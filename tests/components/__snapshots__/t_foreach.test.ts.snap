@@ -3,7 +3,7 @@
 exports[`list of components components in a node in a t-foreach  1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-text-0/></div>\`);
@@ -18,7 +18,7 @@ exports[`list of components components in a node in a t-foreach  1`] = `
 exports[`list of components components in a node in a t-foreach  2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><ul><owl-child-0/></ul></div>\`);
@@ -30,7 +30,7 @@ exports[`list of components components in a node in a t-foreach  2`] = `
     for (let i1 = 0; i1 < l2; i1++) {
       ctx[\`item\`] = v2[i1];
       let key1 = 'li_'+ctx['item'];
-      let b4 = node.getChild(\`Child\`, {item: ctx['item']}, key + \`__1__\${key1}\`, ctx);
+      let b4 = component(\`Child\`, {item: ctx['item']}, key + \`__1__\${key1}\`, node, ctx);
       c2[i1] = withKey(block3([], [b4]), key1);
     }
     let b2 = list(c2);
@@ -42,7 +42,7 @@ exports[`list of components components in a node in a t-foreach  2`] = `
 exports[`list of components reconciliation alg works for t-foreach in t-foreach 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-text-0/></div>\`);
@@ -57,7 +57,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
 exports[`list of components reconciliation alg works for t-foreach in t-foreach 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
@@ -75,7 +75,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
         ctx[\`blip\`] = v3[i2];
         ctx[\`blip_index\`] = i2;
         let key2 = ctx['blip_index'];
-        c3[i2] = withKey(node.getChild(\`Child\`, {blip: ctx['blip']}, key + \`__1__\${key1}__\${key2}\`, ctx), key2);
+        c3[i2] = withKey(component(\`Child\`, {blip: ctx['blip']}, key + \`__1__\${key1}__\${key2}\`, node, ctx), key2);
       }
       ctx = ctx.__proto__;
       c2[i1] = withKey(list(c3), key1);
@@ -89,7 +89,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
 exports[`list of components reconciliation alg works for t-foreach in t-foreach, 2 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-text-0/></div>\`);
@@ -104,7 +104,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
 exports[`list of components reconciliation alg works for t-foreach in t-foreach, 2 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
@@ -122,7 +122,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
       for (let i2 = 0; i2 < l4; i2++) {
         ctx[\`col\`] = v4[i2];
         let key2 = ctx['col'];
-        let b6 = node.getChild(\`Child\`, {row: ctx['row'],col: ctx['col']}, key + \`__1__\${key1}__\${key2}\`, ctx);
+        let b6 = component(\`Child\`, {row: ctx['row'],col: ctx['col']}, key + \`__1__\${key1}__\${key2}\`, node, ctx);
         c4[i2] = withKey(block5([], [b6]), key2);
       }
       ctx = ctx.__proto__;
@@ -138,7 +138,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
 exports[`list of components simple list 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span><owl-text-0/></span>\`);
@@ -153,7 +153,7 @@ exports[`list of components simple list 1`] = `
 exports[`list of components simple list 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -162,7 +162,7 @@ exports[`list of components simple list 2`] = `
     for (let i1 = 0; i1 < l1; i1++) {
       ctx[\`elem\`] = v1[i1];
       let key1 = ctx['elem'].id;
-      c1[i1] = withKey(node.getChild(\`Child\`, {value: ctx['elem'].value}, key + \`__1__\${key1}\`, ctx), key1);
+      c1[i1] = withKey(component(\`Child\`, {value: ctx['elem'].value}, key + \`__1__\${key1}\`, node, ctx), key1);
     }
     return list(c1);
   }
@@ -172,7 +172,7 @@ exports[`list of components simple list 2`] = `
 exports[`list of components sub components rendered in a loop 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<p><owl-text-0/></p>\`);
@@ -187,7 +187,7 @@ exports[`list of components sub components rendered in a loop 1`] = `
 exports[`list of components sub components rendered in a loop 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
@@ -198,7 +198,7 @@ exports[`list of components sub components rendered in a loop 2`] = `
     for (let i1 = 0; i1 < l2; i1++) {
       ctx[\`number\`] = v2[i1];
       let key1 = ctx['number'];
-      c2[i1] = withKey(node.getChild(\`Child\`, {n: ctx['number']}, key + \`__1__\${key1}\`, ctx), key1);
+      c2[i1] = withKey(component(\`Child\`, {n: ctx['number']}, key + \`__1__\${key1}\`, node, ctx), key1);
     }
     let b2 = list(c2);
     return block1([], [b2]);
@@ -209,7 +209,7 @@ exports[`list of components sub components rendered in a loop 2`] = `
 exports[`list of components sub components with some state rendered in a loop 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<p><owl-text-0/></p>\`);
@@ -224,7 +224,7 @@ exports[`list of components sub components with some state rendered in a loop 1`
 exports[`list of components sub components with some state rendered in a loop 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
@@ -235,7 +235,7 @@ exports[`list of components sub components with some state rendered in a loop 2`
     for (let i1 = 0; i1 < l2; i1++) {
       ctx[\`number\`] = v2[i1];
       let key1 = ctx['number'];
-      c2[i1] = withKey(node.getChild(\`Child\`, {}, key + \`__1__\${key1}\`, ctx), key1);
+      c2[i1] = withKey(component(\`Child\`, {}, key + \`__1__\${key1}\`, node, ctx), key1);
     }
     let b2 = list(c2);
     return block1([], [b2]);

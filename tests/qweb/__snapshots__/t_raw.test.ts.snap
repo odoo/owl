@@ -3,7 +3,7 @@
 exports[`t-raw literal 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span><owl-child-0/></span>\`);
@@ -18,7 +18,7 @@ exports[`t-raw literal 1`] = `
 exports[`t-raw literal, no outside html element 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -30,7 +30,7 @@ exports[`t-raw literal, no outside html element 1`] = `
 exports[`t-raw multiple calls to t-raw 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/><div>Greeter</div><owl-child-1/></div>\`);
@@ -46,7 +46,7 @@ exports[`t-raw multiple calls to t-raw 1`] = `
 exports[`t-raw multiple calls to t-raw 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
@@ -66,7 +66,7 @@ exports[`t-raw multiple calls to t-raw 2`] = `
 exports[`t-raw not escaping 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
@@ -81,7 +81,7 @@ exports[`t-raw not escaping 1`] = `
 exports[`t-raw t-raw and another sibling node 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span><span>hello</span><owl-child-0/></span>\`);
@@ -96,7 +96,7 @@ exports[`t-raw t-raw and another sibling node 1`] = `
 exports[`t-raw t-raw on a node with a body, as a default 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span><owl-child-0/></span>\`);
@@ -112,7 +112,7 @@ exports[`t-raw t-raw on a node with a body, as a default 1`] = `
 exports[`t-raw t-raw on a node with a dom node in body, as a default 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span><owl-child-0/></span>\`);
@@ -129,7 +129,7 @@ exports[`t-raw t-raw on a node with a dom node in body, as a default 1`] = `
 exports[`t-raw t-raw with a <t/> in body 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -141,7 +141,7 @@ exports[`t-raw t-raw with a <t/> in body 1`] = `
 exports[`t-raw t-raw with comment 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span><owl-child-0/></span>\`);
@@ -156,7 +156,7 @@ exports[`t-raw t-raw with comment 1`] = `
 exports[`t-raw t-raw with just a t-set t-value in body 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -168,7 +168,7 @@ exports[`t-raw t-raw with just a t-set t-value in body 1`] = `
 exports[`t-raw variable 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span><owl-child-0/></span>\`);

@@ -3,7 +3,7 @@
 exports[`t-set evaluate value expression 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-text-0/></div>\`);
@@ -20,7 +20,7 @@ exports[`t-set evaluate value expression 1`] = `
 exports[`t-set evaluate value expression, part 2 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-text-0/></div>\`);
@@ -37,7 +37,7 @@ exports[`t-set evaluate value expression, part 2 1`] = `
 exports[`t-set set from attribute literal (no outside div) 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -51,7 +51,7 @@ exports[`t-set set from attribute literal (no outside div) 1`] = `
 exports[`t-set set from attribute literal 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-text-0/></div>\`);
@@ -68,7 +68,7 @@ exports[`t-set set from attribute literal 1`] = `
 exports[`t-set set from attribute lookup 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-text-0/></div>\`);
@@ -85,7 +85,7 @@ exports[`t-set set from attribute lookup 1`] = `
 exports[`t-set set from body literal 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -99,7 +99,7 @@ exports[`t-set set from body literal 1`] = `
 exports[`t-set set from body lookup 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-text-0/></div>\`);
@@ -117,7 +117,7 @@ exports[`t-set set from body lookup 1`] = `
 exports[`t-set set from empty body 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-text-0/></div>\`);
@@ -134,7 +134,7 @@ exports[`t-set set from empty body 1`] = `
 exports[`t-set t-set and t-if 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
@@ -154,7 +154,7 @@ exports[`t-set t-set and t-if 1`] = `
 exports[`t-set t-set body is evaluated immediately 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
@@ -176,7 +176,7 @@ exports[`t-set t-set body is evaluated immediately 1`] = `
 exports[`t-set t-set evaluates an expression only once 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-text-0/><owl-text-1/></div>\`);
@@ -194,7 +194,7 @@ exports[`t-set t-set evaluates an expression only once 1`] = `
 exports[`t-set t-set should reuse variable if possible 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
@@ -222,7 +222,7 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
 exports[`t-set t-set with content and sub t-esc 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-text-0/></div>\`);
@@ -242,7 +242,7 @@ exports[`t-set t-set with content and sub t-esc 1`] = `
 exports[`t-set t-set with t-value (falsy) and body 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
@@ -266,7 +266,7 @@ exports[`t-set t-set with t-value (falsy) and body 1`] = `
 exports[`t-set t-set with t-value (truthy) and body 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
@@ -290,7 +290,7 @@ exports[`t-set t-set with t-value (truthy) and body 1`] = `
 exports[`t-set t-set, t-if, and mix of expression/body lookup, 1 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/><owl-child-0/><owl-text-0/></div>\`);
@@ -311,7 +311,7 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 1 1`] = `
 exports[`t-set t-set, t-if, and mix of expression/body lookup, 2 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/><owl-child-0/><owl-text-0/></div>\`);
@@ -332,7 +332,7 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 2 1`] = `
 exports[`t-set t-set, t-if, and mix of expression/body lookup, 3 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -352,7 +352,7 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 3 1`] = `
 exports[`t-set value priority (with non text body 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-text-0/></div>\`);
@@ -371,7 +371,7 @@ exports[`t-set value priority (with non text body 1`] = `
 exports[`t-set value priority 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-text-0/></div>\`);

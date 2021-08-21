@@ -1,8 +1,9 @@
 // import { compileTemplate, Template } from "./qweb/index";
 import { BDom, createBlock, html, list, multi, text, toggler } from "../bdom";
+import { component } from "../component/component_node";
 import { Template, compileTemplate } from "./compiler";
 
-const bdom = { text, createBlock, list, multi, html, toggler };
+const bdom = { text, createBlock, list, multi, html, toggler, component };
 
 export const globalTemplates: { [key: string]: string } = {};
 

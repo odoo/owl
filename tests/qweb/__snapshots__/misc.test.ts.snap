@@ -3,7 +3,7 @@
 exports[`misc complex template 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div owl-attribute-0=\\"class\\"><div owl-attribute-1=\\"class\\"><div class=\\"batch_header\\"><a owl-attribute-2=\\"href\\" owl-attribute-3=\\"class\\" title=\\"View Batch\\"><owl-text-4/><owl-child-0/><i class=\\"arrow fa fa-window-maximize\\"/></a></div><owl-child-1/><div class=\\"batch_slots\\"><owl-child-2/><owl-child-3/></div><div class=\\"batch_commits\\"><owl-child-4/></div></div></div>\`);
@@ -34,7 +34,7 @@ exports[`misc complex template 1`] = `
     for (let i1 = 0; i1 < l4; i1++) {
       ctx[\`slot\`] = v4[i1];
       let key1 = ctx['slot'].id;
-      c4[i1] = withKey(node.getChild(\`SlotButton\`, {class: ctx['slot_container'],slot: ctx['slot']}, key + \`__1__\${key1}\`, ctx), key1);
+      c4[i1] = withKey(component(\`SlotButton\`, {class: ctx['slot_container'],slot: ctx['slot']}, key + \`__1__\${key1}\`, node, ctx), key1);
     }
     ctx = ctx.__proto__;
     b4 = list(c4);
@@ -81,7 +81,7 @@ exports[`misc complex template 1`] = `
 exports[`misc global 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<año owl-attribute-0=\\"falló\\"><owl-child-0/></año>\`);
@@ -97,7 +97,7 @@ exports[`misc global 1`] = `
 exports[`misc global 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span><owl-text-0/></span>\`);
@@ -112,7 +112,7 @@ exports[`misc global 2`] = `
 exports[`misc global 3`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
@@ -128,7 +128,7 @@ exports[`misc global 3`] = `
 exports[`misc global 4`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   const callTemplate_2 = getTemplate(\`_callee-uses-foo\`);
   const callTemplate_4 = getTemplate(\`_callee-uses-foo\`);
@@ -177,7 +177,7 @@ exports[`misc global 4`] = `
 exports[`misc other complex template 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   const callTemplate_3 = getTemplate(\`LOAD_INFOS_TEMPLATE\`);
   
@@ -314,8 +314,8 @@ exports[`misc other complex template 1`] = `
     if (!ctx['project']) {
       b24 = block24();
     } else {
-      let b26 = node.getChild(\`BundlesList\`, {bundles: ctx['bundles'].sticky,category_custom_views: ctx['category_custom_views'],search: ctx['search']}, key + \`__4\`, ctx);
-      let b27 = node.getChild(\`BundlesList\`, {bundles: ctx['bundles'].dev,search: ctx['search']}, key + \`__5\`, ctx);
+      let b26 = component(\`BundlesList\`, {bundles: ctx['bundles'].sticky,category_custom_views: ctx['category_custom_views'],search: ctx['search']}, key + \`__4\`, node, ctx);
+      let b27 = component(\`BundlesList\`, {bundles: ctx['bundles'].dev,search: ctx['search']}, key + \`__5\`, node, ctx);
       b25 = block25([], [b26, b27]);
     }
     return block1([d1, d2, d11, d12, d16, d17, d18, d19, d20, d21], [b2, b4, b14, b17, b22, b23, b24, b25]);

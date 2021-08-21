@@ -3,7 +3,7 @@
 exports[`t-call-block simple t-call-block with static text 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);

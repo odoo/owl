@@ -3,7 +3,7 @@
 exports[`basics basic use 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span>child<owl-text-0/></span>\`);
@@ -18,11 +18,11 @@ exports[`basics basic use 1`] = `
 exports[`basics basic use 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    return node.getChild(\`Child\`, {p: 1}, key + \`__1\`, ctx);
+    return component(\`Child\`, {p: 1}, key + \`__1\`, node, ctx);
   }
 }"
 `;
@@ -30,7 +30,7 @@ exports[`basics basic use 2`] = `
 exports[`basics can select a sub widget  1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span>CHILD 1</span>\`);
@@ -44,7 +44,7 @@ exports[`basics can select a sub widget  1`] = `
 exports[`basics can select a sub widget  2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div>CHILD 2</div>\`);
@@ -58,16 +58,16 @@ exports[`basics can select a sub widget  2`] = `
 exports[`basics can select a sub widget  3`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     let b2,b3;
     if (ctx['env'].flag) {
-      b2 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+      b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
     }
     if (!ctx['env'].flag) {
-      b3 = node.getChild(\`OtherChild\`, {}, key + \`__2\`, ctx);
+      b3 = component(\`OtherChild\`, {}, key + \`__2\`, node, ctx);
     }
     return multi([b2, b3]);
   }
@@ -77,7 +77,7 @@ exports[`basics can select a sub widget  3`] = `
 exports[`basics can select a sub widget, part 2 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span>CHILD 1</span>\`);
@@ -91,7 +91,7 @@ exports[`basics can select a sub widget, part 2 1`] = `
 exports[`basics can select a sub widget, part 2 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div>CHILD 2</div>\`);
@@ -105,16 +105,16 @@ exports[`basics can select a sub widget, part 2 2`] = `
 exports[`basics can select a sub widget, part 2 3`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     let b2,b3;
     if (ctx['state'].flag) {
-      b2 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+      b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
     }
     if (!ctx['state'].flag) {
-      b3 = node.getChild(\`OtherChild\`, {}, key + \`__2\`, ctx);
+      b3 = component(\`OtherChild\`, {}, key + \`__2\`, node, ctx);
     }
     return multi([b2, b3]);
   }
@@ -124,7 +124,7 @@ exports[`basics can select a sub widget, part 2 3`] = `
 exports[`basics sub widget is interactive 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span><button owl-handler-0=\\"click\\">click</button>child<owl-text-1/></span>\`);
@@ -140,11 +140,11 @@ exports[`basics sub widget is interactive 1`] = `
 exports[`basics sub widget is interactive 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    return node.getChild(\`Child\`, {p: 1}, key + \`__1\`, ctx);
+    return component(\`Child\`, {p: 1}, key + \`__1\`, node, ctx);
   }
 }"
 `;
@@ -152,7 +152,7 @@ exports[`basics sub widget is interactive 2`] = `
 exports[`basics top level sub widget with a parent 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span>Hello</span>\`);
@@ -166,11 +166,11 @@ exports[`basics top level sub widget with a parent 1`] = `
 exports[`basics top level sub widget with a parent 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    return node.getChild(\`ComponentC\`, {}, key + \`__1\`, ctx);
+    return component(\`ComponentC\`, {}, key + \`__1\`, node, ctx);
   }
 }"
 `;
@@ -178,13 +178,13 @@ exports[`basics top level sub widget with a parent 2`] = `
 exports[`basics top level sub widget with a parent 3`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = node.getChild(\`ComponentB\`, {}, key + \`__1\`, ctx);
+    let b2 = component(\`ComponentB\`, {}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"

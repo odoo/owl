@@ -3,7 +3,7 @@
 exports[`refs refs are properly bound in slots 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span><owl-child-0/></span>\`);
@@ -18,7 +18,7 @@ exports[`refs refs are properly bound in slots 1`] = `
 exports[`refs refs are properly bound in slots 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   let assign = Object.assign;
   
@@ -36,7 +36,7 @@ exports[`refs refs are properly bound in slots 2`] = `
     const refs = ctx.__owl__.refs;
     let d1 = ctx['state'].val;
     const ctx2 = capture(ctx);
-    let b3 = assign(node.getChild(\`Dialog\`, {}, key + \`__1\`, ctx), {slots: {'footer': slot3(ctx2)}});
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'footer': slot3(ctx2)}});
     return block1([d1], [b3]);
   }
 }"

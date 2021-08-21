@@ -229,7 +229,7 @@ export class QWebCompiler {
     this.target.code = [];
     this.target.indentLevel = 0;
     // define blocks and utility functions
-    this.addLine(`let { text, createBlock, list, multi, html, toggler } = bdom;`);
+    this.addLine(`let { text, createBlock, list, multi, html, toggler, component } = bdom;`);
     this.addLine(
       `let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;`
     );
@@ -843,7 +843,7 @@ export class QWebCompiler {
     } else {
       expr = `\`${ast.name}\``;
     }
-    let blockArgs = `${expr}, ${propString}, key + \`${key}\`, ctx`;
+    let blockArgs = `${expr}, ${propString}, key + \`${key}\`, node, ctx`;
 
     // slots
     const hasSlot = !!Object.keys(ast.slots).length;
@@ -895,7 +895,7 @@ export class QWebCompiler {
       // todo: check the forcenewblock condition
       this.insertAnchor(block);
     }
-    let blockExpr = `node.getChild(${blockArgs})`;
+    let blockExpr = `component(${blockArgs})`;
     if (Object.keys(extraArgs).length) {
       this.shouldDefineAssign = true;
       const content = Object.keys(extraArgs).map((k) => `${k}: ${extraArgs[k]}`);

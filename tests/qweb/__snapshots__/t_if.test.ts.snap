@@ -3,7 +3,7 @@
 exports[`t-if a t-if next to a div 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block2 = createBlock(\`<div>foo</div>\`);
@@ -22,7 +22,7 @@ exports[`t-if a t-if next to a div 1`] = `
 exports[`t-if a t-if with two inner nodes 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block3 = createBlock(\`<span>yip</span>\`);
@@ -43,7 +43,7 @@ exports[`t-if a t-if with two inner nodes 1`] = `
 exports[`t-if boolean value condition elif (no outside node) 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -65,7 +65,7 @@ exports[`t-if boolean value condition elif (no outside node) 1`] = `
 exports[`t-if boolean value condition elif 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/><owl-child-2/><owl-child-3/></div>\`);
@@ -89,7 +89,7 @@ exports[`t-if boolean value condition elif 1`] = `
 exports[`t-if boolean value condition else 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><span>begin</span><owl-child-0/><owl-child-1/><span>end</span></div>\`);
@@ -109,7 +109,7 @@ exports[`t-if boolean value condition else 1`] = `
 exports[`t-if boolean value condition false else 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><span>begin</span><owl-child-0/><owl-child-1/><span>end</span></div>\`);
@@ -129,7 +129,7 @@ exports[`t-if boolean value condition false else 1`] = `
 exports[`t-if can use some boolean operators in expressions 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/><owl-child-2/><owl-child-3/><owl-child-4/><owl-child-5/><owl-child-6/><owl-child-7/></div>\`);
@@ -168,7 +168,7 @@ exports[`t-if can use some boolean operators in expressions 1`] = `
 exports[`t-if div containing a t-if with two inner nodes 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
@@ -190,7 +190,7 @@ exports[`t-if div containing a t-if with two inner nodes 1`] = `
 exports[`t-if dynamic content after t-if with two children nodes 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/><owl-text-0/></div>\`);
@@ -213,7 +213,7 @@ exports[`t-if dynamic content after t-if with two children nodes 1`] = `
 exports[`t-if just a t-if 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -229,7 +229,7 @@ exports[`t-if just a t-if 1`] = `
 exports[`t-if simple t-if/t-else 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -247,7 +247,7 @@ exports[`t-if simple t-if/t-else 1`] = `
 exports[`t-if simple t-if/t-else in a div 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
@@ -267,7 +267,7 @@ exports[`t-if simple t-if/t-else in a div 1`] = `
 exports[`t-if t-esc with t-elif 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
@@ -287,7 +287,7 @@ exports[`t-if t-esc with t-elif 1`] = `
 exports[`t-if t-esc with t-if 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
@@ -305,7 +305,7 @@ exports[`t-if t-esc with t-if 1`] = `
 exports[`t-if t-if and t-else with two nodes 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block4 = createBlock(\`<span>a</span>\`);
@@ -328,7 +328,7 @@ exports[`t-if t-if and t-else with two nodes 1`] = `
 exports[`t-if t-if in a div 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
@@ -346,7 +346,7 @@ exports[`t-if t-if in a div 1`] = `
 exports[`t-if t-if in a t-if 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
@@ -369,7 +369,7 @@ exports[`t-if t-if in a t-if 1`] = `
 exports[`t-if t-if/t-else with more content 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -389,7 +389,7 @@ exports[`t-if t-if/t-else with more content 1`] = `
 exports[`t-if t-set, then t-if 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
@@ -409,7 +409,7 @@ exports[`t-if t-set, then t-if 1`] = `
 exports[`t-if t-set, then t-if, part 2 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
@@ -431,7 +431,7 @@ exports[`t-if t-set, then t-if, part 2 1`] = `
 exports[`t-if t-set, then t-if, part 3 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
@@ -456,7 +456,7 @@ exports[`t-if t-set, then t-if, part 3 1`] = `
 exports[`t-if two consecutive t-if 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -475,7 +475,7 @@ exports[`t-if two consecutive t-if 1`] = `
 exports[`t-if two consecutive t-if in a div 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
@@ -496,7 +496,7 @@ exports[`t-if two consecutive t-if in a div 1`] = `
 exports[`t-if two t-ifs next to each other 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);

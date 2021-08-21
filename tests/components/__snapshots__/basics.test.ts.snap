@@ -3,7 +3,7 @@
 exports[`basics Multi root component 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block2 = createBlock(\`<span>1</span>\`);
@@ -21,7 +21,7 @@ exports[`basics Multi root component 1`] = `
 exports[`basics a class component inside a class component, no external dom 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div>simple vnode</div>\`);
@@ -35,11 +35,11 @@ exports[`basics a class component inside a class component, no external dom 1`] 
 exports[`basics a class component inside a class component, no external dom 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    return node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+    return component(\`Child\`, {}, key + \`__1\`, node, ctx);
   }
 }"
 `;
@@ -47,7 +47,7 @@ exports[`basics a class component inside a class component, no external dom 2`] 
 exports[`basics a component cannot be mounted in a detached node 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div/>\`);
@@ -61,7 +61,7 @@ exports[`basics a component cannot be mounted in a detached node 1`] = `
 exports[`basics a component inside a component 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div>simple vnode</div>\`);
@@ -75,13 +75,13 @@ exports[`basics a component inside a component 1`] = `
 exports[`basics a component inside a component 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span><owl-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+    let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -90,7 +90,7 @@ exports[`basics a component inside a component 2`] = `
 exports[`basics can be clicked on and updated 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-text-0/><button owl-handler-1=\\"click\\">Inc</button></div>\`);
@@ -107,7 +107,7 @@ exports[`basics can be clicked on and updated 1`] = `
 exports[`basics can handle empty props 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span><owl-text-0/></span>\`);
@@ -122,13 +122,13 @@ exports[`basics can handle empty props 1`] = `
 exports[`basics can handle empty props 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = node.getChild(\`Child\`, {val: undefined}, key + \`__1\`, ctx);
+    let b2 = component(\`Child\`, {val: undefined}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -137,7 +137,7 @@ exports[`basics can handle empty props 2`] = `
 exports[`basics can mount a component with just some text 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -149,7 +149,7 @@ exports[`basics can mount a component with just some text 1`] = `
 exports[`basics can mount a component with no text 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -161,7 +161,7 @@ exports[`basics can mount a component with no text 1`] = `
 exports[`basics can mount a simple component 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span>simple vnode</span>\`);
@@ -175,7 +175,7 @@ exports[`basics can mount a simple component 1`] = `
 exports[`basics can mount a simple component with multiple roots 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block2 = createBlock(\`<span/>\`);
@@ -192,7 +192,7 @@ exports[`basics can mount a simple component with multiple roots 1`] = `
 exports[`basics can mount a simple component with props 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span><owl-text-0/></span>\`);
@@ -207,7 +207,7 @@ exports[`basics can mount a simple component with props 1`] = `
 exports[`basics cannot mount on a documentFragment 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div>content</div>\`);
@@ -221,7 +221,7 @@ exports[`basics cannot mount on a documentFragment 1`] = `
 exports[`basics child can be updated 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -233,11 +233,11 @@ exports[`basics child can be updated 1`] = `
 exports[`basics child can be updated 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    return node.getChild(\`Child\`, {value: ctx['state'].counter}, key + \`__1\`, ctx);
+    return component(\`Child\`, {value: ctx['state'].counter}, key + \`__1\`, node, ctx);
   }
 }"
 `;
@@ -245,7 +245,7 @@ exports[`basics child can be updated 2`] = `
 exports[`basics class component with dynamic text 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span>My value: <owl-text-0/></span>\`);
@@ -260,7 +260,7 @@ exports[`basics class component with dynamic text 1`] = `
 exports[`basics class parent, class child component with props 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-text-0/></div>\`);
@@ -275,11 +275,11 @@ exports[`basics class parent, class child component with props 1`] = `
 exports[`basics class parent, class child component with props 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    return node.getChild(\`Child\`, {value: 42}, key + \`__1\`, ctx);
+    return component(\`Child\`, {value: 42}, key + \`__1\`, node, ctx);
   }
 }"
 `;
@@ -287,7 +287,7 @@ exports[`basics class parent, class child component with props 2`] = `
 exports[`basics component with dynamic content can be updated 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span><owl-text-0/></span>\`);
@@ -302,7 +302,7 @@ exports[`basics component with dynamic content can be updated 1`] = `
 exports[`basics do not remove previously rendered dom if not necessary 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div/>\`);
@@ -316,7 +316,7 @@ exports[`basics do not remove previously rendered dom if not necessary 1`] = `
 exports[`basics do not remove previously rendered dom if not necessary, variation 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><h1>h1</h1><span><owl-text-0/></span></div>\`);
@@ -331,7 +331,7 @@ exports[`basics do not remove previously rendered dom if not necessary, variatio
 exports[`basics has no el after creation 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span>simple</span>\`);
@@ -345,7 +345,7 @@ exports[`basics has no el after creation 1`] = `
 exports[`basics higher order components parent and child 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div>a</div>\`);
@@ -359,7 +359,7 @@ exports[`basics higher order components parent and child 1`] = `
 exports[`basics higher order components parent and child 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span>b</span>\`);
@@ -373,15 +373,15 @@ exports[`basics higher order components parent and child 2`] = `
 exports[`basics higher order components parent and child 3`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     let b2,b3;
     if (ctx['props'].child==='a') {
-      b2 = node.getChild(\`ChildA\`, {}, key + \`__1\`, ctx);
+      b2 = component(\`ChildA\`, {}, key + \`__1\`, node, ctx);
     } else {
-      b3 = node.getChild(\`ChildB\`, {}, key + \`__2\`, ctx);
+      b3 = component(\`ChildB\`, {}, key + \`__2\`, node, ctx);
     }
     return multi([b2, b3]);
   }
@@ -391,11 +391,11 @@ exports[`basics higher order components parent and child 3`] = `
 exports[`basics higher order components parent and child 4`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    return node.getChild(\`Child\`, {child: ctx['state'].child}, key + \`__1\`, ctx);
+    return component(\`Child\`, {child: ctx['state'].child}, key + \`__1\`, node, ctx);
   }
 }"
 `;
@@ -403,7 +403,7 @@ exports[`basics higher order components parent and child 4`] = `
 exports[`basics parent, child and grandchild 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div>hey</div>\`);
@@ -417,11 +417,11 @@ exports[`basics parent, child and grandchild 1`] = `
 exports[`basics parent, child and grandchild 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    return node.getChild(\`GrandChild\`, {}, key + \`__1\`, ctx);
+    return component(\`GrandChild\`, {}, key + \`__1\`, node, ctx);
   }
 }"
 `;
@@ -429,11 +429,11 @@ exports[`basics parent, child and grandchild 2`] = `
 exports[`basics parent, child and grandchild 3`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    return node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+    return component(\`Child\`, {}, key + \`__1\`, node, ctx);
   }
 }"
 `;
@@ -441,7 +441,7 @@ exports[`basics parent, child and grandchild 3`] = `
 exports[`basics props is set on root component 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span>simple vnode</span>\`);
@@ -455,7 +455,7 @@ exports[`basics props is set on root component 1`] = `
 exports[`basics reconciliation alg is not confused in some specific situation 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span>child</span>\`);
@@ -469,14 +469,14 @@ exports[`basics reconciliation alg is not confused in some specific situation 1`
 exports[`basics reconciliation alg is not confused in some specific situation 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
-    let b3 = node.getChild(\`Child\`, {}, key + \`__2\`, ctx);
+    let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    let b3 = component(\`Child\`, {}, key + \`__2\`, node, ctx);
     return block1([], [b2, b3]);
   }
 }"
@@ -485,7 +485,7 @@ exports[`basics reconciliation alg is not confused in some specific situation 2`
 exports[`basics same t-keys in two different places 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span><owl-text-0/></span>\`);
@@ -500,14 +500,14 @@ exports[`basics same t-keys in two different places 1`] = `
 exports[`basics same t-keys in two different places 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><div><owl-child-0/></div><div><owl-child-1/></div></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = node.getChild(\`Child\`, {blip: '1'}, key + \`__1\`, ctx);
-    let b3 = node.getChild(\`Child\`, {blip: '2'}, key + \`__2\`, ctx);
+    let b2 = component(\`Child\`, {blip: '1'}, key + \`__1\`, node, ctx);
+    let b3 = component(\`Child\`, {blip: '2'}, key + \`__2\`, node, ctx);
     return block1([], [b2, b3]);
   }
 }"
@@ -516,7 +516,7 @@ exports[`basics same t-keys in two different places 2`] = `
 exports[`basics simple component with a dynamic text 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-text-0/></div>\`);
@@ -531,7 +531,7 @@ exports[`basics simple component with a dynamic text 1`] = `
 exports[`basics simple component, useState 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-text-0/></div>\`);
@@ -546,7 +546,7 @@ exports[`basics simple component, useState 1`] = `
 exports[`basics some simple sanity checks (el/status) 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span>simple vnode</span>\`);
@@ -560,7 +560,7 @@ exports[`basics some simple sanity checks (el/status) 1`] = `
 exports[`basics t-elif works with t-component 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span>hey</span>\`);
@@ -574,7 +574,7 @@ exports[`basics t-elif works with t-component 1`] = `
 exports[`basics t-elif works with t-component 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
@@ -585,7 +585,7 @@ exports[`basics t-elif works with t-component 2`] = `
     if (ctx['state'].flag) {
       b2 = block2();
     } else if (!ctx['state'].flag) {
-      b3 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+      b3 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
     }
     return block1([], [b2, b3]);
   }
@@ -595,7 +595,7 @@ exports[`basics t-elif works with t-component 2`] = `
 exports[`basics t-else with empty string works with t-component 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span>hey</span>\`);
@@ -609,7 +609,7 @@ exports[`basics t-else with empty string works with t-component 1`] = `
 exports[`basics t-else with empty string works with t-component 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
@@ -620,7 +620,7 @@ exports[`basics t-else with empty string works with t-component 2`] = `
     if (ctx['state'].flag) {
       b2 = block2();
     } else {
-      b3 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+      b3 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
     }
     return block1([], [b2, b3]);
   }
@@ -630,7 +630,7 @@ exports[`basics t-else with empty string works with t-component 2`] = `
 exports[`basics t-else works with t-component 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span>hey</span>\`);
@@ -644,7 +644,7 @@ exports[`basics t-else works with t-component 1`] = `
 exports[`basics t-else works with t-component 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
@@ -655,7 +655,7 @@ exports[`basics t-else works with t-component 2`] = `
     if (ctx['state'].flag) {
       b2 = block2();
     } else {
-      b3 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+      b3 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
     }
     return block1([], [b2, b3]);
   }
@@ -665,7 +665,7 @@ exports[`basics t-else works with t-component 2`] = `
 exports[`basics t-if works with t-component 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span>hey</span>\`);
@@ -679,7 +679,7 @@ exports[`basics t-if works with t-component 1`] = `
 exports[`basics t-if works with t-component 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/></div>\`);
@@ -687,7 +687,7 @@ exports[`basics t-if works with t-component 2`] = `
   return function template(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].flag) {
-      b2 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+      b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
     }
     return block1([], [b2]);
   }
@@ -697,7 +697,7 @@ exports[`basics t-if works with t-component 2`] = `
 exports[`basics t-key on a component with t-if, and a sibling component 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span>child</span>\`);
@@ -711,7 +711,7 @@ exports[`basics t-key on a component with t-if, and a sibling component 1`] = `
 exports[`basics t-key on a component with t-if, and a sibling component 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
@@ -719,9 +719,9 @@ exports[`basics t-key on a component with t-if, and a sibling component 2`] = `
   return function template(ctx, node, key = \\"\\") {
     let b2,b3;
     if (false) {
-      b2 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+      b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
     }
-    b3 = node.getChild(\`Child\`, {}, key + \`__2\`, ctx);
+    b3 = component(\`Child\`, {}, key + \`__2\`, node, ctx);
     return block1([], [b2, b3]);
   }
 }"
@@ -730,7 +730,7 @@ exports[`basics t-key on a component with t-if, and a sibling component 2`] = `
 exports[`basics text after a conditional component 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<p>simple vnode</p>\`);
@@ -744,7 +744,7 @@ exports[`basics text after a conditional component 1`] = `
 exports[`basics text after a conditional component 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/><span><owl-text-0/></span></div>\`);
@@ -752,7 +752,7 @@ exports[`basics text after a conditional component 2`] = `
   return function template(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].hasChild) {
-      b2 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+      b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
     }
     let d1 = ctx['state'].text;
     return block1([d1], [b2]);
@@ -763,7 +763,7 @@ exports[`basics text after a conditional component 2`] = `
 exports[`basics three level of components with collapsing root nodes 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div>2</div>\`);
@@ -777,11 +777,11 @@ exports[`basics three level of components with collapsing root nodes 1`] = `
 exports[`basics three level of components with collapsing root nodes 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    return node.getChild(\`GrandChild\`, {}, key + \`__1\`, ctx);
+    return component(\`GrandChild\`, {}, key + \`__1\`, node, ctx);
   }
 }"
 `;
@@ -789,11 +789,11 @@ exports[`basics three level of components with collapsing root nodes 2`] = `
 exports[`basics three level of components with collapsing root nodes 3`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    return node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+    return component(\`Child\`, {}, key + \`__1\`, node, ctx);
   }
 }"
 `;
@@ -801,7 +801,7 @@ exports[`basics three level of components with collapsing root nodes 3`] = `
 exports[`basics throws if mounting on target=null 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<span>simple vnode</span>\`);
@@ -815,7 +815,7 @@ exports[`basics throws if mounting on target=null 1`] = `
 exports[`basics two child components 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div>simple vnode</div>\`);
@@ -829,12 +829,12 @@ exports[`basics two child components 1`] = `
 exports[`basics two child components 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
-    let b3 = node.getChild(\`Child\`, {}, key + \`__2\`, ctx);
+    let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    let b3 = component(\`Child\`, {}, key + \`__2\`, node, ctx);
     return multi([b2, b3]);
   }
 }"
@@ -843,7 +843,7 @@ exports[`basics two child components 2`] = `
 exports[`basics updating a component with t-foreach as root 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -862,7 +862,7 @@ exports[`basics updating a component with t-foreach as root 1`] = `
 exports[`basics widget after a t-foreach 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div/>\`);
@@ -876,7 +876,7 @@ exports[`basics widget after a t-foreach 1`] = `
 exports[`basics widget after a t-foreach 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
@@ -892,7 +892,7 @@ exports[`basics widget after a t-foreach 2`] = `
     }
     ctx = ctx.__proto__;
     let b2 = list(c2);
-    let b4 = node.getChild(\`SomeComponent\`, {}, key + \`__1\`, ctx);
+    let b4 = component(\`SomeComponent\`, {}, key + \`__1\`, node, ctx);
     return block1([], [b2, b4]);
   }
 }"
@@ -901,7 +901,7 @@ exports[`basics widget after a t-foreach 2`] = `
 exports[`basics zero or one child components 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   let block1 = createBlock(\`<div>simple vnode</div>\`);
@@ -915,13 +915,13 @@ exports[`basics zero or one child components 1`] = `
 exports[`basics zero or one child components 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].hasChild) {
-      b2 = node.getChild(\`Child\`, {}, key + \`__1\`, ctx);
+      b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
     }
     return multi([b2]);
   }

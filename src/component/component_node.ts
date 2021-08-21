@@ -1,7 +1,6 @@
 import type { App } from "../app";
 import { BDom, VNode } from "../bdom";
 import { Component } from "./component";
-// import { VNode } from "./bdom";
 import {
   Fiber,
   makeChildFiber,
@@ -11,6 +10,39 @@ import {
   __internal__destroyed,
 } from "./fibers";
 import { STATUS } from "./status";
+
+export function component(
+  name: string | typeof Component,
+  props: any,
+  key: string,
+  ctx: ComponentNode,
+  parent: any
+): ComponentNode {
+  let node: any = ctx.children[key];
+  let isDynamic = typeof name !== "string";
+
+  if (node && node.status < STATUS.MOUNTED) {
+    node.destroy();
+    node = undefined;
+  }
+  if (isDynamic && node && node.component.constructor !== name) {
+    node = undefined;
+  }
+
+  const parentFiber = ctx.fiber!;
+  if (node) {
+    node.updateAndRender(props, parentFiber);
+  } else {
+    // new component
+    const C = isDynamic ? name : parent.constructor.components[name as any];
+    node = new ComponentNode(C, props, ctx.app);
+    ctx.children[key] = node;
+
+    const fiber = makeChildFiber(node, parentFiber);
+    node.initiateRender(fiber);
+  }
+  return node;
+}
 
 // -----------------------------------------------------------------------------
 //  Component VNode
@@ -134,41 +166,6 @@ export class ComponentNode<T extends typeof Component = any> implements VNode<Co
         cb.call(component);
       }
     }
-  }
-
-  /**
-   *
-   * @param name
-   * @param props
-   * @param key
-   * @param owner the component in which the component was defined
-   * @param parent the actual parent (may be different in case of slots)
-   */
-  getChild(name: string | typeof Component, props: any, key: string, owner: any) {
-    let node: any = this.children[key];
-    let isDynamic = typeof name !== "string";
-
-    if (node && node.status < STATUS.MOUNTED) {
-      node.destroy();
-      node = undefined;
-    }
-    if (isDynamic && node && node.component.constructor !== name) {
-      node = undefined;
-    }
-
-    const parentFiber = this.fiber!;
-    if (node) {
-      node.updateAndRender(props, parentFiber);
-    } else {
-      // new component
-      const C = isDynamic ? name : owner.constructor.components[name as any];
-      node = new ComponentNode(C, props, this.app);
-      this.children[key] = node;
-
-      const fiber = makeChildFiber(node, parentFiber);
-      node.initiateRender(fiber);
-    }
-    return node;
   }
 
   async updateAndRender(props: any, parentFiber: Fiber) {

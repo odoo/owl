@@ -3,7 +3,7 @@
 exports[`Memo if no prop change, prevent renderings from above  1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -15,7 +15,7 @@ exports[`Memo if no prop change, prevent renderings from above  1`] = `
 exports[`Memo if no prop change, prevent renderings from above  2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   let assign = Object.assign;
   
@@ -30,7 +30,7 @@ exports[`Memo if no prop change, prevent renderings from above  2`] = `
     let b2 = text(ctx['state'].a);
     let b3 = text(ctx['state'].b);
     let b4 = text(ctx['state'].c);
-    let b9 = assign(node.getChild(\`Memo\`, {a: ctx['state'].a,b: ctx['state'].b}, key + \`__1\`, ctx), {slots: {'default': slot2(ctx)}});
+    let b9 = assign(component(\`Memo\`, {a: ctx['state'].a,b: ctx['state'].b}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
     return multi([b2, b3, b4, b9]);
   }
 }"
@@ -39,7 +39,7 @@ exports[`Memo if no prop change, prevent renderings from above  2`] = `
 exports[`Memo if no props, prevent renderings from above  1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -51,17 +51,17 @@ exports[`Memo if no props, prevent renderings from above  1`] = `
 exports[`Memo if no props, prevent renderings from above  2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   let assign = Object.assign;
   
   const slot3 = ctx => (node, key) => {
-    return node.getChild(\`Child\`, {value: ctx['state'].value}, key + \`__4\`, ctx);
+    return component(\`Child\`, {value: ctx['state'].value}, key + \`__4\`, node, ctx);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = node.getChild(\`Child\`, {value: ctx['state'].value}, key + \`__1\`, ctx);
-    let b4 = assign(node.getChild(\`Memo\`, {}, key + \`__2\`, ctx), {slots: {'default': slot3(ctx)}});
+    let b2 = component(\`Child\`, {value: ctx['state'].value}, key + \`__1\`, node, ctx);
+    let b4 = assign(component(\`Memo\`, {}, key + \`__2\`, node, ctx), {slots: {'default': slot3(ctx)}});
     return multi([b2, b4]);
   }
 }"
@@ -70,7 +70,7 @@ exports[`Memo if no props, prevent renderings from above  2`] = `
 exports[`Memo if no props, prevent renderings from above (work with simple html)  1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
   let assign = Object.assign;
   
@@ -80,7 +80,7 @@ exports[`Memo if no props, prevent renderings from above (work with simple html)
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = text(ctx['state'].value);
-    let b4 = assign(node.getChild(\`Memo\`, {}, key + \`__1\`, ctx), {slots: {'default': slot2(ctx)}});
+    let b4 = assign(component(\`Memo\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
     return multi([b2, b4]);
   }
 }"

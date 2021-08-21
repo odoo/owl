@@ -83,7 +83,6 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
       let d1 = [ctx, 'activate', arg1];
       c2[i1] = withKey(block3([d1]), key1);
     }
-    ctx = ctx.__proto__;
     let b2 = list(c2);
     return block1([], [b2]);
   }

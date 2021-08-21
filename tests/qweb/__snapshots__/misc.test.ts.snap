@@ -72,7 +72,6 @@ exports[`misc complex template 1`] = `
       let d10 = ctx['commit_link'].commit_subject;
       c8[i1] = withKey(block9([d6, d7, d8, d9, d10], [b10, b11, b12, b13]), key1);
     }
-    ctx = ctx.__proto__;
     b8 = list(c8);
     return block1([d1, d2, d3, d4, d5], [b2, b3, b4, b6, b8]);
   }

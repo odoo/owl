@@ -102,6 +102,7 @@ interface Context {
   index: number | string;
   forceNewBlock: boolean;
   preventRoot?: boolean;
+  isLast?: boolean;
 }
 
 class CodeTarget {
@@ -164,7 +165,7 @@ export class QWebCompiler {
     this.isDebug = ast.type === ASTType.TDebug;
     BlockDescription.nextBlockId = 1;
     BlockDescription.nextDataId = 1;
-    this.compileAST(ast, { block: null, index: 0, forceNewBlock: false });
+    this.compileAST(ast, { block: null, index: 0, forceNewBlock: false, isLast: true });
     const code = this.generateCode();
     // console.warn(code);
     return new Function("bdom, helpers", code) as TemplateFunction;
@@ -253,14 +254,6 @@ export class QWebCompiler {
     // define all slots
     for (let fn of this.functions) {
       this.generateFunctions(fn);
-    }
-
-    // micro optimization: remove trailing ctx = ctx.__proto__;
-    if (mainCode[mainCode.length - 1] === `  ctx = ctx.__proto__;`) {
-      mainCode.splice(-1, 1);
-    }
-    if (mainCode[mainCode.length - 2] === `  ctx = ctx.__proto__;`) {
-      mainCode.splice(-2, 1);
     }
 
     // // generate main code
@@ -509,6 +502,7 @@ export class QWebCompiler {
           block: block,
           index: block!.childNumber,
           forceNewBlock: false,
+          isLast: ctx.isLast && i === children.length - 1,
         };
         this.compileAST(child, subCtx);
       }
@@ -684,7 +678,9 @@ export class QWebCompiler {
     this.target.indentLevel--;
     this.target.loopLevel--;
     this.addLine(`}`);
-    this.addLine(`ctx = ctx.__proto__;`);
+    if (!ctx.isLast) {
+      this.addLine(`ctx = ctx.__proto__;`);
+    }
     this.insertBlock("l", block, ctx);
   }
 
@@ -707,7 +703,7 @@ export class QWebCompiler {
       block = this.createBlock(block, "multi", ctx);
     }
     let index = 0;
-    for (let i = 0; i < ast.content.length; i++) {
+    for (let i = 0, l = ast.content.length; i < l; i++) {
       const child = ast.content[i];
       const isTSet = child.type === ASTType.TSet;
       const subCtx: Context = {
@@ -715,6 +711,7 @@ export class QWebCompiler {
         index: index,
         forceNewBlock: !isTSet,
         preventRoot: ctx.preventRoot,
+        isLast: ctx.isLast && i === l - 1,
       };
       this.compileAST(child, subCtx);
       if (!isTSet) {
@@ -778,7 +775,7 @@ export class QWebCompiler {
       block = this.createBlock(block, "multi", ctx);
       this.insertBlock(`${id}(ctx, node, ${key})`, block!, { ...ctx, forceNewBlock: !block });
     }
-    if (ast.body) {
+    if (ast.body && !ctx.isLast) {
       this.addLine(`ctx = ctx.__proto__;`);
     }
   }

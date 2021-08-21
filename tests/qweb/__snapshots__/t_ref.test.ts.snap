@@ -107,7 +107,6 @@ exports[`t-ref refs in a loop 1`] = `
       let d2 = ctx['item'];
       c2[i1] = withKey(block3([d1, d2]), key1);
     }
-    ctx = ctx.__proto__;
     let b2 = list(c2);
     return block1([], [b2]);
   }

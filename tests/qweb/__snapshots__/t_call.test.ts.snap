@@ -397,7 +397,6 @@ exports[`t-call (template calling) recursive template, part 2 2`] = `
       c2[i1] = withKey(callTemplate_2(ctx, node, key + \`__1__\${key1}\`), key1);
       ctx = ctx.__proto__;
     }
-    ctx = ctx.__proto__;
     let b2 = list(c2);
     return block1([d1], [b2]);
   }
@@ -449,7 +448,6 @@ exports[`t-call (template calling) recursive template, part 3 2`] = `
       c2[i1] = withKey(callTemplate_2(ctx, node, key + \`__1__\${key1}\`), key1);
       ctx = ctx.__proto__;
     }
-    ctx = ctx.__proto__;
     let b2 = list(c2);
     return block1([d1], [b2]);
   }
@@ -504,7 +502,6 @@ exports[`t-call (template calling) recursive template, part 4: with t-set recurs
       c2[i1] = withKey(callTemplate_2(ctx, node, key + \`__1__\${key1}\`), key1);
       ctx = ctx.__proto__;
     }
-    ctx = ctx.__proto__;
     let b2 = list(c2);
     return block1([d1, d2], [b2]);
   }
@@ -734,7 +731,6 @@ exports[`t-call (template calling) t-call with t-set inside and outside 1`] = `
       c2[i1] = withKey(callTemplate_2(ctx, node, key + \`__1__\${key1}\`), key1);
       ctx = ctx.__proto__;
     }
-    ctx = ctx.__proto__;
     let b2 = list(c2);
     return block1([], [b2]);
   }
@@ -782,7 +778,6 @@ exports[`t-call (template calling) t-call with t-set inside and outside. 2 1`] =
       c2[i1] = withKey(callTemplate_2(ctx, node, key + \`__1__\${key1}\`), key1);
       ctx = ctx.__proto__;
     }
-    ctx = ctx.__proto__;
     let b2 = list(c2);
     return block1([], [b2]);
   }

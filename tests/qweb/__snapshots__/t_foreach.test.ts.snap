@@ -16,7 +16,6 @@ exports[`t-foreach does not pollute the rendering context 1`] = `
       let key1 = ctx['item'];
       c2[i1] = withKey(text(ctx['item']), key1);
     }
-    ctx = ctx.__proto__;
     let b2 = list(c2);
     return block1([], [b2]);
   }
@@ -41,7 +40,6 @@ exports[`t-foreach iterate on items (on a element node) 1`] = `
       let d1 = ctx['item'];
       c2[i1] = withKey(block3([d1]), key1);
     }
-    ctx = ctx.__proto__;
     let b2 = list(c2);
     return block1([], [b2]);
   }
@@ -73,7 +71,6 @@ exports[`t-foreach iterate on items 1`] = `
       let b10 = text(\`] \`);
       c2[i1] = withKey(multi([b4, b5, b6, b7, b8, b9, b10]), key1);
     }
-    ctx = ctx.__proto__;
     let b2 = list(c2);
     return block1([], [b2]);
   }
@@ -105,7 +102,6 @@ exports[`t-foreach iterate, dict param 1`] = `
       let b10 = text(\`] \`);
       c2[i1] = withKey(multi([b4, b5, b6, b7, b8, b9, b10]), key1);
     }
-    ctx = ctx.__proto__;
     let b2 = list(c2);
     return block1([], [b2]);
   }
@@ -142,7 +138,6 @@ exports[`t-foreach iterate, position 1`] = `
       b9 = text(\`) \`);
       c2[i1] = withKey(multi([b4, b5, b6, b7, b8, b9]), key1);
     }
-    ctx = ctx.__proto__;
     let b2 = list(c2);
     return block1([], [b2]);
   }
@@ -165,7 +160,6 @@ exports[`t-foreach simple iteration (in a node) 1`] = `
       let key1 = ctx['item'];
       c2[i1] = withKey(text(ctx['item']), key1);
     }
-    ctx = ctx.__proto__;
     let b2 = list(c2);
     return block1([], [b2]);
   }
@@ -383,7 +377,6 @@ exports[`t-foreach t-foreach in t-foreach 1`] = `
       ctx = ctx.__proto__;
       c2[i1] = withKey(list(c3), key1);
     }
-    ctx = ctx.__proto__;
     let b2 = list(c2);
     return block1([], [b2]);
   }
@@ -438,7 +431,6 @@ exports[`t-foreach t-foreach with t-if inside 1`] = `
       }
       c2[i1] = withKey(multi([b4]), key1);
     }
-    ctx = ctx.__proto__;
     let b2 = list(c2);
     return block1([], [b2]);
   }
@@ -463,7 +455,6 @@ exports[`t-foreach throws error if invalid loop expression 1`] = `
       let key1 = ctx['item'];
       c2[i1] = withKey(block3(), key1);
     }
-    ctx = ctx.__proto__;
     let b2 = list(c2);
     return block1([], [b2]);
   }
@@ -488,7 +479,6 @@ exports[`t-foreach warn if no key in some case 1`] = `
       let d1 = ctx['item'];
       c2[i1] = withKey(block3([d1]), key1);
     }
-    ctx = ctx.__proto__;
     let b2 = list(c2);
     return block1([], [b2]);
   }

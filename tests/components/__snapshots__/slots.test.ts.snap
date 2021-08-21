@@ -1510,7 +1510,6 @@ exports[`slots slots are rendered with proper context, part 2 2`] = `
       let b7 = assign(node.getChild(\`Link\`, {to: '/user/'+ctx['user'].id}, key + \`__1__\${key1}\`, ctx), {slots: {'default': slot3(ctx2)}});
       c2[i1] = withKey(block3([], [b7]), key1);
     }
-    ctx = ctx.__proto__;
     let b2 = list(c2);
     return block1([], [b2]);
   }
@@ -1559,7 +1558,6 @@ exports[`slots slots are rendered with proper context, part 3 2`] = `
       let b5 = assign(node.getChild(\`Link\`, {to: '/user/'+ctx['user'].id}, key + \`__1__\${key1}\`, ctx), {slots: {'default': slot3(ctx2)}});
       c2[i1] = withKey(block3([], [b5]), key1);
     }
-    ctx = ctx.__proto__;
     let b2 = list(c2);
     return block1([], [b2]);
   }
@@ -1704,7 +1702,6 @@ exports[`slots slots in t-foreach and re-rendering 2`] = `
       const ctx2 = capture(ctx);
       c2[i1] = withKey(assign(node.getChild(\`Child\`, {}, key + \`__1__\${key1}\`, ctx), {slots: {'default': slot3(ctx2)}}), key1);
     }
-    ctx = ctx.__proto__;
     let b2 = list(c2);
     return block1([], [b2]);
   }
@@ -1764,7 +1761,6 @@ exports[`slots slots in t-foreach in t-foreach 2`] = `
       let b5 = block5([], [b6]);
       c2[i1] = withKey(multi([b4, b5]), key1);
     }
-    ctx = ctx.__proto__;
     let b2 = list(c2);
     return block1([], [b2]);
   }
@@ -1812,7 +1808,6 @@ exports[`slots slots in t-foreach with t-set and re-rendering 2`] = `
       const ctx2 = capture(ctx);
       c2[i1] = withKey(assign(node.getChild(\`Child\`, {}, key + \`__1__\${key1}\`, ctx), {slots: {'default': slot3(ctx2)}}), key1);
     }
-    ctx = ctx.__proto__;
     let b2 = list(c2);
     return block1([], [b2]);
   }

@@ -37,12 +37,6 @@ export function compileTemplate(template: string, name?: string): TemplateFuncti
 // BlockDescription
 // -----------------------------------------------------------------------------
 
-// interface FunctionLine {
-//   path: string[];
-//   elemDefs: string[];
-//   inserter(el: string): string;
-// }
-
 class BlockDescription {
   static nextBlockId = 1;
   static nextDataId = 1;
@@ -52,19 +46,12 @@ class BlockDescription {
   isRoot: boolean = false;
   hasDynamicChildren: boolean = false;
   children: BlockDescription[] = [];
-  // buildFn: FunctionLine[] = [];
-  // updateFn: FunctionLine[] = [];
-  // removeFn: string[] = [];
-  // currentPath: string[] = ["el"];
-  // dataNumber: number = 0;
   data: string[] = [];
-  // handlerNumber: number = 0;
   dom?: Dom;
   currentDom?: DomNode;
   childNumber: number = 0;
   target: CodeTarget;
   type: BlockType;
-  // baseClass: string = "BElem";
   parentVar: string = "";
   id: number;
 
@@ -74,9 +61,6 @@ class BlockDescription {
     this.blockName = "block" + this.id;
     this.target = target;
     this.type = type;
-    // constructor(varName: string, blockName: string) {
-    // this.varName = varName;
-    // this.blockName = blockName;
   }
 
   insertData(str: string): number {
@@ -100,22 +84,12 @@ class BlockDescription {
       if (hasChildren) {
         params += ", [" + this.children.map((c) => c.varName).join(", ") + "]";
       }
-      // let children = this.children
       return `${this.blockName}(${params})`;
     } else if (this.type === "list") {
       return `list(c${this.id})`;
     }
     return expr;
-    // return `coucou`;
   }
-
-  // insertUpdate(inserter: (target: string) => string) {
-  //   this.updateFn.push({ path: this.currentPath.slice(), inserter, elemDefs: [] });
-  // }
-
-  // insertBuild(inserter: (target: string) => string) {
-  //   this.buildFn.push({ path: this.currentPath.slice(), inserter, elemDefs: [] });
-  // }
 }
 
 // -----------------------------------------------------------------------------
@@ -158,14 +132,10 @@ export class QWebCompiler {
   nextBlockId = 1;
   shouldProtectScope: boolean = false;
   shouldDefineAssign: boolean = false;
-  // shouldDefineOwner: boolean = false;
   shouldDefineKey0: boolean = false;
   hasSafeContext: boolean | null = null;
-  // hasDefinedKey: boolean = false;
   hasRef: boolean = false;
   // hasTCall: boolean = false;
-  // refBlocks: string[] = [];
-  // loopLevel: number = 0;
   isDebug: boolean = false;
   functions: CodeTarget[] = [];
   target = new CodeTarget("main");
@@ -212,21 +182,10 @@ export class QWebCompiler {
     return `block${this.blocks.length + 1}`;
   }
 
-  // getNextBlockId(): () => string | null {
-  //   const id = this.nextBlockId;
-  //   return () => {
-  //     return this.nextBlockId !== id ? `b${id}` : null;
-  //   };
-  // }
-
   insertAnchor(block: BlockDescription) {
-    // const index = block.childNumber;
     const tag = `owl-child-${block.children.length}`;
     const anchor: Dom = { type: DomType.Node, tag, attrs: {}, content: [] };
     block.insert(anchor);
-    // block.insertBuild((el) => `this.anchors[${index}] = ${el};`);
-    // block.currentPath = [`anchors[${block.childNumber}]`];
-    // block.childNumber++;
   }
 
   createBlock(
@@ -250,21 +209,8 @@ export class QWebCompiler {
   }
 
   insertBlock(expression: string, block: BlockDescription, ctx: Context): string | null {
-    // const { forceNewBlock } = ctx;
-    // const { block, index, forceNewBlock } = ctx;
-    // const shouldBindVar = forceNewBlock || !this.target.hasRoot;
-    // let prefix = "";
-    // let parentStr = "";
     let id: string | null = null;
-    // if (shouldBindVar) {
-    //   id = this.generateNodeName();
-    // prefix = `const ${id} = `;
-    // }
-    // if (block) {
-    //   parentStr = `${block.varName}.children[${index}] = `;
-    // }
     const blockExpr = block.generateExpr(expression);
-    // console.warn('----', block)
     if (block.parentVar) {
       this.addLine(
         `${block.parentVar}[${ctx.index}] = withKey(${blockExpr}, key${this.target.loopLevel});`
@@ -274,10 +220,6 @@ export class QWebCompiler {
     } else {
       this.addLine(`let ${block.varName} = ${blockExpr};`);
     }
-    // this.addLine(`${prefix}${parentStr}${expression};`);
-    // if (!this.target.rootBlock) {
-    //   this.target.rootBlock = id;
-    // }
     return id;
   }
 
@@ -293,9 +235,6 @@ export class QWebCompiler {
     if (this.shouldDefineAssign) {
       this.addLine(`let assign = Object.assign;`);
     }
-    // this.addLine(
-    //   `let {elem, setText, withDefault, call, getTemplate, zero, callSlot, capture, toClassObj} = helpers;`
-    // );
 
     for (let { id, template } of this.staticCalls) {
       this.addLine(`const ${id} = getTemplate(${template});`);
@@ -305,7 +244,9 @@ export class QWebCompiler {
     if (this.blocks.length) {
       this.addLine(``);
       for (let block of this.blocks) {
-        this.generateBlockCode(block);
+        if (block.dom) {
+          this.addLine(`let ${block.blockName} = createBlock(\`${domToString(block.dom)}\`);`);
+        }
       }
     }
 
@@ -330,7 +271,6 @@ export class QWebCompiler {
       this.addLine(`  const refs = ctx.__owl__.refs;`);
     }
     if (this.shouldProtectScope) {
-      // if (this.shouldProtectScope || this.shouldDefineOwner) {
       this.addLine(`  ctx = Object.create(ctx);`);
     }
     // if (this.shouldDefineKey0) {
@@ -343,7 +283,6 @@ export class QWebCompiler {
     if (!this.target.hasRoot) {
       throw new Error("missing root block");
     }
-    // this.addLine(`  return ${this.target.rootBlock};`);
     this.addLine("}");
     const code = this.target.code.join("\n");
 
@@ -354,135 +293,14 @@ export class QWebCompiler {
     return code;
   }
 
-  generateBlockCode(block: BlockDescription) {
-    // console.warn(block)
-    if (block.dom) {
-      this.addLine(`let ${block.blockName} = createBlock(\`${domToString(block.dom)}\`);`);
-    }
-    // const isStatic =
-    //   block.buildFn.length === 0 && block.updateFn.length === 0 && block.childNumber === 0;
-    // if (isStatic) {
-    //   block.baseClass = "BStatic";
-    // }
-    // this.addLine(``);
-    // this.addLine(`class ${block.blockName} extends ${block.baseClass} {`);
-    // this.target.indentLevel++;
-    // if (block.dom) {
-    //   this.addLine(`static el = elem(\`${domToString(block.dom)}\`);`);
-    // }
-    // if (block.childNumber) {
-    //   this.addLine(`children = new Array(${block.childNumber});`);
-    // }
-    // if (block.dataNumber) {
-    //   this.addLine(`data = new Array(${block.dataNumber});`);
-    // }
-    // if (block.handlerNumber) {
-    //   this.addLine(`handlers = new Array(${block.handlerNumber});`);
-    // }
-    // if (block.buildFn.length) {
-    //   const updateInfo = block.buildFn;
-    //   this.addLine(`build() {`);
-    //   this.target.indentLevel++;
-    //   if (block.childNumber > 0) {
-    //     this.addLine(`this.anchors = new Array(${block.childNumber});`);
-    //   }
-
-    //   if (updateInfo.length === 1) {
-    //     const { path, inserter } = updateInfo[0];
-    //     const target = `this.${path.join(".")}`;
-    //     this.addLine(inserter(target));
-    //   } else {
-    //     this.generateFunctionCode(block.buildFn);
-    //   }
-    //   this.target.indentLevel--;
-    //   this.addLine(`}`);
-    // }
-    // if (block.updateFn.length) {
-    //   const updateInfo = block.updateFn;
-    //   this.addLine(`update(prevData, data) {`);
-    //   this.target.indentLevel++;
-    //   if (updateInfo.length === 1) {
-    //     const { path, inserter } = updateInfo[0];
-    //     const target = `this.${path.join(".")}`;
-    //     this.addLine(inserter(target));
-    //   } else {
-    //     this.generateFunctionCode(block.updateFn);
-    //   }
-    //   this.target.indentLevel--;
-    //   this.addLine(`}`);
-    // }
-    // if (block.removeFn.length) {
-    //   this.addLine(`remove() {`);
-    //   this.target.indentLevel++;
-    //   for (let line of block.removeFn) {
-    //     this.addLine(line);
-    //   }
-    //   this.addLine(`super.remove();`);
-    //   this.target.indentLevel--;
-    //   this.addLine("}");
-    // }
-
-    // this.target.indentLevel--;
-    // this.addLine(`}`);
-  }
-
   generateFunctions(fn: CodeTarget) {
     this.addLine("");
     this.addLine(`const ${fn.name} = ${fn.signature}`);
     for (let line of fn.code) {
       this.addLine(line);
     }
-    // this.addLine(`  return ${fn.rootBlock};`);
     this.addLine(`}`);
   }
-
-  // generateFunctionCode(lines: FunctionLine[]) {
-  //   // build tree of paths
-  //   const tree: any = {};
-  //   let i = 1;
-  //   for (let line of lines) {
-  //     let current: any = tree;
-  //     let el: string = `this`;
-  //     for (let p of line.path.slice()) {
-  //       if (current[p]) {
-  //       } else {
-  //         current[p] = { firstChild: null, nextSibling: null, line };
-  //       }
-  //       if (current.firstChild && current.nextSibling && !current.name) {
-  //         current.name = `el${i++}`;
-  //         current.line.elemDefs.push(`const ${current.name} = ${el};`);
-  //       }
-  //       el = `${current.name ? current.name : el}.${p}`;
-  //       current = current[p];
-  //       if (current.target && !current.name) {
-  //         current.name = `el${i++}`;
-  //         current.line.elemDefs.push(`const ${current.name} = ${el};`);
-  //       }
-  //     }
-  //     current.target = true;
-  //   }
-  //   for (let line of lines) {
-  //     const { path, inserter, elemDefs } = line;
-  //     for (let elem of elemDefs) {
-  //       this.addLine(elem);
-  //     }
-  //     let current: any = tree;
-  //     let el = `this`;
-  //     for (let p of path.slice()) {
-  //       current = current[p];
-  //       if (current) {
-  //         if (current.name) {
-  //           el = current.name;
-  //         } else {
-  //           el = `${el}.${p}`;
-  //         }
-  //       } else {
-  //         el = `${el}.${p}`;
-  //       }
-  //     }
-  //     this.addLine(inserter(el));
-  //   }
-  // }
 
   captureExpression(expr: string): string {
     const tokens = compileExprToArray(expr);
@@ -573,9 +391,6 @@ export class QWebCompiler {
     const isNewBlock = !block || forceNewBlock;
     if (isNewBlock) {
       block = this.createBlock(block, "block", ctx);
-      //   const name = this.generateBlockName();
-      //   const id = this.insertBlock(`new ${name}()`, ctx)!;
-      //   block = new BlockDescription(id, name);
       this.blocks.push(block);
     }
     const text: Dom = { type: DomType.Comment, value: ast.value };
@@ -586,7 +401,6 @@ export class QWebCompiler {
   }
 
   compileText(ast: ASTText, ctx: Context) {
-    // console.warn(ast, ctx)
     let { block, forceNewBlock } = ctx;
     if (!block || forceNewBlock) {
       block = this.createBlock(block, "text", ctx);
@@ -595,21 +409,14 @@ export class QWebCompiler {
         forceNewBlock: forceNewBlock && !block,
       });
     } else {
-      // console.warn(block)
       const type = ast.type === ASTType.Text ? DomType.Text : DomType.Comment;
       const text: Dom = { type, value: ast.value };
       block.insert(text);
     }
   }
 
-  generateHandlerCode(
-    //   block: BlockDescription,
-    handler: string,
-    event: string = ""
-    //   insert?: (type: string, index: number) => void
-  ): string {
+  generateHandlerCode(handler: string, event: string = ""): string {
     let args: string = "";
-    //     let code: string = "";
     const name: string = handler.replace(/\(.*\)/, function (_args) {
       args = _args.slice(1, -1);
       return "";
@@ -632,46 +439,8 @@ export class QWebCompiler {
       if (event) {
         handlerFn = `[\`${event}\`, ${handlerFn}]`;
       }
-      // const handler = insert ? handlerFn : `['${event}', ${handlerFn}]`;
       return handlerFn;
-
-      // this.addLine(`${block.varName}.handlers[${index}] = ${handler};`);
     }
-
-    //   for (let event in handlers) {
-    //     this.shouldDefineOwner = true;
-    //     const index = block.handlerNumber;
-    //     block.handlerNumber++;
-    //     if (insert) {
-    //       insert(event, index);
-    //     }
-    //     const value = handlers[event];
-    //     let args: string = "";
-    //     let code: string = "";
-    //     const name: string = value.replace(/\(.*\)/, function (_args) {
-    //       args = _args.slice(1, -1);
-    //       return "";
-    //     });
-    //     const isMethodCall = name.match(FNAMEREGEXP);
-    //     if (isMethodCall) {
-    //       let handlerFn;
-    //       if (args) {
-    //         const argId = this.generateId("arg");
-    //         this.addLine(`const ${argId} = [${compileExpr(args)}];`);
-    //         handlerFn = `'${name}', ${argId}`;
-    //       } else {
-    //         handlerFn = `'${name}'`;
-    //       }
-    //       const handler = insert ? `[ctx, ${handlerFn}]` : `['${event}', ctx, ${handlerFn}]`;
-    //       this.addLine(`${block.varName}.handlers[${index}] = ${handler};`);
-    //     } else {
-    //       code = this.captureExpression(value);
-    //       code = `{const res = (() => { return ${code} })(); if (typeof res === 'function') { res(e) }}`;
-    //       const handlerFn = `(e) => ${code}`;
-    //       const handler = insert ? handlerFn : `['${event}', ${handlerFn}]`;
-    //       this.addLine(`${block.varName}.handlers[${index}] = ${handler};`);
-    //     }
-    //   }
   }
 
   compileTDomNode(ast: ASTDomNode, ctx: Context) {
@@ -680,7 +449,6 @@ export class QWebCompiler {
     let codeIdx = this.target.code.length;
     if (isNewBlock) {
       block = this.createBlock(block, "block", ctx);
-      // const id = this.insertBlock(`${name}()`, ctx)!;
       this.blocks.push(block);
     }
 
@@ -704,87 +472,17 @@ export class QWebCompiler {
         attrs[key] = ast.attrs[key];
       }
     }
-    // if (Object.keys(dynAttrs).length) {
-    // for (let key in dynAttrs) {
-    //     const idx = block.dataNumber;
-    //     block.dataNumber++;
-    // let expr = dynAttrs[key];
-    // const idx = block!.insertData(expr);
-    // staticAttrs[`owl-attribute-${idx}`] = key;
-
-    //     // if (key === "class") {
-    //     //   expr = `toClassObj(${expr})`;
-    //     // }
-
-    //     this.addLine(`${block.varName}.data[${idx}] = ${expr};`);
-    //     if (key === "class") {
-    //       block.insertUpdate((el) => `this.updateClass(${el}, prevData[${idx}], data[${idx}]);`);
-    //     } else {
-    //       if (key) {
-    //         block.insertUpdate((el) => `this.updateAttr(${el}, \`${key}\`, this.data[${idx}]);`);
-    //         if (isProp(ast.tag, key)) {
-    //           block.insertUpdate((el) => `this.updateProp(${el}, \`${key}\`, this.data[${idx}]);`);
-    //         }
-    //       } else {
-    //         block.insertUpdate((el) => `this.updateAttrs(${el}, data[${idx}]);`);
-    //       }
-    //     }
-    // }
-    // }
 
     // event handlers
     for (let ev in ast.on) {
-      //     this.shouldDefineOwner = true;
-      //     const index = block.handlerNumber;
-      //     block.handlerNumber++;
-      //     if (insert) {
-      //       insert(event, index);
-      //     }
       const name = this.generateHandlerCode(ast.on[ev]);
       const idx = block!.insertData(name);
       attrs[`owl-handler-${idx}`] = ev;
-
-      // const value = ast.on[ev];
-      // let args: string = "";
-      // //     let code: string = "";
-      // const name: string = value.replace(/\(.*\)/, function (_args) {
-      //   args = _args.slice(1, -1);
-      //   return "";
-      // });
-      // const isMethodCall = name.match(FNAMEREGEXP);
-      // if (isMethodCall) {
-      //   let handlerFn: string;
-      //   if (args) {
-      //     const argId = this.generateId("arg");
-      //     this.addLine(`const ${argId} = [${compileExpr(args)}];`);
-      //     handlerFn = `'${name}', ${argId}`;
-      //   } else {
-      //     handlerFn = `'${name}'`;
-      //   }
-      //   const handler = `[ctx, ${handlerFn!}]`;
-      //   // this.addLine(`${block.varName}.handlers[${index}] = ${handler};`);
-      // } else {
-      //   let code = this.captureExpression(value);
-      //   code = `{const res = (() => { return ${code} })(); if (typeof res === 'function') { res(e) }}`;
-      //   const handlerFn = `(e) => ${code}`;
-      //   // const handler = insert ? handlerFn : `['${event}', ${handlerFn}]`;
-      //   let idx = block!.insertData(handlerFn);
-      //   attrs[`owl-handler-${idx}`] = ev;
-
-      //   // this.addLine(`${block.varName}.handlers[${index}] = ${handler};`);
-      // }
-
-      // const idx = block!.insertData()
     }
-    // const insert = (type: string, index: number) =>
-    //   block!.insertBuild((el) => `this.setupHandler(${el}, \`${type}\`, ${index});`);
-    // this.generateHandlerCode(block, ast.on, insert);
 
     // t-ref
     if (ast.ref) {
       this.hasRef = true;
-      //   this.refBlocks.push(block.varName);
-      //   this.addLine(`${block.varName}.refs = refs;`);
       const isDynamic = INTERP_REGEXP.test(ast.ref);
       if (isDynamic) {
         const str = ast.ref.replace(
@@ -793,16 +491,9 @@ export class QWebCompiler {
         );
         const idx = block!.insertData(`(el) => refs[\`${str}\`] = el`);
         attrs["owl-ref"] = String(idx);
-        //     const index = block.dataNumber;
-        //     block.dataNumber++;
-        //     this.addLine(`${block.varName}.data[${index}] = \`${str}\`;`);
-        //     block.insertUpdate((el) => `this.refs[data[${index}]] = ${el};`);
-        //     block.removeFn.push(`delete this.refs[this.data[${index}]];`);
       } else {
         const idx = block!.insertData(`(el) => refs[\`${ast.ref}\`] = el`);
         attrs["owl-ref"] = String(idx);
-        //     block.insertUpdate((el) => `this.refs[\`${ast.ref}\`] = ${el};`);
-        //     block.removeFn.push(`delete this.refs[\`${ast.ref}\`];`);
       }
     }
 
@@ -845,7 +536,6 @@ export class QWebCompiler {
 
   compileTEsc(ast: ASTTEsc, ctx: Context) {
     let { block, forceNewBlock } = ctx;
-    // const isNew
     let expr: string;
     if (ast.expr === "0") {
       expr = `ctx[zero]`;
@@ -862,44 +552,23 @@ export class QWebCompiler {
       const idx = block.insertData(expr);
       const text: Dom = { type: DomType.Node, tag: `owl-text-${idx}`, attrs: {}, content: [] };
       block.insert(text);
-      // const idx = block.dataNumber;
-      // block.dataNumber++;
-      //   this.addLine(`${block.varName}.data[${idx}] = ${expr};`);
-      //   if (ast.expr === "0") {
-      //     block.insertUpdate((el) => `${el}.textContent = this.data[${idx}];`);
-      //   } else {
-      //     block.insertUpdate((el) => `setText(${el}, prevData[${idx}], data[${idx}]);`);
-      //   }
     }
   }
 
   compileTRaw(ast: ASTTRaw, ctx: Context) {
     let { block } = ctx;
-    // let { block, index } = ctx;
-    // const isNewBlock = !block;
     if (block) {
       this.insertAnchor(block);
     }
     block = this.createBlock(block, "html", ctx);
-    if (!block) {
-      //   const id = this.insertBlock("new BMulti(1)", ctx)!;
-      //   block = new BlockDescription(id, "BMulti");
-    }
     let expr = ast.expr === "0" ? "ctx[zero]" : compileExpr(ast.expr);
     if (ast.body) {
       const nextId = BlockDescription.nextBlockId;
-      //   const nextIdCb = this.getNextBlockId();
       const subCtx: Context = { block: null, index: 0, forceNewBlock: true };
       this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
-      // const nextId = nextIdCb();
-      //   if (nextId) {
       expr = `withDefault(${expr}, b${nextId})`;
-      //   }
     }
-    // if (isNewBlock) {
     this.insertBlock(`html(${expr})`, block, ctx);
-    // }
-    // this.addLine(`${block.varName}.children[${index}] = new BHtml(${expr});`);
   }
 
   compileTIf(ast: ASTTif, ctx: Context, nextNode?: ASTDomNode) {
@@ -911,11 +580,7 @@ export class QWebCompiler {
       block.hasDynamicChildren = true;
     }
     if (!block || (block.type !== "multi" && forceNewBlock)) {
-      // const n = 1 + (ast.tElif ? ast.tElif.length : 0) + (ast.tElse ? 1 : 0);
       block = this.createBlock(block, "multi", ctx);
-      //   const id = this.insertBlock(`new BMulti(${n})`, ctx)!;
-      //   block = new BlockDescription(id, "BMulti");
-      //   currentIndex = 0;
     }
     this.addLine(`if (${compileExpr(ast.condition)}) {`);
     this.target.indentLevel++;
@@ -925,12 +590,8 @@ export class QWebCompiler {
     this.target.indentLevel--;
     if (ast.tElif) {
       for (let clause of ast.tElif) {
-        //     if (typeof currentIndex === "number") {
-        //       currentIndex++;
-        //     }
         this.addLine(`} else if (${compileExpr(clause.condition)}) {`);
         this.target.indentLevel++;
-        //     block.currentPath.push("nextSibling");
         this.insertAnchor(block);
         const subCtx: Context = {
           block: block,
@@ -942,12 +603,8 @@ export class QWebCompiler {
       }
     }
     if (ast.tElse) {
-      //   if (typeof currentIndex === "number") {
-      //     currentIndex++;
-      //   }
       this.addLine(`} else {`);
       this.target.indentLevel++;
-      //   block.currentPath.push("nextSibling");
       this.insertAnchor(block);
       const subCtx: Context = {
         block: block,
@@ -986,14 +643,6 @@ export class QWebCompiler {
       this.insertAnchor(block);
     }
     block = this.createBlock(block, "list", ctx);
-    // block =
-    // const id = this.insertBlock(
-    //   `new BCollection(${compileExpr(ast.collection)}, ${ast.isOnlyChild}, ${ast.hasNoComponent})`,
-    //   {
-    //     ...ctx,
-    //     forceNewBlock: true,
-    //   }
-    // )!;
     this.target.loopLevel++;
     const loopVar = `i${this.target.loopLevel}`;
     this.addLine(`ctx = Object.create(ctx);`);
@@ -1005,9 +654,6 @@ export class QWebCompiler {
     this.addLine(
       `const [${keys}, ${vals}, ${l}, ${c}] = prepareList(${compileExpr(ast.collection)});`
     );
-    // this.addLine(
-    //   `const ${keys} = ${id}.values, ${vals} = ${id}.collection, ${l} = ${keys}.length;`
-    // );
     this.addLine(`for (let ${loopVar} = 0; ${loopVar} < ${l}; ${loopVar}++) {`);
     this.target.indentLevel++;
     this.addLine(`ctx[\`${ast.elem}\`] = ${vals}[${loopVar}];`);
@@ -1024,22 +670,17 @@ export class QWebCompiler {
       this.addLine(`ctx[\`${ast.elem}_value\`] = ${keys}[${loopVar}];`);
     }
     this.addLine(`let key${this.target.loopLevel} = ${ast.key ? compileExpr(ast.key) : loopVar};`);
-    // const collectionBlock = new BlockDescription(id, "Collection");
     const subCtx: Context = {
       block: block, //collectionBlock,
       index: loopVar,
       forceNewBlock: true,
     };
-    // const initialState = this.hasDefinedKey;
-    // this.hasDefinedKey = false;
     this.compileAST(ast.body, subCtx);
     if (!ast.key) {
       console.warn(
         `"Directive t-foreach should always be used with a t-key! (in template: '${this.templateName}')"`
       );
     }
-    // this.addLine(`${id}.keys[${loopVar}] = key${this.loopLevel};`);
-    // this.hasDefinedKey = initialState;
     this.target.indentLevel--;
     this.target.loopLevel--;
     this.addLine(`}`);
@@ -1048,16 +689,10 @@ export class QWebCompiler {
   }
 
   compileTKey(ast: ASTTKey, ctx: Context) {
-    // if (this.loopLevel === 0) {
-    //   this.shouldDefineKey0 = true;
-    // }
-    // this.addLine(`key${this.target.loopLevel} = ${compileExpr(ast.expr)};`);
-    // this.hasDefinedKey = true;
     this.compileAST(ast.content, ctx);
   }
 
   compileMulti(ast: ASTMulti, ctx: Context) {
-    // console.warn(ast)
     let { block, forceNewBlock } = ctx;
     const isNewBlock = !block || forceNewBlock;
     let codeIdx = this.target.code.length;
@@ -1070,8 +705,6 @@ export class QWebCompiler {
         return;
       }
       block = this.createBlock(block, "multi", ctx);
-      // const id = this.insertBlock(`new BMulti(${n})`, ctx)!;
-      // block = new BlockDescription(id, "multi");
     }
     let index = 0;
     for (let i = 0; i < ast.content.length; i++) {
@@ -1114,17 +747,13 @@ export class QWebCompiler {
     let { block, forceNewBlock } = ctx;
     // this.hasTCall = true;
     if (ast.body) {
-      //   const targetRoot = this.target.rootBlock;
       this.addLine(`ctx = Object.create(ctx);`);
-      //   const nextIdCb = this.getNextBlockId();
       const nextId = BlockDescription.nextBlockId;
       const subCtx: Context = { block: null, index: 0, forceNewBlock: true, preventRoot: true };
       this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
-      //   const nextId = nextIdCb();
       if (nextId !== BlockDescription.nextBlockId) {
         this.addLine(`ctx[zero] = b${nextId};`);
       }
-      //   this.target.rootBlock = targetRoot;
     }
     const isDynamic = INTERP_REGEXP.test(ast.name);
     const subTemplate = isDynamic ? interpolate(ast.name) : "`" + ast.name + "`";
@@ -1169,11 +798,9 @@ export class QWebCompiler {
     this.shouldProtectScope = true;
     const expr = ast.value ? compileExpr(ast.value || "") : "null";
     if (ast.body) {
-      //   const nextIdCb = this.getNextBlockId();
       const subCtx: Context = { block: null, index: 0, forceNewBlock: true };
       const nextId = `b${BlockDescription.nextBlockId}`;
       this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
-      //   const nextId = nextIdCb();
       const value = ast.value ? (nextId ? `withDefault(${expr}, ${nextId})` : expr) : nextId;
       this.addLine(`ctx[\`${ast.name}\`] = ${value};`);
     } else {
@@ -1203,35 +830,13 @@ export class QWebCompiler {
     let { block } = ctx;
     let extraArgs: { [key: string]: string } = {};
 
-    // let hasClass = "class" in ast.props || "t-att-class" in ast.props;
-    // if (hasClass) {
-    //   let classExpr = "";
-    //   if ("class" in ast.props) {
-    //     if (ast.props.class) {
-    //       classExpr = "`" + ast.props.class + "`";
-    //     } else {
-    //       hasClass = "t-att-class" in ast.props;
-    //     }
-    //     delete ast.props.class;
-    //   }
-    //   if ("t-att-class" in ast.props) {
-    //     const suffix = classExpr ? `, ${classExpr}` : "";
-    //     classExpr = compileExpr(ast.props["t-att-class"]) + suffix;
-    //     delete ast.props["t-att-class"];
-    //   }
-    //   if (classExpr) {
-    //     extraArgs.parentClass = classExpr;
-    //   }
-    // }
-
     // props
     const props: string[] = [];
     for (let p in ast.props) {
-      // if (p !== "class") {
       props.push(`${p}: ${compileExpr(ast.props[p]) || undefined}`);
-      // }
     }
     const propString = `{${props.join(",")}}`;
+
     // cmap key
     const key = this.generateComponentKey();
     let expr: string;
@@ -1242,6 +847,7 @@ export class QWebCompiler {
       expr = `\`${ast.name}\``;
     }
     let blockArgs = `${expr}, ${propString}, key + \`${key}\`, ctx`;
+
     // slots
     const hasSlot = !!Object.keys(ast.slots).length;
     let slotDef: string;
@@ -1275,31 +881,23 @@ export class QWebCompiler {
       this.target = initialTarget;
       slotDef = `{${slotStr.join(", ")}}`;
       extraArgs.slots = slotDef;
-      // blockArgs += ", " + slotDef;
     }
 
     // handlers
     const hasHandlers = Object.keys(ast.handlers).length;
     if (hasHandlers) {
-      // event handlers
-      // const n = hasHandlers;
       const vars = Object.keys(ast.handlers).map((ev) => {
         let id = this.generateId("h");
         this.addLine(`let ${id} = ${this.generateHandlerCode(ast.handlers[ev], ev)};`);
         return id;
       });
       extraArgs.handlers = `[${vars}]`;
-      // this.addLine(`${id}.handlers = new Array(${n});`);
-      // const cblock = { varName: id, handlerNumber: 0 } as BlockDescription;
-      // this.generateHandlerCode(cblock, ast.handlers);
     }
 
     if (block && ctx.forceNewBlock === false) {
       // todo: check the forcenewblock condition
       this.insertAnchor(block);
     }
-    // let id: string;
-    // const shouldForce = hasSlot || hasClass || Boolean(hasHandlers);
     let blockExpr = `node.getChild(${blockArgs})`;
     if (Object.keys(extraArgs).length) {
       this.shouldDefineAssign = true;
@@ -1309,21 +907,8 @@ export class QWebCompiler {
     if (ast.isDynamic) {
       blockExpr = `toggler(${expr}, ${blockExpr})`;
     }
-    // const addDispatch = (block: string) =>
-    //   ast.isDynamic ? `new BDispatch(${expr}, ${block})` : block;
     block = this.createBlock(block, "multi", ctx);
     this.insertBlock(blockExpr, block, ctx);
-    // id = this.insertBlock(addDispatch(`node.getChild(${blockArgs})`), {
-    //   ...ctx,
-    //   forceNewBlock: shouldForce,
-    // })!;
-    // // class and style
-    // if (hasClass) {
-    //   this.addLine(`${id!}.parentClass = toClassObj(${classExpr});`);
-    // }
-    // if (hasSlot) {
-    //   this.addLine(`${block.id}.slots = ${slotDef!};`);
-    // }
   }
 
   compileTSlot(ast: ASTSlot, ctx: Context) {
@@ -1341,12 +926,6 @@ export class QWebCompiler {
       let name = this.generateId("defaultSlot");
       const slot = new CodeTarget(name);
       slot.signature = "ctx => {";
-      //   const slot: CodeTarget = {
-      //     name,
-      //     indentLevel: 0,
-      //     code: [],
-      //     rootBlock: null,
-      //   };
       this.functions.push(slot);
       const initialTarget = this.target;
       const subCtx: Context = { block: null, index: 0, forceNewBlock: true };
@@ -1368,6 +947,5 @@ export class QWebCompiler {
     }
     block = this.createBlock(block, "multi", ctx);
     this.insertBlock(blockString, block, { ...ctx, forceNewBlock: false });
-    // this.insertBlock(blockString, { ...ctx, forceNewBlock: false });
   }
 }

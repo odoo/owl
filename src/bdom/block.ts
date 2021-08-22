@@ -5,11 +5,8 @@ const getDescriptor = (o: any, p: any) => Object.getOwnPropertyDescriptor(o, p)!
 const nodeProto = Node.prototype;
 const elementProto = Element.prototype;
 const characterDataProto = CharacterData.prototype;
-const characterDataSetData = getDescriptor(characterDataProto, "data").set!;
 
-const nodeCloneNode = nodeProto.cloneNode;
-const nodeInsertBefore = nodeProto.insertBefore;
-const elementRemove = elementProto.remove;
+const characterDataSetData = getDescriptor(characterDataProto, "data").set!;
 const nodeGetFirstChild = getDescriptor(nodeProto, "firstChild").get!;
 const nodeGetNextSibling = getDescriptor(nodeProto, "nextSibling").get!;
 
@@ -331,13 +328,14 @@ function makePropSetter(name: string) {
 }
 
 function createEventHandler(event: string) {
-  let wm = new WeakMap();
+  // let wm = new WeakMap();
   return {
     setup(this: HTMLElement, data: any) {
-      let handlers = wm.get(this);
+      let handlers = (this as any).__handlers;
       if (!handlers) {
         handlers = {};
-        wm.set(this, handlers);
+        (this as any).__handlers = handlers;
+        // wm.set(this, handlers);
       }
       handlers[event] = data;
       this.addEventListener(event, (ev) => {
@@ -345,7 +343,7 @@ function createEventHandler(event: string) {
       });
     },
     update(this: HTMLElement, data: any) {
-      wm.get(this)[event] = data;
+      (this as any).__handlers[event] = data;
     },
   };
 }
@@ -505,8 +503,9 @@ function compileBlock(info: BlockInfo[], template: HTMLElement): BlockType {
         }
       }
     };
+    return (data?: any[], children?: (VNode | undefined)[]) => new B(data, children);
   }
-  return (data?: any[], children?: (VNode | undefined)[]) => new B(data, children);
+  return (data?: any[]) => new B(data);
 }
 
 function setRef(this: HTMLElement, fn: any) {
@@ -529,8 +528,12 @@ function createBlockClass(
   let colLen = collectors.length;
   let locLen = locations.length;
   let childN = childrenLocs.length;
-
   const refN = colLen + 1;
+
+const nodeCloneNode = nodeProto.cloneNode;
+const nodeInsertBefore = nodeProto.insertBefore;
+const elementRemove = elementProto.remove;
+
   return class Block {
     el: HTMLElement | undefined;
     refs: Node[] | undefined;
@@ -615,9 +618,10 @@ function createBlockClass(
         for (let i = 0; i < locLen; i++) {
           const loc = locations[i];
           const idx = loc.idx;
+          const val1 = data1[idx];
           const val2 = data2[idx];
-          if (data1[idx] !== val2) {
-            loc.updateData.call(refs[loc.refIdx], val2, data1[idx]);
+          if (val1 !== val2) {
+            loc.updateData.call(refs[loc.refIdx], val2, val1);
           }
         }
         this.data = other.data;

@@ -55,7 +55,7 @@ describe("t-on", () => {
     expect(steps).toEqual([]);
     fixture.querySelector("button")!.click();
     expect(steps).toEqual(["click"]);
-    fixture.querySelector("button")!.dispatchEvent(new Event("dblclick"));
+    fixture.querySelector("button")!.dispatchEvent(new Event("dblclick", {bubbles: true}));
     expect(steps).toEqual(["click", "dblclick"]);
   });
 

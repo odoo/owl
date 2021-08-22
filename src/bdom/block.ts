@@ -10,7 +10,7 @@ const characterDataSetData = getDescriptor(characterDataProto, "data").set!;
 const nodeGetFirstChild = getDescriptor(nodeProto, "firstChild").get!;
 const nodeGetNextSibling = getDescriptor(nodeProto, "nextSibling").get!;
 
-const NO_OP = () => {};
+const NO_OP = () => { };
 
 export const config = {
   shouldNormalizeDom: true,
@@ -327,25 +327,34 @@ function makePropSetter(name: string) {
   };
 }
 
+
+const nativeToSyntheticEvent = (event: Event, name: string) => {
+  const eventKey = `__event__${name}`
+  let dom = event.target
+  while (dom !== null) {
+    const data = (dom as any)[eventKey]
+    if (data) {
+      config.mainEventHandler(data, event);
+      return;
+    }
+    dom = (dom as any).parentNode
+  }
+}
+
+const CONFIGURED_SYNTHETIC_EVENTS: { [event: string]: boolean } = {}
+function setupSyntheticEvent(name: string) {
+  if (CONFIGURED_SYNTHETIC_EVENTS[name]) {
+    return;
+  }
+  document.addEventListener(name, event => nativeToSyntheticEvent(event, name))
+  CONFIGURED_SYNTHETIC_EVENTS[name] = true
+}
+
 function createEventHandler(event: string) {
-  // let wm = new WeakMap();
-  return {
-    setup(this: HTMLElement, data: any) {
-      let handlers = (this as any).__handlers;
-      if (!handlers) {
-        handlers = {};
-        (this as any).__handlers = handlers;
-        // wm.set(this, handlers);
-      }
-      handlers[event] = data;
-      this.addEventListener(event, (ev) => {
-        config.mainEventHandler(handlers[event], ev);
-      });
-    },
-    update(this: HTMLElement, data: any) {
-      (this as any).__handlers[event] = data;
-    },
-  };
+  const key = `__event__${event}`;
+  return function setupHandler(this: HTMLElement, data: any) {
+      (this as any)[key] = data;
+    };
 }
 
 function setText(this: Text, value: any) {
@@ -441,12 +450,13 @@ function compileBlock(info: BlockInfo[], template: HTMLElement): BlockType {
         }
         case "handler": {
           const refIdx = line.refIndex!;
-          const { setup, update } = createEventHandler(line.event!);
+          const setupHandler = createEventHandler(line.event!);
+          setupSyntheticEvent(line.event!)
           locations.push({
             idx: line.index,
             refIdx,
-            setData: setup,
-            updateData: update,
+            setData: setupHandler,
+            updateData: setupHandler,
           });
           break;
         }
@@ -530,9 +540,9 @@ function createBlockClass(
   let childN = childrenLocs.length;
   const refN = colLen + 1;
 
-const nodeCloneNode = nodeProto.cloneNode;
-const nodeInsertBefore = nodeProto.insertBefore;
-const elementRemove = elementProto.remove;
+  const nodeCloneNode = nodeProto.cloneNode;
+  const nodeInsertBefore = nodeProto.insertBefore;
+  const elementRemove = elementProto.remove;
 
   return class Block {
     el: HTMLElement | undefined;
@@ -547,7 +557,7 @@ const elementRemove = elementProto.remove;
       this.children = children;
     }
 
-    beforeRemove() {}
+    beforeRemove() { }
     remove() {
       elementRemove.call(this.el);
     }

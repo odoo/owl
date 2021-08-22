@@ -54,7 +54,7 @@ class VList {
       return;
     }
     const proto = ch2[0] || ch1[0];
-    const { mount: childMount, patch: childPatch, remove: childRemove, beforeRemove } = proto;
+    const { mount: cMount, patch: cPatch, remove: cRemove, beforeRemove, moveBefore: cMoveBefore, firstNode: cFirstNode } = proto;
 
     const _anchor = this.anchor!;
     const isOnlyChild = this.singleNode;
@@ -100,7 +100,7 @@ class VList {
       // -------------------------------------------------------------------
       else if (startVn1.key === startVn2.key) {
         if (startVn1 !== startVn2) {
-          childPatch.call(startVn1, startVn2);
+          cPatch.call(startVn1, startVn2);
           ch2[startIdx2] = startVn1;
         }
         startVn1 = ch1[++startIdx1];
@@ -109,7 +109,7 @@ class VList {
       // -------------------------------------------------------------------
       else if (endVn1.key === endVn2.key) {
         if (endVn1 !== endVn2) {
-          childPatch.call(endVn1, endVn2);
+          cPatch.call(endVn1, endVn2);
           ch2[endIdx2] = endVn1;
         }
         endVn1 = ch1[--endIdx1];
@@ -119,11 +119,11 @@ class VList {
       else if (startVn1.key === endVn2.key) {
         // bnode moved right
         if (startVn1 !== endVn2) {
-          childPatch.call(startVn1, endVn2);
+          cPatch.call(startVn1, endVn2);
           ch2[endIdx2] = startVn1;
         }
         const nextChild = ch2[endIdx2 + 1];
-        startVn1.moveBefore(nextChild, _anchor);
+        cMoveBefore.call(startVn1, nextChild, _anchor);
         startVn1 = ch1[++startIdx1];
         endVn2 = ch2[--endIdx2];
       }
@@ -131,11 +131,11 @@ class VList {
       else if (endVn1.key === startVn2.key) {
         // bnode moved left
         if (endVn1 !== startVn2) {
-          childPatch.call(endVn1, startVn2);
+          cPatch.call(endVn1, startVn2);
           ch2[startIdx2] = endVn1;
         }
         const nextChild = ch1[startIdx1];
-        endVn1.moveBefore(nextChild, _anchor);
+        cMoveBefore.call(endVn1, nextChild, _anchor);
         endVn1 = ch1[--endIdx1];
         startVn2 = ch2[++startIdx2];
       }
@@ -144,11 +144,11 @@ class VList {
         mapping = mapping || createMapping(ch1, startIdx1, endIdx1);
         let idxInOld = mapping[startVn2.key];
         if (idxInOld === undefined) {
-          childMount.call(startVn2, parent, startVn1.firstNode() || null);
+          cMount.call(startVn2, parent, cFirstNode.call(startVn1) || null);
         } else {
           const elmToMove = ch1[idxInOld];
-          elmToMove.moveBefore(startVn1, null);
-          childPatch.call(elmToMove, startVn2);
+          cMoveBefore.call(elmToMove, startVn1, null);
+          cPatch.call(elmToMove, startVn2);
           ch2[startIdx2] = elmToMove;
           ch1[idxInOld] = null as any;
         }
@@ -159,10 +159,9 @@ class VList {
     if (startIdx1 <= endIdx1 || startIdx2 <= endIdx2) {
       if (startIdx1 > endIdx1) {
         const nextChild = ch2[endIdx2 + 1];
-        const anchor = nextChild ? nextChild.firstNode() || null : _anchor;
-        const mount = proto.mount;
+        const anchor = nextChild ? cFirstNode.call(nextChild) || null : _anchor;
         for (let i = startIdx2; i <= endIdx2; i++) {
-          mount.call(ch2[i], parent, anchor);
+          cMount.call(ch2[i], parent, anchor);
         }
       } else {
         for (let i = startIdx1; i <= endIdx1; i++) {
@@ -171,7 +170,7 @@ class VList {
             if (withBeforeRemove) {
               beforeRemove.call(ch);
             }
-            childRemove.call(ch);
+            cRemove.call(ch);
           }
         }
       }

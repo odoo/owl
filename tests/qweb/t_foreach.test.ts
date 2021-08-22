@@ -219,7 +219,7 @@ describe("t-foreach", () => {
     expect(renderToString(template, ctx)).toBe("<span>a</span><span>b</span>");
   });
 
-  test.only("with t-memo", () => {
+  test("with t-memo", () => {
     const items = [
       { id: 1, x: 1, y: 1 },
       { id: 2, x: 1, y: 1 },

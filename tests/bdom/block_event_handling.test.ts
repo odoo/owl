@@ -67,7 +67,7 @@ test("can bind two handlers on same node", async () => {
   expect(fixture.innerHTML).toBe("<div></div>");
 
   (fixture.firstChild as HTMLDivElement).click();
-  (fixture.firstChild as HTMLDivElement).dispatchEvent(new Event("dblclick"));
+  (fixture.firstChild as HTMLDivElement).dispatchEvent(new Event("dblclick", {bubbles: true}));
   expect(steps).toEqual(["click", "dblclick"]);
 });
 

@@ -99,35 +99,43 @@ class VList {
       }
       // -------------------------------------------------------------------
       else if (startVn1.key === startVn2.key) {
-        if (startVn1 !== startVn2) childPatch.call(startVn1, startVn2);
-        ch2[startIdx2] = startVn1;
+        if (startVn1 !== startVn2) {
+          childPatch.call(startVn1, startVn2);
+          ch2[startIdx2] = startVn1;
+        }
         startVn1 = ch1[++startIdx1];
         startVn2 = ch2[++startIdx2];
       }
       // -------------------------------------------------------------------
       else if (endVn1.key === endVn2.key) {
-        if (endVn1 !== endVn2) childPatch.call(endVn1, endVn2);
-        ch2[endIdx2] = endVn1;
+        if (endVn1 !== endVn2) {
+          childPatch.call(endVn1, endVn2);
+          ch2[endIdx2] = endVn1;
+        }
         endVn1 = ch1[--endIdx1];
         endVn2 = ch2[--endIdx2];
       }
       // -------------------------------------------------------------------
       else if (startVn1.key === endVn2.key) {
         // bnode moved right
-        if (startVn1 !== endVn2) childPatch.call(startVn1, endVn2);
+        if (startVn1 !== endVn2) {
+          childPatch.call(startVn1, endVn2);
+          ch2[endIdx2] = startVn1;
+        }
         const nextChild = ch2[endIdx2 + 1];
         startVn1.moveBefore(nextChild, _anchor);
-        ch2[endIdx2] = startVn1;
         startVn1 = ch1[++startIdx1];
         endVn2 = ch2[--endIdx2];
       }
       // -------------------------------------------------------------------
       else if (endVn1.key === startVn2.key) {
         // bnode moved left
-        if (endVn1 !== startVn2) childPatch.call(endVn1, startVn2);
+        if (endVn1 !== startVn2) {
+          childPatch.call(endVn1, startVn2);
+          ch2[startIdx2] = endVn1;
+        }
         const nextChild = ch1[startIdx1];
         endVn1.moveBefore(nextChild, _anchor);
-        ch2[startIdx2] = endVn1;
         endVn1 = ch1[--endIdx1];
         startVn2 = ch2[++startIdx2];
       }

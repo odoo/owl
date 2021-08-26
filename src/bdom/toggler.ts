@@ -25,17 +25,19 @@ class VToggler {
     this.child.moveBefore(other ? other.child : null, afterNode);
   }
 
-  patch(other: VToggler) {
+  patch(other: VToggler, withBeforeRemove: boolean) {
     if (this === other) {
       return;
     }
     let child1 = this.child;
     let child2 = other.child;
     if (this.key === other.key) {
-      child1.patch(child2);
+      child1.patch(child2, withBeforeRemove);
     } else {
       child2.mount(this.parentEl!, child1.firstNode()!);
-      child1.beforeRemove();
+      if (withBeforeRemove) {
+        child1.beforeRemove();
+      }
       child1.remove();
       this.child = child2;
       this.key = other.key;

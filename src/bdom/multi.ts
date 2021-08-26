@@ -10,10 +10,6 @@ const nodeRemoveChild = nodeProto.removeChild;
 // Multi NODE
 // -----------------------------------------------------------------------------
 
-// TODO!!!!!
-// todo:  either keep a child or a anchor, but not both
-// and use same array!!!, and replacechild
-
 class VMulti {
   children: (VNode | undefined)[];
   anchors?: Node[] | undefined;
@@ -61,7 +57,7 @@ class VMulti {
     }
   }
 
-  patch(other: VMulti) {
+  patch(other: VMulti, withBeforeRemove: boolean) {
     if (this === other) {
       return;
     }
@@ -74,13 +70,15 @@ class VMulti {
       const vn2 = children2[i];
       if (vn1) {
         if (vn2) {
-          vn1.patch(vn2);
+          vn1.patch(vn2, withBeforeRemove);
         } else {
           const afterNode = vn1.firstNode()!;
           const anchor = document.createTextNode("");
           anchors[i] = anchor;
           nodeInsertBefore.call(parentEl, anchor, afterNode);
-          vn1.beforeRemove();
+          if (withBeforeRemove) {
+            vn1.beforeRemove();
+          }
           vn1.remove();
           children1[i] = undefined;
         }

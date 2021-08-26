@@ -27,7 +27,7 @@ describe("before remove is called", () => {
 
     let n = 1;
     child.beforeRemove = () => n++;
-    patch(tree, block1([], []));
+    patch(tree, block1([], []), true);
     expect(fixture.innerHTML).toBe("<div></div>");
     expect(n).toBe(2);
   });
@@ -43,7 +43,7 @@ describe("before remove is called", () => {
 
     let n = 1;
     child.beforeRemove = () => n++;
-    patch(tree, block1([], []));
+    patch(tree, block1([], []), true);
     expect(fixture.innerHTML).toBe("<p></p>");
     expect(n).toBe(2);
   });
@@ -60,7 +60,7 @@ describe("before remove is called", () => {
 
     let n = 1;
     child1.beforeRemove = () => n++;
-    patch(tree, block1([], [multi([])]));
+    patch(tree, block1([], [multi([])]), true);
     expect(fixture.innerHTML).toBe("<div></div>");
     expect(n).toBe(2);
   });
@@ -77,7 +77,7 @@ describe("before remove is called", () => {
 
     let n = 1;
     child1.beforeRemove = () => n++;
-    patch(tree, block1([], []));
+    patch(tree, block1([], []), true);
     expect(fixture.innerHTML).toBe("<div></div>");
     expect(n).toBe(2);
   });

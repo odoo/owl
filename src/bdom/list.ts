@@ -17,11 +17,9 @@ class VList {
   anchor: Node | undefined;
   parentEl?: HTMLElement | undefined;
   singleNode?: boolean | undefined;
-  withBeforeRemove: boolean;
 
-  constructor(children: VNode[], withBeforeRemove: boolean) {
+  constructor(children: VNode[]) {
     this.children = children;
-    this.withBeforeRemove = withBeforeRemove;
   }
 
   mount(parent: HTMLElement, afterNode: Node | null) {
@@ -44,7 +42,7 @@ class VList {
     // todo
   }
 
-  patch(other: VList) {
+  patch(other: VList, withBeforeRemove: boolean) {
     if (this === other) {
       return;
     }
@@ -66,7 +64,6 @@ class VList {
 
     const _anchor = this.anchor!;
     const isOnlyChild = this.singleNode;
-    const withBeforeRemove = this.withBeforeRemove;
     const parent = this.parentEl!;
 
     // fast path: no new child => only remove
@@ -110,7 +107,7 @@ class VList {
       let startKey1 = startVn1.key;
       let startKey2 = startVn2.key;
       if (startKey1 === startKey2) {
-        cPatch.call(startVn1, startVn2);
+        cPatch.call(startVn1, startVn2, withBeforeRemove);
         ch2[startIdx2] = startVn1;
         startVn1 = ch1[++startIdx1];
         startVn2 = ch2[++startIdx2];
@@ -120,7 +117,7 @@ class VList {
       let endKey1 = endVn1.key;
       let endKey2 = endVn2.key;
       if (endKey1 === endKey2) {
-        cPatch.call(endVn1, endVn2);
+        cPatch.call(endVn1, endVn2, withBeforeRemove);
         ch2[endIdx2] = endVn1;
         endVn1 = ch1[--endIdx1];
         endVn2 = ch2[--endIdx2];
@@ -129,7 +126,7 @@ class VList {
       // -------------------------------------------------------------------
       if (startKey1 === endKey2) {
         // bnode moved right
-        cPatch.call(startVn1, endVn2);
+        cPatch.call(startVn1, endVn2, withBeforeRemove);
         ch2[endIdx2] = startVn1;
         const nextChild = ch2[endIdx2 + 1];
         cMoveBefore.call(startVn1, nextChild, _anchor);
@@ -140,7 +137,7 @@ class VList {
       // -------------------------------------------------------------------
       if (endKey1 === startKey2) {
         // bnode moved left
-        cPatch.call(endVn1, startVn2);
+        cPatch.call(endVn1, startVn2, withBeforeRemove);
         ch2[startIdx2] = endVn1;
         const nextChild = ch1[startIdx1];
         cMoveBefore.call(endVn1, nextChild, _anchor);
@@ -156,7 +153,7 @@ class VList {
       } else {
         const elmToMove = ch1[idxInOld];
         cMoveBefore.call(elmToMove, startVn1, null);
-        cPatch.call(elmToMove, startVn2);
+        cPatch.call(elmToMove, startVn2, withBeforeRemove);
         ch2[startIdx2] = elmToMove;
         ch1[idxInOld] = null as any;
       }
@@ -185,14 +182,12 @@ class VList {
   }
 
   beforeRemove() {
-    if (this.withBeforeRemove) {
-      const children = this.children;
-      const l = children.length;
-      if (l) {
-        const beforeRemove = children[0].beforeRemove;
-        for (let i = 0; i < l; i++) {
-          beforeRemove.call(children[i]);
-        }
+    const children = this.children;
+    const l = children.length;
+    if (l) {
+      const beforeRemove = children[0].beforeRemove;
+      for (let i = 0; i < l; i++) {
+        beforeRemove.call(children[i]);
       }
     }
   }
@@ -223,8 +218,8 @@ class VList {
   }
 }
 
-export function list(children: VNode[], withBeforeRemove: boolean = false): VNode<VList> {
-  return new VList(children, withBeforeRemove);
+export function list(children: VNode[]): VNode<VList> {
+  return new VList(children);
 }
 
 function createMapping(ch1: any[], startIdx1: number, endIdx2: number): { [key: string]: any } {

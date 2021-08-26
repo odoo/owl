@@ -555,6 +555,7 @@ function createBlockClass(
     }
 
     beforeRemove() {}
+
     remove() {
       elementRemove.call(this.el);
     }
@@ -611,8 +612,11 @@ function createBlockClass(
       this.el = el as HTMLElement;
       this.parentEl = parent;
     }
-    patch(other: Block) {
+    patch(other: Block, withBeforeRemove: boolean) {
       // note: we don't check for equality here. It should be done by the caller
+      if (this === other) {
+        return;
+      }
       const refs = this.refs!;
       // update texts/attributes/
       if (locLen) {
@@ -643,9 +647,11 @@ function createBlockClass(
           const child2 = children2![i];
           if (child1) {
             if (child2) {
-              child1.patch(child2);
+              child1.patch(child2, withBeforeRemove);
             } else {
-              child1.beforeRemove();
+              if (withBeforeRemove) {
+                child1.beforeRemove();
+              }
               child1.remove();
               children1[i] = undefined;
             }

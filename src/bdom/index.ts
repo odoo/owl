@@ -10,7 +10,7 @@ export { html } from "./html";
 export interface VNode<T = any> {
   mount(parent: HTMLElement, afterNode: Node | null): void;
   moveBefore(other: T | null, afterNode: Node | null): void;
-  patch(other: T): void;
+  patch(other: T, withBeforeRemove: boolean): void;
   beforeRemove(): void;
   remove(): void;
   firstNode(): Node | undefined;
@@ -27,12 +27,14 @@ export function mount(vnode: VNode, fixture: HTMLElement) {
   vnode.mount(fixture, null);
 }
 
-export function patch(vnode1: VNode, vnode2: VNode) {
-  vnode1.patch(vnode2);
+export function patch(vnode1: VNode, vnode2: VNode, withBeforeRemove: boolean = false) {
+  vnode1.patch(vnode2, withBeforeRemove);
 }
 
-export function remove(vnode: VNode) {
-  vnode.beforeRemove();
+export function remove(vnode: VNode, withBeforeRemove: boolean = false) {
+  if (withBeforeRemove) {
+    vnode.beforeRemove();
+  }
   vnode.remove();
 }
 

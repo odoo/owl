@@ -27,7 +27,7 @@ describe("adding/patching blocks", () => {
   });
 
   test("block with dynamic content", async () => {
-    const block = createBlock("<div><p><owl-text-0/></p></div>");
+    const block = createBlock("<div><p><block-text-0/></p></div>");
     const tree = block(["foo"]);
 
     mount(tree, fixture);
@@ -40,7 +40,7 @@ describe("adding/patching blocks", () => {
   });
 
   test("block with 2 dynamic text nodes", async () => {
-    const block = createBlock("<div><p><owl-text-0/></p><span><owl-text-1/></span></div>");
+    const block = createBlock("<div><p><block-text-0/></p><span><block-text-1/></span></div>");
     const tree = block(["foo", "bar"]);
 
     mount(tree, fixture);
@@ -51,7 +51,7 @@ describe("adding/patching blocks", () => {
 
   test("block with multiple references", async () => {
     const block1 = createBlock(
-      "<div><owl-text-0/><p><owl-text-1/><owl-text-2/></p><owl-text-3/></div>"
+      "<div><block-text-0/><p><block-text-1/><block-text-2/></p><block-text-3/></div>"
     );
     const tree = block1(["1", "2", "3", "4"]);
 
@@ -67,7 +67,7 @@ describe("adding/patching blocks", () => {
       [0, "0"],
       ["", ""],
     ];
-    const block = createBlock("<p><owl-text-0/></p>");
+    const block = createBlock("<p><block-text-0/></p>");
 
     for (let [value, result] of cases) {
       const fixture = makeTestFixture();
@@ -79,7 +79,7 @@ describe("adding/patching blocks", () => {
 
 describe("sub blocks", () => {
   test("block with subblock (only child)", async () => {
-    const block1 = createBlock("<div><owl-child-0/></div>");
+    const block1 = createBlock("<div><block-child-0/></div>");
     const block2 = createBlock("<p>yip yip</p>");
     const tree = block1([], [block2()]);
 
@@ -89,7 +89,7 @@ describe("sub blocks", () => {
   });
 
   test("block with subblock (first child with sibling)", async () => {
-    const block1 = createBlock("<div><owl-child-0/><span>something</span></div>");
+    const block1 = createBlock("<div><block-child-0/><span>something</span></div>");
     const block2 = createBlock("<p>yip yip</p>");
     const tree = block1([], [block2()]);
 
@@ -99,7 +99,7 @@ describe("sub blocks", () => {
   });
 
   test("block with subblock (last child with sibling)", async () => {
-    const block1 = createBlock("<div><span>something</span><owl-child-0/></div>");
+    const block1 = createBlock("<div><span>something</span><block-child-0/></div>");
     const block2 = createBlock("<p>yip yip</p>");
     const tree = block1([], [block2()]);
 
@@ -109,7 +109,7 @@ describe("sub blocks", () => {
   });
 
   test("block with 2 subblocks", async () => {
-    const block1 = createBlock("<div><owl-child-0/><owl-child-1/></div>");
+    const block1 = createBlock("<div><block-child-0/><block-child-1/></div>");
     const block2 = createBlock("<p>yip yip</p>");
     const tree = block1([], [block2(), text("appa")]);
 
@@ -119,7 +119,7 @@ describe("sub blocks", () => {
   });
 
   test("block with subblock with siblings", async () => {
-    const block1 = createBlock("<div><p>1</p><owl-child-0/><p>2</p></div>");
+    const block1 = createBlock("<div><p>1</p><block-child-0/><p>2</p></div>");
     const block2 = createBlock("<p>yip yip</p>");
 
     const tree = block1([], [block2()]);
@@ -129,7 +129,7 @@ describe("sub blocks", () => {
   });
 
   test("block with conditional child", async () => {
-    const block1 = createBlock("<div><p><owl-child-0/></p></div>");
+    const block1 = createBlock("<div><p><block-child-0/></p></div>");
     const block2 = createBlock("<span>foo</span>");
 
     const tree = block1();
@@ -144,8 +144,8 @@ describe("sub blocks", () => {
   });
 
   test("block with subblock with dynamic content", async () => {
-    const block1 = createBlock("<div><owl-child-0/></div>");
-    const block2 = createBlock("<p><owl-text-0/></p>");
+    const block1 = createBlock("<div><block-child-0/></div>");
+    const block2 = createBlock("<p><block-text-0/></p>");
     const tree = block1([], [block2(["yip yip"])]);
 
     mount(tree, fixture);
@@ -156,7 +156,7 @@ describe("sub blocks", () => {
   });
 
   test("block with dynamic content and subblock", async () => {
-    const block1 = createBlock("<div><owl-child-0/><p><owl-text-0/></p></div>");
+    const block1 = createBlock("<div><block-child-0/><p><block-text-0/></p></div>");
     const block2 = createBlock("<p>sub block</p>");
     const tree = block1(["yip yip"], [block2()]);
 
@@ -188,7 +188,7 @@ describe("misc", () => {
   });
 
   //     test("reusing a block skips patching process", async () => {
-  //       const block = createBlock('<div><owl-text-0/></div>');
+  //       const block = createBlock('<div><block-text-0/></div>');
   //       const foo = block(["foo"]);
   //       const bar = block(["bar"]);
   //       let fooCounter = 0;

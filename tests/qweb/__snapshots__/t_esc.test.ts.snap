@@ -6,7 +6,7 @@ exports[`t-esc div with falsy values 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><p><owl-text-0/></p><p><owl-text-1/></p><p><owl-text-2/></p><p><owl-text-3/></p><p><owl-text-4/></p></div>\`);
+  let block1 = createBlock(\`<div><p><block-text-0/></p><p><block-text-1/></p><p><block-text-2/></p><p><block-text-3/></p><p><block-text-4/></p></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['v1'];
@@ -25,7 +25,7 @@ exports[`t-esc escaping 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['var'];
@@ -40,7 +40,7 @@ exports[`t-esc escaping on a node 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = 'ok';
@@ -55,7 +55,7 @@ exports[`t-esc escaping on a node with a body 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = withDefault('ok', \`nope\`);
@@ -70,7 +70,7 @@ exports[`t-esc escaping on a node with a body, as a default 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = withDefault(ctx['var'], \`nope\`);
@@ -106,7 +106,7 @@ exports[`t-esc literal 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = 'ok';
@@ -121,7 +121,7 @@ exports[`t-esc t-esc is escaped 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
   let block2 = createBlock(\`<p>escaped</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
@@ -140,7 +140,7 @@ exports[`t-esc t-esc work with spread operator 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = [...ctx['state'].list];
@@ -155,7 +155,7 @@ exports[`t-esc t-esc=0 is escaped 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx[zero];
@@ -171,7 +171,7 @@ exports[`t-esc t-esc=0 is escaped 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<p>escaped</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
@@ -190,7 +190,7 @@ exports[`t-esc variable 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['var'];

@@ -6,7 +6,7 @@ exports[`t-foreach does not pollute the rendering context 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -28,8 +28,8 @@ exports[`t-foreach iterate on items (on a element node) 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
-  let block3 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -52,7 +52,7 @@ exports[`t-foreach iterate on items 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -83,7 +83,7 @@ exports[`t-foreach iterate, dict param 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -114,7 +114,7 @@ exports[`t-foreach iterate, position 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -150,7 +150,7 @@ exports[`t-foreach simple iteration (in a node) 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -191,8 +191,8 @@ exports[`t-foreach simple iteration with two nodes inside 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block3 = createBlock(\`<span>a<owl-text-0/></span>\`);
-  let block4 = createBlock(\`<span>b<owl-text-0/></span>\`);
+  let block3 = createBlock(\`<span>a<block-text-0/></span>\`);
+  let block4 = createBlock(\`<span>b<block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -237,8 +237,8 @@ exports[`t-foreach t-call with body in t-foreach in t-foreach 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
-  let block1 = createBlock(\`<div><owl-child-0/><span>[<owl-text-0/>][<owl-text-1/>][<owl-text-2/>]</span></div>\`);
-  let block6 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<div><block-child-0/><span>[<block-text-0/>][<block-text-1/>][<block-text-2/>]</span></div>\`);
+  let block6 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -309,8 +309,8 @@ exports[`t-foreach t-call without body in t-foreach in t-foreach 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
-  let block1 = createBlock(\`<div><owl-child-0/><span>[<owl-text-0/>][<owl-text-1/>][<owl-text-2/>]</span></div>\`);
-  let block6 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<div><block-child-0/><span>[<block-text-0/>][<block-text-1/>][<block-text-2/>]</span></div>\`);
+  let block6 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -355,7 +355,7 @@ exports[`t-foreach t-foreach in t-foreach 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -389,7 +389,7 @@ exports[`t-foreach t-foreach with t-if inside (no external node) 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block3 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block3 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -415,8 +415,8 @@ exports[`t-foreach t-foreach with t-if inside 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
-  let block4 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block4 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -443,7 +443,7 @@ exports[`t-foreach throws error if invalid loop expression 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<span/>\`);
   
   return function template(ctx, node, key = \\"\\") {
@@ -467,8 +467,8 @@ exports[`t-foreach warn if no key in some case 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
-  let block3 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -492,8 +492,8 @@ exports[`t-foreach with t-memo 1`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
-  let block3 = createBlock(\`<p><owl-text-0/><owl-text-1/></p>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<p><block-text-0/><block-text-1/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let cache = ctx.cache || {};

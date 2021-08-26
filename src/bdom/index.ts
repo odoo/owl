@@ -1,5 +1,7 @@
+export { config } from "./config";
+
 export { toggler } from "./toggler";
-export { createBlock, config } from "./block";
+export { createBlock } from "./block";
 export { list } from "./list";
 export { multi } from "./multi";
 export { text } from "./text";
@@ -26,10 +28,17 @@ export function mount(vnode: VNode, fixture: HTMLElement) {
 }
 
 export function patch(vnode1: VNode, vnode2: VNode) {
-  vnode1.patch(vnode2);
+  if (vnode1 !== vnode2) {
+    vnode1.patch(vnode2);
+  }
 }
 
 export function remove(vnode: VNode) {
   vnode.beforeRemove();
   vnode.remove();
+}
+
+export function withKey(vnode: VNode, key: any) {
+  vnode.key = key;
+  return vnode;
 }

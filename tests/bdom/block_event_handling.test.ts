@@ -28,7 +28,7 @@ test("simple event handling ", async () => {
     }
   };
 
-  const block = createBlock('<div owl-handler-0="click"></div>');
+  const block = createBlock('<div block-handler-0="click"></div>');
   let n = 0;
   const obj = { f: () => n++ };
   const tree = block([[obj, "f"]]);
@@ -43,7 +43,7 @@ test("simple event handling ", async () => {
 });
 
 test("simple event handling, with function", async () => {
-  const block = createBlock('<div owl-handler-0="click"></div>');
+  const block = createBlock('<div block-handler-0="click"></div>');
   let n = 0;
   const tree = block([() => n++]);
 
@@ -57,7 +57,7 @@ test("simple event handling, with function", async () => {
 });
 
 test("can bind two handlers on same node", async () => {
-  const block = createBlock('<div owl-handler-0="click" owl-handler-1="dblclick"></div>');
+  const block = createBlock('<div block-handler-0="click" block-handler-1="dblclick"></div>');
   let steps: string[] = [];
   let handleClick = () => steps.push("click");
   let handleDblClick = () => steps.push("dblclick");
@@ -72,7 +72,7 @@ test("can bind two handlers on same node", async () => {
 });
 
 test("two same block nodes with different handlers", async () => {
-  const block = createBlock('<div owl-handler-0="click"></div>');
+  const block = createBlock('<div block-handler-0="click"></div>');
   let steps: string[] = [];
   let handler1 = () => steps.push("1");
   let handler2 = () => steps.push("2");

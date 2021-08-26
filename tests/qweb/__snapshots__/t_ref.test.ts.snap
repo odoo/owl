@@ -6,7 +6,7 @@ exports[`t-ref can get a dynamic ref on a node 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><span owl-ref=\\"0\\"/></div>\`);
+  let block1 = createBlock(\`<div><span block-ref=\\"0\\"/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const refs = ctx.__owl__.refs;
@@ -23,7 +23,7 @@ exports[`t-ref can get a ref on a node 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><span owl-ref=\\"0\\"/></div>\`);
+  let block1 = createBlock(\`<div><span block-ref=\\"0\\"/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const refs = ctx.__owl__.refs;
@@ -40,7 +40,7 @@ exports[`t-ref ref in a t-call 1`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callTemplate_2(ctx, node, key + \`__1\`);
@@ -55,7 +55,7 @@ exports[`t-ref ref in a t-call 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div>1<span owl-ref=\\"0\\"/>2</div>\`);
+  let block1 = createBlock(\`<div>1<span block-ref=\\"0\\"/>2</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const refs = ctx.__owl__.refs;
@@ -71,8 +71,8 @@ exports[`t-ref ref in a t-if 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
-  let block2 = createBlock(\`<span owl-ref=\\"0\\"/>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block2 = createBlock(\`<span block-ref=\\"0\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const refs = ctx.__owl__.refs;
@@ -92,8 +92,8 @@ exports[`t-ref refs in a loop 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
-  let block3 = createBlock(\`<div owl-ref=\\"0\\"><owl-text-1/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div block-ref=\\"0\\"><block-text-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const refs = ctx.__owl__.refs;
@@ -119,8 +119,8 @@ exports[`t-ref two refs, one in a t-if 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/><p owl-ref=\\"0\\"/></div>\`);
-  let block2 = createBlock(\`<span owl-ref=\\"0\\"/>\`);
+  let block1 = createBlock(\`<div><block-child-0/><p block-ref=\\"0\\"/></div>\`);
+  let block2 = createBlock(\`<span block-ref=\\"0\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const refs = ctx.__owl__.refs;

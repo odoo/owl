@@ -6,7 +6,7 @@ exports[`t-raw literal 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = html('ok');
@@ -33,7 +33,7 @@ exports[`t-raw multiple calls to t-raw 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/><div>Greeter</div><owl-child-1/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><div>Greeter</div><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = html(ctx[zero]);
@@ -50,7 +50,7 @@ exports[`t-raw multiple calls to t-raw 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<span>coucou</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
@@ -69,7 +69,7 @@ exports[`t-raw not escaping 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = html(ctx['var']);
@@ -84,7 +84,7 @@ exports[`t-raw t-raw and another sibling node 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><span>hello</span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><span>hello</span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = html(ctx['var']);
@@ -99,7 +99,7 @@ exports[`t-raw t-raw on a node with a body, as a default 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b3 = text(\`nope\`);
@@ -115,7 +115,7 @@ exports[`t-raw t-raw on a node with a dom node in body, as a default 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   let block3 = createBlock(\`<div>nope</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
@@ -144,7 +144,7 @@ exports[`t-raw t-raw with comment 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = html(ctx['var']);
@@ -171,7 +171,7 @@ exports[`t-raw variable 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = html(ctx['var']);

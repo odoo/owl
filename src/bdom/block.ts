@@ -1,3 +1,4 @@
+import { config } from "./config";
 import type { VNode } from "./index";
 import { toText } from "./text";
 
@@ -10,12 +11,7 @@ const characterDataSetData = getDescriptor(characterDataProto, "data").set!;
 const nodeGetFirstChild = getDescriptor(nodeProto, "firstChild").get!;
 const nodeGetNextSibling = getDescriptor(nodeProto, "nextSibling").get!;
 
-const NO_OP = () => { };
-
-export const config = {
-  shouldNormalizeDom: true,
-  mainEventHandler: (data: any, ev: Event) => data(ev),
-};
+const NO_OP = () => {};
 
 // -----------------------------------------------------------------------------
 // Block
@@ -91,13 +87,13 @@ function processDescription(node: ChildNode, ctx: BuilderContext, parentPath: st
     case 1: {
       // HTMLElement
       const tagName = (node as Element).tagName;
-      if (tagName.startsWith("owl-text-")) {
-        const index = parseInt(tagName.slice(9), 10);
+      if (tagName.startsWith("block-text-")) {
+        const index = parseInt(tagName.slice(11), 10);
         ctx.info.push({ index, path: ctx.path.slice(), type: "text" });
         return document.createTextNode("");
       }
-      if (tagName.startsWith("owl-child-")) {
-        const index = parseInt(tagName.slice(10), 10);
+      if (tagName.startsWith("block-child-")) {
+        const index = parseInt(tagName.slice(12), 10);
         ctx.info.push({ index, type: "child", path: ctx.path.slice(), parentPath });
         return document.createTextNode("");
       }
@@ -106,16 +102,16 @@ function processDescription(node: ChildNode, ctx: BuilderContext, parentPath: st
       for (let i = 0; i < attrs.length; i++) {
         const attrName = attrs[i].name;
         const attrValue = attrs[i].value;
-        if (attrName.startsWith("owl-handler-")) {
-          const index = parseInt(attrName.slice(12), 10);
+        if (attrName.startsWith("block-handler-")) {
+          const index = parseInt(attrName.slice(14), 10);
           ctx.info.push({
             index,
             path: ctx.path.slice(),
             type: "handler",
             event: attrValue,
           });
-        } else if (attrName.startsWith("owl-attribute-")) {
-          const index = parseInt(attrName.slice(14), 10);
+        } else if (attrName.startsWith("block-attribute-")) {
+          const index = parseInt(attrName.slice(16), 10);
           ctx.info.push({
             index,
             path: ctx.path.slice(),
@@ -123,13 +119,13 @@ function processDescription(node: ChildNode, ctx: BuilderContext, parentPath: st
             name: attrValue,
             tag: tagName,
           });
-        } else if (attrName === "owl-attributes") {
+        } else if (attrName === "block-attributes") {
           ctx.info.push({
             index: parseInt(attrValue, 10),
             path: ctx.path.slice(),
             type: "attributes",
           });
-        } else if (attrName === "owl-ref") {
+        } else if (attrName === "block-ref") {
           ctx.info.push({
             index: parseInt(attrValue, 10),
             path: ctx.path.slice(),
@@ -142,7 +138,7 @@ function processDescription(node: ChildNode, ctx: BuilderContext, parentPath: st
       let children = (node as Element).childNodes;
       if (children.length === 1) {
         const childNode = children[0];
-        if (childNode.nodeType === 1 && (childNode as Element).tagName.startsWith("owl-child-")) {
+        if (childNode.nodeType === 1 && (childNode as Element).tagName.startsWith("block-child-")) {
           const tagName = (childNode as Element).tagName;
           const index = parseInt(tagName.slice(10), 10);
           ctx.info.push({ index, type: "child", path: ctx.path.slice(), isOnlyChild: true });
@@ -327,34 +323,33 @@ function makePropSetter(name: string) {
   };
 }
 
-
 const nativeToSyntheticEvent = (event: Event, name: string) => {
-  const eventKey = `__event__${name}`
-  let dom = event.target
+  const eventKey = `__event__${name}`;
+  let dom = event.target;
   while (dom !== null) {
-    const data = (dom as any)[eventKey]
+    const data = (dom as any)[eventKey];
     if (data) {
       config.mainEventHandler(data, event);
       return;
     }
-    dom = (dom as any).parentNode
+    dom = (dom as any).parentNode;
   }
-}
+};
 
-const CONFIGURED_SYNTHETIC_EVENTS: { [event: string]: boolean } = {}
+const CONFIGURED_SYNTHETIC_EVENTS: { [event: string]: boolean } = {};
 function setupSyntheticEvent(name: string) {
   if (CONFIGURED_SYNTHETIC_EVENTS[name]) {
     return;
   }
-  document.addEventListener(name, event => nativeToSyntheticEvent(event, name))
-  CONFIGURED_SYNTHETIC_EVENTS[name] = true
+  document.addEventListener(name, (event) => nativeToSyntheticEvent(event, name));
+  CONFIGURED_SYNTHETIC_EVENTS[name] = true;
 }
 
 function createEventHandler(event: string) {
   const key = `__event__${event}`;
   return function setupHandler(this: HTMLElement, data: any) {
-      (this as any)[key] = data;
-    };
+    (this as any)[key] = data;
+  };
 }
 
 function setText(this: Text, value: any) {
@@ -451,7 +446,7 @@ function compileBlock(info: BlockInfo[], template: HTMLElement): BlockType {
         case "handler": {
           const refIdx = line.refIndex!;
           const setupHandler = createEventHandler(line.event!);
-          setupSyntheticEvent(line.event!)
+          setupSyntheticEvent(line.event!);
           locations.push({
             idx: line.index,
             refIdx,
@@ -540,6 +535,8 @@ function createBlockClass(
   let childN = childrenLocs.length;
   const refN = colLen + 1;
 
+  // these values are defined here to make them faster to lookup in the class
+  // block scope
   const nodeCloneNode = nodeProto.cloneNode;
   const nodeInsertBefore = nodeProto.insertBefore;
   const elementRemove = elementProto.remove;
@@ -557,7 +554,7 @@ function createBlockClass(
       this.children = children;
     }
 
-    beforeRemove() { }
+    beforeRemove() {}
     remove() {
       elementRemove.call(this.el);
     }
@@ -584,8 +581,6 @@ function createBlockClass(
           const w = collectors[i];
           refs[i + 1] = w.getVal.call(refs[w.prevIdx]);
         }
-        this.refs = refs;
-        // console.warn(refs)
 
         // applying data to all update points
         if (locLen) {
@@ -617,9 +612,7 @@ function createBlockClass(
       this.parentEl = parent;
     }
     patch(other: Block) {
-      if (this === other) {
-        return;
-      }
+      // note: we don't check for equality here. It should be done by the caller
       const refs = this.refs!;
       // update texts/attributes/
       if (locLen) {
@@ -650,7 +643,9 @@ function createBlockClass(
           const child2 = children2![i];
           if (child1) {
             if (child2) {
-              child1.patch(child2);
+              if (child1 !== child2) {
+                child1.patch(child2);
+              }
             } else {
               child1.beforeRemove();
               child1.remove();

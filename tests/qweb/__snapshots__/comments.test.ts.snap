@@ -34,7 +34,7 @@ exports[`comments properly handle comments between t-if/t-else 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   let block2 = createBlock(\`<span>true</span>\`);
   let block3 = createBlock(\`<span>owl</span>\`);
   

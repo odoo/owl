@@ -185,7 +185,7 @@ export class QWebCompiler {
   }
 
   insertAnchor(block: BlockDescription) {
-    const tag = `owl-child-${block.children.length}`;
+    const tag = `block-child-${block.children.length}`;
     const anchor: Dom = { type: DomType.Node, tag, attrs: {}, content: [] };
     block.insert(anchor);
   }
@@ -460,15 +460,15 @@ export class QWebCompiler {
       if (key.startsWith("t-attf")) {
         let expr = interpolate(ast.attrs[key]);
         const idx = block!.insertData(expr);
-        attrs["owl-attribute-" + idx] = key.slice(7);
+        attrs["block-attribute-" + idx] = key.slice(7);
         // console.warn('ccc', staticAttrs)
       } else if (key.startsWith("t-att")) {
         let expr = compileExpr(ast.attrs[key]);
         const idx = block!.insertData(expr);
         if (key === "t-att") {
-          attrs[`owl-attributes`] = String(idx);
+          attrs[`block-attributes`] = String(idx);
         } else {
-          attrs[`owl-attribute-${idx}`] = key.slice(6);
+          attrs[`block-attribute-${idx}`] = key.slice(6);
         }
       } else {
         attrs[key] = ast.attrs[key];
@@ -479,7 +479,7 @@ export class QWebCompiler {
     for (let ev in ast.on) {
       const name = this.generateHandlerCode(ast.on[ev]);
       const idx = block!.insertData(name);
-      attrs[`owl-handler-${idx}`] = ev;
+      attrs[`block-handler-${idx}`] = ev;
     }
 
     // t-ref
@@ -492,10 +492,10 @@ export class QWebCompiler {
           (expr) => "${" + this.captureExpression(expr.slice(2, -2)) + "}"
         );
         const idx = block!.insertData(`(el) => refs[\`${str}\`] = el`);
-        attrs["owl-ref"] = String(idx);
+        attrs["block-ref"] = String(idx);
       } else {
         const idx = block!.insertData(`(el) => refs[\`${ast.ref}\`] = el`);
-        attrs["owl-ref"] = String(idx);
+        attrs["block-ref"] = String(idx);
       }
     }
 
@@ -553,7 +553,7 @@ export class QWebCompiler {
       this.insertBlock(`text(${expr})`, block, { ...ctx, forceNewBlock: forceNewBlock && !block });
     } else {
       const idx = block.insertData(expr);
-      const text: Dom = { type: DomType.Node, tag: `owl-text-${idx}`, attrs: {}, content: [] };
+      const text: Dom = { type: DomType.Node, tag: `block-text-${idx}`, attrs: {}, content: [] };
       block.insert(text);
     }
   }

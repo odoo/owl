@@ -6,7 +6,7 @@ exports[`t-on can bind event handler 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Click</button>\`);
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = [ctx, 'add'];
@@ -21,7 +21,7 @@ exports[`t-on can bind handlers with arguments 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Click</button>\`);
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const arg1 = [5];
@@ -37,7 +37,7 @@ exports[`t-on can bind handlers with empty  object 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Click</button>\`);
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const arg1 = [{}];
@@ -53,7 +53,7 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Click</button>\`);
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const arg1 = [{}];
@@ -69,8 +69,8 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<ul><owl-child-0/></ul>\`);
-  let block3 = createBlock(\`<li><a owl-handler-0=\\"click\\">link</a></li>\`);
+  let block1 = createBlock(\`<ul><block-child-0/></ul>\`);
+  let block3 = createBlock(\`<li><a block-handler-0=\\"click\\">link</a></li>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -95,7 +95,7 @@ exports[`t-on can bind handlers with object arguments 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Click</button>\`);
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const arg1 = [{val:5}];
@@ -111,7 +111,7 @@ exports[`t-on can bind two event handlers 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<button owl-handler-0=\\"click\\" owl-handler-1=\\"dblclick\\">Click</button>\`);
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\" block-handler-1=\\"dblclick\\">Click</button>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = [ctx, 'handleClick'];
@@ -127,7 +127,7 @@ exports[`t-on handler is bound to proper owner 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Click</button>\`);
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = [ctx, 'add'];
@@ -142,7 +142,7 @@ exports[`t-on handler is bound to proper owner, part 2 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block2 = createBlock(\`<button owl-handler-0=\\"click\\">Click</button>\`);
+  let block2 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -164,7 +164,7 @@ exports[`t-on handler is bound to proper owner, part 3 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Click</button>\`);
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = [ctx, 'add'];
@@ -192,7 +192,7 @@ exports[`t-on handler is bound to proper owner, part 4 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Click</button>\`);
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = [ctx, 'add'];
@@ -231,7 +231,7 @@ exports[`t-on receive event in first argument 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Click</button>\`);
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = [ctx, 'add'];
@@ -246,7 +246,7 @@ exports[`t-on t-on with inline statement (function call) 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Click</button>\`);
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const v1 = ctx['state'];
@@ -262,7 +262,7 @@ exports[`t-on t-on with inline statement 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Click</button>\`);
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const v1 = ctx['state'];
@@ -278,7 +278,7 @@ exports[`t-on t-on with inline statement, part 2 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Toggle</button>\`);
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Toggle</button>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const v1 = ctx['state'];
@@ -294,7 +294,7 @@ exports[`t-on t-on with inline statement, part 3 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">Toggle</button>\`);
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Toggle</button>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const v1 = ctx['state'];
@@ -311,7 +311,7 @@ exports[`t-on t-on with t-call 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p owl-handler-0=\\"click\\">lucas</p>\`);
+  let block1 = createBlock(\`<p block-handler-0=\\"click\\">lucas</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = [ctx, 'update'];
@@ -327,7 +327,7 @@ exports[`t-on t-on with t-call 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callTemplate_2(ctx, node, key + \`__1\`);
@@ -342,7 +342,7 @@ exports[`t-on t-on, with arguments and t-call 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p owl-handler-0=\\"click\\">lucas</p>\`);
+  let block1 = createBlock(\`<p block-handler-0=\\"click\\">lucas</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const arg1 = [ctx['value']];
@@ -359,7 +359,7 @@ exports[`t-on t-on, with arguments and t-call 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callTemplate_2(ctx, node, key + \`__1\`);

@@ -17,7 +17,7 @@ afterEach(() => {
 
 describe("before remove is called", () => {
   test("simple removal", async () => {
-    const block1 = createBlock("<div><owl-child-0/></div>");
+    const block1 = createBlock("<div><block-child-0/></div>");
     const block2 = createBlock("<p>coucou</p>");
 
     const child = block2();
@@ -33,7 +33,7 @@ describe("before remove is called", () => {
   });
 
   test("removal, variation with grandchild", async () => {
-    const block1 = createBlock("<p><owl-child-0/></p>");
+    const block1 = createBlock("<p><block-child-0/></p>");
     const block2 = createBlock("<span>coucou</span>");
 
     const child = block2();
@@ -49,7 +49,7 @@ describe("before remove is called", () => {
   });
 
   test("remove a child of a multi", async () => {
-    const block1 = createBlock("<div><owl-child-0/></div>");
+    const block1 = createBlock("<div><block-child-0/></div>");
     const block2 = createBlock("<p>coucou</p>");
 
     const child1 = block2();
@@ -66,7 +66,7 @@ describe("before remove is called", () => {
   });
 
   test("remove a multi", async () => {
-    const block1 = createBlock("<div><owl-child-0/></div>");
+    const block1 = createBlock("<div><block-child-0/></div>");
     const block2 = createBlock("<p>coucou</p>");
 
     const child1 = block2();

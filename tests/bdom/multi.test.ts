@@ -44,7 +44,7 @@ describe("multi blocks", () => {
   });
 
   test("multi block in a regular block", async () => {
-    const block1 = createBlock("<div><owl-child-0/></div>");
+    const block1 = createBlock("<div><block-child-0/></div>");
     const block2 = createBlock("<span>yip yip</span>");
 
     const tree = block1([], [multi([block2()])]);

@@ -45,16 +45,21 @@ class VList {
   }
 
   patch(other: VList) {
-    if (this === other) {
-      return;
-    }
     const ch1 = this.children;
     const ch2: VNode[] = other.children;
     if (ch2.length === 0 && ch1.length === 0) {
       return;
     }
+    this.children = ch2;
     const proto = ch2[0] || ch1[0];
-    const { mount: cMount, patch: cPatch, remove: cRemove, beforeRemove, moveBefore: cMoveBefore, firstNode: cFirstNode } = proto;
+    const {
+      mount: cMount,
+      patch: cPatch,
+      remove: cRemove,
+      beforeRemove,
+      moveBefore: cMoveBefore,
+      firstNode: cFirstNode,
+    } = proto;
 
     const _anchor = this.anchor!;
     const isOnlyChild = this.singleNode;
@@ -71,7 +76,6 @@ class VList {
 
       nodeSetTextContent.call(parent, "");
       nodeAppendChild.call(parent, _anchor);
-      this.children = ch2;
       return;
     }
 
@@ -92,31 +96,39 @@ class VList {
       // -------------------------------------------------------------------
       if (startVn1 === null) {
         startVn1 = ch1[++startIdx1];
+        continue;
       }
       // -------------------------------------------------------------------
-      else if (endVn1 === null) {
+      if (endVn1 === null) {
         endVn1 = ch1[--endIdx1];
+        continue;
       }
       // -------------------------------------------------------------------
-      else if (startVn1.key === startVn2.key) {
+      let startKey1 = startVn1.key;
+      let startKey2 = startVn2.key;
+      if (startKey1 === startKey2) {
         if (startVn1 !== startVn2) {
           cPatch.call(startVn1, startVn2);
           ch2[startIdx2] = startVn1;
         }
         startVn1 = ch1[++startIdx1];
         startVn2 = ch2[++startIdx2];
+        continue;
       }
       // -------------------------------------------------------------------
-      else if (endVn1.key === endVn2.key) {
+      let endKey1 = endVn1.key;
+      let endKey2 = endVn2.key;
+      if (endKey1 === endKey2) {
         if (endVn1 !== endVn2) {
           cPatch.call(endVn1, endVn2);
           ch2[endIdx2] = endVn1;
         }
         endVn1 = ch1[--endIdx1];
         endVn2 = ch2[--endIdx2];
+        continue;
       }
       // -------------------------------------------------------------------
-      else if (startVn1.key === endVn2.key) {
+      if (startKey1 === endKey2) {
         // bnode moved right
         if (startVn1 !== endVn2) {
           cPatch.call(startVn1, endVn2);
@@ -126,9 +138,10 @@ class VList {
         cMoveBefore.call(startVn1, nextChild, _anchor);
         startVn1 = ch1[++startIdx1];
         endVn2 = ch2[--endIdx2];
+        continue;
       }
       // -------------------------------------------------------------------
-      else if (endVn1.key === startVn2.key) {
+      if (endKey1 === startKey2) {
         // bnode moved left
         if (endVn1 !== startVn2) {
           cPatch.call(endVn1, startVn2);
@@ -138,22 +151,23 @@ class VList {
         cMoveBefore.call(endVn1, nextChild, _anchor);
         endVn1 = ch1[--endIdx1];
         startVn2 = ch2[++startIdx2];
+        continue;
       }
       // -------------------------------------------------------------------
-      else {
-        mapping = mapping || createMapping(ch1, startIdx1, endIdx1);
-        let idxInOld = mapping[startVn2.key];
-        if (idxInOld === undefined) {
-          cMount.call(startVn2, parent, cFirstNode.call(startVn1) || null);
-        } else {
-          const elmToMove = ch1[idxInOld];
-          cMoveBefore.call(elmToMove, startVn1, null);
+      mapping = mapping || createMapping(ch1, startIdx1, endIdx1);
+      let idxInOld = mapping[startKey2];
+      if (idxInOld === undefined) {
+        cMount.call(startVn2, parent, cFirstNode.call(startVn1) || null);
+      } else {
+        const elmToMove = ch1[idxInOld];
+        cMoveBefore.call(elmToMove, startVn1, null);
+        if (elmToMove !== startVn2) {
           cPatch.call(elmToMove, startVn2);
-          ch2[startIdx2] = elmToMove;
-          ch1[idxInOld] = null as any;
         }
-        startVn2 = ch2[++startIdx2];
+        ch2[startIdx2] = elmToMove;
+        ch1[idxInOld] = null as any;
       }
+      startVn2 = ch2[++startIdx2];
     }
     // ---------------------------------------------------------------------
     if (startIdx1 <= endIdx1 || startIdx2 <= endIdx2) {
@@ -175,7 +189,6 @@ class VList {
         }
       }
     }
-    this.children = ch2;
   }
 
   beforeRemove() {

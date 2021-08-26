@@ -25,8 +25,8 @@ function n(n: number) {
   return kText(String(n), n);
 }
 
-const span = createBlock("<span><owl-text-0/></span>");
-const p = createBlock("<p><owl-text-0/></p>");
+const span = createBlock("<span><block-text-0/></span>");
+const p = createBlock("<p><block-text-0/></p>");
 
 function kSpan(str: string, key: any): VNode {
   const block = span([str]);
@@ -73,7 +73,7 @@ describe("list node: misc", () => {
   });
 
   test("patching a list block inside an elem block", async () => {
-    const block = createBlock("<div><owl-child-0/></div>");
+    const block = createBlock("<div><block-child-0/></div>");
     const tree = block();
     mount(tree, fixture);
     expect(fixture.innerHTML).toBe("<div></div>");
@@ -230,7 +230,7 @@ describe("adding/removing elements", () => {
   });
 
   test("adds children: [] => [1,2,3] (inside elem)", () => {
-    const block = createBlock("<p><owl-child-0/></p>");
+    const block = createBlock("<p><block-child-0/></p>");
     const tree = block([], []);
     mount(tree, fixture);
     expect(fixture.innerHTML).toBe("<p></p>");
@@ -240,7 +240,7 @@ describe("adding/removing elements", () => {
   });
 
   test("adds children: [] => [1,2,3] (inside elem, multi)", () => {
-    const block = createBlock("<p><owl-child-0/></p>");
+    const block = createBlock("<p><block-child-0/></p>");
     const tree = block([], []);
     mount(tree, fixture);
     expect(fixture.innerHTML).toBe("<p></p>");
@@ -268,7 +268,7 @@ describe("adding/removing elements", () => {
   });
 
   test("remove children: [1,2,3] => [] (inside elem)", () => {
-    const block = createBlock("<p><owl-child-0/></p>");
+    const block = createBlock("<p><block-child-0/></p>");
     const tree = block([], [list([1, 2, 3].map(n))]);
     mount(tree, fixture);
     expect(fixture.innerHTML).toBe("<p>123</p>");

@@ -6,7 +6,7 @@ exports[`debugging t-debug 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<span>hey</span>\`);
   
   return function template(ctx, node, key = \\"\\") {

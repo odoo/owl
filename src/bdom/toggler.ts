@@ -26,16 +26,17 @@ class VToggler {
   }
 
   patch(other: VToggler) {
-    if (this === other) {
-      return;
-    }
+    let child1 = this.child;
+    let child2 = other.child;
     if (this.key === other.key) {
-      this.child.patch(other.child);
+      if (child1 !== child2) {
+        child1.patch(child2);
+      }
     } else {
-      other.child.mount(this.parentEl!, this.child.firstNode()!);
-      this.child.beforeRemove();
-      this.child.remove();
-      this.child = other.child;
+      child2.mount(this.parentEl!, child1.firstNode()!);
+      child1.beforeRemove();
+      child1.remove();
+      this.child = child2;
       this.key = other.key;
     }
   }

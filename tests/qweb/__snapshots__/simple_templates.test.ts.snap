@@ -104,7 +104,7 @@ exports[`simple templates, mostly static dom node with t-esc 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['text'];
@@ -119,7 +119,7 @@ exports[`simple templates, mostly static dom node with t-esc 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['text'];
@@ -253,7 +253,7 @@ exports[`simple templates, mostly static t-esc in dom node 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['text'];
@@ -268,7 +268,7 @@ exports[`simple templates, mostly static t-esc in dom node, variations 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div>hello <owl-text-0/></div>\`);
+  let block1 = createBlock(\`<div>hello <block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['text'];
@@ -283,7 +283,7 @@ exports[`simple templates, mostly static t-esc in dom node, variations 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div>hello <owl-text-0/> world</div>\`);
+  let block1 = createBlock(\`<div>hello <block-text-0/> world</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['text'];
@@ -326,7 +326,7 @@ exports[`simple templates, mostly static two t-escs next to each other, in a div
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-text-0/><owl-text-1/></div>\`);
+  let block1 = createBlock(\`<div><block-text-0/><block-text-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['text1'];

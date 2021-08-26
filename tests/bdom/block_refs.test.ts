@@ -16,7 +16,7 @@ afterEach(() => {
 });
 
 test("simple callback ref", async () => {
-  const block = createBlock('<div><span owl-ref="0">hey</span></div>');
+  const block = createBlock('<div><span block-ref="0">hey</span></div>');
   let arg: any = undefined;
   let n = 0;
   const refFn = (_arg: any) => {
@@ -46,7 +46,7 @@ test("simple callback ref", async () => {
 
 test("is in dom when callback is called", async () => {
   expect.assertions(1);
-  const block = createBlock('<div><span owl-ref="0">hey</span></div>');
+  const block = createBlock('<div><span block-ref="0">hey</span></div>');
   const refFn = (span: any) => {
     expect(document.body.contains(span)).toBeTruthy();
   };

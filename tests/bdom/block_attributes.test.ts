@@ -16,7 +16,7 @@ afterEach(() => {
 });
 
 test("simple attribute", async () => {
-  const block = createBlock('<div owl-attribute-0="hello"></div>');
+  const block = createBlock('<div block-attribute-0="hello"></div>');
   const tree = block(["world"]);
 
   mount(tree, fixture);
@@ -27,7 +27,7 @@ test("simple attribute", async () => {
 });
 
 test("dynamic attribute (pair)", async () => {
-  const block = createBlock('<div owl-attributes="0"></div>');
+  const block = createBlock('<div block-attributes="0"></div>');
   const tree = block([["hello", "world"]]);
 
   mount(tree, fixture);
@@ -38,7 +38,7 @@ test("dynamic attribute (pair)", async () => {
 });
 
 test("dynamic attribute (object)", async () => {
-  const block = createBlock('<div owl-attributes="0"></div>');
+  const block = createBlock('<div block-attributes="0"></div>');
   const tree = block([{ hello: "world" }]);
 
   mount(tree, fixture);
@@ -49,7 +49,7 @@ test("dynamic attribute (object)", async () => {
 });
 
 test("class attribute", async () => {
-  const block = createBlock('<div owl-attribute-0="class"></div>');
+  const block = createBlock('<div block-attribute-0="class"></div>');
   const tree = block(["fire"]);
 
   mount(tree, fixture);
@@ -63,7 +63,7 @@ test("class attribute", async () => {
 });
 
 test("class attribute (with a preexisting value", async () => {
-  const block = createBlock('<div class="tomato" owl-attribute-0="class"></div>');
+  const block = createBlock('<div class="tomato" block-attribute-0="class"></div>');
   const tree = block(["potato"]);
 
   mount(tree, fixture);
@@ -79,7 +79,7 @@ test("class attribute (with a preexisting value", async () => {
 describe("properties", () => {
   test("input with value attribute", () => {
     // render input with initial value
-    const block = createBlock(`<input owl-attribute-0="value"/>`);
+    const block = createBlock(`<input block-attribute-0="value"/>`);
 
     const tree = block(["zucchini"]);
     mount(tree, fixture);
@@ -101,7 +101,7 @@ describe("properties", () => {
 
   test("input type=checkbox with checked attribute", () => {
     // render input with initial value
-    const block = createBlock(`<input type="checkbox" owl-attribute-0="checked"/>`);
+    const block = createBlock(`<input type="checkbox" block-attribute-0="checked"/>`);
 
     const tree = block([true]);
     mount(tree, fixture);

@@ -6,7 +6,7 @@ exports[`basics no component catching error lead to full app destruction 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div>hey<owl-text-0/></div>\`);
+  let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].flag&&ctx['state'].this.will.crash;
@@ -21,7 +21,7 @@ exports[`basics no component catching error lead to full app destruction 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`ErrorComponent\`, {flag: ctx['state'].flag}, key + \`__1\`, node, ctx);

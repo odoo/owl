@@ -26,12 +26,13 @@ class VToggler {
   }
 
   patch(other: VToggler) {
+    if (this === other) {
+      return;
+    }
     let child1 = this.child;
     let child2 = other.child;
     if (this.key === other.key) {
-      if (child1 !== child2) {
-        child1.patch(child2);
-      }
+      child1.patch(child2);
     } else {
       child2.mount(this.parentEl!, child1.firstNode()!);
       child1.beforeRemove();

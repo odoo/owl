@@ -20,7 +20,7 @@ exports[`change state and call manually render: no unnecessary rendering 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['value'];
@@ -35,7 +35,7 @@ exports[`changing state before first render does not trigger a render (with pare
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['value'];
@@ -50,7 +50,7 @@ exports[`changing state before first render does not trigger a render (with pare
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2;
@@ -68,7 +68,7 @@ exports[`changing state before first render does not trigger a render 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['value'];
@@ -83,7 +83,7 @@ exports[`concurrent renderings scenario 1 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/><owl-text-1/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].fromA;
@@ -99,7 +99,7 @@ exports[`concurrent renderings scenario 1 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p><owl-child-0/></p>\`);
+  let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`ComponentC\`, {fromA: ctx['props'].fromA,fromB: ctx['state'].fromB}, key + \`__1\`, node, ctx);
@@ -114,7 +114,7 @@ exports[`concurrent renderings scenario 1 3`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
@@ -129,7 +129,7 @@ exports[`concurrent renderings scenario 2 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/><owl-text-1/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].fromA;
@@ -145,7 +145,7 @@ exports[`concurrent renderings scenario 2 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p><owl-child-0/></p>\`);
+  let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`ComponentC\`, {fromA: ctx['props'].fromA,fromB: ctx['state'].fromB}, key + \`__1\`, node, ctx);
@@ -160,7 +160,7 @@ exports[`concurrent renderings scenario 2 3`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-text-0/><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-text-0/><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['state'].fromA;
@@ -176,7 +176,7 @@ exports[`concurrent renderings scenario 2bis 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/><owl-text-1/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].fromA;
@@ -192,7 +192,7 @@ exports[`concurrent renderings scenario 2bis 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p><owl-child-0/></p>\`);
+  let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`ComponentC\`, {fromA: ctx['props'].fromA,fromB: ctx['state'].fromB}, key + \`__1\`, node, ctx);
@@ -207,7 +207,7 @@ exports[`concurrent renderings scenario 2bis 3`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
@@ -222,7 +222,7 @@ exports[`concurrent renderings scenario 3 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<i><owl-text-0/><owl-text-1/></i>\`);
+  let block1 = createBlock(\`<i><block-text-0/><block-text-1/></i>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].fromA;
@@ -238,7 +238,7 @@ exports[`concurrent renderings scenario 3 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`ComponentD\`, {fromA: ctx['props'].fromA,fromC: ctx['state'].fromC}, key + \`__1\`, node, ctx);
@@ -253,7 +253,7 @@ exports[`concurrent renderings scenario 3 3`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p><owl-child-0/></p>\`);
+  let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`ComponentC\`, {fromA: ctx['props'].fromA}, key + \`__1\`, node, ctx);
@@ -268,7 +268,7 @@ exports[`concurrent renderings scenario 3 4`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
@@ -283,7 +283,7 @@ exports[`concurrent renderings scenario 4 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<i><owl-text-0/><owl-text-1/></i>\`);
+  let block1 = createBlock(\`<i><block-text-0/><block-text-1/></i>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].fromA;
@@ -299,7 +299,7 @@ exports[`concurrent renderings scenario 4 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`ComponentD\`, {fromA: ctx['props'].fromA,fromC: ctx['state'].fromC}, key + \`__1\`, node, ctx);
@@ -314,7 +314,7 @@ exports[`concurrent renderings scenario 4 3`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p><owl-child-0/></p>\`);
+  let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`ComponentC\`, {fromA: ctx['props'].fromA}, key + \`__1\`, node, ctx);
@@ -329,7 +329,7 @@ exports[`concurrent renderings scenario 4 4`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
@@ -344,7 +344,7 @@ exports[`concurrent renderings scenario 5 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p><owl-text-0/></p>\`);
+  let block1 = createBlock(\`<p><block-text-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['someValue']();
@@ -359,7 +359,7 @@ exports[`concurrent renderings scenario 5 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
@@ -374,7 +374,7 @@ exports[`concurrent renderings scenario 6 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p><owl-text-0/></p>\`);
+  let block1 = createBlock(\`<p><block-text-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['someValue']();
@@ -389,7 +389,7 @@ exports[`concurrent renderings scenario 6 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
@@ -404,7 +404,7 @@ exports[`concurrent renderings scenario 7 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p><owl-text-0/><owl-text-1/></p>\`);
+  let block1 = createBlock(\`<p><block-text-0/><block-text-1/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].fromA;
@@ -420,7 +420,7 @@ exports[`concurrent renderings scenario 7 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
@@ -435,7 +435,7 @@ exports[`concurrent renderings scenario 8 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p><owl-text-0/><owl-text-1/></p>\`);
+  let block1 = createBlock(\`<p><block-text-0/><block-text-1/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].fromA;
@@ -451,7 +451,7 @@ exports[`concurrent renderings scenario 8 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
@@ -466,7 +466,7 @@ exports[`concurrent renderings scenario 9 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/><owl-text-1/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].fromA;
@@ -482,7 +482,7 @@ exports[`concurrent renderings scenario 9 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p><owl-child-0/></p>\`);
+  let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`ComponentD\`, {fromA: ctx['props'].fromA,fromC: ctx['state'].fromC}, key + \`__1\`, node, ctx);
@@ -497,7 +497,7 @@ exports[`concurrent renderings scenario 9 3`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<b><owl-text-0/></b>\`);
+  let block1 = createBlock(\`<b><block-text-0/></b>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].fromA;
@@ -512,7 +512,7 @@ exports[`concurrent renderings scenario 9 4`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-text-0/><owl-child-0/><owl-child-1/></div>\`);
+  let block1 = createBlock(\`<div><block-text-0/><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['state'].fromA;
@@ -529,7 +529,7 @@ exports[`concurrent renderings scenario 10 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['value'];
@@ -544,7 +544,7 @@ exports[`concurrent renderings scenario 10 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p><owl-child-0/></p>\`);
+  let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2;
@@ -562,7 +562,7 @@ exports[`concurrent renderings scenario 10 3`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`ComponentB\`, {value: ctx['state'].value}, key + \`__1\`, node, ctx);
@@ -577,7 +577,7 @@ exports[`concurrent renderings scenario 11 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/>|<owl-text-1/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/>|<block-text-1/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].val;
@@ -593,7 +593,7 @@ exports[`concurrent renderings scenario 11 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`Child\`, {val: ctx['state'].valA}, key + \`__1\`, node, ctx);
@@ -608,7 +608,7 @@ exports[`concurrent renderings scenario 12 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].val;
@@ -623,7 +623,7 @@ exports[`concurrent renderings scenario 12 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`Child\`, {val: ctx['val']}, key + \`__1\`, node, ctx);
@@ -638,7 +638,7 @@ exports[`concurrent renderings scenario 13 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['state'].val;
@@ -653,7 +653,7 @@ exports[`concurrent renderings scenario 13 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2,b3;
@@ -672,7 +672,7 @@ exports[`concurrent renderings scenario 14 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p><span><owl-text-0/></span><span><owl-text-1/></span><span><owl-text-2/></span></p>\`);
+  let block1 = createBlock(\`<p><span><block-text-0/></span><span><block-text-1/></span><span><block-text-2/></span></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].fromA;
@@ -689,7 +689,7 @@ exports[`concurrent renderings scenario 14 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p><owl-child-0/></p>\`);
+  let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`C\`, {fromB: ctx['state'].fromB,fromA: ctx['props'].fromA}, key + \`__1\`, node, ctx);
@@ -704,7 +704,7 @@ exports[`concurrent renderings scenario 14 3`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p><owl-child-0/></p>\`);
+  let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`B\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
@@ -719,7 +719,7 @@ exports[`concurrent renderings scenario 15 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p><span><owl-text-0/></span><span><owl-text-1/></span><span><owl-text-2/></span></p>\`);
+  let block1 = createBlock(\`<p><span><block-text-0/></span><span><block-text-1/></span><span><block-text-2/></span></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].fromA;
@@ -736,7 +736,7 @@ exports[`concurrent renderings scenario 15 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p><owl-child-0/></p>\`);
+  let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`C\`, {fromB: ctx['state'].fromB,fromA: ctx['props'].fromA}, key + \`__1\`, node, ctx);
@@ -751,7 +751,7 @@ exports[`concurrent renderings scenario 15 3`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p><owl-child-0/></p>\`);
+  let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`B\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
@@ -780,7 +780,7 @@ exports[`concurrent renderings scenario 16 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p><span><owl-text-0/></span><span><owl-text-1/></span><span><owl-text-2/></span><owl-child-0/></p>\`);
+  let block1 = createBlock(\`<p><span><block-text-0/></span><span><block-text-1/></span><span><block-text-2/></span><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2;
@@ -801,7 +801,7 @@ exports[`concurrent renderings scenario 16 3`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p><owl-child-0/></p>\`);
+  let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`C\`, {fromB: ctx['state'].fromB,fromA: ctx['props'].fromA}, key + \`__1\`, node, ctx);
@@ -816,7 +816,7 @@ exports[`concurrent renderings scenario 16 4`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p><owl-child-0/></p>\`);
+  let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`B\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
@@ -831,7 +831,7 @@ exports[`creating two async components, scenario 1 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['getValue']();
@@ -879,7 +879,7 @@ exports[`creating two async components, scenario 2 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span>a<owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span>a<block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].val;
@@ -894,7 +894,7 @@ exports[`creating two async components, scenario 2 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span>b<owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span>b<block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].val;
@@ -909,7 +909,7 @@ exports[`creating two async components, scenario 2 3`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2,b3;
@@ -928,7 +928,7 @@ exports[`creating two async components, scenario 3 (patching in the same frame) 
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span>a<owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span>a<block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].val;
@@ -943,7 +943,7 @@ exports[`creating two async components, scenario 3 (patching in the same frame) 
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span>b<owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span>b<block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].val;
@@ -958,7 +958,7 @@ exports[`creating two async components, scenario 3 (patching in the same frame) 
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2,b3;
@@ -977,7 +977,7 @@ exports[`destroying/recreating a subwidget with different props (if start is not
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span>child:<owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span>child:<block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].val;
@@ -992,7 +992,7 @@ exports[`destroying/recreating a subwidget with different props (if start is not
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2;
@@ -1024,7 +1024,7 @@ exports[`properly behave when destroyed/unmounted while rendering  2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`SubChild\`, {}, key + \`__1\`, node, ctx);
@@ -1039,7 +1039,7 @@ exports[`properly behave when destroyed/unmounted while rendering  3`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2;
@@ -1057,7 +1057,7 @@ exports[`render method wait until rendering is done 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['state'].drinks;
@@ -1086,7 +1086,7 @@ exports[`rendering component again in next microtick 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><button owl-handler-0=\\"click\\">Click</button><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><button block-handler-0=\\"click\\">Click</button><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2;
@@ -1105,7 +1105,7 @@ exports[`two renderings initiated between willPatch and patched 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<abc><owl-text-0/></abc>\`);
+  let block1 = createBlock(\`<abc><block-text-0/></abc>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].val;
@@ -1120,7 +1120,7 @@ exports[`two renderings initiated between willPatch and patched 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2;
@@ -1138,7 +1138,7 @@ exports[`update a sub-component twice in the same frame 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].val;
@@ -1153,7 +1153,7 @@ exports[`update a sub-component twice in the same frame 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`ChildA\`, {val: ctx['state'].valA}, key + \`__1\`, node, ctx);
@@ -1168,7 +1168,7 @@ exports[`update a sub-component twice in the same frame, 2 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['val']();
@@ -1183,7 +1183,7 @@ exports[`update a sub-component twice in the same frame, 2 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`ChildA\`, {val: ctx['state'].valA}, key + \`__1\`, node, ctx);

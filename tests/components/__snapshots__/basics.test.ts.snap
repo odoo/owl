@@ -78,7 +78,7 @@ exports[`basics a component inside a component 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
@@ -93,7 +93,7 @@ exports[`basics can be clicked on and updated 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-text-0/><button owl-handler-1=\\"click\\">Inc</button></div>\`);
+  let block1 = createBlock(\`<div><block-text-0/><button block-handler-1=\\"click\\">Inc</button></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['state'].counter;
@@ -110,7 +110,7 @@ exports[`basics can handle empty props 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].val;
@@ -125,7 +125,7 @@ exports[`basics can handle empty props 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`Child\`, {val: undefined}, key + \`__1\`, node, ctx);
@@ -195,7 +195,7 @@ exports[`basics can mount a simple component with props 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].value;
@@ -248,7 +248,7 @@ exports[`basics class component with dynamic text 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span>My value: <owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span>My value: <block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['value'];
@@ -263,7 +263,7 @@ exports[`basics class parent, class child component with props 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].value;
@@ -290,7 +290,7 @@ exports[`basics component with dynamic content can be updated 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['value'];
@@ -319,7 +319,7 @@ exports[`basics do not remove previously rendered dom if not necessary, variatio
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><h1>h1</h1><span><owl-text-0/></span></div>\`);
+  let block1 = createBlock(\`<div><h1>h1</h1><span><block-text-0/></span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['state'].value;
@@ -472,7 +472,7 @@ exports[`basics reconciliation alg is not confused in some specific situation 2`
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
@@ -488,7 +488,7 @@ exports[`basics same t-keys in two different places 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].blip;
@@ -503,7 +503,7 @@ exports[`basics same t-keys in two different places 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><div><owl-child-0/></div><div><owl-child-1/></div></div>\`);
+  let block1 = createBlock(\`<div><div><block-child-0/></div><div><block-child-1/></div></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`Child\`, {blip: '1'}, key + \`__1\`, node, ctx);
@@ -519,7 +519,7 @@ exports[`basics simple component with a dynamic text 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['value'];
@@ -534,7 +534,7 @@ exports[`basics simple component, useState 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['state'].value;
@@ -577,7 +577,7 @@ exports[`basics t-elif works with t-component 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   let block2 = createBlock(\`<div>somediv</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
@@ -612,7 +612,7 @@ exports[`basics t-else with empty string works with t-component 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   let block2 = createBlock(\`<div>somediv</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
@@ -647,7 +647,7 @@ exports[`basics t-else works with t-component 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   let block2 = createBlock(\`<div>somediv</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
@@ -682,7 +682,7 @@ exports[`basics t-if works with t-component 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2;
@@ -714,7 +714,7 @@ exports[`basics t-key on a component with t-if, and a sibling component 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2,b3;
@@ -747,7 +747,7 @@ exports[`basics text after a conditional component 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/><span><owl-text-0/></span></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><span><block-text-0/></span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2;
@@ -879,7 +879,7 @@ exports[`basics widget after a t-foreach 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);

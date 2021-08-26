@@ -6,7 +6,7 @@ exports[`refs refs are properly bound in slots 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'footer');
@@ -22,8 +22,8 @@ exports[`refs refs are properly bound in slots 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><span class=\\"counter\\"><owl-text-0/></span><owl-child-0/></div>\`);
-  let block2 = createBlock(\`<button owl-handler-0=\\"click\\" owl-ref=\\"1\\">do something</button>\`);
+  let block1 = createBlock(\`<div><span class=\\"counter\\"><block-text-0/></span><block-child-0/></div>\`);
+  let block2 = createBlock(\`<button block-handler-0=\\"click\\" block-ref=\\"1\\">do something</button>\`);
   
   const slot3 = ctx => node => {
     const refs = ctx.__owl__.refs

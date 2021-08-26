@@ -643,9 +643,7 @@ function createBlockClass(
           const child2 = children2![i];
           if (child1) {
             if (child2) {
-              if (child1 !== child2) {
-                child1.patch(child2);
-              }
+              child1.patch(child2);
             } else {
               child1.beforeRemove();
               child1.remove();

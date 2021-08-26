@@ -38,6 +38,9 @@ class VHtml {
   }
 
   patch(other: VHtml) {
+    if (this === other) {
+      return;
+    }
     const html2 = other.html;
     if (this.html !== html2) {
       const parent = this.parentEl;

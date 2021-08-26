@@ -45,6 +45,9 @@ class VList {
   }
 
   patch(other: VList) {
+    if (this === other) {
+      return;
+    }
     const ch1 = this.children;
     const ch2: VNode[] = other.children;
     if (ch2.length === 0 && ch1.length === 0) {
@@ -107,10 +110,8 @@ class VList {
       let startKey1 = startVn1.key;
       let startKey2 = startVn2.key;
       if (startKey1 === startKey2) {
-        if (startVn1 !== startVn2) {
-          cPatch.call(startVn1, startVn2);
-          ch2[startIdx2] = startVn1;
-        }
+        cPatch.call(startVn1, startVn2);
+        ch2[startIdx2] = startVn1;
         startVn1 = ch1[++startIdx1];
         startVn2 = ch2[++startIdx2];
         continue;
@@ -119,10 +120,8 @@ class VList {
       let endKey1 = endVn1.key;
       let endKey2 = endVn2.key;
       if (endKey1 === endKey2) {
-        if (endVn1 !== endVn2) {
-          cPatch.call(endVn1, endVn2);
-          ch2[endIdx2] = endVn1;
-        }
+        cPatch.call(endVn1, endVn2);
+        ch2[endIdx2] = endVn1;
         endVn1 = ch1[--endIdx1];
         endVn2 = ch2[--endIdx2];
         continue;
@@ -130,10 +129,8 @@ class VList {
       // -------------------------------------------------------------------
       if (startKey1 === endKey2) {
         // bnode moved right
-        if (startVn1 !== endVn2) {
-          cPatch.call(startVn1, endVn2);
-          ch2[endIdx2] = startVn1;
-        }
+        cPatch.call(startVn1, endVn2);
+        ch2[endIdx2] = startVn1;
         const nextChild = ch2[endIdx2 + 1];
         cMoveBefore.call(startVn1, nextChild, _anchor);
         startVn1 = ch1[++startIdx1];
@@ -143,10 +140,8 @@ class VList {
       // -------------------------------------------------------------------
       if (endKey1 === startKey2) {
         // bnode moved left
-        if (endVn1 !== startVn2) {
-          cPatch.call(endVn1, startVn2);
-          ch2[startIdx2] = endVn1;
-        }
+        cPatch.call(endVn1, startVn2);
+        ch2[startIdx2] = endVn1;
         const nextChild = ch1[startIdx1];
         cMoveBefore.call(endVn1, nextChild, _anchor);
         endVn1 = ch1[--endIdx1];
@@ -161,9 +156,7 @@ class VList {
       } else {
         const elmToMove = ch1[idxInOld];
         cMoveBefore.call(elmToMove, startVn1, null);
-        if (elmToMove !== startVn2) {
-          cPatch.call(elmToMove, startVn2);
-        }
+        cPatch.call(elmToMove, startVn2);
         ch2[startIdx2] = elmToMove;
         ch1[idxInOld] = null as any;
       }

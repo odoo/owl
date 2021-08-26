@@ -7,7 +7,7 @@ exports[`style and class handling can set class on multi root component 1`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
   let block2 = createBlock(\`<div>a</div>\`);
-  let block3 = createBlock(\`<span owl-attribute-0=\\"class\\">b</span>\`);
+  let block3 = createBlock(\`<span block-attribute-0=\\"class\\">b</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = block2();
@@ -36,7 +36,7 @@ exports[`style and class handling can set class on sub component, as prop 1`] = 
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div owl-attribute-0=\\"class\\">child</div>\`);
+  let block1 = createBlock(\`<div block-attribute-0=\\"class\\">child</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].class;
@@ -63,7 +63,7 @@ exports[`style and class handling can set class on sub sub component 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div owl-attribute-0=\\"class\\">childchild</div>\`);
+  let block1 = createBlock(\`<div block-attribute-0=\\"class\\">childchild</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].class;
@@ -102,7 +102,7 @@ exports[`style and class handling can set more than one class on sub component 1
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div owl-attribute-0=\\"class\\">child</div>\`);
+  let block1 = createBlock(\`<div block-attribute-0=\\"class\\">child</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].class;
@@ -143,7 +143,7 @@ exports[`style and class handling class on sub component, which is switched to a
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div owl-attribute-0=\\"class\\">a</div>\`);
+  let block1 = createBlock(\`<div block-attribute-0=\\"class\\">a</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].class;
@@ -158,7 +158,7 @@ exports[`style and class handling class on sub component, which is switched to a
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span owl-attribute-0=\\"class\\">b</span>\`);
+  let block1 = createBlock(\`<span block-attribute-0=\\"class\\">b</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].class;
@@ -203,7 +203,7 @@ exports[`style and class handling class with extra whitespaces (variation) 1`] =
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div owl-attribute-0=\\"class\\"/>\`);
+  let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].class;
@@ -218,7 +218,7 @@ exports[`style and class handling class with extra whitespaces (variation) 2`] =
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p><owl-child-0/></p>\`);
+  let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`Child\`, {class: 'a  b c   d'}, key + \`__1\`, node, ctx);
@@ -233,7 +233,7 @@ exports[`style and class handling class with extra whitespaces 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div owl-attribute-0=\\"class\\"/>\`);
+  let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].class;
@@ -260,7 +260,7 @@ exports[`style and class handling component class and parent class combine toget
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div class=\\"child\\" owl-attribute-0=\\"class\\">child</div>\`);
+  let block1 = createBlock(\`<div class=\\"child\\" block-attribute-0=\\"class\\">child</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].class;
@@ -287,7 +287,7 @@ exports[`style and class handling empty class attribute is not added on widget r
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span owl-attribute-0=\\"class\\"/>\`);
+  let block1 = createBlock(\`<span block-attribute-0=\\"class\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].class;
@@ -302,7 +302,7 @@ exports[`style and class handling empty class attribute is not added on widget r
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`Child\`, {class: undefined}, key + \`__1\`, node, ctx);
@@ -343,7 +343,7 @@ exports[`style and class handling no class is set is parent does not give it as 
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div owl-attribute-0=\\"class\\">child</div>\`);
+  let block1 = createBlock(\`<div block-attribute-0=\\"class\\">child</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].class;
@@ -370,7 +370,7 @@ exports[`style and class handling t-att-class is properly added/removed on widge
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span class=\\"c\\" owl-attribute-0=\\"class\\"/>\`);
+  let block1 = createBlock(\`<span class=\\"c\\" block-attribute-0=\\"class\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = {d:ctx['state'].d,...ctx['props'].class};
@@ -385,7 +385,7 @@ exports[`style and class handling t-att-class is properly added/removed on widge
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`Child\`, {class: {b:ctx['state'].b}}, key + \`__1\`, node, ctx);

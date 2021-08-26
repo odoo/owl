@@ -34,7 +34,7 @@ exports[`t-component can switch between dynamic components without the need for 
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let Comp2 = ctx['constructor'].components[ctx['state'].child];
@@ -132,7 +132,7 @@ exports[`t-component modifying a sub widget 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-text-0/><button owl-handler-1=\\"click\\">Inc</button></div>\`);
+  let block1 = createBlock(\`<div><block-text-0/><button block-handler-1=\\"click\\">Inc</button></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['state'].counter;
@@ -149,7 +149,7 @@ exports[`t-component modifying a sub widget 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let Comp2 = ctx['Counter'];

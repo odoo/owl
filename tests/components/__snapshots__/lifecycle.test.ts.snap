@@ -50,7 +50,7 @@ exports[`lifecycle hooks components are unmounted and destroyed if no longer in 
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].n;
@@ -65,7 +65,7 @@ exports[`lifecycle hooks components are unmounted and destroyed if no longer in 
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block2 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block2 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2;
@@ -98,7 +98,7 @@ exports[`lifecycle hooks hooks are called in proper order in widget creation/des
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
@@ -127,7 +127,7 @@ exports[`lifecycle hooks lifecycle semantics 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`Child\`, {a: ctx['state'].a}, key + \`__1\`, node, ctx);
@@ -352,7 +352,7 @@ exports[`lifecycle hooks mounted hook is called on subcomponents, in proper orde
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
@@ -381,7 +381,7 @@ exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper o
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`ChildChild\`, {}, key + \`__1\`, node, ctx);
@@ -396,7 +396,7 @@ exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper o
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2;
@@ -414,7 +414,7 @@ exports[`lifecycle hooks onRender 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<button owl-handler-0=\\"click\\"><owl-text-1/></button>\`);
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = [ctx, 'increment'];
@@ -456,7 +456,7 @@ exports[`lifecycle hooks patched hook is called after updateProps 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`Child\`, {a: ctx['state'].a}, key + \`__1\`, node, ctx);
@@ -485,7 +485,7 @@ exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents,
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].n;
@@ -500,7 +500,7 @@ exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents,
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`ChildChild\`, {n: ctx['props'].n}, key + \`__1\`, node, ctx);
@@ -515,7 +515,7 @@ exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents,
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`Child\`, {n: ctx['state'].n}, key + \`__1\`, node, ctx);
@@ -598,7 +598,7 @@ exports[`lifecycle hooks willStart, mounted on subwidget rendered after main is 
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   let block3 = createBlock(\`<div/>\`);
   
   return function template(ctx, node, key = \\"\\") {
@@ -619,7 +619,7 @@ exports[`lifecycle hooks willUpdateProps hook is called 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].n;

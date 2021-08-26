@@ -6,7 +6,7 @@ exports[`slots can define and call slots 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><div><owl-child-0/></div><div><owl-child-1/></div></div>\`);
+  let block1 = createBlock(\`<div><div><block-child-0/></div><div><block-child-1/></div></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'header');
@@ -23,7 +23,7 @@ exports[`slots can define and call slots 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<span>header</span>\`);
   let block3 = createBlock(\`<span>footer</span>\`);
   
@@ -80,7 +80,7 @@ exports[`slots content is the default slot 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'default');
@@ -96,7 +96,7 @@ exports[`slots content is the default slot 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<span>sts rocks</span>\`);
   
   const slot2 = ctx => (node, key) => {
@@ -116,7 +116,7 @@ exports[`slots dafault slots can define a default content 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   const defaultSlot1 = ctx => {
     return text(\`default content\`);
@@ -135,7 +135,7 @@ exports[`slots dafault slots can define a default content 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`Dialog\`, {}, key + \`__1\`, node, ctx);
@@ -150,7 +150,7 @@ exports[`slots default content is not rendered if named slot is provided 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   const defaultSlot1 = ctx => {
     return text(\`default content\`);
@@ -170,7 +170,7 @@ exports[`slots default content is not rendered if named slot is provided 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot3 = ctx => (node, key) => {
     return text(\`hey\`);
@@ -190,7 +190,7 @@ exports[`slots default content is not rendered if slot is provided 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   const defaultSlot1 = ctx => {
     return text(\`default content\`);
@@ -210,7 +210,7 @@ exports[`slots default content is not rendered if slot is provided 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
     return text(\`hey\`);
@@ -229,7 +229,7 @@ exports[`slots default slot next to named slot, with default content 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div class=\\"Dialog\\"><div class=\\"content\\"><owl-child-0/></div><div class=\\"footer\\"><owl-child-1/></div></div>\`);
+  let block1 = createBlock(\`<div class=\\"Dialog\\"><div class=\\"content\\"><block-child-0/></div><div class=\\"footer\\"><block-child-1/></div></div>\`);
   
   const defaultSlot1 = ctx => {
     return text(\` Default content \`);
@@ -254,7 +254,7 @@ exports[`slots default slot next to named slot, with default content 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot3 = ctx => (node, key) => {
     return text(\` Overridden footer \`);
@@ -303,7 +303,7 @@ exports[`slots default slot work with text nodes 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'default');
@@ -319,7 +319,7 @@ exports[`slots default slot work with text nodes 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
     return text(\`sts rocks\`);
@@ -338,7 +338,7 @@ exports[`slots dynamic t-slot call 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<button owl-handler-0=\\"click\\"><owl-child-0/></button>\`);
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-child-0/></button>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = [ctx, 'toggle'];
@@ -356,7 +356,7 @@ exports[`slots dynamic t-slot call 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<p>slot1</p>\`);
   let block4 = createBlock(\`<span>content</span>\`);
   let block5 = createBlock(\`<h1>slot2</h1>\`);
@@ -385,7 +385,7 @@ exports[`slots dynamic t-slot call with default 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<button owl-handler-0=\\"click\\"><owl-child-0/></button>\`);
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-child-0/></button>\`);
   
   const defaultSlot1 = ctx => {
     return text(\` owl \`);
@@ -406,7 +406,7 @@ exports[`slots dynamic t-slot call with default 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<p>slot1</p>\`);
   let block4 = createBlock(\`<span>content</span>\`);
   let block5 = createBlock(\`<h1>slot2</h1>\`);
@@ -466,7 +466,7 @@ exports[`slots missing slots are ignored 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/><span>some content</span><owl-child-1/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/><span>some content</span><block-child-1/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'default');
@@ -482,7 +482,7 @@ exports[`slots missing slots are ignored 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`Dialog\`, {}, key + \`__1\`, node, ctx);
@@ -497,7 +497,7 @@ exports[`slots multiple roots are allowed in a default slot 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'default');
@@ -513,7 +513,7 @@ exports[`slots multiple roots are allowed in a default slot 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<span>sts</span>\`);
   let block4 = createBlock(\`<span>rocks</span>\`);
   
@@ -536,7 +536,7 @@ exports[`slots multiple roots are allowed in a named slot 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'content');
@@ -552,7 +552,7 @@ exports[`slots multiple roots are allowed in a named slot 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<span>sts</span>\`);
   let block4 = createBlock(\`<span>rocks</span>\`);
   
@@ -576,7 +576,7 @@ exports[`slots multiple slots containing components 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].val;
@@ -591,7 +591,7 @@ exports[`slots multiple slots containing components 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 's1');
@@ -629,7 +629,7 @@ exports[`slots named slot inside slot 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'brol');
@@ -646,9 +646,9 @@ exports[`slots named slot inside slot 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
-  let block2 = createBlock(\`<p>A<owl-text-0/></p>\`);
-  let block3 = createBlock(\`<p>B<owl-text-0/></p>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block2 = createBlock(\`<p>A<block-text-0/></p>\`);
+  let block3 = createBlock(\`<p>B<block-text-0/></p>\`);
   
   const slot3 = ctx => (node, key) => {
     let d1 = ctx['value'];
@@ -679,7 +679,7 @@ exports[`slots named slot inside slot, part 3 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/><owl-child-1/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'brol');
@@ -696,9 +696,9 @@ exports[`slots named slot inside slot, part 3 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
-  let block2 = createBlock(\`<p>A<owl-text-0/></p>\`);
-  let block3 = createBlock(\`<p>B<owl-text-0/></p>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block2 = createBlock(\`<p>A<block-text-0/></p>\`);
+  let block3 = createBlock(\`<p>B<block-text-0/></p>\`);
   
   const slot3 = ctx => (node, key) => {
     let d1 = ctx['value'];
@@ -729,7 +729,7 @@ exports[`slots named slots can define a default content 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   const defaultSlot1 = ctx => {
     return text(\`default content\`);
@@ -748,7 +748,7 @@ exports[`slots named slots can define a default content 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`Dialog\`, {}, key + \`__1\`, node, ctx);
@@ -763,7 +763,7 @@ exports[`slots named slots inside slot, again 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<child><owl-child-0/><owl-child-1/><owl-child-2/></child>\`);
+  let block1 = createBlock(\`<child><block-child-0/><block-child-1/><block-child-2/></child>\`);
   
   const defaultSlot1 = ctx => {
     return text(\`default1\`);
@@ -789,9 +789,9 @@ exports[`slots named slots inside slot, again 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
-  let block2 = createBlock(\`<p>A<owl-text-0/></p>\`);
-  let block3 = createBlock(\`<p>B<owl-text-0/></p>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block2 = createBlock(\`<p>A<block-text-0/></p>\`);
+  let block3 = createBlock(\`<p>B<block-text-0/></p>\`);
   
   const slot3 = ctx => (node, key) => {
     let d1 = ctx['value'];
@@ -822,7 +822,7 @@ exports[`slots nested slots in same template 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span id=\\"c1\\"><div><owl-child-0/></div></span>\`);
+  let block1 = createBlock(\`<span id=\\"c1\\"><div><block-child-0/></div></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'default');
@@ -837,7 +837,7 @@ exports[`slots nested slots in same template 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span id=\\"c2\\"><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span id=\\"c2\\"><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'default');
@@ -867,7 +867,7 @@ exports[`slots nested slots in same template 4`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<span id=\\"parent\\"><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span id=\\"parent\\"><block-child-0/></span>\`);
   
   const slot2 = ctx => (node, key) => {
     return assign(component(\`Child2\`, {}, key + \`__3\`, node, ctx), {slots: {'default': slot4(ctx)}});
@@ -890,7 +890,7 @@ exports[`slots nested slots: evaluation context and parented relationship 1`] = 
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].val;
@@ -905,7 +905,7 @@ exports[`slots nested slots: evaluation context and parented relationship 2`] = 
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'default');
@@ -954,7 +954,7 @@ exports[`slots no named slot content => just no children 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'header');
@@ -981,7 +981,7 @@ exports[`slots simple default slot 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'default');
@@ -1056,7 +1056,7 @@ exports[`slots slot and (inline) t-call 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'default');
@@ -1073,7 +1073,7 @@ exports[`slots slot and (inline) t-call 3`] = `
   let assign = Object.assign;
   const callTemplate_5 = getTemplate(\`__template__9\`);
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot3 = ctx => (node, key) => {
     return callTemplate_5(ctx, node, key + \`__4\`);
@@ -1093,7 +1093,7 @@ exports[`slots slot and (inline) t-esc 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'default');
@@ -1109,7 +1109,7 @@ exports[`slots slot and (inline) t-esc 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
     return text('toph');
@@ -1142,7 +1142,7 @@ exports[`slots slot and t-call 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'default');
@@ -1159,7 +1159,7 @@ exports[`slots slot and t-call 3`] = `
   let assign = Object.assign;
   const callTemplate_5 = getTemplate(\`__template__9\`);
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot3 = ctx => (node, key) => {
     return callTemplate_5(ctx, node, key + \`__4\`);
@@ -1179,7 +1179,7 @@ exports[`slots slot and t-esc 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'default');
@@ -1195,7 +1195,7 @@ exports[`slots slot and t-esc 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
     return text('toph');
@@ -1214,7 +1214,7 @@ exports[`slots slot are properly rendered if inner props are changed 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div> SC:<owl-text-0/></div>\`);
+  let block1 = createBlock(\`<div> SC:<block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].val;
@@ -1229,7 +1229,7 @@ exports[`slots slot are properly rendered if inner props are changed 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'default');
@@ -1245,7 +1245,7 @@ exports[`slots slot are properly rendered if inner props are changed 3`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><button owl-handler-0=\\"click\\">Inc[<owl-text-1/>]</button><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><button block-handler-0=\\"click\\">Inc[<block-text-1/>]</button><block-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
     return component(\`SomeComponent\`, {val: ctx['state'].val}, key + \`__3\`, node, ctx);
@@ -1266,7 +1266,7 @@ exports[`slots slot content is bound to caller 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'default');
@@ -1282,7 +1282,7 @@ exports[`slots slot content is bound to caller 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<button owl-handler-0=\\"click\\">some text</button>\`);
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\">some text</button>\`);
   
   const slot2 = ctx => (node, key) => {
     let d1 = [ctx, 'inc'];
@@ -1326,7 +1326,7 @@ exports[`slots slot preserves properly parented relationship 3`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
     return component(\`GrandChild\`, {}, key + \`__3\`, node, ctx);
@@ -1383,7 +1383,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
   let assign = Object.assign;
   const callTemplate_5 = getTemplate(\`sub\`);
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot3 = ctx => (node, key) => {
     return callTemplate_5(ctx, node, key + \`__4\`);
@@ -1403,7 +1403,7 @@ exports[`slots slots and wrapper components 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<a href=\\"abc\\"><owl-child-0/></a>\`);
+  let block1 = createBlock(\`<a href=\\"abc\\"><block-child-0/></a>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'default');
@@ -1435,7 +1435,7 @@ exports[`slots slots are rendered with proper context 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'footer');
@@ -1451,8 +1451,8 @@ exports[`slots slots are rendered with proper context 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><span class=\\"counter\\"><owl-text-0/></span><owl-child-0/></div>\`);
-  let block2 = createBlock(\`<button owl-handler-0=\\"click\\">do something</button>\`);
+  let block1 = createBlock(\`<div><span class=\\"counter\\"><block-text-0/></span><block-child-0/></div>\`);
+  let block2 = createBlock(\`<button block-handler-0=\\"click\\">do something</button>\`);
   
   const slot3 = ctx => (node, key) => {
     let d2 = [ctx, 'doSomething'];
@@ -1474,7 +1474,7 @@ exports[`slots slots are rendered with proper context, part 2 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<a owl-attribute-0=\\"href\\"><owl-child-0/></a>\`);
+  let block1 = createBlock(\`<a block-attribute-0=\\"href\\"><block-child-0/></a>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].to;
@@ -1491,8 +1491,8 @@ exports[`slots slots are rendered with proper context, part 2 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><u><owl-child-0/></u></div>\`);
-  let block3 = createBlock(\`<li><owl-child-0/></li>\`);
+  let block1 = createBlock(\`<div><u><block-child-0/></u></div>\`);
+  let block3 = createBlock(\`<li><block-child-0/></li>\`);
   
   const slot3 = ctx => (node, key) => {
     let b5 = text(\`User \`);
@@ -1522,7 +1522,7 @@ exports[`slots slots are rendered with proper context, part 3 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<a owl-attribute-0=\\"href\\"><owl-child-0/></a>\`);
+  let block1 = createBlock(\`<a block-attribute-0=\\"href\\"><block-child-0/></a>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].to;
@@ -1539,8 +1539,8 @@ exports[`slots slots are rendered with proper context, part 3 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><u><owl-child-0/></u></div>\`);
-  let block3 = createBlock(\`<li><owl-child-0/></li>\`);
+  let block1 = createBlock(\`<div><u><block-child-0/></u></div>\`);
+  let block3 = createBlock(\`<li><block-child-0/></li>\`);
   
   const slot3 = ctx => (node, key) => {
     return text(ctx['userdescr']);
@@ -1570,7 +1570,7 @@ exports[`slots slots are rendered with proper context, part 4 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<a owl-attribute-0=\\"href\\"><owl-child-0/></a>\`);
+  let block1 = createBlock(\`<a block-attribute-0=\\"href\\"><block-child-0/></a>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].to;
@@ -1587,7 +1587,7 @@ exports[`slots slots are rendered with proper context, part 4 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot3 = ctx => (node, key) => {
     return text(ctx['userdescr']);
@@ -1609,7 +1609,7 @@ exports[`slots slots in slots, with vars 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'default');
@@ -1625,7 +1625,7 @@ exports[`slots slots in slots, with vars 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
     return callSlot(ctx, node, key, 'default');
@@ -1645,8 +1645,8 @@ exports[`slots slots in slots, with vars 3`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
-  let block2 = createBlock(\`<p>hey<owl-text-0/></p>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block2 = createBlock(\`<p>hey<block-text-0/></p>\`);
   
   const slot3 = ctx => (node, key) => {
     let d1 = ctx['test'];
@@ -1669,7 +1669,7 @@ exports[`slots slots in t-foreach and re-rendering 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['state'].val;
@@ -1686,7 +1686,7 @@ exports[`slots slots in t-foreach and re-rendering 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot3 = ctx => (node, key) => {
     return text(ctx['n_index']);
@@ -1714,7 +1714,7 @@ exports[`slots slots in t-foreach in t-foreach 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'default');
@@ -1730,10 +1730,10 @@ exports[`slots slots in t-foreach in t-foreach 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
-  let block4 = createBlock(\`<div><owl-text-0/></div>\`);
-  let block5 = createBlock(\`<ul><owl-child-0/></ul>\`);
-  let block7 = createBlock(\`<li><owl-text-0/></li>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block4 = createBlock(\`<div><block-text-0/></div>\`);
+  let block5 = createBlock(\`<ul><block-child-0/></ul>\`);
+  let block7 = createBlock(\`<li><block-text-0/></li>\`);
   
   const slot3 = ctx => (node, key) => {
     let d2 = ctx['node1'].value;
@@ -1773,7 +1773,7 @@ exports[`slots slots in t-foreach with t-set and re-rendering 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['state'].val;
@@ -1790,7 +1790,7 @@ exports[`slots slots in t-foreach with t-set and re-rendering 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot3 = ctx => (node, key) => {
     return text(ctx['dummy']);
@@ -1820,7 +1820,7 @@ exports[`slots t-debug on a t-set-slot (defining a slot) 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'content');
@@ -1836,7 +1836,7 @@ exports[`slots t-debug on a t-set-slot (defining a slot) 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot3 = ctx => (node, key) => {
     debugger;
@@ -1857,7 +1857,7 @@ exports[`slots t-set t-value in a slot 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'default');
@@ -1873,7 +1873,7 @@ exports[`slots t-set t-value in a slot 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot3 = ctx => (node, key) => {
     ctx[\`rainbow\`] = 'dash';
@@ -1895,7 +1895,7 @@ exports[`slots t-slot in recursive templates 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<wrapper><owl-child-0/></wrapper>\`);
+  let block1 = createBlock(\`<wrapper><block-child-0/></wrapper>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'default');
@@ -1968,7 +1968,7 @@ exports[`slots t-slot nested within another slot 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span id=\\"modal\\"><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span id=\\"modal\\"><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'default');
@@ -1983,7 +1983,7 @@ exports[`slots t-slot nested within another slot 3`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span id=\\"portal\\"><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span id=\\"portal\\"><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'default');
@@ -1999,7 +1999,7 @@ exports[`slots t-slot nested within another slot 4`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<span id=\\"c2\\"><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span id=\\"c2\\"><block-child-0/></span>\`);
   
   const slot2 = ctx => (node, key) => {
     return assign(component(\`Portal\`, {}, key + \`__3\`, node, ctx), {slots: {'default': slot4(ctx)}});
@@ -2023,7 +2023,7 @@ exports[`slots t-slot nested within another slot 5`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<span id=\\"c1\\"><owl-child-0/></span>\`);
+  let block1 = createBlock(\`<span id=\\"c1\\"><block-child-0/></span>\`);
   
   const slot2 = ctx => (node, key) => {
     return component(\`Child3\`, {}, key + \`__3\`, node, ctx);
@@ -2055,7 +2055,7 @@ exports[`slots t-slot scope context 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div owl-handler-0=\\"click\\"><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div block-handler-0=\\"click\\"><block-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
     let d1 = [ctx, 'onClick'];
@@ -2108,7 +2108,7 @@ exports[`slots t-slot within dynamic t-call 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div class=\\"slotted\\"><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div class=\\"slotted\\"><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'default');
@@ -2123,7 +2123,7 @@ exports[`slots t-slot within dynamic t-call 3`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div class=\\"slot\\"><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div class=\\"slot\\"><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
@@ -2139,7 +2139,7 @@ exports[`slots t-slot within dynamic t-call 4`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot3 = ctx => (node, key) => {
     const template5 = (ctx['tcallTemplate']);
@@ -2160,7 +2160,7 @@ exports[`slots template can just return a slot 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].value;
@@ -2188,7 +2188,7 @@ exports[`slots template can just return a slot 3`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
     return component(\`Child\`, {value: ctx['state'].value}, key + \`__3\`, node, ctx);

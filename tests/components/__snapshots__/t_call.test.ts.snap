@@ -48,7 +48,7 @@ exports[`t-call handlers are properly bound through a t-call 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p owl-handler-0=\\"click\\">lucas</p>\`);
+  let block1 = createBlock(\`<p block-handler-0=\\"click\\">lucas</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = [ctx, 'update'];
@@ -64,7 +64,7 @@ exports[`t-call handlers are properly bound through a t-call 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   const callTemplate_2 = getTemplate(\`__template__9\`);
   
-  let block1 = createBlock(\`<div><owl-child-0/><owl-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callTemplate_2(ctx, node, key + \`__1\`);
@@ -80,7 +80,7 @@ exports[`t-call handlers with arguments are properly bound through a t-call 1`] 
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p owl-handler-0=\\"click\\">lucas</p>\`);
+  let block1 = createBlock(\`<p block-handler-0=\\"click\\">lucas</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const arg1 = [ctx['a']];
@@ -97,7 +97,7 @@ exports[`t-call handlers with arguments are properly bound through a t-call 2`] 
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   const callTemplate_2 = getTemplate(\`__template__9\`);
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callTemplate_2(ctx, node, key + \`__1\`);
@@ -139,7 +139,7 @@ exports[`t-call parent is set within t-call 3`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   const callTemplate_2 = getTemplate(\`__template__9\`);
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callTemplate_2(ctx, node, key + \`__1\`);
@@ -193,7 +193,7 @@ exports[`t-call sub components in two t-calls 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].val;
@@ -210,7 +210,7 @@ exports[`t-call sub components in two t-calls 2`] = `
   const callTemplate_2 = getTemplate(\`sub\`);
   const callTemplate_4 = getTemplate(\`sub\`);
   
-  let block3 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block3 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2,b3;
@@ -255,7 +255,7 @@ exports[`t-call t-call in t-foreach and children component 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].val;
@@ -271,7 +271,7 @@ exports[`t-call t-call in t-foreach and children component 3`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   const callTemplate_2 = getTemplate(\`__template__9\`);
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);

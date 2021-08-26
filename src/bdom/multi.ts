@@ -62,6 +62,9 @@ class VMulti {
   }
 
   patch(other: VMulti) {
+    if (this === other) {
+      return;
+    }
     const children1 = this.children;
     const children2 = other.children;
     const anchors = this.anchors!;
@@ -71,9 +74,7 @@ class VMulti {
       const vn2 = children2[i];
       if (vn1) {
         if (vn2) {
-          if (vn1 !== vn2) {
-            vn1.patch(vn2);
-          }
+          vn1.patch(vn2);
         } else {
           const afterNode = vn1.firstNode()!;
           const anchor = document.createTextNode("");

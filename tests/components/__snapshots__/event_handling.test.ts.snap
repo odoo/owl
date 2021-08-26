@@ -66,7 +66,7 @@ exports[`event handling support for callable expression in event handler 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-text-0/><input type=\\"text\\" owl-handler-1=\\"input\\"/></div>\`);
+  let block1 = createBlock(\`<div><block-text-0/><input type=\\"text\\" block-handler-1=\\"input\\"/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['state'].value;

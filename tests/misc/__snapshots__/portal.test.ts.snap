@@ -38,7 +38,7 @@ exports[`Portal Portal composed with t-slot 3`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
     let h4 = [\`custom\`, ctx, '_handled'];
@@ -59,7 +59,7 @@ exports[`Portal basic use of portal 1`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><span>1</span><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><span>1</span><block-child-0/></div>\`);
   let block2 = createBlock(\`<p>2</p>\`);
   
   const slot2 = ctx => (node, key) => {
@@ -79,7 +79,7 @@ exports[`Portal conditional use of Portal (with sub Component) 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p><owl-text-0/></p>\`);
+  let block1 = createBlock(\`<p><block-text-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].val;
@@ -143,7 +143,7 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 1`] 
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].val;
@@ -159,7 +159,7 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 2`] 
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
     return component(\`Child\`, {val: ctx['state'].val}, key + \`__3\`, node, ctx);
@@ -182,8 +182,8 @@ exports[`Portal portal could have dynamically no content 1`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
-  let block3 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<span><block-text-0/></span>\`);
   
   const slot2 = ctx => (node, key) => {
     let b3;
@@ -207,7 +207,7 @@ exports[`Portal portal with child and props 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].val;
@@ -223,7 +223,7 @@ exports[`Portal portal with child and props 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
     return component(\`Child\`, {val: ctx['state'].val}, key + \`__3\`, node, ctx);
@@ -243,8 +243,8 @@ exports[`Portal portal with dynamic body 1`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
-  let block3 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<span><block-text-0/></span>\`);
   let block4 = createBlock(\`<div/>\`);
   
   const slot2 = ctx => (node, key) => {
@@ -272,7 +272,7 @@ exports[`Portal portal with many children 1`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<div>1</div>\`);
   let block4 = createBlock(\`<p>2</p>\`);
   
@@ -296,7 +296,7 @@ exports[`Portal portal with no content 1`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
     let b3;
@@ -320,7 +320,7 @@ exports[`Portal portal with only text as content 1`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
     return text('only text');
@@ -375,7 +375,7 @@ exports[`Portal portal's parent's env is not polluted 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
     return component(\`Child\`, {}, key + \`__3\`, node, ctx);
@@ -395,7 +395,7 @@ exports[`Portal with target in template (after portal) 1`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><span>1</span><owl-child-0/><div id=\\"local-target\\"/></div>\`);
+  let block1 = createBlock(\`<div><span>1</span><block-child-0/><div id=\\"local-target\\"/></div>\`);
   let block2 = createBlock(\`<p>2</p>\`);
   
   const slot2 = ctx => (node, key) => {
@@ -416,7 +416,7 @@ exports[`Portal with target in template (before portal) 1`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><div id=\\"local-target\\"/><span>1</span><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><div id=\\"local-target\\"/><span>1</span><block-child-0/></div>\`);
   let block2 = createBlock(\`<p>2</p>\`);
   
   const slot2 = ctx => (node, key) => {
@@ -436,7 +436,7 @@ exports[`Portal: UI/UX focus is kept across re-renders 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<input id=\\"target-me\\" owl-attribute-0=\\"placeholder\\"/>\`);
+  let block1 = createBlock(\`<input id=\\"target-me\\" block-attribute-0=\\"placeholder\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].val;
@@ -452,7 +452,7 @@ exports[`Portal: UI/UX focus is kept across re-renders 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
     return component(\`Child\`, {val: ctx['state'].val}, key + \`__3\`, node, ctx);

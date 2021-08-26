@@ -6,7 +6,7 @@ exports[`basics basic use 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span>child<owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span>child<block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].p;
@@ -127,7 +127,7 @@ exports[`basics sub widget is interactive 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><button owl-handler-0=\\"click\\">click</button>child<owl-text-1/></span>\`);
+  let block1 = createBlock(\`<span><button block-handler-0=\\"click\\">click</button>child<block-text-1/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = [ctx, 'inc'];
@@ -181,7 +181,7 @@ exports[`basics top level sub widget with a parent 3`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`ComponentB\`, {}, key + \`__1\`, node, ctx);

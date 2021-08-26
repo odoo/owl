@@ -6,7 +6,7 @@ exports[`list of components components in a node in a t-foreach  1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].item;
@@ -21,8 +21,8 @@ exports[`list of components components in a node in a t-foreach  2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><ul><owl-child-0/></ul></div>\`);
-  let block3 = createBlock(\`<li><owl-child-0/></li>\`);
+  let block1 = createBlock(\`<div><ul><block-child-0/></ul></div>\`);
+  let block3 = createBlock(\`<li><block-child-0/></li>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -45,7 +45,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].blip;
@@ -60,7 +60,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -92,7 +92,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].row+'_'+ctx['props'].col;
@@ -107,9 +107,9 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
-  let block3 = createBlock(\`<p><owl-child-0/></p>\`);
-  let block5 = createBlock(\`<p><owl-child-0/></p>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<p><block-child-0/></p>\`);
+  let block5 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -141,7 +141,7 @@ exports[`list of components simple list 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<span><owl-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].value;
@@ -175,7 +175,7 @@ exports[`list of components sub components rendered in a loop 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p><owl-text-0/></p>\`);
+  let block1 = createBlock(\`<p><block-text-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].n;
@@ -190,7 +190,7 @@ exports[`list of components sub components rendered in a loop 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -212,7 +212,7 @@ exports[`list of components sub components with some state rendered in a loop 1`
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<p><owl-text-0/></p>\`);
+  let block1 = createBlock(\`<p><block-text-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['state'].n;
@@ -227,7 +227,7 @@ exports[`list of components sub components with some state rendered in a loop 2`
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);

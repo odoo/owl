@@ -145,7 +145,7 @@ a `.js` suffix, which is important. Most text editor can understand this syntax
 and will provide autocompletion.
 
 Now, to execute this code, we need to serve the `src` folder statically. A low
-tech way to do that is to use for example the python `SimpleHTTPServer` feature:
+tech way to do that is to use for example the python `SimpleHTTPServer` feature (if you're using python3, you will use `http.server` feature instead of `SimpleHTTPServer`):
 
 ```
 $ cd src

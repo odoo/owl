@@ -24,4 +24,13 @@ describe("qweb t-att", () => {
       '<div class="a b c"></div>'
     );
   });
+
+  test("t-att-class with multiple classes, some of which are duplicate", () => {
+    expect(render(`<div t-att-class="{'a b c': value, 'a b d': !value}" />`, { value: true })).toBe(
+      '<div class="a b c"></div>'
+    );
+    expect(render(`<div t-att-class="{'a b c': value, 'a b d': !value}" />`, { value: false })).toBe(
+      '<div class="a b d"></div>'
+    );
+  });
 });

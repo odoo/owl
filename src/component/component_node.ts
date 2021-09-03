@@ -222,7 +222,7 @@ export class ComponentNode<T extends typeof Component = any> implements VNode<Co
   }
 
   patch() {
-    this.bdom!.patch(this!.fiber!.bdom!);
+    this.bdom!.patch(this!.fiber!.bdom!, false);
     this.fiber!.appliedToDom = true;
     this.fiber = null;
   }

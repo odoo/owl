@@ -119,7 +119,7 @@ export class RootFiber extends Fiber {
     }
 
     // Step 2: patching the dom
-    node.bdom!.patch(this.bdom!, true);
+    node.bdom!.patch(this.bdom!, Object.keys(node.children).length > 0);
     this.appliedToDom = true;
 
     // Step 3: calling all destroyed hooks

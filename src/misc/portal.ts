@@ -43,7 +43,7 @@ class VPortal extends VText implements Partial<VNode<VPortal>> {
   patch(other: VPortal) {
     super.patch(other);
     if (this.realBDom) {
-      this.realBDom.patch(other.realBDom!);
+      this.realBDom.patch(other.realBDom!, true);
     } else {
       this.realBDom = other.realBDom;
       this.realBDom!.mount(this.target!, null);

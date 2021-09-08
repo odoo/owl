@@ -75,8 +75,6 @@ describe("hooks", () => {
     }
     const component = new MyComponent();
     await component.mount(fixture);
-    expect(component).not.toHaveProperty("mounted");
-    expect(component).not.toHaveProperty("willUnmount");
     expect(fixture.innerHTML).toBe("<div>hey</div>");
     expect(steps).toEqual(["mounted"]);
     component.unmount();
@@ -383,8 +381,6 @@ describe("hooks", () => {
 
     const component = new MyComponent();
     await component.mount(fixture);
-    expect(component).not.toHaveProperty("patched");
-    expect(component).not.toHaveProperty("willPatch");
     expect(steps).toEqual([]);
 
     expect(fixture.innerHTML).toBe("<div>hey</div>");
@@ -630,8 +626,6 @@ describe("hooks", () => {
 
     const app = new App();
     await app.mount(fixture);
-    expect(app).not.toHaveProperty("willStart");
-    expect(app).not.toHaveProperty("willUpdateProps");
     expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
 
     // NOTE: 'on2ndStart' appears first in the list even though

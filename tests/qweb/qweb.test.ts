@@ -1862,8 +1862,7 @@ describe("t-ref", () => {
 
 describe("loading templates", () => {
   test("can initialize qweb with a string", () => {
-    const templates = `
-      <?xml version="1.0" encoding="UTF-8"?>
+    const templates = `<?xml version="1.0" encoding="UTF-8"?>
       <templates id="template" xml:space="preserve">
         <div t-name="hey">jupiler</div>
       </templates>`;
@@ -1872,8 +1871,7 @@ describe("loading templates", () => {
   });
 
   test("can load a few templates from a xml string", () => {
-    const data = `
-      <?xml version="1.0" encoding="UTF-8"?>
+    const data = `<?xml version="1.0" encoding="UTF-8"?>
       <templates id="template" xml:space="preserve">
 
         <t t-name="items"><li>ok</li><li>foo</li></t>

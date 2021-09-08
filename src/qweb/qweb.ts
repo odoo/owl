@@ -329,6 +329,9 @@ export class QWeb extends EventBus {
    * template, with the name given by the t-name attribute.
    */
   addTemplates(xmlstr: string | Document) {
+    if (!xmlstr) {
+      return;
+    }
     const doc = typeof xmlstr === "string" ? parseXML(xmlstr) : xmlstr;
     const templates = doc.getElementsByTagName("templates")[0];
     if (!templates) {
@@ -557,7 +560,7 @@ export class QWeb extends EventBus {
     }
 
     if (node.tagName !== "t" && node.hasAttribute("t-call")) {
-      const tCallNode = document.createElement("t");
+      const tCallNode = document.implementation.createDocument("http://www.w3.org/1999/xhtml", "t", null).documentElement;
       tCallNode.setAttribute("t-call", node.getAttribute("t-call")!);
       node.removeAttribute("t-call");
       node.prepend(tCallNode);
@@ -593,7 +596,7 @@ export class QWeb extends EventBus {
           throw new Error(`Unknown QWeb directive: '${attrName}'`);
         }
         if (node.tagName !== "t" && (attrName === "t-esc" || attrName === "t-raw")) {
-          const tNode = document.createElement("t");
+          const tNode = document.implementation.createDocument("http://www.w3.org/1999/xhtml", "t", null).documentElement;
           tNode.setAttribute(attrName, node.getAttribute(attrName)!);
           for (let child of Array.from(node.childNodes)) {
             tNode.appendChild(child);

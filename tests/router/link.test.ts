@@ -80,7 +80,7 @@ describe("Link component", () => {
     await app.mount(fixture);
 
     expect(window.location.pathname).toBe("/users");
-    var evt = new MouseEvent("click", {
+    var evt = new MouseEvent("contextmenu", {
       button: 1,
     });
 

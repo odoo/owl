@@ -1,5 +1,9 @@
 <h1 align="center">🦉 <a href="https://odoo.github.io/owl/">OWL Framework</a> 🦉</h1>
 
+ [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
+[![npm version](https://badge.fury.io/js/@odoo%2Fowl.svg)](https://badge.fury.io/js/@odoo%2Fowl)
+[![Downloads](https://img.shields.io/npm/dm/@odoo%2Fowl.svg)](https://www.npmjs.com/package/@odoo/owl)
+
 _Class based components with hooks, reactive state and concurrent mode_
 
 ## Project Overview

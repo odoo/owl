@@ -95,7 +95,7 @@ describe("component error handling (catchError)", () => {
         try {
           await super.render();
         } catch (e) {
-          expect(e.message).toBe("Cannot read property 'this' of undefined");
+          expect(e.message).toMatch(/Cannot read properties of undefined \(reading 'this'\)|Cannot read property 'this' of undefined/);
         }
       }
     }
@@ -359,7 +359,8 @@ describe("component error handling (catchError)", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.message).toBe("Cannot read property 'crash' of undefined");
+    const regexp = /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g
+    expect(error.message).toMatch(regexp);
 
     expect(console.error).toBeCalledTimes(0);
     console.error = consoleError;
@@ -469,7 +470,8 @@ describe("component error handling (catchError)", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.message).toBe("Cannot read property 'crash' of undefined");
+    const regexp = /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g
+    expect(error.message).toMatch(regexp);
 
     expect(console.error).toBeCalledTimes(0);
     console.error = consoleError;
@@ -495,7 +497,8 @@ describe("component error handling (catchError)", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.message).toBe("Cannot read property 'crash' of undefined");
+    const regexp = /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g
+    expect(error.message).toMatch(regexp);
 
     expect(console.error).toBeCalledTimes(0);
     console.error = consoleError;
@@ -518,7 +521,8 @@ describe("component error handling (catchError)", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.message).toBe("Cannot read property 'y' of undefined");
+    const regexp = /Cannot read properties of undefined \(reading 'y'\)|Cannot read property 'y' of undefined/g
+    expect(error.message).toMatch(regexp);
   });
 
   test("simple catchError", async () => {

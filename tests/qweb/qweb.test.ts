@@ -1,4 +1,5 @@
 import { QWeb } from "../../src/qweb/index";
+import { config } from "../../src/index";
 import { nextTick, normalize, renderToDOM, renderToString, trim } from "../helpers";
 import { patch } from "../../src/vdom";
 
@@ -13,6 +14,7 @@ let qweb: QWeb;
 
 beforeEach(() => {
   QWeb.TEMPLATES = {};
+  QWeb.nextId = 1;
   qweb = new QWeb();
 });
 
@@ -2209,6 +2211,17 @@ describe("translation support", () => {
     expect(renderToString(qweb, "test")).toBe(
       '<div><p label="mot">mot</p><p title="mot">mot</p><p placeholder="mot">mot</p><p alt="mot">mot</p><p something="word">mot</p></div>'
     );
+  });
+
+  test("can add additional attributes to the list of translatable attributes", () => {
+    const translations = {
+      word: "mot",
+    };
+    const translateFn = (expr) => translations[expr] || expr;
+    const qweb = new QWeb({ translateFn });
+    config.translatableAttributes.push("potato");
+    qweb.addTemplate("test", `<div tomato="word" potato="word">text</div>`);
+    expect(renderToString(qweb, "test")).toBe('<div tomato="word" potato="mot">text</div>');
   });
 
   test("translation is done on the trimmed text, with extra spaces readded after", () => {

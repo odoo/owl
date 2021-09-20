@@ -66,7 +66,7 @@ interface QWebConfig {
 // Const/global stuff/helpers
 //------------------------------------------------------------------------------
 
-const TRANSLATABLE_ATTRS = ["label", "title", "placeholder", "alt"];
+export const TRANSLATABLE_ATTRS = ["label", "title", "placeholder", "alt"];
 
 const lineBreakRE = /[\r\n]/;
 const whitespaceRE = /\s+/g;
@@ -560,7 +560,11 @@ export class QWeb extends EventBus {
     }
 
     if (node.tagName !== "t" && node.hasAttribute("t-call")) {
-      const tCallNode = document.implementation.createDocument("http://www.w3.org/1999/xhtml", "t", null).documentElement;
+      const tCallNode = document.implementation.createDocument(
+        "http://www.w3.org/1999/xhtml",
+        "t",
+        null
+      ).documentElement;
       tCallNode.setAttribute("t-call", node.getAttribute("t-call")!);
       node.removeAttribute("t-call");
       node.prepend(tCallNode);
@@ -596,7 +600,11 @@ export class QWeb extends EventBus {
           throw new Error(`Unknown QWeb directive: '${attrName}'`);
         }
         if (node.tagName !== "t" && (attrName === "t-esc" || attrName === "t-raw")) {
-          const tNode = document.implementation.createDocument("http://www.w3.org/1999/xhtml", "t", null).documentElement;
+          const tNode = document.implementation.createDocument(
+            "http://www.w3.org/1999/xhtml",
+            "t",
+            null
+          ).documentElement;
           tNode.setAttribute(attrName, node.getAttribute(attrName)!);
           for (let child of Array.from(node.childNodes)) {
             tNode.appendChild(child);

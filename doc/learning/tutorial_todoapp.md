@@ -70,7 +70,9 @@ just put the following code:
 Note that we put everything inside an immediately executed function to avoid leaking
 anything to the global scope.
 
-Finally, `owl.js` should be the last version downloaded from the Owl repository (you can use `owl.min.js` if you prefer).
+Finally, `owl.js` should be the last version downloaded from the Owl repository (you can use `owl.min.js` if you prefer). Be aware that you should download the `owl.iife.js` or `owl.iife.min.js`, because these files
+are built to run directly on the browser (other files such as `owl.cjs.js` are
+built to be bundled by other tools).
 
 Now, the project should be ready. Loading the `index.html` file into a browser
 should show an empty page, with the title `Owl Todo App`, and it should log a

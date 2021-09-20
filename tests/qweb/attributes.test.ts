@@ -245,7 +245,7 @@ describe("attributes", () => {
     expect(fixture.innerHTML).toBe('<div value="zucchini"></div>');
 
     const bnode2 = renderToBdom(template, { v: "potato" });
-    patch(bnode1, bnode2)
+    patch(bnode1, bnode2);
     expect(fixture.innerHTML).toBe('<div value="potato"></div>');
 
     const bnode3 = renderToBdom(template, { v: "" });

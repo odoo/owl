@@ -16,7 +16,7 @@ class VList {
   children: VNode[];
   anchor: Node | undefined;
   parentEl?: HTMLElement | undefined;
-  singleNode?: boolean | undefined;
+  isOnlyChild?: boolean | undefined;
 
   constructor(children: VNode[]) {
     this.children = children;
@@ -39,7 +39,15 @@ class VList {
   }
 
   moveBefore(other: VList | null, afterNode: Node | null) {
-    // todo
+    if (other) {
+      const next = other!.children[0];
+      afterNode = (next ? next.firstNode() : other!.anchor) || null;
+    }
+    const children = this.children;
+    for (let i = 0, l = children.length; i < l; i++) {
+      children[i].moveBefore(null, afterNode);
+    }
+    this.parentEl!.insertBefore(this.anchor!, afterNode);
   }
 
   patch(other: VList, withBeforeRemove: boolean) {
@@ -63,7 +71,7 @@ class VList {
     } = proto;
 
     const _anchor = this.anchor!;
-    const isOnlyChild = this.singleNode;
+    const isOnlyChild = this.isOnlyChild;
     const parent = this.parentEl!;
 
     // fast path: no new child => only remove
@@ -194,14 +202,15 @@ class VList {
 
   remove() {
     const { parentEl, anchor } = this;
-    if (this.singleNode) {
+    if (this.isOnlyChild) {
       nodeSetTextContent.call(parentEl, "");
     } else {
       const children = this.children;
       const l = children.length;
       if (l) {
+        const remove = children[0].remove;
         for (let i = 0; i < l; i++) {
-          children[i].remove();
+          remove.call(children[i]);
         }
       }
       nodeRemoveChild.call(parentEl, anchor!);

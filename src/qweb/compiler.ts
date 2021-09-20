@@ -1,4 +1,4 @@
-import { BDom } from "../bdom";
+import { BDom } from "../blockdom";
 import { Dom, DomNode, domToString, DomType } from "./dom_helpers";
 import { compileExpr, compileExprToArray, interpolate, INTERP_REGEXP } from "./inline_expressions";
 import {

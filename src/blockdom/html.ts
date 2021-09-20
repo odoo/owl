@@ -16,9 +16,9 @@ class VHtml {
 
   mount(parent: HTMLElement, afterNode: Node | null) {
     this.parentEl = parent;
-    const div = document.createElement("div");
-    div.innerHTML = this.html;
-    this.content = [...(div.childNodes as any)];
+    const template = document.createElement("template");
+    template.innerHTML = this.html;
+    this.content = [...(template.content.childNodes as any)];
     for (let elem of this.content) {
       nodeInsertBefore.call(parent, elem, afterNode);
     }
@@ -46,9 +46,9 @@ class VHtml {
       const parent = this.parentEl;
       // insert new html in front of current
       const afterNode = this.content[0];
-      const div = document.createElement("div");
-      div.innerHTML = html2;
-      const content = [...(div.childNodes as any)];
+      const template = document.createElement("template");
+      template.innerHTML = html2;
+      const content = [...(template.content.childNodes as any)];
       for (let elem of content) {
         nodeInsertBefore.call(parent, elem, afterNode);
       }

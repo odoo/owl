@@ -1,7 +1,7 @@
 import type { ComponentNode } from "../component/component_node";
 import { Component } from "../component/component";
 import { xml } from "../tags";
-import { BDom, text, VNode } from "../bdom";
+import { BDom, text, VNode } from "../blockdom";
 
 const VText: any = text("").constructor;
 

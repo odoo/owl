@@ -64,10 +64,7 @@ export function toText(value: any): string {
       return String(value);
     case "boolean":
       return value ? "true" : "false";
-    case "object":
-      return value ? value.toString() : "";
     default:
-      // most notably, undefined
-      return "";
+      return value || "";
   }
 }

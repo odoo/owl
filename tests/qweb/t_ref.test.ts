@@ -1,5 +1,5 @@
 import { TemplateSet } from "../../src/qweb/template_helpers";
-import { mount } from "../../src/bdom";
+import { mount } from "../../src/blockdom";
 import { renderToBdom, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -57,12 +57,12 @@ describe("t-ref", () => {
 
     // true now
     const bdom2 = renderToBdom(template, { condition: true, __owl__: { refs } });
-    bdom.patch(bdom2);
+    bdom.patch(bdom2, true);
     expect(refs.name.tagName).toBe("SPAN");
 
     // false again
     const bdom3 = renderToBdom(template, { condition: false, __owl__: { refs } });
-    bdom.patch(bdom3);
+    bdom.patch(bdom3, true);
     expect(refs).toEqual({ name: null });
   });
 
@@ -85,12 +85,12 @@ describe("t-ref", () => {
 
     // true now
     const bdom2 = renderToBdom(template, { condition: true, __owl__: { refs } });
-    bdom.patch(bdom2);
+    bdom.patch(bdom2, true);
     expect(Object.keys(refs)).toEqual(["p", "name"]);
 
     // false again
     const bdom3 = renderToBdom(template, { condition: false, __owl__: { refs } });
-    bdom.patch(bdom3);
+    bdom.patch(bdom3, true);
     expect(Object.keys(refs)).toEqual(["p", "name"]);
     expect(refs.name).toBeNull();
   });

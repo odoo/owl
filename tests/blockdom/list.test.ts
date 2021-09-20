@@ -1,5 +1,5 @@
-import { list, mount, multi, patch, text, createBlock, VNode } from "../../src/bdom";
-import { makeTestFixture } from "../helpers";
+import { list, mount, multi, patch, text, createBlock, VNode, withKey } from "../../src/blockdom";
+import { makeTestFixture } from "./helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -16,9 +16,7 @@ afterEach(() => {
 });
 
 function kText(str: string, key: any): VNode {
-  const block = text(str);
-  block.key = key;
-  return block;
+  return withKey(text(str), key);
 }
 
 function n(n: number) {
@@ -29,16 +27,12 @@ const span = createBlock("<span><block-text-0/></span>");
 const p = createBlock("<p><block-text-0/></p>");
 
 function kSpan(str: string, key: any): VNode {
-  const block = span([str]);
-  block.key = key;
-  return block;
+  return withKey(span([str]), key);
 }
 
 function kPair(n: number): VNode {
   const bnodes = [p([String(n)]), p([String(n)])];
-  const block = multi(bnodes);
-  block.key = n;
-  return block;
+  return withKey(multi(bnodes), n);
 }
 
 describe("list node: misc", () => {
@@ -86,6 +80,35 @@ describe("list node: misc", () => {
 
     patch(tree, block([], [list([1, 2, 3].map(n))]));
     expect(fixture.innerHTML).toBe("<div>123</div>");
+  });
+
+  test("list of lists", async () => {
+    const tree = list([
+      withKey(list([kText("a1", "1"), kText("a2", "2")]), "a"),
+      withKey(list([kText("b1", "1"), kText("b2", "2")]), "b"),
+    ]);
+    mount(tree, fixture);
+    expect(fixture.innerHTML).toBe("a1a2b1b2");
+
+    patch(
+      tree,
+      list([
+        withKey(list([kText("b1", "1"), kText("b2", "2")]), "b"),
+        withKey(list([kText("a1", "1"), kText("a2", "2")]), "a"),
+      ])
+    );
+
+    expect(fixture.innerHTML).toBe("b1b2a1a2");
+
+    patch(
+      tree,
+      list([
+        withKey(list([kText("a2", "2"), kText("a1", "1")]), "a"),
+        withKey(list([kText("b2", "2"), kText("b1", "1")]), "b"),
+      ])
+    );
+
+    expect(fixture.innerHTML).toBe("a2a1b2b1");
   });
 });
 

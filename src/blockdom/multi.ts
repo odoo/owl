@@ -10,11 +10,11 @@ const nodeRemoveChild = nodeProto.removeChild;
 // Multi NODE
 // -----------------------------------------------------------------------------
 
-class VMulti {
+export class VMulti {
   children: (VNode | undefined)[];
   anchors?: Node[] | undefined;
   parentEl?: HTMLElement | undefined;
-  singleNode?: boolean | undefined;
+  isOnlyChild?: boolean | undefined;
 
   constructor(children: (VNode | undefined)[]) {
     this.children = children;
@@ -103,9 +103,7 @@ class VMulti {
 
   remove() {
     const parentEl = this.parentEl;
-    if (this.singleNode) {
-      // todo: check if this should not be fixed. it looks like we still need
-      // to call the beforeRemove hook
+    if (this.isOnlyChild) {
       nodeSetTextContent.call(parentEl, "");
     } else {
       const children = this.children;

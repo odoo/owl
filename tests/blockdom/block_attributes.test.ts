@@ -1,5 +1,5 @@
-import { mount, patch, createBlock } from "../../src/bdom";
-import { makeTestFixture } from "../helpers";
+import { mount, patch, createBlock } from "../../src/blockdom";
+import { makeTestFixture } from "./helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -95,7 +95,7 @@ describe("properties", () => {
 
     // rerender with a different value, and patch actual dom, to check that
     // input value was properly reset by owl
-    tree.patch(block(["potato"]));
+    patch(tree, block(["potato"]));
     expect(input.value).toBe("potato");
   });
 

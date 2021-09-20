@@ -1,5 +1,5 @@
-// import { mountBlock } from "../../src/bdom/block";
-import { mount } from "../../src/bdom";
+// import { mountBlock } from "../../src/blockdom/block";
+import { mount } from "../../src/blockdom";
 import { makeTestFixture, renderToBdom, renderToString, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -204,7 +204,7 @@ describe("t-if", () => {
     mount(bdom, fixture);
     expect(fixture.innerHTML).toBe("<div><p>1</p><p>2</p>owl</div>");
     const bdom2 = renderToBdom(template, { condition: false, text: "halloween" });
-    bdom.patch(bdom2);
+    bdom.patch(bdom2, true);
     expect(fixture.innerHTML).toBe("<div>halloween</div>");
   });
 
@@ -217,7 +217,7 @@ describe("t-if", () => {
     mount(bdom, fixture);
     expect(fixture.innerHTML).toBe("<div><span>owl</span><p>1</p><p>2</p></div>");
     const bdom2 = renderToBdom(template, { condition: false, text: "halloween" });
-    bdom.patch(bdom2);
+    bdom.patch(bdom2, true);
     expect(fixture.innerHTML).toBe("<div></div>");
   });
 });

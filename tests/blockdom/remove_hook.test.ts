@@ -1,5 +1,5 @@
-import { createBlock, mount, multi, patch } from "../../src/bdom";
-import { makeTestFixture } from "../helpers";
+import { createBlock, mount, multi, patch } from "../../src/blockdom";
+import { makeTestFixture } from "./helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers

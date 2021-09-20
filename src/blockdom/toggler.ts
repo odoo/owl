@@ -9,7 +9,6 @@ class VToggler {
   child: VNode;
 
   parentEl?: HTMLElement | undefined;
-  //   singleNode?: boolean | undefined;
 
   constructor(key: string, child: VNode) {
     this.key = key;

@@ -9,7 +9,7 @@ import {
   remove,
   text,
   toggler,
-} from "./bdom";
+} from "./blockdom";
 import { mainEventHandler } from "./component/handler";
 
 config.shouldNormalizeDom = false;

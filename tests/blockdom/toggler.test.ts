@@ -1,5 +1,5 @@
-import { createBlock, mount, patch, text, toggler } from "../../src/bdom";
-import { makeTestFixture } from "../helpers";
+import { createBlock, mount, patch, text, toggler } from "../../src/blockdom";
+import { makeTestFixture } from "./helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers

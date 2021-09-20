@@ -1,5 +1,5 @@
 import type { App } from "../app";
-import { BDom, VNode } from "../bdom";
+import { BDom, VNode } from "../blockdom";
 import { Component } from "./component";
 import {
   Fiber,

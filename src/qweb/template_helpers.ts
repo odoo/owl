@@ -1,5 +1,5 @@
 // import { compileTemplate, Template } from "./qweb/index";
-import { BDom, createBlock, html, list, multi, text, toggler } from "../bdom";
+import { BDom, createBlock, html, list, multi, text, toggler } from "../blockdom";
 import { component } from "../component/component_node";
 import { Template, compileTemplate } from "./compiler";
 

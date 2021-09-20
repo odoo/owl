@@ -1,6 +1,6 @@
-import { mount, createBlock, multi, config } from "../../src/bdom";
+import { mount, createBlock, multi, config, patch } from "../../src/blockdom";
 // import { defaultHandler, setupMainHandler } from "../../src/bdom/block";
-import { makeTestFixture } from "../helpers";
+import { makeTestFixture } from "./helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -16,6 +16,41 @@ beforeEach(() => {
 
 afterEach(() => {
   fixture.remove();
+});
+
+test("simple event handling, with function", async () => {
+  const block = createBlock('<div block-handler-0="click"></div>');
+  let n = 0;
+  const tree = block([() => n++]);
+
+  mount(tree, fixture);
+  expect(fixture.innerHTML).toBe("<div></div>");
+
+  expect(fixture.firstChild).toBeInstanceOf(HTMLDivElement);
+  expect(n).toBe(0);
+  (fixture.firstChild as HTMLDivElement).click();
+  expect(n).toBe(1);
+});
+
+test("simple event handling, with function and argument", async () => {
+  const block = createBlock('<div block-handler-0="click"></div>');
+  let n = 0;
+  const onClick = (arg: number) => {
+    n += arg;
+  };
+  const tree = block([[onClick, 3]]);
+
+  mount(tree, fixture);
+  expect(fixture.innerHTML).toBe("<div></div>");
+
+  expect(fixture.firstChild).toBeInstanceOf(HTMLDivElement);
+  expect(n).toBe(0);
+  (fixture.firstChild as HTMLDivElement).click();
+  expect(n).toBe(3);
+
+  patch(tree, block([[onClick, 5]]));
+  (fixture.firstChild as HTMLDivElement).click();
+  expect(n).toBe(8);
 });
 
 test("simple event handling ", async () => {
@@ -42,20 +77,6 @@ test("simple event handling ", async () => {
   expect(n).toBe(1);
 });
 
-test("simple event handling, with function", async () => {
-  const block = createBlock('<div block-handler-0="click"></div>');
-  let n = 0;
-  const tree = block([() => n++]);
-
-  mount(tree, fixture);
-  expect(fixture.innerHTML).toBe("<div></div>");
-
-  expect(fixture.firstChild).toBeInstanceOf(HTMLDivElement);
-  expect(n).toBe(0);
-  (fixture.firstChild as HTMLDivElement).click();
-  expect(n).toBe(1);
-});
-
 test("can bind two handlers on same node", async () => {
   const block = createBlock('<div block-handler-0="click" block-handler-1="dblclick"></div>');
   let steps: string[] = [];
@@ -67,7 +88,7 @@ test("can bind two handlers on same node", async () => {
   expect(fixture.innerHTML).toBe("<div></div>");
 
   (fixture.firstChild as HTMLDivElement).click();
-  (fixture.firstChild as HTMLDivElement).dispatchEvent(new Event("dblclick", {bubbles: true}));
+  (fixture.firstChild as HTMLDivElement).dispatchEvent(new Event("dblclick", { bubbles: true }));
   expect(steps).toEqual(["click", "dblclick"]);
 });
 

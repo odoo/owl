@@ -1,5 +1,5 @@
-import { createBlock, mount, patch, remove, text } from "../../src/bdom";
-import { makeTestFixture } from "../helpers";
+import { createBlock, mount, patch, remove, text } from "../../src/blockdom";
+import { makeTestFixture } from "./helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -181,13 +181,44 @@ describe("remove elem blocks", () => {
 });
 
 describe("misc", () => {
+  test("constructed block as correct number of refs", () => {
+    const block = createBlock("<p><p><block-text-0/></p><block-text-1/></p>");
+    const tree = block(["a", "b"]);
+    mount(tree, fixture);
+    expect(fixture.innerHTML).toBe("<p><p>a</p>b</p>");
+    expect((tree as any).refs.length).toBe(2);
+  });
+
   test("block vnode can be used as text", () => {
     const block = createBlock("<p>a</p>");
     mount(text(block() as any), fixture);
     expect(fixture.textContent).toBe("<p>a</p>");
   });
 
-  //     test("reusing a block skips patching process", async () => {
+  test("block vnode can be used to represent a <tr>", () => {
+    const block = createBlock("<tr><td>tomato</td></tr>");
+    const tree = block();
+    const fixture = document.createElement("table");
+    mount(tree, fixture);
+    expect(fixture.outerHTML).toBe("<table><tr><td>tomato</td></tr></table>");
+  });
+
+  test("block vnode with <tr> can be used as text ", () => {
+    const block = createBlock("<tr><td>tomato</td></tr>");
+    mount(text(block() as any), fixture);
+    expect(fixture.textContent).toBe("<tr><td>tomato</td></tr>");
+  });
+
+  test("call toString for function/objects if used as inline text in block", () => {
+    const block = createBlock("<p><block-text-0/><block-text-1/></p>");
+    const f = () => 3;
+    const g = () => 4;
+    g.toString = () => "tostring";
+    mount(block([f, g]), fixture);
+    expect(fixture.innerHTML).toBe("<p>() =&gt; 3tostring</p>");
+  });
+
+  //     test.skip("reusing a block skips patching process", async () => {
   //       const block = createBlock('<div><block-text-0/></div>');
   //       const foo = block(["foo"]);
   //       const bar = block(["bar"]);

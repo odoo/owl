@@ -1,5 +1,5 @@
 import { TemplateSet } from "../../src/qweb/template_helpers";
-import { mount } from "../../src/bdom";
+import { mount } from "../../src/blockdom";
 import { makeTestFixture, renderToBdom, renderToString, snapshotEverything } from "../helpers";
 
 snapshotEverything();

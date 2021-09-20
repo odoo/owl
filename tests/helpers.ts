@@ -13,8 +13,8 @@ import {
 } from "../src";
 import { TemplateSet, globalTemplates, UTILS } from "../src/qweb/template_helpers";
 import { blockDom } from "../src";
-import { BDom } from "../src/bdom";
-// import { mountBlock } from "../src/bdom/block";
+import { BDom } from "../src/blockdom";
+// import { mountBlock } from "../src/blockdom/block";
 import { compileTemplate, Template } from "../src/qweb/compiler";
 import { xml } from "../src/tags";
 // import { UTILS } from "../src/template_utils";

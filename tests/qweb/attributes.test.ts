@@ -1,5 +1,5 @@
 import { xml } from "../../src";
-import { mount } from "../../src/bdom";
+import { mount, patch } from "../../src/blockdom";
 import { makeTestFixture, renderToBdom, renderToString, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -245,11 +245,11 @@ describe("attributes", () => {
     expect(fixture.innerHTML).toBe('<div value="zucchini"></div>');
 
     const bnode2 = renderToBdom(template, { v: "potato" });
-    bnode1.patch(bnode2);
+    patch(bnode1, bnode2)
     expect(fixture.innerHTML).toBe('<div value="potato"></div>');
 
     const bnode3 = renderToBdom(template, { v: "" });
-    bnode1.patch(bnode3);
+    patch(bnode1, bnode3);
     // not sure about this. maybe we want to remove the attribute?
     expect(fixture.innerHTML).toBe('<div value=""></div>');
   });
@@ -264,11 +264,11 @@ describe("attributes", () => {
     expect(fixture.innerHTML).toBe('<div class="zucchini"></div>');
 
     const bnode2 = renderToBdom(template, { v: "potato" });
-    bnode1.patch(bnode2);
+    patch(bnode1, bnode2);
     expect(fixture.innerHTML).toBe('<div class="potato"></div>');
 
     const bnode3 = renderToBdom(template, { v: "" });
-    bnode1.patch(bnode3);
+    patch(bnode1, bnode3);
     // not sure about this. maybe we want to remove the attribute?
     expect(fixture.innerHTML).toBe('<div class=""></div>');
   });
@@ -283,11 +283,11 @@ describe("attributes", () => {
     expect(fixture.innerHTML).toBe('<div class="hoy zucchini"></div>');
 
     const bnode2 = renderToBdom(template, { v: "potato" });
-    bnode1.patch(bnode2);
+    patch(bnode1, bnode2);
     expect(fixture.innerHTML).toBe('<div class="hoy potato"></div>');
 
     const bnode3 = renderToBdom(template, { v: "" });
-    bnode1.patch(bnode3);
+    patch(bnode1, bnode3);
     // not sure about this. maybe we want to remove the attribute?
     expect(fixture.innerHTML).toBe('<div class="hoy"></div>');
   });
@@ -302,11 +302,11 @@ describe("attributes", () => {
     expect(fixture.innerHTML).toBe('<div class="hoy a b"></div>');
 
     const bnode2 = renderToBdom(template, { condition: false });
-    bnode1.patch(bnode2);
+    patch(bnode1, bnode2);
     expect(fixture.innerHTML).toBe('<div class="hoy"></div>');
 
     const bnode3 = renderToBdom(template, { condition: true });
-    bnode1.patch(bnode3);
+    patch(bnode1, bnode3);
     // not sure about this. maybe we want to remove the attribute?
     expect(fixture.innerHTML).toBe('<div class="hoy a b"></div>');
   });
@@ -351,7 +351,7 @@ describe("special cases for some specific html attributes/properties", () => {
     // rerender with a different value, and patch actual dom, to check that
     // input value was properly reset by owl
     const bnode2 = renderToBdom(template, { v: "potato" });
-    bnode1.patch(bnode2);
+    patch(bnode1, bnode2);
     expect(input.value).toBe("potato");
   });
 

@@ -1,5 +1,5 @@
-import type { BDom } from "../bdom";
-import { mount } from "../bdom";
+import type { BDom } from "../blockdom";
+import { mount } from "../blockdom";
 import type { ComponentNode } from "./component_node";
 import { STATUS } from "./status";
 // import { mountBlock } from "./bdom/block";

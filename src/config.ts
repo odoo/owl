@@ -1,4 +1,5 @@
 import { QWeb } from "./qweb/index";
+import { TRANSLATABLE_ATTRS } from "./qweb/qweb";
 
 /**
  * This file creates and exports the OWL 'config' object, with keys:
@@ -9,9 +10,12 @@ import { QWeb } from "./qweb/index";
 interface Config {
   mode: string;
   enableTransitions: boolean;
+  translatableAttributes: string[];
 }
 
-export const config = {} as Config;
+export const config = {
+  translatableAttributes: TRANSLATABLE_ATTRS,
+} as Config;
 
 Object.defineProperty(config, "mode", {
   get() {

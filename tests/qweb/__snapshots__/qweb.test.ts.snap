@@ -3943,6 +3943,20 @@ exports[`t-set value priority 1`] = `
 }"
 `;
 
+exports[`translation support can add additional attributes to the list of translatable attributes 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let h = this.h;
+    let _1 = 'word';
+    let _2 = 'mot';
+    let c3 = [], p3 = {key:3,attrs:{tomato: _1,potato: _2}};
+    let vn3 = h('div', p3, c3);
+    c3.push({text: \`text\`});
+    return vn3;
+}"
+`;
+
 exports[`translation support can translate node content 1`] = `
 "function anonymous(context, extra
 ) {

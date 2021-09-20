@@ -300,7 +300,8 @@ function buildContext(
   toIdx?: number
 ): BlockCtx {
   if (!ctx) {
-    ctx = { collectors: [], locations: [], children: [], cbRefs: [], refN: tree.refN };
+    const children = new Array(tree.info.filter((v) => v.type === "child").length);
+    ctx = { collectors: [], locations: [], children, cbRefs: [], refN: tree.refN };
     fromIdx = 0;
     toIdx = tree.refN - 1;
   }
@@ -351,16 +352,16 @@ function updateCtx(ctx: BlockCtx, tree: IntermediateTree) {
       case "child":
         if (info.isOnlyChild) {
           // tree is the parentnode here
-          ctx.children.push({
+          ctx.children[info.idx] = {
             parentRefIdx: info.refIdx!,
             isOnlyChild: true,
-          });
+          };
         } else {
           // tree is the anchor text node
-          ctx.children.push({
+          ctx.children[info.idx] = {
             parentRefIdx: parentTree(tree)!.refIdx!,
             afterRefIdx: info.refIdx!,
-          });
+          };
         }
         break;
       case "attribute": {

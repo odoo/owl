@@ -35,6 +35,6 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("");
     expect(status(parent)).toBe("destroyed");
     expect(error).toBeDefined();
-    expect(error.message).toBe("Cannot read property 'this' of undefined");
+    expect(error.message).toBe("Cannot read properties of undefined (reading 'this')");
   });
 });

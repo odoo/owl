@@ -62,40 +62,44 @@ export function attrsUpdater(this: HTMLElement, attrs: any, oldAttrs: any) {
 
 function toClassObj(expr: string | number | { [c: string]: any }) {
   const result: { [c: string]: any } = {};
-  const type = typeof expr;
-
-  if (type === "object") {
-    // this is already an object but we may need to split keys:
-    // {'a': true, 'b c': true} should become {a: true, b: true, c: true}
-    for (let key in expr as any) {
-      const value = (expr as any)[key];
-      if (value) {
-        const words = split.call(key, wordRegexp);
-        for (let word of words) {
-          result[word] = value;
+  switch (typeof expr) {
+    case "string":
+      // we transform here a list of classes into an object:
+      //  'hey you' becomes {hey: true, you: true}
+      const str = trim.call(expr);
+      if (!str) {
+        return {};
+      }
+      let words = split.call(str, wordRegexp);
+      for (let i = 0, l = words.length; i < l; i++) {
+        result[words[i]] = true;
+      }
+      return result;
+    case "object":
+      // this is already an object but we may need to split keys:
+      // {'a': true, 'b c': true} should become {a: true, b: true, c: true}
+      for (let key in expr as any) {
+        const value = (expr as any)[key];
+        if (value) {
+          const words = split.call(key, wordRegexp);
+          for (let word of words) {
+            result[word] = value;
+          }
         }
       }
-    }
-    return result;
+      return result;
+
+    case "undefined":
+      return {};
+    case "number":
+      return { [expr as number]: true };
+    default:
+      return { [expr as any]: true };
   }
-  if (type !== "string") {
-    expr = String(expr);
-  }
-  // we transform here a list of classes into an object:
-  //  'hey you' becomes {hey: true, you: true}
-  const str = trim.call(expr);
-  if (!str) {
-    return {};
-  }
-  let words = split.call(str, wordRegexp);
-  for (let i = 0, l = words.length; i < l; i++) {
-    result[words[i]] = true;
-  }
-  return result;
 }
 
 export function setClass(this: HTMLElement, val: any) {
-  val = val ? toClassObj(val) : {};
+  val = val === "" ? {} : toClassObj(val);
   // add classes
   const cl = this.classList;
   for (let c in val) {
@@ -104,8 +108,8 @@ export function setClass(this: HTMLElement, val: any) {
 }
 
 export function updateClass(this: HTMLElement, val: any, oldVal: any) {
-  oldVal = oldVal ? toClassObj(oldVal) : {};
-  val = val ? toClassObj(val) : {};
+  oldVal = oldVal === "" ? {} : toClassObj(oldVal);
+  val = val === "" ? {} : toClassObj(val);
   const cl = this.classList;
   // remove classes
   for (let c in oldVal) {

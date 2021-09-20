@@ -68,7 +68,7 @@ describe("event handling", () => {
     expect(fixture.innerHTML).toBe(`<div><input type="text"></div>`);
     const input = (<HTMLElement>counter.el).getElementsByTagName("input")[0];
     input.value = "test";
-    input.dispatchEvent(new Event("input", {bubbles: true}));
+    input.dispatchEvent(new Event("input", { bubbles: true }));
     await nextTick();
     expect(fixture.innerHTML).toBe(`<div>test<input type="text"></div>`);
   });

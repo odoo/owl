@@ -1614,6 +1614,9 @@
          * template, with the name given by the t-name attribute.
          */
         addTemplates(xmlstr) {
+            if (!xmlstr) {
+                return;
+            }
             const doc = typeof xmlstr === "string" ? parseXML(xmlstr) : xmlstr;
             const templates = doc.getElementsByTagName("templates")[0];
             if (!templates) {
@@ -1823,7 +1826,7 @@
                 return;
             }
             if (node.tagName !== "t" && node.hasAttribute("t-call")) {
-                const tCallNode = document.createElement("t");
+                const tCallNode = document.implementation.createDocument("http://www.w3.org/1999/xhtml", "t", null).documentElement;
                 tCallNode.setAttribute("t-call", node.getAttribute("t-call"));
                 node.removeAttribute("t-call");
                 node.prepend(tCallNode);
@@ -1850,7 +1853,7 @@
                         throw new Error(`Unknown QWeb directive: '${attrName}'`);
                     }
                     if (node.tagName !== "t" && (attrName === "t-esc" || attrName === "t-raw")) {
-                        const tNode = document.createElement("t");
+                        const tNode = document.implementation.createDocument("http://www.w3.org/1999/xhtml", "t", null).documentElement;
                         tNode.setAttribute(attrName, node.getAttribute(attrName));
                         for (let child of Array.from(node.childNodes)) {
                             tNode.appendChild(child);
@@ -2905,7 +2908,9 @@
         },
     });
 
-    const config = {};
+    const config = {
+        translatableAttributes: TRANSLATABLE_ATTRS,
+    };
     Object.defineProperty(config, "mode", {
         get() {
             return QWeb.dev ? "dev" : "prod";
@@ -5544,9 +5549,9 @@ See https://github.com/odoo/owl/blob/master/doc/reference/config.md#mode for mor
     exports.utils = utils;
 
 
-    __info__.version = '1.4.4';
-    __info__.date = '2021-09-03T07:57:17.677Z';
-    __info__.hash = 'b3181f1';
+    __info__.version = '1.4.5';
+    __info__.date = '2021-09-22T14:34:19.283Z';
+    __info__.hash = '37313c4';
     __info__.url = 'https://github.com/odoo/owl';
 
 

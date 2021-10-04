@@ -13,8 +13,8 @@
   // "compileOnSave": false,                                    // Signals to the IDE to generate all files for a given tsconfig.json upon saving.
   "compilerOptions": {
                                                                 // Main options
-    "target": "esnext",                                         // Specify ECMAScript target version: 'es3' (default), 'es5', 'es2015', 'es2016', 'es2017','es2018' or 'esnext'.
-    "module": "esnext",                                         // Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'.
+    "target": "es2017",                                         // Specify ECMAScript target version: 'es3' (default), 'es5', 'es2015', 'es2016', 'es2017','es2018' or 'esnext'.
+    "module": "es6",                                         // Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'.
     // "lib": ["esnext", "dom"],                                // Specify library files to be included in the compilation.
     // "allowJs": false,                                        // Allow javascript files to be compiled.
     // "checkJs": false,                                        // Report errors in .js files.

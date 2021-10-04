@@ -198,6 +198,7 @@ export class Fiber {
     // build patchQueue
     const patchQueue: Fiber[] = [];
     const doWork: (Fiber) => Fiber | null = function (f) {
+      f.component.__owl__.currentFiber = null;
       patchQueue.push(f);
       return f.child;
     };
@@ -254,10 +255,6 @@ export class Fiber {
           component.__patch(document.createElement(fiber.vnode!.sel!), fiber.vnode!);
           component.__owl__.pvnode!.elm = component.__owl__.vnode!.elm;
         }
-      }
-      const compOwl = component.__owl__;
-      if (fiber === compOwl.currentFiber) {
-        compOwl.currentFiber = null;
       }
     }
 

@@ -1388,6 +1388,62 @@ describe("async rendering", () => {
     expect(fixture.innerHTML).toBe("<span>4</span>");
   });
 
+  test("calling render in destroy", async () => {
+    let a: any = null;
+    let c: any = null;
+
+    class C extends Component {
+      static template = xml`
+        <div>
+          <t t-esc="props.fromA"/>
+        </div>`;
+    }
+
+    let flag = false;
+    class B extends Component {
+      static template = xml`<C fromA="props.fromA"/>`;
+      static components = { C };
+
+      setup() {
+        c = this;
+      }
+
+      mounted() {
+        if (flag) {
+          this.render();
+        } else {
+          flag = true;
+        }
+      }
+      willUnmount() {
+        c.render();
+      }
+    }
+
+    class A extends Component {
+      static template = xml`<B t-key="key" fromA="state"/>`;
+      static components = { B };
+      state = "a";
+      key = 1;
+
+      setup() {
+        a = this;
+      }
+    }
+
+    const parent = new A();
+    await parent.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>a</div>");
+
+    a.state = "A";
+    a.key = 2;
+    await a.render();
+    // this nextTick is critical, otherwise jest may silently swallow errors
+    await nextTick();
+
+    expect(fixture.innerHTML).toBe("<div>A</div>");
+  });
+
   test("change state and call manually render: no unnecessary rendering", async () => {
     class Widget extends Component {
       static template = xml`<div><t t-esc="state.val"/></div>`;

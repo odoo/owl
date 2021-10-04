@@ -400,6 +400,7 @@ export class Component<Props extends {} = any, T extends Env = Env> {
     if (currentFiber && !currentFiber.isRendered && !currentFiber.isCompleted) {
       return scheduler.addFiber(currentFiber.root);
     }
+
     // if we aren't mounted at this point, it implies that there is a
     // currentFiber that is already rendered (isRendered is true), so we are
     // about to be mounted
@@ -505,7 +506,6 @@ export class Component<Props extends {} = any, T extends Env = Env> {
     const __owl__ = this.__owl__;
 
     __owl__.status = STATUS.MOUNTED;
-    __owl__.currentFiber = null;
     this.mounted();
     if (__owl__.mountedCB) {
       __owl__.mountedCB();

@@ -41,9 +41,10 @@ export async function nextTick(): Promise<void> {
   await new Promise((resolve) => scheduler.requestAnimationFrame(resolve));
 }
 
-export async function nextFrame(): Promise<void> {
-  await new Promise((resolve) => scheduler.requestAnimationFrame(resolve));
-  await new Promise((resolve) => scheduler.requestAnimationFrame(resolve));
+export async function nextFrame(numberOfAnimationFrames: number = 2): Promise<void> {
+  for (let i = 0; i < numberOfAnimationFrames; i++) {
+    await new Promise((resolve) => scheduler.requestAnimationFrame(resolve));
+  }
 }
 
 export function makeTestFixture() {

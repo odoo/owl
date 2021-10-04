@@ -420,29 +420,29 @@ describe("animations", () => {
 
     widget.state.flag = true;
 
-    await nextFrame();
+    await nextFrame(3);
     widget.el!.querySelector("span")!.dispatchEvent(new Event("transitionend"));
     expect(fixture.innerHTML).toBe('<div><span class="">blue</span></div>');
     expect(QWeb.utils.transitionInsert).toBeCalledTimes(1);
 
     widget.state.flag = false;
-    await nextFrame();
+    await nextFrame(3);
     expect(fixture.innerHTML).toBe(
       '<div><span class="chimay-leave-active chimay-leave-to" data-owl-key="__3__">blue</span></div>'
     );
     expect(QWeb.utils.transitionInsert).toBeCalledTimes(1);
 
     widget.state.flag = true;
-    await nextFrame();
+    await nextFrame(3);
     expect(fixture.innerHTML).toBe(
       '<div><span class="chimay-enter-active chimay-enter-to" data-owl-key="__3__">blue</span></div>'
     );
     expect(QWeb.utils.transitionInsert).toBeCalledTimes(2);
 
     widget.state.flag = false;
-    await nextFrame();
+    await nextFrame(3);
     widget.state.flag = true;
-    await nextFrame();
+    await nextFrame(3);
 
     expect(QWeb.utils.transitionInsert).toBeCalledTimes(3);
     widget.el!.querySelector("span")!.dispatchEvent(new Event("transitionend"));

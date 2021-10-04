@@ -28,8 +28,6 @@ Object.defineProperty(config, "mode", {
 
 This is not suitable for production use.
 See https://github.com/odoo/owl/blob/master/doc/reference/config.md#mode for more information.`);
-    } else {
-      console.log(`Owl is now running in 'prod' mode.`);
     }
   },
 });

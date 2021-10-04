@@ -384,7 +384,7 @@
                     if (groupType === "LEFT_BRACE" &&
                         isLeftSeparator(prevToken) &&
                         isRightSeparator(nextToken)) {
-                        tokens.splice(i + 1, 0, { type: "COLON", value: ":" }, { ...token });
+                        tokens.splice(i + 1, 0, { type: "COLON", value: ":" }, Object.assign({}, token));
                         nextToken = tokens[i + 1];
                     }
                     if (prevToken.type === "OPERATOR" && prevToken.value === ".") {
@@ -2923,9 +2923,6 @@
 This is not suitable for production use.
 See https://github.com/odoo/owl/blob/master/doc/reference/config.md#mode for more information.`);
             }
-            else {
-                console.log(`Owl is now running in 'prod' mode.`);
-            }
         },
     });
     Object.defineProperty(config, "enableTransitions", {
@@ -3661,6 +3658,7 @@ See https://github.com/odoo/owl/blob/master/doc/reference/config.md#mode for mor
             // build patchQueue
             const patchQueue = [];
             const doWork = function (f) {
+                f.component.__owl__.currentFiber = null;
                 patchQueue.push(f);
                 return f.child;
             };
@@ -3716,10 +3714,6 @@ See https://github.com/odoo/owl/blob/master/doc/reference/config.md#mode for mor
                         component.__patch(document.createElement(fiber.vnode.sel), fiber.vnode);
                         component.__owl__.pvnode.elm = component.__owl__.vnode.elm;
                     }
-                }
-                const compOwl = component.__owl__;
-                if (fiber === compOwl.currentFiber) {
-                    compOwl.currentFiber = null;
                 }
             }
             // insert into the DOM (mount case)
@@ -4374,7 +4368,6 @@ See https://github.com/odoo/owl/blob/master/doc/reference/config.md#mode for mor
         __callMounted() {
             const __owl__ = this.__owl__;
             __owl__.status = 3 /* MOUNTED */;
-            __owl__.currentFiber = null;
             this.mounted();
             if (__owl__.mountedCB) {
                 __owl__.mountedCB();
@@ -5549,9 +5542,9 @@ See https://github.com/odoo/owl/blob/master/doc/reference/config.md#mode for mor
     exports.utils = utils;
 
 
-    __info__.version = '1.4.5';
-    __info__.date = '2021-09-22T14:34:19.283Z';
-    __info__.hash = '37313c4';
+    __info__.version = '1.4.6';
+    __info__.date = '2021-10-04T13:16:22.377Z';
+    __info__.hash = 'c0f4956';
     __info__.url = 'https://github.com/odoo/owl';
 
 

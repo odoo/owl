@@ -101,6 +101,16 @@ QWeb.addDirective({
 });
 
 QWeb.addDirective({
+  name: "out",
+  priority: 70,
+  atNodeEncounter({ node, qweb, ctx }): boolean {
+    let value = ctx.getValue(node.getAttribute("t-out")!);
+    compileValueNode(value, node, qweb, ctx.subContext("escaping", true));
+    return true;
+  },
+});
+
+QWeb.addDirective({
   name: "raw",
   priority: 80,
   atNodeEncounter({ node, qweb, ctx }): boolean {

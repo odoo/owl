@@ -1,0 +1,122 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`old t-esc directive escaping 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('span', p1, c1);
+    let _2 = scope['var'];
+    if (_2 != null) {
+        c1.push({text: _2});
+    }
+    return vn1;
+}"
+`;
+
+exports[`old t-esc directive simple dynamic value 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let scope = Object.create(context);
+    let result;
+    let h = this.h;
+    let _1 = scope['text'];
+    if (_1 != null) {
+        let vn2 = {text: _1};
+        result = vn2
+    }
+    return result;
+}"
+`;
+
+exports[`old t-raw directive literal 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('span', p1, c1);
+    let _2 = 'ok';
+    if (_2 != null) {
+        c1.push(...utils.htmlToVDOM(_2));
+    }
+    return vn1;
+}"
+`;
+
+exports[`old t-raw directive not escaping 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    let _2 = scope['var'];
+    if (_2 != null) {
+        c1.push(...utils.htmlToVDOM(_2));
+    }
+    return vn1;
+}"
+`;
+
+exports[`old t-raw directive t-raw and another sibling node 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('span', p1, c1);
+    let c2 = [], p2 = {key:2};
+    let vn2 = h('span', p2, c2);
+    c1.push(vn2);
+    c2.push({text: \`hello\`});
+    let _3 = scope['var'];
+    if (_3 != null) {
+        c1.push(...utils.htmlToVDOM(_3));
+    }
+    return vn1;
+}"
+`;
+
+exports[`old t-raw directive t-raw with comment 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('span', p1, c1);
+    let _2 = scope['var'];
+    if (_2 != null) {
+        c1.push(...utils.htmlToVDOM(_2));
+    }
+    return vn1;
+}"
+`;
+
+exports[`old t-raw directive variable 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('span', p1, c1);
+    let _2 = scope['var'];
+    if (_2 != null) {
+        c1.push(...utils.htmlToVDOM(_2));
+    }
+    return vn1;
+}"
+`;

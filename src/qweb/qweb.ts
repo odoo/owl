@@ -599,7 +599,7 @@ export class QWeb extends EventBus {
         if (!(dName in QWeb.DIRECTIVE_NAMES)) {
           throw new Error(`Unknown QWeb directive: '${attrName}'`);
         }
-        if (node.tagName !== "t" && (attrName === "t-esc" || attrName === "t-raw")) {
+        if (node.tagName !== "t" && (attrName === "t-esc" || attrName === "t-out" || attrName === "t-raw")) {
           const tNode = document.implementation.createDocument(
             "http://www.w3.org/1999/xhtml",
             "t",

@@ -1236,7 +1236,7 @@ exports[`static templates empty div 1`] = `
 }"
 `;
 
-exports[`static templates inline template string in t-esc 1`] = `
+exports[`static templates inline template string in t-out 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
@@ -1252,7 +1252,7 @@ exports[`static templates inline template string in t-esc 1`] = `
 }"
 `;
 
-exports[`static templates inline template string with content in t-esc 1`] = `
+exports[`static templates inline template string with content in t-out 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
@@ -2244,245 +2244,6 @@ exports[`t-call (template calling with used set body 1`] = `
 }"
 `;
 
-exports[`t-esc div with falsy values 1`] = `
-"function anonymous(context, extra
-) {
-    // Template name: \\"test\\"
-    let scope = Object.create(context);
-    let h = this.h;
-    let c1 = [], p1 = {key:1};
-    let vn1 = h('div', p1, c1);
-    let c2 = [], p2 = {key:2};
-    let vn2 = h('p', p2, c2);
-    c1.push(vn2);
-    let _3 = scope['v1'];
-    if (_3 != null) {
-        c2.push({text: _3});
-    }
-    let c4 = [], p4 = {key:4};
-    let vn4 = h('p', p4, c4);
-    c1.push(vn4);
-    let _5 = scope['v2'];
-    if (_5 != null) {
-        c4.push({text: _5});
-    }
-    let c6 = [], p6 = {key:6};
-    let vn6 = h('p', p6, c6);
-    c1.push(vn6);
-    let _7 = scope['v3'];
-    if (_7 != null) {
-        c6.push({text: _7});
-    }
-    let c8 = [], p8 = {key:8};
-    let vn8 = h('p', p8, c8);
-    c1.push(vn8);
-    let _9 = scope['v4'];
-    if (_9 != null) {
-        c8.push({text: _9});
-    }
-    let c10 = [], p10 = {key:10};
-    let vn10 = h('p', p10, c10);
-    c1.push(vn10);
-    let _11 = scope['v5'];
-    if (_11 != null) {
-        c10.push({text: _11});
-    }
-    return vn1;
-}"
-`;
-
-exports[`t-esc escaping 1`] = `
-"function anonymous(context, extra
-) {
-    // Template name: \\"test\\"
-    let scope = Object.create(context);
-    let h = this.h;
-    let c1 = [], p1 = {key:1};
-    let vn1 = h('span', p1, c1);
-    let _2 = scope['var'];
-    if (_2 != null) {
-        c1.push({text: _2});
-    }
-    return vn1;
-}"
-`;
-
-exports[`t-esc escaping on a node 1`] = `
-"function anonymous(context, extra
-) {
-    // Template name: \\"test\\"
-    let scope = Object.create(context);
-    let h = this.h;
-    let c1 = [], p1 = {key:1};
-    let vn1 = h('span', p1, c1);
-    let _2 = 'ok';
-    if (_2 != null) {
-        c1.push({text: _2});
-    }
-    return vn1;
-}"
-`;
-
-exports[`t-esc escaping on a node with a body 1`] = `
-"function anonymous(context, extra
-) {
-    // Template name: \\"test\\"
-    let scope = Object.create(context);
-    let h = this.h;
-    let c1 = [], p1 = {key:1};
-    let vn1 = h('span', p1, c1);
-    let _2 = 'ok';
-    if (_2 != null) {
-        c1.push({text: _2});
-    } else {
-        c1.push({text: \`nope\`});
-    }
-    return vn1;
-}"
-`;
-
-exports[`t-esc escaping on a node with a body, as a default 1`] = `
-"function anonymous(context, extra
-) {
-    // Template name: \\"test\\"
-    let scope = Object.create(context);
-    let h = this.h;
-    let c1 = [], p1 = {key:1};
-    let vn1 = h('span', p1, c1);
-    let _2 = scope['var'];
-    if (_2 != null) {
-        c1.push({text: _2});
-    } else {
-        c1.push({text: \`nope\`});
-    }
-    return vn1;
-}"
-`;
-
-exports[`t-esc literal 1`] = `
-"function anonymous(context, extra
-) {
-    // Template name: \\"test\\"
-    let scope = Object.create(context);
-    let h = this.h;
-    let c1 = [], p1 = {key:1};
-    let vn1 = h('span', p1, c1);
-    let _2 = 'ok';
-    if (_2 != null) {
-        c1.push({text: _2});
-    }
-    return vn1;
-}"
-`;
-
-exports[`t-esc t-esc inside t-call, with t-set outside 1`] = `
-"function anonymous(context, extra
-) {
-    // Template name: \\"main\\"
-    let utils = this.constructor.utils;
-    let scope = Object.create(context);
-    let h = this.h;
-    let c1 = [], p1 = {key:1};
-    let vn1 = h('div', p1, c1);
-    let c2 = new utils.VDomArray();
-    c2.push({text: \`Hi\`});
-    scope.v = c2
-    let _origScope6 = scope;
-    scope = Object.create(scope);
-    scope.__access_mode__ = 'ro';
-    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__7__'}));
-    scope = _origScope6;
-    return vn1;
-}"
-`;
-
-exports[`t-esc t-esc is escaped 1`] = `
-"function anonymous(context, extra
-) {
-    // Template name: \\"test\\"
-    let utils = this.constructor.utils;
-    let scope = Object.create(context);
-    let h = this.h;
-    let c1 = [], p1 = {key:1};
-    let vn1 = h('div', p1, c1);
-    let c2 = new utils.VDomArray();
-    let c3 = [], p3 = {key:3};
-    let vn3 = h('p', p3, c3);
-    c2.push(vn3);
-    c3.push({text: \`escaped\`});
-    scope.var = c2
-    if (scope.var != null) {
-        let _origScope4 = scope;
-        scope = Object.create(scope);
-        scope.__access_mode__ = 'ro';
-        scope.var = scope.var instanceof utils.VDomArray ? utils.vDomToString(scope.var) : scope.var;
-        c1.push({text: scope.var});
-        scope = _origScope4;
-    }
-    return vn1;
-}"
-`;
-
-exports[`t-esc t-esc work with spread operator 1`] = `
-"function anonymous(context, extra
-) {
-    // Template name: \\"test\\"
-    let scope = Object.create(context);
-    let h = this.h;
-    let c1 = [], p1 = {key:1};
-    let vn1 = h('span', p1, c1);
-    let _2 = [...scope['state'].list];
-    if (_2 != null) {
-        c1.push({text: _2});
-    }
-    return vn1;
-}"
-`;
-
-exports[`t-esc t-esc=0 is escaped 1`] = `
-"function anonymous(context, extra
-) {
-    // Template name: \\"testCaller\\"
-    let utils = this.constructor.utils;
-    let scope = Object.create(context);
-    let h = this.h;
-    let c1 = [], p1 = {key:1};
-    let vn1 = h('div', p1, c1);
-    let _origScope4 = scope;
-    scope = Object.create(scope);
-    scope.__access_mode__ = 'ro';
-    {
-        {
-            let c__0 = [];
-            let c5 = [], p5 = {key:5};
-            let vn5 = h('p', p5, c5);
-            c__0.push(vn5);
-            c5.push({text: \`escaped\`});
-            scope[utils.zero] = c__0;
-        }
-        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__6__'}));
-    }
-    scope = _origScope4;
-    return vn1;
-}"
-`;
-
-exports[`t-esc variable 1`] = `
-"function anonymous(context, extra
-) {
-    // Template name: \\"test\\"
-    let scope = Object.create(context);
-    let h = this.h;
-    let c1 = [], p1 = {key:1};
-    let vn1 = h('span', p1, c1);
-    let _2 = scope['var'];
-    if (_2 != null) {
-        c1.push({text: _2});
-    }
-    return vn1;
-}"
-`;
-
 exports[`t-if boolean value condition elif 1`] = `
 "function anonymous(context, extra
 ) {
@@ -2640,7 +2401,7 @@ exports[`t-if can use some boolean operators in expressions 1`] = `
 }"
 `;
 
-exports[`t-if t-esc with t-elif 1`] = `
+exports[`t-if t-out with t-elif 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
@@ -2661,7 +2422,7 @@ exports[`t-if t-esc with t-elif 1`] = `
 }"
 `;
 
-exports[`t-if t-esc with t-if 1`] = `
+exports[`t-if t-out with t-if 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
@@ -2957,7 +2718,7 @@ exports[`t-on handler is bound to proper owner 1`] = `
 }"
 `;
 
-exports[`t-on t-on combined with t-esc 1`] = `
+exports[`t-on t-on combined with t-out 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
@@ -3283,41 +3044,39 @@ exports[`t-on t-on, with arguments and t-call 1`] = `
 }"
 `;
 
-exports[`t-raw literal 1`] = `
+exports[`t-out (formerly t-raw tests) literal 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
-    let utils = this.constructor.utils;
     let scope = Object.create(context);
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('span', p1, c1);
     let _2 = 'ok';
     if (_2 != null) {
-        c1.push(...utils.htmlToVDOM(_2));
+        c1.push({text: _2});
     }
     return vn1;
 }"
 `;
 
-exports[`t-raw not escaping 1`] = `
+exports[`t-out (formerly t-raw tests) not escaping 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
-    let utils = this.constructor.utils;
     let scope = Object.create(context);
     let h = this.h;
     let c1 = [], p1 = {key:1};
     let vn1 = h('div', p1, c1);
     let _2 = scope['var'];
     if (_2 != null) {
-        c1.push(...utils.htmlToVDOM(_2));
+        c1.push({text: _2});
     }
     return vn1;
 }"
 `;
 
-exports[`t-raw t-raw and another sibling node 1`] = `
+exports[`t-out (formerly t-raw tests) t-raw and another sibling node 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
@@ -3338,7 +3097,7 @@ exports[`t-raw t-raw and another sibling node 1`] = `
 }"
 `;
 
-exports[`t-raw t-raw with comment 1`] = `
+exports[`t-out (formerly t-raw tests) t-raw with comment 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
@@ -3355,7 +3114,175 @@ exports[`t-raw t-raw with comment 1`] = `
 }"
 `;
 
-exports[`t-raw variable 1`] = `
+exports[`t-out (formerly t-raw tests) variable 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('span', p1, c1);
+    let _2 = scope['var'];
+    if (_2 != null) {
+        c1.push({text: _2});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-out div with falsy values 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    let c2 = [], p2 = {key:2};
+    let vn2 = h('p', p2, c2);
+    c1.push(vn2);
+    let _3 = scope['v1'];
+    if (_3 != null) {
+        c2.push({text: _3});
+    }
+    let c4 = [], p4 = {key:4};
+    let vn4 = h('p', p4, c4);
+    c1.push(vn4);
+    let _5 = scope['v2'];
+    if (_5 != null) {
+        c4.push({text: _5});
+    }
+    let c6 = [], p6 = {key:6};
+    let vn6 = h('p', p6, c6);
+    c1.push(vn6);
+    let _7 = scope['v3'];
+    if (_7 != null) {
+        c6.push({text: _7});
+    }
+    let c8 = [], p8 = {key:8};
+    let vn8 = h('p', p8, c8);
+    c1.push(vn8);
+    let _9 = scope['v4'];
+    if (_9 != null) {
+        c8.push({text: _9});
+    }
+    let c10 = [], p10 = {key:10};
+    let vn10 = h('p', p10, c10);
+    c1.push(vn10);
+    let _11 = scope['v5'];
+    if (_11 != null) {
+        c10.push({text: _11});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-out escaping 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('span', p1, c1);
+    let _2 = scope['var'];
+    if (_2 != null) {
+        c1.push({text: _2});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-out escaping on a node 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('span', p1, c1);
+    let _2 = 'ok';
+    if (_2 != null) {
+        c1.push({text: _2});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-out escaping on a node with a body 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('span', p1, c1);
+    let _2 = 'ok';
+    if (_2 != null) {
+        c1.push({text: _2});
+    } else {
+        c1.push({text: \`nope\`});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-out escaping on a node with a body, as a default 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('span', p1, c1);
+    let _2 = scope['var'];
+    if (_2 != null) {
+        c1.push({text: _2});
+    } else {
+        c1.push({text: \`nope\`});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-out literal 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('span', p1, c1);
+    let _2 = 'ok';
+    if (_2 != null) {
+        c1.push({text: _2});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-out t-out inside t-call, with t-set outside 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"main\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    let c2 = new utils.VDomArray();
+    c2.push({text: \`Hi\`});
+    scope.v = c2
+    let _origScope6 = scope;
+    scope = Object.create(scope);
+    scope.__access_mode__ = 'ro';
+    this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__7__'}));
+    scope = _origScope6;
+    return vn1;
+}"
+`;
+
+exports[`t-out t-out is escaped 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"
@@ -3363,10 +3290,80 @@ exports[`t-raw variable 1`] = `
     let scope = Object.create(context);
     let h = this.h;
     let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    let c2 = new utils.VDomArray();
+    let c3 = [], p3 = {key:3};
+    let vn3 = h('p', p3, c3);
+    c2.push(vn3);
+    c3.push({text: \`escaped\`});
+    scope.var = c2
+    if (scope.var != null) {
+        let _origScope4 = scope;
+        scope = Object.create(scope);
+        scope.__access_mode__ = 'ro';
+        scope.var = scope.var instanceof utils.VDomArray ? utils.vDomToString(scope.var) : scope.var;
+        c1.push({text: scope.var});
+        scope = _origScope4;
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-out t-out work with spread operator 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('span', p1, c1);
+    let _2 = [...scope['state'].list];
+    if (_2 != null) {
+        c1.push({text: _2});
+    }
+    return vn1;
+}"
+`;
+
+exports[`t-out t-out=0 is escaped 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"testCaller\\"
+    let utils = this.constructor.utils;
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
+    let vn1 = h('div', p1, c1);
+    let _origScope4 = scope;
+    scope = Object.create(scope);
+    scope.__access_mode__ = 'ro';
+    {
+        {
+            let c__0 = [];
+            let c5 = [], p5 = {key:5};
+            let vn5 = h('p', p5, c5);
+            c__0.push(vn5);
+            c5.push({text: \`escaped\`});
+            scope[utils.zero] = c__0;
+        }
+        this.constructor.subTemplates['1'].call(this, scope, Object.assign({}, extra, {parentNode: c1, parent: utils.getComponent(context), key: '__6__'}));
+    }
+    scope = _origScope4;
+    return vn1;
+}"
+`;
+
+exports[`t-out variable 1`] = `
+"function anonymous(context, extra
+) {
+    // Template name: \\"test\\"
+    let scope = Object.create(context);
+    let h = this.h;
+    let c1 = [], p1 = {key:1};
     let vn1 = h('span', p1, c1);
     let _2 = scope['var'];
     if (_2 != null) {
-        c1.push(...utils.htmlToVDOM(_2));
+        c1.push({text: _2});
     }
     return vn1;
 }"
@@ -3708,7 +3705,7 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
 }"
 `;
 
-exports[`t-set t-set with content and sub t-esc 1`] = `
+exports[`t-set t-set with content and sub t-out 1`] = `
 "function anonymous(context, extra
 ) {
     // Template name: \\"test\\"

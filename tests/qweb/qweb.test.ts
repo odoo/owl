@@ -150,7 +150,7 @@ describe("error handling", () => {
   });
 });
 
-describe.only("t-out", () => {
+describe("t-out", () => {
   test("literal", () => {
     qweb.addTemplate("test", `<span><t t-out="'ok'"/></span>`);
     expect(renderToString(qweb, "test")).toBe("<span>ok</span>");
@@ -178,7 +178,7 @@ describe.only("t-out", () => {
     expect(renderToString(qweb, "test")).toBe("<span>ok</span>");
   });
 
-  test.only("escaping on a node with a body, as a default", () => {
+  test("escaping on a node with a body, as a default", () => {
     qweb.addTemplate("test", `<span t-out="var">nope</span>`);
     expect(renderToString(qweb, "test")).toBe("<span>nope</span>");
   });
@@ -245,21 +245,26 @@ describe("t-out (formerly t-raw tests)", () => {
     expect(renderToString(qweb, "test", { var: "ok" })).toBe("<span>ok</span>");
   });
 
-  test("not escaping", () => {
+  test("not escaping (Markup as template function)", () => {
     qweb.addTemplate("test", `<div><t t-out="var"/></div>`);
     expect(renderToString(qweb, "test", { var: Markup`<ok></ok>` })).toBe("<div><ok></ok></div>");
   });
 
+  test("not escaping (Markup as function)", () => {
+    qweb.addTemplate("test", `<div><t t-out="var"/></div>`);
+    expect(renderToString(qweb, "test", { var: Markup(`<ok></ok>`) })).toBe("<div><ok></ok></div>");
+  });
+
   test("t-raw and another sibling node", () => {
     qweb.addTemplate("test", `<span><span>hello</span><t t-raw="var"/></span>`);
-    expect(renderToString(qweb, "test", { var: "<ok>world</ok>" })).toBe(
+    expect(renderToString(qweb, "test", { var: Markup`<ok>world</ok>` })).toBe(
       "<span><span>hello</span><ok>world</ok></span>"
     );
   });
 
   test("t-raw with comment", () => {
     qweb.addTemplate("test", `<span><t t-raw="var"/></span>`);
-    expect(renderToString(qweb, "test", { var: "<p>text<!-- top secret --></p>" })).toBe(
+    expect(renderToString(qweb, "test", { var: Markup`<p>text<!-- top secret --></p>` })).toBe(
       "<span><p>text<!-- top secret --></p></span>"
     );
   });
@@ -400,7 +405,7 @@ describe("t-set", () => {
           <span><t t-out="v1"/></span>
         </t>
         <t t-set="v1" t-value="'after'"/>
-        <t t-raw="v2"/>
+        <t t-out="v2"/>
       </div>`
     );
 

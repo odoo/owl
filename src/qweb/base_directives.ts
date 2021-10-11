@@ -45,6 +45,26 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Compilatio
     exprID = `scope.${value.id}`;
   }
 
+    let protectID;
+    if (value.hasBody) {
+      ctx.rootContext.shouldDefineUtils = true;
+      protectID = ctx.startProtectScope();
+      ctx.addLine(
+        `${exprID} = ${exprID} instanceof utils.VDomArray ? utils.vDomToString(${exprID}) : ${exprID};`
+      );
+    }
+  if (node.childNodes.length) {
+      // ctx.addLine(`c${ctx.parentNode}.push(...vnodeArray);`);
+      ctx.addIf(`!${exprID}`);
+      // if (node.childNodes.length) {
+        // ctx.addElse();
+        qweb._compileChildren(node, ctx);
+      // }
+    
+      ctx.closeIf();
+
+
+  }
   if (ctx.parentTextNode) {
     ctx.addIf(`${exprID} != null`);
     ctx.addLine(`vn${ctx.parentTextNode}.text += ${exprID};`);
@@ -64,6 +84,10 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Compilatio
     }
     ctx.closeIf();
   }
+      if (value.hasBody) {
+      ctx.stopProtectScope(protectID);
+    }
+
   // ctx.addIf(`${exprID} != null`);
 
   // if (ctx.escaping) {
@@ -101,10 +125,6 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Compilatio
   //   } else {
   //     ctx.addLine(`c${ctx.parentNode}.push(...utils.htmlToVDOM(${exprID}));`);
   //   }
-  // }
-  // if (node.childNodes.length) {
-  //   ctx.addElse();
-  //   qweb._compileChildren(node, ctx);
   // }
 
   // ctx.closeIf();

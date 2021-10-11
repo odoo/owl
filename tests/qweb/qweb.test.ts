@@ -150,7 +150,7 @@ describe("error handling", () => {
   });
 });
 
-describe("t-out", () => {
+describe.only("t-out", () => {
   test("literal", () => {
     qweb.addTemplate("test", `<span><t t-out="'ok'"/></span>`);
     expect(renderToString(qweb, "test")).toBe("<span>ok</span>");
@@ -178,7 +178,7 @@ describe("t-out", () => {
     expect(renderToString(qweb, "test")).toBe("<span>ok</span>");
   });
 
-  test("escaping on a node with a body, as a default", () => {
+  test.only("escaping on a node with a body, as a default", () => {
     qweb.addTemplate("test", `<span t-out="var">nope</span>`);
     expect(renderToString(qweb, "test")).toBe("<span>nope</span>");
   });

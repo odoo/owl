@@ -44,50 +44,70 @@ function compileValueNode(value: any, node: Element, qweb: QWeb, ctx: Compilatio
   } else {
     exprID = `scope.${value.id}`;
   }
-  ctx.addIf(`${exprID} != null`);
 
-  if (ctx.escaping) {
-    let protectID;
-    if (value.hasBody) {
-      ctx.rootContext.shouldDefineUtils = true;
-      protectID = ctx.startProtectScope();
-      ctx.addLine(
-        `${exprID} = ${exprID} instanceof utils.VDomArray ? utils.vDomToString(${exprID}) : ${exprID};`
-      );
-    }
-    if (ctx.parentTextNode) {
-      ctx.addLine(`vn${ctx.parentTextNode}.text += ${exprID};`);
-    } else if (ctx.parentNode) {
-      ctx.addLine(`c${ctx.parentNode}.push({text: ${exprID}});`);
-    } else {
-      let nodeID = ctx.generateID();
-      ctx.rootContext.rootNode = nodeID;
-      ctx.rootContext.parentTextNode = nodeID;
-      ctx.addLine(`let vn${nodeID} = {text: ${exprID}};`);
-      if (ctx.rootContext.shouldDefineResult) {
-        ctx.addLine(`result = vn${nodeID}`);
-      }
-    }
-    if (value.hasBody) {
-      ctx.stopProtectScope(protectID);
-    }
-  } else {
+  if (ctx.parentTextNode) {
+    ctx.addIf(`${exprID} != null`);
+    ctx.addLine(`vn${ctx.parentTextNode}.text += ${exprID};`);
+    ctx.closeIf();
+  } else if (ctx.parentNode) {
     ctx.rootContext.shouldDefineUtils = true;
-    if (value.hasBody) {
-      ctx.addLine(
-        `const vnodeArray = ${exprID} instanceof utils.VDomArray ? ${exprID} : utils.htmlToVDOM(${exprID});`
-      );
-      ctx.addLine(`c${ctx.parentNode}.push(...vnodeArray);`);
-    } else {
-      ctx.addLine(`c${ctx.parentNode}.push(...utils.htmlToVDOM(${exprID}));`);
-    }
-  }
-  if (node.childNodes.length) {
-    ctx.addElse();
-    qweb._compileChildren(node, ctx);
-  }
+    ctx.addLine(`insertValue(c${ctx.parentNode}, ${exprID})`);
+  } else {
+    ctx.addIf(`${exprID} != null`);
 
-  ctx.closeIf();
+    let nodeID = ctx.generateID();
+    ctx.rootContext.rootNode = nodeID;
+    ctx.rootContext.parentTextNode = nodeID;
+    ctx.addLine(`let vn${nodeID} = {text: ${exprID}};`);
+    if (ctx.rootContext.shouldDefineResult) {
+      ctx.addLine(`result = vn${nodeID}`);
+    }
+    ctx.closeIf();
+  }
+  // ctx.addIf(`${exprID} != null`);
+
+  // if (ctx.escaping) {
+  //   let protectID;
+  //   if (value.hasBody) {
+  //     ctx.rootContext.shouldDefineUtils = true;
+  //     protectID = ctx.startProtectScope();
+  //     ctx.addLine(
+  //       `${exprID} = ${exprID} instanceof utils.VDomArray ? utils.vDomToString(${exprID}) : ${exprID};`
+  //     );
+  //   }
+  //   if (ctx.parentTextNode) {
+  //     ctx.addLine(`vn${ctx.parentTextNode}.text += ${exprID};`);
+  //   } else if (ctx.parentNode) {
+  //     ctx.addLine(`c${ctx.parentNode}.push({text: ${exprID}});`);
+  //   } else {
+  //     let nodeID = ctx.generateID();
+  //     ctx.rootContext.rootNode = nodeID;
+  //     ctx.rootContext.parentTextNode = nodeID;
+  //     ctx.addLine(`let vn${nodeID} = {text: ${exprID}};`);
+  //     if (ctx.rootContext.shouldDefineResult) {
+  //       ctx.addLine(`result = vn${nodeID}`);
+  //     }
+  //   }
+  //   if (value.hasBody) {
+  //     ctx.stopProtectScope(protectID);
+  //   }
+  // } else {
+  //   ctx.rootContext.shouldDefineUtils = true;
+  //   if (value.hasBody) {
+  //     ctx.addLine(
+  //       `const vnodeArray = ${exprID} instanceof utils.VDomArray ? ${exprID} : utils.htmlToVDOM(${exprID});`
+  //     );
+  //     ctx.addLine(`c${ctx.parentNode}.push(...vnodeArray);`);
+  //   } else {
+  //     ctx.addLine(`c${ctx.parentNode}.push(...utils.htmlToVDOM(${exprID}));`);
+  //   }
+  // }
+  // if (node.childNodes.length) {
+  //   ctx.addElse();
+  //   qweb._compileChildren(node, ctx);
+  // }
+
+  // ctx.closeIf();
 }
 
 QWeb.addDirective({

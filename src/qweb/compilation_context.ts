@@ -84,6 +84,7 @@ export class CompilationContext {
       this.code.unshift("    let QWeb = this.constructor;");
     }
     if (this.shouldDefineUtils) {
+      this.code.unshift("    let insertValue = utils.insertValue;");
       this.code.unshift("    let utils = this.constructor.utils;");
     }
     return this.code;

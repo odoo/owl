@@ -2,6 +2,7 @@ import { QWeb } from "../../src/qweb/index";
 import { config } from "../../src/index";
 import { nextTick, normalize, renderToDOM, renderToString, trim } from "../helpers";
 import { patch } from "../../src/vdom";
+import { Markup } from "../../src/utils";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
@@ -246,7 +247,7 @@ describe("t-out (formerly t-raw tests)", () => {
 
   test("not escaping", () => {
     qweb.addTemplate("test", `<div><t t-out="var"/></div>`);
-    expect(renderToString(qweb, "test", { var: "<ok></ok>" })).toBe("<div><ok></ok></div>");
+    expect(renderToString(qweb, "test", { var: Markup`<ok></ok>` })).toBe("<div><ok></ok></div>");
   });
 
   test("t-raw and another sibling node", () => {

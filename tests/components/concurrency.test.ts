@@ -117,6 +117,7 @@ test("destroying/recreating a subwidget with different props (if start is not ov
     "Child:mounted",
     "W:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("creating two async components, scenario 1", async () => {
@@ -197,6 +198,7 @@ test("creating two async components, scenario 1", async () => {
     "ChildA:mounted",
     "Parent:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("creating two async components, scenario 2", async () => {
@@ -272,6 +274,7 @@ test("creating two async components, scenario 2", async () => {
     "ChildA:patched",
     "Parent:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("creating two async components, scenario 3 (patching in the same frame)", async () => {
@@ -344,6 +347,7 @@ test("creating two async components, scenario 3 (patching in the same frame)", a
     "ChildA:patched",
     "Parent:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("update a sub-component twice in the same frame", async () => {
@@ -399,6 +403,7 @@ test("update a sub-component twice in the same frame", async () => {
     "ChildA:patched",
     "Parent:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("update a sub-component twice in the same frame, 2", async () => {
@@ -468,6 +473,7 @@ test("update a sub-component twice in the same frame, 2", async () => {
     "ChildA:patched",
     "Parent:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("properly behave when destroyed/unmounted while rendering ", async () => {
@@ -553,6 +559,7 @@ test("properly behave when destroyed/unmounted while rendering ", async () => {
     "Child:destroyed",
     "Parent:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("rendering component again in next microtick", async () => {
@@ -607,6 +614,7 @@ test("rendering component again in next microtick", async () => {
     "Child:mounted",
     "Parent:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("concurrent renderings scenario 1", async () => {
@@ -693,6 +701,7 @@ test("concurrent renderings scenario 1", async () => {
     "ComponentB:patched",
     "ComponentA:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("concurrent renderings scenario 2", async () => {
@@ -777,6 +786,7 @@ test("concurrent renderings scenario 2", async () => {
     "ComponentB:patched",
     "ComponentA:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("concurrent renderings scenario 2bis", async () => {
@@ -860,6 +870,7 @@ test("concurrent renderings scenario 2bis", async () => {
     "ComponentB:patched",
     "ComponentA:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("concurrent renderings scenario 3", async () => {
@@ -973,6 +984,7 @@ test("concurrent renderings scenario 3", async () => {
     "ComponentB:patched",
     "ComponentA:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("concurrent renderings scenario 4", async () => {
@@ -1086,6 +1098,7 @@ test("concurrent renderings scenario 4", async () => {
     "ComponentB:patched",
     "ComponentA:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("concurrent renderings scenario 5", async () => {
@@ -1155,6 +1168,7 @@ test("concurrent renderings scenario 5", async () => {
     "ComponentB:patched",
     "ComponentA:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("concurrent renderings scenario 6", async () => {
@@ -1225,6 +1239,7 @@ test("concurrent renderings scenario 6", async () => {
     "ComponentB:patched",
     "ComponentA:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("concurrent renderings scenario 7", async () => {
@@ -1281,6 +1296,7 @@ test("concurrent renderings scenario 7", async () => {
     "ComponentB:patched",
     "ComponentA:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("concurrent renderings scenario 8", async () => {
@@ -1340,6 +1356,7 @@ test("concurrent renderings scenario 8", async () => {
     "ComponentB:patched",
     "ComponentA:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("concurrent renderings scenario 9", async () => {
@@ -1450,6 +1467,7 @@ test("concurrent renderings scenario 9", async () => {
     "ComponentB:patched",
     "ComponentA:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("concurrent renderings scenario 10", async () => {
@@ -1546,6 +1564,7 @@ test("concurrent renderings scenario 10", async () => {
     "ComponentB:patched",
     "ComponentA:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("concurrent renderings scenario 11", async () => {
@@ -1607,6 +1626,7 @@ test("concurrent renderings scenario 11", async () => {
     "Child:patched",
     "Parent:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("concurrent renderings scenario 12", async () => {
@@ -1681,6 +1701,7 @@ test("concurrent renderings scenario 12", async () => {
     "Child:patched",
     "Parent:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("concurrent renderings scenario 13", async () => {
@@ -1755,6 +1776,7 @@ test("concurrent renderings scenario 13", async () => {
     "Child:willPatch",
     "Child:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("concurrent renderings scenario 14", async () => {
@@ -1847,6 +1869,7 @@ test("concurrent renderings scenario 14", async () => {
     "B:patched",
     "A:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("concurrent renderings scenario 15", async () => {
@@ -1945,6 +1968,7 @@ test("concurrent renderings scenario 15", async () => {
     "B:patched",
     "A:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("concurrent renderings scenario 16", async () => {
@@ -2054,6 +2078,7 @@ test("concurrent renderings scenario 16", async () => {
     "B:patched",
     "A:patched",
   ]);
+  Object.freeze(steps);
 });
 
 // test.skip("concurrent renderings scenario 17", async () => {
@@ -2111,6 +2136,7 @@ test("change state and call manually render: no unnecessary rendering", async ()
     "Test:willPatch",
     "Test:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("changing state before first render does not trigger a render", async () => {
@@ -2138,6 +2164,7 @@ test("changing state before first render does not trigger a render", async () =>
   expect(renders).toBe(1);
   expect(fixture.innerHTML).toBe("<div>3</div>");
   expect(steps).toEqual(["TestW:setup", "TestW:willStart", "TestW:render", "TestW:mounted"]);
+  Object.freeze(steps);
 });
 
 test("changing state before first render does not trigger a render (with parent)", async () => {
@@ -2187,6 +2214,7 @@ test("changing state before first render does not trigger a render (with parent)
     "TestW:mounted",
     "Parent:patched",
   ]);
+  Object.freeze(steps);
 });
 
 test("render method wait until rendering is done", async () => {
@@ -2263,6 +2291,7 @@ test("two renderings initiated between willPatch and patched", async () => {
     "Panel:destroyed",
     "Parent:patched",
   ]);
+  Object.freeze(steps);
 });
 
 //   test.skip("components with shouldUpdate=false", async () => {

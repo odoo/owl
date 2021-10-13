@@ -140,6 +140,7 @@ describe("lifecycle hooks", () => {
     }
     await mount(Parent, fixture);
     expect(steps).toEqual(["child:mounted", "parent:mounted"]);
+    Object.freeze(steps);
   });
 
   test("mounted hook is called on subsubcomponents, in proper order", async () => {
@@ -198,6 +199,7 @@ describe("lifecycle hooks", () => {
       "child:willUnmount",
       "childchild:willUnmount",
     ]);
+    Object.freeze(steps);
   });
 
   test("willPatch, patched hook are called on subsubcomponents, in proper order", async () => {
@@ -266,6 +268,7 @@ describe("lifecycle hooks", () => {
       "child:patched",
       "parent:patched",
     ]);
+    Object.freeze(steps);
   });
 
   test("willStart, mounted on subwidget rendered after main is mounted in some other position", async () => {
@@ -306,6 +309,8 @@ describe("lifecycle hooks", () => {
     parent.state.ok = true;
     await nextTick();
     expect(steps).toEqual(["child:willStart", "child:mounted"]);
+    Object.freeze(steps);
+    Object.freeze(steps);
   });
 
   test("components are unmounted and destroyed if no longer in DOM", async () => {
@@ -337,6 +342,7 @@ describe("lifecycle hooks", () => {
     parent.state.ok = false;
     await nextTick();
     expect(steps).toEqual(["setup", "willstart", "mounted", "willunmount"]);
+    Object.freeze(steps);
   });
 
   test("components are unmounted and destroyed if no longer in DOM, even after updateprops", async () => {
@@ -398,6 +404,7 @@ describe("lifecycle hooks", () => {
       "Child:destroyed",
       "Parent:patched",
     ]);
+    Object.freeze(steps);
   });
 
   test("hooks are called in proper order in widget creation/destruction", async () => {
@@ -449,6 +456,7 @@ describe("lifecycle hooks", () => {
       "p willunmount",
       "c willunmount",
     ]);
+    Object.freeze(steps);
   });
 
   test("willUpdateProps hook is called", async () => {
@@ -569,6 +577,7 @@ describe("lifecycle hooks", () => {
       "Child:destroyed",
       "Parent:destroyed",
     ]);
+    Object.freeze(steps);
   });
 
   test("lifecycle semantics, part 2", async () => {
@@ -631,6 +640,7 @@ describe("lifecycle hooks", () => {
       "Child:destroyed",
       "Parent:destroyed",
     ]);
+    Object.freeze(steps);
   });
 
   test("lifecycle semantics, part 3", async () => {
@@ -732,6 +742,7 @@ describe("lifecycle hooks", () => {
       "Child:destroyed",
       "Parent:destroyed",
     ]);
+    Object.freeze(steps);
   });
 
   test("lifecycle semantics, part 5", async () => {
@@ -778,6 +789,7 @@ describe("lifecycle hooks", () => {
       "Child:destroyed",
       "Parent:patched",
     ]);
+    Object.freeze(steps);
   });
 
   test("lifecycle semantics, part 6", async () => {
@@ -826,6 +838,7 @@ describe("lifecycle hooks", () => {
       "Child:patched",
       "Parent:patched",
     ]);
+    Object.freeze(steps);
   });
 
   test("onRender", async () => {
@@ -894,5 +907,6 @@ describe("lifecycle hooks", () => {
       "Child:patched",
       "Parent:patched",
     ]);
+    Object.freeze(steps);
   });
 });

@@ -3,6 +3,8 @@ import { ComponentNode } from "./component/component_node";
 import { Scheduler } from "./component/scheduler";
 import { TemplateSet } from "./qweb/template_helpers";
 
+// reimplement dev mode stuff see last change in 0f7a8289a6fb8387c3c1af41c6664b2a8448758f
+
 export class App<T extends typeof Component = any> extends TemplateSet {
   Root: T;
   props: any;

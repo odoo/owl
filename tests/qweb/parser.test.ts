@@ -1126,4 +1126,47 @@ describe("qweb parser", () => {
       name: "myBlock",
     });
   });
+
+  // ---------------------------------------------------------------------------
+  // t-translation
+  // ---------------------------------------------------------------------------
+  test('t-translation="off"', async () => {
+    expect(parse(`<t t-translation="off">word</t>`)).toEqual({
+      type: ASTType.TTranslation,
+      content: {
+        type: ASTType.Text,
+        value: "word",
+      },
+    });
+
+    expect(parse(`<div t-foreach="list" t-translation="off" t-as="item">word</div>`)).toEqual({
+      body: {
+        content: {
+          attrs: {},
+          content: [
+            {
+              type: 0,
+              value: "word",
+            },
+          ],
+          on: {},
+          ref: null,
+          tag: "div",
+          type: 2,
+        },
+        type: 16,
+      },
+      collection: "list",
+      elem: "item",
+      hasNoComponent: true,
+      hasNoFirst: true,
+      hasNoIndex: true,
+      hasNoLast: true,
+      hasNoValue: true,
+      isOnlyChild: false,
+      key: null,
+      memo: "",
+      type: 9,
+    });
+  });
 });

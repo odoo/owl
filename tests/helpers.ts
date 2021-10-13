@@ -1,23 +1,22 @@
 import {
+  App,
+  Component,
   onDestroyed,
-  onWillPatch,
-  onWillUnmount,
   onMounted,
   onPatched,
-  onWillStart,
-  onWillUpdateProps,
-  useComponent,
-  status,
   onRender,
-  Component,
+  onWillPatch,
+  onWillStart,
+  onWillUnmount,
+  onWillUpdateProps,
+  status,
+  useComponent,
 } from "../src";
-import { TemplateSet, globalTemplates, UTILS } from "../src/qweb/template_helpers";
-import { blockDom } from "../src";
 import { BDom } from "../src/blockdom";
-// import { mountBlock } from "../src/blockdom/block";
-import { compileTemplate, Template } from "../src/qweb/compiler";
+import { blockDom } from "../src";
+import { CompileOptions, compileTemplate, Template } from "../src/qweb/compiler";
+import { globalTemplates, TemplateSet, UTILS } from "../src/qweb/template_helpers";
 import { xml } from "../src/tags";
-// import { UTILS } from "../src/template_utils";
 
 const mount = blockDom.mount;
 
@@ -37,8 +36,17 @@ export function makeTestFixture() {
   return fixture;
 }
 
-export function snapshotTemplateCode(template: string) {
-  expect(compileTemplate(template).toString()).toMatchSnapshot();
+export function snapshotTemplateCode(template: string, options?: CompileOptions) {
+  expect(compileTemplate(template, options).toString()).toMatchSnapshot();
+}
+
+export function snapshotApp(app: App) {
+  const Root = app.Root;
+  const template = app.rawTemplates[Root.template];
+  snapshotTemplateCode(template, {
+    translateFn: app.translateFn,
+    translatableAttributes: app.translatableAttributes,
+  });
 }
 
 export async function nextTick(): Promise<void> {

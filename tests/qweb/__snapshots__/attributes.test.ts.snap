@@ -423,6 +423,21 @@ exports[`attributes t-att-class with multiple classes 2`] = `
 }"
 `;
 
+exports[`attributes t-att-class with multiple classes, some of which are duplicate 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = {'a b c':ctx['value'],'a b d':!ctx['value']};
+    return block1([d1]);
+  }
+}"
+`;
+
 exports[`attributes t-att-class with object 1`] = `
 "function anonymous(bdom, helpers
 ) {

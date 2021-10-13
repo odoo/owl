@@ -242,6 +242,15 @@ describe("attributes", () => {
     );
   });
 
+  test.only("t-att-class with multiple classes, some of which are duplicate", () => {
+    expect(
+      renderToString(`<div t-att-class="{'a b c': value, 'a b d': !value}" />`, { value: true })
+    ).toBe('<div class="a b c"></div>');
+    expect(
+      renderToString(`<div t-att-class="{'a b c': value, 'a b d': !value}" />`, { value: false })
+    ).toBe('<div class="a b d"></div>');
+  });
+
   test("changing an attribute with t-att-", () => {
     // render input with initial value
     const template = `<div t-att-value="v"/>`;

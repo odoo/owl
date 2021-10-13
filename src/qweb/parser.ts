@@ -19,6 +19,7 @@ export const enum ASTType {
   TLog,
   TSlot,
   TCallBlock,
+  TTranslation,
 }
 
 export interface ASTText {
@@ -131,6 +132,11 @@ export interface ASTLog {
   content: AST | null;
 }
 
+export interface ASTTranslation {
+  type: ASTType.TTranslation;
+  content: AST | null;
+}
+
 export type AST =
   | ASTText
   | ASTComment
@@ -147,7 +153,8 @@ export type AST =
   | ASTSlot
   | ASTTCallBlock
   | ASTLog
-  | ASTDebug;
+  | ASTDebug
+  | ASTTranslation;
 
 // -----------------------------------------------------------------------------
 // Parser
@@ -179,6 +186,7 @@ function parseNode(node: ChildNode, ctx: ParsingContext): AST | null {
     parseTCallBlock(node, ctx) ||
     parseTEscNode(node, ctx) ||
     parseTKey(node, ctx) ||
+    parseTTranslation(node, ctx) ||
     parseTSlot(node, ctx) ||
     parseTRawNode(node, ctx) ||
     parseComponent(node, ctx) ||
@@ -457,6 +465,7 @@ function hasNoComponent(ast: AST): boolean {
       return hasNoComponent(ast.content);
     case ASTType.TDebug:
     case ASTType.TLog:
+    case ASTType.TTranslation:
       return ast.content ? hasNoComponent(ast.content) : true;
     case ASTType.TForEach:
       return ast.hasNoComponent;
@@ -708,6 +717,17 @@ function parseTSlot(node: Element, ctx: ParsingContext): AST | null {
     type: ASTType.TSlot,
     name: node.getAttribute("t-slot")!,
     defaultContent: parseChildNodes(node, ctx),
+  };
+}
+
+function parseTTranslation(node: Element, ctx: ParsingContext): AST | null {
+  if (node.getAttribute("t-translation") !== "off") {
+    return null;
+  }
+  node.removeAttribute("t-translation");
+  return {
+    type: ASTType.TTranslation,
+    content: parseNode(node, ctx),
   };
 }
 

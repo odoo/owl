@@ -35,6 +35,8 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("");
     expect(status(parent)).toBe("destroyed");
     expect(error).toBeDefined();
-    expect(error.message).toBe("Cannot read properties of undefined (reading 'this')");
+    const regexp =
+      /Cannot read properties of undefined \(reading 'this'\)|Cannot read property 'this' of undefined/g;
+    expect(error.message).toMatch(regexp);
   });
 });

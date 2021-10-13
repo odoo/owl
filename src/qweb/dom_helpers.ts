@@ -22,10 +22,16 @@ export interface DomNode {
 
 export type Dom = DomText | DomComment | DomNode;
 
+function escape(str: string): string {
+  const p = document.createElement("p");
+  p.textContent = str;
+  return p.innerHTML;
+}
+
 export function domToString(dom: Dom): string {
   switch (dom.type) {
     case DomType.Text:
-      return dom.value;
+      return escape(dom.value);
     case DomType.Comment:
       return `<!--${dom.value}-->`;
     case DomType.Node:
@@ -33,7 +39,7 @@ export function domToString(dom: Dom): string {
       const attrs: string[] = [];
       for (let [key, value] of Object.entries(dom.attrs)) {
         if (!(key === "class" && value === "")) {
-          attrs.push(`${key}="${value}"`);
+          attrs.push(`${key}="${escape(value)}"`);
         }
       }
       if (content) {

@@ -406,7 +406,8 @@ describe("Portal", () => {
   //       error = e;
   //     }
   //     expect(error).toBeDefined();
-  //     expect(error.message).toBe("Cannot read property 'crash' of undefined");
+  //     const regexp = /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g
+  //     expect(error.message).toMatch(regexp);
   //   });
 
   //   test.skip("portal manual unmount", async () => {

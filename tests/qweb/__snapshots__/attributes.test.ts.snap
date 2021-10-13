@@ -579,13 +579,27 @@ exports[`attributes various escapes 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
   
-  let block1 = createBlock(\`<div foo=\\"<foo\\" block-attribute-0=\\"bar\\" block-attribute-1=\\"baz\\" block-attributes=\\"2\\"/>\`);
+  let block1 = createBlock(\`<div foo=\\"&lt;foo\\" block-attribute-0=\\"bar\\" block-attribute-1=\\"baz\\" block-attributes=\\"2\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['bar'];
     let d2 = \`<\${ctx['baz']}>\`;
     let d3 = ctx['qux'];
     return block1([d1, d2, d3]);
+  }
+}"
+`;
+
+exports[`attributes various escapes 2 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div> &lt; </div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
   }
 }"
 `;

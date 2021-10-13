@@ -186,7 +186,6 @@ describe("attributes", () => {
   });
 
   test("various escapes", () => {
-    // not needed??
     const template = `
       <div foo="&lt;foo"
         t-att-bar="bar"
@@ -199,6 +198,14 @@ describe("attributes", () => {
       qux: { qux: "<>" },
     });
     const expected = '<div foo="<foo" bar="0" baz="<1>" qux="<>"></div>';
+    expect(result).toBe(expected);
+  });
+
+  test("various escapes 2", () => {
+    const template = `<div> &lt; </div>`;
+
+    const result = renderToString(template, {});
+    const expected = "<div> &lt; </div>";
     expect(result).toBe(expected);
   });
 

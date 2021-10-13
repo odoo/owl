@@ -191,7 +191,7 @@ describe("t-foreach", () => {
     const template = `
         <div>
           <t t-foreach="elems" t-as="elem" t-key="elem.id">
-            <span t-if="elem.id < 3"><t t-esc="elem.text"/></span>
+            <span t-if="elem.id &lt; 3"><t t-esc="elem.text"/></span>
           </t>
         </div>`;
     const ctx = {
@@ -207,7 +207,7 @@ describe("t-foreach", () => {
   test("t-foreach with t-if inside (no external node)", () => {
     const template = `
           <t t-foreach="elems" t-as="elem" t-key="elem.id">
-            <span t-if="elem.id < 3"><t t-esc="elem.text"/></span>
+            <span t-if="elem.id &lt; 3"><t t-esc="elem.text"/></span>
           </t>`;
     const ctx = {
       elems: [

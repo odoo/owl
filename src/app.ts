@@ -23,6 +23,12 @@ export class App<T extends typeof Component = any> extends TemplateSet {
     if (params.env) {
       this.env = params.env;
     }
+    if (params.translateFn) {
+      this.translateFn = params.translateFn;
+    }
+    if (params.translatableAttributes) {
+      this.translatableAttributes = params.translatableAttributes;
+    }
   }
 
   mount(target: HTMLElement): Promise<InstanceType<T>> {

@@ -1,7 +1,6 @@
-// import { compileTemplate, Template } from "./qweb/index";
 import { BDom, createBlock, html, list, multi, text, toggler } from "../blockdom";
+import { compileTemplate, Template } from "./compiler";
 import { component } from "../component/component_node";
-import { Template, compileTemplate } from "./compiler";
 
 const bdom = { text, createBlock, list, multi, html, toggler, component };
 
@@ -82,6 +81,8 @@ export const UTILS = {
 export class TemplateSet {
   rawTemplates: { [name: string]: string } = Object.create(globalTemplates);
   templates: { [name: string]: Template } = {};
+  translateFn?: (s: string) => string;
+  translatableAttributes?: string[];
   utils: typeof UTILS;
 
   constructor() {
@@ -107,7 +108,11 @@ export class TemplateSet {
       if (rawTemplate === undefined) {
         throw new Error(`Missing template: "${name}"`);
       }
-      const templateFn = compileTemplate(rawTemplate, name);
+      const templateFn = compileTemplate(rawTemplate, {
+        name,
+        translateFn: this.translateFn,
+        translatableAttributes: this.translatableAttributes,
+      });
 
       // first add a function to lazily get the template, in case there is a
       // recursive call to the template name

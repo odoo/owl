@@ -18,6 +18,7 @@ import {
   ASTTKey,
   ASTTRaw,
   ASTTSet,
+  ASTTranslation,
   ASTType,
   parse,
 } from "./parser";
@@ -27,8 +28,14 @@ export type TemplateFunction = (blocks: any, utils: any) => Template;
 
 type BlockType = "block" | "text" | "multi" | "list" | "html";
 
-export function compileTemplate(template: string, name?: string): TemplateFunction {
-  const compiler = new QWebCompiler(template, name);
+export interface CompileOptions {
+  name?: string;
+  translateFn?: (s: string) => string;
+  translatableAttributes?: string[];
+}
+
+export function compileTemplate(template: string, options?: CompileOptions): TemplateFunction {
+  const compiler = new QWebCompiler(template, options);
   return compiler.compile();
 }
 
@@ -97,7 +104,7 @@ class BlockDescription {
   asXmlString() {
     // Can't use outerHTML on text/comment nodes
     // append dom to any element and use innerHTML instead
-    const t = xmlDoc.createElement('t');
+    const t = xmlDoc.createElement("t");
     t.appendChild(this.dom!);
     return t.innerHTML;
   }
@@ -114,6 +121,19 @@ interface Context {
   forceNewBlock: boolean;
   preventRoot?: boolean;
   isLast?: boolean;
+  translate: boolean;
+}
+
+function createContext(parentCtx: Context, params?: Partial<Context>) {
+  return Object.assign(
+    {
+      block: null,
+      index: 0,
+      forceNewBlock: true,
+      translate: parentCtx.translate,
+    },
+    params
+  );
 }
 
 class CodeTarget {
@@ -139,6 +159,9 @@ class CodeTarget {
   }
 }
 
+export const TRANSLATABLE_ATTRS = ["label", "title", "placeholder", "alt"];
+const translationRE = /^(\s*)([\s\S]+?)(\s*)$/;
+
 export class QWebCompiler {
   blocks: BlockDescription[] = [];
   nextId = 1;
@@ -154,15 +177,18 @@ export class QWebCompiler {
   target = new CodeTarget("main");
   templateName: string;
   template: string;
+  translateFn: (s: string) => string;
+  translatableAttributes: string[];
   ast: AST;
   staticCalls: { id: string; template: string }[] = [];
 
-  constructor(template: string, name?: string) {
+  constructor(template: string, options: CompileOptions = {}) {
     this.template = template;
+    this.translateFn = options.translateFn || ((s: string) => s);
+    this.translatableAttributes = options.translatableAttributes || TRANSLATABLE_ATTRS;
     this.ast = parse(template);
-    // console.warn(this.ast);
-    if (name) {
-      this.templateName = name;
+    if (options.name) {
+      this.templateName = options.name;
     } else {
       if (template.length > 250) {
         this.templateName = template.slice(0, 250) + "...";
@@ -177,9 +203,14 @@ export class QWebCompiler {
     this.isDebug = ast.type === ASTType.TDebug;
     BlockDescription.nextBlockId = 1;
     BlockDescription.nextDataId = 1;
-    this.compileAST(ast, { block: null, index: 0, forceNewBlock: false, isLast: true });
+    this.compileAST(ast, {
+      block: null,
+      index: 0,
+      forceNewBlock: false,
+      isLast: true,
+      translate: true,
+    });
     const code = this.generateCode();
-    // console.warn(code);
     return new Function("bdom, helpers", code) as TemplateFunction;
   }
 
@@ -282,13 +313,9 @@ export class QWebCompiler {
       this.addLine(`  let cache = ctx.cache || {};`);
       this.addLine(`  let nextCache = ctx.cache = {};`);
     }
-    // if (this.shouldDefineKey0) {
-    //   this.addLine(`  let key0;`);
-    // }
     for (let line of mainCode) {
       this.addLine(line);
     }
-    // console.warn(this.target.code.join('\n'))
     if (!this.target.hasRoot) {
       throw new Error("missing root block");
     }
@@ -383,6 +410,9 @@ export class QWebCompiler {
       case ASTType.TSlot:
         this.compileTSlot(ast, ctx);
         break;
+      case ASTType.TTranslation:
+        this.compileTTranslation(ast, ctx);
+        break;
     }
   }
 
@@ -415,15 +445,22 @@ export class QWebCompiler {
 
   compileText(ast: ASTText, ctx: Context) {
     let { block, forceNewBlock } = ctx;
+
+    let value = ast.value;
+    if (value && ctx.translate !== false) {
+      const match = translationRE.exec(value) as any;
+      value = match[1] + this.translateFn(match[2]) + match[3];
+    }
+
     if (!block || forceNewBlock) {
       block = this.createBlock(block, "text", ctx);
-      this.insertBlock(`text(\`${ast.value}\`)`, block, {
+      this.insertBlock(`text(\`${value}\`)`, block, {
         ...ctx,
         forceNewBlock: forceNewBlock && !block,
       });
     } else {
       const createFn = ast.type === ASTType.Text ? xmlDoc.createTextNode : xmlDoc.createComment;
-      block.insert(createFn.call(xmlDoc, ast.value));
+      block.insert(createFn.call(xmlDoc, value));
     }
   }
 
@@ -463,7 +500,6 @@ export class QWebCompiler {
       block = this.createBlock(block, "block", ctx);
       this.blocks.push(block);
     }
-
     // attributes
     const attrs: { [key: string]: string } = {};
     for (let key in ast.attrs) {
@@ -471,7 +507,6 @@ export class QWebCompiler {
         let expr = interpolate(ast.attrs[key]);
         const idx = block!.insertData(expr);
         attrs["block-attribute-" + idx] = key.slice(7);
-        // console.warn('ccc', staticAttrs)
       } else if (key.startsWith("t-att")) {
         let expr = compileExpr(ast.attrs[key]);
         const idx = block!.insertData(expr);
@@ -480,6 +515,8 @@ export class QWebCompiler {
         } else {
           attrs[`block-attribute-${idx}`] = key.slice(6);
         }
+      } else if (this.translatableAttributes.includes(key)) {
+        attrs[key] = this.translateFn(ast.attrs[key]);
       } else {
         attrs[key] = ast.attrs[key];
       }
@@ -522,12 +559,12 @@ export class QWebCompiler {
       const children = ast.content;
       for (let i = 0; i < children.length; i++) {
         const child = ast.content[i];
-        const subCtx: Context = {
-          block: block,
+        const subCtx: Context = createContext(ctx, {
+          block,
           index: block!.childNumber,
           forceNewBlock: false,
           isLast: ctx.isLast && i === children.length - 1,
-        };
+        });
         this.compileAST(child, subCtx);
       }
       block!.currentDom = initialDom;
@@ -582,7 +619,7 @@ export class QWebCompiler {
     let expr = ast.expr === "0" ? "ctx[zero]" : compileExpr(ast.expr);
     if (ast.body) {
       const nextId = BlockDescription.nextBlockId;
-      const subCtx: Context = { block: null, index: 0, forceNewBlock: true };
+      const subCtx: Context = createContext(ctx);
       this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
       expr = `withDefault(${expr}, b${nextId})`;
     }
@@ -603,7 +640,7 @@ export class QWebCompiler {
     this.addLine(`if (${compileExpr(ast.condition)}) {`);
     this.target.indentLevel++;
     this.insertAnchor(block!);
-    const subCtx: Context = { block: block, index: currentIndex, forceNewBlock: true };
+    const subCtx: Context = createContext(ctx, { block, index: currentIndex });
     this.compileAST(ast.content, subCtx);
     this.target.indentLevel--;
     if (ast.tElif) {
@@ -611,11 +648,7 @@ export class QWebCompiler {
         this.addLine(`} else if (${compileExpr(clause.condition)}) {`);
         this.target.indentLevel++;
         this.insertAnchor(block);
-        const subCtx: Context = {
-          block: block,
-          index: currentIndex,
-          forceNewBlock: true,
-        };
+        const subCtx: Context = createContext(ctx, { block, index: currentIndex });
         this.compileAST(clause.content, subCtx);
         this.target.indentLevel--;
       }
@@ -624,11 +657,7 @@ export class QWebCompiler {
       this.addLine(`} else {`);
       this.target.indentLevel++;
       this.insertAnchor(block);
-      const subCtx: Context = {
-        block: block,
-        index: currentIndex,
-        forceNewBlock: true,
-      };
+      const subCtx: Context = createContext(ctx, { block, index: currentIndex });
       this.compileAST(ast.tElse, subCtx);
       this.target.indentLevel--;
     }
@@ -708,11 +737,7 @@ export class QWebCompiler {
       this.addLine("}");
     }
 
-    const subCtx: Context = {
-      block: block, //collectionBlock,
-      index: loopVar,
-      forceNewBlock: true,
-    };
+    const subCtx: Context = createContext(ctx, { block, index: loopVar });
     this.compileAST(ast.body, subCtx);
     if (!ast.key) {
       console.warn(
@@ -755,13 +780,13 @@ export class QWebCompiler {
     for (let i = 0, l = ast.content.length; i < l; i++) {
       const child = ast.content[i];
       const isTSet = child.type === ASTType.TSet;
-      const subCtx: Context = {
-        block: block,
-        index: index,
+      const subCtx: Context = createContext(ctx, {
+        block,
+        index,
         forceNewBlock: !isTSet,
         preventRoot: ctx.preventRoot,
         isLast: ctx.isLast && i === l - 1,
-      };
+      });
       this.compileAST(child, subCtx);
       if (!isTSet) {
         index++;
@@ -795,7 +820,7 @@ export class QWebCompiler {
     if (ast.body) {
       this.addLine(`ctx = Object.create(ctx);`);
       const nextId = BlockDescription.nextBlockId;
-      const subCtx: Context = { block: null, index: 0, forceNewBlock: true, preventRoot: true };
+      const subCtx: Context = createContext(ctx, { preventRoot: true });
       this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
       if (nextId !== BlockDescription.nextBlockId) {
         this.addLine(`ctx[zero] = b${nextId};`);
@@ -820,7 +845,6 @@ export class QWebCompiler {
     } else {
       const id = this.generateId(`callTemplate_`);
       this.staticCalls.push({ id, template: subTemplate });
-      // console.warn('coucoup', this.target.hasRoot)
       block = this.createBlock(block, "multi", ctx);
       this.insertBlock(`${id}(ctx, node, ${key})`, block!, { ...ctx, forceNewBlock: !block });
     }
@@ -844,7 +868,7 @@ export class QWebCompiler {
     this.shouldProtectScope = true;
     const expr = ast.value ? compileExpr(ast.value || "") : "null";
     if (ast.body) {
-      const subCtx: Context = { block: null, index: 0, forceNewBlock: true };
+      const subCtx: Context = createContext(ctx);
       const nextId = `b${BlockDescription.nextBlockId}`;
       this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
       const value = ast.value ? (nextId ? `withDefault(${expr}, ${nextId})` : expr) : nextId;
@@ -914,7 +938,7 @@ export class QWebCompiler {
         slot.signature = "ctx => (node, key) => {";
         this.functions.push(slot);
         this.target = slot;
-        const subCtx: Context = { block: null, index: 0, forceNewBlock: true };
+        const subCtx: Context = createContext(ctx);
         this.compileAST(ast.slots[slotName], subCtx);
         if (this.hasRef) {
           slot.signature = "ctx => node => {";
@@ -974,7 +998,7 @@ export class QWebCompiler {
       slot.signature = "ctx => {";
       this.functions.push(slot);
       const initialTarget = this.target;
-      const subCtx: Context = { block: null, index: 0, forceNewBlock: true };
+      const subCtx: Context = createContext(ctx);
       this.target = slot;
       this.compileAST(ast.defaultContent, subCtx);
       this.target = initialTarget;
@@ -993,5 +1017,11 @@ export class QWebCompiler {
     }
     block = this.createBlock(block, "multi", ctx);
     this.insertBlock(blockString, block, { ...ctx, forceNewBlock: false });
+  }
+
+  compileTTranslation(ast: ASTTranslation, ctx: Context) {
+    if (ast.content) {
+      this.compileAST(ast.content, Object.assign({}, ctx, { translate: false }));
+    }
   }
 }

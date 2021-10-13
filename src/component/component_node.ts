@@ -117,6 +117,9 @@ export class ComponentNode<T extends typeof Component = any> implements VNode<Co
     const fiber = makeRootFiber(this);
     this.app.scheduler.addFiber(fiber);
     await Promise.resolve();
+    if (this.status === STATUS.DESTROYED) {
+      return;
+    }
     if (this.fiber === fiber) {
       this._render(fiber);
     }

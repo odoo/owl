@@ -668,9 +668,11 @@ describe("lifecycle hooks", () => {
 
     parent.state.hasChild = true;
 
-    // immediately destroy everythin
+    // immediately destroy everything
     app.destroy();
+    await nextTick();
     expect(steps).toEqual(["Parent:willUnmount", "Parent:destroyed"]);
+    Object.freeze(steps);
   });
 
   test("lifecycle semantics, part 4", async () => {

@@ -1,5 +1,4 @@
 import { BDom } from "../blockdom";
-import { Dom, DomNode, domToString, DomType } from "./dom_helpers";
 import { compileExpr, compileExprToArray, interpolate, INTERP_REGEXP } from "./inline_expressions";
 import {
   AST,
@@ -33,6 +32,10 @@ export function compileTemplate(template: string, name?: string): TemplateFuncti
   return compiler.compile();
 }
 
+// using a non-html document so that <inner/outer>HTML serializes as XML instead
+// of HTML (as we will parse it as xml later)
+const xmlDoc = document.implementation.createDocument(null, null, null);
+
 // -----------------------------------------------------------------------------
 // BlockDescription
 // -----------------------------------------------------------------------------
@@ -47,8 +50,8 @@ class BlockDescription {
   hasDynamicChildren: boolean = false;
   children: BlockDescription[] = [];
   data: string[] = [];
-  dom?: Dom;
-  currentDom?: DomNode;
+  dom?: Node;
+  currentDom?: Element;
   childNumber: number = 0;
   target: CodeTarget;
   type: BlockType;
@@ -69,9 +72,9 @@ class BlockDescription {
     return this.data.push(id) - 1;
   }
 
-  insert(dom: Dom) {
+  insert(dom: Node) {
     if (this.currentDom) {
-      this.currentDom.content.push(dom);
+      this.currentDom.appendChild(dom);
     } else {
       this.dom = dom;
     }
@@ -89,6 +92,14 @@ class BlockDescription {
       return `list(c${this.id})`;
     }
     return expr;
+  }
+
+  asXmlString() {
+    // Can't use outerHTML on text/comment nodes
+    // append dom to any element and use innerHTML instead
+    const t = xmlDoc.createElement('t');
+    t.appendChild(this.dom!);
+    return t.innerHTML;
   }
 }
 
@@ -186,7 +197,7 @@ export class QWebCompiler {
 
   insertAnchor(block: BlockDescription) {
     const tag = `block-child-${block.children.length}`;
-    const anchor: Dom = { type: DomType.Node, tag, attrs: {}, content: [] };
+    const anchor = xmlDoc.createElement(tag);
     block.insert(anchor);
   }
 
@@ -247,7 +258,7 @@ export class QWebCompiler {
       this.addLine(``);
       for (let block of this.blocks) {
         if (block.dom) {
-          this.addLine(`let ${block.blockName} = createBlock(\`${domToString(block.dom)}\`);`);
+          this.addLine(`let ${block.blockName} = createBlock(\`${block.asXmlString()}\`);`);
         }
       }
     }
@@ -395,7 +406,7 @@ export class QWebCompiler {
       block = this.createBlock(block, "block", ctx);
       this.blocks.push(block);
     }
-    const text: Dom = { type: DomType.Comment, value: ast.value };
+    const text = xmlDoc.createComment(ast.value);
     block!.insert(text);
     if (isNewBlock) {
       this.insertBlock("", block!, ctx);
@@ -411,9 +422,8 @@ export class QWebCompiler {
         forceNewBlock: forceNewBlock && !block,
       });
     } else {
-      const type = ast.type === ASTType.Text ? DomType.Text : DomType.Comment;
-      const text: Dom = { type, value: ast.value };
-      block.insert(text);
+      const createFn = ast.type === ASTType.Text ? xmlDoc.createTextNode : xmlDoc.createComment;
+      block.insert(createFn.call(xmlDoc, ast.value));
     }
   }
 
@@ -499,7 +509,12 @@ export class QWebCompiler {
       }
     }
 
-    const dom: Dom = { type: DomType.Node, tag: ast.tag, attrs: attrs, content: [] };
+    const dom = xmlDoc.createElement(ast.tag);
+    for (const [attr, val] of Object.entries(attrs)) {
+      if (!(attr === "class" && val === "")) {
+        dom.setAttribute(attr, val);
+      }
+    }
     block!.insert(dom);
     if (ast.content.length) {
       const initialDom = block!.currentDom;
@@ -553,7 +568,7 @@ export class QWebCompiler {
       this.insertBlock(`text(${expr})`, block, { ...ctx, forceNewBlock: forceNewBlock && !block });
     } else {
       const idx = block.insertData(expr);
-      const text: Dom = { type: DomType.Node, tag: `block-text-${idx}`, attrs: {}, content: [] };
+      const text = xmlDoc.createElement(`block-text-${idx}`);
       block.insert(text);
     }
   }

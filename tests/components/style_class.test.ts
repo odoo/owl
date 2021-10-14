@@ -1,4 +1,4 @@
-import { Component, mount, useState, xml } from "../../src";
+import { Component, mount, useState, useRef, xml } from "../../src";
 import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -233,5 +233,39 @@ describe("style and class handling", () => {
     child.state.d = true;
     await nextTick();
     expect(span.className).toBe("c b d");
+  });
+
+  test("t-att-class is properly added/removed on widget root el (v3)", async () => {
+
+    class Child extends Component {
+      static template = `<span t-name="Child" class="c" t-att-class="state.d ? 'd' : ''"/>`;
+      state = useState({ d: true });
+    }
+    class Parent extends Component {
+      static template = xml`<Child class="a" t-att-class="state.b ? 'b' : ''" t-ref="child"/>`
+      static components = { Child };
+      state = useState({ b: true });
+      child = useRef("child");
+    }
+    const widget = await mount(Parent, fixture);
+
+    const span = fixture.querySelector("span")!;
+    expect(span.className).toBe("c d a b");
+
+    widget.state.b = false;
+    await nextTick();
+    expect(span.className).toBe("c d a");
+
+    (widget.child.comp as Child).state.d = false;
+    await nextTick();
+    expect(span.className).toBe("c a");
+
+    widget.state.b = true;
+    await nextTick();
+    expect(span.className).toBe("c a b");
+
+    (widget.child.comp as Child).state.d = true;
+    await nextTick();
+    expect(span.className).toBe("c a b d");
   });
 });

@@ -463,15 +463,15 @@ exports[`basics list of two sub components inside other nodes 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    const [k2, v2, l2, c2] = prepareList(ctx['state'].blips);
-    for (let i1 = 0; i1 < l2; i1++) {
-      ctx[\`blip\`] = v2[i1];
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].blips);
+    for (let i1 = 0; i1 < l_block2; i1++) {
+      ctx[\`blip\`] = v_block2[i1];
       let key1 = ctx['blip'].id;
       let b4 = component(\`SubWidget\`, {}, key + \`__1__\${key1}\`, node, ctx);
       let b5 = component(\`SubWidget\`, {}, key + \`__2__\${key1}\`, node, ctx);
-      c2[i1] = withKey(block3([], [b4, b5]), key1);
+      c_block2[i1] = withKey(block3([], [b4, b5]), key1);
     }
-    let b2 = list(c2);
+    let b2 = list(c_block2);
     return block1([], [b2]);
   }
 }"
@@ -995,13 +995,13 @@ exports[`basics updating a component with t-foreach as root 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    const [k1, v1, l1, c1] = prepareList(ctx['items']);
-    for (let i1 = 0; i1 < l1; i1++) {
-      ctx[\`item\`] = v1[i1];
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['items']);
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      ctx[\`item\`] = v_block1[i1];
       let key1 = ctx['item'];
-      c1[i1] = withKey(text(ctx['item']), key1);
+      c_block1[i1] = withKey(text(ctx['item']), key1);
     }
-    return list(c1);
+    return list(c_block1);
   }
 }"
 `;
@@ -1030,15 +1030,15 @@ exports[`basics widget after a t-foreach 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    const [k2, v2, l2, c2] = prepareList(Array(2));
-    for (let i1 = 0; i1 < l2; i1++) {
-      ctx[\`elem\`] = v2[i1];
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(Array(2));
+    for (let i1 = 0; i1 < l_block2; i1++) {
+      ctx[\`elem\`] = v_block2[i1];
       ctx[\`elem_index\`] = i1;
       let key1 = ctx['elem_index'];
-      c2[i1] = withKey(text(\`txt\`), key1);
+      c_block2[i1] = withKey(text(\`txt\`), key1);
     }
     ctx = ctx.__proto__;
-    let b2 = list(c2);
+    let b2 = list(c_block2);
     let b4 = component(\`SomeComponent\`, {}, key + \`__1\`, node, ctx);
     return block1([], [b2, b4]);
   }

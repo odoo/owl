@@ -244,7 +244,7 @@ describe("style and class handling", () => {
       state = useState({ d: true });
     }
     class Parent extends Component {
-      static template = xml`<Child class="a" t-att-class="state.b ? 'b' : ''" t-ref="child"/>`
+      static template = xml`<Child class="a" t-att-class="state.b ? 'b' : ''" t-ref="child"/>`;
       static components = { Child };
       state = useState({ b: true });
       child = useRef("child");
@@ -319,7 +319,7 @@ describe("style and class handling", () => {
 
     expect(fixture.innerHTML).toBe(`<div t-att-style="font-size: 20px;"></div>`);
 
-    widget.state.style["font-size"] = "30px" ;
+    widget.state.style["font-size"] = "30px";
     await nextTick();
 
     expect(fixture.innerHTML).toBe(`<div style="font-size: 30px;"></div>`);
@@ -341,7 +341,8 @@ describe("style and class handling", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    const regexp = /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
+    const regexp =
+      /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
     expect(error.message).toMatch(regexp);
     expect(fixture.innerHTML).toBe("");
   });

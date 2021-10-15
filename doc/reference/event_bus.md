@@ -23,5 +23,3 @@ Its API is:
 | `off(eventType, owner)`          | remove all listeners for an owner |
 | `trigger(eventType, ...args)`    | trigger an event                  |
 | `clear`                          | remove all subscriptions          |
-
-Note that the [`Store`](store.md) is an example of an `EventBus`.

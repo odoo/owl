@@ -158,12 +158,10 @@ There are two different common problems with Owl asynchronous rendering model:
 Here are a few tips on how to work with asynchronous components:
 
 1. Minimize the use of asynchronous components!
-2. Maybe move the asynchronous logic in a store, which then triggers (mostly)
-   synchronous renderings
-3. Lazy loading external libraries is a good use case for async rendering. This
+2. Lazy loading external libraries is a good use case for async rendering. This
    is mostly fine, because we can assume that it will only takes a fraction of a
    second, and only once (see [`owl.utils.loadJS`](utils.md#loadjs))
-4. For all the other cases, the [`AsyncRoot`](misc.md#asyncroot) component is there to help you. When
+3. For all the other cases, the [`AsyncRoot`](misc.md#asyncroot) component is there to help you. When
    this component is met, a new rendering
    sub tree is created, such that the rendering of that component (and its
    children) is not tied to the rendering of the rest of the interface. It can

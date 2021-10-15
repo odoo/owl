@@ -254,7 +254,7 @@ We explain here all the public methods of the `Component` class.
 
   Note that if a component is mounted, unmounted and remounted, it will be
   automatically re-rendered to ensure that changes in its state (or something
-  in the environment, or in the store, or ...) will be taken into account.
+  in the environment) will be taken into account.
 
   If a component is mounted inside an element or a fragment which is not in the
   DOM, then it will be rendered fully, but not active: the `mounted` hooks will

@@ -1,4 +1,4 @@
-import { Component, mount, useState, xml } from "../../src";
+import { Component, mount, useState, useRef, xml } from "../../src";
 import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -195,6 +195,7 @@ describe("style and class handling", () => {
     expect(fixture.innerHTML).toBe(`<p><div class="a b c d"></div></p>`);
   });
 
+  // TODO: adapt name (t-att-class no longer makes sense on Components)
   test("t-att-class is properly added/removed on widget root el (v2)", async () => {
     let child: any = null;
     class Child extends Component {
@@ -233,5 +234,115 @@ describe("style and class handling", () => {
     child.state.d = true;
     await nextTick();
     expect(span.className).toBe("c b d");
+  });
+
+  // TODO: adapt name (t-att-class no longer makes sense on Components)
+  // TODO: this test depends on ref to components
+  test.skip("t-att-class is properly added/removed on widget root el (v3)", async () => {
+    class Child extends Component {
+      static template = `<span t-name="Child" class="c" t-att-class="state.d ? 'd' : ''"/>`;
+      state = useState({ d: true });
+    }
+    class Parent extends Component {
+      static template = xml`<Child class="a" t-att-class="state.b ? 'b' : ''" t-ref="child"/>`
+      static components = { Child };
+      state = useState({ b: true });
+      child = useRef("child");
+    }
+    const widget = await mount(Parent, fixture);
+
+    const span = fixture.querySelector("span")!;
+    expect(span.className).toBe("c d a b");
+
+    widget.state.b = false;
+    await nextTick();
+    expect(span.className).toBe("c d a");
+
+    (widget.child.comp as Child).state.d = false;
+    await nextTick();
+    expect(span.className).toBe("c a");
+
+    widget.state.b = true;
+    await nextTick();
+    expect(span.className).toBe("c a b");
+
+    (widget.child.comp as Child).state.d = true;
+    await nextTick();
+    expect(span.className).toBe("c a b d");
+  });
+
+  test.skip("class on components do not interfere with user defined classes", async () => {
+    class App extends Component {
+      static template = xml`<div t-att-class="{ c: state.c }" />`;
+      state = useState({ c: true });
+      mounted() {
+        (<HTMLDivElement>this.el!).classList.add("user");
+      }
+    }
+    const widget = await mount(App, fixture);
+
+    expect(fixture.innerHTML).toBe('<div class="c user"></div>');
+
+    widget.state.c = false;
+    await nextTick();
+
+    expect(fixture.innerHTML).toBe('<div class="user"></div>');
+  });
+
+  // TODO: adapt name
+  test("style is properly added on widget root el", async () => {
+    class SomeComponent extends Component {
+      static template = xml`<div t-att-style="props.style"/>`;
+    }
+
+    class ParentWidget extends Component {
+      static components = { Child: SomeComponent };
+      static template = xml`<Child style="'font-weight: bold;'"/>`;
+    }
+    await mount(ParentWidget, fixture);
+    expect(fixture.innerHTML).toBe(`<div style="font-weight: bold;"></div>`);
+  });
+
+  // TODO: adapt name
+  // TODO: t-att-style as object (like class)
+  test.skip("dynamic t-att-style is properly added and updated on widget root el", async () => {
+    class SomeComponent extends Component {
+      static template = xml`<div t-att-style="{ 'font-size': '20px', ...props.style }"/>`;
+    }
+
+    class ParentWidget extends Component {
+      static template = xml`<Child style="state.style"/>`;
+      static components = { Child: SomeComponent };
+      state = useState({ style: { "font-size": "20px" } });
+    }
+    const widget = await mount(ParentWidget, fixture);
+
+    expect(fixture.innerHTML).toBe(`<div t-att-style="font-size: 20px;"></div>`);
+
+    widget.state.style["font-size"] = "30px" ;
+    await nextTick();
+
+    expect(fixture.innerHTML).toBe(`<div style="font-size: 30px;"></div>`);
+  });
+
+  // TODO: does this test need to be moved? (class now a standard prop)
+  test("error in subcomponent with class", async () => {
+    class Child extends Component {
+      static template = xml`<div t-att-class="props.class" t-esc="this.will.crash"/>`;
+    }
+    class ParentWidget extends Component {
+      static template = xml`<Child class="'a'"/>`;
+      static components = { Child };
+    }
+    let error;
+    try {
+      await mount(ParentWidget, fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    const regexp = /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
+    expect(error.message).toMatch(regexp);
+    expect(fixture.innerHTML).toBe("");
   });
 });

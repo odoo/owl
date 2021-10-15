@@ -718,7 +718,9 @@ describe("basics", () => {
     await nextTick();
     expect(Object.values(parent.__owl__.children)[0].component).toBe(child);
     expect(status(child)).toBe("mounted");
-    expect(fixture.innerHTML).toBe(`<div><h1>hey</h1><span><span>child</span></span><span>test</span></div>`)
+    expect(fixture.innerHTML).toBe(
+      `<div><h1>hey</h1><span><span>child</span></span><span>test</span></div>`
+    );
   });
 
   test("list of two sub components inside other nodes", async () => {

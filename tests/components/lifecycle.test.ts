@@ -919,7 +919,9 @@ describe("lifecycle hooks", () => {
       static template = xml`<div/>`;
       setup() {
         created = true;
-        onMounted(() => { mounted = true; })
+        onMounted(() => {
+          mounted = true;
+        });
       }
     }
     class Parent extends Component {

@@ -379,4 +379,47 @@ describe("special cases for some specific html attributes/properties", () => {
     const input = fixture.querySelector("input")!;
     expect(input.indeterminate).toBe(true);
   });
+
+  test.skip("textarea with t-att-value", () => {
+    // render input with initial value
+/*    qweb.addTemplate("test", `<textarea  t-att-value="v"/>`);
+    const vnode1 = qweb.render("test", { v: "zucchini" });
+    const vnode2 = patch(document.createElement("textarea"), vnode1);
+    let elm = vnode2.elm as HTMLInputElement;
+    expect(elm.value).toBe("zucchini");
+
+    // change value manually in textarea, to simulate user textarea
+    elm.value = "tomato";
+    expect(elm.value).toBe("tomato");
+
+    // rerender with a different value, and patch actual dom, to check that
+    // textarea value was properly reset by owl
+    const vnode3 = qweb.render("test", { v: "potato" });
+    patch(vnode2, vnode3);
+    expect(elm.value).toBe("potato");*/
+  });
+
+  test.skip("select with t-att-value", () => {
+/*    const template = `
+      <select t-att-value="value">
+        <option value="potato">Potato</option>
+        <option value="tomato">Tomato</option>
+        <option value="onion">Onion</option>
+      </select>`;
+    qweb.addTemplate("test", template);
+    const vnode1 = qweb.render("test", { value: "tomato" });
+    const vnode2 = patch(document.createElement("select"), vnode1);
+    let elm = vnode2.elm as HTMLSelectElement;
+    expect(elm.value).toBe("tomato");
+
+    elm.value = "potato";
+    expect(elm.value).toBe("potato");
+
+    // rerender with a different value, and patch actual dom, to check that
+    // select value was properly reset by owl
+    const vnode3 = qweb.render("test", { value: "onion" });
+    patch(vnode2, vnode3);
+    expect(elm.value).toBe("onion");
+    expect(qweb.templates.test.fn.toString()).toMatchSnapshot();*/
+  });
 });

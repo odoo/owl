@@ -742,3 +742,291 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("<div><div><span>asdf</span><span>asdf</span></div></div>");
   });
 });
+
+describe.skip("mount targets", () => {
+  test("can attach a component to an existing node (if same tagname)", async () => {
+    // class App extends Component {
+    //   static template = xml`<div t-att-class="state.customClass">app<p>another tag</p></div>`;
+    //   state = useState({ customClass: "custom" });
+    // }
+    // const div = document.createElement("div");
+    // div.classList.add("arbitrary");
+    // div.innerHTML = `<p>pre-existing</p>`;
+    // fixture.appendChild(div);
+    // const app = await mount(App, { target: div, position: "self" });
+    // expect(fixture.innerHTML).toBe(
+    //   `<div class="arbitrary custom"><p>pre-existing</p>app<p>another tag</p></div>`
+    // );
+    // expect(div).toBe(app.el);
+    // app.state.customClass = "custom2";
+    // await nextTick();
+    // expect(fixture.innerHTML).toBe(
+    //   `<div class="arbitrary custom2"><p>pre-existing</p>app<p>another tag</p></div>`
+    // );
+    // expect(div).toBe(app.el);
+    // app.unmount();
+    // // This assert is a best guess
+    // // The use case it covers was not really thought through
+    // // and may change in the future
+    // expect(fixture.innerHTML).toBe("");
+  });
+
+  test("cannot attach a component to an existing node (if not same tagname)", async () => {
+    // class App extends Component {
+    //   static template = xml`<span>app</span>`;
+    // }
+    // const div = document.createElement("div");
+    // fixture.appendChild(div);
+    // let error;
+    // try {
+    //   await mount(App, { target: div, position: "self" });
+    // } catch (e) {
+    //   error = e;
+    // }
+    // expect(error).toBeDefined();
+    // expect(error.message).toBe("Cannot attach 'App' to target node (not same tag name)");
+  });
+
+  test("can mount a component (with position='first-child')", async () => {
+    // class App extends Component {
+    //   static template = xml`<div>app</div>`;
+    // }
+    // const span = document.createElement("span");
+    // fixture.appendChild(span);
+    // await mount(App, { target: fixture, position: "first-child" });
+    // expect(fixture.innerHTML).toBe("<div>app</div><span></span>");
+  });
+
+  test("can mount a component (with position='last-child')", async () => {
+    // class App extends Component {
+    //   static template = xml`<div>app</div>`;
+    // }
+    // const span = document.createElement("span");
+    // fixture.appendChild(span);
+    // await mount(App, { target: fixture, position: "last-child" });
+    // expect(fixture.innerHTML).toBe("<span></span><div>app</div>");
+  });
+
+  test("default mount option is 'last-child'", async () => {
+    // class App extends Component {
+    //   static template = xml`<div>app</div>`;
+    // }
+    // const span = document.createElement("span");
+    // fixture.appendChild(span);
+    // await mount(App, { target: fixture });
+    // expect(fixture.innerHTML).toBe("<span></span><div>app</div>");
+  });
+});
+
+describe.skip("mount special cases", () => {
+  test("widget can be mounted on different target", async () => {
+    // class MyWidget extends Component {
+    //   static template = xml`<div>Hey</div>`;
+    //   patched() {
+    //     throw new Error("patched should not be called");
+    //   }
+    // }
+    // const div = document.createElement("div");
+    // const span = document.createElement("span");
+    // fixture.appendChild(div);
+    // fixture.appendChild(span);
+    // const w = new MyWidget();
+    // await w.mount(div);
+
+    // expect(fixture.innerHTML).toBe("<div><div>Hey</div></div><span></span>");
+
+    // await w.mount(span);
+    // expect(fixture.innerHTML).toBe("<div></div><span><div>Hey</div></span>");
+  });
+
+  test("widget can be mounted on different target, another situation", async () => {
+    // const def = makeDeferred();
+    // const steps: string[] = [];
+
+    // class MyWidget extends Component {
+    //   static template = xml`<div>Hey</div>`;
+    //   async willStart() {
+    //     return def;
+    //   }
+    //   patched() {
+    //     throw new Error("patched should not be called");
+    //   }
+    // }
+    // const div = document.createElement("div");
+    // const span = document.createElement("span");
+    // fixture.appendChild(div);
+    // fixture.appendChild(span);
+    // const w = new MyWidget();
+
+    // w.mount(div).catch(() => steps.push("1 catch"));
+
+    // await nextTick();
+    // expect(fixture.innerHTML).toBe("<div></div><span></span>");
+
+    // w.mount(span).then(() => steps.push("2 resolved"));
+
+    // // we wait two microticks because this is the number of internal promises
+    // // that need to be resolved/rejected, and because we want to prove here
+    // // that the first mount operation is cancelled immediately, and not after
+    // // one full tick.
+    // await nextMicroTick();
+    // await nextMicroTick();
+    // expect(steps).toEqual([]);
+    // await nextTick();
+    // expect(fixture.innerHTML).toBe("<div></div><span></span>");
+
+    // def.resolve();
+    // await nextTick();
+    // expect(steps).toEqual(["2 resolved"]);
+    // expect(fixture.innerHTML).toBe("<div></div><span><div>Hey</div></span>");
+  });
+
+  test("component can be mounted on same target, another situation", async () => {
+    // const def = makeDeferred();
+    // const steps: string[] = [];
+
+    // class MyWidget extends Component {
+    //   static template = xml`<div>Hey</div>`;
+    //   async willStart() {
+    //     return def;
+    //   }
+    //   patched() {
+    //     throw new Error("patched should not be called");
+    //   }
+    // }
+    // const w = new MyWidget();
+
+    // w.mount(fixture).then(() => steps.push("1 resolved"));
+
+    // await nextTick();
+    // expect(fixture.innerHTML).toBe("");
+
+    // w.mount(fixture).then(() => steps.push("2 resolved"));
+
+    // await nextTick();
+    // expect(steps).toEqual([]);
+    // expect(fixture.innerHTML).toBe("");
+
+    // def.resolve();
+    // await nextTick();
+    // expect(fixture.innerHTML).toBe("<div>Hey</div>");
+    // expect(steps).toEqual(["1 resolved", "2 resolved"]);
+  });
+
+  test("mounting a destroyed widget", async () => {
+  //   class MyWidget extends Component {
+  //     static template = xml`<div>Hey</div>`;
+  //   }
+  //   const w = new MyWidget();
+  //   w.destroy(); // because, why not
+
+  //   let error;
+  //   try {
+  //     await w.mount(fixture);
+  //   } catch (e) {
+  //     error = e;
+  //   }
+  //   expect(scheduler.tasks.length).toBe(0);
+  //   expect(error).toBeDefined();
+  //   expect(error.message).toBe("Cannot mount a destroyed component");
+  // });
+
+  // test("destroying a sub-component cleans itself from parent's vnode", async () => {
+  //   class C1 extends Component {
+  //     static template = xml`<div><div><t t-esc="props.a"/></div></div>`;
+  //   }
+  //   class P extends Component {
+  //     static components = { C1 };
+  //     static template = xml`<div><div><C1 t-props="state" t-if="state.a"/></div></div>`;
+  //     state = {
+  //       a: "first",
+  //     };
+  //   }
+  //   const parent = new P();
+  //   await parent.mount(fixture);
+  //   expect(fixture.textContent).toBe("first");
+  //   parent.unmount();
+  //   parent.state.a = "";
+  //   parent.mount(fixture);
+  //   parent.state.a = "fixed";
+  //   await parent.render();
+  //   expect(fixture.textContent).toBe("fixed");
+  });
+
+  test("destroying a sub-component cleans itself from parent's vnode, part 2", async () => {
+    // class C1 extends Component {
+    //   static template = xml`<div><div><t t-esc="props.a"/></div></div>`;
+    // }
+    // class P extends Component {
+    //   static components = { C1 };
+    //   static template = xml`<div><div><C1 t-props="state" t-if="state.a"/>some text</div></div>`;
+    //   state = {
+    //     a: "first",
+    //   };
+    // }
+    // const parent = new P();
+    // await parent.mount(fixture);
+    // expect(fixture.textContent).toBe("firstsome text");
+    // parent.unmount();
+    // parent.state.a = "";
+    // parent.mount(fixture);
+    // parent.state.a = "fixed";
+    // await parent.render();
+    // expect(fixture.textContent).toBe("fixedsome text");
+  });
+
+  test("destroying a sub-component cleans itself from parent's vnode, part 3", async () => {
+    // class C1 extends Component {
+    //   static template = xml`<div><div><t t-esc="props.a"/></div></div>`;
+    // }
+
+    // class C2 extends Component {
+    //   static template = xml`<C1 a="props.a"/>`;
+    //   static components = { C1 };
+    // }
+
+    // class P extends Component {
+    //   static components = { C2 };
+    //   static template = xml`<div><div><C2 t-props="state" t-if="state.a"/></div></div>`;
+    //   state = {
+    //     a: "first",
+    //   };
+    // }
+    // const parent = new P();
+    // await parent.mount(fixture);
+    // expect(fixture.textContent).toBe("first");
+    // parent.unmount();
+    // parent.state.a = "";
+    // parent.mount(fixture);
+    // parent.state.a = "fixed";
+    // await parent.render();
+    // expect(fixture.textContent).toBe("fixed");
+  });
+
+  test("destroying a sub-component cleans itself from parent's vnode, part 4", async () => {
+    // class C1 extends Component {
+    //   static template = xml`<div><div><t t-esc="props.a"/></div></div>`;
+    // }
+
+    // class C2 extends Component {
+    //   static template = xml`<C1 a="props.a"/>`;
+    //   static components = { C1 };
+    // }
+    // class P extends Component {
+    //   static components = { C2 };
+    //   static template = xml`<div><div><C2 t-props="state" t-if="state.a"/>some text</div></div>`;
+    //   state = {
+    //     a: "first",
+    //   };
+    // }
+    // const parent = new P();
+    // await parent.mount(fixture);
+    // expect(fixture.textContent).toBe("firstsome text");
+    // parent.unmount();
+    // parent.state.a = "";
+    // parent.mount(fixture);
+    // parent.state.a = "fixed";
+    // await parent.render();
+    // expect(fixture.textContent).toBe("fixedsome text");
+  });
+})

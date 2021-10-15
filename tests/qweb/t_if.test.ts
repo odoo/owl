@@ -16,6 +16,11 @@ describe("t-if", () => {
     expect(renderToString(template, {})).toBe("<div></div>");
   });
 
+  test("boolean value condition missing", () => {
+    const template = `<span><t t-if="condition">fail</t></span>`;
+    expect(renderToString(template)).toBe("<span></span>");
+  });
+
   test("just a t-if", () => {
     const template = `<t t-if="condition">ok</t>`;
     expect(renderToString(template, { condition: true })).toBe("ok");

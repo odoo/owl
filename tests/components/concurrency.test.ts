@@ -2102,61 +2102,67 @@ test("concurrent renderings scenario 16", async () => {
 //   expect(fixture.innerHTML).toBe("<span>4</span>");
 // });
 
-// test("calling render in destroy", async () => {
-//   let a: any = null;
-//   let c: any = null;
+// TODO: unskip when t-key is reimplemented properly
+test.skip("calling render in destroy", async () => {
+  const steps: any[] = [];
 
-//   class C extends Component {
-//     static template = xml`
-//       <div>
-//         <t t-esc="props.fromA"/>
-//       </div>`;
-//   }
+  let a: any = null;
+  let c: any = null;
 
-//   let flag = false;
-//   class B extends Component {
-//     static template = xml`<C fromA="props.fromA"/>`;
-//     static components = { C };
+  class C extends Component {
+    static template = xml`
+      <div>
+        <t t-esc="props.fromA"/>
+      </div>`;
+  }
 
-//     setup() {
-//       c = this;
-//     }
+  let flag = false;
+  class B extends Component {
+    static template = xml`<C fromA="props.fromA"/>`;
+    static components = { C };
 
-//     mounted() {
-//       if (flag) {
-//         this.render();
-//       } else {
-//         flag = true;
-//       }
-//     }
-//     willUnmount() {
-//       c.render();
-//     }
-//   }
+    setup() {
+      c = this;
+      onMounted(() => {
+        steps.push("B:mounted");
+        if (flag) {
+          this.render();
+        } else {
+          flag = true;
+        }
+      });
 
-//   class A extends Component {
-//     static template = xml`<B t-key="key" fromA="state"/>`;
-//     static components = { B };
-//     state = "a";
-//     key = 1;
+      onWillUnmount(() => {
+        steps.push("B:willUnmount");
+        c.render();
+      });
+    }
+  }
 
-//     setup() {
-//       a = this;
-//     }
-//   }
+  class A extends Component {
+    static template = xml`<B t-key="key" fromA="state"/>`;
+    static components = { B };
+    state = "a";
+    key = 1;
 
-//   const parent = new A();
-//   await parent.mount(fixture);
-//   expect(fixture.innerHTML).toBe("<div>a</div>");
+    setup() {
+      a = this;
+    }
+  }
 
-//   a.state = "A";
-//   a.key = 2;
-//   await a.render();
-//   // this nextTick is critical, otherwise jest may silently swallow errors
-//   await nextTick();
+  const app = new App(A);
+  await app.mount(fixture);
+  expect(fixture.innerHTML).toBe("<div>a</div>");
 
-//   expect(fixture.innerHTML).toBe("<div>A</div>");
-// });
+  a.state = "A";
+  a.key = 2;
+  await a.render();
+  // this nextTick is critical, otherwise jest may silently swallow errors
+  await nextTick();
+
+  expect(steps).toBe(["B:mounted", "B:willUnmount", "B:mounted"]);
+  expect(fixture.innerHTML).toBe("<div>A</div>");
+});
 
 test("change state and call manually render: no unnecessary rendering", async () => {
   const steps: string[] = [];

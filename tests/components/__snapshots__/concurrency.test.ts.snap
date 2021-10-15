@@ -14,6 +14,45 @@ exports[`async rendering destroying a widget before start is over 1`] = `
 }"
 `;
 
+exports[`calling render in destroy 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['props'].fromA;
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`calling render in destroy 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`C\`, {fromA: ctx['props'].fromA}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`calling render in destroy 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`B\`, {fromA: ctx['state']}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
 exports[`change state and call manually render: no unnecessary rendering 1`] = `
 "function anonymous(bdom, helpers
 ) {

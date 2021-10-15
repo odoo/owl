@@ -16,7 +16,6 @@ simple and consistent way. Owl's main features are:
 - a declarative component system,
 - a reactivity system based on hooks,
 - concurrent mode by default,
-- a store and a frontend router
 
 Owl components are defined with ES6 classes, they use QWeb templates, an
 underlying virtual DOM, integrates beautifully with hooks, and the rendering is

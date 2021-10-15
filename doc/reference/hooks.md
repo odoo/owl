@@ -18,9 +18,6 @@
   - [`useRef`](#useref)
   - [`useSubEnv`](#usesubenv)
   - [`useExternalListener`](#useexternallistener)
-  - [`useStore`](#usestore)
-  - [`useDispatch`](#usedispatch)
-  - [`useGetters`](#usegetters)
   - [`useComponent`](#usecomponent)
   - [`useEnv`](#useenv)
   - [Making customized hooks](#making-customized-hooks)
@@ -374,31 +371,6 @@ to be closed:
 ```js
 useExternalListener(window, "click", this.closeMenu);
 ```
-
-### `useStore`
-
-The `useStore` hook is the entry point for a component to connect to the store.
-See the [store documentation](store.md) for more information.
-
-### `useDispatch`
-
-The `useDispatch` hook is the way for components to get a reference to the store
-`dispatch` function. See the [store documentation](store.md) for more information.
-
-### `useGetters`
-
-The `useGetters` hook is the way for components to get a reference to the store
-getters. See the [store documentation](store.md) for more information.
-
-### `useComponent`
-
-The `useComponent` hook is useful as a building block for some customized hooks,
-that may need a reference to the component calling them.
-
-### `useEnv`
-
-The `useEnv` hook is useful as a building block for some customized hooks,
-that may need a reference to the env of the component calling them.
 
 ### Making customized hooks
 

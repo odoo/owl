@@ -1502,15 +1502,15 @@ exports[`slots slots are rendered with proper context, part 2 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    const [k2, v2, l2, c2] = prepareList(ctx['state'].users);
-    for (let i1 = 0; i1 < l2; i1++) {
-      ctx[\`user\`] = v2[i1];
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].users);
+    for (let i1 = 0; i1 < l_block2; i1++) {
+      ctx[\`user\`] = v_block2[i1];
       let key1 = ctx['user'].id;
       const ctx2 = capture(ctx);
       let b7 = assign(component(\`Link\`, {to: '/user/'+ctx['user'].id}, key + \`__1__\${key1}\`, node, ctx), {slots: {'default': slot3(ctx2)}});
-      c2[i1] = withKey(block3([], [b7]), key1);
+      c_block2[i1] = withKey(block3([], [b7]), key1);
     }
-    let b2 = list(c2);
+    let b2 = list(c_block2);
     return block1([], [b2]);
   }
 }"
@@ -1549,16 +1549,16 @@ exports[`slots slots are rendered with proper context, part 3 2`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx = Object.create(ctx);
-    const [k2, v2, l2, c2] = prepareList(ctx['state'].users);
-    for (let i1 = 0; i1 < l2; i1++) {
-      ctx[\`user\`] = v2[i1];
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].users);
+    for (let i1 = 0; i1 < l_block2; i1++) {
+      ctx[\`user\`] = v_block2[i1];
       let key1 = ctx['user'].id;
       ctx[\`userdescr\`] = 'User '+ctx['user'].name;
       const ctx2 = capture(ctx);
       let b5 = assign(component(\`Link\`, {to: '/user/'+ctx['user'].id}, key + \`__1__\${key1}\`, node, ctx), {slots: {'default': slot3(ctx2)}});
-      c2[i1] = withKey(block3([], [b5]), key1);
+      c_block2[i1] = withKey(block3([], [b5]), key1);
     }
-    let b2 = list(c2);
+    let b2 = list(c_block2);
     return block1([], [b2]);
   }
 }"
@@ -1694,15 +1694,15 @@ exports[`slots slots in t-foreach and re-rendering 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    const [k2, v2, l2, c2] = prepareList(Array(2));
-    for (let i1 = 0; i1 < l2; i1++) {
-      ctx[\`n\`] = v2[i1];
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(Array(2));
+    for (let i1 = 0; i1 < l_block2; i1++) {
+      ctx[\`n\`] = v_block2[i1];
       ctx[\`n_index\`] = i1;
       let key1 = ctx['n_index'];
       const ctx2 = capture(ctx);
-      c2[i1] = withKey(assign(component(\`Child\`, {}, key + \`__1__\${key1}\`, node, ctx), {slots: {'default': slot3(ctx2)}}), key1);
+      c_block2[i1] = withKey(assign(component(\`Child\`, {}, key + \`__1__\${key1}\`, node, ctx), {slots: {'default': slot3(ctx2)}}), key1);
     }
-    let b2 = list(c2);
+    let b2 = list(c_block2);
     return block1([], [b2]);
   }
 }"
@@ -1742,26 +1742,26 @@ exports[`slots slots in t-foreach in t-foreach 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    const [k2, v2, l2, c2] = prepareList(ctx['tree']);
-    for (let i1 = 0; i1 < l2; i1++) {
-      ctx[\`node1\`] = v2[i1];
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['tree']);
+    for (let i1 = 0; i1 < l_block2; i1++) {
+      ctx[\`node1\`] = v_block2[i1];
       let key1 = ctx['node1'].key;
       let d1 = ctx['node1'].value;
       let b4 = block4([d1]);
       ctx = Object.create(ctx);
-      const [k6, v6, l6, c6] = prepareList(ctx['node1'].nodes);
-      for (let i2 = 0; i2 < l6; i2++) {
-        ctx[\`node2\`] = v6[i2];
+      const [k_block6, v_block6, l_block6, c_block6] = prepareList(ctx['node1'].nodes);
+      for (let i2 = 0; i2 < l_block6; i2++) {
+        ctx[\`node2\`] = v_block6[i2];
         let key2 = ctx['node2'].key;
         const ctx2 = capture(ctx);
-        c6[i2] = withKey(assign(component(\`Child\`, {}, key + \`__1__\${key1}__\${key2}\`, node, ctx), {slots: {'default': slot3(ctx2)}}), key2);
+        c_block6[i2] = withKey(assign(component(\`Child\`, {}, key + \`__1__\${key1}__\${key2}\`, node, ctx), {slots: {'default': slot3(ctx2)}}), key2);
       }
       ctx = ctx.__proto__;
-      let b6 = list(c6);
+      let b6 = list(c_block6);
       let b5 = block5([], [b6]);
-      c2[i1] = withKey(multi([b4, b5]), key1);
+      c_block2[i1] = withKey(multi([b4, b5]), key1);
     }
-    let b2 = list(c2);
+    let b2 = list(c_block2);
     return block1([], [b2]);
   }
 }"
@@ -1799,16 +1799,16 @@ exports[`slots slots in t-foreach with t-set and re-rendering 2`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx = Object.create(ctx);
-    const [k2, v2, l2, c2] = prepareList(Array(2));
-    for (let i1 = 0; i1 < l2; i1++) {
-      ctx[\`n\`] = v2[i1];
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(Array(2));
+    for (let i1 = 0; i1 < l_block2; i1++) {
+      ctx[\`n\`] = v_block2[i1];
       ctx[\`n_index\`] = i1;
       let key1 = ctx['n_index'];
       ctx[\`dummy\`] = ctx['n_index'];
       const ctx2 = capture(ctx);
-      c2[i1] = withKey(assign(component(\`Child\`, {}, key + \`__1__\${key1}\`, node, ctx), {slots: {'default': slot3(ctx2)}}), key1);
+      c_block2[i1] = withKey(assign(component(\`Child\`, {}, key + \`__1__\${key1}\`, node, ctx), {slots: {'default': slot3(ctx2)}}), key1);
     }
-    let b2 = list(c2);
+    let b2 = list(c_block2);
     return block1([], [b2]);
   }
 }"
@@ -1915,13 +1915,13 @@ exports[`slots t-slot in recursive templates 2`] = `
   const slot3 = ctx => (node, key) => {
     let b2 = text(ctx['name']);
     ctx = Object.create(ctx);
-    const [k3, v3, l3, c3] = prepareList(ctx['items']);
-    for (let i1 = 0; i1 < l3; i1++) {
-      ctx[\`item\`] = v3[i1];
+    const [k_block3, v_block3, l_block3, c_block3] = prepareList(ctx['items']);
+    for (let i1 = 0; i1 < l_block3; i1++) {
+      ctx[\`item\`] = v_block3[i1];
       ctx[\`item_first\`] = i1 === 0;
-      ctx[\`item_last\`] = i1 === v3.length - 1;
+      ctx[\`item_last\`] = i1 === v_block3.length - 1;
       ctx[\`item_index\`] = i1;
-      ctx[\`item_value\`] = k3[i1];
+      ctx[\`item_value\`] = k_block3[i1];
       let key1 = ctx['item'].name;
       let b5,b6;
       if (!ctx['item'].children.length) {
@@ -1933,10 +1933,10 @@ exports[`slots t-slot in recursive templates 2`] = `
         b6 = callTemplate_5(ctx, node, key + \`__4__\${key1}\`);
         ctx = ctx.__proto__;
       }
-      c3[i1] = withKey(multi([b5, b6]), key1);
+      c_block3[i1] = withKey(multi([b5, b6]), key1);
     }
     ctx = ctx.__proto__;
-    let b3 = list(c3);
+    let b3 = list(c_block3);
     return multi([b2, b3]);
   }
   

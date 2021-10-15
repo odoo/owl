@@ -96,7 +96,7 @@ class BlockDescription {
       }
       return `${this.blockName}(${params})`;
     } else if (this.type === "list") {
-      return `list(c${this.id})`;
+      return `list(c_block${this.id})`;
     }
     return expr;
   }
@@ -246,7 +246,7 @@ export class QWebCompiler {
     if (parentBlock) {
       parentBlock.children.push(block);
       if (parentBlock.type === "list") {
-        block.parentVar = `c${parentBlock.id}`;
+        block.parentVar = `c_block${parentBlock.id}`;
       }
     }
     return block;
@@ -693,11 +693,10 @@ export class QWebCompiler {
     this.target.loopLevel++;
     const loopVar = `i${this.target.loopLevel}`;
     this.addLine(`ctx = Object.create(ctx);`);
-    // const cId = this.generateId();
-    const vals = `v${block.id}`;
-    const keys = `k${block.id}`;
-    const l = `l${block.id}`;
-    const c = `c${block.id}`;
+    const vals = `v_block${block.id}`;
+    const keys = `k_block${block.id}`;
+    const l = `l_block${block.id}`;
+    const c = `c_block${block.id}`;
     this.addLine(
       `const [${keys}, ${vals}, ${l}, ${c}] = prepareList(${compileExpr(ast.collection)});`
     );

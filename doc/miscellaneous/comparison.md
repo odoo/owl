@@ -189,95 +189,6 @@ with a `Proxy`, which means that it is totally transparent to the developers.
 Adding new keys is supported. Once any part of the state has been changed, a
 rendering is scheduled in the next microtask tick (promise queue).
 
-## State Management
-
-Managing the state of an application is a tricky issue. Many solutions have
-been proposed these last few years. It also depends on the kind of application we
-are talking about. A small application may not need much more than a simple
-object to contain its state.
-
-However, there are some common solutions for React and Vue: redux and vuex.
-Both of them are a centralized store that own the state, and they dictate how
-the state can be mutated.
-
-**Redux**
-
-In Redux, the state is mutated by reducers. Reducers are functions
-that modify the state by returning a different object:
-
-```javascript
-  ...
-  switch (action.type) {
-    case ADD_TODO: {
-      const { id, content } = action.payload;
-      return {
-        ...state,
-        allIds: [...state.allIds, id],
-        byIds: {
-          ...state.byIds,
-          [id]: {
-            content,
-            completed: false
-          }
-        }
-      };
-    }
-```
-
-This is a little bit awkward to write, but this allows the component system to
-check if a part of the state was changed. This is exactly what is done by the
-`connect` function: it create a _connected_ component, which is subscribed to
-the state and triggers a rerender if some part of the state was modified.
-
-**VueX**
-
-VueX is based on a different principle: the state is mutated through
-some special functions (the mutations), which modify the state in place:
-
-```javascript
-    function ({state}, payload) {
-        const { id, content } = payload;
-        const message = {id, content, completed: false};
-        state.messages.push(message)
-    }
-```
-
-This is simpler, but there is a little bit more happening behind the scene:
-each key from the state is silently replaced by getters and setters, and VueX
-keeps track of who get data, and retrigger a render when it was changed.
-
-**Owl**
-
-Owl store is a little bit like a mix of redux and vuex: it has actions (but not
-mutations), and like VueX, it keeps track of the state changes. However, it does
-not notify a component when the state changes. Instead, components need to connect
-to the store like in redux, with the `useStore` hook (see the [store documentation](../reference/store.md#connecting-a-component)).
-
-```javascript
-const actions = {
-  increment({ state }, val) {
-    state.counter.value += val;
-  },
-};
-
-const state = {
-  counter: { value: 0 },
-};
-const store = new owl.Store({ state, actions });
-
-class Counter extends Component {
-  static template = xml`
-      <button t-name="Counter" t-on-click="dispatch('increment')">
-        Click Me! [<t t-esc="counter.value"/>]
-      </button>`;
-  counter = useStore((state) => state.counter);
-  dispatch = useDispatch();
-}
-
-Counter.env.store = store;
-const counter = new Counter();
-```
-
 ## Hooks
 
 [Hooks](https://reactjs.org/docs/hooks-intro.html#motivation) recently took over
@@ -342,4 +253,4 @@ class Example extends Component {
 
 Since the Owl framework had hooks from early in its life, its main APIs
 are designed to be interacted with hooks from the start. For example, the
-`Context` and `Store` abstractions.
+`Context` abstraction.

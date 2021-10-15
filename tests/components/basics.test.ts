@@ -383,6 +383,27 @@ describe("basics", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>1<button>Inc</button></div>");
   });
+  // TODO: rename
+  test("rerendering a widget with a sub widget", async () => {
+    class Counter extends Component {
+      static template = xml`
+      <div><t t-esc="state.counter"/><button t-on-click="state.counter++">Inc</button></div>`;
+      state = useState({
+        counter: 0,
+      });
+    }
+    class Parent extends Component {
+      static template = xml`<Counter/>`;
+      static components = { Counter };
+    }
+    const parent = await mount(Parent, fixture);
+    const button = fixture.getElementsByTagName("button")[0];
+    button.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>1<button>Inc</button></div>");
+    await parent.render();
+    expect(fixture.innerHTML).toBe("<div>1<button>Inc</button></div>");
+  });
 
   test("can handle empty props", async () => {
     class Child extends Component {
@@ -653,5 +674,69 @@ describe("basics", () => {
     parent.state.flag = false;
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
+  });
+
+  // TODO: implement scope lookup for components
+  test.skip("don't fallback to component's registry if widget defined in the instance's context", async () => {
+    class ChildA extends Component {
+      static template = xml`<span>ChildA</span>`;
+    }
+    class ChildB extends Component {
+      static template = xml`<span>ChildB</span>`;
+    }
+    class Parent extends Component {
+      static template = xml`<Child/>`;
+      static components = { Child: ChildA };
+      Child = ChildB;
+    }
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<span>ChildB</span>");
+  });
+
+  test("sub components between t-ifs", async () => {
+    // this confuses the patching algorithm...
+    class Child extends Component {
+      static template = xml`<span>child</span>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <h1 t-if="state.flag">hey</h1>
+          <h2 t-else="">noo</h2>
+          <span><Child/></span>
+          <t t-if="state.flag"><span>test</span></t>
+        </div>`;
+      static components = { Child };
+      state = useState({ flag: false });
+    }
+    const parent = await mount(Parent, fixture);
+    const child = Object.values(parent.__owl__.children)[0].component;
+    expect(fixture.innerHTML).toBe(`<div><h2>noo</h2><span><span>child</span></span></div>`);
+
+    parent.state.flag = true;
+    await nextTick();
+    expect(Object.values(parent.__owl__.children)[0].component).toBe(child);
+    expect(status(child)).toBe("mounted");
+    expect(fixture.innerHTML).toBe(`<div><h1>hey</h1><span><span>child</span></span><span>test</span></div>`)
+  });
+
+  test("list of two sub components inside other nodes", async () => {
+    class SubWidget extends Component {
+      static template = xml`<span>asdf</span>`;
+    }
+    class Parent extends Component {
+      static template = xml`
+      <div>
+          <div t-foreach="state.blips" t-as="blip" t-key="blip.id">
+              <SubWidget />
+              <SubWidget />
+          </div>
+      </div>`;
+      static components = { SubWidget };
+      state = useState({ blips: [{ a: "a", id: 1 }] });
+    }
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div><div><span>asdf</span><span>asdf</span></div></div>");
   });
 });

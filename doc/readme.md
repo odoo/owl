@@ -33,8 +33,6 @@ provided by Owl.
 - [Props Validation](reference/props_validation.md)
 - [QWeb Templating Language](reference/qweb_templating_language.md)
 - [QWeb Engine](reference/qweb_engine.md)
-- [Router](reference/router.md)
-- [Store](reference/store.md)
 - [Slots](reference/slots.md)
 - [Tags](reference/tags.md)
 - [Utils](reference/utils.md)

@@ -1,4 +1,4 @@
-import { Component, mount, useState, xml } from "../../src/index";
+import { Component, mount, onMounted, useState, xml } from "../../src/index";
 import { makeTestFixture, nextTick, snapshotEverything, useLogLifecycle } from "../helpers";
 
 snapshotEverything();
@@ -228,5 +228,36 @@ describe("list of components", () => {
     expect(fixture.innerHTML).toBe(
       "<div><div><span>asdf</span></div><div><span>asdf</span></div></div>"
     );
+  });
+
+  test("t-foreach with t-component, and update", async () => {
+    class Child extends Component {
+      static template = xml`
+          <span>
+            <t t-esc="state.val"/>
+            <t t-esc="props.val"/>
+          </span>`;
+      state = useState({ val: "A" });
+      setup() {
+        onMounted(() => {
+          this.state.val = "B";
+        });
+      }
+    }
+    class Parent extends Component {
+      static components = { Child };
+      static template = xml`
+          <div>
+            <t t-foreach="Array(2)" t-as="n" t-key="n_index">
+              <Child val="n_index"/>
+            </t>
+          </div>`;
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div><span>A0</span><span>A1</span></div>");
+
+    await nextTick(); // wait for changes triggered in mounted to be applied
+    expect(fixture.innerHTML).toBe("<div><span>B0</span><span>B1</span></div>");
   });
 });

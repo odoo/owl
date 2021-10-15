@@ -126,6 +126,24 @@ exports[`t-if boolean value condition false else 1`] = `
 }"
 `;
 
+exports[`t-if boolean value condition missing 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2;
+    if (ctx['condition']) {
+      b2 = text(\`fail\`);
+    }
+    return block1([], [b2]);
+  }
+}"
+`;
+
 exports[`t-if can use some boolean operators in expressions 1`] = `
 "function anonymous(bdom, helpers
 ) {

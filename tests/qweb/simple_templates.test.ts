@@ -123,3 +123,33 @@ describe("simple templates, mostly static", () => {
     expect(renderToString(template)).toBe(template);
   });
 });
+
+describe("loading templates", () => {
+  test.skip("can initialize qweb with a string", () => {
+/*    const templates = `<?xml version="1.0" encoding="UTF-8"?>
+      <templates id="template" xml:space="preserve">
+        <div t-name="hey">jupiler</div>
+      </templates>`;
+    const qweb = new QWeb({ templates });
+    expect(renderToString(qweb, "hey")).toBe("<div>jupiler</div>");*/
+  });
+
+  test.skip("can load a few templates from a xml string", () => {
+    /*const data = `<?xml version="1.0" encoding="UTF-8"?>
+      <templates id="template" xml:space="preserve">
+
+        <t t-name="items"><li>ok</li><li>foo</li></t>
+
+        <ul t-name="main"><t t-call="items"/></ul>
+      </templates>`;
+    qweb.addTemplates(data);
+    const result = renderToString(qweb, "main");
+    expect(result).toBe("<ul><li>ok</li><li>foo</li></ul>");*/
+  });
+
+  test.skip("does not crash if string does not have templates", () => {
+    /*const data = "";
+    qweb.addTemplates(data);
+    expect(Object.keys(qweb.templates)).toEqual([]);*/
+  });
+});

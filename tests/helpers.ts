@@ -211,3 +211,10 @@ export function children(w: Component): Component[] {
 export function isDirectChildOf(child: Component, parent: Component): boolean {
   return children(parent).includes(child);
 }
+
+export async function editInput(input: HTMLInputElement | HTMLTextAreaElement, value: string) {
+  input.value = value;
+  input.dispatchEvent(new Event("input"));
+  input.dispatchEvent(new Event("change"));
+  return nextTick();
+}

@@ -909,4 +909,31 @@ describe("lifecycle hooks", () => {
     ]);
     Object.freeze(steps);
   });
+
+  // TODO: rename (remove? seems covered by lifecycle semantics)
+  test("sub widget (inside sub node): hooks are correctly called", async () => {
+    let created = false;
+    let mounted = false;
+
+    class Child extends Component {
+      static template = xml`<div/>`;
+      setup() {
+        created = true;
+        onMounted(() => { mounted = true; })
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<Child t-if="state.flag"/>`;
+      static components = { Child };
+      state = useState({ flag: false });
+    }
+    const parent = await mount(Parent, fixture);
+    expect(created).toBe(false);
+    expect(mounted).toBe(false);
+
+    parent.state.flag = true;
+    await nextTick();
+    expect(mounted).toBe(true);
+    expect(created).toBe(true);
+  });
 });

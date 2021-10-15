@@ -275,17 +275,17 @@ exports[`t-call t-call in t-foreach and children component 3`] = `
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    const [k2, v2, l2, c2] = prepareList(['a','b','c']);
-    for (let i1 = 0; i1 < l2; i1++) {
-      ctx[\`val\`] = v2[i1];
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(['a','b','c']);
+    for (let i1 = 0; i1 < l_block2; i1++) {
+      ctx[\`val\`] = v_block2[i1];
       ctx[\`val_first\`] = i1 === 0;
-      ctx[\`val_last\`] = i1 === v2.length - 1;
+      ctx[\`val_last\`] = i1 === v_block2.length - 1;
       ctx[\`val_index\`] = i1;
-      ctx[\`val_value\`] = k2[i1];
+      ctx[\`val_value\`] = k_block2[i1];
       let key1 = ctx['val'];
-      c2[i1] = withKey(callTemplate_2(ctx, node, key + \`__1__\${key1}\`), key1);
+      c_block2[i1] = withKey(callTemplate_2(ctx, node, key + \`__1__\${key1}\`), key1);
     }
-    let b2 = list(c2);
+    let b2 = list(c_block2);
     return block1([], [b2]);
   }
 }"

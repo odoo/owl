@@ -39,6 +39,44 @@ exports[`list of components components in a node in a t-foreach  2`] = `
 }"
 `;
 
+exports[`list of components list of sub components inside other nodes 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<span>asdf</span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`list of components list of sub components inside other nodes 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k2, v2, l2, c2] = prepareList(ctx['state'].blips);
+    for (let i1 = 0; i1 < l2; i1++) {
+      ctx[\`blip\`] = v2[i1];
+      let key1 = ctx['blip'].id;
+      let b4 = component(\`SubComponent\`, {}, key + \`__1__\${key1}\`, node, ctx);
+      c2[i1] = withKey(block3([], [b4]), key1);
+    }
+    let b2 = list(c2);
+    return block1([], [b2]);
+  }
+}"
+`;
+
 exports[`list of components reconciliation alg works for t-foreach in t-foreach 1`] = `
 "function anonymous(bdom, helpers
 ) {

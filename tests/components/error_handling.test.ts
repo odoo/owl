@@ -39,4 +39,25 @@ describe("basics", () => {
       /Cannot read properties of undefined \(reading 'this'\)|Cannot read property 'this' of undefined/g;
     expect(error.message).toMatch(regexp);
   });
+
+  test.skip("display a nice error if it cannot find component", async () => {
+    const consoleError = console.error;
+    console.error = jest.fn();
+
+    class SomeComponent extends Component {}
+    class Parent extends Component {
+      static template = xml`<SomeMispelledComponent />`;
+      static components = { SomeComponent };
+    }
+    let error;
+    try {
+      await mount(Parent, fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe('Cannot find the definition of component "SomeMispelledWidget"');
+    expect(console.error).toBeCalledTimes(0);
+    console.error = consoleError;
+  });
 });

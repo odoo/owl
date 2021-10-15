@@ -197,4 +197,36 @@ describe("list of components", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe(`<div><p>1</p><p>3</p></div>`);
   });
+
+  test("list of sub components inside other nodes", async () => {
+    // this confuses the patching algorithm...
+    class SubComponent extends Component {
+      static template = xml`<span>asdf</span>`;
+    }
+    class Parent extends Component {
+      static template = xml`
+      <div>
+          <div t-foreach="state.blips" t-as="blip" t-key="blip.id">
+              <SubComponent />
+          </div>
+      </div>`;
+      static components = { SubComponent };
+      state = useState({
+        blips: [
+          { a: "a", id: 1 },
+          { b: "b", id: 2 },
+          { c: "c", id: 4 },
+        ],
+      });
+    }
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe(
+      "<div><div><span>asdf</span></div><div><span>asdf</span></div><div><span>asdf</span></div></div>"
+    );
+    parent.state.blips.splice(0, 1);
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      "<div><div><span>asdf</span></div><div><span>asdf</span></div></div>"
+    );
+  });
 });

@@ -190,4 +190,24 @@ describe("t-component", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>1<button>Inc</button></div></div>");
   });
+
+  test.skip("t-component not on a <t> node", async () => {
+    class Child extends Component {
+      static template = xml`<span>1</span>`;
+    }
+    class Parent extends Component {
+      static components = { Child };
+      static template = xml`<div><div t-component="Child"/></div>`;
+    }
+    let error;
+    try {
+      await mount(Parent, fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe(
+      `Directive 't-component' can only be used on <t> nodes (used on a <div>)`
+    );
+  });
 });

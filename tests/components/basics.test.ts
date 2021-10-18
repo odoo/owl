@@ -832,9 +832,7 @@ describe.skip("mount special cases", () => {
     // fixture.appendChild(span);
     // const w = new MyWidget();
     // await w.mount(div);
-
     // expect(fixture.innerHTML).toBe("<div><div>Hey</div></div><span></span>");
-
     // await w.mount(span);
     // expect(fixture.innerHTML).toBe("<div></div><span><div>Hey</div></span>");
   });
@@ -842,7 +840,6 @@ describe.skip("mount special cases", () => {
   test("widget can be mounted on different target, another situation", async () => {
     // const def = makeDeferred();
     // const steps: string[] = [];
-
     // class MyWidget extends Component {
     //   static template = xml`<div>Hey</div>`;
     //   async willStart() {
@@ -857,14 +854,10 @@ describe.skip("mount special cases", () => {
     // fixture.appendChild(div);
     // fixture.appendChild(span);
     // const w = new MyWidget();
-
     // w.mount(div).catch(() => steps.push("1 catch"));
-
     // await nextTick();
     // expect(fixture.innerHTML).toBe("<div></div><span></span>");
-
     // w.mount(span).then(() => steps.push("2 resolved"));
-
     // // we wait two microticks because this is the number of internal promises
     // // that need to be resolved/rejected, and because we want to prove here
     // // that the first mount operation is cancelled immediately, and not after
@@ -874,7 +867,6 @@ describe.skip("mount special cases", () => {
     // expect(steps).toEqual([]);
     // await nextTick();
     // expect(fixture.innerHTML).toBe("<div></div><span></span>");
-
     // def.resolve();
     // await nextTick();
     // expect(steps).toEqual(["2 resolved"]);
@@ -884,7 +876,6 @@ describe.skip("mount special cases", () => {
   test("component can be mounted on same target, another situation", async () => {
     // const def = makeDeferred();
     // const steps: string[] = [];
-
     // class MyWidget extends Component {
     //   static template = xml`<div>Hey</div>`;
     //   async willStart() {
@@ -895,18 +886,13 @@ describe.skip("mount special cases", () => {
     //   }
     // }
     // const w = new MyWidget();
-
     // w.mount(fixture).then(() => steps.push("1 resolved"));
-
     // await nextTick();
     // expect(fixture.innerHTML).toBe("");
-
     // w.mount(fixture).then(() => steps.push("2 resolved"));
-
     // await nextTick();
     // expect(steps).toEqual([]);
     // expect(fixture.innerHTML).toBe("");
-
     // def.resolve();
     // await nextTick();
     // expect(fixture.innerHTML).toBe("<div>Hey</div>");
@@ -914,43 +900,41 @@ describe.skip("mount special cases", () => {
   });
 
   test("mounting a destroyed widget", async () => {
-  //   class MyWidget extends Component {
-  //     static template = xml`<div>Hey</div>`;
-  //   }
-  //   const w = new MyWidget();
-  //   w.destroy(); // because, why not
-
-  //   let error;
-  //   try {
-  //     await w.mount(fixture);
-  //   } catch (e) {
-  //     error = e;
-  //   }
-  //   expect(scheduler.tasks.length).toBe(0);
-  //   expect(error).toBeDefined();
-  //   expect(error.message).toBe("Cannot mount a destroyed component");
-  // });
-
-  // test("destroying a sub-component cleans itself from parent's vnode", async () => {
-  //   class C1 extends Component {
-  //     static template = xml`<div><div><t t-esc="props.a"/></div></div>`;
-  //   }
-  //   class P extends Component {
-  //     static components = { C1 };
-  //     static template = xml`<div><div><C1 t-props="state" t-if="state.a"/></div></div>`;
-  //     state = {
-  //       a: "first",
-  //     };
-  //   }
-  //   const parent = new P();
-  //   await parent.mount(fixture);
-  //   expect(fixture.textContent).toBe("first");
-  //   parent.unmount();
-  //   parent.state.a = "";
-  //   parent.mount(fixture);
-  //   parent.state.a = "fixed";
-  //   await parent.render();
-  //   expect(fixture.textContent).toBe("fixed");
+    //   class MyWidget extends Component {
+    //     static template = xml`<div>Hey</div>`;
+    //   }
+    //   const w = new MyWidget();
+    //   w.destroy(); // because, why not
+    //   let error;
+    //   try {
+    //     await w.mount(fixture);
+    //   } catch (e) {
+    //     error = e;
+    //   }
+    //   expect(scheduler.tasks.length).toBe(0);
+    //   expect(error).toBeDefined();
+    //   expect(error.message).toBe("Cannot mount a destroyed component");
+    // });
+    // test("destroying a sub-component cleans itself from parent's vnode", async () => {
+    //   class C1 extends Component {
+    //     static template = xml`<div><div><t t-esc="props.a"/></div></div>`;
+    //   }
+    //   class P extends Component {
+    //     static components = { C1 };
+    //     static template = xml`<div><div><C1 t-props="state" t-if="state.a"/></div></div>`;
+    //     state = {
+    //       a: "first",
+    //     };
+    //   }
+    //   const parent = new P();
+    //   await parent.mount(fixture);
+    //   expect(fixture.textContent).toBe("first");
+    //   parent.unmount();
+    //   parent.state.a = "";
+    //   parent.mount(fixture);
+    //   parent.state.a = "fixed";
+    //   await parent.render();
+    //   expect(fixture.textContent).toBe("fixed");
   });
 
   test("destroying a sub-component cleans itself from parent's vnode, part 2", async () => {
@@ -979,12 +963,10 @@ describe.skip("mount special cases", () => {
     // class C1 extends Component {
     //   static template = xml`<div><div><t t-esc="props.a"/></div></div>`;
     // }
-
     // class C2 extends Component {
     //   static template = xml`<C1 a="props.a"/>`;
     //   static components = { C1 };
     // }
-
     // class P extends Component {
     //   static components = { C2 };
     //   static template = xml`<div><div><C2 t-props="state" t-if="state.a"/></div></div>`;
@@ -1007,7 +989,6 @@ describe.skip("mount special cases", () => {
     // class C1 extends Component {
     //   static template = xml`<div><div><t t-esc="props.a"/></div></div>`;
     // }
-
     // class C2 extends Component {
     //   static template = xml`<C1 a="props.a"/>`;
     //   static components = { C1 };
@@ -1029,4 +1010,4 @@ describe.skip("mount special cases", () => {
     // await parent.render();
     // expect(fixture.textContent).toBe("fixedsome text");
   });
-})
+});

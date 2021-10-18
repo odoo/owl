@@ -938,4 +938,35 @@ describe("lifecycle hooks", () => {
     expect(mounted).toBe(true);
     expect(created).toBe(true);
   });
+
+  test.skip("two different call to mounted/willunmount should work", async () => {
+    /*const steps: string[] = [];
+    function useMyHook(i) {
+      onMounted(() => {
+        steps.push("hook:mounted" + i);
+      });
+      onWillUnmount(() => {
+        steps.push("hook:willunmount" + i);
+      });
+    }
+    class MyComponent extends Component {
+      static template = xml`<div>hey</div>`;
+      constructor() {
+        super();
+        useMyHook(1);
+        useMyHook(2);
+      }
+    }
+    const component = new MyComponent();
+    await component.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>hey</div>");
+    component.unmount();
+    expect(fixture.innerHTML).toBe("");
+    expect(steps).toEqual([
+      "hook:mounted1",
+      "hook:mounted2",
+      "hook:willunmount2",
+      "hook:willunmount1",
+    ]);*/
+  });
 });

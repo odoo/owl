@@ -1,7 +1,19 @@
 describe.skip("reactivity in lifecycle", () => {
+  test.skip("can use a state hook", async () => {
+    /*    class Counter extends Component {
+      static template = xml`<div><t t-esc="counter.value"/></div>`;
+      counter = useState({ value: 42 });
+    }
+    const counter = new Counter();
+    await counter.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>42</div>");
+    counter.counter.value = 3;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>3</div>");*/
+  });
+
   test("state changes in willUnmount do not trigger rerender", async () => {
     // const steps: string[] = [];
-
     // class Child extends Component {
     //   static template = xml`
     //       <span><t t-esc="props.val"/><t t-esc="state.n"/></span>
@@ -17,7 +29,6 @@ describe.skip("reactivity in lifecycle", () => {
     //   patched() {
     //     steps.push("patched");
     //   }
-
     //   willUnmount() {
     //     steps.push("willUnmount");
     //     this.state.n = 3;
@@ -32,7 +43,6 @@ describe.skip("reactivity in lifecycle", () => {
     //   static components = { Child };
     //   state = useState({ val: 1, flag: true });
     // }
-
     // const widget = await mount(Parent, { target: fixture });
     // expect(steps).toEqual(["render"]);
     // expect(fixture.innerHTML).toBe("<div><span>12</span></div>");
@@ -52,7 +62,6 @@ describe.skip("reactivity in lifecycle", () => {
     //     this.state.val = 3;
     //   }
     // }
-
     // const widget = new TestWidget();
     // await widget.mount(fixture);
     // expect(fixture.innerHTML).toBe("<div>1</div>");
@@ -78,13 +87,11 @@ describe.skip("reactivity in lifecycle", () => {
     //   }
     // }
     // TestWidget.prototype.__render = jest.fn(TestWidget.prototype.__render);
-
     // const widget = new TestWidget();
     // widget.state.val = 2;
     // await widget.mount(fixture);
     // expect(fixture.innerHTML).toBe("<div>2</div>");
     // expect(TestWidget.prototype.__render).toHaveBeenCalledTimes(1);
-
     // // unmount and re-mount, as in this case, willStart won't be called, so it's
     // // slightly different
     // widget.unmount();
@@ -109,14 +116,12 @@ describe.skip("reactivity in lifecycle", () => {
     // }
     // TestWidget.prototype.__render = jest.fn(TestWidget.prototype.__render);
     // TestWidget.prototype.__patch = jest.fn(TestWidget.prototype.__patch);
-
     // const widget = new TestWidget();
     // let prom = widget.mount(fixture);
     // widget.state.val = 2;
     // await prom;
     // expect(fixture.innerHTML).toBe("<div>2</div>");
     // expect(TestWidget.prototype.__render).toHaveBeenCalledTimes(1);
-
     // // unmount and re-mount, as in this case, willStart won't be called, so it's
     // // slightly different
     // widget.unmount();
@@ -134,10 +139,8 @@ describe.skip("reactivity in lifecycle", () => {
     //   static template = xml`<div><t t-esc="state.val"/></div>`;
     //   state = useState({ val: 1 });
     // }
-
     // const detachedDiv = document.createElement("div");
     // const app = await mount(App, { target: detachedDiv });
-
     // expect(detachedDiv.innerHTML).toBe("<div>1</div>");
     // app.state.val = 2;
     // await nextTick();
@@ -149,12 +152,9 @@ describe.skip("reactivity in lifecycle", () => {
     //   static template = xml`<div><t t-esc="state.val"/></div>`;
     //   state = useState({ val: 1 });
     // }
-
     // const detachedDiv = document.createElement("div");
     // const app = await mount(App, { target: detachedDiv });
-
     // expect(detachedDiv.innerHTML).toBe("<div>1</div>");
-
     // app.destroy();
     // app.state.val = 2;
     // await nextTick();
@@ -173,24 +173,19 @@ describe.skip("reactivity in lifecycle", () => {
     //     child = this;
     //   }
     // }
-
     // class Parent extends Component {
     //   static components = { Child };
     //   static template = xml`<div><t t-esc="state.val"/><Child/></div>`;
     //   state = useState({ val: "P1" });
     // }
-
     // const parent = new Parent();
     // await parent.mount(fixture);
     // expect(fixture.innerHTML).toBe("<div>P1<span>C1</span></div>");
-
     // parent.unmount();
     // expect(fixture.innerHTML).toBe("");
-
     // parent.state.val = "P2";
     // child.state.val = "C2";
-
     // await parent.mount(fixture);
     // expect(fixture.innerHTML).toBe("<div>P2<span>C2</span></div>");
   });
-})
+});

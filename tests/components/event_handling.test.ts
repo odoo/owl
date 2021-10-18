@@ -74,7 +74,7 @@ describe("event handling", () => {
   });
 
   test.skip("t-on with prevent and/or stop modifiers", async () => {
-  /*  expect.assertions(7);
+    /*  expect.assertions(7);
     qweb.addTemplate(
       "test",
       `<div>

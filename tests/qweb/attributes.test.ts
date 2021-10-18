@@ -382,7 +382,7 @@ describe("special cases for some specific html attributes/properties", () => {
 
   test.skip("textarea with t-att-value", () => {
     // render input with initial value
-/*    qweb.addTemplate("test", `<textarea  t-att-value="v"/>`);
+    /*    qweb.addTemplate("test", `<textarea  t-att-value="v"/>`);
     const vnode1 = qweb.render("test", { v: "zucchini" });
     const vnode2 = patch(document.createElement("textarea"), vnode1);
     let elm = vnode2.elm as HTMLInputElement;
@@ -400,7 +400,7 @@ describe("special cases for some specific html attributes/properties", () => {
   });
 
   test.skip("select with t-att-value", () => {
-/*    const template = `
+    /*    const template = `
       <select t-att-value="value">
         <option value="potato">Potato</option>
         <option value="tomato">Tomato</option>

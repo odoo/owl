@@ -14,6 +14,21 @@ describe("debugging", () => {
     console.log = consoleLog;
   });
 
+  test.skip("t-debug on sub template", () => {
+    // const consoleLog = console.log;
+    // console.log = jest.fn();
+    // qweb.addTemplates(`
+    //   <templates>
+    //   <p t-name="sub" t-debug="">coucou</p>
+    //   <div t-name="test">
+    //     <t t-call="sub"/>
+    //   </div>
+    //   </templates>`);
+    // qweb.render("test");
+    // expect(console.log).toHaveBeenCalledTimes(1);
+    // console.log = consoleLog;
+  });
+
   test("t-log", () => {
     const consoleLog = console.log;
     console.log = jest.fn();

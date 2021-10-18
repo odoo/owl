@@ -126,7 +126,7 @@ describe("simple templates, mostly static", () => {
 
 describe("loading templates", () => {
   test.skip("can initialize qweb with a string", () => {
-/*    const templates = `<?xml version="1.0" encoding="UTF-8"?>
+    /*    const templates = `<?xml version="1.0" encoding="UTF-8"?>
       <templates id="template" xml:space="preserve">
         <div t-name="hey">jupiler</div>
       </templates>`;
@@ -151,5 +151,23 @@ describe("loading templates", () => {
     /*const data = "";
     qweb.addTemplates(data);
     expect(Object.keys(qweb.templates)).toEqual([]);*/
+  });
+});
+
+describe("global template registration", () => {
+  test.skip("can register template globally", () => {
+    //   expect.assertions(5);
+    //   let qweb = new QWeb();
+    //   try {
+    //     qweb.render("mytemplate");
+    //   } catch (e) {
+    //     expect(e.message).toMatch("Template mytemplate does not exist");
+    //   }
+    //   expect(qweb.templates.mytemplate).toBeUndefined();
+    //   QWeb.registerTemplate("mytemplate", "<div>global</div>");
+    //   expect(qweb.templates.mytemplate).toBeDefined();
+    //   const vnode = qweb.render("mytemplate");
+    //   expect(vnode.sel).toBe("div");
+    //   expect((vnode as any).children[0].text).toBe("global");
   });
 });

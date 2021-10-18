@@ -15,6 +15,13 @@ describe("t-call (template calling)", () => {
     expect(context.renderToString("caller")).toBe("<div><span>ok</span></div>");
   });
 
+  test.skip("t-call, global templates", () => {
+    // QWeb.registerTemplate("abcd", '<div><t t-call="john"/></div>');
+    // qweb.addTemplate("john", `<span>desk</span>`);
+    // const expected = "<div><span>desk</span></div>";
+    // expect(trim(renderToString(qweb, "abcd"))).toBe(expected);
+  });
+
   test("basic caller, no parent node", () => {
     const context = new TestContext();
     context.addTemplate("_basic-callee", `<span>ok</span>`);

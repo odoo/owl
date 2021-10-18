@@ -23,6 +23,28 @@ describe("t-foreach", () => {
     expect(renderToString(template)).toBe(expected);
   });
 
+  test.skip("t-key on t-foreach", async () => {
+    // qweb.addTemplate(
+    //   "test",
+    //   `
+    //     <div>
+    //       <t t-foreach="things" t-as="thing" t-key="thing">
+    //         <span/>
+    //       </t>
+    //     </div>`
+    // );
+    // let vnode = qweb.render("test", { things: [1, 2] });
+    // vnode = patch(document.createElement("div"), vnode);
+    // let elm = vnode.elm as HTMLElement;
+    // expect(elm.outerHTML).toBe("<div><span></span><span></span></div>");
+    // const first = elm.querySelectorAll("span")[0];
+    // const second = elm.querySelectorAll("span")[1];
+    // patch(vnode, qweb.render("test", { things: [2, 1] }));
+    // expect(elm.outerHTML).toBe("<div><span></span><span></span></div>");
+    // expect(first).toBe(elm.querySelectorAll("span")[1]);
+    // expect(second).toBe(elm.querySelectorAll("span")[0]);
+  });
+
   test("simple iteration (in a node)", () => {
     const template = `
         <div>

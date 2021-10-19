@@ -5,7 +5,7 @@ import {
   onPatched,
   onWillUpdateProps,
   onRender,
-} from "../../src/lifecycle_hooks";
+} from "../../src/component/lifecycle_hooks";
 import { status } from "../../src/component/status";
 import { xml } from "../../src/tags";
 import {

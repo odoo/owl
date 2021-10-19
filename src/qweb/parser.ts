@@ -645,6 +645,10 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
   const firstLetter = name[0];
   let isDynamic = node.hasAttribute("t-component");
 
+  if (isDynamic && name !== "t") {
+    throw new Error(`Directive 't-component' can only be used on <t> nodes (used on a <${name}>)`);
+  }
+
   if (!(firstLetter === firstLetter.toUpperCase() || isDynamic)) {
     return null;
   }

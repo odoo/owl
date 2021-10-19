@@ -65,16 +65,34 @@ function prepareList(collection: any): [any[], any[], number, any[]] {
   const n = values.length;
   return [keys, values, n, new Array(n)];
 }
+
+const isBoundary = Symbol("isBoundary");
+
+function setContextValue(ctx: { [key: string]: any }, key: string, value: any): void {
+  const ctx0 = ctx;
+  while (!ctx.hasOwnProperty(key) && !ctx.hasOwnProperty(isBoundary)) {
+    const newCtx = ctx.__proto__;
+    if (!newCtx) {
+      ctx = ctx0;
+      break;
+    }
+    ctx = newCtx;
+  }
+  ctx[key] = value;
+}
+
 export const UTILS = {
   // elem,
   // setText,
   withDefault,
   zero: Symbol("zero"),
+  isBoundary,
   callSlot,
   capture,
   // toClassObj,
   withKey,
   prepareList,
+  setContextValue,
   shallowEqual,
 };
 

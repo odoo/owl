@@ -341,7 +341,8 @@ describe("style and class handling", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    const regexp = /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
+    const regexp =
+      /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
     expect(error.message).toMatch(regexp);
     expect(fixture.innerHTML).toBe("");
   });

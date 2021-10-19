@@ -414,7 +414,8 @@ exports[`t-slot directive slots are rendered with proper context, part 2 2`] = `
     c1.push(vn2);
     let _3 = scope['state'].users;
     if (!_3) { throw new Error('QWeb error: Invalid loop expression')}
-    let _4 = _5 = _3;
+    let _4 = _3;
+    let _5 = _3;
     if (!(_3 instanceof Array)) {
         _4 = Object.keys(_3);
         _5 = Object.values(_3);
@@ -512,7 +513,8 @@ exports[`t-slot directive slots are rendered with proper context, part 3 2`] = `
     c1.push(vn2);
     let _3 = scope['state'].users;
     if (!_3) { throw new Error('QWeb error: Invalid loop expression')}
-    let _4 = _5 = _3;
+    let _4 = _3;
+    let _5 = _3;
     if (!(_3 instanceof Array)) {
         _4 = Object.keys(_3);
         _5 = Object.values(_3);
@@ -645,7 +647,8 @@ exports[`t-slot directive slots in t-foreach in t-foreach 1`] = `
     let vn1 = h('div', p1, c1);
     let _2 = scope['tree'];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
-    let _3 = _4 = _2;
+    let _3 = _2;
+    let _4 = _2;
     if (!(_2 instanceof Array)) {
         _3 = Object.keys(_2);
         _4 = Object.values(_2);
@@ -672,7 +675,8 @@ exports[`t-slot directive slots in t-foreach in t-foreach 1`] = `
         c1.push(vn8);
         let _9 = scope['node1'].nodes;
         if (!_9) { throw new Error('QWeb error: Invalid loop expression')}
-        let _10 = _11 = _9;
+        let _10 = _9;
+        let _11 = _9;
         if (!(_9 instanceof Array)) {
             _10 = Object.keys(_9);
             _11 = Object.values(_9);

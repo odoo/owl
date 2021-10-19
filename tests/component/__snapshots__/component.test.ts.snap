@@ -51,7 +51,8 @@ exports[`basic widget properties reconciliation alg works for t-foreach in t-for
     let vn1 = h('div', p1, c1);
     let _2 = scope['state'].s;
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
-    let _3 = _4 = _2;
+    let _3 = _2;
+    let _4 = _2;
     if (!(_2 instanceof Array)) {
         _3 = Object.keys(_2);
         _4 = Object.values(_2);
@@ -68,7 +69,8 @@ exports[`basic widget properties reconciliation alg works for t-foreach in t-for
         let key1 = i1;
         let _6 = scope['section'].blips;
         if (!_6) { throw new Error('QWeb error: Invalid loop expression')}
-        let _7 = _8 = _6;
+        let _7 = _6;
+        let _8 = _6;
         if (!(_6 instanceof Array)) {
             _7 = Object.keys(_6);
             _8 = Object.values(_6);
@@ -309,7 +311,8 @@ exports[`composition sub components with some state rendered in a loop 1`] = `
     let vn1 = h('div', p1, c1);
     let _2 = scope['state'].numbers;
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
-    let _3 = _4 = _2;
+    let _3 = _2;
+    let _4 = _2;
     if (!(_2 instanceof Array)) {
         _3 = Object.keys(_2);
         _4 = Object.values(_2);
@@ -597,7 +600,8 @@ exports[`other directives with t-component t-on expression captured in t-foreach
     scope.iter = 0;
     let _2 = scope['arr'];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
-    let _3 = _4 = _2;
+    let _3 = _2;
+    let _4 = _2;
     if (!(_2 instanceof Array)) {
         _3 = Object.keys(_2);
         _4 = Object.values(_2);
@@ -639,7 +643,8 @@ exports[`other directives with t-component t-on expression in t-foreach 1`] = `
     let vn1 = h('div', p1, c1);
     let _2 = scope['state'].values;
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
-    let _3 = _4 = _2;
+    let _3 = _2;
+    let _4 = _2;
     if (!(_2 instanceof Array)) {
         _3 = Object.keys(_2);
         _4 = Object.values(_2);
@@ -691,7 +696,8 @@ exports[`other directives with t-component t-on expression in t-foreach with t-s
     scope.bossa = 'nova';
     let _2 = scope['state'].values;
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
-    let _3 = _4 = _2;
+    let _3 = _2;
+    let _4 = _2;
     if (!(_2 instanceof Array)) {
         _3 = Object.keys(_2);
         _4 = Object.values(_2);
@@ -744,7 +750,8 @@ exports[`other directives with t-component t-on method call in t-foreach 1`] = `
     let vn1 = h('div', p1, c1);
     let _2 = scope['state'].values;
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
-    let _3 = _4 = _2;
+    let _3 = _2;
+    let _4 = _2;
     if (!(_2 instanceof Array)) {
         _3 = Object.keys(_2);
         _4 = Object.values(_2);
@@ -1410,7 +1417,8 @@ exports[`other directives with t-component t-set outside modified in t-foreach 1
     scope.iter = 0;
     let _2 = scope['state'].values;
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
-    let _3 = _4 = _2;
+    let _3 = _2;
+    let _4 = _2;
     if (!(_2 instanceof Array)) {
         _3 = Object.keys(_2);
         _4 = Object.values(_2);
@@ -1560,7 +1568,8 @@ exports[`random stuff/miscellaneous t-on with handler bound to dynamic argument 
     let vn1 = h('div', p1, c1);
     let _2 = scope['items'];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
-    let _3 = _4 = _2;
+    let _3 = _2;
+    let _4 = _2;
     if (!(_2 instanceof Array)) {
         _3 = Object.keys(_2);
         _4 = Object.values(_2);
@@ -1838,7 +1847,8 @@ exports[`t-model directive in a t-foreach 1`] = `
     let vn1 = h('div', p1, c1);
     let _2 = scope['state'];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
-    let _3 = _4 = _2;
+    let _3 = _2;
+    let _4 = _2;
     if (!(_2 instanceof Array)) {
         _3 = Object.keys(_2);
         _4 = Object.values(_2);
@@ -1878,7 +1888,8 @@ exports[`t-model directive in a t-foreach, part 2 1`] = `
     let vn1 = h('div', p1, c1);
     let _2 = scope['state'];
     if (!_2) { throw new Error('QWeb error: Invalid loop expression')}
-    let _3 = _4 = _2;
+    let _3 = _2;
+    let _4 = _2;
     if (!(_2 instanceof Array)) {
         _3 = Object.keys(_2);
         _4 = Object.values(_2);

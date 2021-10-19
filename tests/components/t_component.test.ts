@@ -191,7 +191,7 @@ describe("t-component", () => {
     expect(fixture.innerHTML).toBe("<div><div>1<button>Inc</button></div></div>");
   });
 
-  test.skip("t-component not on a <t> node", async () => {
+  test("t-component not on a <t> node", async () => {
     class Child extends Component {
       static template = xml`<span>1</span>`;
     }

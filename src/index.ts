@@ -68,6 +68,6 @@ export {
   onPatched,
   onRender,
   onDestroyed,
-} from "./lifecycle_hooks";
+} from "./component/lifecycle_hooks";
 
 export const __info__ = {};

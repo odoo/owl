@@ -1,4 +1,4 @@
-import { getCurrent } from "./component/component_node";
+import { getCurrent } from "./component_node";
 
 // -----------------------------------------------------------------------------
 //  hooks

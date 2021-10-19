@@ -1,4 +1,4 @@
-import { renderToString, snapshotEverything } from "../helpers";
+import { renderToString, snapshotEverything, TestContext } from "../helpers";
 
 snapshotEverything();
 
@@ -10,6 +10,13 @@ describe("t-set", () => {
   test("set from attribute literal", () => {
     const template = `<div><t t-set="value" t-value="'ok'"/><t t-esc="value"/></div>`;
     expect(renderToString(template)).toBe("<div>ok</div>");
+  });
+
+  test("t-set does not modify render context existing key values", () => {
+    const template = `<div><t t-set="value" t-value="35"/><t t-esc="value"/></div>`;
+    const ctx = { value: 17 };
+    expect(renderToString(template, ctx)).toBe("<div>35</div>");
+    expect(ctx.value).toBe(17);
   });
 
   test("set from attribute literal (no outside div)", () => {
@@ -178,5 +185,93 @@ describe("t-set", () => {
         </div>`;
 
     expect(renderToString(template)).toBe("<div>Truthy</div>");
+  });
+
+  test("t-set outside modified in t-foreach", async () => {
+    const template = `
+      <div>
+        <t t-set="iter" t-value="0"/>
+        <t t-foreach="['a','b']" t-as="val" t-key="val">
+          <p>InLoop: <t t-esc="iter"/></p>
+          <t t-set="iter" t-value="iter + 1"/>
+        </t>
+        <p>EndLoop: <t t-esc="iter"/></p>
+      </div>
+    `;
+    expect(renderToString(template)).toBe(
+      "<div><p>InLoop: 0</p><p>InLoop: 1</p><p>EndLoop: 2</p></div>"
+    );
+  });
+
+  test("t-set outside modified in t-foreach increment-after operator", async () => {
+    const template = `
+      <div>
+        <t t-set="iter" t-value="0"/>
+        <t t-foreach="['a','b']" t-as="val" t-key="val">
+          <p>InLoop: <t t-esc="iter"/></p>
+          <t t-set="iter" t-value="iter++"/>
+        </t>
+        <p>EndLoop: <t t-esc="iter"/></p>
+      </div>
+    `;
+    expect(renderToString(template)).toBe(
+      "<div><p>InLoop: 0</p><p>InLoop: 0</p><p>EndLoop: 0</p></div>"
+    );
+  });
+
+  test("t-set outside modified in t-foreach increment-before operator", async () => {
+    const template = `
+      <div>
+        <t t-set="iter" t-value="0"/>
+        <t t-foreach="['a','b']" t-as="val" t-key="val">
+          <p>InLoop: <t t-esc="iter"/></p>
+          <t t-set="iter" t-value="++iter"/>
+        </t>
+        <p>EndLoop: <t t-esc="iter"/></p>
+      </div>
+    `;
+    expect(renderToString(template)).toBe(
+      "<div><p>InLoop: 0</p><p>InLoop: 1</p><p>EndLoop: 0</p></div>"
+    );
+  });
+
+  test("t-set can't alter from within callee", async () => {
+    const context = new TestContext();
+    const sub = `<div><t t-esc="iter"/><t t-set="iter" t-value="'called'"/><t t-esc="iter"/></div>`;
+    const main = `
+      <div>
+        <t t-set="iter" t-value="'source'"/>
+        <p><t t-esc="iter"/></p>
+        <t t-call="sub"/>
+        <p><t t-esc="iter"/></p>
+      </div>
+    `;
+    context.addTemplate("sub", sub);
+    context.addTemplate("main", main);
+
+    expect(context.renderToString("main")).toBe(
+      "<div><p>source</p><div>sourcecalled</div><p>source</p></div>"
+    );
+  });
+
+  test("t-set can't alter in t-call body", async () => {
+    const context = new TestContext();
+    const sub = `<div><t t-esc="iter"/><t t-set="iter" t-value="'called'"/><t t-esc="iter"/></div>`;
+    const main = `
+      <div>
+        <t t-set="iter" t-value="'source'"/>
+        <p><t t-esc="iter"/></p>
+        <t t-call="sub">
+          <t t-set="iter" t-value="'inCall'"/>
+        </t>
+        <p><t t-esc="iter"/></p>
+      </div>
+    `;
+    context.addTemplate("sub", sub);
+    context.addTemplate("main", main);
+
+    expect(context.renderToString("main")).toBe(
+      "<div><p>source</p><div>inCallcalled</div><p>source</p></div>"
+    );
   });
 });

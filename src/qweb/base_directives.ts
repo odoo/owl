@@ -326,7 +326,8 @@ QWeb.addDirective({
     ctx.addLine(`if (!_${arrayID}) { throw new Error('QWeb error: Invalid loop expression')}`);
     let keysID = ctx.generateID();
     let valuesID = ctx.generateID();
-    ctx.addLine(`let _${keysID} = _${valuesID} = _${arrayID};`);
+    ctx.addLine(`let _${keysID} = _${arrayID};`);
+    ctx.addLine(`let _${valuesID} = _${arrayID};`);
     ctx.addIf(`!(_${arrayID} instanceof Array)`);
     ctx.addLine(`_${keysID} = Object.keys(_${arrayID});`);
     ctx.addLine(`_${valuesID} = Object.values(_${arrayID});`);

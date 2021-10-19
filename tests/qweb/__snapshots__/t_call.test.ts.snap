@@ -4,7 +4,7 @@ exports[`t-call (template calling) basic caller 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block1 = createBlock(\`<span>ok</span>\`);
   
@@ -18,7 +18,7 @@ exports[`t-call (template calling) basic caller 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`_basic-callee\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -34,7 +34,7 @@ exports[`t-call (template calling) basic caller, no parent node 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block1 = createBlock(\`<span>ok</span>\`);
   
@@ -48,7 +48,7 @@ exports[`t-call (template calling) basic caller, no parent node 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`_basic-callee\`);
   
   return function template(ctx, node, key = \\"\\") {
@@ -61,7 +61,7 @@ exports[`t-call (template calling) call with several sub nodes on same line 1`] 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -76,7 +76,7 @@ exports[`t-call (template calling) call with several sub nodes on same line 2`] 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -85,6 +85,7 @@ exports[`t-call (template calling) call with several sub nodes on same line 2`] 
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
+    ctx[isBoundary] = 1;
     let b3 = block3();
     let b4 = text(\` \`);
     let b5 = block5();
@@ -100,7 +101,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0' 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block1 = createBlock(\`<div><span>cascade 2</span><block-child-0/></div>\`);
   
@@ -115,7 +116,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0' 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`finalTemplate\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -123,6 +124,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0' 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
+    ctx[isBoundary] = 1;
     let b3 = block3();
     let b4 = html(ctx[zero]);
     let b2 = multi([b3, b4]);
@@ -137,7 +139,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0' 3`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`subSubTemplate\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -145,6 +147,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0' 3`] = `
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
+    ctx[isBoundary] = 1;
     let b3 = block3();
     let b4 = html(ctx[zero]);
     let b2 = multi([b3, b4]);
@@ -159,7 +162,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0' 4`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`subTemplate\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -168,6 +171,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0' 4`] = `
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
+    ctx[isBoundary] = 1;
     let b3 = block3();
     let b4 = text(\` \`);
     let b5 = block5();
@@ -183,7 +187,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0', without external 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block2 = createBlock(\`<span>cascade 2</span>\`);
   
@@ -199,13 +203,14 @@ exports[`t-call (template calling) cascading t-call t-raw='0', without external 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`finalTemplate\`);
   
   let block2 = createBlock(\`<span>cascade 1</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
+    ctx[isBoundary] = 1;
     let b2 = block2();
     let b3 = html(ctx[zero]);
     let b1 = multi([b2, b3]);
@@ -219,13 +224,14 @@ exports[`t-call (template calling) cascading t-call t-raw='0', without external 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`subSubTemplate\`);
   
   let block2 = createBlock(\`<span>cascade 0</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
+    ctx[isBoundary] = 1;
     let b2 = block2();
     let b3 = html(ctx[zero]);
     let b1 = multi([b2, b3]);
@@ -239,7 +245,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0', without external 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`subTemplate\`);
   
   let block2 = createBlock(\`<span>hey</span>\`);
@@ -247,6 +253,7 @@ exports[`t-call (template calling) cascading t-call t-raw='0', without external 
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
+    ctx[isBoundary] = 1;
     let b2 = block2();
     let b3 = text(\` \`);
     let b4 = block4();
@@ -261,7 +268,7 @@ exports[`t-call (template calling) dynamic t-call 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block1 = createBlock(\`<foo><block-text-0/></foo>\`);
   
@@ -276,7 +283,7 @@ exports[`t-call (template calling) dynamic t-call 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block1 = createBlock(\`<bar><block-text-0/></bar>\`);
   
@@ -291,7 +298,7 @@ exports[`t-call (template calling) dynamic t-call 3`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -307,7 +314,7 @@ exports[`t-call (template calling) inherit context 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return text(ctx['foo']);
@@ -319,14 +326,15 @@ exports[`t-call (template calling) inherit context 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    ctx[\`foo\`] = 1;
+    ctx[isBoundary] = 1
+    setContextValue(ctx, \\"foo\\", 1);
     let b2 = callTemplate_2(ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
@@ -337,7 +345,7 @@ exports[`t-call (template calling) recursive template, part 1 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`recursive\`);
   
   let block1 = createBlock(\`<div><span>hey</span><block-child-0/></div>\`);
@@ -356,15 +364,17 @@ exports[`t-call (template calling) recursive template, part 2 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`nodeTemplate\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
     ctx = Object.create(ctx);
-    ctx[\`node\`] = ctx['root'];
+    ctx[isBoundary] = 1;
+    setContextValue(ctx, \\"node\\", ctx['root']);
     let b2 = callTemplate_2(ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
@@ -375,13 +385,14 @@ exports[`t-call (template calling) recursive template, part 2 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`nodeTemplate\`);
   
   let block1 = createBlock(\`<div><p><block-text-0/></p><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
     let d1 = ctx['node'].val;
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['node'].children||[]);
@@ -393,7 +404,8 @@ exports[`t-call (template calling) recursive template, part 2 2`] = `
       ctx[\`subtree_value\`] = k_block2[i1];
       let key1 = ctx['subtree_index'];
       ctx = Object.create(ctx);
-      ctx[\`node\`] = ctx['subtree'];
+      ctx[isBoundary] = 1;
+      setContextValue(ctx, \\"node\\", ctx['subtree']);
       c_block2[i1] = withKey(callTemplate_2(ctx, node, key + \`__1__\${key1}\`), key1);
       ctx = ctx.__proto__;
     }
@@ -407,15 +419,17 @@ exports[`t-call (template calling) recursive template, part 3 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`nodeTemplate\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
     ctx = Object.create(ctx);
-    ctx[\`node\`] = ctx['root'];
+    ctx[isBoundary] = 1;
+    setContextValue(ctx, \\"node\\", ctx['root']);
     let b2 = callTemplate_2(ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
@@ -426,13 +440,14 @@ exports[`t-call (template calling) recursive template, part 3 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`nodeTemplate\`);
   
   let block1 = createBlock(\`<div><p><block-text-0/></p><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
     let d1 = ctx['node'].val;
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['node'].children||[]);
@@ -444,7 +459,8 @@ exports[`t-call (template calling) recursive template, part 3 2`] = `
       ctx[\`subtree_value\`] = k_block2[i1];
       let key1 = ctx['subtree_index'];
       ctx = Object.create(ctx);
-      ctx[\`node\`] = ctx['subtree'];
+      ctx[isBoundary] = 1;
+      setContextValue(ctx, \\"node\\", ctx['subtree']);
       c_block2[i1] = withKey(callTemplate_2(ctx, node, key + \`__1__\${key1}\`), key1);
       ctx = ctx.__proto__;
     }
@@ -458,16 +474,18 @@ exports[`t-call (template calling) recursive template, part 4: with t-set recurs
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`nodeTemplate\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
     ctx = Object.create(ctx);
-    ctx[\`recursive_idx\`] = 1;
-    ctx[\`node\`] = ctx['root'];
+    ctx[isBoundary] = 1;
+    setContextValue(ctx, \\"recursive_idx\\", 1);
+    setContextValue(ctx, \\"node\\", ctx['root']);
     let b2 = callTemplate_2(ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
@@ -478,14 +496,15 @@ exports[`t-call (template calling) recursive template, part 4: with t-set recurs
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`nodeTemplate\`);
   
   let block1 = createBlock(\`<div><p><block-text-0/> <block-text-1/></p><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    ctx[\`recursive_idx\`] = ctx['recursive_idx']+1;
+    ctx[isBoundary] = 1
+    setContextValue(ctx, \\"recursive_idx\\", ctx['recursive_idx']+1);
     let d1 = ctx['node'].val;
     let d2 = ctx['recursive_idx'];
     ctx = Object.create(ctx);
@@ -498,7 +517,8 @@ exports[`t-call (template calling) recursive template, part 4: with t-set recurs
       ctx[\`subtree_value\`] = k_block2[i1];
       let key1 = ctx['subtree_index'];
       ctx = Object.create(ctx);
-      ctx[\`node\`] = ctx['subtree'];
+      ctx[isBoundary] = 1;
+      setContextValue(ctx, \\"node\\", ctx['subtree']);
       c_block2[i1] = withKey(callTemplate_2(ctx, node, key + \`__1__\${key1}\`), key1);
       ctx = ctx.__proto__;
     }
@@ -512,7 +532,7 @@ exports[`t-call (template calling) scoped parameters 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return text(\`ok\`);
@@ -524,15 +544,17 @@ exports[`t-call (template calling) scoped parameters 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
     ctx = Object.create(ctx);
-    ctx[\`foo\`] = 42;
+    ctx[isBoundary] = 1;
+    setContextValue(ctx, \\"foo\\", 42);
     let b2 = callTemplate_2(ctx, node, key + \`__1\`);
     ctx = ctx.__proto__;
     let d1 = ctx['foo'];
@@ -545,7 +567,7 @@ exports[`t-call (template calling) scoped parameters, part 2 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return text(ctx['foo']);
@@ -557,16 +579,18 @@ exports[`t-call (template calling) scoped parameters, part 2 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    ctx[\`foo\`] = 11;
+    ctx[isBoundary] = 1
+    setContextValue(ctx, \\"foo\\", 11);
     ctx = Object.create(ctx);
-    ctx[\`foo\`] = 42;
+    ctx[isBoundary] = 1;
+    setContextValue(ctx, \\"foo\\", 42);
     let b2 = callTemplate_2(ctx, node, key + \`__1\`);
     ctx = ctx.__proto__;
     let d1 = ctx['foo'];
@@ -579,7 +603,7 @@ exports[`t-call (template calling) t-call allowed on a non t node 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -595,7 +619,7 @@ exports[`t-call (template calling) t-call allowed on a non t node 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block1 = createBlock(\`<span>ok</span>\`);
   
@@ -609,7 +633,7 @@ exports[`t-call (template calling) t-call with body content as root of a templat
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block1 = createBlock(\`<foo><block-child-0/></foo>\`);
   
@@ -624,13 +648,14 @@ exports[`t-call (template calling) t-call with body content as root of a templat
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`antony\`);
   
   let block1 = createBlock(\`<p>antony</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
+    ctx[isBoundary] = 1;
     let b1 = block1();
     ctx[zero] = b1;
     return callTemplate_2(ctx, node, key + \`__1\`);
@@ -642,7 +667,7 @@ exports[`t-call (template calling) t-call with t-if 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -661,7 +686,7 @@ exports[`t-call (template calling) t-call with t-if 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block1 = createBlock(\`<span>ok</span>\`);
   
@@ -675,15 +700,17 @@ exports[`t-call (template calling) t-call with t-set inside and body text conten
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
     ctx = Object.create(ctx);
-    ctx[\`val\`] = \`yip yip\`;
+    ctx[isBoundary] = 1;
+    setContextValue(ctx, \\"val\\", \`yip yip\`);
     let b2 = callTemplate_2(ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
@@ -694,7 +721,7 @@ exports[`t-call (template calling) t-call with t-set inside and body text conten
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block1 = createBlock(\`<p><block-text-0/></p>\`);
   
@@ -709,13 +736,14 @@ exports[`t-call (template calling) t-call with t-set inside and outside 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['list']);
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -725,9 +753,10 @@ exports[`t-call (template calling) t-call with t-set inside and outside 1`] = `
       ctx[\`v_index\`] = i1;
       ctx[\`v_value\`] = k_block2[i1];
       let key1 = ctx['v_index'];
-      ctx[\`val\`] = ctx['v'].val;
+      setContextValue(ctx, \\"val\\", ctx['v'].val);
       ctx = Object.create(ctx);
-      ctx[\`val3\`] = ctx['val']*3;
+      ctx[isBoundary] = 1;
+      setContextValue(ctx, \\"val3\\", ctx['val']*3);
       c_block2[i1] = withKey(callTemplate_2(ctx, node, key + \`__1__\${key1}\`), key1);
       ctx = ctx.__proto__;
     }
@@ -741,7 +770,7 @@ exports[`t-call (template calling) t-call with t-set inside and outside 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
@@ -756,13 +785,14 @@ exports[`t-call (template calling) t-call with t-set inside and outside. 2 1`] =
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['list']);
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -772,9 +802,10 @@ exports[`t-call (template calling) t-call with t-set inside and outside. 2 1`] =
       ctx[\`v_index\`] = i1;
       ctx[\`v_value\`] = k_block2[i1];
       let key1 = ctx['v_index'];
-      ctx[\`val\`] = ctx['v'].val;
+      setContextValue(ctx, \\"val\\", ctx['v'].val);
       ctx = Object.create(ctx);
-      ctx[\`val3\`] = ctx['val']*3;
+      ctx[isBoundary] = 1;
+      setContextValue(ctx, \\"val3\\", ctx['val']*3);
       c_block2[i1] = withKey(callTemplate_2(ctx, node, key + \`__1__\${key1}\`), key1);
       ctx = ctx.__proto__;
     }
@@ -788,7 +819,7 @@ exports[`t-call (template calling) t-call with t-set inside and outside. 2 2`] =
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block2 = createBlock(\`<span><block-text-0/></span>\`);
   
@@ -805,14 +836,15 @@ exports[`t-call (template calling) t-call with t-set inside and outside. 2 3`] =
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`main\`);
   
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    ctx[\`w\`] = 'fromwrapper';
+    ctx[isBoundary] = 1
+    setContextValue(ctx, \\"w\\", 'fromwrapper');
     let b2 = callTemplate_2(ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
@@ -823,7 +855,7 @@ exports[`t-call (template calling) t-call, conditional and t-set in t-call body 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block1 = createBlock(\`<div>callee1</div>\`);
   
@@ -837,7 +869,7 @@ exports[`t-call (template calling) t-call, conditional and t-set in t-call body 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block1 = createBlock(\`<div>callee2 <block-text-0/></div>\`);
   
@@ -852,7 +884,7 @@ exports[`t-call (template calling) t-call, conditional and t-set in t-call body 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`callee1\`);
   const callTemplate_4 = getTemplate(\`callee2\`);
   
@@ -860,13 +892,15 @@ exports[`t-call (template calling) t-call, conditional and t-set in t-call body 
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
     let b2,b3;
-    ctx[\`v1\`] = 'elif';
+    setContextValue(ctx, \\"v1\\", 'elif');
     if (ctx['v1']==='if') {
       b2 = callTemplate_2(ctx, node, key + \`__1\`);
     } else if (ctx['v1']==='elif') {
       ctx = Object.create(ctx);
-      ctx[\`v\`] = 'success';
+      ctx[isBoundary] = 1;
+      setContextValue(ctx, \\"v\\", 'success');
       b3 = callTemplate_4(ctx, node, key + \`__3\`);
       ctx = ctx.__proto__;
     }
@@ -879,14 +913,15 @@ exports[`t-call (template calling) t-esc inside t-call, with t-set outside 1`] =
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    ctx[\`v\`] = \`Hi\`;
+    ctx[isBoundary] = 1
+    setContextValue(ctx, \\"v\\", \`Hi\`);
     let b2 = callTemplate_2(ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
@@ -897,7 +932,7 @@ exports[`t-call (template calling) t-esc inside t-call, with t-set outside 2`] =
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
@@ -912,7 +947,7 @@ exports[`t-call (template calling) with unused body 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block1 = createBlock(\`<div>ok</div>\`);
   
@@ -926,11 +961,12 @@ exports[`t-call (template calling) with unused body 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
+    ctx[isBoundary] = 1;
     let b1 = text(\`WHEEE\`);
     ctx[zero] = b1;
     return callTemplate_2(ctx, node, key + \`__1\`);
@@ -942,7 +978,7 @@ exports[`t-call (template calling) with unused setbody 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block1 = createBlock(\`<div>ok</div>\`);
   
@@ -956,13 +992,15 @@ exports[`t-call (template calling) with unused setbody 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
     ctx = Object.create(ctx);
-    ctx[\`qux\`] = 3;
+    ctx[isBoundary] = 1;
+    setContextValue(ctx, \\"qux\\", 3);
     return callTemplate_2(ctx, node, key + \`__1\`);
   }
 }"
@@ -972,7 +1010,7 @@ exports[`t-call (template calling) with used body 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block1 = createBlock(\`<h1><block-text-0/></h1>\`);
   
@@ -987,11 +1025,12 @@ exports[`t-call (template calling) with used body 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
+    ctx[isBoundary] = 1;
     let b1 = text(\`ok\`);
     ctx[zero] = b1;
     return callTemplate_2(ctx, node, key + \`__1\`);
@@ -1003,7 +1042,7 @@ exports[`t-call (template calling) with used setbody 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return text(ctx['foo']);
@@ -1015,15 +1054,17 @@ exports[`t-call (template calling) with used setbody 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
     ctx = Object.create(ctx);
-    ctx[\`foo\`] = 'ok';
+    ctx[isBoundary] = 1;
+    setContextValue(ctx, \\"foo\\", 'ok');
     let b2 = callTemplate_2(ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }

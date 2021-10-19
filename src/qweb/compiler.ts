@@ -274,7 +274,7 @@ export class QWebCompiler {
     // define blocks and utility functions
     this.addLine(`let { text, createBlock, list, multi, html, toggler, component } = bdom;`);
     this.addLine(
-      `let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;`
+      `let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;`
     );
     if (this.shouldDefineAssign) {
       this.addLine(`let assign = Object.assign;`);
@@ -308,6 +308,7 @@ export class QWebCompiler {
     }
     if (this.shouldProtectScope) {
       this.addLine(`  ctx = Object.create(ctx);`);
+      this.addLine(`  ctx[isBoundary] = 1`);
     }
     if (this.target.hasCache) {
       this.addLine(`  let cache = ctx.cache || {};`);
@@ -815,9 +816,9 @@ export class QWebCompiler {
 
   compileTCall(ast: ASTTCall, ctx: Context) {
     let { block, forceNewBlock } = ctx;
-    // this.hasTCall = true;
     if (ast.body) {
       this.addLine(`ctx = Object.create(ctx);`);
+      this.addLine(`ctx[isBoundary] = 1;`);
       const nextId = BlockDescription.nextBlockId;
       const subCtx: Context = createContext(ctx, { preventRoot: true });
       this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
@@ -883,7 +884,7 @@ export class QWebCompiler {
       } else {
         value = expr;
       }
-      this.addLine(`ctx[\`${ast.name}\`] = ${value};`);
+      this.addLine(`setContextValue(ctx, "${ast.name}", ${value});`);
     }
   }
 

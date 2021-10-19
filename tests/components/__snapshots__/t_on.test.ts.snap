@@ -4,14 +4,15 @@ exports[`t-on t-on expression captured in t-foreach 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<div><button block-handler-0=\\"click\\">expr</button></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    ctx[\`iter\`] = 0;
+    ctx[isBoundary] = 1
+    setContextValue(ctx, \\"iter\\", 0);
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['arr']);
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -20,7 +21,7 @@ exports[`t-on t-on expression captured in t-foreach 1`] = `
       const v1 = ctx['otherState'];
       const v2 = ctx['iter'];
       let d1 = (e) => {const res = (() => { return v1.vals.push(v2+'_'+v2) })(); if (typeof res === 'function') { res(e) }};
-      ctx[\`iter\`] = ctx['iter']+1;
+      setContextValue(ctx, \\"iter\\", ctx['iter']+1);
       c_block2[i1] = withKey(block3([d1]), key1);
     }
     let b2 = list(c_block2);
@@ -33,7 +34,7 @@ exports[`t-on t-on expression in t-foreach 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<div><block-text-0/>: <block-text-1/><button block-handler-2=\\"click\\">Expr</button></div>\`);
@@ -62,21 +63,22 @@ exports[`t-on t-on expression in t-foreach with t-set 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<div><block-text-0/>: <block-text-1/><button block-handler-2=\\"click\\">Expr</button></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    ctx[\`bossa\`] = 'nova';
+    ctx[isBoundary] = 1
+    setContextValue(ctx, \\"bossa\\", 'nova');
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].values);
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`val\`] = v_block2[i1];
       ctx[\`val_index\`] = i1;
       let key1 = ctx['val'];
-      ctx[\`bossa\`] = ctx['bossa']+'_'+ctx['val_index'];
+      setContextValue(ctx, \\"bossa\\", ctx['bossa']+'_'+ctx['val_index']);
       let d1 = ctx['val_index'];
       let d2 = ctx['val']+'';
       const v1 = ctx['otherState'];
@@ -95,7 +97,7 @@ exports[`t-on t-on method call in t-foreach 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<div><block-text-0/>: <block-text-1/><button block-handler-2=\\"click\\">meth call</button></div>\`);
@@ -123,7 +125,7 @@ exports[`t-on t-on on destroyed components 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block1 = createBlock(\`<div block-handler-0=\\"click\\"/>\`);
   
@@ -138,7 +140,7 @@ exports[`t-on t-on on destroyed components 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   

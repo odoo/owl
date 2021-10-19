@@ -212,22 +212,6 @@ exports[`t-component t-component not on a <t> node 1`] = `
 }"
 `;
 
-exports[`t-component t-component not on a <t> node 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    let Comp2 = ctx['Child'];
-    let b2 = toggler(Comp2, component(Comp2, {}, key + \`__1\`, node, ctx));
-    return block1([], [b2]);
-  }
-}"
-`;
-
 exports[`t-component t-component works in simple case 1`] = `
 "function anonymous(bdom, helpers
 ) {

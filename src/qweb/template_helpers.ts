@@ -1,6 +1,7 @@
 import { BDom, createBlock, html, list, multi, text, toggler } from "../blockdom";
 import { compileTemplate, Template } from "./compiler";
 import { component } from "../component/component_node";
+import { validateProps } from "../component/props_validation";
 
 const bdom = { text, createBlock, list, multi, html, toggler, component };
 
@@ -94,6 +95,7 @@ export const UTILS = {
   prepareList,
   setContextValue,
   shallowEqual,
+  validateProps,
 };
 
 export class TemplateSet {
@@ -102,6 +104,7 @@ export class TemplateSet {
   translateFn?: (s: string) => string;
   translatableAttributes?: string[];
   utils: typeof UTILS;
+  dev?: boolean;
 
   constructor() {
     const call = (subTemplate: string, ctx: any, parent: any) => {
@@ -128,6 +131,7 @@ export class TemplateSet {
       }
       const templateFn = compileTemplate(rawTemplate, {
         name,
+        dev: this.dev,
         translateFn: this.translateFn,
         translatableAttributes: this.translatableAttributes,
       });

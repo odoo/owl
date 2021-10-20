@@ -46,6 +46,7 @@ export function snapshotApp(app: App) {
   snapshotTemplateCode(template, {
     translateFn: app.translateFn,
     translatableAttributes: app.translatableAttributes,
+    dev: app.dev,
   });
 }
 

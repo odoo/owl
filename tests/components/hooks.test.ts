@@ -1,9 +1,19 @@
-import { App, Component, mount, useRef, useState, useComponent, onMounted, onPatched, onWillStart, onWillUpdateProps, onWillPatch, xml, onWillUnmount } from "../../src";
 import {
-  makeTestFixture,
-  nextTick,
-  snapshotEverything,
-} from "../helpers";
+  App,
+  Component,
+  mount,
+  useRef,
+  useState,
+  useComponent,
+  onMounted,
+  onPatched,
+  onWillStart,
+  onWillUpdateProps,
+  onWillPatch,
+  xml,
+  onWillUnmount,
+} from "../../src";
+import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -85,7 +95,12 @@ describe("hooks", () => {
     const app = new App(Test);
     await app.mount(fixture);
     app.destroy();
-    expect(steps).toEqual(["hook:mounted2", "hook:mounted1", "hook:willUnmount1", "hook:willUnmount2"]);
+    expect(steps).toEqual([
+      "hook:mounted2",
+      "hook:mounted1",
+      "hook:willUnmount1",
+      "hook:willUnmount2",
+    ]);
   });
 
   describe("autofocus hook", () => {

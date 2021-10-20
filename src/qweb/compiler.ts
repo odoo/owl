@@ -32,6 +32,7 @@ export interface CompileOptions {
   name?: string;
   translateFn?: (s: string) => string;
   translatableAttributes?: string[];
+  dev?: boolean;
 }
 
 export function compileTemplate(template: string, options?: CompileOptions): TemplateFunction {
@@ -177,6 +178,7 @@ export class QWebCompiler {
   target = new CodeTarget("main");
   templateName: string;
   template: string;
+  dev: boolean;
   translateFn: (s: string) => string;
   translatableAttributes: string[];
   ast: AST;
@@ -186,6 +188,7 @@ export class QWebCompiler {
     this.template = template;
     this.translateFn = options.translateFn || ((s: string) => s);
     this.translatableAttributes = options.translatableAttributes || TRANSLATABLE_ATTRS;
+    this.dev = options.dev || false;
     this.ast = parse(template);
     if (options.name) {
       this.templateName = options.name;
@@ -925,6 +928,14 @@ export class QWebCompiler {
     } else {
       expr = `\`${ast.name}\``;
     }
+
+    if (this.dev) {
+      const propVar = this.generateId("props");
+      this.addLine(`const ${propVar} = ${propString}`);
+      this.addLine(`helpers.validateProps(${expr}, ${propVar}, ctx)`);
+      propString = propVar;
+    }
+
     let blockArgs = `${expr}, ${propString}, key + \`${key}\`, node, ctx`;
 
     // slots

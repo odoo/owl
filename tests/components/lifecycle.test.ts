@@ -1070,7 +1070,7 @@ describe("lifecycle hooks", () => {
     class Child extends Component {
       static template = xml`<div>child</div>`;
       setup() {
-        useLogLifecycle(steps)
+        useLogLifecycle(steps);
       }
     }
 
@@ -1110,7 +1110,7 @@ describe("lifecycle hooks", () => {
       "Child:render",
       "Parent:willPatch",
       "Child:mounted",
-      "Parent:patched"
+      "Parent:patched",
     ]);
     Object.freeze(steps);
   });

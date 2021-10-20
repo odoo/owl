@@ -1,7 +1,4 @@
-import {
-  renderToString,
-  snapshotEverything,
-} from "../helpers";
+import { renderToString, snapshotEverything } from "../helpers";
 
 snapshotEverything();
 

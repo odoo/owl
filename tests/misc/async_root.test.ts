@@ -33,7 +33,7 @@ describe("Asyncroot", () => {
               </AsyncRoot>
             </div>
           </div>`;
-      static components = { Child, AsyncChild, /*AsyncRoot*/ };
+      static components = { Child, AsyncChild /*AsyncRoot*/ };
       state = useState({ val: 0 });
 
       updateApp() {
@@ -79,7 +79,7 @@ describe("Asyncroot", () => {
               <AsyncChild val="state.val"/>
             </div>
           </div>`;
-      static components = { Child, AsyncChild, /*AsyncRoot*/ };
+      static components = { Child, AsyncChild /*AsyncRoot*/ };
       state = useState({ val: 0 });
 
       updateApp() {
@@ -132,7 +132,7 @@ describe("Asyncroot", () => {
             </AsyncRoot>
           </div>
         </div>`;
-      static components = { Child, AsyncChild, /*AsyncRoot*/ };
+      static components = { Child, AsyncChild /*AsyncRoot*/ };
       state = useState({ val: 0 });
 
       updateApp() {

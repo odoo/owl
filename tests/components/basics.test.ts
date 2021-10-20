@@ -750,7 +750,7 @@ describe("basics", () => {
       static template = xml`<span>abc<t t-if="props.flag">def</t></span>`;
     }
     class Parent extends Component {
-      static template = xml`<Child flag="state.flag"/>`
+      static template = xml`<Child flag="state.flag"/>`;
       static components = { Child };
       state = useState({ flag: false });
     }

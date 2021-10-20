@@ -320,6 +320,6 @@ describe("event handling", () => {
     }
 
     await mount(Parent, fixture);
-    (<HTMLElement>fixture.querySelector('.item')).click();
+    (<HTMLElement>fixture.querySelector(".item")).click();
   });
 });

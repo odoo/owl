@@ -905,7 +905,16 @@ export class QWebCompiler {
     for (let p in ast.props) {
       props.push(`${p}: ${compileExpr(ast.props[p]) || undefined}`);
     }
-    const propString = `{${props.join(",")}}`;
+    const propStr = `{${props.join(",")}}`;
+
+    let propString = propStr;
+    if (ast.dynamicProps) {
+      if (!props.length) {
+        propString = `${compileExpr(ast.dynamicProps)}`;
+      } else {
+        propString = `Object.assign({}, ${compileExpr(ast.dynamicProps)}, ${propStr})`;
+      }
+    }
 
     // cmap key
     const key = this.generateComponentKey();

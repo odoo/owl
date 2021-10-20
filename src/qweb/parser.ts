@@ -105,6 +105,7 @@ export interface ASTComponent {
   type: ASTType.TComponent;
   name: string;
   isDynamic: boolean;
+  dynamicProps: string | null;
   props: { [name: string]: string };
   handlers: { [event: string]: string };
   slots: { [name: string]: AST };
@@ -657,6 +658,9 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
     node.removeAttribute("t-component");
   }
 
+  const dynamicProps = node.getAttribute("t-props");
+  node.removeAttribute("t-props");
+
   const props: ASTComponent["props"] = {};
   const handlers: ASTComponent["handlers"] = {};
   for (let name of node.getAttributeNames()) {
@@ -706,7 +710,7 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
       slots.default = defaultContent;
     }
   }
-  return { type: ASTType.TComponent, name, isDynamic, props, handlers, slots };
+  return { type: ASTType.TComponent, name, isDynamic, dynamicProps, props, handlers, slots };
 }
 
 // -----------------------------------------------------------------------------

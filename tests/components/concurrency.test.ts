@@ -1,6 +1,11 @@
 import { App, Component, mount, onWillStart, onWillUpdateProps, useState } from "../../src";
 import { Fiber } from "../../src/component/fibers";
-import { onMounted, onPatched, onWillPatch, onWillUnmount } from "../../src/component/lifecycle_hooks";
+import {
+  onMounted,
+  onPatched,
+  onWillPatch,
+  onWillUnmount,
+} from "../../src/component/lifecycle_hooks";
 import { Scheduler } from "../../src/component/scheduler";
 import { status } from "../../src/component/status";
 import { xml } from "../../src/tags";

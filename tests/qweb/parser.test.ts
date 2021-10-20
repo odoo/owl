@@ -699,6 +699,7 @@ describe("qweb parser", () => {
         isDynamic: false,
         name: "Comp",
         handlers: {},
+        dynamicProps: null,
         props: {},
         slots: {},
       },
@@ -824,6 +825,7 @@ describe("qweb parser", () => {
     expect(parse(`<MyComponent />`)).toEqual({
       type: ASTType.TComponent,
       name: "MyComponent",
+      dynamicProps: null,
       props: {},
       handlers: {},
       slots: {},
@@ -835,7 +837,20 @@ describe("qweb parser", () => {
     expect(parse(`<MyComponent a="1" b="'b'"/>`)).toEqual({
       type: ASTType.TComponent,
       name: "MyComponent",
+      dynamicProps: null,
       props: { a: "1", b: "'b'" },
+      handlers: {},
+      isDynamic: false,
+      slots: {},
+    });
+  });
+
+  test("component with t-props", async () => {
+    expect(parse(`<MyComponent t-props="state" a="1"/>`)).toEqual({
+      type: ASTType.TComponent,
+      name: "MyComponent",
+      dynamicProps: "state",
+      props: { a: "1" },
       handlers: {},
       isDynamic: false,
       slots: {},
@@ -846,6 +861,7 @@ describe("qweb parser", () => {
     expect(parse(`<MyComponent t-on-click="someMethod"/>`)).toEqual({
       type: ASTType.TComponent,
       name: "MyComponent",
+      dynamicProps: null,
       props: {},
       handlers: { click: "someMethod" },
       isDynamic: false,
@@ -857,6 +873,7 @@ describe("qweb parser", () => {
     expect(parse(`<MyComponent>foo</MyComponent>`)).toEqual({
       type: ASTType.TComponent,
       name: "MyComponent",
+      dynamicProps: null,
       props: {},
       isDynamic: false,
       handlers: {},
@@ -869,6 +886,7 @@ describe("qweb parser", () => {
       type: ASTType.TComponent,
       name: "MyComponent",
       isDynamic: false,
+      dynamicProps: null,
       props: {},
       handlers: {},
       slots: {
@@ -888,6 +906,7 @@ describe("qweb parser", () => {
       type: ASTType.TComponent,
       name: "MyComponent",
       isDynamic: false,
+      dynamicProps: null,
       props: {},
       handlers: {},
       slots: { name: { type: ASTType.Text, value: "foo" } },
@@ -898,6 +917,7 @@ describe("qweb parser", () => {
     expect(parse(`<MyComponent><t t-set-slot="name">foo</t> </MyComponent>`)).toEqual({
       type: ASTType.TComponent,
       name: "MyComponent",
+      dynamicProps: null,
       props: {},
       isDynamic: false,
       handlers: {},
@@ -917,6 +937,7 @@ describe("qweb parser", () => {
     expect(parse(template)).toEqual({
       type: ASTType.TComponent,
       name: "MyComponent",
+      dynamicProps: null,
       props: {},
       handlers: {},
       isDynamic: false,
@@ -931,6 +952,7 @@ describe("qweb parser", () => {
     expect(parse(`<t t-component="myComponent" />`)).toEqual({
       type: ASTType.TComponent,
       name: "myComponent",
+      dynamicProps: null,
       props: {},
       handlers: {},
       isDynamic: true,
@@ -942,7 +964,20 @@ describe("qweb parser", () => {
     expect(parse(`<t t-component="mycomponent" a="1" b="'b'"/>`)).toEqual({
       type: ASTType.TComponent,
       name: "mycomponent",
+      dynamicProps: null,
       props: { a: "1", b: "'b'" },
+      handlers: {},
+      isDynamic: true,
+      slots: {},
+    });
+  });
+
+  test("dynamic component with t-props", async () => {
+    expect(parse(`<t t-component="mycomponent" t-props="state" a="1"/>`)).toEqual({
+      type: ASTType.TComponent,
+      name: "mycomponent",
+      dynamicProps: "state",
+      props: { a: "1" },
       handlers: {},
       isDynamic: true,
       slots: {},
@@ -953,6 +988,7 @@ describe("qweb parser", () => {
     expect(parse(`<MyComponent t-esc="someValue"/>`)).toEqual({
       type: ASTType.TComponent,
       name: "MyComponent",
+      dynamicProps: null,
       props: {},
       handlers: {},
       isDynamic: false,
@@ -964,6 +1000,7 @@ describe("qweb parser", () => {
     expect(parse(`<MyComponent t-call="subTemplate"/>`)).toEqual({
       type: ASTType.TComponent,
       name: "MyComponent",
+      dynamicProps: null,
       props: {},
       handlers: {},
       isDynamic: false,
@@ -982,6 +1019,7 @@ describe("qweb parser", () => {
     expect(parse(template)).toEqual({
       type: ASTType.TComponent,
       name: "MyComponent",
+      dynamicProps: null,
       props: {},
       handlers: {},
       isDynamic: false,
@@ -991,6 +1029,7 @@ describe("qweb parser", () => {
           isDynamic: false,
           handlers: {},
           name: "Child",
+          dynamicProps: null,
           props: {},
           slots: { brol: { type: ASTType.Text, value: "coucou" } },
         },
@@ -1009,6 +1048,7 @@ describe("qweb parser", () => {
     expect(parse(template)).toEqual({
       type: ASTType.TComponent,
       name: "MyComponent",
+      dynamicProps: null,
       props: {},
       handlers: {},
       isDynamic: false,
@@ -1018,6 +1058,7 @@ describe("qweb parser", () => {
           isDynamic: false,
           handlers: {},
           name: "Child",
+          dynamicProps: null,
           props: {},
           slots: { brol: { type: ASTType.Text, value: "coucou" } },
         },

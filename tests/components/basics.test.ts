@@ -914,8 +914,9 @@ describe.skip("mount special cases", () => {
     //   expect(scheduler.tasks.length).toBe(0);
     //   expect(error).toBeDefined();
     //   expect(error.message).toBe("Cannot mount a destroyed component");
-    // });
-    // test("destroying a sub-component cleans itself from parent's vnode", async () => {
+  });
+
+  test("destroying a sub-component cleans itself from parent's vnode", async () => {
     //   class C1 extends Component {
     //     static template = xml`<div><div><t t-esc="props.a"/></div></div>`;
     //   }

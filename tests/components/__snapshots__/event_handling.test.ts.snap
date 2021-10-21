@@ -76,3 +76,28 @@ exports[`event handling support for callable expression in event handler 1`] = `
   }
 }"
 `;
+
+exports[`event handling t-on with handler bound to dynamic argument on a t-foreach 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div class=\\"item\\" block-handler-0=\\"click\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['items']);
+    for (let i1 = 0; i1 < l_block2; i1++) {
+      ctx[\`item\`] = v_block2[i1];
+      let key1 = ctx['item'];
+      const arg1 = [ctx['item']];
+      let d1 = [ctx, 'onClick', arg1];
+      c_block2[i1] = withKey(block3([d1]), key1);
+    }
+    let b2 = list(c_block2);
+    return block1([], [b2]);
+  }
+}"
+`;

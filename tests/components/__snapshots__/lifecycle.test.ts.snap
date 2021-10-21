@@ -14,6 +14,99 @@ exports[`lifecycle hooks basic checks for a component 1`] = `
 }"
 `;
 
+exports[`lifecycle hooks component semantics 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div>B</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`lifecycle hooks component semantics 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div>D</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`lifecycle hooks component semantics 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div>E</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`lifecycle hooks component semantics 4`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div>F</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`lifecycle hooks component semantics 5`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div>C<block-child-0/><block-child-1/><block-child-2/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2,b3,b4;
+    b2 = component(\`D\`, {}, key + \`__1\`, node, ctx);
+    if (ctx['state'].flag) {
+      b3 = component(\`E\`, {}, key + \`__2\`, node, ctx);
+    } else {
+      b4 = component(\`F\`, {}, key + \`__3\`, node, ctx);
+    }
+    return block1([], [b2, b3, b4]);
+  }
+}"
+`;
+
+exports[`lifecycle hooks component semantics 6`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div>A<block-child-0/><block-child-1/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = component(\`B\`, {}, key + \`__1\`, node, ctx);
+    let b3 = component(\`C\`, {}, key + \`__2\`, node, ctx);
+    return block1([], [b2, b3]);
+  }
+}"
+`;
+
 exports[`lifecycle hooks components are unmounted and destroyed if no longer in DOM 1`] = `
 "function anonymous(bdom, helpers
 ) {

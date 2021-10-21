@@ -122,6 +122,21 @@ describe("simple templates, mostly static", () => {
     const template = `<tr><td>cell</td></tr>`;
     expect(renderToString(template)).toBe(template);
   });
+
+  test("inline template string in t-esc", () => {
+    const template = '<t><t t-esc="`text`"/></t>';
+    expect(renderToString(template)).toBe("text");
+  });
+
+  test("inline template string with content in t-esc", () => {
+    const template = '<t><t t-set="v" t-value="1"/><t t-esc="`text${v}`"/></t>';
+    expect(renderToString(template)).toBe("text1");
+  });
+
+  test("inline template string with variable in context", () => {
+    const template = '<t><t t-esc="`text ${v}`"/></t>';
+    expect(renderToString(template, { v: "from context" })).toBe("text from context");
+  });
 });
 
 describe("loading templates", () => {

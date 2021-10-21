@@ -201,6 +201,41 @@ exports[`Portal portal could have dynamically no content 1`] = `
 }"
 `;
 
+exports[`Portal portal destroys on crash 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['props'].error&&this.will.crash;
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`Portal portal destroys on crash 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  const slot2 = ctx => (node, key) => {
+    return component(\`Child\`, {error: ctx['state'].error}, key + \`__3\`, node, ctx);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b3 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b3]);
+  }
+}"
+`;
+
 exports[`Portal portal with child and props 1`] = `
 "function anonymous(bdom, helpers
 ) {

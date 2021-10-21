@@ -19,7 +19,7 @@ export function useRef<C extends Component = Component>(name: string): Ref<C> {
   return {
     get el(): HTMLElement | null {
       const val = node.refs[name];
-      return val!;
+      return val || null;
       // if (val instanceof HTMLElement) {
       //   return val;
       // } else if (val instanceof Component) {

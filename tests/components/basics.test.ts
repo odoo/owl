@@ -741,6 +741,165 @@ describe("basics", () => {
     await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div><div><span>asdf</span><span>asdf</span></div></div>");
   });
+  // TODO: rename
+  test("updating widget immediately", async () => {
+    // in this situation, we protect against a bug that occurred: because of the
+    // interplay between components and vnodes, a sub widget vnode was patched
+    // twice.
+    class Child extends Component {
+      static template = xml`<span>abc<t t-if="props.flag">def</t></span>`;
+    }
+    class Parent extends Component {
+      static template = xml`<Child flag="state.flag"/>`
+      static components = { Child };
+      state = useState({ flag: false });
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<span>abc</span>");
+    parent.state.flag = true;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span>abcdef</span>");
+  });
+
+  test("can inject values in tagged templates", async () => {
+    const SUBTEMPLATE = xml`<span><t t-esc="state.n"/></span>`;
+    class Parent extends Component {
+      static template = xml`<t t-call="${SUBTEMPLATE}"/>`;
+      state = useState({ n: 42 });
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<span>42</span>");
+  });
+  // Depends on t-props
+  test.skip("update props of component without concrete own node", async () => {
+    class Custom extends Component {
+      static template = xml`
+        <div class="widget-subkey">
+          <t t-esc="props.key"/>__<t t-esc="props.subKey"/>
+        </div>`;
+    }
+    class Child extends Component {
+      static components = { Custom };
+      static template = xml`
+        <Custom
+          t-key="props.subKey"
+          key="props.key"
+          subKey="props.subKey"/>`;
+    }
+
+    class Parent extends Component {
+      static components = { Child };
+      static template = xml`
+        <div>
+          <Child t-key="childProps.key" t-props="childProps"/>
+        </div>`;
+      childProps = {
+        key: 1,
+        subKey: 1,
+      };
+    }
+    const parent = await mount(Parent, fixture);
+    expect(fixture.textContent!.trim()).toBe("1__1");
+
+    // First step: change the Custom's instance
+    Object.assign(parent.childProps, {
+      subKey: 2,
+    });
+    parent.render();
+    await nextTick();
+    expect(fixture.textContent!.trim()).toBe("1__2");
+
+    // Second step, change both Child's and Custom's instance
+    Object.assign(parent.childProps, {
+      key: 2,
+      subKey: 3,
+    });
+    parent.render();
+    await nextTick();
+    expect(fixture.textContent!.trim()).toBe("2__3");
+  });
+
+  test.skip("subcomponents cannot change observable state received from parent", async () => {
+    const consoleError = console.error;
+    console.error = jest.fn();
+    class Child extends Component {
+      static template = xml`<div/>`;
+      setup() {
+        this.props.obj.coffee = 2;
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<div><Child obj="state.obj"/></div>`;
+      static components = { Child };
+      state = useState({ obj: { coffee: 1 } });
+    }
+    let error;
+    try {
+      await mount(Parent, fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeDefined();
+    expect(error.message).toBe('Observed state cannot be changed here! (key: "coffee", val: "2")');
+    expect(console.error).toBeCalledTimes(0);
+    console.error = consoleError;
+  });
+});
+
+describe("dynamic t-props", () => {
+  test.skip("basic use", async () => {
+    expect.assertions(4);
+
+    class Child extends Component {
+      static template = xml`
+        <span>
+            <t t-esc="props.a + props.b"/>
+        </span>
+      `;
+      setup() {
+        expect(this.props).toEqual({ a: 1, b: 2 });
+        expect(this.props).not.toBe(parent.some.obj);
+      }
+    }
+    class Parent extends Component {
+      static template = xml`
+        <div>
+            <Child t-props="some.obj"/>
+        </div>
+      `;
+      static components = { Child };
+
+      some = { obj: { a: 1, b: 2 } };
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
+  });
+
+  test.skip("t-props with props", async () => {
+    expect.assertions(1);
+
+    class Child extends Component {
+      static template = xml`<div />`;
+      setup() {
+        expect(this.props).toEqual({ a: 1, b: 2, c: "c" });
+      }
+    }
+    class Parent extends Component {
+      static template = xml`
+        <div>
+            <Child t-props="props" a="1" b="2" />
+        </div>
+      `;
+      static components = { Child };
+
+      props = { a: "a", c: "c" };
+    }
+
+    await mount(Parent, fixture);
+  });
 });
 
 describe.skip("mount targets", () => {
@@ -1010,5 +1169,63 @@ describe.skip("mount special cases", () => {
     // parent.state.a = "fixed";
     // await parent.render();
     // expect(fixture.textContent).toBe("fixedsome text");
+  });
+});
+
+describe("support svg components", () => {
+  test("add proper namespace to svg", async () => {
+    class GComp extends Component {
+      static template = xml`
+        <g>
+            <circle cx="50" cy="50" r="4" stroke="green" stroke-width="1" fill="yellow"/>
+        </g>`;
+    }
+
+    class Svg extends Component {
+      static template = xml`
+        <svg>
+            <GComp/>
+        </svg>`;
+      static components = { GComp };
+    }
+    await mount(Svg, fixture);
+
+    expect(fixture.innerHTML).toBe(
+      '<svg><g><circle cx="50" cy="50" r="4" stroke="green" stroke-width="1" fill="yellow"></circle></g></svg>'
+    );
+  });
+});
+
+describe("t-raw in components", () => {
+  test("update properly on state changes", async () => {
+    class Test extends Component {
+      static template = xml`<div><t t-raw="state.value"/></div>`;
+      state = useState({ value: "<b>content</b>" });
+    }
+    const component = await mount(Test, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><b>content</b></div>");
+
+    component.state.value = "<span>other content</span>";
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>other content</span></div>");
+  });
+
+  test("can render list of t-raw ", async () => {
+    class Test extends Component {
+      static template = xml`
+        <div>
+            <t t-foreach="state.items" t-as="item" t-key="item">
+            <t t-esc="item"/>
+            <t t-raw="item"/>
+            </t>
+        </div>`;
+      state = useState({ items: ["<b>one</b>", "<b>two</b>", "<b>tree</b>"] });
+    }
+    await mount(Test, fixture);
+
+    expect(fixture.innerHTML).toBe(
+      "<div>&lt;b&gt;one&lt;/b&gt;<b>one</b>&lt;b&gt;two&lt;/b&gt;<b>two</b>&lt;b&gt;tree&lt;/b&gt;<b>tree</b></div>"
+    );
   });
 });

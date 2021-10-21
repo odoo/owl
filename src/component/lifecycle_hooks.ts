@@ -16,12 +16,12 @@ export function onWillUpdateProps(fn: (nextProps: any) => Promise<void> | void |
 
 export function onMounted(fn: () => void | any) {
   const node = getCurrent()!;
-  node.mounted.push(fn);
+  node.mounted.unshift(fn);
 }
 
 export function onWillPatch(fn: () => Promise<void> | any | void) {
   const node = getCurrent()!;
-  node.willPatch.push(fn);
+  node.willPatch.unshift(fn);
 }
 
 export function onPatched(fn: () => void | any) {

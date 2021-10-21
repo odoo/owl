@@ -969,4 +969,99 @@ describe("lifecycle hooks", () => {
       "hook:willunmount1",
     ]);*/
   });
+
+  // TODO: rename (corresponds to https://github.com/odoo/owl/blob/master/doc/reference/concurrency_model.md#semantics)
+  test("component semantics", async () => {
+    let steps: string[] = [];
+
+    class TestWidget extends Component {
+      name: string = "test";
+      setup() {
+        useLogLifecycle(steps);
+      }
+    }
+    class B extends TestWidget {
+      static template = xml`<div>B</div>`;
+      name = "B";
+    }
+    class D extends TestWidget {
+      static template = xml`<div>D</div>`;
+      name = "D";
+    }
+    class E extends TestWidget {
+      static template = xml`<div>E</div>`;
+      name = "E";
+    }
+
+    class F extends TestWidget {
+      static template = xml`<div>F</div>`;
+      name = "F";
+    }
+    let c: C;
+    class C extends TestWidget {
+      static template = xml`
+        <div>C<D />
+          <E t-if="state.flag" />
+          <F t-else="!state.flag" />
+        </div>`;
+      static components = { D, E, F };
+      name = "C";
+      state = useState({ flag: true });
+
+      setup() {
+        c = this;
+        super.setup();
+      }
+    }
+    class A extends TestWidget {
+      static template = xml`<div>A<B /><C /></div>`;
+      static components = { B, C };
+      name = "A";
+    }
+
+    await mount(A, fixture);
+    expect(fixture.innerHTML).toBe(`<div>A<div>B</div><div>C<div>D</div><div>E</div></div></div>`);
+    expect(steps).toEqual([
+      "A:setup",
+      "A:willStart",
+      "A:render",
+      "B:setup",
+      "B:willStart",
+      "C:setup",
+      "C:willStart",
+      "B:render",
+      "C:render",
+      "D:setup",
+      "D:willStart",
+      "E:setup",
+      "E:willStart",
+      "D:render",
+      "E:render",
+      "E:mounted",
+      "D:mounted",
+      "C:mounted",
+      "B:mounted",
+      "A:mounted",
+    ]);
+
+    // update
+    steps.splice(0);
+    c!.state.flag = false;
+    await nextTick();
+    expect(steps).toEqual([
+      "C:render",
+      "D:willUpdateProps",
+      "F:setup",
+      "F:willStart",
+      "D:render",
+      "F:render",
+      "C:willPatch",
+      "D:willPatch",
+      "E:willUnmount",
+      "E:destroyed",
+      "F:mounted",
+      "D:patched",
+      "C:patched",
+    ]);
+  });
 });

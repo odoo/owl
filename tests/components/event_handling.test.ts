@@ -302,4 +302,24 @@ describe("event handling", () => {
     button.click();
     expect(steps).toEqual(["captured", "normal"]);*/
   });
+
+  test.only("t-on with handler bound to dynamic argument on a t-foreach", async () => {
+    expect.assertions(3);
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <t t-foreach="items" t-as="item" t-key="item">
+            <div class="item" t-on-click="onClick(item)"/>
+          </t>
+        </div>`;
+      items = [1, 2, 3, 4];
+      onClick(n: number, ev: MouseEvent) {
+        expect(n).toBe(1);
+        expect(ev).toBeInstanceOf(MouseEvent);
+      }
+    }
+
+    await mount(Parent, fixture);
+    (<HTMLElement>fixture.querySelector('.item')).click();
+  });
 });

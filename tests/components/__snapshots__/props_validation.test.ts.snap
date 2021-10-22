@@ -1,5 +1,56 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`default props can set default required boolean values 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const props2 = {}
+    helpers.validateProps(\`SubComp\`, props2, ctx)
+    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`default props can set default values 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const props2 = {}
+    helpers.validateProps(\`SubComp\`, props2, ctx)
+    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`default props default values are also set whenever component is updated 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const props2 = {p: ctx['state'].p}
+    helpers.validateProps(\`SubComp\`, props2, ctx)
+    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    return block1([], [b2]);
+  }
+}"
+`;
+
 exports[`props validation can validate a prop with multiple types 1`] = `
 "function anonymous(bdom, helpers
 ) {
@@ -197,6 +248,23 @@ exports[`props validation can validate recursively complicated prop def 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const props2 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props2, ctx)
+    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`props validation default values are applied before validating props at update 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const props2 = {p: ctx['state'].p}
     helpers.validateProps(\`SubComp\`, props2, ctx)
     let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
     return block1([], [b2]);

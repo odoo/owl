@@ -902,78 +902,38 @@ describe("dynamic t-props", () => {
   });
 });
 
-describe.skip("mount targets", () => {
-  test("can attach a component to an existing node (if same tagname)", async () => {
-    // class App extends Component {
-    //   static template = xml`<div t-att-class="state.customClass">app<p>another tag</p></div>`;
-    //   state = useState({ customClass: "custom" });
-    // }
-    // const div = document.createElement("div");
-    // div.classList.add("arbitrary");
-    // div.innerHTML = `<p>pre-existing</p>`;
-    // fixture.appendChild(div);
-    // const app = await mount(App, { target: div, position: "self" });
-    // expect(fixture.innerHTML).toBe(
-    //   `<div class="arbitrary custom"><p>pre-existing</p>app<p>another tag</p></div>`
-    // );
-    // expect(div).toBe(app.el);
-    // app.state.customClass = "custom2";
-    // await nextTick();
-    // expect(fixture.innerHTML).toBe(
-    //   `<div class="arbitrary custom2"><p>pre-existing</p>app<p>another tag</p></div>`
-    // );
-    // expect(div).toBe(app.el);
-    // app.unmount();
-    // // This assert is a best guess
-    // // The use case it covers was not really thought through
-    // // and may change in the future
-    // expect(fixture.innerHTML).toBe("");
-  });
-
-  test("cannot attach a component to an existing node (if not same tagname)", async () => {
-    // class App extends Component {
-    //   static template = xml`<span>app</span>`;
-    // }
-    // const div = document.createElement("div");
-    // fixture.appendChild(div);
-    // let error;
-    // try {
-    //   await mount(App, { target: div, position: "self" });
-    // } catch (e) {
-    //   error = e;
-    // }
-    // expect(error).toBeDefined();
-    // expect(error.message).toBe("Cannot attach 'App' to target node (not same tag name)");
-  });
-
+describe("mount targets", () => {
   test("can mount a component (with position='first-child')", async () => {
-    // class App extends Component {
-    //   static template = xml`<div>app</div>`;
-    // }
-    // const span = document.createElement("span");
-    // fixture.appendChild(span);
-    // await mount(App, { target: fixture, position: "first-child" });
-    // expect(fixture.innerHTML).toBe("<div>app</div><span></span>");
+    class Root extends Component {
+      static template = xml`<div>app</div>`;
+    }
+    const span = document.createElement("span");
+    fixture.appendChild(span);
+    const app = new App(Root);
+    await app.mount(fixture, { position: "first-child" });
+    expect(fixture.innerHTML).toBe("<div>app</div><span></span>");
   });
 
-  test("can mount a component (with position='last-child')", async () => {
-    // class App extends Component {
-    //   static template = xml`<div>app</div>`;
-    // }
-    // const span = document.createElement("span");
-    // fixture.appendChild(span);
-    // await mount(App, { target: fixture, position: "last-child" });
-    // expect(fixture.innerHTML).toBe("<span></span><div>app</div>");
+  test("can mount a component (with default position='last-child')", async () => {
+    class Root extends Component {
+      static template = xml`<div>app</div>`;
+    }
+    const span = document.createElement("span");
+    fixture.appendChild(span);
+    const app = new App(Root);
+    await app.mount(fixture, { position: "last-child" });
+    expect(fixture.innerHTML).toBe("<span></span><div>app</div>");
   });
 
   test("default mount option is 'last-child'", async () => {
-    // class App extends Component {
-    //   static template = xml`<div>app</div>`;
-    // }
-    // const span = document.createElement("span");
-    // fixture.appendChild(span);
-    // await mount(App, { target: fixture });
-    // expect(fixture.innerHTML).toBe("<span></span><div>app</div>");
+    class Root extends Component {
+      static template = xml`<div>app</div>`;
+    }
+    const span = document.createElement("span");
+    fixture.appendChild(span);
+    const app = new App(Root);
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<span></span><div>app</div>");
   });
 });
 

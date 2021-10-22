@@ -158,17 +158,30 @@ export class RootFiber extends Fiber {
 
 export let __internal__destroyed: ComponentNode[] = [];
 
+type Position = "first-child" | "last-child";
+
+export interface MountOptions {
+  position?: Position;
+}
+
 export class MountFiber extends RootFiber {
   target: HTMLElement;
+  position: Position;
 
-  constructor(node: ComponentNode, target: HTMLElement) {
+  constructor(node: ComponentNode, target: HTMLElement, options: MountOptions = {}) {
     super(node);
     this.target = target;
+    this.position = options.position || "last-child";
   }
   complete() {
     const node = this.node;
     node.bdom = this.bdom;
-    mount(node.bdom!, this.target);
+    if (this.position === "last-child" || this.target.childNodes.length === 0) {
+      mount(node.bdom!, this.target);
+    } else {
+      const firstChild = this.target.childNodes[0];
+      mount(node.bdom!, this.target, firstChild);
+    }
     node.status = STATUS.MOUNTED;
     this.appliedToDom = true;
     let current;

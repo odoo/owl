@@ -23,8 +23,8 @@ export interface VNode<T = any> {
 
 export type BDom = VNode<any>;
 
-export function mount(vnode: VNode, fixture: HTMLElement) {
-  vnode.mount(fixture, null);
+export function mount(vnode: VNode, fixture: HTMLElement, afterNode: Node | null = null) {
+  vnode.mount(fixture, afterNode);
 }
 
 export function patch(vnode1: VNode, vnode2: VNode, withBeforeRemove: boolean = false) {

@@ -21,9 +21,13 @@ export function component(
   let node: any = ctx.children[key];
   let isDynamic = typeof name !== "string";
 
-  if (node && node.status < STATUS.MOUNTED) {
-    node.destroy();
-    node = undefined;
+  if (node) {
+    if (node.status < STATUS.MOUNTED) {
+      node.destroy();
+      node = undefined;
+    } else if (node.status === STATUS.DESTROYED) {
+      node = undefined;
+    }
   }
   if (isDynamic && node && node.component.constructor !== name) {
     node = undefined;

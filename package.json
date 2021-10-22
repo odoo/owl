@@ -16,7 +16,7 @@
     "build:bundle": "rollup -c",
     "build": "npm run build:bundle",
     "test": "jest",
-    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
+    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --watch",
     "test:watch": "jest --watch",
     "tools:serve": "python3 tools/server.py || python tools/server.py",
     "tools": "npm run build && npm run tools:serve",

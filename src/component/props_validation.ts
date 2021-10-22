@@ -1,5 +1,22 @@
 import { Component } from "./component";
 
+/**
+ * Apply default props (only top level).
+ *
+ * Note that this method does modify in place the props
+ */
+export function applyDefaultProps(props: { [key: string]: any }, ComponentClass: typeof Component) {
+  const defaultProps = (ComponentClass as any).defaultProps
+  if (defaultProps) {
+    for (let propName in defaultProps) {
+      if (props![propName] === undefined) {
+        props![propName] = defaultProps[propName];
+      }
+    }
+  }
+}
+
+
 //------------------------------------------------------------------------------
 // Prop validation helper
 //------------------------------------------------------------------------------
@@ -16,6 +33,8 @@ import { Component } from "./component";
 export const validateProps = function (name: string | typeof Component, props: any, parent?: any) {
   const ComponentClass =
     typeof name !== "string" ? name : parent.constructor.components[name as string];
+
+  applyDefaultProps(props, ComponentClass);
 
   const propsDef = (<any>ComponentClass).props;
   if (propsDef instanceof Array) {

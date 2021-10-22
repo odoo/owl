@@ -1,5 +1,5 @@
-import { makeTestFixture, nextTick, snapshotApp } from "../helpers";
-import { Component, useState, xml } from "../../src";
+import { makeTestFixture, snapshotApp } from "../helpers";
+import { Component, xml } from "../../src";
 import { App, DEV_MSG } from "../../src/app";
 import { validateProps } from "../../src/component/props_validation";
 
@@ -680,7 +680,7 @@ describe("props validation", () => {
     expect(error.message).toBe("Missing props 'p' (component 'SubComp')");
   });
 
-  test.skip("default values are applied before validating props at update", async () => {
+  test("default values are applied before validating props at update", async () => {
     // need to do something about errors catched in render
     class SubComp extends Component {
       static props = { p: { type: Number } };
@@ -690,13 +690,13 @@ describe("props validation", () => {
     class Parent extends Component {
       static template = xml`<div><SubComp p="state.p"/></div>`;
       static components = { SubComp };
-      state: any = useState({ p: 1 });
+      state: any = { p: 1 };
     }
 
     const app = await mountApp(Parent);
     expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
     (app as any).root.component.state.p = undefined;
-    await nextTick();
+    await (app as any).root.component.render();
     expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
   });
 
@@ -727,51 +727,48 @@ describe("props validation", () => {
 // Default props
 //------------------------------------------------------------------------------
 
-describe.skip("default props", () => {
+describe("default props", () => {
   test("can set default values", async () => {
-    // class SubComp extends Component {
-    //   static defaultProps = { p: 4 };
-    //   static template = xml`<div><t t-esc="props.p"/></div>`;
-    // }
-    // class Parent extends Component {
-    //   static template = xml`<div><SubComp /></div>`;
-    //   static components = { SubComp };
-    // }
-    // const w = new Parent();
-    // await w.mount(fixture);
-    // expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
+    class SubComp extends Component {
+      static defaultProps = { p: 4 };
+      static template = xml`<div><t t-esc="props.p"/></div>`;
+    }
+    class Parent extends Component {
+      static template = xml`<div><SubComp /></div>`;
+      static components = { SubComp };
+    }
+    await mountApp(Parent);
+    expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
   });
 
   test("default values are also set whenever component is updated", async () => {
-    // class SubComp extends Component {
-    //   static template = xml`<div><t t-esc="props.p"/></div>`;
-    //   static defaultProps = { p: 4 };
-    // }
-    // class Parent extends Component {
-    //   static template = xml`<div><SubComp p="state.p"/></div>`;
-    //   static components = { SubComp };
-    //   state: any = useState({ p: 1 });
-    // }
-    // const w = new Parent();
-    // await w.mount(fixture);
-    // expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
-    // w.state.p = undefined;
-    // await nextTick();
-    // expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
+    class SubComp extends Component {
+      static template = xml`<div><t t-esc="props.p"/></div>`;
+      static defaultProps = { p: 4 };
+    }
+    class Parent extends Component {
+      static template = xml`<div><SubComp p="state.p"/></div>`;
+      static components = { SubComp };
+      state: any = { p: 1 };
+    }
+    const app = await mountApp(Parent);
+    expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
+    (app as any).root.component.state.p = undefined;
+    await (app as any).root.component.render();
+    expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
   });
 
   test("can set default required boolean values", async () => {
-    // class SubComp extends Component {
-    //   static props = ["p", "q"];
-    //   static defaultProps = { p: true, q: false };
-    //   static template = xml`<span><t t-if="props.p">hey</t><t t-if="!props.q">hey</t></span>`;
-    // }
-    // class App extends Component {
-    //   static template = xml`<div><SubComp/></div>`;
-    //   static components = { SubComp };
-    // }
-    // const w = new App(undefined, {});
-    // await w.mount(fixture);
-    // expect(fixture.innerHTML).toBe("<div><span>heyhey</span></div>");
+    class SubComp extends Component {
+      static props = ["p", "q"];
+      static defaultProps = { p: true, q: false };
+      static template = xml`<span><t t-if="props.p">hey</t><t t-if="!props.q">hey</t></span>`;
+    }
+    class Parent extends Component {
+      static template = xml`<div><SubComp/></div>`;
+      static components = { SubComp };
+    }
+    await mountApp(Parent);
+    expect(fixture.innerHTML).toBe("<div><span>heyhey</span></div>");
   });
 });

@@ -9,6 +9,7 @@ import {
   RootFiber,
   __internal__destroyed,
 } from "./fibers";
+import { applyDefaultProps } from "./props_validation";
 import { STATUS } from "./status";
 
 export function component(
@@ -85,6 +86,7 @@ export class ComponentNode<T extends typeof Component = any> implements VNode<Co
   constructor(C: T, props: any, app: App) {
     currentNode = this;
     this.app = app;
+    applyDefaultProps(props, C);
     this.component = new C(props, app.env, this) as any;
     this.renderFn = app.getTemplate(C.template).bind(null, this.component, this);
     this.component.setup();
@@ -185,6 +187,7 @@ export class ComponentNode<T extends typeof Component = any> implements VNode<Co
       parentFiber.root.patched.push(fiber);
     }
     const component = this.component;
+    applyDefaultProps(props, component.constructor as any);
     const prom = Promise.all(this.willUpdateProps.map((f) => f.call(component, props)));
     await prom;
     if (fiber !== this.fiber) {

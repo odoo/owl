@@ -1064,4 +1064,54 @@ describe("lifecycle hooks", () => {
       "C:patched",
     ]);
   });
+
+  test("mounted hook is called on every mount, not just the first one", async () => {
+    const steps: string[] = [];
+    class Child extends Component {
+      static template = xml`<div>child</div>`;
+      setup() {
+        useLogLifecycle(steps)
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child t-if="state.hasChild"/>`;
+      static components = { Child };
+      state = useState({ hasChild: true });
+      setup() {
+        useLogLifecycle(steps);
+      }
+    }
+
+    const parent = await mount(Parent, fixture);
+
+    parent.state.hasChild = false;
+    await nextTick();
+
+    parent.state.hasChild = true;
+    await nextTick();
+    expect(steps).toEqual([
+      "Parent:setup",
+      "Parent:willStart",
+      "Parent:render",
+      "Child:setup",
+      "Child:willStart",
+      "Child:render",
+      "Child:mounted",
+      "Parent:mounted",
+      "Parent:render",
+      "Parent:willPatch",
+      "Child:willUnmount",
+      "Child:destroyed",
+      "Parent:patched",
+      "Parent:render",
+      "Child:setup",
+      "Child:willStart",
+      "Child:render",
+      "Parent:willPatch",
+      "Child:mounted",
+      "Parent:patched"
+    ]);
+    Object.freeze(steps);
+  });
 });

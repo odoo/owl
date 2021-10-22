@@ -6,6 +6,7 @@ import {
   makeChildFiber,
   makeRootFiber,
   MountFiber,
+  MountOptions,
   RootFiber,
   __internal__destroyed,
 } from "./fibers";
@@ -92,8 +93,8 @@ export class ComponentNode<T extends typeof Component = any> implements VNode<Co
     this.component.setup();
   }
 
-  mountComponent(target: any): Promise<InstanceType<T>> {
-    const fiber = new MountFiber(this, target);
+  mountComponent(target: any, options?: MountOptions): Promise<InstanceType<T>> {
+    const fiber = new MountFiber(this, target, options);
     this.app.scheduler.addFiber(fiber);
     this.initiateRender(fiber);
     return fiber.promise.then(() => this.component);

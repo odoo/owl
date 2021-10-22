@@ -6,7 +6,7 @@ import { Component } from "./component";
  * Note that this method does modify in place the props
  */
 export function applyDefaultProps(props: { [key: string]: any }, ComponentClass: typeof Component) {
-  const defaultProps = (ComponentClass as any).defaultProps
+  const defaultProps = (ComponentClass as any).defaultProps;
   if (defaultProps) {
     for (let propName in defaultProps) {
       if (props![propName] === undefined) {
@@ -15,7 +15,6 @@ export function applyDefaultProps(props: { [key: string]: any }, ComponentClass:
     }
   }
 }
-
 
 //------------------------------------------------------------------------------
 // Prop validation helper

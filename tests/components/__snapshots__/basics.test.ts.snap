@@ -1133,6 +1133,48 @@ exports[`basics zero or one child components 2`] = `
 }"
 `;
 
+exports[`mount targets can mount a component (with default position='last-child') 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div>app</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`mount targets can mount a component (with position='first-child') 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div>app</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`mount targets default mount option is 'last-child' 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div>app</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`support svg components add proper namespace to svg 1`] = `
 "function anonymous(bdom, helpers
 ) {

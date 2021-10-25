@@ -938,22 +938,23 @@ describe("mount targets", () => {
 });
 
 describe.skip("mount special cases", () => {
-  test("widget can be mounted on different target", async () => {
-    // class MyWidget extends Component {
-    //   static template = xml`<div>Hey</div>`;
-    //   patched() {
-    //     throw new Error("patched should not be called");
+  test("component can be mounted on different target", async () => {
+    //   class Comp extends Component {
+    //     static template = xml`<div>Hey</div>`;
+    //     setup() {
+    //       onPatched(() => {
+    //         throw new Error("patched should not be called");
+    //       });
+    //     }
     //   }
-    // }
-    // const div = document.createElement("div");
-    // const span = document.createElement("span");
-    // fixture.appendChild(div);
-    // fixture.appendChild(span);
-    // const w = new MyWidget();
-    // await w.mount(div);
-    // expect(fixture.innerHTML).toBe("<div><div>Hey</div></div><span></span>");
-    // await w.mount(span);
-    // expect(fixture.innerHTML).toBe("<div></div><span><div>Hey</div></span>");
+    //   const div = document.createElement("div");
+    //   const span = document.createElement("span");
+    //   fixture.appendChild(div);
+    //   fixture.appendChild(span);
+    //   const comp = await mount(Comp, div);
+    //   expect(fixture.innerHTML).toBe("<div><div>Hey</div></div><span></span>");
+    //   await comp.__owl__.mount(span, );
+    //   expect(fixture.innerHTML).toBe("<div></div><span><div>Hey</div></span>");
   });
 
   test("widget can be mounted on different target, another situation", async () => {
@@ -1016,119 +1017,6 @@ describe.skip("mount special cases", () => {
     // await nextTick();
     // expect(fixture.innerHTML).toBe("<div>Hey</div>");
     // expect(steps).toEqual(["1 resolved", "2 resolved"]);
-  });
-
-  test("mounting a destroyed widget", async () => {
-    //   class MyWidget extends Component {
-    //     static template = xml`<div>Hey</div>`;
-    //   }
-    //   const w = new MyWidget();
-    //   w.destroy(); // because, why not
-    //   let error;
-    //   try {
-    //     await w.mount(fixture);
-    //   } catch (e) {
-    //     error = e;
-    //   }
-    //   expect(scheduler.tasks.length).toBe(0);
-    //   expect(error).toBeDefined();
-    //   expect(error.message).toBe("Cannot mount a destroyed component");
-  });
-
-  test("destroying a sub-component cleans itself from parent's vnode", async () => {
-    //   class C1 extends Component {
-    //     static template = xml`<div><div><t t-esc="props.a"/></div></div>`;
-    //   }
-    //   class P extends Component {
-    //     static components = { C1 };
-    //     static template = xml`<div><div><C1 t-props="state" t-if="state.a"/></div></div>`;
-    //     state = {
-    //       a: "first",
-    //     };
-    //   }
-    //   const parent = new P();
-    //   await parent.mount(fixture);
-    //   expect(fixture.textContent).toBe("first");
-    //   parent.unmount();
-    //   parent.state.a = "";
-    //   parent.mount(fixture);
-    //   parent.state.a = "fixed";
-    //   await parent.render();
-    //   expect(fixture.textContent).toBe("fixed");
-  });
-
-  test("destroying a sub-component cleans itself from parent's vnode, part 2", async () => {
-    // class C1 extends Component {
-    //   static template = xml`<div><div><t t-esc="props.a"/></div></div>`;
-    // }
-    // class P extends Component {
-    //   static components = { C1 };
-    //   static template = xml`<div><div><C1 t-props="state" t-if="state.a"/>some text</div></div>`;
-    //   state = {
-    //     a: "first",
-    //   };
-    // }
-    // const parent = new P();
-    // await parent.mount(fixture);
-    // expect(fixture.textContent).toBe("firstsome text");
-    // parent.unmount();
-    // parent.state.a = "";
-    // parent.mount(fixture);
-    // parent.state.a = "fixed";
-    // await parent.render();
-    // expect(fixture.textContent).toBe("fixedsome text");
-  });
-
-  test("destroying a sub-component cleans itself from parent's vnode, part 3", async () => {
-    // class C1 extends Component {
-    //   static template = xml`<div><div><t t-esc="props.a"/></div></div>`;
-    // }
-    // class C2 extends Component {
-    //   static template = xml`<C1 a="props.a"/>`;
-    //   static components = { C1 };
-    // }
-    // class P extends Component {
-    //   static components = { C2 };
-    //   static template = xml`<div><div><C2 t-props="state" t-if="state.a"/></div></div>`;
-    //   state = {
-    //     a: "first",
-    //   };
-    // }
-    // const parent = new P();
-    // await parent.mount(fixture);
-    // expect(fixture.textContent).toBe("first");
-    // parent.unmount();
-    // parent.state.a = "";
-    // parent.mount(fixture);
-    // parent.state.a = "fixed";
-    // await parent.render();
-    // expect(fixture.textContent).toBe("fixed");
-  });
-
-  test("destroying a sub-component cleans itself from parent's vnode, part 4", async () => {
-    // class C1 extends Component {
-    //   static template = xml`<div><div><t t-esc="props.a"/></div></div>`;
-    // }
-    // class C2 extends Component {
-    //   static template = xml`<C1 a="props.a"/>`;
-    //   static components = { C1 };
-    // }
-    // class P extends Component {
-    //   static components = { C2 };
-    //   static template = xml`<div><div><C2 t-props="state" t-if="state.a"/>some text</div></div>`;
-    //   state = {
-    //     a: "first",
-    //   };
-    // }
-    // const parent = new P();
-    // await parent.mount(fixture);
-    // expect(fixture.textContent).toBe("firstsome text");
-    // parent.unmount();
-    // parent.state.a = "";
-    // parent.mount(fixture);
-    // parent.state.a = "fixed";
-    // await parent.render();
-    // expect(fixture.textContent).toBe("fixedsome text");
   });
 });
 

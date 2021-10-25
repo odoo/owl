@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`reactivity in lifecycle can use a state hook 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['counter'].value;
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`reactivity in lifecycle change state while mounting component 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['state'].val;
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`reactivity in lifecycle state changes in willUnmount do not trigger rerender 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['props'].val;
+    let d2 = ctx['state'].n;
+    return block1([d1, d2]);
+  }
+}"
+`;
+
+exports[`reactivity in lifecycle state changes in willUnmount do not trigger rerender 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2;
+    if (ctx['state'].flag) {
+      b2 = component(\`Child\`, {val: ctx['state'].val}, key + \`__1\`, node, ctx);
+    }
+    return block1([], [b2]);
+  }
+}"
+`;

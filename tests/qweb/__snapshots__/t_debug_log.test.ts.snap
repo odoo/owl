@@ -21,6 +21,37 @@ exports[`debugging t-debug 1`] = `
 }"
 `;
 
+exports[`debugging t-debug on sub template 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<p>coucou</p>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    debugger;
+    return block1();
+  }
+}"
+`;
+
+exports[`debugging t-debug on sub template 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  const callTemplate_2 = getTemplate(\`sub\`);
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callTemplate_2(ctx, node, key + \`__1\`);
+    return block1([], [b2]);
+  }
+}"
+`;
+
 exports[`debugging t-log 1`] = `
 "function anonymous(bdom, helpers
 ) {

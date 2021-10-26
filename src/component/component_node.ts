@@ -64,7 +64,6 @@ type LifecycleHook = Function;
 
 export class ComponentNode<T extends typeof Component = any> implements VNode<ComponentNode> {
   el?: HTMLElement | Text | undefined;
-  handlers: any = null;
   app: App;
   fiber: Fiber | null = null;
   component: InstanceType<T>;
@@ -214,18 +213,6 @@ export class ComponentNode<T extends typeof Component = any> implements VNode<Co
     this.status = STATUS.MOUNTED;
     this.fiber!.appliedToDom = true;
     this.fiber = null;
-    if (this.handlers) {
-      for (let i = 0; i < this.handlers.length; i++) {
-        const handler = this.handlers[i];
-        const eventType = handler[0];
-        const el = bdom.el!;
-        el.addEventListener(eventType, (ev: Event) => {
-          const info = this.handlers![i];
-          const [, ctx, method] = info;
-          (ctx.__owl__.component as any)[method](ev);
-        });
-      }
-    }
   }
 
   moveBefore(other: ComponentNode | null, afterNode: Node | null) {

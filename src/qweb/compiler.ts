@@ -968,17 +968,6 @@ export class QWebCompiler {
       extraArgs.slots = slotDef;
     }
 
-    // handlers
-    const hasHandlers = Object.keys(ast.handlers).length;
-    if (hasHandlers) {
-      const vars = Object.keys(ast.handlers).map((ev) => {
-        let id = this.generateId("h");
-        this.addLine(`let ${id} = ${this.generateHandlerCode(ast.handlers[ev], ev)};`);
-        return id;
-      });
-      extraArgs.handlers = `[${vars}]`;
-    }
-
     if (block && ctx.forceNewBlock === false) {
       // todo: check the forcenewblock condition
       this.insertAnchor(block);

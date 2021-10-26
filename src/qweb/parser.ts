@@ -107,7 +107,6 @@ export interface ASTComponent {
   isDynamic: boolean;
   dynamicProps: string | null;
   props: { [name: string]: string };
-  handlers: { [event: string]: string };
   slots: { [name: string]: AST };
 }
 
@@ -667,11 +666,12 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
   node.removeAttribute("t-props");
 
   const props: ASTComponent["props"] = {};
-  const handlers: ASTComponent["handlers"] = {};
   for (let name of node.getAttributeNames()) {
     const value = node.getAttribute(name)!;
     if (name.startsWith("t-on-")) {
-      handlers[name.slice(5)] = value;
+      throw new Error(
+        "t-on is no longer supported on Component node. Consider passing a callback in props."
+      );
     } else {
       props[name] = value;
     }
@@ -715,7 +715,7 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
       slots.default = defaultContent;
     }
   }
-  return { type: ASTType.TComponent, name, isDynamic, dynamicProps, props, handlers, slots };
+  return { type: ASTType.TComponent, name, isDynamic, dynamicProps, props, slots };
 }
 
 // -----------------------------------------------------------------------------

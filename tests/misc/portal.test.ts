@@ -432,7 +432,7 @@ describe("Portal", () => {
     expect(parent.env).toStrictEqual({});
   });
 
-  test.skip("Portal composed with t-slot", async () => {
+  test("Portal composed with t-slot", async () => {
     const steps: Array<string> = [];
     let childInst: Component | null = null;
     class Child2 extends Component {

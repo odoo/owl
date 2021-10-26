@@ -1,3 +1,13 @@
+export function filterOutModifiersFromData(dataList: any[]): { modifiers: string[], data: any[]} {
+  dataList = dataList.slice();
+  const modifiers = [];
+  let elm;
+  while ((elm = dataList[0]) && typeof elm === "string") {
+    modifiers.push(dataList.shift());
+  }
+  return { modifiers, data: dataList };
+}
+
 export const config = {
   // whether or not blockdom should normalize DOM whenever a block is created.
   // Normalizing dom mean removing empty text nodes (or containing only spaces)
@@ -10,6 +20,7 @@ export const config = {
     if (typeof data === "function") {
       data(ev);
     } else if (Array.isArray(data)) {
+      data = filterOutModifiersFromData(data).data;
       data[0](data[1], ev);
     }
   },

@@ -301,4 +301,55 @@ describe("t-on", () => {
       "Missing event name with t-on directive"
     );
   });
+
+  describe("t-on modifiers (native listener)", () => {
+    test("basic support for native listener", () => {
+      const template = `<div class="myClass" t-on-click="divClicked">
+        <button t-on-click="btnClicked">Button</button>
+      </div>`;
+
+      const steps: string[] = [];
+
+      const owner = {
+        divClicked(ev: Event) {
+          expect(ev.currentTarget).toBe(div);
+          steps.push("divClicked");
+        },
+        btnClicked(ev: Event) {
+          expect(ev.currentTarget).toBe(button);
+          steps.push("btnClicked");
+        },
+      };
+      const node = mountToFixture(template, owner);
+      const div = node.querySelector(".myClass");
+      const button = (<HTMLElement>node).getElementsByTagName("button")[0];
+      button.click();
+      expect(steps).toEqual(["btnClicked", "divClicked"]);
+    });
+  });
+
+  describe("t-on modifiers (synthetic listener)", () => {
+    test("basic support for synthetic", () => {
+      const template = `<div t-on-click.synthetic="divClicked">
+        <button t-on-click.synthetic="btnClicked">Button</button>
+      </div>`;
+
+      const steps: string[] = [];
+
+      const owner = {
+        divClicked(ev: Event) {
+          expect(ev.currentTarget).toBe(document);
+          steps.push("divClicked");
+        },
+        btnClicked(ev: Event) {
+          expect(ev.currentTarget).toBe(document);
+          steps.push("btnClicked");
+        },
+      };
+      const node = mountToFixture(template, owner);
+      const button = (<HTMLElement>node).getElementsByTagName("button")[0];
+      button.click();
+      expect(steps).toEqual(["btnClicked", "divClicked"]);
+    });
+  });
 });

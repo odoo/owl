@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`t-key can use t-key directive on a node 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['beer'].name;
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`t-key t-key directive in a list 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<ul><block-child-0/></ul>\`);
+  let block3 = createBlock(\`<li><block-text-0/></li>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['beers']);
+    for (let i1 = 0; i1 < l_block2; i1++) {
+      ctx[\`beer\`] = v_block2[i1];
+      let key1 = ctx['beer'].id;
+      let d1 = ctx['beer'].name;
+      c_block2[i1] = withKey(block3([d1]), key1);
+    }
+    let b2 = list(c_block2);
+    return block1([], [b2]);
+  }
+}"
+`;

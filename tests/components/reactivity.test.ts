@@ -31,6 +31,28 @@ describe("reactivity in lifecycle", () => {
     expect(fixture.innerHTML).toBe("<div>3</div>");
   });
 
+  test("can use a state hook 2", async () => {
+    let n = 0;
+    class Comp extends Component {
+      static template = xml`<div><t t-esc="state.a"/></div>`;
+      state = useState({ a: 5, b: 7 });
+      setup() {
+        onRender(() => n++);
+      }
+    }
+    const comp = await mount(Comp, fixture);
+    expect(fixture.innerHTML).toBe("<div>5</div>");
+    expect(n).toBe(1);
+    comp.state.a = 11;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>11</div>");
+    expect(n).toBe(2);
+    comp.state.b = 13;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>11</div>");
+    expect(n).toBe(2); // no new rendering occured: b was never read via state!
+  });
+
   test("state changes in willUnmount do not trigger rerender", async () => {
     const steps: string[] = [];
     class Child extends Component {

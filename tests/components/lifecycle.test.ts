@@ -493,7 +493,7 @@ describe("lifecycle hooks", () => {
     let n = 0;
 
     class Test extends Component {
-      static template = xml`<div/>`;
+      static template = xml`<div><t t-esc="state.a"/></div>`;
       state = useState({ a: 1 });
 
       setup() {

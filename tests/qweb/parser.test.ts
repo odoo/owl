@@ -464,48 +464,53 @@ describe("qweb parser", () => {
   // t-foreach
   // ---------------------------------------------------------------------------
 
+  test("simple t-foreach expression, t-key mandatory", async () => {
+    expect(() => parse(`<t t-foreach="list" t-as="item"><t t-esc="item"/></t>`)).toThrowErrorMatchingSnapshot();
+
+  })
+
   test("simple t-foreach expression", async () => {
-    expect(parse(`<t t-foreach="list" t-as="item"><t t-esc="item"/></t>`)).toEqual({
+    expect(parse(`<t t-foreach="list" t-as="item" t-key="item_index"><t t-esc="item"/></t>`)).toEqual({
       type: ASTType.TForEach,
       collection: "list",
       elem: "item",
-      key: null,
+      key: "item_index",
       hasNoComponent: true,
       isOnlyChild: false,
       body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
       memo: "",
       hasNoFirst: true,
-      hasNoIndex: true,
+      hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
     });
   });
 
   test("t-foreach expression with t-esc", async () => {
-    expect(parse(`<t t-foreach="list" t-as="item" t-esc="item"/>`)).toEqual({
+    expect(parse(`<t t-foreach="list" t-as="item" t-esc="item" t-key="item_index"/>`)).toEqual({
       type: ASTType.TForEach,
       collection: "list",
       elem: "item",
-      key: null,
+      key: "item_index",
       hasNoComponent: true,
       isOnlyChild: false,
       body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
       memo: "",
       hasNoFirst: true,
-      hasNoIndex: true,
+      hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
     });
   });
 
   test("t-foreach on a div expression with t-esc", async () => {
-    expect(parse(`<div t-foreach="list" t-as="item" t-esc="item"/>`)).toEqual({
+    expect(parse(`<div t-foreach="list" t-as="item" t-esc="item" t-key="item_index"/>`)).toEqual({
       type: ASTType.TForEach,
       collection: "list",
       elem: "item",
       hasNoComponent: true,
       isOnlyChild: false,
-      key: null,
+      key: "item_index",
       body: {
         type: ASTType.DomNode,
         tag: "div",
@@ -516,7 +521,7 @@ describe("qweb parser", () => {
       },
       memo: "",
       hasNoFirst: true,
-      hasNoIndex: true,
+      hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
     });
@@ -540,11 +545,11 @@ describe("qweb parser", () => {
   });
 
   test("t-foreach expression on a span", async () => {
-    expect(parse(`<span t-foreach="list" t-as="item"><t t-esc="item"/></span>`)).toEqual({
+    expect(parse(`<span t-foreach="list" t-as="item" t-key="item_index"><t t-esc="item"/></span>`)).toEqual({
       type: ASTType.TForEach,
       collection: "list",
       elem: "item",
-      key: null,
+      key: "item_index",
       hasNoComponent: true,
       isOnlyChild: false,
       body: {
@@ -557,7 +562,7 @@ describe("qweb parser", () => {
       },
       memo: "",
       hasNoFirst: true,
-      hasNoIndex: true,
+      hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
     });
@@ -565,12 +570,12 @@ describe("qweb parser", () => {
 
   test("t-foreach expression on a span", async () => {
     expect(
-      parse(`<span t-foreach="list" t-if="condition" t-as="item"><t t-esc="item"/></span>`)
+      parse(`<span t-foreach="list" t-if="condition" t-as="item" t-key="item_index"><t t-esc="item"/></span>`)
     ).toEqual({
       type: ASTType.TForEach,
       collection: "list",
       elem: "item",
-      key: null,
+      key: "item_index",
       hasNoComponent: true,
       isOnlyChild: false,
       body: {
@@ -589,7 +594,7 @@ describe("qweb parser", () => {
       },
       memo: "",
       hasNoFirst: true,
-      hasNoIndex: true,
+      hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
     });
@@ -598,13 +603,13 @@ describe("qweb parser", () => {
   test("more complex t-foreach expression on an option", async () => {
     expect(
       parse(
-        `<option t-foreach="categories" t-as="category" t-att-value="category.id" t-esc="category.name" t-att-selected="category.id==options.active_category_id"/>`
+        `<option t-foreach="categories" t-as="category" t-att-value="category.id" t-esc="category.name" t-att-selected="category.id==options.active_category_id" t-key="category_index"/>`
       )
     ).toEqual({
       type: ASTType.TForEach,
       collection: "categories",
       elem: "category",
-      key: null,
+      key: "category_index",
       hasNoComponent: true,
       isOnlyChild: false,
       body: {
@@ -620,14 +625,14 @@ describe("qweb parser", () => {
       },
       memo: "",
       hasNoFirst: true,
-      hasNoIndex: true,
+      hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
     });
   });
 
   test("t-foreach in a div", async () => {
-    expect(parse(`<div><t t-foreach="list" t-as="item"><t t-esc="item"/></t></div>`)).toEqual({
+    expect(parse(`<div><t t-foreach="list" t-as="item" t-key="item_index"><t t-esc="item"/></t></div>`)).toEqual({
       type: ASTType.DomNode,
       attrs: {},
       on: {},
@@ -638,13 +643,13 @@ describe("qweb parser", () => {
           type: ASTType.TForEach,
           collection: "list",
           elem: "item",
-          key: null,
+          key: "item_index",
           hasNoComponent: true,
           isOnlyChild: true,
           body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
           memo: "",
           hasNoFirst: true,
-          hasNoIndex: true,
+          hasNoIndex: false,
           hasNoLast: true,
           hasNoValue: true,
         },
@@ -687,11 +692,11 @@ describe("qweb parser", () => {
   });
 
   test("t-foreach expression with a component inside", async () => {
-    expect(parse(`<Comp t-foreach="list" t-as="item" />`)).toEqual({
+    expect(parse(`<Comp t-foreach="list" t-as="item" t-key="item_index" />`)).toEqual({
       type: ASTType.TForEach,
       collection: "list",
       elem: "item",
-      key: null,
+      key: "item_index",
       hasNoComponent: false,
       isOnlyChild: false,
       body: {
@@ -705,18 +710,18 @@ describe("qweb parser", () => {
       },
       memo: "",
       hasNoFirst: true,
-      hasNoIndex: true,
+      hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
     });
   });
 
   test("t-foreach expression with a t-call inside", async () => {
-    expect(parse(`<t t-foreach="list" t-as="item"><t t-call="blap"/></t>`)).toEqual({
+    expect(parse(`<t t-foreach="list" t-as="item" t-key="item_index"><t t-call="blap"/></t>`)).toEqual({
       type: ASTType.TForEach,
       collection: "list",
       elem: "item",
-      key: null,
+      key: "item_index",
       hasNoComponent: false,
       isOnlyChild: false,
       body: {
@@ -733,18 +738,18 @@ describe("qweb parser", () => {
   });
 
   test("t-foreach expression with t-memo", async () => {
-    expect(parse(`<t t-foreach="list" t-as="item" t-memo="[row.x]"><t t-esc="item"/></t>`)).toEqual(
+    expect(parse(`<t t-foreach="list" t-as="item" t-memo="[row.x]" t-key="item_index"><t t-esc="item"/></t>`)).toEqual(
       {
         type: ASTType.TForEach,
         collection: "list",
         elem: "item",
-        key: null,
+        key: "item_index",
         hasNoComponent: true,
         isOnlyChild: false,
         body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
         memo: "[row.x]",
         hasNoFirst: true,
-        hasNoIndex: true,
+        hasNoIndex: false,
         hasNoLast: true,
         hasNoValue: true,
       }
@@ -1180,7 +1185,7 @@ describe("qweb parser", () => {
       },
     });
 
-    expect(parse(`<div t-foreach="list" t-translation="off" t-as="item">word</div>`)).toEqual({
+    expect(parse(`<div t-foreach="list" t-translation="off" t-as="item" t-key="item_index">word</div>`)).toEqual({
       body: {
         content: {
           attrs: {},
@@ -1201,11 +1206,11 @@ describe("qweb parser", () => {
       elem: "item",
       hasNoComponent: true,
       hasNoFirst: true,
-      hasNoIndex: true,
+      hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
       isOnlyChild: false,
-      key: null,
+      key: "item_index",
       memo: "",
       type: 9,
     });

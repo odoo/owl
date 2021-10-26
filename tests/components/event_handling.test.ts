@@ -33,7 +33,7 @@ describe("event handling", () => {
     expect(fixture.innerHTML).toBe("<span><div>simple vnode</div>2</span>");
   });
 
-  test.skip("support for callable expression in event handler", async () => {
+  test("support for callable expression in event handler", async () => {
     class Counter extends Component {
       static template = xml`
       <div><t t-esc="state.value"/><input type="text" t-on-input="obj.onInput"/></div>`;

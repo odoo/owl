@@ -240,6 +240,38 @@ exports[`t-on receive event in first argument 1`] = `
 }"
 `;
 
+exports[`t-on t-on modifiers (native listener) basic support for native listener 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div class=\\"myClass\\" block-handler-0=\\"click\\"><button block-handler-1=\\"click\\">Button</button></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = [ctx, 'divClicked'];
+    let d2 = [ctx, 'btnClicked'];
+    return block1([d1, d2]);
+  }
+}"
+`;
+
+exports[`t-on t-on modifiers (synthetic listener) basic support for synthetic 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div block-handler-0=\\"click.synthetic\\"><button block-handler-1=\\"click.synthetic\\">Button</button></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = [ctx, 'divClicked'];
+    let d2 = [ctx, 'btnClicked'];
+    return block1([d1, d2]);
+  }
+}"
+`;
+
 exports[`t-on t-on with inline statement (function call) 1`] = `
 "function anonymous(bdom, helpers
 ) {

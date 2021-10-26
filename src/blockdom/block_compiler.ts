@@ -396,12 +396,12 @@ function updateCtx(ctx: BlockCtx, tree: IntermediateTree) {
         });
         break;
       case "handler": {
-        const setupHandler = createEventHandler(info.event!);
+        const { setup, update } = createEventHandler(info.event!);
         ctx.locations.push({
           idx: info.idx,
           refIdx: info.refIdx!,
-          setData: setupHandler,
-          updateData: setupHandler,
+          setData: setup,
+          updateData: update,
         });
         break;
       }

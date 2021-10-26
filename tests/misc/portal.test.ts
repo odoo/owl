@@ -432,13 +432,16 @@ describe("Portal", () => {
     expect(parent.env).toStrictEqual({});
   });
 
-  test("Portal composed with t-slot", async () => {
+  test.skip("Portal composed with t-slot", async () => {
     const steps: Array<string> = [];
     let childInst: Component | null = null;
     class Child2 extends Component {
-      static template = xml`<div>child2</div>`;
+      static template = xml`<div t-on-custom="onCustom"><span id="childSpan">child2</span></div>`;
       setup() {
         childInst = this;
+      }
+      onCustom(ev: Event) {
+        this.props.customHandler(ev);
       }
     }
     class Child extends Component {
@@ -453,7 +456,7 @@ describe("Portal", () => {
       static template = xml`
             <div>
               <Child>
-                <Child2 t-on-custom="_handled"/>
+                <Child2 customHandler="_handled"/>
               </Child>
             </div>`;
 

@@ -6,10 +6,11 @@ exports[`Portal Portal composed with t-slot 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
-  let block1 = createBlock(\`<div>child2</div>\`);
+  let block1 = createBlock(\`<div block-handler-0=\\"custom\\"><span id=\\"childSpan\\">child2</span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    return block1();
+    let d1 = [ctx, 'onCustom'];
+    return block1([d1]);
   }
 }"
 `;
@@ -41,8 +42,7 @@ exports[`Portal Portal composed with t-slot 3`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
-    let h4 = [\`custom\`, ctx, '_handled'];
-    return assign(component(\`Child2\`, {}, key + \`__3\`, node, ctx), {handlers: [h4]});
+    return component(\`Child2\`, {customHandler: ctx['_handled']}, key + \`__3\`, node, ctx);
   }
   
   return function template(ctx, node, key = \\"\\") {

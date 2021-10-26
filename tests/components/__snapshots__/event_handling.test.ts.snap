@@ -1,35 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`event handling can set handler on sub component 1`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
-  
-  let block1 = createBlock(\`<div>simple vnode</div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    return block1();
-  }
-}"
-`;
-
-exports[`event handling can set handler on sub component 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
-  let assign = Object.assign;
-  
-  return function template(ctx, node, key = \\"\\") {
-    let h2 = [\`click\`, ctx, 'inc'];
-    let b2 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {handlers: [h2]});
-    let b3 = text(ctx['state'].value);
-    return multi([b2, b3]);
-  }
-}"
-`;
-
 exports[`event handling handler receive the event as argument 1`] = `
 "function anonymous(bdom, helpers
 ) {
@@ -49,13 +19,14 @@ exports[`event handling handler receive the event as argument 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
-  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<span block-handler-0=\\"click\\"><block-child-0/><block-text-1/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let h2 = [\`click\`, ctx, 'inc'];
-    let b2 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {handlers: [h2]});
-    let b3 = text(ctx['state'].value);
-    return multi([b2, b3]);
+    let d1 = [ctx, 'inc'];
+    let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    let d2 = ctx['state'].value;
+    return block1([d1, d2], [b2]);
   }
 }"
 `;

@@ -440,6 +440,29 @@ exports[`t-foreach t-foreach with t-if inside 1`] = `
 }"
 `;
 
+exports[`t-foreach t-key on t-foreach 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<span/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['things']);
+    for (let i1 = 0; i1 < l_block2; i1++) {
+      ctx[\`thing\`] = v_block2[i1];
+      let key1 = ctx['thing'];
+      c_block2[i1] = withKey(block3(), key1);
+    }
+    let b2 = list(c_block2);
+    return block1([], [b2]);
+  }
+}"
+`;
+
 exports[`t-foreach throws error if invalid loop expression 1`] = `
 "function anonymous(bdom, helpers
 ) {
@@ -457,30 +480,6 @@ exports[`t-foreach throws error if invalid loop expression 1`] = `
       ctx[\`item_index\`] = i1;
       let key1 = ctx['item'];
       c_block2[i1] = withKey(block3(), key1);
-    }
-    let b2 = list(c_block2);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`t-foreach warn if no key in some case 1`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<span><block-text-0/></span>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList([1,2]);
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`item\`] = v_block2[i1];
-      let key1 = i1;
-      let d1 = ctx['item'];
-      c_block2[i1] = withKey(block3([d1]), key1);
     }
     let b2 = list(c_block2);
     return block1([], [b2]);

@@ -1,4 +1,11 @@
-import { renderToString, snapshotEverything, TestContext } from "../helpers";
+import {
+  renderToBdom,
+  renderToString,
+  snapshotEverything,
+  TestContext,
+  makeTestFixture,
+} from "../helpers";
+import { mount, patch } from "../../src/blockdom";
 
 snapshotEverything();
 
@@ -23,26 +30,29 @@ describe("t-foreach", () => {
     expect(renderToString(template)).toBe(expected);
   });
 
-  test.skip("t-key on t-foreach", async () => {
-    // qweb.addTemplate(
-    //   "test",
-    //   `
-    //     <div>
-    //       <t t-foreach="things" t-as="thing" t-key="thing">
-    //         <span/>
-    //       </t>
-    //     </div>`
-    // );
-    // let vnode = qweb.render("test", { things: [1, 2] });
-    // vnode = patch(document.createElement("div"), vnode);
-    // let elm = vnode.elm as HTMLElement;
-    // expect(elm.outerHTML).toBe("<div><span></span><span></span></div>");
-    // const first = elm.querySelectorAll("span")[0];
-    // const second = elm.querySelectorAll("span")[1];
-    // patch(vnode, qweb.render("test", { things: [2, 1] }));
-    // expect(elm.outerHTML).toBe("<div><span></span><span></span></div>");
-    // expect(first).toBe(elm.querySelectorAll("span")[1]);
-    // expect(second).toBe(elm.querySelectorAll("span")[0]);
+  test("t-key on t-foreach", async () => {
+    const template = `
+        <div>
+          <t t-foreach="things" t-as="thing" t-key="thing">
+            <span/>
+          </t>
+        </div>`;
+
+    const fixture = makeTestFixture();
+
+    const vnode1 = renderToBdom(template, { things: [1, 2] });
+    mount(vnode1, fixture);
+    let elm = fixture;
+    expect(elm.innerHTML).toBe("<div><span></span><span></span></div>");
+    const first = elm.querySelectorAll("span")[0];
+    const second = elm.querySelectorAll("span")[1];
+
+    const vnode2 = renderToBdom(template, { things: [2, 1] });
+    patch(vnode1, vnode2);
+
+    expect(elm.innerHTML).toBe("<div><span></span><span></span></div>");
+    expect(first).toBe(elm.querySelectorAll("span")[1]);
+    expect(second).toBe(elm.querySelectorAll("span")[0]);
   });
 
   test("simple iteration (in a node)", () => {
@@ -184,29 +194,6 @@ describe("t-foreach", () => {
   test("throws error if invalid loop expression", () => {
     const test = `<div><t t-foreach="abc" t-as="item" t-key="item"><span t-key="item_index"/></t></div>`;
     expect(() => renderToString(test)).toThrow("Invalid loop expression");
-  });
-
-  test("warn if no key in some case", () => {
-    const consoleWarn = console.warn;
-    console.warn = jest.fn();
-
-    const template = `
-        <div>
-          <t t-foreach="[1, 2]" t-as="item">
-            <span><t t-esc="item"/></span>
-          </t>
-        </div>`;
-    renderToString(template);
-    expect(console.warn).toHaveBeenCalledTimes(1);
-    expect(console.warn).toHaveBeenCalledWith(
-      `\"Directive t-foreach should always be used with a t-key! (in template: '
-        <div>
-          <t t-foreach=\"[1, 2]\" t-as=\"item\">
-            <span><t t-esc=\"item\"/></span>
-          </t>
-        </div>')\"`
-    );
-    console.warn = consoleWarn;
   });
 
   test("t-foreach with t-if inside", () => {

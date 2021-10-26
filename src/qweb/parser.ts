@@ -415,6 +415,11 @@ function parseTForEach(node: Element, ctx: ParsingContext): AST | null {
   const elem = node.getAttribute("t-as") || "";
   node.removeAttribute("t-as");
   const key = node.getAttribute("t-key");
+  if (!key) {
+    throw new Error(
+      `"Directive t-foreach should always be used with a t-key!" (expression: t-foreach="${collection}" t-as="${elem}")`
+    );
+  }
   node.removeAttribute("t-key");
   const memo = node.getAttribute("t-memo") || "";
   node.removeAttribute("t-memo");

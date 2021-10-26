@@ -742,11 +742,6 @@ export class QWebCompiler {
 
     const subCtx: Context = createContext(ctx, { block, index: loopVar });
     this.compileAST(ast.body, subCtx);
-    if (!ast.key) {
-      console.warn(
-        `"Directive t-foreach should always be used with a t-key! (in template: '${this.templateName}')"`
-      );
-    }
     if (ast.memo) {
       this.addLine(
         `nextCache[key${this.target.loopLevel}] = assign(${c}[${loopVar}], {memo: memo${id!}});`

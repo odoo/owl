@@ -15,6 +15,21 @@ exports[`reactivity in lifecycle can use a state hook 1`] = `
 }"
 `;
 
+exports[`reactivity in lifecycle can use a state hook 2 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['state'].a;
+    return block1([d1]);
+  }
+}"
+`;
+
 exports[`reactivity in lifecycle change state while mounting component 1`] = `
 "function anonymous(bdom, helpers
 ) {

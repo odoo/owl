@@ -594,10 +594,11 @@ exports[`lifecycle hooks patched hook is called after updating State 1`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
   
-  let block1 = createBlock(\`<div/>\`);
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    return block1();
+    let d1 = ctx['state'].a;
+    return block1([d1]);
   }
 }"
 `;

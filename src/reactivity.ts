@@ -1,144 +1,150 @@
 import { getCurrent } from "./component/component_node";
+import { onWillUnmount } from "./component/lifecycle_hooks";
 
-export function useState<T>(state: T): T {
-  const node = getCurrent()!;
-  return observe(state, () => node.render());
+type Atom = any; // proxy linked to a unique observer and source
+type Source = any; // trackable that is not an atom
+type Observer = () => void;
+type Keys = Set<any>;
+
+const sourceAtoms: WeakMap<Source, Set<Atom>> = new WeakMap();
+const observerAtoms: WeakMap<Observer, Set<Atom>> = new WeakMap();
+
+const SOURCE = Symbol("source");
+const OBSERVER = Symbol("observer");
+const KEYS = Symbol("keys");
+
+export function atom(source: any, observer: Observer) {
+  if (isTrackable(source) && observerAtoms.has(observer)) {
+    source = source[SOURCE] || source;
+    const oldAtom = getObserverSourceAtom(observer, source);
+    if (oldAtom) {
+      return oldAtom;
+    }
+    registerSource(source);
+    return createAtom(source, observer);
+  }
+  return source;
 }
 
-type CB = () => void;
-const observers: WeakMap<any, PSet<CB>> = new WeakMap();
-
-/**
- * PSet (for Prototypal Set) are sets that can lookup in their "parent sets", if
- * any.
- */
-
-class PSet<T> extends Set<T> {
-  parent?: PSet<T>;
-
-  static createChild<T>(parent: PSet<T>): PSet<T> {
-    const pset: PSet<T> = new PSet();
-    pset.parent = parent;
-    return pset;
-  }
-
-  has(key: T): boolean {
-    if (super.has(key)) {
-      return true;
-    }
-    return this.parent ? this.parent.has(key) : false;
-  }
-
-  *[Symbol.iterator](): Generator<T> {
-    let iterator = super[Symbol.iterator]();
-    for (let elem of iterator) {
-      yield elem;
-    }
-    if (this.parent) {
-      for (let elem of this.parent) {
-        yield elem;
+function createAtom(source: Source, observer: Observer): Atom {
+  const keys: Keys = new Set();
+  const newAtom: Atom = new Proxy(source as any, {
+    set(target: any, key: string, value: any): boolean {
+      if (!(key in target)) {
+        target[key] = value;
+        notifySourceObservers(source);
+        return true;
       }
+      const current = target[key];
+      if (current !== value) {
+        target[key] = value;
+        notifySourceKeyOBservers(source, key);
+      }
+      return true;
+    },
+    deleteProperty(target: any, key: string): boolean {
+      if (key in target) {
+        delete target[key];
+        notifySourceObservers(source);
+        deleteKeyFromKeys(source, key);
+      }
+      return true;
+    },
+    get(target: any, key: any): any {
+      switch (key) {
+        case OBSERVER:
+          return observer;
+        case SOURCE:
+          return source;
+        case KEYS:
+          return keys;
+        default:
+          const value = target[key];
+          keys.add(key);
+          return atom(value, observer);
+      }
+    },
+  });
+  getObserverAtoms(observer).add(newAtom);
+  getSourceAtoms(source).add(newAtom);
+  return newAtom;
+}
+
+function deleteKeyFromKeys(source: Source, key: any) {
+  for (const atom of getSourceAtoms(source)) {
+    atom[KEYS].delete(key);
+  }
+}
+
+function getObserverAtoms(observer: Observer): Set<Atom> {
+  return observerAtoms.get(observer)!;
+}
+
+function getObserverSourceAtom(observer: Observer, source: Source): Atom | null {
+  for (const atom of getObserverAtoms(observer)) {
+    if (atom[SOURCE] === source) {
+      return atom;
     }
   }
+  return null;
 }
 
-// -----------------------------------------------------------------------------
-
-export function observe<T>(value: T, cb: CB): T {
-  if (isNotObservable(value)) {
-    return value;
-  }
-  if (observers.has(value)) {
-    const callbacks = observers.get(value)!;
-    callbacks.add(cb);
-    return value;
-  }
-  const callbacks: PSet<CB> = new PSet();
-  callbacks.add(cb);
-  return observeValue(value, callbacks);
+function getSourceAtoms(source: Source): Set<Atom> {
+  return sourceAtoms.get(source)!;
 }
 
-export function unobserve<T>(value: T, cb: () => void) {
-  if (isNotObservable(value)) {
-    return;
-  }
-  if (observers.has(value)) {
-    const callbacks = observers.get(value)!;
-    callbacks.delete(cb);
-  }
-}
-
-function isNotObservable(value: any): boolean {
+function isTrackable(value: any): boolean {
   return (
-    value === null || typeof value !== "object" || value instanceof Date || value instanceof Promise
+    value !== null &&
+    typeof value === "object" &&
+    !(value instanceof Date) &&
+    !(value instanceof Promise)
   );
 }
 
-/**
- * value should
- * 1. be observable
- * 2. not yet be observed
- */
-function observeValue(value: any, callbacks: PSet<CB>): any {
-  const proxy = new Proxy(value as any, {
-    get(target: any, key: any): any {
-      const current = target[key];
-      if (isNotObservable(current)) {
-        return current;
-      }
-      if (observers.has(current)) {
-        // this is wrong ?
-        observers.get(current)!.parent = callbacks;
-        return current;
-      }
-      const subCallbacks = PSet.createChild(callbacks);
-      const subValue = observeValue(current, subCallbacks);
-      target[key] = subValue;
-      return subValue;
-    },
-    set(target: any, key: any, value: any): boolean {
-      // TODO: check if current !== target or proxy ??
-      const current = target[key];
-      if (current !== value) {
-        if (isNotObservable(value)) {
-          target[key] = value;
-        } else {
-          // TODO: test following scenario:
-          // 1. obj1 = observer({a:1}, somecb);
-          // 2. unobserve(obj1, somecb)
-          // 3. obj1.a = {b: 2};
-          // check that somecb was not called
-          // obj1.a.b = 3;
-          // check again that somecb was not called
-          if (observers.has(value)) {
-            const pset = observers.get(value)!;
-            pset.parent = callbacks;
-            target[key] = value;
-          } else {
-            const subCallbacks = PSet.createChild(callbacks);
-            target[key] = observeValue(value, subCallbacks);
-          }
-        }
-        notify(target);
-      }
-      return true;
-    },
-    deleteProperty(target: any, key: any) {
-      if (key in target) {
-        delete target[key];
-        notify(target);
-      }
-      return true;
-    },
-  });
-  observers.set(value, callbacks);
-  observers.set(proxy, callbacks);
-  return proxy;
+function notifySourceKeyOBservers(source: Source, key: any) {
+  for (const atom of getSourceAtoms(source)) {
+    if (atom[KEYS].has(key)) {
+      atom[OBSERVER]();
+    }
+  }
 }
 
-function notify(value: any) {
-  const cbs = observers.get(value)!;
-  for (let cb of cbs) {
-    cb();
+function notifySourceObservers(source: Source) {
+  for (const atom of getSourceAtoms(source)) {
+    atom[OBSERVER]();
   }
+}
+
+export function registerObserver(observer: Observer) {
+  if (!observerAtoms.get(observer)) {
+    observerAtoms.set(observer, new Set());
+  }
+  return unregisterObserver.bind(null, observer);
+}
+
+function registerSource(source: Source) {
+  if (!sourceAtoms.get(source)) {
+    sourceAtoms.set(source, new Set());
+  }
+}
+
+function unregisterObserver(observer: Observer) {
+  for (const atom of getObserverAtoms(observer)) {
+    const source = atom[SOURCE];
+    const sourceAtoms = getSourceAtoms(source);
+    sourceAtoms.delete(atom);
+  }
+  observerAtoms.delete(observer);
+}
+
+export function useState(state: any): Atom {
+  if (!isTrackable(state)) {
+    throw new Error("Argument is not trackable");
+  }
+  const node = getCurrent()!;
+  const observer = () => node.render();
+  const unregisterObserver = registerObserver(observer);
+  onWillUnmount(() => unregisterObserver());
+  return atom(state, observer);
 }

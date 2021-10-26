@@ -703,7 +703,6 @@ describe("qweb parser", () => {
         type: ASTType.TComponent,
         isDynamic: false,
         name: "Comp",
-        handlers: {},
         dynamicProps: null,
         props: {},
         slots: {},
@@ -832,7 +831,6 @@ describe("qweb parser", () => {
       name: "MyComponent",
       dynamicProps: null,
       props: {},
-      handlers: {},
       slots: {},
       isDynamic: false,
     });
@@ -844,7 +842,6 @@ describe("qweb parser", () => {
       name: "MyComponent",
       dynamicProps: null,
       props: { a: "1", b: "'b'" },
-      handlers: {},
       isDynamic: false,
       slots: {},
     });
@@ -856,22 +853,15 @@ describe("qweb parser", () => {
       name: "MyComponent",
       dynamicProps: "state",
       props: { a: "1" },
-      handlers: {},
       isDynamic: false,
       slots: {},
     });
   });
 
   test("component with event handler", async () => {
-    expect(parse(`<MyComponent t-on-click="someMethod"/>`)).toEqual({
-      type: ASTType.TComponent,
-      name: "MyComponent",
-      dynamicProps: null,
-      props: {},
-      handlers: { click: "someMethod" },
-      isDynamic: false,
-      slots: {},
-    });
+    expect(() => parse(`<MyComponent t-on-click="someMethod"/>`)).toThrow(
+      "t-on is no longer supported on Component node. Consider passing a callback in props."
+    );
   });
 
   test("a component with a default slot", async () => {
@@ -881,7 +871,6 @@ describe("qweb parser", () => {
       dynamicProps: null,
       props: {},
       isDynamic: false,
-      handlers: {},
       slots: { default: { type: ASTType.Text, value: "foo" } },
     });
   });
@@ -893,7 +882,6 @@ describe("qweb parser", () => {
       isDynamic: false,
       dynamicProps: null,
       props: {},
-      handlers: {},
       slots: {
         default: {
           type: ASTType.Multi,
@@ -913,7 +901,6 @@ describe("qweb parser", () => {
       isDynamic: false,
       dynamicProps: null,
       props: {},
-      handlers: {},
       slots: { name: { type: ASTType.Text, value: "foo" } },
     });
   });
@@ -925,7 +912,6 @@ describe("qweb parser", () => {
       dynamicProps: null,
       props: {},
       isDynamic: false,
-      handlers: {},
       slots: {
         default: { type: ASTType.Text, value: " " },
         name: { type: ASTType.Text, value: "foo" },
@@ -944,7 +930,6 @@ describe("qweb parser", () => {
       name: "MyComponent",
       dynamicProps: null,
       props: {},
-      handlers: {},
       isDynamic: false,
       slots: {
         a: { type: ASTType.Text, value: "foo" },
@@ -959,7 +944,6 @@ describe("qweb parser", () => {
       name: "myComponent",
       dynamicProps: null,
       props: {},
-      handlers: {},
       isDynamic: true,
       slots: {},
     });
@@ -971,7 +955,6 @@ describe("qweb parser", () => {
       name: "mycomponent",
       dynamicProps: null,
       props: { a: "1", b: "'b'" },
-      handlers: {},
       isDynamic: true,
       slots: {},
     });
@@ -983,7 +966,6 @@ describe("qweb parser", () => {
       name: "mycomponent",
       dynamicProps: "state",
       props: { a: "1" },
-      handlers: {},
       isDynamic: true,
       slots: {},
     });
@@ -995,7 +977,6 @@ describe("qweb parser", () => {
       name: "MyComponent",
       dynamicProps: null,
       props: {},
-      handlers: {},
       isDynamic: false,
       slots: { default: { defaultValue: "", expr: "someValue", type: ASTType.TEsc } },
     });
@@ -1007,7 +988,6 @@ describe("qweb parser", () => {
       name: "MyComponent",
       dynamicProps: null,
       props: {},
-      handlers: {},
       isDynamic: false,
       slots: { default: { body: null, name: "subTemplate", type: ASTType.TCall } },
     });
@@ -1026,13 +1006,11 @@ describe("qweb parser", () => {
       name: "MyComponent",
       dynamicProps: null,
       props: {},
-      handlers: {},
       isDynamic: false,
       slots: {
         default: {
           type: ASTType.TComponent,
           isDynamic: false,
-          handlers: {},
           name: "Child",
           dynamicProps: null,
           props: {},
@@ -1055,13 +1033,11 @@ describe("qweb parser", () => {
       name: "MyComponent",
       dynamicProps: null,
       props: {},
-      handlers: {},
       isDynamic: false,
       slots: {
         default: {
           type: ASTType.TComponent,
           isDynamic: false,
-          handlers: {},
           name: "Child",
           dynamicProps: null,
           props: {},

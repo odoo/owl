@@ -468,12 +468,17 @@ export class QWebCompiler {
     }
   }
 
-  generateHandlerCode(handler: string, event: string = ""): string {
+  generateHandlerCode(rawEvent: string, handler: string): string {
     let args: string = "";
     const name: string = handler.replace(/\(.*\)/, function (_args) {
       args = _args.slice(1, -1);
       return "";
     });
+    const modifiers = rawEvent.split(".").slice(1).map(m => `"${m}"`);
+    let modifiersCode = "";
+    if (modifiers.length) {
+      modifiersCode = `${modifiers.join(",")}, `;
+    }
     const isMethodCall = name.match(FNAMEREGEXP);
     if (isMethodCall) {
       let handlerFn: string;
@@ -484,15 +489,11 @@ export class QWebCompiler {
       } else {
         handlerFn = `'${name}'`;
       }
-      return `[${event ? `\`${event}\`` + ", " : ""}ctx, ${handlerFn!}]`;
+      return `[${modifiersCode}ctx, ${handlerFn!}]`;
     } else {
       let code = this.captureExpression(handler);
       code = `{const res = (() => { return ${code} })(); if (typeof res === 'function') { res(e) }}`;
-      let handlerFn = `(e) => ${code}`;
-      if (event) {
-        handlerFn = `[\`${event}\`, ${handlerFn}]`;
-      }
-      return handlerFn;
+      return `[${modifiersCode}(e) => ${code}]`;
     }
   }
 
@@ -528,7 +529,7 @@ export class QWebCompiler {
 
     // event handlers
     for (let ev in ast.on) {
-      const name = this.generateHandlerCode(ast.on[ev]);
+      const name = this.generateHandlerCode(ev, ast.on[ev]);
       const idx = block!.insertData(name);
       attrs[`block-handler-${idx}`] = ev;
     }

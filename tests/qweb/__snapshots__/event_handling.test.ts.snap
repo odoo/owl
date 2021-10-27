@@ -256,6 +256,158 @@ exports[`t-on t-on modifiers (native listener) basic support for native listener
 }"
 `;
 
+exports[`t-on t-on modifiers (native listener) t-on combined with t-esc 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div><button block-handler-0=\\"click\\"><block-text-1/></button></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = [ctx, 'onClick'];
+    let d2 = ctx['text'];
+    return block1([d1, d2]);
+  }
+}"
+`;
+
+exports[`t-on t-on modifiers (native listener) t-on combined with t-raw 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div><button block-handler-0=\\"click\\"><block-child-0/></button></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = [ctx, 'onClick'];
+    let b2 = html(ctx['html']);
+    return block1([d1], [b2]);
+  }
+}"
+`;
+
+exports[`t-on t-on modifiers (native listener) t-on with .capture modifier 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div block-handler-0=\\"click.capture\\"><button block-handler-1=\\"click\\">Button</button></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = [\\"capture\\", ctx, 'onCapture'];
+    let d2 = [ctx, 'doSomething'];
+    return block1([d1, d2]);
+  }
+}"
+`;
+
+exports[`t-on t-on modifiers (native listener) t-on with empty handler (only modifiers) 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div><button block-handler-0=\\"click.prevent\\">Button</button></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = [\\"prevent\\", (e) => {const res = (() => { return  })(); if (typeof res === 'function') { res(e) }}];
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`t-on t-on modifiers (native listener) t-on with prevent and self modifiers (order matters) 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div><button block-handler-0=\\"click.prevent.self\\"><span>Button</span></button></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = [\\"prevent\\",\\"self\\", ctx, 'onClick'];
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`t-on t-on modifiers (native listener) t-on with prevent and/or stop modifiers 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div><button block-handler-0=\\"click.prevent\\">Button 1</button><button block-handler-1=\\"click.stop\\">Button 2</button><button block-handler-2=\\"click.prevent.stop\\">Button 3</button></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = [\\"prevent\\", ctx, 'onClickPrevented'];
+    let d2 = [\\"stop\\", ctx, 'onClickStopped'];
+    let d3 = [\\"prevent\\",\\"stop\\", ctx, 'onClickPreventedAndStopped'];
+    return block1([d1, d2, d3]);
+  }
+}"
+`;
+
+exports[`t-on t-on modifiers (native listener) t-on with prevent modifier in t-foreach 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<a href=\\"#\\" block-handler-0=\\"click.prevent\\"> Edit <block-text-1/></a>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['projects']);
+    for (let i1 = 0; i1 < l_block2; i1++) {
+      ctx[\`project\`] = v_block2[i1];
+      let key1 = ctx['project'];
+      const arg1 = [ctx['project'].id];
+      let d1 = [\\"prevent\\", ctx, 'onEdit', arg1];
+      let d2 = ctx['project'].name;
+      c_block2[i1] = withKey(block3([d1, d2]), key1);
+    }
+    let b2 = list(c_block2);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`t-on t-on modifiers (native listener) t-on with self and prevent modifiers (order matters) 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div><button block-handler-0=\\"click.self.prevent\\"><span>Button</span></button></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = [\\"self\\",\\"prevent\\", ctx, 'onClick'];
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`t-on t-on modifiers (native listener) t-on with self modifier 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div><button block-handler-0=\\"click\\"><span>Button</span></button><button block-handler-1=\\"click.self\\"><span>Button</span></button></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = [ctx, 'onClick'];
+    let d2 = [\\"self\\", ctx, 'onClickSelf'];
+    return block1([d1, d2]);
+  }
+}"
+`;
+
 exports[`t-on t-on modifiers (synthetic listener) basic support for synthetic 1`] = `
 "function anonymous(bdom, helpers
 ) {
@@ -265,8 +417,8 @@ exports[`t-on t-on modifiers (synthetic listener) basic support for synthetic 1`
   let block1 = createBlock(\`<div block-handler-0=\\"click.synthetic\\"><button block-handler-1=\\"click.synthetic\\">Button</button></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = [ctx, 'divClicked'];
-    let d2 = [ctx, 'btnClicked'];
+    let d1 = [\\"synthetic\\", ctx, 'divClicked'];
+    let d2 = [\\"synthetic\\", ctx, 'btnClicked'];
     return block1([d1, d2]);
   }
 }"
@@ -282,7 +434,7 @@ exports[`t-on t-on with inline statement (function call) 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const v1 = ctx['state'];
-    let d1 = (e) => {const res = (() => { return v1.incrementCounter(2) })(); if (typeof res === 'function') { res(e) }};
+    let d1 = [(e) => {const res = (() => { return v1.incrementCounter(2) })(); if (typeof res === 'function') { res(e) }}];
     return block1([d1]);
   }
 }"
@@ -298,7 +450,7 @@ exports[`t-on t-on with inline statement 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const v1 = ctx['state'];
-    let d1 = (e) => {const res = (() => { return v1.counter++ })(); if (typeof res === 'function') { res(e) }};
+    let d1 = [(e) => {const res = (() => { return v1.counter++ })(); if (typeof res === 'function') { res(e) }}];
     return block1([d1]);
   }
 }"
@@ -314,7 +466,7 @@ exports[`t-on t-on with inline statement, part 2 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const v1 = ctx['state'];
-    let d1 = (e) => {const res = (() => { return v1.flag=!v1.flag })(); if (typeof res === 'function') { res(e) }};
+    let d1 = [(e) => {const res = (() => { return v1.flag=!v1.flag })(); if (typeof res === 'function') { res(e) }}];
     return block1([d1]);
   }
 }"
@@ -331,7 +483,7 @@ exports[`t-on t-on with inline statement, part 3 1`] = `
   return function template(ctx, node, key = \\"\\") {
     const v1 = ctx['state'];
     const v2 = ctx['someFunction'];
-    let d1 = (e) => {const res = (() => { return v1.n=v2(3) })(); if (typeof res === 'function') { res(e) }};
+    let d1 = [(e) => {const res = (() => { return v1.n=v2(3) })(); if (typeof res === 'function') { res(e) }}];
     return block1([d1]);
   }
 }"

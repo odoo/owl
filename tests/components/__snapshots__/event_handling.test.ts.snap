@@ -42,7 +42,7 @@ exports[`event handling support for callable expression in event handler 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['state'].value;
     const v1 = ctx['obj'];
-    let d2 = (e) => {const res = (() => { return v1.onInput })(); if (typeof res === 'function') { res(e) }};
+    let d2 = [(e) => {const res = (() => { return v1.onInput })(); if (typeof res === 'function') { res(e) }}];
     return block1([d1, d2]);
   }
 }"

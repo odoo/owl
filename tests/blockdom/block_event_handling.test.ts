@@ -61,6 +61,7 @@ test("simple event handling ", async () => {
       const [owner, method] = data;
       owner[method]();
     }
+    return false;
   };
 
   const block = createBlock('<div block-handler-0="click"></div>');

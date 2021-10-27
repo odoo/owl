@@ -326,6 +326,217 @@ describe("t-on", () => {
       button.click();
       expect(steps).toEqual(["btnClicked", "divClicked"]);
     });
+
+  test("t-on with prevent and/or stop modifiers", async () => {
+      expect.assertions(7);
+      const template = `<div>
+      <button t-on-click.prevent="onClickPrevented">Button 1</button>
+      <button t-on-click.stop="onClickStopped">Button 2</button>
+      <button t-on-click.prevent.stop="onClickPreventedAndStopped">Button 3</button>
+      </div>`;
+
+      let owner = {
+        onClickPrevented(e: Event) {
+          expect(e.defaultPrevented).toBe(true);
+          expect(e.cancelBubble).toBe(false);
+        },
+        onClickStopped(e: Event) {
+          expect(e.defaultPrevented).toBe(false);
+          expect(e.cancelBubble).toBe(true);
+        },
+        onClickPreventedAndStopped(e: Event) {
+          expect(e.defaultPrevented).toBe(true);
+          expect(e.cancelBubble).toBe(true);
+        },
+      };
+
+      const node = mountToFixture(template, owner);
+
+      const buttons = (<HTMLElement>node).getElementsByTagName("button");
+      buttons[0].click();
+      buttons[1].click();
+      buttons[2].click();
+    });
+
+    test("t-on with self modifier", async () => {
+      expect.assertions(2);
+      const template = `<div>
+        <button t-on-click="onClick"><span>Button</span></button>
+        <button t-on-click.self="onClickSelf"><span>Button</span></button>
+      </div>`;
+      let steps: string[] = [];
+      let owner = {
+        onClick(e: Event) {
+          steps.push("onClick");
+        },
+        onClickSelf(e: Event) {
+          steps.push("onClickSelf");
+        },
+      };
+      const node = mountToFixture(template, owner);
+
+      const buttons = (<HTMLElement>node).getElementsByTagName("button");
+      const spans = (<HTMLElement>node).getElementsByTagName("span");
+      spans[0].click();
+      spans[1].click();
+      buttons[0].click();
+      buttons[1].click();
+
+      expect(steps).toEqual(["onClick", "onClick", "onClickSelf"]);
+    });
+
+    test("t-on with self and prevent modifiers (order matters)", async () => {
+      expect.assertions(2);
+      const template = `<div>
+        <button t-on-click.self.prevent="onClick"><span>Button</span></button>
+      </div>`;
+      let steps: boolean[] = [];
+      let owner = {
+        onClick() {},
+      };
+      const node = mountToFixture(template, owner);
+      (<HTMLElement>node).addEventListener("click", function (e) {
+        steps.push(e.defaultPrevented);
+      });
+
+      const button = (<HTMLElement>node).getElementsByTagName("button")[0];
+      const span = (<HTMLElement>node).getElementsByTagName("span")[0];
+      span.click();
+      button.click();
+
+      expect(steps).toEqual([false, true]);
+    });
+
+    test("t-on with prevent and self modifiers (order matters)", async () => {
+      expect.assertions(2);
+      const template = `<div>
+        <button t-on-click.prevent.self="onClick"><span>Button</span></button>
+      </div>`;
+      let steps: boolean[] = [];
+      let owner = {
+        onClick() {},
+      };
+      const node = mountToFixture(template, owner);
+      (<HTMLElement>node).addEventListener("click", function (e) {
+        steps.push(e.defaultPrevented);
+      });
+
+      const button = (<HTMLElement>node).getElementsByTagName("button")[0];
+      const span = (<HTMLElement>node).getElementsByTagName("span")[0];
+      span.click();
+      button.click();
+
+      expect(steps).toEqual([true, true]);
+    });
+
+    test("t-on with prevent modifier in t-foreach", async () => {
+      expect.assertions(5);
+      const template = `<div>
+        <t t-foreach="projects" t-as="project" t-key="project">
+          <a href="#" t-on-click.prevent="onEdit(project.id)">
+            Edit <t t-esc="project.name"/>
+          </a>
+        </t>
+      </div>`;
+      const steps: string[] = [];
+      const owner = {
+        projects: [
+          { id: 1, name: "Project 1" },
+          { id: 2, name: "Project 2" },
+        ],
+
+        onEdit(projectId: string, ev: Event) {
+          expect(ev.defaultPrevented).toBe(true);
+          steps.push(projectId);
+        },
+      };
+
+      const node = mountToFixture(template, owner);
+      expect(node.innerHTML).toBe(
+        `<div><a href="#"> Edit Project 1</a><a href="#"> Edit Project 2</a></div>`
+      );
+
+      const links = node.querySelectorAll("a")!;
+      links[0].click();
+      links[1].click();
+
+      expect(steps).toEqual([1, 2]);
+    });
+
+    test("t-on with empty handler (only modifiers)", () => {
+      expect.assertions(2);
+      const template = `<div>
+        <button t-on-click.prevent="">Button</button>
+      </div>`;
+      const node = mountToFixture(template, {});
+
+      node.addEventListener("click", (e) => {
+        expect(e.defaultPrevented).toBe(true);
+      });
+
+      const button = (<HTMLElement>node).getElementsByTagName("button")[0];
+      button.click();
+    });
+
+    test("t-on combined with t-esc", async () => {
+      expect.assertions(3);
+      const template = `<div><button t-on-click="onClick" t-esc="text"/></div>`;
+      const steps: string[] = [];
+      const owner = {
+        text: "Click here",
+        onClick() {
+          steps.push("onClick");
+        },
+      };
+
+      const node = mountToFixture(template, owner);
+      expect(node.innerHTML).toBe(`<div><button>Click here</button></div>`);
+
+      node.querySelector("button")!.click();
+
+      expect(steps).toEqual(["onClick"]);
+    });
+
+    test("t-on combined with t-raw", async () => {
+      expect.assertions(3);
+      const template = `<div><button t-on-click="onClick" t-raw="html"/></div>`;
+      const steps: string[] = [];
+      const owner = {
+        html: "Click <b>here</b>",
+        onClick() {
+          steps.push("onClick");
+        },
+      };
+
+      const node = mountToFixture(template, owner);
+      expect(node.innerHTML).toBe(`<div><button>Click <b>here</b></button></div>`);
+
+      node.querySelector("button")!.click();
+
+      expect(steps).toEqual(["onClick"]);
+    });
+
+    test("t-on with .capture modifier", () => {
+      expect.assertions(2);
+      const template = `<div t-on-click.capture="onCapture">
+        <button t-on-click="doSomething">Button</button>
+      </div>`;
+
+      const steps: string[] = [];
+      const owner = {
+        onCapture() {
+          steps.push("captured");
+        },
+        doSomething() {
+          steps.push("normal");
+        },
+      };
+      const node = mountToFixture(template, owner);
+
+      const button = (<HTMLElement>node).getElementsByTagName("button")[0];
+      button.click();
+      expect(steps).toEqual(["captured", "normal"]);
+    });
   });
 
   describe("t-on modifiers (synthetic listener)", () => {

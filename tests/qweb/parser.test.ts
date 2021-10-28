@@ -465,12 +465,15 @@ describe("qweb parser", () => {
   // ---------------------------------------------------------------------------
 
   test("simple t-foreach expression, t-key mandatory", async () => {
-    expect(() => parse(`<t t-foreach="list" t-as="item"><t t-esc="item"/></t>`)).toThrowErrorMatchingSnapshot();
-
-  })
+    expect(() =>
+      parse(`<t t-foreach="list" t-as="item"><t t-esc="item"/></t>`)
+    ).toThrowErrorMatchingSnapshot();
+  });
 
   test("simple t-foreach expression", async () => {
-    expect(parse(`<t t-foreach="list" t-as="item" t-key="item_index"><t t-esc="item"/></t>`)).toEqual({
+    expect(
+      parse(`<t t-foreach="list" t-as="item" t-key="item_index"><t t-esc="item"/></t>`)
+    ).toEqual({
       type: ASTType.TForEach,
       collection: "list",
       elem: "item",
@@ -545,7 +548,9 @@ describe("qweb parser", () => {
   });
 
   test("t-foreach expression on a span", async () => {
-    expect(parse(`<span t-foreach="list" t-as="item" t-key="item_index"><t t-esc="item"/></span>`)).toEqual({
+    expect(
+      parse(`<span t-foreach="list" t-as="item" t-key="item_index"><t t-esc="item"/></span>`)
+    ).toEqual({
       type: ASTType.TForEach,
       collection: "list",
       elem: "item",
@@ -570,7 +575,9 @@ describe("qweb parser", () => {
 
   test("t-foreach expression on a span", async () => {
     expect(
-      parse(`<span t-foreach="list" t-if="condition" t-as="item" t-key="item_index"><t t-esc="item"/></span>`)
+      parse(
+        `<span t-foreach="list" t-if="condition" t-as="item" t-key="item_index"><t t-esc="item"/></span>`
+      )
     ).toEqual({
       type: ASTType.TForEach,
       collection: "list",
@@ -632,7 +639,9 @@ describe("qweb parser", () => {
   });
 
   test("t-foreach in a div", async () => {
-    expect(parse(`<div><t t-foreach="list" t-as="item" t-key="item_index"><t t-esc="item"/></t></div>`)).toEqual({
+    expect(
+      parse(`<div><t t-foreach="list" t-as="item" t-key="item_index"><t t-esc="item"/></t></div>`)
+    ).toEqual({
       type: ASTType.DomNode,
       attrs: {},
       on: {},
@@ -716,7 +725,9 @@ describe("qweb parser", () => {
   });
 
   test("t-foreach expression with a t-call inside", async () => {
-    expect(parse(`<t t-foreach="list" t-as="item" t-key="item_index"><t t-call="blap"/></t>`)).toEqual({
+    expect(
+      parse(`<t t-foreach="list" t-as="item" t-key="item_index"><t t-call="blap"/></t>`)
+    ).toEqual({
       type: ASTType.TForEach,
       collection: "list",
       elem: "item",
@@ -737,22 +748,24 @@ describe("qweb parser", () => {
   });
 
   test("t-foreach expression with t-memo", async () => {
-    expect(parse(`<t t-foreach="list" t-as="item" t-memo="[row.x]" t-key="item_index"><t t-esc="item"/></t>`)).toEqual(
-      {
-        type: ASTType.TForEach,
-        collection: "list",
-        elem: "item",
-        key: "item_index",
-        hasNoComponent: true,
-        isOnlyChild: false,
-        body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
-        memo: "[row.x]",
-        hasNoFirst: true,
-        hasNoIndex: false,
-        hasNoLast: true,
-        hasNoValue: true,
-      }
-    );
+    expect(
+      parse(
+        `<t t-foreach="list" t-as="item" t-memo="[row.x]" t-key="item_index"><t t-esc="item"/></t>`
+      )
+    ).toEqual({
+      type: ASTType.TForEach,
+      collection: "list",
+      elem: "item",
+      key: "item_index",
+      hasNoComponent: true,
+      isOnlyChild: false,
+      body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
+      memo: "[row.x]",
+      hasNoFirst: true,
+      hasNoIndex: false,
+      hasNoLast: true,
+      hasNoValue: true,
+    });
   });
 
   // ---------------------------------------------------------------------------
@@ -1161,7 +1174,9 @@ describe("qweb parser", () => {
       },
     });
 
-    expect(parse(`<div t-foreach="list" t-translation="off" t-as="item" t-key="item_index">word</div>`)).toEqual({
+    expect(
+      parse(`<div t-foreach="list" t-translation="off" t-as="item" t-key="item_index">word</div>`)
+    ).toEqual({
       body: {
         content: {
           attrs: {},

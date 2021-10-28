@@ -1,6 +1,6 @@
 import { filterOutModifiersFromData } from "../blockdom/config";
 
-export const mainEventHandler = (data: any, ev: Event, currentTarget?: EventTarget|null) => {
+export const mainEventHandler = (data: any, ev: Event, currentTarget?: EventTarget | null) => {
   const { data: _data, modifiers } = filterOutModifiersFromData(data);
   data = _data;
   let stopped = false;
@@ -9,9 +9,20 @@ export const mainEventHandler = (data: any, ev: Event, currentTarget?: EventTarg
     const isSelf = ev.target === currentTarget;
     for (const mod of modifiers) {
       switch (mod) {
-        case "self": selfMode = true; if (isSelf) { continue; } else { return stopped; };
-        case "prevent": if ((selfMode && isSelf) || (!selfMode)) ev.preventDefault(); continue;
-        case "stop": if ((selfMode && isSelf) || (!selfMode)) ev.stopPropagation() ; stopped = true; continue;
+        case "self":
+          selfMode = true;
+          if (isSelf) {
+            continue;
+          } else {
+            return stopped;
+          }
+        case "prevent":
+          if ((selfMode && isSelf) || !selfMode) ev.preventDefault();
+          continue;
+        case "stop":
+          if ((selfMode && isSelf) || !selfMode) ev.stopPropagation();
+          stopped = true;
+          continue;
       }
     }
   }
@@ -23,4 +34,4 @@ export const mainEventHandler = (data: any, ev: Event, currentTarget?: EventTarg
     data[0].__owl__.component[method](...args, ev);
   }
   return stopped;
-}
+};

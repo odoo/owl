@@ -1,4 +1,4 @@
-export function filterOutModifiersFromData(dataList: any[]): { modifiers: string[], data: any[]} {
+export function filterOutModifiersFromData(dataList: any[]): { modifiers: string[]; data: any[] } {
   dataList = dataList.slice();
   const modifiers = [];
   let elm;

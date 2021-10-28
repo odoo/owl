@@ -124,9 +124,11 @@ test("two same block nodes with different handlers (synthetic)", async () => {
 });
 
 test("synthetic and native handlers can cohabitate", async () => {
-  const block = createBlock('<div block-handler-0="click.synthetic"><div block-handler-1="click"/></div>');
+  const block = createBlock(
+    '<div block-handler-0="click.synthetic"><div block-handler-1="click"/></div>'
+  );
   let steps: string[] = [];
-  let handler1 = () => steps.push("1");;
+  let handler1 = () => steps.push("1");
   let handler2 = () => steps.push("2");
   const tree = block([handler1, handler2]);
 
@@ -140,9 +142,11 @@ test("synthetic and native handlers can cohabitate", async () => {
 });
 
 test("synthetic and native handlers can cohabitate (2)", async () => {
-  const block = createBlock('<div block-handler-0="click"><div block-handler-1="click.synthetic"/></div>');
+  const block = createBlock(
+    '<div block-handler-0="click"><div block-handler-1="click.synthetic"/></div>'
+  );
   let steps: string[] = [];
-  let handler1 = () => steps.push("1");;
+  let handler1 = () => steps.push("1");
   let handler2 = () => steps.push("2");
   const tree = block([handler1, handler2]);
 
@@ -156,12 +160,12 @@ test("synthetic and native handlers can cohabitate (2)", async () => {
 });
 
 test("synthetic and native handlers can cohabitate (3)", async () => {
-  const parent = createBlock(`<div block-handler-0="click"><block-child-0/><block-child-1/></div>`)
+  const parent = createBlock(`<div block-handler-0="click"><block-child-0/><block-child-1/></div>`);
   const block = createBlock('<div block-handler-0="click"/>');
   const blockSynth = createBlock('<div block-handler-0="click.synthetic"/>');
   let steps: string[] = [];
-  const handler0 = () => steps.push("0");;
-  let handler1 = () => steps.push("1");;
+  const handler0 = () => steps.push("0");
+  let handler1 = () => steps.push("1");
   let handler2 = () => steps.push("2");
   const tree = parent([handler0], [block([handler1]), blockSynth([handler2])]);
 
@@ -177,12 +181,15 @@ test("synthetic and native handlers can cohabitate (3)", async () => {
 });
 
 test("synthetic and native handlers can cohabitate (5)", async () => {
-  const parent = createBlock(`<div block-handler-0="click"><block-child-0/><block-child-1/></div>`)
+  const parent = createBlock(`<div block-handler-0="click"><block-child-0/><block-child-1/></div>`);
   const block = createBlock('<div block-handler-0="click"/>');
   const blockSynth = createBlock('<div block-handler-0="click.synthetic"/>');
   let steps: string[] = [];
-  const handler0 = (ev: Event) => { steps.push("0"); ev.stopPropagation();};
-  let handler1 = () => steps.push("1");;
+  const handler0 = (ev: Event) => {
+    steps.push("0");
+    ev.stopPropagation();
+  };
+  let handler1 = () => steps.push("1");
   let handler2 = () => steps.push("2");
   const tree = parent([handler0], [block([handler1]), blockSynth([handler2])]);
 

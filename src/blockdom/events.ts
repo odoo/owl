@@ -76,6 +76,8 @@ function setupSyntheticEvent(evName: string, eventKey: string, capture: boolean 
   if (CONFIGURED_SYNTHETIC_EVENTS[eventKey]) {
     return;
   }
-  document.addEventListener(evName, (event) => nativeToSyntheticEvent(eventKey, event), { capture });
+  document.addEventListener(evName, (event) => nativeToSyntheticEvent(eventKey, event), {
+    capture,
+  });
   CONFIGURED_SYNTHETIC_EVENTS[eventKey] = true;
 }

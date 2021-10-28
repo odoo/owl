@@ -474,7 +474,10 @@ export class QWebCompiler {
       args = _args.slice(1, -1);
       return "";
     });
-    const modifiers = rawEvent.split(".").slice(1).map(m => `"${m}"`);
+    const modifiers = rawEvent
+      .split(".")
+      .slice(1)
+      .map((m) => `"${m}"`);
     let modifiersCode = "";
     if (modifiers.length) {
       modifiersCode = `${modifiers.join(",")}, `;

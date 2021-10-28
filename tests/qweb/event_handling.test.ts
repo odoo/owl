@@ -327,7 +327,7 @@ describe("t-on", () => {
       expect(steps).toEqual(["btnClicked", "divClicked"]);
     });
 
-  test("t-on with prevent and/or stop modifiers", async () => {
+    test("t-on with prevent and/or stop modifiers", async () => {
       expect.assertions(7);
       const template = `<div>
       <button t-on-click.prevent="onClickPrevented">Button 1</button>

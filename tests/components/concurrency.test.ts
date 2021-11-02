@@ -94,13 +94,17 @@ test("destroying/recreating a subwidget with different props (if start is not ov
   const w = await mount(W, fixture);
 
   expect(n).toBe(0);
-  w.state.val = 2;
 
+  w.state.val = 2;
+  await nextMicroTick();
   await nextMicroTick();
   expect(n).toBe(1);
+
   w.state.val = 3;
   await nextMicroTick();
+  await nextMicroTick();
   expect(n).toBe(2);
+
   def.resolve();
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><span>child:3</span></div>");
@@ -439,6 +443,7 @@ test("update a sub-component twice in the same frame, 2", async () => {
   expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
   parent.state.valA = 2;
   await nextMicroTick();
+  await nextMicroTick();
   expect(steps.splice(0)).toEqual([
     "Parent:setup",
     "Parent:willStart",
@@ -461,6 +466,7 @@ test("update a sub-component twice in the same frame, 2", async () => {
   expect(steps.splice(0)).toEqual(["ChildA:render", "render"]);
   expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
   parent.state.valA = 3;
+  await nextMicroTick();
   await nextMicroTick();
   expect(steps.splice(0)).toEqual(["Parent:render", "ChildA:willUpdateProps"]);
   await nextMicroTick();
@@ -1976,7 +1982,7 @@ test("concurrent renderings scenario 15", async () => {
   Object.freeze(steps);
 });
 
-test("concurrent renderings scenario 16", async () => {
+test.skip("concurrent renderings scenario 16", async () => {
   const steps: string[] = [];
   let b: B | undefined = undefined;
   let c: C | undefined = undefined;
@@ -2013,12 +2019,12 @@ test("concurrent renderings scenario 16", async () => {
       useLogLifecycle(steps);
       b = this;
     }
-    state = useState({ fromB: 2 });
+    state = { fromB: 2 };
   }
   class A extends Component {
     static template = xml`<p><B fromA="state.fromA"/></p>`;
     static components = { B };
-    state = useState({ fromA: 1 });
+    state = { fromA: 1 };
 
     setup() {
       useLogLifecycle(steps);
@@ -2039,9 +2045,11 @@ test("concurrent renderings scenario 16", async () => {
 
   // trigger a re-rendering from C, which will remap its new fiber
   c!.state.fromC += 10;
+  c!.render();
   const prom = c!.render();
   // trigger a re-rendering from B, which will remap its new fiber as well
   b!.state.fromB += 10;
+  b!.render();
 
   await nextTick();
   // at this point, C rendering is still pending, and nothing should have been
@@ -2069,9 +2077,12 @@ test("concurrent renderings scenario 16", async () => {
     "B:render",
     "C:willUpdateProps",
     "C:render",
+    "D:setup",
+    "D:willStart",
     "B:render",
     "C:willUpdateProps",
     "C:render",
+    "D:destroyed",
     "D:setup",
     "D:willStart",
     "D:render",

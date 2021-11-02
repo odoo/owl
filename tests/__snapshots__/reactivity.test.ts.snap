@@ -1,0 +1,355 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Reactivity: useState destroyed component before being mounted is inactive 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['contextObj'].a;
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState destroyed component before being mounted is inactive 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2;
+    if (ctx['state'].flag) {
+      b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    }
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState destroyed component is inactive 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['contextObj'].a;
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState destroyed component is inactive 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2;
+    if (ctx['state'].flag) {
+      b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    }
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState one components can subscribe twice to same context 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><block-text-0/><block-text-1/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['contextObj1'].a;
+    let d2 = ctx['contextObj2'].b;
+    return block1([d1, d2]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState parent and children subscribed to same context 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['contextObj'].a;
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState parent and children subscribed to same context 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    let d1 = ctx['contextObj'].b;
+    return block1([d1], [b2]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState several nodes on different level use same context 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><block-text-0/> <block-text-1/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['contextObj'].a;
+    let d2 = ctx['contextObj'].b;
+    return block1([d1, d2]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState several nodes on different level use same context 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['contextObj'].b;
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState several nodes on different level use same context 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><block-text-0/><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['contextObj'].a;
+    let b2 = component(\`L3A\`, {}, key + \`__1\`, node, ctx);
+    return block1([d1], [b2]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState several nodes on different level use same context 4`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = component(\`L2A\`, {}, key + \`__1\`, node, ctx);
+    let b3 = component(\`L2B\`, {}, key + \`__2\`, node, ctx);
+    return block1([], [b2, b3]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState two components are updated in parallel 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['contextObj'].value;
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState two components are updated in parallel 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    let b3 = component(\`Child\`, {}, key + \`__2\`, node, ctx);
+    return block1([], [b2, b3]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState two components can subscribe to same context 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['contextObj'].value;
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState two components can subscribe to same context 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    let b3 = component(\`Child\`, {}, key + \`__2\`, node, ctx);
+    return block1([], [b2, b3]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState two independent components on different levels are updated in parallel 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['contextObj'].value;
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState two independent components on different levels are updated in parallel 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState two independent components on different levels are updated in parallel 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    let b3 = component(\`Parent\`, {}, key + \`__2\`, node, ctx);
+    return block1([], [b2, b3]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState useContext=useState hook is reactive, for one component 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['contextObj'].value;
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState useless atoms should be deleted 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['state'].quantity;
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState useless atoms should be deleted 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/> Total: <block-text-0/> Count: <block-text-1/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(Object.keys(ctx['state']));
+    for (let i1 = 0; i1 < l_block2; i1++) {
+      ctx[\`id\`] = v_block2[i1];
+      let key1 = ctx['id'];
+      c_block2[i1] = withKey(component(\`Quantity\`, {id: ctx['id']}, key + \`__1__\${key1}\`, node, ctx), key1);
+    }
+    ctx = ctx.__proto__;
+    let b2 = list(c_block2);
+    let d1 = ctx['total'];
+    let d2 = Object.keys(ctx['state']).length;
+    return block1([d1, d2], [b2]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState very simple use, with initial value 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['contextObj'].value;
+    return block1([d1]);
+  }
+}"
+`;

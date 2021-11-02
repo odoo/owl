@@ -42,7 +42,7 @@ export function component(
   } else {
     // new component
     const C = isDynamic ? name : parent.constructor.components[name as any];
-    node = new ComponentNode(C, props, ctx.app);
+    node = new ComponentNode(C, props, ctx.app, ctx);
     ctx.children[key] = node;
 
     const fiber = makeChildFiber(node, parentFiber);
@@ -72,6 +72,8 @@ export class ComponentNode<T extends typeof Component = any> implements VNode<Co
   status: STATUS = STATUS.NEW;
 
   renderFn: Function;
+  parent: ComponentNode | null;
+  level: number;
   children: { [key: string]: ComponentNode } = Object.create(null);
   slots: any = {};
   refs: any = {};
@@ -84,9 +86,11 @@ export class ComponentNode<T extends typeof Component = any> implements VNode<Co
   patched: LifecycleHook[] = [];
   destroyed: LifecycleHook[] = [];
 
-  constructor(C: T, props: any, app: App) {
+  constructor(C: T, props: any, app: App, parent?: ComponentNode) {
     currentNode = this;
     this.app = app;
+    this.parent = parent || null;
+    this.level = parent ? parent.level + 1 : 0;
     applyDefaultProps(props, C);
     this.component = new C(props, app.env, this) as any;
     this.renderFn = app.getTemplate(C.template).bind(null, this.component, this);

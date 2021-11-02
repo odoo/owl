@@ -44,6 +44,7 @@ describe("qweb parser", () => {
       attrs: {},
       on: {},
       ref: null,
+      model: null,
     });
   });
 
@@ -68,6 +69,7 @@ describe("qweb parser", () => {
       attrs: {},
       on: {},
       ref: null,
+      model: null,
       content: [],
     });
   });
@@ -79,6 +81,7 @@ describe("qweb parser", () => {
       attrs: {},
       on: {},
       ref: null,
+      model: null,
       content: [{ type: ASTType.Text, value: "some text" }],
     });
   });
@@ -90,6 +93,7 @@ describe("qweb parser", () => {
       attrs: {},
       on: {},
       ref: null,
+      model: null,
       content: [
         { type: ASTType.Text, value: "some text" },
         {
@@ -98,6 +102,7 @@ describe("qweb parser", () => {
           attrs: {},
           on: {},
           ref: null,
+          model: null,
           content: [{ type: ASTType.Text, value: "inside" }],
         },
       ],
@@ -108,8 +113,24 @@ describe("qweb parser", () => {
     expect(parse("<div></div><span></span>")).toEqual({
       type: ASTType.Multi,
       content: [
-        { type: ASTType.DomNode, tag: "div", attrs: {}, on: {}, ref: null, content: [] },
-        { type: ASTType.DomNode, tag: "span", attrs: {}, on: {}, ref: null, content: [] },
+        {
+          type: ASTType.DomNode,
+          tag: "div",
+          attrs: {},
+          on: {},
+          ref: null,
+          model: null,
+          content: [],
+        },
+        {
+          type: ASTType.DomNode,
+          tag: "span",
+          attrs: {},
+          on: {},
+          ref: null,
+          model: null,
+          content: [],
+        },
       ],
     });
   });
@@ -119,7 +140,15 @@ describe("qweb parser", () => {
       type: ASTType.Multi,
       content: [
         { type: ASTType.Text, value: "some text" },
-        { type: ASTType.DomNode, tag: "span", attrs: {}, on: {}, ref: null, content: [] },
+        {
+          type: ASTType.DomNode,
+          tag: "span",
+          attrs: {},
+          on: {},
+          ref: null,
+          model: null,
+          content: [],
+        },
       ],
     });
   });
@@ -131,6 +160,7 @@ describe("qweb parser", () => {
       attrs: { class: "abc" },
       on: {},
       ref: null,
+      model: null,
       content: [{ type: ASTType.Text, value: "foo" }],
     });
   });
@@ -159,6 +189,7 @@ describe("qweb parser", () => {
       attrs: {},
       on: {},
       ref: null,
+      model: null,
       content: [{ type: ASTType.TEsc, expr: "text", defaultValue: "" }],
     });
   });
@@ -178,6 +209,7 @@ describe("qweb parser", () => {
       attrs: {},
       on: {},
       ref: null,
+      model: null,
       content: [{ type: ASTType.TEsc, expr: "text", defaultValue: "hey" }],
     });
   });
@@ -201,6 +233,7 @@ describe("qweb parser", () => {
       attrs: {},
       on: {},
       ref: null,
+      model: null,
       content: [{ type: ASTType.TRaw, expr: "text", body: null }],
     });
   });
@@ -212,6 +245,7 @@ describe("qweb parser", () => {
       attrs: {},
       on: {},
       ref: null,
+      model: null,
       content: [
         { type: ASTType.TRaw, expr: "text", body: [{ type: ASTType.Text, value: "body" }] },
       ],
@@ -229,6 +263,7 @@ describe("qweb parser", () => {
       attrs: {},
       on: {},
       ref: null,
+      model: null,
       content: [
         {
           type: ASTType.TIf,
@@ -254,6 +289,7 @@ describe("qweb parser", () => {
         attrs: {},
         on: {},
         ref: null,
+        model: null,
         content: [{ type: ASTType.Text, value: "hey" }],
       },
       tElif: null,
@@ -328,6 +364,7 @@ describe("qweb parser", () => {
         attrs: {},
         on: {},
         ref: null,
+        model: null,
         content: [
           {
             type: ASTType.Text,
@@ -344,6 +381,7 @@ describe("qweb parser", () => {
             attrs: {},
             on: {},
             ref: null,
+            model: null,
             content: [{ type: ASTType.Text, value: "elif" }],
           },
         },
@@ -354,6 +392,7 @@ describe("qweb parser", () => {
         attrs: {},
         on: {},
         ref: null,
+        model: null,
         content: [
           {
             type: ASTType.Text,
@@ -399,6 +438,7 @@ describe("qweb parser", () => {
           on: {},
           tag: "div",
           ref: null,
+          model: null,
           content: [{ type: ASTType.Text, value: "ok" }],
         },
       ],
@@ -416,6 +456,7 @@ describe("qweb parser", () => {
           on: {},
           tag: "div",
           ref: null,
+          model: null,
           content: [{ type: ASTType.Text, value: "ok" }],
         },
         { type: ASTType.Text, value: "abc" },
@@ -448,6 +489,7 @@ describe("qweb parser", () => {
       attrs: {},
       on: {},
       ref: null,
+      model: null,
       content: [
         {
           type: ASTType.TIf,
@@ -520,6 +562,7 @@ describe("qweb parser", () => {
         attrs: {},
         on: {},
         ref: null,
+        model: null,
         content: [{ type: ASTType.TEsc, expr: "item", defaultValue: "" }],
       },
       memo: "",
@@ -563,6 +606,7 @@ describe("qweb parser", () => {
         attrs: {},
         on: {},
         ref: null,
+        model: null,
         content: [{ type: ASTType.TEsc, expr: "item", defaultValue: "" }],
       },
       memo: "",
@@ -596,6 +640,7 @@ describe("qweb parser", () => {
           attrs: {},
           on: {},
           ref: null,
+          model: null,
           content: [{ type: ASTType.TEsc, expr: "item", defaultValue: "" }],
         },
       },
@@ -628,6 +673,7 @@ describe("qweb parser", () => {
         },
         on: {},
         ref: null,
+        model: null,
         content: [{ type: ASTType.TEsc, expr: "category.name", defaultValue: "" }],
       },
       memo: "",
@@ -646,6 +692,7 @@ describe("qweb parser", () => {
       attrs: {},
       on: {},
       ref: null,
+      model: null,
       tag: "div",
       content: [
         {
@@ -689,6 +736,7 @@ describe("qweb parser", () => {
         tag: "span",
         on: {},
         ref: null,
+        model: null,
         attrs: {},
         content: [{ type: ASTType.TEsc, expr: "item", defaultValue: "" }],
       },
@@ -795,6 +843,7 @@ describe("qweb parser", () => {
       attrs: {},
       on: {},
       ref: null,
+      model: null,
       content: [
         {
           type: ASTType.TCall,
@@ -830,6 +879,7 @@ describe("qweb parser", () => {
       attrs: {},
       on: { click: "add" },
       ref: null,
+      model: null,
       content: [{ type: ASTType.Text, value: "Click" }],
     });
   });
@@ -899,8 +949,24 @@ describe("qweb parser", () => {
         default: {
           type: ASTType.Multi,
           content: [
-            { type: ASTType.DomNode, tag: "span", attrs: {}, content: [], ref: null, on: {} },
-            { type: ASTType.DomNode, tag: "div", attrs: {}, content: [], ref: null, on: {} },
+            {
+              type: ASTType.DomNode,
+              tag: "span",
+              attrs: {},
+              content: [],
+              ref: null,
+              model: null,
+              on: {},
+            },
+            {
+              type: ASTType.DomNode,
+              tag: "div",
+              attrs: {},
+              content: [],
+              ref: null,
+              model: null,
+              on: {},
+            },
           ],
         },
       },
@@ -1093,6 +1159,7 @@ describe("qweb parser", () => {
         attrs: {},
         on: {},
         ref: null,
+        model: null,
         content: [{ type: ASTType.Text, value: "hey" }],
       },
     });
@@ -1108,6 +1175,7 @@ describe("qweb parser", () => {
         attrs: {},
         on: {},
         ref: null,
+        model: null,
         content: [{ type: ASTType.Text, value: "hey" }],
       },
     });
@@ -1124,6 +1192,7 @@ describe("qweb parser", () => {
       attrs: {},
       on: {},
       ref: "name",
+      model: null,
       content: [{ type: ASTType.Text, value: "hey" }],
     });
   });
@@ -1135,6 +1204,7 @@ describe("qweb parser", () => {
       attrs: {},
       on: {},
       ref: "name",
+      model: null,
       content: [
         { type: ASTType.TRaw, expr: "text", body: [{ type: ASTType.Text, value: "body" }] },
       ],
@@ -1148,6 +1218,7 @@ describe("qweb parser", () => {
       attrs: {},
       on: {},
       ref: "name",
+      model: null,
       content: [{ type: ASTType.TEsc, expr: "text", defaultValue: "body" }],
     });
   });
@@ -1188,6 +1259,7 @@ describe("qweb parser", () => {
           ],
           on: {},
           ref: null,
+          model: null,
           tag: "div",
           type: 2,
         },
@@ -1205,5 +1277,130 @@ describe("qweb parser", () => {
       memo: "",
       type: 9,
     });
+  });
+
+  // ---------------------------------------------------------------------------
+  // t-model
+  // ---------------------------------------------------------------------------
+  test("t-model", async () => {
+    expect(parse(`<input t-model="state.stuff" />`)).toEqual({
+      type: ASTType.DomNode,
+      attrs: {},
+      content: [],
+      on: {},
+      ref: null,
+      tag: "input",
+      model: {
+        baseExpr: "state",
+        expr: "'stuff'",
+        eventType: "input",
+        shouldNumberize: false,
+        shouldTrim: false,
+        targetAttr: "value",
+        specialInitTargetAttr: null,
+      },
+    });
+    expect(parse(`<input t-model="state['stuff']" />`)).toEqual({
+      type: ASTType.DomNode,
+      attrs: {},
+      content: [],
+      on: {},
+      ref: null,
+      tag: "input",
+      model: {
+        baseExpr: "state",
+        expr: "'stuff'",
+        eventType: "input",
+        shouldNumberize: false,
+        shouldTrim: false,
+        targetAttr: "value",
+        specialInitTargetAttr: null,
+      },
+    });
+    expect(parse(`<input t-model.lazy.trim.number="state.stuff" />`)).toEqual({
+      type: ASTType.DomNode,
+      attrs: {},
+      content: [],
+      on: {},
+      ref: null,
+      tag: "input",
+      model: {
+        baseExpr: "state",
+        expr: "'stuff'",
+        eventType: "change",
+        shouldNumberize: true,
+        shouldTrim: true,
+        targetAttr: "value",
+        specialInitTargetAttr: null,
+      },
+    });
+  });
+  expect(parse(`<textarea t-model="state.stuff" />`)).toEqual({
+    type: ASTType.DomNode,
+    attrs: {},
+    content: [],
+    on: {},
+    ref: null,
+    tag: "textarea",
+    model: {
+      baseExpr: "state",
+      expr: "'stuff'",
+      eventType: "input",
+      shouldNumberize: false,
+      shouldTrim: false,
+      targetAttr: "value",
+      specialInitTargetAttr: null,
+    },
+  });
+  expect(parse(`<input type="checkbox" t-model="state.stuff" />`)).toEqual({
+    type: ASTType.DomNode,
+    attrs: { type: "checkbox" },
+    content: [],
+    on: {},
+    ref: null,
+    tag: "input",
+    model: {
+      baseExpr: "state",
+      expr: "'stuff'",
+      eventType: "input",
+      shouldNumberize: false,
+      shouldTrim: false,
+      targetAttr: "checked",
+      specialInitTargetAttr: null,
+    },
+  });
+  expect(parse(`<input type="radio" t-model="state.stuff" />`)).toEqual({
+    type: ASTType.DomNode,
+    attrs: { type: "radio" },
+    content: [],
+    on: {},
+    ref: null,
+    tag: "input",
+    model: {
+      baseExpr: "state",
+      expr: "'stuff'",
+      eventType: "click",
+      shouldNumberize: false,
+      shouldTrim: false,
+      targetAttr: "value",
+      specialInitTargetAttr: "checked",
+    },
+  });
+  expect(parse(`<input type="radio" t-model.lazy.trim.number="state.stuff" />`)).toEqual({
+    type: ASTType.DomNode,
+    attrs: { type: "radio" },
+    content: [],
+    on: {},
+    ref: null,
+    tag: "input",
+    model: {
+      baseExpr: "state",
+      expr: "'stuff'",
+      eventType: "click",
+      shouldNumberize: false,
+      shouldTrim: false,
+      targetAttr: "value",
+      specialInitTargetAttr: "checked",
+    },
   });
 });

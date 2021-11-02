@@ -95,6 +95,7 @@ export const UTILS = {
   prepareList,
   setContextValue,
   shallowEqual,
+  toNumber,
   validateProps,
 };
 
@@ -144,6 +145,11 @@ export class TemplateSet {
     }
     return this.templates[name];
   }
+}
+
+function toNumber(val: string): number | string {
+  const n = parseFloat(val);
+  return isNaN(n) ? val : n;
 }
 
 function shallowEqual(l1: any[], l2: any[]): boolean {

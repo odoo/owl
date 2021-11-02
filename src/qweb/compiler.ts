@@ -277,7 +277,7 @@ export class QWebCompiler {
     // define blocks and utility functions
     this.addLine(`let { text, createBlock, list, multi, html, toggler, component } = bdom;`);
     this.addLine(
-      `let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;`
+      `let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;`
     );
     if (this.shouldDefineAssign) {
       this.addLine(`let assign = Object.assign;`);
@@ -552,6 +552,41 @@ export class QWebCompiler {
         const idx = block!.insertData(`(el) => refs[\`${ast.ref}\`] = el`);
         attrs["block-ref"] = String(idx);
       }
+    }
+
+    // t-model
+    if (ast.model) {
+      const {
+        baseExpr,
+        expr,
+        eventType,
+        shouldNumberize,
+        shouldTrim,
+        targetAttr,
+        specialInitTargetAttr,
+      } = ast.model;
+
+      const baseExpression = compileExpr(baseExpr);
+      const id = this.generateId();
+      this.addLine(`const bExpr${id} = ${baseExpression};`);
+
+      const expression = compileExpr(expr);
+
+      let idx: number;
+      if (specialInitTargetAttr) {
+        idx = block!.insertData(`${baseExpression}[${expression}] === '${attrs[targetAttr]}'`);
+        attrs[`block-attribute-${idx}`] = specialInitTargetAttr;
+      } else {
+        idx = block!.insertData(`${baseExpression}[${expression}]`);
+        attrs[`block-attribute-${idx}`] = targetAttr;
+      }
+      let valueCode = `ev.target.${targetAttr}`;
+      valueCode = shouldTrim ? `${valueCode}.trim()` : valueCode;
+      valueCode = shouldNumberize ? `toNumber(${valueCode})` : valueCode;
+
+      const handler = `[(ev) => { bExpr${id}[${expression}] = ${valueCode}; }]`;
+      idx = block!.insertData(handler);
+      attrs[`block-handler-${idx}`] = eventType;
     }
 
     const dom = xmlDoc.createElement(ast.tag);

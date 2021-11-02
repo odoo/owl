@@ -4,7 +4,7 @@ exports[`basics accept ES6-like syntax for props (with getters) 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
@@ -19,7 +19,7 @@ exports[`basics accept ES6-like syntax for props (with getters) 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -34,7 +34,7 @@ exports[`basics explicit object prop 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
@@ -49,7 +49,7 @@ exports[`basics explicit object prop 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -64,7 +64,7 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/><block-child-0/></span>\`);
   
@@ -80,7 +80,7 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<p>43</p>\`);
@@ -100,7 +100,7 @@ exports[`basics t-set with a body expression can be used as textual prop 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
@@ -115,7 +115,7 @@ exports[`basics t-set with a body expression can be used as textual prop 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -133,7 +133,7 @@ exports[`basics t-set works  1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
@@ -148,7 +148,7 @@ exports[`basics t-set works  2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   

@@ -4,7 +4,7 @@ exports[`Memo if no prop change, prevent renderings from above  1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return text(ctx['props'].value);
@@ -16,7 +16,7 @@ exports[`Memo if no prop change, prevent renderings from above  2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   const slot2 = ctx => (node, key) => {
@@ -40,7 +40,7 @@ exports[`Memo if no props, prevent renderings from above  1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return text(ctx['props'].value);
@@ -52,7 +52,7 @@ exports[`Memo if no props, prevent renderings from above  2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   const slot3 = ctx => (node, key) => {
@@ -71,7 +71,7 @@ exports[`Memo if no props, prevent renderings from above (work with simple html)
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   const slot2 = ctx => (node, key) => {

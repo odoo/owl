@@ -144,10 +144,10 @@ export function isProp(tag: string, key: string): boolean {
     case "option":
       return key === "selected" || key === "disabled";
     case "textarea":
-      return key === "readonly" || key === "disabled";
-      break;
-    case "button":
+      return key === "value" || key === "readonly" || key === "disabled";
     case "select":
+      return key === "value" || key === "disabled";
+    case "button":
     case "optgroup":
       return key === "disabled";
   }

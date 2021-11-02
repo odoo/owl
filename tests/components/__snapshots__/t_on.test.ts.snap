@@ -4,7 +4,7 @@ exports[`t-on t-on expression captured in t-foreach 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<div><button block-handler-0=\\"click\\">expr</button></div>\`);
@@ -34,7 +34,7 @@ exports[`t-on t-on expression in t-foreach 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<div><block-text-0/>: <block-text-1/><button block-handler-2=\\"click\\">Expr</button></div>\`);
@@ -63,7 +63,7 @@ exports[`t-on t-on expression in t-foreach with t-set 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<div><block-text-0/>: <block-text-1/><button block-handler-2=\\"click\\">Expr</button></div>\`);
@@ -97,7 +97,7 @@ exports[`t-on t-on method call in t-foreach 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<div><block-text-0/>: <block-text-1/><button block-handler-2=\\"click\\">meth call</button></div>\`);
@@ -125,7 +125,7 @@ exports[`t-on t-on on destroyed components 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div block-handler-0=\\"click\\"/>\`);
   
@@ -140,7 +140,7 @@ exports[`t-on t-on on destroyed components 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   

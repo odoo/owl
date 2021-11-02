@@ -4,7 +4,7 @@ exports[`white space handling consecutives whitespaces are condensed into a sing
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div> abc </div>\`);
   
@@ -18,7 +18,7 @@ exports[`white space handling nothing is done in pre tags 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<pre>   </pre>\`);
   
@@ -32,7 +32,7 @@ exports[`white space handling nothing is done in pre tags 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<pre>
           some text
@@ -48,7 +48,7 @@ exports[`white space handling nothing is done in pre tags 3`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<pre>
           
@@ -64,7 +64,7 @@ exports[`white space handling white space only text nodes are condensed into a s
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div> </div>\`);
   
@@ -78,7 +78,7 @@ exports[`white space handling whitespace only text nodes with newlines are remov
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><span>abc</span></div>\`);
   

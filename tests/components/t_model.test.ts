@@ -10,7 +10,7 @@ beforeEach(() => {
   fixture = makeTestFixture();
 });
 
-describe.skip("t-model directive", () => {
+describe("t-model directive", () => {
   test("basic use, on an input", async () => {
     class SomeComponent extends Component {
       static template = xml`
@@ -113,7 +113,7 @@ describe.skip("t-model directive", () => {
 
   test("on an textarea", async () => {
     class SomeComponent extends Component {
-      static template = xml`<div">
+      static template = xml`<div>
             <textarea t-model="state.text"/>
             <span><t t-esc="state.text"/></span>
         </div>`;
@@ -159,6 +159,24 @@ describe.skip("t-model directive", () => {
     expect(fixture.innerHTML).toBe(
       '<div><input type="radio" id="one" value="One"><input type="radio" id="two" value="Two"><span>Choice: Two</span></div>'
     );
+  });
+
+  test("on an input type=radio, with initial value", async () => {
+    class SomeComponent extends Component {
+      static template = xml`<div>
+            <input type="radio" id="one" value="One" t-model="state.choice"/>
+            <input type="radio" id="two" value="Two" t-model="state.choice"/>
+        </div>`;
+      state = useState({ choice: "Two" });
+    }
+    await mount(SomeComponent, fixture);
+
+    expect(fixture.innerHTML).toBe(
+      '<div><input type="radio" id="one" value="One"><input type="radio" id="two" value="Two"></div>'
+    );
+
+    const secondInput = fixture.querySelectorAll("input")[1];
+    expect(secondInput.checked).toBe(true);
   });
 
   test("on a select", async () => {
@@ -257,7 +275,7 @@ describe.skip("t-model directive", () => {
   test(".trim modifier", async () => {
     class SomeComponent extends Component {
       static template = xml`
-        <div t-name="SomeComponent">
+        <div>
           <input t-model.trim="state.text"/>
           <span><t t-esc="state.text"/></span>
         </div>
@@ -338,28 +356,101 @@ describe.skip("t-model directive", () => {
     expect(comp.state).toEqual(["zuko", "iroh"]);
 
     const input = fixture.querySelectorAll("input")[1]!;
-    input.value = "uncle iroh";
-    input.dispatchEvent(new Event("input"));
+    await editInput(input, "uncle iroh");
     expect(comp.state).toEqual(["zuko", "uncle iroh"]);
   });
 
-  test("two inputs in a div with a t-key", async () => {
+  test("two inputs in a div alternating with a t-if", async () => {
     class SomeComponent extends Component {
       static template = xml`
-        <div t-key="'key'">
-          <input class="a" t-if="state.flag"/>
-          <input class="b" t-if="!state.flag"/>
+        <div>
+          <input class="a" t-if="state.flag" t-model="state.text1"/>
+          <input class="b" t-if="!state.flag" t-model="state.text2"/>
         </div>
       `;
-      state = useState({ flag: true });
+      state = useState({ flag: true, text1: "", text2: "" });
     }
     const comp = await mount(SomeComponent, fixture);
+
     expect(fixture.innerHTML).toBe('<div><input class="a"></div>');
-    fixture.querySelector("input")!.value = "asdf";
-    expect(fixture.querySelector("input")!.value).toBe("asdf");
+    let input = fixture.querySelector("input")!;
+    expect(input.value).toBe("");
+    await editInput(input, "Jean-Luc");
+    expect(comp.state.text1).toBe("Jean-Luc");
+
     comp.state.flag = false;
     await nextTick();
+
     expect(fixture.innerHTML).toBe('<div><input class="b"></div>');
-    expect(fixture.querySelector("input")!.value).toBe("");
+    input = fixture.querySelector("input")!;
+    expect(input.value).toBe("");
+    await editInput(input, "Picard");
+    expect(comp.state.text2).toBe("Picard");
+  });
+
+  test("following a scope protecting directive (e.g. t-set)", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+        <div>
+          <t t-set="admiral" t-value="'Bruno'"/>
+          <input t-model="state['text']"/>
+        </div>
+      `;
+      state = useState({ text: "Jean-Luc Picard" });
+    }
+    const comp = await mount(SomeComponent, fixture);
+    expect(fixture.innerHTML).toBe("<div><input></div>");
+    const input = fixture.querySelector("input")!;
+    expect(input.value).toBe("Jean-Luc Picard");
+    await editInput(input, "Commander Data");
+    expect(comp.state.text).toBe("Commander Data");
+  });
+
+  test("throws when conflicting with t-on directive, part 1", async () => {
+    class SomeComponent extends Component {
+      static template = xml`<div><input t-model="state['text']" t-on-input="() => {}"/></div>`;
+      state = useState({ text: "" });
+    }
+    let error;
+    try {
+      await mount(SomeComponent, fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error.message).toBe(
+      "Conflicting t-model and t-on-input directives on event type: input"
+    );
+  });
+
+  test("throws when conflicting with t-on directive, part 2", async () => {
+    class SomeComponent extends Component {
+      static template = xml`<div><input t-model.lazy="state['text']" t-on-change="() => {}"/></div>`;
+      state = useState({ text: "" });
+    }
+    let error;
+    try {
+      await mount(SomeComponent, fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error.message).toBe(
+      "Conflicting t-model and t-on-change directives on event type: change"
+    );
+  });
+
+  test("throws when conflicting with t-on directive, part 3", async () => {
+    class SomeComponent extends Component {
+      static template = xml`<div><input type="radio" t-model="state['text']" t-on-click="() => {}"/></div>`;
+      state = useState({ text: "" });
+    }
+    let error;
+    try {
+      await mount(SomeComponent, fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error.message).toBe(
+      "Conflicting t-model and t-on-click directives on event type: click"
+    );
   });
 });

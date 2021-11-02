@@ -4,7 +4,7 @@ exports[`slots can define and call slots 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><div><block-child-0/></div><div><block-child-1/></div></div>\`);
   
@@ -20,7 +20,7 @@ exports[`slots can define and call slots 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -47,7 +47,7 @@ exports[`slots content is the default slot (variation) 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return callSlot(ctx, node, key, 'default');
@@ -59,7 +59,7 @@ exports[`slots content is the default slot (variation) 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<span>sts rocks</span>\`);
@@ -78,7 +78,7 @@ exports[`slots content is the default slot 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -93,7 +93,7 @@ exports[`slots content is the default slot 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -114,7 +114,7 @@ exports[`slots dafault slots can define a default content 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -133,7 +133,7 @@ exports[`slots dafault slots can define a default content 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -148,7 +148,7 @@ exports[`slots default content is not rendered if named slot is provided 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -167,7 +167,7 @@ exports[`slots default content is not rendered if named slot is provided 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -188,7 +188,7 @@ exports[`slots default content is not rendered if slot is provided 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -207,7 +207,7 @@ exports[`slots default content is not rendered if slot is provided 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -227,7 +227,7 @@ exports[`slots default slot next to named slot, with default content 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div class=\\"Dialog\\"><div class=\\"content\\"><block-child-0/></div><div class=\\"footer\\"><block-child-1/></div></div>\`);
   
@@ -251,7 +251,7 @@ exports[`slots default slot next to named slot, with default content 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -272,7 +272,7 @@ exports[`slots default slot work with text nodes (variation) 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return callSlot(ctx, node, key, 'default');
@@ -284,7 +284,7 @@ exports[`slots default slot work with text nodes (variation) 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   const slot2 = ctx => (node, key) => {
@@ -301,7 +301,7 @@ exports[`slots default slot work with text nodes 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -316,7 +316,7 @@ exports[`slots default slot work with text nodes 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -336,7 +336,7 @@ exports[`slots dynamic t-slot call 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-child-0/></button>\`);
   
@@ -353,7 +353,7 @@ exports[`slots dynamic t-slot call 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -383,7 +383,7 @@ exports[`slots dynamic t-slot call with default 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-child-0/></button>\`);
   
@@ -403,7 +403,7 @@ exports[`slots dynamic t-slot call with default 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -433,7 +433,7 @@ exports[`slots fun: two calls to the same slot 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callSlot(ctx, node, key, 'default');
@@ -447,7 +447,7 @@ exports[`slots fun: two calls to the same slot 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   const slot2 = ctx => (node, key) => {
@@ -464,7 +464,7 @@ exports[`slots missing slots are ignored 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/><span>some content</span><block-child-1/></span>\`);
   
@@ -480,7 +480,7 @@ exports[`slots missing slots are ignored 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -495,7 +495,7 @@ exports[`slots multiple roots are allowed in a default slot 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -510,7 +510,7 @@ exports[`slots multiple roots are allowed in a default slot 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -534,7 +534,7 @@ exports[`slots multiple roots are allowed in a named slot 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -549,7 +549,7 @@ exports[`slots multiple roots are allowed in a named slot 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -574,7 +574,7 @@ exports[`slots multiple slots containing components 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
@@ -589,7 +589,7 @@ exports[`slots multiple slots containing components 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -605,7 +605,7 @@ exports[`slots multiple slots containing components 3`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   const slot3 = ctx => (node, key) => {
@@ -627,7 +627,7 @@ exports[`slots named slot inside slot 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -643,7 +643,7 @@ exports[`slots named slot inside slot 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -677,7 +677,7 @@ exports[`slots named slot inside slot, part 3 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -693,7 +693,7 @@ exports[`slots named slot inside slot, part 3 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -727,7 +727,7 @@ exports[`slots named slots can define a default content 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -746,7 +746,7 @@ exports[`slots named slots can define a default content 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -761,7 +761,7 @@ exports[`slots named slots inside slot, again 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<child><block-child-0/><block-child-1/><block-child-2/></child>\`);
   
@@ -786,7 +786,7 @@ exports[`slots named slots inside slot, again 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -820,7 +820,7 @@ exports[`slots nested slots in same template 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span id=\\"c1\\"><div><block-child-0/></div></span>\`);
   
@@ -835,7 +835,7 @@ exports[`slots nested slots in same template 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span id=\\"c2\\"><block-child-0/></span>\`);
   
@@ -850,7 +850,7 @@ exports[`slots nested slots in same template 3`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span>Child 3</span>\`);
   
@@ -864,7 +864,7 @@ exports[`slots nested slots in same template 4`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<span id=\\"parent\\"><block-child-0/></span>\`);
@@ -888,7 +888,7 @@ exports[`slots nested slots: evaluation context and parented relationship 1`] = 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
@@ -903,7 +903,7 @@ exports[`slots nested slots: evaluation context and parented relationship 2`] = 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -918,7 +918,7 @@ exports[`slots nested slots: evaluation context and parented relationship 3`] = 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   const slot2 = ctx => (node, key) => {
@@ -935,7 +935,7 @@ exports[`slots nested slots: evaluation context and parented relationship 4`] = 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   const slot2 = ctx => (node, key) => {
@@ -952,7 +952,7 @@ exports[`slots no named slot content => just no children 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -967,7 +967,7 @@ exports[`slots no named slot content => just no children 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Dialog\`, {}, key + \`__1\`, node, ctx);
@@ -979,7 +979,7 @@ exports[`slots simple default slot 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -994,7 +994,7 @@ exports[`slots simple default slot 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   const slot2 = ctx => (node, key) => {
@@ -1011,7 +1011,7 @@ exports[`slots simple default slot, variation 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return callSlot(ctx, node, key, 'default');
@@ -1023,7 +1023,7 @@ exports[`slots simple default slot, variation 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   const slot2 = ctx => (node, key) => {
@@ -1040,7 +1040,7 @@ exports[`slots slot and (inline) t-call 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<p>sokka</p>\`);
   
@@ -1054,7 +1054,7 @@ exports[`slots slot and (inline) t-call 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -1069,7 +1069,7 @@ exports[`slots slot and (inline) t-call 3`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   const callTemplate_5 = getTemplate(\`__template__9\`);
   
@@ -1091,7 +1091,7 @@ exports[`slots slot and (inline) t-esc 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -1106,7 +1106,7 @@ exports[`slots slot and (inline) t-esc 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -1126,7 +1126,7 @@ exports[`slots slot and t-call 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<p>sokka</p>\`);
   
@@ -1140,7 +1140,7 @@ exports[`slots slot and t-call 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -1155,7 +1155,7 @@ exports[`slots slot and t-call 3`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   const callTemplate_5 = getTemplate(\`__template__9\`);
   
@@ -1177,7 +1177,7 @@ exports[`slots slot and t-esc 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -1192,7 +1192,7 @@ exports[`slots slot and t-esc 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -1212,7 +1212,7 @@ exports[`slots slot are properly rendered if inner props are changed 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div> SC:<block-text-0/></div>\`);
   
@@ -1227,7 +1227,7 @@ exports[`slots slot are properly rendered if inner props are changed 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1242,7 +1242,7 @@ exports[`slots slot are properly rendered if inner props are changed 3`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><button block-handler-0=\\"click\\">Inc[<block-text-1/>]</button><block-child-0/></div>\`);
@@ -1264,7 +1264,7 @@ exports[`slots slot content is bound to caller 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -1279,7 +1279,7 @@ exports[`slots slot content is bound to caller 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\">some text</button>\`);
@@ -1299,7 +1299,7 @@ exports[`slots slot preserves properly parented relationship 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return callSlot(ctx, node, key, 'default');
@@ -1311,7 +1311,7 @@ exports[`slots slot preserves properly parented relationship 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return text(\`Grand Child\`);
@@ -1323,7 +1323,7 @@ exports[`slots slot preserves properly parented relationship 3`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -1343,7 +1343,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return callSlot(ctx, node, key, 'default');
@@ -1355,7 +1355,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return text(\`Grand Child\`);
@@ -1367,7 +1367,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`GrandChild\`, {}, key + \`__1\`, node, ctx);
@@ -1379,7 +1379,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   const callTemplate_5 = getTemplate(\`sub\`);
   
@@ -1401,7 +1401,7 @@ exports[`slots slots and wrapper components 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<a href=\\"abc\\"><block-child-0/></a>\`);
   
@@ -1416,7 +1416,7 @@ exports[`slots slots and wrapper components 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   const slot2 = ctx => (node, key) => {
@@ -1433,7 +1433,7 @@ exports[`slots slots are rendered with proper context 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -1448,7 +1448,7 @@ exports[`slots slots are rendered with proper context 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><span class=\\"counter\\"><block-text-0/></span><block-child-0/></div>\`);
@@ -1472,7 +1472,7 @@ exports[`slots slots are rendered with proper context, part 2 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<a block-attribute-0=\\"href\\"><block-child-0/></a>\`);
   
@@ -1488,7 +1488,7 @@ exports[`slots slots are rendered with proper context, part 2 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><u><block-child-0/></u></div>\`);
@@ -1520,7 +1520,7 @@ exports[`slots slots are rendered with proper context, part 3 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<a block-attribute-0=\\"href\\"><block-child-0/></a>\`);
   
@@ -1536,7 +1536,7 @@ exports[`slots slots are rendered with proper context, part 3 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><u><block-child-0/></u></div>\`);
@@ -1569,7 +1569,7 @@ exports[`slots slots are rendered with proper context, part 4 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<a block-attribute-0=\\"href\\"><block-child-0/></a>\`);
   
@@ -1585,7 +1585,7 @@ exports[`slots slots are rendered with proper context, part 4 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -1609,7 +1609,7 @@ exports[`slots slots in slots, with vars 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -1624,7 +1624,7 @@ exports[`slots slots in slots, with vars 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -1644,7 +1644,7 @@ exports[`slots slots in slots, with vars 3`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -1670,7 +1670,7 @@ exports[`slots slots in t-foreach and re-rendering 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/><block-child-0/></span>\`);
   
@@ -1686,7 +1686,7 @@ exports[`slots slots in t-foreach and re-rendering 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -1715,7 +1715,7 @@ exports[`slots slots in t-foreach in t-foreach 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1730,7 +1730,7 @@ exports[`slots slots in t-foreach in t-foreach 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -1774,7 +1774,7 @@ exports[`slots slots in t-foreach with t-set and re-rendering 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/><block-child-0/></span>\`);
   
@@ -1790,7 +1790,7 @@ exports[`slots slots in t-foreach with t-set and re-rendering 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -1822,7 +1822,7 @@ exports[`slots t-debug on a t-set-slot (defining a slot) 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -1837,7 +1837,7 @@ exports[`slots t-debug on a t-set-slot (defining a slot) 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -1859,7 +1859,7 @@ exports[`slots t-set t-value in a slot 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -1874,7 +1874,7 @@ exports[`slots t-set t-value in a slot 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -1898,7 +1898,7 @@ exports[`slots t-slot in recursive templates 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<wrapper><block-child-0/></wrapper>\`);
   
@@ -1913,7 +1913,7 @@ exports[`slots t-slot in recursive templates 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   const callTemplate_5 = getTemplate(\`_test_recursive_template\`);
   
@@ -1959,7 +1959,7 @@ exports[`slots t-slot nested within another slot 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span>Child 3</span>\`);
   
@@ -1973,7 +1973,7 @@ exports[`slots t-slot nested within another slot 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span id=\\"modal\\"><block-child-0/></span>\`);
   
@@ -1988,7 +1988,7 @@ exports[`slots t-slot nested within another slot 3`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span id=\\"portal\\"><block-child-0/></span>\`);
   
@@ -2003,7 +2003,7 @@ exports[`slots t-slot nested within another slot 4`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<span id=\\"c2\\"><block-child-0/></span>\`);
@@ -2027,7 +2027,7 @@ exports[`slots t-slot nested within another slot 5`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<span id=\\"c1\\"><block-child-0/></span>\`);
@@ -2047,7 +2047,7 @@ exports[`slots t-slot scope context 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return callSlot(ctx, node, key, 'default');
@@ -2059,7 +2059,7 @@ exports[`slots t-slot scope context 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div block-handler-0=\\"click\\"><block-child-0/></div>\`);
@@ -2080,7 +2080,7 @@ exports[`slots t-slot scope context 3`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<button>The Button</button>\`);
@@ -2099,7 +2099,7 @@ exports[`slots t-slot within dynamic t-call 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div class=\\"child\\"/>\`);
   
@@ -2113,7 +2113,7 @@ exports[`slots t-slot within dynamic t-call 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div class=\\"slotted\\"><block-child-0/></div>\`);
   
@@ -2128,7 +2128,7 @@ exports[`slots t-slot within dynamic t-call 3`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div class=\\"slot\\"><block-child-0/></div>\`);
   
@@ -2143,7 +2143,7 @@ exports[`slots t-slot within dynamic t-call 4`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -2165,7 +2165,7 @@ exports[`slots template can just return a slot 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
@@ -2180,7 +2180,7 @@ exports[`slots template can just return a slot 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return callSlot(ctx, node, key, 'default');
@@ -2192,7 +2192,7 @@ exports[`slots template can just return a slot 3`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);

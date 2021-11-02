@@ -39,6 +39,15 @@ export interface ASTDomNode {
   content: AST[];
   ref: string | null;
   on: { [key: string]: string };
+  model: {
+    baseExpr: string;
+    expr: string;
+    targetAttr: string;
+    specialInitTargetAttr: string | null;
+    eventType: "change" | "click" | "input";
+    shouldTrim: boolean;
+    shouldNumberize: boolean;
+  } | null;
 }
 
 export interface ASTMulti {
@@ -275,13 +284,16 @@ function parseTDebugLog(node: Element, ctx: ParsingContext): AST | null {
 // -----------------------------------------------------------------------------
 // Regular dom node
 // -----------------------------------------------------------------------------
+const hasDotAtTheEnd = /\.[\w_]+\s*$/;
+const hasBracketsAtTheEnd = /\[[^\[]+\]\s*$/;
 
 function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
-  if (node.tagName === "t") {
+  const { tagName } = node;
+  if (tagName === "t") {
     return null;
   }
   const children: AST[] = [];
-  if (node.tagName === "pre") {
+  if (tagName === "pre") {
     ctx = { inPreTag: true };
   }
   let ref = null;
@@ -297,16 +309,64 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
     }
   }
 
+  const nodeAttrsNames = node.getAttributeNames();
   const attrs: ASTDomNode["attrs"] = {};
   const on: ASTDomNode["on"] = {};
+  let model: ASTDomNode["model"] = null;
 
-  for (let attr of node.getAttributeNames()) {
+  for (let attr of nodeAttrsNames) {
     const value = node.getAttribute(attr)!;
     if (attr.startsWith("t-on")) {
       if (attr === "t-on") {
         throw new Error("Missing event name with t-on directive");
       }
       on[attr.slice(5)] = value;
+    } else if (attr.startsWith("t-model")) {
+      if (!["input", "select", "textarea"].includes(tagName)) {
+        throw new Error("The t-model directive only works with <input>, <textarea> and <select>");
+      }
+
+      let baseExpr, expr;
+      if (hasDotAtTheEnd.test(value)) {
+        const index = value.lastIndexOf(".");
+        baseExpr = value.slice(0, index);
+        expr = `'${value.slice(index + 1)}'`;
+      } else if (hasBracketsAtTheEnd.test(value)) {
+        const index = value.lastIndexOf("[");
+        baseExpr = value.slice(0, index);
+        expr = value.slice(index + 1, -1);
+      } else {
+        throw new Error(`Invalid t-model expression: "${value}" (it should be assignable)`);
+      }
+
+      const typeAttr = node.getAttribute("type");
+      const isInput = tagName === "input";
+      const isSelect = tagName === "select";
+      const isTextarea = tagName === "textarea";
+      const isCheckboxInput = isInput && typeAttr === "checkbox";
+      const isRadioInput = isInput && typeAttr === "radio";
+      const isOtherInput = isInput && !isCheckboxInput && !isRadioInput;
+      const hasLazyMod = attr.includes(".lazy");
+      const hasNumberMod = attr.includes(".number");
+      const hasTrimMod = attr.includes(".trim");
+      const eventType = isRadioInput ? "click" : isSelect || hasLazyMod ? "change" : "input";
+      const similarTOnEvent = nodeAttrsNames.find((a) => a.startsWith(`t-on-${eventType}`));
+
+      if (similarTOnEvent) {
+        throw new Error(
+          `Conflicting t-model and ${similarTOnEvent} directives on event type: ${eventType}`
+        );
+      }
+
+      model = {
+        baseExpr,
+        expr,
+        targetAttr: isCheckboxInput ? "checked" : "value",
+        specialInitTargetAttr: isRadioInput ? "checked" : null,
+        eventType,
+        shouldTrim: hasTrimMod && (isOtherInput || isTextarea),
+        shouldNumberize: hasNumberMod && (isOtherInput || isTextarea),
+      };
     } else {
       if (attr.startsWith("t-") && !attr.startsWith("t-att")) {
         throw new Error(`Unknown QWeb directive: '${attr}'`);
@@ -319,11 +379,12 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
   }
   return {
     type: ASTType.DomNode,
-    tag: node.tagName,
+    tag: tagName,
     attrs,
     on,
     ref,
     content: children,
+    model,
   };
 }
 
@@ -356,6 +417,7 @@ function parseTEscNode(node: Element, ctx: ParsingContext): AST | null {
       on: ast.on,
       ref,
       content: [tesc],
+      model: ast.model,
     };
   }
   if (ast && ast.type === ASTType.TComponent) {
@@ -394,6 +456,7 @@ function parseTRawNode(node: Element, ctx: ParsingContext): AST | null {
       on: ast.on,
       ref,
       content: [tRaw],
+      model: ast.model,
     };
   }
 

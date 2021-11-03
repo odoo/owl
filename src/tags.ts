@@ -1,3 +1,4 @@
+import { registerSheet } from "./component/style";
 import { globalTemplates } from "./qweb/template_helpers";
 
 // -----------------------------------------------------------------------------
@@ -12,3 +13,16 @@ export function xml(strings: TemplateStringsArray, ...args: any[]) {
 }
 
 xml.nextId = 1;
+
+// -----------------------------------------------------------------------------
+//  Global stylesheets
+// -----------------------------------------------------------------------------
+
+export function css(strings: TemplateStringsArray, ...args: any[]) {
+  const name = `__sheet__${css.nextId++}`;
+  const value = String.raw(strings, ...args);
+  registerSheet(name, value);
+  return name;
+}
+
+css.nextId = 1;

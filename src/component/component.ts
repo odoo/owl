@@ -6,6 +6,7 @@ import type { ComponentNode } from "./component_node";
 
 export class Component {
   static template: string = "";
+  static style: string = "";
 
   props: any;
   env: any;

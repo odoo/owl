@@ -54,7 +54,7 @@ export function useComponent(): Component {
 export { status } from "./component/status";
 export { Portal } from "./misc/portal";
 export { Memo } from "./misc/memo";
-export { xml } from "./tags";
+export { css, xml } from "./tags";
 export { useState } from "./reactivity";
 export { useRef } from "./refs";
 export { EventBus } from "./event_bus";

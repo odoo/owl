@@ -243,8 +243,9 @@ export class Fiber {
         }
         component.__patch(target!, fiber.vnode!);
       } else {
-        if (fiber.shouldPatch) {
-          component.__patch(component.__owl__.vnode!, fiber.vnode!);
+        const vnode = component.__owl__.vnode;
+        if (fiber.shouldPatch && vnode) {
+          component.__patch(vnode, fiber.vnode!);
           // When updating a Component's props (in directive),
           // the component has a pvnode AND should be patched.
           // However, its pvnode.elm may have changed if it is a High Order Component

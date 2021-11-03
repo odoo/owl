@@ -18,8 +18,9 @@ export function createEventHandler(rawEvent: string): EventHandlerCreator {
 }
 
 // Native listener
+let nextNativeEventId = 1;
 function createElementHandler(evName: string, capture: boolean = false): EventHandlerCreator {
-  let eventKey = `__event__${evName}`;
+  let eventKey = `__event__${evName}_${nextNativeEventId++}`;
   if (capture) {
     eventKey = `${eventKey}_capture`;
   }

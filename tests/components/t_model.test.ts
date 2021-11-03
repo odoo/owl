@@ -406,51 +406,50 @@ describe("t-model directive", () => {
     expect(comp.state.text).toBe("Commander Data");
   });
 
-  test("throws when conflicting with t-on directive, part 1", async () => {
+  test("can also define t-on directive on same event, part 1", async () => {
     class SomeComponent extends Component {
-      static template = xml`<div><input t-model="state['text']" t-on-input="() => {}"/></div>`;
-      state = useState({ text: "" });
+      static template = xml`
+        <div>
+          <input t-model="state['text']" t-on-input="onInput"/>
+        </div>
+      `;
+      state = useState({ text: "", other: "" });
+      onInput(ev: InputEvent) {
+        this.state.other = (ev.target as HTMLInputElement).value;
+      }
     }
-    let error;
-    try {
-      await mount(SomeComponent, fixture);
-    } catch (e) {
-      error = e;
-    }
-    expect(error.message).toBe(
-      "Conflicting t-model and t-on-input directives on event type: input"
-    );
+    const comp = await mount(SomeComponent, fixture);
+    expect(comp.state.text).toBe("");
+    expect(comp.state.other).toBe("");
+    const input = fixture.querySelector("input")!;
+    await editInput(input, "Beam me up, Scotty");
+    expect(comp.state.text).toBe("Beam me up, Scotty");
+    expect(comp.state.other).toBe("Beam me up, Scotty");
   });
 
-  test("throws when conflicting with t-on directive, part 2", async () => {
+  test("can also define t-on directive on same event, part 2", async () => {
     class SomeComponent extends Component {
-      static template = xml`<div><input t-model.lazy="state['text']" t-on-change="() => {}"/></div>`;
-      state = useState({ text: "" });
+      static template = xml`
+        <div>
+          <input type="radio" id="one" value="One" t-model="state.choice" t-on-click="onClick"/>
+          <input type="radio" id="two" value="Two" t-model="state.choice" t-on-click="onClick"/>
+          <input type="radio" id="three" value="Three" t-model="state.choice" t-on-click="onClick"/>
+        </div>
+      `;
+      state = useState({ choice: "", lastClicked: "" });
+      onClick(ev: MouseEvent) {
+        this.state.lastClicked = (ev.target as HTMLInputElement).value;
+      }
     }
-    let error;
-    try {
-      await mount(SomeComponent, fixture);
-    } catch (e) {
-      error = e;
-    }
-    expect(error.message).toBe(
-      "Conflicting t-model and t-on-change directives on event type: change"
-    );
-  });
 
-  test("throws when conflicting with t-on directive, part 3", async () => {
-    class SomeComponent extends Component {
-      static template = xml`<div><input type="radio" t-model="state['text']" t-on-click="() => {}"/></div>`;
-      state = useState({ text: "" });
-    }
-    let error;
-    try {
-      await mount(SomeComponent, fixture);
-    } catch (e) {
-      error = e;
-    }
-    expect(error.message).toBe(
-      "Conflicting t-model and t-on-click directives on event type: click"
-    );
+    const comp = await mount(SomeComponent, fixture);
+    expect(comp.state.choice).toBe("");
+    expect(comp.state.lastClicked).toBe("");
+
+    const lastInput = fixture.querySelectorAll("input")[2];
+    lastInput.click();
+    await nextTick();
+    expect(comp.state.choice).toBe("Three");
+    expect(comp.state.lastClicked).toBe("Three");
   });
 });

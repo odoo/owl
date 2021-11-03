@@ -350,13 +350,6 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
       const hasNumberMod = attr.includes(".number");
       const hasTrimMod = attr.includes(".trim");
       const eventType = isRadioInput ? "click" : isSelect || hasLazyMod ? "change" : "input";
-      const similarTOnEvent = nodeAttrsNames.find((a) => a.startsWith(`t-on-${eventType}`));
-
-      if (similarTOnEvent) {
-        throw new Error(
-          `Conflicting t-model and ${similarTOnEvent} directives on event type: ${eventType}`
-        );
-      }
 
       model = {
         baseExpr,

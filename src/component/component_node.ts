@@ -12,6 +12,7 @@ import {
 } from "./fibers";
 import { applyDefaultProps } from "./props_validation";
 import { STATUS } from "./status";
+import { applyStyles } from "./style";
 
 export function component(
   name: string | typeof Component,
@@ -89,6 +90,9 @@ export class ComponentNode<T extends typeof Component = any> implements VNode<Co
     applyDefaultProps(props, C);
     this.component = new C(props, app.env, this) as any;
     this.renderFn = app.getTemplate(C.template).bind(null, this.component, this);
+    if (C.style) {
+      applyStyles(C);
+    }
     this.component.setup();
   }
 

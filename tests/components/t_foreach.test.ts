@@ -260,4 +260,32 @@ describe("list of components", () => {
     await nextTick(); // wait for changes triggered in mounted to be applied
     expect(fixture.innerHTML).toBe("<div><span>B0</span><span>B1</span></div>");
   });
+
+  test("switch component position", async () => {
+    const childInstances = [];
+    class Child extends Component {
+      static template = xml`<div t-esc="props.key"></div>`;
+      setup() {
+        childInstances.push(this);
+      }
+    }
+
+    class Parent extends Component {
+      static components = { Child };
+      static template = xml`<span>
+        <t t-foreach="clist" t-as="c" t-key="c">
+          <Child key="c"/>
+        </t>
+      </span>`;
+
+      clist = [1, 2];
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect((parent.el as HTMLElement).innerHTML).toBe("<div>1</div><div>2</div>");
+    parent.clist = [2, 1];
+    await parent.render();
+    expect((parent.el as HTMLElement).innerHTML).toBe("<div>2</div><div>1</div>");
+    expect(childInstances.length).toBe(2);
+  });
 });

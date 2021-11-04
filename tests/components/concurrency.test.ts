@@ -2108,7 +2108,7 @@ test("concurrent renderings scenario 16", async () => {
 // });
 
 // TODO: unskip when t-key is reimplemented properly
-test.skip("calling render in destroy", async () => {
+test("calling render in destroy", async () => {
   const steps: any[] = [];
 
   let a: any = null;
@@ -2165,7 +2165,7 @@ test.skip("calling render in destroy", async () => {
   // this nextTick is critical, otherwise jest may silently swallow errors
   await nextTick();
 
-  expect(steps).toBe(["B:mounted", "B:willUnmount", "B:mounted"]);
+  expect(steps).toStrictEqual(["B:mounted", "B:willUnmount", "B:mounted"]);
   expect(fixture.innerHTML).toBe("<div>A</div>");
 });
 
@@ -2302,7 +2302,7 @@ test("render method wait until rendering is done", async () => {
 
 test("two renderings initiated between willPatch and patched", async () => {
   let parent: any = null;
-  let steps: string[] = [];
+  const steps: string[] = [];
 
   class Panel extends Component {
     static template = xml`<abc><t t-esc="props.val"/></abc>`;
@@ -2325,16 +2325,7 @@ test("two renderings initiated between willPatch and patched", async () => {
   }
 
   await mount(Parent, fixture);
-
   expect(fixture.innerHTML).toBe("<div><abc>Panel1</abc></div>");
-
-  parent.state.panel = "Panel2";
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><abc>Panel2</abc></div>");
-
-  parent.state.flag = false;
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div></div>");
 
   expect(steps).toEqual([
     "Parent:setup",
@@ -2345,13 +2336,31 @@ test("two renderings initiated between willPatch and patched", async () => {
     "Panel:render",
     "Panel:mounted",
     "Parent:mounted",
+  ]);
+  steps.length = 0;
+
+  parent.state.panel = "Panel2";
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><abc>Panel2</abc></div>");
+
+  expect(steps).toEqual([
     "Parent:render",
-    "Panel:willUpdateProps",
+    "Panel:setup",
+    "Panel:willStart",
     "Panel:render",
     "Parent:willPatch",
-    "Panel:willPatch",
-    "Panel:patched",
+    "Panel:willUnmount",
+    "Panel:destroyed",
+    "Panel:mounted",
     "Parent:patched",
+  ]);
+  steps.length = 0;
+
+  parent.state.flag = false;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div></div>");
+
+  expect(steps).toEqual([
     "Parent:render",
     "Parent:willPatch",
     "Panel:willUnmount",

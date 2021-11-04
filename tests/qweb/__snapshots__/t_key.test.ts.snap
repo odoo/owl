@@ -9,8 +9,41 @@ exports[`t-key can use t-key directive on a node 1`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const tKey_1 = ctx['beer'].id;
     let d1 = ctx['beer'].name;
-    return block1([d1]);
+    return toggler(tKey_1, block1([d1]));
+  }
+}"
+`;
+
+exports[`t-key can use t-key directive on a node 2 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const tKey_1 = ctx['beer'].id;
+    let d1 = ctx['beer'].name;
+    return toggler(tKey_1, block1([d1]));
+  }
+}"
+`;
+
+exports[`t-key can use t-key directive on a node as a function 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const tKey_1 = ctx['getKey'](ctx['beer']);
+    let d1 = ctx['beer'].name;
+    return toggler(tKey_1, block1([d1]));
   }
 }"
 `;

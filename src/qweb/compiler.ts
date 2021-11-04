@@ -123,6 +123,7 @@ interface Context {
   preventRoot?: boolean;
   isLast?: boolean;
   translate: boolean;
+  tKeyExpr: string | null;
 }
 
 function createContext(parentCtx: Context, params?: Partial<Context>) {
@@ -132,6 +133,7 @@ function createContext(parentCtx: Context, params?: Partial<Context>) {
       index: 0,
       forceNewBlock: true,
       translate: parentCtx.translate,
+      tKeyExpr: null,
     },
     params
   );
@@ -169,7 +171,6 @@ export class QWebCompiler {
   nextBlockId = 1;
   shouldProtectScope: boolean = false;
   shouldDefineAssign: boolean = false;
-  shouldDefineKey0: boolean = false;
   hasSafeContext: boolean | null = null;
   hasRef: boolean = false;
   // hasTCall: boolean = false;
@@ -212,6 +213,7 @@ export class QWebCompiler {
       forceNewBlock: false,
       isLast: true,
       translate: true,
+      tKeyExpr: null,
     });
     const code = this.generateCode();
     return new Function("bdom, helpers", code) as TemplateFunction;
@@ -257,12 +259,22 @@ export class QWebCompiler {
 
   insertBlock(expression: string, block: BlockDescription, ctx: Context): string | null {
     let id: string | null = null;
-    const blockExpr = block.generateExpr(expression);
+    let blockExpr = block.generateExpr(expression);
+    const tKeyExpr = ctx.tKeyExpr;
     if (block.parentVar) {
-      this.addLine(
-        `${block.parentVar}[${ctx.index}] = withKey(${blockExpr}, key${this.target.loopLevel});`
-      );
-    } else if (block.isRoot && !ctx.preventRoot) {
+      let keyArg = `key${this.target.loopLevel}`;
+      if (tKeyExpr) {
+        keyArg = `${tKeyExpr} + ${keyArg}`;
+      }
+      this.addLine(`${block.parentVar}[${ctx.index}] = withKey(${blockExpr}, ${keyArg});`);
+      return id;
+    }
+
+    if (tKeyExpr) {
+      blockExpr = `toggler(${tKeyExpr}, ${blockExpr})`;
+    }
+
+    if (block.isRoot && !ctx.preventRoot) {
       this.addLine(`return ${blockExpr};`);
     } else {
       this.addLine(`let ${block.varName} = ${blockExpr};`);
@@ -796,6 +808,13 @@ export class QWebCompiler {
   }
 
   compileTKey(ast: ASTTKey, ctx: Context) {
+    const tKeyExpr = this.generateId("tKey_");
+    this.addLine(`const ${tKeyExpr} = ${compileExpr(ast.expr)};`);
+    ctx = createContext(ctx, {
+      tKeyExpr,
+      block: ctx.block,
+      index: ctx.index,
+    });
     this.compileAST(ast.content, ctx);
   }
 
@@ -970,7 +989,11 @@ export class QWebCompiler {
       propString = propVar;
     }
 
-    let blockArgs = `${expr}, ${propString}, key + \`${key}\`, node, ctx`;
+    let keyArg = `key + \`${key}\``;
+    if (ctx.tKeyExpr) {
+      keyArg = `${ctx.tKeyExpr} + ${keyArg}`;
+    }
+    let blockArgs = `${expr}, ${propString}, ${keyArg}, node, ctx`;
 
     // slots
     const hasSlot = !!Object.keys(ast.slots).length;
@@ -1007,7 +1030,7 @@ export class QWebCompiler {
       extraArgs.slots = slotDef;
     }
 
-    if (block && ctx.forceNewBlock === false) {
+    if (block && (ctx.forceNewBlock === false || ctx.tKeyExpr)) {
       // todo: check the forcenewblock condition
       this.insertAnchor(block);
     }

@@ -43,7 +43,9 @@ class VToggler {
     }
   }
 
-  beforeRemove() {}
+  beforeRemove() {
+    this.child.beforeRemove();
+  }
 
   remove() {
     this.child.remove();

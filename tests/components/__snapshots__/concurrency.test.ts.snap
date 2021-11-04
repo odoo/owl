@@ -18,7 +18,7 @@ exports[`calling render in destroy 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, inTCall, shallowEqual, setContextValue } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
@@ -33,7 +33,7 @@ exports[`calling render in destroy 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`C\`, {fromA: ctx['props'].fromA}, key + \`__1\`, node, ctx);
@@ -45,10 +45,11 @@ exports[`calling render in destroy 3`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, shallowEqual } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`B\`, {fromA: ctx['state']}, key + \`__1\`, node, ctx);
+    const tKey_1 = ctx['key'];
+    return toggler(tKey_1, component(\`B\`, {fromA: ctx['state']}, tKey_1 + key + \`__2\`, node, ctx));
   }
 }"
 `;
@@ -1159,12 +1160,13 @@ exports[`two renderings initiated between willPatch and patched 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].flag) {
-      b2 = component(\`Panel\`, {val: ctx['state'].panel}, key + \`__1\`, node, ctx);
+      const tKey_1 = 'panel_'+ctx['state'].panel;
+      b2 = toggler(tKey_1, component(\`Panel\`, {val: ctx['state'].panel}, tKey_1 + key + \`__2\`, node, ctx));
     }
     return block1([], [b2]);
   }

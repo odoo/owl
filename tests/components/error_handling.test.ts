@@ -43,8 +43,7 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("");
     expect(status(parent)).toBe("destroyed");
     expect(error).toBeDefined();
-    const regexp =
-      /Cannot read properties of undefined \(reading 'this'\)|Cannot read property 'this' of undefined/g;
+    const regexp = /Cannot read properties of undefined \(reading 'this'\)|Cannot read property 'this' of undefined/g;
     expect(error.message).toMatch(regexp);
   });
 
@@ -113,8 +112,7 @@ describe.skip("errors and promises", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    const regexp =
-      /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
+    const regexp = /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
     expect(error.message).toMatch(regexp);
 
     expect(console.error).toBeCalledTimes(0);
@@ -227,8 +225,7 @@ describe.skip("errors and promises", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    const regexp =
-      /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
+    const regexp = /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
     expect(error.message).toMatch(regexp);
 
     expect(console.error).toBeCalledTimes(0);
@@ -254,8 +251,7 @@ describe.skip("errors and promises", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    const regexp =
-      /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
+    const regexp = /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
     expect(error.message).toMatch(regexp);
 
     expect(console.error).toBeCalledTimes(0);
@@ -278,8 +274,7 @@ describe.skip("errors and promises", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    const regexp =
-      /Cannot read properties of undefined \(reading 'y'\)|Cannot read property 'y' of undefined/g;
+    const regexp = /Cannot read properties of undefined \(reading 'y'\)|Cannot read property 'y' of undefined/g;
     expect(error.message).toMatch(regexp);
   });
 

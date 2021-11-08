@@ -1,4 +1,5 @@
 import { getCurrent } from "./component_node";
+import { nodeErrorHandlers } from "./error_handling";
 
 // -----------------------------------------------------------------------------
 //  hooks
@@ -46,4 +47,16 @@ export function onRender(fn: () => void | any) {
     fn();
     return renderFn();
   };
+}
+
+export function onError(fn: (error: Error) => void | any) {
+  const node = getCurrent()!;
+  let handlers = nodeErrorHandlers.get(node);
+  if (handlers) {
+    handlers.push(fn);
+  } else {
+    handlers = [];
+    handlers.push(fn);
+    nodeErrorHandlers.set(node, handlers);
+  }
 }

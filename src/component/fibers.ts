@@ -2,6 +2,7 @@ import type { BDom } from "../blockdom";
 import { mount } from "../blockdom";
 import type { ComponentNode } from "./component_node";
 import { STATUS } from "./status";
+import { fibersInError } from "./error_handling";
 // import { mountBlock } from "./bdom/block";
 
 export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
@@ -27,6 +28,10 @@ export function makeRootFiber(node: ComponentNode): Fiber {
     current.children = [];
     root.counter++;
     current.bdom = null;
+    if (fibersInError.has(current)) {
+      fibersInError.delete(current);
+      fibersInError.delete(root);
+    }
     return current;
   }
   const fiber = new RootFiber(node);
@@ -81,7 +86,6 @@ export class Fiber {
 
 export class RootFiber extends Fiber {
   counter: number = 1;
-  error: Error | null = null;
   resolve: any;
   promise: Promise<any>;
   reject: any;

@@ -10,6 +10,7 @@ import {
   RootFiber,
   __internal__destroyed,
 } from "./fibers";
+import { handleError, fibersInError } from "./error_handling";
 import { applyDefaultProps } from "./props_validation";
 import { STATUS } from "./status";
 import { applyStyles } from "./style";
@@ -41,7 +42,15 @@ export function component(
     node.updateAndRender(props, parentFiber);
   } else {
     // new component
-    const C = isDynamic ? name : parent.constructor.components[name as any];
+    let C;
+    if (isDynamic) {
+      C = name;
+    } else {
+      C = parent.constructor.components[name as any];
+      if (!C) {
+        throw new Error(`Cannot find the definition of component "${name}"`);
+      }
+    }
     node = new ComponentNode(C, props, ctx.app, ctx);
     ctx.children[key] = node;
 
@@ -112,23 +121,27 @@ export class ComponentNode<T extends typeof Component = any> implements VNode<Co
       fiber.root.mounted.push(fiber);
     }
     const component = this.component;
-    const prom = Promise.all(this.willStart.map((f) => f.call(component)));
-    await prom;
+    try {
+      await Promise.all(this.willStart.map((f) => f.call(component)));
+    } catch (e) {
+      handleError(this, e);
+      return;
+    }
     if (this.status === STATUS.NEW && this.fiber === fiber) {
       this._render(fiber);
     }
   }
 
   async render() {
-    if (this.fiber && !this.fiber.bdom) {
-      return this.fiber.root.promise;
+    let fiber = this.fiber;
+    if (fiber && !fiber.bdom && !fibersInError.has(fiber)) {
+      return fiber.root.promise;
     }
     if (!this.bdom && !this.fiber) {
       // should find a way to return the future mounting promise
       return;
     }
-
-    const fiber = makeRootFiber(this);
+    fiber = makeRootFiber(this);
     this.app.scheduler.addFiber(fiber);
     await Promise.resolve();
     if (this.status === STATUS.DESTROYED) {
@@ -143,15 +156,10 @@ export class ComponentNode<T extends typeof Component = any> implements VNode<Co
   _render(fiber: Fiber | RootFiber) {
     try {
       fiber.bdom = this.renderFn();
+      fiber.root.counter--;
     } catch (e) {
-      fiber.root.error = e;
-      this.handleError(fiber);
+      handleError(this, e);
     }
-    fiber.root.counter--;
-  }
-
-  handleError(fiber: Fiber) {
-    fiber.node.app.destroy();
   }
 
   destroy() {

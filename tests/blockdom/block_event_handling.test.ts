@@ -123,6 +123,40 @@ test("two same block nodes with different handlers (synthetic)", async () => {
   expect(steps).toEqual(["1", "2"]);
 });
 
+test("two event handlers on same event", async () => {
+  const block = createBlock('<div block-handler-0="click" block-handler-1="click"></div>');
+  let n = 0;
+  let m = 0;
+  const tree = block([() => m++, () => n++]);
+
+  mount(tree, fixture);
+  expect(fixture.innerHTML).toBe("<div></div>");
+
+  expect(m).toBe(0);
+  expect(n).toBe(0);
+  (fixture.firstChild as HTMLDivElement).click();
+  expect(m).toBe(1);
+  expect(n).toBe(1);
+});
+
+test("two synthetic event handlers on same event", async () => {
+  const block = createBlock(
+    '<div block-handler-0="click.synthetic" block-handler-1="click.synthetic"></div>'
+  );
+  let n = 0;
+  let m = 0;
+  const tree = block([() => m++, () => n++]);
+
+  mount(tree, fixture);
+  expect(fixture.innerHTML).toBe("<div></div>");
+
+  expect(m).toBe(0);
+  expect(n).toBe(0);
+  (fixture.firstChild as HTMLDivElement).click();
+  expect(m).toBe(1);
+  expect(n).toBe(1);
+});
+
 test("synthetic and native handlers can cohabitate", async () => {
   const block = createBlock(
     '<div block-handler-0="click.synthetic"><div block-handler-1="click"/></div>'
@@ -180,7 +214,7 @@ test("synthetic and native handlers can cohabitate (3)", async () => {
   expect(steps).toEqual(["1", "0", "0", "2"]);
 });
 
-test("synthetic and native handlers can cohabitate (5)", async () => {
+test("synthetic and native handlers can cohabitate (4)", async () => {
   const parent = createBlock(`<div block-handler-0="click"><block-child-0/><block-child-1/></div>`);
   const block = createBlock('<div block-handler-0="click"/>');
   const blockSynth = createBlock('<div block-handler-0="click.synthetic"/>');
@@ -202,4 +236,38 @@ test("synthetic and native handlers can cohabitate (5)", async () => {
   expect(steps).toEqual(["1", "0"]);
   (children[1] as HTMLElement).click();
   expect(steps).toEqual(["1", "0", "0"]);
+});
+
+test("synthetic and native handlers can cohabitate (5)", async () => {
+  const block = createBlock('<div block-handler-0="click.synthetic" block-handler-1="click"/>');
+  let steps: string[] = [];
+  let handler1 = () => steps.push("1");
+  let handler2 = () => steps.push("2");
+  const tree = block([handler1, handler2]);
+
+  mount(tree, fixture);
+  expect(fixture.innerHTML).toBe("<div></div>");
+
+  (fixture.firstChild as HTMLDivElement).click();
+  expect(steps).toEqual(["2", "1"]);
+});
+
+test("synthetic and native handlers can cohabitate (6)", async () => {
+  const block = createBlock(`<div
+    block-handler-0="click.synthetic"
+    block-handler-1="click"
+    block-handler-2="click.synthetic"
+    block-handler-3="click"
+  />`);
+  let steps: string[] = [];
+  const handler1 = () => steps.push("1");
+  const handler2 = () => steps.push("2");
+  const handler3 = () => steps.push("3");
+  const handler4 = () => steps.push("4");
+  const tree = block([handler1, handler2, handler3, handler4]);
+  mount(tree, fixture);
+  expect(fixture.innerHTML).toBe("<div></div>");
+
+  (fixture.firstChild as HTMLDivElement).click();
+  expect(steps).toEqual(["2", "4", "1", "3"]);
 });

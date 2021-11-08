@@ -47,14 +47,17 @@ function createElementHandler(evName: string, capture: boolean = false): EventHa
 
 // Synthetic handler: a form of event delegation that allows placing only one
 // listener per event type.
+let nextSyntheticEventId = 1;
 function createSyntheticHandler(evName: string, capture: boolean = false): EventHandlerCreator {
   let eventKey = `__event__synthetic_${evName}`;
   if (capture) {
     eventKey = `${eventKey}_capture`;
   }
   setupSyntheticEvent(evName, eventKey, capture);
+  const currentId = nextSyntheticEventId++;
   function setup(this: HTMLElement, data: any) {
-    (this as any)[eventKey] = data;
+    (this as any)[eventKey] = (this as any)[eventKey] || {};
+    (this as any)[eventKey][currentId] = data;
   }
   return { setup, update: setup };
 }
@@ -62,10 +65,14 @@ function createSyntheticHandler(evName: string, capture: boolean = false): Event
 function nativeToSyntheticEvent(eventKey: string, event: Event) {
   let dom = event.target;
   while (dom !== null) {
-    const data = (dom as any)[eventKey];
-    if (data) {
-      const stopped = config.mainEventHandler(data, event, dom);
-      if (stopped) return;
+    const datas = (dom as any)[eventKey];
+    if (datas) {
+      for (const data of Object.values(datas)) {
+        if (data) {
+          const stopped = config.mainEventHandler(data, event, dom);
+          if (stopped) return;
+        }
+      }
     }
     dom = (dom as any).parentNode;
   }

@@ -9,6 +9,7 @@ import {
   onWillStart,
   onWillUnmount,
   useState,
+  onError,
 } from "../../src/index";
 
 let fixture: HTMLElement;
@@ -48,7 +49,7 @@ describe("basics", () => {
     expect(error.message).toMatch(regexp);
   });
 
-  test.skip("display a nice error if it cannot find component", async () => {
+  test("display a nice error if it cannot find component", async () => {
     const consoleError = console.error;
     console.error = jest.fn();
 
@@ -64,12 +65,12 @@ describe("basics", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.message).toBe('Cannot find the definition of component "SomeMispelledWidget"');
+    expect(error.message).toBe('Cannot find the definition of component "SomeMispelledComponent"');
     expect(console.error).toBeCalledTimes(0);
     console.error = consoleError;
   });
 
-  test.skip("simple catchError", async () => {
+  test("simple catchError", async () => {
     class Boom extends Component {
       static template = xml`<div t-esc="a.b.c"/>`;
     }
@@ -84,20 +85,21 @@ describe("basics", () => {
         </div>`;
       static components = { Boom };
 
-      error = false;
+      error: any = false;
 
-      // catchError(error) {
-      //   this.error = error;
-      //   this.render();
-      // }
+      setup() {
+        onError((err) => {
+          this.error = err;
+          this.render();
+        });
+      }
     }
-
     await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div>Error</div>");
   });
 });
 
-describe.skip("errors and promises", () => {
+describe("errors and promises", () => {
   test("a rendering error will reject the mount promise", async () => {
     const consoleError = console.error;
     console.error = jest.fn(() => {});
@@ -283,9 +285,8 @@ describe.skip("errors and promises", () => {
     expect(error.message).toMatch(regexp);
   });
 
-  // LPE: relevant: dead code....?
   test("errors in mounted and in willUnmount", async () => {
-    expect.assertions(1);
+    expect.assertions(2); // apparently this expect count in assertions...
     class Example extends Component {
       static template = xml`<div/>`;
       val: any;
@@ -309,12 +310,10 @@ describe.skip("errors and promises", () => {
   });
 });
 
-describe.skip("can catch errors", () => {
+describe("can catch errors", () => {
   test("can catch an error in a component render function", async () => {
     const consoleError = console.error;
     console.error = jest.fn();
-    const handler = jest.fn();
-    //env.qweb.on("error", null, handler);
     class ErrorComponent extends Component {
       static template = xml`<div>hey<t t-esc="props.flag and state.this.will.crash"/></div>`;
     }
@@ -326,8 +325,8 @@ describe.skip("can catch errors", () => {
           </div>`;
       state = useState({ error: false });
 
-      catchError() {
-        this.state.error = true;
+      setup() {
+        onError(() => (this.state.error = true));
       }
     }
     class App extends Component {
@@ -346,12 +345,9 @@ describe.skip("can catch errors", () => {
 
     expect(console.error).toBeCalledTimes(0);
     console.error = consoleError;
-    expect(handler).toBeCalledTimes(1);
   });
 
   test("can catch an error in the initial call of a component render function (parent mounted)", async () => {
-    const handler = jest.fn();
-    //env.qweb.on("error", null, handler);
     const consoleError = console.error;
     console.error = jest.fn();
     class ErrorComponent extends Component {
@@ -365,8 +361,10 @@ describe.skip("can catch errors", () => {
           </div>`;
       state = useState({ error: false });
 
-      catchError() {
-        this.state.error = true;
+      setup() {
+        onError(() => {
+          this.state.error = true;
+        });
       }
     }
     class App extends Component {
@@ -381,12 +379,9 @@ describe.skip("can catch errors", () => {
 
     expect(console.error).toBeCalledTimes(0);
     console.error = consoleError;
-    expect(handler).toBeCalledTimes(1);
   });
 
   test("can catch an error in the initial call of a component render function (parent updated)", async () => {
-    const handler = jest.fn();
-    //env.qweb.on("error", null, handler);
     const consoleError = console.error;
     console.error = jest.fn();
     class ErrorComponent extends Component {
@@ -400,8 +395,8 @@ describe.skip("can catch errors", () => {
           </div>`;
       state = useState({ error: false });
 
-      catchError() {
-        this.state.error = true;
+      setup() {
+        onError(() => (this.state.error = true));
       }
     }
     class App extends Component {
@@ -419,12 +414,9 @@ describe.skip("can catch errors", () => {
 
     expect(console.error).toBeCalledTimes(0);
     console.error = consoleError;
-    expect(handler).toBeCalledTimes(1);
   });
 
   test("can catch an error in the constructor call of a component render function", async () => {
-    const handler = jest.fn();
-    //env.qweb.on("error", null, handler);
     const consoleError = console.error;
     console.error = jest.fn();
 
@@ -441,12 +433,12 @@ describe.skip("can catch errors", () => {
           </div>`;
       state = useState({ error: false });
 
-      catchError() {
-        this.state.error = true;
+      setup() {
+        onError(() => (this.state.error = true));
       }
     }
     class App extends Component {
-      static template = xml`<div">
+      static template = xml`<div>
               <ErrorBoundary><ErrorComponent /></ErrorBoundary>
           </div>`;
       static components = { ErrorBoundary, ErrorComponent };
@@ -456,14 +448,13 @@ describe.skip("can catch errors", () => {
 
     expect(console.error).toBeCalledTimes(0);
     console.error = consoleError;
-    expect(handler).toBeCalledTimes(1);
   });
 
   test("can catch an error in the willStart call", async () => {
     const consoleError = console.error;
     console.error = jest.fn();
     class ErrorComponent extends Component {
-      static template = xml`<div t-name="ErrorComponent">Some text</div>`;
+      static template = xml`<div>Some text</div>`;
       setup() {
         onWillStart(async () => {
           // we wait a little bit to be in a different stack frame
@@ -480,8 +471,8 @@ describe.skip("can catch errors", () => {
           </div>`;
       state = useState({ error: false });
 
-      catchError() {
-        this.state.error = true;
+      setup() {
+        onError(() => (this.state.error = true));
       }
     }
     class App extends Component {
@@ -587,9 +578,11 @@ describe.skip("can catch errors", () => {
         </div>`;
       static components = { Boom };
 
-      // catchError(error) {
-      //   throw error;
-      // }
+      setup() {
+        onError((error) => {
+          throw error;
+        });
+      }
     }
 
     class Parent extends Component {
@@ -602,12 +595,14 @@ describe.skip("can catch errors", () => {
         </div>`;
       static components = { Child };
 
-      error = false;
+      error: any = false;
 
-      // catchError(error) {
-      //   this.error = error;
-      //   this.render();
-      // }
+      setup() {
+        onError((error) => {
+          this.error = error;
+          this.render();
+        });
+      }
     }
 
     await mount(Parent, fixture);

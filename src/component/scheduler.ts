@@ -1,4 +1,5 @@
 import { Fiber, RootFiber } from "./fibers";
+import { handleError, fibersInError } from "./error_handling";
 import { STATUS } from "./status";
 
 // -----------------------------------------------------------------------------
@@ -46,20 +47,27 @@ export class Scheduler {
         this.tasks.delete(fiber);
         return;
       }
-      if (fiber.error) {
+      const hasError = fibersInError.has(fiber);
+      if (hasError && fiber.counter !== 0) {
         this.tasks.delete(fiber);
-        fiber.reject(fiber.error);
+        fiber.reject(fibersInError.get(fiber));
         return;
       }
       if (fiber.node.status === STATUS.DESTROYED) {
         this.tasks.delete(fiber);
         return;
       }
+
       if (fiber.counter === 0) {
-        if (!fiber.error) {
-          fiber.complete();
+        if (!hasError) {
+          try {
+            fiber.complete();
+            fiber.resolve();
+          } catch (e) {
+            handleError(fiber.node, e);
+            fiber.reject(e);
+          }
         }
-        fiber.resolve();
         this.tasks.delete(fiber);
       }
     });

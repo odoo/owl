@@ -56,8 +56,9 @@ function createSyntheticHandler(evName: string, capture: boolean = false): Event
   setupSyntheticEvent(evName, eventKey, capture);
   const currentId = nextSyntheticEventId++;
   function setup(this: HTMLElement, data: any) {
-    (this as any)[eventKey] = (this as any)[eventKey] || {};
-    (this as any)[eventKey][currentId] = data;
+    const _data = (this as any)[eventKey] || {};
+    _data[currentId] = data;
+    (this as any)[eventKey] = _data;
   }
   return { setup, update: setup };
 }
@@ -65,13 +66,11 @@ function createSyntheticHandler(evName: string, capture: boolean = false): Event
 function nativeToSyntheticEvent(eventKey: string, event: Event) {
   let dom = event.target;
   while (dom !== null) {
-    const datas = (dom as any)[eventKey];
-    if (datas) {
-      for (const data of Object.values(datas)) {
-        if (data) {
-          const stopped = config.mainEventHandler(data, event, dom);
-          if (stopped) return;
-        }
+    const _data = (dom as any)[eventKey];
+    if (_data) {
+      for (const data of Object.values(_data)) {
+        const stopped = config.mainEventHandler(data, event, dom);
+        if (stopped) return;
       }
     }
     dom = (dom as any).parentNode;

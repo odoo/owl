@@ -380,12 +380,13 @@ describe("special cases for some specific html attributes/properties", () => {
     expect(input.indeterminate).toBe(true);
   });
 
-  test.skip("textarea with t-att-value", () => {
-    // render input with initial value
-    /*    qweb.addTemplate("test", `<textarea  t-att-value="v"/>`);
-    const vnode1 = qweb.render("test", { v: "zucchini" });
-    const vnode2 = patch(document.createElement("textarea"), vnode1);
-    let elm = vnode2.elm as HTMLInputElement;
+  test("textarea with t-att-value", () => {
+    // render textarea with initial value
+    const template = `<textarea t-att-value="v"/>`;
+    const bnode1 = renderToBdom(template, { v: "zucchini" });
+    const fixture = makeTestFixture();
+    mount(bnode1, fixture);
+    const elm = fixture.querySelector("textarea")!;
     expect(elm.value).toBe("zucchini");
 
     // change value manually in textarea, to simulate user textarea
@@ -394,22 +395,22 @@ describe("special cases for some specific html attributes/properties", () => {
 
     // rerender with a different value, and patch actual dom, to check that
     // textarea value was properly reset by owl
-    const vnode3 = qweb.render("test", { v: "potato" });
-    patch(vnode2, vnode3);
-    expect(elm.value).toBe("potato");*/
+    const bnode2 = renderToBdom(template, { v: "potato" });
+    patch(bnode1, bnode2);
+    expect(elm.value).toBe("potato");
   });
 
-  test.skip("select with t-att-value", () => {
-    /*    const template = `
+  test("select with t-att-value", () => {
+    const template = `
       <select t-att-value="value">
         <option value="potato">Potato</option>
         <option value="tomato">Tomato</option>
         <option value="onion">Onion</option>
       </select>`;
-    qweb.addTemplate("test", template);
-    const vnode1 = qweb.render("test", { value: "tomato" });
-    const vnode2 = patch(document.createElement("select"), vnode1);
-    let elm = vnode2.elm as HTMLSelectElement;
+    const bnode1 = renderToBdom(template, { value: "tomato" });
+    const fixture = makeTestFixture();
+    mount(bnode1, fixture);
+    const elm = fixture.querySelector("select")!;
     expect(elm.value).toBe("tomato");
 
     elm.value = "potato";
@@ -417,9 +418,8 @@ describe("special cases for some specific html attributes/properties", () => {
 
     // rerender with a different value, and patch actual dom, to check that
     // select value was properly reset by owl
-    const vnode3 = qweb.render("test", { value: "onion" });
-    patch(vnode2, vnode3);
+    const bnode2 = renderToBdom(template, { value: "onion" });
+    patch(bnode1, bnode2);
     expect(elm.value).toBe("onion");
-    expect(qweb.templates.test.fn.toString()).toMatchSnapshot();*/
   });
 });

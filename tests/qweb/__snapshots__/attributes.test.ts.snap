@@ -667,6 +667,36 @@ exports[`special cases for some specific html attributes/properties input with t
 }"
 `;
 
+exports[`special cases for some specific html attributes/properties select with t-att-value 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<select block-attribute-0=\\"value\\"><option value=\\"potato\\">Potato</option><option value=\\"tomato\\">Tomato</option><option value=\\"onion\\">Onion</option></select>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['value'];
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`special cases for some specific html attributes/properties textarea with t-att-value 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<textarea block-attribute-0=\\"value\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['v'];
+    return block1([d1]);
+  }
+}"
+`;
+
 exports[`special cases for some specific html attributes/properties various boolean html attributes 1`] = `
 "function anonymous(bdom, helpers
 ) {

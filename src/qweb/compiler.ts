@@ -54,6 +54,7 @@ class BlockDescription {
 
   varName: string;
   blockName: string;
+  dynamicTagName: string | null = null;
   isRoot: boolean = false;
   hasDynamicChildren: boolean = false;
   children: BlockDescription[] = [];
@@ -94,6 +95,9 @@ class BlockDescription {
       let params = this.data.length ? `[${this.data.join(", ")}]` : hasChildren ? "[]" : "";
       if (hasChildren) {
         params += ", [" + this.children.map((c) => c.varName).join(", ") + "]";
+      }
+      if (this.dynamicTagName) {
+        return `toggler(${this.dynamicTagName}, ${this.blockName}(${this.dynamicTagName})(${params}))`;
       }
       return `${this.blockName}(${params})`;
     } else if (this.type === "list") {
@@ -304,7 +308,14 @@ export class QWebCompiler {
       this.addLine(``);
       for (let block of this.blocks) {
         if (block.dom) {
-          this.addLine(`let ${block.blockName} = createBlock(\`${block.asXmlString()}\`);`);
+          let xmlString = block.asXmlString();
+          if (block.dynamicTagName) {
+            xmlString = xmlString.replace(/^<\w+/, `<\${tag || '${block.dom.nodeName}'}`);
+            xmlString = xmlString.replace(/\w+>$/, `\${tag || '${block.dom.nodeName}'}>`);
+            this.addLine(`let ${block.blockName} = tag => createBlock(\`${xmlString}\`);`);
+          } else {
+            this.addLine(`let ${block.blockName} = createBlock(\`${xmlString}\`);`);
+          }
         }
       }
     }
@@ -514,11 +525,19 @@ export class QWebCompiler {
 
   compileTDomNode(ast: ASTDomNode, ctx: Context) {
     let { block, forceNewBlock } = ctx;
-    const isNewBlock = !block || forceNewBlock;
+    const isNewBlock = !block || forceNewBlock || ast.dynamicTag !== null;
     let codeIdx = this.target.code.length;
     if (isNewBlock) {
+      if (ast.dynamicTag && ctx.block) {
+        this.insertAnchor(ctx.block!);
+      }
       block = this.createBlock(block, "block", ctx);
       this.blocks.push(block);
+      if (ast.dynamicTag) {
+        const tagExpr = this.generateId("tag");
+        this.addLine(`let ${tagExpr} = ${compileExpr(ast.dynamicTag)};`);
+        block.dynamicTagName = tagExpr;
+      }
     }
     // attributes
     const attrs: { [key: string]: string } = {};
@@ -989,12 +1008,6 @@ export class QWebCompiler {
       propString = propVar;
     }
 
-    let keyArg = `key + \`${key}\``;
-    if (ctx.tKeyExpr) {
-      keyArg = `${ctx.tKeyExpr} + ${keyArg}`;
-    }
-    let blockArgs = `${expr}, ${propString}, ${keyArg}, node, ctx`;
-
     // slots
     const hasSlot = !!Object.keys(ast.slots).length;
     let slotDef: string;
@@ -1034,6 +1047,12 @@ export class QWebCompiler {
       // todo: check the forcenewblock condition
       this.insertAnchor(block);
     }
+
+    let keyArg = `key + \`${key}\``;
+    if (ctx.tKeyExpr) {
+      keyArg = `${ctx.tKeyExpr} + ${keyArg}`;
+    }
+    const blockArgs = `${expr}, ${propString}, ${keyArg}, node, ctx`;
     let blockExpr = `component(${blockArgs})`;
     if (Object.keys(extraArgs).length) {
       this.shouldDefineAssign = true;

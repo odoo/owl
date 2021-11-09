@@ -40,6 +40,7 @@ describe("qweb parser", () => {
     expect(parse(template)).toEqual({
       type: ASTType.DomNode,
       tag: "div",
+      dynamicTag: null,
       content: [],
       attrs: {},
       on: {},
@@ -66,6 +67,7 @@ describe("qweb parser", () => {
     expect(parse("<div></div>")).toEqual({
       type: ASTType.DomNode,
       tag: "div",
+      dynamicTag: null,
       attrs: {},
       on: {},
       ref: null,
@@ -78,6 +80,7 @@ describe("qweb parser", () => {
     expect(parse("<div>some text</div>")).toEqual({
       type: ASTType.DomNode,
       tag: "div",
+      dynamicTag: null,
       attrs: {},
       on: {},
       ref: null,
@@ -90,6 +93,7 @@ describe("qweb parser", () => {
     expect(parse("<div>some text<span>inside</span></div>")).toEqual({
       type: ASTType.DomNode,
       tag: "div",
+      dynamicTag: null,
       attrs: {},
       on: {},
       ref: null,
@@ -99,6 +103,7 @@ describe("qweb parser", () => {
         {
           type: ASTType.DomNode,
           tag: "span",
+          dynamicTag: null,
           attrs: {},
           on: {},
           ref: null,
@@ -116,6 +121,7 @@ describe("qweb parser", () => {
         {
           type: ASTType.DomNode,
           tag: "div",
+          dynamicTag: null,
           attrs: {},
           on: {},
           ref: null,
@@ -125,6 +131,7 @@ describe("qweb parser", () => {
         {
           type: ASTType.DomNode,
           tag: "span",
+          dynamicTag: null,
           attrs: {},
           on: {},
           ref: null,
@@ -143,6 +150,7 @@ describe("qweb parser", () => {
         {
           type: ASTType.DomNode,
           tag: "span",
+          dynamicTag: null,
           attrs: {},
           on: {},
           ref: null,
@@ -157,6 +165,7 @@ describe("qweb parser", () => {
     expect(parse(`<div class="abc">foo</div>`)).toEqual({
       type: ASTType.DomNode,
       tag: "div",
+      dynamicTag: null,
       attrs: { class: "abc" },
       on: {},
       ref: null,
@@ -186,6 +195,7 @@ describe("qweb parser", () => {
     expect(parse(`<span t-esc="text"/>`)).toEqual({
       type: ASTType.DomNode,
       tag: "span",
+      dynamicTag: null,
       attrs: {},
       on: {},
       ref: null,
@@ -206,6 +216,7 @@ describe("qweb parser", () => {
     expect(parse(`<div t-esc="text">hey</div>`)).toEqual({
       type: ASTType.DomNode,
       tag: "div",
+      dynamicTag: null,
       attrs: {},
       on: {},
       ref: null,
@@ -230,6 +241,7 @@ describe("qweb parser", () => {
     expect(parse(`<div t-raw="text"/>`)).toEqual({
       type: ASTType.DomNode,
       tag: "div",
+      dynamicTag: null,
       attrs: {},
       on: {},
       ref: null,
@@ -242,6 +254,7 @@ describe("qweb parser", () => {
     expect(parse(`<div t-raw="text">body</div>`)).toEqual({
       type: ASTType.DomNode,
       tag: "div",
+      dynamicTag: null,
       attrs: {},
       on: {},
       ref: null,
@@ -260,6 +273,7 @@ describe("qweb parser", () => {
     expect(parse(`<div><t t-if="condition">hey</t></div>`)).toEqual({
       type: ASTType.DomNode,
       tag: "div",
+      dynamicTag: null,
       attrs: {},
       on: {},
       ref: null,
@@ -286,6 +300,7 @@ describe("qweb parser", () => {
       content: {
         type: ASTType.DomNode,
         tag: "div",
+        dynamicTag: null,
         attrs: {},
         on: {},
         ref: null,
@@ -361,6 +376,7 @@ describe("qweb parser", () => {
       content: {
         type: ASTType.DomNode,
         tag: "div",
+        dynamicTag: null,
         attrs: {},
         on: {},
         ref: null,
@@ -378,6 +394,7 @@ describe("qweb parser", () => {
           content: {
             type: ASTType.DomNode,
             tag: "h1",
+            dynamicTag: null,
             attrs: {},
             on: {},
             ref: null,
@@ -389,6 +406,7 @@ describe("qweb parser", () => {
       tElse: {
         type: ASTType.DomNode,
         tag: "h2",
+        dynamicTag: null,
         attrs: {},
         on: {},
         ref: null,
@@ -437,6 +455,7 @@ describe("qweb parser", () => {
           attrs: {},
           on: {},
           tag: "div",
+          dynamicTag: null,
           ref: null,
           model: null,
           content: [{ type: ASTType.Text, value: "ok" }],
@@ -455,6 +474,7 @@ describe("qweb parser", () => {
           attrs: {},
           on: {},
           tag: "div",
+          dynamicTag: null,
           ref: null,
           model: null,
           content: [{ type: ASTType.Text, value: "ok" }],
@@ -486,6 +506,7 @@ describe("qweb parser", () => {
     ).toEqual({
       type: ASTType.DomNode,
       tag: "div",
+      dynamicTag: null,
       attrs: {},
       on: {},
       ref: null,
@@ -559,6 +580,7 @@ describe("qweb parser", () => {
       body: {
         type: ASTType.DomNode,
         tag: "div",
+        dynamicTag: null,
         attrs: {},
         on: {},
         ref: null,
@@ -603,6 +625,7 @@ describe("qweb parser", () => {
       body: {
         type: ASTType.DomNode,
         tag: "span",
+        dynamicTag: null,
         attrs: {},
         on: {},
         ref: null,
@@ -637,6 +660,7 @@ describe("qweb parser", () => {
         content: {
           type: ASTType.DomNode,
           tag: "span",
+          dynamicTag: null,
           attrs: {},
           on: {},
           ref: null,
@@ -667,6 +691,7 @@ describe("qweb parser", () => {
       body: {
         type: ASTType.DomNode,
         tag: "option",
+        dynamicTag: null,
         attrs: {
           "t-att-selected": "category.id==options.active_category_id",
           "t-att-value": "category.id",
@@ -694,6 +719,7 @@ describe("qweb parser", () => {
       ref: null,
       model: null,
       tag: "div",
+      dynamicTag: null,
       content: [
         {
           type: ASTType.TForEach,
@@ -734,6 +760,7 @@ describe("qweb parser", () => {
       body: {
         type: ASTType.DomNode,
         tag: "span",
+        dynamicTag: null,
         on: {},
         ref: null,
         model: null,
@@ -840,6 +867,7 @@ describe("qweb parser", () => {
     expect(parse(`<div t-call="blabla" />`)).toEqual({
       type: ASTType.DomNode,
       tag: "div",
+      dynamicTag: null,
       attrs: {},
       on: {},
       ref: null,
@@ -876,6 +904,7 @@ describe("qweb parser", () => {
     expect(parse(`<button t-on-click="add">Click</button>`)).toEqual({
       type: ASTType.DomNode,
       tag: "button",
+      dynamicTag: null,
       attrs: {},
       on: { click: "add" },
       ref: null,
@@ -952,6 +981,7 @@ describe("qweb parser", () => {
             {
               type: ASTType.DomNode,
               tag: "span",
+              dynamicTag: null,
               attrs: {},
               content: [],
               ref: null,
@@ -961,6 +991,7 @@ describe("qweb parser", () => {
             {
               type: ASTType.DomNode,
               tag: "div",
+              dynamicTag: null,
               attrs: {},
               content: [],
               ref: null,
@@ -1156,6 +1187,7 @@ describe("qweb parser", () => {
       content: {
         type: ASTType.DomNode,
         tag: "div",
+        dynamicTag: null,
         attrs: {},
         on: {},
         ref: null,
@@ -1172,6 +1204,7 @@ describe("qweb parser", () => {
       content: {
         type: ASTType.DomNode,
         tag: "div",
+        dynamicTag: null,
         attrs: {},
         on: {},
         ref: null,
@@ -1189,6 +1222,7 @@ describe("qweb parser", () => {
     expect(parse(`<div t-ref="name">hey</div>`)).toEqual({
       type: ASTType.DomNode,
       tag: "div",
+      dynamicTag: null,
       attrs: {},
       on: {},
       ref: "name",
@@ -1201,6 +1235,7 @@ describe("qweb parser", () => {
     expect(parse(`<div t-raw="text" t-ref="name">body</div>`)).toEqual({
       type: ASTType.DomNode,
       tag: "div",
+      dynamicTag: null,
       attrs: {},
       on: {},
       ref: "name",
@@ -1215,6 +1250,7 @@ describe("qweb parser", () => {
     expect(parse(`<div t-esc="text" t-ref="name">body</div>`)).toEqual({
       type: ASTType.DomNode,
       tag: "div",
+      dynamicTag: null,
       attrs: {},
       on: {},
       ref: "name",
@@ -1261,6 +1297,7 @@ describe("qweb parser", () => {
           ref: null,
           model: null,
           tag: "div",
+          dynamicTag: null,
           type: 2,
         },
         type: 16,
@@ -1290,6 +1327,7 @@ describe("qweb parser", () => {
       on: {},
       ref: null,
       tag: "input",
+      dynamicTag: null,
       model: {
         baseExpr: "state",
         expr: "'stuff'",
@@ -1307,6 +1345,7 @@ describe("qweb parser", () => {
       on: {},
       ref: null,
       tag: "input",
+      dynamicTag: null,
       model: {
         baseExpr: "state",
         expr: "'stuff'",
@@ -1324,6 +1363,7 @@ describe("qweb parser", () => {
       on: {},
       ref: null,
       tag: "input",
+      dynamicTag: null,
       model: {
         baseExpr: "state",
         expr: "'stuff'",
@@ -1342,6 +1382,7 @@ describe("qweb parser", () => {
     on: {},
     ref: null,
     tag: "textarea",
+    dynamicTag: null,
     model: {
       baseExpr: "state",
       expr: "'stuff'",
@@ -1359,6 +1400,7 @@ describe("qweb parser", () => {
     on: {},
     ref: null,
     tag: "input",
+    dynamicTag: null,
     model: {
       baseExpr: "state",
       expr: "'stuff'",
@@ -1376,6 +1418,7 @@ describe("qweb parser", () => {
     on: {},
     ref: null,
     tag: "input",
+    dynamicTag: null,
     model: {
       baseExpr: "state",
       expr: "'stuff'",
@@ -1393,6 +1436,7 @@ describe("qweb parser", () => {
     on: {},
     ref: null,
     tag: "input",
+    dynamicTag: null,
     model: {
       baseExpr: "state",
       expr: "'stuff'",
@@ -1402,5 +1446,21 @@ describe("qweb parser", () => {
       targetAttr: "value",
       specialInitTargetAttr: "checked",
     },
+  });
+
+  // ---------------------------------------------------------------------------
+  // t-tag
+  // ---------------------------------------------------------------------------
+  test("t-tag", async () => {
+    expect(parse(`<div t-tag="theTag" />`)).toEqual({
+      type: ASTType.DomNode,
+      attrs: {},
+      content: [],
+      on: {},
+      ref: null,
+      tag: "div",
+      dynamicTag: "theTag",
+      model: null,
+    });
   });
 });

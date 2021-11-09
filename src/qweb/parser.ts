@@ -35,6 +35,7 @@ export interface ASTComment {
 export interface ASTDomNode {
   type: ASTType.DomNode;
   tag: string;
+  dynamicTag: string | null;
   attrs: { [key: string]: string };
   content: AST[];
   ref: string | null;
@@ -289,7 +290,12 @@ const hasBracketsAtTheEnd = /\[[^\[]+\]\s*$/;
 
 function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
   const { tagName } = node;
-  if (tagName === "t") {
+  let dynamicTag = null;
+  if (node.hasAttribute("t-tag")) {
+    dynamicTag = node.getAttribute("t-tag");
+    node.removeAttribute("t-tag");
+  }
+  if (tagName === "t" && !dynamicTag) {
     return null;
   }
   const children: AST[] = [];
@@ -373,6 +379,7 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
   return {
     type: ASTType.DomNode,
     tag: tagName,
+    dynamicTag,
     attrs,
     on,
     ref,
@@ -404,13 +411,9 @@ function parseTEscNode(node: Element, ctx: ParsingContext): AST | null {
   }
   if (ast && ast.type === ASTType.DomNode) {
     return {
-      type: ASTType.DomNode,
-      tag: ast.tag,
-      attrs: ast.attrs,
-      on: ast.on,
+      ...ast,
       ref,
       content: [tesc],
-      model: ast.model,
     };
   }
   if (ast && ast.type === ASTType.TComponent) {
@@ -443,13 +446,9 @@ function parseTRawNode(node: Element, ctx: ParsingContext): AST | null {
   if (ast && ast.type === ASTType.DomNode) {
     tRaw.body = ast.content.length ? ast.content : null;
     return {
-      type: ASTType.DomNode,
-      tag: ast.tag,
-      attrs: ast.attrs,
-      on: ast.on,
+      ...ast,
       ref,
       content: [tRaw],
-      model: ast.model,
     };
   }
 

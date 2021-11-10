@@ -43,6 +43,42 @@ exports[`slots can define and call slots 2`] = `
 }"
 `;
 
+exports[`slots can render node with t-ref and Component in same slot 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return callSlot(ctx, node, key, 'default');
+  }
+}"
+`;
+
+exports[`slots can render node with t-ref and Component in same slot 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  let assign = Object.assign;
+  
+  let block2 = createBlock(\`<div block-ref=\\"0\\"/>\`);
+  
+  const slot2 = ctx => (node, key) => {
+    const refs = ctx.__owl__.refs
+    let d1 = (el) => refs[\`div\`] = el;
+    let b2 = block2([d1]);
+    let b3 = component(\`Child\`, {}, key + \`__3\`, node, ctx);
+    return multi([b2, b3]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const refs = ctx.__owl__.refs;
+    return assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+  }
+}"
+`;
+
 exports[`slots can render only empty slot 1`] = `
 "function anonymous(bdom, helpers
 ) {

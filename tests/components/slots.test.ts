@@ -1347,4 +1347,22 @@ describe("slots", () => {
     expect(error).toBeNull();
     expect(fixture.innerHTML).toEqual("");
   });
+
+  test("can render node with t-ref and Component in same slot", async () => {
+    class Child extends Component {
+      static template = xml`<t t-slot="default"/>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child><div t-ref="div"/><Child/></Child>`;
+      static components = { Child };
+    }
+    let error = null;
+    try {
+      await mount(Parent, fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeNull();
+  });
 });

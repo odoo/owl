@@ -1332,4 +1332,19 @@ describe("slots", () => {
 
     expect(fixture.innerHTML).toBe("<div><div><p>Ablip</p><div><p>Bblip</p></div></div></div>");
   });
+
+  test("can render only empty slot", async () => {
+    class Parent extends Component {
+      static template = xml`<t t-slot="default"/>`;
+    }
+
+    let error = null;
+    try {
+      await mount(Parent, fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).toBeNull();
+    expect(fixture.innerHTML).toEqual("");
+  });
 });

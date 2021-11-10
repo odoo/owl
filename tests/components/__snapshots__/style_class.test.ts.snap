@@ -490,3 +490,30 @@ exports[`style and class handling t-att-class is properly added/removed on widge
   }
 }"
 `;
+
+exports[`style and class handling t-att-class is properly added/removed on widget root el (v3) 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<span class=\\"c\\" block-attribute-0=\\"class\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = {d:ctx['state'].d,...ctx['props'].class};
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`style and class handling t-att-class is properly added/removed on widget root el (v3) 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`Child\`, {class: {a:true,b:ctx['state'].b}}, key + \`__1\`, node, ctx);
+  }
+}"
+`;

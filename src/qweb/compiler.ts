@@ -261,8 +261,7 @@ export class QWebCompiler {
     return block;
   }
 
-  insertBlock(expression: string, block: BlockDescription, ctx: Context): string | null {
-    let id: string | null = null;
+  insertBlock(expression: string, block: BlockDescription, ctx: Context): void {
     let blockExpr = block.generateExpr(expression);
     const tKeyExpr = ctx.tKeyExpr;
     if (block.parentVar) {
@@ -271,7 +270,7 @@ export class QWebCompiler {
         keyArg = `${tKeyExpr} + ${keyArg}`;
       }
       this.addLine(`${block.parentVar}[${ctx.index}] = withKey(${blockExpr}, ${keyArg});`);
-      return id;
+      return;
     }
 
     if (tKeyExpr) {
@@ -283,7 +282,6 @@ export class QWebCompiler {
     } else {
       this.addLine(`let ${block.varName} = ${blockExpr};`);
     }
-    return id;
   }
 
   generateCode(): string {

@@ -34,7 +34,7 @@ describe("hooks", () => {
       }
       increment() {
         this.value++;
-        (this.button.el as HTMLButtonElement).innerHTML = String(this.value);
+        this.button.el!.innerHTML = String(this.value);
       }
     }
     const mounted = mount(Counter, fixture);

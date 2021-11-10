@@ -1029,7 +1029,6 @@ export class QWebCompiler {
         const subCtx: Context = createContext(ctx);
         this.compileAST(ast.slots[slotName], subCtx);
         if (this.hasRef) {
-          slot.signature = "ctx => node => {";
           slot.code.unshift(`  const refs = ctx.__owl__.refs`);
           slotStr.push(`'${slotName}': ${name}(${ctxStr})`);
         } else {

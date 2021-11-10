@@ -43,6 +43,18 @@ exports[`slots can define and call slots 2`] = `
 }"
 `;
 
+exports[`slots can render only empty slot 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return callSlot(ctx, node, key, 'default');
+  }
+}"
+`;
+
 exports[`slots content is the default slot (variation) 1`] = `
 "function anonymous(bdom, helpers
 ) {

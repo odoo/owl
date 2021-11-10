@@ -18,7 +18,7 @@ function callSlot(
   name: string,
   defaultSlot?: (ctx: any, key: string) => BDom,
   dynamic?: boolean
-): BDom | null {
+): BDom {
   const slots = ctx.__owl__.slots;
   const slotFn = slots[name];
   const slotBDom = slotFn ? slotFn(parent, key) : null;
@@ -33,7 +33,7 @@ function callSlot(
     }
     return multi([child1, child2]);
   }
-  return slotBDom;
+  return slotBDom || text("");
 }
 
 function capture(ctx: any): any {

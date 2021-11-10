@@ -296,11 +296,8 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
   if (tagName === "pre") {
     ctx = { inPreTag: true };
   }
-  let ref = null;
-  if (node.hasAttribute("t-ref")) {
-    ref = node.getAttribute("t-ref");
-    node.removeAttribute("t-ref");
-  }
+  const ref = node.getAttribute("t-ref");
+  node.removeAttribute("t-ref");
 
   for (let child of node.childNodes) {
     const ast = parseNode(child, ctx);

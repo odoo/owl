@@ -1,4 +1,4 @@
-import { Component, mount, useState, useRef, xml } from "../../src";
+import { Component, mount, useState, xml } from "../../src";
 import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -197,7 +197,7 @@ describe("style and class handling", () => {
 
   // TODO: adapt name (t-att-class no longer makes sense on Components)
   test("t-att-class is properly added/removed on widget root el (v2)", async () => {
-    let child: any = null;
+    let child: Child;
     class Child extends Component {
       static template = xml`<span class="c" t-att-class="{ d: state.d, ...props.class }"/>`;
       state = useState({ d: true });
@@ -223,7 +223,7 @@ describe("style and class handling", () => {
     await nextTick();
     expect(span.className).toBe("c d");
 
-    child.state.d = false;
+    child!.state.d = false;
     await nextTick();
     expect(span.className).toBe("c");
 
@@ -231,23 +231,25 @@ describe("style and class handling", () => {
     await nextTick();
     expect(span.className).toBe("c b");
 
-    child.state.d = true;
+    child!.state.d = true;
     await nextTick();
     expect(span.className).toBe("c b d");
   });
 
   // TODO: adapt name (t-att-class no longer makes sense on Components)
-  // TODO: this test depends on ref to components
-  test.skip("t-att-class is properly added/removed on widget root el (v3)", async () => {
+  test("t-att-class is properly added/removed on widget root el (v3)", async () => {
+    let child: Child;
     class Child extends Component {
-      static template = `<span t-name="Child" class="c" t-att-class="state.d ? 'd' : ''"/>`;
+      static template = xml`<span class="c" t-att-class="{ d: state.d, ...props.class }"/>`;
       state = useState({ d: true });
+      setup() {
+        child = this;
+      }
     }
     class Parent extends Component {
-      static template = xml`<Child class="a" t-att-class="state.b ? 'b' : ''" t-ref="child"/>`;
+      static template = xml`<Child class="{ a: true, b: state.b }"/>`;
       static components = { Child };
       state = useState({ b: true });
-      child = useRef("child");
     }
     const widget = await mount(Parent, fixture);
 
@@ -258,7 +260,7 @@ describe("style and class handling", () => {
     await nextTick();
     expect(span.className).toBe("c d a");
 
-    (widget.child.comp as Child).state.d = false;
+    child!.state.d = false;
     await nextTick();
     expect(span.className).toBe("c a");
 
@@ -266,7 +268,7 @@ describe("style and class handling", () => {
     await nextTick();
     expect(span.className).toBe("c a b");
 
-    (widget.child.comp as Child).state.d = true;
+    child!.state.d = true;
     await nextTick();
     expect(span.className).toBe("c a b d");
   });
@@ -341,7 +343,8 @@ describe("style and class handling", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    const regexp = /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
+    const regexp =
+      /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
     expect(error.message).toMatch(regexp);
     expect(fixture.innerHTML).toBe("");
   });

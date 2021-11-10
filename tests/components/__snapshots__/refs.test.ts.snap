@@ -1,5 +1,21 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`refs basic use 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div block-ref=\\"0\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const refs = ctx.__owl__.refs;
+    let d1 = (el) => refs[\`div\`] = el;
+    return block1([d1]);
+  }
+}"
+`;
+
 exports[`refs refs are properly bound in slots 1`] = `
 "function anonymous(bdom, helpers
 ) {

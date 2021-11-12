@@ -20,7 +20,7 @@ exports[`t-on t-on expression captured in t-foreach 1`] = `
       let key1 = ctx['val'];
       const v1 = ctx['otherState'];
       const v2 = ctx['iter'];
-      let d1 = [(e) => {const res = (() => { return v1.vals.push(v2+'_'+v2) })(); if (typeof res === 'function') { res(e) }}];
+      let d1 = [()=>v1.vals.push(v2+'_'+v2), ctx];
       setContextValue(ctx, \\"iter\\", ctx['iter']+1);
       c_block2[i1] = withKey(block3([d1]), key1);
     }
@@ -50,7 +50,7 @@ exports[`t-on t-on expression in t-foreach 1`] = `
       let d2 = ctx['val']+'';
       const v1 = ctx['otherState'];
       const v2 = ctx['val'];
-      let d3 = [(e) => {const res = (() => { return v1.vals.push(v2) })(); if (typeof res === 'function') { res(e) }}];
+      let d3 = [()=>v1.vals.push(v2), ctx];
       c_block2[i1] = withKey(block3([d1, d2, d3]), key1);
     }
     let b2 = list(c_block2);
@@ -84,7 +84,7 @@ exports[`t-on t-on expression in t-foreach with t-set 1`] = `
       const v1 = ctx['otherState'];
       const v2 = ctx['val'];
       const v3 = ctx['bossa'];
-      let d3 = [(e) => {const res = (() => { return v1.vals.push(v2+'_'+v3) })(); if (typeof res === 'function') { res(e) }}];
+      let d3 = [()=>v1.vals.push(v2+'_'+v3), ctx];
       c_block2[i1] = withKey(block3([d1, d2, d3]), key1);
     }
     let b2 = list(c_block2);
@@ -111,8 +111,8 @@ exports[`t-on t-on method call in t-foreach 1`] = `
       let key1 = ctx['val'];
       let d1 = ctx['val_index'];
       let d2 = ctx['val']+'';
-      const arg1 = [ctx['val']];
-      let d3 = [ctx, 'addVal', arg1];
+      const v1 = ctx['val'];
+      let d3 = [()=>this.addVal(v1), ctx];
       c_block2[i1] = withKey(block3([d1, d2, d3]), key1);
     }
     let b2 = list(c_block2);
@@ -130,7 +130,8 @@ exports[`t-on t-on on destroyed components 1`] = `
   let block1 = createBlock(\`<div block-handler-0=\\"click\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = [ctx, 'onClick'];
+    const v1 = ctx['onClick'];
+    let d1 = [v1, ctx];
     return block1([d1]);
   }
 }"

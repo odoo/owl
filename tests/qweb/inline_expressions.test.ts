@@ -169,6 +169,11 @@ describe("expression evaluation", () => {
     expect(compileExpr("list.map((elem, index) => elem + index)")).toBe(
       "ctx['list'].map((elem,index)=>elem+index)"
     );
+    expect(compileExpr("(ev => ev)(e)")).toBe("(ev=>ev)(ctx['e'])");
+  });
+  test.skip("arrow functions: not yet supported", () => {
+    // e is added to localvars in inline_expression but not removed after the arrow func body
+    expect(compileExpr("(e => e)(e)")).toBe("(e=>e)(ctx['e'])");
   });
 
   test("assignation", () => {

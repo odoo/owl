@@ -70,6 +70,7 @@ interface Token {
   size?: number;
   varName?: string;
   replace?: Function;
+  isLocal?: boolean;
 }
 
 const STATIC_TOKEN_MAP: { [key: string]: TKind } = Object.assign(Object.create(null), {
@@ -324,6 +325,13 @@ export function compileExprToArray(expr: string): Token[] {
       }
     }
     i++;
+  }
+  // Mark all variables that have been used locally.
+  // This assumes the expression has only one scope (incorrect but "good enough for now")
+  for (const token of tokens) {
+    if (token.type === "SYMBOL" && localVars.has(token.value)) {
+      token.isLocal = true;
+    }
   }
   return tokens;
 }

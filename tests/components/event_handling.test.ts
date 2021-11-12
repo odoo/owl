@@ -52,22 +52,24 @@ describe("event handling", () => {
   });
 
   test("t-on with handler bound to dynamic argument on a t-foreach", async () => {
-    expect.assertions(3);
+    let onClickArgs: [number, MouseEvent] | null = null;
     class Parent extends Component {
       static template = xml`
         <div>
           <t t-foreach="items" t-as="item" t-key="item">
-            <div class="item" t-on-click="onClick(item)"/>
+            <div class="item" t-on-click="ev => onClick(item, ev)"/>
           </t>
         </div>`;
       items = [1, 2, 3, 4];
       onClick(n: number, ev: MouseEvent) {
-        expect(n).toBe(1);
-        expect(ev).toBeInstanceOf(MouseEvent);
+        onClickArgs = [n, ev];
       }
     }
 
     await mount(Parent, fixture);
+    expect(onClickArgs).toBeNull();
     (<HTMLElement>fixture.querySelector(".item")).click();
+    expect(onClickArgs![0]).toBe(1);
+    expect(onClickArgs![1]).toBeInstanceOf(MouseEvent);
   });
 });

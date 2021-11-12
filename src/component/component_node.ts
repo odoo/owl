@@ -89,7 +89,7 @@ export class ComponentNode<T extends typeof Component = any> implements VNode<Co
     this.app = app;
     applyDefaultProps(props, C);
     this.component = new C(props, app.env, this) as any;
-    this.renderFn = app.getTemplate(C.template).bind(null, this.component, this);
+    this.renderFn = app.getTemplate(C.template).bind(this.component, this.component, this);
     if (C.style) {
       applyStyles(C);
     }

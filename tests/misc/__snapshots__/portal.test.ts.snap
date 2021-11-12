@@ -9,7 +9,8 @@ exports[`Portal Portal composed with t-slot 1`] = `
   let block1 = createBlock(\`<div block-handler-0=\\"custom\\"><span id=\\"childSpan\\">child2</span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = [ctx, 'onCustom'];
+    const v1 = ctx['onCustom'];
+    let d1 = [v1, ctx];
     return block1([d1]);
   }
 }"

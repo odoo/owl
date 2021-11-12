@@ -23,8 +23,9 @@ exports[`event handling handler receive the event as argument 2`] = `
   let block1 = createBlock(\`<span block-handler-0=\\"click\\"><block-child-0/><block-text-1/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = [ctx, 'inc'];
-    let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    const v1 = ctx['inc'];
+    let d1 = [v1, ctx];
+    let b2 = component(\`Child\`, {}, key + \`__2\`, node, ctx);
     let d2 = ctx['state'].value;
     return block1([d1, d2], [b2]);
   }
@@ -42,7 +43,7 @@ exports[`event handling support for callable expression in event handler 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['state'].value;
     const v1 = ctx['obj'];
-    let d2 = [(e) => {const res = (() => { return v1.onInput })(); if (typeof res === 'function') { res(e) }}];
+    let d2 = [v1.onInput, ctx];
     return block1([d1, d2]);
   }
 }"
@@ -63,8 +64,9 @@ exports[`event handling t-on with handler bound to dynamic argument on a t-forea
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`item\`] = v_block2[i1];
       let key1 = ctx['item'];
-      const arg1 = [ctx['item']];
-      let d1 = [ctx, 'onClick', arg1];
+      const v1 = ctx['onClick'];
+      const v2 = ctx['item'];
+      let d1 = [ev=>v1(v2,ev), ctx];
       c_block2[i1] = withKey(block3([d1]), key1);
     }
     let b2 = list(c_block2);

@@ -104,7 +104,6 @@ describe("t-on", () => {
       state = useState({ values: ["a", "b"] });
       otherState = { vals: new Array<string>() };
       addVal(val: string) {
-        debugger;
         this.otherState.vals.push(val);
       }
     }

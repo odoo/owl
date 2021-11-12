@@ -76,6 +76,67 @@ describe("Reactivity: atom", () => {
     expect(n).toBe(1);
   });
 
+  test("atom on an object with a getter 1", async () => {
+    let n = 0;
+    let value = 1;
+    const atom = createAtom(
+      {
+        get a() {
+          return value;
+        },
+        set a(val) {
+          value = val;
+        },
+      },
+      () => n++
+    );
+    atom.a = atom.a + 4;
+    await nextMicroTick();
+    expect(n).toBe(1);
+  });
+
+  test("atom on an object with a getter 2", async () => {
+    let n = 0;
+    let value = { b: 1 };
+    const atom = createAtom(
+      {
+        get a() {
+          return value;
+        },
+      },
+      () => n++
+    );
+    expect(atom.a.b).toBe(1);
+    atom.a.b = 2;
+    await nextMicroTick();
+    expect(n).toBe(1);
+  });
+
+  test("atom on an object with a getter 3", async () => {
+    let n = 0;
+    const values: { b: number }[] = createAtom([]);
+    function createValue() {
+      const o = { b: values.length };
+      values.push(o);
+      return o;
+    }
+    const atom = createAtom(
+      {
+        get a() {
+          return createValue();
+        },
+      },
+      () => n++
+    );
+    for (let i = 0; i < 10; i++) {
+      expect(atom.a.b).toEqual(i);
+    }
+    expect(n).toBe(0);
+    values[0].b = 3;
+    await nextMicroTick();
+    expect(n).toBe(1); // !!! atoms for each object in values are still there !!!
+  });
+
   test("atom observer is called after batch of operation", async () => {
     let n = 0;
     const atom1 = createAtom({ a: 1, b: 2 }, () => n++);
@@ -553,6 +614,7 @@ describe("Reactivity: atom", () => {
   test("properly handle already observed atom", async () => {
     let n1 = 0;
     let n2 = 0;
+
     const obj1 = createAtom({ a: 1 }, () => n1++) as any;
     const obj2 = createAtom({ b: 1 }, () => n2++) as any;
 
@@ -886,6 +948,106 @@ describe("Reactivity: atom", () => {
     state.a.b = state.a.b + 3;
     await nextMicroTick();
     expect(n).toBe(0);
+  });
+
+  test("atom cleaning after key deleted 1", async () => {
+    let n = 0;
+    const a = { k: {} } as any;
+    const atom = createAtom(a, () => n++);
+
+    atom.k.l = 1;
+    await nextMicroTick();
+    expect(n).toBe(1);
+
+    const kVal = atom.k;
+
+    delete atom.k;
+    await nextMicroTick();
+    expect(n).toBe(2);
+
+    kVal.l = 2;
+    await nextMicroTick();
+    expect(n).toBe(2); // kVal must no longer be observed
+  });
+
+  test("atom cleaning after key deleted 2", async () => {
+    let n = 0;
+    const b = {} as any;
+    const a = { k: b } as any;
+    const observer = () => n++;
+    const atom2 = createAtom(b, observer);
+    const atom1 = createAtom(a, observer); // atom2 should be still a seed
+
+    atom1.c = 1;
+    atom1.k.d = 2;
+    await nextMicroTick();
+    expect(n).toBe(1);
+
+    delete atom1.k;
+    await nextMicroTick();
+    expect(n).toBe(2);
+
+    atom2.e = 3;
+    await nextMicroTick();
+    expect(n).toBe(3); // b must still be observed
+  });
+
+  test("atom cleaning after key deleted 3", async () => {
+    let n = 0;
+    const b = {} as any;
+    const a = { k: b } as any;
+    const observer = () => n++;
+    const atom1 = createAtom(a, observer);
+    const atom2 = createAtom(b, observer); // atom2 should be a seed now
+
+    atom1.c = 1;
+    atom1.k.d = 2;
+    await nextMicroTick();
+    expect(n).toBe(1);
+
+    delete atom1.k;
+    await nextMicroTick();
+    expect(n).toBe(2);
+
+    atom2.e = 3;
+    await nextMicroTick();
+    expect(n).toBe(3); // b must still be observed
+  });
+
+  test("atom cleaning after key deleted 4", async () => {
+    let n = 0;
+    const a = { k: {} } as any;
+    a.k = a;
+    const atom = createAtom(a, () => n++);
+
+    atom.b = 1;
+    await nextMicroTick();
+    expect(n).toBe(1);
+
+    delete atom.k;
+    await nextMicroTick();
+    expect(n).toBe(2);
+
+    atom.c = 2;
+    await nextMicroTick();
+    expect(n).toBe(3); // a must still be observed
+  });
+
+  test("atom cleaning after trackable key value changed", async () => {
+    let n = 0;
+    const a = { k: { n: 1 } } as any;
+    const atom = createAtom(a, () => n++);
+    const kVal = atom.k; // read k
+
+    atom.k = { n: atom.k.n + 1 };
+    await nextMicroTick();
+    expect(n).toBe(1);
+    expect(atom.k).toEqual({ n: 2 });
+
+    kVal.n = 3;
+    await nextMicroTick();
+    expect(n).toBe(1);
+    expect(atom.k).toEqual({ n: 2 });
   });
 });
 
@@ -1324,14 +1486,11 @@ describe("Reactivity: useState", () => {
     expect([...steps]).toEqual(["list", "quantity1"]);
     steps.clear();
 
-    // secondQuantity is no longer accessible by List! But list react to changes
-    // --> this prooff that a useless atom continues to exist
     secondQuantity.quantity = 2;
     await nextMicroTick();
     await nextMicroTick();
-
     expect(fixture.innerHTML).toBe("<div><div>3</div> Total: 3 Count: 1</div>");
-    expect([...steps]).toEqual(["list"]); // should be avoided!!!
+    expect([...steps]).toEqual([]);
     steps.clear();
   });
 

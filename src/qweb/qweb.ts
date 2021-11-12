@@ -1,8 +1,9 @@
 import { EventBus } from "../core/event_bus";
 import { h, patch, VNode } from "../vdom/index";
 import { CompilationContext } from "./compilation_context";
-import { shallowEqual, escape } from "../utils";
+import { shallowEqual, escape, _Markup } from "../utils";
 import { addNS } from "../vdom/vdom";
+import { htmlToVDOM } from "../vdom/html_to_vdom";
 
 /**
  * Owl QWeb Engine
@@ -89,6 +90,16 @@ function isComponent(obj): boolean {
   return obj && obj.hasOwnProperty("__owl__");
 }
 
+function insertValue(children: any[], value: any) {
+  if (value != null) {
+    if (value instanceof _Markup) {
+      children.push(...htmlToVDOM(value as any));
+    } else {
+      children.push({ text: value });
+    }
+  }
+}
+
 class VDomArray extends Array {
   toString() {
     return vDomToString(this);
@@ -111,6 +122,7 @@ function vDomToString(vdom: VNode[]): string {
 
 const UTILS: Utils = {
   zero: Symbol("zero"),
+  insertValue,
   toClassObj(expr) {
     const result = {};
     if (typeof expr === "string") {
@@ -599,7 +611,10 @@ export class QWeb extends EventBus {
         if (!(dName in QWeb.DIRECTIVE_NAMES)) {
           throw new Error(`Unknown QWeb directive: '${attrName}'`);
         }
-        if (node.tagName !== "t" && (attrName === "t-esc" || attrName === "t-raw")) {
+        if (
+          node.tagName !== "t" &&
+          (attrName === "t-esc" || attrName === "t-out" || attrName === "t-raw")
+        ) {
           const tNode = document.implementation.createDocument(
             "http://www.w3.org/1999/xhtml",
             "t",

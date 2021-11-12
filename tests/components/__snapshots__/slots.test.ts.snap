@@ -389,9 +389,10 @@ exports[`slots dynamic t-slot call 1`] = `
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-child-0/></button>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = [ctx, 'toggle'];
-    const slot1 = (ctx['current'].slot);
-    let b2 = toggler(slot1, callSlot(ctx, node, key, slot1));
+    const v1 = ctx['toggle'];
+    let d1 = [v1, ctx];
+    const slot2 = (ctx['current'].slot);
+    let b2 = toggler(slot2, callSlot(ctx, node, key, slot2));
     return block1([d1], [b2]);
   }
 }"
@@ -435,13 +436,14 @@ exports[`slots dynamic t-slot call with default 1`] = `
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-child-0/></button>\`);
   
-  const defaultSlot1 = ctx => {
+  const defaultSlot2 = ctx => {
     return text(\` owl \`);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = [ctx, 'toggle'];
-    let b3 = callSlot(ctx, node, key, (ctx['current'].slot), defaultSlot1, true);
+    const v1 = ctx['toggle'];
+    let d1 = [v1, ctx];
+    let b3 = callSlot(ctx, node, key, (ctx['current'].slot), defaultSlot2, true);
     return block1([d1], [b3]);
   }
 }"
@@ -1124,7 +1126,7 @@ exports[`slots slot and (inline) t-call 3`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot3 = ctx => (node, key) => {
-    return callTemplate_5(ctx, node, key + \`__4\`);
+    return callTemplate_5.call(this, ctx, node, key + \`__4\`);
   }
   
   return function template(ctx, node, key = \\"\\") {
@@ -1210,7 +1212,7 @@ exports[`slots slot and t-call 3`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot3 = ctx => (node, key) => {
-    return callTemplate_5(ctx, node, key + \`__4\`);
+    return callTemplate_5.call(this, ctx, node, key + \`__4\`);
   }
   
   return function template(ctx, node, key = \\"\\") {
@@ -1295,14 +1297,15 @@ exports[`slots slot are properly rendered if inner props are changed 3`] = `
   
   let block1 = createBlock(\`<div><button block-handler-0=\\"click\\">Inc[<block-text-1/>]</button><block-child-0/></div>\`);
   
-  const slot2 = ctx => (node, key) => {
-    return component(\`SomeComponent\`, {val: ctx['state'].val}, key + \`__3\`, node, ctx);
+  const slot3 = ctx => (node, key) => {
+    return component(\`SomeComponent\`, {val: ctx['state'].val}, key + \`__4\`, node, ctx);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = [ctx, 'inc'];
+    const v1 = ctx['inc'];
+    let d1 = [v1, ctx];
     let d2 = ctx['state'].val;
-    let b3 = assign(component(\`GenericComponent\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`GenericComponent\`, {}, key + \`__2\`, node, ctx), {slots: {'default': slot3(ctx)}});
     return block1([d1, d2], [b3]);
   }
 }"
@@ -1333,7 +1336,8 @@ exports[`slots slot content is bound to caller 2`] = `
   let block1 = createBlock(\`<button block-handler-0=\\"click\\">some text</button>\`);
   
   const slot2 = ctx => (node, key) => {
-    let d1 = [ctx, 'inc'];
+    const v3 = ctx['inc'];
+    let d1 = [v3, ctx];
     return block1([d1]);
   }
   
@@ -1434,7 +1438,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   const slot3 = ctx => (node, key) => {
-    return callTemplate_5(ctx, node, key + \`__4\`);
+    return callTemplate_5.call(this, ctx, node, key + \`__4\`);
   }
   
   return function template(ctx, node, key = \\"\\") {
@@ -1503,7 +1507,8 @@ exports[`slots slots are rendered with proper context 2`] = `
   let block2 = createBlock(\`<button block-handler-0=\\"click\\">do something</button>\`);
   
   const slot3 = ctx => (node, key) => {
-    let d2 = [ctx, 'doSomething'];
+    const v4 = ctx['doSomething'];
+    let d2 = [v4, ctx];
     return block2([d2]);
   }
   
@@ -1984,7 +1989,7 @@ exports[`slots t-slot in recursive templates 2`] = `
         ctx[isBoundary] = 1;
         setContextValue(ctx, \\"name\\", ctx['item'].name);
         setContextValue(ctx, \\"items\\", ctx['item'].children);
-        b6 = callTemplate_5(ctx, node, key + \`__4__\${key1}\`);
+        b6 = callTemplate_5.call(this, ctx, node, key + \`__4__\${key1}\`);
         ctx = ctx.__proto__;
       }
       c_block3[i1] = withKey(multi([b5, b6]), key1);
@@ -2113,7 +2118,8 @@ exports[`slots t-slot scope context 2`] = `
   let block1 = createBlock(\`<div block-handler-0=\\"click\\"><block-child-0/></div>\`);
   
   const slot2 = ctx => (node, key) => {
-    let d1 = [ctx, 'onClick'];
+    const v3 = ctx['onClick'];
+    let d1 = [v3, ctx];
     let b2 = callSlot(ctx, node, key, 'default');
     return block1([d1], [b2]);
   }

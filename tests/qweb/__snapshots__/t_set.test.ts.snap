@@ -216,7 +216,7 @@ exports[`t-set t-set can't alter from within callee 2`] = `
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"iter\\", 'source');
     let d1 = ctx['iter'];
-    let b2 = callTemplate_2(ctx, node, key + \`__1\`);
+    let b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
     let d2 = ctx['iter'];
     return block1([d1, d2], [b2]);
   }
@@ -259,7 +259,7 @@ exports[`t-set t-set can't alter in t-call body 2`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
     setContextValue(ctx, \\"iter\\", 'inCall');
-    let b2 = callTemplate_2(ctx, node, key + \`__1\`);
+    let b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
     ctx = ctx.__proto__;
     let d2 = ctx['iter'];
     return block1([d1, d2], [b2]);

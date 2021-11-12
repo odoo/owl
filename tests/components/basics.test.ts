@@ -370,7 +370,7 @@ describe("basics", () => {
   test("can be clicked on and updated", async () => {
     class Counter extends Component {
       static template = xml`
-      <div><t t-esc="state.counter"/><button t-on-click="state.counter++">Inc</button></div>`;
+      <div><t t-esc="state.counter"/><button t-on-click="() => state.counter++">Inc</button></div>`;
       state = useState({
         counter: 0,
       });
@@ -387,7 +387,7 @@ describe("basics", () => {
   test("rerendering a widget with a sub widget", async () => {
     class Counter extends Component {
       static template = xml`
-      <div><t t-esc="state.counter"/><button t-on-click="state.counter++">Inc</button></div>`;
+      <div><t t-esc="state.counter"/><button t-on-click="() => state.counter++">Inc</button></div>`;
       state = useState({
         counter: 0,
       });

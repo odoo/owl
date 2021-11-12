@@ -26,12 +26,11 @@ export const mainEventHandler = (data: any, ev: Event, currentTarget?: EventTarg
       }
     }
   }
-  if (typeof data[0] === "function") {
-    data[0](ev);
-  } else if (data[0].__owl__) {
-    const method = data[1];
-    const args = data[2] || [];
-    data[0].__owl__.component[method](...args, ev);
+  // If handler is empty, the array slot 0 will also be empty, and data will not have the property 0
+  // We check this rather than data[0] being truthy (or typeof function) so that it crashes
+  // as expected when there is a handler expression that evaluates to a falsy value
+  if (Object.hasOwnProperty.call(data, 0)) {
+    data[0].call(data[1] ? data[1].__owl__.component : null, ev);
   }
   return stopped;
 };

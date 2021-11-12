@@ -118,7 +118,6 @@ class BlockDescription {
 // -----------------------------------------------------------------------------
 // Compiler code
 // -----------------------------------------------------------------------------
-const FNAMEREGEXP = /^[$A-Z_][0-9A-Z_$]*$/i;
 
 interface Context {
   block: BlockDescription | null;
@@ -372,7 +371,7 @@ export class QWebCompiler {
     const mapping = new Map<string, string>();
     return tokens
       .map((tok) => {
-        if (tok.varName) {
+        if (tok.varName && !tok.isLocal) {
           if (!mapping.has(tok.varName)) {
             const varId = this.generateId("v");
             mapping.set(tok.varName, varId);
@@ -490,11 +489,6 @@ export class QWebCompiler {
   }
 
   generateHandlerCode(rawEvent: string, handler: string): string {
-    let args: string = "";
-    const name: string = handler.replace(/\(.*\)/, function (_args) {
-      args = _args.slice(1, -1);
-      return "";
-    });
     const modifiers = rawEvent
       .split(".")
       .slice(1)
@@ -503,22 +497,7 @@ export class QWebCompiler {
     if (modifiers.length) {
       modifiersCode = `${modifiers.join(",")}, `;
     }
-    const isMethodCall = name.match(FNAMEREGEXP);
-    if (isMethodCall) {
-      let handlerFn: string;
-      if (args) {
-        const argId = this.generateId("arg");
-        this.addLine(`const ${argId} = [${compileExpr(args)}];`);
-        handlerFn = `'${name}', ${argId}`;
-      } else {
-        handlerFn = `'${name}'`;
-      }
-      return `[${modifiersCode}ctx, ${handlerFn!}]`;
-    } else {
-      let code = this.captureExpression(handler);
-      code = `{const res = (() => { return ${code} })(); if (typeof res === 'function') { res(e) }}`;
-      return `[${modifiersCode}(e) => ${code}]`;
-    }
+    return `[${modifiersCode}${this.captureExpression(handler)}, ctx]`;
   }
 
   compileTDomNode(ast: ASTDomNode, ctx: Context) {
@@ -919,7 +898,10 @@ export class QWebCompiler {
       const id = this.generateId(`callTemplate_`);
       this.staticCalls.push({ id, template: subTemplate });
       block = this.createBlock(block, "multi", ctx);
-      this.insertBlock(`${id}(ctx, node, ${key})`, block!, { ...ctx, forceNewBlock: !block });
+      this.insertBlock(`${id}.call(this, ctx, node, ${key})`, block!, {
+        ...ctx,
+        forceNewBlock: !block,
+      });
     }
     if (ast.body && !ctx.isLast) {
       this.addLine(`ctx = ctx.__proto__;`);

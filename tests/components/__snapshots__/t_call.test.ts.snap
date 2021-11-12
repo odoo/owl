@@ -52,7 +52,8 @@ exports[`t-call handlers are properly bound through a t-call 1`] = `
   let block1 = createBlock(\`<p block-handler-0=\\"click\\">lucas</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = [ctx, 'update'];
+    const v1 = ctx['update'];
+    let d1 = [v1, ctx];
     return block1([d1]);
   }
 }"
@@ -68,7 +69,7 @@ exports[`t-call handlers are properly bound through a t-call 2`] = `
   let block1 = createBlock(\`<div><block-child-0/><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = callTemplate_2(ctx, node, key + \`__1\`);
+    let b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
     let d1 = ctx['counter'];
     return block1([d1], [b2]);
   }
@@ -84,8 +85,8 @@ exports[`t-call handlers with arguments are properly bound through a t-call 1`] 
   let block1 = createBlock(\`<p block-handler-0=\\"click\\">lucas</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const arg1 = [ctx['a']];
-    let d1 = [ctx, 'update', arg1];
+    const v1 = ctx['a'];
+    let d1 = [()=>this.update(v1), ctx];
     return block1([d1]);
   }
 }"
@@ -101,7 +102,7 @@ exports[`t-call handlers with arguments are properly bound through a t-call 2`] 
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = callTemplate_2(ctx, node, key + \`__1\`);
+    let b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
 }"
@@ -143,7 +144,7 @@ exports[`t-call parent is set within t-call 3`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = callTemplate_2(ctx, node, key + \`__1\`);
+    let b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
 }"
@@ -183,7 +184,7 @@ exports[`t-call parent is set within t-call with no parentNode 3`] = `
   const callTemplate_2 = getTemplate(\`__template__9\`);
   
   return function template(ctx, node, key = \\"\\") {
-    return callTemplate_2(ctx, node, key + \`__1\`);
+    return callTemplate_2.call(this, ctx, node, key + \`__1\`);
   }
 }"
 `;
@@ -216,9 +217,9 @@ exports[`t-call sub components in two t-calls 2`] = `
   return function template(ctx, node, key = \\"\\") {
     let b2,b3;
     if (ctx['state'].val===1) {
-      b2 = callTemplate_2(ctx, node, key + \`__1\`);
+      b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
     } else {
-      let b4 = callTemplate_4(ctx, node, key + \`__3\`);
+      let b4 = callTemplate_4.call(this, ctx, node, key + \`__3\`);
       b3 = block3([], [b4]);
     }
     return multi([b2, b3]);
@@ -284,7 +285,7 @@ exports[`t-call t-call in t-foreach and children component 3`] = `
       ctx[\`val_index\`] = i1;
       ctx[\`val_value\`] = k_block2[i1];
       let key1 = ctx['val'];
-      c_block2[i1] = withKey(callTemplate_2(ctx, node, key + \`__1__\${key1}\`), key1);
+      c_block2[i1] = withKey(callTemplate_2.call(this, ctx, node, key + \`__1__\${key1}\`), key1);
     }
     let b2 = list(c_block2);
     return block1([], [b2]);

@@ -60,7 +60,7 @@ describe("t-on", () => {
   });
 
   test("can bind handlers with arguments", () => {
-    const template = `<button t-on-click="add(5)">Click</button>`;
+    const template = `<button t-on-click="() => add(5)">Click</button>`;
     let a = 1;
     const fixture = mountToFixture(template, { add: (n: number) => (a = a + n) });
     expect(a).toBe(1);
@@ -69,7 +69,7 @@ describe("t-on", () => {
   });
 
   test("can bind handlers with object arguments", () => {
-    const template = `<button t-on-click="add({val: 5})">Click</button>`;
+    const template = `<button t-on-click="() => add({val: 5})">Click</button>`;
     let a = 1;
     const fixture = mountToFixture(template, { add: ({ val }: any) => (a = a + val) });
     expect(a).toBe(1);
@@ -79,7 +79,7 @@ describe("t-on", () => {
 
   test("can bind handlers with empty  object", () => {
     expect.assertions(2);
-    const template = `<button t-on-click="doSomething({})">Click</button>`;
+    const template = `<button t-on-click="() => doSomething({})">Click</button>`;
     const fixture = mountToFixture(template, {
       doSomething(arg: any) {
         expect(arg).toEqual({});
@@ -90,7 +90,7 @@ describe("t-on", () => {
 
   test("can bind handlers with empty object (with non empty inner string)", () => {
     expect.assertions(2);
-    const template = `<button t-on-click="doSomething({ })">Click</button>`;
+    const template = `<button t-on-click="() => doSomething({ })">Click</button>`;
     const fixture = mountToFixture(template, {
       doSomething(arg: any) {
         expect(arg).toEqual({});
@@ -104,7 +104,7 @@ describe("t-on", () => {
     const template = `
         <ul>
           <li t-foreach="['someval']" t-as="action" t-key="action_index">
-            <a t-on-click="activate(action)">link</a>
+            <a t-on-click="() => activate(action)">link</a>
           </li>
         </ul>`;
     const fixture = mountToFixture(template, {
@@ -190,7 +190,7 @@ describe("t-on", () => {
   });
 
   test("t-on with inline statement", () => {
-    const template = `<button t-on-click="state.counter++">Click</button>`;
+    const template = `<button t-on-click="() => state.counter++">Click</button>`;
     let owner = { state: { counter: 0 } };
     const fixture = mountToFixture(template, owner);
     expect(owner.state.counter).toBe(0);
@@ -199,7 +199,7 @@ describe("t-on", () => {
   });
 
   test("t-on with inline statement (function call)", () => {
-    const template = `<button t-on-click="state.incrementCounter(2)">Click</button>`;
+    const template = `<button t-on-click="() => state.incrementCounter(2)">Click</button>`;
     let owner = {
       state: {
         counter: 0,
@@ -215,7 +215,7 @@ describe("t-on", () => {
   });
 
   test("t-on with inline statement, part 2", () => {
-    const template = `<button t-on-click="state.flag = !state.flag">Toggle</button>`;
+    const template = `<button t-on-click="() => state.flag = !state.flag">Toggle</button>`;
     let owner = {
       state: {
         flag: true,
@@ -230,7 +230,7 @@ describe("t-on", () => {
   });
 
   test("t-on with inline statement, part 3", () => {
-    const template = `<button t-on-click="state.n = someFunction(3)">Toggle</button>`;
+    const template = `<button t-on-click="() => state.n = someFunction(3)">Toggle</button>`;
     let owner = {
       someFunction(n: number) {
         return n + 1;
@@ -272,7 +272,7 @@ describe("t-on", () => {
   test("t-on, with arguments and t-call", async () => {
     expect.assertions(4);
     const app = new TemplateSet();
-    const sub = `<p t-on-click="update(value)">lucas</p>`;
+    const sub = `<p t-on-click="() => this.update(value)">lucas</p>`;
     const main = `<div><t t-call="sub"/></div>`;
     app.addTemplate("sub", sub);
     app.addTemplate("main", main);
@@ -290,7 +290,7 @@ describe("t-on", () => {
 
     const fixture = makeTestFixture();
     const render = app.getTemplate("main");
-    const bdom = render(owner, node);
+    const bdom = render.call(owner, owner, node);
     mount(bdom, fixture);
     fixture.querySelector("p")!.click();
   });
@@ -433,7 +433,7 @@ describe("t-on", () => {
       expect.assertions(5);
       const template = `<div>
         <t t-foreach="projects" t-as="project" t-key="project">
-          <a href="#" t-on-click.prevent="onEdit(project.id)">
+          <a href="#" t-on-click.prevent="ev => onEdit(project.id, ev)">
             Edit <t t-esc="project.name"/>
           </a>
         </t>

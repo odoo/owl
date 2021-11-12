@@ -145,7 +145,7 @@ describe("t-call", () => {
   });
 
   test("handlers with arguments are properly bound through a t-call", async () => {
-    const sub = xml`<p t-on-click="update(a)">lucas</p>`;
+    const sub = xml`<p t-on-click="() => this.update(a)">lucas</p>`;
 
     let value: any = null;
 

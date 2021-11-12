@@ -170,7 +170,7 @@ describe("t-component", () => {
   test("modifying a sub widget", async () => {
     class Counter extends Component {
       static template = xml`
-      <div><t t-esc="state.counter"/><button t-on-click="state.counter++">Inc</button></div>`;
+      <div><t t-esc="state.counter"/><button t-on-click="() => state.counter++">Inc</button></div>`;
       state = useState({
         counter: 0,
       });

@@ -139,7 +139,7 @@ exports[`t-component modifying a sub widget 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['state'].counter;
     const v1 = ctx['state'];
-    let d2 = [(e) => {const res = (() => { return v1.counter++ })(); if (typeof res === 'function') { res(e) }}];
+    let d2 = [()=>v1.counter++, ctx];
     return block1([d1, d2]);
   }
 }"

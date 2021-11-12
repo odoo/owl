@@ -47,7 +47,7 @@ describe("t-on", () => {
           <div>
             <div t-foreach="state.values" t-as="val" t-key="val">
               <t t-esc="val_index"/>: <t t-esc="val + ''"/>
-              <button t-on-click="otherState.vals.push(val)">Expr</button>
+              <button t-on-click="() => otherState.vals.push(val)">Expr</button>
             </div>
           </div>
         `;
@@ -73,7 +73,7 @@ describe("t-on", () => {
             <div t-foreach="state.values" t-as="val" t-key="val">
               <t t-set="bossa" t-value="bossa + '_' + val_index" />
               <t t-esc="val_index"/>: <t t-esc="val + ''"/>
-              <button t-on-click="otherState.vals.push(val + '_' + bossa)">Expr</button>
+              <button t-on-click="() => otherState.vals.push(val + '_' + bossa)">Expr</button>
             </div>
           </div>
         `;
@@ -97,13 +97,14 @@ describe("t-on", () => {
           <div>
             <div t-foreach="state.values" t-as="val" t-key="val">
               <t t-esc="val_index"/>: <t t-esc="val + ''"/>
-              <button t-on-click="addVal(val)">meth call</button>
+              <button t-on-click="() => this.addVal(val)">meth call</button>
             </div>
           </div>
         `;
       state = useState({ values: ["a", "b"] });
       otherState = { vals: new Array<string>() };
       addVal(val: string) {
+        debugger;
         this.otherState.vals.push(val);
       }
     }
@@ -124,7 +125,7 @@ describe("t-on", () => {
           <div>
             <t t-set="iter" t-value="0" />
             <div t-foreach="arr" t-as="val" t-key="val">
-              <button t-on-click="otherState.vals.push(iter + '_' + iter)">expr</button>
+              <button t-on-click="() => otherState.vals.push(iter + '_' + iter)">expr</button>
               <t t-set="iter" t-value="iter + 1" />
             </div>
           </div>

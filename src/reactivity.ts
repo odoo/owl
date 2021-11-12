@@ -12,18 +12,29 @@ const SOURCE = Symbol("source");
 const OBSERVER = Symbol("observer");
 const KEYS = Symbol("keys");
 const ROOT = Symbol("root");
+const SEED = Symbol("Seed");
 
-export function atom<T>(source: T, observer: Observer): T {
+export function atom(source: any, observer: Observer) {
+  return _atom(source, observer, true);
+}
+
+export function _atom(source: any, observer: Observer, seed = false) {
   if (isTrackable(source) && observerSourceAtom.has(observer)) {
     source = (source as any)[SOURCE] || source;
     const oldAtom = observerSourceAtom.get(observer)!.get(source);
     if (oldAtom) {
+      if (seed) {
+        oldAtom[SEED] = true;
+      }
       return oldAtom;
     }
     if (!sourceAtoms.get(source)) {
       sourceAtoms.set(source, new Map([[ROOT, new ObserverSet()]]));
     }
     const newAtom = createAtom(source, observer);
+    if (seed) {
+      newAtom[SEED] = true;
+    }
     observerSourceAtom.get(observer)!.set(source, newAtom);
     sourceAtoms.get(source)!.get(ROOT)!.add(newAtom);
     return newAtom;
@@ -33,8 +44,13 @@ export function atom<T>(source: T, observer: Observer): T {
 
 function createAtom(source: Source, observer: Observer): Atom {
   const keys: Set<any> = new Set();
-  return new Proxy(source as any, {
-    set(target: any, key: string, value: any): boolean {
+  let seed: boolean = false;
+  const newAtom: Atom = new Proxy(source as any, {
+    set(target: any, key: any, value: any): boolean {
+      if (key === SEED) {
+        seed = value;
+        return true;
+      }
       if (!(key in target)) {
         target[key] = value;
         notify(sourceAtoms.get(source)!.get(ROOT)!);
@@ -45,20 +61,25 @@ function createAtom(source: Source, observer: Observer): Atom {
         target[key] = value;
         const observerSet = sourceAtoms.get(source)!.get(key);
         if (observerSet) {
-          notify(observerSet);
+          const clean = isTrackable(current);
+          notify(observerSet, clean);
         }
       }
       return true;
     },
     deleteProperty(target: any, key: string): boolean {
       if (key in target) {
+        const current = target[key];
         delete target[key];
         // notify source observers
-        notify(sourceAtoms.get(source)!.get(ROOT)!);
+        const clean = isTrackable(current);
+        notify(sourceAtoms.get(source)!.get(ROOT)!, clean);
         const atoms = sourceAtoms.get(source)!;
         if (atoms.has(key)) {
           // clear source-key observers
-          atoms.get(key)!.deleteKey(key);
+          for (const atom of atoms.get(key)!) {
+            atom[KEYS].delete(key);
+          }
           atoms.delete(key);
         }
       }
@@ -72,6 +93,8 @@ function createAtom(source: Source, observer: Observer): Atom {
           return source;
         case KEYS:
           return keys;
+        case SEED:
+          return seed;
         default:
           const value = target[key];
           // register observer to source-key
@@ -80,14 +103,15 @@ function createAtom(source: Source, observer: Observer): Atom {
             if (!atoms.has(key)) {
               atoms.set(key, new ObserverSet());
             }
-            atoms.get(key)!.add(proxy);
+            atoms.get(key)!.add(newAtom);
             keys.add(key);
           }
           //
-          return atom(value, observer);
+          return _atom(value, observer);
       }
     },
   });
+  return newAtom;
 }
 
 function isTrackable(value: any): boolean {
@@ -103,18 +127,25 @@ export function registerObserver(observer: Observer) {
   if (!observerSourceAtom.get(observer)) {
     observerSourceAtom.set(observer, new Map());
   }
-  return unregisterObserver.bind(null, observer);
+  return unregisterObserverAtoms.bind(null, observer, false);
 }
 
-function unregisterObserver(observer: Observer) {
-  for (const [source, atom] of observerSourceAtom.get(observer)!) {
+function unregisterObserverAtoms(observer: Observer, keepSeeds: boolean) {
+  const observerAtoms = observerSourceAtom.get(observer)!;
+  for (const [source, atom] of observerAtoms) {
+    if (keepSeeds && atom[SEED]) {
+      continue;
+    }
+    observerAtoms.delete(source);
     const atoms = sourceAtoms.get(source)!;
     atoms.get(ROOT)!.delete(atom);
     for (const key of atom[KEYS]) {
       atoms.get(key)!.delete(atom);
     }
   }
-  observerSourceAtom.delete(observer);
+  if (!keepSeeds) {
+    observerSourceAtom.delete(observer);
+  }
 }
 
 export function useState(state: any): Atom {
@@ -145,14 +176,6 @@ class ObserverSet {
       return this.callbackSet.delete(atom);
     }
   }
-  deleteKey(key: any) {
-    for (const atom of this.nodeAntichain) {
-      atom[KEYS].delete(key);
-    }
-    for (const atom of this.callbackSet) {
-      atom[KEYS].delete(key);
-    }
-  }
   union(other: ObserverSet) {
     for (const atom of other.nodeAntichain) {
       this.nodeAntichain.add(atom);
@@ -163,11 +186,21 @@ class ObserverSet {
   }
   notify() {
     for (const atom of this.nodeAntichain) {
+      // an observer cannot be found twice here: <= in add is based on observers
       atom[OBSERVER].render();
     }
+    const called = new Set();
     for (const atom of this.callbackSet) {
-      atom[OBSERVER]();
+      const observer = atom[OBSERVER];
+      if (!called.has(observer)) {
+        observer();
+      }
+      called.add(observer);
     }
+  }
+  *[Symbol.iterator]() {
+    yield* this.nodeAntichain;
+    yield* this.callbackSet;
   }
 }
 
@@ -213,7 +246,13 @@ class Antichain extends Set<Atom> {
 }
 
 let toNotify: ObserverSet | null = null;
-async function notify(observers: ObserverSet) {
+let toClean: Set<Observer> = new Set();
+async function notify(observers: ObserverSet, clean = false) {
+  if (clean) {
+    for (const atom of observers) {
+      toClean.add(atom[OBSERVER]);
+    }
+  }
   if (toNotify) {
     toNotify.union(observers);
     return;
@@ -221,6 +260,10 @@ async function notify(observers: ObserverSet) {
   toNotify = new ObserverSet();
   toNotify.union(observers);
   await Promise.resolve();
+  for (const observer of toClean) {
+    unregisterObserverAtoms(observer, true);
+  }
+  toClean.clear();
   toNotify.notify();
   toNotify = null;
 }

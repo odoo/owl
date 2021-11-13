@@ -1,4 +1,4 @@
-import { EventBus } from "../src/event_bus";
+import { EventBus } from "../src/utils";
 
 describe("event bus behaviour", () => {
   test("can subscribe and be notified", () => {

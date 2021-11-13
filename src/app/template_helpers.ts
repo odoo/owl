@@ -1,6 +1,11 @@
 import { BDom, multi, text, toggler } from "../blockdom";
 import { validateProps } from "../component/props_validation";
 
+/**
+ * This file contains utility functions that will be injected in each template,
+ * to perform various useful tasks in the compiled code.
+ */
+
 function withDefault(value: any, defaultValue: any): any {
   return value === undefined || value === null || value === false ? defaultValue : value;
 }
@@ -19,7 +24,6 @@ function callSlot(
   if (defaultSlot) {
     let child1: BDom | undefined = undefined;
     let child2: BDom | undefined = undefined;
-    // const result = new BMulti(2);
     if (slotBDom) {
       child1 = dynamic ? toggler(name, slotBDom) : slotBDom;
     } else {

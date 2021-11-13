@@ -31,7 +31,7 @@ export class App<T extends typeof Component = any> extends TemplateSet {
     this.props = props;
   }
 
-  configure(config: Config) {
+  configure(config: Config): App<T> {
     if (config.dev) {
       this.dev = config.dev;
       console.info(DEV_MSG);
@@ -46,6 +46,7 @@ export class App<T extends typeof Component = any> extends TemplateSet {
     if (config.translatableAttributes) {
       this.translatableAttributes = config.translatableAttributes;
     }
+    return this;
   }
 
   mount(target: HTMLElement, options?: MountOptions): Promise<InstanceType<T>> {

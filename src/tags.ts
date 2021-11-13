@@ -1,5 +1,5 @@
 import { registerSheet } from "./component/style";
-import { globalTemplates } from "./qweb/template_helpers";
+import { globalTemplates } from "./compiler/template_helpers";
 
 // -----------------------------------------------------------------------------
 //  Global templates

@@ -3,7 +3,6 @@ import { mount } from "../blockdom";
 import type { ComponentNode } from "./component_node";
 import { STATUS } from "./status";
 import { fibersInError } from "./error_handling";
-// import { mountBlock } from "./bdom/block";
 
 export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
   let current = node.fiber;

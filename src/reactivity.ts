@@ -13,9 +13,9 @@ const OBSERVER = Symbol("observer");
 const KEYS = Symbol("keys");
 const ROOT = Symbol("root");
 
-export function atom(source: any, observer: Observer) {
+export function atom<T>(source: T, observer: Observer): T {
   if (isTrackable(source) && observerSourceAtom.has(observer)) {
-    source = source[SOURCE] || source;
+    source = (source as any)[SOURCE] || source;
     const oldAtom = observerSourceAtom.get(observer)!.get(source);
     if (oldAtom) {
       return oldAtom;
@@ -33,8 +33,7 @@ export function atom(source: any, observer: Observer) {
 
 function createAtom(source: Source, observer: Observer): Atom {
   const keys: Set<any> = new Set();
-  let self: Atom;
-  const newAtom: Atom = new Proxy(source as any, {
+  return new Proxy(source as any, {
     set(target: any, key: string, value: any): boolean {
       if (!(key in target)) {
         target[key] = value;
@@ -65,7 +64,7 @@ function createAtom(source: Source, observer: Observer): Atom {
       }
       return true;
     },
-    get(target: any, key: any): any {
+    get(target: any, key: any, proxy: any): any {
       switch (key) {
         case OBSERVER:
           return observer;
@@ -81,7 +80,7 @@ function createAtom(source: Source, observer: Observer): Atom {
             if (!atoms.has(key)) {
               atoms.set(key, new ObserverSet());
             }
-            atoms.get(key)!.add(self);
+            atoms.get(key)!.add(proxy);
             keys.add(key);
           }
           //
@@ -89,8 +88,6 @@ function createAtom(source: Source, observer: Observer): Atom {
       }
     },
   });
-  self = newAtom;
-  return newAtom;
 }
 
 function isTrackable(value: any): boolean {

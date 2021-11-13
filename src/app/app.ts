@@ -2,7 +2,7 @@ import { Component } from "../component/component";
 import { ComponentNode } from "../component/component_node";
 import { MountOptions } from "../component/fibers";
 import { Scheduler } from "../component/scheduler";
-import { TemplateSet } from "./template_helpers";
+import { TemplateSet } from "./template_set";
 
 // reimplement dev mode stuff see last change in 0f7a8289a6fb8387c3c1af41c6664b2a8448758f
 

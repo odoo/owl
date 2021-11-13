@@ -16,7 +16,8 @@ import { BDom } from "../src/blockdom";
 import { blockDom } from "../src";
 import { compile as compileTemplate, Template } from "../src/compiler";
 import { CodeGenOptions } from "../src/compiler/code_generator";
-import { globalTemplates, TemplateSet, UTILS } from "../src/app/template_helpers";
+import { UTILS } from "../src/app/template_helpers";
+import { globalTemplates, TemplateSet } from "../src/app/template_set";
 import { xml } from "../src/tags";
 
 const mount = blockDom.mount;

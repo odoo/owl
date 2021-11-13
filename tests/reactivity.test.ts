@@ -871,7 +871,7 @@ describe("Reactivity: atom", () => {
     let n = 0;
     const observer = () => n++;
     const unregisterObserver = registerObserver(observer);
-    const state = atom({ a: 1 }, observer);
+    const state = atom({ a: 1 } as any, observer);
 
     state.a = state.a;
     await nextMicroTick();

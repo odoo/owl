@@ -772,8 +772,9 @@ describe("basics", () => {
     await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<span>42</span>");
   });
+
   // Depends on t-props
-  test.skip("update props of component without concrete own node", async () => {
+  test("update props of component without concrete own node", async () => {
     class Custom extends Component {
       static template = xml`
         <div class="widget-subkey">
@@ -819,86 +820,6 @@ describe("basics", () => {
     parent.render();
     await nextTick();
     expect(fixture.textContent!.trim()).toBe("2__3");
-  });
-
-  test.skip("subcomponents cannot change observable state received from parent", async () => {
-    const consoleError = console.error;
-    console.error = jest.fn();
-    class Child extends Component {
-      static template = xml`<div/>`;
-      setup() {
-        this.props.obj.coffee = 2;
-      }
-    }
-    class Parent extends Component {
-      static template = xml`<div><Child obj="state.obj"/></div>`;
-      static components = { Child };
-      state = useState({ obj: { coffee: 1 } });
-    }
-    let error;
-    try {
-      await mount(Parent, fixture);
-    } catch (e) {
-      error = e;
-    }
-    expect(error).toBeDefined();
-    expect(error.message).toBe('Observed state cannot be changed here! (key: "coffee", val: "2")');
-    expect(console.error).toBeCalledTimes(0);
-    console.error = consoleError;
-  });
-});
-
-describe("dynamic t-props", () => {
-  test.skip("basic use", async () => {
-    expect.assertions(4);
-
-    class Child extends Component {
-      static template = xml`
-        <span>
-            <t t-esc="props.a + props.b"/>
-        </span>
-      `;
-      setup() {
-        expect(this.props).toEqual({ a: 1, b: 2 });
-        expect(this.props).not.toBe(parent.some.obj);
-      }
-    }
-    class Parent extends Component {
-      static template = xml`
-        <div>
-            <Child t-props="some.obj"/>
-        </div>
-      `;
-      static components = { Child };
-
-      some = { obj: { a: 1, b: 2 } };
-    }
-
-    const parent = await mount(Parent, fixture);
-    expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
-  });
-
-  test.skip("t-props with props", async () => {
-    expect.assertions(1);
-
-    class Child extends Component {
-      static template = xml`<div />`;
-      setup() {
-        expect(this.props).toEqual({ a: 1, b: 2, c: "c" });
-      }
-    }
-    class Parent extends Component {
-      static template = xml`
-        <div>
-            <Child t-props="props" a="1" b="2" />
-        </div>
-      `;
-      static components = { Child };
-
-      props = { a: "a", c: "c" };
-    }
-
-    await mount(Parent, fixture);
   });
 });
 

@@ -1,5 +1,5 @@
 import { registerSheet } from "./component/style";
-import { globalTemplates } from "./app/template_helpers";
+import { globalTemplates } from "./app/template_set";
 
 // -----------------------------------------------------------------------------
 //  Global templates

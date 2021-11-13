@@ -1,6 +1,6 @@
 import { makeTestFixture, snapshotApp } from "../helpers";
 import { Component, xml } from "../../src";
-import { App, DEV_MSG } from "../../src/app";
+import { App, DEV_MSG } from "../../src/app/app";
 import { validateProps } from "../../src/component/props_validation";
 
 let fixture: HTMLElement;

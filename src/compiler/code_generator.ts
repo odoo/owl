@@ -1,4 +1,3 @@
-import { BDom } from "../blockdom";
 import { compileExpr, compileExprToArray, interpolate, INTERP_REGEXP } from "./inline_expressions";
 import {
   AST,
@@ -20,24 +19,18 @@ import {
   ASTTSet,
   ASTTranslation,
   ASTType,
-  parse,
 } from "./parser";
-
-export type Template = (context: any, vnode: any, key?: string) => BDom;
-export type TemplateFunction = (blocks: any, utils: any) => Template;
 
 type BlockType = "block" | "text" | "multi" | "list" | "html";
 
-export interface CompileOptions {
-  name?: string;
+export interface Config {
   translateFn?: (s: string) => string;
   translatableAttributes?: string[];
   dev?: boolean;
 }
 
-export function compileTemplate(template: string, options?: CompileOptions): TemplateFunction {
-  const compiler = new QWebCompiler(template, options);
-  return compiler.compile();
+export interface CodeGenOptions extends Config {
+  hasSafeContext?: boolean;
 }
 
 // using a non-html document so that <inner/outer>HTML serializes as XML instead
@@ -165,47 +158,37 @@ class CodeTarget {
   }
 }
 
-export const TRANSLATABLE_ATTRS = ["label", "title", "placeholder", "alt"];
+const TRANSLATABLE_ATTRS = ["label", "title", "placeholder", "alt"];
 const translationRE = /^(\s*)([\s\S]+?)(\s*)$/;
 
-export class QWebCompiler {
+export class CodeGenerator {
   blocks: BlockDescription[] = [];
   nextId = 1;
   nextBlockId = 1;
   shouldProtectScope: boolean = false;
   shouldDefineAssign: boolean = false;
-  hasSafeContext: boolean | null = null;
+  hasSafeContext: boolean;
   hasRef: boolean = false;
-  // hasTCall: boolean = false;
   isDebug: boolean = false;
   functions: CodeTarget[] = [];
   target = new CodeTarget("main");
   templateName: string;
-  template: string;
   dev: boolean;
   translateFn: (s: string) => string;
   translatableAttributes: string[];
   ast: AST;
   staticCalls: { id: string; template: string }[] = [];
 
-  constructor(template: string, options: CompileOptions = {}) {
-    this.template = template;
+  constructor(name: string, ast: AST, options: CodeGenOptions) {
     this.translateFn = options.translateFn || ((s: string) => s);
     this.translatableAttributes = options.translatableAttributes || TRANSLATABLE_ATTRS;
+    this.hasSafeContext = options.hasSafeContext || false;
     this.dev = options.dev || false;
-    this.ast = parse(template);
-    if (options.name) {
-      this.templateName = options.name;
-    } else {
-      if (template.length > 250) {
-        this.templateName = template.slice(0, 250) + "...";
-      } else {
-        this.templateName = template;
-      }
-    }
+    this.ast = ast;
+    this.templateName = name;
   }
 
-  compile(): TemplateFunction {
+  generateCode(): string {
     const ast = this.ast;
     this.isDebug = ast.type === ASTType.TDebug;
     BlockDescription.nextBlockId = 1;
@@ -218,72 +201,7 @@ export class QWebCompiler {
       translate: true,
       tKeyExpr: null,
     });
-    const code = this.generateCode();
-    return new Function("bdom, helpers", code) as TemplateFunction;
-  }
 
-  addLine(line: string) {
-    this.target.addLine(line);
-  }
-
-  generateId(prefix: string = ""): string {
-    return `${prefix}${this.nextId++}`;
-  }
-
-  generateBlockName(): string {
-    return `block${this.blocks.length + 1}`;
-  }
-
-  insertAnchor(block: BlockDescription) {
-    const tag = `block-child-${block.children.length}`;
-    const anchor = xmlDoc.createElement(tag);
-    block.insert(anchor);
-  }
-
-  createBlock(
-    parentBlock: BlockDescription | null,
-    type: BlockType,
-    ctx: Context
-  ): BlockDescription {
-    const hasRoot = this.target.hasRoot;
-    const block = new BlockDescription(this.target, type);
-    if (!hasRoot && !ctx.preventRoot) {
-      this.target.hasRoot = true;
-      block.isRoot = true;
-    }
-    if (parentBlock) {
-      parentBlock.children.push(block);
-      if (parentBlock.type === "list") {
-        block.parentVar = `c_block${parentBlock.id}`;
-      }
-    }
-    return block;
-  }
-
-  insertBlock(expression: string, block: BlockDescription, ctx: Context): void {
-    let blockExpr = block.generateExpr(expression);
-    const tKeyExpr = ctx.tKeyExpr;
-    if (block.parentVar) {
-      let keyArg = `key${this.target.loopLevel}`;
-      if (tKeyExpr) {
-        keyArg = `${tKeyExpr} + ${keyArg}`;
-      }
-      this.addLine(`${block.parentVar}[${ctx.index}] = withKey(${blockExpr}, ${keyArg});`);
-      return;
-    }
-
-    if (tKeyExpr) {
-      blockExpr = `toggler(${tKeyExpr}, ${blockExpr})`;
-    }
-
-    if (block.isRoot && !ctx.preventRoot) {
-      this.addLine(`return ${blockExpr};`);
-    } else {
-      this.addLine(`let ${block.varName} = ${blockExpr};`);
-    }
-  }
-
-  generateCode(): string {
     let mainCode = this.target.code;
     this.target.code = [];
     this.target.indentLevel = 0;
@@ -351,6 +269,67 @@ export class QWebCompiler {
       console.log(msg);
     }
     return code;
+  }
+
+  addLine(line: string) {
+    this.target.addLine(line);
+  }
+
+  generateId(prefix: string = ""): string {
+    return `${prefix}${this.nextId++}`;
+  }
+
+  generateBlockName(): string {
+    return `block${this.blocks.length + 1}`;
+  }
+
+  insertAnchor(block: BlockDescription) {
+    const tag = `block-child-${block.children.length}`;
+    const anchor = xmlDoc.createElement(tag);
+    block.insert(anchor);
+  }
+
+  createBlock(
+    parentBlock: BlockDescription | null,
+    type: BlockType,
+    ctx: Context
+  ): BlockDescription {
+    const hasRoot = this.target.hasRoot;
+    const block = new BlockDescription(this.target, type);
+    if (!hasRoot && !ctx.preventRoot) {
+      this.target.hasRoot = true;
+      block.isRoot = true;
+    }
+    if (parentBlock) {
+      parentBlock.children.push(block);
+      if (parentBlock.type === "list") {
+        block.parentVar = `c_block${parentBlock.id}`;
+      }
+    }
+    return block;
+  }
+
+  insertBlock(expression: string, block: BlockDescription, ctx: Context): void {
+    let blockExpr = block.generateExpr(expression);
+    const tKeyExpr = ctx.tKeyExpr;
+    if (block.parentVar) {
+      let keyArg = `key${this.target.loopLevel}`;
+      if (tKeyExpr) {
+        keyArg = `${tKeyExpr} + ${keyArg}`;
+      }
+      this.addLine(`${block.parentVar}[${ctx.index}] = withKey(${blockExpr}, ${keyArg});`);
+      return;
+    }
+
+    if (tKeyExpr) {
+      blockExpr = `toggler(${tKeyExpr}, ${blockExpr})`;
+    }
+
+    if (block.isRoot && !ctx.preventRoot) {
+      this.addLine(`return ${blockExpr};`);
+    } else {
+      this.addLine(`let ${block.varName} = ${blockExpr};`);
+    }
   }
 
   generateFunctions(fn: CodeTarget) {
@@ -992,9 +971,6 @@ export class QWebCompiler {
     const hasSlot = !!Object.keys(ast.slots).length;
     let slotDef: string;
     if (hasSlot) {
-      if (this.hasSafeContext === null) {
-        this.hasSafeContext = !this.template.includes("t-set") && !this.template.includes("t-call");
-      }
       let ctxStr = "ctx";
       if (this.target.loopLevel || !this.hasSafeContext) {
         ctxStr = this.generateId("ctx");

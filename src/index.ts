@@ -31,7 +31,7 @@ export const blockDom = {
 };
 
 // import { makeBlockClass } from "./_old_bdom/element";
-import { App } from "./app";
+import { App } from "./app/app";
 import { Component } from "./component/component";
 import { getCurrent } from "./component/component_node";
 // import { getCurrent } from "./b_node";

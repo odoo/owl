@@ -1,5 +1,5 @@
 import { BDom, createBlock, html, list, multi, text, toggler } from "../blockdom";
-import { compileTemplate, Template } from "./compiler";
+import { compileTemplate, Template } from "./code_generator";
 import { component } from "../component/component_node";
 import { validateProps } from "../component/props_validation";
 

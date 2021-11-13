@@ -1,4 +1,4 @@
-import { compileExpr, tokenize } from "../../src/qweb/inline_expressions";
+import { compileExpr, tokenize } from "../../src/compiler/inline_expressions";
 
 describe("tokenizer", () => {
   test("simple tokens", () => {

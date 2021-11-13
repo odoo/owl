@@ -51,4 +51,58 @@ describe("t-props", () => {
     await nextTick();
     expect(fixture.textContent).toBe("second");
   });
+
+  test("basic use", async () => {
+    expect.assertions(5);
+
+    let props = { a: 1, b: 2 };
+
+    class Child extends Component {
+      static template = xml`
+          <span>
+              <t t-esc="props.a + props.b"/>
+          </span>
+        `;
+      setup() {
+        expect(this.props).toEqual({ a: 1, b: 2 });
+        expect(this.props).toBe(props);
+      }
+    }
+    class Parent extends Component {
+      static template = xml`
+          <div>
+              <Child t-props="some.obj"/>
+          </div>
+        `;
+      static components = { Child };
+
+      some = { obj: props };
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
+  });
+
+  test("t-props with props", async () => {
+    expect.assertions(3); // 2 comes from snapshots
+
+    class Child extends Component {
+      static template = xml`<div />`;
+      setup() {
+        expect(this.props).toEqual({ a: 1, b: 2, c: "c" });
+      }
+    }
+    class Parent extends Component {
+      static template = xml`
+          <div>
+              <Child t-props="props" a="1" b="2" />
+          </div>
+        `;
+      static components = { Child };
+
+      props = { a: "a", c: "c" };
+    }
+
+    await mount(Parent, fixture);
+  });
 });

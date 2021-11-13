@@ -1,4 +1,4 @@
-import { Component, mount, useState, xml } from "../../src";
+import { Component, mount, onMounted, useState, xml } from "../../src";
 import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -273,12 +273,14 @@ describe("style and class handling", () => {
     expect(span.className).toBe("c a b d");
   });
 
-  test.skip("class on components do not interfere with user defined classes", async () => {
+  test("class on components do not interfere with user defined classes", async () => {
     class App extends Component {
       static template = xml`<div t-att-class="{ c: state.c }" />`;
       state = useState({ c: true });
-      mounted() {
-        (<HTMLDivElement>this.el!).classList.add("user");
+      setup() {
+        onMounted(() => {
+          (<HTMLDivElement>this.el!).classList.add("user");
+        });
       }
     }
     const widget = await mount(App, fixture);

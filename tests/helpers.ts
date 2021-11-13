@@ -14,8 +14,9 @@ import {
 } from "../src";
 import { BDom } from "../src/blockdom";
 import { blockDom } from "../src";
-import { CompileOptions, compileTemplate, Template } from "../src/compiler/code_generator";
-import { globalTemplates, TemplateSet, UTILS } from "../src/compiler/template_helpers";
+import { compile as compileTemplate, Template } from "../src/compiler";
+import { CodeGenOptions } from "../src/compiler/code_generator";
+import { globalTemplates, TemplateSet, UTILS } from "../src/app/template_helpers";
 import { xml } from "../src/tags";
 
 const mount = blockDom.mount;
@@ -36,7 +37,7 @@ export function makeTestFixture() {
   return fixture;
 }
 
-export function snapshotTemplateCode(template: string, options?: CompileOptions) {
+export function snapshotTemplateCode(template: string, options?: CodeGenOptions) {
   expect(compileTemplate(template, options).toString()).toMatchSnapshot();
 }
 

@@ -1,5 +1,5 @@
 import { BDom, createBlock, html, list, multi, text, toggler } from "../blockdom";
-import { compileTemplate, Template } from "./code_generator";
+import { compile, Template } from "../compiler";
 import { component } from "../component/component_node";
 import { validateProps } from "../component/props_validation";
 
@@ -130,7 +130,7 @@ export class TemplateSet {
       if (rawTemplate === undefined) {
         throw new Error(`Missing template: "${name}"`);
       }
-      const templateFn = compileTemplate(rawTemplate, {
+      const templateFn = compile(rawTemplate, {
         name,
         dev: this.dev,
         translateFn: this.translateFn,

@@ -1,4 +1,4 @@
-import type { App } from "../app";
+import type { App } from "../app/app";
 import { BDom, VNode } from "../blockdom";
 import { Component } from "./component";
 import {

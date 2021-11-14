@@ -149,9 +149,7 @@ describe("Portal", () => {
     );
   });
 
-  test.skip("portal with target not in dom", async () => {
-    // need error handling to unskip this one
-
+  test("portal with target not in dom", async () => {
     class Parent extends Component {
       static components = { Portal };
       static template = xml`
@@ -170,8 +168,8 @@ describe("Portal", () => {
     }
 
     expect(error).toBeDefined();
-    expect(error.message).toBe('Could not find any match for "#does-not-exist"');
-    expect(fixture.innerHTML).toBe(`<div id="outside"></div>`);
+    expect(error.message).toBe("invalid portal target");
+    expect(fixture.innerHTML).toBe(`<div></div>`);
   });
 
   test("portal with child and props", async () => {
@@ -508,7 +506,10 @@ describe("Portal: UI/UX", () => {
 });
 
 describe("Portal: Props validation", () => {
-  test.skip("target is mandatory", async () => {
+  test("target is mandatory", async () => {
+    const consoleInfo = console.info;
+    console.info = jest.fn();
+
     class Parent extends Component {
       static components = { Portal };
       static template = xml`
@@ -519,16 +520,21 @@ describe("Portal: Props validation", () => {
         </div>`;
     }
     let error;
+    let app = new App(Parent);
+    app.configure({ dev: true });
     try {
-      await mount(Parent, fixture);
+      await app.mount(fixture);
     } catch (e) {
       error = e;
     }
     expect(error).toBeDefined();
     expect(error.message).toBe(`Missing props 'target' (component 'Portal')`);
+    console.info = consoleInfo;
   });
 
-  test.skip("target is not list", async () => {
+  test("target is not list", async () => {
+    const consoleInfo = console.info;
+    console.info = jest.fn();
     class Parent extends Component {
       static components = { Portal };
       static template = xml`
@@ -539,12 +545,15 @@ describe("Portal: Props validation", () => {
         </div>`;
     }
     let error;
+    let app = new App(Parent);
+    app.configure({ dev: true });
     try {
-      await mount(Parent, fixture);
+      await app.mount(fixture);
     } catch (e) {
       error = e;
     }
     expect(error).toBeDefined();
     expect(error.message).toBe(`Invalid Prop 'target' in component 'Portal'`);
+    console.info = consoleInfo;
   });
 });

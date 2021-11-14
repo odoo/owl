@@ -53,6 +53,11 @@ class VPortal extends VText implements Partial<VNode<VPortal>> {
 
 export class Portal extends Component {
   static template = xml`<t t-slot="default"/>`;
+  static props = {
+    target: {
+      type: String,
+    },
+  };
 
   constructor(props: any, env: any, node: ComponentNode) {
     super(props, env, node);

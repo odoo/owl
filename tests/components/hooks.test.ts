@@ -96,10 +96,10 @@ describe("hooks", () => {
     await app.mount(fixture);
     app.destroy();
     expect(steps).toEqual([
-      "hook:mounted2",
       "hook:mounted1",
-      "hook:willUnmount1",
+      "hook:mounted2",
       "hook:willUnmount2",
+      "hook:willUnmount1",
     ]);
   });
 

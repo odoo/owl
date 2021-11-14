@@ -939,37 +939,6 @@ describe("lifecycle hooks", () => {
     expect(created).toBe(true);
   });
 
-  test.skip("two different call to mounted/willunmount should work", async () => {
-    /*const steps: string[] = [];
-    function useMyHook(i) {
-      onMounted(() => {
-        steps.push("hook:mounted" + i);
-      });
-      onWillUnmount(() => {
-        steps.push("hook:willunmount" + i);
-      });
-    }
-    class MyComponent extends Component {
-      static template = xml`<div>hey</div>`;
-      constructor() {
-        super();
-        useMyHook(1);
-        useMyHook(2);
-      }
-    }
-    const component = new MyComponent();
-    await component.mount(fixture);
-    expect(fixture.innerHTML).toBe("<div>hey</div>");
-    component.unmount();
-    expect(fixture.innerHTML).toBe("");
-    expect(steps).toEqual([
-      "hook:mounted1",
-      "hook:mounted2",
-      "hook:willunmount2",
-      "hook:willunmount1",
-    ]);*/
-  });
-
   // TODO: rename (corresponds to https://github.com/odoo/owl/blob/master/doc/reference/concurrency_model.md#semantics)
   test("component semantics", async () => {
     let steps: string[] = [];

@@ -372,11 +372,11 @@ exports[`Portal portal with only text as content 1`] = `
 exports[`Portal portal with target not in dom 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture } = helpers;
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
   let assign = Object.assign;
   
-  let block1 = createBlock(\`<div><owl-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<div>2</div>\`);
   
   const slot2 = ctx => (node, key) => {
@@ -384,7 +384,7 @@ exports[`Portal portal with target not in dom 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(node.getChild(\`Portal\`, {target: '#does-not-exist'}, key + \`__1\`, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`Portal\`, {target: '#does-not-exist'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"
@@ -461,6 +461,48 @@ exports[`Portal with target in template (before portal) 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     let b3 = assign(component(\`Portal\`, {target: '#local-target'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`Portal: Props validation target is mandatory 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block2 = createBlock(\`<div>2</div>\`);
+  
+  const slot2 = ctx => (node, key) => {
+    return block2();
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b3 = assign(component(\`Portal\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`Portal: Props validation target is not list 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  let assign = Object.assign;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block2 = createBlock(\`<div>2</div>\`);
+  
+  const slot2 = ctx => (node, key) => {
+    return block2();
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b3 = assign(component(\`Portal\`, {target: ['body']}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"

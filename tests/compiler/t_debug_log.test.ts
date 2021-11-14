@@ -15,10 +15,14 @@ describe("debugging", () => {
   });
 
   test("t-debug on sub template", () => {
+    const consoleLog = console.log;
+    console.log = jest.fn();
     let template = `<p t-debug="">coucou</p>`;
     snapshotTemplateCode(template);
     template = `<div><t t-call="sub"/></div>`;
     snapshotTemplateCode(template);
+    expect(console.log).toHaveBeenCalledTimes(1);
+    console.log = consoleLog;
   });
 
   test("t-log", () => {

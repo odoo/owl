@@ -17,7 +17,7 @@ export function onWillUpdateProps(fn: (nextProps: any) => Promise<void> | void |
 
 export function onMounted(fn: () => void | any) {
   const node = getCurrent()!;
-  node.mounted.unshift(fn);
+  node.mounted.push(fn);
 }
 
 export function onWillPatch(fn: () => Promise<void> | any | void) {
@@ -32,7 +32,7 @@ export function onPatched(fn: () => void | any) {
 
 export function onWillUnmount(fn: () => Promise<void> | void | any) {
   const node = getCurrent()!;
-  node.willUnmount.push(fn);
+  node.willUnmount.unshift(fn);
 }
 
 export function onDestroyed(fn: () => Promise<void> | void | any) {

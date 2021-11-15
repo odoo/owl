@@ -66,6 +66,21 @@ exports[`hooks can use onWillStart, onWillUpdateProps 2`] = `
 }"
 `;
 
+exports[`hooks can use sub env 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['env'].val;
+    return block1([d1]);
+  }
+}"
+`;
+
 exports[`hooks can use useComponent 1`] = `
 "function anonymous(bdom, helpers
 ) {
@@ -76,6 +91,21 @@ exports[`hooks can use useComponent 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     return block1();
+  }
+}"
+`;
+
+exports[`hooks can use useEnv 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['env'].val;
+    return block1([d1]);
   }
 }"
 `;
@@ -91,6 +121,35 @@ exports[`hooks mounted callbacks should be called in reverse order from willUnmo
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['state'].value;
     return block1([d1]);
+  }
+}"
+`;
+
+exports[`hooks parent and child env 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['env'].val;
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`hooks parent and child env 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = text(ctx['env'].val);
+    let b3 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    return multi([b2, b3]);
   }
 }"
 `;

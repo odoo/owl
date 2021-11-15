@@ -58,19 +58,17 @@ describe("basics", () => {
     class Parent extends Component {
       static template = xml`
             <t>
-              <t t-if="env.flag"><Child /></t>
-              <t t-if="!env.flag"><OtherChild /></t>
+              <t t-if="env.options.flag"><Child /></t>
+              <t t-if="!env.options.flag"><OtherChild /></t>
             </t>
           `;
       static components = { Child, OtherChild };
     }
-    const env = { flag: true };
-    const app = new App(Parent);
-    app.configure({ env });
-    const parent = await app.mount(fixture);
+    const env = { options: { flag: true } };
+    const parent = await new App(Parent).configure({ env }).mount(fixture);
     expect(fixture.innerHTML).toBe("<span>CHILD 1</span>");
 
-    env.flag = false;
+    env.options.flag = false;
     await parent.render();
     expect(fixture.innerHTML).toBe("<div>CHILD 2</div>");
   });

@@ -8,17 +8,6 @@ beforeEach(() => {
 });
 
 describe("env handling", () => {
-  test("keeps a reference to env", async () => {
-    const env = {};
-    class Test extends Component {
-      static template = xml`<div/>`;
-    }
-    const app = new App(Test);
-    app.configure({ env });
-    const component = await app.mount(fixture);
-    expect(component.env).toBe(env);
-  });
-
   test("has an env by default", async () => {
     class Test extends Component {
       static template = xml`<div/>`;
@@ -27,8 +16,23 @@ describe("env handling", () => {
     expect(component.env).toEqual({});
   });
 
+  test("env is shallow frozen", async () => {
+    const env = { foo: 42, bar: { value: 42 } };
+    class Test extends Component {
+      static template = xml`<div/>`;
+    }
+    const component = await new App(Test).configure({ env }).mount(fixture);
+    expect(Object.isFrozen(component.env)).toBeTruthy();
+    expect(component.env).toEqual({ foo: 42, bar: { value: 42 } });
+    expect(() => {
+      component.env.foo = 23;
+    }).toThrow(/Cannot assign to read only property 'foo' of object/);
+    component.env.bar.value = 23;
+    expect(component.env).toEqual({ foo: 42, bar: { value: 23 } });
+  });
+
   test("parent env is propagated to child components", async () => {
-    const env = {};
+    const env = { foo: 42, bar: { value: 42 } };
     let child: any = null;
 
     class Child extends Component {
@@ -43,9 +47,7 @@ describe("env handling", () => {
       static components = { Child };
     }
 
-    const app = new App(Test);
-    app.configure({ env });
-    await app.mount(fixture);
-    expect(child.env).toBe(env);
+    await new App(Test).configure({ env }).mount(fixture);
+    expect(child.env).toEqual(env);
   });
 });

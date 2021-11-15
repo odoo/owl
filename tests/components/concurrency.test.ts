@@ -587,7 +587,7 @@ test("rendering component again in next microtick", async () => {
     static template = xml`
           <div>
             <button t-on-click="onClick">Click</button>
-            <t t-if="env.flag"><Child/></t>
+            <t t-if="env.config.flag"><Child/></t>
           </div>`;
     static components = { Child };
 
@@ -595,14 +595,15 @@ test("rendering component again in next microtick", async () => {
       useLogLifecycle(steps);
     }
     async onClick() {
-      this.env.flag = true;
+      this.env.config.flag = true;
       this.render();
       await Promise.resolve();
       this.render();
     }
   }
 
-  await mount(Parent, fixture);
+  const env = { config: { flag: false } };
+  await new App(Parent).configure({ env }).mount(fixture);
   expect(fixture.innerHTML).toBe("<div><button>Click</button></div>");
   fixture.querySelector("button")!.click();
   await nextTick();

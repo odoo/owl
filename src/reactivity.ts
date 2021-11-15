@@ -14,11 +14,20 @@ const KEYS = Symbol("keys");
 const ROOT = Symbol("root");
 const SEED = Symbol("Seed");
 
-export function atom(source: any, observer: Observer) {
+export function observe(source: any, observer: Observer): [Atom, Function] {
+  if (!isTrackable(source)) {
+    throw new Error("First argument is not trackable");
+  }
+  const unregisterObserver = registerObserver(observer);
+  const newAtom = atom(source, observer);
+  return [newAtom, unregisterObserver];
+}
+
+function atom(source: any, observer: Observer) {
   return _atom(source, observer, true);
 }
 
-export function _atom(source: any, observer: Observer, seed = false) {
+function _atom(source: any, observer: Observer, seed = false) {
   if (isTrackable(source) && observerSourceAtom.has(observer)) {
     source = (source as any)[SOURCE] || source;
     const oldAtom = observerSourceAtom.get(observer)!.get(source);
@@ -123,7 +132,7 @@ function isTrackable(value: any): boolean {
   );
 }
 
-export function registerObserver(observer: Observer) {
+function registerObserver(observer: Observer) {
   if (!observerSourceAtom.get(observer)) {
     observerSourceAtom.set(observer, new Map());
   }
@@ -149,13 +158,10 @@ function unregisterObserverAtoms(observer: Observer, keepSeeds: boolean) {
 }
 
 export function useState(state: any): Atom {
-  if (!isTrackable(state)) {
-    throw new Error("Argument is not trackable");
-  }
   const node = getCurrent()!;
-  const unregisterObserver = registerObserver(node);
+  const [newAtom, unregisterObserver] = observe(state, node);
   onWillUnmount(() => unregisterObserver());
-  return atom(state, node);
+  return newAtom;
 }
 
 class ObserverSet {

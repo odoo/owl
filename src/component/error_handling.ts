@@ -26,7 +26,7 @@ function _handleError(node: ComponentNode | null, error: any, isFirstRound = fal
         h(error);
         propagate = false;
       } catch (e) {
-        error = e as Error;
+        error = e;
       }
     }
 

@@ -63,10 +63,10 @@ exports[`basics can select a sub widget  3`] = `
   
   return function template(ctx, node, key = \\"\\") {
     let b2,b3;
-    if (ctx['env'].flag) {
+    if (ctx['env'].options.flag) {
       b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
     }
-    if (!ctx['env'].flag) {
+    if (!ctx['env'].options.flag) {
       b3 = component(\`OtherChild\`, {}, key + \`__2\`, node, ctx);
     }
     return multi([b2, b3]);

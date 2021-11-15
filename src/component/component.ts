@@ -1,3 +1,4 @@
+import type { Env } from "../app/app";
 import type { ComponentNode } from "./component_node";
 
 // -----------------------------------------------------------------------------
@@ -9,10 +10,10 @@ export class Component {
   static style: string = "";
 
   props: any;
-  env: any;
+  env: Env;
   __owl__: ComponentNode;
 
-  constructor(props: any, env: any, node: ComponentNode) {
+  constructor(props: any, env: Env, node: ComponentNode) {
     this.props = props;
     this.env = env;
     this.__owl__ = node;

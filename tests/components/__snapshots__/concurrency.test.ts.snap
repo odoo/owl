@@ -1132,7 +1132,7 @@ exports[`rendering component again in next microtick 2`] = `
     let b2;
     const v1 = ctx['onClick'];
     let d1 = [v1, ctx];
-    if (ctx['env'].flag) {
+    if (ctx['env'].config.flag) {
       b2 = component(\`Child\`, {}, key + \`__2\`, node, ctx);
     }
     return block1([d1], [b2]);

@@ -31,11 +31,9 @@ export const blockDom = {
   html,
 };
 
-// import { makeBlockClass } from "./_old_bdom/element";
 import { App } from "./app/app";
 import { Component } from "./component/component";
 import { getCurrent } from "./component/component_node";
-// import { getCurrent } from "./b_node";
 
 export { App, Component };
 
@@ -57,7 +55,7 @@ export { Portal } from "./misc/portal";
 export { Memo } from "./misc/memo";
 export { css, xml } from "./tags";
 export { useState } from "./reactivity";
-export { useRef } from "./refs";
+export { useRef, useEnv, useSubEnv } from "./hooks";
 export const utils = { EventBus, whenReady, loadFile };
 
 export {

@@ -1082,14 +1082,7 @@ describe("qweb parser", () => {
   });
 
   test("component with t-esc", async () => {
-    expect(parse(`<MyComponent t-esc="someValue"/>`)).toEqual({
-      type: ASTType.TComponent,
-      name: "MyComponent",
-      dynamicProps: null,
-      props: {},
-      isDynamic: false,
-      slots: { default: { defaultValue: "", expr: "someValue", type: ASTType.TEsc } },
-    });
+    expect(() => parse(`<MyComponent t-esc="someValue"/>`)).toThrow("t-esc is not supported on Component nodes");
   });
 
   test("component with t-call", async () => {

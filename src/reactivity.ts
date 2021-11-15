@@ -128,7 +128,9 @@ function isTrackable(value: any): boolean {
     value !== null &&
     typeof value === "object" &&
     !(value instanceof Date) &&
-    !(value instanceof Promise)
+    !(value instanceof Promise) &&
+    !(value instanceof String) &&
+    !(value instanceof Number)
   );
 }
 

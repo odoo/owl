@@ -21,3 +21,18 @@ export async function loadFile(url: string): Promise<string> {
   }
   return await result.text();
 }
+
+/*
+ * This class just transports the fact that a string is safe
+ * to be injected as HTML. Overriding a JS primitive is quite painful though
+ * so we need to redfine toString and valueOf.
+ */
+export class Markup extends String {}
+
+/*
+ * Marks a value as safe, that is, a value that can be injected as HTML directly.
+ * It should be used to wrap the value passed to a t-out directive to allow a raw rendering.
+ */
+export function markup(value: any) {
+  return new Markup(value);
+}

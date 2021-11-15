@@ -10,9 +10,9 @@ snapshotEverything();
 describe("misc", () => {
   test("global", () => {
     const context = new TestContext();
-    const _calleeAsc = `<año t-att-falló="'agüero'" t-raw="0"/>`;
+    const _calleeAsc = `<año t-att-falló="'agüero'" t-out="0"/>`;
     const _calleeUsesFoo = `<span t-esc="foo">foo default</span>`;
-    const _calleeAscToto = `<div t-raw="toto">toto default</div>`;
+    const _calleeAscToto = `<div t-out="toto">toto default</div>`;
     const caller = `
         <div>
           <t t-foreach="[4,5,6]" t-as="value" t-key="value">

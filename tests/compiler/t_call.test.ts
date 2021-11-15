@@ -144,7 +144,7 @@ describe("t-call (template calling)", () => {
     const context = new TestContext();
     const sub = `
         <div>
-          <t t-raw="0"/>
+          <t t-out="0"/>
         </div>`;
     const main = `
         <div>
@@ -159,19 +159,19 @@ describe("t-call (template calling)", () => {
     expect(context.renderToString("main")).toBe(expected);
   });
 
-  test("cascading t-call t-raw='0'", () => {
+  test("cascading t-call t-out='0'", () => {
     const context = new TestContext();
     const finalTemplate = `
         <div>
           <span>cascade 2</span>
-          <t t-raw="0"/>
+          <t t-out="0"/>
         </div>`;
 
     const subSubTemplate = `
         <div>
           <t t-call="finalTemplate">
             <span>cascade 1</span>
-            <t t-raw="0"/>
+            <t t-out="0"/>
           </t>
         </div>`;
 
@@ -179,7 +179,7 @@ describe("t-call (template calling)", () => {
         <div>
           <t t-call="subSubTemplate">
             <span>cascade 0</span>
-            <t t-raw="0"/>
+            <t t-out="0"/>
           </t>
         </div>`;
 
@@ -200,22 +200,22 @@ describe("t-call (template calling)", () => {
     expect(context.renderToString("main")).toBe(expected);
   });
 
-  test("cascading t-call t-raw='0', without external divs", () => {
+  test("cascading t-call t-out='0', without external divs", () => {
     const context = new TestContext();
     const finalTemplate = `
           <span>cascade 2</span>
-          <t t-raw="0"/>`;
+          <t t-out="0"/>`;
 
     const subSubTemplate = `
           <t t-call="finalTemplate">
             <span>cascade 1</span>
-            <t t-raw="0"/>
+            <t t-out="0"/>
           </t>`;
 
     const subTemplate = `
           <t t-call="subSubTemplate">
             <span>cascade 0</span>
-            <t t-raw="0"/>
+            <t t-out="0"/>
           </t>`;
 
     const main = `
@@ -429,7 +429,7 @@ describe("t-call (template calling)", () => {
 
   test("t-call with body content as root of a template", () => {
     const context = new TestContext();
-    const antony = `<foo><t t-raw="0"/></foo>`;
+    const antony = `<foo><t t-out="0"/></foo>`;
     const main = `<t><t t-call="antony"><p>antony</p></t></t>`;
     context.addTemplate("antony", antony);
     context.addTemplate("main", main);

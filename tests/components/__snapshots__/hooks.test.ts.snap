@@ -212,6 +212,37 @@ exports[`hooks useEffect hook effect with empty dependency list never reruns 1`]
 }"
 `;
 
+exports[`hooks useExternalListener 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['props'].value;
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`hooks useExternalListener 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2;
+    if (ctx['state'].flag) {
+      b2 = component(\`MyComponent\`, {}, key + \`__1\`, node, ctx);
+    }
+    return multi([b2]);
+  }
+}"
+`;
+
 exports[`hooks useRef hook: basic use 1`] = `
 "function anonymous(bdom, helpers
 ) {

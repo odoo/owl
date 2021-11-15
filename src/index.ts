@@ -31,6 +31,7 @@ export const blockDom = {
   html,
 };
 
+import type { AppConfig } from "./app/app";
 import { App } from "./app/app";
 import { Component } from "./component/component";
 import { getCurrent } from "./component/component_node";
@@ -39,10 +40,11 @@ export { App, Component };
 
 export async function mount<T extends typeof Component>(
   C: T,
-  target: HTMLElement
+  target: HTMLElement,
+  config: AppConfig = {}
 ): Promise<InstanceType<T>> {
   const app = new App(C);
-  return app.mount(target);
+  return app.configure(config).mount(target);
 }
 
 export function useComponent(): Component {

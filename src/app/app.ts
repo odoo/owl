@@ -10,7 +10,7 @@ export interface Env {
   [key: string]: any;
 }
 
-interface Config {
+export interface AppConfig {
   dev?: boolean;
   env?: Env;
   translatableAttributes?: string[];
@@ -35,7 +35,7 @@ export class App<T extends typeof Component = any> extends TemplateSet {
     this.props = props;
   }
 
-  configure(config: Config): App<T> {
+  configure(config: AppConfig): App<T> {
     if (config.dev) {
       this.dev = config.dev;
       console.info(DEV_MSG);

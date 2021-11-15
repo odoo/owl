@@ -1162,19 +1162,6 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><span>toph</span></div>");
   });
 
-  test("slot and (inline) t-esc", async () => {
-    class Dialog extends Component {
-      static template = xml`<span><t t-slot="default"/></span>`;
-    }
-    class Parent extends Component {
-      static template = xml`<div><Dialog t-esc="'toph'"/></div>`;
-      static components = { Dialog };
-    }
-    await mount(Parent, fixture);
-
-    expect(fixture.innerHTML).toBe("<div><span>toph</span></div>");
-  });
-
   test("slot and t-call", async () => {
     let sokka = xml`<p>sokka</p>`;
     class Dialog extends Component {

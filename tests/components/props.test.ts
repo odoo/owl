@@ -82,12 +82,12 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("<div><span>42</span></div>");
   });
 
-  test("t-set with a body expression can be passed in props, and then t-raw", async () => {
+  test("t-set with a body expression can be passed in props, and then t-out", async () => {
     class Child extends Component {
       static template = xml`
         <span>
           <t t-esc="props.val"/>
-          <t t-raw="props.val"/>
+          <t t-out="props.val"/>
         </span>`;
     }
     class Parent extends Component {

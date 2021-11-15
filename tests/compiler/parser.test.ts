@@ -226,19 +226,35 @@ describe("qweb parser", () => {
   });
 
   // ---------------------------------------------------------------------------
-  // t-raw
+  // t-out
   // ---------------------------------------------------------------------------
 
-  test("t-raw node", async () => {
+  test("t-raw node (deprecated)", async () => {
+    const warn = console.warn;
+    const steps: string[] = [];
+    console.warn = (msg: any) => steps.push(msg);
     expect(parse(`<t t-raw="text"/>`)).toEqual({
-      type: ASTType.TRaw,
+      type: ASTType.TOut,
+      expr: "text",
+      body: null,
+    });
+
+    expect(steps).toEqual([
+      't-raw has been deprecated in favor of t-out. If the value to render is not wrapped by the "markup" function, it will be escaped',
+    ]);
+    console.warn = warn;
+  });
+
+  test("t-out node", async () => {
+    expect(parse(`<t t-out="text"/>`)).toEqual({
+      type: ASTType.TOut,
       expr: "text",
       body: null,
     });
   });
 
-  test("t-raw node on a dom node", async () => {
-    expect(parse(`<div t-raw="text"/>`)).toEqual({
+  test("t-out node on a dom node", async () => {
+    expect(parse(`<div t-out="text"/>`)).toEqual({
       type: ASTType.DomNode,
       tag: "div",
       dynamicTag: null,
@@ -246,12 +262,12 @@ describe("qweb parser", () => {
       on: {},
       ref: null,
       model: null,
-      content: [{ type: ASTType.TRaw, expr: "text", body: null }],
+      content: [{ type: ASTType.TOut, expr: "text", body: null }],
     });
   });
 
-  test("t-raw node with body", async () => {
-    expect(parse(`<div t-raw="text">body</div>`)).toEqual({
+  test("t-out node with body", async () => {
+    expect(parse(`<div t-out="text">body</div>`)).toEqual({
       type: ASTType.DomNode,
       tag: "div",
       dynamicTag: null,
@@ -260,7 +276,7 @@ describe("qweb parser", () => {
       ref: null,
       model: null,
       content: [
-        { type: ASTType.TRaw, expr: "text", body: [{ type: ASTType.Text, value: "body" }] },
+        { type: ASTType.TOut, expr: "text", body: [{ type: ASTType.Text, value: "body" }] },
       ],
     });
   });
@@ -1082,7 +1098,9 @@ describe("qweb parser", () => {
   });
 
   test("component with t-esc", async () => {
-    expect(() => parse(`<MyComponent t-esc="someValue"/>`)).toThrow("t-esc is not supported on Component nodes");
+    expect(() => parse(`<MyComponent t-esc="someValue"/>`)).toThrow(
+      "t-esc is not supported on Component nodes"
+    );
   });
 
   test("component with t-call", async () => {
@@ -1224,8 +1242,8 @@ describe("qweb parser", () => {
     });
   });
 
-  test("node with t-ref and t-raw", async () => {
-    expect(parse(`<div t-raw="text" t-ref="name">body</div>`)).toEqual({
+  test("node with t-ref and t-out", async () => {
+    expect(parse(`<div t-out="text" t-ref="name">body</div>`)).toEqual({
       type: ASTType.DomNode,
       tag: "div",
       dynamicTag: null,
@@ -1234,7 +1252,7 @@ describe("qweb parser", () => {
       ref: "name",
       model: null,
       content: [
-        { type: ASTType.TRaw, expr: "text", body: [{ type: ASTType.Text, value: "body" }] },
+        { type: ASTType.TOut, expr: "text", body: [{ type: ASTType.Text, value: "body" }] },
       ],
     });
   });

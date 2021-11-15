@@ -1,23 +1,70 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`default props can set default required boolean values 1`] = `
+exports[`t-out literal 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    let b2 = safeOutput('ok');
     return block1([], [b2]);
   }
 }"
 `;
 
-exports[`default props can set default values 1`] = `
+exports[`t-out literal, no outside html element 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return safeOutput('ok');
+  }
+}"
+`;
+
+exports[`t-out multiple calls to t-out 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/><div>Greeter</div><block-child-1/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = ctx[zero];
+    let b3 = ctx[zero];
+    return block1([], [b2, b3]);
+  }
+}"
+`;
+
+exports[`t-out multiple calls to t-out 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  const callTemplate_2 = getTemplate(\`sub\`);
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block2 = createBlock(\`<span>coucou</span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1;
+    let b2 = block2();
+    ctx[zero] = b2;
+    let b3 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`t-out not escaping 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
@@ -26,15 +73,13 @@ exports[`default props can set default values 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    let b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
 }"
 `;
 
-exports[`default props default values are also set whenever component is updated 1`] = `
+exports[`t-out t-out 0 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
@@ -43,185 +88,248 @@ exports[`default props default values are also set whenever component is updated
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['state'].p}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    let b2 = ctx[zero];
     return block1([], [b2]);
   }
 }"
 `;
 
-exports[`props validation can validate a prop with multiple types 1`] = `
+exports[`t-out t-out 0 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  const callTemplate_2 = getTemplate(\`_basic-callee\`);
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block2 = createBlock(\`<div>zero</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1;
+    let b2 = block2();
+    ctx[zero] = b2;
+    let b3 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`t-out t-out and another sibling node 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block1 = createBlock(\`<span><span>hello</span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    let b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
 }"
 `;
 
-exports[`props validation can validate a prop with multiple types 2`] = `
+exports[`t-out t-out bdom 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block1 = createBlock(\`<div><span><block-child-0/></span></div>\`);
+  let block2 = createBlock(\`<ol>set</ol>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    let b2 = block2();
+    ctx[\`var\`] = b2;
+    let b3 = safeOutput(ctx['var']);
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`t-out t-out block 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = safeOutput(ctx['bdom']);
     return block1([], [b2]);
   }
 }"
 `;
 
-exports[`props validation can validate an array with given primitive type 1`] = `
+exports[`t-out t-out escaped 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    let b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
 }"
 `;
 
-exports[`props validation can validate an array with given primitive type 2`] = `
+exports[`t-out t-out markedup 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    let b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
 }"
 `;
 
-exports[`props validation can validate an array with multiple sub element types 1`] = `
+exports[`t-out t-out on a node with a body, as a default 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    let b3 = text(\`nope\`);
+    let b2 = withDefault(safeOutput(ctx['var']), b3);
     return block1([], [b2]);
   }
 }"
 `;
 
-exports[`props validation can validate an array with multiple sub element types 2`] = `
+exports[`t-out t-out on a node with a dom node in body, as a default 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  let block3 = createBlock(\`<div>nope</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    let b3 = block3();
+    let b2 = withDefault(safeOutput(ctx['var']), b3);
     return block1([], [b2]);
   }
 }"
 `;
 
-exports[`props validation can validate an array with multiple sub element types 3`] = `
+exports[`t-out t-out switch escaped 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    let b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
 }"
 `;
 
-exports[`props validation can validate an object with simple shape 1`] = `
+exports[`t-out t-out switch escaped on markup 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    let b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
 }"
 `;
 
-exports[`props validation can validate an optional props 1`] = `
+exports[`t-out t-out switch markup 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    let b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
 }"
 `;
 
-exports[`props validation can validate an optional props 2`] = `
+exports[`t-out t-out switch markup on bdom 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
+  let block2 = createBlock(\`<ol>set</ol>\`);
+  let block3 = createBlock(\`<span><block-child-0/></span>\`);
+  let block5 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    let b3,b5;
+    let b2 = block2();
+    ctx[\`bdom\`] = b2;
+    if (ctx['hasBdom']) {
+      let b4 = safeOutput(ctx['bdom']);
+      b3 = block3([], [b4]);
+    } else {
+      let b6 = safeOutput(ctx['var']);
+      b5 = block5([], [b6]);
+    }
+    return block1([], [b3, b5]);
+  }
+}"
+`;
+
+exports[`t-out t-out switch markup on escaped 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
 }"
 `;
 
-exports[`props validation can validate recursively complicated prop def 1`] = `
+exports[`t-out t-out with a <t/> in body 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return safeOutput(ctx['var']);
+  }
+}"
+`;
+
+exports[`t-out t-out with arbitrary object 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
@@ -230,15 +338,13 @@ exports[`props validation can validate recursively complicated prop def 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    let b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
 }"
 `;
 
-exports[`props validation can validate recursively complicated prop def 2`] = `
+exports[`t-out t-out with arbitrary object 2 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
@@ -247,49 +353,55 @@ exports[`props validation can validate recursively complicated prop def 2`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    let b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
 }"
 `;
 
-exports[`props validation default values are applied before validating props at update 1`] = `
+exports[`t-out t-out with comment 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['state'].p}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    let b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
 }"
 `;
 
-exports[`props validation props are validated in dev mode (code snapshot) 1`] = `
+exports[`t-out t-out with just a t-set t-value in body 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  return function template(ctx, node, key = \\"\\") {
+    return safeOutput(ctx['var']);
+  }
+}"
+`;
+
+exports[`t-out variable 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {message: 1}
-    helpers.validateProps(\`Child\`, props2, ctx)
-    let b2 = component(\`Child\`, props2, key + \`__1\`, node, ctx);
+    let b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
 }"
 `;
 
-exports[`props validation props are validated whenever component is updated 1`] = `
+exports[`t-raw is deprecated should warn 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
@@ -298,15 +410,13 @@ exports[`props validation props are validated whenever component is updated 1`] 
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['state'].p}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    let b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
 }"
 `;
 
-exports[`props validation validate simple types 1`] = `
+exports[`t-raw is deprecated t-out is actually called in t-raw's place 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
@@ -315,211 +425,7 @@ exports[`props validation validate simple types 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types 3`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types 4`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types 5`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types 6`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 1`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 3`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 4`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 5`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 6`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validation is only done in dev mode 1`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`SubComp\`, {}, key + \`__1\`, node, ctx);
+    let b2 = safeOutput(ctx['var']);
     return block1([], [b2]);
   }
 }"

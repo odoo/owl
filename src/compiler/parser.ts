@@ -11,7 +11,7 @@ export const enum ASTType {
   TIf,
   TSet,
   TCall,
-  TRaw,
+  TOut,
   TForEach,
   TKey,
   TComponent,
@@ -62,8 +62,8 @@ export interface ASTTEsc {
   defaultValue: string;
 }
 
-export interface ASTTRaw {
-  type: ASTType.TRaw;
+export interface ASTTOut {
+  type: ASTType.TOut;
   expr: string;
   body: AST[] | null;
 }
@@ -156,7 +156,7 @@ export type AST =
   | ASTTif
   | ASTTSet
   | ASTTCall
-  | ASTTRaw
+  | ASTTOut
   | ASTTForEach
   | ASTTKey
   | ASTComponent
@@ -197,7 +197,7 @@ function parseNode(node: ChildNode, ctx: ParsingContext): AST | null {
     parseTKey(node, ctx) ||
     parseTTranslation(node, ctx) ||
     parseTSlot(node, ctx) ||
-    parseTRawNode(node, ctx) ||
+    parseTOutNode(node, ctx) ||
     parseComponent(node, ctx) ||
     parseDOMNode(node, ctx) ||
     parseTSetNode(node, ctx) ||
@@ -419,33 +419,39 @@ function parseTEscNode(node: Element, ctx: ParsingContext): AST | null {
 }
 
 // -----------------------------------------------------------------------------
-// t-raw
+// t-out
 // -----------------------------------------------------------------------------
 
-function parseTRawNode(node: Element, ctx: ParsingContext): AST | null {
-  if (!node.hasAttribute("t-raw")) {
+function parseTOutNode(node: Element, ctx: ParsingContext): AST | null {
+  if (!node.hasAttribute("t-out") && !node.hasAttribute("t-raw")) {
     return null;
   }
-  const expr = node.getAttribute("t-raw")!;
+  if (node.hasAttribute("t-raw")) {
+    console.warn(
+      `t-raw has been deprecated in favor of t-out. If the value to render is not wrapped by the "markup" function, it will be escaped`
+    );
+  }
+  const expr = (node.getAttribute("t-out") || node.getAttribute("t-raw"))!;
+  node.removeAttribute("t-out");
   node.removeAttribute("t-raw");
 
-  const tRaw: AST = { type: ASTType.TRaw, expr, body: null };
+  const tOut: AST = { type: ASTType.TOut, expr, body: null };
   const ref = node.getAttribute("t-ref");
   node.removeAttribute("t-ref");
   const ast = parseNode(node, ctx);
   if (!ast) {
-    return tRaw;
+    return tOut;
   }
-  if (ast && ast.type === ASTType.DomNode) {
-    tRaw.body = ast.content.length ? ast.content : null;
+  if (ast.type === ASTType.DomNode) {
+    tOut.body = ast.content.length ? ast.content : null;
     return {
       ...ast,
       ref,
-      content: [tRaw],
+      content: [tOut],
     };
   }
 
-  return tRaw;
+  return tOut;
 }
 
 // -----------------------------------------------------------------------------
@@ -504,7 +510,7 @@ function parseTForEach(node: Element, ctx: ParsingContext): AST | null {
 function hasNoComponent(ast: AST): boolean {
   switch (ast.type) {
     case ASTType.TComponent:
-    case ASTType.TRaw:
+    case ASTType.TOut:
     case ASTType.TCall:
     case ASTType.TCallBlock:
     case ASTType.TSlot:

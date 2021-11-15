@@ -4,7 +4,7 @@ exports[`qweb t-tag can fallback if falsy tag 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = tag => createBlock(\`<\${tag || 'fallback'}/>\`);
   
@@ -19,7 +19,7 @@ exports[`qweb t-tag can update 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = tag => createBlock(\`<\${tag || 't'}/>\`);
   
@@ -34,7 +34,7 @@ exports[`qweb t-tag simple usecases 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = tag => createBlock(\`<\${tag || 't'}/>\`);
   
@@ -49,7 +49,7 @@ exports[`qweb t-tag simple usecases 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = tag => createBlock(\`<\${tag || 't'}>text</\${tag || 't'}>\`);
   
@@ -64,7 +64,7 @@ exports[`qweb t-tag with multiple attributes 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = tag => createBlock(\`<\${tag || 't'} class=\\"blueberry\\" taste=\\"raspberry\\">gooseberry</\${tag || 't'}>\`);
   
@@ -79,7 +79,7 @@ exports[`qweb t-tag with multiple child nodes 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = tag => createBlock(\`<\${tag || 't'}> pear <span>apple</span> strawberry </\${tag || 't'}>\`);
   
@@ -94,7 +94,7 @@ exports[`qweb t-tag with multiple t-tag in same template 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = tag => createBlock(\`<\${tag || 't'}><block-child-0/></\${tag || 't'}>\`);
   let block2 = tag => createBlock(\`<\${tag || 't'}>baz</\${tag || 't'}>\`);
@@ -112,7 +112,7 @@ exports[`qweb t-tag with multiple t-tag in same template, part 2 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block2 = tag => createBlock(\`<\${tag || 't'}>bar</\${tag || 't'}>\`);
   let block3 = tag => createBlock(\`<\${tag || 't'}>baz</\${tag || 't'}>\`);

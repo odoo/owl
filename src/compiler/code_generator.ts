@@ -15,7 +15,7 @@ import {
   ASTTForEach,
   ASTTif,
   ASTTKey,
-  ASTTRaw,
+  ASTTOut,
   ASTTSet,
   ASTTranslation,
   ASTType,
@@ -208,7 +208,7 @@ export class CodeGenerator {
     // define blocks and utility functions
     this.addLine(`let { text, createBlock, list, multi, html, toggler, component } = bdom;`);
     this.addLine(
-      `let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber } = helpers;`
+      `let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;`
     );
     if (this.shouldDefineAssign) {
       this.addLine(`let assign = Object.assign;`);
@@ -377,8 +377,8 @@ export class CodeGenerator {
       case ASTType.TEsc:
         this.compileTEsc(ast, ctx);
         break;
-      case ASTType.TRaw:
-        this.compileTRaw(ast, ctx);
+      case ASTType.TOut:
+        this.compileTOut(ast, ctx);
         break;
       case ASTType.TIf:
         this.compileTIf(ast, ctx);
@@ -640,20 +640,20 @@ export class CodeGenerator {
     }
   }
 
-  compileTRaw(ast: ASTTRaw, ctx: Context) {
+  compileTOut(ast: ASTTOut, ctx: Context) {
     let { block } = ctx;
     if (block) {
       this.insertAnchor(block);
     }
     block = this.createBlock(block, "html", ctx);
-    let expr = ast.expr === "0" ? "ctx[zero]" : compileExpr(ast.expr);
+    let expr = ast.expr === "0" ? "ctx[zero]" : `safeOutput(${compileExpr(ast.expr)})`;
     if (ast.body) {
       const nextId = BlockDescription.nextBlockId;
       const subCtx: Context = createContext(ctx);
       this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
       expr = `withDefault(${expr}, b${nextId})`;
     }
-    this.insertBlock(`html(${expr})`, block, ctx);
+    this.insertBlock(`${expr}`, block, ctx);
   }
 
   compileTIf(ast: ASTTif, ctx: Context, nextNode?: ASTDomNode) {

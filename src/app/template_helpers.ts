@@ -1,5 +1,7 @@
 import { BDom, multi, text, toggler } from "../blockdom";
 import { validateProps } from "../component/props_validation";
+import { Markup } from "../utils";
+import { html } from "../blockdom/index";
 
 /**
  * This file contains utility functions that will be injected in each template,
@@ -94,6 +96,29 @@ function shallowEqual(l1: any[], l2: any[]): boolean {
   return true;
 }
 
+/*
+ * Safely outputs `value` as a block depending on the nature of `value`
+ */
+export function safeOutput(value: any): ReturnType<typeof toggler> {
+  if (!value) {
+    return value;
+  }
+  let safeKey;
+  let block;
+  if (value instanceof Markup) {
+    safeKey = `string_safe`;
+    block = html(value as string);
+  } else if (typeof value === "string") {
+    safeKey = "string_unsafe";
+    block = text(value);
+  } else {
+    // Assuming it is a block
+    safeKey = "block_safe";
+    block = value;
+  }
+  return toggler(safeKey, block);
+}
+
 export const UTILS = {
   withDefault,
   zero: Symbol("zero"),
@@ -106,4 +131,5 @@ export const UTILS = {
   shallowEqual,
   toNumber,
   validateProps,
+  safeOutput,
 };

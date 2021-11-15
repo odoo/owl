@@ -1,5 +1,5 @@
-import { Component, mount, onRender, onWillStart, onWillUpdateProps, useState } from "../src";
-import { atom, registerObserver } from "../src/reactivity";
+import { Component, mount, onRender, onWillStart, onWillUpdateProps } from "../src";
+import { observe, useState } from "../src/reactivity";
 import { xml } from "../src/tags";
 import {
   makeDeferred,
@@ -9,10 +9,9 @@ import {
   snapshotEverything,
 } from "./helpers";
 
-function createAtom(value: any, observer?: any) {
-  observer = observer || (() => {});
-  registerObserver(observer);
-  return atom(value, observer);
+function createAtom(value: any, observer: any = () => {}) {
+  const [atom] = observe(value, observer);
+  return atom;
 }
 
 describe("Reactivity: atom", () => {
@@ -54,15 +53,8 @@ describe("Reactivity: atom", () => {
     expect(Array.isArray(atom1)).toBe(true);
   });
 
-  test("return value if not proxifiable", () => {
-    const atom1 = createAtom(1);
-    expect(atom1).toBe(1);
-  });
-
-  test("return value if observer is not registered", () => {
-    const obj = { a: 1 };
-    const atom1 = atom(obj, () => {});
-    expect(atom1).toBe(obj);
+  test("Throw error if value is not proxifiable", () => {
+    expect(() => createAtom(1)).toThrow("First argument is not trackable");
   });
 
   test("atom observer is called properly", async () => {
@@ -270,16 +262,16 @@ describe("Reactivity: atom", () => {
   });
 
   test("immediately returns primitive values", () => {
-    expect(createAtom(1)).toBe(1);
-    expect(createAtom("asf")).toBe("asf");
-    expect(createAtom(true)).toBe(true);
-    expect(createAtom(null)).toBe(null);
-    expect(createAtom(undefined)).toBe(undefined);
+    expect(() => createAtom(1)).toThrowError();
+    expect(() => createAtom("asf")).toThrowError();
+    expect(() => createAtom(true)).toThrowError();
+    expect(() => createAtom(null)).toThrowError();
+    expect(() => createAtom(undefined)).toThrowError();
   });
 
   test("immediately returns dates", () => {
     const date = new Date();
-    expect(createAtom(date)).toBe(date);
+    expect(() => createAtom(date)).toThrow("First argument is not trackable");
   });
 
   test("can observe object with some key set to null", async () => {
@@ -294,8 +286,7 @@ describe("Reactivity: atom", () => {
   test("can reobserve object with some key set to null", async () => {
     let n = 0;
     const fn = () => n++;
-    const unregisterObserver = registerObserver(fn);
-    const atom1 = createAtom({ a: { b: null } } as any, fn);
+    const [atom1, unregisterObserver] = observe({ a: { b: null } } as any, fn);
     const atom2 = createAtom(atom1, fn);
     expect(atom2).toBe(atom1);
     expect(atom2).toEqual(atom1);
@@ -846,9 +837,8 @@ describe("Reactivity: atom", () => {
   test("can unobserve a value", async () => {
     let n = 0;
     const cb = () => n++;
-    const unregisterObserver = registerObserver(cb);
 
-    const atom1 = createAtom({ a: 1 }, cb);
+    const [atom1, unregisterObserver] = observe({ a: 1 }, cb);
 
     atom1.a = atom1.a + 3;
     await nextMicroTick();
@@ -932,8 +922,7 @@ describe("Reactivity: atom", () => {
   test("notification is not done after unregistration", async () => {
     let n = 0;
     const observer = () => n++;
-    const unregisterObserver = registerObserver(observer);
-    const state = atom({ a: 1 } as any, observer);
+    const [state, unregisterObserver] = observe({ a: 1 } as any, observer);
 
     state.a = state.a;
     await nextMicroTick();

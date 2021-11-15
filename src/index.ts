@@ -57,7 +57,7 @@ export { Portal } from "./misc/portal";
 export { Memo } from "./misc/memo";
 export { css, xml } from "./tags";
 export { useState } from "./reactivity";
-export { useRef, useEnv, useSubEnv } from "./hooks";
+export { useRef, useEnv, useSubEnv, useEffect } from "./hooks";
 export const utils = { EventBus, whenReady, loadFile };
 
 export {

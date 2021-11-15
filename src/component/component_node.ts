@@ -1,4 +1,4 @@
-import type { App } from "../app/app";
+import type { App, Env } from "../app/app";
 import { BDom, VNode } from "../blockdom";
 import { Component } from "./component";
 import {
@@ -83,6 +83,7 @@ export class ComponentNode<T extends typeof Component = any> implements VNode<Co
   renderFn: Function;
   parent: ComponentNode | null;
   level: number;
+  childEnv: Env;
   children: { [key: string]: ComponentNode } = Object.create(null);
   slots: any = {};
   refs: any = {};
@@ -101,7 +102,9 @@ export class ComponentNode<T extends typeof Component = any> implements VNode<Co
     this.parent = parent || null;
     this.level = parent ? parent.level + 1 : 0;
     applyDefaultProps(props, C);
-    this.component = new C(props, app.env, this) as any;
+    const env = (parent && parent.childEnv) || app.env;
+    this.childEnv = env;
+    this.component = new C(props, env, this) as any;
     this.renderFn = app.getTemplate(C.template).bind(this.component, this.component, this);
     if (C.style) {
       applyStyles(C);

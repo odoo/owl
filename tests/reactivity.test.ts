@@ -1,5 +1,5 @@
-import { Component, mount, onRender, onWillStart, onWillUpdateProps } from "../src";
-import { observe, useState } from "../src/reactivity";
+import { Component, mount, onRender, onWillStart, onWillUpdateProps, useState } from "../src";
+import { batched, reactive } from "../src/reactivity";
 import { xml } from "../src/tags";
 import {
   makeDeferred,
@@ -9,69 +9,75 @@ import {
   snapshotEverything,
 } from "./helpers";
 
-function createAtom(value: any, observer: any = () => {}) {
-  const [atom] = observe(value, observer);
-  return atom;
+function createReactive(value: any, observer: any = () => {}) {
+  return reactive(value, observer);
 }
 
-describe("Reactivity: atom", () => {
+describe("Reactivity", () => {
   test("can read", async () => {
-    const atom1 = createAtom({ a: 1 });
-    expect(atom1.a).toBe(1);
+    const state = createReactive({ a: 1 });
+    expect(state.a).toBe(1);
   });
 
-  test("can write", () => {
-    const atom1 = createAtom({});
-    atom1.a = 1;
-    expect(atom1.a).toBe(1);
+  test("can create new keys", () => {
+    const state = createReactive({});
+    state.a = 1;
+    expect(state.a).toBe(1);
   });
 
   test("can update", () => {
-    const atom1 = createAtom({ a: 1 });
-    atom1.a = 2;
-    expect(atom1.a).toBe(2);
+    const state = createReactive({ a: 1 });
+    state.a = 2;
+    expect(state.a).toBe(2);
   });
 
-  test("can delete", () => {
-    const atom1 = createAtom({ a: 1 });
-    delete atom1.a;
-    expect(atom1.a).toBeUndefined();
+  test("can delete existing keys", () => {
+    const state = createReactive({ a: 1 });
+    delete state.a;
+    expect(state).not.toHaveProperty("a");
   });
 
   test("act like an object", () => {
-    const atom1 = createAtom({ a: 1 });
-    expect(Object.keys(atom1)).toEqual(["a"]);
-    expect(Object.values(atom1)).toEqual([1]);
-    expect(typeof atom1).toBe("object");
+    const state = createReactive({ a: 1 });
+    expect(Object.keys(state)).toEqual(["a"]);
+    expect(Object.values(state)).toEqual([1]);
+    expect(typeof state).toBe("object");
   });
 
   test("act like an array", () => {
-    const atom1 = createAtom(["a", "b"]);
-    expect(atom1.length).toBe(2);
-    expect(atom1).toEqual(["a", "b"]);
-    expect(typeof atom1).toBe("object");
-    expect(Array.isArray(atom1)).toBe(true);
+    const state = createReactive(["a", "b"]);
+    expect(state.length).toBe(2);
+    expect(state).toEqual(["a", "b"]);
+    expect(typeof state).toBe("object");
+    expect(Array.isArray(state)).toBe(true);
   });
 
   test("Throw error if value is not proxifiable", () => {
-    expect(() => createAtom(1)).toThrow("First argument is not trackable");
+    expect(() => createReactive(1)).toThrow("Cannot make the given value reactive");
   });
 
-  test("atom observer is called properly", async () => {
+  test("callback is called when changing an observed property 1", async () => {
     let n = 0;
-    const atom1 = createAtom({ a: 1 }, () => n++);
-    atom1.a = 2;
-    await nextMicroTick();
+    const state = createReactive({ a: 1 }, () => n++);
+    state.a = 2;
     expect(n).toBe(0); // key has not be read yet
-    atom1.a = atom1.a + 5; // key is read and then modified
-    await nextMicroTick();
+    state.a = state.a + 5; // key is read and then modified
     expect(n).toBe(1);
   });
 
-  test("atom on an object with a getter 1", async () => {
+  test("callback is called when changing an observed property 2", async () => {
+    let n = 0;
+    const state = createReactive({ a: { k: 1 } }, () => n++);
+    state.a.k = state.a.k + 1;
+    expect(n).toBe(1);
+    state.k = 2; // observer has been interested specifically to key k of a!
+    expect(n).toBe(1);
+  });
+
+  test("reactive from object with a getter 1", async () => {
     let n = 0;
     let value = 1;
-    const atom = createAtom(
+    const state = createReactive(
       {
         get a() {
           return value;
@@ -82,15 +88,15 @@ describe("Reactivity: atom", () => {
       },
       () => n++
     );
-    atom.a = atom.a + 4;
+    state.a = state.a + 4;
     await nextMicroTick();
     expect(n).toBe(1);
   });
 
-  test("atom on an object with a getter 2", async () => {
+  test("reactive from object with a getter 2", async () => {
     let n = 0;
     let value = { b: 1 };
-    const atom = createAtom(
+    const state = createReactive(
       {
         get a() {
           return value;
@@ -98,21 +104,21 @@ describe("Reactivity: atom", () => {
       },
       () => n++
     );
-    expect(atom.a.b).toBe(1);
-    atom.a.b = 2;
+    expect(state.a.b).toBe(1);
+    state.a.b = 2;
     await nextMicroTick();
     expect(n).toBe(1);
   });
 
-  test("atom on an object with a getter 3", async () => {
+  test("reactive from object with a getter 3", async () => {
     let n = 0;
-    const values: { b: number }[] = createAtom([]);
+    const values: { b: number }[] = createReactive([]);
     function createValue() {
       const o = { b: values.length };
       values.push(o);
       return o;
     }
-    const atom = createAtom(
+    const reactive = createReactive(
       {
         get a() {
           return createValue();
@@ -121,24 +127,62 @@ describe("Reactivity: atom", () => {
       () => n++
     );
     for (let i = 0; i < 10; i++) {
-      expect(atom.a.b).toEqual(i);
+      expect(reactive.a.b).toEqual(i);
     }
     expect(n).toBe(0);
     values[0].b = 3;
-    await nextMicroTick();
-    expect(n).toBe(1); // !!! atoms for each object in values are still there !!!
+    expect(n).toBe(1); // !!! reactives for each object in values are still there !!!
+    values[0].b = 4;
+    expect(n).toBe(1); // reactives for each object in values were cleaned up by the previous write
   });
 
-  test("atom observer is called after batch of operation", async () => {
+  test("Operator 'in' causes key's presence to be observed", async () => {
     let n = 0;
-    const atom1 = createAtom({ a: 1, b: 2 }, () => n++);
-    atom1.a = 2;
+    const state = createReactive({}, () => n++);
+
+    "a" in state;
+    state.a = 2;
+    expect(n).toBe(1);
+
+    "a" in state;
+    state.a = 3; // Write on existing property shouldn't notify
+    expect(n).toBe(1);
+
+    "a" in state;
+    delete state.a;
+    expect(n).toBe(2);
+  });
+
+  test.skip("hasOwnProperty causes the key's presence to be observed", async () => {
+    let n = 0;
+    const state = createReactive({}, () => n++);
+
+    Object.hasOwnProperty.call(state, "a");
+    state.a = 2;
+    expect(n).toBe(1);
+
+    Object.hasOwnProperty.call(state, "a");
+    state.a = 3;
+    expect(n).toBe(1);
+
+    Object.hasOwnProperty.call(state, "a");
+    delete state.a;
+    expect(n).toBe(2);
+  });
+
+  test("batched: callback is called after batch of operation", async () => {
+    let n = 0;
+    const state = createReactive(
+      { a: 1, b: 2 },
+      batched(() => n++)
+    );
+    state.a = 2;
     expect(n).toBe(0);
     await nextMicroTick();
     expect(n).toBe(0); // key has not be read yet
-    atom1.a = atom1.a + 5; // key is read and then modified
+    state.a = state.a + 5; // key is read and then modified
     expect(n).toBe(0);
-    atom1.b = atom1.b + 5; // key is read and then modified
+    state.b = state.b + 5; // key is read and then modified
     expect(n).toBe(0);
     await nextMicroTick();
     expect(n).toBe(1); // two operations but only one notification
@@ -146,12 +190,10 @@ describe("Reactivity: atom", () => {
 
   test("setting property to same value does not trigger callback", async () => {
     let n = 0;
-    const atom1 = createAtom({ a: 1 }, () => n++);
-    atom1.a = atom1.a + 5; // read and modifies property a to have value 6
-    await nextMicroTick();
+    const state = createReactive({ a: 1 }, () => n++);
+    state.a = state.a + 5; // read and modifies property a to have value 6
     expect(n).toBe(1);
-    atom1.a = 6; // same value
-    await nextMicroTick();
+    state.a = 6; // same value
     expect(n).toBe(1);
   });
 
@@ -160,197 +202,188 @@ describe("Reactivity: atom", () => {
     a.a = a;
 
     let n = 0;
-    const atom1 = createAtom(a, () => n++);
+    const state = createReactive(a, () => n++);
 
-    atom1.k = 2;
-    await nextMicroTick();
+    state.k;
+    state.k = 2;
     expect(n).toBe(1);
 
-    delete atom1.l;
-    await nextMicroTick();
+    delete state.l;
     expect(n).toBe(1);
 
-    delete atom1.k;
-    await nextMicroTick();
+    state.k;
+    delete state.k;
     expect(n).toBe(2);
 
-    atom1.a = 1;
-    await nextMicroTick();
+    state.a = 1;
     expect(n).toBe(2);
 
-    atom1.a = atom1.a + 5;
-    await nextMicroTick();
+    state.a = state.a + 5;
     expect(n).toBe(3);
+  });
+
+  test("equality", async () => {
+    const a = { a: {}, b: 1 };
+    a.a = a;
+    let n = 0;
+    const state = createReactive(a, () => n++);
+    expect(state).toBe(state.a);
+    expect(n).toBe(0);
+    (state.b = state.b + 1), expect(n).toBe(1);
+    expect(state).toBe(state.a);
   });
 
   test("two observers for same source", async () => {
     let m = 0;
     let n = 0;
     const obj = { a: 1 } as any;
-    const atom1 = createAtom(obj, () => m++);
-    const atom2 = createAtom(obj, () => n++);
+    const state = createReactive(obj, () => m++);
+    const state2 = createReactive(obj, () => n++);
 
     obj.new = 2;
-    await nextMicroTick();
     expect(m).toBe(0);
     expect(n).toBe(0);
 
-    atom1.new = 2; // already exists!
-    await nextMicroTick();
+    state.new = 2; // already exists!
     expect(m).toBe(0);
     expect(n).toBe(0);
 
-    atom1.veryNew = 2;
-    await nextMicroTick();
+    state.veryNew;
+    state2.veryNew;
+    state.veryNew = 2;
     expect(m).toBe(1);
     expect(n).toBe(1);
 
-    atom1.a = atom1.a + 5;
-    await nextMicroTick();
+    state.a = state.a + 5;
     expect(m).toBe(2);
     expect(n).toBe(1);
 
-    atom2.a = atom2.a + 5;
-    await nextMicroTick();
+    state.a;
+    state2.a = state2.a + 5;
     expect(m).toBe(3);
     expect(n).toBe(2);
 
-    delete atom2.veryNew;
-    await nextMicroTick();
+    state.veryNew;
+    state2.veryNew;
+    delete state2.veryNew;
     expect(m).toBe(4);
     expect(n).toBe(3);
   });
 
-  test("create atom from another atom", async () => {
+  test("create reactive from another", async () => {
     let n = 0;
-    const atom1 = createAtom({ a: 1 });
-    const atom2 = createAtom(atom1, () => n++);
-    atom2.a = atom2.a + 5;
-    await nextMicroTick();
+    const state = createReactive({ a: 1 });
+    const state2 = createReactive(state, () => n++);
+    state2.a = state2.a + 5;
     expect(n).toBe(1);
-    atom1.a = 2;
-    await nextMicroTick();
+    state2.a;
+    state.a = 2;
     expect(n).toBe(2);
   });
 
-  test("create atom from another atom 2", async () => {
+  test("create reactive from another 2", async () => {
     let n = 0;
-    const atom1 = createAtom({ a: 1 });
-    const atom2 = createAtom(atom1, () => n++);
-    atom1.a = atom2.a + 5;
-    await nextMicroTick();
+    const state = createReactive({ a: 1 });
+    const state2 = createReactive(state, () => n++);
+    state.a = state2.a + 5;
     expect(n).toBe(1);
 
-    atom2.a = atom2.a + 5;
-    await nextMicroTick();
+    state2.a = state2.a + 5;
     expect(n).toBe(2);
   });
 
-  test("create atom from another atom 3", async () => {
+  test("create reactive from another 3", async () => {
     let n = 0;
-    const atom1 = createAtom({ a: 1 });
-    const atom2 = createAtom(atom1, () => n++);
-    atom1.a = atom1.a + 5;
-    await nextMicroTick();
-    expect(n).toBe(0); // atom2.a was not yet read
-    atom2.a = atom2.a + 5;
-    await nextMicroTick();
-    expect(n).toBe(1); // atom2.a has been read and is now observed
-    atom1.a = atom1.a + 5;
-    await nextMicroTick();
+    const state = createReactive({ a: 1 });
+    const state2 = createReactive(state, () => n++);
+    state.a = state.a + 5;
+    expect(n).toBe(0); // state2.a was not yet read
+    state2.a = state2.a + 5;
+    state2.a;
+    expect(n).toBe(1); // state2.a has been read and is now observed
+    state.a = state.a + 5;
     expect(n).toBe(2);
   });
 
-  test("immediately returns primitive values", () => {
-    expect(() => createAtom(1)).toThrowError();
-    expect(() => createAtom("asf")).toThrowError();
-    expect(() => createAtom(true)).toThrowError();
-    expect(() => createAtom(null)).toThrowError();
-    expect(() => createAtom(undefined)).toThrowError();
+  test("throws on primitive values", () => {
+    expect(() => createReactive(1)).toThrowError();
+    expect(() => createReactive("asf")).toThrowError();
+    expect(() => createReactive(true)).toThrowError();
+    expect(() => createReactive(null)).toThrowError();
+    expect(() => createReactive(undefined)).toThrowError();
   });
 
-  test("immediately returns dates", () => {
+  test("throws on dates", () => {
     const date = new Date();
-    expect(() => createAtom(date)).toThrow("First argument is not trackable");
+    expect(() => createReactive(date)).toThrow("Cannot make the given value reactive");
   });
 
   test("can observe object with some key set to null", async () => {
     let n = 0;
-    const atom1 = createAtom({ a: { b: null } } as any, () => n++);
+    const state = createReactive({ a: { b: null } } as any, () => n++);
     expect(n).toBe(0);
-    atom1.a.b = Boolean(atom1.a.b);
-    await nextMicroTick();
+    state.a.b = Boolean(state.a.b);
     expect(n).toBe(1);
   });
 
   test("can reobserve object with some key set to null", async () => {
     let n = 0;
     const fn = () => n++;
-    const [atom1, unregisterObserver] = observe({ a: { b: null } } as any, fn);
-    const atom2 = createAtom(atom1, fn);
-    expect(atom2).toBe(atom1);
-    expect(atom2).toEqual(atom1);
-    await nextMicroTick();
+    const state = createReactive({ a: { b: null } } as any, fn);
+    const state2 = createReactive(state, fn);
+    expect(state2).toBe(state);
+    expect(state2).toEqual(state);
     expect(n).toBe(0);
-    atom1.a.b = Boolean(atom1.a.b);
-    await nextMicroTick();
-    expect(n).toBe(1);
-    unregisterObserver();
-    atom1.a.b = !atom1.a.b;
-    await nextMicroTick();
+    state.a.b = Boolean(state.a.b);
     expect(n).toBe(1);
   });
 
   test("contains initial values", () => {
-    const atom1 = createAtom({ a: 1, b: 2 });
-    expect(atom1.a).toBe(1);
-    expect(atom1.b).toBe(2);
-    expect((atom1 as any).c).toBeUndefined();
+    const state = createReactive({ a: 1, b: 2 });
+    expect(state.a).toBe(1);
+    expect(state.b).toBe(2);
+    expect((state as any).c).toBeUndefined();
   });
 
   test("detect object value changes", async () => {
     let n = 0;
-    const atom1 = createAtom({ a: 1 }, () => n++) as any;
+    const state = createReactive({ a: 1 }, () => n++) as any;
     expect(n).toBe(0);
 
-    atom1.a = atom1.a + 5;
-    await nextMicroTick();
+    state.a = state.a + 5;
     expect(n).toBe(1);
 
-    atom1.b = atom1.b + 5;
-    await nextMicroTick();
+    state.b = state.b + 5;
     expect(n).toBe(2);
 
-    atom1.a = null;
-    atom1.b = undefined;
-    await nextMicroTick();
+    state.a;
+    state.b;
+    state.a = null;
+    state.b = undefined;
     expect(n).toBe(3);
-    expect(atom1).toEqual({ a: null, b: undefined });
+    expect(state).toEqual({ a: null, b: undefined });
   });
 
   test("properly handle dates", async () => {
     const date = new Date();
     let n = 0;
-    const atom1 = createAtom({ date }, () => n++);
+    const state = createReactive({ date }, () => n++);
 
-    await nextMicroTick();
-    expect(typeof atom1.date.getFullYear()).toBe("number");
-    expect(atom1.date).toBe(date);
+    expect(typeof state.date.getFullYear()).toBe("number");
+    expect(state.date).toBe(date);
 
-    atom1.date = new Date();
-    await nextMicroTick();
+    state.date = new Date();
     expect(n).toBe(1);
-    expect(atom1.date).not.toBe(date);
+    expect(state.date).not.toBe(date);
   });
 
   test("properly handle promise", async () => {
     let resolved = false;
-    const prom = new Promise((r) => r());
     let n = 0;
-    const atom1 = createAtom({ prom }, () => n++);
+    const state = createReactive({ prom: Promise.resolve() }, () => n++);
 
-    expect(atom1.prom).toBeInstanceOf(Promise);
-    atom1.prom.then(() => (resolved = true));
+    expect(state.prom).toBeInstanceOf(Promise);
+    state.prom.then(() => (resolved = true));
     expect(n).toBe(0);
     expect(resolved).toBe(false);
     await Promise.resolve();
@@ -360,295 +393,316 @@ describe("Reactivity: atom", () => {
 
   test("can observe value change in array in an object", async () => {
     let n = 0;
-    const atom1 = createAtom({ arr: [1, 2] }, () => n++) as any;
+    const state = createReactive({ arr: [1, 2] }, () => n++) as any;
 
-    expect(Array.isArray(atom1.arr)).toBe(true);
+    expect(Array.isArray(state.arr)).toBe(true);
     expect(n).toBe(0);
 
-    atom1.arr[0] = atom1.arr[0] + "nope";
-    await nextMicroTick();
+    state.arr[0] = state.arr[0] + "nope";
 
     expect(n).toBe(1);
-    expect(atom1.arr[0]).toBe("1nope");
-    expect(atom1.arr).toEqual(["1nope", 2]);
+    expect(state.arr[0]).toBe("1nope");
+    expect(state.arr).toEqual(["1nope", 2]);
   });
 
   test("can observe: changing array in object to another array", async () => {
     let n = 0;
-    const atom1 = createAtom({ arr: [1, 2] }, () => n++) as any;
+    const state = createReactive({ arr: [1, 2] }, () => n++) as any;
 
-    expect(Array.isArray(atom1.arr)).toBe(true);
+    expect(Array.isArray(state.arr)).toBe(true);
     expect(n).toBe(0);
 
-    atom1.arr = [2, 1];
-    await nextMicroTick();
+    state.arr = [2, 1];
 
     expect(n).toBe(1);
-    expect(atom1.arr[0]).toBe(2);
-    expect(atom1.arr).toEqual([2, 1]);
+    expect(state.arr[0]).toBe(2);
+    expect(state.arr).toEqual([2, 1]);
   });
 
-  test("getting twice an object properties return same object", () => {
-    const atom1 = createAtom({ a: { b: 1 } });
-    const a1 = atom1.a;
-    const a2 = atom1.a;
+  test("getting the same property twice returns the same object", () => {
+    const state = createReactive({ a: { b: 1 } });
+    const a1 = state.a;
+    const a2 = state.a;
     expect(a1).toBe(a2);
   });
 
   test("various object property changes", async () => {
     let n = 0;
-    const atom1 = createAtom({ a: 1 }, () => n++) as any;
+    const state = createReactive({ a: 1 }, () => n++) as any;
     expect(n).toBe(0);
 
-    atom1.a = atom1.a + 2;
-    await nextMicroTick();
+    state.a = state.a + 2;
     expect(n).toBe(1);
 
-    // same value again
-    atom1.a = 3;
-    await nextMicroTick();
+    state.a;
+    // same value again: no notification
+    state.a = 3;
     expect(n).toBe(1);
 
-    atom1.a = 4;
-    await nextMicroTick();
+    state.a = 4;
     expect(n).toBe(2);
   });
 
   test("properly observe arrays", async () => {
     let n = 0;
-    const atom1 = createAtom([], () => n++) as any;
+    const state = createReactive([], () => n++) as any;
 
-    expect(Array.isArray(atom1)).toBe(true);
-    expect(atom1.length).toBe(0);
+    expect(Array.isArray(state)).toBe(true);
+    expect(state.length).toBe(0);
     expect(n).toBe(0);
 
-    atom1.push(1);
-    await nextMicroTick();
+    state.push(1);
     expect(n).toBe(1);
-    expect(atom1.length).toBe(1);
-    expect(atom1).toEqual([1]);
+    expect(state.length).toBe(1);
+    expect(state).toEqual([1]);
 
-    atom1.splice(1, 0, "hey");
-    await nextMicroTick();
+    state.splice(1, 0, "hey");
     expect(n).toBe(2);
-    expect(atom1).toEqual([1, "hey"]);
-    expect(atom1.length).toBe(2);
+    expect(state).toEqual([1, "hey"]);
+    expect(state.length).toBe(2);
 
-    atom1.unshift("lindemans");
-    await nextMicroTick();
-    //it generates 3 primitive operations
+    // clear all observations caused by previous expects
+    state[0] = 2;
     expect(n).toBe(3);
-    expect(atom1).toEqual(["lindemans", 1, "hey"]);
-    expect(atom1.length).toBe(3);
 
-    atom1.reverse();
-    await nextMicroTick();
-    //it generates 2 primitive operations
-    expect(n).toBe(4);
-    expect(atom1).toEqual(["hey", 1, "lindemans"]);
-    expect(atom1.length).toBe(3);
-
-    atom1.pop(); // one set, one delete
-    await nextMicroTick();
+    state.unshift("lindemans");
+    // unshift generates the following sequence of operations: (observed keys in brackets)
+    // - read 'unshift' => { unshift }
+    // - read 'length' =>  { unshift , length }
+    // - hasProperty '1' =>  { unshift , length, [KEYCHANGES] }
+    // - read '1' =>  { unshift , length, 1 }
+    // - write "hey" on '2' => notification for key creation, {}
+    // - hasProperty '0' =>  { [KEYCHANGES] }
+    // - read '0' => { 0, [KEYCHANGES] }
+    // - write "2" on '1' => not observing '1', no notification
+    // - write "lindemans" on '0' => notification, stop observing {}
+    // - write 3 on 'length' => not observing 'length', no notification
     expect(n).toBe(5);
-    expect(atom1).toEqual(["hey", 1]);
-    expect(atom1.length).toBe(2);
+    expect(state).toEqual(["lindemans", 2, "hey"]);
+    expect(state.length).toBe(3);
 
-    atom1.shift(); // 2 sets, 1 delete
-    await nextMicroTick();
+    // clear all observations caused by previous expects
+    state[1] = 3;
     expect(n).toBe(6);
-    expect(atom1).toEqual([1]);
-    expect(atom1.length).toBe(1);
+
+    state.reverse();
+    // Reverse will generate floor(length/2) notifications because it swaps elements pair-wise
+    expect(n).toBe(7);
+    expect(state).toEqual(["hey", 3, "lindemans"]);
+    expect(state.length).toBe(3);
+
+    state.pop(); // reads '2', deletes '2', sets length. Only delete triggers a notification
+    expect(n).toBe(8);
+    expect(state).toEqual(["hey", 3]);
+    expect(state.length).toBe(2);
+
+    state.shift(); // reads '0', reads '1', sets '0', sets length. Only set '0' triggers a notification
+    expect(n).toBe(9);
+    expect(state).toEqual([3]);
+    expect(state.length).toBe(1);
   });
 
   test("object pushed into arrays are observed", async () => {
     let n = 0;
-    const arr: any = createAtom([], () => n++);
+    const arr: any = createReactive([], () => n++);
 
     arr.push({ kriek: 5 });
-    await nextMicroTick();
     expect(n).toBe(1);
 
     arr[0].kriek = 6;
-    await nextMicroTick();
     expect(n).toBe(1);
 
     arr[0].kriek = arr[0].kriek + 6;
-    await nextMicroTick();
     expect(n).toBe(2);
   });
 
   test("set new property on observed object", async () => {
     let n = 0;
-    const atom1 = createAtom({}, () => n++) as any;
+    let keys: string[] = [];
+    const notify = () => {
+      n++;
+      keys.splice(0);
+      keys.push(...Object.keys(state));
+    };
+    const state = createReactive({}, notify) as any;
+    Object.keys(state);
     expect(n).toBe(0);
 
-    atom1.b = 8;
-    await nextMicroTick();
+    state.b = 8;
     expect(n).toBe(1);
-    expect(atom1.b).toBe(8);
+    expect(state.b).toBe(8);
+    expect(keys).toEqual(["b"]);
+  });
+
+  test("set new property object when key changes are not observed", async () => {
+    let n = 0;
+    const notify = () => n++;
+    const state = createReactive({ a: 1 }, notify) as any;
+    state.a;
+    expect(n).toBe(0);
+
+    state.b = 8;
+    expect(n).toBe(0); // Not observing key changes: shouldn't get notified
+    expect(state.b).toBe(8);
+    expect(state).toEqual({ a: 1, b: 8 });
   });
 
   test("delete property from observed object", async () => {
     let n = 0;
-    const atom1 = createAtom({ a: 1, b: 8 }, () => n++) as any;
+    const state = createReactive({ a: 1, b: 8 }, () => n++) as any;
+    Object.keys(state);
     expect(n).toBe(0);
 
-    delete atom1.b;
-    await nextMicroTick();
+    delete state.b;
     expect(n).toBe(1);
-    expect(atom1).toEqual({ a: 1 });
+    expect(state).toEqual({ a: 1 });
   });
 
   test("delete property from observed object 2", async () => {
     let n = 0;
     const observer = () => n++;
     const obj = { a: { b: 1 } };
-    const atom1 = createAtom(obj.a, observer) as any;
-    const atom2 = createAtom(obj, observer) as any;
+    const state = createReactive(obj.a, observer) as any;
+    const state2 = createReactive(obj, observer) as any;
+    expect(state2.a).toBe(state);
     expect(n).toBe(0);
 
-    delete atom2.a;
-    await nextMicroTick();
-    // key "a" is no longer observed
+    Object.keys(state2);
+    delete state2.a;
     expect(n).toBe(1);
 
-    atom1.new = 2; // but { b: 1 } is still observed!
-    await nextMicroTick();
+    Object.keys(state);
+    state.new = 2;
     expect(n).toBe(2);
   });
 
   test("set element in observed array", async () => {
     let n = 0;
-    const arr = createAtom(["a"], () => n++);
-
+    const arr = createReactive(["a"], () => n++);
+    arr[1];
     arr[1] = "b";
-    await nextMicroTick();
     expect(n).toBe(1);
     expect(arr).toEqual(["a", "b"]);
   });
 
   test("properly observe arrays in object", async () => {
     let n = 0;
-    const atom1 = createAtom({ arr: [] }, () => n++) as any;
+    const state = createReactive({ arr: [] }, () => n++) as any;
 
-    expect(atom1.arr.length).toBe(0);
+    expect(state.arr.length).toBe(0);
     expect(n).toBe(0);
 
-    atom1.arr.push(1);
-    await nextMicroTick();
+    state.arr.push(1);
     expect(n).toBe(1);
-    expect(atom1.arr.length).toBe(1);
+    expect(state.arr.length).toBe(1);
   });
 
   test("properly observe objects in array", async () => {
     let n = 0;
-    const atom1 = createAtom({ arr: [{ something: 1 }] }, () => n++) as any;
+    const state = createReactive({ arr: [{ something: 1 }] }, () => n++) as any;
     expect(n).toBe(0);
 
-    atom1.arr[0].something = atom1.arr[0].something + 1;
-    await nextMicroTick();
+    state.arr[0].something = state.arr[0].something + 1;
     expect(n).toBe(1);
-    expect(atom1.arr[0].something).toBe(2);
+    expect(state.arr[0].something).toBe(2);
   });
 
   test("properly observe objects in object", async () => {
     let n = 0;
-    const atom1 = createAtom({ a: { b: 1 } }, () => n++) as any;
+    const state = createReactive({ a: { b: 1 } }, () => n++) as any;
     expect(n).toBe(0);
 
-    atom1.a.b = atom1.a.b + 2;
-    await nextMicroTick();
+    state.a.b = state.a.b + 2;
     expect(n).toBe(1);
+  });
+
+  test("Observing the same object through the same reactive preserves referential equality", async () => {
+    const o = {} as any;
+    o.o = o;
+    const state = createReactive(o);
+    expect(state.o).toBe(state);
+    expect(state.o.o).toBe(state);
   });
 
   test("reobserve new object values", async () => {
     let n = 0;
-    const atom1 = createAtom({ a: 1 }, () => n++) as any;
+    const state = createReactive({ a: 1 }, () => n++) as any;
     expect(n).toBe(0);
 
-    atom1.a++;
-    await nextMicroTick();
+    state.a++;
+    state.a;
     expect(n).toBe(1);
 
-    atom1.a = { b: 2 };
-    await nextMicroTick();
+    state.a = { b: 2 };
     expect(n).toBe(2);
 
-    atom1.a.b = atom1.a.b + 3;
-    await nextMicroTick();
+    state.a.b = state.a.b + 3;
     expect(n).toBe(3);
   });
 
   test("deep observe misc changes", async () => {
     let n = 0;
-    const atom1 = createAtom({ o: { a: 1 }, arr: [1], n: 13 }, () => n++) as any;
+    const state = createReactive({ o: { a: 1 }, arr: [1], n: 13 }, () => n++) as any;
     expect(n).toBe(0);
 
-    atom1.o.a = atom1.o.a + 2;
-    await nextMicroTick();
+    state.o.a = state.o.a + 2;
     expect(n).toBe(1);
 
-    atom1.arr.push(2);
-    await nextMicroTick();
+    state.arr.push(2);
     expect(n).toBe(2);
 
-    atom1.n = 155;
-    await nextMicroTick();
+    state.n = 155;
     expect(n).toBe(2);
 
-    atom1.n = atom1.n + 1;
-    await nextMicroTick();
+    state.n = state.n + 1;
     expect(n).toBe(3);
   });
 
-  test("properly handle already observed atom", async () => {
+  test("properly handle already observed object", async () => {
     let n1 = 0;
     let n2 = 0;
 
-    const obj1 = createAtom({ a: 1 }, () => n1++) as any;
-    const obj2 = createAtom({ b: 1 }, () => n2++) as any;
+    const obj1 = createReactive({ a: 1 }, () => n1++) as any;
+    const obj2 = createReactive({ b: 1 }, () => n2++) as any;
 
     obj1.a = obj1.a + 2;
     obj2.b = obj2.b + 3;
-    await nextMicroTick();
     expect(n1).toBe(1);
     expect(n2).toBe(1);
 
+    obj2.b;
     obj2.b = obj1;
-    await nextMicroTick();
     expect(n1).toBe(1);
     expect(n2).toBe(2);
 
+    obj1.a;
     obj1.a = 33;
-    await nextMicroTick();
     expect(n1).toBe(2);
     expect(n2).toBe(2);
 
+    obj1.a;
     obj2.b.a = obj2.b.a + 2;
-    await nextMicroTick();
     expect(n1).toBe(3);
     expect(n2).toBe(3);
   });
 
-  test("properly handle already observed atom in observed atom", async () => {
+  test("properly handle already observed object in observed object", async () => {
     let n1 = 0;
     let n2 = 0;
-    const obj1 = createAtom({ a: { c: 2 } }, () => n1++) as any;
-    const obj2 = createAtom({ b: 1 }, () => n2++) as any;
+    const obj1 = createReactive({ a: { c: 2 } }, () => n1++) as any;
+    const obj2 = createReactive({ b: 1 }, () => n2++) as any;
 
+    obj2.c;
     obj2.c = obj1;
-    await nextMicroTick();
     expect(n1).toBe(0);
     expect(n2).toBe(1);
 
     obj1.a.c = obj1.a.c + 33;
-    await nextMicroTick();
+    obj1.a.c;
     expect(n1).toBe(1);
     expect(n2).toBe(1);
 
     obj2.c.a.c = obj2.c.a.c + 3;
-    await nextMicroTick();
     expect(n1).toBe(2);
     expect(n2).toBe(2);
   });
@@ -656,18 +710,16 @@ describe("Reactivity: atom", () => {
   test("can reobserve object", async () => {
     let n1 = 0;
     let n2 = 0;
-    const atom1 = createAtom({ a: 0 }, () => n1++) as any;
+    const state = createReactive({ a: 0 }, () => n1++) as any;
 
-    atom1.a = atom1.a + 1;
-    await nextMicroTick();
+    state.a = state.a + 1;
     expect(n1).toBe(1);
     expect(n2).toBe(0);
 
-    const atom2 = createAtom(atom1, () => n2++) as any;
-    expect(atom1).toEqual(atom2);
+    const state2 = createReactive(state, () => n2++) as any;
+    expect(state).toEqual(state2);
 
-    atom2.a = 2;
-    await nextMicroTick();
+    state2.a = 2;
     expect(n1).toBe(2);
     expect(n2).toBe(1);
   });
@@ -675,42 +727,40 @@ describe("Reactivity: atom", () => {
   test("can reobserve nested properties in object", async () => {
     let n1 = 0;
     let n2 = 0;
-    const atom1 = createAtom({ a: [{ b: 1 }] }, () => n1++) as any;
+    const state = createReactive({ a: [{ b: 1 }] }, () => n1++) as any;
 
-    const atom2 = createAtom(atom1, () => n2++) as any;
+    const state2 = createReactive(state, () => n2++) as any;
 
-    atom1.a[0].b = atom1.a[0].b + 2;
-    await nextMicroTick();
+    state.a[0].b = state.a[0].b + 2;
     expect(n1).toBe(1);
     expect(n2).toBe(0);
 
-    atom2.c = 2;
-    await nextMicroTick();
+    state.c;
+    state2.c;
+    state2.c = 2;
     expect(n1).toBe(2);
     expect(n2).toBe(1);
   });
 
   test("rereading some property again give exactly same result", () => {
-    const atom1 = createAtom({ a: { b: 1 } });
-    const obj1 = atom1.a;
-    const obj2 = atom1.a;
+    const state = createReactive({ a: { b: 1 } });
+    const obj1 = state.a;
+    const obj2 = state.a;
     expect(obj1).toBe(obj2);
   });
 
   test("can reobserve new properties in object", async () => {
     let n1 = 0;
     let n2 = 0;
-    const atom1 = createAtom({ a: [{ b: 1 }] }, () => n1++) as any;
+    const state = createReactive({ a: [{ b: 1 }] }, () => n1++) as any;
 
-    createAtom(atom1, () => n2++) as any;
+    createReactive(state, () => n2++) as any;
 
-    atom1.a[0].b = { c: 1 };
-    await nextMicroTick();
+    state.a[0].b = { c: 1 };
     expect(n1).toBe(0);
     expect(n2).toBe(0);
 
-    atom1.a[0].b.c = atom1.a[0].b.c + 2;
-    await nextMicroTick();
+    state.a[0].b.c = state.a[0].b.c + 2;
     expect(n1).toBe(1);
     expect(n2).toBe(0);
   });
@@ -718,325 +768,312 @@ describe("Reactivity: atom", () => {
   test("can observe sub property of observed object", async () => {
     let n1 = 0;
     let n2 = 0;
-    const atom1 = createAtom({ a: { b: 1 }, c: 1 }, () => n1++) as any;
+    const state = createReactive({ a: { b: 1 }, c: 1 }, () => n1++) as any;
 
-    const atom2 = createAtom(atom1.a, () => n2++) as any;
+    const state2 = createReactive(state.a, () => n2++) as any;
 
-    atom1.a.b = atom1.a.b + 2;
-    await nextMicroTick();
+    state.a.b = state.a.b + 2;
     expect(n1).toBe(1);
     expect(n2).toBe(0);
 
-    atom1.l = 2;
-    await nextMicroTick();
+    state.l;
+    state.l = 2;
     expect(n1).toBe(2);
     expect(n2).toBe(0);
 
-    atom1.a.k = 3;
-    await nextMicroTick();
+    state.a.k;
+    state2.k;
+    state.a.k = 3;
     expect(n1).toBe(3);
     expect(n2).toBe(1);
 
-    atom1.c = 14;
-    await nextMicroTick();
+    state.c = 14;
     expect(n1).toBe(3);
     expect(n2).toBe(1);
 
-    atom2.b = atom2.b + 3;
-    await nextMicroTick();
+    state.a.b;
+    state2.b = state2.b + 3;
     expect(n1).toBe(4);
     expect(n2).toBe(2);
   });
 
   test("can set a property more than once", async () => {
     let n = 0;
-    const atom1 = createAtom({}, () => n++) as any;
+    const state = createReactive({}, () => n++) as any;
 
-    atom1.aky = atom1.aku;
+    state.aky = state.aku;
     expect(n).toBe(0);
-    atom1.aku = "always finds annoying problems";
-    expect(n).toBe(0);
-    await nextMicroTick();
+    state.aku = "always finds annoying problems";
     expect(n).toBe(1);
 
-    atom1.aku = "always finds good problems";
-    await nextMicroTick();
+    state.aku;
+    state.aku = "always finds good problems";
     expect(n).toBe(2);
   });
 
   test("properly handle swapping elements", async () => {
     let n = 0;
-    const atom1 = createAtom({ a: { arr: [] }, b: 1 }, () => n++) as any;
+    const state = createReactive({ a: { arr: [] }, b: 1 }, () => n++) as any;
 
     // swap a and b
-    const b = atom1.b;
-    atom1.b = atom1.a;
-    atom1.a = b;
-    await nextMicroTick();
+    const b = state.b;
+    state.b = state.a;
+    state.a = b;
     expect(n).toBe(1);
 
     // push something into array to make sure it works
-    atom1.b.arr.push("blanche");
-    await nextMicroTick();
+    state.b.arr.push("blanche");
+    // push reads the length property and as such subscribes to the change it is about to cause
     expect(n).toBe(2);
   });
 
-  test("properly handle assigning observed atom containing array", async () => {
+  test("properly handle assigning object containing array to reactive", async () => {
     let n = 0;
-    const atom1 = createAtom({ a: { arr: [], val: "test" } }, () => n++) as any;
+    const state = createReactive({ a: { arr: [], val: "test" } }, () => n++) as any;
     expect(n).toBe(0);
 
-    atom1.a = { ...atom1.a, val: "test2" };
-    await nextMicroTick();
+    state.a = { ...state.a, val: "test2" };
     expect(n).toBe(1);
 
     // push something into array to make sure it works
-    atom1.a.arr.push("blanche");
-    await nextMicroTick();
+    state.a.arr.push("blanche");
     expect(n).toBe(2);
   });
 
-  test("accept cycles in observed atom", async () => {
+  test.skip("accept cycles in observed object", async () => {
+    // ???
     let n = 0;
     let obj1: any = {};
     let obj2: any = { b: obj1, key: 1 };
     obj1.a = obj2;
-    obj1 = createAtom(obj1, () => n++) as any;
+    obj1 = createReactive(obj1, () => n++) as any;
     obj2 = obj1.a;
-    await nextMicroTick();
     expect(n).toBe(0);
 
     obj1.key = 3;
-    await nextMicroTick();
     expect(n).toBe(1);
   });
 
-  test("call callback when atom is changed", async () => {
+  test("call callback when reactive is changed", async () => {
     let n = 0;
-    const atom1: any = createAtom({ a: 1, b: { c: 2 }, d: [{ e: 3 }], f: 4 }, () => n++);
+    const state: any = createReactive({ a: 1, b: { c: 2 }, d: [{ e: 3 }], f: 4 }, () => n++);
     expect(n).toBe(0);
 
-    atom1.a = atom1.a + 2;
-    await nextMicroTick();
+    state.a = state.a + 2;
+    state.a;
     expect(n).toBe(1);
 
-    atom1.b.c = atom1.b.c + 3;
-    await nextMicroTick();
+    state.b.c = state.b.c + 3;
     expect(n).toBe(2);
 
-    atom1.d[0].e = atom1.d[0].e + 5;
-    await nextMicroTick();
+    state.d[0].e = state.d[0].e + 5;
     expect(n).toBe(3);
 
-    atom1.a = 111;
-    atom1.f = 222;
-    await nextMicroTick();
+    state.a;
+    state.f;
+    state.a = 111;
+    state.f = 222;
     expect(n).toBe(4);
   });
 
-  test("can unobserve a value", async () => {
-    let n = 0;
-    const cb = () => n++;
+  // test("can unobserve a value", async () => {
+  //   let n = 0;
+  //   const cb = () => n++;
+  //   const unregisterObserver = registerObserver(cb);
 
-    const [atom1, unregisterObserver] = observe({ a: 1 }, cb);
+  //   const state = createReactive({ a: 1 }, cb);
 
-    atom1.a = atom1.a + 3;
-    await nextMicroTick();
-    expect(n).toBe(1);
+  //   state.a = state.a + 3;
+  //   await nextMicroTick();
+  //   expect(n).toBe(1);
 
-    unregisterObserver();
+  //   unregisterObserver();
 
-    atom1.a = 4;
-    await nextMicroTick();
-    expect(n).toBe(1);
-  });
+  //   state.a = 4;
+  //   await nextMicroTick();
+  //   expect(n).toBe(1);
+  // });
 
-  test("observing some observed atom", async () => {
+  test("reactive inside other reactive", async () => {
     let n1 = 0;
     let n2 = 0;
-    const inner = createAtom({ a: 1 }, () => n1++);
-    const outer = createAtom({ b: inner }, () => n2++);
+    const inner = createReactive({ a: 1 }, () => n1++);
+    const outer = createReactive({ b: inner }, () => n2++);
     expect(n1).toBe(0);
     expect(n2).toBe(0);
 
     outer.b.a = outer.b.a + 2;
-    await nextMicroTick();
     expect(n1).toBe(0);
     expect(n2).toBe(1);
   });
 
-  test("observing some observed atom, variant", async () => {
+  test("reactive inside other reactive, variant", async () => {
     let n1 = 0;
     let n2 = 0;
-    const inner = createAtom({ a: 1 }, () => n1++);
-    const outer = createAtom({ b: inner, c: 0 }, () => n2++);
+    const inner = createReactive({ a: 1 }, () => n1++);
+    const outer = createReactive({ b: inner, c: 0 }, () => n2++);
     expect(n1).toBe(0);
     expect(n2).toBe(0);
 
     inner.a = inner.a + 2;
-    await nextMicroTick();
     expect(n1).toBe(1);
     expect(n2).toBe(0);
 
     outer.c = outer.c + 3;
-    await nextMicroTick();
     expect(n1).toBe(1);
     expect(n2).toBe(1);
   });
 
-  test("observing some observed atom, variant 2", async () => {
+  test("reactive inside other reactive, variant 2", async () => {
     let n1 = 0;
     let n2 = 0;
     let n3 = 0;
-    const obj1 = createAtom({ a: 1 }, () => n1++);
-    const obj2 = createAtom({ b: {} }, () => n2++);
-    const obj3 = createAtom({ c: {} }, () => n3++);
+    const obj1 = createReactive({ a: 1 }, () => n1++);
+    const obj2 = createReactive({ b: {} }, () => n2++);
+    const obj3 = createReactive({ c: {} }, () => n3++);
 
     obj2.b = obj2.b;
+    obj2.b;
     obj3.c = obj3.c;
-    await nextMicroTick();
+    obj3.c;
     expect(n1).toBe(0);
     expect(n2).toBe(1);
     expect(n3).toBe(1);
 
     obj2.b = obj1;
+    obj2.b;
     obj3.c = obj1;
-    await nextMicroTick();
+    obj3.c;
     expect(n1).toBe(0);
     expect(n2).toBe(2);
     expect(n3).toBe(2);
 
     obj1.a = obj1.a + 2;
-    await nextMicroTick();
+    obj1.a;
     expect(n1).toBe(1);
     expect(n2).toBe(2);
     expect(n3).toBe(2);
 
     obj2.b.a = obj2.b.a + 1;
-    await nextMicroTick();
     expect(n1).toBe(2);
     expect(n2).toBe(3);
     expect(n3).toBe(2);
   });
 
-  test("notification is not done after unregistration", async () => {
-    let n = 0;
-    const observer = () => n++;
-    const [state, unregisterObserver] = observe({ a: 1 } as any, observer);
+  // test("notification is not done after unregistration", async () => {
+  //   let n = 0;
+  //   const observer = () => n++;
+  //   const unregisterObserver = registerObserver(observer);
+  //   const state = atom({ a: 1 } as any, observer);
 
-    state.a = state.a;
-    await nextMicroTick();
-    expect(n).toBe(0);
+  //   state.a = state.a;
+  //   await nextMicroTick();
+  //   expect(n).toBe(0);
 
-    unregisterObserver();
+  //   unregisterObserver();
 
-    state.a = { b: 2 };
-    await nextMicroTick();
-    expect(n).toBe(0);
+  //   state.a = { b: 2 };
+  //   await nextMicroTick();
+  //   expect(n).toBe(0);
 
-    state.a.b = state.a.b + 3;
-    await nextMicroTick();
-    expect(n).toBe(0);
-  });
+  //   state.a.b = state.a.b + 3;
+  //   await nextMicroTick();
+  //   expect(n).toBe(0);
+  // });
 
-  test("atom cleaning after key deleted 1", async () => {
+  test("don't react to changes in subobject that has been deleted", async () => {
     let n = 0;
     const a = { k: {} } as any;
-    const atom = createAtom(a, () => n++);
+    const state = createReactive(a, () => n++);
 
-    atom.k.l = 1;
-    await nextMicroTick();
+    state.k.l;
+    state.k.l = 1;
     expect(n).toBe(1);
 
-    const kVal = atom.k;
+    const kVal = state.k;
 
-    delete atom.k;
-    await nextMicroTick();
+    delete state.k;
     expect(n).toBe(2);
 
     kVal.l = 2;
-    await nextMicroTick();
     expect(n).toBe(2); // kVal must no longer be observed
   });
 
-  test("atom cleaning after key deleted 2", async () => {
+  test("don't react to changes in subobject that has been deleted", async () => {
     let n = 0;
     const b = {} as any;
     const a = { k: b } as any;
     const observer = () => n++;
-    const atom2 = createAtom(b, observer);
-    const atom1 = createAtom(a, observer); // atom2 should be still a seed
+    const state2 = createReactive(b, observer);
+    const state = createReactive(a, observer);
 
-    atom1.c = 1;
-    atom1.k.d = 2;
-    await nextMicroTick();
+    state.c = 1;
+    state.k.d;
+    state.k.d = 2;
+    state.k;
     expect(n).toBe(1);
 
-    delete atom1.k;
-    await nextMicroTick();
+    delete state.k;
     expect(n).toBe(2);
 
-    atom2.e = 3;
-    await nextMicroTick();
-    expect(n).toBe(3); // b must still be observed
+    state2.e = 3;
+    expect(n).toBe(2);
   });
 
-  test("atom cleaning after key deleted 3", async () => {
+  test("don't react to changes in subobject that has been deleted 3", async () => {
     let n = 0;
     const b = {} as any;
     const a = { k: b } as any;
     const observer = () => n++;
-    const atom1 = createAtom(a, observer);
-    const atom2 = createAtom(b, observer); // atom2 should be a seed now
+    const state = createReactive(a, observer);
+    const state2 = createReactive(b, observer);
 
-    atom1.c = 1;
-    atom1.k.d = 2;
-    await nextMicroTick();
+    state.c = 1;
+    state.k.d;
+    state.k.d = 2;
+    state.k.d;
     expect(n).toBe(1);
 
-    delete atom1.k;
-    await nextMicroTick();
+    delete state.k;
     expect(n).toBe(2);
 
-    atom2.e = 3;
-    await nextMicroTick();
-    expect(n).toBe(3); // b must still be observed
+    state2.e = 3;
+    expect(n).toBe(2);
   });
 
-  test("atom cleaning after key deleted 4", async () => {
+  test("don't react to changes in subobject that has been deleted 4", async () => {
     let n = 0;
     const a = { k: {} } as any;
     a.k = a;
-    const atom = createAtom(a, () => n++);
+    const state = createReactive(a, () => n++);
+    Object.keys(state);
 
-    atom.b = 1;
-    await nextMicroTick();
+    state.b = 1;
     expect(n).toBe(1);
 
-    delete atom.k;
-    await nextMicroTick();
+    Object.keys(state);
+    delete state.k;
     expect(n).toBe(2);
 
-    atom.c = 2;
-    await nextMicroTick();
-    expect(n).toBe(3); // a must still be observed
+    state.c = 2;
+    expect(n).toBe(2);
   });
 
-  test("atom cleaning after trackable key value changed", async () => {
+  test("don't react to changes in subobject that has been replaced", async () => {
     let n = 0;
     const a = { k: { n: 1 } } as any;
-    const atom = createAtom(a, () => n++);
-    const kVal = atom.k; // read k
+    const state = createReactive(a, () => n++);
+    const kVal = state.k; // read k
 
-    atom.k = { n: atom.k.n + 1 };
+    state.k = { n: state.k.n + 1 };
     await nextMicroTick();
     expect(n).toBe(1);
-    expect(atom.k).toEqual({ n: 2 });
+    expect(state.k).toEqual({ n: 2 });
 
     kVal.n = 3;
     await nextMicroTick();
     expect(n).toBe(1);
-    expect(atom.k).toEqual({ n: 2 });
+    expect(state.k).toEqual({ n: 2 });
   });
 });
 
@@ -1050,13 +1087,13 @@ describe("Reactivity: useState", () => {
   });
 
   /**
-   * A context can be defined as an atom with a default observer.
+   * A context can be defined as a reactive with a default observer.
    * It can be exposed and share by multiple components or other objects
    * (via useState for instance)
    */
 
   test("very simple use, with initial value", async () => {
-    const testContext = createAtom({ value: 123 });
+    const testContext = createReactive({ value: 123 });
 
     class Comp extends Component {
       static template = xml`<div><t t-esc="contextObj.value"/></div>`;
@@ -1067,7 +1104,7 @@ describe("Reactivity: useState", () => {
   });
 
   test("useContext=useState hook is reactive, for one component", async () => {
-    const testContext = createAtom({ value: 123 });
+    const testContext = createReactive({ value: 123 });
 
     class Comp extends Component {
       static template = xml`<div><t t-esc="contextObj.value"/></div>`;
@@ -1081,7 +1118,7 @@ describe("Reactivity: useState", () => {
   });
 
   test("two components can subscribe to same context", async () => {
-    const testContext = createAtom({ value: 123 });
+    const testContext = createReactive({ value: 123 });
     const steps: string[] = [];
 
     class Child extends Component {
@@ -1112,7 +1149,7 @@ describe("Reactivity: useState", () => {
   });
 
   test("two components are updated in parallel", async () => {
-    const testContext = createAtom({ value: 123 });
+    const testContext = createReactive({ value: 123 });
     const steps: string[] = [];
 
     class Child extends Component {
@@ -1142,7 +1179,7 @@ describe("Reactivity: useState", () => {
   });
 
   test("two independent components on different levels are updated in parallel", async () => {
-    const testContext = createAtom({ value: 123 });
+    const testContext = createReactive({ value: 123 });
     const steps: string[] = [];
 
     class Child extends Component {
@@ -1183,7 +1220,7 @@ describe("Reactivity: useState", () => {
   });
 
   test("one components can subscribe twice to same context", async () => {
-    const testContext = createAtom({ a: 1, b: 2 });
+    const testContext = createReactive({ a: 1, b: 2 });
     const steps: string[] = [];
 
     class Comp extends Component {
@@ -1206,7 +1243,7 @@ describe("Reactivity: useState", () => {
   });
 
   test("parent and children subscribed to same context", async () => {
-    const testContext = createAtom({ a: 123, b: 321 });
+    const testContext = createReactive({ a: 123, b: 321 });
     const steps: string[] = [];
 
     class Child extends Component {
@@ -1239,8 +1276,8 @@ describe("Reactivity: useState", () => {
     expect(steps).toEqual(["parent", "child", "child"]);
   });
 
-  test("several nodes on different level use same context", async () => {
-    const testContext = createAtom({ a: 123, b: 456 });
+  test.skip("several nodes on different level use same context", async () => {
+    const testContext = createReactive({ a: 123, b: 456 });
     const steps: Set<string> = new Set();
 
     /**
@@ -1336,7 +1373,7 @@ describe("Reactivity: useState", () => {
   });
 
   test("destroyed component is inactive", async () => {
-    const testContext = createAtom({ a: 123 });
+    const testContext = createReactive({ a: 123 });
     const steps: string[] = [];
 
     class Child extends Component {
@@ -1377,7 +1414,7 @@ describe("Reactivity: useState", () => {
   });
 
   test("destroyed component before being mounted is inactive", async () => {
-    const testContext = createAtom({ a: 123 });
+    const testContext = createReactive({ a: 123 });
     const steps: string[] = [];
     class Child extends Component {
       static template = xml`<span><t t-esc="contextObj.a"/></span>`;
@@ -1414,7 +1451,7 @@ describe("Reactivity: useState", () => {
   });
 
   test("useless atoms should be deleted", async () => {
-    const testContext = createAtom({
+    const testContext = createReactive({
       1: { id: 1, quantity: 3, description: "First quantity" },
       2: { id: 2, quantity: 5, description: "Second quantity" },
     });
@@ -1503,7 +1540,7 @@ describe("Reactivity: useState", () => {
      * more advanced API, to let components determine if they should be updated
      * or not (so, something slightly more advanced that the useStore hook).
      */
-    const testContext = createAtom({ x: { n: 1 }, key: "x" });
+    const testContext = createReactive({ x: { n: 1 }, key: "x" });
     const def = makeDeferred();
     let stateC: any;
     class ComponentC extends Component {

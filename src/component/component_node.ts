@@ -72,7 +72,9 @@ export function getCurrent(): ComponentNode | null {
 
 type LifecycleHook = Function;
 
-export class ComponentNode<T extends typeof Component = any> implements VNode<ComponentNode> {
+export class ComponentNode<T extends typeof Component = typeof Component>
+  implements VNode<ComponentNode>
+{
   el?: HTMLElement | Text | undefined;
   app: App;
   fiber: Fiber | null = null;

@@ -2,19 +2,20 @@ import {
   App,
   Component,
   mount,
-  useRef,
-  useState,
-  useComponent,
-  useEnv,
-  useSubEnv,
-  useEffect,
   onMounted,
   onPatched,
-  onWillStart,
-  onWillUpdateProps,
   onWillPatch,
-  xml,
+  onWillStart,
   onWillUnmount,
+  onWillUpdateProps,
+  useComponent,
+  useEffect,
+  useEnv,
+  useExternalListener,
+  useRef,
+  useState,
+  useSubEnv,
+  xml,
 } from "../../src/index";
 import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
@@ -287,13 +288,13 @@ describe("hooks", () => {
     ]);
   });
 
-  test.skip("useExternalListener", async () => {
+  test("useExternalListener", async () => {
     let n = 0;
 
     class MyComponent extends Component {
       static template = xml`<span><t t-esc="props.value"/></span>`;
       setup() {
-        //useExternalListener(window as any, "click", this.increment);
+        useExternalListener(window, "click", this.increment);
       }
       increment() {
         n++;

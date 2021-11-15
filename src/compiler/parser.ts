@@ -405,18 +405,15 @@ function parseTEscNode(node: Element, ctx: ParsingContext): AST | null {
   if (!ast) {
     return tesc;
   }
-  if (ast && ast.type === ASTType.DomNode) {
+  if (ast.type === ASTType.DomNode) {
     return {
       ...ast,
       ref,
       content: [tesc],
     };
   }
-  if (ast && ast.type === ASTType.TComponent) {
-    return {
-      ...ast,
-      slots: { default: tesc },
-    };
+  if (ast.type === ASTType.TComponent) {
+    throw new Error("t-esc is not supported on Component nodes");
   }
   return tesc;
 }

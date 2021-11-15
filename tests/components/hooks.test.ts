@@ -7,6 +7,7 @@ import {
   useComponent,
   useEnv,
   useSubEnv,
+  useEffect,
   onMounted,
   onPatched,
   onWillStart,
@@ -317,5 +318,171 @@ describe("hooks", () => {
     await nextTick();
     window.dispatchEvent(new Event("click"));
     expect(n).toBe(1);
+  });
+
+  describe("useEffect hook", () => {
+    test("effect runs on mount, is reapplied on patch, and is cleaned up on unmount and before reapplying", async () => {
+      let cleanupRun = 0;
+      let steps = [];
+      class MyComponent extends Component {
+        state = useState({
+          value: 0,
+        });
+        setup() {
+          useEffect(() => {
+            steps.push(`value is ${this.state.value}`);
+            return () =>
+              steps.push(`cleaning up for value = ${this.state.value} (cleanup ${cleanupRun++})`);
+          });
+        }
+      }
+      MyComponent.template = xml`<div/>`;
+
+      const component = await mount(MyComponent, fixture);
+
+      steps.push("before state mutation");
+      component.state.value++;
+      // Wait for an owl render
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+      steps.push("after state mutation");
+      await component.__owl__.destroy();
+
+      expect(steps).toEqual([
+        "value is 0",
+        "before state mutation",
+        // While one might expect value to be 0 at cleanup, because the value is
+        // read during cleanup from the state rather than captured by a dependency
+        // it already has the new value. Having this in business code is a symptom
+        // of a missing dependency and can lead to bugs.
+        "cleaning up for value = 1 (cleanup 0)",
+        "value is 1",
+        "after state mutation",
+        "cleaning up for value = 1 (cleanup 1)",
+      ]);
+    });
+
+    test("dependencies prevent effects from rerunning when unchanged", async () => {
+      let steps = [];
+      class MyComponent extends Component {
+        state = useState({
+          a: 0,
+          b: 0,
+        });
+        setup() {
+          useEffect(
+            (a) => {
+              steps.push(`Effect a: ${a}`);
+              return () => steps.push(`cleaning up for a: ${a}`);
+            },
+            () => [this.state.a]
+          );
+          useEffect(
+            (b) => {
+              steps.push(`Effect b: ${b}`);
+              return () => steps.push(`cleaning up for b: ${b}`);
+            },
+            () => [this.state.b]
+          );
+          useEffect(
+            (a, b) => {
+              steps.push(`Effect ab: {a: ${a}, b: ${b}}`);
+              return () => steps.push(`cleaning up for ab: {a: ${a}, b: ${b}}`);
+            },
+            () => [this.state.a, this.state.b]
+          );
+        }
+      }
+      MyComponent.template = xml`<div/>`;
+      steps.push("before mount");
+      const component = await mount(MyComponent, fixture);
+      steps.push("after mount");
+
+      steps.push("before state mutation: a");
+      component.state.a++;
+      // Wait for an owl render
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+      steps.push("after state mutation: a");
+
+      steps.push("before state mutation: b");
+      component.state.b++;
+      // Wait for an owl render
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+      steps.push("after state mutation: b");
+      await component.__owl__.destroy();
+
+      expect(steps).toEqual([
+        // All effects run on mount
+        "before mount",
+        "Effect a: 0",
+        "Effect b: 0",
+        "Effect ab: {a: 0, b: 0}",
+        "after mount",
+
+        "before state mutation: a",
+        // Cleanups run in reverse order
+        "cleaning up for ab: {a: 0, b: 0}",
+        // Cleanup for b is not run
+        "cleaning up for a: 0",
+
+        "Effect a: 1",
+        // Effect b is not run
+        "Effect ab: {a: 1, b: 0}",
+        "after state mutation: a",
+
+        "before state mutation: b",
+        "cleaning up for ab: {a: 1, b: 0}",
+        "cleaning up for b: 0",
+        // Cleanup for a is not run
+
+        // Effect a is not run
+        "Effect b: 1",
+        "Effect ab: {a: 1, b: 1}",
+        "after state mutation: b",
+
+        // All cleanups run on unmount
+        "cleaning up for ab: {a: 1, b: 1}",
+        "cleaning up for b: 1",
+        "cleaning up for a: 1",
+      ]);
+    });
+
+    test("effect with empty dependency list never reruns", async () => {
+      let steps = [];
+      class MyComponent extends Component {
+        state = useState({
+          value: 0,
+        });
+        setup() {
+          useEffect(
+            () => {
+              steps.push(`value is ${this.state.value}`);
+              return () => steps.push(`cleaning up for ${this.state.value}`);
+            },
+            () => []
+          );
+        }
+      }
+      MyComponent.template = xml`<div t-esc="state.value"/>`;
+
+      const component = await mount(MyComponent, fixture);
+
+      steps.push("before state mutation");
+      component.state.value++;
+      // Wait for an owl render
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+      // Value was correctly changed inside the component
+      expect(component.el!.textContent).toBe("1");
+      steps.push("after state mutation");
+      await component.__owl__.destroy();
+
+      expect(steps).toEqual([
+        "value is 0",
+        "before state mutation",
+        // no cleanup or effect caused by mutation
+        "after state mutation",
+        // Value being clean
+        "cleaning up for 1",
+      ]);
+    });
   });
 });

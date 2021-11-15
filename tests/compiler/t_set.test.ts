@@ -149,7 +149,7 @@ describe("t-set", () => {
             <span><t t-esc="v1"/></span>
           </t>
           <t t-set="v1" t-value="'after'"/>
-          <t t-raw="v2"/>
+          <t t-out="v2"/>
         </div>`;
 
     expect(renderToString(template)).toBe("<div><span>before</span></div>");
@@ -165,7 +165,7 @@ describe("t-set", () => {
           </t>
           <t t-set="v1" t-value="'after'"/>
           <t t-set="v3" t-value="true"/>
-          <t t-raw="v2"/>
+          <t t-out="v2"/>
         </div>`;
 
     expect(renderToString(template)).toBe("<div><span>before</span></div>");
@@ -181,7 +181,7 @@ describe("t-set", () => {
           </t>
           <t t-set="v1" t-value="'after'"/>
           <t t-set="v3" t-value="false"/>
-          <t t-raw="v2"/>
+          <t t-out="v2"/>
         </div>`;
 
     expect(renderToString(template)).toBe("<div>Truthy</div>");

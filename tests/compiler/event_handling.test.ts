@@ -1,6 +1,7 @@
 import { TemplateSet } from "../../src/app/template_set";
 import { mount } from "../../src/blockdom";
 import { makeTestFixture, renderToBdom, renderToString, snapshotEverything } from "../helpers";
+import { markup } from "../../src/utils";
 
 snapshotEverything();
 // -----------------------------------------------------------------------------
@@ -497,12 +498,12 @@ describe("t-on", () => {
       expect(steps).toEqual(["onClick"]);
     });
 
-    test("t-on combined with t-raw", async () => {
+    test("t-on combined with t-out", async () => {
       expect.assertions(3);
-      const template = `<div><button t-on-click="onClick" t-raw="html"/></div>`;
+      const template = `<div><button t-on-click="onClick" t-out="html"/></div>`;
       const steps: string[] = [];
       const owner = {
-        html: "Click <b>here</b>",
+        html: markup("Click <b>here</b>"),
         onClick() {
           steps.push("onClick");
         },

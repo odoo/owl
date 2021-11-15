@@ -11,7 +11,6 @@ import {
   toggler,
 } from "./blockdom";
 import { mainEventHandler } from "./component/handler";
-import { EventBus, whenReady, loadFile } from "./utils";
 
 config.shouldNormalizeDom = false;
 config.mainEventHandler = mainEventHandler;
@@ -58,7 +57,7 @@ export { Memo } from "./misc/memo";
 export { css, xml } from "./tags";
 export { useState } from "./reactivity";
 export { useEffect, useEnv, useExternalListener, useRef, useSubEnv } from "./hooks";
-export const utils = { EventBus, whenReady, loadFile };
+export { EventBus, whenReady, loadFile, markup } from "./utils";
 
 export {
   onWillStart,

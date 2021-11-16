@@ -173,11 +173,10 @@ interface ParsingContext {
   inPreTag: boolean;
 }
 
-export function parse(xml: string): AST {
-  const template = `<t>${xml}</t>`;
-  const doc = parseXML(template);
+export function parse(xml: string | Node): AST {
+  const node = xml instanceof Element ? xml : parseXML(`<t>${xml}</t>`).firstChild!;
   const ctx = { inPreTag: false };
-  const ast = parseNode(doc.firstChild!, ctx);
+  const ast = parseNode(node, ctx);
   if (!ast) {
     return { type: ASTType.Text, value: "" };
   }

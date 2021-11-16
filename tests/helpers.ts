@@ -38,7 +38,7 @@ export function makeTestFixture() {
   return fixture;
 }
 
-export function snapshotTemplateCode(template: string, options?: CodeGenOptions) {
+export function snapshotTemplateCode(template: string | Node, options?: CodeGenOptions) {
   expect(compileTemplate(template, options).toString()).toMatchSnapshot();
 }
 

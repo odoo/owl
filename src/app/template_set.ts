@@ -5,10 +5,10 @@ import { UTILS } from "./template_helpers";
 
 const bdom = { text, createBlock, list, multi, html, toggler, component };
 
-export const globalTemplates: { [key: string]: string } = {};
+export const globalTemplates: { [key: string]: string | Node } = {};
 
 export class TemplateSet {
-  rawTemplates: { [name: string]: string } = Object.create(globalTemplates);
+  rawTemplates: typeof globalTemplates = Object.create(globalTemplates);
   templates: { [name: string]: Template } = {};
   translateFn?: (s: string) => string;
   translatableAttributes?: string[];
@@ -25,11 +25,20 @@ export class TemplateSet {
     this.utils = Object.assign({}, UTILS, { getTemplate, call });
   }
 
-  addTemplate(name: string, template: string, options: { allowDuplicate?: boolean } = {}) {
+  addTemplate(name: string, template: string | Node, options: { allowDuplicate?: boolean } = {}) {
     if (name in this.rawTemplates && !options.allowDuplicate) {
       throw new Error(`Template ${name} already defined`);
     }
     this.rawTemplates[name] = template;
+  }
+
+  addTemplates(xml: string | Document, options: { allowDuplicate?: boolean } = {}) {
+    xml = xml instanceof Document ? xml : new DOMParser().parseFromString(xml, "text/xml");
+    for (const template of xml.querySelectorAll("[t-name]")) {
+      const name = template.getAttribute("t-name")!;
+      template.removeAttribute("t-name");
+      this.addTemplate(name, template, options);
+    }
   }
 
   getTemplate(name: string): Template {

@@ -677,23 +677,6 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
   });
 
-  // TODO: implement scope lookup for components
-  test.skip("don't fallback to component's registry if widget defined in the instance's context", async () => {
-    class ChildA extends Component {
-      static template = xml`<span>ChildA</span>`;
-    }
-    class ChildB extends Component {
-      static template = xml`<span>ChildB</span>`;
-    }
-    class Parent extends Component {
-      static template = xml`<Child/>`;
-      static components = { Child: ChildA };
-      Child = ChildB;
-    }
-    await mount(Parent, fixture);
-    expect(fixture.innerHTML).toBe("<span>ChildB</span>");
-  });
-
   test("sub components between t-ifs", async () => {
     // this confuses the patching algorithm...
     class Child extends Component {
@@ -856,89 +839,6 @@ describe("mount targets", () => {
     const app = new App(Root);
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<span></span><div>app</div>");
-  });
-});
-
-describe.skip("mount special cases", () => {
-  test("component can be mounted on different target", async () => {
-    //   class Comp extends Component {
-    //     static template = xml`<div>Hey</div>`;
-    //     setup() {
-    //       onPatched(() => {
-    //         throw new Error("patched should not be called");
-    //       });
-    //     }
-    //   }
-    //   const div = document.createElement("div");
-    //   const span = document.createElement("span");
-    //   fixture.appendChild(div);
-    //   fixture.appendChild(span);
-    //   const comp = await mount(Comp, div);
-    //   expect(fixture.innerHTML).toBe("<div><div>Hey</div></div><span></span>");
-    //   await comp.__owl__.mount(span, );
-    //   expect(fixture.innerHTML).toBe("<div></div><span><div>Hey</div></span>");
-  });
-
-  test("widget can be mounted on different target, another situation", async () => {
-    // const def = makeDeferred();
-    // const steps: string[] = [];
-    // class MyWidget extends Component {
-    //   static template = xml`<div>Hey</div>`;
-    //   async willStart() {
-    //     return def;
-    //   }
-    //   patched() {
-    //     throw new Error("patched should not be called");
-    //   }
-    // }
-    // const div = document.createElement("div");
-    // const span = document.createElement("span");
-    // fixture.appendChild(div);
-    // fixture.appendChild(span);
-    // const w = new MyWidget();
-    // w.mount(div).catch(() => steps.push("1 catch"));
-    // await nextTick();
-    // expect(fixture.innerHTML).toBe("<div></div><span></span>");
-    // w.mount(span).then(() => steps.push("2 resolved"));
-    // // we wait two microticks because this is the number of internal promises
-    // // that need to be resolved/rejected, and because we want to prove here
-    // // that the first mount operation is cancelled immediately, and not after
-    // // one full tick.
-    // await nextMicroTick();
-    // await nextMicroTick();
-    // expect(steps).toEqual([]);
-    // await nextTick();
-    // expect(fixture.innerHTML).toBe("<div></div><span></span>");
-    // def.resolve();
-    // await nextTick();
-    // expect(steps).toEqual(["2 resolved"]);
-    // expect(fixture.innerHTML).toBe("<div></div><span><div>Hey</div></span>");
-  });
-
-  test("component can be mounted on same target, another situation", async () => {
-    // const def = makeDeferred();
-    // const steps: string[] = [];
-    // class MyWidget extends Component {
-    //   static template = xml`<div>Hey</div>`;
-    //   async willStart() {
-    //     return def;
-    //   }
-    //   patched() {
-    //     throw new Error("patched should not be called");
-    //   }
-    // }
-    // const w = new MyWidget();
-    // w.mount(fixture).then(() => steps.push("1 resolved"));
-    // await nextTick();
-    // expect(fixture.innerHTML).toBe("");
-    // w.mount(fixture).then(() => steps.push("2 resolved"));
-    // await nextTick();
-    // expect(steps).toEqual([]);
-    // expect(fixture.innerHTML).toBe("");
-    // def.resolve();
-    // await nextTick();
-    // expect(fixture.innerHTML).toBe("<div>Hey</div>");
-    // expect(steps).toEqual(["1 resolved", "2 resolved"]);
   });
 });
 

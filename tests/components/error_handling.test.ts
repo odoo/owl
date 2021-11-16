@@ -450,6 +450,44 @@ describe("can catch errors", () => {
     console.error = consoleError;
   });
 
+  test("can catch an error in the constructor call of a component render function 2", async () => {
+    const consoleError = console.error;
+    console.error = jest.fn();
+
+    class ClassicCompoent extends Component {
+      static template = xml`<div>classic</div>`;
+    }
+
+    class ErrorComponent extends Component {
+      static template = xml`<div>Some text</div>`;
+      setup() {
+        throw new Error("NOOOOO");
+      }
+    }
+    class ErrorBoundary extends Component {
+      static template = xml`<div>
+              <t t-if="state.error">Error handled</t>
+              <t t-else=""><t t-slot="default" /></t>
+          </div>`;
+      state = useState({ error: false });
+
+      setup() {
+        onError(() => (this.state.error = true));
+      }
+    }
+    class App extends Component {
+      static template = xml`<div>
+              <ErrorBoundary><ClassicCompoent/><ErrorComponent /></ErrorBoundary>
+          </div>`;
+      static components = { ErrorBoundary, ErrorComponent, ClassicCompoent };
+    }
+    await mount(App, fixture);
+    expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
+
+    expect(console.error).toBeCalledTimes(0);
+    console.error = consoleError;
+  });
+
   test("can catch an error in the willStart call", async () => {
     const consoleError = console.error;
     console.error = jest.fn();
@@ -478,6 +516,46 @@ describe("can catch errors", () => {
     class App extends Component {
       static template = xml`<div><ErrorBoundary><ErrorComponent /></ErrorBoundary></div>`;
       static components = { ErrorBoundary, ErrorComponent };
+    }
+    await mount(App, fixture);
+    expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
+
+    expect(console.error).toBeCalledTimes(0);
+    console.error = consoleError;
+  });
+
+  test("can catch an error origination from a child's willStart function", async () => {
+    const consoleError = console.error;
+    console.error = jest.fn();
+
+    class ClassicCompoent extends Component {
+      static template = xml`<div>classic</div>`;
+    }
+
+    class ErrorComponent extends Component {
+      static template = xml`<div>Some text</div>`;
+      setup() {
+        onWillStart(() => {
+          throw new Error("NOOOOO");
+        });
+      }
+    }
+    class ErrorBoundary extends Component {
+      static template = xml`<div>
+              <t t-if="state.error">Error handled</t>
+              <t t-else=""><t t-slot="default" /></t>
+          </div>`;
+      state = useState({ error: false });
+
+      setup() {
+        onError(() => (this.state.error = true));
+      }
+    }
+    class App extends Component {
+      static template = xml`<div>
+              <ErrorBoundary><ClassicCompoent/><ErrorComponent /></ErrorBoundary>
+          </div>`;
+      static components = { ErrorBoundary, ErrorComponent, ClassicCompoent };
     }
     await mount(App, fixture);
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");

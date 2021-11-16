@@ -4,7 +4,7 @@ import type { Fiber } from "./fibers";
 export const fibersInError: WeakMap<Fiber, Error> = new WeakMap();
 export const nodeErrorHandlers: WeakMap<ComponentNode, ((error: Error) => void)[]> = new WeakMap();
 
-function _handleError(node: ComponentNode | null, error: Error): boolean {
+function _handleError(node: ComponentNode | null, error: Error, isFirstRound = false): boolean {
   if (!node) {
     return false;
   }
@@ -15,7 +15,7 @@ function _handleError(node: ComponentNode | null, error: Error): boolean {
 
   const errorHandlers = nodeErrorHandlers.get(node);
   if (errorHandlers) {
-    if (fiber && !fiber.children.length) {
+    if (isFirstRound && fiber) {
       fiber.root.counter--;
     }
 
@@ -42,7 +42,7 @@ export function handleError(node: ComponentNode, error: Error) {
   const fiber = node.fiber!;
   fibersInError.set(fiber.root, error);
 
-  if (!_handleError(node, error)) {
+  if (!_handleError(node, error, true)) {
     try {
       node.app.destroy();
     } catch (e) {}

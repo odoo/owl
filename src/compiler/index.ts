@@ -9,13 +9,17 @@ export type TemplateFunction = (blocks: any, utils: any) => Template;
 interface CompileOptions extends Config {
   name?: string;
 }
-export function compile(template: string, options: CompileOptions = {}): TemplateFunction {
+let nextId = 1;
+export function compile(template: string | Node, options: CompileOptions = {}): TemplateFunction {
   // parsing
   const ast = parse(template);
 
   // some work
-  const hasSafeContext = !template.includes("t-set") && !template.includes("t-call");
-  const name = options.name || (template.length > 250 ? template.slice(0, 250) + "..." : template);
+  const hasSafeContext =
+    template instanceof Node
+      ? !(template instanceof Element) || template.querySelector("[t-set], [t-call]") === null
+      : !template.includes("t-set") && !template.includes("t-call");
+  const name = options.name || `template_${nextId++}`;
 
   // code generation
   const codeGenerator = new CodeGenerator(name, ast, { ...options, hasSafeContext });

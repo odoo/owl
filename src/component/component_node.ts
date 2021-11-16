@@ -140,7 +140,7 @@ export class ComponentNode<T extends typeof Component = any> implements VNode<Co
     if (fiber && !fiber.bdom && !fibersInError.has(fiber)) {
       return fiber.root.promise;
     }
-    if (!this.bdom && !this.fiber) {
+    if (!this.bdom && !fiber) {
       // should find a way to return the future mounting promise
       return;
     }

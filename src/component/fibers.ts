@@ -2,7 +2,7 @@ import type { BDom } from "../blockdom";
 import { mount } from "../blockdom";
 import type { ComponentNode } from "./component_node";
 import { STATUS } from "./status";
-import { fibersInError } from "./error_handling";
+import { fibersInError, handleError } from "./error_handling";
 
 export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
   let current = node.fiber;
@@ -106,56 +106,63 @@ export class RootFiber extends Fiber {
 
   complete() {
     const node = this.node;
-
-    // Step 1: calling all willPatch lifecycle hooks
-    for (let fiber of this.willPatch) {
-      // because of the asynchronous nature of the rendering, some parts of the
-      // UI may have been rendered, then deleted in a followup rendering, and we
-      // do not want to call onWillPatch in that case.
-      let node = fiber.node;
-      if (node.fiber === fiber) {
-        const component = node.component;
-        for (let cb of node.willPatch) {
-          cb.call(component);
+    let current: Fiber | undefined = undefined;
+    try {
+      // Step 1: calling all willPatch lifecycle hooks
+      for (current of this.willPatch) {
+        // because of the asynchronous nature of the rendering, some parts of the
+        // UI may have been rendered, then deleted in a followup rendering, and we
+        // do not want to call onWillPatch in that case.
+        let node = current.node;
+        if (node.fiber === current) {
+          const component = node.component;
+          for (let cb of node.willPatch) {
+            cb.call(component);
+          }
         }
       }
-    }
+      current = undefined;
 
-    // Step 2: patching the dom
-    node.bdom!.patch(this.bdom!, Object.keys(node.children).length > 0);
-    this.appliedToDom = true;
+      // Step 2: patching the dom
+      node.bdom!.patch(this.bdom!, Object.keys(node.children).length > 0);
+      this.appliedToDom = true;
 
-    // Step 3: calling all destroyed hooks
-    for (let node of __internal__destroyed) {
-      for (let cb of node.destroyed) {
-        cb();
-      }
-    }
-    __internal__destroyed.length = 0;
-
-    // Step 4: calling all mounted lifecycle hooks
-    let current;
-    let mountedFibers = this.mounted;
-    while ((current = mountedFibers.pop())) {
-      if (current.appliedToDom) {
-        for (let cb of current.node.mounted) {
+      // Step 3: calling all destroyed hooks
+      for (let node of __internal__destroyed) {
+        for (let cb of node.destroyed) {
           cb();
         }
       }
-    }
+      __internal__destroyed.length = 0;
 
-    // Step 5: calling all patched hooks
-    let patchedFibers = this.patched;
-    while ((current = patchedFibers.pop())) {
-      if (current.appliedToDom) {
-        for (let cb of current.node.patched) {
-          cb();
+      // Step 4: calling all mounted lifecycle hooks
+      let mountedFibers = this.mounted;
+      while ((current = mountedFibers.pop())) {
+        current = current;
+        if (current.appliedToDom) {
+          for (let cb of current.node.mounted) {
+            cb();
+          }
         }
       }
-    }
 
-    // unregistering the fiber
-    node.fiber = null;
+      // Step 5: calling all patched hooks
+      let patchedFibers = this.patched;
+      while ((current = patchedFibers.pop())) {
+        current = current;
+        if (current.appliedToDom) {
+          for (let cb of current.node.patched) {
+            cb();
+          }
+        }
+      }
+      // unregistering the fiber
+      node.fiber = null;
+    } catch (e) {
+      if (!handleError(current || this, e)) {
+        this.reject(e);
+      }
+    }
   }
 }
 
@@ -177,25 +184,31 @@ export class MountFiber extends RootFiber {
     this.position = options.position || "last-child";
   }
   complete() {
-    const node = this.node;
-    node.bdom = this.bdom;
-    if (this.position === "last-child" || this.target.childNodes.length === 0) {
-      mount(node.bdom!, this.target);
-    } else {
-      const firstChild = this.target.childNodes[0];
-      mount(node.bdom!, this.target, firstChild);
-    }
-    node.status = STATUS.MOUNTED;
-    this.appliedToDom = true;
-    let current;
-    let mountedFibers = this.mounted;
-    while ((current = mountedFibers.pop())) {
-      if (current.appliedToDom) {
-        for (let cb of current.node.mounted) {
-          cb();
+    let current: Fiber | undefined = this;
+    try {
+      const node = this.node;
+      node.bdom = this.bdom;
+      if (this.position === "last-child" || this.target.childNodes.length === 0) {
+        mount(node.bdom!, this.target);
+      } else {
+        const firstChild = this.target.childNodes[0];
+        mount(node.bdom!, this.target, firstChild);
+      }
+      node.status = STATUS.MOUNTED;
+      this.appliedToDom = true;
+      let mountedFibers = this.mounted;
+      while ((current = mountedFibers.pop())) {
+        if (current.appliedToDom) {
+          for (let cb of current.node.mounted) {
+            cb();
+          }
         }
       }
+      node.fiber = null;
+    } catch (e) {
+      if (!handleError(current as Fiber, e)) {
+        this.reject(e);
+      }
     }
-    node.fiber = null;
   }
 }

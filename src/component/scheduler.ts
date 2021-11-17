@@ -1,5 +1,5 @@
 import { Fiber, RootFiber } from "./fibers";
-import { handleError, fibersInError } from "./error_handling";
+import { fibersInError } from "./error_handling";
 import { STATUS } from "./status";
 
 // -----------------------------------------------------------------------------
@@ -60,13 +60,8 @@ export class Scheduler {
 
       if (fiber.counter === 0) {
         if (!hasError) {
-          try {
-            fiber.complete();
-            fiber.resolve();
-          } catch (e) {
-            handleError(fiber.node, e);
-            fiber.reject(e);
-          }
+          fiber.complete();
+          fiber.resolve();
         }
         this.tasks.delete(fiber);
       }

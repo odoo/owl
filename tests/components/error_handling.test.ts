@@ -564,33 +564,30 @@ describe("can catch errors", () => {
     console.error = consoleError;
   });
 
-  test.skip("can catch an error in the mounted call", async () => {
-    // we do not catch error in mounted anymore
-    console.error = jest.fn();
-    // env.qweb.addTemplates(`
-    //     <templates>
-    //       <div t-name="ErrorBoundary">
-    //           <t t-if="state.error">Error handled</t>
-    //           <t t-else=""><t t-slot="default" /></t>
-    //       </div>
-    //       <div t-name="ErrorComponent">Some text</div>
-    //       <div t-name="App">
-    //           <ErrorBoundary><ErrorComponent /></ErrorBoundary>
-    //       </div>
-    //     </templates>`);
+  test("can catch an error in the mounted call", async () => {
     class ErrorComponent extends Component {
-      mounted() {
-        throw new Error("NOOOOO");
+      static template = xml`<div>Some text</div>`;
+      setup() {
+        onMounted(() => {
+          throw new Error("NOOOOO");
+        });
       }
     }
     class ErrorBoundary extends Component {
+      static template = xml`<div>
+       <t t-if="state.error">Error handled</t>
+       <t t-else=""><t t-slot="default" /></t>
+      </div>`;
       state = useState({ error: false });
 
-      catchError() {
-        this.state.error = true;
+      setup() {
+        onError(() => (this.state.error = true));
       }
     }
     class App extends Component {
+      static template = xml`<div>
+        <ErrorBoundary><ErrorComponent /></ErrorBoundary>
+      </div>`;
       static components = { ErrorBoundary, ErrorComponent };
     }
     await mount(App, fixture);
@@ -600,10 +597,7 @@ describe("can catch errors", () => {
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
   });
 
-  test.skip("can catch an error in the willPatch call", async () => {
-    // we do not catch error in willPatch anymore
-    const consoleError = console.error;
-    console.error = jest.fn();
+  test("can catch an error in the willPatch call", async () => {
     class ErrorComponent extends Component {
       static template = xml`<div><t t-esc="props.message"/></div>`;
       setup() {
@@ -620,8 +614,8 @@ describe("can catch errors", () => {
           </div>`;
       state = useState({ error: false });
 
-      catchError() {
-        this.state.error = true;
+      setup() {
+        onError(() => (this.state.error = true));
       }
     }
     class App extends Component {
@@ -640,8 +634,6 @@ describe("can catch errors", () => {
     await nextTick();
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>def</span><div>Error handled</div></div>");
-    expect(console.error).toHaveBeenCalledTimes(1);
-    console.error = consoleError;
   });
 
   test("catchError in catchError", async () => {

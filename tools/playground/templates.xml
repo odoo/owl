@@ -1,8 +1,8 @@
 <templates>
   <div t-name="TabbedEditor" class="tabbed-editor">
     <div class="tabBar" t-att-class="{resizeable: props.resizeable}" t-on-mousedown="onMouseDown">
-        <t t-foreach="['js', 'xml', 'css']" t-as="tab">
-            <a t-ref="{{tab}}" t-if="props[tab] !== false" t-key="tab" class="tab flash" t-att-class="{active: state.currentTab===tab}" t-on-click="setTab(tab)">
+        <t t-foreach="['js', 'xml', 'css']" t-as="tab" t-key="tab">
+            <a t-ref="{{tab}}" t-if="props[tab] !== false" t-key="tab" class="tab flash" t-att-class="{active: state.currentTab===tab}" t-on-click="() => setTab(tab)">
                 <t t-esc="tab"/>
             </a>
         </t>
@@ -12,8 +12,7 @@
 
   <div t-name="App" class="playground">
       <div class="left-bar" t-att-class="{split: state.splitLayout}"
-           t-att-style="leftPaneStyle"
-           t-on-updateCode="updateCode">
+           t-att-style="leftPaneStyle">
         <div class="menubar">
           <a class="btn run-code flash" t-on-click="runCode" title="Execute this Code">▶ Run</a>
           <select t-on-change="setSample">
@@ -28,7 +27,8 @@
             js="state.js"
             css="!state.splitLayout and state.css"
             xml="!state.splitLayout and state.xml"
-            t-att-style="topEditorStyle"/>
+            style="topEditorStyle"
+            updateCode="updateCode"/>
         <t t-if="state.splitLayout">
           <div class="separator horizontal"/>
           <TabbedEditor
@@ -36,7 +36,8 @@
              css="state.css"
              xml="state.xml"
              resizeable="true"
-             t-on-updatePanelHeight="updatePanelHeight"/>
+             onUpdatePanelHeight="updatePanelHeight"
+             updateCode="updateCode"/>
         </t>
       </div>
       <div class="separator vertical" t-on-mousedown="onMouseDown"/>

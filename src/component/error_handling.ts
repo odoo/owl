@@ -1,5 +1,5 @@
 import type { ComponentNode } from "./component_node";
-import { Fiber } from "./fibers";
+import type { Fiber } from "./fibers";
 
 export const fibersInError: WeakMap<Fiber, Error> = new WeakMap();
 export const nodeErrorHandlers: WeakMap<ComponentNode, ((error: Error) => void)[]> = new WeakMap();
@@ -41,7 +41,8 @@ function _handleError(node: ComponentNode | null, error: Error, isFirstRound = f
 export function handleError(entity: ComponentNode | Fiber, error: Error) {
   let node: ComponentNode;
   let fiber: Fiber;
-  if (entity instanceof Fiber) {
+  // soft type check on Fiber
+  if ("node" in entity) {
     fiber = entity;
     node = entity.node;
   } else {

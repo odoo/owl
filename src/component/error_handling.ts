@@ -1,5 +1,5 @@
 import type { ComponentNode } from "./component_node";
-import type { Fiber } from "./fibers";
+import { Fiber } from "./fibers";
 
 export const fibersInError: WeakMap<Fiber, Error> = new WeakMap();
 export const nodeErrorHandlers: WeakMap<ComponentNode, ((error: Error) => void)[]> = new WeakMap();
@@ -38,13 +38,23 @@ function _handleError(node: ComponentNode | null, error: Error, isFirstRound = f
   }
 }
 
-export function handleError(node: ComponentNode, error: Error) {
-  const fiber = node.fiber!;
+export function handleError(entity: ComponentNode | Fiber, error: Error) {
+  let node: ComponentNode;
+  let fiber: Fiber;
+  if (entity instanceof Fiber) {
+    fiber = entity;
+    node = entity.node;
+  } else {
+    node = entity;
+    fiber = entity.fiber!;
+  }
   fibersInError.set(fiber.root, error);
 
-  if (!_handleError(node, error, true)) {
+  const handled = _handleError(node, error, true);
+  if (!handled) {
     try {
       node.app.destroy();
     } catch (e) {}
   }
+  return handled;
 }

@@ -1,10 +1,11 @@
 import type { ComponentNode } from "./component_node";
-import { Fiber } from "./fibers";
+import type { Fiber } from "./fibers";
 
-export const fibersInError: WeakMap<Fiber, Error> = new WeakMap();
-export const nodeErrorHandlers: WeakMap<ComponentNode, ((error: Error) => void)[]> = new WeakMap();
+// Maps fibers to thrown errors
+export const fibersInError: WeakMap<Fiber, any> = new WeakMap();
+export const nodeErrorHandlers: WeakMap<ComponentNode, ((error: any) => void)[]> = new WeakMap();
 
-function _handleError(node: ComponentNode | null, error: Error, isFirstRound = false): boolean {
+function _handleError(node: ComponentNode | null, error: any, isFirstRound = false): boolean {
   if (!node) {
     return false;
   }
@@ -38,16 +39,12 @@ function _handleError(node: ComponentNode | null, error: Error, isFirstRound = f
   }
 }
 
-export function handleError(entity: ComponentNode | Fiber, error: Error) {
-  let node: ComponentNode;
-  let fiber: Fiber;
-  if (entity instanceof Fiber) {
-    fiber = entity;
-    node = entity.node;
-  } else {
-    node = entity;
-    fiber = entity.fiber!;
-  }
+type ErrorParams = { error: any } & ({ node: ComponentNode } | { fiber: Fiber });
+export function handleError(params: ErrorParams) {
+  const error = params.error;
+  const node = "node" in params ? params.node : params.fiber.node;
+  const fiber = "fiber" in params ? params.fiber : node.fiber!;
+
   fibersInError.set(fiber.root, error);
 
   const handled = _handleError(node, error, true);

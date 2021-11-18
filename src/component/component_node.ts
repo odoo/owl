@@ -1,6 +1,6 @@
 import type { App, Env } from "../app/app";
 import { BDom, VNode } from "../blockdom";
-import { Component } from "./component";
+import { Component, Props } from "./component";
 import {
   Fiber,
   makeChildFiber,
@@ -15,12 +15,21 @@ import { applyDefaultProps } from "./props_validation";
 import { STATUS } from "./status";
 import { applyStyles } from "./style";
 
+function arePropsDifferent(props1: Props, props2: Props): boolean {
+  for (let k in props1) {
+    if (props1[k] !== props2[k]) {
+      return true;
+    }
+  }
+  return false;
+}
 export function component(
   name: string | typeof Component,
   props: any,
   key: string,
   ctx: ComponentNode,
-  parent: any
+  parent: any,
+  hasSlots: boolean = false
 ): ComponentNode {
   let node: any = ctx.children[key];
   let isDynamic = typeof name !== "string";
@@ -39,7 +48,9 @@ export function component(
 
   const parentFiber = ctx.fiber!;
   if (node) {
-    node.updateAndRender(props, parentFiber);
+    if (hasSlots || arePropsDifferent(node.component.props, props)) {
+      node.updateAndRender(props, parentFiber);
+    }
   } else {
     // new component
     let C;
@@ -241,6 +252,10 @@ export class ComponentNode<T extends typeof Component = typeof Component>
   }
 
   patch() {
+    if (!this.fiber) {
+      // component was not rendered => no need to do anything
+      return;
+    }
     this.bdom!.patch(this!.fiber!.bdom!, false);
     this.fiber!.appliedToDom = true;
     this.fiber = null;

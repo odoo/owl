@@ -899,8 +899,9 @@ describe("lifecycle hooks", () => {
 
     class Parent extends Component {
       static template = xml`
-        <Child />`;
+        <Child someValue="state.value" />`;
       static components = { Child };
+      state = useState({ value: 1 });
       setup() {
         useLogLifecycle(steps);
       }
@@ -910,7 +911,7 @@ describe("lifecycle hooks", () => {
 
     expect(fixture.innerHTML).toBe("<button>1</button>");
 
-    parent.render(); // to block child render
+    parent.state.value++; // to block child render
     await nextTick();
 
     fixture.querySelector("button")!.click();
@@ -1063,22 +1064,18 @@ describe("lifecycle hooks", () => {
     steps.splice(0);
     c!.state.flag = false;
     await nextTick();
+    expect(fixture.innerHTML).toBe(`<div>A<div>B</div><div>C<div>D</div><div>F</div></div></div>`);
     expect(steps).toEqual([
       "C:willRender",
-      "D:willUpdateProps",
       "F:setup",
       "F:willStart",
       "C:rendered",
-      "D:willRender",
-      "D:rendered",
       "F:willRender",
       "F:rendered",
       "C:willPatch",
-      "D:willPatch",
       "E:willUnmount",
       "E:destroyed",
       "F:mounted",
-      "D:patched",
       "C:patched",
     ]);
   });

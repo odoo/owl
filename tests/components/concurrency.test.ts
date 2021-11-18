@@ -543,7 +543,7 @@ test("properly behave when destroyed/unmounted while rendering ", async () => {
   }
 
   class Child extends Component {
-    static template = xml`<div><SubChild /></div>`;
+    static template = xml`<div><SubChild val="props.val"/></div>`;
     static components = { SubChild };
     setup() {
       useLogLifecycle(steps);
@@ -1900,18 +1900,13 @@ test("concurrent renderings scenario 13", async () => {
     "Child:willPatch",
     "Child:patched",
     "Parent:willRender",
-    "Child:willUpdateProps",
     "Child:setup",
     "Child:willStart",
     "Parent:rendered",
     "Child:willRender",
     "Child:rendered",
-    "Child:willRender",
-    "Child:rendered",
     "Parent:willPatch",
-    "Child:willPatch",
     "Child:mounted",
-    "Child:patched",
     "Parent:patched",
     "Child:willRender",
     "Child:rendered",

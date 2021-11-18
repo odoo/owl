@@ -555,7 +555,7 @@ exports[`lifecycle hooks onWillRender 2`] = `
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    return component(\`Child\`, {someValue: ctx['state'].value}, key + \`__1\`, node, ctx);
   }
 }"
 `;

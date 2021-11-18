@@ -28,7 +28,7 @@ exports[`Portal Portal composed with t-slot 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
   }
 }"
 `;
@@ -47,7 +47,7 @@ exports[`Portal Portal composed with t-slot 3`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"
@@ -68,7 +68,7 @@ exports[`Portal basic use of portal 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"
@@ -106,7 +106,7 @@ exports[`Portal conditional use of Portal (with sub Component) 2`] = `
     let b2,b4;
     b2 = block2();
     if (ctx['state'].hasPortal) {
-      b4 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+      b4 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     }
     return multi([b2, b4]);
   }
@@ -131,7 +131,7 @@ exports[`Portal conditional use of Portal 1`] = `
     let b2,b4;
     b2 = block2();
     if (ctx['state'].hasPortal) {
-      b4 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+      b4 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     }
     return multi([b2, b4]);
   }
@@ -169,7 +169,7 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 2`] 
   return function template(ctx, node, key = \\"\\") {
     let b3;
     if (ctx['state'].hasChild) {
-      b3 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+      b3 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     }
     return block1([], [b3]);
   }
@@ -196,7 +196,7 @@ exports[`Portal portal could have dynamically no content 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b4 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b4 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b4]);
   }
 }"
@@ -231,7 +231,7 @@ exports[`Portal portal destroys on crash 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"
@@ -266,7 +266,7 @@ exports[`Portal portal with child and props 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"
@@ -295,7 +295,7 @@ exports[`Portal portal with dynamic body 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b5 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b5 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b5]);
   }
 }"
@@ -319,7 +319,7 @@ exports[`Portal portal with many children 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b5 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b5 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b5]);
   }
 }"
@@ -343,7 +343,7 @@ exports[`Portal portal with no content 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b4 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b4 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b4]);
   }
 }"
@@ -363,7 +363,7 @@ exports[`Portal portal with only text as content 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"
@@ -384,7 +384,7 @@ exports[`Portal portal with target not in dom 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Portal\`, {target: '#does-not-exist'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`Portal\`, {target: '#does-not-exist'}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"
@@ -418,7 +418,7 @@ exports[`Portal portal's parent's env is not polluted 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"
@@ -439,7 +439,7 @@ exports[`Portal with target in template (after portal) 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Portal\`, {target: '#local-target'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`Portal\`, {target: '#local-target'}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"
@@ -460,7 +460,7 @@ exports[`Portal with target in template (before portal) 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Portal\`, {target: '#local-target'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`Portal\`, {target: '#local-target'}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"
@@ -481,7 +481,7 @@ exports[`Portal: Props validation target is mandatory 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Portal\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`Portal\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"
@@ -502,7 +502,7 @@ exports[`Portal: Props validation target is not list 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Portal\`, {target: ['body']}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`Portal\`, {target: ['body']}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"
@@ -537,7 +537,7 @@ exports[`Portal: UI/UX focus is kept across re-renders 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"

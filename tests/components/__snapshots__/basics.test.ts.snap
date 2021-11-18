@@ -1020,7 +1020,7 @@ exports[`basics update props of component without concrete own node 3`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['childProps'].key;
-    let b2 = toggler(tKey_1, component(\`Child\`, ctx['childProps'], tKey_1 + key + \`__2\`, node, ctx));
+    let b2 = toggler(tKey_1, component(\`Child\`, Object.assign({}, ctx['childProps']), tKey_1 + key + \`__2\`, node, ctx));
     return block1([], [b2]);
   }
 }"

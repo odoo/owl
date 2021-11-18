@@ -53,7 +53,7 @@ exports[`refs refs are properly bound in slots 2`] = `
     const refs = ctx.__owl__.refs;
     let d1 = ctx['state'].val;
     const ctx2 = capture(ctx);
-    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'footer': slot3(ctx2)}});
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx, true), {slots: {'footer': slot3(ctx2)}});
     return block1([d1], [b3]);
   }
 }"

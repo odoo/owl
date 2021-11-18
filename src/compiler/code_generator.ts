@@ -948,7 +948,7 @@ export class CodeGenerator {
     let propString = propStr;
     if (ast.dynamicProps) {
       if (!props.length) {
-        propString = `${compileExpr(ast.dynamicProps)}`;
+        propString = `Object.assign({}, ${compileExpr(ast.dynamicProps)})`;
       } else {
         propString = `Object.assign({}, ${compileExpr(ast.dynamicProps)}, ${propStr})`;
       }
@@ -1012,7 +1012,7 @@ export class CodeGenerator {
       keyArg = `${ctx.tKeyExpr} + ${keyArg}`;
     }
     const blockArgs = `${expr}, ${propString}, ${keyArg}, node, ctx`;
-    let blockExpr = `component(${blockArgs})`;
+    let blockExpr = `component(${blockArgs}${hasSlot ? ", true" : ""})`;
     if (Object.keys(extraArgs).length) {
       this.shouldDefineAssign = true;
       const content = Object.keys(extraArgs).map((k) => `${k}: ${extraArgs[k]}`);

@@ -1,6 +1,8 @@
 import type { Env } from "../app/app";
 import type { ComponentNode } from "./component_node";
 
+export type Props = { [key: string]: any };
+
 // -----------------------------------------------------------------------------
 //  Component Class
 // -----------------------------------------------------------------------------

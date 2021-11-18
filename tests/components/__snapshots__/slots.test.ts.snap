@@ -37,7 +37,7 @@ exports[`slots can define and call slots 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx2 = capture(ctx);
-    let b4 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'header': slot3(ctx2), 'footer': slot4(ctx2)}});
+    let b4 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx, true), {slots: {'header': slot3(ctx2), 'footer': slot4(ctx2)}});
     return block1([], [b4]);
   }
 }"
@@ -74,7 +74,7 @@ exports[`slots can render node with t-ref and Component in same slot 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const refs = ctx.__owl__.refs;
-    return assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return assign(component(\`Child\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
   }
 }"
 `;
@@ -117,7 +117,7 @@ exports[`slots content is the default slot (variation) 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
   }
 }"
 `;
@@ -152,7 +152,7 @@ exports[`slots content is the default slot 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"
@@ -226,7 +226,7 @@ exports[`slots default content is not rendered if named slot is provided 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx2 = capture(ctx);
-    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'header': slot3(ctx2)}});
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx, true), {slots: {'header': slot3(ctx2)}});
     return block1([], [b3]);
   }
 }"
@@ -265,7 +265,7 @@ exports[`slots default content is not rendered if slot is provided 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"
@@ -310,7 +310,7 @@ exports[`slots default slot next to named slot, with default content 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx2 = capture(ctx);
-    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'footer': slot3(ctx2)}});
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx, true), {slots: {'footer': slot3(ctx2)}});
     return block1([], [b3]);
   }
 }"
@@ -340,7 +340,7 @@ exports[`slots default slot work with text nodes (variation) 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
   }
 }"
 `;
@@ -374,7 +374,7 @@ exports[`slots default slot work with text nodes 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"
@@ -422,7 +422,7 @@ exports[`slots dynamic t-slot call 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx2 = capture(ctx);
-    let b6 = assign(component(\`Toggler\`, {}, key + \`__1\`, node, ctx), {slots: {'slot1': slot3(ctx2), 'slot2': slot4(ctx2)}});
+    let b6 = assign(component(\`Toggler\`, {}, key + \`__1\`, node, ctx, true), {slots: {'slot1': slot3(ctx2), 'slot2': slot4(ctx2)}});
     return block1([], [b6]);
   }
 }"
@@ -473,7 +473,7 @@ exports[`slots dynamic t-slot call with default 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx2 = capture(ctx);
-    let b6 = assign(component(\`Toggler\`, {}, key + \`__1\`, node, ctx), {slots: {'slot1': slot3(ctx2), 'slot2': slot4(ctx2)}});
+    let b6 = assign(component(\`Toggler\`, {}, key + \`__1\`, node, ctx, true), {slots: {'slot1': slot3(ctx2), 'slot2': slot4(ctx2)}});
     return block1([], [b6]);
   }
 }"
@@ -505,7 +505,7 @@ exports[`slots fun: two calls to the same slot 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return assign(component(\`Child\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
   }
 }"
 `;
@@ -574,7 +574,7 @@ exports[`slots multiple roots are allowed in a default slot 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b5 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b5 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b5]);
   }
 }"
@@ -614,7 +614,7 @@ exports[`slots multiple roots are allowed in a named slot 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx2 = capture(ctx);
-    let b5 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'content': slot3(ctx2)}});
+    let b5 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx, true), {slots: {'content': slot3(ctx2)}});
     return block1([], [b5]);
   }
 }"
@@ -668,7 +668,7 @@ exports[`slots multiple slots containing components 3`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx2 = capture(ctx);
-    return assign(component(\`B\`, {}, key + \`__1\`, node, ctx), {slots: {'s1': slot3(ctx2), 's2': slot5(ctx2)}});
+    return assign(component(\`B\`, {}, key + \`__1\`, node, ctx, true), {slots: {'s1': slot3(ctx2), 's2': slot5(ctx2)}});
   }
 }"
 `;
@@ -707,7 +707,7 @@ exports[`slots named slot inside slot 2`] = `
   
   const slot4 = ctx => (node, key) => {
     const ctx6 = capture(ctx);
-    return assign(component(\`Child\`, {}, key + \`__5\`, node, ctx), {slots: {'brol': slot7(ctx6)}});
+    return assign(component(\`Child\`, {}, key + \`__5\`, node, ctx, true), {slots: {'brol': slot7(ctx6)}});
   }
   
   const slot7 = ctx => (node, key) => {
@@ -717,7 +717,7 @@ exports[`slots named slot inside slot 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx2 = capture(ctx);
-    let b5 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'brol': slot3(ctx2), 'default': slot4(ctx2)}});
+    let b5 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx, true), {slots: {'brol': slot3(ctx2), 'default': slot4(ctx2)}});
     return block1([], [b5]);
   }
 }"
@@ -757,7 +757,7 @@ exports[`slots named slot inside slot, part 3 2`] = `
   
   const slot4 = ctx => (node, key) => {
     const ctx6 = capture(ctx);
-    return assign(component(\`Child\`, {}, key + \`__5\`, node, ctx), {slots: {'brol': slot7(ctx6)}});
+    return assign(component(\`Child\`, {}, key + \`__5\`, node, ctx, true), {slots: {'brol': slot7(ctx6)}});
   }
   
   const slot7 = ctx => (node, key) => {
@@ -767,7 +767,7 @@ exports[`slots named slot inside slot, part 3 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx2 = capture(ctx);
-    let b5 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'brol': slot3(ctx2), 'default': slot4(ctx2)}});
+    let b5 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx, true), {slots: {'brol': slot3(ctx2), 'default': slot4(ctx2)}});
     return block1([], [b5]);
   }
 }"
@@ -850,7 +850,7 @@ exports[`slots named slots inside slot, again 2`] = `
   
   const slot4 = ctx => (node, key) => {
     const ctx6 = capture(ctx);
-    return assign(component(\`Child\`, {}, key + \`__5\`, node, ctx), {slots: {'brol2': slot7(ctx6)}});
+    return assign(component(\`Child\`, {}, key + \`__5\`, node, ctx, true), {slots: {'brol2': slot7(ctx6)}});
   }
   
   const slot7 = ctx => (node, key) => {
@@ -860,7 +860,7 @@ exports[`slots named slots inside slot, again 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx2 = capture(ctx);
-    let b5 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'brol1': slot3(ctx2), 'default': slot4(ctx2)}});
+    let b5 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx, true), {slots: {'brol1': slot3(ctx2), 'default': slot4(ctx2)}});
     return block1([], [b5]);
   }
 }"
@@ -920,7 +920,7 @@ exports[`slots nested slots in same template 4`] = `
   let block1 = createBlock(\`<span id=\\"parent\\"><block-child-0/></span>\`);
   
   const slot2 = ctx => (node, key) => {
-    return assign(component(\`Child2\`, {}, key + \`__3\`, node, ctx), {slots: {'default': slot4(ctx)}});
+    return assign(component(\`Child2\`, {}, key + \`__3\`, node, ctx, true), {slots: {'default': slot4(ctx)}});
   }
   
   const slot4 = ctx => (node, key) => {
@@ -928,7 +928,7 @@ exports[`slots nested slots in same template 4`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b4 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b4 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b4]);
   }
 }"
@@ -976,7 +976,7 @@ exports[`slots nested slots: evaluation context and parented relationship 3`] = 
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return assign(component(\`GrandChild\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return assign(component(\`GrandChild\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
   }
 }"
 `;
@@ -993,7 +993,7 @@ exports[`slots nested slots: evaluation context and parented relationship 4`] = 
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return assign(component(\`Child\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
   }
 }"
 `;
@@ -1052,7 +1052,7 @@ exports[`slots simple default slot 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return assign(component(\`Child\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
   }
 }"
 `;
@@ -1081,7 +1081,7 @@ exports[`slots simple default slot, variation 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return assign(component(\`Child\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
   }
 }"
 `;
@@ -1131,7 +1131,7 @@ exports[`slots slot and (inline) t-call 3`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx2 = capture(ctx);
-    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot3(ctx2)}});
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot3(ctx2)}});
     return block1([], [b3]);
   }
 }"
@@ -1182,7 +1182,7 @@ exports[`slots slot and t-call 3`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx2 = capture(ctx);
-    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot3(ctx2)}});
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot3(ctx2)}});
     return block1([], [b3]);
   }
 }"
@@ -1217,7 +1217,7 @@ exports[`slots slot and t-esc 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"
@@ -1270,7 +1270,7 @@ exports[`slots slot are properly rendered if inner props are changed 3`] = `
     const v1 = ctx['inc'];
     let d1 = [v1, ctx];
     let d2 = ctx['state'].val;
-    let b3 = assign(component(\`GenericComponent\`, {}, key + \`__2\`, node, ctx), {slots: {'default': slot3(ctx)}});
+    let b3 = assign(component(\`GenericComponent\`, {}, key + \`__2\`, node, ctx, true), {slots: {'default': slot3(ctx)}});
     return block1([d1, d2], [b3]);
   }
 }"
@@ -1307,7 +1307,7 @@ exports[`slots slot content is bound to caller 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return assign(component(\`Child\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
   }
 }"
 `;
@@ -1350,7 +1350,7 @@ exports[`slots slot preserves properly parented relationship 3`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"
@@ -1408,7 +1408,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
   
   return function template(ctx, node, key = \\"\\") {
     const ctx2 = capture(ctx);
-    let b3 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot3(ctx2)}});
+    let b3 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot3(ctx2)}});
     return block1([], [b3]);
   }
 }"
@@ -1441,7 +1441,7 @@ exports[`slots slots and wrapper components 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return assign(component(\`Link\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return assign(component(\`Link\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
   }
 }"
 `;
@@ -1480,7 +1480,7 @@ exports[`slots slots are rendered with proper context 2`] = `
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['state'].val;
     const ctx2 = capture(ctx);
-    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'footer': slot3(ctx2)}});
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx, true), {slots: {'footer': slot3(ctx2)}});
     return block1([d1], [b3]);
   }
 }"
@@ -1525,7 +1525,7 @@ exports[`slots slots are rendered with proper context, part 2 2`] = `
       ctx[\`user\`] = v_block2[i1];
       let key1 = ctx['user'].id;
       const ctx2 = capture(ctx);
-      let b7 = assign(component(\`Link\`, {to: '/user/'+ctx['user'].id}, key + \`__1__\${key1}\`, node, ctx), {slots: {'default': slot3(ctx2)}});
+      let b7 = assign(component(\`Link\`, {to: '/user/'+ctx['user'].id}, key + \`__1__\${key1}\`, node, ctx, true), {slots: {'default': slot3(ctx2)}});
       c_block2[i1] = withKey(block3([], [b7]), key1);
     }
     let b2 = list(c_block2);
@@ -1574,7 +1574,7 @@ exports[`slots slots are rendered with proper context, part 3 2`] = `
       let key1 = ctx['user'].id;
       setContextValue(ctx, \\"userdescr\\", 'User '+ctx['user'].name);
       const ctx2 = capture(ctx);
-      let b5 = assign(component(\`Link\`, {to: '/user/'+ctx['user'].id}, key + \`__1__\${key1}\`, node, ctx), {slots: {'default': slot3(ctx2)}});
+      let b5 = assign(component(\`Link\`, {to: '/user/'+ctx['user'].id}, key + \`__1__\${key1}\`, node, ctx, true), {slots: {'default': slot3(ctx2)}});
       c_block2[i1] = withKey(block3([], [b5]), key1);
     }
     let b2 = list(c_block2);
@@ -1617,7 +1617,7 @@ exports[`slots slots are rendered with proper context, part 4 2`] = `
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"userdescr\\", 'User '+ctx['state'].user.name);
     const ctx2 = capture(ctx);
-    let b3 = assign(component(\`Link\`, {to: '/user/'+ctx['state'].user.id}, key + \`__1\`, node, ctx), {slots: {'default': slot3(ctx2)}});
+    let b3 = assign(component(\`Link\`, {to: '/user/'+ctx['state'].user.id}, key + \`__1\`, node, ctx, true), {slots: {'default': slot3(ctx2)}});
     return block1([], [b3]);
   }
 }"
@@ -1652,7 +1652,7 @@ exports[`slots slots in slots, with vars 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`B\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`B\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"
@@ -1678,7 +1678,7 @@ exports[`slots slots in slots, with vars 3`] = `
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"test\\", ctx['state'].name);
     const ctx2 = capture(ctx);
-    let b3 = assign(component(\`A\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot3(ctx2)}});
+    let b3 = assign(component(\`A\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot3(ctx2)}});
     return block1([], [b3]);
   }
 }"
@@ -1721,7 +1721,7 @@ exports[`slots slots in t-foreach and re-rendering 2`] = `
       ctx[\`n_index\`] = i1;
       let key1 = ctx['n_index'];
       const ctx2 = capture(ctx);
-      c_block2[i1] = withKey(assign(component(\`Child\`, {}, key + \`__1__\${key1}\`, node, ctx), {slots: {'default': slot3(ctx2)}}), key1);
+      c_block2[i1] = withKey(assign(component(\`Child\`, {}, key + \`__1__\${key1}\`, node, ctx, true), {slots: {'default': slot3(ctx2)}}), key1);
     }
     let b2 = list(c_block2);
     return block1([], [b2]);
@@ -1775,7 +1775,7 @@ exports[`slots slots in t-foreach in t-foreach 2`] = `
         ctx[\`node2\`] = v_block6[i2];
         let key2 = ctx['node2'].key;
         const ctx2 = capture(ctx);
-        c_block6[i2] = withKey(assign(component(\`Child\`, {}, key + \`__1__\${key1}__\${key2}\`, node, ctx), {slots: {'default': slot3(ctx2)}}), key2);
+        c_block6[i2] = withKey(assign(component(\`Child\`, {}, key + \`__1__\${key1}__\${key2}\`, node, ctx, true), {slots: {'default': slot3(ctx2)}}), key2);
       }
       ctx = ctx.__proto__;
       let b6 = list(c_block6);
@@ -1828,7 +1828,7 @@ exports[`slots slots in t-foreach with t-set and re-rendering 2`] = `
       let key1 = ctx['n_index'];
       setContextValue(ctx, \\"dummy\\", ctx['n_index']);
       const ctx2 = capture(ctx);
-      c_block2[i1] = withKey(assign(component(\`Child\`, {}, key + \`__1__\${key1}\`, node, ctx), {slots: {'default': slot3(ctx2)}}), key1);
+      c_block2[i1] = withKey(assign(component(\`Child\`, {}, key + \`__1__\${key1}\`, node, ctx, true), {slots: {'default': slot3(ctx2)}}), key1);
     }
     let b2 = list(c_block2);
     return block1([], [b2]);
@@ -1867,7 +1867,7 @@ exports[`slots t-debug on a t-set-slot (defining a slot) 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx2 = capture(ctx);
-    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'content': slot3(ctx2)}});
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx, true), {slots: {'content': slot3(ctx2)}});
     return block1([], [b3]);
   }
 }"
@@ -1906,7 +1906,7 @@ exports[`slots t-set t-value in a slot 2`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     const ctx2 = capture(ctx);
-    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot3(ctx2)}});
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot3(ctx2)}});
     return block1([], [b3]);
   }
 }"
@@ -1968,7 +1968,7 @@ exports[`slots t-slot in recursive templates 2`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     const ctx2 = capture(ctx);
-    return assign(component(\`Wrapper\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot3(ctx2)}});
+    return assign(component(\`Wrapper\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot3(ctx2)}});
   }
 }"
 `;
@@ -2027,7 +2027,7 @@ exports[`slots t-slot nested within another slot 4`] = `
   let block1 = createBlock(\`<span id=\\"c2\\"><block-child-0/></span>\`);
   
   const slot2 = ctx => (node, key) => {
-    return assign(component(\`Portal\`, {}, key + \`__3\`, node, ctx), {slots: {'default': slot4(ctx)}});
+    return assign(component(\`Portal\`, {}, key + \`__3\`, node, ctx, true), {slots: {'default': slot4(ctx)}});
   }
   
   const slot4 = ctx => (node, key) => {
@@ -2035,7 +2035,7 @@ exports[`slots t-slot nested within another slot 4`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b4 = assign(component(\`Modal\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b4 = assign(component(\`Modal\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b4]);
   }
 }"
@@ -2055,7 +2055,7 @@ exports[`slots t-slot nested within another slot 5`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"
@@ -2090,7 +2090,7 @@ exports[`slots t-slot scope context 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return assign(component(\`Wrapper\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return assign(component(\`Wrapper\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
   }
 }"
 `;
@@ -2109,7 +2109,7 @@ exports[`slots t-slot scope context 3`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
   }
 }"
 `;
@@ -2174,7 +2174,7 @@ exports[`slots t-slot within dynamic t-call 4`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx2 = capture(ctx);
-    let b3 = assign(component(\`Slotted\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot3(ctx2)}});
+    let b3 = assign(component(\`Slotted\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot3(ctx2)}});
     return block1([], [b3]);
   }
 }"
@@ -2221,7 +2221,7 @@ exports[`slots template can just return a slot 3`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`SlotComponent\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`SlotComponent\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"

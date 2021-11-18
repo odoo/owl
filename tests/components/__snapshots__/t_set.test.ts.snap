@@ -38,7 +38,7 @@ exports[`t-set slot setted value (with t-set) not accessible with t-esc 2`] = `
     setContextValue(ctx, \\"iter\\", 'source');
     let d1 = ctx['iter'];
     const ctx2 = capture(ctx);
-    let b2 = assign(component(\`Childcomp\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot3(ctx2)}});
+    let b2 = assign(component(\`Childcomp\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot3(ctx2)}});
     let d2 = ctx['iter'];
     return block1([d1, d2], [b2]);
   }

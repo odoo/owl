@@ -126,7 +126,7 @@ exports[`can catch errors can catch an error in a component render function 3`] 
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`ErrorBoundary\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`ErrorBoundary\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"
@@ -230,7 +230,7 @@ exports[`can catch errors can catch an error in the constructor call of a compon
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b5 = assign(component(\`ErrorBoundary\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b5 = assign(component(\`ErrorBoundary\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b5]);
   }
 }"
@@ -250,7 +250,7 @@ exports[`can catch errors can catch an error in the constructor call of a compon
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`ErrorBoundary\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`ErrorBoundary\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"
@@ -305,7 +305,7 @@ exports[`can catch errors can catch an error in the initial call of a component 
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`ErrorBoundary\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`ErrorBoundary\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"
@@ -362,7 +362,7 @@ exports[`can catch errors can catch an error in the initial call of a component 
   return function template(ctx, node, key = \\"\\") {
     let b3;
     if (ctx['state'].flag) {
-      b3 = assign(component(\`ErrorBoundary\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+      b3 = assign(component(\`ErrorBoundary\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     }
     return block1([], [b3]);
   }
@@ -417,7 +417,7 @@ exports[`can catch errors can catch an error in the mounted call 3`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`ErrorBoundary\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`ErrorBoundary\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"
@@ -473,7 +473,7 @@ exports[`can catch errors can catch an error in the willPatch call 3`] = `
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['state'].message;
-    let b3 = assign(component(\`ErrorBoundary\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`ErrorBoundary\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([d1], [b3]);
   }
 }"
@@ -527,7 +527,7 @@ exports[`can catch errors can catch an error in the willStart call 3`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`ErrorBoundary\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = assign(component(\`ErrorBoundary\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b3]);
   }
 }"
@@ -597,7 +597,7 @@ exports[`can catch errors can catch an error origination from a child's willStar
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b5 = assign(component(\`ErrorBoundary\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b5 = assign(component(\`ErrorBoundary\`, {}, key + \`__1\`, node, ctx, true), {slots: {'default': slot2(ctx)}});
     return block1([], [b5]);
   }
 }"

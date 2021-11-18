@@ -159,7 +159,7 @@ export class RootFiber extends Fiber {
       // unregistering the fiber
       node.fiber = null;
     } catch (e) {
-      if (!handleError(current || this, e)) {
+      if (!handleError({ fiber: current || this, error: e })) {
         this.reject(e);
       }
     }
@@ -206,7 +206,7 @@ export class MountFiber extends RootFiber {
       }
       node.fiber = null;
     } catch (e) {
-      if (!handleError(current as Fiber, e)) {
+      if (!handleError({ fiber: current as Fiber, error: e })) {
         this.reject(e);
       }
     }

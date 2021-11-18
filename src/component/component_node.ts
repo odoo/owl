@@ -127,7 +127,7 @@ export class ComponentNode<T extends typeof Component = any> implements VNode<Co
     try {
       await Promise.all(this.willStart.map((f) => f.call(component)));
     } catch (e) {
-      handleError(this, e as Error);
+      handleError({ node: this, error: e });
       return;
     }
     if (this.status === STATUS.NEW && this.fiber === fiber) {
@@ -161,7 +161,7 @@ export class ComponentNode<T extends typeof Component = any> implements VNode<Co
       fiber.bdom = this.renderFn();
       fiber.root.counter--;
     } catch (e) {
-      handleError(this, e as Error);
+      handleError({ node: this, error: e });
     }
   }
 

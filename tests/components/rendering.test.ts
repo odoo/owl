@@ -46,4 +46,41 @@ describe("rendering semantics", () => {
     expect(parentN).toBe(2);
     expect(childN).toBe(1);
   });
+
+  test("can force a render to update sub tree", async () => {
+    let childN = 0;
+    let parentN = 0;
+    class Child extends Component {
+      static template = xml`child`;
+      setup() {
+        onRender(() => childN++);
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <t t-esc="state.value"/>
+        <Child/>
+      `;
+      static components = { Child };
+
+      state = { value: "A" };
+      setup() {
+        onRender(() => parentN++);
+      }
+    }
+
+    const parent = await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe("Achild");
+    expect(parentN).toBe(1);
+    expect(childN).toBe(1);
+
+    parent.state.value = "B";
+    parent.render(true);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("Bchild");
+    expect(parentN).toBe(2);
+    expect(childN).toBe(2);
+  });
 });

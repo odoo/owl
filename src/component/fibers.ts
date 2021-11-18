@@ -67,6 +67,7 @@ export class Fiber {
   parent: Fiber | null;
   children: Fiber[] = [];
   appliedToDom = false;
+  deep: boolean = false;
 
   constructor(node: ComponentNode, parent: Fiber | null) {
     this.node = node;

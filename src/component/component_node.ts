@@ -48,7 +48,7 @@ export function component(
 
   const parentFiber = ctx.fiber!;
   if (node) {
-    if (hasSlots || arePropsDifferent(node.component.props, props)) {
+    if (hasSlots || parentFiber.deep || arePropsDifferent(node.component.props, props)) {
       node.updateAndRender(props, parentFiber);
     }
   } else {
@@ -148,7 +148,7 @@ export class ComponentNode<T extends typeof Component = typeof Component>
     }
   }
 
-  async render() {
+  async render(deep: boolean = false) {
     let fiber = this.fiber;
     if (fiber && !fiber.bdom && !fibersInError.has(fiber)) {
       return fiber.root.promise;
@@ -158,6 +158,7 @@ export class ComponentNode<T extends typeof Component = typeof Component>
       return;
     }
     fiber = makeRootFiber(this);
+    fiber.deep = deep;
     this.app.scheduler.addFiber(fiber);
     await Promise.resolve();
     if (this.status === STATUS.DESTROYED) {

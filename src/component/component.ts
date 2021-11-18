@@ -28,7 +28,7 @@ export class Component {
 
   setup() {}
 
-  render(): Promise<void> {
-    return this.__owl__.render();
+  render(deep: boolean = false): Promise<void> {
+    return this.__owl__.render(deep);
   }
 }

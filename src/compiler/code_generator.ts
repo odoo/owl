@@ -497,6 +497,10 @@ export class CodeGenerator {
     }
     // attributes
     const attrs: { [key: string]: string } = {};
+    if (ast.ns) {
+      // specific namespace uri
+      attrs["block-ns"] = ast.ns;
+    }
     for (let key in ast.attrs) {
       if (key.startsWith("t-attf")) {
         let expr = interpolate(ast.attrs[key]);

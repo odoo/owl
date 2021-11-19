@@ -1080,7 +1080,22 @@ describe("qweb parser", () => {
       dynamicProps: null,
       props: {},
       isDynamic: false,
-      slots: { default: { type: ASTType.Text, value: "foo" } },
+      slots: { default: { content: { type: ASTType.Text, value: "foo" } } },
+    });
+  });
+
+  test("a component with a default slot with attributes", async () => {
+    expect(
+      parse(`<MyComponent><t t-set-slot="default" param="param">foo</t></MyComponent>`)
+    ).toEqual({
+      type: ASTType.TComponent,
+      name: "MyComponent",
+      dynamicProps: null,
+      props: {},
+      isDynamic: false,
+      slots: {
+        default: { content: { type: ASTType.Text, value: "foo" }, attrs: { param: "param" } },
+      },
     });
   });
 
@@ -1093,31 +1108,33 @@ describe("qweb parser", () => {
       props: {},
       slots: {
         default: {
-          type: ASTType.Multi,
-          content: [
-            {
-              type: ASTType.DomNode,
-              tag: "span",
-              dynamicTag: null,
-              attrs: {},
-              content: [],
-              ref: null,
-              model: null,
-              on: {},
-              ns: null,
-            },
-            {
-              type: ASTType.DomNode,
-              tag: "div",
-              dynamicTag: null,
-              attrs: {},
-              content: [],
-              ref: null,
-              model: null,
-              on: {},
-              ns: null,
-            },
-          ],
+          content: {
+            type: ASTType.Multi,
+            content: [
+              {
+                type: ASTType.DomNode,
+                tag: "span",
+                dynamicTag: null,
+                attrs: {},
+                content: [],
+                ref: null,
+                model: null,
+                on: {},
+                ns: null,
+              },
+              {
+                type: ASTType.DomNode,
+                tag: "div",
+                dynamicTag: null,
+                attrs: {},
+                content: [],
+                ref: null,
+                model: null,
+                on: {},
+                ns: null,
+              },
+            ],
+          },
         },
       },
     });
@@ -1130,8 +1147,25 @@ describe("qweb parser", () => {
       isDynamic: false,
       dynamicProps: null,
       props: {},
-      slots: { name: { type: ASTType.Text, value: "foo" } },
+      slots: { name: { content: { type: ASTType.Text, value: "foo" } } },
     });
+  });
+
+  test("a component with a named slot with attributes", async () => {
+    expect(parse(`<MyComponent><t t-set-slot="name" param="param">foo</t></MyComponent>`)).toEqual({
+      type: ASTType.TComponent,
+      name: "MyComponent",
+      isDynamic: false,
+      dynamicProps: null,
+      props: {},
+      slots: { name: { content: { type: ASTType.Text, value: "foo" }, attrs: { param: "param" } } },
+    });
+  });
+
+  test("a component with a named slot with div tag", async () => {
+    expect(() =>
+      parse(`<MyComponent><div t-set-slot="name">foo</div></MyComponent>`)
+    ).toThrowError();
   });
 
   test("a component with a named slot and some white space", async () => {
@@ -1142,8 +1176,8 @@ describe("qweb parser", () => {
       props: {},
       isDynamic: false,
       slots: {
-        default: { type: ASTType.Text, value: " " },
-        name: { type: ASTType.Text, value: "foo" },
+        default: { content: { type: ASTType.Text, value: " " } },
+        name: { content: { type: ASTType.Text, value: "foo" } },
       },
     });
   });
@@ -1161,8 +1195,8 @@ describe("qweb parser", () => {
       props: {},
       isDynamic: false,
       slots: {
-        a: { type: ASTType.Text, value: "foo" },
-        b: { type: ASTType.Text, value: "bar" },
+        a: { content: { type: ASTType.Text, value: "foo" } },
+        b: { content: { type: ASTType.Text, value: "bar" } },
       },
     });
   });
@@ -1213,7 +1247,7 @@ describe("qweb parser", () => {
       dynamicProps: null,
       props: {},
       isDynamic: false,
-      slots: { default: { body: null, name: "subTemplate", type: ASTType.TCall } },
+      slots: { default: { content: { body: null, name: "subTemplate", type: ASTType.TCall } } },
     });
   });
 
@@ -1233,12 +1267,14 @@ describe("qweb parser", () => {
       isDynamic: false,
       slots: {
         default: {
-          type: ASTType.TComponent,
-          isDynamic: false,
-          name: "Child",
-          dynamicProps: null,
-          props: {},
-          slots: { brol: { type: ASTType.Text, value: "coucou" } },
+          content: {
+            type: ASTType.TComponent,
+            isDynamic: false,
+            name: "Child",
+            dynamicProps: null,
+            props: {},
+            slots: { brol: { content: { type: ASTType.Text, value: "coucou" } } },
+          },
         },
       },
     });
@@ -1248,7 +1284,7 @@ describe("qweb parser", () => {
     const template = `
       <MyComponent>
         <Child>
-          <t><t t-set-slot="brol">coucou</t></t>
+          <t t-set-slot="brol">coucou</t>
         </Child>
       </MyComponent>
     `;
@@ -1260,12 +1296,14 @@ describe("qweb parser", () => {
       isDynamic: false,
       slots: {
         default: {
-          type: ASTType.TComponent,
-          isDynamic: false,
-          name: "Child",
-          dynamicProps: null,
-          props: {},
-          slots: { brol: { type: ASTType.Text, value: "coucou" } },
+          content: {
+            type: ASTType.TComponent,
+            isDynamic: false,
+            name: "Child",
+            dynamicProps: null,
+            props: {},
+            slots: { brol: { content: { type: ASTType.Text, value: "coucou" } } },
+          },
         },
       },
     });
@@ -1279,6 +1317,7 @@ describe("qweb parser", () => {
     expect(parse(`<t t-slot="default"/>`)).toEqual({
       type: ASTType.TSlot,
       name: "default",
+      attrs: {},
       defaultContent: null,
     });
   });
@@ -1287,6 +1326,7 @@ describe("qweb parser", () => {
     expect(parse(`<t t-slot="header">default content</t>`)).toEqual({
       type: ASTType.TSlot,
       name: "header",
+      attrs: {},
       defaultContent: { type: ASTType.Text, value: "default content" },
     });
   });

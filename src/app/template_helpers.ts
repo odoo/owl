@@ -17,12 +17,17 @@ function callSlot(
   parent: any,
   key: string,
   name: string,
-  defaultSlot?: (ctx: any, key: string) => BDom,
-  dynamic?: boolean
+  dynamic: boolean,
+  extra: any,
+  defaultSlot?: (ctx: any, key: string) => BDom
 ): BDom {
-  const slots = ctx.__owl__.slots;
-  const slotFn = slots[name];
-  const slotBDom = slotFn ? slotFn(parent, key) : null;
+  const slots = (ctx.props && ctx.props.slots) || {};
+  const { __render, __ctx, __scope } = slots[name] || {};
+  const slotScope = Object.create(__ctx || {});
+  if (__scope) {
+    slotScope[__scope] = extra || {};
+  }
+  const slotBDom = __render ? __render(slotScope, parent, key) : null;
   if (defaultSlot) {
     let child1: BDom | undefined = undefined;
     let child2: BDom | undefined = undefined;

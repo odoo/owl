@@ -25,7 +25,7 @@ exports[`refs refs are properly bound in slots 1`] = `
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = callSlot(ctx, node, key, 'footer');
+    let b2 = callSlot(ctx, node, key, 'footer', false, {});
     return block1([], [b2]);
   }
 }"
@@ -36,12 +36,11 @@ exports[`refs refs are properly bound in slots 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
   let block1 = createBlock(\`<div><span class=\\"counter\\"><block-text-0/></span><block-child-0/></div>\`);
   let block2 = createBlock(\`<button block-handler-0=\\"click\\" block-ref=\\"1\\">do something</button>\`);
   
-  const slot3 = ctx => (node, key) => {
+  const slot2 = (ctx, node, key) => {
     const refs = ctx.__owl__.refs
     let d2 = [ctx['doSomething'], ctx];
     let d3 = (el) => refs[\`myButton\`] = el;
@@ -51,8 +50,8 @@ exports[`refs refs are properly bound in slots 2`] = `
   return function template(ctx, node, key = \\"\\") {
     const refs = ctx.__owl__.refs;
     let d1 = ctx['state'].val;
-    const ctx2 = capture(ctx);
-    let b3 = assign(component(\`Dialog\`, {}, key + \`__1\`, node, ctx), {slots: {'footer': slot3(ctx2)}});
+    const ctx1 = capture(ctx);
+    let b3 = component(\`Dialog\`, {slots: {'footer': {__render: slot2, __ctx: ctx1}}}, key + \`__3\`, node, ctx);
     return block1([d1], [b3]);
   }
 }"

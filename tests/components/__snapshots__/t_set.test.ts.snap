@@ -24,11 +24,10 @@ exports[`t-set slot setted value (with t-set) not accessible with t-esc 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
   let block1 = createBlock(\`<div><p><block-text-0/></p><block-child-0/><p><block-text-1/></p></div>\`);
   
-  const slot3 = ctx => (node, key) => {
+  const slot2 = (ctx, node, key) => {
     setContextValue(ctx, \\"iter\\", 'inCall');
   }
   
@@ -37,8 +36,8 @@ exports[`t-set slot setted value (with t-set) not accessible with t-esc 2`] = `
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"iter\\", 'source');
     let d1 = ctx['iter'];
-    const ctx2 = capture(ctx);
-    let b2 = assign(component(\`Childcomp\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot3(ctx2)}});
+    const ctx1 = capture(ctx);
+    let b2 = component(\`Childcomp\`, {slots: {'default': {__render: slot2, __ctx: ctx1}}}, key + \`__3\`, node, ctx);
     let d2 = ctx['iter'];
     return block1([d1, d2], [b2]);
   }

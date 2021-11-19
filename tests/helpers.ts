@@ -4,13 +4,14 @@ import {
   onDestroyed,
   onMounted,
   onPatched,
-  onRender,
+  onWillRender,
   onWillPatch,
   onWillStart,
   onWillUnmount,
   onWillUpdateProps,
   status,
   useComponent,
+  onRendered,
 } from "../src";
 import { BDom } from "../src/blockdom";
 import { blockDom } from "../src";
@@ -181,8 +182,12 @@ export function useLogLifecycle(steps: string[]) {
     steps.push(`${name}:willUpdateProps`);
   });
 
-  onRender(() => {
-    steps.push(`${name}:render`);
+  onWillRender(() => {
+    steps.push(`${name}:willRender`);
+  });
+
+  onRendered(() => {
+    steps.push(`${name}:rendered`);
   });
 
   onWillPatch(() => {

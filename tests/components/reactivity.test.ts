@@ -2,7 +2,7 @@ import {
   Component,
   mount,
   onPatched,
-  onRender,
+  onWillRender,
   onWillPatch,
   onWillUnmount,
   useState,
@@ -37,7 +37,7 @@ describe("reactivity in lifecycle", () => {
       static template = xml`<div><t t-esc="state.a"/></div>`;
       state = useState({ a: 5, b: 7 });
       setup() {
-        onRender(() => n++);
+        onWillRender(() => n++);
       }
     }
     const comp = await mount(Comp, fixture);
@@ -61,7 +61,7 @@ describe("reactivity in lifecycle", () => {
         `;
       state = useState({ n: 2 });
       setup() {
-        onRender(() => {
+        onWillRender(() => {
           steps.push("render");
         });
         onWillPatch(() => {
@@ -132,7 +132,7 @@ describe("reactivity in lifecycle", () => {
       state = useState({ val: 1 });
       setup() {
         STATE = this.state;
-        onRender(() => {
+        onWillRender(() => {
           steps.push(this.state.val);
         });
       }

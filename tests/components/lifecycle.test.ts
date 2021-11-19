@@ -4,7 +4,7 @@ import {
   onWillUnmount,
   onPatched,
   onWillUpdateProps,
-  onRender,
+  onWillRender,
 } from "../../src/component/lifecycle_hooks";
 import { status } from "../../src/component/status";
 import { xml } from "../../src/tags";
@@ -385,20 +385,25 @@ describe("lifecycle hooks", () => {
     expect(steps).toEqual([
       "Parent:setup",
       "Parent:willStart",
-      "Parent:render",
+      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Child:render",
+      "Parent:rendered",
+      "Child:willRender",
+      "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
-      "Parent:render",
+      "Parent:willRender",
       "Child:willUpdateProps",
-      "Child:render",
+      "Parent:rendered",
+      "Child:willRender",
+      "Child:rendered",
       "Parent:willPatch",
       "Child:willPatch",
       "Child:patched",
       "Parent:patched",
-      "Parent:render",
+      "Parent:willRender",
+      "Parent:rendered",
       "Parent:willPatch",
       "Child:willUnmount",
       "Child:destroyed",
@@ -561,10 +566,12 @@ describe("lifecycle hooks", () => {
     expect(steps).toEqual([
       "Parent:setup",
       "Parent:willStart",
-      "Parent:render",
+      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Child:render",
+      "Parent:rendered",
+      "Child:willRender",
+      "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]);
@@ -609,20 +616,29 @@ describe("lifecycle hooks", () => {
     const app = new App(Parent);
     const parent = await app.mount(fixture);
 
-    expect(steps).toEqual(["Parent:setup", "Parent:willStart", "Parent:render", "Parent:mounted"]);
+    expect(steps).toEqual([
+      "Parent:setup",
+      "Parent:willStart",
+      "Parent:willRender",
+      "Parent:rendered",
+      "Parent:mounted",
+    ]);
 
     steps.splice(0);
 
     parent.state.hasChild = true;
     await nextTick();
     expect(steps).toEqual([
-      "Parent:render",
+      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Child:render",
+      "Parent:rendered",
+      "Child:willRender",
       "GrandChild:setup",
       "GrandChild:willStart",
-      "GrandChild:render",
+      "Child:rendered",
+      "GrandChild:willRender",
+      "GrandChild:rendered",
       "Parent:willPatch",
       "GrandChild:mounted",
       "Child:mounted",
@@ -672,7 +688,13 @@ describe("lifecycle hooks", () => {
     const app = new App(Parent);
     const parent = await app.mount(fixture);
 
-    expect(steps).toEqual(["Parent:setup", "Parent:willStart", "Parent:render", "Parent:mounted"]);
+    expect(steps).toEqual([
+      "Parent:setup",
+      "Parent:willStart",
+      "Parent:willRender",
+      "Parent:rendered",
+      "Parent:mounted",
+    ]);
 
     steps.splice(0);
 
@@ -717,7 +739,13 @@ describe("lifecycle hooks", () => {
     const app = new App(Parent);
     const parent = await app.mount(fixture);
 
-    expect(steps).toEqual(["Parent:setup", "Parent:willStart", "Parent:render", "Parent:mounted"]);
+    expect(steps).toEqual([
+      "Parent:setup",
+      "Parent:willStart",
+      "Parent:willRender",
+      "Parent:rendered",
+      "Parent:mounted",
+    ]);
 
     steps.splice(0);
 
@@ -725,12 +753,14 @@ describe("lifecycle hooks", () => {
 
     await nextTick();
     expect(steps).toEqual([
-      "Parent:render",
+      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Child:render",
+      "Parent:rendered",
+      "Child:willRender",
       "GrandChild:setup",
       "GrandChild:willStart",
+      "Child:rendered",
     ]);
 
     steps.splice(0);
@@ -769,10 +799,12 @@ describe("lifecycle hooks", () => {
     expect(steps).toEqual([
       "Parent:setup",
       "Parent:willStart",
-      "Parent:render",
+      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Child:render",
+      "Parent:rendered",
+      "Child:willRender",
+      "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]);
@@ -783,7 +815,8 @@ describe("lifecycle hooks", () => {
 
     await nextTick();
     expect(steps).toEqual([
-      "Parent:render",
+      "Parent:willRender",
+      "Parent:rendered",
       "Parent:willPatch",
       "Child:willUnmount",
       "Child:destroyed",
@@ -816,10 +849,12 @@ describe("lifecycle hooks", () => {
     expect(steps).toEqual([
       "Parent:setup",
       "Parent:willStart",
-      "Parent:render",
+      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Child:render",
+      "Parent:rendered",
+      "Child:willRender",
+      "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]);
@@ -830,9 +865,11 @@ describe("lifecycle hooks", () => {
 
     await nextTick();
     expect(steps).toEqual([
-      "Parent:render",
+      "Parent:willRender",
       "Child:willUpdateProps",
-      "Child:render",
+      "Parent:rendered",
+      "Child:willRender",
+      "Child:rendered",
       "Parent:willPatch",
       "Child:willPatch",
       "Child:patched",
@@ -841,7 +878,7 @@ describe("lifecycle hooks", () => {
     Object.freeze(steps);
   });
 
-  test("onRender", async () => {
+  test("onWillRender", async () => {
     let steps: string[] = [];
     const def = makeDeferred();
 
@@ -852,7 +889,7 @@ describe("lifecycle hooks", () => {
       setup() {
         useLogLifecycle(steps);
         onWillUpdateProps(() => def);
-        onRender(() => (this.visibleState = this.state.value));
+        onWillRender(() => (this.visibleState = this.state.value));
       }
       increment() {
         this.state.value++;
@@ -891,17 +928,21 @@ describe("lifecycle hooks", () => {
     expect(steps).toEqual([
       "Parent:setup",
       "Parent:willStart",
-      "Parent:render",
+      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Child:render",
+      "Parent:rendered",
+      "Child:willRender",
+      "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
-      "Parent:render",
+      "Parent:willRender",
       "Child:willUpdateProps",
+      "Parent:rendered",
       "inc:1",
       "inc:1",
-      "Child:render",
+      "Child:willRender",
+      "Child:rendered",
       "Parent:willPatch",
       "Child:willPatch",
       "Child:patched",
@@ -993,19 +1034,24 @@ describe("lifecycle hooks", () => {
     expect(steps).toEqual([
       "A:setup",
       "A:willStart",
-      "A:render",
+      "A:willRender",
       "B:setup",
       "B:willStart",
       "C:setup",
       "C:willStart",
-      "B:render",
-      "C:render",
+      "A:rendered",
+      "B:willRender",
+      "B:rendered",
+      "C:willRender",
       "D:setup",
       "D:willStart",
       "E:setup",
       "E:willStart",
-      "D:render",
-      "E:render",
+      "C:rendered",
+      "D:willRender",
+      "D:rendered",
+      "E:willRender",
+      "E:rendered",
       "E:mounted",
       "D:mounted",
       "C:mounted",
@@ -1018,12 +1064,15 @@ describe("lifecycle hooks", () => {
     c!.state.flag = false;
     await nextTick();
     expect(steps).toEqual([
-      "C:render",
+      "C:willRender",
       "D:willUpdateProps",
       "F:setup",
       "F:willStart",
-      "D:render",
-      "F:render",
+      "C:rendered",
+      "D:willRender",
+      "D:rendered",
+      "F:willRender",
+      "F:rendered",
       "C:willPatch",
       "D:willPatch",
       "E:willUnmount",
@@ -1062,21 +1111,26 @@ describe("lifecycle hooks", () => {
     expect(steps).toEqual([
       "Parent:setup",
       "Parent:willStart",
-      "Parent:render",
+      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Child:render",
+      "Parent:rendered",
+      "Child:willRender",
+      "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
-      "Parent:render",
+      "Parent:willRender",
+      "Parent:rendered",
       "Parent:willPatch",
       "Child:willUnmount",
       "Child:destroyed",
       "Parent:patched",
-      "Parent:render",
+      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Child:render",
+      "Parent:rendered",
+      "Child:willRender",
+      "Child:rendered",
       "Parent:willPatch",
       "Child:mounted",
       "Parent:patched",

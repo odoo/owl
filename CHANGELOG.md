@@ -14,7 +14,7 @@ removed after.
 
 - components can now have empty content or multiple root nodes (htmlelement or text) ([details](#31-components-can-now-have-arbitrary-content))
 - new `useEffect` hook
-- new `onDestroyed` and `onRender` hooks
+- new `onDestroyed`, `onWillRender` and `onRendered` hooks
 - breaking: lifecycle methods are removed ([details](#1-component-lifecycle-methods-are-removed))
 - breaking: can no longer be mounted on detached DOM ([details](#2-components-can-no-longer-be-mounted-in-a-detached-dom-element))
 - breaking: standalone `mount` method API is simpler ([details](#4-mount-method-api-is-simpler))

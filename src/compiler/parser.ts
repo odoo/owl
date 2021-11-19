@@ -118,12 +118,13 @@ export interface ASTComponent {
   isDynamic: boolean;
   dynamicProps: string | null;
   props: { [name: string]: string };
-  slots: { [name: string]: AST };
+  slots: { [name: string]: { content: AST; attrs?: { [key: string]: string }; scope?: string } };
 }
 
 export interface ASTSlot {
   type: ASTType.TSlot;
   name: string;
+  attrs: { [key: string]: string };
   defaultContent: AST | null;
 }
 
@@ -593,7 +594,7 @@ function parseTCall(node: Element, ctx: ParsingContext): AST | null {
     if (ast && ast.type === ASTType.TComponent) {
       return {
         ...ast,
-        slots: { default: tcall },
+        slots: { default: { content: tcall } },
       };
     }
   }
@@ -741,6 +742,11 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
     // named slots
     const slotNodes = Array.from(clone.querySelectorAll("[t-set-slot]"));
     for (let slotNode of slotNodes) {
+      if (slotNode.tagName !== "t") {
+        throw new Error(
+          `Directive 't-set-slot' can only be used on <t> nodes (used on a <${slotNode.tagName}>)`
+        );
+      }
       const name = slotNode.getAttribute("t-set-slot")!;
 
       // check if this is defined in a sub component (in which case it should
@@ -762,14 +768,27 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
       slotNode.remove();
       const slotAst = parseNode(slotNode, ctx);
       if (slotAst) {
-        slots[name] = slotAst;
+        const slotInfo: any = { content: slotAst };
+        const attrs: { [key: string]: string } = {};
+        for (let attributeName of slotNode.getAttributeNames()) {
+          const value = slotNode.getAttribute(attributeName)!;
+          if (attributeName === "t-slot-scope") {
+            slotInfo.scope = value;
+            continue;
+          }
+          attrs[attributeName] = value;
+        }
+        if (Object.keys(attrs).length) {
+          slotInfo.attrs = attrs;
+        }
+        slots[name] = slotInfo;
       }
     }
 
     // default slot
     const defaultContent = parseChildNodes(clone, ctx);
     if (defaultContent) {
-      slots.default = defaultContent;
+      slots.default = { content: defaultContent };
     }
   }
   return { type: ASTType.TComponent, name, isDynamic, dynamicProps, props, slots };
@@ -783,9 +802,17 @@ function parseTSlot(node: Element, ctx: ParsingContext): AST | null {
   if (!node.hasAttribute("t-slot")) {
     return null;
   }
+  const name = node.getAttribute("t-slot")!;
+  node.removeAttribute("t-slot");
+  const attrs: { [key: string]: string } = {};
+  for (let attributeName of node.getAttributeNames()) {
+    const value = node.getAttribute(attributeName)!;
+    attrs[attributeName] = value;
+  }
   return {
     type: ASTType.TSlot,
-    name: node.getAttribute("t-slot")!,
+    name,
+    attrs,
     defaultContent: parseChildNodes(node, ctx),
   };
 }

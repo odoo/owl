@@ -87,7 +87,6 @@ export class ComponentNode<T extends typeof Component = typeof Component>
   level: number;
   childEnv: Env;
   children: { [key: string]: ComponentNode } = Object.create(null);
-  slots: any = {};
   refs: any = {};
 
   willStart: LifecycleHook[] = [];

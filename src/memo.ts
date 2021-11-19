@@ -39,7 +39,7 @@ export class Memo extends Component {
  */
 function shallowEqual(p1: any, p2: any): boolean {
   for (let k in p1) {
-    if (p1[k] !== p2[k]) {
+    if (k !== "slots" && p1[k] !== p2[k]) {
       return false;
     }
   }

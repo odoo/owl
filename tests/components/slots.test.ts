@@ -37,6 +37,59 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("some text");
   });
 
+  test("simple default slot with params", async () => {
+    let child: any;
+    class Child extends Component {
+      static template = xml`<span><t t-slot="default" bool="state.bool"/></span>`;
+      state = useState({ bool: true });
+      setup() {
+        child = this;
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <Child>
+          <t t-set-slot="default" t-slot-scope="slotScope">
+            <t t-if="slotScope.bool">some text</t>
+            <t t-else="slotScope.bool">other text</t>
+          </t>
+        </Child>`;
+      static components = { Child };
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<span>some text</span>");
+
+    child.state.bool = false;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span>other text</span>");
+  });
+
+  test("simple default slot with params", async () => {
+    class Child extends Component {
+      static template = xml`<span><t t-slot="default" bool="state.bool"/></span>`;
+      state = useState({ bool: true });
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <Child>
+          <t t-if="slotScope.bool">some text</t>
+          <t t-else="slotScope.bool">other text</t>
+        </Child>`;
+      static components = { Child };
+    }
+
+    let error = null;
+    try {
+      await mount(Parent, fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error).not.toBeNull();
+  });
+
   test("fun: two calls to the same slot", async () => {
     class Child extends Component {
       static template = xml`<t t-slot="default"/><t t-slot="default"/>`;
@@ -94,6 +147,35 @@ describe("slots", () => {
 
     expect(fixture.innerHTML).toBe(
       "<div><div><div><span>header</span></div><div><span>footer</span></div></div></div>"
+    );
+  });
+
+  test("can define and call slots with params", async () => {
+    class Dialog extends Component {
+      static template = xml`
+        <div>
+          <t t-esc="props.slots['header'].param"/>
+          <div><t t-slot="header"/></div>
+          <t t-esc="props.slots['footer'].param"/>
+          <div><t t-slot="footer"/></div>
+        </div>`;
+    }
+
+    class Parent extends Component {
+      static components = { Dialog };
+      static template = xml`
+        <div>
+          <Dialog>
+            <t t-set-slot="header" param="var"><span>header</span></t>
+            <t t-set-slot="footer" param="'5'"><span>footer</span></t>
+          </Dialog>
+        </div>`;
+      var = 3;
+    }
+    await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe(
+      "<div><div>3<div><span>header</span></div>5<div><span>footer</span></div></div></div>"
     );
   });
 

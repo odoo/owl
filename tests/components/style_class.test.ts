@@ -338,16 +338,16 @@ describe("style and class handling", () => {
       static template = xml`<Child class="'a'"/>`;
       static components = { Child };
     }
-    let error;
+    let error: Error;
     try {
       await mount(ParentWidget, fixture);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
+    expect(error!).toBeDefined();
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
-    expect(error.message).toMatch(regexp);
+    expect(error!.message).toMatch(regexp);
     expect(fixture.innerHTML).toBe("");
   });
 });

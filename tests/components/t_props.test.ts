@@ -42,7 +42,7 @@ describe("t-props", () => {
         a: "first",
         b: "second",
       });
-      a = "third";
+      a? = "third";
     }
     const parent = await mount(Parent, fixture);
     expect(fixture.textContent).toBe("thirdsecond");

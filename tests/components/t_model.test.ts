@@ -57,14 +57,14 @@ describe("t-model directive", () => {
         </div>`;
       state = useState({ text: "" });
     }
-    let error;
+    let error: Error;
     try {
       await mount(SomeComponent, fixture);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe(`Invalid t-model expression: "state" (it should be assignable)`);
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe(`Invalid t-model expression: "state" (it should be assignable)`);
   });
 
   test("basic use, on another key in component", async () => {

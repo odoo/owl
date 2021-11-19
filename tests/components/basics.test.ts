@@ -40,14 +40,14 @@ describe("basics", () => {
     class SomeWidget extends Component {
       static template = xml`<div>content</div>`;
     }
-    let error;
+    let error: Error;
     try {
       await mount(SomeWidget, document.createDocumentFragment() as any);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe("Cannot mount component: the target is not a valid DOM element");
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe("Cannot mount component: the target is not a valid DOM element");
   });
 
   test("can mount a simple component with props", async () => {
@@ -160,28 +160,28 @@ describe("basics", () => {
       static template = xml`<span>simple vnode</span>`;
     }
 
-    let error;
+    let error: Error;
     try {
       await mount(Test, null as any);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe("Cannot mount component: the target is not a valid DOM element");
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe("Cannot mount component: the target is not a valid DOM element");
   });
 
   test("a component cannot be mounted in a detached node", async () => {
     class Test extends Component {
       static template = xml`<div/>`;
     }
-    let error;
+    let error: Error;
     try {
       await mount(Test, document.createElement("div"));
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe("Cannot mount a component on a detached dom node");
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe("Cannot mount a component on a detached dom node");
   });
 
   test("crashes if it cannot find a template", async () => {
@@ -189,14 +189,14 @@ describe("basics", () => {
       static template = "wrongtemplate";
     }
 
-    let error;
+    let error: Error;
     try {
       await mount(Test, fixture);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe('Missing template: "wrongtemplate"');
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe('Missing template: "wrongtemplate"');
   });
 
   test("class component with dynamic text", async () => {

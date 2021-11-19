@@ -160,15 +160,15 @@ describe("Portal", () => {
             </div>`;
     }
 
-    let error;
+    let error: Error;
     try {
       await mount(Parent, fixture);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
 
-    expect(error).toBeDefined();
-    expect(error.message).toBe("invalid portal target");
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe("invalid portal target");
     expect(fixture.innerHTML).toBe(`<div></div>`);
   });
 
@@ -396,16 +396,16 @@ describe("Portal", () => {
     const parent = await mount(Parent, fixture);
     parent.state.error = true;
 
-    let error;
+    let error: Error;
     try {
       await parent.render();
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
+    expect(error!).toBeDefined();
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
-    expect(error.message).toMatch(regexp);
+    expect(error!.message).toMatch(regexp);
   });
 
   test("portal's parent's env is not polluted", async () => {
@@ -519,16 +519,16 @@ describe("Portal: Props validation", () => {
           </Portal>
         </div>`;
     }
-    let error;
+    let error: Error;
     let app = new App(Parent);
     app.configure({ dev: true });
     try {
       await app.mount(fixture);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe(`Missing props 'target' (component 'Portal')`);
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe(`Missing props 'target' (component 'Portal')`);
     console.info = consoleInfo;
   });
 
@@ -544,16 +544,16 @@ describe("Portal: Props validation", () => {
           </Portal>
         </div>`;
     }
-    let error;
+    let error: Error;
     let app = new App(Parent);
     app.configure({ dev: true });
     try {
       await app.mount(fixture);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe(`Invalid Prop 'target' in component 'Portal'`);
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe(`Invalid Prop 'target' in component 'Portal'`);
     console.info = consoleInfo;
   });
 });

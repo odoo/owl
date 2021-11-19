@@ -49,6 +49,7 @@ export interface ASTDomNode {
     shouldTrim: boolean;
     shouldNumberize: boolean;
   } | null;
+  ns: string | null;
 }
 
 export interface ASTMulti {
@@ -171,11 +172,12 @@ export type AST =
 // -----------------------------------------------------------------------------
 interface ParsingContext {
   inPreTag: boolean;
+  inSVG: boolean;
 }
 
 export function parse(xml: string | Node): AST {
   const node = xml instanceof Element ? xml : parseXML(`<t>${xml}</t>`).firstChild!;
-  const ctx = { inPreTag: false };
+  const ctx = { inPreTag: false, inSVG: false };
   const ast = parseNode(node, ctx);
   if (!ast) {
     return { type: ASTType.Text, value: "" };
@@ -240,7 +242,7 @@ const lineBreakRE = /[\r\n]/;
 const whitespaceRE = /\s+/g;
 
 function parseTextCommentNode(node: ChildNode, ctx: ParsingContext): AST | null {
-  if (node.nodeType === 3) {
+  if (node.nodeType === Node.TEXT_NODE) {
     let value = node.textContent || "";
     if (!ctx.inPreTag) {
       if (lineBreakRE.test(value) && !value.trim()) {
@@ -250,7 +252,7 @@ function parseTextCommentNode(node: ChildNode, ctx: ParsingContext): AST | null 
     }
 
     return { type: ASTType.Text, value };
-  } else if (node.nodeType === 8) {
+  } else if (node.nodeType === Node.COMMENT_NODE) {
     return { type: ASTType.Comment, value: node.textContent || "" };
   }
   return null;
@@ -289,18 +291,18 @@ const hasBracketsAtTheEnd = /\[[^\[]+\]\s*$/;
 
 function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
   const { tagName } = node;
-  let dynamicTag = null;
-  if (node.hasAttribute("t-tag")) {
-    dynamicTag = node.getAttribute("t-tag");
-    node.removeAttribute("t-tag");
-  }
+  const dynamicTag = node.getAttribute("t-tag");
+  node.removeAttribute("t-tag");
   if (tagName === "t" && !dynamicTag) {
     return null;
   }
   const children: AST[] = [];
   if (tagName === "pre") {
-    ctx = { inPreTag: true };
+    ctx.inPreTag = true;
   }
+  const shouldAddSVGNS = tagName === "svg" || (tagName === "g" && !ctx.inSVG);
+  ctx.inSVG = ctx.inSVG || shouldAddSVGNS;
+  const ns = shouldAddSVGNS ? "http://www.w3.org/2000/svg" : null;
   const ref = node.getAttribute("t-ref");
   node.removeAttribute("t-ref");
 
@@ -381,6 +383,7 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
     ref,
     content: children,
     model,
+    ns,
   };
 }
 

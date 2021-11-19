@@ -116,6 +116,7 @@ interface IntermediateTree {
   forceRef?: boolean;
   refIdx?: number;
   refN: number;
+  currentNS: string | null;
 }
 
 function buildTree(
@@ -124,9 +125,10 @@ function buildTree(
   domParentTree: IntermediateTree | null = null
 ): IntermediateTree {
   switch (node.nodeType) {
-    case 1: {
+    case Node.ELEMENT_NODE: {
       // HTMLElement
       let isActive = false;
+      let currentNS = parent && parent.currentNS;
       const tagName = (node as Element).tagName;
       let el: Node | undefined = undefined;
       const info: DynamicInfo[] = [];
@@ -143,11 +145,18 @@ function buildTree(
         el = document.createTextNode("");
         isActive = true;
       }
-      if (!el) {
-        el = document.createElement(tagName);
+      const attrs = (node as Element).attributes;
+      const ns = attrs.getNamedItem("block-ns");
+      if (ns) {
+        attrs.removeNamedItem("block-ns");
+        currentNS = ns.value;
       }
-      if (el instanceof HTMLElement) {
-        const attrs = (node as Element).attributes;
+      if (!el) {
+        el = currentNS
+          ? document.createElementNS(currentNS, tagName)
+          : document.createElement(tagName);
+      }
+      if (el instanceof Element) {
         for (let i = 0; i < attrs.length; i++) {
           const attrName = attrs[i].name;
           const attrValue = attrs[i].value;
@@ -193,13 +202,14 @@ function buildTree(
         el,
         info,
         refN: isActive ? 1 : 0,
+        currentNS,
       };
 
       if (node.firstChild) {
         const childNode = node.childNodes[0];
         if (
           node.childNodes.length === 1 &&
-          childNode.nodeType === 1 &&
+          childNode.nodeType === Node.ELEMENT_NODE &&
           (childNode as Element).tagName.startsWith("block-child-")
         ) {
           const tagName = (childNode as Element).tagName;
@@ -227,11 +237,11 @@ function buildTree(
       }
       return tree;
     }
-    case 3:
-    case 8: {
+    case Node.TEXT_NODE:
+    case Node.COMMENT_NODE: {
       // text node or comment node
       const el =
-        node.nodeType === 3
+        node.nodeType === Node.TEXT_NODE
           ? document.createTextNode(node.textContent!)
           : document.createComment(node.textContent!);
       return {
@@ -241,6 +251,7 @@ function buildTree(
         el,
         info: [],
         refN: 0,
+        currentNS: null,
       };
     }
   }

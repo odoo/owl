@@ -1,6 +1,7 @@
 import type { App, Env } from "../app/app";
 import { BDom, VNode } from "../blockdom";
 import { Component, Props } from "./component";
+import { fibersInError, handleError } from "./error_handling";
 import {
   Fiber,
   makeChildFiber,
@@ -8,9 +9,8 @@ import {
   MountFiber,
   MountOptions,
   RootFiber,
-  __internal__destroyed,
+  __internal__destroyed
 } from "./fibers";
-import { handleError, fibersInError } from "./error_handling";
 import { applyDefaultProps } from "./props_validation";
 import { STATUS } from "./status";
 import { applyStyles } from "./style";

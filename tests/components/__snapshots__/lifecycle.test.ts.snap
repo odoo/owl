@@ -531,7 +531,7 @@ exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper o
 }"
 `;
 
-exports[`lifecycle hooks onRender 1`] = `
+exports[`lifecycle hooks onWillRender 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
@@ -548,7 +548,7 @@ exports[`lifecycle hooks onRender 1`] = `
 }"
 `;
 
-exports[`lifecycle hooks onRender 2`] = `
+exports[`lifecycle hooks onWillRender 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;

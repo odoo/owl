@@ -66,7 +66,8 @@ export {
   onWillUpdateProps,
   onWillPatch,
   onPatched,
-  onRender,
+  onWillRender,
+  onRendered,
   onDestroyed,
   onError,
 } from "./component/lifecycle_hooks";

@@ -35,18 +35,18 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("<div><div>heyfalse</div></div>");
     parent.state.flag = true;
 
-    let error;
+    let error: Error;
     try {
       await parent.render();
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
     expect(fixture.innerHTML).toBe("");
     expect(status(parent)).toBe("destroyed");
-    expect(error).toBeDefined();
+    expect(error!).toBeDefined();
     const regexp =
       /Cannot read properties of undefined \(reading 'this'\)|Cannot read property 'this' of undefined/g;
-    expect(error.message).toMatch(regexp);
+    expect(error!.message).toMatch(regexp);
   });
 
   test("display a nice error if it cannot find component", async () => {
@@ -58,14 +58,14 @@ describe("basics", () => {
       static template = xml`<SomeMispelledComponent />`;
       static components = { SomeComponent };
     }
-    let error;
+    let error: Error;
     try {
       await mount(Parent, fixture);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe('Cannot find the definition of component "SomeMispelledComponent"');
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe('Cannot find the definition of component "SomeMispelledComponent"');
     expect(console.error).toBeCalledTimes(0);
     console.error = consoleError;
   });
@@ -108,16 +108,16 @@ describe("errors and promises", () => {
       static template = xml`<div><t t-esc="this.will.crash"/></div>`;
     }
 
-    let error;
+    let error: Error;
     try {
       await mount(App, fixture);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
+    expect(error!).toBeDefined();
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
-    expect(error.message).toMatch(regexp);
+    expect(error!.message).toMatch(regexp);
 
     expect(console.error).toBeCalledTimes(0);
     console.error = consoleError;
@@ -136,14 +136,14 @@ describe("errors and promises", () => {
       }
     }
 
-    let error;
+    let error: Error;
     try {
       await mount(App, fixture);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe("boom");
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe("boom");
     expect(fixture.innerHTML).toBe("");
 
     expect(console.error).toBeCalledTimes(0);
@@ -166,14 +166,14 @@ describe("errors and promises", () => {
 
     const app = await mount(App, fixture);
     app.val = 4;
-    let error;
+    let error: Error;
     try {
       await app.render();
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe("boom");
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe("boom");
     expect(fixture.innerHTML).toBe("");
 
     expect(console.error).toBeCalledTimes(0);
@@ -196,14 +196,14 @@ describe("errors and promises", () => {
 
     const app = await mount(App, fixture);
     app.val = 4;
-    let error;
+    let error: Error;
     try {
       await app.render();
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe("boom");
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe("boom");
     expect(fixture.innerHTML).toBe("");
 
     expect(console.error).toBeCalledTimes(0);
@@ -222,16 +222,16 @@ describe("errors and promises", () => {
       static components = { Child };
     }
 
-    let error;
+    let error: Error;
     try {
       await mount(App, fixture);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
+    expect(error!).toBeDefined();
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
-    expect(error.message).toMatch(regexp);
+    expect(error!.message).toMatch(regexp);
 
     expect(console.error).toBeCalledTimes(0);
     console.error = consoleError;
@@ -249,16 +249,16 @@ describe("errors and promises", () => {
     const app = await mount(App, fixture);
     expect(fixture.innerHTML).toBe("<div></div>");
     app.flag = true;
-    let error;
+    let error: Error;
     try {
       await app.render();
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
+    expect(error!).toBeDefined();
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
-    expect(error.message).toMatch(regexp);
+    expect(error!.message).toMatch(regexp);
 
     expect(console.error).toBeCalledTimes(0);
     console.error = consoleError;
@@ -273,20 +273,20 @@ describe("errors and promises", () => {
       static components = { Child };
     }
 
-    let error;
+    let error: Error;
     try {
       await mount(Parent, fixture);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
+    expect(error!).toBeDefined();
     const regexp =
       /Cannot read properties of undefined \(reading 'y'\)|Cannot read property 'y' of undefined/g;
-    expect(error.message).toMatch(regexp);
+    expect(error!.message).toMatch(regexp);
   });
 
   test("errors in mounted and in willUnmount", async () => {
-    expect.assertions(2); // apparently this expect count in assertions...
+    expect.assertions(2);
     class Example extends Component {
       static template = xml`<div/>`;
       val: any;
@@ -305,7 +305,7 @@ describe("errors and promises", () => {
     try {
       await mount(Example, fixture);
     } catch (e) {
-      expect(e.message).toBe("Error in mounted");
+      expect((e as Error).message).toBe("Error in mounted");
     }
   });
 });

@@ -87,14 +87,14 @@ describe("styles and component", () => {
       static template = xml`<div class="app">text</div>`;
       static style = `.app {color: red;}`;
     }
-    let error;
+    let error: Error;
     try {
       await mount(App, fixture);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe(
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe(
       "Invalid css stylesheet for component 'App'. Did you forget to use the 'css' tag helper?"
     );
   });

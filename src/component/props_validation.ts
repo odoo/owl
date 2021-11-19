@@ -26,26 +26,23 @@ export function applyDefaultProps(props: { [key: string]: any }, ComponentClass:
  * visit recursively the props and all the children to check if they are valid.
  * This is why it is only done in 'dev' mode.
  */
-
-// message: { type: String, default: "hello" };
-
 export const validateProps = function (name: string | typeof Component, props: any, parent?: any) {
-  const ComponentClass =
-    typeof name !== "string" ? name : parent.constructor.components[name as string];
+  const ComponentClass = (
+    typeof name !== "string" ? name : parent.constructor.components[name]
+  ) as typeof Component;
 
   applyDefaultProps(props, ComponentClass);
 
-  const propsDef = (<any>ComponentClass).props;
+  const propsDef = ComponentClass.props;
   if (propsDef instanceof Array) {
     // list of strings (prop names)
-    for (let i = 0, l = propsDef.length; i < l; i++) {
-      const propName = propsDef[i];
+    for (const propName of propsDef) {
       if (propName[propName.length - 1] === "?") {
         // optional prop
         break;
       }
       if (!(propName in props)) {
-        throw new Error(`Missing props '${propsDef[i]}' (component '${ComponentClass.name}')`);
+        throw new Error(`Missing props '${propName}' (component '${ComponentClass.name}')`);
       }
     }
     for (let key in props) {
@@ -67,7 +64,9 @@ export const validateProps = function (name: string | typeof Component, props: a
       try {
         isValid = isValidProp(props[propName], propsDef[propName]);
       } catch (e) {
-        e.message = `Invalid prop '${propName}' in component ${ComponentClass.name} (${e.message})`;
+        (e as Error).message = `Invalid prop '${propName}' in component ${ComponentClass.name} (${
+          (e as Error).message
+        })`;
         throw e;
       }
       if (!isValid) {

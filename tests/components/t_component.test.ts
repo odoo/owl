@@ -199,14 +199,14 @@ describe("t-component", () => {
       static components = { Child };
       static template = xml`<div><div t-component="Child"/></div>`;
     }
-    let error;
+    let error: Error;
     try {
       await mount(Parent, fixture);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe(
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe(
       `Directive 't-component' can only be used on <t> nodes (used on a <div>)`
     );
   });

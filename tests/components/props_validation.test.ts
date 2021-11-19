@@ -46,23 +46,23 @@ describe("props validation", () => {
       static components = { SubComp };
       static template = xml`<div><SubComp /></div>`;
     }
-    let error;
+    let error: Error | undefined;
 
     try {
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe(`Missing props 'message' (component 'SubComp')`);
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe(`Missing props 'message' (component 'SubComp')`);
     error = undefined;
 
     try {
       await mountApp(Parent, false);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeUndefined();
+    expect(error!).toBeUndefined();
   });
 
   test("props: list of strings", async () => {
@@ -75,14 +75,14 @@ describe("props validation", () => {
       static template = xml`<div><SubComp /></div>`;
     }
 
-    let error;
+    let error: Error;
     try {
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe(`Missing props 'message' (component 'SubComp')`);
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe(`Missing props 'message' (component 'SubComp')`);
   });
 
   test("validate simple types", async () => {
@@ -108,32 +108,32 @@ describe("props validation", () => {
       };
       (Parent as any).components = { SubComp };
 
-      let error;
+      let error: Error | undefined;
       props = {};
 
       try {
         await mountApp(Parent);
       } catch (e) {
-        error = e;
+        error = e as Error;
       }
-      expect(error).toBeDefined();
-      expect(error.message).toBe(`Missing props 'p' (component '_a')`);
+      expect(error!).toBeDefined();
+      expect(error!.message).toBe(`Missing props 'p' (component '_a')`);
       error = undefined;
       props = { p: test.ok };
       try {
         await mountApp(Parent);
       } catch (e) {
-        error = e;
+        error = e as Error;
       }
-      expect(error).toBeUndefined();
+      expect(error!).toBeUndefined();
       props = { p: test.ko };
       try {
         await mountApp(Parent);
       } catch (e) {
-        error = e;
+        error = e as Error;
       }
-      expect(error).toBeDefined();
-      expect(error.message).toBe("Invalid Prop 'p' in component '_a'");
+      expect(error!).toBeDefined();
+      expect(error!.message).toBe("Invalid Prop 'p' in component '_a'");
     }
   });
 
@@ -159,31 +159,31 @@ describe("props validation", () => {
         static template = xml`<div>hey</div>`;
       };
       (Parent as any).components = { SubComp };
-      let error;
+      let error: Error | undefined;
       props = {};
       try {
         await mountApp(Parent);
       } catch (e) {
-        error = e;
+        error = e as Error;
       }
-      expect(error).toBeDefined();
-      expect(error.message).toBe(`Missing props 'p' (component '_a')`);
+      expect(error!).toBeDefined();
+      expect(error!.message).toBe(`Missing props 'p' (component '_a')`);
       error = undefined;
       props = { p: test.ok };
       try {
         await mountApp(Parent);
       } catch (e) {
-        error = e;
+        error = e as Error;
       }
-      expect(error).toBeUndefined();
+      expect(error!).toBeUndefined();
       props = { p: test.ko };
       try {
         await mountApp(Parent);
       } catch (e) {
-        error = e;
+        error = e as Error;
       }
-      expect(error).toBeDefined();
-      expect(error.message).toBe("Invalid Prop 'p' in component '_a'");
+      expect(error!).toBeDefined();
+      expect(error!.message).toBe("Invalid Prop 'p' in component '_a'");
     }
   });
 
@@ -199,30 +199,30 @@ describe("props validation", () => {
         return props.p;
       }
     }
-    let error;
+    let error: Error;
     let props: { p?: any };
     try {
       props = { p: "string" };
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeUndefined();
+    expect(error!).toBeUndefined();
     try {
       props = { p: true };
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeUndefined();
+    expect(error!).toBeUndefined();
     try {
       props = { p: 1 };
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe("Invalid Prop 'p' in component 'SubComp'");
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe("Invalid Prop 'p' in component 'SubComp'");
   });
 
   test("can validate an optional props", async () => {
@@ -237,30 +237,30 @@ describe("props validation", () => {
         return props.p;
       }
     }
-    let error;
+    let error: Error;
     let props: { p?: any };
     try {
       props = { p: "key" };
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeUndefined();
+    expect(error!).toBeUndefined();
     try {
       props = {};
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeUndefined();
+    expect(error!).toBeUndefined();
     try {
       props = { p: 1 };
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe("Invalid Prop 'p' in component 'SubComp'");
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe("Invalid Prop 'p' in component 'SubComp'");
   });
 
   test("can validate an array with given primitive type", async () => {
@@ -275,35 +275,35 @@ describe("props validation", () => {
         return props.p;
       }
     }
-    let error;
+    let error: Error | undefined;
     let props: { p?: any };
     try {
       props = { p: [] };
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeUndefined();
+    expect(error!).toBeUndefined();
     try {
       props = { p: ["string"] };
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeUndefined();
+    expect(error!).toBeUndefined();
     try {
       props = { p: [1] };
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
+    expect(error!).toBeDefined();
     error = undefined;
     try {
       props = { p: ["string", 1] };
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
   });
 
@@ -319,37 +319,37 @@ describe("props validation", () => {
         return props.p;
       }
     }
-    let error;
+    let error: Error;
     let props: { p?: any };
     try {
       props = { p: [] };
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeUndefined();
+    expect(error!).toBeUndefined();
     try {
       props = { p: ["string"] };
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeUndefined();
+    expect(error!).toBeUndefined();
     try {
       props = { p: [false, true, "string"] };
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeUndefined();
+    expect(error!).toBeUndefined();
     try {
       props = { p: [true, 1] };
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe("Invalid Prop 'p' in component 'SubComp'");
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe("Invalid Prop 'p' in component 'SubComp'");
   });
 
   test("can validate an object with simple shape", async () => {
@@ -366,40 +366,40 @@ describe("props validation", () => {
         return props.p;
       }
     }
-    let error;
+    let error: Error | undefined;
     let props: { p?: any };
     try {
       props = { p: { id: 1, url: "url" } };
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeUndefined();
+    expect(error!).toBeUndefined();
     try {
       props = { p: { id: 1, url: "url", extra: true } };
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe("Invalid prop 'p' in component SubComp (unknown prop 'extra')");
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe("Invalid prop 'p' in component SubComp (unknown prop 'extra')");
     try {
       props = { p: { id: "1", url: "url" } };
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe("Invalid Prop 'p' in component 'SubComp'");
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe("Invalid Prop 'p' in component 'SubComp'");
     error = undefined;
     try {
       props = { p: { id: 1 } };
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe("Invalid Prop 'p' in component 'SubComp'");
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe("Invalid Prop 'p' in component 'SubComp'");
   });
 
   test("can validate recursively complicated prop def", async () => {
@@ -422,30 +422,30 @@ describe("props validation", () => {
         return props.p;
       }
     }
-    let error;
+    let error: Error;
     let props: { p?: any };
     try {
       props = { p: { id: 1, url: true } };
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeUndefined();
+    expect(error!).toBeUndefined();
     try {
       props = { p: { id: 1, url: [12] } };
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeUndefined();
+    expect(error!).toBeUndefined();
     try {
       props = { p: { id: 1, url: [12, true] } };
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe("Invalid Prop 'p' in component 'SubComp'");
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe("Invalid Prop 'p' in component 'SubComp'");
   });
 
   test("can validate optional attributes in nested sub props", () => {
@@ -462,20 +462,20 @@ describe("props validation", () => {
         },
       };
     }
-    let error;
+    let error: Error;
     try {
       validateProps(TestComponent as any, { myprop: [{}] });
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeUndefined();
+    expect(error!).toBeUndefined();
     try {
       validateProps(TestComponent as any, { myprop: [{ a: 1 }] });
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe(
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe(
       "Invalid prop 'myprop' in component TestComponent (unknown prop 'a')"
     );
   });
@@ -488,20 +488,20 @@ describe("props validation", () => {
         },
       };
     }
-    let error;
+    let error: Error;
     try {
       validateProps(TestComponent as any, { size: "small" });
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeUndefined();
+    expect(error!).toBeUndefined();
     try {
       validateProps(TestComponent as any, { size: "abcdef" });
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe("Invalid Prop 'size' in component 'TestComponent'");
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe("Invalid Prop 'size' in component 'TestComponent'");
   });
 
   test("can validate with a custom validator, and a type", () => {
@@ -514,30 +514,30 @@ describe("props validation", () => {
         },
       };
     }
-    let error;
+    let error: Error | undefined;
     try {
       validateProps(TestComponent as any, { n: 3 });
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeUndefined();
+    expect(error!).toBeUndefined();
     expect(validator).toBeCalledTimes(1);
     try {
       validateProps(TestComponent as any, { n: "str" });
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe("Invalid Prop 'n' in component 'TestComponent'");
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe("Invalid Prop 'n' in component 'TestComponent'");
     expect(validator).toBeCalledTimes(1);
-    error = null;
+    error = undefined;
     try {
       validateProps(TestComponent as any, { n: 100 });
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe("Invalid Prop 'n' in component 'TestComponent'");
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe("Invalid Prop 'n' in component 'TestComponent'");
     expect(validator).toBeCalledTimes(2);
   });
 
@@ -647,18 +647,18 @@ describe("props validation", () => {
       static template = xml`<div><SubComp/></div>`;
       static components = { SubComp };
     }
-    let error;
+    let error: Error;
     try {
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe("Missing props 'p' (component 'SubComp')");
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe("Missing props 'p' (component 'SubComp')");
   });
 
   test("props are validated whenever component is updated", async () => {
-    let error;
+    let error: Error;
     class SubComp extends Component {
       static props = { p: { type: Number } };
       static template = xml`<div><t t-esc="props.p"/></div>`;
@@ -674,10 +674,10 @@ describe("props validation", () => {
       (app as any).root.component.state.p = undefined;
       await (app as any).root.component.render();
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe("Missing props 'p' (component 'SubComp')");
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe("Missing props 'p' (component 'SubComp')");
   });
 
   test("default values are applied before validating props at update", async () => {
@@ -712,14 +712,14 @@ describe("props validation", () => {
       static components = { Child };
       static template = xml`<div><Child/></div>`;
     }
-    let error;
+    let error: Error;
     try {
       await mountApp(Parent);
     } catch (e) {
-      error = e;
+      error = e as Error;
     }
-    expect(error).toBeDefined();
-    expect(error.message).toBe("Missing props 'mandatory' (component 'Child')");
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe("Missing props 'mandatory' (component 'Child')");
   });
 });
 

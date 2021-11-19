@@ -40,12 +40,22 @@ export function onDestroyed(fn: () => Promise<void> | void | any) {
   node.destroyed.push(fn);
 }
 
-export function onRender(fn: () => void | any) {
+export function onWillRender(fn: () => void | any) {
   const node = getCurrent()!;
   const renderFn = node.renderFn;
   node.renderFn = () => {
     fn();
     return renderFn();
+  };
+}
+
+export function onRendered(fn: () => void | any) {
+  const node = getCurrent()!;
+  const renderFn = node.renderFn;
+  node.renderFn = () => {
+    const result = renderFn();
+    fn();
+    return result;
   };
 }
 

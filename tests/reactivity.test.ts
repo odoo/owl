@@ -1,4 +1,4 @@
-import { Component, mount, onRender, onWillStart, onWillUpdateProps, useState } from "../src";
+import { Component, mount, onWillRender, onWillStart, onWillUpdateProps, useState } from "../src";
 import { batched, reactive } from "../src/reactivity";
 import { xml } from "../src/tags";
 import {
@@ -1125,7 +1125,7 @@ describe("Reactivity: useState", () => {
       static template = xml`<span><t t-esc="contextObj.value"/></span>`;
       contextObj = useState(testContext);
       setup() {
-        onRender(() => {
+        onWillRender(() => {
           steps.push("child");
         });
       }
@@ -1134,7 +1134,7 @@ describe("Reactivity: useState", () => {
       static template = xml`<div><Child /><Child /></div>`;
       static components = { Child };
       setup() {
-        onRender(() => {
+        onWillRender(() => {
           steps.push("parent");
         });
       }
@@ -1156,7 +1156,7 @@ describe("Reactivity: useState", () => {
       static template = xml`<span><t t-esc="contextObj.value"/></span>`;
       contextObj = useState(testContext);
       setup() {
-        onRender(async () => {
+        onWillRender(async () => {
           steps.push("render");
         });
       }
@@ -1187,7 +1187,7 @@ describe("Reactivity: useState", () => {
       static components = {};
       contextObj = useState(testContext);
       setup() {
-        onRender(() => {
+        onWillRender(() => {
           steps.push("render");
         });
       }
@@ -1228,7 +1228,7 @@ describe("Reactivity: useState", () => {
       contextObj1 = useState(testContext);
       contextObj2 = useState(testContext);
       setup() {
-        onRender(() => {
+        onWillRender(() => {
           steps.push("comp");
         });
       }
@@ -1250,7 +1250,7 @@ describe("Reactivity: useState", () => {
       static template = xml`<span><t t-esc="contextObj.a"/></span>`;
       contextObj = useState(testContext);
       setup() {
-        onRender(() => {
+        onWillRender(() => {
           steps.push("child");
         });
       }
@@ -1260,7 +1260,7 @@ describe("Reactivity: useState", () => {
       static components = { Child };
       contextObj = useState(testContext);
       setup() {
-        onRender(() => {
+        onWillRender(() => {
           steps.push("parent");
         });
       }
@@ -1293,7 +1293,7 @@ describe("Reactivity: useState", () => {
       static template = xml`<div><t t-esc="contextObj.a"/> <t t-esc="contextObj.b"/></div>`;
       contextObj = useState(testContext);
       setup() {
-        onRender(() => {
+        onWillRender(() => {
           steps.add("L3A");
         });
       }
@@ -1303,7 +1303,7 @@ describe("Reactivity: useState", () => {
       static template = xml`<div><t t-esc="contextObj.b"/></div>`;
       contextObj = useState(testContext);
       setup() {
-        onRender(() => {
+        onWillRender(() => {
           steps.add("L2B");
         });
       }
@@ -1314,7 +1314,7 @@ describe("Reactivity: useState", () => {
       static components = { L3A };
       contextObj = useState(testContext);
       setup() {
-        onRender(() => {
+        onWillRender(() => {
           steps.add("L2A");
         });
       }
@@ -1325,7 +1325,7 @@ describe("Reactivity: useState", () => {
       static components = { L2A, L2B };
       contextObj = useState(testContext);
       setup() {
-        onRender(() => {
+        onWillRender(() => {
           steps.add("L1A");
         });
       }
@@ -1380,7 +1380,7 @@ describe("Reactivity: useState", () => {
       static template = xml`<span><t t-esc="contextObj.a"/></span>`;
       contextObj = useState(testContext);
       setup() {
-        onRender(() => {
+        onWillRender(() => {
           steps.push("child");
         });
       }
@@ -1390,7 +1390,7 @@ describe("Reactivity: useState", () => {
       static components = { Child };
       state = useState({ flag: true });
       setup() {
-        onRender(() => {
+        onWillRender(() => {
           steps.push("parent");
         });
       }
@@ -1423,7 +1423,7 @@ describe("Reactivity: useState", () => {
         onWillStart(() => {
           return makeDeferred();
         });
-        onRender(() => {
+        onWillRender(() => {
           steps.push("child");
         });
       }
@@ -1465,7 +1465,7 @@ describe("Reactivity: useState", () => {
       state = useState(testContext[this.props.id]);
 
       setup() {
-        onRender(() => {
+        onWillRender(() => {
           steps.add(`quantity${this.props.id}`);
         });
       }
@@ -1484,7 +1484,7 @@ describe("Reactivity: useState", () => {
       state = useState(testContext);
 
       setup() {
-        onRender(() => {
+        onWillRender(() => {
           steps.add("list");
         });
       }

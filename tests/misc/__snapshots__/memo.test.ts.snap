@@ -17,9 +17,8 @@ exports[`Memo if no prop change, prevent renderings from above  2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
-  const slot2 = ctx => (node, key) => {
+  const slot1 = (ctx, node, key) => {
     let b6 = text(ctx['state'].a);
     let b7 = text(ctx['state'].b);
     let b8 = text(ctx['state'].c);
@@ -30,7 +29,7 @@ exports[`Memo if no prop change, prevent renderings from above  2`] = `
     let b2 = text(ctx['state'].a);
     let b3 = text(ctx['state'].b);
     let b4 = text(ctx['state'].c);
-    let b9 = assign(component(\`Memo\`, {a: ctx['state'].a,b: ctx['state'].b}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b9 = component(\`Memo\`, {a: ctx['state'].a,b: ctx['state'].b,slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
     return multi([b2, b3, b4, b9]);
   }
 }"
@@ -53,15 +52,14 @@ exports[`Memo if no props, prevent renderings from above  2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
-  const slot3 = ctx => (node, key) => {
-    return component(\`Child\`, {value: ctx['state'].value}, key + \`__4\`, node, ctx);
+  const slot2 = (ctx, node, key) => {
+    return component(\`Child\`, {value: ctx['state'].value}, key + \`__3\`, node, ctx);
   }
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`Child\`, {value: ctx['state'].value}, key + \`__1\`, node, ctx);
-    let b4 = assign(component(\`Memo\`, {}, key + \`__2\`, node, ctx), {slots: {'default': slot3(ctx)}});
+    let b4 = component(\`Memo\`, {slots: {'default': {__render: slot2, __ctx: ctx}}}, key + \`__4\`, node, ctx);
     return multi([b2, b4]);
   }
 }"
@@ -72,15 +70,14 @@ exports[`Memo if no props, prevent renderings from above (work with simple html)
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
-  const slot2 = ctx => (node, key) => {
+  const slot1 = (ctx, node, key) => {
     return text(ctx['state'].value);
   }
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = text(ctx['state'].value);
-    let b4 = assign(component(\`Memo\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b4 = component(\`Memo\`, {slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
     return multi([b2, b4]);
   }
 }"

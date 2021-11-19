@@ -54,9 +54,9 @@ exports[`list of components crash on duplicate key in dev mode 1`] = `
       let key1 = 'child';
       if (keys1.has(key1)) { throw new Error(\`Got duplicate key in t-foreach: \${key1}\`)}
       keys1.add(key1);
-      const props2 = {}
-      helpers.validateProps(\`Child\`, props2, ctx)
-      c_block1[i1] = withKey(component(\`Child\`, props2, key + \`__1__\${key1}\`, node, ctx), key1);
+      const props1 = {}
+      helpers.validateProps(\`Child\`, props1, ctx)
+      c_block1[i1] = withKey(component(\`Child\`, props1, key + \`__2__\${key1}\`, node, ctx), key1);
     }
     return list(c_block1);
   }

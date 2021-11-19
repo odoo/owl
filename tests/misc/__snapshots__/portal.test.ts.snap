@@ -20,14 +20,13 @@ exports[`Portal Portal composed with t-slot 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
-  const slot2 = ctx => (node, key) => {
-    return callSlot(ctx, node, key, 'default');
+  const slot1 = (ctx, node, key) => {
+    return callSlot(ctx, node, key, 'default', false, {});
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    return component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
   }
 }"
 `;
@@ -37,16 +36,15 @@ exports[`Portal Portal composed with t-slot 3`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  const slot2 = ctx => (node, key) => {
-    return component(\`Child2\`, {customHandler: ctx['_handled']}, key + \`__3\`, node, ctx);
+  const slot1 = (ctx, node, key) => {
+    return component(\`Child2\`, {customHandler: ctx['_handled']}, key + \`__2\`, node, ctx);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Child\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = component(\`Child\`, {slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__3\`, node, ctx);
     return block1([], [b3]);
   }
 }"
@@ -57,17 +55,16 @@ exports[`Portal basic use of portal 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
   let block1 = createBlock(\`<div><span>1</span><block-child-0/></div>\`);
   let block2 = createBlock(\`<p>2</p>\`);
   
-  const slot2 = ctx => (node, key) => {
+  const slot1 = (ctx, node, key) => {
     return block2();
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
     return block1([], [b3]);
   }
 }"
@@ -93,19 +90,18 @@ exports[`Portal conditional use of Portal (with sub Component) 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
   let block2 = createBlock(\`<span>1</span>\`);
   
-  const slot2 = ctx => (node, key) => {
-    return component(\`Child\`, {val: ctx['state'].val}, key + \`__3\`, node, ctx);
+  const slot1 = (ctx, node, key) => {
+    return component(\`Child\`, {val: ctx['state'].val}, key + \`__2\`, node, ctx);
   }
   
   return function template(ctx, node, key = \\"\\") {
     let b2,b4;
     b2 = block2();
     if (ctx['state'].hasPortal) {
-      b4 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+      b4 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__3\`, node, ctx);
     }
     return multi([b2, b4]);
   }
@@ -117,12 +113,11 @@ exports[`Portal conditional use of Portal 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
   let block2 = createBlock(\`<span>1</span>\`);
   let block3 = createBlock(\`<p>2</p>\`);
   
-  const slot2 = ctx => (node, key) => {
+  const slot1 = (ctx, node, key) => {
     return block3();
   }
   
@@ -130,7 +125,7 @@ exports[`Portal conditional use of Portal 1`] = `
     let b2,b4;
     b2 = block2();
     if (ctx['state'].hasPortal) {
-      b4 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+      b4 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
     }
     return multi([b2, b4]);
   }
@@ -157,18 +152,17 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 2`] 
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  const slot2 = ctx => (node, key) => {
-    return component(\`Child\`, {val: ctx['state'].val}, key + \`__3\`, node, ctx);
+  const slot1 = (ctx, node, key) => {
+    return component(\`Child\`, {val: ctx['state'].val}, key + \`__2\`, node, ctx);
   }
   
   return function template(ctx, node, key = \\"\\") {
     let b3;
     if (ctx['state'].hasChild) {
-      b3 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+      b3 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__3\`, node, ctx);
     }
     return block1([], [b3]);
   }
@@ -180,12 +174,11 @@ exports[`Portal portal could have dynamically no content 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<span><block-text-0/></span>\`);
   
-  const slot2 = ctx => (node, key) => {
+  const slot1 = (ctx, node, key) => {
     let b3;
     if (ctx['state'].val) {
       let d1 = ctx['state'].val;
@@ -195,7 +188,7 @@ exports[`Portal portal could have dynamically no content 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b4 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b4 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
     return block1([], [b4]);
   }
 }"
@@ -221,16 +214,15 @@ exports[`Portal portal destroys on crash 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  const slot2 = ctx => (node, key) => {
-    return component(\`Child\`, {error: ctx['state'].error}, key + \`__3\`, node, ctx);
+  const slot1 = (ctx, node, key) => {
+    return component(\`Child\`, {error: ctx['state'].error}, key + \`__2\`, node, ctx);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__3\`, node, ctx);
     return block1([], [b3]);
   }
 }"
@@ -256,16 +248,15 @@ exports[`Portal portal with child and props 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  const slot2 = ctx => (node, key) => {
-    return component(\`Child\`, {val: ctx['state'].val}, key + \`__3\`, node, ctx);
+  const slot1 = (ctx, node, key) => {
+    return component(\`Child\`, {val: ctx['state'].val}, key + \`__2\`, node, ctx);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__3\`, node, ctx);
     return block1([], [b3]);
   }
 }"
@@ -276,13 +267,12 @@ exports[`Portal portal with dynamic body 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<span><block-text-0/></span>\`);
   let block4 = createBlock(\`<div/>\`);
   
-  const slot2 = ctx => (node, key) => {
+  const slot1 = (ctx, node, key) => {
     let b3,b4;
     if (ctx['state'].val) {
       let d1 = ctx['state'].val;
@@ -294,7 +284,7 @@ exports[`Portal portal with dynamic body 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b5 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b5 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
     return block1([], [b5]);
   }
 }"
@@ -305,20 +295,19 @@ exports[`Portal portal with many children 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<div>1</div>\`);
   let block4 = createBlock(\`<p>2</p>\`);
   
-  const slot2 = ctx => (node, key) => {
+  const slot1 = (ctx, node, key) => {
     let b3 = block3();
     let b4 = block4();
     return multi([b3, b4]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b5 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b5 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
     return block1([], [b5]);
   }
 }"
@@ -329,11 +318,10 @@ exports[`Portal portal with no content 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  const slot2 = ctx => (node, key) => {
+  const slot1 = (ctx, node, key) => {
     let b3;
     if (false) {
       b3 = text('ABC');
@@ -342,7 +330,7 @@ exports[`Portal portal with no content 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b4 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b4 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
     return block1([], [b4]);
   }
 }"
@@ -353,16 +341,15 @@ exports[`Portal portal with only text as content 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  const slot2 = ctx => (node, key) => {
+  const slot1 = (ctx, node, key) => {
     return text('only text');
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
     return block1([], [b3]);
   }
 }"
@@ -373,17 +360,16 @@ exports[`Portal portal with target not in dom 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<div>2</div>\`);
   
-  const slot2 = ctx => (node, key) => {
+  const slot1 = (ctx, node, key) => {
     return block2();
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Portal\`, {target: '#does-not-exist'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = component(\`Portal\`, {target: '#does-not-exist',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
     return block1([], [b3]);
   }
 }"
@@ -408,16 +394,15 @@ exports[`Portal portal's parent's env is not polluted 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  const slot2 = ctx => (node, key) => {
-    return component(\`Child\`, {}, key + \`__3\`, node, ctx);
+  const slot1 = (ctx, node, key) => {
+    return component(\`Child\`, {}, key + \`__2\`, node, ctx);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__3\`, node, ctx);
     return block1([], [b3]);
   }
 }"
@@ -428,17 +413,16 @@ exports[`Portal with target in template (after portal) 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
   let block1 = createBlock(\`<div><span>1</span><block-child-0/><div id=\\"local-target\\"/></div>\`);
   let block2 = createBlock(\`<p>2</p>\`);
   
-  const slot2 = ctx => (node, key) => {
+  const slot1 = (ctx, node, key) => {
     return block2();
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Portal\`, {target: '#local-target'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = component(\`Portal\`, {target: '#local-target',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
     return block1([], [b3]);
   }
 }"
@@ -449,17 +433,16 @@ exports[`Portal with target in template (before portal) 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
   let block1 = createBlock(\`<div><div id=\\"local-target\\"/><span>1</span><block-child-0/></div>\`);
   let block2 = createBlock(\`<p>2</p>\`);
   
-  const slot2 = ctx => (node, key) => {
+  const slot1 = (ctx, node, key) => {
     return block2();
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Portal\`, {target: '#local-target'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = component(\`Portal\`, {target: '#local-target',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
     return block1([], [b3]);
   }
 }"
@@ -470,17 +453,16 @@ exports[`Portal: Props validation target is mandatory 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<div>2</div>\`);
   
-  const slot2 = ctx => (node, key) => {
+  const slot1 = (ctx, node, key) => {
     return block2();
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Portal\`, {}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = component(\`Portal\`, {slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
     return block1([], [b3]);
   }
 }"
@@ -491,17 +473,16 @@ exports[`Portal: Props validation target is not list 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<div>2</div>\`);
   
-  const slot2 = ctx => (node, key) => {
+  const slot1 = (ctx, node, key) => {
     return block2();
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Portal\`, {target: ['body']}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = component(\`Portal\`, {target: ['body'],slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
     return block1([], [b3]);
   }
 }"
@@ -527,16 +508,15 @@ exports[`Portal: UI/UX focus is kept across re-renders 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  let assign = Object.assign;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  const slot2 = ctx => (node, key) => {
-    return component(\`Child\`, {val: ctx['state'].val}, key + \`__3\`, node, ctx);
+  const slot1 = (ctx, node, key) => {
+    return component(\`Child\`, {val: ctx['state'].val}, key + \`__2\`, node, ctx);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = assign(component(\`Portal\`, {target: '#outside'}, key + \`__1\`, node, ctx), {slots: {'default': slot2(ctx)}});
+    let b3 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__3\`, node, ctx);
     return block1([], [b3]);
   }
 }"

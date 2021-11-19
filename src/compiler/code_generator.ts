@@ -962,13 +962,62 @@ export class CodeGenerator {
 
   compileComponent(ast: ASTComponent, ctx: Context) {
     let { block } = ctx;
-    let extraArgs: { [key: string]: string } = {};
 
     // props
     const props: string[] = [];
+    let hasSlotsProp = false;
     for (let p in ast.props) {
       props.push(`${p}: ${this.captureExpression(ast.props[p]) || undefined}`);
+      if (p === "slots") {
+        hasSlotsProp = true;
+      }
     }
+
+    // slots
+    const hasSlot = !!Object.keys(ast.slots).length;
+    let slotDef: string = "";
+    if (hasSlot) {
+      let ctxStr = "ctx";
+      if (this.target.loopLevel || !this.hasSafeContext) {
+        ctxStr = this.generateId("ctx");
+        this.addLine(`const ${ctxStr} = capture(ctx);`);
+      }
+      let slotStr: string[] = [];
+      const initialTarget = this.target;
+      for (let slotName in ast.slots) {
+        let name = this.generateId("slot");
+        const slot = new CodeTarget(name);
+        slot.signature = "(ctx, node, key) => {";
+        this.functions.push(slot);
+        this.target = slot;
+        const subCtx: Context = createContext(ctx);
+        this.compileAST(ast.slots[slotName].content, subCtx);
+        const params = [`__render: ${name}, __ctx: ${ctxStr}`];
+        const scope = ast.slots[slotName].scope;
+        if (scope) {
+          params.push(`__scope: "${scope}"`);
+        }
+        if (ast.slots[slotName].attrs) {
+          for (const [n, v] of Object.entries(ast.slots[slotName].attrs!)) {
+            params.push(`${n}: ${compileExpr(v) || undefined}`);
+          }
+        }
+        const slotInfo = `{${params.join(", ")}}`;
+        if (this.hasRef) {
+          slot.code.unshift(`  const refs = ctx.__owl__.refs`);
+          slotStr.push(`'${slotName}': ${slotInfo}`);
+        } else {
+          slotStr.push(`'${slotName}': ${slotInfo}`);
+        }
+      }
+      this.target = initialTarget;
+      slotDef = `{${slotStr.join(", ")}}`;
+    }
+
+    if (slotDef && !(ast.dynamicProps || hasSlotsProp)) {
+      props.push(`slots: ${slotDef}`);
+    }
+
     const propStr = `{${props.join(",")}}`;
 
     let propString = propStr;
@@ -978,6 +1027,17 @@ export class CodeGenerator {
       } else {
         propString = `Object.assign({}, ${compileExpr(ast.dynamicProps)}, ${propStr})`;
       }
+    }
+
+    let propVar: string;
+    if ((slotDef && (ast.dynamicProps || hasSlotsProp)) || this.dev) {
+      propVar = this.generateId("props");
+      this.addLine(`const ${propVar!} = ${propString}`);
+      propString = propVar!;
+    }
+
+    if (slotDef && (ast.dynamicProps || hasSlotsProp)) {
+      this.addLine(`${propVar!}.slots = Object.assign(${slotDef}, ${propVar!}.slots)`);
     }
 
     // cmap key
@@ -991,41 +1051,7 @@ export class CodeGenerator {
     }
 
     if (this.dev) {
-      const propVar = this.generateId("props");
-      this.addLine(`const ${propVar} = ${propString}`);
-      this.addLine(`helpers.validateProps(${expr}, ${propVar}, ctx)`);
-      propString = propVar;
-    }
-
-    // slots
-    const hasSlot = !!Object.keys(ast.slots).length;
-    let slotDef: string;
-    if (hasSlot) {
-      let ctxStr = "ctx";
-      if (this.target.loopLevel || !this.hasSafeContext) {
-        ctxStr = this.generateId("ctx");
-        this.addLine(`const ${ctxStr} = capture(ctx);`);
-      }
-      let slotStr: string[] = [];
-      const initialTarget = this.target;
-      for (let slotName in ast.slots) {
-        let name = this.generateId("slot");
-        const slot = new CodeTarget(name);
-        slot.signature = "ctx => (node, key) => {";
-        this.functions.push(slot);
-        this.target = slot;
-        const subCtx: Context = createContext(ctx);
-        this.compileAST(ast.slots[slotName], subCtx);
-        if (this.hasRef) {
-          slot.code.unshift(`  const refs = ctx.__owl__.refs`);
-          slotStr.push(`'${slotName}': ${name}(${ctxStr})`);
-        } else {
-          slotStr.push(`'${slotName}': ${name}(${ctxStr})`);
-        }
-      }
-      this.target = initialTarget;
-      slotDef = `{${slotStr.join(", ")}}`;
-      extraArgs.slots = slotDef;
+      this.addLine(`helpers.validateProps(${expr}, ${propVar!}, ctx)`);
     }
 
     if (block && (ctx.forceNewBlock === false || ctx.tKeyExpr)) {
@@ -1039,11 +1065,6 @@ export class CodeGenerator {
     }
     const blockArgs = `${expr}, ${propString}, ${keyArg}, node, ctx`;
     let blockExpr = `component(${blockArgs})`;
-    if (Object.keys(extraArgs).length) {
-      this.shouldDefineAssign = true;
-      const content = Object.keys(extraArgs).map((k) => `${k}: ${extraArgs[k]}`);
-      blockExpr = `assign(${blockExpr}, {${content.join(", ")}})`;
-    }
     if (ast.isDynamic) {
       blockExpr = `toggler(${expr}, ${blockExpr})`;
     }
@@ -1062,6 +1083,16 @@ export class CodeGenerator {
     } else {
       slotName = "'" + ast.name + "'";
     }
+
+    let scope = null;
+    if (ast.attrs) {
+      const params = [];
+      for (const [n, v] of Object.entries(ast.attrs!)) {
+        params.push(`${n}: ${compileExpr(v) || undefined}`);
+      }
+      scope = `{${params.join(", ")}}`;
+    }
+
     if (ast.defaultContent) {
       let name = this.generateId("defaultSlot");
       const slot = new CodeTarget(name);
@@ -1072,14 +1103,14 @@ export class CodeGenerator {
       this.target = slot;
       this.compileAST(ast.defaultContent, subCtx);
       this.target = initialTarget;
-      blockString = `callSlot(ctx, node, key, ${slotName}, ${name}, ${dynamic})`;
+      blockString = `callSlot(ctx, node, key, ${slotName}, ${dynamic}, ${scope}, ${name})`;
     } else {
       if (dynamic) {
         let name = this.generateId("slot");
         this.addLine(`const ${name} = ${slotName};`);
-        blockString = `toggler(${name}, callSlot(ctx, node, key, ${name}))`;
+        blockString = `toggler(${name}, callSlot(ctx, node, key, ${name}), ${dynamic}, ${scope})`;
       } else {
-        blockString = `callSlot(ctx, node, key, ${slotName})`;
+        blockString = `callSlot(ctx, node, key, ${slotName}, ${dynamic}, ${scope})`;
       }
     }
     if (block) {

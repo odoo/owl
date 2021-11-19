@@ -9,9 +9,9 @@ exports[`default props can set default required boolean values 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -26,9 +26,9 @@ exports[`default props can set default values 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -43,9 +43,9 @@ exports[`default props default values are also set whenever component is updated
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['state'].p}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['state'].p}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -60,9 +60,9 @@ exports[`props validation can validate a prop with multiple types 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -77,9 +77,9 @@ exports[`props validation can validate a prop with multiple types 2`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -94,9 +94,9 @@ exports[`props validation can validate an array with given primitive type 1`] = 
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -111,9 +111,9 @@ exports[`props validation can validate an array with given primitive type 2`] = 
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -128,9 +128,9 @@ exports[`props validation can validate an array with multiple sub element types 
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -145,9 +145,9 @@ exports[`props validation can validate an array with multiple sub element types 
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -162,9 +162,9 @@ exports[`props validation can validate an array with multiple sub element types 
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -179,9 +179,9 @@ exports[`props validation can validate an object with simple shape 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -196,9 +196,9 @@ exports[`props validation can validate an optional props 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -213,9 +213,9 @@ exports[`props validation can validate an optional props 2`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -230,9 +230,9 @@ exports[`props validation can validate recursively complicated prop def 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -247,9 +247,9 @@ exports[`props validation can validate recursively complicated prop def 2`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -264,9 +264,9 @@ exports[`props validation default values are applied before validating props at 
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['state'].p}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['state'].p}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -281,9 +281,9 @@ exports[`props validation props are validated in dev mode (code snapshot) 1`] = 
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {message: 1}
-    helpers.validateProps(\`Child\`, props2, ctx)
-    let b2 = component(\`Child\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {message: 1}
+    helpers.validateProps(\`Child\`, props1, ctx)
+    let b2 = component(\`Child\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -298,9 +298,9 @@ exports[`props validation props are validated whenever component is updated 1`] 
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['state'].p}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['state'].p}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -315,9 +315,9 @@ exports[`props validation validate simple types 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -332,9 +332,9 @@ exports[`props validation validate simple types 2`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -349,9 +349,9 @@ exports[`props validation validate simple types 3`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -366,9 +366,9 @@ exports[`props validation validate simple types 4`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -383,9 +383,9 @@ exports[`props validation validate simple types 5`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -400,9 +400,9 @@ exports[`props validation validate simple types 6`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -417,9 +417,9 @@ exports[`props validation validate simple types, alternate form 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -434,9 +434,9 @@ exports[`props validation validate simple types, alternate form 2`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -451,9 +451,9 @@ exports[`props validation validate simple types, alternate form 3`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -468,9 +468,9 @@ exports[`props validation validate simple types, alternate form 4`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -485,9 +485,9 @@ exports[`props validation validate simple types, alternate form 5`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -502,9 +502,9 @@ exports[`props validation validate simple types, alternate form 6`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {p: ctx['p']}
-    helpers.validateProps(\`SubComp\`, props2, ctx)
-    let b2 = component(\`SubComp\`, props2, key + \`__1\`, node, ctx);
+    const props1 = {p: ctx['p']}
+    helpers.validateProps(\`SubComp\`, props1, ctx)
+    let b2 = component(\`SubComp\`, props1, key + \`__2\`, node, ctx);
     return block1([], [b2]);
   }
 }"

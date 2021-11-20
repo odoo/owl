@@ -1,3 +1,4 @@
+import { useState } from "../reactivity";
 import type { App, Env } from "../app/app";
 import { BDom, VNode } from "../blockdom";
 import { Component, Props } from "./component";
@@ -14,6 +15,8 @@ import {
 import { applyDefaultProps } from "./props_validation";
 import { STATUS } from "./status";
 import { applyStyles } from "./style";
+
+let currentNode: ComponentNode | null = null;
 
 function arePropsDifferent(props1: Props, props2: Props): boolean {
   for (let k in props1) {
@@ -75,7 +78,6 @@ export function component(
 //  Component VNode
 // -----------------------------------------------------------------------------
 
-let currentNode: ComponentNode | null = null;
 
 export function getCurrent(): ComponentNode | null {
   return currentNode;
@@ -117,6 +119,11 @@ export class ComponentNode<T extends typeof Component = typeof Component>
     applyDefaultProps(props, C);
     const env = (parent && parent.childEnv) || app.env;
     this.childEnv = env;
+    if (props) {
+      props = useState(props);
+    } else {
+      console.trace()
+    }
     this.component = new C(props, env, this) as any;
     this.renderFn = app.getTemplate(C.template).bind(this.component, this.component, this);
     if (C.style) {

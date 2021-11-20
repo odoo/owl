@@ -53,7 +53,7 @@ describe("rendering semantics", () => {
     class Child extends Component {
       static template = xml`child`;
       setup() {
-        onRender(() => childN++);
+        onRendered(() => childN++);
       }
     }
 
@@ -66,7 +66,7 @@ describe("rendering semantics", () => {
 
       state = { value: "A" };
       setup() {
-        onRender(() => parentN++);
+        onRendered(() => parentN++);
       }
     }
 

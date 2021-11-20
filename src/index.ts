@@ -34,6 +34,7 @@ import type { AppConfig } from "./app/app";
 import { App } from "./app/app";
 import { Component } from "./component/component";
 import { getCurrent } from "./component/component_node";
+export { useState } from "./component/component_node";
 
 export { App, Component };
 
@@ -55,7 +56,7 @@ export { status } from "./component/status";
 export { Portal } from "./portal";
 export { Memo } from "./memo";
 export { css, xml } from "./tags";
-export { useState, reactive } from "./reactivity";
+export { reactive } from "./reactivity";
 export { useEffect, useEnv, useExternalListener, useRef, useSubEnv } from "./hooks";
 export { EventBus, whenReady, loadFile, markup } from "./utils";
 

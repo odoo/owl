@@ -1,6 +1,7 @@
-import { useState } from "../reactivity";
 import type { App, Env } from "../app/app";
 import { BDom, VNode } from "../blockdom";
+import { clearReactivesForCallback, Reactive, reactive } from "../reactivity";
+import { batched, Callback } from "../utils";
 import { Component, Props } from "./component";
 import { fibersInError, handleError } from "./error_handling";
 import {
@@ -18,6 +19,43 @@ import { applyStyles } from "./style";
 
 let currentNode: ComponentNode | null = null;
 
+export function getCurrent(): ComponentNode | null {
+  return currentNode;
+}
+
+// -----------------------------------------------------------------------------
+// Integration with reactivity system (useState)
+// -----------------------------------------------------------------------------
+
+const batchedRenderFunctions = new WeakMap<ComponentNode, Callback>();
+/**
+ * Creates a reactive object that will be observed by the current component.
+ * Reading data from the returned object (eg during rendering) will cause the
+ * component to subscribe to that data and be rerendered when it changes.
+ *
+ * @param state the state to observe
+ * @returns a reactive object that will cause the component to re-render on
+ *  relevant changes
+ * @see reactive
+ */
+export function useState<T extends object>(state: T): Reactive<T> {
+  if (!batchedRenderFunctions.has(currentNode!)) {
+    batchedRenderFunctions.set(
+      currentNode!,
+      batched(() => currentNode!.render())
+    );
+  }
+  const render = batchedRenderFunctions.get(currentNode!)!;
+  const reactiveState = reactive(state, render);
+
+  // manual implementation of onWillUnmount to break cyclic dependency
+  currentNode!.willUnmount.unshift( clearReactivesForCallback.bind(null, render))
+  return reactiveState;
+}
+
+// -----------------------------------------------------------------------------
+// component function (used in compiled template code)
+// -----------------------------------------------------------------------------
 function arePropsDifferent(props1: Props, props2: Props): boolean {
   for (let k in props1) {
     if (props1[k] !== props2[k]) {
@@ -34,6 +72,7 @@ export function component(
   parent: any,
   hasSlots: boolean = false
 ): ComponentNode {
+  console.warn('asdf')
   let node: any = ctx.children[key];
   let isDynamic = typeof name !== "string";
 
@@ -51,7 +90,9 @@ export function component(
 
   const parentFiber = ctx.fiber!;
   if (node) {
+    console.warn('coucou');
     if (hasSlots || parentFiber.deep || arePropsDifferent(node.component.props, props)) {
+      console.warn('coucou3');
       node.updateAndRender(props, parentFiber);
     }
   } else {
@@ -75,13 +116,8 @@ export function component(
 }
 
 // -----------------------------------------------------------------------------
-//  Component VNode
+//  Component VNode class
 // -----------------------------------------------------------------------------
-
-
-export function getCurrent(): ComponentNode | null {
-  return currentNode;
-}
 
 type LifecycleHook = Function;
 
@@ -119,11 +155,9 @@ export class ComponentNode<T extends typeof Component = typeof Component>
     applyDefaultProps(props, C);
     const env = (parent && parent.childEnv) || app.env;
     this.childEnv = env;
-    if (props) {
-      props = useState(props);
-    } else {
-      console.trace()
-    }
+    // if (props) {
+    //   props = useState(props);
+    // }
     this.component = new C(props, env, this) as any;
     this.renderFn = app.getTemplate(C.template).bind(this.component, this.component, this);
     if (C.style) {

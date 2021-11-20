@@ -419,7 +419,7 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("<div><span></span></div>");
   });
 
-  test("child can be updated", async () => {
+  test.only("child can be updated", async () => {
     class Child extends Component {
       static template = xml`<t t-esc="props.value"/>`;
     }

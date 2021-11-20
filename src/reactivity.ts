@@ -1,5 +1,6 @@
 import { onWillUnmount } from "./component/lifecycle_hooks";
 import { ComponentNode, getCurrent } from "./component/component_node";
+import { batched, Callback } from "./utils";
 
 // Allows to get the target of a Reactive (used for making a new Reactive from the underlying object)
 const TARGET = Symbol("Target");
@@ -8,7 +9,6 @@ const KEYCHANGES = Symbol("Key changes");
 
 type ObjectKey = string | number | symbol;
 type Target = object;
-type Callback = () => void;
 type Reactive<T extends Target = Target> = T & {
   [TARGET]: any;
 };
@@ -188,30 +188,6 @@ export function reactive<T extends Target>(target: T, callback: Callback): React
     callbacksToTargets.get(callback)!.add(target);
   }
   return reactivesForTarget.get(callback) as Reactive<T>;
-}
-
-/**
- * Creates a batched version of a callback so that all calls to it in the same
- * microtick will only call the original callback once.
- *
- * @param callback the callback to batch
- * @returns a batched version of the original callback
- */
-export function batched(callback: Callback): Callback {
-  let called = false;
-  return async () => {
-    // This await blocks all calls to the callback here, then releases them sequentially
-    // in the next microtick. This line decides the granularity of the batch.
-    await Promise.resolve();
-    if (!called) {
-      called = true;
-      callback();
-      // wait for all calls in this microtick to fall through before resetting "called"
-      // so that only the first call to the batched function calls the original callback
-      await Promise.resolve();
-      called = false;
-    }
-  };
 }
 
 const batchedRenderFunctions = new WeakMap<ComponentNode, Callback>();

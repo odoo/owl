@@ -967,7 +967,8 @@ export class CodeGenerator {
     const props: string[] = [];
     let hasSlotsProp = false;
     for (let p in ast.props) {
-      props.push(`${p}: ${this.captureExpression(ast.props[p]) || undefined}`);
+      const propName = p.includes("-") ? `'${p}'` : p;
+      props.push(`${propName}: ${this.captureExpression(ast.props[p]) || undefined}`);
       if (p === "slots") {
         hasSlotsProp = true;
       }

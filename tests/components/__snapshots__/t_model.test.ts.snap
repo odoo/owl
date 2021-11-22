@@ -117,11 +117,10 @@ exports[`t-model directive can also define t-on directive on same event, part 1 
   let block1 = createBlock(\`<div><input block-handler-0=\\"input\\" block-attribute-1=\\"value\\" block-handler-2=\\"input\\"/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const v1 = ctx['onInput'];
-    let d1 = [v1, ctx];
-    const bExpr2 = ctx['state'];
+    let d1 = [ctx['onInput'], ctx];
+    const bExpr1 = ctx['state'];
     let d2 = ctx['state']['text'];
-    let d3 = [(ev) => { bExpr2['text'] = ev.target.value; }];
+    let d3 = [(ev) => { bExpr1['text'] = ev.target.value; }];
     return block1([d1, d2, d3]);
   }
 }"
@@ -136,21 +135,18 @@ exports[`t-model directive can also define t-on directive on same event, part 2 
   let block1 = createBlock(\`<div><input type=\\"radio\\" id=\\"one\\" value=\\"One\\" block-handler-0=\\"click\\" block-attribute-1=\\"checked\\" block-handler-2=\\"click\\"/><input type=\\"radio\\" id=\\"two\\" value=\\"Two\\" block-handler-3=\\"click\\" block-attribute-4=\\"checked\\" block-handler-5=\\"click\\"/><input type=\\"radio\\" id=\\"three\\" value=\\"Three\\" block-handler-6=\\"click\\" block-attribute-7=\\"checked\\" block-handler-8=\\"click\\"/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const v1 = ctx['onClick'];
-    let d1 = [v1, ctx];
-    const bExpr2 = ctx['state'];
+    let d1 = [ctx['onClick'], ctx];
+    const bExpr1 = ctx['state'];
     let d2 = ctx['state']['choice'] === 'One';
-    let d3 = [(ev) => { bExpr2['choice'] = ev.target.value; }];
-    const v3 = ctx['onClick'];
-    let d4 = [v3, ctx];
-    const bExpr4 = ctx['state'];
+    let d3 = [(ev) => { bExpr1['choice'] = ev.target.value; }];
+    let d4 = [ctx['onClick'], ctx];
+    const bExpr2 = ctx['state'];
     let d5 = ctx['state']['choice'] === 'Two';
-    let d6 = [(ev) => { bExpr4['choice'] = ev.target.value; }];
-    const v5 = ctx['onClick'];
-    let d7 = [v5, ctx];
-    const bExpr6 = ctx['state'];
+    let d6 = [(ev) => { bExpr2['choice'] = ev.target.value; }];
+    let d7 = [ctx['onClick'], ctx];
+    const bExpr3 = ctx['state'];
     let d8 = ctx['state']['choice'] === 'Three';
-    let d9 = [(ev) => { bExpr6['choice'] = ev.target.value; }];
+    let d9 = [(ev) => { bExpr3['choice'] = ev.target.value; }];
     return block1([d1, d2, d3, d4, d5, d6, d7, d8, d9]);
   }
 }"

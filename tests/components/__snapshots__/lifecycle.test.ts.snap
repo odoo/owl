@@ -540,8 +540,7 @@ exports[`lifecycle hooks onWillRender 1`] = `
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const v1 = ctx['increment'];
-    let d1 = [v1, ctx];
+    let d1 = [ctx['increment'], ctx];
     let d2 = ctx['state'].value;
     return block1([d1, d2]);
   }

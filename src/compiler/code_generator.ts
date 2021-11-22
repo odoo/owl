@@ -344,8 +344,23 @@ export class CodeGenerator {
     }
     this.addLine(`}`);
   }
-
-  captureExpression(expr: string): string {
+  /**
+   * Captures variables that are used inside of an expression. This is useful
+   * because in compiled code, almost all variables are accessed through the ctx
+   * object. In the case of functions, that lookup in the context can be delayed
+   * which can cause issues if the value has changed since the function was
+   * defined.
+   *
+   * @param expr the expression to capture
+   * @param forceCapture whether the expression should capture its scope even if
+   *  it doesn't contain a function. Useful when the expression will be used as
+   *  a function body.
+   * @returns a new expression that uses the captured values
+   */
+  captureExpression(expr: string, forceCapture: boolean = false): string {
+    if (!forceCapture && !expr.includes("=>")) {
+      return compileExpr(expr);
+    }
     const tokens = compileExprToArray(expr);
     const mapping = new Map<string, string>();
     return tokens
@@ -535,7 +550,7 @@ export class CodeGenerator {
       if (isDynamic) {
         const str = ast.ref.replace(
           INTERP_REGEXP,
-          (expr) => "${" + this.captureExpression(expr.slice(2, -2)) + "}"
+          (expr) => "${" + this.captureExpression(expr.slice(2, -2), true) + "}"
         );
         const idx = block!.insertData(`(el) => refs[\`${str}\`] = el`);
         attrs["block-ref"] = String(idx);
@@ -941,7 +956,7 @@ export class CodeGenerator {
     // props
     const props: string[] = [];
     for (let p in ast.props) {
-      props.push(`${p}: ${compileExpr(ast.props[p]) || undefined}`);
+      props.push(`${p}: ${this.captureExpression(ast.props[p]) || undefined}`);
     }
     const propStr = `{${props.join(",")}}`;
 

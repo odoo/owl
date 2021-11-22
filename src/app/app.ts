@@ -15,6 +15,7 @@ export interface AppConfig {
   env?: Env;
   translatableAttributes?: string[];
   translateFn?: (s: string) => string;
+  templates?: string | Document;
 }
 
 export const DEV_MSG = `Owl is running in 'dev' mode.
@@ -48,6 +49,9 @@ export class App<T extends typeof Component = any> extends TemplateSet {
     }
     if (config.translatableAttributes) {
       this.translatableAttributes = config.translatableAttributes;
+    }
+    if (config.templates) {
+      this.addTemplates(config.templates);
     }
     return this;
   }

@@ -6,7 +6,7 @@ from http.server import SimpleHTTPRequestHandler, HTTPServer
 
 HOST = '127.0.0.1'
 PORT = 8000
-URL = 'http://{0}:{1}/tools'.format(HOST, PORT)
+URL = 'http://{0}:{1}/tools/playground'.format(HOST, PORT)
 
 
 # We define our own handler here to remap owl.js GET requests to the Owl build

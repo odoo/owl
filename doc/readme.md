@@ -9,7 +9,6 @@ Are you new to Owl? This is the place to start!
 - [How to start an Owl project](learning/quick_start.md)
 - [How to test Components](learning/how_to_test.md)
 - [How to write Single File Components](learning/how_to_write_sfc.md)
-- [How to write debug Owl applications](learning/how_to_debug.md)
 
 ## Reference
 

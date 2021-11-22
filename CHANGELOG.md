@@ -447,8 +447,10 @@ bus.addEventListener('event-name', callback);
 Rationale: it makes it easier to have just one interface to remember, it makes
 the code simpler
 
-Migration: most bus methods need to be adapted. So, `bus.on(...)` has to be
-rewritten like this: `bus.addEventListener(...)`.
+Migration: most bus methods need to be adapted. So, `bus.on("event-type", owner, (info) => {...})` has to be
+rewritten like this: `bus.addEventListener("event-type", (({detail: info}) => {...}).bind(owner))`.
+
+Do not forget to similarly replace `bus.off(...)` by `bus.removeEventListener(...)`
 
 ### 22. `Store` is removed
 

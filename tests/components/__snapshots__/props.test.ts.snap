@@ -96,6 +96,33 @@ exports[`basics explicit object prop 2`] = `
 }"
 `;
 
+exports[`basics prop names can contain - 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['props']['prop-name'];
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`basics prop names can contain - 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`Child\`, {'prop-name': 7}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
 exports[`basics t-set with a body expression can be passed in props, and then t-out 1`] = `
 "function anonymous(bdom, helpers
 ) {

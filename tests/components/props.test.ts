@@ -30,6 +30,20 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("<div><span>42</span></div>");
   });
 
+  test("prop names can contain -", async () => {
+    class Child extends Component {
+      static template = xml`<div><t t-esc="props['prop-name']"/></div>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child prop-name="7"/>`;
+      static components = { Child };
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div>7</div>");
+  });
+
   test("accept ES6-like syntax for props (with getters)", async () => {
     class Child extends Component {
       static template = xml`<span><t t-esc="props.greetings"/></span>`;

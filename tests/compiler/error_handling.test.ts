@@ -21,12 +21,12 @@ describe("error handling", () => {
     expect(() => context.addTemplate("test", "<div/>")).toThrow("already defined");
   });
 
-  // test("addTemplates throw if parser error", () => {
-  //   const context = new TestContext();
-  //   expect(() => {
-  //     context.addTemplates("<templates><abc>></templates>");
-  //   }).toThrow("Invalid XML in template");
-  // });
+  test("addTemplates throw if parser error", () => {
+    const context = new TestContext();
+    expect(() => {
+      context.addTemplates("<templates><abc>></templates>");
+    }).toThrow("Invalid XML in template");
+  });
 
   test("nice error when t-on is evaluated with a missing event", () => {
     expect(() => renderToString(`<div t-on="somemethod"></div>`)).toThrow(

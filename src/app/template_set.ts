@@ -7,6 +7,36 @@ const bdom = { text, createBlock, list, multi, html, toggler, component };
 
 export const globalTemplates: { [key: string]: string | Node } = {};
 
+function parseXML(xml: string): Document {
+  const parser = new DOMParser();
+
+  const doc = parser.parseFromString(xml, "text/xml");
+  if (doc.getElementsByTagName("parsererror").length) {
+    let msg = "Invalid XML in template.";
+    const parsererrorText = doc.getElementsByTagName("parsererror")[0].textContent;
+    if (parsererrorText) {
+      msg += "\nThe parser has produced the following error message:\n" + parsererrorText;
+      const re = /\d+/g;
+      const firstMatch = re.exec(parsererrorText);
+      if (firstMatch) {
+        const lineNumber = Number(firstMatch[0]);
+        const line = xml.split("\n")[lineNumber - 1];
+        const secondMatch = re.exec(parsererrorText);
+        if (line && secondMatch) {
+          const columnIndex = Number(secondMatch[0]) - 1;
+          if (line[columnIndex]) {
+            msg +=
+              `\nThe error might be located at xml line ${lineNumber} column ${columnIndex}\n` +
+              `${line}\n${"-".repeat(columnIndex - 1)}^`;
+          }
+        }
+      }
+    }
+    throw new Error(msg);
+  }
+  return doc;
+}
+
 export class TemplateSet {
   rawTemplates: typeof globalTemplates = Object.create(globalTemplates);
   templates: { [name: string]: Template } = {};
@@ -33,7 +63,11 @@ export class TemplateSet {
   }
 
   addTemplates(xml: string | Document, options: { allowDuplicate?: boolean } = {}) {
-    xml = xml instanceof Document ? xml : new DOMParser().parseFromString(xml, "text/xml");
+    if (!xml) {
+      // empty string
+      return;
+    }
+    xml = xml instanceof Document ? xml : parseXML(xml);
     for (const template of xml.querySelectorAll("[t-name]")) {
       const name = template.getAttribute("t-name")!;
       template.removeAttribute("t-name");

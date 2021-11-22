@@ -72,4 +72,25 @@ describe("event handling", () => {
     expect(onClickArgs![0]).toBe(1);
     expect(onClickArgs![1]).toBeInstanceOf(MouseEvent);
   });
+
+  test("objects from scope are properly captured by t-on", async () => {
+    let onClickArgs: [number, MouseEvent] | null = null;
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <t t-foreach="items" t-as="item" t-key="item">
+            <div class="item" t-on-click="ev => onClick(item.val, ev)"/>
+          </t>
+        </div>`;
+      items = [{ val: 1 }, { val: 2 }, { val: 3 }, { val: 4 }];
+      onClick(n: number, ev: MouseEvent) {
+        onClickArgs = [n, ev];
+      }
+    }
+    await mount(Parent, fixture);
+    expect(onClickArgs).toBeNull();
+    (<HTMLElement>fixture.querySelector(".item")).click();
+    expect(onClickArgs![0]).toBe(1);
+    expect(onClickArgs![1]).toBeInstanceOf(MouseEvent);
+  });
 });

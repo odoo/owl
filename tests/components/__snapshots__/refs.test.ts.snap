@@ -43,8 +43,7 @@ exports[`refs refs are properly bound in slots 2`] = `
   
   const slot3 = ctx => (node, key) => {
     const refs = ctx.__owl__.refs
-    const v4 = ctx['doSomething'];
-    let d2 = [v4, ctx];
+    let d2 = [ctx['doSomething'], ctx];
     let d3 = (el) => refs[\`myButton\`] = el;
     return block2([d2, d3]);
   }

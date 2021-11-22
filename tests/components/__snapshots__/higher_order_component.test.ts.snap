@@ -130,8 +130,7 @@ exports[`basics sub widget is interactive 1`] = `
   let block1 = createBlock(\`<span><button block-handler-0=\\"click\\">click</button>child<block-text-1/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const v1 = ctx['inc'];
-    let d1 = [v1, ctx];
+    let d1 = [ctx['inc'], ctx];
     let d2 = ctx['state'].val;
     return block1([d1, d2]);
   }

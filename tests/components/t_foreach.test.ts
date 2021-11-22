@@ -1,5 +1,11 @@
-import { Component, mount, onMounted, useState, xml } from "../../src/index";
-import { makeTestFixture, nextTick, snapshotEverything, useLogLifecycle } from "../helpers";
+import { App, Component, mount, onMounted, useState, xml } from "../../src/index";
+import {
+  makeTestFixture,
+  nextTick,
+  snapshotApp,
+  snapshotEverything,
+  useLogLifecycle,
+} from "../helpers";
 
 snapshotEverything();
 
@@ -290,5 +296,29 @@ describe("list of components", () => {
     await parent.render();
     expect((parent.el as HTMLElement).innerHTML).toBe("<div>2</div><div>1</div>");
     expect(childInstances.length).toBe(2);
+  });
+
+  test("crash on duplicate key in dev mode", async () => {
+    const consoleInfo = console.info;
+    console.info = jest.fn();
+    class Child extends Component {
+      static template = xml``;
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <t t-foreach="[1, 2]" t-as="item" t-key="'child'">
+          <Child/>
+        </t>
+      `;
+      static components = { Child };
+    }
+    const app = new App(Parent);
+    app.configure({ dev: true });
+    await expect(async () => {
+      await app.mount(fixture);
+    }).rejects.toThrowError("Got duplicate key in t-foreach: child");
+    snapshotApp(app);
+    console.info = consoleInfo;
   });
 });

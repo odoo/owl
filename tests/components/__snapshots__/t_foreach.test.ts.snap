@@ -39,6 +39,61 @@ exports[`list of components components in a node in a t-foreach  2`] = `
 }"
 `;
 
+exports[`list of components crash on duplicate key in dev mode 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList([1,2]);
+    const keys1 = new Set();
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      ctx[\`item\`] = v_block1[i1];
+      let key1 = 'child';
+      if (keys1.has(key1)) { throw new Error(\`Got duplicate key in t-foreach: \${key1}\`)}
+      keys1.add(key1);
+      const props2 = {}
+      helpers.validateProps(\`Child\`, props2, ctx)
+      c_block1[i1] = withKey(component(\`Child\`, props2, key + \`__1__\${key1}\`, node, ctx), key1);
+    }
+    return list(c_block1);
+  }
+}"
+`;
+
+exports[`list of components crash on duplicate key in dev mode 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`\`);
+  }
+}"
+`;
+
+exports[`list of components crash on duplicate key in dev mode 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList([1,2]);
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      ctx[\`item\`] = v_block1[i1];
+      let key1 = 'child';
+      c_block1[i1] = withKey(component(\`Child\`, {}, key + \`__1__\${key1}\`, node, ctx), key1);
+    }
+    return list(c_block1);
+  }
+}"
+`;
+
 exports[`list of components list of sub components inside other nodes 1`] = `
 "function anonymous(bdom, helpers
 ) {

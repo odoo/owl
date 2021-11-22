@@ -734,6 +734,10 @@ export class CodeGenerator {
     this.addLine(
       `const [${keys}, ${vals}, ${l}, ${c}] = prepareList(${compileExpr(ast.collection)});`
     );
+    // Throw errors on duplicate keys in dev mode
+    if (this.dev) {
+      this.addLine(`const keys${block.id} = new Set();`);
+    }
     this.addLine(`for (let ${loopVar} = 0; ${loopVar} < ${l}; ${loopVar}++) {`);
     this.target.indentLevel++;
     this.addLine(`ctx[\`${ast.elem}\`] = ${vals}[${loopVar}];`);
@@ -750,6 +754,13 @@ export class CodeGenerator {
       this.addLine(`ctx[\`${ast.elem}_value\`] = ${keys}[${loopVar}];`);
     }
     this.addLine(`let key${this.target.loopLevel} = ${ast.key ? compileExpr(ast.key) : loopVar};`);
+    if (this.dev) {
+      // Throw error on duplicate keys in dev mode
+      this.addLine(
+        `if (keys${block.id}.has(key${this.target.loopLevel})) { throw new Error(\`Got duplicate key in t-foreach: \${key${this.target.loopLevel}}\`)}`
+      );
+      this.addLine(`keys${block.id}.add(key${this.target.loopLevel});`);
+    }
     let id: string;
     if (ast.memo) {
       this.target.hasCache = true;

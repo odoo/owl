@@ -102,4 +102,29 @@ describe("basics", () => {
     await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div><span>&lt;p&gt;43&lt;/p&gt;<p>43</p></span></div>");
   });
+
+  test("arrow functions as prop correctly capture their scope", async () => {
+    class Child extends Component {
+      static template = xml`<button t-on-click="props.onClick"/>`;
+    }
+
+    let onClickArgs: [number, MouseEvent] | null = null;
+    class Parent extends Component {
+      static template = xml`
+        <t t-foreach="items" t-as="item" t-key="item.val">
+          <Child onClick="ev => onClick(item.val, ev)"/>
+        </t>
+      `;
+      static components = { Child };
+      items = [{ val: 1 }, { val: 2 }, { val: 3 }, { val: 4 }];
+      onClick(n: number, ev: MouseEvent) {
+        onClickArgs = [n, ev];
+      }
+    }
+    await mount(Parent, fixture);
+    expect(onClickArgs).toBeNull();
+    (<HTMLElement>fixture.querySelector("button")).click();
+    expect(onClickArgs![0]).toBe(1);
+    expect(onClickArgs![1]).toBeInstanceOf(MouseEvent);
+  });
 });

@@ -703,6 +703,20 @@ function parseTSetNode(node: Element, ctx: ParsingContext): AST | null {
 // Components
 // -----------------------------------------------------------------------------
 
+// Error messages when trying to use an unsupported directive on a component
+const directiveErrorMap = new Map([
+  ["t-on", "t-on is no longer supported on components. Consider passing a callback in props."],
+  [
+    "t-ref",
+    "t-ref is no longer supported on components. Consider exposing only the public part of the component's API through a callback prop.",
+  ],
+  ["t-att", "t-att makes no sense on component: props are already treated as expressions"],
+  [
+    "t-attf",
+    "t-attf is not supported on components: use template strings for string interpolation in props",
+  ],
+]);
+
 function parseComponent(node: Element, ctx: ParsingContext): AST | null {
   let name = node.tagName;
   const firstLetter = name[0];
@@ -726,10 +740,9 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
   const props: ASTComponent["props"] = {};
   for (let name of node.getAttributeNames()) {
     const value = node.getAttribute(name)!;
-    if (name.startsWith("t-on-")) {
-      throw new Error(
-        "t-on is no longer supported on Component node. Consider passing a callback in props."
-      );
+    if (name.startsWith("t-")) {
+      const message = directiveErrorMap.get(name.split("-").slice(0, 2).join("-"));
+      throw new Error(message || `unsupported directive on Component: ${name}`);
     } else {
       props[name] = value;
     }

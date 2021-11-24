@@ -19,7 +19,7 @@ function callSlot(
   name: string,
   dynamic: boolean,
   extra: any,
-  defaultSlot?: (ctx: any, key: string) => BDom
+  defaultContent?: (ctx: any, node: any, key: string) => BDom
 ): BDom {
   const slots = (ctx.props && ctx.props.slots) || {};
   const { __render, __ctx, __scope } = slots[name] || {};
@@ -28,13 +28,13 @@ function callSlot(
     slotScope[__scope] = extra || {};
   }
   const slotBDom = __render ? __render(slotScope, parent, key) : null;
-  if (defaultSlot) {
+  if (defaultContent) {
     let child1: BDom | undefined = undefined;
     let child2: BDom | undefined = undefined;
     if (slotBDom) {
       child1 = dynamic ? toggler(name, slotBDom) : slotBDom;
     } else {
-      child2 = defaultSlot(parent, key);
+      child2 = defaultContent(ctx, parent, key);
     }
     return multi([child1, child2]);
   }

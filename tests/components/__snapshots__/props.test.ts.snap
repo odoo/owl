@@ -123,6 +123,33 @@ exports[`basics prop names can contain - 2`] = `
 }"
 `;
 
+exports[`basics support prop names that aren't valid bare object property names 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = [ctx['props'].onClick, ctx];
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`basics support prop names that aren't valid bare object property names 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`Child\`, {'some-dashed-prop': 5,'a.b': 'keyword prop'}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
 exports[`basics t-set with a body expression can be passed in props, and then t-out 1`] = `
 "function anonymous(bdom, helpers
 ) {

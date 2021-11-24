@@ -141,4 +141,21 @@ describe("basics", () => {
     expect(onClickArgs![0]).toBe(1);
     expect(onClickArgs![1]).toBeInstanceOf(MouseEvent);
   });
+
+  test("support prop names that aren't valid bare object property names", async () => {
+    expect.assertions(4);
+    class Child extends Component {
+      static template = xml`<button t-on-click="props.onClick"/>`;
+      setup() {
+        expect(this.props["some-dashed-prop"]).toBe(5);
+        expect(this.props["a.b"]).toBe("keyword prop");
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child some-dashed-prop="5" a.b="'keyword prop'"/>`;
+      static components = { Child };
+    }
+    await mount(Parent, fixture);
+  });
 });

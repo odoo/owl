@@ -5,9 +5,9 @@ import { globalTemplates } from "./app/template_set";
 //  Global templates
 // -----------------------------------------------------------------------------
 
-export function xml(strings: TemplateStringsArray, ...args: any[]) {
+export function xml(...args: Parameters<typeof String.raw>) {
   const name = `__template__${xml.nextId++}`;
-  const value = String.raw(strings, ...args);
+  const value = String.raw(...args);
   globalTemplates[name] = value;
   return name;
 }

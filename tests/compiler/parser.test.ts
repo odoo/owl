@@ -1069,7 +1069,31 @@ describe("qweb parser", () => {
 
   test("component with event handler", async () => {
     expect(() => parse(`<MyComponent t-on-click="someMethod"/>`)).toThrow(
-      "t-on is no longer supported on Component node. Consider passing a callback in props."
+      "t-on is no longer supported on components. Consider passing a callback in props."
+    );
+  });
+
+  test("component with t-ref", async () => {
+    expect(() => parse(`<MyComponent t-ref="something"/>`)).toThrow(
+      "t-ref is no longer supported on components. Consider exposing only the public part of the component's API through a callback prop."
+    );
+  });
+
+  test("component with t-att", async () => {
+    expect(() => parse(`<MyComponent t-att="something"/>`)).toThrow(
+      "t-att makes no sense on component: props are already treated as expressions"
+    );
+  });
+
+  test("component with t-attf", async () => {
+    expect(() => parse(`<MyComponent t-attf="something"/>`)).toThrow(
+      "t-attf is not supported on components: use template strings for string interpolation in props"
+    );
+  });
+
+  test("component with other unsupported directive", async () => {
+    expect(() => parse(`<MyComponent t-something="5"/>`)).toThrow(
+      "unsupported directive on Component: t-something"
     );
   });
 

@@ -133,6 +133,87 @@ exports[`slots can render only empty slot 1`] = `
 }"
 `;
 
+exports[`slots can use component in default-content of t-slot 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`\`);
+  }
+}"
+`;
+
+exports[`slots can use component in default-content of t-slot 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  const defaultContent1 = (ctx, node, key) => {
+    return component(\`GrandChild\`, {}, key + \`__2\`, node, ctx);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    return callSlot(ctx, node, key, 'default', false, {}, defaultContent1);
+  }
+}"
+`;
+
+exports[`slots can use component in default-content of t-slot 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`Child\`, {}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`slots can use t-call in default-content of t-slot 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`\`);
+  }
+}"
+`;
+
+exports[`slots can use t-call in default-content of t-slot 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  const callTemplate_3 = getTemplate(\`__template__9\`);
+  
+  const defaultContent1 = (ctx, node, key) => {
+    return callTemplate_3.call(this, ctx, node, key + \`__2\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    return callSlot(ctx, node, key, 'default', false, {}, defaultContent1);
+  }
+}"
+`;
+
+exports[`slots can use t-call in default-content of t-slot 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`Child\`, {}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
 exports[`slots content is the default slot (variation) 1`] = `
 "function anonymous(bdom, helpers
 ) {
@@ -206,12 +287,12 @@ exports[`slots dafault slots can define a default content 1`] = `
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  const defaultSlot1 = ctx => {
+  const defaultContent1 = (ctx, node, key) => {
     return text(\`default content\`);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = callSlot(ctx, node, key, 'default', false, {}, defaultSlot1);
+    let b3 = callSlot(ctx, node, key, 'default', false, {}, defaultContent1);
     return block1([], [b3]);
   }
 }"
@@ -240,12 +321,12 @@ exports[`slots default content is not rendered if named slot is provided 1`] = `
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  const defaultSlot1 = ctx => {
+  const defaultContent1 = (ctx, node, key) => {
     return text(\`default content\`);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = callSlot(ctx, node, key, 'header', false, {}, defaultSlot1);
+    let b3 = callSlot(ctx, node, key, 'header', false, {}, defaultContent1);
     return block1([], [b3]);
   }
 }"
@@ -279,12 +360,12 @@ exports[`slots default content is not rendered if slot is provided 1`] = `
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  const defaultSlot1 = ctx => {
+  const defaultContent1 = (ctx, node, key) => {
     return text(\`default content\`);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = callSlot(ctx, node, key, 'default', false, {}, defaultSlot1);
+    let b3 = callSlot(ctx, node, key, 'default', false, {}, defaultContent1);
     return block1([], [b3]);
   }
 }"
@@ -317,17 +398,17 @@ exports[`slots default slot next to named slot, with default content 1`] = `
   
   let block1 = createBlock(\`<div class=\\"Dialog\\"><div class=\\"content\\"><block-child-0/></div><div class=\\"footer\\"><block-child-1/></div></div>\`);
   
-  const defaultSlot1 = ctx => {
+  const defaultContent1 = (ctx, node, key) => {
     return text(\` Default content \`);
   }
   
-  const defaultSlot2 = ctx => {
+  const defaultContent2 = (ctx, node, key) => {
     return text(\` Default footer \`);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = callSlot(ctx, node, key, 'default', false, {}, defaultSlot1);
-    let b5 = callSlot(ctx, node, key, 'footer', false, {}, defaultSlot2);
+    let b3 = callSlot(ctx, node, key, 'default', false, {}, defaultContent1);
+    let b5 = callSlot(ctx, node, key, 'footer', false, {}, defaultContent2);
     return block1([], [b3, b5]);
   }
 }"
@@ -469,13 +550,13 @@ exports[`slots dynamic t-slot call with default 1`] = `
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-child-0/></button>\`);
   
-  const defaultSlot1 = ctx => {
+  const defaultContent1 = (ctx, node, key) => {
     return text(\` owl \`);
   }
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = [ctx['toggle'], ctx];
-    let b3 = callSlot(ctx, node, key, (ctx['current'].slot), true, {}, defaultSlot1);
+    let b3 = callSlot(ctx, node, key, (ctx['current'].slot), true, {}, defaultContent1);
     return block1([d1], [b3]);
   }
 }"
@@ -806,12 +887,12 @@ exports[`slots named slots can define a default content 1`] = `
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  const defaultSlot1 = ctx => {
+  const defaultContent1 = (ctx, node, key) => {
     return text(\`default content\`);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = callSlot(ctx, node, key, 'header', false, {}, defaultSlot1);
+    let b3 = callSlot(ctx, node, key, 'header', false, {}, defaultContent1);
     return block1([], [b3]);
   }
 }"
@@ -840,17 +921,17 @@ exports[`slots named slots inside slot, again 1`] = `
   
   let block1 = createBlock(\`<child><block-child-0/><block-child-1/><block-child-2/></child>\`);
   
-  const defaultSlot1 = ctx => {
+  const defaultContent1 = (ctx, node, key) => {
     return text(\`default1\`);
   }
   
-  const defaultSlot2 = ctx => {
+  const defaultContent2 = (ctx, node, key) => {
     return text(\`default2\`);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = callSlot(ctx, node, key, 'brol1', false, {}, defaultSlot1);
-    let b5 = callSlot(ctx, node, key, 'brol2', false, {}, defaultSlot2);
+    let b3 = callSlot(ctx, node, key, 'brol1', false, {}, defaultContent1);
+    let b5 = callSlot(ctx, node, key, 'brol2', false, {}, defaultContent2);
     let b6 = callSlot(ctx, node, key, 'default', false, {});
     return block1([], [b3, b5, b6]);
   }

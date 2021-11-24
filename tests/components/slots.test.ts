@@ -1434,4 +1434,33 @@ describe("slots", () => {
     }
     expect(error).toBeNull();
   });
+
+  test("can use t-call in default-content of t-slot", async () => {
+    const template = xml``;
+    class Child extends Component {
+      static template = xml`<t t-slot="default"><t t-call="${template}"/></t>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child/>`;
+      static components = { Child };
+    }
+    await mount(Parent, fixture);
+  });
+
+  test("can use component in default-content of t-slot", async () => {
+    class GrandChild extends Component {
+      static template = xml``;
+    }
+    class Child extends Component {
+      static template = xml`<t t-slot="default"><GrandChild/></t>`;
+      static components = { GrandChild };
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child/>`;
+      static components = { Child };
+    }
+    await mount(Parent, fixture);
+  });
 });

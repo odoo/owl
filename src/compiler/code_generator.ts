@@ -1095,9 +1095,9 @@ export class CodeGenerator {
     }
 
     if (ast.defaultContent) {
-      let name = this.generateId("defaultSlot");
+      let name = this.generateId("defaultContent");
       const slot = new CodeTarget(name);
-      slot.signature = "ctx => {";
+      slot.signature = "(ctx, node, key) => {";
       this.functions.push(slot);
       const initialTarget = this.target;
       const subCtx: Context = createContext(ctx);

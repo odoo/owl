@@ -177,7 +177,8 @@ interface ParsingContext {
 }
 
 export function parse(xml: string | Node): AST {
-  const node = xml instanceof Element ? xml : parseXML(`<t>${xml}</t>`).firstChild!;
+  const node = xml instanceof Element ? xml : (parseXML(`<t>${xml}</t>`).firstChild! as Element);
+  normalizeXML(node);
   const ctx = { inPreTag: false, inSVG: false };
   const ast = parseNode(node, ctx);
   if (!ast) {
@@ -862,34 +863,17 @@ function parseChildNodes(node: Element, ctx: ParsingContext): AST | null {
       return { type: ASTType.Multi, content: children };
   }
 }
-function parseXML(xml: string): Document {
-  const parser = new DOMParser();
 
-  const doc = parser.parseFromString(xml, "text/xml");
-  if (doc.getElementsByTagName("parsererror").length) {
-    let msg = "Invalid XML in template.";
-    const parsererrorText = doc.getElementsByTagName("parsererror")[0].textContent;
-    if (parsererrorText) {
-      msg += "\nThe parser has produced the following error message:\n" + parsererrorText;
-      const re = /\d+/g;
-      const firstMatch = re.exec(parsererrorText);
-      if (firstMatch) {
-        const lineNumber = Number(firstMatch[0]);
-        const line = xml.split("\n")[lineNumber - 1];
-        const secondMatch = re.exec(parsererrorText);
-        if (line && secondMatch) {
-          const columnIndex = Number(secondMatch[0]) - 1;
-          if (line[columnIndex]) {
-            msg +=
-              `\nThe error might be located at xml line ${lineNumber} column ${columnIndex}\n` +
-              `${line}\n${"-".repeat(columnIndex - 1)}^`;
-          }
-        }
-      }
-    }
-    throw new Error(msg);
-  }
-  let tbranch = doc.querySelectorAll("[t-elif], [t-else]");
+/**
+ * Normalizes the content of an Element so that t-if/t-elif/t-else directives
+ * immediately follow one another (by removing empty text nodes or comments).
+ * Throws an error when a conditional branching statement is malformed. This
+ * function modifies the Element in place.
+ *
+ * @param el the element containing the tree that should be normalized
+ */
+function normalizeTIf(el: Element) {
+  let tbranch = el.querySelectorAll("[t-elif], [t-else]");
   for (let i = 0, ilen = tbranch.length; i < ilen; i++) {
     let node = tbranch[i];
     let prevElem = node.previousElementSibling!;
@@ -922,6 +906,78 @@ function parseXML(xml: string): Document {
         "t-elif and t-else directives must be preceded by a t-if or t-elif directive"
       );
     }
+  }
+}
+
+/**
+ * Normalizes the content of an Element so that t-esc directives on components
+ * are removed and instead places a <t t-esc=""> as the default slot of the
+ * component. Also throws if the component already has content. This function
+ * modifies the Element in place.
+ *
+ * @param el the element containing the tree that should be normalized
+ */
+function normalizeTEsc(el: Element) {
+  const elements = [...el.querySelectorAll("[t-esc]")].filter(
+    (el) => el.tagName[0] === el.tagName[0].toUpperCase() || el.hasAttribute("t-component")
+  );
+  for (const el of elements) {
+    if (el.childNodes.length) {
+      throw new Error("Cannot have t-esc on a component that already has content");
+    }
+    const value = el.getAttribute("t-esc");
+    el.removeAttribute("t-esc");
+    const t = el.ownerDocument.createElement("t");
+    if (value != null) {
+      t.setAttribute("t-esc", value);
+    }
+    el.appendChild(t);
+  }
+}
+
+/**
+ * Normalizes the tree inside a given element and do some preliminary validation
+ * on it. This function modifies the Element in place.
+ *
+ * @param el the element containing the tree that should be normalized
+ */
+function normalizeXML(el: Element) {
+  normalizeTIf(el);
+  normalizeTEsc(el);
+}
+
+/**
+ * Parses an XML string into an XML document, throwing errors on parser errors
+ * instead of returning an XML document containing the parseerror.
+ *
+ * @param xml the string to parse
+ * @returns an XML document corresponding to the content of the string
+ */
+function parseXML(xml: string): XMLDocument {
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(xml, "text/xml");
+  if (doc.getElementsByTagName("parsererror").length) {
+    let msg = "Invalid XML in template.";
+    const parsererrorText = doc.getElementsByTagName("parsererror")[0].textContent;
+    if (parsererrorText) {
+      msg += "\nThe parser has produced the following error message:\n" + parsererrorText;
+      const re = /\d+/g;
+      const firstMatch = re.exec(parsererrorText);
+      if (firstMatch) {
+        const lineNumber = Number(firstMatch[0]);
+        const line = xml.split("\n")[lineNumber - 1];
+        const secondMatch = re.exec(parsererrorText);
+        if (line && secondMatch) {
+          const columnIndex = Number(secondMatch[0]) - 1;
+          if (line[columnIndex]) {
+            msg +=
+              `\nThe error might be located at xml line ${lineNumber} column ${columnIndex}\n` +
+              `${line}\n${"-".repeat(columnIndex - 1)}^`;
+          }
+        }
+      }
+    }
+    throw new Error(msg);
   }
 
   return doc;

@@ -158,4 +158,21 @@ describe("basics", () => {
     }
     await mount(Parent, fixture);
   });
+
+  test("template string in prop", async () => {
+    expect.assertions(3);
+    class Child extends Component {
+      static template = xml``;
+      setup() {
+        expect(this.props.propName).toBe("123");
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml({ raw: ['<Child propName="`1${someVal}3`"/>'] });
+      static components = { Child };
+      someVal = 2;
+    }
+    await mount(Parent, fixture);
+  });
 });

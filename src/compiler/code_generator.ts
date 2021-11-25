@@ -137,7 +137,6 @@ function createContext(parentCtx: Context, params?: Partial<Context>) {
 
 class CodeTarget {
   name: string;
-  signature: string = "";
   indentLevel = 0;
   loopLevel = 0;
   code: string[] = [];
@@ -334,7 +333,7 @@ export class CodeGenerator {
 
   generateFunctions(fn: CodeTarget) {
     this.addLine("");
-    this.addLine(`const ${fn.name} = ${fn.signature}`);
+    this.addLine(`function ${fn.name}(ctx, node, key) {`);
     if (fn.hasCache) {
       this.addLine(`let cache = ctx.cache || {};`);
       this.addLine(`let nextCache = ctx.cache = {};`);
@@ -988,7 +987,6 @@ export class CodeGenerator {
       for (let slotName in ast.slots) {
         let name = this.generateId("slot");
         const slot = new CodeTarget(name);
-        slot.signature = "(ctx, node, key) => {";
         this.functions.push(slot);
         this.target = slot;
         const subCtx: Context = createContext(ctx);
@@ -1097,7 +1095,6 @@ export class CodeGenerator {
     if (ast.defaultContent) {
       let name = this.generateId("defaultContent");
       const slot = new CodeTarget(name);
-      slot.signature = "(ctx, node, key) => {";
       this.functions.push(slot);
       const initialTarget = this.target;
       const subCtx: Context = createContext(ctx);

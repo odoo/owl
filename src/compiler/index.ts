@@ -9,7 +9,6 @@ export type TemplateFunction = (blocks: any, utils: any) => Template;
 interface CompileOptions extends Config {
   name?: string;
 }
-let nextId = 1;
 export function compile(template: string | Node, options: CompileOptions = {}): TemplateFunction {
   // parsing
   const ast = parse(template);
@@ -19,10 +18,9 @@ export function compile(template: string | Node, options: CompileOptions = {}): 
     template instanceof Node
       ? !(template instanceof Element) || template.querySelector("[t-set], [t-call]") === null
       : !template.includes("t-set") && !template.includes("t-call");
-  const name = options.name || `template_${nextId++}`;
 
   // code generation
-  const codeGenerator = new CodeGenerator(name, ast, { ...options, hasSafeContext });
+  const codeGenerator = new CodeGenerator(ast, { ...options, hasSafeContext });
   const code = codeGenerator.generateCode();
 
   // template function

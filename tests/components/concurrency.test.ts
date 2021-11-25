@@ -2562,6 +2562,59 @@ test("two renderings initiated between willPatch and patched", async () => {
   Object.freeze(steps);
 });
 
+test("parent and child rendered at exact same time", async () => {
+  let child: any = null;
+  let steps: any[] = [];
+
+  class Child extends Component {
+    static template = xml`<t t-esc="props.value"/>`;
+    setup() {
+      child = this;
+      useLogLifecycle(steps);
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`<Child value="state.value"/>`;
+    static components = { Child };
+    state = { value: 0 };
+    setup() {
+      useLogLifecycle(steps);
+    }
+  }
+
+  const parent = await mount(Parent, fixture);
+
+  expect(fixture.innerHTML).toBe("0");
+
+  parent.state.value = 1;
+  parent.render();
+  child.render();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("1");
+  expect(steps).toEqual([
+    "Parent:setup",
+    "Parent:willStart",
+    "Parent:willRender",
+    "Child:setup",
+    "Child:willStart",
+    "Parent:rendered",
+    "Child:willRender",
+    "Child:rendered",
+    "Child:mounted",
+    "Parent:mounted",
+    "Parent:willRender",
+    "Child:willUpdateProps",
+    "Parent:rendered",
+    "Child:willRender",
+    "Child:rendered",
+    "Parent:willPatch",
+    "Child:willPatch",
+    "Child:patched",
+    "Parent:patched",
+  ]);
+});
+
 //   test.skip("components with shouldUpdate=false", async () => {
 //     const state = { p: 1, cc: 10 };
 

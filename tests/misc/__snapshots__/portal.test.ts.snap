@@ -21,7 +21,7 @@ exports[`Portal Portal composed with t-slot 2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
-  const slot1 = (ctx, node, key) => {
+  function slot1(ctx, node, key) {
     return callSlot(ctx, node, key, 'default', false, {});
   }
   
@@ -39,7 +39,7 @@ exports[`Portal Portal composed with t-slot 3`] = `
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  const slot1 = (ctx, node, key) => {
+  function slot1(ctx, node, key) {
     return component(\`Child2\`, {customHandler: ctx['_handled']}, key + \`__2\`, node, ctx);
   }
   
@@ -59,7 +59,7 @@ exports[`Portal basic use of portal 1`] = `
   let block1 = createBlock(\`<div><span>1</span><block-child-0/></div>\`);
   let block2 = createBlock(\`<p>2</p>\`);
   
-  const slot1 = (ctx, node, key) => {
+  function slot1(ctx, node, key) {
     return block2();
   }
   
@@ -93,7 +93,7 @@ exports[`Portal conditional use of Portal (with sub Component) 2`] = `
   
   let block2 = createBlock(\`<span>1</span>\`);
   
-  const slot1 = (ctx, node, key) => {
+  function slot1(ctx, node, key) {
     return component(\`Child\`, {val: ctx['state'].val}, key + \`__2\`, node, ctx);
   }
   
@@ -117,7 +117,7 @@ exports[`Portal conditional use of Portal 1`] = `
   let block2 = createBlock(\`<span>1</span>\`);
   let block3 = createBlock(\`<p>2</p>\`);
   
-  const slot1 = (ctx, node, key) => {
+  function slot1(ctx, node, key) {
     return block3();
   }
   
@@ -155,7 +155,7 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 2`] 
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  const slot1 = (ctx, node, key) => {
+  function slot1(ctx, node, key) {
     return component(\`Child\`, {val: ctx['state'].val}, key + \`__2\`, node, ctx);
   }
   
@@ -178,7 +178,7 @@ exports[`Portal portal could have dynamically no content 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<span><block-text-0/></span>\`);
   
-  const slot1 = (ctx, node, key) => {
+  function slot1(ctx, node, key) {
     let b3;
     if (ctx['state'].val) {
       let d1 = ctx['state'].val;
@@ -217,7 +217,7 @@ exports[`Portal portal destroys on crash 2`] = `
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  const slot1 = (ctx, node, key) => {
+  function slot1(ctx, node, key) {
     return component(\`Child\`, {error: ctx['state'].error}, key + \`__2\`, node, ctx);
   }
   
@@ -251,7 +251,7 @@ exports[`Portal portal with child and props 2`] = `
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  const slot1 = (ctx, node, key) => {
+  function slot1(ctx, node, key) {
     return component(\`Child\`, {val: ctx['state'].val}, key + \`__2\`, node, ctx);
   }
   
@@ -272,7 +272,7 @@ exports[`Portal portal with dynamic body 1`] = `
   let block3 = createBlock(\`<span><block-text-0/></span>\`);
   let block4 = createBlock(\`<div/>\`);
   
-  const slot1 = (ctx, node, key) => {
+  function slot1(ctx, node, key) {
     let b3,b4;
     if (ctx['state'].val) {
       let d1 = ctx['state'].val;
@@ -300,7 +300,7 @@ exports[`Portal portal with many children 1`] = `
   let block3 = createBlock(\`<div>1</div>\`);
   let block4 = createBlock(\`<p>2</p>\`);
   
-  const slot1 = (ctx, node, key) => {
+  function slot1(ctx, node, key) {
     let b3 = block3();
     let b4 = block4();
     return multi([b3, b4]);
@@ -321,7 +321,7 @@ exports[`Portal portal with no content 1`] = `
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  const slot1 = (ctx, node, key) => {
+  function slot1(ctx, node, key) {
     let b3;
     if (false) {
       b3 = text('ABC');
@@ -344,7 +344,7 @@ exports[`Portal portal with only text as content 1`] = `
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  const slot1 = (ctx, node, key) => {
+  function slot1(ctx, node, key) {
     return text('only text');
   }
   
@@ -364,7 +364,7 @@ exports[`Portal portal with target not in dom 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<div>2</div>\`);
   
-  const slot1 = (ctx, node, key) => {
+  function slot1(ctx, node, key) {
     return block2();
   }
   
@@ -397,7 +397,7 @@ exports[`Portal portal's parent's env is not polluted 2`] = `
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  const slot1 = (ctx, node, key) => {
+  function slot1(ctx, node, key) {
     return component(\`Child\`, {}, key + \`__2\`, node, ctx);
   }
   
@@ -417,7 +417,7 @@ exports[`Portal with target in template (after portal) 1`] = `
   let block1 = createBlock(\`<div><span>1</span><block-child-0/><div id=\\"local-target\\"/></div>\`);
   let block2 = createBlock(\`<p>2</p>\`);
   
-  const slot1 = (ctx, node, key) => {
+  function slot1(ctx, node, key) {
     return block2();
   }
   
@@ -437,7 +437,7 @@ exports[`Portal with target in template (before portal) 1`] = `
   let block1 = createBlock(\`<div><div id=\\"local-target\\"/><span>1</span><block-child-0/></div>\`);
   let block2 = createBlock(\`<p>2</p>\`);
   
-  const slot1 = (ctx, node, key) => {
+  function slot1(ctx, node, key) {
     return block2();
   }
   
@@ -457,7 +457,7 @@ exports[`Portal: Props validation target is mandatory 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<div>2</div>\`);
   
-  const slot1 = (ctx, node, key) => {
+  function slot1(ctx, node, key) {
     return block2();
   }
   
@@ -477,7 +477,7 @@ exports[`Portal: Props validation target is not list 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<div>2</div>\`);
   
-  const slot1 = (ctx, node, key) => {
+  function slot1(ctx, node, key) {
     return block2();
   }
   
@@ -511,7 +511,7 @@ exports[`Portal: UI/UX focus is kept across re-renders 2`] = `
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  const slot1 = (ctx, node, key) => {
+  function slot1(ctx, node, key) {
     return component(\`Child\`, {val: ctx['state'].val}, key + \`__2\`, node, ctx);
   }
   

@@ -27,7 +27,7 @@ exports[`t-set slot setted value (with t-set) not accessible with t-esc 2`] = `
   
   let block1 = createBlock(\`<div><p><block-text-0/></p><block-child-0/><p><block-text-1/></p></div>\`);
   
-  const slot2 = (ctx, node, key) => {
+  function slot2(ctx, node, key) {
     setContextValue(ctx, \\"iter\\", 'inCall');
   }
   

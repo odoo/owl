@@ -124,6 +124,33 @@ describe("slots", () => {
     expect(parent.state.value).toBe(1);
   });
 
+  test("slot content is bound to caller (variation)", async () => {
+    class Child extends Component {
+      static template = xml`<span><t t-slot="default"/></span>`;
+    }
+
+    class Parent extends Component {
+      // t-set t-value in template is to force compiler to protect the scope
+      // which in turns means that the ctx propagated to the slot is a sub object
+      static template = xml`
+        <Child>
+          <t t-set="var" t-value="1"/>
+          <button t-on-click="() => this.inc()">some text</button>
+        </Child>`;
+      static components = { Child };
+      state = useState({ value: 0 });
+      inc() {
+        expect(this).toBe(parent);
+        this.state.value++;
+      }
+    }
+    const parent = await mount(Parent, fixture);
+
+    expect(parent.state.value).toBe(0);
+    fixture.querySelector("button")!.click();
+    expect(parent.state.value).toBe(1);
+  });
+
   test("can define and call slots", async () => {
     class Dialog extends Component {
       static template = xml`
@@ -208,7 +235,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><span>default content</span></div>");
   });
 
-  test("dafault slots can define a default content", async () => {
+  test("can define a default content", async () => {
     class Dialog extends Component {
       static template = xml`
           <span>
@@ -254,6 +281,42 @@ describe("slots", () => {
     await mount(Parent, fixture);
 
     expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
+  });
+
+  test("slots are properly bound to correct component", async () => {
+    let child: any = null;
+    class Child extends Component {
+      // t-set t-value in template is to force compiler to protect the scope
+      // which in turns means that the ctx propagated to the slot is a sub object
+      static template = xml`
+        <t t-slot="default">
+          <t t-set="var" t-value="1"/>
+          <button t-on-click="() => this.increment()">
+            <t t-esc="state.value"/>
+          </button>
+        </t>`;
+
+      state = useState({ value: 1 });
+      setup() {
+        child = this;
+      }
+      increment() {
+        expect(this).toBe(child);
+        this.state.value++;
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child/>`;
+      static components = { Child };
+    }
+    await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe("<button>1</button>");
+
+    fixture.querySelector("button")!.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<button>2</button>");
   });
 
   test("slots are rendered with proper context", async () => {

@@ -27,14 +27,14 @@ function callSlot(
   if (__scope) {
     slotScope[__scope] = extra || {};
   }
-  const slotBDom = __render ? __render(slotScope, parent, key) : null;
+  const slotBDom = __render ? __render.call(__ctx.__owl__.component, slotScope, parent, key) : null;
   if (defaultContent) {
     let child1: BDom | undefined = undefined;
     let child2: BDom | undefined = undefined;
     if (slotBDom) {
       child1 = dynamic ? toggler(name, slotBDom) : slotBDom;
     } else {
-      child2 = defaultContent(ctx, parent, key);
+      child2 = defaultContent.call(ctx.__owl__.component, ctx, parent, key);
     }
     return multi([child1, child2]);
   }

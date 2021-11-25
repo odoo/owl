@@ -121,6 +121,7 @@ export class ComponentNode<T extends typeof Component = typeof Component>
   }
 
   async initiateRender(fiber: Fiber | MountFiber) {
+    this.fiber = fiber;
     if (this.mounted.length) {
       fiber.root.mounted.push(fiber);
     }
@@ -146,6 +147,7 @@ export class ComponentNode<T extends typeof Component = typeof Component>
       return;
     }
     const fiber = makeRootFiber(this);
+    this.fiber = fiber;
     this.app.scheduler.addFiber(fiber);
     await Promise.resolve();
     if (this.status === STATUS.DESTROYED) {
@@ -211,6 +213,7 @@ export class ComponentNode<T extends typeof Component = typeof Component>
   async updateAndRender(props: any, parentFiber: Fiber) {
     // update
     const fiber = makeChildFiber(this, parentFiber);
+    this.fiber = fiber;
     if (this.willPatch.length) {
       parentFiber.root.willPatch.push(fiber);
     }

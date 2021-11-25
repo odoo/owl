@@ -120,7 +120,7 @@ exports[`can catch errors can catch an error in a component render function 3`] 
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  function slot1(ctx, node, key) {
+  function slot1(ctx, node, key = \\"\\") {
     return component(\`ErrorComponent\`, {flag: ctx['state'].flag}, key + \`__2\`, node, ctx);
   }
   
@@ -221,7 +221,7 @@ exports[`can catch errors can catch an error in the constructor call of a compon
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  function slot1(ctx, node, key) {
+  function slot1(ctx, node, key = \\"\\") {
     let b3 = component(\`ClassicCompoent\`, {}, key + \`__2\`, node, ctx);
     let b4 = component(\`ErrorComponent\`, {}, key + \`__3\`, node, ctx);
     return multi([b3, b4]);
@@ -242,7 +242,7 @@ exports[`can catch errors can catch an error in the constructor call of a compon
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  function slot1(ctx, node, key) {
+  function slot1(ctx, node, key = \\"\\") {
     return component(\`ErrorComponent\`, {}, key + \`__2\`, node, ctx);
   }
   
@@ -296,7 +296,7 @@ exports[`can catch errors can catch an error in the initial call of a component 
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  function slot1(ctx, node, key) {
+  function slot1(ctx, node, key = \\"\\") {
     return component(\`ErrorComponent\`, {}, key + \`__2\`, node, ctx);
   }
   
@@ -350,7 +350,7 @@ exports[`can catch errors can catch an error in the initial call of a component 
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  function slot1(ctx, node, key) {
+  function slot1(ctx, node, key = \\"\\") {
     return component(\`ErrorComponent\`, {}, key + \`__2\`, node, ctx);
   }
   
@@ -406,7 +406,7 @@ exports[`can catch errors can catch an error in the mounted call 3`] = `
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  function slot1(ctx, node, key) {
+  function slot1(ctx, node, key = \\"\\") {
     return component(\`ErrorComponent\`, {}, key + \`__2\`, node, ctx);
   }
   
@@ -460,7 +460,7 @@ exports[`can catch errors can catch an error in the willPatch call 3`] = `
   
   let block1 = createBlock(\`<div><span><block-text-0/></span><block-child-0/></div>\`);
   
-  function slot1(ctx, node, key) {
+  function slot1(ctx, node, key = \\"\\") {
     return component(\`ErrorComponent\`, {message: ctx['state'].message}, key + \`__2\`, node, ctx);
   }
   
@@ -514,7 +514,7 @@ exports[`can catch errors can catch an error in the willStart call 3`] = `
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  function slot1(ctx, node, key) {
+  function slot1(ctx, node, key = \\"\\") {
     return component(\`ErrorComponent\`, {}, key + \`__2\`, node, ctx);
   }
   
@@ -581,7 +581,7 @@ exports[`can catch errors can catch an error origination from a child's willStar
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  function slot1(ctx, node, key) {
+  function slot1(ctx, node, key = \\"\\") {
     let b3 = component(\`ClassicCompoent\`, {}, key + \`__2\`, node, ctx);
     let b4 = component(\`ErrorComponent\`, {}, key + \`__3\`, node, ctx);
     return multi([b3, b4]);

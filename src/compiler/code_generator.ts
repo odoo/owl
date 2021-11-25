@@ -142,6 +142,8 @@ class CodeTarget {
   code: string[] = [];
   hasRoot = false;
   hasCache = false;
+  hasRef: boolean = false;
+  shouldProtectScope: boolean = false;
 
   constructor(name: string) {
     this.name = name;
@@ -155,6 +157,30 @@ class CodeTarget {
       this.code.splice(idx, 0, prefix + line);
     }
   }
+
+  generateCode(): string {
+    let result: string[] = [];
+    result.push(`function ${this.name}(ctx, node, key = "") {`);
+    if (this.hasRef) {
+      result.push(`  const refs = ctx.__owl__.refs;`);
+    }
+    if (this.shouldProtectScope) {
+      result.push(`  ctx = Object.create(ctx);`);
+      result.push(`  ctx[isBoundary] = 1`);
+    }
+    if (this.hasCache) {
+      result.push(`  let cache = ctx.cache || {};`);
+      result.push(`  let nextCache = ctx.cache = {};`);
+    }
+    for (let line of this.code) {
+      result.push(line);
+    }
+    if (!this.hasRoot) {
+      result.push(`return text('');`);
+    }
+    result.push(`}`);
+    return result.join("\n  ");
+  }
 }
 
 const TRANSLATABLE_ATTRS = ["label", "title", "placeholder", "alt"];
@@ -164,13 +190,10 @@ export class CodeGenerator {
   blocks: BlockDescription[] = [];
   nextId = 1;
   nextBlockId = 1;
-  shouldProtectScope: boolean = false;
-  shouldDefineAssign: boolean = false;
   hasSafeContext: boolean;
-  hasRef: boolean = false;
   isDebug: boolean = false;
-  functions: CodeTarget[] = [];
-  target = new CodeTarget("main");
+  targets: CodeTarget[] = [];
+  target = new CodeTarget("template");
   templateName: string;
   dev: boolean;
   translateFn: (s: string) => string;
@@ -201,67 +224,45 @@ export class CodeGenerator {
       tKeyExpr: null,
     });
 
-    let mainCode = this.target.code;
-    this.target.code = [];
-    this.target.indentLevel = 0;
     // define blocks and utility functions
-    this.addLine(`let { text, createBlock, list, multi, html, toggler, component } = bdom;`);
-    this.addLine(
-      `let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;`
-    );
-    if (this.shouldDefineAssign) {
-      this.addLine(`let assign = Object.assign;`);
-    }
+    let mainCode = [
+      `  let { text, createBlock, list, multi, html, toggler, component } = bdom;`,
+      `let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;`,
+    ];
 
     for (let { id, template } of this.staticCalls) {
-      this.addLine(`const ${id} = getTemplate(${template});`);
+      mainCode.push(`const ${id} = getTemplate(${template});`);
     }
 
     // define all blocks
     if (this.blocks.length) {
-      this.addLine(``);
+      mainCode.push(``);
       for (let block of this.blocks) {
         if (block.dom) {
           let xmlString = block.asXmlString();
           if (block.dynamicTagName) {
             xmlString = xmlString.replace(/^<\w+/, `<\${tag || '${block.dom.nodeName}'}`);
             xmlString = xmlString.replace(/\w+>$/, `\${tag || '${block.dom.nodeName}'}>`);
-            this.addLine(`let ${block.blockName} = tag => createBlock(\`${xmlString}\`);`);
+            mainCode.push(`let ${block.blockName} = tag => createBlock(\`${xmlString}\`);`);
           } else {
-            this.addLine(`let ${block.blockName} = createBlock(\`${xmlString}\`);`);
+            mainCode.push(`let ${block.blockName} = createBlock(\`${xmlString}\`);`);
           }
         }
       }
     }
 
-    // define all slots
-    for (let fn of this.functions) {
-      this.generateFunctions(fn);
+    // define all slots/defaultcontent function
+    if (this.targets.length) {
+      for (let fn of this.targets) {
+        mainCode.push("");
+        mainCode = mainCode.concat(fn.generateCode());
+      }
     }
 
-    // // generate main code
-    this.target.indentLevel = 0;
-    this.addLine(``);
-    this.addLine(`return function template(ctx, node, key = "") {`);
-    if (this.hasRef) {
-      this.addLine(`  const refs = ctx.__owl__.refs;`);
-    }
-    if (this.shouldProtectScope) {
-      this.addLine(`  ctx = Object.create(ctx);`);
-      this.addLine(`  ctx[isBoundary] = 1`);
-    }
-    if (this.target.hasCache) {
-      this.addLine(`  let cache = ctx.cache || {};`);
-      this.addLine(`  let nextCache = ctx.cache = {};`);
-    }
-    for (let line of mainCode) {
-      this.addLine(line);
-    }
-    if (!this.target.hasRoot) {
-      throw new Error("missing root block");
-    }
-    this.addLine("}");
-    const code = this.target.code.join("\n");
+    // generate main code
+    mainCode.push("");
+    mainCode = mainCode.concat("return " + this.target.generateCode());
+    const code = mainCode.join("\n  ");
 
     if (this.isDebug) {
       const msg = `[Owl Debug]\n${code}`;
@@ -331,18 +332,6 @@ export class CodeGenerator {
     }
   }
 
-  generateFunctions(fn: CodeTarget) {
-    this.addLine("");
-    this.addLine(`function ${fn.name}(ctx, node, key) {`);
-    if (fn.hasCache) {
-      this.addLine(`let cache = ctx.cache || {};`);
-      this.addLine(`let nextCache = ctx.cache = {};`);
-    }
-    for (let line of fn.code) {
-      this.addLine(line);
-    }
-    this.addLine(`}`);
-  }
   /**
    * Captures variables that are used inside of an expression. This is useful
    * because in compiled code, almost all variables are accessed through the ctx
@@ -544,7 +533,7 @@ export class CodeGenerator {
 
     // t-ref
     if (ast.ref) {
-      this.hasRef = true;
+      this.target.hasRef = true;
       const isDynamic = INTERP_REGEXP.test(ast.ref);
       if (isDynamic) {
         const str = ast.ref.replace(
@@ -778,7 +767,6 @@ export class CodeGenerator {
     let id: string;
     if (ast.memo) {
       this.target.hasCache = true;
-      this.shouldDefineAssign = true;
       id = this.generateId();
       this.addLine(`let memo${id} = ${compileExpr(ast.memo)}`);
       this.addLine(`let vnode${id} = cache[key${this.target.loopLevel}];`);
@@ -799,7 +787,9 @@ export class CodeGenerator {
     this.compileAST(ast.body, subCtx);
     if (ast.memo) {
       this.addLine(
-        `nextCache[key${this.target.loopLevel}] = assign(${c}[${loopVar}], {memo: memo${id!}});`
+        `nextCache[key${
+          this.target.loopLevel
+        }] = Object.assign(${c}[${loopVar}], {memo: memo${id!}});`
       );
     }
     this.target.indentLevel--;
@@ -928,7 +918,7 @@ export class CodeGenerator {
   }
 
   compileTSet(ast: ASTTSet, ctx: Context) {
-    this.shouldProtectScope = true;
+    this.target.shouldProtectScope = true;
     const expr = ast.value ? compileExpr(ast.value || "") : "null";
     if (ast.body) {
       const subCtx: Context = createContext(ctx);
@@ -987,7 +977,7 @@ export class CodeGenerator {
       for (let slotName in ast.slots) {
         let name = this.generateId("slot");
         const slot = new CodeTarget(name);
-        this.functions.push(slot);
+        this.targets.push(slot);
         this.target = slot;
         const subCtx: Context = createContext(ctx);
         this.compileAST(ast.slots[slotName].content, subCtx);
@@ -1002,12 +992,7 @@ export class CodeGenerator {
           }
         }
         const slotInfo = `{${params.join(", ")}}`;
-        if (this.hasRef) {
-          slot.code.unshift(`  const refs = ctx.__owl__.refs`);
-          slotStr.push(`'${slotName}': ${slotInfo}`);
-        } else {
-          slotStr.push(`'${slotName}': ${slotInfo}`);
-        }
+        slotStr.push(`'${slotName}': ${slotInfo}`);
       }
       this.target = initialTarget;
       slotDef = `{${slotStr.join(", ")}}`;
@@ -1095,7 +1080,7 @@ export class CodeGenerator {
     if (ast.defaultContent) {
       let name = this.generateId("defaultContent");
       const slot = new CodeTarget(name);
-      this.functions.push(slot);
+      this.targets.push(slot);
       const initialTarget = this.target;
       const subCtx: Context = createContext(ctx);
       this.target = slot;

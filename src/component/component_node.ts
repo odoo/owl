@@ -137,21 +137,32 @@ export class ComponentNode<T extends typeof Component = typeof Component>
   }
 
   async render() {
-    let fiber = this.fiber;
-    if (fiber && !fiber.bdom && !fibersInError.has(fiber)) {
-      return fiber.root.promise;
+    const current = this.fiber;
+    if (current && !current.bdom && !fibersInError.has(current)) {
+      return current.root.promise;
     }
-    if (!this.bdom && !fiber) {
+    if (!this.bdom && !current) {
       // should find a way to return the future mounting promise
       return;
     }
-    fiber = makeRootFiber(this);
+    const fiber = makeRootFiber(this);
     this.app.scheduler.addFiber(fiber);
     await Promise.resolve();
     if (this.status === STATUS.DESTROYED) {
       return;
     }
-    if (this.fiber === fiber) {
+    // We only want to actually render the component if the following two
+    // conditions are true:
+    // * this.fiber: it could be null, in which case the render has been cancelled
+    // * (current || !fiber.parent): if current is not null, this means that the
+    //   render function was called when a render was already occurring. In this
+    //   case, the pending rendering was cancelled, and the fiber needs to be
+    //   rendered to complete the work.  If current is null, we check that the
+    //   fiber has no parent.  If that is the case, the fiber was downgraded from
+    //   a root fiber to a child fiber in the previous microtick, because it was
+    //   embedded in a rendering coming from above, so the fiber will be rendered
+    //   in the next microtick anyway, so we should not render it again.
+    if (this.fiber && (current || !fiber.parent)) {
       this._render(fiber);
     }
     return fiber.root.promise;

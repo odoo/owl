@@ -1626,6 +1626,89 @@ App.components = { Counter };
 mount(App, document.body);
 `;
 
+
+
+
+const TRANSITION = /*js*/`
+
+const { xml, Component, App } = owl;
+const nodeProto = Node.prototype;
+const nodeInsertBefore = nodeProto.insertBefore;
+
+function nodePropertiesForTransition() {
+  const property = Object.getOwnPropertyDescriptor(Node.prototype, "insertBefore");
+
+  Object.defineProperty(Node.prototype, "insertBefore", {
+    get() {
+      return function(inserted, ref) {
+        if (inserted.hasAttribute("__transitions__")) {
+          inserted.classList.add(inserted.getAttribute("__transitions__"));
+        }
+        nodeInsertBefore.call(this, ...arguments);
+      } 
+    }
+  });
+
+  return () => {
+    Object.defineProperty(Node.prototype, "insertBefore", property);
+  }
+}
+
+function MakeTransitionable(C, transitions) {
+  const transitionableName  = C.template + "__transition";
+  
+  let originGetTemplate;
+  class _Transitionable extends C {
+    constructor(props, env, node) {
+        if (transitionableName in node.app.rawTemplates) {
+          super(...arguments);
+          return;
+        }
+        const tmplString = node.app.rawTemplates[C.template];
+        const doc = new DOMParser().parseFromString(tmplString, "text/xml")
+        for (const { sel , cls} of transitions) {
+          const elms = doc.querySelectorAll(sel);
+          for (const el of elms) {
+            el.setAttribute("__transitions__", cls);
+          }
+        }
+        node.app.rawTemplates[transitionableName] = new XMLSerializer().serializeToString(doc);
+
+        originGetTemplate = node.app.getTemplate;
+        node.app.getTemplate = (...args) => {
+          const undo = nodePropertiesForTransition();
+          const tmplFn = originGetTemplate.call(node.app, ...args);
+          undo();
+          return tmplFn;
+        }
+
+        super(...arguments);
+    }
+    setup() {
+      if (originGetTemplate) {
+        this.__owl__.app.getTemplate = originGetTemplate;
+        originGetTemplate = null;
+      }
+      super.setup();
+    }
+  }
+  _Transitionable.template = transitionableName
+  return _Transitionable;
+}
+
+class Transition extends Component {}
+Transition.template = xml\`<div/>\`
+
+class Root extends Component {}
+Root.template = xml\`<div><Transition/></div> \`;
+Root.components = { Transition: MakeTransitionable(Transition, [{sel: "div", cls:"prout"}]) };
+
+new App(Root).mount(document.body);
+`;
+
+
+
+
 export const SAMPLES = [
   {
     description: "Components",
@@ -1683,5 +1766,9 @@ export const SAMPLES = [
     code: PORTAL_COMPONENTS,
     xml: PORTAL_XML,
     css: PORTAL_CSS,
+  },
+  {
+    description: "Transition",
+    code: TRANSITION,
   },
 ];

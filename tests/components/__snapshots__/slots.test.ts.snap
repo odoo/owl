@@ -2388,7 +2388,7 @@ exports[`slots t-slot within dynamic t-call 4`] = `
   
   function slot2(ctx, node, key) {
     const template4 = (ctx['tcallTemplate']);
-    return call(template4, ctx, node, key + \`__3\`);
+    return call(this, template4, ctx, node, key + \`__3\`);
   }
   
   return function template(ctx, node, key = \\"\\") {

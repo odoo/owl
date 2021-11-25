@@ -46,9 +46,9 @@ export class TemplateSet {
   dev?: boolean;
 
   constructor() {
-    const call = (subTemplate: string, ctx: any, parent: any) => {
+    const call = (owner: any, subTemplate: string, ctx: any, parent: any) => {
       const template = this.getTemplate(subTemplate);
-      return toggler(subTemplate, template(ctx, parent));
+      return toggler(subTemplate, template.call(owner, ctx, parent));
     };
 
     const getTemplate = (name: string) => this.getTemplate(name);

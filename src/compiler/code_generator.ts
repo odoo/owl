@@ -898,7 +898,7 @@ export class CodeGenerator {
       const templateVar = this.generateId("template");
       this.addLine(`const ${templateVar} = ${subTemplate};`);
       block = this.createBlock(block, "multi", ctx);
-      this.insertBlock(`call(${templateVar}, ctx, node, ${key})`, block!, {
+      this.insertBlock(`call(this, ${templateVar}, ctx, node, ${key})`, block!, {
         ...ctx,
         forceNewBlock: !block,
       });

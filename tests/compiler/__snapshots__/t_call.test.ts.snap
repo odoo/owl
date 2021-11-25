@@ -304,7 +304,7 @@ exports[`t-call (template calling) dynamic t-call 3`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const template2 = (ctx['template']);
-    let b2 = call(template2, ctx, node, key + \`__1\`);
+    let b2 = call(this, template2, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
 }"

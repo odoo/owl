@@ -12,7 +12,7 @@ exports[`t-call dynamic t-call 1`] = `
     let b1 = text(\` owl \`);
     ctx[zero] = b1;
     const template2 = (ctx['current'].template);
-    return call(template2, ctx, node, key + \`__1\`);
+    return call(this, template2, ctx, node, key + \`__1\`);
   }
 }"
 `;
@@ -39,6 +39,38 @@ exports[`t-call dynamic t-call 3`] = `
   
   return function template(ctx, node, key = \\"\\") {
     return text(\`bar\`);
+  }
+}"
+`;
+
+exports[`t-call handlers are properly bound through a dynamic t-call 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<p block-handler-0=\\"click\\">lucas</p>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = [()=>this.update(), ctx];
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`t-call handlers are properly bound through a dynamic t-call 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const template2 = ('__template__9');
+    let b2 = call(this, template2, ctx, node, key + \`__1\`);
+    let d1 = ctx['counter'];
+    return block1([d1], [b2]);
   }
 }"
 `;

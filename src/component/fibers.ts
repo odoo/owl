@@ -70,7 +70,6 @@ export class Fiber {
 
   constructor(node: ComponentNode, parent: Fiber | null) {
     this.node = node;
-    node.fiber = this;
     this.parent = parent;
     if (parent) {
       const root = parent.root;

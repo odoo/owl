@@ -40,15 +40,14 @@ exports[`refs refs are properly bound in slots 2`] = `
   let block1 = createBlock(\`<div><span class=\\"counter\\"><block-text-0/></span><block-child-0/></div>\`);
   let block2 = createBlock(\`<button block-handler-0=\\"click\\" block-ref=\\"1\\">do something</button>\`);
   
-  function slot2(ctx, node, key) {
-    const refs = ctx.__owl__.refs
+  function slot2(ctx, node, key = \\"\\") {
+    const refs = ctx.__owl__.refs;
     let d2 = [ctx['doSomething'], ctx];
     let d3 = (el) => refs[\`myButton\`] = el;
     return block2([d2, d3]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const refs = ctx.__owl__.refs;
     let d1 = ctx['state'].val;
     const ctx1 = capture(ctx);
     let b3 = component(\`Dialog\`, {slots: {'footer': {__render: slot2, __ctx: ctx1}}}, key + \`__3\`, node, ctx);

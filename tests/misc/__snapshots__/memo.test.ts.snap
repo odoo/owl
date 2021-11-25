@@ -18,7 +18,7 @@ exports[`Memo if no prop change, prevent renderings from above  2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
-  function slot1(ctx, node, key) {
+  function slot1(ctx, node, key = \\"\\") {
     let b6 = text(ctx['state'].a);
     let b7 = text(ctx['state'].b);
     let b8 = text(ctx['state'].c);
@@ -53,7 +53,7 @@ exports[`Memo if no props, prevent renderings from above  2`] = `
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
-  function slot2(ctx, node, key) {
+  function slot2(ctx, node, key = \\"\\") {
     return component(\`Child\`, {value: ctx['state'].value}, key + \`__3\`, node, ctx);
   }
   
@@ -71,7 +71,7 @@ exports[`Memo if no props, prevent renderings from above (work with simple html)
   let { text, createBlock, list, multi, html, toggler, component } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
-  function slot1(ctx, node, key) {
+  function slot1(ctx, node, key = \\"\\") {
     return text(ctx['state'].value);
   }
   

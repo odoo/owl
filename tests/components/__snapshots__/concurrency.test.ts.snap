@@ -1044,6 +1044,30 @@ exports[`destroying/recreating a subwidget with different props (if start is not
 }"
 `;
 
+exports[`parent and child rendered at exact same time 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['props'].value);
+  }
+}"
+`;
+
+exports[`parent and child rendered at exact same time 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`Child\`, {value: ctx['state'].value}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
 exports[`properly behave when destroyed/unmounted while rendering  1`] = `
 "function anonymous(bdom, helpers
 ) {

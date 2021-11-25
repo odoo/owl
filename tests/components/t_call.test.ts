@@ -82,6 +82,29 @@ describe("t-call", () => {
     expect(fixture.innerHTML).toBe("<div><p>lucas</p>1</div>");
   });
 
+  test("handlers are properly bound through a dynamic t-call", async () => {
+    let parent: any;
+
+    const subTemplate = xml`<p t-on-click="() => this.update()">lucas</p>`;
+    class Parent extends Component {
+      static template = xml`
+        <div><t t-call="{{'${subTemplate}'}}"/><t t-esc="counter"/></div>`;
+      counter = 0;
+
+      update() {
+        expect(this).toBe(parent);
+        this.counter++;
+        this.render();
+      }
+    }
+    parent = await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><p>lucas</p>0</div>");
+    fixture.querySelector("p")!.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><p>lucas</p>1</div>");
+  });
+
   test("parent is set within t-call", async () => {
     const sub = xml`<Child/>`;
     let child: any = null;

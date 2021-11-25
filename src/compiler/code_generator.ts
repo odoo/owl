@@ -31,6 +31,7 @@ export interface Config {
 
 export interface CodeGenOptions extends Config {
   hasSafeContext?: boolean;
+  name?: string;
 }
 
 // using a non-html document so that <inner/outer>HTML serializes as XML instead
@@ -194,20 +195,20 @@ export class CodeGenerator {
   isDebug: boolean = false;
   targets: CodeTarget[] = [];
   target = new CodeTarget("template");
-  templateName: string;
+  templateName?: string;
   dev: boolean;
   translateFn: (s: string) => string;
   translatableAttributes: string[];
   ast: AST;
   staticCalls: { id: string; template: string }[] = [];
 
-  constructor(name: string, ast: AST, options: CodeGenOptions) {
+  constructor(ast: AST, options: CodeGenOptions) {
     this.translateFn = options.translateFn || ((s: string) => s);
     this.translatableAttributes = options.translatableAttributes || TRANSLATABLE_ATTRS;
     this.hasSafeContext = options.hasSafeContext || false;
     this.dev = options.dev || false;
     this.ast = ast;
-    this.templateName = name;
+    this.templateName = options.name;
   }
 
   generateCode(): string {
@@ -229,6 +230,9 @@ export class CodeGenerator {
       `  let { text, createBlock, list, multi, html, toggler, component } = bdom;`,
       `let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;`,
     ];
+    if (this.templateName) {
+      mainCode.push(`// Template name: "${this.templateName}"`);
+    }
 
     for (let { id, template } of this.staticCalls) {
       mainCode.push(`const ${id} = getTemplate(${template});`);

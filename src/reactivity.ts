@@ -233,9 +233,9 @@ export function useState<T extends object>(state: T): Reactive<T> {
       node,
       batched(() => node.render())
     );
+    onWillUnmount(() => clearReactivesForCallback(render));
   }
   const render = batchedRenderFunctions.get(node)!;
   const reactiveState = reactive(state, render);
-  onWillUnmount(() => clearReactivesForCallback(render));
   return reactiveState;
 }

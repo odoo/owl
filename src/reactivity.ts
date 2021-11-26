@@ -49,6 +49,10 @@ function observeTargetKey(target: Target, key: ObjectKey, callback: Callback): v
     keyToCallbacks.set(key, new Set());
   }
   keyToCallbacks.get(key)!.add(callback);
+  if (!callbacksToTargets.has(callback)) {
+    callbacksToTargets.set(callback, new Set());
+  }
+  callbacksToTargets.get(callback)!.add(target);
 }
 /**
  * Notify Reactives that are observing a given target that a key has changed on
@@ -95,9 +99,10 @@ function clearReactivesForCallback(callback: Callback): void {
       callbacks.delete(callback);
     }
   }
+  targetsToClear.clear();
 }
 
-const reactiveCache = new WeakMap<Target, Map<Callback, Reactive>>();
+const reactiveCache = new WeakMap<Target, WeakMap<Callback, Reactive>>();
 /**
  * Creates a reactive proxy for an object. Reading data on the reactive object
  * subscribes to changes to the data. Writing data on the object will cause the
@@ -182,10 +187,6 @@ export function reactive<T extends Target>(target: T, callback: Callback): React
       },
     });
     reactivesForTarget.set(callback, proxy);
-    if (!callbacksToTargets.has(callback)) {
-      callbacksToTargets.set(callback, new Set());
-    }
-    callbacksToTargets.get(callback)!.add(target);
   }
   return reactivesForTarget.get(callback) as Reactive<T>;
 }

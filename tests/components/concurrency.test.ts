@@ -1,11 +1,14 @@
-import { App, Component, mount, onWillStart, onWillUpdateProps, useState } from "../../src";
-import { Fiber } from "../../src/component/fibers";
 import {
+  App,
+  Component,
+  mount,
   onMounted,
-  onPatched,
-  onWillPatch,
+  onWillStart,
   onWillUnmount,
-} from "../../src/component/lifecycle_hooks";
+  onWillUpdateProps,
+  useState,
+} from "../../src";
+import { Fiber } from "../../src/component/fibers";
 import { Scheduler } from "../../src/component/scheduler";
 import { status } from "../../src/component/status";
 import { xml } from "../../src/tags";
@@ -42,13 +45,12 @@ afterEach(() => {
 
 describe("async rendering", () => {
   test("destroying a widget before start is over", async () => {
-    let steps: string[] = [];
     let def = makeDeferred();
     let w: any = null;
     class W extends Component {
       static template = xml`<div/>`;
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
         expect(status(this)).toBe("new");
         w = this;
         onWillStart(() => def);
@@ -62,18 +64,17 @@ describe("async rendering", () => {
     def.resolve();
     await nextTick();
     expect(status(w)).toBe("destroyed");
-    expect(steps).toEqual(["W:setup", "W:willStart", "W:destroyed"]);
+    expect(["W:setup", "W:willStart", "W:destroyed"]).toBeLogged();
   });
 });
 
 test("destroying/recreating a subwidget with different props (if start is not over)", async () => {
-  let steps: string[] = [];
   let def = makeDeferred();
   let n = 0;
   class Child extends Component {
     static template = xml`<span>child:<t t-esc="props.val"/></span>`;
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       n++;
       onWillStart(() => def);
     }
@@ -87,11 +88,13 @@ test("destroying/recreating a subwidget with different props (if start is not ov
     static components = { Child };
     state = useState({ val: 1 });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
 
   const w = await mount(W, fixture);
+
+  expect(["W:setup", "W:willStart", "W:willRender", "W:rendered", "W:mounted"]).toBeLogged();
 
   expect(n).toBe(0);
 
@@ -100,42 +103,35 @@ test("destroying/recreating a subwidget with different props (if start is not ov
   await nextMicroTick();
   expect(n).toBe(1);
 
+  expect(["W:willRender", "Child:setup", "Child:willStart", "W:rendered"]).toBeLogged();
+
   w.state.val = 3;
   await nextMicroTick();
   await nextMicroTick();
   expect(n).toBe(2);
 
-  def.resolve();
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><span>child:3</span></div>");
-  expect(Object.values(w.__owl__.children).length).toBe(1);
-  expect(steps).toEqual([
-    "W:setup",
-    "W:willStart",
-    "W:willRender",
-    "W:rendered",
-    "W:mounted",
-    "W:willRender",
-    "Child:setup",
-    "Child:willStart",
-    "W:rendered",
+  expect([
     "W:willRender",
     "Child:destroyed",
     "Child:setup",
     "Child:willStart",
     "W:rendered",
+  ]).toBeLogged();
+
+  def.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>child:3</span></div>");
+  expect(Object.values(w.__owl__.children).length).toBe(1);
+  expect([
     "Child:willRender",
     "Child:rendered",
     "W:willPatch",
     "Child:mounted",
     "W:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
 });
 
 test("creating two async components, scenario 1", async () => {
-  let steps: string[] = [];
-
   let defA = makeDeferred();
   let defB = makeDeferred();
   let nbRenderings: number = 0;
@@ -144,7 +140,7 @@ test("creating two async components, scenario 1", async () => {
     static template = xml`<span><t t-esc="getValue()"/></span>`;
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       onWillStart(() => defA);
     }
 
@@ -157,7 +153,7 @@ test("creating two async components, scenario 1", async () => {
   class ChildB extends Component {
     static template = xml`<span>b</span>`;
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       onWillStart(() => defB);
     }
   }
@@ -170,36 +166,29 @@ test("creating two async components, scenario 1", async () => {
     static components = { ChildA, ChildB };
     state = useState({ flagA: false, flagB: false });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
 
   const parent = await mount(Parent, fixture);
-  expect(fixture.innerHTML).toBe("");
-  parent.state.flagA = true;
-  await nextTick();
-  expect(fixture.innerHTML).toBe("");
-  parent.state.flagB = true;
-  await nextTick();
-  expect(fixture.innerHTML).toBe("");
-  defB.resolve();
-  await nextTick();
-  expect(fixture.innerHTML).toBe("");
-  expect(nbRenderings).toBe(0);
-  defA.resolve();
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<span>a</span><span>b</span>");
-  expect(nbRenderings).toBe(1);
-  expect(steps).toEqual([
+  expect([
     "Parent:setup",
     "Parent:willStart",
     "Parent:willRender",
     "Parent:rendered",
     "Parent:mounted",
-    "Parent:willRender",
-    "ChildA:setup",
-    "ChildA:willStart",
-    "Parent:rendered",
+  ]).toBeLogged();
+  expect(fixture.innerHTML).toBe("");
+
+  parent.state.flagA = true;
+  await nextTick();
+  expect(["Parent:willRender", "ChildA:setup", "ChildA:willStart", "Parent:rendered"]).toBeLogged();
+  expect(fixture.innerHTML).toBe("");
+
+  parent.state.flagB = true;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("");
+  expect([
     "Parent:willRender",
     "ChildA:destroyed",
     "ChildA:setup",
@@ -207,20 +196,29 @@ test("creating two async components, scenario 1", async () => {
     "ChildB:setup",
     "ChildB:willStart",
     "Parent:rendered",
-    "ChildB:willRender",
-    "ChildB:rendered",
+  ]).toBeLogged();
+
+  defB.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("");
+  expect(nbRenderings).toBe(0);
+  expect(["ChildB:willRender", "ChildB:rendered"]).toBeLogged();
+
+  defA.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<span>a</span><span>b</span>");
+  expect(nbRenderings).toBe(1);
+  expect([
     "ChildA:willRender",
     "ChildA:rendered",
     "Parent:willPatch",
     "ChildB:mounted",
     "ChildA:mounted",
     "Parent:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
 });
 
 test("creating two async components, scenario 2", async () => {
-  let steps: string[] = [];
   let defA = makeDeferred();
   let defB = makeDeferred();
 
@@ -228,7 +226,7 @@ test("creating two async components, scenario 2", async () => {
     static template = xml`<span>a<t t-esc="props.val"/></span>`;
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       onWillUpdateProps(() => defA);
     }
   }
@@ -236,7 +234,7 @@ test("creating two async components, scenario 2", async () => {
   class ChildB extends Component {
     static template = xml`<span>b<t t-esc="props.val"/></span>`;
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       onWillStart(() => defB);
     }
   }
@@ -250,26 +248,11 @@ test("creating two async components, scenario 2", async () => {
     static components = { ChildA, ChildB };
     state = useState({ valA: 1, valB: 2, flagB: false });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
   const parent = await mount(Parent, fixture);
-
-  expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
-  parent.state.valA = 2;
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
-  parent.state.flagB = true;
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
-  defB.resolve();
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
-  defA.resolve();
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><span>a2</span><span>b2</span></div>");
-
-  expect(steps).toEqual([
+  expect([
     "Parent:setup",
     "Parent:willStart",
     "Parent:willRender",
@@ -280,16 +263,34 @@ test("creating two async components, scenario 2", async () => {
     "ChildA:rendered",
     "ChildA:mounted",
     "Parent:mounted",
-    "Parent:willRender",
-    "ChildA:willUpdateProps",
-    "Parent:rendered",
+  ]).toBeLogged();
+  expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
+
+  parent.state.valA = 2;
+  await nextTick();
+  expect(["Parent:willRender", "ChildA:willUpdateProps", "Parent:rendered"]).toBeLogged();
+  expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
+
+  parent.state.flagB = true;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
+  expect([
     "Parent:willRender",
     "ChildA:willUpdateProps",
     "ChildB:setup",
     "ChildB:willStart",
     "Parent:rendered",
-    "ChildB:willRender",
-    "ChildB:rendered",
+  ]).toBeLogged();
+
+  defB.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
+  expect(["ChildB:willRender", "ChildB:rendered"]).toBeLogged();
+
+  defA.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>a2</span><span>b2</span></div>");
+  expect([
     "ChildA:willRender",
     "ChildA:rendered",
     "Parent:willPatch",
@@ -297,26 +298,24 @@ test("creating two async components, scenario 2", async () => {
     "ChildB:mounted",
     "ChildA:patched",
     "Parent:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
 });
 
 test("creating two async components, scenario 3 (patching in the same frame)", async () => {
-  let steps: string[] = [];
   let defA = makeDeferred();
   let defB = makeDeferred();
 
   class ChildA extends Component {
     static template = xml`<span>a<t t-esc="props.val"/></span>`;
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       onWillUpdateProps(() => defA);
     }
   }
   class ChildB extends Component {
     static template = xml`<span>b<t t-esc="props.val"/></span>`;
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       onWillStart(() => defB);
     }
   }
@@ -330,25 +329,11 @@ test("creating two async components, scenario 3 (patching in the same frame)", a
     static components = { ChildA, ChildB };
     state = useState({ valA: 1, valB: 2, flagB: false });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
   const parent = await mount(Parent, fixture);
-
-  expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
-  parent.state.valA = 2;
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
-  parent.state.flagB = true;
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
-  defB.resolve();
-  expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
-  defA.resolve();
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><span>a2</span><span>b2</span></div>");
-
-  expect(steps).toEqual([
+  expect([
     "Parent:setup",
     "Parent:willStart",
     "Parent:willRender",
@@ -359,14 +344,33 @@ test("creating two async components, scenario 3 (patching in the same frame)", a
     "ChildA:rendered",
     "ChildA:mounted",
     "Parent:mounted",
-    "Parent:willRender",
-    "ChildA:willUpdateProps",
-    "Parent:rendered",
+  ]).toBeLogged();
+  expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
+
+  parent.state.valA = 2;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
+  expect(["Parent:willRender", "ChildA:willUpdateProps", "Parent:rendered"]).toBeLogged();
+
+  parent.state.flagB = true;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
+  expect([
     "Parent:willRender",
     "ChildA:willUpdateProps",
     "ChildB:setup",
     "ChildB:willStart",
     "Parent:rendered",
+  ]).toBeLogged();
+
+  defB.resolve();
+  expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
+  expect([]).toBeLogged();
+
+  defA.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>a2</span><span>b2</span></div>");
+  expect([
     "ChildB:willRender",
     "ChildB:rendered",
     "ChildA:willRender",
@@ -376,19 +380,17 @@ test("creating two async components, scenario 3 (patching in the same frame)", a
     "ChildB:mounted",
     "ChildA:patched",
     "Parent:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
 });
 
 test("update a sub-component twice in the same frame", async () => {
-  const steps: string[] = [];
   const defs = [makeDeferred(), makeDeferred()];
   let index = 0;
   class ChildA extends Component {
     static template = xml`<span><t t-esc="props.val"/></span>`;
     setup() {
       onWillUpdateProps(() => defs[index++]);
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
 
@@ -397,24 +399,12 @@ test("update a sub-component twice in the same frame", async () => {
     static components = { ChildA };
     state = useState({ valA: 1 });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
   const parent = await mount(Parent, fixture);
-
   expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
-  parent.state.valA = 2;
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
-  parent.state.valA = 3;
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
-  defs[0].resolve();
-  await Promise.resolve();
-  defs[1].resolve();
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
-  expect(steps).toEqual([
+  expect([
     "Parent:setup",
     "Parent:willStart",
     "Parent:willRender",
@@ -425,33 +415,42 @@ test("update a sub-component twice in the same frame", async () => {
     "ChildA:rendered",
     "ChildA:mounted",
     "Parent:mounted",
-    "Parent:willRender",
-    "ChildA:willUpdateProps",
-    "Parent:rendered",
-    "Parent:willRender",
-    "ChildA:willUpdateProps",
-    "Parent:rendered",
+  ]).toBeLogged();
+
+  parent.state.valA = 2;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+  expect(["Parent:willRender", "ChildA:willUpdateProps", "Parent:rendered"]).toBeLogged();
+
+  parent.state.valA = 3;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+  expect(["Parent:willRender", "ChildA:willUpdateProps", "Parent:rendered"]).toBeLogged();
+
+  defs[0].resolve();
+  await Promise.resolve();
+  defs[1].resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
+  expect([
     "ChildA:willRender",
     "ChildA:rendered",
     "Parent:willPatch",
     "ChildA:willPatch",
     "ChildA:patched",
     "Parent:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
 });
 
 test("update a sub-component twice in the same frame, 2", async () => {
-  const steps: string[] = [];
   class ChildA extends Component {
     static template = xml`<span><t t-esc="val()"/></span>`;
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
 
     val() {
-      steps.push("render");
       return this.props.val;
     }
   }
@@ -461,16 +460,11 @@ test("update a sub-component twice in the same frame, 2", async () => {
     static components = { ChildA };
     state = useState({ valA: 1 });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
   const parent = await mount(Parent, fixture);
-
-  expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
-  parent.state.valA = 2;
-  await nextMicroTick();
-  await nextMicroTick();
-  expect(steps.splice(0)).toEqual([
+  expect([
     "Parent:setup",
     "Parent:willStart",
     "Parent:willRender",
@@ -478,64 +472,48 @@ test("update a sub-component twice in the same frame, 2", async () => {
     "ChildA:willStart",
     "Parent:rendered",
     "ChildA:willRender",
-    "render",
     "ChildA:rendered",
     "ChildA:mounted",
     "Parent:mounted",
-    "Parent:willRender",
-    "ChildA:willUpdateProps",
-    "Parent:rendered",
-  ]);
+  ]).toBeLogged();
+  expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+
+  parent.state.valA = 2;
+  await nextMicroTick();
+  await nextMicroTick();
+  expect(["Parent:willRender", "ChildA:willUpdateProps", "Parent:rendered"]).toBeLogged();
   await nextMicroTick();
   // For an unknown reason, this test fails on windows without the next microtick. It works
   // in linux and osx, but fails on at least this machine.
   // I do not see anything harmful in waiting an extra tick. But it is annoying to not
   // know what is different.
   await nextMicroTick();
-  expect(steps.splice(0)).toEqual(["ChildA:willRender", "render", "ChildA:rendered"]);
+  expect(["ChildA:willRender", "ChildA:rendered"]).toBeLogged();
   expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
   parent.state.valA = 3;
   await nextMicroTick();
   await nextMicroTick();
-  expect(steps.splice(0)).toEqual([
-    "Parent:willRender",
-    "ChildA:willUpdateProps",
-    "Parent:rendered",
-  ]);
+  expect(["Parent:willRender", "ChildA:willUpdateProps", "Parent:rendered"]).toBeLogged();
+
   await nextMicroTick();
   // same as above
   await nextMicroTick();
-  expect(steps).toEqual(["ChildA:willRender", "render", "ChildA:rendered"]);
+  expect(["ChildA:willRender", "ChildA:rendered"]).toBeLogged();
   expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
-  expect(steps).toEqual([
-    "ChildA:willRender",
-    "render",
-    "ChildA:rendered",
-    "Parent:willPatch",
-    "ChildA:willPatch",
-    "ChildA:patched",
-    "Parent:patched",
-  ]);
-  Object.freeze(steps);
+  expect(["Parent:willPatch", "ChildA:willPatch", "ChildA:patched", "Parent:patched"]).toBeLogged();
 });
 
 test("properly behave when destroyed/unmounted while rendering ", async () => {
-  const steps: string[] = [];
   const def = makeDeferred();
 
   class SubChild extends Component {
     static template = xml`<div/>`;
 
     setup() {
-      useLogLifecycle(steps);
-      onWillPatch(() => {
-        throw new Error("Should not happen!");
-      });
-      onPatched(() => {
-        throw new Error("Should not happen!");
-      });
+      useLogLifecycle();
       onWillUpdateProps(() => {
         return def;
       });
@@ -546,7 +524,7 @@ test("properly behave when destroyed/unmounted while rendering ", async () => {
     static template = xml`<div><SubChild /></div>`;
     static components = { SubChild };
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
 
@@ -556,30 +534,13 @@ test("properly behave when destroyed/unmounted while rendering ", async () => {
     static components = { Child };
     state = useState({ flag: true, val: "Framboise Lindemans" });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
 
   const parent = await mount(Parent, fixture);
   expect(fixture.innerHTML).toBe("<div><div><div></div></div></div>");
-
-  // this change triggers a rendering of the parent. This rendering is delayed,
-  // because child is now waiting for def to be resolved
-  parent.state.val = "Framboise Girardin";
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><div><div></div></div></div>");
-
-  // with this, we remove child, and subchild, even though it is not finished
-  // rendering from previous changes
-  parent.state.flag = false;
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div></div>");
-
-  // we now resolve def, so the child rendering is now complete.
-  def.resolve();
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div></div>");
-  expect(steps).toEqual([
+  expect([
     "Parent:setup",
     "Parent:willStart",
     "Parent:willRender",
@@ -595,12 +556,28 @@ test("properly behave when destroyed/unmounted while rendering ", async () => {
     "SubChild:mounted",
     "Child:mounted",
     "Parent:mounted",
+  ]).toBeLogged();
+
+  // this change triggers a rendering of the parent. This rendering is delayed,
+  // because child is now waiting for def to be resolved
+  parent.state.val = "Framboise Girardin";
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><div><div></div></div></div>");
+  expect([
     "Parent:willRender",
     "Child:willUpdateProps",
     "Parent:rendered",
     "Child:willRender",
     "SubChild:willUpdateProps",
     "Child:rendered",
+  ]).toBeLogged();
+
+  // with this, we remove child, and subchild, even though it is not finished
+  // rendering from previous changes
+  parent.state.flag = false;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div></div>");
+  expect([
     "Parent:willRender",
     "Parent:rendered",
     "Parent:willPatch",
@@ -609,17 +586,20 @@ test("properly behave when destroyed/unmounted while rendering ", async () => {
     "SubChild:destroyed",
     "Child:destroyed",
     "Parent:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
+
+  // we now resolve def, so the child rendering is now complete.
+  def.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div></div>");
+  expect([]).toBeLogged();
 });
 
 test("rendering component again in next microtick", async () => {
-  const steps: string[] = [];
-
   class Child extends Component {
     static template = xml`<div>Child</div>`;
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
 
@@ -632,7 +612,7 @@ test("rendering component again in next microtick", async () => {
     static components = { Child };
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
     async onClick() {
       this.env.config.flag = true;
@@ -645,16 +625,18 @@ test("rendering component again in next microtick", async () => {
   const env = { config: { flag: false } };
   await new App(Parent).configure({ env }).mount(fixture);
   expect(fixture.innerHTML).toBe("<div><button>Click</button></div>");
-  fixture.querySelector("button")!.click();
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><button>Click</button><div>Child</div></div>");
-
-  expect(steps).toEqual([
+  expect([
     "Parent:setup",
     "Parent:willStart",
     "Parent:willRender",
     "Parent:rendered",
     "Parent:mounted",
+  ]).toBeLogged();
+
+  fixture.querySelector("button")!.click();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><button>Click</button><div>Child</div></div>");
+  expect([
     "Parent:willRender",
     "Child:setup",
     "Child:willStart",
@@ -669,19 +651,17 @@ test("rendering component again in next microtick", async () => {
     "Parent:willPatch",
     "Child:mounted",
     "Parent:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
 });
 
 test("concurrent renderings scenario 1", async () => {
-  const steps: string[] = [];
   const def = makeDeferred();
   let stateB: any = null;
 
   class ComponentC extends Component {
     static template = xml`<span><t t-esc="props.fromA"/><t t-esc="someValue()"/></span>`;
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       onWillUpdateProps(() => def);
     }
     someValue() {
@@ -697,7 +677,7 @@ test("concurrent renderings scenario 1", async () => {
 
     setup() {
       stateB = this.state;
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
 
@@ -706,31 +686,13 @@ test("concurrent renderings scenario 1", async () => {
     static components = { ComponentB };
     state = useState({ fromA: 1 });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
 
   const component = await mount(ComponentA, fixture);
-
   expect(fixture.innerHTML).toBe("<div><p><span>1b</span></p></div>");
-
-  stateB.fromB = "c";
-  await nextTick();
-
-  expect(fixture.innerHTML).toBe("<div><p><span>1b</span></p></div>");
-
-  component.state.fromA = 2;
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p><span>1b</span></p></div>");
-
-  expect(ComponentC.prototype.someValue).toBeCalledTimes(1);
-  def.resolve();
-  await nextTick();
-
-  expect(fixture.innerHTML).toBe("<div><p><span>2c</span></p></div>");
-  expect(ComponentC.prototype.someValue).toBeCalledTimes(2);
-
-  expect(steps).toEqual([
+  expect([
     "ComponentA:setup",
     "ComponentA:willStart",
     "ComponentA:willRender",
@@ -746,15 +708,35 @@ test("concurrent renderings scenario 1", async () => {
     "ComponentC:mounted",
     "ComponentB:mounted",
     "ComponentA:mounted",
+  ]).toBeLogged();
+
+  stateB.fromB = "c";
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p><span>1b</span></p></div>");
+  expect([
     "ComponentB:willRender",
     "ComponentC:willUpdateProps",
     "ComponentB:rendered",
+  ]).toBeLogged();
+
+  component.state.fromA = 2;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p><span>1b</span></p></div>");
+  expect([
     "ComponentA:willRender",
     "ComponentB:willUpdateProps",
     "ComponentA:rendered",
     "ComponentB:willRender",
     "ComponentC:willUpdateProps",
     "ComponentB:rendered",
+  ]).toBeLogged();
+  expect(ComponentC.prototype.someValue).toBeCalledTimes(1);
+
+  def.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p><span>2c</span></p></div>");
+  expect(ComponentC.prototype.someValue).toBeCalledTimes(2);
+  expect([
     "ComponentC:willRender",
     "ComponentC:rendered",
     "ComponentA:willPatch",
@@ -763,12 +745,10 @@ test("concurrent renderings scenario 1", async () => {
     "ComponentC:patched",
     "ComponentB:patched",
     "ComponentA:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
 });
 
 test("concurrent renderings scenario 2", async () => {
-  const steps: string[] = [];
   // this test asserts that a rendering initiated before another one, and that
   // ends after it, is re-mapped to that second rendering
   const defs = [makeDeferred(), makeDeferred()];
@@ -778,7 +758,7 @@ test("concurrent renderings scenario 2", async () => {
     static template = xml`<span><t t-esc="props.fromA"/><t t-esc="props.fromB"/></span>`;
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       onWillUpdateProps(() => defs[index++]);
     }
   }
@@ -789,7 +769,7 @@ test("concurrent renderings scenario 2", async () => {
     state = useState({ fromB: "b" });
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       stateB = this.state;
     }
   }
@@ -799,30 +779,13 @@ test("concurrent renderings scenario 2", async () => {
     static components = { ComponentB };
     state = useState({ fromA: 1 });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
 
   const component = await mount(ComponentA, fixture);
-
   expect(fixture.innerHTML).toBe("<div>1<p><span>1b</span></p></div>");
-
-  component.state.fromA = 2;
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div>1<p><span>1b</span></p></div>");
-
-  stateB.fromB = "c";
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div>1<p><span>1b</span></p></div>");
-
-  defs[1].resolve(); // resolve rendering initiated in B
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div>2<p><span>2c</span></p></div>");
-
-  defs[0].resolve(); // resolve rendering initiated in A
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div>2<p><span>2c</span></p></div>");
-  expect(steps).toEqual([
+  expect([
     "ComponentA:setup",
     "ComponentA:willStart",
     "ComponentA:willRender",
@@ -838,15 +801,33 @@ test("concurrent renderings scenario 2", async () => {
     "ComponentC:mounted",
     "ComponentB:mounted",
     "ComponentA:mounted",
+  ]).toBeLogged();
+
+  component.state.fromA = 2;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div>1<p><span>1b</span></p></div>");
+  expect([
     "ComponentA:willRender",
     "ComponentB:willUpdateProps",
     "ComponentA:rendered",
     "ComponentB:willRender",
     "ComponentC:willUpdateProps",
     "ComponentB:rendered",
+  ]).toBeLogged();
+
+  stateB.fromB = "c";
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div>1<p><span>1b</span></p></div>");
+  expect([
     "ComponentB:willRender",
     "ComponentC:willUpdateProps",
     "ComponentB:rendered",
+  ]).toBeLogged();
+
+  defs[1].resolve(); // resolve rendering initiated in B
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div>2<p><span>2c</span></p></div>");
+  expect([
     "ComponentC:willRender",
     "ComponentC:rendered",
     "ComponentA:willPatch",
@@ -855,12 +836,15 @@ test("concurrent renderings scenario 2", async () => {
     "ComponentC:patched",
     "ComponentB:patched",
     "ComponentA:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
+
+  defs[0].resolve(); // resolve rendering initiated in A
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div>2<p><span>2c</span></p></div>");
+  expect([]).toBeLogged();
 });
 
 test("concurrent renderings scenario 2bis", async () => {
-  const steps: string[] = [];
   const defs = [makeDeferred(), makeDeferred()];
   let index = 0;
   let stateB: any = null;
@@ -868,7 +852,7 @@ test("concurrent renderings scenario 2bis", async () => {
     static template = xml`<span><t t-esc="props.fromA"/><t t-esc="props.fromB"/></span>`;
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       onWillUpdateProps(() => defs[index++]);
     }
   }
@@ -879,7 +863,7 @@ test("concurrent renderings scenario 2bis", async () => {
     state = useState({ fromB: "b" });
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       stateB = this.state;
     }
   }
@@ -890,30 +874,13 @@ test("concurrent renderings scenario 2bis", async () => {
     state = useState({ fromA: 1 });
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
 
   const component = await mount(ComponentA, fixture);
-
   expect(fixture.innerHTML).toBe("<div><p><span>1b</span></p></div>");
-
-  component.state.fromA = 2;
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p><span>1b</span></p></div>");
-
-  stateB.fromB = "c";
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p><span>1b</span></p></div>");
-
-  defs[0].resolve(); // resolve rendering initiated in A
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p><span>1b</span></p></div>"); // TODO: is this what we want?? 2b could be ok too
-
-  defs[1].resolve(); // resolve rendering initiated in B
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p><span>2c</span></p></div>");
-  expect(steps).toEqual([
+  expect([
     "ComponentA:setup",
     "ComponentA:willStart",
     "ComponentA:willRender",
@@ -929,15 +896,38 @@ test("concurrent renderings scenario 2bis", async () => {
     "ComponentC:mounted",
     "ComponentB:mounted",
     "ComponentA:mounted",
+  ]).toBeLogged();
+
+  component.state.fromA = 2;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p><span>1b</span></p></div>");
+  expect([
     "ComponentA:willRender",
     "ComponentB:willUpdateProps",
     "ComponentA:rendered",
     "ComponentB:willRender",
     "ComponentC:willUpdateProps",
     "ComponentB:rendered",
+  ]).toBeLogged();
+
+  stateB.fromB = "c";
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p><span>1b</span></p></div>");
+  expect([
     "ComponentB:willRender",
     "ComponentC:willUpdateProps",
     "ComponentB:rendered",
+  ]).toBeLogged();
+
+  defs[0].resolve(); // resolve rendering initiated in A
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p><span>1b</span></p></div>"); // TODO: is this what we want?? 2b could be ok too
+  expect([]).toBeLogged();
+
+  defs[1].resolve(); // resolve rendering initiated in B
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p><span>2c</span></p></div>");
+  expect([
     "ComponentC:willRender",
     "ComponentC:rendered",
     "ComponentA:willPatch",
@@ -946,12 +936,10 @@ test("concurrent renderings scenario 2bis", async () => {
     "ComponentC:patched",
     "ComponentB:patched",
     "ComponentA:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
 });
 
 test("concurrent renderings scenario 3", async () => {
-  const steps: string[] = [];
   const defB = makeDeferred();
   const defsD = [makeDeferred(), makeDeferred()];
   let index = 0;
@@ -961,7 +949,7 @@ test("concurrent renderings scenario 3", async () => {
     static template = xml`<i><t t-esc="props.fromA"/><t t-esc="someValue()"/></i>`;
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       onWillUpdateProps(() => defsD[index++]);
     }
     someValue() {
@@ -975,7 +963,7 @@ test("concurrent renderings scenario 3", async () => {
     static components = { ComponentD };
     state = useState({ fromC: "c" });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       stateC = this.state;
     }
   }
@@ -985,7 +973,7 @@ test("concurrent renderings scenario 3", async () => {
     static components = { ComponentC };
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       onWillUpdateProps(() => defB);
     }
   }
@@ -996,69 +984,76 @@ test("concurrent renderings scenario 3", async () => {
     state = useState({ fromA: 1 });
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
 
   const component = await mount(ComponentA, fixture);
-
   expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
+  expect([
+    "ComponentA:setup",
+    "ComponentA:willStart",
+    "ComponentA:willRender",
+    "ComponentB:setup",
+    "ComponentB:willStart",
+    "ComponentA:rendered",
+    "ComponentB:willRender",
+    "ComponentC:setup",
+    "ComponentC:willStart",
+    "ComponentB:rendered",
+    "ComponentC:willRender",
+    "ComponentD:setup",
+    "ComponentD:willStart",
+    "ComponentC:rendered",
+    "ComponentD:willRender",
+    "ComponentD:rendered",
+    "ComponentD:mounted",
+    "ComponentC:mounted",
+    "ComponentB:mounted",
+    "ComponentA:mounted",
+  ]).toBeLogged();
 
   component.state.fromA = 2;
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
+  expect([
+    "ComponentA:willRender",
+    "ComponentB:willUpdateProps",
+    "ComponentA:rendered",
+  ]).toBeLogged();
 
   stateC.fromC = "d";
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
+  expect([
+    "ComponentC:willRender",
+    "ComponentD:willUpdateProps",
+    "ComponentC:rendered",
+  ]).toBeLogged();
 
   defB.resolve(); // resolve rendering initiated in A (still blocked in D)
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
+  expect([
+    "ComponentB:willRender",
+    "ComponentC:willUpdateProps",
+    "ComponentB:rendered",
+    "ComponentC:willRender",
+    "ComponentD:willUpdateProps",
+    "ComponentC:rendered",
+  ]).toBeLogged();
 
   defsD[0].resolve(); // resolve rendering initiated in C (should be ignored)
   await nextTick();
   expect(ComponentD.prototype.someValue).toBeCalledTimes(1);
   expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
+  expect([]).toBeLogged();
 
   defsD[1].resolve(); // completely resolve rendering initiated in A
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><p><span><i>2d</i></span></p></div>");
   expect(ComponentD.prototype.someValue).toBeCalledTimes(2);
-
-  expect(steps).toEqual([
-    "ComponentA:setup",
-    "ComponentA:willStart",
-    "ComponentA:willRender",
-    "ComponentB:setup",
-    "ComponentB:willStart",
-    "ComponentA:rendered",
-    "ComponentB:willRender",
-    "ComponentC:setup",
-    "ComponentC:willStart",
-    "ComponentB:rendered",
-    "ComponentC:willRender",
-    "ComponentD:setup",
-    "ComponentD:willStart",
-    "ComponentC:rendered",
-    "ComponentD:willRender",
-    "ComponentD:rendered",
-    "ComponentD:mounted",
-    "ComponentC:mounted",
-    "ComponentB:mounted",
-    "ComponentA:mounted",
-    "ComponentA:willRender",
-    "ComponentB:willUpdateProps",
-    "ComponentA:rendered",
-    "ComponentC:willRender",
-    "ComponentD:willUpdateProps",
-    "ComponentC:rendered",
-    "ComponentB:willRender",
-    "ComponentC:willUpdateProps",
-    "ComponentB:rendered",
-    "ComponentC:willRender",
-    "ComponentD:willUpdateProps",
-    "ComponentC:rendered",
+  expect([
     "ComponentD:willRender",
     "ComponentD:rendered",
     "ComponentA:willPatch",
@@ -1069,12 +1064,10 @@ test("concurrent renderings scenario 3", async () => {
     "ComponentC:patched",
     "ComponentB:patched",
     "ComponentA:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
 });
 
 test("concurrent renderings scenario 4", async () => {
-  const steps: string[] = [];
   const defB = makeDeferred();
   const defsD = [makeDeferred(), makeDeferred()];
   let index = 0;
@@ -1084,7 +1077,7 @@ test("concurrent renderings scenario 4", async () => {
     static template = xml`<i><t t-esc="props.fromA"/><t t-esc="someValue()"/></i>`;
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       onWillUpdateProps(() => defsD[index++]);
     }
     someValue() {
@@ -1098,7 +1091,7 @@ test("concurrent renderings scenario 4", async () => {
     static components = { ComponentD };
     state = useState({ fromC: "c" });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       stateC = this.state;
     }
   }
@@ -1108,7 +1101,7 @@ test("concurrent renderings scenario 4", async () => {
     static components = { ComponentC };
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       onWillUpdateProps(() => defB);
     }
   }
@@ -1119,37 +1112,13 @@ test("concurrent renderings scenario 4", async () => {
     state = useState({ fromA: 1 });
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
 
   const component = await mount(ComponentA, fixture);
-
   expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
-
-  component.state.fromA = 2;
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
-
-  stateC.fromC = "d";
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
-
-  defB.resolve(); // resolve rendering initiated in A (still blocked in D)
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
-
-  defsD[1].resolve(); // completely resolve rendering initiated in A
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p><span><i>2d</i></span></p></div>");
-  expect(ComponentD.prototype.someValue).toBeCalledTimes(2);
-
-  defsD[0].resolve(); // resolve rendering initiated in C (should be ignored)
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p><span><i>2d</i></span></p></div>");
-  expect(ComponentD.prototype.someValue).toBeCalledTimes(2);
-
-  expect(steps).toEqual([
+  expect([
     "ComponentA:setup",
     "ComponentA:willStart",
     "ComponentA:willRender",
@@ -1170,18 +1139,43 @@ test("concurrent renderings scenario 4", async () => {
     "ComponentC:mounted",
     "ComponentB:mounted",
     "ComponentA:mounted",
+  ]).toBeLogged();
+
+  component.state.fromA = 2;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
+  expect([
     "ComponentA:willRender",
     "ComponentB:willUpdateProps",
     "ComponentA:rendered",
+  ]).toBeLogged();
+
+  stateC.fromC = "d";
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
+  expect([
     "ComponentC:willRender",
     "ComponentD:willUpdateProps",
     "ComponentC:rendered",
+  ]).toBeLogged();
+
+  defB.resolve(); // resolve rendering initiated in A (still blocked in D)
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
+  expect([
     "ComponentB:willRender",
     "ComponentC:willUpdateProps",
     "ComponentB:rendered",
     "ComponentC:willRender",
     "ComponentD:willUpdateProps",
     "ComponentC:rendered",
+  ]).toBeLogged();
+
+  defsD[1].resolve(); // completely resolve rendering initiated in A
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p><span><i>2d</i></span></p></div>");
+  expect(ComponentD.prototype.someValue).toBeCalledTimes(2);
+  expect([
     "ComponentD:willRender",
     "ComponentD:rendered",
     "ComponentA:willPatch",
@@ -1192,12 +1186,16 @@ test("concurrent renderings scenario 4", async () => {
     "ComponentC:patched",
     "ComponentB:patched",
     "ComponentA:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
+
+  defsD[0].resolve(); // resolve rendering initiated in C (should be ignored)
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p><span><i>2d</i></span></p></div>");
+  expect(ComponentD.prototype.someValue).toBeCalledTimes(2);
+  expect([]).toBeLogged();
 });
 
 test("concurrent renderings scenario 5", async () => {
-  const steps: string[] = [];
   const defsB = [makeDeferred(), makeDeferred()];
   let index = 0;
 
@@ -1205,7 +1203,7 @@ test("concurrent renderings scenario 5", async () => {
     static template = xml`<p><t t-esc="someValue()" /></p>`;
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       onWillUpdateProps(() => defsB[index++]);
     }
     someValue() {
@@ -1219,60 +1217,64 @@ test("concurrent renderings scenario 5", async () => {
     static template = xml`<div><ComponentB fromA="state.fromA"/></div>`;
     state = useState({ fromA: 1 });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
 
   const component = await mount(ComponentA, fixture);
-
   expect(fixture.innerHTML).toBe("<div><p>1</p></div>");
+  expect([
+    "ComponentA:setup",
+    "ComponentA:willStart",
+    "ComponentA:willRender",
+    "ComponentB:setup",
+    "ComponentB:willStart",
+    "ComponentA:rendered",
+    "ComponentB:willRender",
+    "ComponentB:rendered",
+    "ComponentB:mounted",
+    "ComponentA:mounted",
+  ]).toBeLogged();
 
   component.state.fromA = 2;
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><p>1</p></div>");
+  expect([
+    "ComponentA:willRender",
+    "ComponentB:willUpdateProps",
+    "ComponentA:rendered",
+  ]).toBeLogged();
 
   component.state.fromA = 3;
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><p>1</p></div>");
+  expect([
+    "ComponentA:willRender",
+    "ComponentB:willUpdateProps",
+    "ComponentA:rendered",
+  ]).toBeLogged();
 
   defsB[0].resolve(); // resolve first re-rendering (should be ignored)
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><p>1</p></div>");
   expect(ComponentB.prototype.someValue).toBeCalledTimes(1);
+  expect([]).toBeLogged();
 
   defsB[1].resolve(); // resolve second re-rendering
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><p>3</p></div>");
   expect(ComponentB.prototype.someValue).toBeCalledTimes(2);
-  expect(steps).toEqual([
-    "ComponentA:setup",
-    "ComponentA:willStart",
-    "ComponentA:willRender",
-    "ComponentB:setup",
-    "ComponentB:willStart",
-    "ComponentA:rendered",
-    "ComponentB:willRender",
-    "ComponentB:rendered",
-    "ComponentB:mounted",
-    "ComponentA:mounted",
-    "ComponentA:willRender",
-    "ComponentB:willUpdateProps",
-    "ComponentA:rendered",
-    "ComponentA:willRender",
-    "ComponentB:willUpdateProps",
-    "ComponentA:rendered",
+  expect([
     "ComponentB:willRender",
     "ComponentB:rendered",
     "ComponentA:willPatch",
     "ComponentB:willPatch",
     "ComponentB:patched",
     "ComponentA:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
 });
 
 test("concurrent renderings scenario 6", async () => {
-  const steps: string[] = [];
   const defsB = [makeDeferred(), makeDeferred()];
   let index = 0;
 
@@ -1280,7 +1282,7 @@ test("concurrent renderings scenario 6", async () => {
     static template = xml`<p><t t-esc="someValue()" /></p>`;
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       onWillUpdateProps(() => defsB[index++]);
     }
     someValue() {
@@ -1295,32 +1297,13 @@ test("concurrent renderings scenario 6", async () => {
     state = useState({ fromA: 1 });
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
 
   const component = await mount(ComponentA, fixture);
-
   expect(fixture.innerHTML).toBe("<div><p>1</p></div>");
-
-  component.state.fromA = 2;
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p>1</p></div>");
-
-  component.state.fromA = 3;
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p>1</p></div>");
-
-  defsB[1].resolve(); // resolve second re-rendering
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p>3</p></div>");
-  expect(ComponentB.prototype.someValue).toBeCalledTimes(2);
-
-  defsB[0].resolve(); // resolve first re-rendering (should be ignored)
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p>3</p></div>");
-  expect(ComponentB.prototype.someValue).toBeCalledTimes(2);
-  expect(steps).toEqual([
+  expect([
     "ComponentA:setup",
     "ComponentA:willStart",
     "ComponentA:willRender",
@@ -1331,31 +1314,53 @@ test("concurrent renderings scenario 6", async () => {
     "ComponentB:rendered",
     "ComponentB:mounted",
     "ComponentA:mounted",
+  ]).toBeLogged();
+
+  component.state.fromA = 2;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p>1</p></div>");
+  expect([
     "ComponentA:willRender",
     "ComponentB:willUpdateProps",
     "ComponentA:rendered",
+  ]).toBeLogged();
+
+  component.state.fromA = 3;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p>1</p></div>");
+  expect([
     "ComponentA:willRender",
     "ComponentB:willUpdateProps",
     "ComponentA:rendered",
+  ]).toBeLogged();
+
+  defsB[1].resolve(); // resolve second re-rendering
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p>3</p></div>");
+  expect(ComponentB.prototype.someValue).toBeCalledTimes(2);
+  expect([
     "ComponentB:willRender",
     "ComponentB:rendered",
     "ComponentA:willPatch",
     "ComponentB:willPatch",
     "ComponentB:patched",
     "ComponentA:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
+
+  defsB[0].resolve(); // resolve first re-rendering (should be ignored)
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p>3</p></div>");
+  expect(ComponentB.prototype.someValue).toBeCalledTimes(2);
+  expect([]).toBeLogged();
 });
 
 test("concurrent renderings scenario 7", async () => {
-  const steps: string[] = [];
-
   class ComponentB extends Component {
     static template = xml`<p><t t-esc="props.fromA" /><t t-esc="someValue()" /></p>`;
     state = useState({ fromB: "b" });
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       onWillUpdateProps(() => {
         this.state.fromB = "c";
       });
@@ -1371,20 +1376,14 @@ test("concurrent renderings scenario 7", async () => {
     static template = xml`<div><ComponentB fromA="state.fromA"/></div>`;
     state = useState({ fromA: 1 });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
 
   const component = await mount(ComponentA, fixture);
-
   expect(fixture.innerHTML).toBe("<div><p>1b</p></div>");
   expect(ComponentB.prototype.someValue).toBeCalledTimes(1);
-
-  component.state.fromA = 2;
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p>2c</p></div>");
-  expect(ComponentB.prototype.someValue).toBeCalledTimes(2);
-  expect(steps).toEqual([
+  expect([
     "ComponentA:setup",
     "ComponentA:willStart",
     "ComponentA:willRender",
@@ -1395,6 +1394,13 @@ test("concurrent renderings scenario 7", async () => {
     "ComponentB:rendered",
     "ComponentB:mounted",
     "ComponentA:mounted",
+  ]).toBeLogged();
+
+  component.state.fromA = 2;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p>2c</p></div>");
+  expect(ComponentB.prototype.someValue).toBeCalledTimes(2);
+  expect([
     "ComponentA:willRender",
     "ComponentB:willUpdateProps",
     "ComponentA:rendered",
@@ -1404,20 +1410,17 @@ test("concurrent renderings scenario 7", async () => {
     "ComponentB:willPatch",
     "ComponentB:patched",
     "ComponentA:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
 });
 
 test("concurrent renderings scenario 8", async () => {
-  const steps: string[] = [];
-
   const def = makeDeferred();
   let stateB: any = null;
   class ComponentB extends Component {
     static template = xml`<p><t t-esc="props.fromA" /><t t-esc="state.fromB" /></p>`;
     state = useState({ fromB: "b" });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       stateB = this.state;
       onWillUpdateProps(() => def);
     }
@@ -1428,27 +1431,13 @@ test("concurrent renderings scenario 8", async () => {
     static template = xml`<div><ComponentB fromA="state.fromA"/></div>`;
     state = useState({ fromA: 1 });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
 
   const component = await mount(ComponentA, fixture);
-
   expect(fixture.innerHTML).toBe("<div><p>1b</p></div>");
-
-  component.state.fromA = 2;
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p>1b</p></div>");
-
-  stateB.fromB = "c";
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p>1b</p></div>");
-
-  def.resolve();
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p>2c</p></div>");
-
-  expect(steps).toEqual([
+  expect([
     "ComponentA:setup",
     "ComponentA:willStart",
     "ComponentA:willRender",
@@ -1459,17 +1448,33 @@ test("concurrent renderings scenario 8", async () => {
     "ComponentB:rendered",
     "ComponentB:mounted",
     "ComponentA:mounted",
+  ]).toBeLogged();
+
+  component.state.fromA = 2;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p>1b</p></div>");
+  expect([
     "ComponentA:willRender",
     "ComponentB:willUpdateProps",
     "ComponentA:rendered",
+  ]).toBeLogged();
+
+  stateB.fromB = "c";
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p>1b</p></div>");
+  expect([]).toBeLogged();
+
+  def.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p>2c</p></div>");
+  expect([
     "ComponentB:willRender",
     "ComponentB:rendered",
     "ComponentA:willPatch",
     "ComponentB:willPatch",
     "ComponentB:patched",
     "ComponentA:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
 });
 
 test("concurrent renderings scenario 9", async () => {
@@ -1485,14 +1490,13 @@ test("concurrent renderings scenario 9", async () => {
   // C state is updated, producing a re-rendering of C and D
   // this last re-rendering of C should be correctly re-mapped to the whole
   // re-rendering
-  const steps: string[] = [];
   const def = makeDeferred();
   let stateC: any = null;
 
   class ComponentD extends Component {
     static template = xml`<span><t t-esc="props.fromA"/><t t-esc="props.fromC"/></span>`;
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
 
@@ -1503,7 +1507,7 @@ test("concurrent renderings scenario 9", async () => {
 
     setup() {
       stateC = this.state;
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
   class ComponentB extends Component {
@@ -1511,7 +1515,7 @@ test("concurrent renderings scenario 9", async () => {
 
     setup() {
       onWillUpdateProps(() => def);
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
   class ComponentA extends Component {
@@ -1524,27 +1528,13 @@ test("concurrent renderings scenario 9", async () => {
     static components = { ComponentB, ComponentC };
     state = useState({ fromA: "a1" });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
 
   const component = await mount(ComponentA, fixture);
-
   expect(fixture.innerHTML).toBe("<div>a1<b>a1</b><p><span>a1b1</span></p></div>");
-
-  component.state.fromA = "a2";
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div>a1<b>a1</b><p><span>a1b1</span></p></div>");
-
-  stateC.fromC = "b2";
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div>a1<b>a1</b><p><span>a1b1</span></p></div>");
-
-  def.resolve();
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div>a2<b>a2</b><p><span>a2b2</span></p></div>");
-
-  expect(steps).toEqual([
+  expect([
     "ComponentA:setup",
     "ComponentA:willStart",
     "ComponentA:willRender",
@@ -1565,6 +1555,12 @@ test("concurrent renderings scenario 9", async () => {
     "ComponentC:mounted",
     "ComponentB:mounted",
     "ComponentA:mounted",
+  ]).toBeLogged();
+
+  component.state.fromA = "a2";
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div>a1<b>a1</b><p><span>a1b1</span></p></div>");
+  expect([
     "ComponentA:willRender",
     "ComponentB:willUpdateProps",
     "ComponentC:willUpdateProps",
@@ -1574,11 +1570,23 @@ test("concurrent renderings scenario 9", async () => {
     "ComponentC:rendered",
     "ComponentD:willRender",
     "ComponentD:rendered",
+  ]).toBeLogged();
+
+  stateC.fromC = "b2";
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div>a1<b>a1</b><p><span>a1b1</span></p></div>");
+  expect([
     "ComponentC:willRender",
     "ComponentD:willUpdateProps",
     "ComponentC:rendered",
     "ComponentD:willRender",
     "ComponentD:rendered",
+  ]).toBeLogged();
+
+  def.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div>a2<b>a2</b><p><span>a2b2</span></p></div>");
+  expect([
     "ComponentB:willRender",
     "ComponentB:rendered",
     "ComponentA:willPatch",
@@ -1589,8 +1597,7 @@ test("concurrent renderings scenario 9", async () => {
     "ComponentC:patched",
     "ComponentB:patched",
     "ComponentA:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
 });
 
 test("concurrent renderings scenario 10", async () => {
@@ -1609,7 +1616,6 @@ test("concurrent renderings scenario 10", async () => {
   // the global re-rendering, but handlers waiting for the rendering promise to
   // resolve might execute and we don't want them to crash/do anything
 
-  const steps: string[] = [];
   const defB = makeDeferred();
   const defC = makeDeferred();
   let stateB: any = null;
@@ -1617,7 +1623,7 @@ test("concurrent renderings scenario 10", async () => {
   class ComponentC extends Component {
     static template = xml`<span><t t-esc="value"/></span>`;
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       onWillStart(() => defC);
     }
     get value() {
@@ -1631,7 +1637,7 @@ test("concurrent renderings scenario 10", async () => {
     state = useState({ hasChild: false });
     static components = { ComponentC };
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       stateB = this.state;
       onWillUpdateProps(() => defB);
     }
@@ -1643,26 +1649,13 @@ test("concurrent renderings scenario 10", async () => {
     state = useState({ value: 1 });
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
 
   const componentA = await mount(ComponentA, fixture);
   expect(fixture.innerHTML).toBe("<div><p></p></div>");
-  stateB.hasChild = true;
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p></p></div>");
-
-  componentA.state.value = 2;
-  defC.resolve();
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p></p></div>");
-
-  defB.resolve();
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><p><span>2</span></p></div>");
-  expect(rendered).toBe(1);
-  expect(steps).toEqual([
+  expect([
     "ComponentA:setup",
     "ComponentA:willStart",
     "ComponentA:willRender",
@@ -1673,13 +1666,33 @@ test("concurrent renderings scenario 10", async () => {
     "ComponentB:rendered",
     "ComponentB:mounted",
     "ComponentA:mounted",
+  ]).toBeLogged();
+
+  stateB.hasChild = true;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p></p></div>");
+  expect([
     "ComponentB:willRender",
     "ComponentC:setup",
     "ComponentC:willStart",
     "ComponentB:rendered",
+  ]).toBeLogged();
+
+  componentA.state.value = 2;
+  defC.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p></p></div>");
+  expect([
     "ComponentA:willRender",
     "ComponentB:willUpdateProps",
     "ComponentA:rendered",
+  ]).toBeLogged();
+
+  defB.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><p><span>2</span></p></div>");
+  expect(rendered).toBe(1);
+  expect([
     "ComponentB:willRender",
     "ComponentC:destroyed",
     "ComponentC:setup",
@@ -1692,8 +1705,7 @@ test("concurrent renderings scenario 10", async () => {
     "ComponentC:mounted",
     "ComponentB:patched",
     "ComponentA:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
 });
 
 test("concurrent renderings scenario 11", async () => {
@@ -1702,7 +1714,6 @@ test("concurrent renderings scenario 11", async () => {
   // We check that in that case, the return value of the render method is a promise
   // that is resolved when the component is completely rendered (so, properly
   // remapped to the promise of the ambient rendering)
-  const steps: string[] = [];
   const def = makeDeferred();
   let child: any = null;
   class Child extends Component {
@@ -1710,7 +1721,7 @@ test("concurrent renderings scenario 11", async () => {
     val = 3;
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       onWillUpdateProps(() => {
         child = this;
         return def;
@@ -1723,22 +1734,12 @@ test("concurrent renderings scenario 11", async () => {
     static components = { Child };
     state = useState({ valA: 1 });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
   const parent = await mount(Parent, fixture);
   expect(fixture.innerHTML).toBe("<div><span>1|3</span></div>");
-  parent.state.valA = 2;
-
-  await nextTick();
-  setTimeout(() => {
-    def.resolve();
-  }, 20);
-  child.val = 5;
-  await child.render();
-  expect(fixture.innerHTML).toBe("<div><span>2|5</span></div>");
-
-  expect(steps).toEqual([
+  expect([
     "Parent:setup",
     "Parent:willStart",
     "Parent:willRender",
@@ -1749,6 +1750,17 @@ test("concurrent renderings scenario 11", async () => {
     "Child:rendered",
     "Child:mounted",
     "Parent:mounted",
+  ]).toBeLogged();
+
+  parent.state.valA = 2;
+  await nextTick();
+  setTimeout(() => {
+    def.resolve();
+  }, 20);
+  child.val = 5;
+  await child.render();
+  expect(fixture.innerHTML).toBe("<div><span>2|5</span></div>");
+  expect([
     "Parent:willRender",
     "Child:willUpdateProps",
     "Parent:rendered",
@@ -1758,8 +1770,7 @@ test("concurrent renderings scenario 11", async () => {
     "Child:willPatch",
     "Child:patched",
     "Parent:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
 });
 
 test("concurrent renderings scenario 12", async () => {
@@ -1769,13 +1780,12 @@ test("concurrent renderings scenario 12", async () => {
   //    to wait for its child (blocking) to be completed
   //    - twice in the next tick: it will twice reuse the same fiber (as it is
   //    rendered but not completed yet)
-  const steps: string[] = [];
   const def = makeDeferred();
 
   class Child extends Component {
     static template = xml`<span><t t-esc="props.val"/></span>`;
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       onWillUpdateProps(() => def);
     }
   }
@@ -1787,7 +1797,7 @@ test("concurrent renderings scenario 12", async () => {
     static components = { Child };
     state = useState({ val: 1 });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
 
     get val() {
@@ -1799,23 +1809,7 @@ test("concurrent renderings scenario 12", async () => {
   const parent = await mount(Parent, fixture);
   expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
   expect(rendered).toBe(1);
-
-  parent.state.val = 2;
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
-  expect(rendered).toBe(2);
-
-  parent.state.val = 3;
-  parent.state.val = 4;
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
-  expect(rendered).toBe(3);
-
-  def.resolve();
-  await nextTick();
-  expect(fixture.innerHTML).toBe("<div><span>4</span></div>");
-  expect(rendered).toBe(3);
-  expect(steps).toEqual([
+  expect([
     "Parent:setup",
     "Parent:willStart",
     "Parent:willRender",
@@ -1826,31 +1820,43 @@ test("concurrent renderings scenario 12", async () => {
     "Child:rendered",
     "Child:mounted",
     "Parent:mounted",
-    "Parent:willRender",
-    "Child:willUpdateProps",
-    "Parent:rendered",
-    "Parent:willRender",
-    "Child:willUpdateProps",
-    "Parent:rendered",
+  ]).toBeLogged();
+
+  parent.state.val = 2;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+  expect(rendered).toBe(2);
+  expect(["Parent:willRender", "Child:willUpdateProps", "Parent:rendered"]).toBeLogged();
+
+  parent.state.val = 3;
+  parent.state.val = 4;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+  expect(rendered).toBe(3);
+  expect(["Parent:willRender", "Child:willUpdateProps", "Parent:rendered"]).toBeLogged();
+
+  def.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><span>4</span></div>");
+  expect(rendered).toBe(3);
+  expect([
     "Child:willRender",
     "Child:rendered",
     "Parent:willPatch",
     "Child:willPatch",
     "Child:patched",
     "Parent:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
 });
 
 test("concurrent renderings scenario 13", async () => {
-  const steps: string[] = [];
   let lastChild: any = null;
 
   class Child extends Component {
     static template = xml`<span><t t-esc="state.val"/></span>`;
     state = useState({ val: 0 });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       onMounted(() => {
         if (lastChild) {
           lastChild.state.val = 0;
@@ -1870,21 +1876,13 @@ test("concurrent renderings scenario 13", async () => {
     static components = { Child };
     state = useState({ bool: false });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
 
   const parent = await mount(Parent, fixture);
   expect(fixture.innerHTML).toBe("<div><span>0</span></div>");
-
-  await nextTick(); // wait for changes triggered in mounted to be applied
-  expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
-
-  parent.state.bool = true;
-  await nextTick(); // wait for this change to be applied
-  await nextTick(); // wait for changes triggered in mounted to be applied
-  expect(fixture.innerHTML).toBe("<div><span>0</span><span>1</span></div>");
-  expect(steps).toEqual([
+  expect([
     "Parent:setup",
     "Parent:willStart",
     "Parent:willRender",
@@ -1897,8 +1895,15 @@ test("concurrent renderings scenario 13", async () => {
     "Parent:mounted",
     "Child:willRender",
     "Child:rendered",
-    "Child:willPatch",
-    "Child:patched",
+  ]).toBeLogged();
+
+  await nextTick(); // wait for changes triggered in mounted to be applied
+  expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+  expect(["Child:willPatch", "Child:patched"]).toBeLogged();
+
+  parent.state.bool = true;
+  await nextTick(); // wait for this change to be applied
+  expect([
     "Parent:willRender",
     "Child:willUpdateProps",
     "Child:setup",
@@ -1917,16 +1922,14 @@ test("concurrent renderings scenario 13", async () => {
     "Child:rendered",
     "Child:willRender",
     "Child:rendered",
-    "Child:willPatch",
-    "Child:patched",
-    "Child:willPatch",
-    "Child:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
+
+  await nextTick(); // wait for changes triggered in mounted to be applied
+  expect(fixture.innerHTML).toBe("<div><span>0</span><span>1</span></div>");
+  expect(["Child:willPatch", "Child:patched", "Child:willPatch", "Child:patched"]).toBeLogged();
 });
 
 test("concurrent renderings scenario 14", async () => {
-  const steps: string[] = [];
   let b: B | undefined = undefined;
   let c: C | undefined = undefined;
   class C extends Component {
@@ -1939,7 +1942,7 @@ test("concurrent renderings scenario 14", async () => {
 
     state = useState({ fromC: 3 });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       c = this;
     }
   }
@@ -1947,7 +1950,7 @@ test("concurrent renderings scenario 14", async () => {
     static template = xml`<p><C fromB="state.fromB" fromA="props.fromA"/></p>`;
     static components = { C };
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       b = this;
     }
     state = useState({ fromB: 2 });
@@ -1959,35 +1962,12 @@ test("concurrent renderings scenario 14", async () => {
     state = useState({ fromA: 1 });
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
   const a = await mount(A, fixture);
   expect(fixture.innerHTML).toBe("<p><p><p><span>1</span><span>2</span><span>3</span></p></p></p>");
-
-  // trigger a re-rendering of the whole tree
-  a.state.fromA += 10;
-  // wait enough for the whole tree to be re-rendered, but not patched yet
-  await nextMicroTick();
-  await nextMicroTick();
-  await nextMicroTick();
-  await nextMicroTick();
-  await nextMicroTick();
-  expect(fixture.innerHTML).toBe("<p><p><p><span>1</span><span>2</span><span>3</span></p></p></p>");
-
-  // trigger a re-rendering from C, which will remap its new fiber
-  c!.state.fromC += 10;
-  // trigger a re-rendering from B, which will remap its new fiber as well
-  b!.state.fromB += 10;
-
-  await nextTick();
-  // at this point, all re-renderings should have been done correctly, and
-  // the root fiber (A) counter should have been reset to 0, so the DOM should
-  // have been patched with the updated version of each component
-  expect(fixture.innerHTML).toBe(
-    "<p><p><p><span>11</span><span>12</span><span>13</span></p></p></p>"
-  );
-  expect(steps).toEqual([
+  expect([
     "A:setup",
     "A:willStart",
     "A:willRender",
@@ -2003,12 +1983,38 @@ test("concurrent renderings scenario 14", async () => {
     "C:mounted",
     "B:mounted",
     "A:mounted",
+  ]).toBeLogged();
+
+  // trigger a re-rendering of the whole tree
+  a.state.fromA += 10;
+  // wait enough for the whole tree to be re-rendered, but not patched yet
+  await nextMicroTick();
+  await nextMicroTick();
+  await nextMicroTick();
+  await nextMicroTick();
+  await nextMicroTick();
+  expect(fixture.innerHTML).toBe("<p><p><p><span>1</span><span>2</span><span>3</span></p></p></p>");
+  expect([
     "A:willRender",
     "B:willUpdateProps",
     "A:rendered",
     "B:willRender",
     "C:willUpdateProps",
     "B:rendered",
+  ]).toBeLogged();
+
+  // trigger a re-rendering from C, which will remap its new fiber
+  c!.state.fromC += 10;
+  // trigger a re-rendering from B, which will remap its new fiber as well
+  b!.state.fromB += 10;
+  await nextTick();
+  // at this point, all re-renderings should have been done correctly, and
+  // the root fiber (A) counter should have been reset to 0, so the DOM should
+  // have been patched with the updated version of each component
+  expect(fixture.innerHTML).toBe(
+    "<p><p><p><span>11</span><span>12</span><span>13</span></p></p></p>"
+  );
+  expect([
     "C:willRender",
     "C:rendered",
     "B:willRender",
@@ -2022,12 +2028,10 @@ test("concurrent renderings scenario 14", async () => {
     "C:patched",
     "B:patched",
     "A:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
 });
 
 test("concurrent renderings scenario 15", async () => {
-  const steps: string[] = [];
   let b: B | undefined = undefined;
   let c: C | undefined = undefined;
   class C extends Component {
@@ -2040,7 +2044,7 @@ test("concurrent renderings scenario 15", async () => {
 
     state = useState({ fromC: 3 });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       c = this;
     }
   }
@@ -2048,7 +2052,7 @@ test("concurrent renderings scenario 15", async () => {
     static template = xml`<p><C fromB="state.fromB" fromA="props.fromA"/></p>`;
     static components = { C };
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       b = this;
     }
     state = useState({ fromB: 2 });
@@ -2058,12 +2062,29 @@ test("concurrent renderings scenario 15", async () => {
     static components = { B };
     state = useState({ fromA: 1 });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
   const app = new App(A);
   const a = await app.mount(fixture);
   expect(fixture.innerHTML).toBe("<p><p><p><span>1</span><span>2</span><span>3</span></p></p></p>");
+  expect([
+    "A:setup",
+    "A:willStart",
+    "A:willRender",
+    "B:setup",
+    "B:willStart",
+    "A:rendered",
+    "B:willRender",
+    "C:setup",
+    "C:willStart",
+    "B:rendered",
+    "C:willRender",
+    "C:rendered",
+    "C:mounted",
+    "B:mounted",
+    "A:mounted",
+  ]).toBeLogged();
 
   // trigger a re-rendering of the whole tree
   a.state.fromA += 10;
@@ -2074,6 +2095,14 @@ test("concurrent renderings scenario 15", async () => {
   await nextMicroTick();
   await nextMicroTick();
   expect(fixture.innerHTML).toBe("<p><p><p><span>1</span><span>2</span><span>3</span></p></p></p>");
+  expect([
+    "A:willRender",
+    "B:willUpdateProps",
+    "A:rendered",
+    "B:willRender",
+    "C:willUpdateProps",
+    "B:rendered",
+  ]).toBeLogged();
 
   // trigger a re-rendering from C, which will remap its new fiber
   c!.state.fromC += 10;
@@ -2084,40 +2113,19 @@ test("concurrent renderings scenario 15", async () => {
   // counter to 0)
   app.scheduler.flush();
   expect(fixture.innerHTML).toBe("<p><p><p><span>1</span><span>2</span><span>3</span></p></p></p>");
+  expect([]).toBeLogged();
 
   // wait a bit and simulate another flush (we expect nothing to change as well)
   await nextMicroTick();
   app.scheduler.flush();
   expect(fixture.innerHTML).toBe("<p><p><p><span>1</span><span>2</span><span>3</span></p></p></p>");
+  expect(["C:willRender", "C:rendered"]).toBeLogged();
 
   await nextTick();
   expect(fixture.innerHTML).toBe(
     "<p><p><p><span>11</span><span>12</span><span>13</span></p></p></p>"
   );
-  expect(steps).toEqual([
-    "A:setup",
-    "A:willStart",
-    "A:willRender",
-    "B:setup",
-    "B:willStart",
-    "A:rendered",
-    "B:willRender",
-    "C:setup",
-    "C:willStart",
-    "B:rendered",
-    "C:willRender",
-    "C:rendered",
-    "C:mounted",
-    "B:mounted",
-    "A:mounted",
-    "A:willRender",
-    "B:willUpdateProps",
-    "A:rendered",
-    "B:willRender",
-    "C:willUpdateProps",
-    "B:rendered",
-    "C:willRender",
-    "C:rendered",
+  expect([
     "B:willRender",
     "C:willUpdateProps",
     "B:rendered",
@@ -2129,19 +2137,17 @@ test("concurrent renderings scenario 15", async () => {
     "C:patched",
     "B:patched",
     "A:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
 });
 
 test.skip("concurrent renderings scenario 16", async () => {
-  const steps: string[] = [];
   let b: B | undefined = undefined;
   let c: C | undefined = undefined;
   class D extends Component {
     static template = xml`<ul>DDD</ul>`;
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       onWillStart(async () => {
         await nextTick();
         await nextTick();
@@ -2159,7 +2165,7 @@ test.skip("concurrent renderings scenario 16", async () => {
     static components = { D };
     state = { fromC: 3 }; // not reactive
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       c = this;
     }
   }
@@ -2167,7 +2173,7 @@ test.skip("concurrent renderings scenario 16", async () => {
     static template = xml`<p><C fromB="state.fromB" fromA="props.fromA"/></p>`;
     static components = { C };
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       b = this;
     }
     state = { fromB: 2 };
@@ -2178,11 +2184,28 @@ test.skip("concurrent renderings scenario 16", async () => {
     state = { fromA: 1 };
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
   const a = await mount(A, fixture);
   expect(fixture.innerHTML).toBe("<p><p><p><span>1</span><span>2</span><span>3</span></p></p></p>");
+  expect([
+    "A:setup",
+    "A:willStart",
+    "A:willRender",
+    "B:setup",
+    "B:willStart",
+    "A:rendered",
+    "B:willRender",
+    "C:setup",
+    "C:willStart",
+    "B:rendered",
+    "C:willRender",
+    "C:rendered",
+    "C:mounted",
+    "B:mounted",
+    "A:mounted",
+  ]).toBeLogged();
 
   // trigger a re-rendering of the whole tree
   a.state.fromA += 10;
@@ -2210,22 +2233,7 @@ test.skip("concurrent renderings scenario 16", async () => {
   expect(fixture.innerHTML).toBe(
     "<p><p><p><span>11</span><span>12</span><span>13</span><ul>DDD</ul></p></p></p>"
   );
-  expect(steps).toEqual([
-    "A:setup",
-    "A:willStart",
-    "A:willRender",
-    "B:setup",
-    "B:willStart",
-    "A:rendered",
-    "B:willRender",
-    "C:setup",
-    "C:willStart",
-    "B:rendered",
-    "C:willRender",
-    "C:rendered",
-    "C:mounted",
-    "B:mounted",
-    "A:mounted",
+  expect([
     "A:willRender",
     "B:willUpdateProps",
     "A:rendered",
@@ -2253,35 +2261,10 @@ test.skip("concurrent renderings scenario 16", async () => {
     "C:patched",
     "B:patched",
     "A:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
 });
 
-// test.skip("concurrent renderings scenario 17", async () => {
-//   class Parent extends Component {
-//     static template = xml`<span><t t-esc="state.value"/></span>`;
-//     state = useState({ value: 1 });
-//   }
-
-//   const parent = await mount(Parent, fixture);
-//   expect(fixture.innerHTML).toBe("<span>1</span>");
-
-//   parent.state.value = 2;
-//   parent.__owl__.fiber!.cancel();
-
-//   parent.state.value = 3; // update value directly
-//   await nextTick();
-//   expect(fixture.innerHTML).toBe("<span>3</span>");
-
-//   parent.state.value = 4; // update value after a tick
-//   await nextTick();
-//   expect(fixture.innerHTML).toBe("<span>4</span>");
-// });
-
-// TODO: unskip when t-key is reimplemented properly
 test("calling render in destroy", async () => {
-  const steps: any[] = [];
-
   let a: any = null;
   let c: any = null;
 
@@ -2298,9 +2281,9 @@ test("calling render in destroy", async () => {
     static components = { C };
 
     setup() {
+      useLogLifecycle();
       c = this;
       onMounted(() => {
-        steps.push("B:mounted");
         if (flag) {
           this.render();
         } else {
@@ -2309,7 +2292,6 @@ test("calling render in destroy", async () => {
       });
 
       onWillUnmount(() => {
-        steps.push("B:willUnmount");
         c.render();
       });
     }
@@ -2329,19 +2311,30 @@ test("calling render in destroy", async () => {
   const app = new App(A);
   await app.mount(fixture);
   expect(fixture.innerHTML).toBe("<div>a</div>");
+  expect(["B:setup", "B:willStart", "B:willRender", "B:rendered", "B:mounted"]).toBeLogged();
 
   a.state = "A";
   a.key = 2;
   await a.render();
   // this nextTick is critical, otherwise jest may silently swallow errors
   await nextTick();
-
-  expect(steps).toStrictEqual(["B:mounted", "B:willUnmount", "B:mounted"]);
+  expect([
+    "B:setup",
+    "B:willStart",
+    "B:willRender",
+    "B:rendered",
+    "B:willUnmount",
+    "B:destroyed",
+    "B:mounted",
+    "B:willRender",
+    "B:rendered",
+    "B:willPatch",
+    "B:patched",
+  ]).toBeLogged();
   expect(fixture.innerHTML).toBe("<div>A</div>");
 });
 
 test("change state and call manually render: no unnecessary rendering", async () => {
-  const steps: string[] = [];
   let numberOfRender = 0;
 
   class Test extends Component {
@@ -2349,7 +2342,7 @@ test("change state and call manually render: no unnecessary rendering", async ()
     state = useState({ val: 1 });
 
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
     get value() {
       numberOfRender++;
@@ -2358,6 +2351,13 @@ test("change state and call manually render: no unnecessary rendering", async ()
   }
 
   const test = await mount(Test, fixture);
+  expect([
+    "Test:setup",
+    "Test:willStart",
+    "Test:willRender",
+    "Test:rendered",
+    "Test:mounted",
+  ]).toBeLogged();
   expect(fixture.innerHTML).toBe("<div>1</div>");
   expect(numberOfRender).toBe(1);
 
@@ -2365,29 +2365,17 @@ test("change state and call manually render: no unnecessary rendering", async ()
   await test.render();
   expect(fixture.innerHTML).toBe("<div>2</div>");
   expect(numberOfRender).toBe(2);
-  expect(steps).toEqual([
-    "Test:setup",
-    "Test:willStart",
-    "Test:willRender",
-    "Test:rendered",
-    "Test:mounted",
-    "Test:willRender",
-    "Test:rendered",
-    "Test:willPatch",
-    "Test:patched",
-  ]);
-  Object.freeze(steps);
+  expect(["Test:willRender", "Test:rendered", "Test:willPatch", "Test:patched"]).toBeLogged();
 });
 
 test("changing state before first render does not trigger a render", async () => {
-  const steps: string[] = [];
   let renders = 0;
 
   class TestW extends Component {
     static template = xml`<div t-esc="value"/>`;
     state = useState({ drinks: 1 });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       this.state.drinks++;
       onWillStart(() => {
         this.state.drinks++;
@@ -2399,29 +2387,28 @@ test("changing state before first render does not trigger a render", async () =>
     }
   }
   await mount(TestW, fixture);
-
-  await nextTick();
-  expect(renders).toBe(1);
-  expect(fixture.innerHTML).toBe("<div>3</div>");
-  expect(steps).toEqual([
+  expect([
     "TestW:setup",
     "TestW:willStart",
     "TestW:willRender",
     "TestW:rendered",
     "TestW:mounted",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
+
+  await nextTick();
+  expect(renders).toBe(1);
+  expect(fixture.innerHTML).toBe("<div>3</div>");
+  expect([]).toBeLogged();
 });
 
 test("changing state before first render does not trigger a render (with parent)", async () => {
-  const steps: string[] = [];
   let renders = 0;
 
   class TestW extends Component {
     static template = xml`<div t-esc="value"/>`;
     state = useState({ drinks: 1 });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       this.state.drinks++;
       onWillStart(() => {
         this.state.drinks++;
@@ -2437,27 +2424,26 @@ test("changing state before first render does not trigger a render (with parent)
     static components = { TestW };
     static template = xml`<div><TestW t-if="state.flag"/></div>`;
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
     state = useState({ flag: false });
   }
 
   const parent = await mount(Parent, fixture);
-
   expect(fixture.innerHTML).toBe("<div></div>");
-  expect(steps).toEqual([
+  expect([
     "Parent:setup",
     "Parent:willStart",
     "Parent:willRender",
     "Parent:rendered",
     "Parent:mounted",
-  ]);
-  steps.splice(0);
+  ]).toBeLogged();
+
   parent.state.flag = true;
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><div>3</div></div>");
   expect(renders).toBe(1);
-  expect(steps).toEqual([
+  expect([
     "Parent:willRender",
     "TestW:setup",
     "TestW:willStart",
@@ -2467,8 +2453,7 @@ test("changing state before first render does not trigger a render (with parent)
     "Parent:willPatch",
     "TestW:mounted",
     "Parent:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
 });
 
 test("render method wait until rendering is done", async () => {
@@ -2489,12 +2474,11 @@ test("render method wait until rendering is done", async () => {
 
 test("two renderings initiated between willPatch and patched", async () => {
   let parent: any = null;
-  const steps: string[] = [];
 
   class Panel extends Component {
     static template = xml`<abc><t t-esc="props.val"/></abc>`;
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       onMounted(() => parent.render());
       onWillUnmount(() => parent.render());
     }
@@ -2506,15 +2490,14 @@ test("two renderings initiated between willPatch and patched", async () => {
     static components = { Panel };
     state = useState({ panel: "Panel1", flag: true });
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
       parent = this;
     }
   }
 
   await mount(Parent, fixture);
   expect(fixture.innerHTML).toBe("<div><abc>Panel1</abc></div>");
-
-  expect(steps).toEqual([
+  expect([
     "Parent:setup",
     "Parent:willStart",
     "Parent:willRender",
@@ -2525,14 +2508,12 @@ test("two renderings initiated between willPatch and patched", async () => {
     "Panel:rendered",
     "Panel:mounted",
     "Parent:mounted",
-  ]);
-  steps.length = 0;
+  ]).toBeLogged();
 
   parent.state.panel = "Panel2";
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><abc>Panel2</abc></div>");
-
-  expect(steps).toEqual([
+  expect([
     "Parent:willRender",
     "Panel:setup",
     "Panel:willStart",
@@ -2544,33 +2525,29 @@ test("two renderings initiated between willPatch and patched", async () => {
     "Panel:destroyed",
     "Panel:mounted",
     "Parent:patched",
-  ]);
-  steps.length = 0;
+  ]).toBeLogged();
 
   parent.state.flag = false;
   await nextTick();
   expect(fixture.innerHTML).toBe("<div></div>");
-
-  expect(steps).toEqual([
+  expect([
     "Parent:willRender",
     "Parent:rendered",
     "Parent:willPatch",
     "Panel:willUnmount",
     "Panel:destroyed",
     "Parent:patched",
-  ]);
-  Object.freeze(steps);
+  ]).toBeLogged();
 });
 
 test("parent and child rendered at exact same time", async () => {
   let child: any = null;
-  let steps: any[] = [];
 
   class Child extends Component {
     static template = xml`<t t-esc="props.value"/>`;
     setup() {
       child = this;
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
 
@@ -2579,20 +2556,13 @@ test("parent and child rendered at exact same time", async () => {
     static components = { Child };
     state = { value: 0 };
     setup() {
-      useLogLifecycle(steps);
+      useLogLifecycle();
     }
   }
 
   const parent = await mount(Parent, fixture);
-
   expect(fixture.innerHTML).toBe("0");
-
-  parent.state.value = 1;
-  parent.render();
-  child.render();
-  await nextTick();
-  expect(fixture.innerHTML).toBe("1");
-  expect(steps).toEqual([
+  expect([
     "Parent:setup",
     "Parent:willStart",
     "Parent:willRender",
@@ -2603,6 +2573,14 @@ test("parent and child rendered at exact same time", async () => {
     "Child:rendered",
     "Child:mounted",
     "Parent:mounted",
+  ]).toBeLogged();
+
+  parent.state.value = 1;
+  parent.render();
+  child.render();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("1");
+  expect([
     "Parent:willRender",
     "Child:willUpdateProps",
     "Parent:rendered",
@@ -2612,7 +2590,7 @@ test("parent and child rendered at exact same time", async () => {
     "Child:willPatch",
     "Child:patched",
     "Parent:patched",
-  ]);
+  ]).toBeLogged();
 });
 
 //   test.skip("components with shouldUpdate=false", async () => {

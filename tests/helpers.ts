@@ -161,53 +161,58 @@ export function snapshotEverything() {
   });
 }
 
-export function useLogLifecycle(steps: string[]) {
+const steps: string[] = [];
+
+export function logStep(step: string) {
+  steps.push(step);
+}
+export function useLogLifecycle() {
   const component = useComponent();
   const name = component.constructor.name;
-  steps.push(`${name}:setup`);
+  logStep(`${name}:setup`);
   expect(name + ": " + status(component)).toBe(name + ": " + "new");
 
   onWillStart(() => {
     expect(name + ": " + status(component)).toBe(name + ": " + "new");
-    steps.push(`${name}:willStart`);
+    logStep(`${name}:willStart`);
   });
 
   onMounted(() => {
     expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
-    steps.push(`${name}:mounted`);
+    logStep(`${name}:mounted`);
   });
 
   onWillUpdateProps(() => {
     expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
-    steps.push(`${name}:willUpdateProps`);
+    logStep(`${name}:willUpdateProps`);
   });
 
   onWillRender(() => {
-    steps.push(`${name}:willRender`);
+    logStep(`${name}:willRender`);
   });
 
   onRendered(() => {
-    steps.push(`${name}:rendered`);
+    logStep(`${name}:rendered`);
   });
 
   onWillPatch(() => {
     expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
-    steps.push(`${name}:willPatch`);
+    logStep(`${name}:willPatch`);
   });
 
   onPatched(() => {
     expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
-    steps.push(`${name}:patched`);
+    logStep(`${name}:patched`);
   });
 
   onWillUnmount(() => {
     expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
-    steps.push(`${name}:willUnmount`);
+    logStep(`${name}:willUnmount`);
   });
 
   onDestroyed(() => {
     expect(name + ": " + status(component)).toBe(name + ": " + "destroyed");
-    steps.push(`${name}:destroyed`);
+    logStep(`${name}:destroyed`);
   });
 }
 
@@ -225,4 +230,56 @@ export async function editInput(input: HTMLInputElement | HTMLTextAreaElement, v
   input.dispatchEvent(new Event("input"));
   input.dispatchEvent(new Event("change"));
   return nextTick();
+}
+
+import { diff } from "jest-diff";
+
+afterEach(() => {
+  if (steps.length) {
+    steps.splice(0);
+    throw new Error("Remaining steps! Should be checked by a .toBeLogged() assertion!");
+  }
+});
+
+expect.extend({
+  toBeLogged(expected) {
+    const options = {
+      comment: "steps equality",
+      isNot: this.isNot,
+      promise: this.promise,
+    };
+
+    const currentSteps = steps.splice(0);
+    const pass = this.equals(currentSteps, expected);
+
+    const message = pass
+      ? () =>
+          this.utils.matcherHint("toEqual", undefined, undefined, options) +
+          "\n\n" +
+          `Expected: not ${this.utils.printExpected(expected)}\n` +
+          `Received: ${this.utils.printReceived(currentSteps)}`
+      : () => {
+          const diffString = diff(expected, currentSteps, {
+            expand: this.expand,
+          });
+          return (
+            this.utils.matcherHint("toBe", undefined, undefined, options) +
+            "\n\n" +
+            (diffString && diffString.includes("- Expect")
+              ? `Difference:\n\n${diffString}`
+              : `Expected: ${this.utils.printExpected(expected)}\n` +
+                `Received: ${this.utils.printReceived(currentSteps)}`)
+          );
+        };
+
+    return { actual: currentSteps, message, pass };
+  },
+});
+
+declare global {
+  namespace jest {
+    interface Matchers<R> {
+      toBeLogged(): R;
+    }
+  }
 }

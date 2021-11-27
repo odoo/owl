@@ -6,7 +6,7 @@ import {
   makeTestFixture,
   nextMicroTick,
   nextTick,
-  snapshotEverything,
+  snapshotEverything
 } from "./helpers";
 
 function createReactive(value: any, observer: any = () => {}) {

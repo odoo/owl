@@ -346,12 +346,10 @@ describe("lifecycle hooks", () => {
   });
 
   test("components are unmounted and destroyed if no longer in DOM, even after updateprops", async () => {
-    let steps: string[] = [];
-
     class Child extends Component {
       static template = xml`<span><t t-esc="props.n"/></span>`;
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
 
@@ -363,7 +361,7 @@ describe("lifecycle hooks", () => {
       `;
       static components = { Child };
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
       state = useState({ n: 0, flag: true });
       increment() {
@@ -376,13 +374,7 @@ describe("lifecycle hooks", () => {
 
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div><span>0</span></div>");
-    parent.increment();
-    await nextTick();
-    expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
-    parent.toggleSubWidget();
-    await nextTick();
-    expect(fixture.innerHTML).toBe("");
-    expect(steps).toEqual([
+    expect([
       "Parent:setup",
       "Parent:willStart",
       "Parent:willRender",
@@ -393,6 +385,12 @@ describe("lifecycle hooks", () => {
       "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
+    ]).toBeLogged();
+
+    parent.increment();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
+    expect([
       "Parent:willRender",
       "Child:willUpdateProps",
       "Parent:rendered",
@@ -402,32 +400,26 @@ describe("lifecycle hooks", () => {
       "Child:willPatch",
       "Child:patched",
       "Parent:patched",
+    ]).toBeLogged();
+
+    parent.toggleSubWidget();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("");
+    expect([
       "Parent:willRender",
       "Parent:rendered",
       "Parent:willPatch",
       "Child:willUnmount",
       "Child:destroyed",
       "Parent:patched",
-    ]);
-    Object.freeze(steps);
+    ]).toBeLogged();
   });
 
   test("hooks are called in proper order in widget creation/destruction", async () => {
-    let steps: string[] = [];
-
     class Child extends Component {
       static template = xml`<div/>`;
       setup() {
-        steps.push("c init");
-        onWillStart(() => {
-          steps.push("c willstart");
-        });
-        onMounted(() => {
-          steps.push("c mounted");
-        });
-        onWillUnmount(() => {
-          steps.push("c willunmount");
-        });
+        useLogLifecycle();
       }
     }
 
@@ -435,33 +427,32 @@ describe("lifecycle hooks", () => {
       static template = xml`<div><Child/></div>`;
       static components = { Child };
       setup() {
-        steps.push("p init");
-        onWillStart(() => {
-          steps.push("p willstart");
-        });
-        onMounted(() => {
-          steps.push("p mounted");
-        });
-        onWillUnmount(() => {
-          steps.push("p willunmount");
-        });
+        useLogLifecycle();
       }
     }
 
     const app = new App(Parent);
     await app.mount(fixture);
+    expect([
+      "Parent:setup",
+      "Parent:willStart",
+      "Parent:willRender",
+      "Child:setup",
+      "Child:willStart",
+      "Parent:rendered",
+      "Child:willRender",
+      "Child:rendered",
+      "Child:mounted",
+      "Parent:mounted",
+    ]).toBeLogged();
+
     app.destroy();
-    expect(steps).toEqual([
-      "p init",
-      "p willstart",
-      "c init",
-      "c willstart",
-      "c mounted",
-      "p mounted",
-      "p willunmount",
-      "c willunmount",
-    ]);
-    Object.freeze(steps);
+    expect([
+      "Parent:willUnmount",
+      "Child:willUnmount",
+      "Child:destroyed",
+      "Parent:destroyed",
+    ]).toBeLogged();
   });
 
   test("willUpdateProps hook is called", async () => {
@@ -543,12 +534,10 @@ describe("lifecycle hooks", () => {
   });
 
   test("lifecycle semantics", async () => {
-    let steps: string[] = [];
-
     class Child extends Component {
       static template = xml`<div/>`;
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
     class Parent extends Component {
@@ -556,14 +545,13 @@ describe("lifecycle hooks", () => {
       static components = { Child };
       state = useState({ a: 1 });
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
 
     const app = new App(Parent);
     await app.mount(fixture);
-
-    expect(steps).toEqual([
+    expect([
       "Parent:setup",
       "Parent:willStart",
       "Parent:willRender",
@@ -574,33 +562,29 @@ describe("lifecycle hooks", () => {
       "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
-    ]);
+    ]).toBeLogged();
 
-    steps.splice(0);
     app.destroy();
-    expect(steps).toEqual([
+    expect([
       "Parent:willUnmount",
       "Child:willUnmount",
       "Child:destroyed",
       "Parent:destroyed",
-    ]);
-    Object.freeze(steps);
+    ]).toBeLogged();
   });
 
   test("lifecycle semantics, part 2", async () => {
-    let steps: string[] = [];
-
     class GrandChild extends Component {
       static template = xml`<div/>`;
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
     class Child extends Component {
       static template = xml`<GrandChild/>`;
       static components = { GrandChild };
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
 
@@ -609,26 +593,23 @@ describe("lifecycle hooks", () => {
       static components = { Child };
       state = useState({ hasChild: false });
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
 
     const app = new App(Parent);
     const parent = await app.mount(fixture);
-
-    expect(steps).toEqual([
+    expect([
       "Parent:setup",
       "Parent:willStart",
       "Parent:willRender",
       "Parent:rendered",
       "Parent:mounted",
-    ]);
-
-    steps.splice(0);
+    ]).toBeLogged();
 
     parent.state.hasChild = true;
     await nextTick();
-    expect(steps).toEqual([
+    expect([
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
@@ -643,36 +624,31 @@ describe("lifecycle hooks", () => {
       "GrandChild:mounted",
       "Child:mounted",
       "Parent:patched",
-    ]);
-
-    steps.splice(0);
+    ]).toBeLogged();
 
     app.destroy();
-    expect(steps).toEqual([
+    expect([
       "Parent:willUnmount",
       "Child:willUnmount",
       "GrandChild:willUnmount",
       "GrandChild:destroyed",
       "Child:destroyed",
       "Parent:destroyed",
-    ]);
-    Object.freeze(steps);
+    ]).toBeLogged();
   });
 
   test("lifecycle semantics, part 3", async () => {
-    let steps: string[] = [];
-
     class GrandChild extends Component {
       static template = xml`<div/>`;
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
     class Child extends Component {
       static template = xml`<GrandChild/>`;
       static components = { GrandChild };
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
 
@@ -681,41 +657,34 @@ describe("lifecycle hooks", () => {
       static components = { Child };
       state = useState({ hasChild: false });
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
 
     const app = new App(Parent);
     const parent = await app.mount(fixture);
-
-    expect(steps).toEqual([
+    expect([
       "Parent:setup",
       "Parent:willStart",
       "Parent:willRender",
       "Parent:rendered",
       "Parent:mounted",
-    ]);
-
-    steps.splice(0);
+    ]).toBeLogged();
 
     parent.state.hasChild = true;
-
     // immediately destroy everything
     app.destroy();
     await nextTick();
-    expect(steps).toEqual(["Parent:willUnmount", "Parent:destroyed"]);
-    Object.freeze(steps);
+    expect(["Parent:willUnmount", "Parent:destroyed"]).toBeLogged();
   });
 
   test("lifecycle semantics, part 4", async () => {
     let def = makeDeferred();
 
-    let steps: string[] = [];
-
     class GrandChild extends Component {
       static template = xml`<div/>`;
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
         onWillStart(() => def);
       }
     }
@@ -723,7 +692,7 @@ describe("lifecycle hooks", () => {
       static template = xml`<GrandChild/>`;
       static components = { GrandChild };
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
 
@@ -732,27 +701,24 @@ describe("lifecycle hooks", () => {
       static components = { Child };
       state = useState({ hasChild: false });
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
 
     const app = new App(Parent);
     const parent = await app.mount(fixture);
 
-    expect(steps).toEqual([
+    expect([
       "Parent:setup",
       "Parent:willStart",
       "Parent:willRender",
       "Parent:rendered",
       "Parent:mounted",
-    ]);
-
-    steps.splice(0);
+    ]).toBeLogged();
 
     parent.state.hasChild = true;
-
     await nextTick();
-    expect(steps).toEqual([
+    expect([
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
@@ -761,27 +727,22 @@ describe("lifecycle hooks", () => {
       "GrandChild:setup",
       "GrandChild:willStart",
       "Child:rendered",
-    ]);
-
-    steps.splice(0);
+    ]).toBeLogged();
 
     app.destroy();
-    expect(steps).toEqual([
+    expect([
       "Parent:willUnmount",
       "GrandChild:destroyed",
       "Child:destroyed",
       "Parent:destroyed",
-    ]);
-    Object.freeze(steps);
+    ]).toBeLogged();
   });
 
   test("lifecycle semantics, part 5", async () => {
-    let steps: string[] = [];
-
     class Child extends Component {
       static template = xml`<div/>`;
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
 
@@ -790,13 +751,12 @@ describe("lifecycle hooks", () => {
       static components = { Child };
       state = useState({ hasChild: true });
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
 
     const parent = await mount(Parent, fixture);
-
-    expect(steps).toEqual([
+    expect([
       "Parent:setup",
       "Parent:willStart",
       "Parent:willRender",
@@ -807,31 +767,25 @@ describe("lifecycle hooks", () => {
       "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
-    ]);
-
-    steps.splice(0);
+    ]).toBeLogged();
 
     parent.state.hasChild = false;
-
     await nextTick();
-    expect(steps).toEqual([
+    expect([
       "Parent:willRender",
       "Parent:rendered",
       "Parent:willPatch",
       "Child:willUnmount",
       "Child:destroyed",
       "Parent:patched",
-    ]);
-    Object.freeze(steps);
+    ]).toBeLogged();
   });
 
   test("lifecycle semantics, part 6", async () => {
-    let steps: string[] = [];
-
     class Child extends Component {
       static template = xml`<div/>`;
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
 
@@ -840,13 +794,12 @@ describe("lifecycle hooks", () => {
       static components = { Child };
       state = useState({ value: 1 });
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
 
     const parent = await mount(Parent, fixture);
-
-    expect(steps).toEqual([
+    expect([
       "Parent:setup",
       "Parent:willStart",
       "Parent:willRender",
@@ -857,14 +810,11 @@ describe("lifecycle hooks", () => {
       "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
-    ]);
-
-    steps.splice(0);
+    ]).toBeLogged();
 
     parent.state.value = 2;
-
     await nextTick();
-    expect(steps).toEqual([
+    expect([
       "Parent:willRender",
       "Child:willUpdateProps",
       "Parent:rendered",
@@ -874,12 +824,10 @@ describe("lifecycle hooks", () => {
       "Child:willPatch",
       "Child:patched",
       "Parent:patched",
-    ]);
-    Object.freeze(steps);
+    ]).toBeLogged();
   });
 
   test("onWillRender", async () => {
-    let steps: string[] = [];
     const def = makeDeferred();
 
     class Child extends Component {
@@ -887,13 +835,12 @@ describe("lifecycle hooks", () => {
       state = useState({ value: 1 });
       visibleState = this.state.value;
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
         onWillUpdateProps(() => def);
         onWillRender(() => (this.visibleState = this.state.value));
       }
       increment() {
         this.state.value++;
-        steps.push(`inc:${this.visibleState}`);
       }
     }
 
@@ -902,30 +849,13 @@ describe("lifecycle hooks", () => {
         <Child />`;
       static components = { Child };
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
 
     const parent = await mount(Parent, fixture);
-
     expect(fixture.innerHTML).toBe("<button>1</button>");
-
-    parent.render(); // to block child render
-    await nextTick();
-
-    fixture.querySelector("button")!.click();
-
-    await nextTick();
-    fixture.querySelector("button")!.click();
-
-    await nextTick();
-
-    expect(fixture.innerHTML).toBe("<button>1</button>");
-
-    def.resolve();
-    await nextTick();
-    expect(fixture.innerHTML).toBe("<button>3</button>");
-    expect(steps).toEqual([
+    expect([
       "Parent:setup",
       "Parent:willStart",
       "Parent:willRender",
@@ -936,19 +866,32 @@ describe("lifecycle hooks", () => {
       "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
-      "Parent:willRender",
-      "Child:willUpdateProps",
-      "Parent:rendered",
-      "inc:1",
-      "inc:1",
+    ]).toBeLogged();
+
+    parent.render(); // to block child render
+    await nextTick();
+    expect(["Parent:willRender", "Child:willUpdateProps", "Parent:rendered"]).toBeLogged();
+
+    fixture.querySelector("button")!.click();
+    await nextTick();
+    expect([]).toBeLogged();
+
+    fixture.querySelector("button")!.click();
+    await nextTick();
+    expect([]).toBeLogged();
+    expect(fixture.innerHTML).toBe("<button>1</button>");
+
+    def.resolve();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<button>3</button>");
+    expect([
       "Child:willRender",
       "Child:rendered",
       "Parent:willPatch",
       "Child:willPatch",
       "Child:patched",
       "Parent:patched",
-    ]);
-    Object.freeze(steps);
+    ]).toBeLogged();
   });
 
   // TODO: rename (remove? seems covered by lifecycle semantics)
@@ -982,12 +925,10 @@ describe("lifecycle hooks", () => {
 
   // TODO: rename (corresponds to https://github.com/odoo/owl/blob/master/doc/reference/concurrency_model.md#semantics)
   test("component semantics", async () => {
-    let steps: string[] = [];
-
     class TestWidget extends Component {
       name: string = "test";
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
     class B extends TestWidget {
@@ -1031,7 +972,7 @@ describe("lifecycle hooks", () => {
 
     await mount(A, fixture);
     expect(fixture.innerHTML).toBe(`<div>A<div>B</div><div>C<div>D</div><div>E</div></div></div>`);
-    expect(steps).toEqual([
+    expect([
       "A:setup",
       "A:willStart",
       "A:willRender",
@@ -1057,13 +998,12 @@ describe("lifecycle hooks", () => {
       "C:mounted",
       "B:mounted",
       "A:mounted",
-    ]);
+    ]).toBeLogged();
 
     // update
-    steps.splice(0);
     c!.state.flag = false;
     await nextTick();
-    expect(steps).toEqual([
+    expect([
       "C:willRender",
       "D:willUpdateProps",
       "F:setup",
@@ -1080,15 +1020,14 @@ describe("lifecycle hooks", () => {
       "F:mounted",
       "D:patched",
       "C:patched",
-    ]);
+    ]).toBeLogged();
   });
 
   test("mounted hook is called on every mount, not just the first one", async () => {
-    const steps: string[] = [];
     class Child extends Component {
       static template = xml`<div>child</div>`;
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
 
@@ -1097,18 +1036,12 @@ describe("lifecycle hooks", () => {
       static components = { Child };
       state = useState({ hasChild: true });
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
 
     const parent = await mount(Parent, fixture);
-
-    parent.state.hasChild = false;
-    await nextTick();
-
-    parent.state.hasChild = true;
-    await nextTick();
-    expect(steps).toEqual([
+    expect([
       "Parent:setup",
       "Parent:willStart",
       "Parent:willRender",
@@ -1119,12 +1052,22 @@ describe("lifecycle hooks", () => {
       "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
+    ]).toBeLogged();
+
+    parent.state.hasChild = false;
+    await nextTick();
+    expect([
       "Parent:willRender",
       "Parent:rendered",
       "Parent:willPatch",
       "Child:willUnmount",
       "Child:destroyed",
       "Parent:patched",
+    ]).toBeLogged();
+
+    parent.state.hasChild = true;
+    await nextTick();
+    expect([
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
@@ -1134,7 +1077,6 @@ describe("lifecycle hooks", () => {
       "Parent:willPatch",
       "Child:mounted",
       "Parent:patched",
-    ]);
-    Object.freeze(steps);
+    ]).toBeLogged();
   });
 });

@@ -49,12 +49,10 @@ describe("list of components", () => {
   });
 
   test("components in a node in a t-foreach ", async () => {
-    const steps: string[] = [];
-
     class Child extends Component {
       static template = xml`<div><t t-esc="props.item"/></div>`;
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
 
@@ -72,7 +70,7 @@ describe("list of components", () => {
       static components = { Child };
 
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
 
       get items() {
@@ -84,7 +82,7 @@ describe("list of components", () => {
     expect(fixture.innerHTML).toBe(
       "<div><ul><li><div>1</div></li><li><div>2</div></li></ul></div>"
     );
-    expect(steps).toEqual([
+    expect([
       "Parent:setup",
       "Parent:willStart",
       "Parent:willRender",
@@ -100,7 +98,7 @@ describe("list of components", () => {
       "Child:mounted",
       "Child:mounted",
       "Parent:mounted",
-    ]);
+    ]).toBeLogged();
   });
 
   test("reconciliation alg works for t-foreach in t-foreach", async () => {

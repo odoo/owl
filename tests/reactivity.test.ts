@@ -6,7 +6,8 @@ import {
   makeTestFixture,
   nextMicroTick,
   nextTick,
-  snapshotEverything
+  snapshotEverything,
+  useLogLifecycle,
 } from "./helpers";
 
 function createReactive(value: any, observer: any = () => {}) {
@@ -1119,104 +1120,178 @@ describe("Reactivity: useState", () => {
 
   test("two components can subscribe to same context", async () => {
     const testContext = createReactive({ value: 123 });
-    const steps: string[] = [];
 
     class Child extends Component {
       static template = xml`<span><t t-esc="contextObj.value"/></span>`;
       contextObj = useState(testContext);
       setup() {
-        onWillRender(() => {
-          steps.push("child");
-        });
+        useLogLifecycle();
       }
     }
     class Parent extends Component {
       static template = xml`<div><Child /><Child /></div>`;
       static components = { Child };
       setup() {
-        onWillRender(() => {
-          steps.push("parent");
-        });
+        useLogLifecycle();
       }
     }
     await mount(Parent, fixture);
-    expect(steps).toEqual(["parent", "child", "child"]);
+    expect([
+      "Parent:setup",
+      "Parent:willStart",
+      "Parent:willRender",
+      "Child:setup",
+      "Child:willStart",
+      "Child:setup",
+      "Child:willStart",
+      "Parent:rendered",
+      "Child:willRender",
+      "Child:rendered",
+      "Child:willRender",
+      "Child:rendered",
+      "Child:mounted",
+      "Child:mounted",
+      "Parent:mounted",
+    ]).toBeLogged();
+
     expect(fixture.innerHTML).toBe("<div><span>123</span><span>123</span></div>");
     testContext.value = 321;
     await nextTick();
-    expect(steps).toEqual(["parent", "child", "child", "child", "child"]);
+    expect([
+      "Child:willRender",
+      "Child:rendered",
+      "Child:willRender",
+      "Child:rendered",
+      "Child:willPatch",
+      "Child:patched",
+      "Child:willPatch",
+      "Child:patched",
+    ]).toBeLogged();
     expect(fixture.innerHTML).toBe("<div><span>321</span><span>321</span></div>");
   });
 
   test("two components are updated in parallel", async () => {
     const testContext = createReactive({ value: 123 });
-    const steps: string[] = [];
 
     class Child extends Component {
       static template = xml`<span><t t-esc="contextObj.value"/></span>`;
       contextObj = useState(testContext);
       setup() {
-        onWillRender(async () => {
-          steps.push("render");
-        });
+        useLogLifecycle();
       }
     }
 
     class Parent extends Component {
       static template = xml`<div><Child /><Child /></div>`;
       static components = { Child };
+      setup() {
+        useLogLifecycle();
+      }
     }
+
     await mount(Parent, fixture);
-    expect(steps).toEqual(["render", "render"]);
+    expect([
+      "Parent:setup",
+      "Parent:willStart",
+      "Parent:willRender",
+      "Child:setup",
+      "Child:willStart",
+      "Child:setup",
+      "Child:willStart",
+      "Parent:rendered",
+      "Child:willRender",
+      "Child:rendered",
+      "Child:willRender",
+      "Child:rendered",
+      "Child:mounted",
+      "Child:mounted",
+      "Parent:mounted",
+    ]).toBeLogged();
+
     expect(fixture.innerHTML).toBe("<div><span>123</span><span>123</span></div>");
     testContext.value = 321;
     await nextMicroTick();
     await nextMicroTick();
-    expect(steps).toEqual(["render", "render", "render", "render"]);
+    expect([
+      "Child:willRender",
+      "Child:rendered",
+      "Child:willRender",
+      "Child:rendered",
+    ]).toBeLogged();
     expect(fixture.innerHTML).toBe("<div><span>123</span><span>123</span></div>");
+
     await nextTick();
+    expect(["Child:willPatch", "Child:patched", "Child:willPatch", "Child:patched"]).toBeLogged();
     expect(fixture.innerHTML).toBe("<div><span>321</span><span>321</span></div>");
   });
 
   test("two independent components on different levels are updated in parallel", async () => {
     const testContext = createReactive({ value: 123 });
-    const steps: string[] = [];
 
     class Child extends Component {
       static template = xml`<span><t t-esc="contextObj.value"/></span>`;
       static components = {};
       contextObj = useState(testContext);
       setup() {
-        onWillRender(() => {
-          steps.push("render");
-        });
+        useLogLifecycle();
       }
     }
 
     class Parent extends Component {
       static template = xml`<div><Child /></div>`;
       static components = { Child };
+      setup() {
+        useLogLifecycle();
+      }
     }
 
     class GrandFather extends Component {
       static template = xml`<div><Child /><Parent /></div>`;
       static components = { Child, Parent };
+      setup() {
+        useLogLifecycle();
+      }
     }
 
     await mount(GrandFather, fixture);
-
     expect(fixture.innerHTML).toBe("<div><span>123</span><div><span>123</span></div></div>");
-    expect(steps).toEqual(["render", "render"]);
+    expect([
+      "GrandFather:setup",
+      "GrandFather:willStart",
+      "GrandFather:willRender",
+      "Child:setup",
+      "Child:willStart",
+      "Parent:setup",
+      "Parent:willStart",
+      "GrandFather:rendered",
+      "Child:willRender",
+      "Child:rendered",
+      "Parent:willRender",
+      "Child:setup",
+      "Child:willStart",
+      "Parent:rendered",
+      "Child:willRender",
+      "Child:rendered",
+      "Child:mounted",
+      "Parent:mounted",
+      "Child:mounted",
+      "GrandFather:mounted",
+    ]).toBeLogged();
 
     testContext.value = 321;
-
     await nextMicroTick();
     await nextMicroTick();
-    expect(steps).toEqual(["render", "render", "render", "render"]);
     expect(fixture.innerHTML).toBe("<div><span>123</span><div><span>123</span></div></div>");
+    expect([
+      "Child:willRender",
+      "Child:rendered",
+      "Child:willRender",
+      "Child:rendered",
+    ]).toBeLogged();
 
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>321</span><div><span>321</span></div></div>");
+    expect(["Child:willPatch", "Child:patched", "Child:willPatch", "Child:patched"]).toBeLogged();
   });
 
   test("one components can subscribe twice to same context", async () => {
@@ -1374,15 +1449,12 @@ describe("Reactivity: useState", () => {
 
   test("destroyed component is inactive", async () => {
     const testContext = createReactive({ a: 123 });
-    const steps: string[] = [];
 
     class Child extends Component {
       static template = xml`<span><t t-esc="contextObj.a"/></span>`;
       contextObj = useState(testContext);
       setup() {
-        onWillRender(() => {
-          steps.push("child");
-        });
+        useLogLifecycle();
       }
     }
     class Parent extends Component {
@@ -1390,27 +1462,43 @@ describe("Reactivity: useState", () => {
       static components = { Child };
       state = useState({ flag: true });
       setup() {
-        onWillRender(() => {
-          steps.push("parent");
-        });
+        useLogLifecycle();
       }
     }
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div><span>123</span></div>");
-    expect(steps).toEqual(["parent", "child"]);
+    expect([
+      "Parent:setup",
+      "Parent:willStart",
+      "Parent:willRender",
+      "Child:setup",
+      "Child:willStart",
+      "Parent:rendered",
+      "Child:willRender",
+      "Child:rendered",
+      "Child:mounted",
+      "Parent:mounted",
+    ]).toBeLogged();
 
     testContext.a = 321;
     await nextTick();
-    expect(steps).toEqual(["parent", "child", "child"]);
+    expect(["Child:willRender", "Child:rendered", "Child:willPatch", "Child:patched"]).toBeLogged();
 
     parent.state.flag = false;
     await nextTick();
     expect(fixture.innerHTML).toBe("<div></div>");
-    expect(steps).toEqual(["parent", "child", "child", "parent"]);
+    expect([
+      "Parent:willRender",
+      "Parent:rendered",
+      "Parent:willPatch",
+      "Child:willUnmount",
+      "Child:destroyed",
+      "Parent:patched",
+    ]).toBeLogged();
 
     testContext.a = 456;
     await nextTick();
-    expect(steps).toEqual(["parent", "child", "child", "parent"]);
+    expect([]).toBeLogged();
   });
 
   test("destroyed component before being mounted is inactive", async () => {

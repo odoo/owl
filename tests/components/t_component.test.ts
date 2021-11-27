@@ -12,12 +12,10 @@ beforeEach(() => {
 
 describe("t-component", () => {
   test("t-component works in simple case", async () => {
-    let steps: string[] = [];
-
     class Child extends Component {
       static template = xml`<div>child</div>`;
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
 
@@ -25,14 +23,14 @@ describe("t-component", () => {
       static template = xml`<t t-component="Child"/>`;
       Child = Child;
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
 
     await mount(Parent, fixture);
 
     expect(fixture.innerHTML).toBe("<div>child</div>");
-    expect(steps).toEqual([
+    expect([
       "Parent:setup",
       "Parent:willStart",
       "Parent:willRender",
@@ -43,23 +41,21 @@ describe("t-component", () => {
       "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
-    ]);
+    ]).toBeLogged();
   });
 
   test("switching dynamic component", async () => {
-    let steps: string[] = [];
-
     class ChildA extends Component {
       static template = xml`<div>child a</div>`;
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
 
     class ChildB extends Component {
       static template = xml`child b`;
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
 
@@ -67,19 +63,13 @@ describe("t-component", () => {
       static template = xml`<t t-component="Child"/>`;
       Child = ChildA;
       setup() {
-        useLogLifecycle(steps);
+        useLogLifecycle();
       }
     }
 
     const parent = await mount(Parent, fixture);
-
     expect(fixture.innerHTML).toBe("<div>child a</div>");
-
-    parent.Child = ChildB;
-    parent.render();
-    await nextTick();
-    expect(fixture.innerHTML).toBe("child b");
-    expect(steps).toEqual([
+    expect([
       "Parent:setup",
       "Parent:willStart",
       "Parent:willRender",
@@ -90,6 +80,13 @@ describe("t-component", () => {
       "ChildA:rendered",
       "ChildA:mounted",
       "Parent:mounted",
+    ]).toBeLogged();
+
+    parent.Child = ChildB;
+    parent.render();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("child b");
+    expect([
       "Parent:willRender",
       "ChildB:setup",
       "ChildB:willStart",
@@ -101,7 +98,7 @@ describe("t-component", () => {
       "ChildA:destroyed",
       "ChildB:mounted",
       "Parent:patched",
-    ]);
+    ]).toBeLogged();
   });
 
   test("can switch between dynamic components without the need for a t-key", async () => {

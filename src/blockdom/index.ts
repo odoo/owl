@@ -4,7 +4,7 @@ export { toggler } from "./toggler";
 export { createBlock } from "./block_compiler";
 export { list } from "./list";
 export { multi } from "./multi";
-export { text } from "./text";
+export { text, comment } from "./text";
 export { html } from "./html";
 
 export interface VNode<T = any> {

@@ -3,7 +3,7 @@
 exports[`misc complex template 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\"><div block-attribute-1=\\"class\\"><div class=\\"batch_header\\"><a block-attribute-2=\\"href\\" block-attribute-3=\\"class\\" title=\\"View Batch\\"><block-text-4/><block-child-0/><i class=\\"arrow fa fa-window-maximize\\"/></a></div><block-child-1/><div class=\\"batch_slots\\"><block-child-2/><block-child-3/></div><div class=\\"batch_commits\\"><block-child-4/></div></div></div>\`);
@@ -81,7 +81,7 @@ exports[`misc complex template 1`] = `
 exports[`misc global 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<año block-attribute-0=\\"falló\\"><block-child-0/></año>\`);
@@ -97,7 +97,7 @@ exports[`misc global 1`] = `
 exports[`misc global 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -112,7 +112,7 @@ exports[`misc global 2`] = `
 exports[`misc global 3`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -128,7 +128,7 @@ exports[`misc global 3`] = `
 exports[`misc global 4`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   const callTemplate_2 = getTemplate(\`_callee-uses-foo\`);
   const callTemplate_4 = getTemplate(\`_callee-uses-foo\`);
@@ -180,7 +180,7 @@ exports[`misc global 4`] = `
 exports[`misc other complex template 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   const callTemplate_2 = getTemplate(\`LOAD_INFOS_TEMPLATE\`);
   

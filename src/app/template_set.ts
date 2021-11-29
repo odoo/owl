@@ -1,9 +1,9 @@
-import { createBlock, html, list, multi, text, toggler } from "../blockdom";
+import { createBlock, html, list, multi, text, toggler, comment } from "../blockdom";
 import { compile, Template } from "../compiler";
 import { component } from "../component/component_node";
 import { UTILS } from "./template_helpers";
 
-const bdom = { text, createBlock, list, multi, html, toggler, component };
+const bdom = { text, createBlock, list, multi, html, toggler, component, comment };
 
 export const globalTemplates: { [key: string]: string | Node } = {};
 

@@ -1,3 +1,4 @@
+import { onError, onMounted } from "..";
 import { Component } from "../component/component";
 import { ComponentNode } from "../component/component_node";
 import { MountOptions } from "../component/fibers";
@@ -64,8 +65,22 @@ export class App<T extends typeof Component = any> extends TemplateSet {
       throw new Error("Cannot mount a component on a detached dom node");
     }
     const node = new ComponentNode(this.Root, this.props, this);
+    let resolve: any, reject: any;
+    let promise: any = new Promise((_resolve, _reject) => {
+      resolve = _resolve;
+      reject = _reject;
+    });
+    onMounted(() => {
+      resolve(node.component);
+    });
+    onError((e) => {
+      reject(e);
+      throw e;
+    });
+
     this.root = node;
-    return node.mountComponent(target, options);
+    node.mountComponent(target, options);
+    return promise;
   }
 
   destroy() {

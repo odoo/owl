@@ -585,7 +585,6 @@ describe("can catch errors", () => {
       }
     }
     await mount(Root, fixture);
-    await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
     expect([
       "Root:setup",

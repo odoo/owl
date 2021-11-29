@@ -26,7 +26,7 @@ export class Component {
 
   setup() {}
 
-  render(): Promise<void> {
-    return this.__owl__.render();
+  render() {
+    this.__owl__.render();
   }
 }

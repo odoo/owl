@@ -139,10 +139,9 @@ export class ComponentNode<T extends typeof Component = typeof Component>
   async render() {
     const current = this.fiber;
     if (current && !current.bdom && !fibersInError.has(current)) {
-      return current.root.promise;
+      return;
     }
     if (!this.bdom && !current) {
-      // should find a way to return the future mounting promise
       return;
     }
     const fiber = makeRootFiber(this);
@@ -166,7 +165,6 @@ export class ComponentNode<T extends typeof Component = typeof Component>
     if (this.fiber && (current || !fiber.parent)) {
       this._render(fiber);
     }
-    return fiber.root.promise;
   }
 
   _render(fiber: Fiber | RootFiber) {

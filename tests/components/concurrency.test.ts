@@ -1758,7 +1758,9 @@ test("concurrent renderings scenario 11", async () => {
     def.resolve();
   }, 20);
   child.val = 5;
-  await child.render();
+  child.render();
+  await def;
+  await nextTick();
   expect(fixture.innerHTML).toBe("<div><span>2|5</span></div>");
   expect([
     "Parent:willRender",
@@ -2315,7 +2317,8 @@ test("calling render in destroy", async () => {
 
   a.state = "A";
   a.key = 2;
-  await a.render();
+  a.render();
+  await nextTick();
   // this nextTick is critical, otherwise jest may silently swallow errors
   await nextTick();
   expect([
@@ -2362,7 +2365,8 @@ test("change state and call manually render: no unnecessary rendering", async ()
   expect(numberOfRender).toBe(1);
 
   test.state.val = 2;
-  await test.render();
+  test.render();
+  await nextTick();
   expect(fixture.innerHTML).toBe("<div>2</div>");
   expect(numberOfRender).toBe(2);
   expect(["Test:willRender", "Test:rendered", "Test:willPatch", "Test:patched"]).toBeLogged();
@@ -2454,22 +2458,6 @@ test("changing state before first render does not trigger a render (with parent)
     "TestW:mounted",
     "Parent:patched",
   ]).toBeLogged();
-});
-
-test("render method wait until rendering is done", async () => {
-  class TestW extends Component {
-    static template = xml`<div><t t-esc="state.drinks"/></div>`;
-    state = { drinks: 1 };
-  }
-  const widget = await mount(TestW, fixture);
-  expect(fixture.innerHTML).toBe("<div>1</div>");
-
-  widget.state.drinks = 2;
-
-  const renderPromise = widget.render();
-  expect(fixture.innerHTML).toBe("<div>1</div>");
-  await renderPromise;
-  expect(fixture.innerHTML).toBe("<div>2</div>");
 });
 
 test("two renderings initiated between willPatch and patched", async () => {

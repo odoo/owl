@@ -1,5 +1,5 @@
-import { makeTestFixture, snapshotApp } from "../helpers";
-import { Component, xml } from "../../src";
+import { makeTestFixture, nextTick, snapshotApp } from "../helpers";
+import { Component, onError, xml } from "../../src";
 import { App, DEV_MSG } from "../../src/app/app";
 import { validateProps } from "../../src/component/props_validation";
 
@@ -667,15 +667,15 @@ describe("props validation", () => {
       static template = xml`<div><SubComp p="state.p"/></div>`;
       static components = { SubComp };
       state: any = { p: 1 };
+      setup() {
+        onError((e) => (error = e));
+      }
     }
     const app = await mountApp(Parent);
     expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
-    try {
-      (app as any).root.component.state.p = undefined;
-      await (app as any).root.component.render();
-    } catch (e) {
-      error = e as Error;
-    }
+    (app as any).root.component.state.p = undefined;
+    (app as any).root.component.render();
+    await nextTick();
     expect(error!).toBeDefined();
     expect(error!.message).toBe("Missing props 'p' (component 'SubComp')");
   });
@@ -696,7 +696,8 @@ describe("props validation", () => {
     const app = await mountApp(Parent);
     expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
     (app as any).root.component.state.p = undefined;
-    await (app as any).root.component.render();
+    (app as any).root.component.render();
+    await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
   });
 
@@ -754,7 +755,8 @@ describe("default props", () => {
     const app = await mountApp(Parent);
     expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
     (app as any).root.component.state.p = undefined;
-    await (app as any).root.component.render();
+    (app as any).root.component.render();
+    await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
   });
 

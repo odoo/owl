@@ -2,6 +2,7 @@ import {
   App,
   Component,
   mount,
+  onError,
   onMounted,
   onPatched,
   onWillPatch,
@@ -391,17 +392,17 @@ describe("Portal", () => {
           </Portal>
         </div>`;
       state = { error: false };
+      setup() {
+        onError((e) => (error = e));
+      }
     }
     addOutsideDiv(fixture);
     const parent = await mount(Parent, fixture);
-    parent.state.error = true;
 
     let error: Error;
-    try {
-      await parent.render();
-    } catch (e) {
-      error = e as Error;
-    }
+    parent.state.error = true;
+    parent.render();
+    await nextTick();
     expect(error!).toBeDefined();
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;

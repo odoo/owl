@@ -1,4 +1,4 @@
-import { snapshotEverything, makeTestFixture, addTemplate } from "../helpers";
+import { snapshotEverything, makeTestFixture, addTemplate, nextTick } from "../helpers";
 import { Component, mount, xml } from "../../src/index";
 
 snapshotEverything();
@@ -32,7 +32,8 @@ describe("t-key", () => {
 
     const oldChild = childInstance;
     parent.key = 2;
-    await parent.render();
+    parent.render();
+    await nextTick();
     expect((parent.el as HTMLElement).innerHTML).toBe("<div>2</div>");
     expect(oldChild === childInstance).toBeFalsy();
   });
@@ -65,7 +66,8 @@ describe("t-key", () => {
 
     const oldChild = childInstance;
     __key = 2;
-    await parent.render();
+    parent.render();
+    await nextTick();
     expect((parent.el as HTMLElement).innerHTML).toBe("<div>2</div>");
     expect(oldChild === childInstance).toBeFalsy();
     expect(keyCalls).toBe(4);
@@ -97,7 +99,8 @@ describe("t-key", () => {
 
     parent.key1 = 2;
     parent.key2 = 1;
-    await parent.render();
+    parent.render();
+    await nextTick();
     expect((parent.el as HTMLElement).innerHTML).toBe("<div>2</div><div>1</div>");
     expect(childInstances.length).toBe(4);
   });
@@ -130,7 +133,8 @@ describe("t-key", () => {
 
     parent.key1 = 2;
     parent.key2 = 1;
-    await parent.render();
+    parent.render();
+    await nextTick();
     expect((parent.el as HTMLElement).innerHTML).toBe("<div>2</div><div>1</div>");
     expect(childInstances.length).toBe(4);
   });
@@ -165,7 +169,8 @@ describe("t-key", () => {
 
     parent.key1 = 2;
     parent.key2 = 1;
-    await parent.render();
+    parent.render();
+    await nextTick();
     expect((parent.el as HTMLElement).innerHTML).toBe("<div>2</div><div>1</div>");
     expect(childInstances.length).toBe(4);
   });
@@ -194,14 +199,16 @@ describe("t-key", () => {
     const parent = await mount(Parent, fixture);
     expect((parent.el as HTMLElement).innerHTML).toBe("<div>1key1</div><div>2key1</div>");
     parent.clist = [2, 1];
-    await parent.render();
+    parent.render();
+    await nextTick();
     expect((parent.el as HTMLElement).innerHTML).toBe("<div>2key1</div><div>1key1</div>");
     expect(childInstances.length).toBe(2);
     childInstances.length = 0;
 
     parent.clist = [1, 2];
     parent.key1 = "key2";
-    await parent.render();
+    parent.render();
+    await nextTick();
     expect((parent.el as HTMLElement).innerHTML).toBe("<div>1key2</div><div>2key2</div>");
     expect(childInstances.length).toBe(2);
   });

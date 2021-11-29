@@ -69,7 +69,8 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("<span>CHILD 1</span>");
 
     env.options.flag = false;
-    await parent.render();
+    parent.render();
+    await nextTick();
     expect(fixture.innerHTML).toBe("<div>CHILD 2</div>");
   });
 

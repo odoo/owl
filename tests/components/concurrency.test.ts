@@ -64,7 +64,7 @@ describe("async rendering", () => {
     def.resolve();
     await nextTick();
     expect(status(w)).toBe("destroyed");
-    expect(["W:setup", "W:willStart", "W:destroyed"]).toBeLogged();
+    expect(["W:setup", "W:willStart", "W:willDestroy"]).toBeLogged();
   });
 });
 
@@ -112,7 +112,7 @@ test("destroying/recreating a subwidget with different props (if start is not ov
 
   expect([
     "W:willRender",
-    "Child:destroyed",
+    "Child:willDestroy",
     "Child:setup",
     "Child:willStart",
     "W:rendered",
@@ -190,7 +190,7 @@ test("creating two async components, scenario 1", async () => {
   expect(fixture.innerHTML).toBe("");
   expect([
     "Parent:willRender",
-    "ChildA:destroyed",
+    "ChildA:willDestroy",
     "ChildA:setup",
     "ChildA:willStart",
     "ChildB:setup",
@@ -583,8 +583,8 @@ test("properly behave when destroyed/unmounted while rendering ", async () => {
     "Parent:willPatch",
     "Child:willUnmount",
     "SubChild:willUnmount",
-    "SubChild:destroyed",
-    "Child:destroyed",
+    "SubChild:willDestroy",
+    "Child:willDestroy",
     "Parent:patched",
   ]).toBeLogged();
 
@@ -642,7 +642,7 @@ test("rendering component again in next microtick", async () => {
     "Child:willStart",
     "Parent:rendered",
     "Parent:willRender",
-    "Child:destroyed",
+    "Child:willDestroy",
     "Child:setup",
     "Child:willStart",
     "Parent:rendered",
@@ -1694,7 +1694,7 @@ test("concurrent renderings scenario 10", async () => {
   expect(rendered).toBe(1);
   expect([
     "ComponentB:willRender",
-    "ComponentC:destroyed",
+    "ComponentC:willDestroy",
     "ComponentC:setup",
     "ComponentC:willStart",
     "ComponentB:rendered",
@@ -2249,7 +2249,7 @@ test.skip("concurrent renderings scenario 16", async () => {
     "C:willUpdateProps",
     "C:willRender",
     "C:rendered",
-    "D:destroyed",
+    "D:willDestroy",
     "D:setup",
     "D:willStart",
     "D:willRender",
@@ -2324,7 +2324,7 @@ test("calling render in destroy", async () => {
     "B:willRender",
     "B:rendered",
     "B:willUnmount",
-    "B:destroyed",
+    "B:willDestroy",
     "B:mounted",
     "B:willRender",
     "B:rendered",
@@ -2522,7 +2522,7 @@ test("two renderings initiated between willPatch and patched", async () => {
     "Panel:rendered",
     "Parent:willPatch",
     "Panel:willUnmount",
-    "Panel:destroyed",
+    "Panel:willDestroy",
     "Panel:mounted",
     "Parent:patched",
   ]).toBeLogged();
@@ -2535,7 +2535,7 @@ test("two renderings initiated between willPatch and patched", async () => {
     "Parent:rendered",
     "Parent:willPatch",
     "Panel:willUnmount",
-    "Panel:destroyed",
+    "Panel:willDestroy",
     "Parent:patched",
   ]).toBeLogged();
 });

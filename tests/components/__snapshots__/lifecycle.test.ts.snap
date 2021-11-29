@@ -107,36 +107,6 @@ exports[`lifecycle hooks component semantics 6`] = `
 }"
 `;
 
-exports[`lifecycle hooks components are unmounted and destroyed if no longer in DOM 1`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  
-  let block1 = createBlock(\`<div/>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    return block1();
-  }
-}"
-`;
-
-exports[`lifecycle hooks components are unmounted and destroyed if no longer in DOM 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
-  
-  return function template(ctx, node, key = \\"\\") {
-    let b2;
-    if (ctx['state'].ok) {
-      b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
-    }
-    return multi([b2]);
-  }
-}"
-`;
-
 exports[`lifecycle hooks components are unmounted and destroyed if no longer in DOM, even after updateprops 1`] = `
 "function anonymous(bdom, helpers
 ) {
@@ -165,6 +135,36 @@ exports[`lifecycle hooks components are unmounted and destroyed if no longer in 
     if (ctx['state'].flag) {
       let b3 = component(\`Child\`, {n: ctx['state'].n}, key + \`__1\`, node, ctx);
       b2 = block2([], [b3]);
+    }
+    return multi([b2]);
+  }
+}"
+`;
+
+exports[`lifecycle hooks components are unmounted destroyed if no longer in DOM 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`lifecycle hooks components are unmounted destroyed if no longer in DOM 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2;
+    if (ctx['state'].ok) {
+      b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
     }
     return multi([b2]);
   }

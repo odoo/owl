@@ -35,9 +35,9 @@ export function onWillUnmount(fn: () => Promise<void> | void | any) {
   node.willUnmount.unshift(fn);
 }
 
-export function onDestroyed(fn: () => Promise<void> | void | any) {
+export function onWillDestroy(fn: () => Promise<void> | void | any) {
   const node = getCurrent()!;
-  node.destroyed.push(fn);
+  node.willDestroy.push(fn);
 }
 
 export function onWillRender(fn: () => void | any) {

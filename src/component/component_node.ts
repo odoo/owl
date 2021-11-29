@@ -8,7 +8,6 @@ import {
   MountFiber,
   MountOptions,
   RootFiber,
-  __internal__destroyed,
 } from "./fibers";
 import { handleError, fibersInError } from "./error_handling";
 import { applyDefaultProps } from "./props_validation";
@@ -95,7 +94,7 @@ export class ComponentNode<T extends typeof Component = typeof Component>
   mounted: LifecycleHook[] = [];
   willPatch: LifecycleHook[] = [];
   patched: LifecycleHook[] = [];
-  destroyed: LifecycleHook[] = [];
+  willDestroy: LifecycleHook[] = [];
 
   constructor(C: T, props: any, app: App, parent?: ComponentNode) {
     currentNode = this;
@@ -180,34 +179,27 @@ export class ComponentNode<T extends typeof Component = typeof Component>
   }
 
   destroy() {
-    if (this.status === STATUS.MOUNTED) {
-      callWillUnmount(this);
+    let shouldRemove = this.status === STATUS.MOUNTED;
+    this._destroy();
+    if (shouldRemove) {
       this.bdom!.remove();
     }
-    callDestroyed(this);
+  }
 
-    function callWillUnmount(node: ComponentNode) {
-      const component = node.component;
-      for (let cb of node.willUnmount) {
-        cb.call(component);
-      }
-      for (let child of Object.values(node.children)) {
-        if (child.status === STATUS.MOUNTED) {
-          callWillUnmount(child);
-        }
-      }
-    }
-
-    function callDestroyed(node: ComponentNode) {
-      const component = node.component;
-      node.status = STATUS.DESTROYED;
-      for (let child of Object.values(node.children)) {
-        callDestroyed(child);
-      }
-      for (let cb of node.destroyed) {
+  _destroy() {
+    const component = this.component;
+    if (this.status === STATUS.MOUNTED) {
+      for (let cb of this.willUnmount) {
         cb.call(component);
       }
     }
+    for (let child of Object.values(this.children)) {
+      child._destroy();
+    }
+    for (let cb of this.willDestroy) {
+      cb.call(component);
+    }
+    this.status = STATUS.DESTROYED;
   }
 
   async updateAndRender(props: any, parentFiber: Fiber) {
@@ -260,26 +252,10 @@ export class ComponentNode<T extends typeof Component = typeof Component>
   }
 
   beforeRemove() {
-    visitRemovedNodes(this);
+    this._destroy();
   }
 
   remove() {
     this.bdom!.remove();
-  }
-}
-
-function visitRemovedNodes(node: ComponentNode) {
-  if (node.status === STATUS.MOUNTED) {
-    const component = node.component;
-    for (let cb of node.willUnmount) {
-      cb.call(component);
-    }
-  }
-  for (let child of Object.values(node.children)) {
-    visitRemovedNodes(child);
-  }
-  node.status = STATUS.DESTROYED;
-  if (node.destroyed.length) {
-    __internal__destroyed.push(node);
   }
 }

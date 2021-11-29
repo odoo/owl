@@ -8,18 +8,17 @@ const nodeInsertBefore = nodeProto.insertBefore;
 const characterDataSetData = getDescriptor(characterDataProto, "data").set!;
 const nodeRemoveChild = nodeProto.removeChild;
 
-class VText {
+abstract class VSimpleNode {
   text: string;
   parentEl?: HTMLElement | undefined;
-  el?: Text;
+  el?: any;
 
   constructor(text: string) {
     this.text = text;
   }
 
-  mount(parent: HTMLElement, afterNode: Node | null) {
+  mountNode(node: Node, parent: HTMLElement, afterNode: Node | null) {
     this.parentEl = parent;
-    const node = document.createTextNode(toText(this.text));
     nodeInsertBefore.call(parent, node, afterNode);
     this.el = node;
   }
@@ -27,14 +26,6 @@ class VText {
   moveBefore(other: VText | null, afterNode: Node | null) {
     const target = other ? other.el! : afterNode;
     nodeInsertBefore.call(this.parentEl, this.el!, target);
-  }
-
-  patch(other: VText) {
-    const text2 = other.text;
-    if (this.text !== text2) {
-      characterDataSetData.call(this.el!, toText(text2));
-      this.text = text2;
-    }
   }
 
   beforeRemove() {}
@@ -52,8 +43,34 @@ class VText {
   }
 }
 
+class VText extends VSimpleNode {
+  mount(parent: HTMLElement, afterNode: Node | null) {
+    this.mountNode(document.createTextNode(toText(this.text)), parent, afterNode);
+  }
+
+  patch(other: VText) {
+    const text2 = other.text;
+    if (this.text !== text2) {
+      characterDataSetData.call(this.el!, toText(text2));
+      this.text = text2;
+    }
+  }
+}
+
+class VComment extends VSimpleNode {
+  mount(parent: HTMLElement, afterNode: Node | null) {
+    this.mountNode(document.createComment(toText(this.text)), parent, afterNode);
+  }
+
+  patch() {}
+}
+
 export function text(str: string): VNode<VText> {
   return new VText(str);
+}
+
+export function comment(str: string): VNode<VComment> {
+  return new VComment(str);
 }
 
 export function toText(value: any): string {

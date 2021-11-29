@@ -3,7 +3,7 @@
 exports[`t-model directive .lazy modifier 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><input block-attribute-0=\\"value\\" block-handler-1=\\"change\\"/><span><block-text-2/></span></div>\`);
@@ -21,7 +21,7 @@ exports[`t-model directive .lazy modifier 1`] = `
 exports[`t-model directive .number modifier 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><input block-attribute-0=\\"value\\" block-handler-1=\\"input\\"/><span><block-text-2/></span></div>\`);
@@ -39,7 +39,7 @@ exports[`t-model directive .number modifier 1`] = `
 exports[`t-model directive .trim modifier 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><input block-attribute-0=\\"value\\" block-handler-1=\\"input\\"/><span><block-text-2/></span></div>\`);
@@ -57,7 +57,7 @@ exports[`t-model directive .trim modifier 1`] = `
 exports[`t-model directive basic use, on an input 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><input block-attribute-0=\\"value\\" block-handler-1=\\"input\\"/><span><block-text-2/></span></div>\`);
@@ -75,7 +75,7 @@ exports[`t-model directive basic use, on an input 1`] = `
 exports[`t-model directive basic use, on an input with bracket expression 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><input block-attribute-0=\\"value\\" block-handler-1=\\"input\\"/><span><block-text-2/></span></div>\`);
@@ -93,7 +93,7 @@ exports[`t-model directive basic use, on an input with bracket expression 1`] = 
 exports[`t-model directive basic use, on another key in component 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><input block-attribute-0=\\"value\\" block-handler-1=\\"input\\"/><span><block-text-2/></span></div>\`);
@@ -111,7 +111,7 @@ exports[`t-model directive basic use, on another key in component 1`] = `
 exports[`t-model directive can also define t-on directive on same event, part 1 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><input block-handler-0=\\"input\\" block-attribute-1=\\"value\\" block-handler-2=\\"input\\"/></div>\`);
@@ -129,7 +129,7 @@ exports[`t-model directive can also define t-on directive on same event, part 1 
 exports[`t-model directive can also define t-on directive on same event, part 2 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><input type=\\"radio\\" id=\\"one\\" value=\\"One\\" block-handler-0=\\"click\\" block-attribute-1=\\"checked\\" block-handler-2=\\"click\\"/><input type=\\"radio\\" id=\\"two\\" value=\\"Two\\" block-handler-3=\\"click\\" block-attribute-4=\\"checked\\" block-handler-5=\\"click\\"/><input type=\\"radio\\" id=\\"three\\" value=\\"Three\\" block-handler-6=\\"click\\" block-attribute-7=\\"checked\\" block-handler-8=\\"click\\"/></div>\`);
@@ -155,7 +155,7 @@ exports[`t-model directive can also define t-on directive on same event, part 2 
 exports[`t-model directive following a scope protecting directive (e.g. t-set) 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><input block-attribute-0=\\"value\\" block-handler-1=\\"input\\"/></div>\`);
@@ -175,7 +175,7 @@ exports[`t-model directive following a scope protecting directive (e.g. t-set) 1
 exports[`t-model directive in a t-foreach 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -201,7 +201,7 @@ exports[`t-model directive in a t-foreach 1`] = `
 exports[`t-model directive in a t-foreach, part 2 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -228,7 +228,7 @@ exports[`t-model directive in a t-foreach, part 2 1`] = `
 exports[`t-model directive on a select 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><select block-attribute-0=\\"value\\" block-handler-1=\\"change\\"><option value=\\"\\">Please select one</option><option value=\\"red\\">Red</option><option value=\\"blue\\">Blue</option></select><span>Choice: <block-text-2/></span></div>\`);
@@ -246,7 +246,7 @@ exports[`t-model directive on a select 1`] = `
 exports[`t-model directive on a select, initial state 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><select block-attribute-0=\\"value\\" block-handler-1=\\"change\\"><option value=\\"\\">Please select one</option><option value=\\"red\\">Red</option><option value=\\"blue\\">Blue</option></select></div>\`);
@@ -263,7 +263,7 @@ exports[`t-model directive on a select, initial state 1`] = `
 exports[`t-model directive on a sub state key 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><input block-attribute-0=\\"value\\" block-handler-1=\\"input\\"/><span><block-text-2/></span></div>\`);
@@ -281,7 +281,7 @@ exports[`t-model directive on a sub state key 1`] = `
 exports[`t-model directive on an input type=radio 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><input type=\\"radio\\" id=\\"one\\" value=\\"One\\" block-attribute-0=\\"checked\\" block-handler-1=\\"click\\"/><input type=\\"radio\\" id=\\"two\\" value=\\"Two\\" block-attribute-2=\\"checked\\" block-handler-3=\\"click\\"/><span>Choice: <block-text-4/></span></div>\`);
@@ -302,7 +302,7 @@ exports[`t-model directive on an input type=radio 1`] = `
 exports[`t-model directive on an input type=radio, with initial value 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><input type=\\"radio\\" id=\\"one\\" value=\\"One\\" block-attribute-0=\\"checked\\" block-handler-1=\\"click\\"/><input type=\\"radio\\" id=\\"two\\" value=\\"Two\\" block-attribute-2=\\"checked\\" block-handler-3=\\"click\\"/></div>\`);
@@ -322,7 +322,7 @@ exports[`t-model directive on an input type=radio, with initial value 1`] = `
 exports[`t-model directive on an input, type=checkbox 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><input type=\\"checkbox\\" block-attribute-0=\\"checked\\" block-handler-1=\\"input\\"/><span><block-child-0/><block-child-1/></span></div>\`);
@@ -345,7 +345,7 @@ exports[`t-model directive on an input, type=checkbox 1`] = `
 exports[`t-model directive on an textarea 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><textarea block-attribute-0=\\"value\\" block-handler-1=\\"input\\"/><span><block-text-2/></span></div>\`);
@@ -363,7 +363,7 @@ exports[`t-model directive on an textarea 1`] = `
 exports[`t-model directive two inputs in a div alternating with a t-if 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);

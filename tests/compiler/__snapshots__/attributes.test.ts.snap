@@ -3,7 +3,7 @@
 exports[`attributes changing a class with t-att-class (preexisting class 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div class=\\"hoy\\" block-attribute-0=\\"class\\"/>\`);
@@ -18,7 +18,7 @@ exports[`attributes changing a class with t-att-class (preexisting class 1`] = `
 exports[`attributes changing a class with t-att-class 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
@@ -33,7 +33,7 @@ exports[`attributes changing a class with t-att-class 1`] = `
 exports[`attributes changing an attribute with t-att- 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"value\\"/>\`);
@@ -48,7 +48,7 @@ exports[`attributes changing an attribute with t-att- 1`] = `
 exports[`attributes class and t-att-class should combine together 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\" class=\\"hello\\"/>\`);
@@ -63,7 +63,7 @@ exports[`attributes class and t-att-class should combine together 1`] = `
 exports[`attributes class and t-attf-class with ternary operation 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div class=\\"hello\\" block-attribute-0=\\"class\\"/>\`);
@@ -78,7 +78,7 @@ exports[`attributes class and t-attf-class with ternary operation 1`] = `
 exports[`attributes dynamic attribute evaluating to 0 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"foo\\"/>\`);
@@ -93,7 +93,7 @@ exports[`attributes dynamic attribute evaluating to 0 1`] = `
 exports[`attributes dynamic attribute falsy variable  1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"foo\\"/>\`);
@@ -108,7 +108,7 @@ exports[`attributes dynamic attribute falsy variable  1`] = `
 exports[`attributes dynamic attribute with a dash 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"data-action-id\\"/>\`);
@@ -123,7 +123,7 @@ exports[`attributes dynamic attribute with a dash 1`] = `
 exports[`attributes dynamic attributes 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"foo\\"/>\`);
@@ -138,7 +138,7 @@ exports[`attributes dynamic attributes 1`] = `
 exports[`attributes dynamic class attribute 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
@@ -153,7 +153,7 @@ exports[`attributes dynamic class attribute 1`] = `
 exports[`attributes dynamic class attribute evaluating to 0 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
@@ -168,7 +168,7 @@ exports[`attributes dynamic class attribute evaluating to 0 1`] = `
 exports[`attributes dynamic empty class attribute 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
@@ -183,7 +183,7 @@ exports[`attributes dynamic empty class attribute 1`] = `
 exports[`attributes dynamic formatted attributes with a dash 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"aria-label\\"/>\`);
@@ -198,7 +198,7 @@ exports[`attributes dynamic formatted attributes with a dash 1`] = `
 exports[`attributes fixed variable 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"foo\\"/>\`);
@@ -213,7 +213,7 @@ exports[`attributes fixed variable 1`] = `
 exports[`attributes format expression 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"foo\\"/>\`);
@@ -228,7 +228,7 @@ exports[`attributes format expression 1`] = `
 exports[`attributes format literal 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"foo\\"/>\`);
@@ -243,7 +243,7 @@ exports[`attributes format literal 1`] = `
 exports[`attributes format multiple 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"foo\\"/>\`);
@@ -258,7 +258,7 @@ exports[`attributes format multiple 1`] = `
 exports[`attributes format value 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"foo\\"/>\`);
@@ -273,7 +273,7 @@ exports[`attributes format value 1`] = `
 exports[`attributes from object variables set previously 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><span block-attribute-0=\\"class\\"/></div>\`);
@@ -291,7 +291,7 @@ exports[`attributes from object variables set previously 1`] = `
 exports[`attributes from variables set previously (no external node) 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span block-attribute-0=\\"class\\"/>\`);
@@ -309,7 +309,7 @@ exports[`attributes from variables set previously (no external node) 1`] = `
 exports[`attributes from variables set previously 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><span block-attribute-0=\\"class\\"/></div>\`);
@@ -327,7 +327,7 @@ exports[`attributes from variables set previously 1`] = `
 exports[`attributes object 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attributes=\\"0\\"/>\`);
@@ -342,7 +342,7 @@ exports[`attributes object 1`] = `
 exports[`attributes static attributes 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div foo=\\"a\\" bar=\\"b\\" baz=\\"c\\"/>\`);
@@ -356,7 +356,7 @@ exports[`attributes static attributes 1`] = `
 exports[`attributes static attributes on void elements 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<img src=\\"/test.skip.jpg\\" alt=\\"Test\\"/>\`);
@@ -370,7 +370,7 @@ exports[`attributes static attributes on void elements 1`] = `
 exports[`attributes static attributes with dashes 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div aria-label=\\"Close\\"/>\`);
@@ -384,7 +384,7 @@ exports[`attributes static attributes with dashes 1`] = `
 exports[`attributes t-att-class and class should combine together 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div class=\\"hello\\" block-attribute-0=\\"class\\"/>\`);
@@ -399,7 +399,7 @@ exports[`attributes t-att-class and class should combine together 1`] = `
 exports[`attributes t-att-class with multiple classes 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
@@ -414,7 +414,7 @@ exports[`attributes t-att-class with multiple classes 1`] = `
 exports[`attributes t-att-class with multiple classes 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
@@ -429,7 +429,7 @@ exports[`attributes t-att-class with multiple classes 2`] = `
 exports[`attributes t-att-class with multiple classes, some of which are duplicate 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
@@ -444,7 +444,7 @@ exports[`attributes t-att-class with multiple classes, some of which are duplica
 exports[`attributes t-att-class with object 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div class=\\"static\\" block-attribute-0=\\"class\\"/>\`);
@@ -459,7 +459,7 @@ exports[`attributes t-att-class with object 1`] = `
 exports[`attributes t-attf-class 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
@@ -474,7 +474,7 @@ exports[`attributes t-attf-class 1`] = `
 exports[`attributes t-attf-class should combine with class 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div class=\\"hello\\" block-attribute-0=\\"class\\"/>\`);
@@ -489,7 +489,7 @@ exports[`attributes t-attf-class should combine with class 1`] = `
 exports[`attributes t-attf-class with multiple classes 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
@@ -504,7 +504,7 @@ exports[`attributes t-attf-class with multiple classes 1`] = `
 exports[`attributes t-attf-class with multiple classes separated by multiple spaces 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
@@ -519,7 +519,7 @@ exports[`attributes t-attf-class with multiple classes separated by multiple spa
 exports[`attributes tuple literal 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attributes=\\"0\\"/>\`);
@@ -534,7 +534,7 @@ exports[`attributes tuple literal 1`] = `
 exports[`attributes tuple variable 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attributes=\\"0\\"/>\`);
@@ -549,7 +549,7 @@ exports[`attributes tuple variable 1`] = `
 exports[`attributes two classes 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div class=\\"a b\\"/>\`);
@@ -563,7 +563,7 @@ exports[`attributes two classes 1`] = `
 exports[`attributes two dynamic attributes 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"foo\\" block-attribute-1=\\"bar\\"/>\`);
@@ -579,7 +579,7 @@ exports[`attributes two dynamic attributes 1`] = `
 exports[`attributes updating classes (with obj notation) 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div class=\\"hoy\\" block-attribute-0=\\"class\\"/>\`);
@@ -594,7 +594,7 @@ exports[`attributes updating classes (with obj notation) 1`] = `
 exports[`attributes various escapes 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div foo=\\"&lt;foo\\" block-attribute-0=\\"bar\\" block-attribute-1=\\"baz\\" block-attributes=\\"2\\"/>\`);
@@ -611,7 +611,7 @@ exports[`attributes various escapes 1`] = `
 exports[`attributes various escapes 2 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div> &lt; </div>\`);
@@ -625,7 +625,7 @@ exports[`attributes various escapes 2 1`] = `
 exports[`special cases for some specific html attributes/properties input of type checkbox with t-att-indeterminate 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<input type=\\"checkbox\\" block-attribute-0=\\"indeterminate\\"/>\`);
@@ -640,7 +640,7 @@ exports[`special cases for some specific html attributes/properties input of typ
 exports[`special cases for some specific html attributes/properties input type= checkbox, with t-att-checked 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<input type=\\"checkbox\\" block-attribute-0=\\"checked\\"/>\`);
@@ -655,7 +655,7 @@ exports[`special cases for some specific html attributes/properties input type= 
 exports[`special cases for some specific html attributes/properties input with t-att-value 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<input block-attribute-0=\\"value\\"/>\`);
@@ -670,7 +670,7 @@ exports[`special cases for some specific html attributes/properties input with t
 exports[`special cases for some specific html attributes/properties select with t-att-value 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<select block-attribute-0=\\"value\\"><option value=\\"potato\\">Potato</option><option value=\\"tomato\\">Tomato</option><option value=\\"onion\\">Onion</option></select>\`);
@@ -685,7 +685,7 @@ exports[`special cases for some specific html attributes/properties select with 
 exports[`special cases for some specific html attributes/properties textarea with t-att-value 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<textarea block-attribute-0=\\"value\\"/>\`);
@@ -700,7 +700,7 @@ exports[`special cases for some specific html attributes/properties textarea wit
 exports[`special cases for some specific html attributes/properties various boolean html attributes 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><input type=\\"checkbox\\" checked=\\"checked\\"/><input checked=\\"checked\\"/><div checked=\\"checked\\"/><div selected=\\"selected\\"/><option selected=\\"selected\\" other=\\"1\\"/><input readonly=\\"readonly\\"/><button disabled=\\"disabled\\"/></div>\`);

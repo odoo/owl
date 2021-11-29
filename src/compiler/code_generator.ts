@@ -21,7 +21,7 @@ import {
   ASTType,
 } from "./parser";
 
-type BlockType = "block" | "text" | "multi" | "list" | "html";
+type BlockType = "block" | "text" | "multi" | "list" | "html" | "comment";
 
 export interface Config {
   translateFn?: (s: string) => string;
@@ -227,7 +227,7 @@ export class CodeGenerator {
 
     // define blocks and utility functions
     let mainCode = [
-      `  let { text, createBlock, list, multi, html, toggler, component } = bdom;`,
+      `  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;`,
       `let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;`,
     ];
     if (this.templateName) {
@@ -443,13 +443,14 @@ export class CodeGenerator {
     let { block, forceNewBlock } = ctx;
     const isNewBlock = !block || forceNewBlock;
     if (isNewBlock) {
-      block = this.createBlock(block, "block", ctx);
-      this.blocks.push(block);
-    }
-    const text = xmlDoc.createComment(ast.value);
-    block!.insert(text);
-    if (isNewBlock) {
-      this.insertBlock("", block!, ctx);
+      block = this.createBlock(block, "comment", ctx);
+      this.insertBlock(`comment(\`${ast.value}\`)`, block, {
+        ...ctx,
+        forceNewBlock: forceNewBlock && !block,
+      });
+    } else {
+      const text = xmlDoc.createComment(ast.value);
+      block!.insert(text);
     }
   }
 

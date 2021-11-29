@@ -1,7 +1,7 @@
 import {
   App,
   Component,
-  onDestroyed,
+  onWillDestroy,
   onMounted,
   onPatched,
   onWillRender,
@@ -210,9 +210,9 @@ export function useLogLifecycle() {
     logStep(`${name}:willUnmount`);
   });
 
-  onDestroyed(() => {
-    expect(name + ": " + status(component)).toBe(name + ": " + "destroyed");
-    logStep(`${name}:destroyed`);
+  onWillDestroy(() => {
+    expect(status(component)).not.toBe("destroyed");
+    logStep(`${name}:willDestroy`);
   });
 }
 

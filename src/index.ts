@@ -68,7 +68,7 @@ export {
   onPatched,
   onWillRender,
   onRendered,
-  onDestroyed,
+  onWillDestroy,
   onError,
 } from "./component/lifecycle_hooks";
 

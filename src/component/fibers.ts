@@ -126,14 +126,6 @@ export class RootFiber extends Fiber {
       node.bdom!.patch(this.bdom!, Object.keys(node.children).length > 0);
       this.appliedToDom = true;
 
-      // Step 3: calling all destroyed hooks
-      for (let node of __internal__destroyed) {
-        for (let cb of node.destroyed) {
-          cb();
-        }
-      }
-      __internal__destroyed.length = 0;
-
       // Step 4: calling all mounted lifecycle hooks
       let mountedFibers = this.mounted;
       while ((current = mountedFibers.pop())) {
@@ -164,8 +156,6 @@ export class RootFiber extends Fiber {
     }
   }
 }
-
-export let __internal__destroyed: ComponentNode[] = [];
 
 type Position = "first-child" | "last-child";
 

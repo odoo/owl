@@ -95,7 +95,7 @@ describe("t-component", () => {
       "ChildB:rendered",
       "Parent:willPatch",
       "ChildA:willUnmount",
-      "ChildA:destroyed",
+      "ChildA:willDestroy",
       "ChildB:mounted",
       "Parent:patched",
     ]).toBeLogged();

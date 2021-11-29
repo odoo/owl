@@ -313,7 +313,7 @@ describe("lifecycle hooks", () => {
     Object.freeze(steps);
   });
 
-  test("components are unmounted and destroyed if no longer in DOM", async () => {
+  test("components are unmounted destroyed if no longer in DOM", async () => {
     let steps: string[] = [];
 
     class Child extends Component {
@@ -410,7 +410,7 @@ describe("lifecycle hooks", () => {
       "Parent:rendered",
       "Parent:willPatch",
       "Child:willUnmount",
-      "Child:destroyed",
+      "Child:willDestroy",
       "Parent:patched",
     ]).toBeLogged();
   });
@@ -450,8 +450,8 @@ describe("lifecycle hooks", () => {
     expect([
       "Parent:willUnmount",
       "Child:willUnmount",
-      "Child:destroyed",
-      "Parent:destroyed",
+      "Child:willDestroy",
+      "Parent:willDestroy",
     ]).toBeLogged();
   });
 
@@ -568,8 +568,8 @@ describe("lifecycle hooks", () => {
     expect([
       "Parent:willUnmount",
       "Child:willUnmount",
-      "Child:destroyed",
-      "Parent:destroyed",
+      "Child:willDestroy",
+      "Parent:willDestroy",
     ]).toBeLogged();
   });
 
@@ -631,9 +631,9 @@ describe("lifecycle hooks", () => {
       "Parent:willUnmount",
       "Child:willUnmount",
       "GrandChild:willUnmount",
-      "GrandChild:destroyed",
-      "Child:destroyed",
-      "Parent:destroyed",
+      "GrandChild:willDestroy",
+      "Child:willDestroy",
+      "Parent:willDestroy",
     ]).toBeLogged();
   });
 
@@ -675,7 +675,7 @@ describe("lifecycle hooks", () => {
     // immediately destroy everything
     app.destroy();
     await nextTick();
-    expect(["Parent:willUnmount", "Parent:destroyed"]).toBeLogged();
+    expect(["Parent:willUnmount", "Parent:willDestroy"]).toBeLogged();
   });
 
   test("lifecycle semantics, part 4", async () => {
@@ -732,9 +732,9 @@ describe("lifecycle hooks", () => {
     app.destroy();
     expect([
       "Parent:willUnmount",
-      "GrandChild:destroyed",
-      "Child:destroyed",
-      "Parent:destroyed",
+      "GrandChild:willDestroy",
+      "Child:willDestroy",
+      "Parent:willDestroy",
     ]).toBeLogged();
   });
 
@@ -776,7 +776,7 @@ describe("lifecycle hooks", () => {
       "Parent:rendered",
       "Parent:willPatch",
       "Child:willUnmount",
-      "Child:destroyed",
+      "Child:willDestroy",
       "Parent:patched",
     ]).toBeLogged();
   });
@@ -1016,7 +1016,7 @@ describe("lifecycle hooks", () => {
       "C:willPatch",
       "D:willPatch",
       "E:willUnmount",
-      "E:destroyed",
+      "E:willDestroy",
       "F:mounted",
       "D:patched",
       "C:patched",
@@ -1061,7 +1061,7 @@ describe("lifecycle hooks", () => {
       "Parent:rendered",
       "Parent:willPatch",
       "Child:willUnmount",
-      "Child:destroyed",
+      "Child:willDestroy",
       "Parent:patched",
     ]).toBeLogged();
 

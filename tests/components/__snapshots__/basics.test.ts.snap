@@ -3,7 +3,7 @@
 exports[`basics Multi root component 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block2 = createBlock(\`<span>1</span>\`);
@@ -21,7 +21,7 @@ exports[`basics Multi root component 1`] = `
 exports[`basics a class component inside a class component, no external dom 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div>simple vnode</div>\`);
@@ -35,7 +35,7 @@ exports[`basics a class component inside a class component, no external dom 1`] 
 exports[`basics a class component inside a class component, no external dom 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -47,7 +47,7 @@ exports[`basics a class component inside a class component, no external dom 2`] 
 exports[`basics a component cannot be mounted in a detached node 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div/>\`);
@@ -61,7 +61,7 @@ exports[`basics a component cannot be mounted in a detached node 1`] = `
 exports[`basics a component inside a component 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div>simple vnode</div>\`);
@@ -75,7 +75,7 @@ exports[`basics a component inside a component 1`] = `
 exports[`basics a component inside a component 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -90,7 +90,7 @@ exports[`basics a component inside a component 2`] = `
 exports[`basics can be clicked on and updated 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-text-0/><button block-handler-1=\\"click\\">Inc</button></div>\`);
@@ -107,7 +107,7 @@ exports[`basics can be clicked on and updated 1`] = `
 exports[`basics can handle empty props 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -122,7 +122,7 @@ exports[`basics can handle empty props 1`] = `
 exports[`basics can handle empty props 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -137,7 +137,7 @@ exports[`basics can handle empty props 2`] = `
 exports[`basics can inject values in tagged templates 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -152,7 +152,7 @@ exports[`basics can inject values in tagged templates 1`] = `
 exports[`basics can inject values in tagged templates 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   const callTemplate_2 = getTemplate(\`__template__9\`);
   
@@ -165,7 +165,7 @@ exports[`basics can inject values in tagged templates 2`] = `
 exports[`basics can mount a component with just some text 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -177,7 +177,7 @@ exports[`basics can mount a component with just some text 1`] = `
 exports[`basics can mount a component with no text 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -189,7 +189,7 @@ exports[`basics can mount a component with no text 1`] = `
 exports[`basics can mount a simple component 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>simple vnode</span>\`);
@@ -203,7 +203,7 @@ exports[`basics can mount a simple component 1`] = `
 exports[`basics can mount a simple component with multiple roots 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block2 = createBlock(\`<span/>\`);
@@ -220,7 +220,7 @@ exports[`basics can mount a simple component with multiple roots 1`] = `
 exports[`basics can mount a simple component with props 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -235,7 +235,7 @@ exports[`basics can mount a simple component with props 1`] = `
 exports[`basics cannot mount on a documentFragment 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div>content</div>\`);
@@ -249,7 +249,7 @@ exports[`basics cannot mount on a documentFragment 1`] = `
 exports[`basics child can be updated 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -261,7 +261,7 @@ exports[`basics child can be updated 1`] = `
 exports[`basics child can be updated 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -273,7 +273,7 @@ exports[`basics child can be updated 2`] = `
 exports[`basics class component with dynamic text 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>My value: <block-text-0/></span>\`);
@@ -288,7 +288,7 @@ exports[`basics class component with dynamic text 1`] = `
 exports[`basics class parent, class child component with props 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -303,7 +303,7 @@ exports[`basics class parent, class child component with props 1`] = `
 exports[`basics class parent, class child component with props 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -315,7 +315,7 @@ exports[`basics class parent, class child component with props 2`] = `
 exports[`basics component with dynamic content can be updated 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -330,7 +330,7 @@ exports[`basics component with dynamic content can be updated 1`] = `
 exports[`basics do not remove previously rendered dom if not necessary 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div/>\`);
@@ -344,7 +344,7 @@ exports[`basics do not remove previously rendered dom if not necessary 1`] = `
 exports[`basics do not remove previously rendered dom if not necessary, variation 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><h1>h1</h1><span><block-text-0/></span></div>\`);
@@ -359,7 +359,7 @@ exports[`basics do not remove previously rendered dom if not necessary, variatio
 exports[`basics has no el after creation 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>simple</span>\`);
@@ -373,7 +373,7 @@ exports[`basics has no el after creation 1`] = `
 exports[`basics higher order components parent and child 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div>a</div>\`);
@@ -387,7 +387,7 @@ exports[`basics higher order components parent and child 1`] = `
 exports[`basics higher order components parent and child 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>b</span>\`);
@@ -401,7 +401,7 @@ exports[`basics higher order components parent and child 2`] = `
 exports[`basics higher order components parent and child 3`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -419,7 +419,7 @@ exports[`basics higher order components parent and child 3`] = `
 exports[`basics higher order components parent and child 4`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -431,7 +431,7 @@ exports[`basics higher order components parent and child 4`] = `
 exports[`basics list of two sub components inside other nodes 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>asdf</span>\`);
@@ -445,7 +445,7 @@ exports[`basics list of two sub components inside other nodes 1`] = `
 exports[`basics list of two sub components inside other nodes 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -470,7 +470,7 @@ exports[`basics list of two sub components inside other nodes 2`] = `
 exports[`basics parent, child and grandchild 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div>hey</div>\`);
@@ -484,7 +484,7 @@ exports[`basics parent, child and grandchild 1`] = `
 exports[`basics parent, child and grandchild 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -496,7 +496,7 @@ exports[`basics parent, child and grandchild 2`] = `
 exports[`basics parent, child and grandchild 3`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -508,7 +508,7 @@ exports[`basics parent, child and grandchild 3`] = `
 exports[`basics props is set on root component 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>simple vnode</span>\`);
@@ -522,7 +522,7 @@ exports[`basics props is set on root component 1`] = `
 exports[`basics reconciliation alg is not confused in some specific situation 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>child</span>\`);
@@ -536,7 +536,7 @@ exports[`basics reconciliation alg is not confused in some specific situation 1`
 exports[`basics reconciliation alg is not confused in some specific situation 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
@@ -553,7 +553,7 @@ exports[`basics reconciliation alg is not confused in some specific situation 2`
 exports[`basics rerendering a widget with a sub widget 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-text-0/><button block-handler-1=\\"click\\">Inc</button></div>\`);
@@ -570,7 +570,7 @@ exports[`basics rerendering a widget with a sub widget 1`] = `
 exports[`basics rerendering a widget with a sub widget 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -582,7 +582,7 @@ exports[`basics rerendering a widget with a sub widget 2`] = `
 exports[`basics same t-keys in two different places 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -597,7 +597,7 @@ exports[`basics same t-keys in two different places 1`] = `
 exports[`basics same t-keys in two different places 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><div><block-child-0/></div><div><block-child-1/></div></div>\`);
@@ -615,7 +615,7 @@ exports[`basics same t-keys in two different places 2`] = `
 exports[`basics simple component with a dynamic text 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -630,7 +630,7 @@ exports[`basics simple component with a dynamic text 1`] = `
 exports[`basics simple component, useState 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -645,7 +645,7 @@ exports[`basics simple component, useState 1`] = `
 exports[`basics some simple sanity checks (el/status) 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>simple vnode</span>\`);
@@ -659,7 +659,7 @@ exports[`basics some simple sanity checks (el/status) 1`] = `
 exports[`basics sub components between t-ifs 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>child</span>\`);
@@ -673,7 +673,7 @@ exports[`basics sub components between t-ifs 1`] = `
 exports[`basics sub components between t-ifs 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><span><block-child-2/></span><block-child-3/></div>\`);
@@ -700,7 +700,7 @@ exports[`basics sub components between t-ifs 2`] = `
 exports[`basics t-elif works with t-component 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>hey</span>\`);
@@ -714,7 +714,7 @@ exports[`basics t-elif works with t-component 1`] = `
 exports[`basics t-elif works with t-component 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
@@ -735,7 +735,7 @@ exports[`basics t-elif works with t-component 2`] = `
 exports[`basics t-else with empty string works with t-component 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>hey</span>\`);
@@ -749,7 +749,7 @@ exports[`basics t-else with empty string works with t-component 1`] = `
 exports[`basics t-else with empty string works with t-component 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
@@ -770,7 +770,7 @@ exports[`basics t-else with empty string works with t-component 2`] = `
 exports[`basics t-else works with t-component 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>hey</span>\`);
@@ -784,7 +784,7 @@ exports[`basics t-else works with t-component 1`] = `
 exports[`basics t-else works with t-component 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
@@ -805,7 +805,7 @@ exports[`basics t-else works with t-component 2`] = `
 exports[`basics t-if works with t-component 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>hey</span>\`);
@@ -819,7 +819,7 @@ exports[`basics t-if works with t-component 1`] = `
 exports[`basics t-if works with t-component 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -837,7 +837,7 @@ exports[`basics t-if works with t-component 2`] = `
 exports[`basics t-key on a component with t-if, and a sibling component 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>child</span>\`);
@@ -851,7 +851,7 @@ exports[`basics t-key on a component with t-if, and a sibling component 1`] = `
 exports[`basics t-key on a component with t-if, and a sibling component 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-0/><block-child-1/></div>\`);
@@ -871,7 +871,7 @@ exports[`basics t-key on a component with t-if, and a sibling component 2`] = `
 exports[`basics text after a conditional component 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<p>simple vnode</p>\`);
@@ -885,7 +885,7 @@ exports[`basics text after a conditional component 1`] = `
 exports[`basics text after a conditional component 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><span><block-text-0/></span></div>\`);
@@ -904,7 +904,7 @@ exports[`basics text after a conditional component 2`] = `
 exports[`basics three level of components with collapsing root nodes 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div>2</div>\`);
@@ -918,7 +918,7 @@ exports[`basics three level of components with collapsing root nodes 1`] = `
 exports[`basics three level of components with collapsing root nodes 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -930,7 +930,7 @@ exports[`basics three level of components with collapsing root nodes 2`] = `
 exports[`basics three level of components with collapsing root nodes 3`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -942,7 +942,7 @@ exports[`basics three level of components with collapsing root nodes 3`] = `
 exports[`basics throws if mounting on target=null 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>simple vnode</span>\`);
@@ -956,7 +956,7 @@ exports[`basics throws if mounting on target=null 1`] = `
 exports[`basics two child components 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div>simple vnode</div>\`);
@@ -970,7 +970,7 @@ exports[`basics two child components 1`] = `
 exports[`basics two child components 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -984,7 +984,7 @@ exports[`basics two child components 2`] = `
 exports[`basics update props of component without concrete own node 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div class=\\"widget-subkey\\"><block-text-0/>__<block-text-1/></div>\`);
@@ -1000,7 +1000,7 @@ exports[`basics update props of component without concrete own node 1`] = `
 exports[`basics update props of component without concrete own node 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -1013,7 +1013,7 @@ exports[`basics update props of component without concrete own node 2`] = `
 exports[`basics update props of component without concrete own node 3`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -1029,7 +1029,7 @@ exports[`basics update props of component without concrete own node 3`] = `
 exports[`basics updating a component with t-foreach as root 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -1048,7 +1048,7 @@ exports[`basics updating a component with t-foreach as root 1`] = `
 exports[`basics updating widget immediately 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>abc<block-child-0/></span>\`);
@@ -1066,7 +1066,7 @@ exports[`basics updating widget immediately 1`] = `
 exports[`basics updating widget immediately 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -1078,7 +1078,7 @@ exports[`basics updating widget immediately 2`] = `
 exports[`basics widget after a t-foreach 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div/>\`);
@@ -1092,7 +1092,7 @@ exports[`basics widget after a t-foreach 1`] = `
 exports[`basics widget after a t-foreach 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
@@ -1117,7 +1117,7 @@ exports[`basics widget after a t-foreach 2`] = `
 exports[`basics zero or one child components 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div>simple vnode</div>\`);
@@ -1131,7 +1131,7 @@ exports[`basics zero or one child components 1`] = `
 exports[`basics zero or one child components 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -1147,7 +1147,7 @@ exports[`basics zero or one child components 2`] = `
 exports[`mount targets can mount a component (with default position='last-child') 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div>app</div>\`);
@@ -1161,7 +1161,7 @@ exports[`mount targets can mount a component (with default position='last-child'
 exports[`mount targets can mount a component (with position='first-child') 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div>app</div>\`);
@@ -1175,7 +1175,7 @@ exports[`mount targets can mount a component (with position='first-child') 1`] =
 exports[`mount targets default mount option is 'last-child' 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div>app</div>\`);
@@ -1189,7 +1189,7 @@ exports[`mount targets default mount option is 'last-child' 1`] = `
 exports[`support svg components add proper namespace to svg 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<g block-ns=\\"http://www.w3.org/2000/svg\\"><circle cx=\\"50\\" cy=\\"50\\" r=\\"4\\" stroke=\\"green\\" stroke-width=\\"1\\" fill=\\"yellow\\"/></g>\`);
@@ -1203,7 +1203,7 @@ exports[`support svg components add proper namespace to svg 1`] = `
 exports[`support svg components add proper namespace to svg 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<svg block-ns=\\"http://www.w3.org/2000/svg\\"><block-child-0/></svg>\`);
@@ -1218,7 +1218,7 @@ exports[`support svg components add proper namespace to svg 2`] = `
 exports[`t-out in components can render list of t-out  1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -1242,7 +1242,7 @@ exports[`t-out in components can render list of t-out  1`] = `
 exports[`t-out in components update properly on state changes 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);

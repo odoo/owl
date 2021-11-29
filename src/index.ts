@@ -9,6 +9,7 @@ import {
   remove,
   text,
   toggler,
+  comment,
 } from "./blockdom";
 import { mainEventHandler } from "./component/handler";
 
@@ -28,6 +29,7 @@ export const blockDom = {
   toggler,
   createBlock,
   html,
+  comment,
 };
 
 import type { AppConfig } from "./app/app";

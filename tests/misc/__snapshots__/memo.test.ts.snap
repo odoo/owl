@@ -3,7 +3,7 @@
 exports[`Memo if no prop change, prevent renderings from above  1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -15,7 +15,7 @@ exports[`Memo if no prop change, prevent renderings from above  1`] = `
 exports[`Memo if no prop change, prevent renderings from above  2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   function slot1(ctx, node, key = \\"\\") {
@@ -38,7 +38,7 @@ exports[`Memo if no prop change, prevent renderings from above  2`] = `
 exports[`Memo if no props, prevent renderings from above  1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -50,7 +50,7 @@ exports[`Memo if no props, prevent renderings from above  1`] = `
 exports[`Memo if no props, prevent renderings from above  2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   function slot2(ctx, node, key = \\"\\") {
@@ -68,7 +68,7 @@ exports[`Memo if no props, prevent renderings from above  2`] = `
 exports[`Memo if no props, prevent renderings from above (work with simple html)  1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   function slot1(ctx, node, key = \\"\\") {

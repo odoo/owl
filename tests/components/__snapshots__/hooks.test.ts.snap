@@ -3,7 +3,7 @@
 exports[`hooks autofocus hook input in a t-if 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><input block-ref=\\"0\\"/><block-child-0/></div>\`);
@@ -25,7 +25,7 @@ exports[`hooks autofocus hook input in a t-if 1`] = `
 exports[`hooks autofocus hook simple input 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><input block-ref=\\"0\\"/><input block-ref=\\"1\\"/></div>\`);
@@ -42,7 +42,7 @@ exports[`hooks autofocus hook simple input 1`] = `
 exports[`hooks can use onWillStart, onWillUpdateProps 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -57,7 +57,7 @@ exports[`hooks can use onWillStart, onWillUpdateProps 1`] = `
 exports[`hooks can use onWillStart, onWillUpdateProps 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -69,7 +69,7 @@ exports[`hooks can use onWillStart, onWillUpdateProps 2`] = `
 exports[`hooks can use useComponent 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div/>\`);
@@ -83,7 +83,7 @@ exports[`hooks can use useComponent 1`] = `
 exports[`hooks can use useEnv 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -98,7 +98,7 @@ exports[`hooks can use useEnv 1`] = `
 exports[`hooks mounted callbacks should be called in reverse order from willUnmount callbacks 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
@@ -113,7 +113,7 @@ exports[`hooks mounted callbacks should be called in reverse order from willUnmo
 exports[`hooks parent and child env 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -128,7 +128,7 @@ exports[`hooks parent and child env 1`] = `
 exports[`hooks parent and child env 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -142,7 +142,7 @@ exports[`hooks parent and child env 2`] = `
 exports[`hooks two different call to willPatch/patched should work 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
@@ -157,7 +157,7 @@ exports[`hooks two different call to willPatch/patched should work 1`] = `
 exports[`hooks use sub env does not pollute user env 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -172,7 +172,7 @@ exports[`hooks use sub env does not pollute user env 1`] = `
 exports[`hooks useEffect hook dependencies prevent effects from rerunning when unchanged 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div/>\`);
@@ -186,7 +186,7 @@ exports[`hooks useEffect hook dependencies prevent effects from rerunning when u
 exports[`hooks useEffect hook effect runs on mount, is reapplied on patch, and is cleaned up on unmount and before reapplying 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div/>\`);
@@ -200,7 +200,7 @@ exports[`hooks useEffect hook effect runs on mount, is reapplied on patch, and i
 exports[`hooks useEffect hook effect with empty dependency list never reruns 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -215,7 +215,7 @@ exports[`hooks useEffect hook effect with empty dependency list never reruns 1`]
 exports[`hooks useExternalListener 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -230,7 +230,7 @@ exports[`hooks useExternalListener 1`] = `
 exports[`hooks useExternalListener 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -246,7 +246,7 @@ exports[`hooks useExternalListener 2`] = `
 exports[`hooks useRef hook: basic use 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><button block-ref=\\"0\\"><block-text-1/></button></div>\`);

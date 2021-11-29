@@ -3,7 +3,7 @@
 exports[`t-props basic use 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -18,7 +18,7 @@ exports[`t-props basic use 1`] = `
 exports[`t-props basic use 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -33,7 +33,7 @@ exports[`t-props basic use 2`] = `
 exports[`t-props t-props and other props 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-text-0/><block-text-1/></div>\`);
@@ -49,7 +49,7 @@ exports[`t-props t-props and other props 1`] = `
 exports[`t-props t-props and other props 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><div><block-child-0/></div></div>\`);
@@ -64,7 +64,7 @@ exports[`t-props t-props and other props 2`] = `
 exports[`t-props t-props only 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -79,7 +79,7 @@ exports[`t-props t-props only 1`] = `
 exports[`t-props t-props only 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><div><block-child-0/></div></div>\`);
@@ -94,7 +94,7 @@ exports[`t-props t-props only 2`] = `
 exports[`t-props t-props with props 1`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div/>\`);
@@ -108,7 +108,7 @@ exports[`t-props t-props with props 1`] = `
 exports[`t-props t-props with props 2`] = `
 "function anonymous(bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component } = bdom;
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);

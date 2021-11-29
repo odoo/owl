@@ -33,7 +33,7 @@ export function makeRootFiber(node: ComponentNode): Fiber {
     }
     return current;
   }
-  const fiber = new RootFiber(node);
+  const fiber = new RootFiber(node, null);
   if (node.willPatch.length) {
     fiber.willPatch.push(fiber);
   }
@@ -84,24 +84,11 @@ export class Fiber {
 
 export class RootFiber extends Fiber {
   counter: number = 1;
-  resolve: any;
-  promise: Promise<any>;
-  reject: any;
 
   // only add stuff in this if they have registered some hooks
   willPatch: Fiber[] = [];
   patched: Fiber[] = [];
   mounted: Fiber[] = [];
-
-  constructor(node: ComponentNode) {
-    super(node, null);
-    this.counter = 1;
-
-    this.promise = new Promise((resolve, reject) => {
-      this.resolve = resolve;
-      this.reject = reject;
-    });
-  }
 
   complete() {
     const node = this.node;
@@ -150,9 +137,7 @@ export class RootFiber extends Fiber {
       // unregistering the fiber
       node.fiber = null;
     } catch (e) {
-      if (!handleError({ fiber: current || this, error: e })) {
-        this.reject(e);
-      }
+      handleError({ fiber: current || this, error: e });
     }
   }
 }
@@ -166,11 +151,18 @@ export interface MountOptions {
 export class MountFiber extends RootFiber {
   target: HTMLElement;
   position: Position;
+  resolve: any;
+  promise: Promise<any>;
+  reject: any;
 
   constructor(node: ComponentNode, target: HTMLElement, options: MountOptions = {}) {
-    super(node);
+    super(node, null);
     this.target = target;
     this.position = options.position || "last-child";
+    this.promise = new Promise((resolve, reject) => {
+      this.resolve = resolve;
+      this.reject = reject;
+    });
   }
   complete() {
     let current: Fiber | undefined = this;
@@ -199,5 +191,6 @@ export class MountFiber extends RootFiber {
         this.reject(e);
       }
     }
+    this.resolve();
   }
 }

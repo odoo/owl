@@ -1,16 +1,15 @@
 import { Component, mount } from "../../src";
-import { status } from "../../src/component/status";
-import { xml } from "../../src/tags";
-import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 import {
+  onError,
   onMounted,
   onPatched,
   onWillPatch,
   onWillStart,
   onWillUnmount,
   useState,
-  onError,
 } from "../../src/index";
+import { xml } from "../../src/tags";
+import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -35,18 +34,9 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("<div><div>heyfalse</div></div>");
     parent.state.flag = true;
 
-    let error: Error;
-    try {
-      await parent.render();
-    } catch (e) {
-      error = e as Error;
-    }
+    parent.render();
+    await nextTick();
     expect(fixture.innerHTML).toBe("");
-    expect(status(parent)).toBe("destroyed");
-    expect(error!).toBeDefined();
-    const regexp =
-      /Cannot read properties of undefined \(reading 'this'\)|Cannot read property 'this' of undefined/g;
-    expect(error!.message).toMatch(regexp);
   });
 
   test("display a nice error if it cannot find component", async () => {
@@ -154,28 +144,24 @@ describe("errors and promises", () => {
     const consoleError = console.error;
     console.error = jest.fn(() => {});
 
-    class App extends Component {
+    class Root extends Component {
       static template = xml`<div><t t-esc="val"/></div>`;
       val = 3;
       setup() {
         onWillPatch(() => {
           throw new Error("boom");
         });
+        onError((e) => (error = e));
       }
     }
 
-    const app = await mount(App, fixture);
-    app.val = 4;
+    const root = await mount(Root, fixture);
+    root.val = 4;
     let error: Error;
-    try {
-      await app.render();
-    } catch (e) {
-      error = e as Error;
-    }
+    root.render();
+    await nextTick();
     expect(error!).toBeDefined();
     expect(error!.message).toBe("boom");
-    expect(fixture.innerHTML).toBe("");
-
     expect(console.error).toBeCalledTimes(0);
     console.error = consoleError;
   });
@@ -184,28 +170,24 @@ describe("errors and promises", () => {
     const consoleError = console.error;
     console.error = jest.fn(() => {});
 
-    class App extends Component {
+    class Root extends Component {
       static template = xml`<div><t t-esc="val"/></div>`;
       val = 3;
       setup() {
         onPatched(() => {
           throw new Error("boom");
         });
+        onError((e) => (error = e));
       }
     }
 
-    const app = await mount(App, fixture);
-    app.val = 4;
+    const root = await mount(Root, fixture);
+    root.val = 4;
     let error: Error;
-    try {
-      await app.render();
-    } catch (e) {
-      error = e as Error;
-    }
+    root.render();
+    await nextTick();
     expect(error!).toBeDefined();
     expect(error!.message).toBe("boom");
-    expect(fixture.innerHTML).toBe("");
-
     expect(console.error).toBeCalledTimes(0);
     console.error = consoleError;
   });
@@ -241,20 +223,20 @@ describe("errors and promises", () => {
     const consoleError = console.error;
     console.error = jest.fn(() => {});
     // we do not catch error in willPatch anymore
-    class App extends Component {
+    class Root extends Component {
       static template = xml`<div><t t-if="flag" t-esc="this.will.crash"/></div>`;
       flag = false;
+      setup() {
+        onError((e) => (error = e));
+      }
     }
 
-    const app = await mount(App, fixture);
+    const root = await mount(Root, fixture);
     expect(fixture.innerHTML).toBe("<div></div>");
-    app.flag = true;
+    root.flag = true;
     let error: Error;
-    try {
-      await app.render();
-    } catch (e) {
-      error = e as Error;
-    }
+    root.render();
+    await nextTick();
     expect(error!).toBeDefined();
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;

@@ -106,7 +106,8 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("<span>1</span>");
 
     component.value = 2;
-    await component.render();
+    component.render();
+    await nextTick();
     expect(fixture.innerHTML).toBe("<span>2</span>");
   });
 
@@ -123,7 +124,8 @@ describe("basics", () => {
 
     expect(fixture.innerHTML).toBe("onetwothree");
     component.items = ["two", "three", "one"];
-    await component.render();
+    component.render();
+    await nextTick();
     expect(fixture.innerHTML).toBe("twothreeone");
   });
 
@@ -258,7 +260,8 @@ describe("basics", () => {
     const test = await mount(Test, fixture);
     expect(fixture.innerHTML).toBe("<div>3</div>");
     test.value = 5;
-    await test.render();
+    test.render();
+    await nextTick();
     expect(fixture.innerHTML).toBe("<div>5</div>");
   });
 

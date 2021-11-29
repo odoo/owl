@@ -1492,7 +1492,7 @@ describe("Reactivity: useState", () => {
       "Parent:rendered",
       "Parent:willPatch",
       "Child:willUnmount",
-      "Child:destroyed",
+      "Child:willDestroy",
       "Parent:patched",
     ]).toBeLogged();
 

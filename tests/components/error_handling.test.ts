@@ -608,6 +608,70 @@ describe("can catch errors", () => {
     ]).toBeLogged();
   });
 
+  test("error in mounted on a component with a sibling (properly mounted)", async () => {
+    class ErrorComponent extends Component {
+      static template = xml`<div>Some text</div>`;
+      setup() {
+        useLogLifecycle();
+        onMounted(() => {
+          logStep("boom");
+          throw new Error("NOOOOO");
+        });
+      }
+    }
+    class ErrorBoundary extends Component {
+      static template = xml`<div>
+       <t t-if="state.error">Error handled</t>
+       <t t-else=""><t t-slot="default" /></t>
+      </div>`;
+      state = useState({ error: false });
+
+      setup() {
+        useLogLifecycle();
+        onError(() => (this.state.error = true));
+      }
+    }
+    class OK extends Component {
+      static template = xml`OK`;
+      setup() {
+        useLogLifecycle();
+      }
+    }
+
+    class Root extends Component {
+      static template = xml`<div>
+        <OK/>
+        <ErrorBoundary><ErrorComponent /></ErrorBoundary>
+      </div>`;
+      static components = { ErrorBoundary, ErrorComponent, OK };
+      setup() {
+        useLogLifecycle();
+      }
+    }
+    await mount(Root, fixture);
+    expect(fixture.innerHTML).toBe("<div>OK<div>Error handled</div></div>");
+    expect([
+      "Root:setup",
+      "Root:willStart",
+      "Root:willRender",
+      "ErrorBoundary:setup",
+      "ErrorBoundary:willStart",
+      "Root:rendered",
+      "ErrorBoundary:willRender",
+      "ErrorComponent:setup",
+      "ErrorComponent:willStart",
+      "ErrorBoundary:rendered",
+      "ErrorComponent:willRender",
+      "ErrorComponent:rendered",
+      "ErrorComponent:mounted",
+      "boom",
+      "ErrorBoundary:willRender",
+      "ErrorBoundary:rendered",
+      "ErrorBoundary:mounted",
+      "Root:mounted",
+    ]).toBeLogged();
+  });
+
   test("can catch an error in the willPatch call", async () => {
     class ErrorComponent extends Component {
       static template = xml`<div><t t-esc="props.message"/></div>`;

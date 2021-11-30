@@ -112,11 +112,10 @@ export class ComponentNode<T extends typeof Component = typeof Component>
     this.component.setup();
   }
 
-  mountComponent(target: any, options?: MountOptions): Promise<InstanceType<T>> {
+  mountComponent(target: any, options?: MountOptions) {
     const fiber = new MountFiber(this, target, options);
     this.app.scheduler.addFiber(fiber);
     this.initiateRender(fiber);
-    return fiber.promise.then(() => this.component);
   }
 
   async initiateRender(fiber: Fiber | MountFiber) {
@@ -227,6 +226,9 @@ export class ComponentNode<T extends typeof Component = typeof Component>
    * a mounted hook failed and was handled.
    */
   updateDom() {
+    if (!this.fiber) {
+      return;
+    }
     if (this.bdom === this.fiber!.bdom) {
       // If the error was handled by some child component, we need to find it to
       // apply its change

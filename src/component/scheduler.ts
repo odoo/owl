@@ -1,5 +1,5 @@
-import { Fiber, MountFiber, RootFiber } from "./fibers";
 import { fibersInError } from "./error_handling";
+import { Fiber, RootFiber } from "./fibers";
 import { STATUS } from "./status";
 
 // -----------------------------------------------------------------------------
@@ -44,9 +44,6 @@ export class Scheduler {
       const hasError = fibersInError.has(fiber);
       if (hasError && fiber.counter !== 0) {
         this.tasks.delete(fiber);
-        if (fiber instanceof MountFiber) {
-          fiber.reject(fibersInError.get(fiber));
-        }
         return;
       }
       if (fiber.node.status === STATUS.DESTROYED) {

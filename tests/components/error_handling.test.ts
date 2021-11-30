@@ -585,7 +585,6 @@ describe("can catch errors", () => {
       }
     }
     await mount(Root, fixture);
-    await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
     expect([
       "Root:setup",
@@ -634,7 +633,6 @@ describe("can catch errors", () => {
       }
     }
     await mount(Root, fixture);
-    await nextTick();
     expect(fixture.innerHTML).toBe("<div>Error handled</div>");
     expect([
       "Root:setup",
@@ -694,7 +692,6 @@ describe("can catch errors", () => {
       }
     }
     await mount(A, fixture);
-    await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
     expect([
       "A:setup",
@@ -720,6 +717,75 @@ describe("can catch errors", () => {
       "C:mounted",
       "B:mounted",
       "A:mounted",
+    ]).toBeLogged();
+  });
+
+  test("error in mounted on a component with a sibling (properly mounted)", async () => {
+    class ErrorComponent extends Component {
+      static template = xml`<div>Some text</div>`;
+      setup() {
+        useLogLifecycle();
+        onMounted(() => {
+          logStep("boom");
+          throw new Error("NOOOOO");
+        });
+      }
+    }
+    class ErrorBoundary extends Component {
+      static template = xml`<div>
+       <t t-if="state.error">Error handled</t>
+       <t t-else=""><t t-slot="default" /></t>
+      </div>`;
+      state = useState({ error: false });
+
+      setup() {
+        useLogLifecycle();
+        onError(() => (this.state.error = true));
+      }
+    }
+    class OK extends Component {
+      static template = xml`OK`;
+      setup() {
+        useLogLifecycle();
+      }
+    }
+
+    class Root extends Component {
+      static template = xml`<div>
+        <OK/>
+        <ErrorBoundary><ErrorComponent /></ErrorBoundary>
+      </div>`;
+      static components = { ErrorBoundary, ErrorComponent, OK };
+      setup() {
+        useLogLifecycle();
+      }
+    }
+    await mount(Root, fixture);
+    expect(fixture.innerHTML).toBe("<div>OK<div>Error handled</div></div>");
+    expect([
+      "Root:setup",
+      "Root:willStart",
+      "Root:willRender",
+      "OK:setup",
+      "OK:willStart",
+      "ErrorBoundary:setup",
+      "ErrorBoundary:willStart",
+      "Root:rendered",
+      "OK:willRender",
+      "OK:rendered",
+      "ErrorBoundary:willRender",
+      "ErrorComponent:setup",
+      "ErrorComponent:willStart",
+      "ErrorBoundary:rendered",
+      "ErrorComponent:willRender",
+      "ErrorComponent:rendered",
+      "ErrorComponent:mounted",
+      "boom",
+      "ErrorBoundary:willRender",
+      "ErrorBoundary:rendered",
+      "ErrorBoundary:mounted",
+      "OK:mounted",
+      "Root:mounted",
     ]).toBeLogged();
   });
 

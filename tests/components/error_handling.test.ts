@@ -9,7 +9,13 @@ import {
   useState,
 } from "../../src/index";
 import { xml } from "../../src/tags";
-import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import {
+  logStep,
+  makeTestFixture,
+  nextTick,
+  snapshotEverything,
+  useLogLifecycle,
+} from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -550,7 +556,9 @@ describe("can catch errors", () => {
     class ErrorComponent extends Component {
       static template = xml`<div>Some text</div>`;
       setup() {
+        useLogLifecycle();
         onMounted(() => {
+          logStep("boom");
           throw new Error("NOOOOO");
         });
       }
@@ -563,20 +571,42 @@ describe("can catch errors", () => {
       state = useState({ error: false });
 
       setup() {
+        useLogLifecycle();
         onError(() => (this.state.error = true));
       }
     }
-    class App extends Component {
+    class Root extends Component {
       static template = xml`<div>
         <ErrorBoundary><ErrorComponent /></ErrorBoundary>
       </div>`;
       static components = { ErrorBoundary, ErrorComponent };
+      setup() {
+        useLogLifecycle();
+      }
     }
-    await mount(App, fixture);
-    await nextTick();
-    await nextTick();
+    await mount(Root, fixture);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
+    expect([
+      "Root:setup",
+      "Root:willStart",
+      "Root:willRender",
+      "ErrorBoundary:setup",
+      "ErrorBoundary:willStart",
+      "Root:rendered",
+      "ErrorBoundary:willRender",
+      "ErrorComponent:setup",
+      "ErrorComponent:willStart",
+      "ErrorBoundary:rendered",
+      "ErrorComponent:willRender",
+      "ErrorComponent:rendered",
+      "ErrorComponent:mounted",
+      "boom",
+      "ErrorBoundary:willRender",
+      "ErrorBoundary:rendered",
+      "ErrorBoundary:mounted",
+      "Root:mounted",
+    ]).toBeLogged();
   });
 
   test("can catch an error in the willPatch call", async () => {

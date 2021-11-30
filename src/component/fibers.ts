@@ -30,6 +30,7 @@ export function makeRootFiber(node: ComponentNode): Fiber {
     if (fibersInError.has(current)) {
       fibersInError.delete(current);
       fibersInError.delete(root);
+      current.appliedToDom = false;
     }
     return current;
   }
@@ -168,6 +169,11 @@ export class MountFiber extends RootFiber {
     let current: Fiber | undefined = this;
     try {
       const node = this.node;
+      if (node.bdom) {
+        // if an error occured while mounting an app, then we might have been
+        // partially rendered. Here, we clean that up
+        node.bdom.remove();
+      }
       node.bdom = this.bdom;
       if (this.position === "last-child" || this.target.childNodes.length === 0) {
         mount(node.bdom!, this.target);

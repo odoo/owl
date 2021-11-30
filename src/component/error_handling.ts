@@ -45,6 +45,14 @@ export function handleError(params: ErrorParams) {
   const node = "node" in params ? params.node : params.fiber.node;
   const fiber = "fiber" in params ? params.fiber : node.fiber!;
 
+  // resets the fibers on components if possible. This is important so that
+  // new renderings can be properly included in the initial one, if any.
+  let current: Fiber | null = fiber;
+  do {
+    current.node.fiber = current;
+    current = current.parent;
+  } while (current);
+
   fibersInError.set(fiber.root, error);
 
   const handled = _handleError(node, error, true);

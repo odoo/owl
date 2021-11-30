@@ -9,7 +9,13 @@ import {
   useState,
 } from "../../src/index";
 import { xml } from "../../src/tags";
-import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import {
+  logStep,
+  makeTestFixture,
+  nextTick,
+  snapshotEverything,
+  useLogLifecycle,
+} from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -550,7 +556,9 @@ describe("can catch errors", () => {
     class ErrorComponent extends Component {
       static template = xml`<div>Some text</div>`;
       setup() {
+        useLogLifecycle();
         onMounted(() => {
+          logStep("boom");
           throw new Error("NOOOOO");
         });
       }
@@ -563,20 +571,156 @@ describe("can catch errors", () => {
       state = useState({ error: false });
 
       setup() {
+        useLogLifecycle();
         onError(() => (this.state.error = true));
       }
     }
-    class App extends Component {
+    class Root extends Component {
       static template = xml`<div>
         <ErrorBoundary><ErrorComponent /></ErrorBoundary>
       </div>`;
       static components = { ErrorBoundary, ErrorComponent };
+      setup() {
+        useLogLifecycle();
+      }
     }
-    await mount(App, fixture);
-    await nextTick();
-    await nextTick();
+    await mount(Root, fixture);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
+    expect([
+      "Root:setup",
+      "Root:willStart",
+      "Root:willRender",
+      "ErrorBoundary:setup",
+      "ErrorBoundary:willStart",
+      "Root:rendered",
+      "ErrorBoundary:willRender",
+      "ErrorComponent:setup",
+      "ErrorComponent:willStart",
+      "ErrorBoundary:rendered",
+      "ErrorComponent:willRender",
+      "ErrorComponent:rendered",
+      "ErrorComponent:mounted",
+      "boom",
+      "ErrorBoundary:willRender",
+      "ErrorBoundary:rendered",
+      "ErrorBoundary:mounted",
+      "Root:mounted",
+    ]).toBeLogged();
+  });
+
+  test("can catch an error in the mounted call (in root component)", async () => {
+    class ErrorComponent extends Component {
+      static template = xml`<div>Some text</div>`;
+      setup() {
+        useLogLifecycle();
+        onMounted(() => {
+          logStep("boom");
+          throw new Error("NOOOOO");
+        });
+      }
+    }
+    class Root extends Component {
+      static template = xml`<div>
+       <t t-if="state.error">Error handled</t>
+       <t t-else=""><ErrorComponent /></t>
+      </div>`;
+      static components = { ErrorComponent };
+      state = useState({ error: false });
+
+      setup() {
+        useLogLifecycle();
+        onError(() => (this.state.error = true));
+      }
+    }
+    await mount(Root, fixture);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>Error handled</div>");
+    expect([
+      "Root:setup",
+      "Root:willStart",
+      "Root:willRender",
+      "ErrorComponent:setup",
+      "ErrorComponent:willStart",
+      "Root:rendered",
+      "ErrorComponent:willRender",
+      "ErrorComponent:rendered",
+      "ErrorComponent:mounted",
+      "boom",
+      "Root:willRender",
+      "Root:rendered",
+      "Root:mounted",
+    ]).toBeLogged();
+  });
+
+  test("can catch an error in the mounted call (in child of child)", async () => {
+    class Boom extends Component {
+      static template = xml`<div>Some text</div>`;
+      setup() {
+        useLogLifecycle();
+        onMounted(() => {
+          logStep("boom");
+          throw new Error("NOOOOO");
+        });
+      }
+    }
+
+    class C extends Component {
+      static template = xml`<div>
+       <t t-if="state.error">Error handled</t>
+       <t t-else=""><Boom/></t>
+      </div>`;
+      static components = { Boom };
+      state = useState({ error: false });
+
+      setup() {
+        useLogLifecycle();
+        onError(() => (this.state.error = true));
+      }
+    }
+
+    class B extends Component {
+      static template = xml`<div><C/></div>`;
+      static components = { C };
+      setup() {
+        useLogLifecycle();
+      }
+    }
+    class A extends Component {
+      static template = xml`<B/>`;
+      static components = { B };
+      setup() {
+        useLogLifecycle();
+      }
+    }
+    await mount(A, fixture);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
+    expect([
+      "A:setup",
+      "A:willStart",
+      "A:willRender",
+      "B:setup",
+      "B:willStart",
+      "A:rendered",
+      "B:willRender",
+      "C:setup",
+      "C:willStart",
+      "B:rendered",
+      "C:willRender",
+      "Boom:setup",
+      "Boom:willStart",
+      "C:rendered",
+      "Boom:willRender",
+      "Boom:rendered",
+      "Boom:mounted",
+      "boom",
+      "C:willRender",
+      "C:rendered",
+      "C:mounted",
+      "B:mounted",
+      "A:mounted",
+    ]).toBeLogged();
   });
 
   test("can catch an error in the willPatch call", async () => {

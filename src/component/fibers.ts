@@ -1,8 +1,7 @@
-import type { BDom } from "../blockdom";
-import { mount } from "../blockdom";
+import { BDom, mount } from "../blockdom";
 import type { ComponentNode } from "./component_node";
-import { STATUS } from "./status";
 import { fibersInError, handleError } from "./error_handling";
+import { STATUS } from "./status";
 
 export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
   let current = node.fiber;
@@ -30,6 +29,7 @@ export function makeRootFiber(node: ComponentNode): Fiber {
     if (fibersInError.has(current)) {
       fibersInError.delete(current);
       fibersInError.delete(root);
+      current.appliedToDom = false;
     }
     return current;
   }
@@ -168,12 +168,20 @@ export class MountFiber extends RootFiber {
     let current: Fiber | undefined = this;
     try {
       const node = this.node;
-      node.bdom = this.bdom;
-      if (this.position === "last-child" || this.target.childNodes.length === 0) {
-        mount(node.bdom!, this.target);
+      if (node.bdom) {
+        // this is a complicated situation: if we mount a fiber with an existing
+        // bdom, this means that this same fiber was already completed, mounted,
+        // but a crash occurred in some mounted hook. Then, it was handled and
+        // the new rendering is being applied.
+        node.updateDom();
       } else {
-        const firstChild = this.target.childNodes[0];
-        mount(node.bdom!, this.target, firstChild);
+        node.bdom = this.bdom;
+        if (this.position === "last-child" || this.target.childNodes.length === 0) {
+          mount(node.bdom!, this.target);
+        } else {
+          const firstChild = this.target.childNodes[0];
+          mount(node.bdom!, this.target, firstChild);
+        }
       }
       node.status = STATUS.MOUNTED;
       this.appliedToDom = true;

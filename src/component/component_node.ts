@@ -221,6 +221,28 @@ export class ComponentNode<T extends typeof Component = typeof Component>
     this._render(fiber);
   }
 
+  /**
+   * Finds a child that has dom that is not yet updated, and update it. This
+   * method is meant to be used only in the context of repatching the dom after
+   * a mounted hook failed and was handled.
+   */
+  updateDom() {
+    if (this.bdom === this.fiber!.bdom) {
+      // If the error was handled by some child component, we need to find it to
+      // apply its change
+      for (let k in this.children) {
+        const child = this.children[k];
+        child.updateDom();
+      }
+    } else {
+      // if we get here, this is the component that handled the error and rerendered
+      // itself, so we can simply patch the dom
+      this.bdom!.patch(this.fiber!.bdom, false);
+      this.fiber!.appliedToDom = true;
+      this.fiber = null;
+    }
+  }
+
   // ---------------------------------------------------------------------------
   // Block DOM methods
   // ---------------------------------------------------------------------------

@@ -20,24 +20,22 @@ function _handleError(node: ComponentNode | null, error: any, isFirstRound = fal
       fiber.root.counter--;
     }
 
-    let propagate = true;
+    let stopped = false;
     for (const h of errorHandlers) {
       try {
         h(error);
-        propagate = false;
+        stopped = true;
         break;
       } catch (e) {
         error = e;
       }
     }
 
-    if (propagate) {
-      return _handleError(node.parent, error);
+    if (stopped) {
+      return true;
     }
-    return true;
-  } else {
-    return _handleError(node.parent, error);
   }
+  return _handleError(node.parent, error);
 }
 
 type ErrorParams = { error: any } & ({ node: ComponentNode } | { fiber: Fiber });

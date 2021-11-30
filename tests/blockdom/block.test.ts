@@ -227,6 +227,22 @@ describe("misc", () => {
     expect(fixture.innerHTML).toBe("<p>() =&gt; 3tostring</p>");
   });
 
+  test("block with 2 subblocks: variation", async () => {
+    const block = createBlock("<a><b><c><block-child-0/>2</c></b><block-child-1/></a>");
+    const tree = block([], [text("1"), text("3")]);
+    mount(tree, fixture);
+    expect(fixture.innerHTML).toBe("<a><b><c>12</c></b>3</a>");
+  });
+
+  test("block with 2 subblocks: another variation", async () => {
+    const block = createBlock(
+      `<a block-attribute-0="hello"><b><c><block-child-0/>2</c></b><block-child-1/></a>`
+    );
+    const tree = block(["world"], [text("1"), text("3")]);
+    mount(tree, fixture);
+    expect(fixture.innerHTML).toBe(`<a hello="world"><b><c>12</c></b>3</a>`);
+  });
+
   //     test.skip("reusing a block skips patching process", async () => {
   //       const block = createBlock('<div><block-text-0/></div>');
   //       const foo = block(["foo"]);

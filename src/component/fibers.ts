@@ -151,18 +151,11 @@ export interface MountOptions {
 export class MountFiber extends RootFiber {
   target: HTMLElement;
   position: Position;
-  resolve: any;
-  promise: Promise<any>;
-  reject: any;
 
   constructor(node: ComponentNode, target: HTMLElement, options: MountOptions = {}) {
     super(node, null);
     this.target = target;
     this.position = options.position || "last-child";
-    this.promise = new Promise((resolve, reject) => {
-      this.resolve = resolve;
-      this.reject = reject;
-    });
   }
   complete() {
     let current: Fiber | undefined = this;
@@ -195,10 +188,7 @@ export class MountFiber extends RootFiber {
       }
       node.fiber = null;
     } catch (e) {
-      if (!handleError({ fiber: current as Fiber, error: e })) {
-        this.reject(e);
-      }
+      handleError({ fiber: current as Fiber, error: e });
     }
-    this.resolve();
   }
 }

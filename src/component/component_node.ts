@@ -230,12 +230,14 @@ export class ComponentNode<T extends typeof Component = typeof Component>
   }
 
   mount(parent: HTMLElement, anchor: ChildNode) {
-    const bdom = this.fiber!.bdom!;
-    this.bdom = bdom;
-    bdom.mount(parent, anchor);
-    this.status = STATUS.MOUNTED;
-    this.fiber!.appliedToDom = true;
-    this.fiber = null;
+    if (this.fiber) {
+      const bdom = this.fiber!.bdom!;
+      this.bdom = bdom;
+      bdom.mount(parent, anchor);
+      this.status = STATUS.MOUNTED;
+      this.fiber!.appliedToDom = true;
+      this.fiber = null;
+    }
   }
 
   moveBefore(other: ComponentNode | null, afterNode: Node | null) {

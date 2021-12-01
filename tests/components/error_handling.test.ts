@@ -552,7 +552,7 @@ describe("can catch errors", () => {
     console.error = consoleError;
   });
 
-  test("can catch an error in the mounted call", async () => {
+  test.only("can catch an error in the mounted call", async () => {
     class ErrorComponent extends Component {
       static template = xml`<div>Some text</div>`;
       setup() {

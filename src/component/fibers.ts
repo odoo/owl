@@ -1,4 +1,4 @@
-import type { BDom } from "../blockdom";
+import { BDom, patch } from "../blockdom";
 import { mount } from "../blockdom";
 import type { ComponentNode } from "./component_node";
 import { STATUS } from "./status";
@@ -163,16 +163,19 @@ export class MountFiber extends RootFiber {
     try {
       const node = this.node;
       if (node.bdom) {
+        patch(node.bdom, this.bdom!);
         // if an error occured while mounting an app, then we might have been
         // partially rendered. Here, we clean that up
-        node.bdom.remove();
-      }
-      node.bdom = this.bdom;
-      if (this.position === "last-child" || this.target.childNodes.length === 0) {
-        mount(node.bdom!, this.target);
+        // node.bdom.remove();
       } else {
-        const firstChild = this.target.childNodes[0];
-        mount(node.bdom!, this.target, firstChild);
+
+        node.bdom = this.bdom;
+        if (this.position === "last-child" || this.target.childNodes.length === 0) {
+          mount(node.bdom!, this.target);
+        } else {
+          const firstChild = this.target.childNodes[0];
+          mount(node.bdom!, this.target, firstChild);
+        }
       }
       node.status = STATUS.MOUNTED;
       this.appliedToDom = true;

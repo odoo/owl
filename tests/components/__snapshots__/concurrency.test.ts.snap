@@ -800,6 +800,64 @@ exports[`concurrent renderings scenario 15 3`] = `
 }"
 `;
 
+exports[`concurrent renderings scenario 16 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`D\`);
+  }
+}"
+`;
+
+exports[`concurrent renderings scenario 16 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2,b3,b4,b5,b6,b7,b8;
+    b2 = text(ctx['props'].fromA);
+    b3 = text(\`:\`);
+    b4 = text(ctx['props'].fromB);
+    b5 = text(\`:\`);
+    b6 = text(ctx['state'].fromC);
+    b7 = text(\`: \`);
+    if (ctx['state'].fromC===13) {
+      b8 = component(\`D\`, {}, key + \`__1\`, node, ctx);
+    }
+    return multi([b2, b3, b4, b5, b6, b7, b8]);
+  }
+}"
+`;
+
+exports[`concurrent renderings scenario 16 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`C\`, {fromB: ctx['state'].fromB,fromA: ctx['props'].fromA}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`concurrent renderings scenario 16 4`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`B\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
 exports[`creating two async components, scenario 1 1`] = `
 "function anonymous(bdom, helpers
 ) {

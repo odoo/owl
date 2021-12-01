@@ -1,6 +1,6 @@
-import { Component, mount, useState } from "../../src";
+import { Component, mount, onWillUpdateProps, useState } from "../../src";
 import { xml } from "../../src/tags";
-import { makeTestFixture, snapshotEverything } from "../helpers";
+import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -175,4 +175,54 @@ describe("basics", () => {
     }
     await mount(Parent, fixture);
   });
+});
+
+test("can bind function prop with bind suffix", async () => {
+  class Child extends Component {
+    static template = xml`child`;
+    setup() {
+      this.props.doSomething(123);
+    }
+  }
+
+  let boundedThing: any = null;
+
+  class Parent extends Component {
+    static template = xml`<Child doSomething.bind="doSomething"/>`;
+    static components = { Child };
+
+    doSomething(val: number) {
+      expect(val).toBe(123);
+      boundedThing = this;
+    }
+  }
+
+  const parent = await mount(Parent, fixture);
+  expect(boundedThing).toBe(parent);
+  expect(fixture.innerHTML).toBe("child");
+});
+
+test("bound functions is referentially equal after update", async () => {
+  let isEqual = false;
+  class Child extends Component {
+    static template = xml`<t t-esc="props.val"/>`;
+    setup() {
+      onWillUpdateProps((nextProps: any) => {
+        isEqual = nextProps.fn === this.props.fn;
+      });
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`<Child val="state.val" fn.bind="someFunction"/>`;
+    static components = { Child };
+    state = useState({ val: 1 });
+    someFunction() {}
+  }
+
+  const parent = await mount(Parent, fixture);
+  parent.state.val = 3;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("3");
+  expect(isEqual).toBe(true);
 });

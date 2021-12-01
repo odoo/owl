@@ -2142,11 +2142,11 @@ test("concurrent renderings scenario 15", async () => {
   ]).toBeLogged();
 });
 
-test.skip("concurrent renderings scenario 16", async () => {
+test("concurrent renderings scenario 16", async () => {
   let b: B | undefined = undefined;
   let c: C | undefined = undefined;
   class D extends Component {
-    static template = xml`<ul>DDD</ul>`;
+    static template = xml`D`;
 
     setup() {
       useLogLifecycle();
@@ -2158,12 +2158,8 @@ test.skip("concurrent renderings scenario 16", async () => {
   }
   class C extends Component {
     static template = xml`
-       <p>
-        <span t-esc="props.fromA"/>
-        <span t-esc="props.fromB"/>
-        <span t-esc="state.fromC"/>
-        <D t-if="state.fromC === 13"/>
-       </p>`;
+        <t t-esc="props.fromA"/>:<t t-esc="props.fromB"/>:<t t-esc="state.fromC"/>:
+        <D t-if="state.fromC === 13"/>`;
     static components = { D };
     state = { fromC: 3 }; // not reactive
     setup() {
@@ -2172,7 +2168,7 @@ test.skip("concurrent renderings scenario 16", async () => {
     }
   }
   class B extends Component {
-    static template = xml`<p><C fromB="state.fromB" fromA="props.fromA"/></p>`;
+    static template = xml`<C fromB="state.fromB" fromA="props.fromA"/>`;
     static components = { C };
     setup() {
       useLogLifecycle();
@@ -2181,16 +2177,16 @@ test.skip("concurrent renderings scenario 16", async () => {
     state = { fromB: 2 };
   }
   class A extends Component {
-    static template = xml`<p><B fromA="state.fromA"/></p>`;
+    static template = xml`<B fromA="state.fromA"/>`;
     static components = { B };
-    state = { fromA: 1 };
+    state = useState({ fromA: 1 });
 
     setup() {
       useLogLifecycle();
     }
   }
   const a = await mount(A, fixture);
-  expect(fixture.innerHTML).toBe("<p><p><p><span>1</span><span>2</span><span>3</span></p></p></p>");
+  expect(fixture.innerHTML).toBe("1:2:3: ");
   expect([
     "A:setup",
     "A:willStart",
@@ -2217,43 +2213,49 @@ test.skip("concurrent renderings scenario 16", async () => {
   await nextMicroTick();
   await nextMicroTick();
   await nextMicroTick();
-  expect(fixture.innerHTML).toBe("<p><p><p><span>1</span><span>2</span><span>3</span></p></p></p>");
-
-  // trigger a re-rendering from C, which will remap its new fiber
-  c!.state.fromC += 10;
-  c!.render();
-  const prom = c!.render();
-  // trigger a re-rendering from B, which will remap its new fiber as well
-  b!.state.fromB += 10;
-  b!.render();
-
-  await nextTick();
-  // at this point, C rendering is still pending, and nothing should have been
-  // updated yet.
-  expect(fixture.innerHTML).toBe("<p><p><p><span>1</span><span>2</span><span>3</span></p></p></p>");
-  await prom;
-  expect(fixture.innerHTML).toBe(
-    "<p><p><p><span>11</span><span>12</span><span>13</span><ul>DDD</ul></p></p></p>"
-  );
+  await nextMicroTick();
+  expect(fixture.innerHTML).toBe("1:2:3: ");
   expect([
     "A:willRender",
     "B:willUpdateProps",
     "A:rendered",
     "B:willRender",
-    "B:rendered",
     "C:willUpdateProps",
+    "B:rendered",
     "C:willRender",
     "C:rendered",
+  ]).toBeLogged();
+
+  // trigger a re-rendering from C, which will remap its new fiber
+  c!.state.fromC += 10;
+  c!.render();
+  await nextMicroTick();
+  // trigger a re-rendering from B, which will remap its new fiber as well
+  b!.state.fromB += 10;
+  b!.render();
+  await nextTick();
+  expect([
+    "C:willRender",
     "D:setup",
     "D:willStart",
-    "B:willRender",
-    "B:rendered",
-    "C:willUpdateProps",
-    "C:willRender",
     "C:rendered",
+    "B:willRender",
+    "C:willUpdateProps",
+    "B:rendered",
+    "C:willRender",
     "D:willDestroy",
     "D:setup",
     "D:willStart",
+    "C:rendered",
+  ]).toBeLogged();
+
+  // at this point, C rendering is still pending, and nothing should have been
+  // updated yet.
+  expect(fixture.innerHTML).toBe("1:2:3: ");
+  await nextTick();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("11:12:13: D");
+  expect([
     "D:willRender",
     "D:rendered",
     "A:willPatch",

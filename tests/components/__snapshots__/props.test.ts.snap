@@ -262,3 +262,49 @@ exports[`basics template string in prop 2`] = `
   }
 }"
 `;
+
+exports[`bound functions is referentially equal after update 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['props'].val);
+  }
+}"
+`;
+
+exports[`bound functions is referentially equal after update 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { bind } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`Child\`, {val: ctx['state'].val,fn: bind(ctx, ctx['someFunction'])}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`can bind function prop with bind suffix 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`child\`);
+  }
+}"
+`;
+
+exports[`can bind function prop with bind suffix 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { bind } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`Child\`, {doSomething: bind(ctx, ctx['doSomething'])}, key + \`__1\`, node, ctx);
+  }
+}"
+`;

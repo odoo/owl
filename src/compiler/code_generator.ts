@@ -975,10 +975,19 @@ export class CodeGenerator {
     // props
     const props: string[] = [];
     let hasSlotsProp = false;
-    for (let p in ast.props) {
-      const propName = /^[a-z_]+$/i.test(p) ? p : `'${p}'`;
-      props.push(`${propName}: ${this.captureExpression(ast.props[p]) || undefined}`);
-      if (p === "slots") {
+    for (let propName in ast.props) {
+      let propValue = this.captureExpression(ast.props[propName]) || undefined;
+      if (propName.includes(".")) {
+        let [name, suffix] = propName.split(".");
+        if (suffix === "bind") {
+          this.helpers.add("bind");
+          propName = name;
+          propValue = `bind(ctx, ${propValue})`;
+        }
+      }
+      propName = /^[a-z_]+$/i.test(propName) ? propName : `'${propName}'`;
+      props.push(`${propName}: ${propValue}`);
+      if (propName === "slots") {
         hasSlotsProp = true;
       }
     }

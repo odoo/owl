@@ -384,6 +384,23 @@ exports[`t-if t-if in a t-if 1`] = `
 }"
 `;
 
+exports[`t-if t-if with empty content 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2,b3;
+    b2 = text(\`hello\`);
+    if (ctx['condition']) {
+      b3 = text(\`\`);
+    }
+    return multi([b2, b3]);
+  }
+}"
+`;
+
 exports[`t-if t-if/t-else with more content 1`] = `
 "function anonymous(bdom, helpers
 ) {

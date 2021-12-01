@@ -395,6 +395,19 @@ describe("qweb parser", () => {
     });
   });
 
+  test("t-if with empty content", async () => {
+    expect(parse(`<t t-if="condition"></t>`)).toEqual({
+      type: ASTType.TIf,
+      condition: "condition",
+      content: {
+        type: ASTType.Text,
+        value: "",
+      },
+      tElif: null,
+      tElse: null,
+    });
+  });
+
   test("t-if (on dom node", async () => {
     expect(parse(`<div t-if="condition">hey</div>`)).toEqual({
       type: ASTType.TIf,

@@ -870,4 +870,91 @@ describe("can catch errors", () => {
     await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div>Error</div>");
   });
+
+  test("onError in class inheritance is not called if no rethrown", async () => {
+    const steps: string[] = [];
+
+    class Abstract extends Component {
+      static template = xml`<div>
+          <t t-if="!state.error">
+            <t t-esc="this.will.crash" />
+          </t>
+          <t t-else="">
+            <t t-esc="state.error"/>
+          </t>
+        </div>`;
+      state: any;
+      setup() {
+        this.state = useState({});
+        onError(() => {
+          steps.push("Abstract onError");
+          this.state.error = "Abstract";
+        });
+      }
+    }
+
+    class Concrete extends Abstract {
+      setup() {
+        super.setup();
+        onError(() => {
+          steps.push("Concrete onError");
+          this.state.error = "Concrete";
+        });
+      }
+    }
+
+    class Parent extends Component {
+      static components = { Concrete };
+      static template = xml`<Concrete />`;
+    }
+
+    await mount(Parent, fixture);
+
+    expect(steps).toStrictEqual(["Concrete onError"]);
+    expect(fixture.innerHTML).toBe("<div>Concrete</div>");
+  });
+
+  test("onError in class inheritance is called if rethrown", async () => {
+    const steps: string[] = [];
+
+    class Abstract extends Component {
+      static template = xml`<div>
+          <t t-if="!state.error">
+            <t t-esc="this.will.crash" />
+          </t>
+          <t t-else="">
+            <t t-esc="state.error"/>
+          </t>
+        </div>`;
+      state: any;
+      setup() {
+        this.state = useState({});
+        onError(() => {
+          steps.push("Abstract onError");
+          this.state.error = "Abstract";
+        });
+      }
+    }
+
+    class Concrete extends Abstract {
+      setup() {
+        super.setup();
+        onError((error) => {
+          steps.push("Concrete onError");
+          this.state.error = "Concrete";
+          throw error;
+        });
+      }
+    }
+
+    class Parent extends Component {
+      static components = { Concrete };
+      static template = xml`<Concrete />`;
+    }
+
+    await mount(Parent, fixture);
+
+    expect(steps).toStrictEqual(["Concrete onError", "Abstract onError"]);
+    expect(fixture.innerHTML).toBe("<div>Abstract</div>");
+  });
 });

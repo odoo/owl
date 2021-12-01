@@ -21,9 +21,10 @@ function _handleError(node: ComponentNode | null, error: any, isFirstRound = fal
     }
 
     let stopped = false;
-    for (const h of errorHandlers) {
+    // execute in the opposite order
+    for (let i = errorHandlers.length - 1; i >= 0; i--) {
       try {
-        h(error);
+        errorHandlers[i](error);
         stopped = true;
         break;
       } catch (e) {

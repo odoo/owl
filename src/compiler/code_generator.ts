@@ -201,6 +201,7 @@ export class CodeGenerator {
   translatableAttributes: string[];
   ast: AST;
   staticCalls: { id: string; template: string }[] = [];
+  helpers: Set<string> = new Set();
 
   constructor(ast: AST, options: CodeGenOptions) {
     this.translateFn = options.translateFn || ((s: string) => s);
@@ -224,12 +225,13 @@ export class CodeGenerator {
       translate: true,
       tKeyExpr: null,
     });
-
     // define blocks and utility functions
     let mainCode = [
       `  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;`,
-      `let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;`,
     ];
+    if (this.helpers.size) {
+      mainCode.push(`let { ${[...this.helpers].join(", ")} } = helpers;`);
+    }
     if (this.templateName) {
       mainCode.push(`// Template name: "${this.templateName}"`);
     }
@@ -321,6 +323,7 @@ export class CodeGenerator {
       if (tKeyExpr) {
         keyArg = `${tKeyExpr} + ${keyArg}`;
       }
+      this.helpers.add("withKey");
       this.addLine(`${block.parentVar}[${ctx.index}] = withKey(${blockExpr}, ${keyArg});`);
       return;
     }
@@ -579,6 +582,7 @@ export class CodeGenerator {
         idx = block!.insertData(`${baseExpression}[${expression}]`);
         attrs[`block-attribute-${idx}`] = targetAttr;
       }
+      this.helpers.add("toNumber");
       let valueCode = `ev.target.${targetAttr}`;
       valueCode = shouldTrim ? `${valueCode}.trim()` : valueCode;
       valueCode = shouldNumberize ? `toNumber(${valueCode})` : valueCode;
@@ -635,10 +639,12 @@ export class CodeGenerator {
     let { block, forceNewBlock } = ctx;
     let expr: string;
     if (ast.expr === "0") {
+      this.helpers.add("zero");
       expr = `ctx[zero]`;
     } else {
       expr = compileExpr(ast.expr);
       if (ast.defaultValue) {
+        this.helpers.add("withDefault");
         expr = `withDefault(${expr}, \`${ast.defaultValue}\`)`;
       }
     }
@@ -658,11 +664,13 @@ export class CodeGenerator {
       this.insertAnchor(block);
     }
     block = this.createBlock(block, "html", ctx);
+    this.helpers.add(ast.expr === "0" ? "zero" : "safeOutput");
     let expr = ast.expr === "0" ? "ctx[zero]" : `safeOutput(${compileExpr(ast.expr)})`;
     if (ast.body) {
       const nextId = BlockDescription.nextBlockId;
       const subCtx: Context = createContext(ctx);
       this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
+      this.helpers.add("withDefault");
       expr = `withDefault(${expr}, b${nextId})`;
     }
     this.insertBlock(`${expr}`, block, ctx);
@@ -739,6 +747,7 @@ export class CodeGenerator {
     const keys = `k_block${block.id}`;
     const l = `l_block${block.id}`;
     const c = `c_block${block.id}`;
+    this.helpers.add("prepareList");
     this.addLine(
       `const [${keys}, ${vals}, ${l}, ${c}] = prepareList(${compileExpr(ast.collection)});`
     );
@@ -874,10 +883,12 @@ export class CodeGenerator {
     if (ast.body) {
       this.addLine(`ctx = Object.create(ctx);`);
       this.addLine(`ctx[isBoundary] = 1;`);
+      this.helpers.add("isBoundary");
       const nextId = BlockDescription.nextBlockId;
       const subCtx: Context = createContext(ctx, { preventRoot: true });
       this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
       if (nextId !== BlockDescription.nextBlockId) {
+        this.helpers.add("zero");
         this.addLine(`ctx[zero] = b${nextId};`);
       }
     }
@@ -893,12 +904,14 @@ export class CodeGenerator {
       const templateVar = this.generateId("template");
       this.addLine(`const ${templateVar} = ${subTemplate};`);
       block = this.createBlock(block, "multi", ctx);
+      this.helpers.add("call");
       this.insertBlock(`call(this, ${templateVar}, ctx, node, ${key})`, block!, {
         ...ctx,
         forceNewBlock: !block,
       });
     } else {
       const id = this.generateId(`callTemplate_`);
+      this.helpers.add("getTemplate");
       this.staticCalls.push({ id, template: subTemplate });
       block = this.createBlock(block, "multi", ctx);
       this.insertBlock(`${id}.call(this, ctx, node, ${key})`, block!, {
@@ -924,6 +937,7 @@ export class CodeGenerator {
 
   compileTSet(ast: ASTTSet, ctx: Context) {
     this.target.shouldProtectScope = true;
+    this.helpers.add("isBoundary").add("withDefault");
     const expr = ast.value ? compileExpr(ast.value || "") : "null";
     if (ast.body) {
       const subCtx: Context = createContext(ctx);
@@ -942,6 +956,7 @@ export class CodeGenerator {
       } else {
         value = expr;
       }
+      this.helpers.add("setContextValue");
       this.addLine(`setContextValue(ctx, "${ast.name}", ${value});`);
     }
   }
@@ -975,6 +990,7 @@ export class CodeGenerator {
       let ctxStr = "ctx";
       if (this.target.loopLevel || !this.hasSafeContext) {
         ctxStr = this.generateId("ctx");
+        this.helpers.add("capture");
         this.addLine(`const ${ctxStr} = capture(ctx);`);
       }
       let slotStr: string[] = [];
@@ -1062,6 +1078,7 @@ export class CodeGenerator {
   }
 
   compileTSlot(ast: ASTSlot, ctx: Context) {
+    this.helpers.add("callSlot");
     let { block } = ctx;
     let blockString: string;
     let slotName;

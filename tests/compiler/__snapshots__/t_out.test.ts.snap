@@ -4,7 +4,7 @@ exports[`t-out literal 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -19,7 +19,7 @@ exports[`t-out literal, no outside html element 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return safeOutput('ok');
@@ -31,7 +31,7 @@ exports[`t-out multiple calls to t-out 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { zero } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><div>Greeter</div><block-child-1/></div>\`);
   
@@ -47,7 +47,7 @@ exports[`t-out multiple calls to t-out 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { isBoundary, zero, getTemplate } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -68,7 +68,7 @@ exports[`t-out not escaping 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -83,7 +83,7 @@ exports[`t-out t-out 0 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { zero } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -98,7 +98,7 @@ exports[`t-out t-out 0 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { isBoundary, zero, getTemplate } = helpers;
   const callTemplate_2 = getTemplate(\`_basic-callee\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -119,7 +119,7 @@ exports[`t-out t-out and another sibling node 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><span>hello</span><block-child-0/></span>\`);
   
@@ -134,7 +134,7 @@ exports[`t-out t-out bdom 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { isBoundary, withDefault, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><span><block-child-0/></span></div>\`);
   let block2 = createBlock(\`<ol>set</ol>\`);
@@ -154,7 +154,7 @@ exports[`t-out t-out block 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -169,7 +169,7 @@ exports[`t-out t-out escaped 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -184,7 +184,7 @@ exports[`t-out t-out markedup 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -199,7 +199,7 @@ exports[`t-out t-out on a node with a body, as a default 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { safeOutput, withDefault } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -215,7 +215,7 @@ exports[`t-out t-out on a node with a dom node in body, as a default 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { safeOutput, withDefault } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   let block3 = createBlock(\`<div>nope</div>\`);
@@ -232,7 +232,7 @@ exports[`t-out t-out switch escaped 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -247,7 +247,7 @@ exports[`t-out t-out switch escaped on markup 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -262,7 +262,7 @@ exports[`t-out t-out switch markup 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -277,7 +277,7 @@ exports[`t-out t-out switch markup on bdom 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { isBoundary, withDefault, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   let block2 = createBlock(\`<ol>set</ol>\`);
@@ -306,7 +306,7 @@ exports[`t-out t-out switch markup on escaped 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -321,7 +321,7 @@ exports[`t-out t-out with a <t/> in body 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return safeOutput(ctx['var']);
@@ -333,7 +333,7 @@ exports[`t-out t-out with arbitrary object 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -348,7 +348,7 @@ exports[`t-out t-out with arbitrary object 2 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -363,7 +363,7 @@ exports[`t-out t-out with comment 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -378,7 +378,7 @@ exports[`t-out t-out with just a t-set t-value in body 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return safeOutput(ctx['var']);
@@ -390,7 +390,7 @@ exports[`t-out variable 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -405,7 +405,7 @@ exports[`t-raw is deprecated should warn 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -420,7 +420,7 @@ exports[`t-raw is deprecated t-out is actually called in t-raw's place 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   

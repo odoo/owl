@@ -4,7 +4,6 @@ exports[`refs basic use 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-ref=\\"0\\"/>\`);
   
@@ -20,7 +19,7 @@ exports[`refs refs are properly bound in slots 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -35,7 +34,7 @@ exports[`refs refs are properly bound in slots 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { capture } = helpers;
   
   let block1 = createBlock(\`<div><span class=\\"counter\\"><block-text-0/></span><block-child-0/></div>\`);
   let block2 = createBlock(\`<button block-handler-0=\\"click\\" block-ref=\\"1\\">do something</button>\`);

@@ -4,7 +4,6 @@ exports[`basics basic use 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>child<block-text-0/></span>\`);
   
@@ -19,7 +18,6 @@ exports[`basics basic use 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Child\`, {p: 1}, key + \`__1\`, node, ctx);
@@ -31,7 +29,6 @@ exports[`basics can select a sub widget  1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>CHILD 1</span>\`);
   
@@ -45,7 +42,6 @@ exports[`basics can select a sub widget  2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div>CHILD 2</div>\`);
   
@@ -59,7 +55,6 @@ exports[`basics can select a sub widget  3`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     let b2,b3;
@@ -78,7 +73,6 @@ exports[`basics can select a sub widget, part 2 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>CHILD 1</span>\`);
   
@@ -92,7 +86,6 @@ exports[`basics can select a sub widget, part 2 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div>CHILD 2</div>\`);
   
@@ -106,7 +99,6 @@ exports[`basics can select a sub widget, part 2 3`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     let b2,b3;
@@ -125,7 +117,6 @@ exports[`basics sub widget is interactive 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><button block-handler-0=\\"click\\">click</button>child<block-text-1/></span>\`);
   
@@ -141,7 +132,6 @@ exports[`basics sub widget is interactive 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Child\`, {p: 1}, key + \`__1\`, node, ctx);
@@ -153,7 +143,6 @@ exports[`basics top level sub widget with a parent 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span>Hello</span>\`);
   
@@ -167,7 +156,6 @@ exports[`basics top level sub widget with a parent 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`ComponentC\`, {}, key + \`__1\`, node, ctx);
@@ -179,7 +167,6 @@ exports[`basics top level sub widget with a parent 3`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   

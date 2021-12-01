@@ -4,7 +4,6 @@ exports[`style and class handling can set class on multi root component 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block2 = createBlock(\`<div>a</div>\`);
   let block3 = createBlock(\`<span block-attribute-0=\\"class\\">b</span>\`);
@@ -22,7 +21,6 @@ exports[`style and class handling can set class on multi root component 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Child\`, {class: 'fromparent'}, key + \`__1\`, node, ctx);
@@ -34,7 +32,6 @@ exports[`style and class handling can set class on sub component, as prop 1`] = 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\">child</div>\`);
   
@@ -49,7 +46,6 @@ exports[`style and class handling can set class on sub component, as prop 2`] = 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Child\`, {class: 'some-class'}, key + \`__1\`, node, ctx);
@@ -61,7 +57,6 @@ exports[`style and class handling can set class on sub sub component 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\">childchild</div>\`);
   
@@ -76,7 +71,6 @@ exports[`style and class handling can set class on sub sub component 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`ChildChild\`, {class: (ctx['props'].class||'')+' fromchild'}, key + \`__1\`, node, ctx);
@@ -88,7 +82,6 @@ exports[`style and class handling can set class on sub sub component 3`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Child\`, {class: 'fromparent'}, key + \`__1\`, node, ctx);
@@ -100,7 +93,6 @@ exports[`style and class handling can set more than one class on sub component 1
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\">child</div>\`);
   
@@ -115,7 +107,6 @@ exports[`style and class handling can set more than one class on sub component 2
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Child\`, {class: 'a  b'}, key + \`__1\`, node, ctx);
@@ -127,7 +118,6 @@ exports[`style and class handling can set style and class inside component 1`] =
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div style=\\"font-weight:bold;\\" class=\\"some-class\\">world</div>\`);
   
@@ -141,7 +131,6 @@ exports[`style and class handling class on components do not interfere with user
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
   
@@ -156,7 +145,6 @@ exports[`style and class handling class on sub component, which is switched to a
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\">a</div>\`);
   
@@ -171,7 +159,6 @@ exports[`style and class handling class on sub component, which is switched to a
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span block-attribute-0=\\"class\\">b</span>\`);
   
@@ -186,7 +173,6 @@ exports[`style and class handling class on sub component, which is switched to a
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     let b2,b3;
@@ -204,7 +190,6 @@ exports[`style and class handling class on sub component, which is switched to a
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Child\`, {class: 'someclass',child: ctx['state'].child}, key + \`__1\`, node, ctx);
@@ -216,7 +201,6 @@ exports[`style and class handling class with extra whitespaces (variation) 1`] =
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
   
@@ -231,7 +215,6 @@ exports[`style and class handling class with extra whitespaces (variation) 2`] =
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
@@ -246,7 +229,6 @@ exports[`style and class handling class with extra whitespaces 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
   
@@ -261,7 +243,6 @@ exports[`style and class handling class with extra whitespaces 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Child\`, {class: 'a  b c   d'}, key + \`__1\`, node, ctx);
@@ -273,7 +254,6 @@ exports[`style and class handling component class and parent class combine toget
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div class=\\"child\\" block-attribute-0=\\"class\\">child</div>\`);
   
@@ -288,7 +268,6 @@ exports[`style and class handling component class and parent class combine toget
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Child\`, {class: 'from parent'}, key + \`__1\`, node, ctx);
@@ -327,7 +306,6 @@ exports[`style and class handling empty class attribute is not added on widget r
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span block-attribute-0=\\"class\\"/>\`);
   
@@ -342,7 +320,6 @@ exports[`style and class handling empty class attribute is not added on widget r
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -357,7 +334,6 @@ exports[`style and class handling error in subcomponent with class 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\"><block-text-1/></div>\`);
   
@@ -373,7 +349,6 @@ exports[`style and class handling error in subcomponent with class 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Child\`, {class: 'a'}, key + \`__1\`, node, ctx);
@@ -385,7 +360,6 @@ exports[`style and class handling no class is set is child ignores it 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div>child</div>\`);
   
@@ -399,7 +373,6 @@ exports[`style and class handling no class is set is child ignores it 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Child\`, {class: 'hey'}, key + \`__1\`, node, ctx);
@@ -411,7 +384,6 @@ exports[`style and class handling no class is set is parent does not give it as 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\">child</div>\`);
   
@@ -426,7 +398,6 @@ exports[`style and class handling no class is set is parent does not give it as 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Child\`, {}, key + \`__1\`, node, ctx);
@@ -438,7 +409,6 @@ exports[`style and class handling style is properly added on widget root el 1`] 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"style\\"/>\`);
   
@@ -453,7 +423,6 @@ exports[`style and class handling style is properly added on widget root el 2`] 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Child\`, {style: 'font-weight: bold;'}, key + \`__1\`, node, ctx);
@@ -465,7 +434,6 @@ exports[`style and class handling t-att-class is properly added/removed on widge
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span class=\\"c\\" block-attribute-0=\\"class\\"/>\`);
   
@@ -480,7 +448,6 @@ exports[`style and class handling t-att-class is properly added/removed on widge
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -495,7 +462,6 @@ exports[`style and class handling t-att-class is properly added/removed on widge
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<span class=\\"c\\" block-attribute-0=\\"class\\"/>\`);
   
@@ -510,7 +476,6 @@ exports[`style and class handling t-att-class is properly added/removed on widge
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Child\`, {class: {a:true,b:ctx['state'].b}}, key + \`__1\`, node, ctx);

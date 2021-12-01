@@ -768,6 +768,66 @@ exports[`can catch errors error in mounted on a component with a sibling (proper
 }"
 `;
 
+exports[`can catch errors onError in class inheritance is called if rethrown 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2,b3;
+    if (!ctx['state'].error) {
+      b2 = text(this.will.crash);
+    } else {
+      b3 = text(ctx['state'].error);
+    }
+    return block1([], [b2, b3]);
+  }
+}"
+`;
+
+exports[`can catch errors onError in class inheritance is called if rethrown 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`Concrete\`, {}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`can catch errors onError in class inheritance is not called if no rethrown 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2,b3;
+    if (!ctx['state'].error) {
+      b2 = text(this.will.crash);
+    } else {
+      b3 = text(ctx['state'].error);
+    }
+    return block1([], [b2, b3]);
+  }
+}"
+`;
+
+exports[`can catch errors onError in class inheritance is not called if no rethrown 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`Concrete\`, {}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
 exports[`errors and promises a rendering error in a sub component will reject the mount promise 1`] = `
 "function anonymous(bdom, helpers
 ) {

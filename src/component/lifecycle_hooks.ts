@@ -59,14 +59,13 @@ export function onRendered(fn: () => void | any) {
   };
 }
 
-export function onError(fn: (error: Error) => void | any) {
+type OnErrorCallback = (error: any) => void | any;
+export function onError(callback: OnErrorCallback) {
   const node = getCurrent()!;
   let handlers = nodeErrorHandlers.get(node);
-  if (handlers) {
-    handlers.push(fn);
-  } else {
+  if (!handlers) {
     handlers = [];
-    handlers.push(fn);
     nodeErrorHandlers.set(node, handlers);
   }
+  handlers.push(callback);
 }

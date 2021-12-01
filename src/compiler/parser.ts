@@ -639,10 +639,7 @@ function parseTIf(node: Element, ctx: ParsingContext): AST | null {
   }
   const condition = node.getAttribute("t-if")!;
   node.removeAttribute("t-if");
-  const content = parseNode(node, ctx);
-  if (!content) {
-    throw new Error("hmmm");
-  }
+  const content = parseNode(node, ctx) || { type: ASTType.Text, value: "" };
 
   let nextElement = node.nextElementSibling;
   // t-elifs

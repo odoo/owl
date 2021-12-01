@@ -124,6 +124,23 @@ export function safeOutput(value: any): ReturnType<typeof toggler> {
   return toggler(safeKey, block);
 }
 
+let boundFunctions = new WeakMap();
+
+function bind(ctx: any, fn: Function): Function {
+  let component = ctx.__owl__.component;
+  let boundFnMap = boundFunctions.get(component);
+  if (!boundFnMap) {
+    boundFnMap = new WeakMap();
+    boundFunctions.set(component, boundFnMap);
+  }
+  let boundFn = boundFnMap.get(fn);
+  if (!boundFn) {
+    boundFn = fn.bind(component);
+    boundFnMap.set(fn, boundFn);
+  }
+  return boundFn;
+}
+
 export const UTILS = {
   withDefault,
   zero: Symbol("zero"),
@@ -137,4 +154,5 @@ export const UTILS = {
   toNumber,
   validateProps,
   safeOutput,
+  bind,
 };

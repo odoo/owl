@@ -4,7 +4,6 @@ exports[`t-on can bind event handler 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
@@ -19,7 +18,6 @@ exports[`t-on can bind handlers with arguments 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
@@ -35,7 +33,6 @@ exports[`t-on can bind handlers with empty  object 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
@@ -51,7 +48,6 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
@@ -67,7 +63,7 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { prepareList, withKey } = helpers;
   
   let block1 = createBlock(\`<ul><block-child-0/></ul>\`);
   let block3 = createBlock(\`<li><a block-handler-0=\\"click\\">link</a></li>\`);
@@ -94,7 +90,6 @@ exports[`t-on can bind handlers with object arguments 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
@@ -110,7 +105,6 @@ exports[`t-on can bind two event handlers 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\" block-handler-1=\\"dblclick\\">Click</button>\`);
   
@@ -126,7 +120,6 @@ exports[`t-on handler is bound to proper owner 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
@@ -141,7 +134,7 @@ exports[`t-on handler is bound to proper owner, part 2 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { prepareList, withKey } = helpers;
   
   let block2 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
@@ -163,7 +156,6 @@ exports[`t-on handler is bound to proper owner, part 3 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
@@ -178,7 +170,7 @@ exports[`t-on handler is bound to proper owner, part 3 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { getTemplate } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
   return function template(ctx, node, key = \\"\\") {
@@ -191,7 +183,6 @@ exports[`t-on handler is bound to proper owner, part 4 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
@@ -206,7 +197,7 @@ exports[`t-on handler is bound to proper owner, part 4 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { prepareList, getTemplate, withKey } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
   return function template(ctx, node, key = \\"\\") {
@@ -230,7 +221,6 @@ exports[`t-on receive event in first argument 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
@@ -245,7 +235,6 @@ exports[`t-on t-on modifiers (native listener) basic support for native listener
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div class=\\"myClass\\" block-handler-0=\\"click\\"><button block-handler-1=\\"click\\">Button</button></div>\`);
   
@@ -261,7 +250,6 @@ exports[`t-on t-on modifiers (native listener) t-on combined with t-esc 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><button block-handler-0=\\"click\\"><block-text-1/></button></div>\`);
   
@@ -277,7 +265,7 @@ exports[`t-on t-on modifiers (native listener) t-on combined with t-out 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><button block-handler-0=\\"click\\"><block-child-0/></button></div>\`);
   
@@ -293,7 +281,6 @@ exports[`t-on t-on modifiers (native listener) t-on with .capture modifier 1`] =
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-handler-0=\\"click.capture\\"><button block-handler-1=\\"click\\">Button</button></div>\`);
   
@@ -309,7 +296,6 @@ exports[`t-on t-on modifiers (native listener) t-on with empty handler (only mod
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><button block-handler-0=\\"click.prevent\\">Button</button></div>\`);
   
@@ -324,7 +310,6 @@ exports[`t-on t-on modifiers (native listener) t-on with prevent and self modifi
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><button block-handler-0=\\"click.prevent.self\\"><span>Button</span></button></div>\`);
   
@@ -339,7 +324,6 @@ exports[`t-on t-on modifiers (native listener) t-on with prevent and/or stop mod
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><button block-handler-0=\\"click.prevent\\">Button 1</button><button block-handler-1=\\"click.stop\\">Button 2</button><button block-handler-2=\\"click.prevent.stop\\">Button 3</button></div>\`);
   
@@ -356,7 +340,7 @@ exports[`t-on t-on modifiers (native listener) t-on with prevent modifier in t-f
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { prepareList, withKey } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<a href=\\"#\\" block-handler-0=\\"click.prevent\\"> Edit <block-text-1/></a>\`);
@@ -383,7 +367,6 @@ exports[`t-on t-on modifiers (native listener) t-on with self and prevent modifi
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><button block-handler-0=\\"click.self.prevent\\"><span>Button</span></button></div>\`);
   
@@ -398,7 +381,6 @@ exports[`t-on t-on modifiers (native listener) t-on with self modifier 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><button block-handler-0=\\"click\\"><span>Button</span></button><button block-handler-1=\\"click.self\\"><span>Button</span></button></div>\`);
   
@@ -414,7 +396,6 @@ exports[`t-on t-on modifiers (synthetic listener) basic support for synthetic 1`
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div block-handler-0=\\"click.synthetic\\"><button block-handler-1=\\"click.synthetic\\">Button</button></div>\`);
   
@@ -430,7 +411,6 @@ exports[`t-on t-on with inline statement (function call) 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
@@ -446,7 +426,6 @@ exports[`t-on t-on with inline statement 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
@@ -462,7 +441,6 @@ exports[`t-on t-on with inline statement, part 2 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\">Toggle</button>\`);
   
@@ -478,7 +456,6 @@ exports[`t-on t-on with inline statement, part 3 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\">Toggle</button>\`);
   
@@ -495,7 +472,6 @@ exports[`t-on t-on with t-call 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<p block-handler-0=\\"click\\">lucas</p>\`);
   
@@ -510,7 +486,7 @@ exports[`t-on t-on with t-call 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { getTemplate } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -526,7 +502,6 @@ exports[`t-on t-on, with arguments and t-call 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
   
   let block1 = createBlock(\`<p block-handler-0=\\"click\\">lucas</p>\`);
   
@@ -542,7 +517,7 @@ exports[`t-on t-on, with arguments and t-call 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault, getTemplate, prepareList, withKey, zero, call, callSlot, capture, isBoundary, shallowEqual, setContextValue, toNumber, safeOutput } = helpers;
+  let { getTemplate } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);

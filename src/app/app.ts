@@ -44,7 +44,8 @@ export class App<T extends typeof Component = any> extends TemplateSet {
       console.info(DEV_MSG);
     }
     if (config.env) {
-      this.env = Object.freeze(Object.assign({}, config.env));
+      const descrs = Object.getOwnPropertyDescriptors(config.env);
+      this.env = Object.freeze(Object.defineProperties({}, descrs));
     }
     if (config.translateFn) {
       this.translateFn = config.translateFn;

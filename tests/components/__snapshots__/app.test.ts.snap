@@ -1,5 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`app App supports env with getters/setters 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><block-text-0/> <block-text-1/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['env'].someVal;
+    let d2 = Object.keys(ctx['env'].services);
+    return block1([d1, d2]);
+  }
+}"
+`;
+
 exports[`app destroy remove the widget from the DOM 1`] = `
 "function anonymous(bdom, helpers
 ) {

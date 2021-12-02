@@ -163,7 +163,18 @@ export class CompilationContext {
     const done = new Set();
     return tokens
       .map((tok) => {
-        if (tok.varName) {
+        // "this" in captured expressions should be the current component
+        if (tok.value === "this") {
+          if (!done.has("this")) {
+            done.add("this");
+            this.addLine(`const this_${argId} = utils.getComponent(context);`);
+          }
+          tok.value = `this_${argId}`;
+        }
+        // Variables that should be looked up in the scope. isLocal is for arrow
+        // function arguments that should stay untouched (eg "ev => ev" should
+        // not become "const ev_1 = scope['ev']; ev_1 => ev_1")
+        if (tok.varName && !tok.isLocal) {
           if (!done.has(tok.varName)) {
             done.add(tok.varName);
             this.addLine(`const ${tok.varName}_${argId} = ${tok.value};`);

@@ -234,7 +234,11 @@ QWeb.addDirective({
       } else if (!name.startsWith("t-")) {
         if (name !== "class" && name !== "style") {
           // this is a prop!
-          props[name] = ctx.formatExpression(value) || "undefined";
+          if (value.includes("=>")) {
+            props[name] = ctx.captureExpression(value);
+          } else {
+            props[name] = ctx.formatExpression(value) || "undefined";
+          }
         }
       }
     }

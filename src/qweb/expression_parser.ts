@@ -70,6 +70,7 @@ interface Token {
   size?: number;
   varName?: string;
   replace?: Function;
+  isLocal?: boolean;
 }
 
 const STATIC_TOKEN_MAP: { [key: string]: TKind } = Object.assign(Object.create(null), {
@@ -254,6 +255,7 @@ const isRightSeparator = (token) =>
  * the list of variables so it does not get replaced by a lookup in the context
  */
 export function compileExprToArray(expr: string, scope: { [key: string]: QWebVar }): Token[] {
+  const localVars = new Set<string>();
   scope = Object.create(scope);
   const tokens = tokenize(expr);
 
@@ -308,11 +310,13 @@ export function compileExprToArray(expr: string, scope: { [key: string]: QWebVar
           if (tokens[j].type === "SYMBOL" && tokens[j].originalValue) {
             tokens[j].value = tokens[j].originalValue!;
             scope[tokens[j].value] = { id: tokens[j].value, expr: tokens[j].value };
+            localVars.add(tokens[j].value);
           }
           j--;
         }
       } else {
         scope[token.value] = { id: token.value, expr: token.value };
+        localVars.add(token.value);
       }
     }
 
@@ -326,6 +330,13 @@ export function compileExprToArray(expr: string, scope: { [key: string]: QWebVar
       }
     }
     i++;
+  }
+  // Mark all variables that have been used locally.
+  // This assumes the expression has only one scope (incorrect but "good enough for now")
+  for (const token of tokens) {
+    if (token.type === "SYMBOL" && localVars.has(token.value)) {
+      token.isLocal = true;
+    }
   }
   return tokens;
 }

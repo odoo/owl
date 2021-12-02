@@ -1881,6 +1881,176 @@ describe("props evaluation ", () => {
     await widget.mount(fixture);
     expect(fixture.innerHTML).toBe("<div><span>&lt;p&gt;4343&lt;/p&gt;<p>43</p></span></div>");
   });
+
+  test("arrow function prop captures component instance as 'this'", async () => {
+    expect.assertions(5);
+    let child, parent;
+    class Child extends Component {
+      setup() {
+        child = this;
+      }
+    }
+    env.qweb.addTemplate("Child", `<span><t t-esc="props.value"/></span>`);
+
+    class Parent extends Component {
+      static components = { Child };
+      state = useState({ val: 42 });
+      setup() {
+        parent = this;
+      }
+      setValue(value) {
+        expect(this).toBe(parent);
+        this.state.val = value;
+      }
+    }
+    env.qweb.addTemplate(
+      "Parent",
+      `<div>
+        <Child callback="value => this.setValue(value)" value="state.val"/>
+      </div>`
+    );
+
+    const widget = new Parent();
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>42</span></div>");
+    child.props.callback(123);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>123</span></div>");
+    expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
+    expect(env.qweb.templates.Child.fn.toString()).toMatchSnapshot();
+  });
+
+  test("arrow function prop captures context component instance as 'this' inside slot", async () => {
+    expect.assertions(7);
+    let child, parent;
+    class Child extends Component {
+      setup() {
+        child = this;
+      }
+    }
+    env.qweb.addTemplate("Child", `<span><t t-esc="props.value"/></span>`);
+
+    class Wrapper extends Component {}
+    env.qweb.addTemplate("Wrapper", `<t t-slot="default"/>`);
+
+    class Parent extends Component {
+      static components = { Child, Wrapper };
+      state = useState({ val: 42 });
+      setup() {
+        parent = this;
+      }
+      setValue(value) {
+        expect(this).toBe(parent);
+        this.state.val = value;
+      }
+    }
+    env.qweb.addTemplate(
+      "Parent",
+      `<div>
+        <Wrapper>
+          <Child callback="value => this.setValue(value)" value="state.val"/>
+        </Wrapper>
+      </div>`
+    );
+
+    const widget = new Parent();
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>42</span></div>");
+    child.props.callback(123);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>123</span></div>");
+    expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
+    expect(env.qweb.templates.Wrapper.fn.toString()).toMatchSnapshot();
+    expect(QWeb.slots["1_default"].toString()).toMatchSnapshot();
+    expect(env.qweb.templates.Child.fn.toString()).toMatchSnapshot();
+  });
+
+  test("arrow function prop captures context component instance as 'this' inside slot default content", async () => {
+    expect.assertions(6);
+    let child, wrapper;
+    class Child extends Component {
+      setup() {
+        child = this;
+      }
+    }
+    env.qweb.addTemplate("Child", `<span><t t-esc="props.value"/></span>`);
+
+    class Wrapper extends Component {
+      static components = { Child };
+      state = useState({ val: 42 });
+      setup() {
+        wrapper = this;
+      }
+      setValue(value) {
+        expect(this).toBe(wrapper);
+        this.state.val = value;
+      }
+    }
+    env.qweb.addTemplate(
+      "Wrapper",
+      `<t t-slot="default">
+        <Child callback="value => this.setValue(value)" value="state.val"/>
+      </t>`
+    );
+
+    class Parent extends Component {
+      static components = { Wrapper };
+    }
+    env.qweb.addTemplate(
+      "Parent",
+      `<div>
+        <Wrapper/>
+      </div>`
+    );
+
+    const widget = new Parent();
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>42</span></div>");
+    child.props.callback(123);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>123</span></div>");
+    expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
+    expect(env.qweb.templates.Wrapper.fn.toString()).toMatchSnapshot();
+    expect(env.qweb.templates.Child.fn.toString()).toMatchSnapshot();
+  });
+
+  test("arrow function prop captures loop variables", async () => {
+    let children = [];
+    class Child extends Component {
+      setup() {
+        children.push(this);
+      }
+    }
+    env.qweb.addTemplate("Child", `<span><t t-esc="props.value"/></span>`);
+
+    class Parent extends Component {
+      static components = { Child };
+      state = useState({ val: 42 });
+      setValue(value) {
+        this.state.val = value;
+      }
+    }
+    env.qweb.addTemplate(
+      "Parent",
+      `<div>
+        <t t-foreach="[0, 1]" t-as="loopVar" t-key="loopVar">
+          <Child callback="() => this.setValue(loopVar)" value="state.val"/>
+        </t>
+      </div>`
+    );
+
+    const widget = new Parent();
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>42</span><span>42</span></div>");
+    children[0].props.callback();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>0</span><span>0</span></div>");
+    children[1].props.callback();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>1</span><span>1</span></div>");
+    expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
+    expect(env.qweb.templates.Child.fn.toString()).toMatchSnapshot();
+  });
 });
 
 describe("other directives with t-component", () => {

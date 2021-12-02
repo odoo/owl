@@ -298,6 +298,7 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
   if (tagName === "t" && !dynamicTag) {
     return null;
   }
+  ctx = Object.assign({}, ctx);
   const children: AST[] = [];
   if (tagName === "pre") {
     ctx.inPreTag = true;

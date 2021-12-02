@@ -255,6 +255,32 @@ describe("qweb parser", () => {
     });
   });
 
+  test("pre dom node with new line", async () => {
+    expect(parse(`<div><pre />\n</div>`)).toEqual({
+      type: 2,
+      tag: "div",
+      dynamicTag: null,
+      attrs: {},
+      on: {},
+      ref: null,
+      content: [
+        {
+          type: 2,
+          tag: "pre",
+          dynamicTag: null,
+          attrs: {},
+          on: {},
+          ref: null,
+          content: [],
+          model: null,
+          ns: null,
+        },
+      ],
+      model: null,
+      ns: null,
+    });
+  });
+
   // ---------------------------------------------------------------------------
   // t-esc
   // ---------------------------------------------------------------------------

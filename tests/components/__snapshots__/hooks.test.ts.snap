@@ -158,6 +158,32 @@ exports[`hooks use sub env does not pollute user env 1`] = `
 }"
 `;
 
+exports[`hooks use sub env supports arbitrary descriptor 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><block-text-0/> <block-text-1/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['env'].someVal;
+    let d2 = ctx['env'].someVal2;
+    return block1([d1, d2]);
+  }
+}"
+`;
+
+exports[`hooks use sub env supports arbitrary descriptor 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`Child\`, {}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
 exports[`hooks useEffect hook dependencies prevent effects from rerunning when unchanged 1`] = `
 "function anonymous(bdom, helpers
 ) {

@@ -194,6 +194,40 @@ describe("hooks", () => {
     expect(component.env).toHaveProperty("val");
   });
 
+  test("use sub env supports arbitrary descriptor", async () => {
+    let someVal = "maggot";
+    let someVal2 = "brain";
+
+    class Child extends Component {
+      static template = xml`<div><t t-esc="env.someVal" /> <t t-esc="env.someVal2" /></div>`;
+    }
+
+    class Test extends Component {
+      static template = xml`<Child />`;
+      static components = { Child };
+      setup() {
+        useSubEnv({
+          get someVal2() {
+            return someVal2;
+          },
+        });
+      }
+    }
+    someVal = "maggot";
+    const env = {
+      get someVal() {
+        return someVal;
+      },
+    };
+    const component = await new App(Test).configure({ env }).mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>maggot brain</div>");
+    someVal = "brain";
+    someVal2 = "maggot";
+    component.render();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>brain maggot</div>");
+  });
+
   test("can use useComponent", async () => {
     expect.assertions(2);
     class Test extends Component {

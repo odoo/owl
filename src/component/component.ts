@@ -767,7 +767,7 @@ export async function mount<T extends Type<Component>>(
   const { env, props, target } = params;
   let origEnv = C.hasOwnProperty("env") ? (C as any).env : null;
   if (env) {
-    ((C as any) as typeof Component).env = env;
+    (C as any as typeof Component).env = env;
   }
   const component: Component = new C(null, props);
   if (origEnv) {

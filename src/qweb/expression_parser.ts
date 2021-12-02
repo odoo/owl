@@ -25,9 +25,10 @@
 // Misc types, constants and helpers
 //------------------------------------------------------------------------------
 
-const RESERVED_WORDS = "true,false,NaN,null,undefined,debugger,console,window,in,instanceof,new,function,return,this,eval,void,Math,RegExp,Array,Object,Date".split(
-  ","
-);
+const RESERVED_WORDS =
+  "true,false,NaN,null,undefined,debugger,console,window,in,instanceof,new,function,return,this,eval,void,Math,RegExp,Array,Object,Date".split(
+    ","
+  );
 
 const WORD_REPLACEMENT = Object.assign(Object.create(null), {
   and: "&&",

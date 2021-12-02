@@ -56,6 +56,19 @@ exports[`white space handling nothing is done in pre tags 3`] = `
 }"
 `;
 
+exports[`white space handling pre inside a div with a new line 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><pre>SomeText</pre></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`white space handling white space only text nodes are condensed into a single space 1`] = `
 "function anonymous(bdom, helpers
 ) {

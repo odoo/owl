@@ -39,4 +39,10 @@ describe("white space handling", () => {
         </pre>`;
     expect(renderToString(template3)).toBe(template3);
   });
+
+  test("pre inside a div with a new line", () => {
+    expect(renderToString(`<div><pre>SomeText</pre>\n</div>`)).toBe(
+      "<div><pre>SomeText</pre></div>"
+    );
+  });
 });

@@ -243,6 +243,22 @@ describe("misc", () => {
     expect(fixture.innerHTML).toBe(`<a hello="world"><b><c>12</c></b>3</a>`);
   });
 
+  test("namespace is not propagated to siblings", () => {
+    const block = createBlock(`<div><svg block-ns="someNameSpace"><g/></svg><div></div></div>`);
+
+    const fixture = makeTestFixture();
+    mount(block(), fixture);
+
+    expect(fixture.innerHTML).toBe("<div><svg><g></g></svg><div></div></div>");
+    expect(fixture.querySelector("svg")!.namespaceURI).toBe("someNameSpace");
+    expect(fixture.querySelector("g")!.namespaceURI).toBe("someNameSpace");
+    const allDivs = fixture.querySelectorAll("div");
+    expect(Array.from(allDivs).map((el) => el.namespaceURI)).toEqual([
+      "http://www.w3.org/1999/xhtml",
+      "http://www.w3.org/1999/xhtml",
+    ]);
+  });
+
   //     test.skip("reusing a block skips patching process", async () => {
   //       const block = createBlock('<div><block-text-0/></div>');
   //       const foo = block(["foo"]);

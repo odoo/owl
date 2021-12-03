@@ -127,7 +127,7 @@ function buildTree(
   switch (node.nodeType) {
     case Node.ELEMENT_NODE: {
       // HTMLElement
-      let currentNS = parent && parent.currentNS;
+      let currentNS = domParentTree && domParentTree.currentNS;
       const tagName = (node as Element).tagName;
       let el: Node | undefined = undefined;
       const info: DynamicInfo[] = [];

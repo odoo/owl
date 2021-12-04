@@ -1590,12 +1590,12 @@ test("concurrent renderings scenario 9", async () => {
     "ComponentB:willRender",
     "ComponentB:rendered",
     "ComponentA:willPatch",
-    "ComponentB:willPatch",
     "ComponentC:willPatch",
     "ComponentD:willPatch",
+    "ComponentB:willPatch",
+    "ComponentB:patched",
     "ComponentD:patched",
     "ComponentC:patched",
-    "ComponentB:patched",
     "ComponentA:patched",
   ]).toBeLogged();
 });
@@ -2583,6 +2583,292 @@ test("parent and child rendered at exact same time", async () => {
   ]).toBeLogged();
 });
 
+test("delay willUpdateProps", async () => {
+  let promise: any = null;
+  let child: any;
+
+  class Child extends Component {
+    static template = xml`<t t-esc="props.value"/>_<t t-esc="state.int" />`;
+    state: any;
+    setup() {
+      useLogLifecycle();
+      child = this;
+      this.state = useState({ int: 0 });
+      onWillUpdateProps(async () => {
+        await promise;
+        this.state.int++;
+      });
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`<Child value="state.value"/>`;
+    static components = { Child };
+    state = { value: 0 };
+    setup() {
+      useLogLifecycle();
+    }
+  }
+  const parent = await mount(Parent, fixture);
+  expect(fixture.innerHTML).toBe("0_0");
+  expect([
+    "Parent:setup",
+    "Parent:willStart",
+    "Parent:willRender",
+    "Child:setup",
+    "Child:willStart",
+    "Parent:rendered",
+    "Child:willRender",
+    "Child:rendered",
+    "Child:mounted",
+    "Parent:mounted",
+  ]).toBeLogged();
+
+  promise = makeDeferred();
+  const prom1 = promise;
+  parent.state.value = 1;
+  child.render(); // trigger a root rendering first
+  parent.render();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("0_0");
+  expect([
+    "Child:willRender",
+    "Child:rendered",
+    "Parent:willRender",
+    "Child:willUpdateProps",
+    "Parent:rendered",
+  ]).toBeLogged();
+
+  promise = makeDeferred();
+  const prom2 = promise;
+  parent.state.value = 2;
+  parent.render();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("0_0");
+
+  prom2.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("2_1");
+
+  expect([
+    "Parent:willRender",
+    "Child:willUpdateProps",
+    "Parent:rendered",
+    "Child:willRender",
+    "Child:rendered",
+    "Parent:willPatch",
+    "Child:willPatch",
+    "Child:patched",
+    "Parent:patched",
+  ]).toBeLogged();
+
+  prom1.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("2_2");
+
+  expect(["Child:willRender", "Child:rendered", "Child:willPatch", "Child:patched"]).toBeLogged();
+});
+
+test("delay willUpdateProps with rendering grandchild", async () => {
+  // This test is a bit tricky, a Parent and one of his grandchildren render while another of the parent's
+  // grandchildren is awaiting its willUpdateProps.
+  // Technically RootFibers will be downgraded in ChildFibers, keeping the same container RootFiber.
+  // This case happens when Parent and ReaciveChild react together to a change in a reactive state/
+  let promise: any = null;
+  let child: any;
+  let reactiveChild: any;
+
+  // Delayed willUpdateProps
+  class DelayedChild extends Component {
+    static template = xml`<t t-esc="props.value"/>_<t t-esc="state.int" />`;
+    state: any;
+    setup() {
+      useLogLifecycle();
+      child = this;
+      this.state = useState({ int: 0 });
+      onWillUpdateProps(async () => {
+        await promise;
+        this.state.int++;
+      });
+    }
+  }
+
+  // A sibling of the delayed component, we will trigger a render on it manually
+  class ReactiveChild extends Component {
+    static template = xml`<div />`;
+    setup() {
+      reactiveChild = this;
+      useLogLifecycle();
+    }
+  }
+
+  // The parent of everybody, we also manually trigger render on it.
+  class Parent extends Component {
+    static template = xml`<DelayedChild value="props.state.value"/><ReactiveChild />`;
+    static components = { DelayedChild, ReactiveChild };
+    setup() {
+      useLogLifecycle();
+    }
+  }
+
+  class GrandParent extends Component {
+    static template = xml`<Parent state="state"/>`;
+    static components = { Parent };
+    state = { value: 0 };
+  }
+  const parent = await mount(GrandParent, fixture);
+  expect(fixture.innerHTML).toBe("0_0<div></div>");
+  expect([
+    "Parent:setup",
+    "Parent:willStart",
+    "Parent:willRender",
+    "DelayedChild:setup",
+    "DelayedChild:willStart",
+    "ReactiveChild:setup",
+    "ReactiveChild:willStart",
+    "Parent:rendered",
+    "DelayedChild:willRender",
+    "DelayedChild:rendered",
+    "ReactiveChild:willRender",
+    "ReactiveChild:rendered",
+    "ReactiveChild:mounted",
+    "DelayedChild:mounted",
+    "Parent:mounted",
+  ]).toBeLogged();
+
+  promise = makeDeferred();
+  const prom1 = promise;
+  parent.state.value = 1;
+  child.render(); // trigger a root rendering first
+  parent.render();
+  reactiveChild.render();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("0_0<div></div>");
+  expect([
+    "DelayedChild:willRender",
+    "DelayedChild:rendered",
+    "Parent:willUpdateProps",
+    "ReactiveChild:willRender",
+    "ReactiveChild:rendered",
+    "Parent:willRender",
+    "DelayedChild:willUpdateProps",
+    "ReactiveChild:willUpdateProps",
+    "Parent:rendered",
+    "ReactiveChild:willRender",
+    "ReactiveChild:rendered",
+  ]).toBeLogged();
+
+  promise = makeDeferred();
+  const prom2 = promise;
+  child.render(); // trigger a root rendering first
+  parent.state.value = 2;
+  parent.render();
+  reactiveChild.render();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("0_0<div></div>");
+  expect([
+    "Parent:willUpdateProps",
+    "ReactiveChild:willRender",
+    "ReactiveChild:rendered",
+    "Parent:willRender",
+    "DelayedChild:willUpdateProps",
+    "ReactiveChild:willUpdateProps",
+    "Parent:rendered",
+    "ReactiveChild:willRender",
+    "ReactiveChild:rendered",
+  ]).toBeLogged();
+
+  prom2.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("2_1<div></div>");
+  expect([
+    "DelayedChild:willRender",
+    "DelayedChild:rendered",
+    "Parent:willPatch",
+    "ReactiveChild:willPatch",
+    "DelayedChild:willPatch",
+    "DelayedChild:patched",
+    "ReactiveChild:patched",
+    "Parent:patched",
+  ]).toBeLogged();
+
+  prom1.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("2_2<div></div>");
+  expect([
+    "DelayedChild:willRender",
+    "DelayedChild:rendered",
+    "DelayedChild:willPatch",
+    "DelayedChild:patched",
+  ]).toBeLogged();
+});
+
+test("two sequential renderings before an animation frame", async () => {
+  class Child extends Component {
+    static template = xml`<t t-esc="props.value"/>`;
+    setup() {
+      useLogLifecycle();
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`<Child value="state.value"/>`;
+    static components = { Child };
+    state = useState({ value: 0 });
+    setup() {
+      useLogLifecycle();
+    }
+  }
+  const parent = await mount(Parent, fixture);
+  expect(fixture.innerHTML).toBe("0");
+  expect([
+    "Parent:setup",
+    "Parent:willStart",
+    "Parent:willRender",
+    "Child:setup",
+    "Child:willStart",
+    "Parent:rendered",
+    "Child:willRender",
+    "Child:rendered",
+    "Child:mounted",
+    "Parent:mounted",
+  ]).toBeLogged();
+
+  parent.state.value = 1;
+  await nextMicroTick();
+  await nextMicroTick();
+  await nextMicroTick();
+  await nextMicroTick();
+  await nextMicroTick();
+  expect(fixture.innerHTML).toBe("0");
+  expect([
+    "Parent:willRender",
+    "Child:willUpdateProps",
+    "Parent:rendered",
+    "Child:willRender",
+    "Child:rendered",
+  ]).toBeLogged();
+
+  parent.state.value = 2;
+  // enough microticks to wait for render + willupdateprops
+  await nextMicroTick();
+  await nextMicroTick();
+  await nextMicroTick();
+  await nextMicroTick();
+  await nextMicroTick();
+  expect(fixture.innerHTML).toBe("0");
+  expect([
+    "Parent:willRender",
+    "Child:willUpdateProps",
+    "Parent:rendered",
+    "Child:willRender",
+    "Child:rendered",
+  ]).toBeLogged();
+
+  await nextTick();
+  // we check here that the willPatch and patched hooks are called only once
+  expect(["Parent:willPatch", "Child:willPatch", "Child:patched", "Parent:patched"]).toBeLogged();
+});
 //   test.skip("components with shouldUpdate=false", async () => {
 //     const state = { p: 1, cc: 10 };
 

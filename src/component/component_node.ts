@@ -203,12 +203,6 @@ export class ComponentNode<T extends typeof Component = typeof Component>
     // update
     const fiber = makeChildFiber(this, parentFiber);
     this.fiber = fiber;
-    if (this.willPatch.length) {
-      parentFiber.root.willPatch.push(fiber);
-    }
-    if (this.patched.length) {
-      parentFiber.root.patched.push(fiber);
-    }
     const component = this.component;
     applyDefaultProps(props, component.constructor as any);
     const prom = Promise.all(this.willUpdateProps.map((f) => f.call(component, props)));
@@ -216,8 +210,15 @@ export class ComponentNode<T extends typeof Component = typeof Component>
     if (fiber !== this.fiber) {
       return;
     }
-    this.component.props = props;
+    component.props = props;
     this._render(fiber);
+    const parentRoot = parentFiber.root;
+    if (this.willPatch.length) {
+      parentRoot.willPatch.push(fiber);
+    }
+    if (this.patched.length) {
+      parentRoot.patched.push(fiber);
+    }
   }
 
   /**

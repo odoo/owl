@@ -201,13 +201,18 @@ export class ComponentNode<T extends typeof Component = typeof Component>
 
   async updateAndRender(props: any, parentFiber: Fiber) {
     // update
+    const root = this.fiber && this.fiber.root;
     const fiber = makeChildFiber(this, parentFiber);
+    const parentRoot = parentFiber.root;
+    const rootChanged = root !== parentRoot;
     this.fiber = fiber;
-    if (this.willPatch.length) {
-      parentFiber.root.willPatch.push(fiber);
-    }
-    if (this.patched.length) {
-      parentFiber.root.patched.push(fiber);
+    if (rootChanged) {
+      if (this.willPatch.length) {
+        parentRoot.willPatch.push(fiber);
+      }
+      if (this.patched.length) {
+        parentRoot.patched.push(fiber);
+      }
     }
     const component = this.component;
     applyDefaultProps(props, component.constructor as any);

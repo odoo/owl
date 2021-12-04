@@ -939,6 +939,82 @@ exports[`creating two async components, scenario 3 (patching in the same frame) 
 }"
 `;
 
+exports[`delay willUpdateProps 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = text(ctx['props'].value);
+    let b3 = text(\`_\`);
+    let b4 = text(ctx['state'].int);
+    return multi([b2, b3, b4]);
+  }
+}"
+`;
+
+exports[`delay willUpdateProps 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`Child\`, {value: ctx['state'].value}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`delay willUpdateProps with rendering grandchild 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = text(ctx['props'].value);
+    let b3 = text(\`_\`);
+    let b4 = text(ctx['state'].int);
+    return multi([b2, b3, b4]);
+  }
+}"
+`;
+
+exports[`delay willUpdateProps with rendering grandchild 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`delay willUpdateProps with rendering grandchild 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = component(\`DelayedChild\`, {value: ctx['props'].state.value}, key + \`__1\`, node, ctx);
+    let b3 = component(\`ReactiveChild\`, {}, key + \`__2\`, node, ctx);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`delay willUpdateProps with rendering grandchild 4`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`Parent\`, {state: ctx['state']}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
 exports[`destroying/recreating a subwidget with different props (if start is not over) 1`] = `
 "function anonymous(bdom, helpers
 ) {

@@ -2803,6 +2803,72 @@ test("delay willUpdateProps with rendering grandchild", async () => {
   ]).toBeLogged();
 });
 
+test("two sequential renderings before an animation frame", async () => {
+  class Child extends Component {
+    static template = xml`<t t-esc="props.value"/>`;
+    setup() {
+      useLogLifecycle();
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`<Child value="state.value"/>`;
+    static components = { Child };
+    state = useState({ value: 0 });
+    setup() {
+      useLogLifecycle();
+    }
+  }
+  const parent = await mount(Parent, fixture);
+  expect(fixture.innerHTML).toBe("0");
+  expect([
+    "Parent:setup",
+    "Parent:willStart",
+    "Parent:willRender",
+    "Child:setup",
+    "Child:willStart",
+    "Parent:rendered",
+    "Child:willRender",
+    "Child:rendered",
+    "Child:mounted",
+    "Parent:mounted",
+  ]).toBeLogged();
+
+  parent.state.value = 1;
+  await nextMicroTick();
+  await nextMicroTick();
+  await nextMicroTick();
+  await nextMicroTick();
+  await nextMicroTick();
+  expect(fixture.innerHTML).toBe("0");
+  expect([
+    "Parent:willRender",
+    "Child:willUpdateProps",
+    "Parent:rendered",
+    "Child:willRender",
+    "Child:rendered",
+  ]).toBeLogged();
+
+  parent.state.value = 2;
+  // enough microticks to wait for render + willupdateprops
+  await nextMicroTick();
+  await nextMicroTick();
+  await nextMicroTick();
+  await nextMicroTick();
+  await nextMicroTick();
+  expect(fixture.innerHTML).toBe("0");
+  expect([
+    "Parent:willRender",
+    "Child:willUpdateProps",
+    "Parent:rendered",
+    "Child:willRender",
+    "Child:rendered",
+  ]).toBeLogged();
+
+  await nextTick();
+  // we check here that the willPatch and patched hooks are called only once
+  expect(["Parent:willPatch", "Child:willPatch", "Child:patched", "Parent:patched"]).toBeLogged();
+});
 //   test.skip("components with shouldUpdate=false", async () => {
 //     const state = { p: 1, cc: 10 };
 

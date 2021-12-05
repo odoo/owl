@@ -1175,6 +1175,28 @@ exports[`two renderings initiated between willPatch and patched 2`] = `
 }"
 `;
 
+exports[`two sequential renderings before an animation frame 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['props'].value);
+  }
+}"
+`;
+
+exports[`two sequential renderings before an animation frame 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`Child\`, {value: ctx['state'].value}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
 exports[`update a sub-component twice in the same frame 1`] = `
 "function anonymous(bdom, helpers
 ) {

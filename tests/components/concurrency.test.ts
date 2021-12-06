@@ -1590,12 +1590,12 @@ test("concurrent renderings scenario 9", async () => {
     "ComponentB:willRender",
     "ComponentB:rendered",
     "ComponentA:willPatch",
-    "ComponentB:willPatch",
     "ComponentC:willPatch",
     "ComponentD:willPatch",
+    "ComponentB:willPatch",
+    "ComponentB:patched",
     "ComponentD:patched",
     "ComponentC:patched",
-    "ComponentB:patched",
     "ComponentA:patched",
   ]).toBeLogged();
 });

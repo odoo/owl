@@ -1920,6 +1920,49 @@ describe("props evaluation ", () => {
     expect(env.qweb.templates.Child.fn.toString()).toMatchSnapshot();
   });
 
+  test("bare function calls in arrow function has rendering context as 'this'", async () => {
+    expect.assertions(7);
+    let child, parent;
+    class Child extends Component {
+      setup() {
+        child = this;
+      }
+    }
+    env.qweb.addTemplate("Child", `<span><t t-esc="props.value"/></span>`);
+
+    class Parent extends Component {
+      static components = { Child };
+      state = useState({ val: 42 });
+      setup() {
+        parent = this;
+      }
+      setValue(value) {
+        // 'this' is the rendering context, NOT the instance
+        expect(this).not.toBe(parent);
+        // the state in the rendering context should be the same as the instance's
+        expect(this.state).toBe(parent.state);
+        expect((this as any).ctxVal).toBe(2);
+        this.state.val = value;
+      }
+    }
+    env.qweb.addTemplate(
+      "Parent",
+      `<div>
+        <t t-set="ctxVal" t-value="2"/>
+        <Child callback="value => setValue(value)" value="state.val"/>
+      </div>`
+    );
+
+    const widget = new Parent();
+    await widget.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>42</span></div>");
+    child.props.callback(123);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>123</span></div>");
+    expect(env.qweb.templates.Parent.fn.toString()).toMatchSnapshot();
+    expect(env.qweb.templates.Child.fn.toString()).toMatchSnapshot();
+  });
+
   test("arrow function prop captures context component instance as 'this' inside slot", async () => {
     expect.assertions(7);
     let child, parent;

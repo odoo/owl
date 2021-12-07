@@ -162,7 +162,7 @@ export class CompilationContext {
     const tokens = compileExprToArray(expr, this.variables);
     const done = new Set();
     return tokens
-      .map((tok) => {
+      .map((tok, i) => {
         // "this" in captured expressions should be the current component
         if (tok.value === "this") {
           if (!done.has("this")) {
@@ -174,7 +174,14 @@ export class CompilationContext {
         // Variables that should be looked up in the scope. isLocal is for arrow
         // function arguments that should stay untouched (eg "ev => ev" should
         // not become "const ev_1 = scope['ev']; ev_1 => ev_1")
-        if (tok.varName && !tok.isLocal) {
+        if (
+          tok.varName &&
+          !tok.isLocal &&
+          // HACK: for backwards compatibility, we don't capture bare methods
+          // this allows them to be called with the rendering context/scope
+          // as their this value.
+          (!tokens[i + 1] || tokens[i + 1].type !== "LEFT_PAREN")
+        ) {
           if (!done.has(tok.varName)) {
             done.add(tok.varName);
             this.addLine(`const ${tok.varName}_${argId} = ${tok.value};`);

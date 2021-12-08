@@ -1,4 +1,3 @@
-import { onMounted } from "../component/lifecycle_hooks";
 import { Component } from "../component/component";
 import { ComponentNode } from "../component/component_node";
 import { MountOptions } from "../component/fibers";
@@ -60,15 +59,33 @@ export class App<T extends typeof Component = any> extends TemplateSet {
   }
 
   mount(target: HTMLElement, options?: MountOptions): Promise<InstanceType<T>> {
+    this.checkTarget(target);
+    const node = this.makeNode(this.Root, this.props);
+    const prom = this.mountNode(node, target, options);
+    this.root = node;
+    return prom;
+  }
+
+  checkTarget(target: HTMLElement) {
     if (!(target instanceof HTMLElement)) {
       throw new Error("Cannot mount component: the target is not a valid DOM element");
     }
     if (!document.body.contains(target)) {
       throw new Error("Cannot mount a component on a detached dom node");
     }
-    const node = new ComponentNode(this.Root, this.props, this);
+  }
+
+  makeNode(Component: T, props: any): ComponentNode {
+    return new ComponentNode(Component, props, this);
+  }
+
+  mountNode(node: ComponentNode, target: HTMLElement, options?: MountOptions) {
     const promise: any = new Promise((resolve, reject) => {
-      onMounted(() => resolve(node.component));
+      // manually set a onMounted callback.
+      // that way, we are independant from the current node.
+      node.mounted.push(() => {
+        resolve(node.component);
+      });
 
       // Manually add the last resort error handler on the node
       let handlers = nodeErrorHandlers.get(node);
@@ -81,7 +98,6 @@ export class App<T extends typeof Component = any> extends TemplateSet {
         throw e;
       });
     });
-    this.root = node;
     node.mountComponent(target, options);
     return promise;
   }

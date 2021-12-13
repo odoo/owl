@@ -182,6 +182,34 @@ exports[`attributes dynamic formatted attributes with a dash 1`] = `
 }"
 `;
 
+exports[`attributes dynamic undefined class attribute 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['c'];
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`attributes dynamic undefined generic attribute 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div block-attribute-0=\\"thing\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['c'];
+    return block1([d1]);
+  }
+}"
+`;
+
 exports[`attributes fixed variable 1`] = `
 "function anonymous(bdom, helpers
 ) {

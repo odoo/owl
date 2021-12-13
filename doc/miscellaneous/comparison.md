@@ -14,8 +14,7 @@ discussed, feel free to open an issue/submit a PR to correct this text.
 - [Tooling/Build Step](#toolingbuild-step)
 - [Templating](#templating)
 - [Asynchronous rendering](#asynchronous-rendering)
-- [Reactiveness](#reactiveness)
-- [State Management](#state-management)
+- [Reactivity](#reactivity)
 - [Hooks](#hooks)
 
 ## Size
@@ -173,7 +172,7 @@ more convoluted. For example, in Vue, you need to use a dynamic import keyword
 that needs to be transpiled at build time in order for the component to be loaded
 asynchronously (see [the documentation](https://vuejs.org/v2/guide/components-dynamic-async.html#Async-Components)).
 
-## Reactiveness
+## Reactivity
 
 React has a simple model: whenever the state changes, it is
 replaced with a new state (via the `setState` method). Then, the DOM is patched.

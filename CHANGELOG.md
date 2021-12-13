@@ -1,4 +1,4 @@
-# ChangeLog
+# Changelog
 
 This document contains an overview of all changes between Owl 1.x and
 Owl 2.x, with some pointers on how to update the code.

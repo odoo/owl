@@ -372,6 +372,16 @@ to be closed:
 useExternalListener(window, "click", this.closeMenu);
 ```
 
+### `useComponent`
+
+The `useComponent` hook is useful as a building block for some customized hooks,
+that may need a reference to the component calling them.
+
+### `useEnv`
+
+The `useEnv` hook is useful as a building block for some customized hooks,
+that may need a reference to the env of the component calling them.
+
 ### Making customized hooks
 
 Hooks are a wonderful way to organize the code of a complex component by feature

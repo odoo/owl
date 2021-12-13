@@ -16,7 +16,7 @@ const wordRegexp = /\s+/;
 
 export function createAttrUpdater(attr: string): Setter<HTMLElement> {
   return function (this: HTMLElement, value: any) {
-    if (value !== false) {
+    if (value !== false && value !== undefined) {
       setAttribute.call(this, attr, value === true ? "" : value);
     }
   };

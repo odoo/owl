@@ -65,6 +65,14 @@ test("class attribute", async () => {
   expect(fixture.innerHTML).toBe(`<div class="0"></div>`);
 });
 
+test("attribute with undefined value", async () => {
+  const block = createBlock('<div block-attribute-0="abc"></div>');
+  const tree = block([undefined]);
+
+  mount(tree, fixture);
+  expect(fixture.innerHTML).toBe(`<div></div>`);
+});
+
 test("class attribute with undefined value", async () => {
   const block = createBlock('<div block-attribute-0="class"></div>');
   const tree = block([undefined]);

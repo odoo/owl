@@ -52,6 +52,18 @@ describe("attributes", () => {
     expect(result).toBe(`<div></div>`);
   });
 
+  test("dynamic undefined generic attribute", () => {
+    const template = `<div t-att-thing="c"/>`;
+    const result = renderToString(template, { c: undefined });
+    expect(result).toBe(`<div></div>`);
+  });
+
+  test("dynamic undefined class attribute", () => {
+    const template = `<div t-att-class="c"/>`;
+    const result = renderToString(template, { c: undefined });
+    expect(result).toBe(`<div></div>`);
+  });
+
   test("dynamic attribute with a dash", () => {
     const template = `<div t-att-data-action-id="id"/>`;
     const result = renderToString(template, { id: 32 });

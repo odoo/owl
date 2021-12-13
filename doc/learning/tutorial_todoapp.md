@@ -539,8 +539,7 @@ deleteTask(ev) {
 
 Looking at the code, it is apparent that we now have code to handle tasks
 scattered in more than one place. Also, it mixes UI code and business logic
-code. Owl has a way to manage state separately from the user interface: a
-[`Store`](../reference/store.md).
+code. Owl has a way to manage state separately from the user interface: a store.
 
 Let us use it in our application. This is a pretty large refactoring (for our
 application), since it involves extracting all task related code out of the

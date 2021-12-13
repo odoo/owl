@@ -1,4 +1,4 @@
-<h1 align="center">🦉 <a href="https://odoo.github.io/owl/">OWL Framework</a> 🦉</h1>
+<h1 align="center">🦉 <a href="https://odoo.github.io/owl/">Owl Framework</a> 🦉</h1>
 
  [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 [![npm version](https://badge.fury.io/js/@odoo%2Fowl.svg)](https://badge.fury.io/js/@odoo%2Fowl)
@@ -6,10 +6,12 @@
 
 _Class based components with hooks, reactive state and concurrent mode_
 
+**Try it online!** you can experiment with the Owl framework in an online [playground](https://odoo.github.io/owl/playground).
+
 ## Project Overview
 
-The Odoo Web Library (OWL) is a smallish (~<20kb gzipped) UI framework intended to
-be the basis for the [Odoo](https://www.odoo.com/) Web Client. Owl is a modern
+The Odoo Web Library (Owl) is a smallish (~<20kb gzipped) UI framework built by
+[Odoo](https://www.odoo.com/) for its products. Owl is a modern
 framework, written in Typescript, taking the best ideas from React and Vue in a
 simple and consistent way. Owl's main features are:
 
@@ -17,39 +19,26 @@ simple and consistent way. Owl's main features are:
 - a reactivity system based on hooks,
 - concurrent mode by default,
 
-Owl components are defined with ES6 classes, they use QWeb templates, an
+Owl components are defined with ES6 classes and xml templates, uses an
 underlying virtual DOM, integrates beautifully with hooks, and the rendering is
 asynchronous.
 
-**Try it online!** An online playground is available at
-[https://odoo.github.io/owl/playground](https://odoo.github.io/owl/playground)
-to let you experiment with the Owl framework. There are some code examples to
-showcase some interesting features.
+Quick links:
 
-Owl is currently stable.  Possible future changes are explained in the
-[roadmap](roadmap.md).
-
-## Why Owl?
-
-Why did Odoo decide to make Yet Another Framework?  This is really a question
-that deserves [a long answer](doc/miscellaneous/why_owl.md). But in short, we believe that
-while the current state of the art frameworks are excellent, they are not
-optimized for our use case, and there is still room for something else.
-
-If you are interested in a comparison with React or Vue, you will
-find some more additional information [here](doc/miscellaneous/comparison.md).
+- [documentation](#documentation),
+- [changelog](CHANGELOG.md) (from Owl 1.x to 2.x),
+- [playground](https://odoo.github.io/owl/playground)
 
 ## Example
 
 Here is a short example to illustrate interactive components:
 
 ```javascript
-const { Component, useState, mount } = owl;
-const { xml } = owl.tags;
+const { Component, useState, mount, xml } = owl;
 
 class Counter extends Component {
   static template = xml`
-    <button t-on-click="state.value++">
+    <button t-on-click="() => state.value++">
       Click Me! [<t t-esc="state.value"/>]
     </button>`;
 
@@ -66,7 +55,7 @@ class App extends Component {
   static components = { Counter };
 }
 
-mount(App, { target: document.body });
+mount(App, document.body);
 ```
 
 Note that the counter component is made reactive with the [`useState` hook](doc/reference/hooks.md#usestate).
@@ -76,41 +65,56 @@ But this is not mandatory, many applications will load templates separately.
 More interesting examples can be found on the
 [playground](https://odoo.github.io/owl/playground) application.
 
-## Design Principles
-
-OWL is designed to be used in highly dynamic applications where changing
-requirements are common and code needs to be maintained by large teams.
-
-- **XML based**: templates are based on the XML format, which allows interesting
-  applications. For example, they could be stored in a database and modified
-  dynamically with `xpaths`.
-- **templates compilation in the browser**: this may not be a good fit for all
-  applications, but if you need to generate dynamically user interfaces in the
-  browser, this is very powerful. For example, a generic form view component
-  could generate a specific form user interface for each various models, from a XML view.
-- **no toolchain required**: this is extremely useful for some applications, if,
-  for various reasons (security/deployment/dynamic modules/specific assets tools),
-  it is not ok to use standard web tools based on `npm`.
-
-Owl is not designed to be fast nor small (even though it is quite good on those
-two topics). It is a no nonsense framework to build applications. There is only
-one way to define components (with classes). There is no black magic. It just
-works.
-
-
 ## Documentation
 
-A complete documentation for Owl can be found here:
+### Learning Owl
 
-- [Main documentation page](doc/readme.md).
+Are you new to Owl? This is the place to start!
 
-Some of the most important pages are:
-
-- [Tutorial: TodoList application](doc/learning/tutorial_todoapp.md)
+- [Tutorial: create a TodoList application](doc/learning/tutorial_todoapp.md)
+- [Quick Overview](doc/learning/overview.md)
 - [How to start an Owl project](doc/learning/quick_start.md)
-- [QWeb templating language](doc/reference/qweb_templating_language.md)
+- [How to test Components](doc/learning/how_to_test.md)
+- [How to write Single File Components](doc/learning/how_to_write_sfc.md)
+
+### Reference
+
+You will find here a complete reference of every feature, class or object
+provided by Owl.
+
+- [Animations](doc/reference/animations.md)
+- [Browser](doc/reference/browser.md)
 - [Component](doc/reference/component.md)
+- [Content](doc/reference/content.md)
+- [Concurrency Model](doc/reference/concurrency_model.md)
+- [Configuration](doc/reference/config.md)
+- [Context](doc/reference/context.md)
+- [Environment](doc/reference/environment.md)
+- [Event Bus](doc/reference/event_bus.md)
+- [Event Handling](doc/reference/event_handling.md)
+- [Error Handling](doc/reference/error_handling.md)
 - [Hooks](doc/reference/hooks.md)
+- [Mounting a component](doc/reference/mounting.md)
+- [Miscellaneous Components](doc/reference/misc.md)
+- [Observer](doc/reference/observer.md)
+- [Props](doc/reference/props.md)
+- [Props Validation](doc/reference/props_validation.md)
+- [QWeb Templating Language](doc/reference/qweb_templating_language.md)
+- [QWeb Engine](doc/reference/qweb_engine.md)
+- [Slots](doc/reference/slots.md)
+- [Tags](doc/reference/tags.md)
+- [Utils](doc/reference/utils.md)
+
+### Other Topics
+
+This section provides miscellaneous document that explains some topics
+which cannot be considered either a tutorial, or reference documentation.
+
+- [Owl architecture: the Virtual DOM](doc/miscellaneous/vdom.md)
+- [Owl architecture: the rendering pipeline](doc/miscellaneous/rendering.md)
+- [Comparison with React/Vue](doc/miscellaneous/comparison.md)
+- [Why did Odoo built Owl?](doc/miscellaneous/why_owl.md)
+
 
 
 ## Installing Owl
@@ -125,6 +129,3 @@ If you want to use a simple `<script>` tag, the last release can be downloaded h
 
 - [owl-1.4.7](https://github.com/odoo/owl/releases/tag/v1.4.7)
 
-## License
-
-OWL is [LGPL licensed](./LICENSE).

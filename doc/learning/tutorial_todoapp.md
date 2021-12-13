@@ -50,10 +50,11 @@ the following content:
     <meta charset="UTF-8" />
     <title>OWL Todo App</title>
     <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
     <script src="owl.js"></script>
     <script src="app.js"></script>
-  </head>
-  <body></body>
+  </body>
 </html>
 ```
 
@@ -71,44 +72,34 @@ Note that we put everything inside an immediately executed function to avoid lea
 anything to the global scope.
 
 Finally, `owl.js` should be the last version downloaded from the Owl repository (you can use `owl.min.js` if you prefer). Be aware that you should download the `owl.iife.js` or `owl.iife.min.js`, because these files
-are built to run directly on the browser (other files such as `owl.cjs.js` are
+are built to run directly on the browser, and rename it `owl.js` (other files such as `owl.cjs.js` are
 built to be bundled by other tools).
 
 Now, the project should be ready. Loading the `index.html` file into a browser
 should show an empty page, with the title `Owl Todo App`, and it should log a
-message such as `hello owl 1.0.0` in the console.
+message such as `hello owl 2.x.y` in the console.
 
 ## 2. Adding a first component
 
 An Owl application is made out of [components](../reference/component.md), with
-a single root component. Let us start by defining an `App` component. Replace the
+a single root component. Let us start by defining a `Root` component. Replace the
 content of the function in `app.js` by the following code:
 
 ```js
-const { Component, mount } = owl;
-const { xml } = owl.tags;
-const { whenReady } = owl.utils;
+const { Component, mount, xml } = owl;
 
 // Owl Components
-class App extends Component {
+class Root extends Component {
   static template = xml`<div>todo app</div>`;
 }
 
-// Setup code
-function setup() {
-  mount(App, { target: document.body });
-}
-
-whenReady(setup);
+mount(Root, document.body);
 ```
 
 Now, reloading the page in a browser should display a message.
 
-The code is pretty simple, but let us explain the last line in more detail. The
-browser tries to execute the javascript code in `app.js` as quickly as possible,
-and it could happen that the DOM is not ready yet when we try to mount the `App`
-component. To avoid this situation, we use the [`whenReady`](../reference/utils.md#whenready)
-helper to delay the execution of the `setup` function until the DOM is ready.
+The code is pretty simple: we define a component with an inline template, then
+mount it in the document body.
 
 Note 1: in a larger project, we would split the code in multiple files, with
 components in a sub folder, and a main file that would initialize the application.
@@ -149,20 +140,20 @@ with the following keys:
   tasks. Since the title is something created/edited by the user, it offers
   no guarantee that it is unique. So, we will generate a unique `id` number for
   each task.
-- `title`: a string, to explain what the task is about.
+- `text`: a string, to explain what the task is about.
 - `isCompleted`: a boolean, to keep track of the status of the task
 
 Now that we decided on the internal format of the state, let us add some demo
 data and a template to the `App` component:
 
 ```js
-class App extends Component {
+class Root extends Component {
   static template = xml/* xml */ `
     <div class="task-list">
         <t t-foreach="tasks" t-as="task" t-key="task.id">
             <div class="task">
                 <input type="checkbox" t-att-checked="task.isCompleted"/>
-                <span><t t-esc="task.title"/></span>
+                <span><t t-esc="task.text"/></span>
             </div>
         </t>
     </div>`;
@@ -170,12 +161,12 @@ class App extends Component {
   tasks = [
     {
       id: 1,
-      title: "buy milk",
+      text: "buy milk",
       isCompleted: true,
     },
     {
       id: 2,
-      title: "clean house",
+      text: "clean house",
       isCompleted: false,
     },
   ];
@@ -245,29 +236,25 @@ a little bit:
 // -------------------------------------------------------------------------
 // Task Component
 // -------------------------------------------------------------------------
-const TASK_TEMPLATE = xml /* xml */`
-    <div class="task" t-att-class="props.task.isCompleted ? 'done' : ''">
-        <input type="checkbox" t-att-checked="props.task.isCompleted"/>
-        <span><t t-esc="props.task.title"/></span>
-    </div>`;
-
 class Task extends Component {
-    static template = TASK_TEMPLATE;
-    static props = ["task"];
+  static template = xml /* xml */`
+    <div class="task" t-att-class="props.task.isCompleted ? 'done' : ''">
+      <input type="checkbox" t-att-checked="props.task.isCompleted"/>
+      <span><t t-esc="props.task.title"/></span>
+    </div>`;
+  static props = ["task"];
 }
 
 // -------------------------------------------------------------------------
-// App Component
+// Root Component
 // -------------------------------------------------------------------------
-const APP_TEMPLATE = xml /* xml */`
+class Root extends Component {
+  static template = xml /* xml */`
     <div class="task-list">
-        <t t-foreach="tasks" t-as="task" t-key="task.id">
-            <Task task="task"/>
-        </t>
+      <t t-foreach="tasks" t-as="task" t-key="task.id">
+        <Task task="task"/>
+      </t>
     </div>`;
-
-class App extends Component {
-    static template = APP_TEMPLATE;
     static components = { Task };
 
     tasks = [
@@ -276,14 +263,9 @@ class App extends Component {
 }
 
 // -------------------------------------------------------------------------
-// Setup code
+// Setup
 // -------------------------------------------------------------------------
-function setup() {
-    owl.config.mode = "dev";
-    mount(App, { target: document.body });
-}
-
-whenReady(setup);
+mount(Root, document.body, {dev: true});
 ```
 
 A lot of stuff happened here:
@@ -292,24 +274,22 @@ A lot of stuff happened here:
 - whenever we define a sub component, it needs to be added to the static
   [`components`](../reference/component.md#static-properties)
   key of its parent, so Owl can get a reference to it,
-- the templates have been extracted out of the components, to make it easier to
-  differentiate the "view/template" code from the "script/behavior" code,
 - the `Task` component has a `props` key: this is only useful for validation
   purpose. It says that each `Task` should be given exactly one prop, named
   `task`. If this is not the case, Owl will throw an
   [error](../reference/props_validation.md). This is extremely
   useful when refactoring components
 - finally, to activate the props validation, we need to set Owl's
-  [mode](../reference/config.md#mode) to `dev`. This is done in the `setup`
-  function. Note that this should be removed when an app is used in a real
+  [mode](../reference/config.md#mode) to `dev`. This is done in the last argument
+  of the `mount` function. Note that this should be removed when an app is used in a real
   production environment, since `dev` mode is slightly slower, due to extra
   checks and validations.
 
 ## 6. Adding tasks (part 1)
 
 We still use a list of hardcoded tasks. It's really time to give the user a way
-to add tasks himself. The first step is to add an input to the `App` component.
-But this input will be outside of the task list, so we need to adapt `App`
+to add tasks himself. The first step is to add an input to the `Root` component.
+But this input will be outside of the task list, so we need to adapt `Root`
 template, js, and css:
 
 ```xml
@@ -327,9 +307,9 @@ template, js, and css:
 addTask(ev) {
     // 13 is keycode for ENTER
     if (ev.keyCode === 13) {
-        const title = ev.target.value.trim();
+        const text = ev.target.value.trim();
         ev.target.value = "";
-        console.log('adding task', title);
+        console.log('adding task', text);
         // todo
     }
 }
@@ -358,10 +338,9 @@ task. Notice that when you load the page, the input is not focused. But adding
 tasks is a core feature of a task list, so let us make it as fast as possible by
 focusing the input.
 
-Since `App` is a component, it has a
-[`mounted` lifecycle method](../reference/component.md#lifecycle) that we can
-implement. We will also need to get a reference to the input, by using the
-`t-ref` directive with the [`useRef`](../reference/hooks.md#useref) hook:
+We need to execute code when the `Root` component is ready (mounted). Let's do
+that using the `onMounted` hook. We will also need to get a reference to the
+input, by using the `t-ref` directive with the [`useRef`](../reference/hooks.md#useref) hook:
 
 ```xml
 <input placeholder="Enter a new task" t-on-keyup="addTask" t-ref="add-input"/>
@@ -369,22 +348,21 @@ implement. We will also need to get a reference to the input, by using the
 
 ```js
 // on top of file:
-const { useRef } = owl.hooks;
+const { Component, mount, xml, useRef, onMounted } = owl;
 ```
 
 ```js
 // in App
-inputRef = useRef("add-input");
-
-mounted() {
-    this.inputRef.el.focus();
+setup() {
+    const inputRef = useRef("add-input");
+    onMounted(() => inputRef.el.focus());
 }
 ```
 
-The `inputRef` is defined as a class field, so it is equivalent to defining it
-in the constructor. It simply instructs Owl to keep a reference to anything with
-the corresponding `t-ref` keyword. We then implement the `mounted` lifecycle
-method, where we now have an active reference that we can use to focus the input.
+This is a very common situation: whenever we need to perform some actions depending
+on the lifecycle of a component, we need to do it in the `setup` method, by using
+one of the lifecycle hook. Here, we first get a reference to the `inputRef`,
+then in the `onMounted` hook, we simply focus the html element.
 
 ## 7. Adding tasks (part 2)
 
@@ -405,12 +383,12 @@ Now, the `addTask` method can be implemented:
 addTask(ev) {
     // 13 is keycode for ENTER
     if (ev.keyCode === 13) {
-        const title = ev.target.value.trim();
+        const text = ev.target.value.trim();
         ev.target.value = "";
-        if (title) {
+        if (text) {
             const newTask = {
                 id: this.nextId++,
-                title: title,
+                text: text,
                 isCompleted: false,
             };
             this.tasks.push(newTask);
@@ -428,7 +406,7 @@ the user interface. We can fix the issue by making `tasks` reactive, with the
 
 ```js
 // on top of the file
-const { useRef, useState } = owl.hooks;
+const { Component, mount, xml, useRef, onMounted, useState } = owl;
 
 // replace the task definition in App with the following:
 tasks = useState([]);
@@ -443,12 +421,8 @@ did not change in opacity. This is because there is no code to modify the
 `isCompleted` flag.
 
 Now, this is an interesting situation: the task is displayed by the `Task`
-component, but it is not the owner of its state, so it cannot modify it. Instead,
-we want to communicate the request to toggle a task to the `App` component.
-Since `App` is a parent of `Task`, we can
-[trigger](../reference/event_handling.md) an event in `Task` and listen
-for it in `App`.
-
+component, but it is not the owner of its state, so ideally, it should not modify it.
+However, for now, that's what we will do (this will be improved in a later step).
 In `Task`, change the `input` to:
 
 ```xml
@@ -459,36 +433,23 @@ and add the `toggleTask` method:
 
 ```js
 toggleTask() {
-    this.trigger('toggle-task', {id: this.props.task.id});
-}
-```
-
-We now need to listen for that event in the `App` template:
-
-```xml
-<div class="task-list" t-on-toggle-task="toggleTask">
-```
-
-and implement the `toggleTask` code:
-
-```js
-toggleTask(ev) {
-    const task = this.tasks.find(t => t.id === ev.detail.id);
-    task.isCompleted = !task.isCompleted;
+  this.props.task.isCompleted = !this.props.task.isCompleted;
 }
 ```
 
 ## 9. Deleting tasks
 
-Let us now add the possibility do delete tasks. To do that, we first need to add
-a trash icon on each task, then we will proceed just like in the previous section.
+Let us now add the possibility do delete tasks. This is different from the previous
+feature: deleting task has to be done on the task itself, but the actual operation
+need to be done on the task list. So, we need to communicate the request to the
+`Root` component. This is usually done by providing a callback in a prop.
 
 First, let us update the `Task` template, css and js:
 
 ```xml
 <div class="task" t-att-class="props.task.isCompleted ? 'done' : ''">
     <input type="checkbox" t-att-checked="props.task.isCompleted" t-on-click="toggleTask"/>
-    <span><t t-esc="props.task.title"/></span>
+    <span><t t-esc="props.task.text"/></span>
     <span class="delete" t-on-click="deleteTask">🗑</span>
 </div>
 ```
@@ -517,217 +478,226 @@ First, let us update the `Task` template, css and js:
 ```
 
 ```js
+static props = ["task", "onDelete"];
+
 deleteTask() {
-    this.trigger('delete-task', {id: this.props.task.id});
+    this.props.onDelete(this.props.task);
 }
 ```
 
-And now, we need to listen to the `delete-task` event in `App`:
+And now, we need to provide the `onDelete` callback to each tasks in the `Root`
+component:
 
 ```xml
-<div class="task-list" t-on-toggle-task="toggleTask" t-on-delete-task="deleteTask">
+  <Task task="task" onDelete.bind="deleteTask"/>
 ```
 
 ```js
-deleteTask(ev) {
-    const index = this.tasks.findIndex(t => t.id === ev.detail.id);
+deleteTask(task) {
+    const index = this.tasks.findIndex(t => t.id === task.id);
     this.tasks.splice(index, 1);
 }
 ```
 
+Notice that the `onDelete` prop is defined with a `.bind` suffix: this is a special
+suffix that make sure the function callback is bound to the component.
+
 ## 10. Using a store
 
-Looking at the code, it is apparent that we now have code to handle tasks
-scattered in more than one place. Also, it mixes UI code and business logic
-code. Owl has a way to manage state separately from the user interface: a store.
+Looking at the code, it is apparent that all the code handling tasks is scattered
+all around the application. Also, it mixes UI code and business logic
+code. Owl does not provide any high level abstraction to manage business logic,
+but it is easy to do it with the basic reactivity primitives (`useState` and `reactive`).
 
-Let us use it in our application. This is a pretty large refactoring (for our
-application), since it involves extracting all task related code out of the
-components. Here is the new content of the `app.js` file:
+Let us use it in our application to implement a central store. This is a pretty
+large refactoring (for our application), since it involves extracting all task
+related code out of the components. Here is the new content of the `app.js` file:
 
 ```js
-const { Component, Store, mount } = owl;
-const { xml } = owl.tags;
-const { whenReady } = owl.utils;
-const { useRef, useDispatch, useStore } = owl.hooks;
+const { Component, mount, xml, useRef, onMounted, useState, reactive, useEnv } = owl;
 
 // -------------------------------------------------------------------------
 // Store
 // -------------------------------------------------------------------------
-const actions = {
-  addTask({ state }, title) {
-    title = title.trim();
-    if (title) {
+function useStore() {
+  const env = useEnv();
+  return useState(env.store);
+}
+
+// -------------------------------------------------------------------------
+// TaskList
+// -------------------------------------------------------------------------
+class TaskList {
+  nextId = 1;
+  tasks = [];
+
+  addTask(text) {
+    text = text.trim();
+    if (text) {
       const task = {
-        id: state.nextId++,
-        title: title,
+        id: this.nextId++,
+        text: text,
         isCompleted: false,
       };
-      state.tasks.push(task);
+      this.tasks.push(task);
     }
-  },
-  toggleTask({ state }, id) {
-    const task = state.tasks.find((t) => t.id === id);
+  }
+
+  toggleTask(task) {
     task.isCompleted = !task.isCompleted;
-  },
-  deleteTask({ state }, id) {
-    const index = state.tasks.findIndex((t) => t.id === id);
-    state.tasks.splice(index, 1);
-  },
-};
-const initialState = {
-  nextId: 1,
-  tasks: [],
-};
+  }
+
+  deleteTask(task) {
+    const index = this.tasks.findIndex((t) => t.id === task.id);
+    this.tasks.splice(index, 1);
+  }
+}
+
+function createTaskStore() {
+  return reactive(new TaskList());
+}
 
 // -------------------------------------------------------------------------
 // Task Component
 // -------------------------------------------------------------------------
-const TASK_TEMPLATE = xml/* xml */ `
+class Task extends Component {
+  static template = xml/* xml */ `
     <div class="task" t-att-class="props.task.isCompleted ? 'done' : ''">
-        <input type="checkbox" t-att-checked="props.task.isCompleted"
-                t-on-click="dispatch('toggleTask', props.task.id)"/>
-        <span><t t-esc="props.task.title"/></span>
-        <span class="delete" t-on-click="dispatch('deleteTask', props.task.id)">🗑</span>
+      <input type="checkbox" t-att-checked="props.task.isCompleted" t-on-click="() => store.toggleTask(props.task)"/>
+      <span><t t-esc="props.task.text"/></span>
+      <span class="delete" t-on-click="() => store.deleteTask(props.task)">🗑</span>
     </div>`;
 
-class Task extends Component {
-  static template = TASK_TEMPLATE;
   static props = ["task"];
-  dispatch = useDispatch();
+
+  setup() {
+    this.store = useStore();
+  }
 }
 
 // -------------------------------------------------------------------------
-// App Component
+// Root Component
 // -------------------------------------------------------------------------
-const APP_TEMPLATE = xml/* xml */ `
+class Root extends Component {
+  static template = xml/* xml */ `
     <div class="todo-app">
-        <input placeholder="Enter a new task" t-on-keyup="addTask" t-ref="add-input"/>
-        <div class="task-list">
-            <t t-foreach="tasks" t-as="task" t-key="task.id">
-                <Task task="task"/>
-            </t>
-        </div>
+      <input placeholder="Enter a new task" t-on-keyup="addTask" t-ref="add-input"/>
+      <div class="task-list">
+        <t t-foreach="store.tasks" t-as="task" t-key="task.id">
+          <Task task="task"/>
+        </t>
+      </div>
     </div>`;
-
-class App extends Component {
-  static template = APP_TEMPLATE;
   static components = { Task };
 
-  inputRef = useRef("add-input");
-  tasks = useStore((state) => state.tasks);
-  dispatch = useDispatch();
-
-  mounted() {
-    this.inputRef.el.focus();
+  setup() {
+    const inputRef = useRef("add-input");
+    onMounted(() => inputRef.el.focus());
+    this.store = useStore();
   }
 
   addTask(ev) {
     // 13 is keycode for ENTER
     if (ev.keyCode === 13) {
-      this.dispatch("addTask", ev.target.value);
+      this.store.addTask(ev.target.value);
       ev.target.value = "";
     }
   }
 }
 
 // -------------------------------------------------------------------------
-// Setup code
+// Setup
 // -------------------------------------------------------------------------
-function setup() {
-  owl.config.mode = "dev";
-  const store = new Store({ actions, state: initialState });
-  App.env.store = store;
-  mount(App, { target: document.body });
-}
-
-whenReady(setup);
+const env = {
+  store: createTaskStore(),
+};
+mount(Root, document.body, { dev: true, env });
 ```
 
-## 11-Saving tasks in local storage
+## 11. Saving tasks in local storage
 
 Now, our TodoApp works great, except if the user closes or refresh the browser!
 It is really inconvenient to only keep the state of the application in memory.
 To fix this, we will save the tasks in the local storage. With our current
-codebase, it is a simple change: only the setup code needs to be updated.
+codebase, it is a simple change: we need to save tasks to local storage and
+listen to any change.
 
 ```js
-function makeStore() {
-  const localState = window.localStorage.getItem("todoapp");
-  const state = localState ? JSON.parse(localState) : initialState;
-  const store = new Store({ state, actions });
-  store.on("update", null, () => {
-    localStorage.setItem("todoapp", JSON.stringify(store.state));
-  });
-  return store;
+class TaskList {
+  constructor(tasks) {
+    this.tasks = tasks || [];
+    const taskIds = this.tasks.map((t) => t.id);
+    this.nextId = taskIds.length ? Math.max(...taskIds) + 1 : 1;
+  }
+  // ...
 }
 
-function setup() {
-  owl.config.mode = "dev";
-  const env = { store: makeStore() };
-  mount(App, { target: document.body, env });
+function createTaskStore() {
+  const saveTasks = () => localStorage.setItem("todoapp", JSON.stringify(taskStore.tasks));
+  const initialTasks = JSON.parse(localStorage.getItem("todoapp") || "[]");
+  const taskStore = reactive(new TaskList(initialTasks), saveTasks);
+  saveTasks();
+  return taskStore;
 }
 ```
 
-The key point is to use the fact that the store is an
-[`EventBus`](../reference/event_bus.md) which triggers an `update` event
-whenever it is updated.
+The key point is that the `reactive` function takes a callback that will be called
+every time an observed value is changed. Note that we need to call the `saveTasks`
+method initially to make sure we observe all current values.
 
 ## 12. Filtering tasks
 
 We are almost done, we can add/update/delete tasks. The only missing feature is
 the possibility to display the task according to their completed status. We will
-need to keep track of the state of the filter in `App`, then filter the visible
+need to keep track of the state of the filter in `Root`, then filter the visible
 tasks according to its value.
 
 ```js
-// on top of file, readd useState:
-const { useRef, useDispatch, useState, useStore } = owl.hooks;
-
-// in App:
-filter = useState({value: "all"})
-
-get displayedTasks() {
-    switch (this.filter.value) {
-        case "active": return this.tasks.filter(t => !t.isCompleted);
-        case "completed": return this.tasks.filter(t => t.isCompleted);
-        case "all": return this.tasks;
-    }
-}
-
-setFilter(filter) {
-    this.filter.value = filter;
-}
-```
-
-Finally, we need to display the visible filters. We can do that, and at the
-same time, display the number of tasks in a small panel below the main list:
-
-```xml
-<div class="todo-app">
-    <input placeholder="Enter a new task" t-on-keyup="addTask" t-ref="add-input"/>
-    <div class="task-list">
+class Root extends Component {
+  static template = xml /* xml */`
+    <div class="todo-app">
+      <input placeholder="Enter a new task" t-on-keyup="addTask" t-ref="add-input"/>
+      <div class="task-list">
         <t t-foreach="displayedTasks" t-as="task" t-key="task.id">
-            <Task task="task"/>
+          <Task task="task"/>
         </t>
-    </div>
-    <div class="task-panel" t-if="tasks.length">
+      </div>
+      <div class="task-panel" t-if="store.tasks.length">
         <div class="task-counter">
-            <t t-esc="displayedTasks.length"/>
-            <t t-if="displayedTasks.length lt tasks.length">
-                / <t t-esc="tasks.length"/>
-            </t>
-            task(s)
+          <t t-esc="displayedTasks.length"/>
+          <t t-if="displayedTasks.length lt store.tasks.length">
+              / <t t-esc="store.tasks.length"/>
+          </t>
+          task(s)
         </div>
         <div>
-            <span t-foreach="['all', 'active', 'completed']"
-                t-as="f" t-key="f"
-                t-att-class="{active: filter.value===f}"
-                t-on-click="setFilter(f)"
-                t-esc="f"/>
+          <span t-foreach="['all', 'active', 'completed']"
+            t-as="f" t-key="f"
+            t-att-class="{active: filter.value===f}"
+            t-on-click="() => this.setFilter(f)"
+            t-esc="f"/>
         </div>
-    </div>
-</div>
+      </div>
+    </div>`;
+
+  setup() {
+    ...
+    this.filter = useState({ value: "all" });
+  }
+
+  get displayedTasks() {
+    const tasks = this.store.tasks;
+    switch (this.filter.value) {
+      case "active": return tasks.filter(t => !t.isCompleted);
+      case "completed": return tasks.filter(t => t.isCompleted);
+      case "all": return tasks;
+    }
+  }
+
+  setFilter(filter) {
+    this.filter.value = filter;
+  }
+}
 ```
 
 ```css
@@ -752,8 +722,8 @@ same time, display the number of tasks in a small panel below the main list:
 }
 ```
 
-Notice here that we set dynamically the class of the filter with the object
-syntax: each key is a class that we want to set if its value is truthy.
+Notice here that we set dynamically the css class of the filter with the object
+syntax.
 
 ## 13. The Final Touch
 
@@ -768,16 +738,16 @@ the user experience.
 }
 ```
 
-2. Make the title of a task clickable, to toggle its checkbox:
+2. Make the text of a task clickable, to toggle its checkbox:
 
 ```xml
 <input type="checkbox" t-att-checked="props.task.isCompleted"
     t-att-id="props.task.id"
     t-on-click="dispatch('toggleTask', props.task.id)"/>
-<label t-att-for="props.task.id"><t t-esc="props.task.title"/></label>
+<label t-att-for="props.task.id"><t t-esc="props.task.text"/></label>
 ```
 
-3. Strike the title of completed task:
+3. Strike the text of completed task:
 
 ```css
 .task.done label {
@@ -809,142 +779,145 @@ For reference, here is the final code:
 
 ```js
 (function () {
-  const { Component, Store, mount } = owl;
-  const { xml } = owl.tags;
-  const { whenReady } = owl.utils;
-  const { useRef, useDispatch, useState, useStore } = owl.hooks;
+  const { Component, mount, xml, useRef, onMounted, useState, reactive, useEnv } = owl;
 
   // -------------------------------------------------------------------------
   // Store
   // -------------------------------------------------------------------------
-  const actions = {
-    addTask({ state }, title) {
-      title = title.trim();
-      if (title) {
+  function useStore() {
+    const env = useEnv();
+    return useState(env.store);
+  }
+
+  // -------------------------------------------------------------------------
+  // TaskList
+  // -------------------------------------------------------------------------
+  class TaskList {
+    constructor(tasks) {
+      this.tasks = tasks || [];
+      const taskIds = this.tasks.map((t) => t.id);
+      this.nextId = taskIds.length ? Math.max(...taskIds) + 1 : 1;
+    }
+
+    addTask(text) {
+      text = text.trim();
+      if (text) {
         const task = {
-          id: state.nextId++,
-          title: title,
+          id: this.nextId++,
+          text: text,
           isCompleted: false,
         };
-        state.tasks.push(task);
+        this.tasks.push(task);
       }
-    },
-    toggleTask({ state }, id) {
-      const task = state.tasks.find((t) => t.id === id);
-      task.isCompleted = !task.isCompleted;
-    },
-    deleteTask({ state }, id) {
-      const index = state.tasks.findIndex((t) => t.id === id);
-      state.tasks.splice(index, 1);
-    },
-  };
+    }
 
-  const initialState = {
-    nextId: 1,
-    tasks: [],
-  };
+    toggleTask(task) {
+      task.isCompleted = !task.isCompleted;
+    }
+
+    deleteTask(task) {
+      const index = this.tasks.findIndex((t) => t.id === task.id);
+      this.tasks.splice(index, 1);
+    }
+  }
+
+  function createTaskStore() {
+    const saveTasks = () => localStorage.setItem("todoapp", JSON.stringify(taskStore.tasks));
+    const initialTasks = JSON.parse(localStorage.getItem("todoapp") || "[]");
+    const taskStore = reactive(new TaskList(initialTasks), saveTasks);
+    saveTasks();
+    return taskStore;
+  }
 
   // -------------------------------------------------------------------------
   // Task Component
   // -------------------------------------------------------------------------
-  const TASK_TEMPLATE = xml/* xml */ `
-    <div class="task" t-att-class="props.task.isCompleted ? 'done' : ''">
-        <input type="checkbox" t-att-checked="props.task.isCompleted"
-            t-att-id="props.task.id"
-            t-on-click="dispatch('toggleTask', props.task.id)"/>
-        <label t-att-for="props.task.id"><t t-esc="props.task.title"/></label>
-        <span class="delete" t-on-click="dispatch('deleteTask', props.task.id)">🗑</span>
-    </div>`;
-
   class Task extends Component {
-    static template = TASK_TEMPLATE;
+    static template = xml/* xml */ `
+      <div class="task" t-att-class="props.task.isCompleted ? 'done' : ''">
+        <input type="checkbox"
+          t-att-id="props.task.id"
+          t-att-checked="props.task.isCompleted"
+          t-on-click="() => store.toggleTask(props.task)"/>
+        <label t-att-for="props.task.id"><t t-esc="props.task.text"/></label>
+        <span class="delete" t-on-click="() => store.deleteTask(props.task)">🗑</span>
+      </div>`;
+
     static props = ["task"];
-    dispatch = useDispatch();
+
+    setup() {
+      this.store = useStore();
+    }
   }
 
   // -------------------------------------------------------------------------
-  // App Component
+  // Root Component
   // -------------------------------------------------------------------------
-  const APP_TEMPLATE = xml/* xml */ `
-    <div class="todo-app">
+  class Root extends Component {
+    static template = xml/* xml */ `
+      <div class="todo-app">
         <input placeholder="Enter a new task" t-on-keyup="addTask" t-ref="add-input"/>
         <div class="task-list">
-            <Task t-foreach="displayedTasks" t-as="task" t-key="task.id" task="task"/>
+          <t t-foreach="displayedTasks" t-as="task" t-key="task.id">
+            <Task task="task"/>
+          </t>
         </div>
-        <div class="task-panel" t-if="tasks.length">
-            <div class="task-counter">
-                <t t-esc="displayedTasks.length"/>
-                <t t-if="displayedTasks.length lt tasks.length">
-                    / <t t-esc="tasks.length"/>
-                </t>
-                task(s)
-            </div>
-            <div>
-                <span t-foreach="['all', 'active', 'completed']"
-                    t-as="f" t-key="f"
-                    t-att-class="{active: filter.value===f}"
-                    t-on-click="setFilter(f)"
-                    t-esc="f"/>
-            </div>
+        <div class="task-panel" t-if="store.tasks.length">
+          <div class="task-counter">
+            <t t-esc="displayedTasks.length"/>
+            <t t-if="displayedTasks.length lt store.tasks.length">
+                / <t t-esc="store.tasks.length"/>
+            </t>
+            task(s)
+          </div>
+          <div>
+            <span t-foreach="['all', 'active', 'completed']"
+              t-as="f" t-key="f"
+              t-att-class="{active: filter.value===f}"
+              t-on-click="() => this.setFilter(f)"
+              t-esc="f"/>
+          </div>
         </div>
-    </div>`;
-
-  class App extends Component {
-    static template = APP_TEMPLATE;
+      </div>`;
     static components = { Task };
 
-    inputRef = useRef("add-input");
-    tasks = useStore((state) => state.tasks);
-    filter = useState({ value: "all" });
-    dispatch = useDispatch();
-
-    mounted() {
-      this.inputRef.el.focus();
+    setup() {
+      const inputRef = useRef("add-input");
+      onMounted(() => inputRef.el.focus());
+      this.store = useStore();
+      this.filter = useState({ value: "all" });
     }
 
     addTask(ev) {
       // 13 is keycode for ENTER
       if (ev.keyCode === 13) {
-        this.dispatch("addTask", ev.target.value);
+        this.store.addTask(ev.target.value);
         ev.target.value = "";
       }
     }
 
     get displayedTasks() {
+      const tasks = this.store.tasks;
       switch (this.filter.value) {
         case "active":
-          return this.tasks.filter((t) => !t.isCompleted);
+          return tasks.filter((t) => !t.isCompleted);
         case "completed":
-          return this.tasks.filter((t) => t.isCompleted);
+          return tasks.filter((t) => t.isCompleted);
         case "all":
-          return this.tasks;
+          return tasks;
       }
     }
+
     setFilter(filter) {
       this.filter.value = filter;
     }
   }
 
   // -------------------------------------------------------------------------
-  // Setup code
+  // Setup
   // -------------------------------------------------------------------------
-  function makeStore() {
-    const localState = window.localStorage.getItem("todoapp");
-    const state = localState ? JSON.parse(localState) : initialState;
-    const store = new Store({ state, actions });
-    store.on("update", null, () => {
-      localStorage.setItem("todoapp", JSON.stringify(store.state));
-    });
-    return store;
-  }
-
-  function setup() {
-    owl.config.mode = "dev";
-    const env = { store: makeStore() };
-    mount(App, { target: document.body, env });
-  }
-
-  whenReady(setup);
+  const env = { store: createTaskStore() };
+  mount(Root, document.body, { dev: true, env });
 })();
 ```
 

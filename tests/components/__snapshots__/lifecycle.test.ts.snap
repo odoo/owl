@@ -562,6 +562,48 @@ exports[`lifecycle hooks patched hook is called after updating State 1`] = `
 }"
 `;
 
+exports[`lifecycle hooks render in mounted 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['patched'];
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`lifecycle hooks render in patched 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['patched'];
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`lifecycle hooks render in willPatch 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['patched'];
+    return block1([d1]);
+  }
+}"
+`;
+
 exports[`lifecycle hooks sub widget (inside sub node): hooks are correctly called 1`] = `
 "function anonymous(bdom, helpers
 ) {

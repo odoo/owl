@@ -136,13 +136,19 @@ export class ComponentNode<T extends typeof Component = typeof Component>
   }
 
   async render() {
-    const current = this.fiber;
+    let current = this.fiber;
+    if (current && current.root.locked) {
+      await Promise.resolve();
+      // situation may have changed after the microtask tick
+      current = this.fiber;
+    }
     if (current && !current.bdom && !fibersInError.has(current)) {
       return;
     }
     if (!this.bdom && !current) {
       return;
     }
+
     const fiber = makeRootFiber(this);
     this.fiber = fiber;
     this.app.scheduler.addFiber(fiber);

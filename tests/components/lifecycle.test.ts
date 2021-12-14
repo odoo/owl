@@ -1079,4 +1079,121 @@ describe("lifecycle hooks", () => {
       "Parent:patched",
     ]).toBeLogged();
   });
+
+  test("render in mounted", async () => {
+    class Parent extends Component {
+      static template = xml`<span t-esc="patched"/>`;
+      patched: any;
+      setup() {
+        useLogLifecycle();
+        onMounted(() => {
+          this.patched = "Patched";
+          this.render();
+        });
+      }
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<span></span>");
+    expect([
+      "Parent:setup",
+      "Parent:willStart",
+      "Parent:willRender",
+      "Parent:rendered",
+      "Parent:mounted",
+      "Parent:willRender",
+      "Parent:rendered",
+    ]).toBeLogged();
+
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span>Patched</span>");
+    expect(["Parent:willPatch", "Parent:patched"]).toBeLogged();
+  });
+
+  test("render in patched", async () => {
+    class Parent extends Component {
+      static template = xml`<span t-esc="patched"/>`;
+      patched: any;
+      setup() {
+        useLogLifecycle();
+        onPatched(() => {
+          if (this.patched === "Patched") {
+            return;
+          }
+          this.patched = "Patched";
+          this.render();
+        });
+      }
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<span></span>");
+    expect([
+      "Parent:setup",
+      "Parent:willStart",
+      "Parent:willRender",
+      "Parent:rendered",
+      "Parent:mounted",
+    ]).toBeLogged();
+
+    parent.render();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span></span>");
+    expect([
+      "Parent:willRender",
+      "Parent:rendered",
+      "Parent:willPatch",
+      "Parent:patched",
+      "Parent:willRender",
+      "Parent:rendered",
+    ]).toBeLogged();
+
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span>Patched</span>");
+    expect(["Parent:willPatch", "Parent:patched"]).toBeLogged();
+  });
+
+  test("render in willPatch", async () => {
+    class Parent extends Component {
+      static template = xml`<span t-esc="patched"/>`;
+      patched: any;
+      setup() {
+        useLogLifecycle();
+        onWillPatch(() => {
+          if (this.patched === "Patched") {
+            return;
+          }
+          this.patched = "Patched";
+          this.render();
+        });
+      }
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<span></span>");
+    expect([
+      "Parent:setup",
+      "Parent:willStart",
+      "Parent:willRender",
+      "Parent:rendered",
+      "Parent:mounted",
+    ]).toBeLogged();
+
+    parent.render();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span></span>");
+
+    expect([
+      "Parent:willRender",
+      "Parent:rendered",
+      "Parent:willPatch",
+      "Parent:patched",
+      "Parent:willRender",
+      "Parent:rendered",
+    ]).toBeLogged();
+
+    await nextTick();
+    expect(["Parent:willPatch", "Parent:patched"]).toBeLogged();
+    expect(fixture.innerHTML).toBe("<span>Patched</span>");
+  });
 });

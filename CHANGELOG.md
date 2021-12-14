@@ -61,6 +61,7 @@ removed after.
 - breaking: `env` is now frozen ([details](#28-env-is-now-frozen))
 - breaking: `t-ref` does not work on components ([details](#29-t-ref-does-not-work-on-component))
 - breaking: `t-on` does not accept expressions, only functions ([details](#30-t-on-does-not-accept-expressions-only-functions))
+- breaking: `renderToString` function on qweb has been removed ([details](#32-rendertostring-on-qweb-has-been-removed))
 
 
 ## Details/Rationale/Migration
@@ -586,3 +587,26 @@ So, the following template works for components:
   <div>2</div>
   hello
 ```
+
+### 32. `renderToString` on QWeb has been removed
+
+Rationale: the `renderToString` function was a qweb method, which made sense because
+the qweb instance knew all templates. But now, the closest analogy is the `App`
+class, but it is not as convenient, since the `app` instance is no longer visible
+to components (while before, `qweb` was in the environment).
+
+Also, this can easily be done in userspace, by mounting a component in a div.  For example:
+
+```js
+export async function renderToString(template, context) {
+  class C extends Component {
+    static template = template;
+  }
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+  const component = await mount(C, div);
+  const result = div.innerHTML;
+  app.destroy();
+  div.remove();
+  return result;
+}

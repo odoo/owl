@@ -2466,10 +2466,14 @@ test("two renderings initiated between willPatch and patched", async () => {
   let parent: any = null;
 
   class Panel extends Component {
-    static template = xml`<abc><t t-esc="props.val"/></abc>`;
+    static template = xml`<abc><t t-esc="props.val"/><t t-esc="mounted" /></abc>`;
+    mounted: any;
     setup() {
       useLogLifecycle();
-      onMounted(() => parent.render());
+      onMounted(() => {
+        this.mounted = "Mounted";
+        parent.render();
+      });
       onWillUnmount(() => parent.render());
     }
   }
@@ -2498,7 +2502,21 @@ test("two renderings initiated between willPatch and patched", async () => {
     "Panel:rendered",
     "Panel:mounted",
     "Parent:mounted",
+    "Parent:willRender",
+    "Panel:willUpdateProps",
+    "Parent:rendered",
   ]).toBeLogged();
+
+  await nextTick();
+  expect([
+    "Panel:willRender",
+    "Panel:rendered",
+    "Parent:willPatch",
+    "Panel:willPatch",
+    "Panel:patched",
+    "Parent:patched",
+  ]).toBeLogged();
+  expect(fixture.innerHTML).toBe("<div><abc>Panel1Mounted</abc></div>");
 
   parent.state.panel = "Panel2";
   await nextTick();
@@ -2515,6 +2533,20 @@ test("two renderings initiated between willPatch and patched", async () => {
     "Panel:willDestroy",
     "Panel:mounted",
     "Parent:patched",
+    "Parent:willRender",
+    "Panel:willUpdateProps",
+    "Parent:rendered",
+  ]).toBeLogged();
+
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div><abc>Panel2Mounted</abc></div>");
+  expect([
+    "Panel:willRender",
+    "Panel:rendered",
+    "Parent:willPatch",
+    "Panel:willPatch",
+    "Panel:patched",
+    "Parent:patched",
   ]).toBeLogged();
 
   parent.state.flag = false;
@@ -2527,7 +2559,13 @@ test("two renderings initiated between willPatch and patched", async () => {
     "Panel:willUnmount",
     "Panel:willDestroy",
     "Parent:patched",
+    "Parent:willRender",
+    "Parent:rendered",
   ]).toBeLogged();
+
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<div></div>");
+  expect(["Parent:willPatch", "Parent:patched"]).toBeLogged();
 });
 
 test("parent and child rendered at exact same time", async () => {

@@ -118,9 +118,13 @@ export class RootFiber extends Fiber {
   willPatch: Fiber[] = [];
   patched: Fiber[] = [];
   mounted: Fiber[] = [];
+  // A fiber is typically locked when it is completing and the patch has not, or is being applied.
+  // i.e.: render triggered in onWillUnmount or in willPatch will be delayed
+  locked: boolean = false;
 
   complete() {
     const node = this.node;
+    this.locked = true;
     let current: Fiber | undefined = undefined;
     try {
       // Step 1: calling all willPatch lifecycle hooks
@@ -141,6 +145,11 @@ export class RootFiber extends Fiber {
       // Step 2: patching the dom
       node.bdom!.patch(this.bdom!, Object.keys(node.children).length > 0);
       this.appliedToDom = true;
+
+      this.locked = false;
+      // unregistering the fiber before mounted since it can do another render
+      // and that the current rendering is obviously completed
+      node.fiber = null;
 
       // Step 4: calling all mounted lifecycle hooks
       let mountedFibers = this.mounted;
@@ -163,9 +172,8 @@ export class RootFiber extends Fiber {
           }
         }
       }
-      // unregistering the fiber
-      node.fiber = null;
     } catch (e) {
+      this.locked = false;
       handleError({ fiber: current || this, error: e });
     }
   }
@@ -205,6 +213,11 @@ export class MountFiber extends RootFiber {
           mount(node.bdom!, this.target, firstChild);
         }
       }
+
+      // unregistering the fiber before mounted since it can do another render
+      // and that the current rendering is obviously completed
+      node.fiber = null;
+
       node.status = STATUS.MOUNTED;
       this.appliedToDom = true;
       let mountedFibers = this.mounted;
@@ -215,7 +228,6 @@ export class MountFiber extends RootFiber {
           }
         }
       }
-      node.fiber = null;
     } catch (e) {
       handleError({ fiber: current as Fiber, error: e });
     }

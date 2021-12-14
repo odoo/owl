@@ -1148,11 +1148,12 @@ exports[`two renderings initiated between willPatch and patched 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<abc><block-text-0/></abc>\`);
+  let block1 = createBlock(\`<abc><block-text-0/><block-text-1/></abc>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['props'].val;
-    return block1([d1]);
+    let d2 = ctx['mounted'];
+    return block1([d1, d2]);
   }
 }"
 `;

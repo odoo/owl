@@ -163,7 +163,7 @@ describe("t-esc", () => {
   test("escaping", () => {
     qweb.addTemplate("test", `<span><t t-esc="var"/></span>`);
     expect(renderToString(qweb, "test", { var: "<ok>abc</ok>" })).toBe(
-      "<span>&amp;lt;ok&amp;gt;abc&amp;lt;/ok&amp;gt;</span>"
+      "<span>&lt;ok&gt;abc&lt;/ok&gt;</span>"
     );
   });
 

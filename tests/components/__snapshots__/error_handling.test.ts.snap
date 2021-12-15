@@ -968,3 +968,17 @@ exports[`errors and promises errors in mounted and in willUnmount 1`] = `
   }
 }"
 `;
+
+exports[`errors and promises errors in rerender 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['state'].a.b;
+    return block1([d1]);
+  }
+}"
+`;

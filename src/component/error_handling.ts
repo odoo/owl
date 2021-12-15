@@ -57,9 +57,11 @@ export function handleError(params: ErrorParams) {
 
   const handled = _handleError(node, error, true);
   if (!handled) {
+    console.warn(`[Owl] Unhandled error. Destroying the root component`);
     try {
       node.app.destroy();
-    } catch (e) {}
+    } catch (e) {
+      console.error(e);
+    }
   }
-  return handled;
 }

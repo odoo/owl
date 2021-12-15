@@ -70,7 +70,9 @@ just put the following code:
 Note that we put everything inside an immediately executed function to avoid leaking
 anything to the global scope.
 
-Finally, `owl.js` should be the last version downloaded from the Owl repository (you can use `owl.min.js` if you prefer). Be aware that you should download the `owl.iife.js` or `owl.iife.min.js`, because these files
+Finally, `owl.js` should be the last version downloaded from the Owl repository (you can use `owl.min.js` if you prefer) published at [https://github.com/odoo/owl/releases](https://github.com/odoo/owl/releases). It is a single javascript file which export all Owl into the global `owl` object.
+
+Be aware that you should download the `owl.iife.js` or `owl.iife.min.js`, because these files
 are built to run directly on the browser (other files such as `owl.cjs.js` are
 built to be bundled by other tools).
 

@@ -76,4 +76,11 @@ describe("multi blocks", () => {
     mount(text(multi([text("a"), text("b")]) as any), fixture);
     expect(fixture.innerHTML).toBe("ab");
   });
+
+  test("multi inside a block", async () => {
+    const block = createBlock("<div><block-child-0/></div>");
+    const tree = block([], [multi([text("foo"), text("bar")])]);
+    mount(tree, fixture);
+    expect(fixture.innerHTML).toBe("<div>foobar</div>");
+  });
 });

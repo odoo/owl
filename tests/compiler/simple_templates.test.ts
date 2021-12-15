@@ -137,4 +137,21 @@ describe("simple templates, mostly static", () => {
     const template = '<t><t t-esc="`text ${v}`"/></t>';
     expect(renderToString(template, { v: "from context" })).toBe("text from context");
   });
+
+  test("template with t tag with multiple content", () => {
+    const template = `<div><t>Loading<t t-if="false"/></t></div>`;
+    expect(renderToString(template)).toBe("<div>Loading</div>");
+  });
+
+  test("template with multiple t tag with multiple content", () => {
+    const template = `
+      <div>
+        <t t-esc="a"/>
+        <t>
+          <t t-esc="b"/>
+          <t>Loading<t t-esc="c"/></t>
+        </t>
+      </div>`;
+    expect(renderToString(template, { a: "a", b: "b", c: "c" })).toBe("<div>abLoadingc</div>");
+  });
 });

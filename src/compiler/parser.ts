@@ -217,24 +217,7 @@ function parseTNode(node: Element, ctx: ParsingContext): AST | null {
   if (node.tagName !== "t") {
     return null;
   }
-  const children: AST[] = [];
-  for (let child of node.childNodes) {
-    const ast = parseNode(child, ctx);
-    if (ast) {
-      children.push(ast);
-    }
-  }
-  switch (children.length) {
-    case 0:
-      return null;
-    case 1:
-      return children[0];
-    default:
-      return {
-        type: ASTType.Multi,
-        content: children,
-      };
-  }
+  return parseChildNodes(node, ctx);
 }
 
 // -----------------------------------------------------------------------------
@@ -299,7 +282,6 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
     return null;
   }
   ctx = Object.assign({}, ctx);
-  const children: AST[] = [];
   if (tagName === "pre") {
     ctx.inPreTag = true;
   }
@@ -309,12 +291,7 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
   const ref = node.getAttribute("t-ref");
   node.removeAttribute("t-ref");
 
-  for (let child of node.childNodes) {
-    const ast = parseNode(child, ctx);
-    if (ast) {
-      children.push(ast);
-    }
-  }
+  const children = parseChildren(node, ctx);
 
   const nodeAttrsNames = node.getAttributeNames();
   const attrs: ASTDomNode["attrs"] = {};
@@ -600,13 +577,7 @@ function parseTCall(node: Element, ctx: ParsingContext): AST | null {
       };
     }
   }
-  const body: AST[] = [];
-  for (let child of node.childNodes) {
-    const ast = parseNode(child, ctx);
-    if (ast) {
-      body.push(ast);
-    }
-  }
+  const body = parseChildren(node, ctx);
 
   return {
     type: ASTType.TCall,
@@ -687,13 +658,7 @@ function parseTSetNode(node: Element, ctx: ParsingContext): AST | null {
   const defaultValue = node.innerHTML === node.textContent ? node.textContent || null : null;
   let body: AST[] | null = null;
   if (node.textContent !== node.innerHTML) {
-    body = [];
-    for (let child of node.childNodes) {
-      let childAst = parseNode(child, ctx);
-      if (childAst) {
-        body.push(childAst);
-      }
-    }
+    body = parseChildren(node, ctx);
   }
   return { type: ASTType.TSet, name, value, defaultValue, body };
 }
@@ -844,14 +809,30 @@ function parseTTranslation(node: Element, ctx: ParsingContext): AST | null {
 // helpers
 // -----------------------------------------------------------------------------
 
-function parseChildNodes(node: Element, ctx: ParsingContext): AST | null {
+/**
+ * Parse all the child nodes of a given node and return a list of ast elements
+ */
+function parseChildren(node: Node, ctx: ParsingContext): AST[] {
   const children: AST[] = [];
   for (let child of node.childNodes) {
     const childAst = parseNode(child, ctx);
     if (childAst) {
-      children.push(childAst);
+      if (childAst.type === ASTType.Multi) {
+        children.push(...childAst.content);
+      } else {
+        children.push(childAst);
+      }
     }
   }
+  return children;
+}
+
+/**
+ * Parse all the child nodes of a given node and return an ast if possible.
+ * In the case there are multiple children, they are wrapped in a astmulti.
+ */
+function parseChildNodes(node: Node, ctx: ParsingContext): AST | null {
+  const children = parseChildren(node, ctx);
   switch (children.length) {
     case 0:
       return null;

@@ -149,6 +149,93 @@ describe("qweb parser", () => {
     });
   });
 
+  test("dom node with t multi inside", async () => {
+    const template = `<div><t>Loading<t t-esc="abc"/></t></div>`;
+    expect(parse(template)).toEqual({
+      type: ASTType.DomNode,
+      tag: "div",
+      dynamicTag: null,
+      attrs: {},
+      on: {},
+      ref: null,
+      model: null,
+      ns: null,
+      content: [
+        { type: ASTType.Text, value: "Loading" },
+        { type: ASTType.TEsc, expr: "abc", defaultValue: "" },
+      ],
+    });
+  });
+
+  test("dom node with multiple t multi inside", async () => {
+    const template = `
+      <div>
+        <t t-esc="a"/>
+        <t>
+          <t t-esc="b"/>
+          <t>Loading<t t-esc="c"/></t>
+        </t>
+      </div>`;
+    expect(parse(template)).toEqual({
+      type: ASTType.DomNode,
+      tag: "div",
+      dynamicTag: null,
+      attrs: {},
+      on: {},
+      ref: null,
+      model: null,
+      ns: null,
+      content: [
+        { type: ASTType.TEsc, expr: "a", defaultValue: "" },
+        { type: ASTType.TEsc, expr: "b", defaultValue: "" },
+        { type: ASTType.Text, value: "Loading" },
+        { type: ASTType.TEsc, expr: "c", defaultValue: "" },
+      ],
+    });
+  });
+
+  test("dom node with t multi inside", async () => {
+    const template = `<div><t><t>Loading<t t-esc="abc"/></t></t></div>`;
+    expect(parse(template)).toEqual({
+      type: ASTType.DomNode,
+      tag: "div",
+      dynamicTag: null,
+      attrs: {},
+      on: {},
+      ref: null,
+      model: null,
+      ns: null,
+      content: [
+        { type: ASTType.Text, value: "Loading" },
+        { type: ASTType.TEsc, expr: "abc", defaultValue: "" },
+      ],
+    });
+  });
+
+  test("dom node with two t multi inside", async () => {
+    const template = `
+      <div>
+        <t><t t-esc="a"/><t t-esc="b"/></t>
+        <t><t t-esc="c"/><t t-esc="d"/></t>
+      </div>`;
+    expect(parse(template)).toEqual({
+      type: ASTType.DomNode,
+      tag: "div",
+      dynamicTag: null,
+      attrs: {},
+      on: {},
+      ref: null,
+      model: null,
+      ns: null,
+      content: [
+        { type: ASTType.TEsc, expr: "a", defaultValue: "" },
+        { type: ASTType.TEsc, expr: "b", defaultValue: "" },
+        { type: ASTType.TEsc, expr: "c", defaultValue: "" },
+        { type: ASTType.TEsc, expr: "d", defaultValue: "" },
+      ],
+    });
+  });
+
   test("dom node next to text node", async () => {
     expect(parse("some text<span></span>")).toEqual({
       type: ASTType.Multi,

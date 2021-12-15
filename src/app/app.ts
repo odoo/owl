@@ -81,10 +81,12 @@ export class App<T extends typeof Component = any> extends TemplateSet {
 
   mountNode(node: ComponentNode, target: HTMLElement, options?: MountOptions) {
     const promise: any = new Promise((resolve, reject) => {
+      let isResolved = false;
       // manually set a onMounted callback.
       // that way, we are independant from the current node.
       node.mounted.push(() => {
         resolve(node.component);
+        isResolved = true;
       });
 
       // Manually add the last resort error handler on the node
@@ -94,7 +96,11 @@ export class App<T extends typeof Component = any> extends TemplateSet {
         nodeErrorHandlers.set(node, handlers);
       }
       handlers.unshift((e) => {
-        reject(e);
+        if (isResolved) {
+          console.error(e);
+        } else {
+          reject(e);
+        }
         throw e;
       });
     });

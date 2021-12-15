@@ -21,7 +21,22 @@ let fixture: HTMLElement;
 
 snapshotEverything();
 
+let originalconsoleError = console.error;
+let mockConsoleError: any;
+let originalconsoleWarn = console.warn;
+let mockConsoleWarn: any;
+
 beforeEach(() => {
+  fixture = makeTestFixture();
+  mockConsoleError = jest.fn(() => {});
+  mockConsoleWarn = jest.fn(() => {});
+  console.error = mockConsoleError;
+  console.warn = mockConsoleWarn;
+});
+
+afterEach(() => {
+  console.error = originalconsoleError;
+  console.warn = originalconsoleWarn;
   fixture = makeTestFixture();
 });
 
@@ -43,12 +58,11 @@ describe("basics", () => {
     parent.render();
     await nextTick();
     expect(fixture.innerHTML).toBe("");
+    expect(mockConsoleError).toBeCalledTimes(1);
+    expect(mockConsoleWarn).toBeCalledTimes(1);
   });
 
   test("display a nice error if it cannot find component", async () => {
-    const consoleError = console.error;
-    console.error = jest.fn();
-
     class SomeComponent extends Component {}
     class Parent extends Component {
       static template = xml`<SomeMispelledComponent />`;
@@ -63,7 +77,8 @@ describe("basics", () => {
     expect(error!).toBeDefined();
     expect(error!.message).toBe('Cannot find the definition of component "SomeMispelledComponent"');
     expect(console.error).toBeCalledTimes(0);
-    console.error = consoleError;
+    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toBeCalledTimes(1);
   });
 
   test("simple catchError", async () => {
@@ -92,13 +107,13 @@ describe("basics", () => {
     }
     await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div>Error</div>");
+    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 });
 
 describe("errors and promises", () => {
   test("a rendering error will reject the mount promise", async () => {
-    const consoleError = console.error;
-    console.error = jest.fn(() => {});
     // we do not catch error in willPatch anymore
     class App extends Component {
       static template = xml`<div><t t-esc="this.will.crash"/></div>`;
@@ -114,15 +129,11 @@ describe("errors and promises", () => {
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
     expect(error!.message).toMatch(regexp);
-
-    expect(console.error).toBeCalledTimes(0);
-    console.error = consoleError;
+    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(mockConsoleError).toBeCalledTimes(0);
   });
 
   test("an error in mounted call will reject the mount promise", async () => {
-    const consoleError = console.error;
-    console.error = jest.fn(() => {});
-
     class App extends Component {
       static template = xml`<div>abc</div>`;
       setup() {
@@ -141,15 +152,11 @@ describe("errors and promises", () => {
     expect(error!).toBeDefined();
     expect(error!.message).toBe("boom");
     expect(fixture.innerHTML).toBe("");
-
-    expect(console.error).toBeCalledTimes(0);
-    console.error = consoleError;
+    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toBeCalledTimes(1);
   });
 
   test("an error in willPatch call will reject the render promise", async () => {
-    const consoleError = console.error;
-    console.error = jest.fn(() => {});
-
     class Root extends Component {
       static template = xml`<div><t t-esc="val"/></div>`;
       val = 3;
@@ -168,14 +175,11 @@ describe("errors and promises", () => {
     await nextTick();
     expect(error!).toBeDefined();
     expect(error!.message).toBe("boom");
-    expect(console.error).toBeCalledTimes(0);
-    console.error = consoleError;
+    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("an error in patched call will reject the render promise", async () => {
-    const consoleError = console.error;
-    console.error = jest.fn(() => {});
-
     class Root extends Component {
       static template = xml`<div><t t-esc="val"/></div>`;
       val = 3;
@@ -194,13 +198,11 @@ describe("errors and promises", () => {
     await nextTick();
     expect(error!).toBeDefined();
     expect(error!.message).toBe("boom");
-    expect(console.error).toBeCalledTimes(0);
-    console.error = consoleError;
+    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("a rendering error in a sub component will reject the mount promise", async () => {
-    const consoleError = console.error;
-    console.error = jest.fn(() => {});
     // we do not catch error in willPatch anymore
     class Child extends Component {
       static template = xml`<div><t t-esc="this.will.crash"/></div>`;
@@ -220,15 +222,11 @@ describe("errors and promises", () => {
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
     expect(error!.message).toMatch(regexp);
-
-    expect(console.error).toBeCalledTimes(0);
-    console.error = consoleError;
+    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toBeCalledTimes(1);
   });
 
   test("a rendering error will reject the render promise", async () => {
-    const consoleError = console.error;
-    console.error = jest.fn(() => {});
-    // we do not catch error in willPatch anymore
     class Root extends Component {
       static template = xml`<div><t t-if="flag" t-esc="this.will.crash"/></div>`;
       flag = false;
@@ -247,9 +245,8 @@ describe("errors and promises", () => {
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
     expect(error!.message).toMatch(regexp);
-
-    expect(console.error).toBeCalledTimes(0);
-    console.error = consoleError;
+    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("a rendering error will reject the render promise (with sub components)", async () => {
@@ -271,10 +268,12 @@ describe("errors and promises", () => {
     const regexp =
       /Cannot read properties of undefined \(reading 'y'\)|Cannot read property 'y' of undefined/g;
     expect(error!.message).toMatch(regexp);
+    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toBeCalledTimes(1);
   });
 
   test("errors in mounted and in willUnmount", async () => {
-    expect.assertions(2);
+    expect.assertions(4);
     class Example extends Component {
       static template = xml`<div/>`;
       val: any;
@@ -295,13 +294,31 @@ describe("errors and promises", () => {
     } catch (e) {
       expect((e as Error).message).toBe("Error in mounted");
     }
+    // 1 additional error is logged because the destruction of the app causes
+    // the onWillUnmount hook to be called and to fail
+    expect(mockConsoleError).toBeCalledTimes(1);
+    expect(mockConsoleWarn).toBeCalledTimes(1);
+  });
+
+  test("errors in rerender", async () => {
+    class Example extends Component {
+      static template = xml`<div t-esc="state.a.b"/>`;
+      state: any = { a: { b: 1 } };
+    }
+    const root = await mount(Example, fixture);
+    expect(fixture.innerHTML).toBe("<div>1</div>");
+
+    root.state = "boom";
+    root.render();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("");
+    expect(mockConsoleError).toBeCalledTimes(1);
+    expect(mockConsoleWarn).toBeCalledTimes(1);
   });
 });
 
 describe("can catch errors", () => {
   test("can catch an error in a component render function", async () => {
-    const consoleError = console.error;
-    console.error = jest.fn();
     class ErrorComponent extends Component {
       static template = xml`<div>hey<t t-esc="props.flag and state.this.will.crash"/></div>`;
     }
@@ -330,14 +347,11 @@ describe("can catch errors", () => {
     app.state.flag = true;
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
-
-    expect(console.error).toBeCalledTimes(0);
-    console.error = consoleError;
+    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("can catch an error in the initial call of a component render function (parent mounted)", async () => {
-    const consoleError = console.error;
-    console.error = jest.fn();
     class ErrorComponent extends Component {
       static template = xml`<div>hey<t t-esc="state.this.will.crash"/></div>`;
     }
@@ -364,14 +378,11 @@ describe("can catch errors", () => {
     }
     await mount(App, fixture);
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
-
-    expect(console.error).toBeCalledTimes(0);
-    console.error = consoleError;
+    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("can catch an error in the initial call of a component render function (parent updated)", async () => {
-    const consoleError = console.error;
-    console.error = jest.fn();
     class ErrorComponent extends Component {
       static template = xml`<div>hey<t t-esc="state.this.will.crash"/></div>`;
     }
@@ -399,15 +410,11 @@ describe("can catch errors", () => {
     app.state.flag = true;
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
-
-    expect(console.error).toBeCalledTimes(0);
-    console.error = consoleError;
+    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("can catch an error in the constructor call of a component render function", async () => {
-    const consoleError = console.error;
-    console.error = jest.fn();
-
     class ErrorComponent extends Component {
       static template = xml`<div>Some text</div>`;
       setup() {
@@ -433,15 +440,11 @@ describe("can catch errors", () => {
     }
     await mount(App, fixture);
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
-
-    expect(console.error).toBeCalledTimes(0);
-    console.error = consoleError;
+    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("can catch an error in the constructor call of a component render function 2", async () => {
-    const consoleError = console.error;
-    console.error = jest.fn();
-
     class ClassicCompoent extends Component {
       static template = xml`<div>classic</div>`;
     }
@@ -471,14 +474,11 @@ describe("can catch errors", () => {
     }
     await mount(App, fixture);
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
-
-    expect(console.error).toBeCalledTimes(0);
-    console.error = consoleError;
+    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("can catch an error in the willStart call", async () => {
-    const consoleError = console.error;
-    console.error = jest.fn();
     class ErrorComponent extends Component {
       static template = xml`<div>Some text</div>`;
       setup() {
@@ -507,15 +507,11 @@ describe("can catch errors", () => {
     }
     await mount(App, fixture);
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
-
-    expect(console.error).toBeCalledTimes(0);
-    console.error = consoleError;
+    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("can catch an error origination from a child's willStart function", async () => {
-    const consoleError = console.error;
-    console.error = jest.fn();
-
     class ClassicCompoent extends Component {
       static template = xml`<div>classic</div>`;
     }
@@ -547,9 +543,8 @@ describe("can catch errors", () => {
     }
     await mount(App, fixture);
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
-
-    expect(console.error).toBeCalledTimes(0);
-    console.error = consoleError;
+    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("can catch an error in the mounted call", async () => {
@@ -606,6 +601,8 @@ describe("can catch errors", () => {
       "ErrorBoundary:mounted",
       "Root:mounted",
     ]).toBeLogged();
+    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("can catch an error in the mounted call (in root component)", async () => {
@@ -649,6 +646,8 @@ describe("can catch errors", () => {
       "Root:rendered",
       "Root:mounted",
     ]).toBeLogged();
+    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("can catch an error in the mounted call (in child of child)", async () => {
@@ -718,6 +717,8 @@ describe("can catch errors", () => {
       "B:mounted",
       "A:mounted",
     ]).toBeLogged();
+    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("error in mounted on a component with a sibling (properly mounted)", async () => {
@@ -787,6 +788,8 @@ describe("can catch errors", () => {
       "OK:mounted",
       "Root:mounted",
     ]).toBeLogged();
+    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("can catch an error in the willPatch call", async () => {
@@ -826,6 +829,7 @@ describe("can catch errors", () => {
     await nextTick();
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>def</span><div>Error handled</div></div>");
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("catchError in catchError", async () => {
@@ -869,6 +873,7 @@ describe("can catch errors", () => {
 
     await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div>Error</div>");
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("onError in class inheritance is not called if no rethrown", async () => {
@@ -912,6 +917,7 @@ describe("can catch errors", () => {
 
     expect(steps).toStrictEqual(["Concrete onError"]);
     expect(fixture.innerHTML).toBe("<div>Concrete</div>");
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("onError in class inheritance is called if rethrown", async () => {
@@ -956,5 +962,6 @@ describe("can catch errors", () => {
 
     expect(steps).toStrictEqual(["Concrete onError", "Abstract onError"]);
     expect(fixture.innerHTML).toBe("<div>Abstract</div>");
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 });

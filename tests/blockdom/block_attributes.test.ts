@@ -26,6 +26,26 @@ test("simple attribute", async () => {
   expect(fixture.innerHTML).toBe(`<div hello="owl"></div>`);
 });
 
+test("updating attribute with falsy value", async () => {
+  const block = createBlock('<div block-attribute-0="hello"></div>');
+  const tree = block([false]);
+
+  mount(tree, fixture);
+  expect(fixture.innerHTML).toBe(`<div></div>`);
+
+  patch(tree, block(["owl"]));
+  expect(fixture.innerHTML).toBe(`<div hello="owl"></div>`);
+
+  patch(tree, block([false]));
+  expect(fixture.innerHTML).toBe(`<div></div>`);
+
+  patch(tree, block(["owl"]));
+  expect(fixture.innerHTML).toBe(`<div hello="owl"></div>`);
+
+  patch(tree, block([undefined]));
+  expect(fixture.innerHTML).toBe(`<div></div>`);
+});
+
 test("dynamic attribute (pair)", async () => {
   const block = createBlock('<div block-attributes="0"></div>');
   const tree = block([["hello", "world"]]);
@@ -37,6 +57,20 @@ test("dynamic attribute (pair)", async () => {
   expect(fixture.innerHTML).toBe(`<div ola="mundo"></div>`);
 });
 
+test("dynamic attribute (pair, with false value)", async () => {
+  const block = createBlock('<div block-attributes="0"></div>');
+  const tree = block([["hello", false]]);
+
+  mount(tree, fixture);
+  expect(fixture.innerHTML).toBe(`<div></div>`);
+
+  patch(tree, block([["hello", "world"]]));
+  expect(fixture.innerHTML).toBe(`<div hello="world"></div>`);
+
+  patch(tree, block([["hello", false]]));
+  expect(fixture.innerHTML).toBe(`<div></div>`);
+});
+
 test("dynamic attribute (object)", async () => {
   const block = createBlock('<div block-attributes="0"></div>');
   const tree = block([{ hello: "world" }]);
@@ -46,6 +80,23 @@ test("dynamic attribute (object)", async () => {
 
   patch(tree, block([{ ola: "mundo" }]));
   expect(fixture.innerHTML).toBe(`<div ola="mundo"></div>`);
+});
+
+test("dynamic attribute (object), with falsy values", async () => {
+  const block = createBlock('<div block-attributes="0"></div>');
+  const tree = block([{ hello: "world", blip: false }]);
+
+  mount(tree, fixture);
+  expect(fixture.innerHTML).toBe(`<div hello="world"></div>`);
+
+  patch(tree, block([{ ola: "mundo", blip: undefined }]));
+  expect(fixture.innerHTML).toBe(`<div ola="mundo"></div>`);
+
+  patch(tree, block([{ ola: false, blip: 1 }]));
+  expect(fixture.innerHTML).toBe(`<div blip="1"></div>`);
+
+  patch(tree, block([{ ola: undefined, blip: undefined }]));
+  expect(fixture.innerHTML).toBe(`<div></div>`);
 });
 
 test("class attribute", async () => {

@@ -1,6 +1,6 @@
 import type { Setter } from "./block_compiler";
 
-const { setAttribute, removeAttribute } = Element.prototype;
+const { setAttribute: elemSetAttribute, removeAttribute } = Element.prototype;
 const tokenList = DOMTokenList.prototype;
 const tokenListAdd = tokenList.add;
 const tokenListRemove = tokenList.remove;
@@ -14,11 +14,23 @@ const wordRegexp = /\s+/;
  * file.
  */
 
+function setAttribute(this: HTMLElement, key: string, value: any) {
+  switch (value) {
+    case false:
+    case undefined:
+      removeAttribute.call(this, key);
+      break;
+    case true:
+      elemSetAttribute.call(this, key, "");
+      break;
+    default:
+      elemSetAttribute.call(this, key, value);
+  }
+}
+
 export function createAttrUpdater(attr: string): Setter<HTMLElement> {
   return function (this: HTMLElement, value: any) {
-    if (value !== false && value !== undefined) {
-      setAttribute.call(this, attr, value === true ? "" : value);
-    }
+    setAttribute.call(this, attr, value);
   };
 }
 

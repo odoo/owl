@@ -72,7 +72,6 @@ More interesting examples can be found on the
 Are you new to Owl? This is the place to start!
 
 - [Tutorial: create a TodoList application](doc/learning/tutorial_todoapp.md)
-- [Quick Overview](doc/learning/overview.md)
 - [How to start an Owl project](doc/learning/quick_start.md)
 - [How to test Components](doc/learning/how_to_test.md)
 - [How to write Single File Components](doc/learning/how_to_write_sfc.md)

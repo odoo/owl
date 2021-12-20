@@ -7,11 +7,11 @@ import {
   onWillUnmount,
   onWillUpdateProps,
   useState,
+  xml,
 } from "../../src";
 import { Fiber } from "../../src/component/fibers";
 import { Scheduler } from "../../src/component/scheduler";
 import { status } from "../../src/component/status";
-import { xml } from "../../src/tags";
 import {
   makeDeferred,
   makeTestFixture,

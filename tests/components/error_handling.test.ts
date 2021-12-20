@@ -7,8 +7,8 @@ import {
   onWillStart,
   onWillUnmount,
   useState,
+  xml,
 } from "../../src/index";
-import { xml } from "../../src/tags";
 import {
   logStep,
   makeTestFixture,

@@ -1,6 +1,5 @@
-import { App, Component } from "../../src";
+import { App, Component, xml } from "../../src";
 import { status } from "../../src/component/status";
-import { xml } from "../../src/tags";
 import { makeTestFixture, snapshotEverything, nextTick, elem } from "../helpers";
 
 let fixture: HTMLElement;

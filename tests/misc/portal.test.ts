@@ -9,8 +9,7 @@ import {
   onWillUnmount,
   useState,
 } from "../../src";
-import { Portal } from "../../src/";
-import { xml } from "../../src/tags";
+import { Portal, xml } from "../../src/";
 import { elem, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;

@@ -16,10 +16,6 @@ function _handleError(node: ComponentNode | null, error: any, isFirstRound = fal
 
   const errorHandlers = nodeErrorHandlers.get(node);
   if (errorHandlers) {
-    if (isFirstRound && fiber) {
-      fiber.root.counter--;
-    }
-
     let stopped = false;
     // execute in the opposite order
     for (let i = errorHandlers.length - 1; i >= 0; i--) {
@@ -33,6 +29,9 @@ function _handleError(node: ComponentNode | null, error: any, isFirstRound = fal
     }
 
     if (stopped) {
+      if (isFirstRound && fiber) {
+        fiber.root.counter--;
+      }
       return true;
     }
   }

@@ -9,7 +9,7 @@ beforeEach(() => {
 
 describe("styles and component", () => {
   test("can define an inline stylesheet", async () => {
-    class App extends Component {
+    class Root extends Component {
       static template = xml`<div class="app">text</div>`;
       static style = css`
         .app {
@@ -18,17 +18,17 @@ describe("styles and component", () => {
       `;
     }
     expect(document.head.innerHTML).toBe("");
-    const app = await mount(App, fixture);
-    expect(document.head.innerHTML).toBe(`<style data-component=\"App\">.app {
+    await mount(Root, fixture);
+    expect(document.head.innerHTML).toBe(`<style data-component=\"Root\">.app {
   color: red;
 }</style>`);
-    const style = getComputedStyle(app.el as HTMLElement);
+    const style = getComputedStyle(fixture.querySelector("div")!);
     expect(style.color).toBe("red");
     expect(fixture.innerHTML).toBe('<div class="app">text</div>');
   });
 
   test("inherited components properly apply css", async () => {
-    class App extends Component {
+    class Root extends Component {
       static template = xml`<div class="app">text</div>`;
       static style = css`
         .app {
@@ -36,7 +36,7 @@ describe("styles and component", () => {
         }
       `;
     }
-    class SubApp extends App {
+    class OtherRoot extends Root {
       static style = css`
         .app {
           font-weight: bold;
@@ -44,13 +44,13 @@ describe("styles and component", () => {
       `;
     }
     expect(document.head.innerHTML).toBe("");
-    const app = await mount(SubApp, fixture);
-    expect(document.head.innerHTML).toBe(`<style data-component=\"App\">.app {
+    await mount(OtherRoot, fixture);
+    expect(document.head.innerHTML).toBe(`<style data-component=\"Root\">.app {
   color: red;
-}</style><style data-component=\"SubApp\">.app {
+}</style><style data-component=\"OtherRoot\">.app {
   font-weight: bold;
 }</style>`);
-    const style = getComputedStyle(app.el as HTMLElement);
+    const style = getComputedStyle(fixture.querySelector("div")!);
     expect(style.color).toBe("red");
     expect(style.fontWeight).toBe("bold");
     expect(fixture.innerHTML).toBe('<div class="app">text</div>');

@@ -287,7 +287,7 @@ describe("style and class handling", () => {
       state = useState({ c: true });
       setup() {
         onMounted(() => {
-          (<HTMLDivElement>this.el!).classList.add("user");
+          fixture.querySelector("div")!.classList.add("user");
         });
       }
     }

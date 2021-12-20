@@ -9,6 +9,7 @@ import {
 import { status } from "../../src/component/status";
 import { xml } from "../../src/tags";
 import {
+  elem,
   makeDeferred,
   makeTestFixture,
   nextTick,
@@ -123,7 +124,7 @@ describe("lifecycle hooks", () => {
       static template = xml`<div/>`;
       setup() {
         onMounted(() => {
-          expect(document.body.contains(this.el!)).toBe(true);
+          expect(document.body.contains(elem(this))).toBe(true);
           steps.push("child:mounted");
         });
       }

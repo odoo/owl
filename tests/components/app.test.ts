@@ -1,7 +1,7 @@
 import { App, Component } from "../../src";
 import { status } from "../../src/component/status";
 import { xml } from "../../src/tags";
-import { makeTestFixture, snapshotEverything, nextTick } from "../helpers";
+import { makeTestFixture, snapshotEverything, nextTick, elem } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -19,7 +19,7 @@ describe("app", () => {
 
     const app = new App(SomeComponent);
     const comp = await app.mount(fixture);
-    const el = comp.el!;
+    const el = elem(comp);
     expect(document.contains(el)).toBe(true);
     app.destroy();
     expect(document.contains(el)).toBe(false);

@@ -1,5 +1,5 @@
 import { Component, mount, onMounted, useState, xml } from "../../src/index";
-import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { elem, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 import { status } from "../../src/component/status";
 
 snapshotEverything();
@@ -13,7 +13,7 @@ beforeEach(() => {
 describe("t-on", () => {
   test("t-on on destroyed components", async () => {
     const steps: string[] = [];
-    let child;
+    let child: any;
     class Child extends Component {
       static template = xml`<div t-on-click="onClick"/>`;
       setup() {
@@ -31,7 +31,7 @@ describe("t-on", () => {
       state = useState({ flag: true });
     }
     const parent = await mount(Parent, fixture);
-    let el = (child as any).el as HTMLElement;
+    let el = elem(child!);
     el.click();
     expect(steps).toEqual(["click"]);
     (parent as any).state.flag = false;

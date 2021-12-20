@@ -218,7 +218,7 @@ exports[`slots can use t-call in default-content of t-slot 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot, getTemplate } = helpers;
-  const callTemplate_3 = getTemplate(\`__template__128\`);
+  const callTemplate_3 = getTemplate(\`__template__999\`);
   
   function defaultContent1(ctx, node, key = \\"\\") {
     return callTemplate_3.call(this, ctx, node, key + \`__2\`);
@@ -1241,7 +1241,7 @@ exports[`slots slot and (inline) t-call 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, getTemplate } = helpers;
-  const callTemplate_4 = getTemplate(\`__template__112\`);
+  const callTemplate_4 = getTemplate(\`__template__999\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1290,7 +1290,7 @@ exports[`slots slot and t-call 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, getTemplate } = helpers;
-  const callTemplate_4 = getTemplate(\`__template__109\`);
+  const callTemplate_4 = getTemplate(\`__template__999\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   

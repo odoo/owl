@@ -1,6 +1,6 @@
 import { App, Component, mount, status, useState } from "../../src";
 import { xml } from "../../src/tags";
-import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { elem, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 import { markup } from "../../src/utils";
 
 let fixture: HTMLElement;
@@ -20,20 +20,7 @@ describe("basics", () => {
     const component = await mount(Test, fixture);
 
     expect(fixture.innerHTML).toBe("<span>simple vnode</span>");
-    expect(component.el).toEqual(fixture.querySelector("span"));
-  });
-
-  test("has no el after creation", async () => {
-    let el: any = null;
-    class Test extends Component {
-      static template = xml`<span>simple</span>`;
-      setup() {
-        el = this.el;
-      }
-    }
-
-    await mount(Test, fixture);
-    expect(el).toBeUndefined();
+    expect(elem(component)).toEqual(fixture.querySelector("span"));
   });
 
   test("cannot mount on a documentFragment", async () => {
@@ -59,7 +46,7 @@ describe("basics", () => {
     const component = await app.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<span>3</span>");
-    expect(component.el).toEqual(fixture.querySelector("span"));
+    expect(elem(component)).toEqual(fixture.querySelector("span"));
   });
 
   test("can mount a component with just some text", async () => {
@@ -70,7 +57,7 @@ describe("basics", () => {
     const component = await mount(Test, fixture);
 
     expect(fixture.innerHTML).toBe("just text");
-    expect(component.el).toBeInstanceOf(Text);
+    expect(elem(component)).toBeInstanceOf(Text);
   });
 
   test("can mount a component with no text", async () => {
@@ -81,7 +68,7 @@ describe("basics", () => {
     const component = await mount(Test, fixture);
 
     expect(fixture.innerHTML).toBe("");
-    expect(component.el).toBeInstanceOf(Text);
+    expect(elem(component)).toBeInstanceOf(Text);
   });
 
   test("can mount a simple component with multiple roots", async () => {
@@ -92,7 +79,7 @@ describe("basics", () => {
     const component = await mount(Test, fixture);
 
     expect(fixture.innerHTML).toBe("<span></span><div></div>");
-    expect((component.el as any).tagName).toBe("SPAN");
+    expect(elem(component).tagName).toBe("SPAN");
   });
 
   test("component with dynamic content can be updated", async () => {
@@ -144,11 +131,10 @@ describe("basics", () => {
   });
 
   test("some simple sanity checks (el/status)", async () => {
-    expect.assertions(4);
+    expect.assertions(3);
     class Test extends Component {
       static template = xml`<span>simple vnode</span>`;
       setup() {
-        expect(this.el).toBe(undefined);
         expect(status(this)).toBe("new");
       }
     }
@@ -380,13 +366,14 @@ describe("basics", () => {
       });
     }
 
-    const counter = await mount(Counter, fixture);
+    await mount(Counter, fixture);
     expect(fixture.innerHTML).toBe("<div>0<button>Inc</button></div>");
-    const button = (<HTMLElement>counter.el).getElementsByTagName("button")[0];
+    const button = fixture.getElementsByTagName("button")[0];
     button.click();
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>1<button>Inc</button></div>");
   });
+
   // TODO: rename
   test("rerendering a widget with a sub widget", async () => {
     class Counter extends Component {
@@ -493,7 +480,7 @@ describe("basics", () => {
     }
     const widget = await mount(SomeComponent, fixture);
     expect(fixture.innerHTML).toBe(`<div></div>`);
-    widget.el!.appendChild(document.createElement("span"));
+    fixture.querySelector("div")!.appendChild(document.createElement("span"));
     expect(fixture.innerHTML).toBe(`<div><span></span></div>`);
     await widget.render();
     expect(fixture.innerHTML).toBe(`<div><span></span></div>`);
@@ -506,7 +493,7 @@ describe("basics", () => {
     }
     const comp = await mount(SomeComponent, fixture);
     expect(fixture.innerHTML).toBe(`<div><h1>h1</h1><span>1</span></div>`);
-    (comp.el! as any).querySelector("h1")!.appendChild(document.createElement("p"));
+    fixture.querySelector("h1")!.appendChild(document.createElement("p"));
     expect(fixture.innerHTML).toBe("<div><h1>h1<p></p></h1><span>1</span></div>");
 
     comp.state.value++;

@@ -500,7 +500,7 @@ deleteTask(task) {
 ```
 
 Notice that the `onDelete` prop is defined with a `.bind` suffix: this is a special
-suffix that make sure the function callback is bound to the component.
+suffix that makes sure the function callback is bound to the component.
 
 ## 10. Using a store
 

@@ -1,6 +1,6 @@
 import { Component } from "./component/component";
 import type { ComponentNode } from "./component/component_node";
-import { xml } from "./tags";
+import { xml } from "./app/template_set";
 import { Fiber } from "./component/fibers";
 
 export class Memo extends Component {

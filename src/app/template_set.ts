@@ -100,3 +100,15 @@ export class TemplateSet {
     });
   }
 }
+
+// -----------------------------------------------------------------------------
+//  xml tag helper
+// -----------------------------------------------------------------------------
+export function xml(...args: Parameters<typeof String.raw>) {
+  const name = `__template__${xml.nextId++}`;
+  const value = String.raw(...args);
+  globalTemplates[name] = value;
+  return name;
+}
+
+xml.nextId = 1;

@@ -1,4 +1,4 @@
-import { App, Component, mount, onMounted, onWillStart, useState } from "../../src";
+import { App, Component, mount, onMounted, onWillStart, useState, xml } from "../../src";
 import {
   onWillPatch,
   onWillUnmount,
@@ -7,7 +7,6 @@ import {
   onWillRender,
 } from "../../src/component/lifecycle_hooks";
 import { status } from "../../src/component/status";
-import { xml } from "../../src/tags";
 import {
   elem,
   makeDeferred,

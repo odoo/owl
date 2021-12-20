@@ -56,7 +56,7 @@ export function useComponent(): Component {
 export { status } from "./component/status";
 export { Portal } from "./portal";
 export { Memo } from "./memo";
-export { css, xml } from "./tags";
+export { xml } from "./app/template_set";
 export { useState, reactive } from "./reactivity";
 export { useEffect, useEnv, useExternalListener, useRef, useSubEnv } from "./hooks";
 export { EventBus, whenReady, loadFile, markup } from "./utils";

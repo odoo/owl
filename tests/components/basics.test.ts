@@ -1,5 +1,4 @@
-import { App, Component, mount, status, useState } from "../../src";
-import { xml } from "../../src/tags";
+import { App, Component, mount, status, useState, xml } from "../../src";
 import { elem, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 import { markup } from "../../src/utils";
 

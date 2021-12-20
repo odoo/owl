@@ -6,8 +6,8 @@ import {
   onWillPatch,
   onWillUnmount,
   useState,
+  xml,
 } from "../../src";
-import { xml } from "../../src/tags";
 import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;

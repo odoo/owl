@@ -1,5 +1,4 @@
-import { Component, mount, onWillUpdateProps, useState } from "../../src";
-import { xml } from "../../src/tags";
+import { Component, mount, onWillUpdateProps, useState, xml } from "../../src";
 import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;

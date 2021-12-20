@@ -12,7 +12,6 @@ import {
 import { handleError, fibersInError } from "./error_handling";
 import { applyDefaultProps } from "./props_validation";
 import { STATUS } from "./status";
-import { applyStyles } from "./style";
 
 export function component(
   name: string | typeof Component,
@@ -106,9 +105,6 @@ export class ComponentNode<T extends typeof Component = typeof Component>
     this.childEnv = env;
     this.component = new C(props, env, this) as any;
     this.renderFn = app.getTemplate(C.template).bind(this.component, this.component, this);
-    if (C.style) {
-      applyStyles(C);
-    }
     this.component.setup();
   }
 

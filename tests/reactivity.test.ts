@@ -1,6 +1,13 @@
-import { Component, mount, onWillRender, onWillStart, onWillUpdateProps, useState } from "../src";
+import {
+  Component,
+  mount,
+  onWillRender,
+  onWillStart,
+  onWillUpdateProps,
+  useState,
+  xml,
+} from "../src";
 import { batched, reactive } from "../src/reactivity";
-import { xml } from "../src/tags";
 import {
   makeDeferred,
   makeTestFixture,

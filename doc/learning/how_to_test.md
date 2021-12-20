@@ -30,27 +30,21 @@ To help with this, it is useful to have a `helper.js` file that contains some
 common utility functions:
 
 ```js
+let lastFixture = null;
+
 export function makeTestFixture() {
   let fixture = document.createElement("div");
   document.body.appendChild(fixture);
+  if (lastFixture) {
+    lastFixture.remove();
+  }
+  lastFixture = fixture;
   return fixture;
 }
 
-export function nextTick() {
-  let requestAnimationFrame = owl.Component.scheduler.requestAnimationFrame;
-  return new Promise(function(resolve) {
-    setTimeout(() => requestAnimationFrame(() => resolve()));
-  });
-}
-
-export function makeTestEnv() {
-    // application specific. It needs a way to load actual templates
-    const templates = ...;
-
-    return {
-        qweb: new QWeb(templates),
-        ..., // each service can be mocked here
-    };
+export async function nextTick() {
+  await new Promise((resolve) => setTimeout(resolve));
+  await new Promise((resolve) => requestAnimationFrame(resolve));
 }
 ```
 
@@ -59,7 +53,7 @@ With such a file, a typical test suite for Jest will look like this:
 ```js
 // in SomeComponent.test.js
 import { SomeComponent } from "../../src/ui/SomeComponent";
-import { nextTick, makeTestFixture, makeTestEnv} from '../helpers';
+import { nextTick, makeTestFixture } from '../helpers';
 
 
 //------------------------------------------------------------------------------
@@ -70,9 +64,6 @@ let env: Env;
 
 beforeEach(() => {
   fixture = makeTestFixture();
-  env = makeTestEnv();
-  // we set here the default environment for each component created in the test
-  Component.env = env;
 });
 
 afterEach(() => {
@@ -85,7 +76,7 @@ afterEach(() => {
 describe("SomeComponent", () => {
   test("component behaves as expected", async () => {
     const props = {...}; // depends on the component
-    const comp = await mount(SomeComponent, { target: fixture, props });
+    const comp = await mount(SomeComponent, fixture, { props });
 
     // do some assertions
     expect(...).toBe(...);
@@ -102,29 +93,3 @@ describe("SomeComponent", () => {
 Note that Owl does wait for the next animation frame to actually update the DOM.
 This is why it is necessary to wait with the `nextTick` (or other methods) to
 make sure that the DOM is up-to-date.
-
-It is sometimes useful to wait until Owl is completely done updating components
-(in particular, if we have a highly concurrent user interface). This next
-helper simply polls every 20ms the internal Owl task queue and returns a promise
-which resolves when it is empty:
-
-```js
-function afterUpdates() {
-  return new Promise((resolve, reject) => {
-    let timer = setTimeout(poll, 20);
-    let counter = 0;
-    function poll() {
-      counter++;
-      if (owl.Component.scheduler.tasks.length) {
-        if (counter > 10) {
-          reject(new Error("timeout"));
-        } else {
-          timer = setTimeout(poll);
-        }
-      } else {
-        resolve();
-      }
-    }
-  });
-}
-```

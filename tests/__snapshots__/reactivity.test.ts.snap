@@ -51,11 +51,14 @@ exports[`Reactivity: useState destroyed component before being mounted is inacti
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['contextObj'].a;
-    return block1([d1]);
+    let b2;
+    if (ctx['state'].flag) {
+      b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    }
+    return block1([], [b2]);
   }
 }"
 `;
@@ -65,23 +68,6 @@ exports[`Reactivity: useState destroyed component before being mounted is inacti
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    let b2;
-    if (ctx['state'].flag) {
-      b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
-    }
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`Reactivity: useState destroyed component is inactive 1`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
@@ -91,7 +77,7 @@ exports[`Reactivity: useState destroyed component is inactive 1`] = `
 }"
 `;
 
-exports[`Reactivity: useState destroyed component is inactive 2`] = `
+exports[`Reactivity: useState destroyed component is inactive 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -104,6 +90,20 @@ exports[`Reactivity: useState destroyed component is inactive 2`] = `
       b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
     }
     return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState destroyed component is inactive 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['contextObj'].a;
+    return block1([d1]);
   }
 }"
 `;
@@ -128,11 +128,12 @@ exports[`Reactivity: useState parent and children subscribed to same context 1`]
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['contextObj'].a;
-    return block1([d1]);
+    let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    let d1 = ctx['contextObj'].b;
+    return block1([d1], [b2]);
   }
 }"
 `;
@@ -142,12 +143,11 @@ exports[`Reactivity: useState parent and children subscribed to same context 2`]
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<div><block-child-0/><block-text-0/></div>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
-    let d1 = ctx['contextObj'].b;
-    return block1([d1], [b2]);
+    let d1 = ctx['contextObj'].a;
+    return block1([d1]);
   }
 }"
 `;
@@ -220,11 +220,12 @@ exports[`Reactivity: useState two components are updated in parallel 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['contextObj'].value;
-    return block1([d1]);
+    let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    let b3 = component(\`Child\`, {}, key + \`__2\`, node, ctx);
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -234,12 +235,11 @@ exports[`Reactivity: useState two components are updated in parallel 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
-    let b3 = component(\`Child\`, {}, key + \`__2\`, node, ctx);
-    return block1([], [b2, b3]);
+    let d1 = ctx['contextObj'].value;
+    return block1([d1]);
   }
 }"
 `;
@@ -249,20 +249,6 @@ exports[`Reactivity: useState two components can subscribe to same context 1`] =
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['contextObj'].value;
-    return block1([d1]);
-  }
-}"
-`;
-
-exports[`Reactivity: useState two components can subscribe to same context 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
@@ -273,7 +259,7 @@ exports[`Reactivity: useState two components can subscribe to same context 2`] =
 }"
 `;
 
-exports[`Reactivity: useState two independent components on different levels are updated in parallel 1`] = `
+exports[`Reactivity: useState two components can subscribe to same context 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -287,21 +273,7 @@ exports[`Reactivity: useState two independent components on different levels are
 }"
 `;
 
-exports[`Reactivity: useState two independent components on different levels are updated in parallel 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`Reactivity: useState two independent components on different levels are updated in parallel 3`] = `
+exports[`Reactivity: useState two independent components on different levels are updated in parallel 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -312,6 +284,34 @@ exports[`Reactivity: useState two independent components on different levels are
     let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
     let b3 = component(\`Parent\`, {}, key + \`__2\`, node, ctx);
     return block1([], [b2, b3]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState two independent components on different levels are updated in parallel 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['contextObj'].value;
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState two independent components on different levels are updated in parallel 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -334,20 +334,6 @@ exports[`Reactivity: useState useless atoms should be deleted 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['state'].quantity;
-    return block1([d1]);
-  }
-}"
-`;
-
-exports[`Reactivity: useState useless atoms should be deleted 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { prepareList, withKey } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/> Total: <block-text-0/> Count: <block-text-1/></div>\`);
@@ -365,6 +351,20 @@ exports[`Reactivity: useState useless atoms should be deleted 2`] = `
     let d1 = ctx['total'];
     let d2 = Object.keys(ctx['state']).length;
     return block1([d1, d2], [b2]);
+  }
+}"
+`;
+
+exports[`Reactivity: useState useless atoms should be deleted 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['state'].quantity;
+    return block1([d1]);
   }
 }"
 `;

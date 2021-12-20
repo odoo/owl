@@ -1,4 +1,4 @@
-import { renderToString, snapshotTemplateCode } from "../helpers";
+import { renderToString, snapshotTemplate } from "../helpers";
 
 // -----------------------------------------------------------------------------
 // debugging
@@ -9,7 +9,7 @@ describe("debugging", () => {
     const consoleLog = console.log;
     console.log = jest.fn();
     const template = `<div t-debug=""><t t-if="true"><span t-debug="">hey</span></t></div>`;
-    snapshotTemplateCode(template);
+    snapshotTemplate(template);
     expect(console.log).toHaveBeenCalledTimes(1);
     console.log = consoleLog;
   });
@@ -18,9 +18,9 @@ describe("debugging", () => {
     const consoleLog = console.log;
     console.log = jest.fn();
     let template = `<p t-debug="">coucou</p>`;
-    snapshotTemplateCode(template);
+    snapshotTemplate(template);
     template = `<div><t t-call="sub"/></div>`;
-    snapshotTemplateCode(template);
+    snapshotTemplate(template);
     expect(console.log).toHaveBeenCalledTimes(1);
     console.log = consoleLog;
   });
@@ -33,7 +33,7 @@ describe("debugging", () => {
             <t t-set="foo" t-value="42"/>
             <t t-log="foo + 3"/>
           </div>`;
-    snapshotTemplateCode(template);
+    snapshotTemplate(template);
     renderToString(template);
     expect(console.log).toHaveBeenCalledWith(45);
     console.log = consoleLog;

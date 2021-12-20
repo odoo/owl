@@ -4,25 +4,6 @@ exports[`t-set slot setted value (with t-set) not accessible with t-esc 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
-  
-  let block1 = createBlock(\`<div><block-text-0/><block-text-1/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    let d1 = ctx['iter'];
-    setContextValue(ctx, \\"iter\\", 'called');
-    let d2 = ctx['iter'];
-    return block1([d1, d2]);
-  }
-}"
-`;
-
-exports[`t-set slot setted value (with t-set) not accessible with t-esc 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { isBoundary, withDefault, setContextValue, capture } = helpers;
   
   let block1 = createBlock(\`<div><p><block-text-0/></p><block-child-0/><p><block-text-1/></p></div>\`);
@@ -43,6 +24,25 @@ exports[`t-set slot setted value (with t-set) not accessible with t-esc 2`] = `
     let b2 = component(\`Childcomp\`, {slots: {'default': {__render: slot2, __ctx: ctx1}}}, key + \`__3\`, node, ctx);
     let d2 = ctx['iter'];
     return block1([d1, d2], [b2]);
+  }
+}"
+`;
+
+exports[`t-set slot setted value (with t-set) not accessible with t-esc 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div><block-text-0/><block-text-1/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    let d1 = ctx['iter'];
+    setContextValue(ctx, \\"iter\\", 'called');
+    let d2 = ctx['iter'];
+    return block1([d1, d2]);
   }
 }"
 `;
@@ -116,25 +116,6 @@ exports[`t-set t-set not altered by child comp 1`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/><block-text-1/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    let d1 = ctx['iter'];
-    setContextValue(ctx, \\"iter\\", 'called');
-    let d2 = ctx['iter'];
-    return block1([d1, d2]);
-  }
-}"
-`;
-
-exports[`t-set t-set not altered by child comp 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
-  
   let block1 = createBlock(\`<div><p><block-text-0/></p><block-child-0/><p><block-text-1/></p></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
@@ -145,6 +126,25 @@ exports[`t-set t-set not altered by child comp 2`] = `
     let b2 = component(\`Childcomp\`, {}, key + \`__1\`, node, ctx);
     let d2 = ctx['iter'];
     return block1([d1, d2], [b2]);
+  }
+}"
+`;
+
+exports[`t-set t-set not altered by child comp 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div><block-text-0/><block-text-1/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    let d1 = ctx['iter'];
+    setContextValue(ctx, \\"iter\\", 'called');
+    let d2 = ctx['iter'];
+    return block1([d1, d2]);
   }
 }"
 `;

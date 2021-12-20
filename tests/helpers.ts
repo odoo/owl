@@ -1,25 +1,23 @@
+import { diff } from "jest-diff";
 import {
-  App,
+  blockDom,
   Component,
-  onWillDestroy,
   onMounted,
   onPatched,
-  onWillRender,
+  onRendered,
+  onWillDestroy,
   onWillPatch,
+  onWillRender,
   onWillStart,
   onWillUnmount,
   onWillUpdateProps,
   status,
   useComponent,
-  onRendered,
 } from "../src";
-import { BDom } from "../src/blockdom";
-import { blockDom } from "../src";
-import { compile as compileTemplate, Template } from "../src/compiler";
-import { CodeGenOptions } from "../src/compiler/code_generator";
 import { UTILS } from "../src/app/template_helpers";
 import { globalTemplates, TemplateSet } from "../src/app/template_set";
-import { xml } from "../src/tags";
+import { BDom } from "../src/blockdom";
+import { compile } from "../src/compiler";
 
 const mount = blockDom.mount;
 
@@ -37,20 +35,6 @@ export function makeTestFixture() {
   }
   lastFixture = fixture;
   return fixture;
-}
-
-export function snapshotTemplateCode(template: string | Node, options?: CodeGenOptions) {
-  expect(compileTemplate(template, options).toString()).toMatchSnapshot();
-}
-
-export function snapshotApp(app: App) {
-  const Root = app.Root;
-  const template = app.rawTemplates[Root.template];
-  snapshotTemplateCode(template, {
-    translateFn: app.translateFn,
-    translatableAttributes: app.translatableAttributes,
-    dev: app.dev,
-  });
 }
 
 export async function nextTick(): Promise<void> {
@@ -74,36 +58,29 @@ export function makeDeferred(): Deferred {
   return <Deferred>def;
 }
 
-/**
- * Return the global template xml string corresponding to the given name
- */
-// export function fromName(name: string): string {
-//   return globalTemplates[name];
-// }
-
 export function trim(str: string): string {
   return str.replace(/\s/g, "");
-}
-
-export function addTemplate(name: string, template: string): string {
-  globalTemplates[name] = template;
-  return name;
 }
 
 // -----------------------------------------------------------------------------
 // Helpers
 // -----------------------------------------------------------------------------
 
-export function compile(template: string): Template {
-  // register here the template globally so snapshotEverything
-  // can get it
-  globalTemplates[template] = template;
-  const templateFunction = compileTemplate(template);
-  return templateFunction(blockDom, UTILS);
+let shouldSnapshot = false;
+let snapshottedTemplates: Set<string> = new Set();
+
+export function snapshotTemplate(template: string) {
+  const fn = compile(template);
+  expect(fn.toString()).toMatchSnapshot();
 }
 
 export function renderToBdom(template: string, context: any = {}, node: any = {}): BDom {
-  return compile(template)(context, node);
+  const fn = compile(template);
+  if (shouldSnapshot && !snapshottedTemplates.has(template)) {
+    snapshottedTemplates.add(template);
+    expect(fn.toString()).toMatchSnapshot();
+  }
+  return fn(blockDom, UTILS)(context, node);
 }
 
 export function renderToString(template: string, context: any = {}): string {
@@ -124,41 +101,24 @@ export class TestContext extends TemplateSet {
 }
 
 export function snapshotEverything() {
-  const consolewarn = console.warn;
-
-  const originalAddTemplate = TemplateSet.prototype.addTemplate;
-  TemplateSet.prototype.addTemplate = function (name: string, template: string, options) {
-    originalAddTemplate.call(this, name, template, options);
-    // register it so snapshotEverything can get it
-    globalTemplates[name] = template;
-  };
-
-  let globalSet: any;
-
-  beforeAll(() => {
-    globalSet = new Set(Object.keys(globalTemplates));
-  });
-
+  if (shouldSnapshot) {
+    // this function has already been called
+    return;
+  }
+  const globalTemplateNames = new Set(Object.keys(globalTemplates));
+  shouldSnapshot = true;
   beforeEach(() => {
-    xml.nextId = 9;
+    snapshottedTemplates.clear();
   });
 
-  afterEach(() => {
-    console.warn = () => {};
-    for (let k in globalTemplates) {
-      if (globalSet.has(k)) {
-        // ignore generic templates
-        continue;
-      }
-      try {
-        snapshotTemplateCode(globalTemplates[k]);
-      } catch (e) {
-        // ignore error
-      }
-      delete globalTemplates[k];
+  const originalCompileTemplate = TemplateSet.prototype._compileTemplate;
+  TemplateSet.prototype._compileTemplate = function (name: string, template: string | Node) {
+    const fn = originalCompileTemplate.call(this, "", template);
+    if (!globalTemplateNames.has(name)) {
+      expect(fn.toString()).toMatchSnapshot();
     }
-    console.warn = consolewarn;
-  });
+    return fn;
+  };
 }
 
 const steps: string[] = [];
@@ -231,8 +191,6 @@ export async function editInput(input: HTMLInputElement | HTMLTextAreaElement, v
   input.dispatchEvent(new Event("change"));
   return nextTick();
 }
-
-import { diff } from "jest-diff";
 
 afterEach(() => {
   if (steps.length) {

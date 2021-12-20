@@ -1,4 +1,3 @@
-import { xml } from "../../src";
 import { mount, patch } from "../../src/blockdom";
 import { makeTestFixture, renderToBdom, renderToString, snapshotEverything } from "../helpers";
 
@@ -348,9 +347,8 @@ describe("special cases for some specific html attributes/properties", () => {
   });
 
   test("various boolean html attributes", () => {
-    // the unique assertion here is the code snapshot automatically done by
-    // renderToString
-    xml`
+    // will cause the template to be snapshotted
+    renderToString(`
       <div>
         <input type="checkbox" checked="checked"/>
         <input checked="checked"/>
@@ -360,7 +358,7 @@ describe("special cases for some specific html attributes/properties", () => {
         <input readonly="readonly"/>
         <button disabled="disabled"/>
       </div>
-      `;
+      `);
   });
 
   test("input with t-att-value", () => {

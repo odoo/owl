@@ -81,13 +81,7 @@ export class TemplateSet {
       if (rawTemplate === undefined) {
         throw new Error(`Missing template: "${name}"`);
       }
-      const templateFn = compile(rawTemplate, {
-        name,
-        dev: this.dev,
-        translateFn: this.translateFn,
-        translatableAttributes: this.translatableAttributes,
-      });
-
+      const templateFn = this._compileTemplate(name, rawTemplate);
       // first add a function to lazily get the template, in case there is a
       // recursive call to the template name
       this.templates[name] = (context, parent) => this.templates[name](context, parent);
@@ -95,5 +89,14 @@ export class TemplateSet {
       this.templates[name] = template;
     }
     return this.templates[name];
+  }
+
+  _compileTemplate(name: string, template: string | Node) {
+    return compile(template, {
+      name,
+      dev: this.dev,
+      translateFn: this.translateFn,
+      translatableAttributes: this.translatableAttributes,
+    });
   }
 }

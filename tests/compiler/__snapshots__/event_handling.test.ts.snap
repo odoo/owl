@@ -156,20 +156,6 @@ exports[`t-on handler is bound to proper owner, part 3 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
-  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    let d1 = [ctx['add'], ctx];
-    return block1([d1]);
-  }
-}"
-`;
-
-exports[`t-on handler is bound to proper owner, part 3 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { getTemplate } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
@@ -179,7 +165,7 @@ exports[`t-on handler is bound to proper owner, part 3 2`] = `
 }"
 `;
 
-exports[`t-on handler is bound to proper owner, part 4 1`] = `
+exports[`t-on handler is bound to proper owner, part 3 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -193,7 +179,7 @@ exports[`t-on handler is bound to proper owner, part 4 1`] = `
 }"
 `;
 
-exports[`t-on handler is bound to proper owner, part 4 2`] = `
+exports[`t-on handler is bound to proper owner, part 4 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -213,6 +199,20 @@ exports[`t-on handler is bound to proper owner, part 4 2`] = `
       c_block1[i1] = withKey(callTemplate_2.call(this, ctx, node, key + \`__1__\${key1}\`), key1);
     }
     return list(c_block1);
+  }
+}"
+`;
+
+exports[`t-on handler is bound to proper owner, part 4 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = [ctx['add'], ctx];
+    return block1([d1]);
   }
 }"
 `;
@@ -472,6 +472,22 @@ exports[`t-on t-on with t-call 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { getTemplate } = helpers;
+  const callTemplate_2 = getTemplate(\`sub\`);
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`t-on t-on with t-call 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   let block1 = createBlock(\`<p block-handler-0=\\"click\\">lucas</p>\`);
   
@@ -482,7 +498,7 @@ exports[`t-on t-on with t-call 1`] = `
 }"
 `;
 
-exports[`t-on t-on with t-call 2`] = `
+exports[`t-on t-on, with arguments and t-call 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -498,7 +514,7 @@ exports[`t-on t-on with t-call 2`] = `
 }"
 `;
 
-exports[`t-on t-on, with arguments and t-call 1`] = `
+exports[`t-on t-on, with arguments and t-call 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -509,22 +525,6 @@ exports[`t-on t-on, with arguments and t-call 1`] = `
     const v1 = ctx['value'];
     let d1 = [()=>this.update(v1), ctx];
     return block1([d1]);
-  }
-}"
-`;
-
-exports[`t-on t-on, with arguments and t-call 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { getTemplate } = helpers;
-  const callTemplate_2 = getTemplate(\`sub\`);
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    let b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
-    return block1([], [b2]);
   }
 }"
 `;

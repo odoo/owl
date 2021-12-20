@@ -41,10 +41,10 @@ describe("event handling", () => {
       obj = { onInput: (ev: any) => (this.state.value = ev.target.value) };
     }
 
-    const counter = await mount(Counter, fixture);
+    await mount(Counter, fixture);
     await nextTick();
     expect(fixture.innerHTML).toBe(`<div><input type="text"></div>`);
-    const input = (<HTMLElement>counter.el).getElementsByTagName("input")[0];
+    const input = fixture.getElementsByTagName("input")[0];
     input.value = "test";
     input.dispatchEvent(new Event("input"));
     await nextTick();

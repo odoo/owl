@@ -17,7 +17,7 @@ import {
   useSubEnv,
   xml,
 } from "../../src/index";
-import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { elem, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -506,7 +506,7 @@ describe("hooks", () => {
       // Wait for an owl render
       await new Promise((resolve) => requestAnimationFrame(resolve));
       // Value was correctly changed inside the component
-      expect(component.el!.textContent).toBe("1");
+      expect(elem(component).textContent).toBe("1");
       steps.push("after state mutation");
       await component.__owl__.destroy();
 

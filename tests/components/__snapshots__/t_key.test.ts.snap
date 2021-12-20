@@ -42,12 +42,9 @@ exports[`t-key t-key on Component 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<span><block-child-0/></span>\`);
-  
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['key'];
-    let b2 = toggler(tKey_1, component(\`Child\`, {key: ctx['key']}, tKey_1 + key + \`__2\`, node, ctx));
-    return block1([], [b2]);
+    return toggler(tKey_1, component(\`Child\`, {key: ctx['key']}, tKey_1 + key + \`__2\`, node, ctx));
   }
 }"
 `;

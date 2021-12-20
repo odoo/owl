@@ -117,7 +117,7 @@ exports[`basics can inject values in tagged templates 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { getTemplate } = helpers;
-  const callTemplate_2 = getTemplate(\`__template__73\`);
+  const callTemplate_2 = getTemplate(\`__template__999\`);
   
   return function template(ctx, node, key = \\"\\") {
     return callTemplate_2.call(this, ctx, node, key + \`__1\`);
@@ -302,19 +302,6 @@ exports[`basics do not remove previously rendered dom if not necessary, variatio
   return function template(ctx, node, key = \\"\\") {
     let d1 = ctx['state'].value;
     return block1([d1]);
-  }
-}"
-`;
-
-exports[`basics has no el after creation 1`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
-  let block1 = createBlock(\`<span>simple</span>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    return block1();
   }
 }"
 `;

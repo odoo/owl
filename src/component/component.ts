@@ -19,10 +19,6 @@ export class Component {
     this.env = env;
     this.__owl__ = node;
   }
-  get el(): HTMLElement | Text | undefined {
-    const node = this.__owl__;
-    return node.bdom ? (node.bdom.firstNode() as any) : undefined;
-  }
 
   setup() {}
 

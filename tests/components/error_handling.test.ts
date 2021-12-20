@@ -13,6 +13,7 @@ import {
   logStep,
   makeTestFixture,
   nextTick,
+  nextMicroTick,
   snapshotEverything,
   useLogLifecycle,
 } from "../helpers";
@@ -962,5 +963,74 @@ describe("can catch errors", () => {
     expect(steps).toStrictEqual(["Concrete onError", "Abstract onError"]);
     expect(fixture.innerHTML).toBe("<div>Abstract</div>");
     expect(mockConsoleWarn).toBeCalledTimes(0);
+  });
+
+  test("catching error, rethrow, render parent  -- a main component loop implementation", async () => {
+    let parentState: any;
+
+    class ErrorComponent extends Component {
+      static template = xml`<div />`;
+      setup() {
+        throw new Error("My Error");
+      }
+    }
+
+    class Child extends Component {
+      static template = xml`<ErrorComponent />`;
+      static components = { ErrorComponent };
+      setup() {
+        onError((error) => {
+          throw error;
+        });
+      }
+    }
+
+    class Sibling extends Component {
+      static template = xml`<div>Sibling</div>`;
+    }
+
+    class ErrorHandler extends Component {
+      static template = xml`<t t-slot="default" />`;
+      setup() {
+        onError(() => {
+          this.props.onError();
+          Promise.resolve().then(() => {
+            parentState.cps[2] = {
+              id: 2,
+              Comp: Sibling,
+            };
+          });
+        });
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <t t-foreach="Object.values(state.cps)" t-as="cp" t-key="cp.id">
+          <ErrorHandler onError="() => this.cleanUp(cp.id)">
+              <t t-component="cp.Comp" />
+            </ErrorHandler>
+        </t>`;
+
+      static components = { ErrorHandler };
+      state: any = useState({
+        cps: {},
+      });
+
+      setup() {
+        parentState = this.state;
+      }
+
+      cleanUp(id: number) {
+        delete this.state.cps[id];
+      }
+    }
+
+    await mount(Parent, fixture);
+    parentState.cps[1] = { id: 1, Comp: Child };
+    await nextMicroTick();
+    expect(fixture.innerHTML).toBe("");
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>Sibling</div>");
   });
 });

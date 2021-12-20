@@ -705,6 +705,81 @@ exports[`can catch errors catchError in catchError 3`] = `
 }"
 `;
 
+exports[`can catch errors catching error, rethrow, render parent  -- a main component loop implementation 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { prepareList, capture, withKey } = helpers;
+  
+  function slot3(ctx, node, key = \\"\\") {
+    let Comp5 = ctx['cp'].Comp;
+    return toggler(Comp5, component(Comp5, {}, key + \`__4\`, node, ctx));
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(Object.values(ctx['state'].cps));
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      ctx[\`cp\`] = v_block1[i1];
+      let key1 = ctx['cp'].id;
+      const v1 = ctx['cp'];
+      const ctx2 = capture(ctx);
+      c_block1[i1] = withKey(component(\`ErrorHandler\`, {onError: ()=>this.cleanUp(v1.id),slots: {'default': {__render: slot3, __ctx: ctx2}}}, key + \`__6__\${key1}\`, node, ctx), key1);
+    }
+    return list(c_block1);
+  }
+}"
+`;
+
+exports[`can catch errors catching error, rethrow, render parent  -- a main component loop implementation 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callSlot } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return callSlot(ctx, node, key, 'default', false, {});
+  }
+}"
+`;
+
+exports[`can catch errors catching error, rethrow, render parent  -- a main component loop implementation 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`ErrorComponent\`, {}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`can catch errors catching error, rethrow, render parent  -- a main component loop implementation 4`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`can catch errors catching error, rethrow, render parent  -- a main component loop implementation 5`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div>Sibling</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`can catch errors error in mounted on a component with a sibling (properly mounted) 1`] = `
 "function anonymous(bdom, helpers
 ) {

@@ -2,7 +2,7 @@ import { Component } from "../component/component";
 import { ComponentNode } from "../component/component_node";
 import { MountOptions } from "../component/fibers";
 import { Scheduler } from "../component/scheduler";
-import { TemplateSet } from "./template_set";
+import { TemplateSet, TemplateSetConfig } from "./template_set";
 import { nodeErrorHandlers } from "../component/error_handling";
 
 // reimplement dev mode stuff see last change in 0f7a8289a6fb8387c3c1af41c6664b2a8448758f
@@ -11,12 +11,9 @@ export interface Env {
   [key: string]: any;
 }
 
-export interface AppConfig {
-  dev?: boolean;
+export interface AppConfig extends TemplateSetConfig {
   env?: Env;
-  translatableAttributes?: string[];
-  translateFn?: (s: string) => string;
-  templates?: string | Document;
+  props?: any;
 }
 
 export const DEV_MSG = `Owl is running in 'dev' mode.
@@ -27,35 +24,19 @@ See https://github.com/odoo/owl/blob/master/doc/reference/config.md#mode for mor
 export class App<T extends typeof Component = any> extends TemplateSet {
   Root: T;
   props: any;
-  env: Env = Object.freeze({});
+  env: Env;
   scheduler = new Scheduler(window.requestAnimationFrame.bind(window));
   root: ComponentNode | null = null;
 
-  constructor(Root: T, props?: any) {
-    super();
+  constructor(Root: T, config: AppConfig = {}) {
+    super(config);
     this.Root = Root;
-    this.props = props;
-  }
-
-  configure(config: AppConfig): App<T> {
     if (config.dev) {
-      this.dev = config.dev;
       console.info(DEV_MSG);
     }
-    if (config.env) {
-      const descrs = Object.getOwnPropertyDescriptors(config.env);
-      this.env = Object.freeze(Object.defineProperties({}, descrs));
-    }
-    if (config.translateFn) {
-      this.translateFn = config.translateFn;
-    }
-    if (config.translatableAttributes) {
-      this.translatableAttributes = config.translatableAttributes;
-    }
-    if (config.templates) {
-      this.addTemplates(config.templates);
-    }
-    return this;
+    const descrs = Object.getOwnPropertyDescriptors(config.env || {});
+    this.env = Object.freeze(Object.defineProperties({}, descrs));
+    this.props = config.props || {};
   }
 
   mount(target: HTMLElement, options?: MountOptions): Promise<InstanceType<T>> {
@@ -113,4 +94,12 @@ export class App<T extends typeof Component = any> extends TemplateSet {
       this.root.destroy();
     }
   }
+}
+
+export async function mount<T extends typeof Component>(
+  C: T,
+  target: HTMLElement,
+  config: AppConfig & MountOptions = {}
+): Promise<InstanceType<T>> {
+  return new App(C, config).mount(target, config);
 }

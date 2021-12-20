@@ -41,7 +41,7 @@ describe("basics", () => {
       static template = xml`<span><t t-esc="props.value"/></span>`;
     }
 
-    const app = new App(Test, { value: 3 });
+    const app = new App(Test, { props: { value: 3 } });
     const component = await app.mount(fixture);
 
     expect(fixture.innerHTML).toBe("<span>3</span>");
@@ -125,7 +125,7 @@ describe("basics", () => {
       }
     }
 
-    const app = new App(Test, p);
+    const app = new App(Test, { props: p });
     await app.mount(fixture);
   });
 
@@ -816,6 +816,16 @@ describe("mount targets", () => {
     fixture.appendChild(span);
     const app = new App(Root);
     await app.mount(fixture, { position: "last-child" });
+    expect(fixture.innerHTML).toBe("<span></span><div>app</div>");
+  });
+
+  test("mount function: can mount a component (with default position='last-child')", async () => {
+    class Root extends Component {
+      static template = xml`<div>app</div>`;
+    }
+    const span = document.createElement("span");
+    fixture.appendChild(span);
+    await mount(Root, fixture, { position: "last-child" });
     expect(fixture.innerHTML).toBe("<span></span><div>app</div>");
   });
 

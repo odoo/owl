@@ -40,8 +40,7 @@ describe("app", () => {
       static template = xml`<div><t t-esc="env.someVal" /> <t t-esc="Object.keys(env.services)" /></div>`;
     }
 
-    const app = new App(SomeComponent);
-    app.configure({ env });
+    const app = new App(SomeComponent, { env });
     const comp = await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>maggot serv1</div>");
     someVal = "brain";
@@ -49,5 +48,15 @@ describe("app", () => {
     comp.render();
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>brain serv1,serv2</div>");
+  });
+
+  test("can configure an app with props", async () => {
+    class SomeComponent extends Component {
+      static template = xml`<div t-esc="props.value"/>`;
+    }
+
+    const app = new App(SomeComponent, { props: { value: 333 } });
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>333</div>");
   });
 });

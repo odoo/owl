@@ -623,7 +623,7 @@ test("rendering component again in next microtick", async () => {
   }
 
   const env = { config: { flag: false } };
-  await new App(Parent).configure({ env }).mount(fixture);
+  await mount(Parent, fixture, { env });
   expect(fixture.innerHTML).toBe("<div><button>Click</button></div>");
   expect([
     "Parent:setup",

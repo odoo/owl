@@ -19,6 +19,14 @@ export function applyDefaultProps(props: { [key: string]: any }, ComponentClass:
 //------------------------------------------------------------------------------
 // Prop validation helper
 //------------------------------------------------------------------------------
+function getPropDescription(staticProps: any) {
+  if (staticProps instanceof Array) {
+    return Object.fromEntries(
+      staticProps.map((p) => (p.endsWith("?") ? [p.slice(0, -1), false] : [p, true]))
+    );
+  }
+  return staticProps || { "*": true };
+}
 
 /**
  * Validate the component props (or next props) against the (static) props
@@ -33,46 +41,34 @@ export const validateProps = function (name: string | typeof Component, props: a
 
   applyDefaultProps(props, ComponentClass);
 
-  const propsDef = ComponentClass.props;
-  if (propsDef instanceof Array) {
-    // list of strings (prop names)
-    for (const propName of propsDef) {
-      if (propName[propName.length - 1] === "?") {
-        // optional prop
-        break;
-      }
-      if (!(propName in props)) {
+  let propsDef = getPropDescription(ComponentClass.props);
+  const allowAdditionalProps = "*" in propsDef;
+
+  for (let propName in propsDef) {
+    if (propName === "*") {
+      continue;
+    }
+    if (props[propName] === undefined) {
+      if (propsDef[propName] && !propsDef[propName].optional) {
         throw new Error(`Missing props '${propName}' (component '${ComponentClass.name}')`);
+      } else {
+        continue;
       }
     }
-    for (let key in props) {
-      if (!propsDef.includes(key) && !propsDef.includes(key + "?")) {
-        throw new Error(`Unknown prop '${key}' given to component '${ComponentClass.name}'`);
-      }
+    let isValid;
+    try {
+      isValid = isValidProp(props[propName], propsDef[propName]);
+    } catch (e) {
+      (e as Error).message = `Invalid prop '${propName}' in component ${ComponentClass.name} (${
+        (e as Error).message
+      })`;
+      throw e;
     }
-  } else if (propsDef) {
-    // propsDef is an object now
-    for (let propName in propsDef) {
-      if (props[propName] === undefined) {
-        if (propsDef[propName] && !propsDef[propName].optional) {
-          throw new Error(`Missing props '${propName}' (component '${ComponentClass.name}')`);
-        } else {
-          continue;
-        }
-      }
-      let isValid;
-      try {
-        isValid = isValidProp(props[propName], propsDef[propName]);
-      } catch (e) {
-        (e as Error).message = `Invalid prop '${propName}' in component ${ComponentClass.name} (${
-          (e as Error).message
-        })`;
-        throw e;
-      }
-      if (!isValid) {
-        throw new Error(`Invalid Prop '${propName}' in component '${ComponentClass.name}'`);
-      }
+    if (!isValid) {
+      throw new Error(`Invalid Prop '${propName}' in component '${ComponentClass.name}'`);
     }
+  }
+  if (!allowAdditionalProps) {
     for (let propName in props) {
       if (!(propName in propsDef)) {
         throw new Error(`Unknown prop '${propName}' given to component '${ComponentClass.name}'`);

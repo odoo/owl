@@ -11,7 +11,7 @@ import {
 } from "../../src";
 import { Portal } from "../../src/";
 import { xml } from "../../src/tags";
-import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { elem, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
 let originalconsoleWarn = console.warn;
@@ -133,9 +133,9 @@ describe("Portal", () => {
             </div>`;
     }
 
-    const parent = await mount(Parent, fixture);
-    expect((parent.el as any)!.innerHTML).toBe(
-      '<div id="local-target"><p>2</p></div><span>1</span>'
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe(
+      '<div><div id="local-target"><p>2</p></div><span>1</span></div>'
     );
   });
 
@@ -152,9 +152,9 @@ describe("Portal", () => {
             </div>`;
     }
 
-    const parent = await mount(Parent, fixture);
-    expect((parent.el as any)!.innerHTML).toBe(
-      '<span>1</span><div id="local-target"><p>2</p></div>'
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe(
+      '<div><span>1</span><div id="local-target"><p>2</p></div></div>'
     );
   });
 
@@ -213,12 +213,12 @@ describe("Portal", () => {
 
     const parent = await mount(Parent, fixture);
     expect(outside.innerHTML).toBe("<span>1</span>");
-    expect((parent.el as any).innerHTML).toBe("");
+    expect(fixture.innerHTML).toBe('<div id="outside"><span>1</span></div><div></div>');
 
     parent.state.val = 2;
     await nextTick();
     expect(outside.innerHTML).toBe("<span>2</span>");
-    expect((parent.el as any).innerHTML).toBe("");
+    expect(fixture.innerHTML).toBe('<div id="outside"><span>2</span></div><div></div>');
     expect(steps).toEqual(["mounted", "patched"]);
   });
 
@@ -476,7 +476,7 @@ describe("Portal", () => {
     addOutsideDiv(fixture);
     await mount(Parent, fixture);
 
-    childInst!.el!.dispatchEvent(new CustomEvent("custom"));
+    elem(childInst!).dispatchEvent(new CustomEvent("custom"));
     expect(steps).toEqual(["custom"]);
   });
 });

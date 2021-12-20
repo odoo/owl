@@ -292,11 +292,11 @@ describe("list of components", () => {
     }
 
     const parent = await mount(Parent, fixture);
-    expect((parent.el as HTMLElement).innerHTML).toBe("<div>1</div><div>2</div>");
+    expect(fixture.innerHTML).toBe("<span><div>1</div><div>2</div></span>");
     parent.clist = [2, 1];
     parent.render();
     await nextTick();
-    expect((parent.el as HTMLElement).innerHTML).toBe("<div>2</div><div>1</div>");
+    expect(fixture.innerHTML).toBe("<span><div>2</div><div>1</div></span>");
     expect(childInstances.length).toBe(2);
   });
 

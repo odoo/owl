@@ -13,6 +13,7 @@ import {
   onWillUpdateProps,
   status,
   useComponent,
+  xml,
 } from "../src";
 import { UTILS } from "../src/app/template_helpers";
 import { globalTemplates, TemplateSet } from "../src/app/template_set";
@@ -37,6 +38,9 @@ export function makeTestFixture() {
   return fixture;
 }
 
+beforeEach(() => {
+  xml.nextId = 999;
+});
 export async function nextTick(): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve));
   await new Promise((resolve) => requestAnimationFrame(resolve));
@@ -183,6 +187,10 @@ export function children(w: Component): Component[] {
 
 export function isDirectChildOf(child: Component, parent: Component): boolean {
   return children(parent).includes(child);
+}
+
+export function elem(component: Component): any {
+  return component.__owl__.firstNode();
 }
 
 export async function editInput(input: HTMLInputElement | HTMLTextAreaElement, value: string) {

@@ -82,7 +82,7 @@
     // "noEmitOnError": false,                                  // Do not emit outputs if any errors were reported.
     // "noImplicitUseStrict": false,                            // Do not emit "use strict" directives in module output.
     // "noResolve": false,                                      // Do not add triple-slash references or module import targets to the list of compiled files.
-    "preserveConstEnums": true,                                 // Do not erase const enum declarations in generated code.
+    "preserveConstEnums": false,                                 // Do not erase const enum declarations in generated code.
     // "removeComments": false,                                 // Remove all comments except copy-right header comments beginning with 
     // "experimentalDecorators": true,                          // Enables experimental support for ES7 decorators.
     // "emitDecoratorMetadata": true,                           // Enables experimental support for emitting type metadata for decorators.

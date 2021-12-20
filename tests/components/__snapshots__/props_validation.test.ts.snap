@@ -96,6 +96,58 @@ exports[`default props default values are also set whenever component is updated
 }"
 `;
 
+exports[`props validation can specify that additional props are allowed (array) 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    const props1 = {message: 'm',otherProp: 'o'}
+    helpers.validateProps(\`Child\`, props1, ctx)
+    return component(\`Child\`, props1, key + \`__2\`, node, ctx);
+  }
+}"
+`;
+
+exports[`props validation can specify that additional props are allowed (array) 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div>hey</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`props validation can specify that additional props are allowed (object) 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    const props1 = {message: 'm',otherProp: 'o'}
+    helpers.validateProps(\`Child\`, props1, ctx)
+    return component(\`Child\`, props1, key + \`__2\`, node, ctx);
+  }
+}"
+`;
+
+exports[`props validation can specify that additional props are allowed (object) 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div>hey</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`props validation can validate a prop with multiple types 1`] = `
 "function anonymous(bdom, helpers
 ) {

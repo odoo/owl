@@ -723,6 +723,36 @@ describe("props validation", () => {
     expect(error!).toBeDefined();
     expect(error!.message).toBe("Missing props 'mandatory' (component 'Child')");
   });
+
+  test("can specify that additional props are allowed (array)", async () => {
+    class Child extends Component {
+      static props = ["message", "*"];
+      static template = xml`<div>hey</div>`;
+    }
+    class Parent extends Component {
+      static template = xml`<Child message="'m'" otherProp="'o'"/>`;
+      static components = { Child };
+    }
+
+    await expect(mount(Parent, fixture, { dev: true })).resolves.toEqual(expect.anything());
+  });
+
+  test("can specify that additional props are allowed (object)", async () => {
+    class Child extends Component {
+      static props = {
+        message: { type: String },
+        "*": true,
+      };
+      static template = xml`<div>hey</div>`;
+    }
+    class Parent extends Component {
+      static template = xml`<Child message="'m'" otherProp="'o'"/>`;
+      static components = { Child };
+    }
+
+    // we just check that it doesn't throw
+    await expect(mount(Parent, fixture, { dev: true })).resolves.toEqual(expect.anything());
+  });
 });
 
 //------------------------------------------------------------------------------

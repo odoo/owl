@@ -36,6 +36,8 @@ hello_owl/
 The file `owl.js` can be downloaded from the last release published at
 [https://github.com/odoo/owl/releases](https://github.com/odoo/owl/releases). It
 is a single javascript file which export all Owl into the global `owl` object.
+Note that there are multiple files, and in this case, we need one of the two
+files suffixed with `.iife`: they are built to be directly used in a browser.
 
 Now, `index.html` should contain the following:
 
@@ -45,30 +47,24 @@ Now, `index.html` should contain the following:
   <head>
     <title>Hello Owl</title>
     <script src="owl.js"></script>
-    <script src="app.js"></script>
   </head>
-  <body></body>
+  <body>
+    <script src="app.js"></script>
+  </body>
 </html>
 ```
 
 And `app.js` should look like this:
 
 ```js
-const { Component, mount } = owl;
-const { xml } = owl.tags;
-const { whenReady } = owl.utils;
+const { Component, mount, xml } = owl;
 
 // Owl Components
-class App extends Component {
+class Root extends Component {
   static template = xml`<div>Hello Owl</div>`;
 }
 
-// Setup code
-function setup() {
-  mount(App, target: { document.body })
-}
-
-whenReady(setup);
+mount(Root, document.body);
 ```
 
 Now, simply loading this html file in a browser should display a welcome message.
@@ -93,14 +89,16 @@ Let us start a new project with the following file structure:
 ```
 hello_owl/
   src/
-    app.js
     index.html
     main.js
     owl.js
+    root.js
 ```
 
 As previously, the file `owl.js` can be downloaded from the last release published at
 [https://github.com/odoo/owl/releases](https://github.com/odoo/owl/releases).
+Note that there are multiple files, and in this case, we need one of the two
+files suffixed with `.iife`: they are built to be directly used in a browser.
 
 Now, `index.html` should contain the following:
 
@@ -110,37 +108,33 @@ Now, `index.html` should contain the following:
   <head>
     <title>Hello Owl</title>
     <script src="owl.js"></script>
-    <script src="main.js" type="module"></script>
   </head>
-  <body></body>
+  <body>
+    <script src="main.js" type="module"></script>
+  </body>
 </html>
 ```
 
 Not that the `main.js` script tag has the `type="module"` attribute. This means
 that the browser will parse the script as a module, and load all its dependencies.
 
-Here is the content of `app.js` and `main.js`:
+Here is the content of `root.js` and `main.js`:
 
 ```js
-// app.js ----------------------------------------------------------------------
-const { Component, mount } = owl;
-const { xml } = owl.tags;
+// root.js ----------------------------------------------------------------------
+const { Component, mount, xml } = owl;
 
-export class App extends Component {
+export class Root extends Component {
   static template = xml`<div>Hello Owl</div>`;
 }
 
 // main.js ---------------------------------------------------------------------
-import { App } from "./app.js";
+import { Root } from "./root.js";
 
-function setup() {
-  mount(App, { target: document.body });
-}
-
-owl.utils.whenReady(setup);
+mount(Root, document.body);
 ```
 
-The `main.js` file import the `app.js` file. Note that the import statement has
+The `main.js` file imports the `root.js` file. Note that the import statement has
 a `.js` suffix, which is important. Most text editor can understand this syntax
 and will provide autocompletion.
 
@@ -193,11 +187,11 @@ hello_owl/
     index.html
   src/
     components/
-      App.js
+      Root.js
     main.js
   tests/
     components/
-      App.test.js
+      Root.test.js
     helpers.js
   .gitignore
   package.json
@@ -224,13 +218,15 @@ Note that there are no `<script>` tag here. They will be injected by webpack.
 Now, let's have a look at the javascript files:
 
 ```js
-// src/components/App.js -------------------------------------------------------
-import { Component, tags, useState } from "@odoo/owl";
+// src/components/Root.js -------------------------------------------------------
+import { Component, xml, useState } from "@odoo/owl";
 
-const { xml } = tags;
+export class Root extends Component {
+  static template = xml`
+    <div t-on-click="update">
+      Hello <t t-esc="state.text"/>
+    </div>`;
 
-export class App extends Component {
-  static template = xml`<div t-on-click="update">Hello <t t-esc="state.text"/></div>`;
   state = useState({ text: "Owl" });
   update() {
     this.state.text = this.state.text === "Owl" ? "World" : "Owl";
@@ -239,16 +235,12 @@ export class App extends Component {
 
 // src/main.js -----------------------------------------------------------------
 import { utils, mount } from "@odoo/owl";
-import { App } from "./components/App";
+import { Root } from "./components/Root";
 
-function setup() {
-  mount(App, { target: document.body });
-}
+mount(Root, document.body);
 
-utils.whenReady(setup);
-
-// tests/components/App.test.js ------------------------------------------------
-import { App } from "../../src/components/App";
+// tests/components/Root.test.js ------------------------------------------------
+import { Root } from "../../src/components/Root";
 import { makeTestFixture, nextTick, click } from "../helpers";
 import { mount } from "@odoo/owl";
 
@@ -262,9 +254,9 @@ afterEach(() => {
   fixture.remove();
 });
 
-describe("App", () => {
+describe("Root", () => {
   test("Works as expected...", async () => {
-    await mount(App, { target: fixture });
+    await mount(Root, fixture);
     expect(fixture.innerHTML).toBe("<div>Hello Owl</div>");
 
     click(fixture, "div");
@@ -278,9 +270,8 @@ import { Component } from "@odoo/owl";
 import "regenerator-runtime/runtime";
 
 export async function nextTick() {
-  return new Promise(function (resolve) {
-    setTimeout(() => Component.scheduler.requestAnimationFrame(() => resolve()));
-  });
+  await new Promise((resolve) => setTimeout(resolve));
+  await new Promise((resolve) => requestAnimationFrame(resolve));
 }
 
 export function makeTestFixture() {

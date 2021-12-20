@@ -14,6 +14,8 @@ import { xml } from "../../src/tags";
 import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
+let originalconsoleWarn = console.warn;
+let mockConsoleWarn: any;
 
 function addOutsideDiv(fixture: HTMLElement): HTMLElement {
   let outside = document.createElement("div");
@@ -26,6 +28,12 @@ snapshotEverything();
 
 beforeEach(() => {
   fixture = makeTestFixture();
+  mockConsoleWarn = jest.fn(() => {});
+  console.warn = mockConsoleWarn;
+});
+
+afterEach(() => {
+  console.warn = originalconsoleWarn;
 });
 
 describe("Portal", () => {
@@ -171,6 +179,7 @@ describe("Portal", () => {
     expect(error!).toBeDefined();
     expect(error!.message).toBe("invalid portal target");
     expect(fixture.innerHTML).toBe(`<div></div>`);
+    expect(mockConsoleWarn).toBeCalledTimes(1);
   });
 
   test("portal with child and props", async () => {
@@ -531,6 +540,7 @@ describe("Portal: Props validation", () => {
     expect(error!).toBeDefined();
     expect(error!.message).toBe(`Missing props 'target' (component 'Portal')`);
     console.info = consoleInfo;
+    expect(mockConsoleWarn).toBeCalledTimes(1);
   });
 
   test("target is not list", async () => {
@@ -556,5 +566,6 @@ describe("Portal: Props validation", () => {
     expect(error!).toBeDefined();
     expect(error!.message).toBe(`Invalid Prop 'target' in component 'Portal'`);
     console.info = consoleInfo;
+    expect(mockConsoleWarn).toBeCalledTimes(1);
   });
 });

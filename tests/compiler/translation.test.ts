@@ -1,8 +1,10 @@
-import { App, Component } from "../../src";
-import { makeTestFixture, snapshotApp } from "../helpers";
+import { Component, mount } from "../../src";
+import { makeTestFixture, snapshotEverything } from "../helpers";
 import { xml } from "../../src/tags";
 
 let fixture: HTMLElement;
+
+snapshotEverything();
 
 beforeEach(() => {
   fixture = makeTestFixture();
@@ -14,16 +16,10 @@ describe("translation support", () => {
       static template = xml`<div>word</div>`;
     }
 
-    const app = new App(SomeComponent);
-    app.configure({
+    await mount(SomeComponent, fixture, {
       translateFn: (expr: string) => (expr === "word" ? "mot" : expr),
     });
-    const comp = await app.mount(fixture);
-
-    const el = comp.el as HTMLElement;
-
-    expect(el.outerHTML).toBe("<div>mot</div>");
-    snapshotApp(app);
+    expect(fixture.innerHTML).toBe("<div>mot</div>");
   });
 
   test("does not translate node content if disabled", async () => {
@@ -36,16 +32,11 @@ describe("translation support", () => {
       `;
     }
 
-    const app = new App(SomeComponent);
-    app.configure({
+    await mount(SomeComponent, fixture, {
       translateFn: (expr: string) => (expr === "word" ? "mot" : expr),
     });
-    const comp = await app.mount(fixture);
 
-    const el = comp.el as HTMLElement;
-
-    expect(el.outerHTML).toBe("<div><span>mot</span><span>word</span></div>");
-    snapshotApp(app);
+    expect(fixture.innerHTML).toBe("<div><span>mot</span><span>word</span></div>");
   });
 
   test("some attributes are translated", async () => {
@@ -61,18 +52,12 @@ describe("translation support", () => {
       `;
     }
 
-    const app = new App(SomeComponent);
-    app.configure({
+    await mount(SomeComponent, fixture, {
       translateFn: (expr: string) => (expr === "word" ? "mot" : expr),
     });
-    const comp = await app.mount(fixture);
-
-    const el = comp.el as HTMLElement;
-
-    expect(el.outerHTML).toBe(
+    expect(fixture.innerHTML).toBe(
       '<div><p label="mot">mot</p><p title="mot">mot</p><p placeholder="mot">mot</p><p alt="mot">mot</p><p something="word">mot</p></div>'
     );
-    snapshotApp(app);
   });
 
   test("can set translatable attributes", async () => {
@@ -82,16 +67,11 @@ describe("translation support", () => {
       `;
     }
 
-    const app = new App(SomeComponent);
-    app.configure({
+    await mount(SomeComponent, fixture, {
       translateFn: (expr: string) => (expr === "word" ? "mot" : expr),
       translatableAttributes: ["potato"],
     });
-    const comp = await app.mount(fixture);
-
-    const el = comp.el as HTMLElement;
-    expect(el.outerHTML).toBe('<div tomato="word" potato="mot" title="word">text</div>');
-    snapshotApp(app);
+    expect(fixture.innerHTML).toBe('<div tomato="word" potato="mot" title="word">text</div>');
   });
 
   test("translation is done on the trimmed text, with extra spaces readded after", async () => {
@@ -103,14 +83,8 @@ describe("translation support", () => {
 
     const translateFn = jest.fn((expr: string) => (expr === "word" ? "mot" : expr));
 
-    const app = new App(SomeComponent);
-    app.configure({ translateFn });
-    const comp = await app.mount(fixture);
-
-    const el = comp.el as HTMLElement;
-
-    expect(el.outerHTML).toBe("<div> mot </div>");
+    await mount(SomeComponent, fixture, { translateFn });
+    expect(fixture.innerHTML).toBe("<div> mot </div>");
     expect(translateFn).toHaveBeenCalledWith("word");
-    snapshotApp(app);
   });
 });

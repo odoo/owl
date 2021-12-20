@@ -1,11 +1,19 @@
 import { App, Component, mount, onMounted, useState, xml } from "../../src/index";
-import { addTemplate, children, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { children, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
+let originalconsoleWarn = console.warn;
+let mockConsoleWarn: any;
 let fixture: HTMLElement;
 
 beforeEach(() => {
   fixture = makeTestFixture();
+  mockConsoleWarn = jest.fn(() => {});
+  console.warn = mockConsoleWarn;
+});
+
+afterEach(() => {
+  console.warn = originalconsoleWarn;
 });
 
 describe("slots", () => {
@@ -88,6 +96,7 @@ describe("slots", () => {
       error = e;
     }
     expect(error).not.toBeNull();
+    expect(mockConsoleWarn).toBeCalledTimes(1);
   });
 
   test("fun: two calls to the same slot", async () => {
@@ -642,8 +651,6 @@ describe("slots", () => {
       static template = xml`Grand Child`;
     }
 
-    addTemplate("sub", `<GrandChild/>`);
-
     class Parent extends Component {
       static template = xml`
           <div>
@@ -655,7 +662,12 @@ describe("slots", () => {
     }
 
     // throw new Error("boom")
-    const parent = await mount(Parent, fixture);
+    const parent = await mount(Parent, fixture, {
+      templates: `
+        <templates>
+          <t t-name="sub"><GrandChild/></t>
+        </templates>`,
+    });
 
     expect(fixture.innerHTML).toBe("<div>Grand Child</div>");
 
@@ -786,7 +798,6 @@ describe("slots", () => {
       static template = xml`<div class="slotted"><t t-slot="default" /></div>`;
     }
 
-    addTemplate("sometemplate", `<div class="slot"><Child/></div>`);
     class UsingTcallInSlotted extends Component {
       tcallTemplate = "sometemplate";
       static template = xml`
@@ -798,7 +809,14 @@ describe("slots", () => {
       static components = { Slotted, Child };
     }
 
-    const parent = await mount(UsingTcallInSlotted, fixture);
+    const parent = await mount(UsingTcallInSlotted, fixture, {
+      templates: `
+        <templates>
+          <t t-name="sometemplate">
+            <div class="slot"><Child/></div>
+          </t>
+        </templates>`,
+    });
 
     expect(parent).toBeInstanceOf(UsingTcallInSlotted);
     expect(children(parent).length).toBe(1);

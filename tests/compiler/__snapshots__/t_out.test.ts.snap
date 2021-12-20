@@ -31,22 +31,6 @@ exports[`t-out multiple calls to t-out 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { zero } = helpers;
-  
-  let block1 = createBlock(\`<div><block-child-0/><div>Greeter</div><block-child-1/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    let b2 = ctx[zero];
-    let b3 = ctx[zero];
-    return block1([], [b2, b3]);
-  }
-}"
-`;
-
-exports[`t-out multiple calls to t-out 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { isBoundary, zero, getTemplate } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
@@ -60,6 +44,22 @@ exports[`t-out multiple calls to t-out 2`] = `
     ctx[zero] = b2;
     let b3 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
     return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`t-out multiple calls to t-out 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { zero } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/><div>Greeter</div><block-child-1/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = ctx[zero];
+    let b3 = ctx[zero];
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -83,21 +83,6 @@ exports[`t-out t-out 0 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { zero } = helpers;
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    let b2 = ctx[zero];
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`t-out t-out 0 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { isBoundary, zero, getTemplate } = helpers;
   const callTemplate_2 = getTemplate(\`_basic-callee\`);
   
@@ -111,6 +96,21 @@ exports[`t-out t-out 0 2`] = `
     ctx[zero] = b2;
     let b3 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
     return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`t-out t-out 0 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { zero } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = ctx[zero];
+    return block1([], [b2]);
   }
 }"
 `;

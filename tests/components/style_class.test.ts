@@ -3,9 +3,17 @@ import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
 let fixture: HTMLElement;
+let originalconsoleWarn = console.warn;
+let mockConsoleWarn: any;
 
 beforeEach(() => {
   fixture = makeTestFixture();
+  mockConsoleWarn = jest.fn(() => {});
+  console.warn = mockConsoleWarn;
+});
+
+afterEach(() => {
+  console.warn = originalconsoleWarn;
 });
 
 describe("style and class handling", () => {
@@ -349,5 +357,6 @@ describe("style and class handling", () => {
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
     expect(error!.message).toMatch(regexp);
     expect(fixture.innerHTML).toBe("");
+    expect(mockConsoleWarn).toBeCalledTimes(1);
   });
 });

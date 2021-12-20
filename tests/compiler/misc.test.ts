@@ -1,5 +1,10 @@
-import { xml } from "../../src";
-import { renderToString, snapshotEverything, TestContext, trim } from "../helpers";
+import {
+  renderToString,
+  snapshotEverything,
+  snapshotTemplate,
+  TestContext,
+  trim,
+} from "../helpers";
 
 snapshotEverything();
 
@@ -116,7 +121,7 @@ describe("misc", () => {
   });
 
   test("other complex template", () => {
-    xml`
+    snapshotTemplate(`
         <div>
           <header>
               <nav class="navbar navbar-expand-md navbar-light bg-light">
@@ -257,6 +262,6 @@ describe("misc", () => {
                   </div>
               </div>
           </div>
-      </div>`;
+      </div>`);
   });
 });

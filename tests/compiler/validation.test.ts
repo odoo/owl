@@ -1,5 +1,5 @@
 import { TemplateSet } from "../../src/app/template_set";
-import { renderToString, TestContext, compile } from "../helpers";
+import { renderToString, snapshotTemplate, TestContext } from "../helpers";
 
 // -----------------------------------------------------------------------------
 // basic validation
@@ -21,7 +21,7 @@ describe("basic validation", () => {
 
   test("invalid xml", () => {
     const template = "<div>";
-    expect(() => compile(template)).toThrow("Invalid XML in template");
+    expect(() => snapshotTemplate(template)).toThrow("Invalid XML in template");
   });
 
   test("missing template in template set", () => {

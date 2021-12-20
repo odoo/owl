@@ -5,11 +5,15 @@ exports[`Portal Portal composed with t-slot 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<div block-handler-0=\\"custom\\"><span id=\\"childSpan\\">child2</span></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  function slot1(ctx, node, key = \\"\\") {
+    return component(\`Child2\`, {customHandler: ctx['_handled']}, key + \`__2\`, node, ctx);
+  }
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = [ctx['onCustom'], ctx];
-    return block1([d1]);
+    let b3 = component(\`Child\`, {slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__3\`, node, ctx);
+    return block1([], [b3]);
   }
 }"
 `;
@@ -35,15 +39,11 @@ exports[`Portal Portal composed with t-slot 3`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  function slot1(ctx, node, key = \\"\\") {
-    return component(\`Child2\`, {customHandler: ctx['_handled']}, key + \`__2\`, node, ctx);
-  }
+  let block1 = createBlock(\`<div block-handler-0=\\"custom\\"><span id=\\"childSpan\\">child2</span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = component(\`Child\`, {slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__3\`, node, ctx);
-    return block1([], [b3]);
+    let d1 = [ctx['onCustom'], ctx];
+    return block1([d1]);
   }
 }"
 `;
@@ -72,20 +72,6 @@ exports[`Portal conditional use of Portal (with sub Component) 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<p><block-text-0/></p>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].val;
-    return block1([d1]);
-  }
-}"
-`;
-
-exports[`Portal conditional use of Portal (with sub Component) 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
   let block2 = createBlock(\`<span>1</span>\`);
   
   function slot1(ctx, node, key = \\"\\") {
@@ -99,6 +85,20 @@ exports[`Portal conditional use of Portal (with sub Component) 2`] = `
       b4 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__3\`, node, ctx);
     }
     return multi([b2, b4]);
+  }
+}"
+`;
+
+exports[`Portal conditional use of Portal (with sub Component) 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<p><block-text-0/></p>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['props'].val;
+    return block1([d1]);
   }
 }"
 `;
@@ -131,20 +131,6 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 1`] 
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].val;
-    return block1([d1]);
-  }
-}"
-`;
-
-exports[`Portal lifecycle hooks of portal sub component are properly called 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
@@ -157,6 +143,20 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 2`] 
       b3 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__3\`, node, ctx);
     }
     return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`Portal lifecycle hooks of portal sub component are properly called 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['props'].val;
+    return block1([d1]);
   }
 }"
 `;
@@ -190,20 +190,6 @@ exports[`Portal portal destroys on crash 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].error&&this.will.crash;
-    return block1([d1]);
-  }
-}"
-`;
-
-exports[`Portal portal destroys on crash 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
@@ -217,7 +203,7 @@ exports[`Portal portal destroys on crash 2`] = `
 }"
 `;
 
-exports[`Portal portal with child and props 1`] = `
+exports[`Portal portal destroys on crash 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -225,13 +211,13 @@ exports[`Portal portal with child and props 1`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].val;
+    let d1 = ctx['props'].error&&this.will.crash;
     return block1([d1]);
   }
 }"
 `;
 
-exports[`Portal portal with child and props 2`] = `
+exports[`Portal portal with child and props 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -245,6 +231,20 @@ exports[`Portal portal with child and props 2`] = `
   return function template(ctx, node, key = \\"\\") {
     let b3 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__3\`, node, ctx);
     return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`Portal portal with child and props 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['props'].val;
+    return block1([d1]);
   }
 }"
 `;
@@ -362,19 +362,6 @@ exports[`Portal portal's parent's env is not polluted 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<button>child</button>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    return block1();
-  }
-}"
-`;
-
-exports[`Portal portal's parent's env is not polluted 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
@@ -384,6 +371,19 @@ exports[`Portal portal's parent's env is not polluted 2`] = `
   return function template(ctx, node, key = \\"\\") {
     let b3 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__3\`, node, ctx);
     return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`Portal portal's parent's env is not polluted 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<button>child</button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
   }
 }"
 `;
@@ -439,7 +439,9 @@ exports[`Portal: Props validation target is mandatory 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = component(\`Portal\`, {slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
+    const props2 = {slots: {'default': {__render: slot1, __ctx: ctx}}}
+    helpers.validateProps(\`Portal\`, props2, ctx)
+    let b3 = component(\`Portal\`, props2, key + \`__3\`, node, ctx);
     return block1([], [b3]);
   }
 }"
@@ -458,27 +460,15 @@ exports[`Portal: Props validation target is not list 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = component(\`Portal\`, {target: ['body'],slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
+    const props2 = {target: ['body'],slots: {'default': {__render: slot1, __ctx: ctx}}}
+    helpers.validateProps(\`Portal\`, props2, ctx)
+    let b3 = component(\`Portal\`, props2, key + \`__3\`, node, ctx);
     return block1([], [b3]);
   }
 }"
 `;
 
 exports[`Portal: UI/UX focus is kept across re-renders 1`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
-  let block1 = createBlock(\`<input id=\\"target-me\\" block-attribute-0=\\"placeholder\\"/>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].val;
-    return block1([d1]);
-  }
-}"
-`;
-
-exports[`Portal: UI/UX focus is kept across re-renders 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -492,6 +482,20 @@ exports[`Portal: UI/UX focus is kept across re-renders 2`] = `
   return function template(ctx, node, key = \\"\\") {
     let b3 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__3\`, node, ctx);
     return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`Portal: UI/UX focus is kept across re-renders 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<input id=\\"target-me\\" block-attribute-0=\\"placeholder\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx['props'].val;
+    return block1([d1]);
   }
 }"
 `;

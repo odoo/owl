@@ -1,18 +1,21 @@
-import { App, Component, mount, onMounted, useState, xml } from "../../src/index";
-import {
-  makeTestFixture,
-  nextTick,
-  snapshotApp,
-  snapshotEverything,
-  useLogLifecycle,
-} from "../helpers";
+import { Component, mount, onMounted, useState, xml } from "../../src/index";
+import { makeTestFixture, nextTick, snapshotEverything, useLogLifecycle } from "../helpers";
 
 snapshotEverything();
+
+let originalconsoleWarn = console.warn;
+let mockConsoleWarn: any;
 
 let fixture: HTMLElement;
 
 beforeEach(() => {
   fixture = makeTestFixture();
+  mockConsoleWarn = jest.fn(() => {});
+  console.warn = mockConsoleWarn;
+});
+
+afterEach(() => {
+  console.warn = originalconsoleWarn;
 });
 
 describe("list of components", () => {
@@ -312,12 +315,10 @@ describe("list of components", () => {
       `;
       static components = { Child };
     }
-    const app = new App(Parent);
-    app.configure({ dev: true });
     await expect(async () => {
-      await app.mount(fixture);
+      await mount(Parent, fixture, { dev: true });
     }).rejects.toThrowError("Got duplicate key in t-foreach: child");
-    snapshotApp(app);
     console.info = consoleInfo;
+    expect(mockConsoleWarn).toBeCalledTimes(1);
   });
 });

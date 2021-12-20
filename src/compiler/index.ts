@@ -22,7 +22,6 @@ export function compile(template: string | Node, options: CompileOptions = {}): 
   // code generation
   const codeGenerator = new CodeGenerator(ast, { ...options, hasSafeContext });
   const code = codeGenerator.generateCode();
-
   // template function
   return new Function("bdom, helpers", code) as TemplateFunction;
 }

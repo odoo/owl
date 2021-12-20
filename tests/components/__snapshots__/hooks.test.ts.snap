@@ -42,11 +42,8 @@ exports[`hooks can use onWillStart, onWillUpdateProps 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
-  
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].value;
-    return block1([d1]);
+    return component(\`MyComponent\`, {value: ctx['state'].value}, key + \`__1\`, node, ctx);
   }
 }"
 `;
@@ -56,8 +53,11 @@ exports[`hooks can use onWillStart, onWillUpdateProps 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  
   return function template(ctx, node, key = \\"\\") {
-    return component(\`MyComponent\`, {value: ctx['state'].value}, key + \`__1\`, node, ctx);
+    let d1 = ctx['props'].value;
+    return block1([d1]);
   }
 }"
 `;
@@ -108,11 +108,10 @@ exports[`hooks parent and child env 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
-  
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['env'].val;
-    return block1([d1]);
+    let b2 = text(ctx['env'].val);
+    let b3 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -122,10 +121,11 @@ exports[`hooks parent and child env 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
   return function template(ctx, node, key = \\"\\") {
-    let b2 = text(ctx['env'].val);
-    let b3 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
-    return multi([b2, b3]);
+    let d1 = ctx['env'].val;
+    return block1([d1]);
   }
 }"
 `;
@@ -163,12 +163,8 @@ exports[`hooks use sub env supports arbitrary descriptor 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<div><block-text-0/> <block-text-1/></div>\`);
-  
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['env'].someVal;
-    let d2 = ctx['env'].someVal2;
-    return block1([d1, d2]);
+    return component(\`Child\`, {}, key + \`__1\`, node, ctx);
   }
 }"
 `;
@@ -178,8 +174,12 @@ exports[`hooks use sub env supports arbitrary descriptor 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
+  let block1 = createBlock(\`<div><block-text-0/> <block-text-1/></div>\`);
+  
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    let d1 = ctx['env'].someVal;
+    let d2 = ctx['env'].someVal2;
+    return block1([d1, d2]);
   }
 }"
 `;
@@ -229,11 +229,12 @@ exports[`hooks useExternalListener 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
-  
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].value;
-    return block1([d1]);
+    let b2;
+    if (ctx['state'].flag) {
+      b2 = component(\`MyComponent\`, {}, key + \`__1\`, node, ctx);
+    }
+    return multi([b2]);
   }
 }"
 `;
@@ -243,12 +244,11 @@ exports[`hooks useExternalListener 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  
   return function template(ctx, node, key = \\"\\") {
-    let b2;
-    if (ctx['state'].flag) {
-      b2 = component(\`MyComponent\`, {}, key + \`__1\`, node, ctx);
-    }
-    return multi([b2]);
+    let d1 = ctx['props'].value;
+    return block1([d1]);
   }
 }"
 `;

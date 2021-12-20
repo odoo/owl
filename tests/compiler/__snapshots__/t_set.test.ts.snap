@@ -187,25 +187,6 @@ exports[`t-set t-set can't alter from within callee 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
-  
-  let block1 = createBlock(\`<div><block-text-0/><block-text-1/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    let d1 = ctx['iter'];
-    setContextValue(ctx, \\"iter\\", 'called');
-    let d2 = ctx['iter'];
-    return block1([d1, d2]);
-  }
-}"
-`;
-
-exports[`t-set t-set can't alter from within callee 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { isBoundary, withDefault, setContextValue, getTemplate } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
@@ -223,7 +204,7 @@ exports[`t-set t-set can't alter from within callee 2`] = `
 }"
 `;
 
-exports[`t-set t-set can't alter in t-call body 1`] = `
+exports[`t-set t-set can't alter from within callee 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -242,7 +223,7 @@ exports[`t-set t-set can't alter in t-call body 1`] = `
 }"
 `;
 
-exports[`t-set t-set can't alter in t-call body 2`] = `
+exports[`t-set t-set can't alter in t-call body 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -263,6 +244,25 @@ exports[`t-set t-set can't alter in t-call body 2`] = `
     ctx = ctx.__proto__;
     let d2 = ctx['iter'];
     return block1([d1, d2], [b2]);
+  }
+}"
+`;
+
+exports[`t-set t-set can't alter in t-call body 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div><block-text-0/><block-text-1/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    let d1 = ctx['iter'];
+    setContextValue(ctx, \\"iter\\", 'called');
+    let d2 = ctx['iter'];
+    return block1([d1, d2]);
   }
 }"
 `;

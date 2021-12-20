@@ -82,53 +82,6 @@ exports[`misc global 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { zero } = helpers;
-  
-  let block1 = createBlock(\`<año block-attribute-0=\\"falló\\"><block-child-0/></año>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    let d1 = 'agüero';
-    let b2 = ctx[zero];
-    return block1([d1], [b2]);
-  }
-}"
-`;
-
-exports[`misc global 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { withDefault } = helpers;
-  
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    let d1 = withDefault(ctx['foo'], \`foo default\`);
-    return block1([d1]);
-  }
-}"
-`;
-
-exports[`misc global 3`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { safeOutput, withDefault } = helpers;
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    let b3 = text(\`toto default\`);
-    let b2 = withDefault(safeOutput(ctx['toto']), b3);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`misc global 4`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { prepareList, isBoundary, withDefault, setContextValue, getTemplate, zero, withKey } = helpers;
   const callTemplate_2 = getTemplate(\`_callee-uses-foo\`);
   const callTemplate_4 = getTemplate(\`_callee-uses-foo\`);
@@ -173,6 +126,53 @@ exports[`misc global 4`] = `
     let b2 = list(c_block2);
     let b10 = callTemplate_10.call(this, ctx, node, key + \`__9\`);
     return block1([], [b2, b10]);
+  }
+}"
+`;
+
+exports[`misc global 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { withDefault } = helpers;
+  
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = withDefault(ctx['foo'], \`foo default\`);
+    return block1([d1]);
+  }
+}"
+`;
+
+exports[`misc global 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { zero } = helpers;
+  
+  let block1 = createBlock(\`<año block-attribute-0=\\"falló\\"><block-child-0/></año>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = 'agüero';
+    let b2 = ctx[zero];
+    return block1([d1], [b2]);
+  }
+}"
+`;
+
+exports[`misc global 4`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { safeOutput, withDefault } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b3 = text(\`toto default\`);
+    let b2 = withDefault(safeOutput(ctx['toto']), b3);
+    return block1([], [b2]);
   }
 }"
 `;

@@ -148,21 +148,6 @@ exports[`t-esc t-esc=0 is escaped 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { zero } = helpers;
-  
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx[zero];
-    return block1([d1]);
-  }
-}"
-`;
-
-exports[`t-esc t-esc=0 is escaped 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { isBoundary, zero, getTemplate } = helpers;
   const callTemplate_2 = getTemplate(\`sub\`);
   
@@ -176,6 +161,21 @@ exports[`t-esc t-esc=0 is escaped 2`] = `
     ctx[zero] = b2;
     let b3 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
     return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`t-esc t-esc=0 is escaped 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { zero } = helpers;
+  
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let d1 = ctx[zero];
+    return block1([d1]);
   }
 }"
 `;

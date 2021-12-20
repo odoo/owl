@@ -1,11 +1,5 @@
 import { App, Component, mount, useState, xml } from "../../src/index";
-import {
-  addTemplate,
-  isDirectChildOf,
-  makeTestFixture,
-  nextTick,
-  snapshotEverything,
-} from "../helpers";
+import { isDirectChildOf, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
 
@@ -17,20 +11,24 @@ beforeEach(() => {
 
 describe("t-call", () => {
   test("dynamic t-call", async () => {
-    class App extends Component {
+    class Root extends Component {
       static template = xml`
           <t t-call="{{current.template}}">
             owl
           </t>`;
       current = useState({ template: "foo" });
     }
-    addTemplate("foo", "<div>foo</div>");
-    addTemplate("bar", "bar");
 
-    const app = await mount(App, fixture);
+    const root = await mount(Root, fixture, {
+      templates: `
+        <templates>
+          <t t-name="foo"><div>foo</div></t>
+          <t t-name="bar">bar</t>
+        </templates>`,
+    });
     expect(fixture.innerHTML).toBe("<div>foo</div>");
 
-    app.current.template = "bar";
+    root.current.template = "bar";
     await nextTick();
     expect(fixture.innerHTML).toBe("bar");
   });

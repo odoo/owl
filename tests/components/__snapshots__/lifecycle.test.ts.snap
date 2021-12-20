@@ -18,10 +18,12 @@ exports[`lifecycle hooks component semantics 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<div>B</div>\`);
+  let block1 = createBlock(\`<div>A<block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    return block1();
+    let b2 = component(\`B\`, {}, key + \`__1\`, node, ctx);
+    let b3 = component(\`C\`, {}, key + \`__2\`, node, ctx);
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -31,7 +33,7 @@ exports[`lifecycle hooks component semantics 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<div>D</div>\`);
+  let block1 = createBlock(\`<div>B</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     return block1();
@@ -40,32 +42,6 @@ exports[`lifecycle hooks component semantics 2`] = `
 `;
 
 exports[`lifecycle hooks component semantics 3`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
-  let block1 = createBlock(\`<div>E</div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    return block1();
-  }
-}"
-`;
-
-exports[`lifecycle hooks component semantics 4`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
-  let block1 = createBlock(\`<div>F</div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    return block1();
-  }
-}"
-`;
-
-exports[`lifecycle hooks component semantics 5`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -85,36 +61,46 @@ exports[`lifecycle hooks component semantics 5`] = `
 }"
 `;
 
+exports[`lifecycle hooks component semantics 4`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div>D</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`lifecycle hooks component semantics 5`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div>E</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`lifecycle hooks component semantics 6`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<div>A<block-child-0/><block-child-1/></div>\`);
+  let block1 = createBlock(\`<div>F</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`B\`, {}, key + \`__1\`, node, ctx);
-    let b3 = component(\`C\`, {}, key + \`__2\`, node, ctx);
-    return block1([], [b2, b3]);
+    return block1();
   }
 }"
 `;
 
 exports[`lifecycle hooks components are unmounted and destroyed if no longer in DOM, even after updateprops 1`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].n;
-    return block1([d1]);
-  }
-}"
-`;
-
-exports[`lifecycle hooks components are unmounted and destroyed if no longer in DOM, even after updateprops 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -132,20 +118,21 @@ exports[`lifecycle hooks components are unmounted and destroyed if no longer in 
 }"
 `;
 
-exports[`lifecycle hooks components are unmounted destroyed if no longer in DOM 1`] = `
+exports[`lifecycle hooks components are unmounted and destroyed if no longer in DOM, even after updateprops 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<div/>\`);
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    return block1();
+    let d1 = ctx['props'].n;
+    return block1([d1]);
   }
 }"
 `;
 
-exports[`lifecycle hooks components are unmounted destroyed if no longer in DOM 2`] = `
+exports[`lifecycle hooks components are unmounted destroyed if no longer in DOM 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -160,7 +147,7 @@ exports[`lifecycle hooks components are unmounted destroyed if no longer in DOM 
 }"
 `;
 
-exports[`lifecycle hooks hooks are called in proper order in widget creation/destruction 1`] = `
+exports[`lifecycle hooks components are unmounted destroyed if no longer in DOM 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -173,7 +160,7 @@ exports[`lifecycle hooks hooks are called in proper order in widget creation/des
 }"
 `;
 
-exports[`lifecycle hooks hooks are called in proper order in widget creation/destruction 2`] = `
+exports[`lifecycle hooks hooks are called in proper order in widget creation/destruction 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -187,7 +174,7 @@ exports[`lifecycle hooks hooks are called in proper order in widget creation/des
 }"
 `;
 
-exports[`lifecycle hooks lifecycle semantics 1`] = `
+exports[`lifecycle hooks hooks are called in proper order in widget creation/destruction 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -200,7 +187,7 @@ exports[`lifecycle hooks lifecycle semantics 1`] = `
 }"
 `;
 
-exports[`lifecycle hooks lifecycle semantics 2`] = `
+exports[`lifecycle hooks lifecycle semantics 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -214,7 +201,7 @@ exports[`lifecycle hooks lifecycle semantics 2`] = `
 }"
 `;
 
-exports[`lifecycle hooks lifecycle semantics, part 2 1`] = `
+exports[`lifecycle hooks lifecycle semantics 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -223,6 +210,21 @@ exports[`lifecycle hooks lifecycle semantics, part 2 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     return block1();
+  }
+}"
+`;
+
+exports[`lifecycle hooks lifecycle semantics, part 2 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2;
+    if (ctx['state'].hasChild) {
+      b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    }
+    return multi([b2]);
   }
 }"
 `;
@@ -243,21 +245,6 @@ exports[`lifecycle hooks lifecycle semantics, part 2 3`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
-    let b2;
-    if (ctx['state'].hasChild) {
-      b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
-    }
-    return multi([b2]);
-  }
-}"
-`;
-
-exports[`lifecycle hooks lifecycle semantics, part 3 1`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
   let block1 = createBlock(\`<div/>\`);
   
   return function template(ctx, node, key = \\"\\") {
@@ -266,18 +253,7 @@ exports[`lifecycle hooks lifecycle semantics, part 3 1`] = `
 }"
 `;
 
-exports[`lifecycle hooks lifecycle semantics, part 3 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
-  return function template(ctx, node, key = \\"\\") {
-    return component(\`GrandChild\`, {}, key + \`__1\`, node, ctx);
-  }
-}"
-`;
-
-exports[`lifecycle hooks lifecycle semantics, part 3 3`] = `
+exports[`lifecycle hooks lifecycle semantics, part 3 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -297,10 +273,12 @@ exports[`lifecycle hooks lifecycle semantics, part 4 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<div/>\`);
-  
   return function template(ctx, node, key = \\"\\") {
-    return block1();
+    let b2;
+    if (ctx['state'].hasChild) {
+      b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    }
+    return multi([b2]);
   }
 }"
 `;
@@ -321,12 +299,10 @@ exports[`lifecycle hooks lifecycle semantics, part 4 3`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
+  let block1 = createBlock(\`<div/>\`);
+  
   return function template(ctx, node, key = \\"\\") {
-    let b2;
-    if (ctx['state'].hasChild) {
-      b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
-    }
-    return multi([b2]);
+    return block1();
   }
 }"
 `;
@@ -336,19 +312,6 @@ exports[`lifecycle hooks lifecycle semantics, part 5 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<div/>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    return block1();
-  }
-}"
-`;
-
-exports[`lifecycle hooks lifecycle semantics, part 5 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
   return function template(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].hasChild) {
@@ -359,7 +322,7 @@ exports[`lifecycle hooks lifecycle semantics, part 5 2`] = `
 }"
 `;
 
-exports[`lifecycle hooks lifecycle semantics, part 6 1`] = `
+exports[`lifecycle hooks lifecycle semantics, part 5 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -372,13 +335,26 @@ exports[`lifecycle hooks lifecycle semantics, part 6 1`] = `
 }"
 `;
 
-exports[`lifecycle hooks lifecycle semantics, part 6 2`] = `
+exports[`lifecycle hooks lifecycle semantics, part 6 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
     return component(\`Child\`, {value: ctx['state'].value}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`lifecycle hooks lifecycle semantics, part 6 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
   }
 }"
 `;
@@ -401,19 +377,6 @@ exports[`lifecycle hooks mounted hook is called on every mount, not just the fir
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<div>child</div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    return block1();
-  }
-}"
-`;
-
-exports[`lifecycle hooks mounted hook is called on every mount, not just the first one 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
   return function template(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].hasChild) {
@@ -424,12 +387,12 @@ exports[`lifecycle hooks mounted hook is called on every mount, not just the fir
 }"
 `;
 
-exports[`lifecycle hooks mounted hook is called on subcomponents, in proper order 1`] = `
+exports[`lifecycle hooks mounted hook is called on every mount, not just the first one 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<div/>\`);
+  let block1 = createBlock(\`<div>child</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     return block1();
@@ -437,7 +400,7 @@ exports[`lifecycle hooks mounted hook is called on subcomponents, in proper orde
 }"
 `;
 
-exports[`lifecycle hooks mounted hook is called on subcomponents, in proper order 2`] = `
+exports[`lifecycle hooks mounted hook is called on subcomponents, in proper order 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -451,7 +414,7 @@ exports[`lifecycle hooks mounted hook is called on subcomponents, in proper orde
 }"
 `;
 
-exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper order 1`] = `
+exports[`lifecycle hooks mounted hook is called on subcomponents, in proper order 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -460,6 +423,23 @@ exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper o
   
   return function template(ctx, node, key = \\"\\") {
     return block1();
+  }
+}"
+`;
+
+exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper order 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2;
+    if (ctx['state'].flag) {
+      b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    }
+    return block1([], [b2]);
   }
 }"
 `;
@@ -483,19 +463,26 @@ exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper o
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block1 = createBlock(\`<div/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2;
-    if (ctx['state'].flag) {
-      b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
-    }
-    return block1([], [b2]);
+    return block1();
   }
 }"
 `;
 
 exports[`lifecycle hooks onWillRender 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`Child\`, {}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`lifecycle hooks onWillRender 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -510,31 +497,7 @@ exports[`lifecycle hooks onWillRender 1`] = `
 }"
 `;
 
-exports[`lifecycle hooks onWillRender 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
-  return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {}, key + \`__1\`, node, ctx);
-  }
-}"
-`;
-
 exports[`lifecycle hooks patched hook is called after updateProps 1`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
-  let block1 = createBlock(\`<div/>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    return block1();
-  }
-}"
-`;
-
-exports[`lifecycle hooks patched hook is called after updateProps 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -544,6 +507,19 @@ exports[`lifecycle hooks patched hook is called after updateProps 2`] = `
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`Child\`, {a: ctx['state'].a}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`lifecycle hooks patched hook is called after updateProps 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
   }
 }"
 `;
@@ -609,19 +585,6 @@ exports[`lifecycle hooks sub widget (inside sub node): hooks are correctly calle
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<div/>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    return block1();
-  }
-}"
-`;
-
-exports[`lifecycle hooks sub widget (inside sub node): hooks are correctly called 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
   return function template(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].flag) {
@@ -632,16 +595,29 @@ exports[`lifecycle hooks sub widget (inside sub node): hooks are correctly calle
 }"
 `;
 
+exports[`lifecycle hooks sub widget (inside sub node): hooks are correctly called 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents, in proper order 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].n;
-    return block1([d1]);
+    let b2 = component(\`Child\`, {n: ctx['state'].n}, key + \`__1\`, node, ctx);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -665,11 +641,11 @@ exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents,
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`Child\`, {n: ctx['state'].n}, key + \`__1\`, node, ctx);
-    return block1([], [b2]);
+    let d1 = ctx['props'].n;
+    return block1([d1]);
   }
 }"
 `;
@@ -679,10 +655,8 @@ exports[`lifecycle hooks willStart hook is called on sub component 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<div/>\`);
-  
   return function template(ctx, node, key = \\"\\") {
-    return block1();
+    return component(\`Child\`, {}, key + \`__1\`, node, ctx);
   }
 }"
 `;
@@ -692,8 +666,10 @@ exports[`lifecycle hooks willStart hook is called on sub component 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
+  let block1 = createBlock(\`<div/>\`);
+  
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    return block1();
   }
 }"
 `;
@@ -729,19 +705,6 @@ exports[`lifecycle hooks willStart, mounted on subwidget rendered after main is 
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<div/>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    return block1();
-  }
-}"
-`;
-
-exports[`lifecycle hooks willStart, mounted on subwidget rendered after main is mounted in some other position 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   let block3 = createBlock(\`<div/>\`);
   
@@ -757,16 +720,26 @@ exports[`lifecycle hooks willStart, mounted on subwidget rendered after main is 
 }"
 `;
 
+exports[`lifecycle hooks willStart, mounted on subwidget rendered after main is mounted in some other position 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`lifecycle hooks willUpdateProps hook is called 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
-  
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].n;
-    return block1([d1]);
+    return component(\`Child\`, {n: ctx['state'].n}, key + \`__1\`, node, ctx);
   }
 }"
 `;
@@ -776,8 +749,11 @@ exports[`lifecycle hooks willUpdateProps hook is called 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {n: ctx['state'].n}, key + \`__1\`, node, ctx);
+    let d1 = ctx['props'].n;
+    return block1([d1]);
   }
 }"
 `;

@@ -1,4 +1,4 @@
-import { snapshotEverything, makeTestFixture, addTemplate, nextTick } from "../helpers";
+import { snapshotEverything, makeTestFixture, nextTick } from "../helpers";
 import { Component, mount, xml } from "../../src/index";
 
 snapshotEverything();
@@ -115,8 +115,6 @@ describe("t-key", () => {
       }
     }
 
-    addTemplate("calledTemplate", `<Child t-key="key" key="key" />`);
-
     class Parent extends Component {
       static components = { Child };
       static template = xml`<span>
@@ -128,7 +126,14 @@ describe("t-key", () => {
       key2 = 2;
     }
 
-    const parent = await mount(Parent, fixture);
+    const parent = await mount(Parent, fixture, {
+      templates: `
+        <templates>
+          <t t-name="calledTemplate">
+            <Child t-key="key" key="key" />
+          </t>
+        </templates>`,
+    });
     expect((parent.el as HTMLElement).innerHTML).toBe("<div>1</div><div>2</div>");
 
     parent.key1 = 2;
@@ -149,11 +154,6 @@ describe("t-key", () => {
       }
     }
 
-    addTemplate(
-      "calledTemplate",
-      `<Child t-key="key1" key="key1" /><Child t-key="key2" key="key2" />`
-    );
-
     class Parent extends Component {
       static components = { Child };
       static template = xml`<span>
@@ -164,7 +164,14 @@ describe("t-key", () => {
       key2 = 2;
     }
 
-    const parent = await mount(Parent, fixture);
+    const parent = await mount(Parent, fixture, {
+      templates: `
+        <templates>
+          <t t-name="calledTemplate">
+          <Child t-key="key1" key="key1" /><Child t-key="key2" key="key2" />
+          </t>
+        </templates>`,
+    });
     expect((parent.el as HTMLElement).innerHTML).toBe("<div>1</div><div>2</div>");
 
     parent.key1 = 2;

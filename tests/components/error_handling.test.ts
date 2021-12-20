@@ -37,7 +37,6 @@ beforeEach(() => {
 afterEach(() => {
   console.error = originalconsoleError;
   console.warn = originalconsoleWarn;
-  fixture = makeTestFixture();
 });
 
 describe("basics", () => {

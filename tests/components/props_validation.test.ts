@@ -1,11 +1,14 @@
-import { makeTestFixture, nextTick, snapshotApp } from "../helpers";
-import { Component, onError, xml } from "../../src";
-import { App, DEV_MSG } from "../../src/app/app";
+import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { Component, onError, xml, mount } from "../../src";
+import { DEV_MSG } from "../../src/app/app";
 import { validateProps } from "../../src/component/props_validation";
 
 let fixture: HTMLElement;
 
+snapshotEverything();
 const info = console.info;
+let originalconsoleWarn = console.warn;
+let mockConsoleWarn: any;
 
 beforeAll(() => {
   console.info = (message: any) => {
@@ -22,15 +25,13 @@ afterAll(() => {
 
 beforeEach(() => {
   fixture = makeTestFixture();
+  mockConsoleWarn = jest.fn(() => {});
+  console.warn = mockConsoleWarn;
 });
 
-async function mountApp(Root: any, dev: boolean = true) {
-  const app = new App(Root);
-  app.configure({ dev });
-  await app.mount(fixture);
-  snapshotApp(app);
-  return app;
-}
+afterEach(() => {
+  console.warn = originalconsoleWarn;
+});
 
 //------------------------------------------------------------------------------
 // Props validation
@@ -49,7 +50,7 @@ describe("props validation", () => {
     let error: Error | undefined;
 
     try {
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
@@ -58,7 +59,7 @@ describe("props validation", () => {
     error = undefined;
 
     try {
-      await mountApp(Parent, false);
+      await mount(Parent, fixture, { dev: false });
     } catch (e) {
       error = e as Error;
     }
@@ -77,7 +78,7 @@ describe("props validation", () => {
 
     let error: Error;
     try {
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
@@ -112,7 +113,7 @@ describe("props validation", () => {
       props = {};
 
       try {
-        await mountApp(Parent);
+        await mount(Parent, fixture, { dev: true });
       } catch (e) {
         error = e as Error;
       }
@@ -121,14 +122,14 @@ describe("props validation", () => {
       error = undefined;
       props = { p: test.ok };
       try {
-        await mountApp(Parent);
+        await mount(Parent, fixture, { dev: true });
       } catch (e) {
         error = e as Error;
       }
       expect(error!).toBeUndefined();
       props = { p: test.ko };
       try {
-        await mountApp(Parent);
+        await mount(Parent, fixture, { dev: true });
       } catch (e) {
         error = e as Error;
       }
@@ -162,7 +163,7 @@ describe("props validation", () => {
       let error: Error | undefined;
       props = {};
       try {
-        await mountApp(Parent);
+        await mount(Parent, fixture, { dev: true });
       } catch (e) {
         error = e as Error;
       }
@@ -171,14 +172,14 @@ describe("props validation", () => {
       error = undefined;
       props = { p: test.ok };
       try {
-        await mountApp(Parent);
+        await mount(Parent, fixture, { dev: true });
       } catch (e) {
         error = e as Error;
       }
       expect(error!).toBeUndefined();
       props = { p: test.ko };
       try {
-        await mountApp(Parent);
+        await mount(Parent, fixture, { dev: true });
       } catch (e) {
         error = e as Error;
       }
@@ -203,21 +204,21 @@ describe("props validation", () => {
     let props: { p?: any };
     try {
       props = { p: "string" };
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
     expect(error!).toBeUndefined();
     try {
       props = { p: true };
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
     expect(error!).toBeUndefined();
     try {
       props = { p: 1 };
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
@@ -241,21 +242,21 @@ describe("props validation", () => {
     let props: { p?: any };
     try {
       props = { p: "key" };
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
     expect(error!).toBeUndefined();
     try {
       props = {};
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
     expect(error!).toBeUndefined();
     try {
       props = { p: 1 };
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
@@ -279,21 +280,21 @@ describe("props validation", () => {
     let props: { p?: any };
     try {
       props = { p: [] };
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
     expect(error!).toBeUndefined();
     try {
       props = { p: ["string"] };
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
     expect(error!).toBeUndefined();
     try {
       props = { p: [1] };
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
@@ -301,7 +302,7 @@ describe("props validation", () => {
     error = undefined;
     try {
       props = { p: ["string", 1] };
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
@@ -323,28 +324,28 @@ describe("props validation", () => {
     let props: { p?: any };
     try {
       props = { p: [] };
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
     expect(error!).toBeUndefined();
     try {
       props = { p: ["string"] };
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
     expect(error!).toBeUndefined();
     try {
       props = { p: [false, true, "string"] };
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
     expect(error!).toBeUndefined();
     try {
       props = { p: [true, 1] };
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
@@ -370,14 +371,14 @@ describe("props validation", () => {
     let props: { p?: any };
     try {
       props = { p: { id: 1, url: "url" } };
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
     expect(error!).toBeUndefined();
     try {
       props = { p: { id: 1, url: "url", extra: true } };
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
@@ -385,7 +386,7 @@ describe("props validation", () => {
     expect(error!.message).toBe("Invalid prop 'p' in component SubComp (unknown prop 'extra')");
     try {
       props = { p: { id: "1", url: "url" } };
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
@@ -394,7 +395,7 @@ describe("props validation", () => {
     error = undefined;
     try {
       props = { p: { id: 1 } };
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
@@ -426,21 +427,21 @@ describe("props validation", () => {
     let props: { p?: any };
     try {
       props = { p: { id: 1, url: true } };
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
     expect(error!).toBeUndefined();
     try {
       props = { p: { id: 1, url: [12] } };
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
     expect(error!).toBeUndefined();
     try {
       props = { p: { id: 1, url: [12, true] } };
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
@@ -550,7 +551,7 @@ describe("props validation", () => {
       static components = { Child };
       static template = xml`<div><Child message="1"/></div>`;
     }
-    await mountApp(Parent);
+    await mount(Parent, fixture, { dev: true });
     expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
   });
 
@@ -649,7 +650,7 @@ describe("props validation", () => {
     }
     let error: Error;
     try {
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
@@ -671,10 +672,10 @@ describe("props validation", () => {
         onError((e) => (error = e));
       }
     }
-    const app = await mountApp(Parent);
+    const parent = await mount(Parent, fixture, { dev: true });
     expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
-    (app as any).root.component.state.p = undefined;
-    (app as any).root.component.render();
+    parent.state.p = undefined;
+    parent.render();
     await nextTick();
     expect(error!).toBeDefined();
     expect(error!.message).toBe("Missing props 'p' (component 'SubComp')");
@@ -693,10 +694,10 @@ describe("props validation", () => {
       state: any = { p: 1 };
     }
 
-    const app = await mountApp(Parent);
+    const parent = await mount(Parent, fixture, { dev: true });
     expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
-    (app as any).root.component.state.p = undefined;
-    (app as any).root.component.render();
+    parent.state.p = undefined;
+    parent.render();
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
   });
@@ -715,7 +716,7 @@ describe("props validation", () => {
     }
     let error: Error;
     try {
-      await mountApp(Parent);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
@@ -738,7 +739,7 @@ describe("default props", () => {
       static template = xml`<div><SubComp /></div>`;
       static components = { SubComp };
     }
-    await mountApp(Parent);
+    await mount(Parent, fixture, { dev: true });
     expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
   });
 
@@ -752,10 +753,10 @@ describe("default props", () => {
       static components = { SubComp };
       state: any = { p: 1 };
     }
-    const app = await mountApp(Parent);
+    const parent = await mount(Parent, fixture, { dev: true });
     expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
-    (app as any).root.component.state.p = undefined;
-    (app as any).root.component.render();
+    parent.state.p = undefined;
+    parent.render();
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
   });
@@ -770,7 +771,7 @@ describe("default props", () => {
       static template = xml`<div><SubComp/></div>`;
       static components = { SubComp };
     }
-    await mountApp(Parent);
+    await mount(Parent, fixture, { dev: true });
     expect(fixture.innerHTML).toBe("<div><span>heyhey</span></div>");
   });
 });

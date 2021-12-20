@@ -5,10 +5,13 @@ exports[`event handling handler receive the event as argument 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<div>simple vnode</div>\`);
+  let block1 = createBlock(\`<span block-handler-0=\\"click\\"><block-child-0/><block-text-1/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    return block1();
+    let d1 = [ctx['inc'], ctx];
+    let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    let d2 = ctx['state'].value;
+    return block1([d1, d2], [b2]);
   }
 }"
 `;
@@ -18,13 +21,10 @@ exports[`event handling handler receive the event as argument 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<span block-handler-0=\\"click\\"><block-child-0/><block-text-1/></span>\`);
+  let block1 = createBlock(\`<div>simple vnode</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = [ctx['inc'], ctx];
-    let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
-    let d2 = ctx['state'].value;
-    return block1([d1, d2], [b2]);
+    return block1();
   }
 }"
 `;

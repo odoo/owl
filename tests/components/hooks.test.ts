@@ -176,7 +176,7 @@ describe("hooks", () => {
       }
     }
     const env = { val: 1 };
-    await new App(Test).configure({ env }).mount(fixture);
+    await mount(Test, fixture, { env });
     expect(fixture.innerHTML).toBe("<div>1</div>");
   });
 
@@ -188,7 +188,7 @@ describe("hooks", () => {
       }
     }
     const env = { val: 3 };
-    const component = await new App(Test).configure({ env }).mount(fixture);
+    const component = await mount(Test, fixture, { env });
     expect(fixture.innerHTML).toBe("<div>3</div>");
     expect(component.env).not.toHaveProperty("val2");
     expect(component.env).toHaveProperty("val");
@@ -219,7 +219,7 @@ describe("hooks", () => {
         return someVal;
       },
     };
-    const component = await new App(Test).configure({ env }).mount(fixture);
+    const component = await mount(Test, fixture, { env });
     expect(fixture.innerHTML).toBe("<div>maggot brain</div>");
     someVal = "brain";
     someVal2 = "maggot";
@@ -252,7 +252,7 @@ describe("hooks", () => {
       }
     }
     const env = { val: 3 };
-    await new App(Parent).configure({ env }).mount(fixture);
+    await mount(Parent, fixture, { env });
     expect(fixture.innerHTML).toBe("3<div>5</div>");
   });
 

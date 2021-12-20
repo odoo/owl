@@ -1,4 +1,4 @@
-import { App, Component, mount, useState, xml } from "../../src";
+import { Component, mount, useState, xml } from "../../src";
 import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
@@ -64,7 +64,7 @@ describe("basics", () => {
       static components = { Child, OtherChild };
     }
     const env = { options: { flag: true } };
-    const parent = await new App(Parent).configure({ env }).mount(fixture);
+    const parent = await mount(Parent, fixture, { env });
     expect(fixture.innerHTML).toBe("<span>CHILD 1</span>");
 
     env.options.flag = false;

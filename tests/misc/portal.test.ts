@@ -1,5 +1,4 @@
 import {
-  App,
   Component,
   mount,
   onError,
@@ -432,10 +431,8 @@ describe("Portal", () => {
             </div>`;
     }
     const env = {};
-    const app = new App(Parent);
-    app.configure({ env });
     addOutsideDiv(fixture);
-    const parent = await mount(Parent, fixture);
+    const parent = await mount(Parent, fixture, { env });
     expect(parent.env).toStrictEqual({});
   });
 
@@ -529,10 +526,8 @@ describe("Portal: Props validation", () => {
         </div>`;
     }
     let error: Error;
-    let app = new App(Parent);
-    app.configure({ dev: true });
     try {
-      await app.mount(fixture);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }
@@ -555,10 +550,8 @@ describe("Portal: Props validation", () => {
         </div>`;
     }
     let error: Error;
-    let app = new App(Parent);
-    app.configure({ dev: true });
     try {
-      await app.mount(fixture);
+      await mount(Parent, fixture, { dev: true });
     } catch (e) {
       error = e as Error;
     }

@@ -13,6 +13,16 @@ import { handleError, fibersInError } from "./error_handling";
 import { applyDefaultProps } from "./props_validation";
 import { STATUS } from "./status";
 
+let currentNode: ComponentNode | null = null;
+
+export function getCurrent(): ComponentNode | null {
+  return currentNode;
+}
+
+export function useComponent(): Component {
+  return currentNode!.component;
+}
+
 export function component(
   name: string | typeof Component,
   props: any,
@@ -61,12 +71,6 @@ export function component(
 // -----------------------------------------------------------------------------
 //  Component VNode
 // -----------------------------------------------------------------------------
-
-let currentNode: ComponentNode | null = null;
-
-export function getCurrent(): ComponentNode | null {
-  return currentNode;
-}
 
 type LifecycleHook = Function;
 

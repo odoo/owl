@@ -21,7 +21,7 @@ describe("env handling", () => {
     class Test extends Component {
       static template = xml`<div/>`;
     }
-    const component = await new App(Test).configure({ env }).mount(fixture);
+    const component = await new App(Test, { env }).mount(fixture);
     expect(Object.isFrozen(component.env)).toBeTruthy();
     expect(component.env).toEqual({ foo: 42, bar: { value: 42 } });
     expect(() => {
@@ -47,7 +47,7 @@ describe("env handling", () => {
       static components = { Child };
     }
 
-    await new App(Test).configure({ env }).mount(fixture);
+    await new App(Test, { env }).mount(fixture);
     expect(child.env).toEqual(env);
   });
 });

@@ -37,22 +37,34 @@ function parseXML(xml: string): Document {
   return doc;
 }
 
+export interface TemplateSetConfig {
+  dev?: boolean;
+  translatableAttributes?: string[];
+  translateFn?: (s: string) => string;
+  templates?: string | Document;
+}
+
 export class TemplateSet {
+  dev: boolean;
   rawTemplates: typeof globalTemplates = Object.create(globalTemplates);
   templates: { [name: string]: Template } = {};
   translateFn?: (s: string) => string;
   translatableAttributes?: string[];
-  utils: typeof UTILS;
-  dev?: boolean;
-
-  constructor() {
-    const call = (owner: any, subTemplate: string, ctx: any, parent: any) => {
+  utils: typeof UTILS = Object.assign({}, UTILS, {
+    call: (owner: any, subTemplate: string, ctx: any, parent: any) => {
       const template = this.getTemplate(subTemplate);
       return toggler(subTemplate, template.call(owner, ctx, parent));
-    };
+    },
+    getTemplate: (name: string) => this.getTemplate(name),
+  });
 
-    const getTemplate = (name: string) => this.getTemplate(name);
-    this.utils = Object.assign({}, UTILS, { getTemplate, call });
+  constructor(config: TemplateSetConfig = {}) {
+    this.dev = config.dev || false;
+    this.translateFn = config.translateFn;
+    this.translatableAttributes = config.translatableAttributes;
+    if (config.templates) {
+      this.addTemplates(config.templates);
+    }
   }
 
   addTemplate(name: string, template: string | Node, options: { allowDuplicate?: boolean } = {}) {

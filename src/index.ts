@@ -32,27 +32,9 @@ export const blockDom = {
   comment,
 };
 
-import type { AppConfig } from "./app/app";
-import { App } from "./app/app";
-import { Component } from "./component/component";
-import { getCurrent } from "./component/component_node";
-
-export { App, Component };
-
-export async function mount<T extends typeof Component>(
-  C: T,
-  target: HTMLElement,
-  config: AppConfig = {}
-): Promise<InstanceType<T>> {
-  const app = new App(C);
-  return app.configure(config).mount(target);
-}
-
-export function useComponent(): Component {
-  const current = getCurrent();
-  return current!.component;
-}
-
+export { App, mount } from "./app/app";
+export { Component } from "./component/component";
+export { useComponent } from "./component/component_node";
 export { status } from "./component/status";
 export { Portal } from "./portal";
 export { Memo } from "./memo";
@@ -60,7 +42,6 @@ export { xml } from "./app/template_set";
 export { useState, reactive } from "./reactivity";
 export { useEffect, useEnv, useExternalListener, useRef, useSubEnv } from "./hooks";
 export { EventBus, whenReady, loadFile, markup } from "./utils";
-
 export {
   onWillStart,
   onMounted,

@@ -1060,6 +1060,19 @@ exports[`mount targets default mount option is 'last-child' 1`] = `
 }"
 `;
 
+exports[`mount targets mount function: can mount a component (with default position='last-child') 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div>app</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`support svg components add proper namespace to svg 1`] = `
 "function anonymous(bdom, helpers
 ) {

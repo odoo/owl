@@ -197,6 +197,25 @@ exports[`hooks useEffect hook dependencies prevent effects from rerunning when u
 }"
 `;
 
+exports[`hooks useEffect hook effect can depend on stuff in dom 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block2 = createBlock(\`<div block-ref=\\"0\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const refs = ctx.__owl__.refs;
+    let b2;
+    if (ctx['state'].value) {
+      let d1 = (el) => refs[\`div\`] = el;
+      b2 = block2([d1]);
+    }
+    return multi([b2]);
+  }
+}"
+`;
+
 exports[`hooks useEffect hook effect runs on mount, is reapplied on patch, and is cleaned up on unmount and before reapplying 1`] = `
 "function anonymous(bdom, helpers
 ) {

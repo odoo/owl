@@ -1,6 +1,6 @@
 import type { Env } from "./app/app";
 import { getCurrent } from "./component/component_node";
-import { onMounted, onPatched, onWillPatch, onWillUnmount } from "./component/lifecycle_hooks";
+import { onMounted, onPatched, onWillUnmount } from "./component/lifecycle_hooks";
 
 // -----------------------------------------------------------------------------
 // useRef
@@ -75,17 +75,12 @@ export function useEffect(effect: Effect, computeDependencies: () => any[] = () 
     cleanup = effect(...dependencies) || NO_OP;
   });
 
-  let shouldReapplyOnPatch = false;
-  onWillPatch(() => {
-    const newDeps = computeDependencies();
-    shouldReapplyOnPatch = newDeps.some((val, i) => val !== dependencies[i]);
-    if (shouldReapplyOnPatch) {
-      cleanup();
-      dependencies = newDeps;
-    }
-  });
   onPatched(() => {
-    if (shouldReapplyOnPatch) {
+    const newDeps = computeDependencies();
+    const shouldReapply = newDeps.some((val, i) => val !== dependencies[i]);
+    if (shouldReapply) {
+      dependencies = newDeps;
+      cleanup();
       cleanup = effect(...dependencies) || NO_OP;
     }
   });

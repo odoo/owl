@@ -10,10 +10,12 @@ import {
 } from "../../src";
 import { Portal, xml } from "../../src/";
 import { elem, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { DEV_MSG } from "../../src/app/app";
 
 let fixture: HTMLElement;
 let originalconsoleWarn = console.warn;
 let mockConsoleWarn: any;
+const info = console.info;
 
 function addOutsideDiv(fixture: HTMLElement): HTMLElement {
   let outside = document.createElement("div");
@@ -23,6 +25,19 @@ function addOutsideDiv(fixture: HTMLElement): HTMLElement {
 }
 
 snapshotEverything();
+
+beforeAll(() => {
+  console.info = (message: any) => {
+    if (message === DEV_MSG) {
+      return;
+    }
+    info(message);
+  };
+});
+
+afterAll(() => {
+  console.info = info;
+});
 
 beforeEach(() => {
   fixture = makeTestFixture();
@@ -49,6 +64,24 @@ describe("Portal", () => {
 
     addOutsideDiv(fixture);
     await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe('<div id="outside"><p>2</p></div><div><span>1</span></div>');
+  });
+
+  test("basic use of portal in dev mode", async () => {
+    class Parent extends Component {
+      static components = { Portal };
+      static template = xml`
+          <div>
+            <span>1</span>
+            <Portal target="'#outside'">
+              <p>2</p>
+            </Portal>
+          </div>`;
+    }
+
+    addOutsideDiv(fixture);
+    await mount(Parent, fixture, { dev: true });
 
     expect(fixture.innerHTML).toBe('<div id="outside"><p>2</p></div><div><span>1</span></div>');
   });

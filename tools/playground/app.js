@@ -39,18 +39,9 @@ function makeCodeIframe(js, css, xml) {
       const script = doc.createElement("script");
       script.type = "module";
       const content = `
-      import * as utils from "./utils.js";
-        (function (owl) {
-          const _configure = owl.App.prototype.configure;
-          owl.App.prototype.configure = function configureOverriden(config) {
-            config = Object.assign({ dev: true }, config); 
-            this.addTemplates(\`${sanitizedXML}\`);
-            return _configure.call(this, config);
-          }
-        })(owl);
-        (async function() {
+        (async function(TEMPLATES) {
           ${js}
-        })()`;
+        })(\`${sanitizedXML}\`)`;
       script.innerHTML = content;
       doc.body.appendChild(script);
     });

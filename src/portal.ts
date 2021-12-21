@@ -57,6 +57,7 @@ export class Portal extends Component {
     target: {
       type: String,
     },
+    slots: true,
   };
 
   constructor(props: any, env: any, node: ComponentNode) {

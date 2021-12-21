@@ -67,6 +67,27 @@ exports[`Portal basic use of portal 1`] = `
 }"
 `;
 
+exports[`Portal basic use of portal in dev mode 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><span>1</span><block-child-0/></div>\`);
+  let block2 = createBlock(\`<p>2</p>\`);
+  
+  function slot1(ctx, node, key = \\"\\") {
+    return block2();
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const props2 = {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}
+    helpers.validateProps(\`Portal\`, props2, ctx)
+    let b3 = component(\`Portal\`, props2, key + \`__3\`, node, ctx);
+    return block1([], [b3]);
+  }
+}"
+`;
+
 exports[`Portal conditional use of Portal (with sub Component) 1`] = `
 "function anonymous(bdom, helpers
 ) {

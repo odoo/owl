@@ -17,7 +17,7 @@ import {
   useSubEnv,
   xml,
 } from "../../src/index";
-import { elem, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { elem, logStep, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -396,6 +396,35 @@ describe("hooks", () => {
       ]);
     });
 
+    test("effect can depend on stuff in dom", async () => {
+      class MyComponent extends Component {
+        static template = xml`
+          <t t-if="state.value">
+            <div t-ref="div"/>
+          </t>`;
+        state = useState({
+          value: false,
+        });
+        setup() {
+          const ref = useRef("div");
+          useEffect(
+            (el) => {
+              logStep("effect started:" + (el ? "EL" : "NULL"));
+              return () => logStep("cleaning up effect:" + (el ? "EL" : "NULL"));
+            },
+            () => [ref.el]
+          );
+        }
+      }
+      const component = await mount(MyComponent, fixture);
+
+      expect(["effect started:NULL"]).toBeLogged();
+
+      component.state.value = true;
+      await nextTick();
+      expect(["cleaning up effect:NULL", "effect started:EL"]).toBeLogged();
+    });
+
     test("dependencies prevent effects from rerunning when unchanged", async () => {
       let steps = [];
       class MyComponent extends Component {
@@ -455,22 +484,22 @@ describe("hooks", () => {
 
         "before state mutation: a",
         // Cleanups run in reverse order
-        "cleaning up for ab: {a: 0, b: 0}",
         // Cleanup for b is not run
         "cleaning up for a: 0",
 
         "Effect a: 1",
+        "cleaning up for ab: {a: 0, b: 0}",
         // Effect b is not run
         "Effect ab: {a: 1, b: 0}",
         "after state mutation: a",
 
         "before state mutation: b",
-        "cleaning up for ab: {a: 1, b: 0}",
         "cleaning up for b: 0",
         // Cleanup for a is not run
 
         // Effect a is not run
         "Effect b: 1",
+        "cleaning up for ab: {a: 1, b: 0}",
         "Effect ab: {a: 1, b: 1}",
         "after state mutation: b",
 

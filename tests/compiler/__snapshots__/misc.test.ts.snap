@@ -215,6 +215,8 @@ exports[`misc other complex template 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const refs = ctx.__owl__.refs;
+    const ref1 = (el) => refs[\`search_input\`] = el;
+    const ref2 = (el) => refs[\`settings_menu\`] = el;
     let b2,b4,b14,b17,b22,b23,b24,b25;
     let attr1 = \`/runbot/\${ctx['project'].slug}\`;
     let txt1 = ctx['project'].name;
@@ -275,9 +277,7 @@ exports[`misc other complex template 1`] = `
     let attr8 = ctx['search'].value;
     let hdlr4 = [ctx['updateFilter'], ctx];
     let hdlr5 = [ctx['updateFilter'], ctx];
-    let d1 = (el) => refs[\`search_input\`] = el;
     let hdlr6 = [ctx['clearSearch'], ctx];
-    let d2 = (el) => refs[\`settings_menu\`] = el;
     if (ctx['triggers']) {
       ctx = Object.create(ctx);
       const [k_block18, v_block18, l_block18, c_block18] = prepareList(ctx['triggers']);
@@ -320,7 +320,7 @@ exports[`misc other complex template 1`] = `
       let b27 = component(\`BundlesList\`, {bundles: ctx['bundles'].dev,search: ctx['search']}, key + \`__3\`, node, ctx);
       b25 = block25([], [b26, b27]);
     }
-    return block1([attr1, txt1, hdlr2, hdlr3, attr8, hdlr4, hdlr5, d1, hdlr6, d2], [b2, b4, b14, b17, b22, b23, b24, b25]);
+    return block1([attr1, txt1, hdlr2, hdlr3, attr8, hdlr4, hdlr5, ref1, hdlr6, ref2], [b2, b4, b14, b17, b22, b23, b24, b25]);
   }
 }"
 `;

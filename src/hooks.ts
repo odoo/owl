@@ -12,9 +12,10 @@ import { onMounted, onPatched, onWillUnmount } from "./component/lifecycle_hooks
  */
 export function useRef<T extends HTMLElement = HTMLElement>(name: string): { el: T | null } {
   const node = getCurrent()!;
+  const refs = node.refs;
   return {
     get el(): T | null {
-      return node.refs[name] || null;
+      return refs[name] || null;
     },
   };
 }

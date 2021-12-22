@@ -114,16 +114,19 @@ exports[`t-esc t-esc is escaped 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { isBoundary, withDefault } = helpers;
+  let { isBoundary, withDefault, LazyValue } = helpers;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   let block2 = createBlock(\`<p>escaped</p>\`);
   
+  function value1(ctx, node, key = \\"\\") {
+    return block2();
+  }
+  
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    let b2 = block2();
-    ctx[\`var\`] = b2;
+    ctx[\`var\`] = new LazyValue(value1, ctx, node);
     let txt1 = ctx['var'];
     return block1([txt1]);
   }

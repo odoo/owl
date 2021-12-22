@@ -966,10 +966,17 @@ export class CodeGenerator {
     this.helpers.add("isBoundary").add("withDefault");
     const expr = ast.value ? compileExpr(ast.value || "") : "null";
     if (ast.body) {
+      const initialTarget = this.target;
+      this.helpers.add("LazyValue");
+      let name = this.generateId("value");
+      const fn = new CodeTarget(name);
+      this.targets.push(fn);
+      this.target = fn;
       const subCtx: Context = createContext(ctx);
-      const nextId = `b${BlockDescription.nextBlockId}`;
       this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
-      const value = ast.value ? (nextId ? `withDefault(${expr}, ${nextId})` : expr) : nextId;
+      this.target = initialTarget;
+      let value = `new LazyValue(${name}, ctx, node)`;
+      value = ast.value ? (value ? `withDefault(${expr}, ${value})` : expr) : value;
       this.addLine(`ctx[\`${ast.name}\`] = ${value};`);
     } else {
       let value: string;

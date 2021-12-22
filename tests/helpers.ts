@@ -78,7 +78,14 @@ export function snapshotTemplate(template: string) {
   expect(fn.toString()).toMatchSnapshot();
 }
 
-export function renderToBdom(template: string, context: any = {}, node: any = {}): BDom {
+export function renderToBdom(template: string, context: any = {}, node?: any): BDom {
+  if (!node) {
+    if (!context.__owl__) {
+      context.__owl__ = { component: context };
+    } else {
+      context.__owl__.component = context;
+    }
+  }
   const fn = compile(template);
   if (shouldSnapshot && !snapshottedTemplates.has(template)) {
     snapshottedTemplates.add(template);
@@ -87,9 +94,9 @@ export function renderToBdom(template: string, context: any = {}, node: any = {}
   return fn(blockDom, UTILS)(context, node);
 }
 
-export function renderToString(template: string, context: any = {}): string {
+export function renderToString(template: string, context: any = {}, node?: any): string {
   const fixture = makeTestFixture();
-  const bdom = renderToBdom(template, context);
+  const bdom = renderToBdom(template, context, node);
   mount(bdom, fixture);
   return fixture.innerHTML;
 }

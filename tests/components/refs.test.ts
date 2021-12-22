@@ -53,4 +53,51 @@ describe("refs", () => {
       '<div><span class="counter">1</span><span><button>do something</button></span></div>'
     );
   });
+
+  test("can use 2 refs with same name in a t-if/t-else situation", async () => {
+    class Test extends Component {
+      static template = xml`
+        <t t-if="state.value">
+          <div t-ref="coucou"/>
+        </t>
+        <t t-else="">
+          <span t-ref="coucou"/>
+        </t>`;
+
+      state = useState({ value: true });
+      ref = useRef("coucou");
+    }
+    const test = await mount(Test, fixture);
+    expect(fixture.innerHTML).toBe("<div></div>");
+    expect(test.ref.el!.tagName).toBe("DIV");
+
+    test.state.value = false;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span></span>");
+    expect(test.ref.el!.tagName).toBe("SPAN");
+
+    test.state.value = true;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div></div>");
+    expect(test.ref.el!.tagName).toBe("DIV");
+  });
+
+  test("throws if there are 2 same refs at the same time", async () => {
+    const consoleWarn = console.warn;
+    console.warn = jest.fn();
+    class Test extends Component {
+      static template = xml`
+        <div t-ref="coucou"/>
+        <span t-ref="coucou"/>`;
+
+      state = useState({ value: true });
+      ref = useRef("coucou");
+    }
+
+    await expect(async () => {
+      await mount(Test, fixture);
+    }).rejects.toThrowError("Cannot have 2 elements with same ref name at the same time");
+    expect(console.warn).toBeCalledTimes(1);
+    console.warn = consoleWarn;
+  });
 });

@@ -148,6 +148,8 @@ class CodeTarget {
   hasRoot = false;
   hasCache = false;
   hasRef: boolean = false;
+  // maps ref name to [id, expr]
+  refInfo: { [name: string]: [string, string] } = {};
   shouldProtectScope: boolean = false;
 
   constructor(name: string) {
@@ -168,6 +170,10 @@ class CodeTarget {
     result.push(`function ${this.name}(ctx, node, key = "") {`);
     if (this.hasRef) {
       result.push(`  const refs = ctx.__owl__.refs;`);
+      for (let name in this.refInfo) {
+        const [id, expr] = this.refInfo[name];
+        result.push(`  const ${id} = ${expr};`);
+      }
     }
     if (this.shouldProtectScope) {
       result.push(`  ctx = Object.create(ctx);`);
@@ -556,8 +562,20 @@ export class CodeGenerator {
         const idx = block!.insertData(`(el) => refs[\`${str}\`] = el`, "ref");
         attrs["block-ref"] = String(idx);
       } else {
-        const idx = block!.insertData(`(el) => refs[\`${ast.ref}\`] = el`);
-        attrs["block-ref"] = String(idx);
+        let name = ast.ref;
+        if (name in this.target.refInfo) {
+          // ref has already been defined
+          this.helpers.add("multiRefSetter");
+          const info = this.target.refInfo[name];
+          const index = block!.data.push(info[0]) - 1;
+          attrs["block-ref"] = String(index);
+          info[1] = `multiRefSetter(refs, \`${name}\`)`;
+        } else {
+          let id = this.generateId("ref");
+          this.target.refInfo[name] = [id, `(el) => refs[\`${name}\`] = el`];
+          const index = block!.data.push(id) - 1;
+          attrs["block-ref"] = String(index);
+        }
       }
     }
 

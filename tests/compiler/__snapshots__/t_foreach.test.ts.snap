@@ -37,8 +37,8 @@ exports[`t-foreach iterate on items (on a element node) 1`] = `
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`item\`] = v_block2[i1];
       let key1 = ctx['item'];
-      let d1 = ctx['item'];
-      c_block2[i1] = withKey(block3([d1]), key1);
+      let txt1 = ctx['item'];
+      c_block2[i1] = withKey(block3([txt1]), key1);
     }
     let b2 = list(c_block2);
     return block1([], [b2]);
@@ -200,10 +200,10 @@ exports[`t-foreach simple iteration with two nodes inside 1`] = `
     for (let i1 = 0; i1 < l_block1; i1++) {
       ctx[\`item\`] = v_block1[i1];
       let key1 = ctx['item'];
-      let d1 = ctx['item'];
-      let b3 = block3([d1]);
-      let d2 = ctx['item'];
-      let b4 = block4([d2]);
+      let txt1 = ctx['item'];
+      let b3 = block3([txt1]);
+      let txt2 = ctx['item'];
+      let b4 = block4([txt2]);
       c_block1[i1] = withKey(multi([b3, b4]), key1);
     }
     return list(c_block1);
@@ -250,16 +250,16 @@ exports[`t-foreach t-call with body in t-foreach in t-foreach 1`] = `
       }
       ctx = ctx.__proto__;
       let b4 = list(c_block4);
-      let d1 = ctx['c'];
-      let b6 = block6([d1]);
+      let txt1 = ctx['c'];
+      let b6 = block6([txt1]);
       c_block2[i1] = withKey(multi([b4, b6]), key1);
     }
     ctx = ctx.__proto__;
     let b2 = list(c_block2);
-    let d2 = ctx['a'];
-    let d3 = ctx['b'];
-    let d4 = ctx['c'];
-    return block1([d2, d3, d4], [b2]);
+    let txt2 = ctx['a'];
+    let txt3 = ctx['b'];
+    let txt4 = ctx['c'];
+    return block1([txt2, txt3, txt4], [b2]);
   }
 }"
 `;
@@ -315,16 +315,16 @@ exports[`t-foreach t-call without body in t-foreach in t-foreach 1`] = `
       }
       ctx = ctx.__proto__;
       let b4 = list(c_block4);
-      let d1 = ctx['c'];
-      let b6 = block6([d1]);
+      let txt1 = ctx['c'];
+      let b6 = block6([txt1]);
       c_block2[i1] = withKey(multi([b4, b6]), key1);
     }
     ctx = ctx.__proto__;
     let b2 = list(c_block2);
-    let d2 = ctx['a'];
-    let d3 = ctx['b'];
-    let d4 = ctx['c'];
-    return block1([d2, d3, d4], [b2]);
+    let txt2 = ctx['a'];
+    let txt3 = ctx['b'];
+    let txt4 = ctx['c'];
+    return block1([txt2, txt3, txt4], [b2]);
   }
 }"
 `;
@@ -401,8 +401,8 @@ exports[`t-foreach t-foreach with t-if inside (no external node) 1`] = `
       let key1 = ctx['elem'].id;
       let b3;
       if (ctx['elem'].id<3) {
-        let d1 = ctx['elem'].text;
-        b3 = block3([d1]);
+        let txt1 = ctx['elem'].text;
+        b3 = block3([txt1]);
       }
       c_block1[i1] = withKey(multi([b3]), key1);
     }
@@ -428,8 +428,8 @@ exports[`t-foreach t-foreach with t-if inside 1`] = `
       let key1 = ctx['elem'].id;
       let b4;
       if (ctx['elem'].id<3) {
-        let d1 = ctx['elem'].text;
-        b4 = block4([d1]);
+        let txt1 = ctx['elem'].text;
+        b4 = block4([txt1]);
       }
       c_block2[i1] = withKey(multi([b4]), key1);
     }
@@ -513,9 +513,9 @@ exports[`t-foreach with t-memo 1`] = `
           continue;
         }
       }
-      let d1 = ctx['item'].x;
-      let d2 = ctx['item'].y;
-      c_block2[i1] = withKey(block3([d1, d2]), key1);
+      let txt1 = ctx['item'].x;
+      let txt2 = ctx['item'].y;
+      c_block2[i1] = withKey(block3([txt1, txt2]), key1);
       nextCache[key1] = Object.assign(c_block2[i1], {memo: memo1});
     }
     let b2 = list(c_block2);

@@ -56,8 +56,8 @@ exports[`hooks can use onWillStart, onWillUpdateProps 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].value;
-    return block1([d1]);
+    let txt1 = ctx['props'].value;
+    return block1([txt1]);
   }
 }"
 `;
@@ -83,8 +83,8 @@ exports[`hooks can use useEnv 1`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['env'].val;
-    return block1([d1]);
+    let txt1 = ctx['env'].val;
+    return block1([txt1]);
   }
 }"
 `;
@@ -97,8 +97,8 @@ exports[`hooks mounted callbacks should be called in reverse order from willUnmo
   let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['state'].value;
-    return block1([d1]);
+    let txt1 = ctx['state'].value;
+    return block1([txt1]);
   }
 }"
 `;
@@ -124,8 +124,8 @@ exports[`hooks parent and child env 2`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['env'].val;
-    return block1([d1]);
+    let txt1 = ctx['env'].val;
+    return block1([txt1]);
   }
 }"
 `;
@@ -138,8 +138,8 @@ exports[`hooks two different call to willPatch/patched should work 1`] = `
   let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['state'].value;
-    return block1([d1]);
+    let txt1 = ctx['state'].value;
+    return block1([txt1]);
   }
 }"
 `;
@@ -152,8 +152,8 @@ exports[`hooks use sub env does not pollute user env 1`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['env'].val;
-    return block1([d1]);
+    let txt1 = ctx['env'].val;
+    return block1([txt1]);
   }
 }"
 `;
@@ -177,9 +177,9 @@ exports[`hooks use sub env supports arbitrary descriptor 2`] = `
   let block1 = createBlock(\`<div><block-text-0/> <block-text-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['env'].someVal;
-    let d2 = ctx['env'].someVal2;
-    return block1([d1, d2]);
+    let txt1 = ctx['env'].someVal;
+    let txt2 = ctx['env'].someVal2;
+    return block1([txt1, txt2]);
   }
 }"
 `;
@@ -237,8 +237,8 @@ exports[`hooks useEffect hook effect with empty dependency list never reruns 1`]
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['state'].value;
-    return block1([d1]);
+    let txt1 = ctx['state'].value;
+    return block1([txt1]);
   }
 }"
 `;
@@ -266,8 +266,8 @@ exports[`hooks useExternalListener 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].value;
-    return block1([d1]);
+    let txt1 = ctx['props'].value;
+    return block1([txt1]);
   }
 }"
 `;
@@ -282,8 +282,8 @@ exports[`hooks useRef hook: basic use 1`] = `
   return function template(ctx, node, key = \\"\\") {
     const refs = ctx.__owl__.refs;
     let d1 = (el) => refs[\`button\`] = el;
-    let d2 = ctx['value'];
-    return block1([d1, d2]);
+    let txt2 = ctx['value'];
+    return block1([d1, txt2]);
   }
 }"
 `;

@@ -69,8 +69,8 @@ class BlockDescription {
     this.type = type;
   }
 
-  insertData(str: string): number {
-    const id = "d" + BlockDescription.nextDataId++;
+  insertData(str: string, prefix: string = "d"): number {
+    const id = prefix + BlockDescription.nextDataId++;
     this.target.addLine(`let ${id} = ${str};`);
     return this.data.push(id) - 1;
   }
@@ -515,11 +515,11 @@ export class CodeGenerator {
     for (let key in ast.attrs) {
       if (key.startsWith("t-attf")) {
         let expr = interpolate(ast.attrs[key]);
-        const idx = block!.insertData(expr);
+        const idx = block!.insertData(expr, "attr");
         attrs["block-attribute-" + idx] = key.slice(7);
       } else if (key.startsWith("t-att")) {
         let expr = compileExpr(ast.attrs[key]);
-        const idx = block!.insertData(expr);
+        const idx = block!.insertData(expr, "attr");
         if (key === "t-att") {
           attrs[`block-attributes`] = String(idx);
         } else {
@@ -535,7 +535,7 @@ export class CodeGenerator {
     // event handlers
     for (let ev in ast.on) {
       const name = this.generateHandlerCode(ev, ast.on[ev]);
-      const idx = block!.insertData(name);
+      const idx = block!.insertData(name, "hdlr");
       attrs[`block-handler-${idx}`] = ev;
     }
 
@@ -548,7 +548,7 @@ export class CodeGenerator {
           INTERP_REGEXP,
           (expr) => "${" + this.captureExpression(expr.slice(2, -2), true) + "}"
         );
-        const idx = block!.insertData(`(el) => refs[\`${str}\`] = el`);
+        const idx = block!.insertData(`(el) => refs[\`${str}\`] = el`, "ref");
         attrs["block-ref"] = String(idx);
       } else {
         const idx = block!.insertData(`(el) => refs[\`${ast.ref}\`] = el`);
@@ -576,10 +576,13 @@ export class CodeGenerator {
 
       let idx: number;
       if (specialInitTargetAttr) {
-        idx = block!.insertData(`${baseExpression}[${expression}] === '${attrs[targetAttr]}'`);
+        idx = block!.insertData(
+          `${baseExpression}[${expression}] === '${attrs[targetAttr]}'`,
+          "attr"
+        );
         attrs[`block-attribute-${idx}`] = specialInitTargetAttr;
       } else {
-        idx = block!.insertData(`${baseExpression}[${expression}]`);
+        idx = block!.insertData(`${baseExpression}[${expression}]`, "attr");
         attrs[`block-attribute-${idx}`] = targetAttr;
       }
       this.helpers.add("toNumber");
@@ -588,7 +591,7 @@ export class CodeGenerator {
       valueCode = shouldNumberize ? `toNumber(${valueCode})` : valueCode;
 
       const handler = `[(ev) => { bExpr${id}[${expression}] = ${valueCode}; }]`;
-      idx = block!.insertData(handler);
+      idx = block!.insertData(handler, "hdlr");
       attrs[`block-handler-${idx}`] = eventType;
     }
 
@@ -652,7 +655,7 @@ export class CodeGenerator {
       block = this.createBlock(block, "text", ctx);
       this.insertBlock(`text(${expr})`, block, { ...ctx, forceNewBlock: forceNewBlock && !block });
     } else {
-      const idx = block.insertData(expr);
+      const idx = block.insertData(expr, "txt");
       const text = xmlDoc.createElement(`block-text-${idx}`);
       block.insert(text);
     }

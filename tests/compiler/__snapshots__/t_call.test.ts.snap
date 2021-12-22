@@ -286,8 +286,8 @@ exports[`t-call (template calling) dynamic t-call 2`] = `
   let block1 = createBlock(\`<foo><block-text-0/></foo>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['val'];
-    return block1([d1]);
+    let txt1 = ctx['val'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -300,8 +300,8 @@ exports[`t-call (template calling) dynamic t-call 3`] = `
   let block1 = createBlock(\`<bar><block-text-0/></bar>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['val'];
-    return block1([d1]);
+    let txt1 = ctx['val'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -388,7 +388,7 @@ exports[`t-call (template calling) recursive template, part 2 2`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    let d1 = ctx['node'].val;
+    let txt1 = ctx['node'].val;
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['node'].children||[]);
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -405,7 +405,7 @@ exports[`t-call (template calling) recursive template, part 2 2`] = `
       ctx = ctx.__proto__;
     }
     let b2 = list(c_block2);
-    return block1([d1], [b2]);
+    return block1([txt1], [b2]);
   }
 }"
 `;
@@ -443,7 +443,7 @@ exports[`t-call (template calling) recursive template, part 3 2`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    let d1 = ctx['node'].val;
+    let txt1 = ctx['node'].val;
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['node'].children||[]);
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -460,7 +460,7 @@ exports[`t-call (template calling) recursive template, part 3 2`] = `
       ctx = ctx.__proto__;
     }
     let b2 = list(c_block2);
-    return block1([d1], [b2]);
+    return block1([txt1], [b2]);
   }
 }"
 `;
@@ -500,8 +500,8 @@ exports[`t-call (template calling) recursive template, part 4: with t-set recurs
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"recursive_idx\\", ctx['recursive_idx']+1);
-    let d1 = ctx['node'].val;
-    let d2 = ctx['recursive_idx'];
+    let txt1 = ctx['node'].val;
+    let txt2 = ctx['recursive_idx'];
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['node'].children||[]);
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -518,7 +518,7 @@ exports[`t-call (template calling) recursive template, part 4: with t-set recurs
       ctx = ctx.__proto__;
     }
     let b2 = list(c_block2);
-    return block1([d1, d2], [b2]);
+    return block1([txt1, txt2], [b2]);
   }
 }"
 `;
@@ -540,8 +540,8 @@ exports[`t-call (template calling) scoped parameters 1`] = `
     setContextValue(ctx, \\"foo\\", 42);
     let b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
     ctx = ctx.__proto__;
-    let d1 = ctx['foo'];
-    return block1([d1], [b2]);
+    let txt1 = ctx['foo'];
+    return block1([txt1], [b2]);
   }
 }"
 `;
@@ -575,8 +575,8 @@ exports[`t-call (template calling) scoped parameters, part 2 1`] = `
     setContextValue(ctx, \\"foo\\", 42);
     let b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
     ctx = ctx.__proto__;
-    let d1 = ctx['foo'];
-    return block1([d1], [b2]);
+    let txt1 = ctx['foo'];
+    return block1([txt1], [b2]);
   }
 }"
 `;
@@ -716,8 +716,8 @@ exports[`t-call (template calling) t-call with t-set inside and body text conten
   let block1 = createBlock(\`<p><block-text-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['val'];
-    return block1([d1]);
+    let txt1 = ctx['val'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -764,8 +764,8 @@ exports[`t-call (template calling) t-call with t-set inside and outside 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['val3'];
-    return block1([d1]);
+    let txt1 = ctx['val3'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -831,8 +831,8 @@ exports[`t-call (template calling) t-call with t-set inside and outside. 2 3`] =
   let block2 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['val3'];
-    let b2 = block2([d1]);
+    let txt1 = ctx['val3'];
+    let b2 = block2([txt1]);
     let b3 = text(ctx['w']);
     return multi([b2, b3]);
   }
@@ -889,8 +889,8 @@ exports[`t-call (template calling) t-call, conditional and t-set in t-call body 
   let block1 = createBlock(\`<div>callee2 <block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['v'];
-    return block1([d1]);
+    let txt1 = ctx['v'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -922,8 +922,8 @@ exports[`t-call (template calling) t-esc inside t-call, with t-set outside 2`] =
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['v'];
-    return block1([d1]);
+    let txt1 = ctx['v'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -1015,8 +1015,8 @@ exports[`t-call (template calling) with used body 2`] = `
   let block1 = createBlock(\`<h1><block-text-0/></h1>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx[zero];
-    return block1([d1]);
+    let txt1 = ctx[zero];
+    return block1([txt1]);
   }
 }"
 `;

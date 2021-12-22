@@ -212,8 +212,8 @@ exports[`t-if dynamic content after t-if with two children nodes 1`] = `
       let b4 = block4();
       b2 = multi([b3, b4]);
     }
-    let d1 = ctx['text'];
-    return block1([d1], [b2]);
+    let txt1 = ctx['text'];
+    return block1([txt1], [b2]);
   }
 }"
 `;
@@ -522,8 +522,8 @@ exports[`t-if two t-ifs next to each other 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let b2,b3;
     if (ctx['condition']) {
-      let d1 = ctx['text'];
-      b2 = block2([d1]);
+      let txt1 = ctx['text'];
+      b2 = block2([txt1]);
     }
     if (ctx['condition']) {
       let b4 = block4();

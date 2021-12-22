@@ -32,8 +32,8 @@ exports[`list of components components in a node in a t-foreach  2`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].item;
-    return block1([d1]);
+    let txt1 = ctx['props'].item;
+    return block1([txt1]);
   }
 }"
 `;
@@ -150,8 +150,8 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].blip;
-    return block1([d1]);
+    let txt1 = ctx['props'].blip;
+    return block1([txt1]);
   }
 }"
 `;
@@ -198,8 +198,8 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].row+'_'+ctx['props'].col;
-    return block1([d1]);
+    let txt1 = ctx['props'].row+'_'+ctx['props'].col;
+    return block1([txt1]);
   }
 }"
 `;
@@ -231,8 +231,8 @@ exports[`list of components simple list 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].value;
-    return block1([d1]);
+    let txt1 = ctx['props'].value;
+    return block1([txt1]);
   }
 }"
 `;
@@ -267,8 +267,8 @@ exports[`list of components sub components rendered in a loop 2`] = `
   let block1 = createBlock(\`<p><block-text-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].n;
-    return block1([d1]);
+    let txt1 = ctx['props'].n;
+    return block1([txt1]);
   }
 }"
 `;
@@ -303,8 +303,8 @@ exports[`list of components sub components with some state rendered in a loop 2`
   let block1 = createBlock(\`<p><block-text-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['state'].n;
-    return block1([d1]);
+    let txt1 = ctx['state'].n;
+    return block1([txt1]);
   }
 }"
 `;
@@ -339,8 +339,8 @@ exports[`list of components switch component position 2`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].key;
-    return block1([d1]);
+    let txt1 = ctx['props'].key;
+    return block1([txt1]);
   }
 }"
 `;
@@ -376,9 +376,9 @@ exports[`list of components t-foreach with t-component, and update 2`] = `
   let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['state'].val;
-    let d2 = ctx['props'].val;
-    return block1([d1, d2]);
+    let txt1 = ctx['state'].val;
+    let txt2 = ctx['props'].val;
+    return block1([txt1, txt2]);
   }
 }"
 `;

@@ -44,8 +44,8 @@ exports[`calling render in destroy 3`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].fromA;
-    return block1([d1]);
+    let txt1 = ctx['props'].fromA;
+    return block1([txt1]);
   }
 }"
 `;
@@ -58,8 +58,8 @@ exports[`change state and call manually render: no unnecessary rendering 1`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['value'];
-    return block1([d1]);
+    let txt1 = ctx['value'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -89,8 +89,8 @@ exports[`changing state before first render does not trigger a render (with pare
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['value'];
-    return block1([d1]);
+    let txt1 = ctx['value'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -103,8 +103,8 @@ exports[`changing state before first render does not trigger a render 1`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['value'];
-    return block1([d1]);
+    let txt1 = ctx['value'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -145,9 +145,9 @@ exports[`concurrent renderings scenario 1 3`] = `
   let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].fromA;
-    let d2 = ctx['someValue']();
-    return block1([d1, d2]);
+    let txt1 = ctx['props'].fromA;
+    let txt2 = ctx['someValue']();
+    return block1([txt1, txt2]);
   }
 }"
 `;
@@ -160,9 +160,9 @@ exports[`concurrent renderings scenario 2 1`] = `
   let block1 = createBlock(\`<div><block-text-0/><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['state'].fromA;
+    let txt1 = ctx['state'].fromA;
     let b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
-    return block1([d1], [b2]);
+    return block1([txt1], [b2]);
   }
 }"
 `;
@@ -189,9 +189,9 @@ exports[`concurrent renderings scenario 2 3`] = `
   let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].fromA;
-    let d2 = ctx['props'].fromB;
-    return block1([d1, d2]);
+    let txt1 = ctx['props'].fromA;
+    let txt2 = ctx['props'].fromB;
+    return block1([txt1, txt2]);
   }
 }"
 `;
@@ -232,9 +232,9 @@ exports[`concurrent renderings scenario 2bis 3`] = `
   let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].fromA;
-    let d2 = ctx['props'].fromB;
-    return block1([d1, d2]);
+    let txt1 = ctx['props'].fromA;
+    let txt2 = ctx['props'].fromB;
+    return block1([txt1, txt2]);
   }
 }"
 `;
@@ -289,9 +289,9 @@ exports[`concurrent renderings scenario 3 4`] = `
   let block1 = createBlock(\`<i><block-text-0/><block-text-1/></i>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].fromA;
-    let d2 = ctx['someValue']();
-    return block1([d1, d2]);
+    let txt1 = ctx['props'].fromA;
+    let txt2 = ctx['someValue']();
+    return block1([txt1, txt2]);
   }
 }"
 `;
@@ -346,9 +346,9 @@ exports[`concurrent renderings scenario 4 4`] = `
   let block1 = createBlock(\`<i><block-text-0/><block-text-1/></i>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].fromA;
-    let d2 = ctx['someValue']();
-    return block1([d1, d2]);
+    let txt1 = ctx['props'].fromA;
+    let txt2 = ctx['someValue']();
+    return block1([txt1, txt2]);
   }
 }"
 `;
@@ -375,8 +375,8 @@ exports[`concurrent renderings scenario 5 2`] = `
   let block1 = createBlock(\`<p><block-text-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['someValue']();
-    return block1([d1]);
+    let txt1 = ctx['someValue']();
+    return block1([txt1]);
   }
 }"
 `;
@@ -403,8 +403,8 @@ exports[`concurrent renderings scenario 6 2`] = `
   let block1 = createBlock(\`<p><block-text-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['someValue']();
-    return block1([d1]);
+    let txt1 = ctx['someValue']();
+    return block1([txt1]);
   }
 }"
 `;
@@ -431,9 +431,9 @@ exports[`concurrent renderings scenario 7 2`] = `
   let block1 = createBlock(\`<p><block-text-0/><block-text-1/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].fromA;
-    let d2 = ctx['someValue']();
-    return block1([d1, d2]);
+    let txt1 = ctx['props'].fromA;
+    let txt2 = ctx['someValue']();
+    return block1([txt1, txt2]);
   }
 }"
 `;
@@ -460,9 +460,9 @@ exports[`concurrent renderings scenario 8 2`] = `
   let block1 = createBlock(\`<p><block-text-0/><block-text-1/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].fromA;
-    let d2 = ctx['state'].fromB;
-    return block1([d1, d2]);
+    let txt1 = ctx['props'].fromA;
+    let txt2 = ctx['state'].fromB;
+    return block1([txt1, txt2]);
   }
 }"
 `;
@@ -475,10 +475,10 @@ exports[`concurrent renderings scenario 9 1`] = `
   let block1 = createBlock(\`<div><block-text-0/><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['state'].fromA;
+    let txt1 = ctx['state'].fromA;
     let b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
     let b3 = component(\`ComponentC\`, {fromA: ctx['state'].fromA}, key + \`__2\`, node, ctx);
-    return block1([d1], [b2, b3]);
+    return block1([txt1], [b2, b3]);
   }
 }"
 `;
@@ -491,8 +491,8 @@ exports[`concurrent renderings scenario 9 2`] = `
   let block1 = createBlock(\`<b><block-text-0/></b>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].fromA;
-    return block1([d1]);
+    let txt1 = ctx['props'].fromA;
+    return block1([txt1]);
   }
 }"
 `;
@@ -519,9 +519,9 @@ exports[`concurrent renderings scenario 9 4`] = `
   let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].fromA;
-    let d2 = ctx['props'].fromC;
-    return block1([d1, d2]);
+    let txt1 = ctx['props'].fromA;
+    let txt2 = ctx['props'].fromC;
+    return block1([txt1, txt2]);
   }
 }"
 `;
@@ -565,8 +565,8 @@ exports[`concurrent renderings scenario 10 3`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['value'];
-    return block1([d1]);
+    let txt1 = ctx['value'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -593,9 +593,9 @@ exports[`concurrent renderings scenario 11 2`] = `
   let block1 = createBlock(\`<span><block-text-0/>|<block-text-1/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].val;
-    let d2 = ctx['val'];
-    return block1([d1, d2]);
+    let txt1 = ctx['props'].val;
+    let txt2 = ctx['val'];
+    return block1([txt1, txt2]);
   }
 }"
 `;
@@ -622,8 +622,8 @@ exports[`concurrent renderings scenario 12 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].val;
-    return block1([d1]);
+    let txt1 = ctx['props'].val;
+    return block1([txt1]);
   }
 }"
 `;
@@ -654,8 +654,8 @@ exports[`concurrent renderings scenario 13 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['state'].val;
-    return block1([d1]);
+    let txt1 = ctx['state'].val;
+    return block1([txt1]);
   }
 }"
 `;
@@ -696,10 +696,10 @@ exports[`concurrent renderings scenario 14 3`] = `
   let block1 = createBlock(\`<p><span><block-text-0/></span><span><block-text-1/></span><span><block-text-2/></span></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].fromA;
-    let d2 = ctx['props'].fromB;
-    let d3 = ctx['state'].fromC;
-    return block1([d1, d2, d3]);
+    let txt1 = ctx['props'].fromA;
+    let txt2 = ctx['props'].fromB;
+    let txt3 = ctx['state'].fromC;
+    return block1([txt1, txt2, txt3]);
   }
 }"
 `;
@@ -740,10 +740,10 @@ exports[`concurrent renderings scenario 15 3`] = `
   let block1 = createBlock(\`<p><span><block-text-0/></span><span><block-text-1/></span><span><block-text-2/></span></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].fromA;
-    let d2 = ctx['props'].fromB;
-    let d3 = ctx['state'].fromC;
-    return block1([d1, d2, d3]);
+    let txt1 = ctx['props'].fromA;
+    let txt2 = ctx['props'].fromB;
+    let txt3 = ctx['state'].fromC;
+    return block1([txt1, txt2, txt3]);
   }
 }"
 `;
@@ -828,8 +828,8 @@ exports[`creating two async components, scenario 1 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['getValue']();
-    return block1([d1]);
+    let txt1 = ctx['getValue']();
+    return block1([txt1]);
   }
 }"
 `;
@@ -873,8 +873,8 @@ exports[`creating two async components, scenario 2 2`] = `
   let block1 = createBlock(\`<span>a<block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].val;
-    return block1([d1]);
+    let txt1 = ctx['props'].val;
+    return block1([txt1]);
   }
 }"
 `;
@@ -887,8 +887,8 @@ exports[`creating two async components, scenario 2 3`] = `
   let block1 = createBlock(\`<span>b<block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].val;
-    return block1([d1]);
+    let txt1 = ctx['props'].val;
+    return block1([txt1]);
   }
 }"
 `;
@@ -919,8 +919,8 @@ exports[`creating two async components, scenario 3 (patching in the same frame) 
   let block1 = createBlock(\`<span>a<block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].val;
-    return block1([d1]);
+    let txt1 = ctx['props'].val;
+    return block1([txt1]);
   }
 }"
 `;
@@ -933,8 +933,8 @@ exports[`creating two async components, scenario 3 (patching in the same frame) 
   let block1 = createBlock(\`<span>b<block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].val;
-    return block1([d1]);
+    let txt1 = ctx['props'].val;
+    return block1([txt1]);
   }
 }"
 `;
@@ -1040,8 +1040,8 @@ exports[`destroying/recreating a subwidget with different props (if start is not
   let block1 = createBlock(\`<span>child:<block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].val;
-    return block1([d1]);
+    let txt1 = ctx['props'].val;
+    return block1([txt1]);
   }
 }"
 `;
@@ -1121,11 +1121,11 @@ exports[`rendering component again in next microtick 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     let b2;
-    let d1 = [ctx['onClick'], ctx];
+    let hdlr1 = [ctx['onClick'], ctx];
     if (ctx['env'].config.flag) {
       b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
     }
-    return block1([d1], [b2]);
+    return block1([hdlr1], [b2]);
   }
 }"
 `;
@@ -1169,9 +1169,9 @@ exports[`two renderings initiated between willPatch and patched 2`] = `
   let block1 = createBlock(\`<abc><block-text-0/><block-text-1/></abc>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].val;
-    let d2 = ctx['mounted'];
-    return block1([d1, d2]);
+    let txt1 = ctx['props'].val;
+    let txt2 = ctx['mounted'];
+    return block1([txt1, txt2]);
   }
 }"
 `;
@@ -1220,8 +1220,8 @@ exports[`update a sub-component twice in the same frame 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].val;
-    return block1([d1]);
+    let txt1 = ctx['props'].val;
+    return block1([txt1]);
   }
 }"
 `;
@@ -1248,8 +1248,8 @@ exports[`update a sub-component twice in the same frame, 2 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['val']();
-    return block1([d1]);
+    let txt1 = ctx['val']();
+    return block1([txt1]);
   }
 }"
 `;

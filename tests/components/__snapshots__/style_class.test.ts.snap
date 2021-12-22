@@ -21,8 +21,8 @@ exports[`style and class handling can set class on multi root component 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = block2();
-    let d1 = ctx['props'].class;
-    let b3 = block3([d1]);
+    let attr1 = ctx['props'].class;
+    let b3 = block3([attr1]);
     return multi([b2, b3]);
   }
 }"
@@ -47,8 +47,8 @@ exports[`style and class handling can set class on sub component, as prop 2`] = 
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\">child</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].class;
-    return block1([d1]);
+    let attr1 = ctx['props'].class;
+    return block1([attr1]);
   }
 }"
 `;
@@ -83,8 +83,8 @@ exports[`style and class handling can set class on sub sub component 3`] = `
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\">childchild</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].class;
-    return block1([d1]);
+    let attr1 = ctx['props'].class;
+    return block1([attr1]);
   }
 }"
 `;
@@ -108,8 +108,8 @@ exports[`style and class handling can set more than one class on sub component 2
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\">child</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].class;
-    return block1([d1]);
+    let attr1 = ctx['props'].class;
+    return block1([attr1]);
   }
 }"
 `;
@@ -135,8 +135,8 @@ exports[`style and class handling class on components do not interfere with user
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = {c:ctx['state'].c};
-    return block1([d1]);
+    let attr1 = {c:ctx['state'].c};
+    return block1([attr1]);
   }
 }"
 `;
@@ -177,8 +177,8 @@ exports[`style and class handling class on sub component, which is switched to a
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\">a</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].class;
-    return block1([d1]);
+    let attr1 = ctx['props'].class;
+    return block1([attr1]);
   }
 }"
 `;
@@ -191,8 +191,8 @@ exports[`style and class handling class on sub component, which is switched to a
   let block1 = createBlock(\`<span block-attribute-0=\\"class\\">b</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].class;
-    return block1([d1]);
+    let attr1 = ctx['props'].class;
+    return block1([attr1]);
   }
 }"
 `;
@@ -219,8 +219,8 @@ exports[`style and class handling class with extra whitespaces (variation) 2`] =
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].class;
-    return block1([d1]);
+    let attr1 = ctx['props'].class;
+    return block1([attr1]);
   }
 }"
 `;
@@ -244,8 +244,8 @@ exports[`style and class handling class with extra whitespaces 2`] = `
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].class;
-    return block1([d1]);
+    let attr1 = ctx['props'].class;
+    return block1([attr1]);
   }
 }"
 `;
@@ -269,8 +269,8 @@ exports[`style and class handling component class and parent class combine toget
   let block1 = createBlock(\`<div class=\\"child\\" block-attribute-0=\\"class\\">child</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].class;
-    return block1([d1]);
+    let attr1 = ctx['props'].class;
+    return block1([attr1]);
   }
 }"
 `;
@@ -324,8 +324,8 @@ exports[`style and class handling empty class attribute is not added on widget r
   let block1 = createBlock(\`<span block-attribute-0=\\"class\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].class;
-    return block1([d1]);
+    let attr1 = ctx['props'].class;
+    return block1([attr1]);
   }
 }"
 `;
@@ -349,9 +349,9 @@ exports[`style and class handling error in subcomponent with class 2`] = `
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\"><block-text-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].class;
-    let d2 = this.will.crash;
-    return block1([d1, d2]);
+    let attr1 = ctx['props'].class;
+    let txt2 = this.will.crash;
+    return block1([attr1, txt2]);
   }
 }"
 `;
@@ -399,8 +399,8 @@ exports[`style and class handling no class is set is parent does not give it as 
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\">child</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].class;
-    return block1([d1]);
+    let attr1 = ctx['props'].class;
+    return block1([attr1]);
   }
 }"
 `;
@@ -424,8 +424,8 @@ exports[`style and class handling style is properly added on widget root el 2`] 
   let block1 = createBlock(\`<div block-attribute-0=\\"style\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].style;
-    return block1([d1]);
+    let attr1 = ctx['props'].style;
+    return block1([attr1]);
   }
 }"
 `;
@@ -452,8 +452,8 @@ exports[`style and class handling t-att-class is properly added/removed on widge
   let block1 = createBlock(\`<span class=\\"c\\" block-attribute-0=\\"class\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = {d:ctx['state'].d,...ctx['props'].class};
-    return block1([d1]);
+    let attr1 = {d:ctx['state'].d,...ctx['props'].class};
+    return block1([attr1]);
   }
 }"
 `;
@@ -477,8 +477,8 @@ exports[`style and class handling t-att-class is properly added/removed on widge
   let block1 = createBlock(\`<span class=\\"c\\" block-attribute-0=\\"class\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = {d:ctx['state'].d,...ctx['props'].class};
-    return block1([d1]);
+    let attr1 = {d:ctx['state'].d,...ctx['props'].class};
+    return block1([attr1]);
   }
 }"
 `;

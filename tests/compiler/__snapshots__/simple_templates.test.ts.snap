@@ -99,8 +99,8 @@ exports[`simple templates, mostly static dom node with t-esc 1`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['text'];
-    return block1([d1]);
+    let txt1 = ctx['text'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -113,8 +113,8 @@ exports[`simple templates, mostly static dom node with t-esc 2`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['text'];
-    return block1([d1]);
+    let txt1 = ctx['text'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -274,8 +274,8 @@ exports[`simple templates, mostly static t-esc in dom node 1`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['text'];
-    return block1([d1]);
+    let txt1 = ctx['text'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -288,8 +288,8 @@ exports[`simple templates, mostly static t-esc in dom node, variations 1`] = `
   let block1 = createBlock(\`<div>hello <block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['text'];
-    return block1([d1]);
+    let txt1 = ctx['text'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -302,8 +302,8 @@ exports[`simple templates, mostly static t-esc in dom node, variations 2`] = `
   let block1 = createBlock(\`<div>hello <block-text-0/> world</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['text'];
-    return block1([d1]);
+    let txt1 = ctx['text'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -316,10 +316,10 @@ exports[`simple templates, mostly static template with multiple t tag with multi
   let block1 = createBlock(\`<div><block-text-0/><block-text-1/>Loading<block-text-2/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['a'];
-    let d2 = ctx['b'];
-    let d3 = ctx['c'];
-    return block1([d1, d2, d3]);
+    let txt1 = ctx['a'];
+    let txt2 = ctx['b'];
+    let txt3 = ctx['c'];
+    return block1([txt1, txt2, txt3]);
   }
 }"
 `;
@@ -375,9 +375,9 @@ exports[`simple templates, mostly static two t-escs next to each other, in a div
   let block1 = createBlock(\`<div><block-text-0/><block-text-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['text1'];
-    let d2 = ctx['text2'];
-    return block1([d1, d2]);
+    let txt1 = ctx['text1'];
+    let txt2 = ctx['text2'];
+    return block1([txt1, txt2]);
   }
 }"
 `;

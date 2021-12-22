@@ -22,8 +22,8 @@ exports[`basics accept ES6-like syntax for props (with getters) 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].greetings;
-    return block1([d1]);
+    let txt1 = ctx['props'].greetings;
+    return block1([txt1]);
   }
 }"
 `;
@@ -57,8 +57,8 @@ exports[`basics arrow functions as prop correctly capture their scope 2`] = `
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = [ctx['props'].onClick, ctx];
-    return block1([d1]);
+    let hdlr1 = [ctx['props'].onClick, ctx];
+    return block1([hdlr1]);
   }
 }"
 `;
@@ -85,8 +85,8 @@ exports[`basics explicit object prop 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['state'].someval;
-    return block1([d1]);
+    let txt1 = ctx['state'].someval;
+    return block1([txt1]);
   }
 }"
 `;
@@ -110,8 +110,8 @@ exports[`basics prop names can contain - 2`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props']['prop-name'];
-    return block1([d1]);
+    let txt1 = ctx['props']['prop-name'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -135,8 +135,8 @@ exports[`basics support prop names that aren't valid bare object property names 
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = [ctx['props'].onClick, ctx];
-    return block1([d1]);
+    let hdlr1 = [ctx['props'].onClick, ctx];
+    return block1([hdlr1]);
   }
 }"
 `;
@@ -170,9 +170,9 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
   let block1 = createBlock(\`<span><block-text-0/><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].val;
+    let txt1 = ctx['props'].val;
     let b2 = safeOutput(ctx['props'].val);
-    return block1([d1], [b2]);
+    return block1([txt1], [b2]);
   }
 }"
 `;
@@ -203,8 +203,8 @@ exports[`basics t-set with a body expression can be used as textual prop 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].val;
-    return block1([d1]);
+    let txt1 = ctx['props'].val;
+    return block1([txt1]);
   }
 }"
 `;
@@ -235,8 +235,8 @@ exports[`basics t-set works  2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].val;
-    return block1([d1]);
+    let txt1 = ctx['props'].val;
+    return block1([txt1]);
   }
 }"
 `;

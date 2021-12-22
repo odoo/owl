@@ -142,10 +142,10 @@ exports[`t-component modifying a sub widget 2`] = `
   let block1 = createBlock(\`<div><block-text-0/><button block-handler-1=\\"click\\">Inc</button></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['state'].counter;
+    let txt1 = ctx['state'].counter;
     const v1 = ctx['state'];
-    let d2 = [()=>v1.counter++, ctx];
-    return block1([d1, d2]);
+    let hdlr2 = [()=>v1.counter++, ctx];
+    return block1([txt1, hdlr2]);
   }
 }"
 `;

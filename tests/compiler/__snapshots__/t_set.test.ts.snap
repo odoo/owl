@@ -12,8 +12,8 @@ exports[`t-set evaluate value expression 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"value\\", 1+2);
-    let d1 = ctx['value'];
-    return block1([d1]);
+    let txt1 = ctx['value'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -30,8 +30,8 @@ exports[`t-set evaluate value expression, part 2 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"value\\", ctx['somevariable']+2);
-    let d1 = ctx['value'];
-    return block1([d1]);
+    let txt1 = ctx['value'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -63,8 +63,8 @@ exports[`t-set set from attribute literal 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"value\\", 'ok');
-    let d1 = ctx['value'];
-    return block1([d1]);
+    let txt1 = ctx['value'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -81,8 +81,8 @@ exports[`t-set set from attribute lookup 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"stuff\\", ctx['value']);
-    let d1 = ctx['stuff'];
-    return block1([d1]);
+    let txt1 = ctx['stuff'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -115,8 +115,8 @@ exports[`t-set set from body lookup 1`] = `
     ctx[isBoundary] = 1
     let b2 = text(ctx['value']);
     ctx[\`stuff\`] = b2;
-    let d1 = ctx['stuff'];
-    return block1([d1]);
+    let txt1 = ctx['stuff'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -133,8 +133,8 @@ exports[`t-set set from empty body 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"stuff\\", null);
-    let d1 = ctx['stuff'];
-    return block1([d1]);
+    let txt1 = ctx['stuff'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -173,8 +173,8 @@ exports[`t-set t-set body is evaluated immediately 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"v1\\", 'before');
-    let d1 = ctx['v1'];
-    let b2 = block2([d1]);
+    let txt1 = ctx['v1'];
+    let b2 = block2([txt1]);
     ctx[\`v2\`] = b2;
     setContextValue(ctx, \\"v1\\", 'after');
     let b3 = safeOutput(ctx['v2']);
@@ -196,10 +196,10 @@ exports[`t-set t-set can't alter from within callee 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"iter\\", 'source');
-    let d1 = ctx['iter'];
+    let txt1 = ctx['iter'];
     let b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
-    let d2 = ctx['iter'];
-    return block1([d1, d2], [b2]);
+    let txt2 = ctx['iter'];
+    return block1([txt1, txt2], [b2]);
   }
 }"
 `;
@@ -215,10 +215,10 @@ exports[`t-set t-set can't alter from within callee 2`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    let d1 = ctx['iter'];
+    let txt1 = ctx['iter'];
     setContextValue(ctx, \\"iter\\", 'called');
-    let d2 = ctx['iter'];
-    return block1([d1, d2]);
+    let txt2 = ctx['iter'];
+    return block1([txt1, txt2]);
   }
 }"
 `;
@@ -236,14 +236,14 @@ exports[`t-set t-set can't alter in t-call body 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"iter\\", 'source');
-    let d1 = ctx['iter'];
+    let txt1 = ctx['iter'];
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
     setContextValue(ctx, \\"iter\\", 'inCall');
     let b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
     ctx = ctx.__proto__;
-    let d2 = ctx['iter'];
-    return block1([d1, d2], [b2]);
+    let txt2 = ctx['iter'];
+    return block1([txt1, txt2], [b2]);
   }
 }"
 `;
@@ -259,10 +259,10 @@ exports[`t-set t-set can't alter in t-call body 2`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    let d1 = ctx['iter'];
+    let txt1 = ctx['iter'];
     setContextValue(ctx, \\"iter\\", 'called');
-    let d2 = ctx['iter'];
-    return block1([d1, d2]);
+    let txt2 = ctx['iter'];
+    return block1([txt1, txt2]);
   }
 }"
 `;
@@ -279,8 +279,8 @@ exports[`t-set t-set does not modify render context existing key values 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"value\\", 35);
-    let d1 = ctx['value'];
-    return block1([d1]);
+    let txt1 = ctx['value'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -297,9 +297,9 @@ exports[`t-set t-set evaluates an expression only once 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"v\\", ctx['value']+' artois');
-    let d1 = ctx['v'];
-    let d2 = ctx['v'];
-    return block1([d1, d2]);
+    let txt1 = ctx['v'];
+    let txt2 = ctx['v'];
+    return block1([txt1, txt2]);
   }
 }"
 `;
@@ -322,14 +322,14 @@ exports[`t-set t-set outside modified in t-foreach 1`] = `
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`val\`] = v_block2[i1];
       let key1 = ctx['val'];
-      let d1 = ctx['iter'];
-      c_block2[i1] = withKey(block3([d1]), key1);
+      let txt1 = ctx['iter'];
+      c_block2[i1] = withKey(block3([txt1]), key1);
       setContextValue(ctx, \\"iter\\", ctx['iter']+1);
     }
     ctx = ctx.__proto__;
     let b2 = list(c_block2);
-    let d2 = ctx['iter'];
-    return block1([d2], [b2]);
+    let txt2 = ctx['iter'];
+    return block1([txt2], [b2]);
   }
 }"
 `;
@@ -352,14 +352,14 @@ exports[`t-set t-set outside modified in t-foreach increment-after operator 1`] 
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`val\`] = v_block2[i1];
       let key1 = ctx['val'];
-      let d1 = ctx['iter'];
-      c_block2[i1] = withKey(block3([d1]), key1);
+      let txt1 = ctx['iter'];
+      c_block2[i1] = withKey(block3([txt1]), key1);
       setContextValue(ctx, \\"iter\\", ctx['iter']++);
     }
     ctx = ctx.__proto__;
     let b2 = list(c_block2);
-    let d2 = ctx['iter'];
-    return block1([d2], [b2]);
+    let txt2 = ctx['iter'];
+    return block1([txt2], [b2]);
   }
 }"
 `;
@@ -382,14 +382,14 @@ exports[`t-set t-set outside modified in t-foreach increment-before operator 1`]
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`val\`] = v_block2[i1];
       let key1 = ctx['val'];
-      let d1 = ctx['iter'];
-      c_block2[i1] = withKey(block3([d1]), key1);
+      let txt1 = ctx['iter'];
+      c_block2[i1] = withKey(block3([txt1]), key1);
       setContextValue(ctx, \\"iter\\", ++ctx['iter']);
     }
     ctx = ctx.__proto__;
     let b2 = list(c_block2);
-    let d2 = ctx['iter'];
-    return block1([d2], [b2]);
+    let txt2 = ctx['iter'];
+    return block1([txt2], [b2]);
   }
 }"
 `;
@@ -413,9 +413,9 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
       ctx[\`elem\`] = v_block2[i1];
       ctx[\`elem_index\`] = i1;
       let key1 = ctx['elem_index'];
-      let d1 = ctx['v'];
+      let txt1 = ctx['v'];
       setContextValue(ctx, \\"v\\", ctx['elem']);
-      c_block2[i1] = withKey(block3([d1]), key1);
+      c_block2[i1] = withKey(block3([txt1]), key1);
     }
     let b2 = list(c_block2);
     return block1([], [b2]);
@@ -438,8 +438,8 @@ exports[`t-set t-set with content and sub t-esc 1`] = `
     let b4 = text(\` boop\`);
     let b2 = multi([b3, b4]);
     ctx[\`setvar\`] = b2;
-    let d1 = ctx['setvar'];
-    return block1([d1]);
+    let txt1 = ctx['setvar'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -458,8 +458,8 @@ exports[`t-set t-set with t-value (falsy) and body 1`] = `
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"v3\\", false);
     setContextValue(ctx, \\"v1\\", 'before');
-    let d1 = ctx['v1'];
-    let b2 = block2([d1]);
+    let txt1 = ctx['v1'];
+    let b2 = block2([txt1]);
     ctx[\`v2\`] = withDefault(ctx['v3'], b2);
     setContextValue(ctx, \\"v1\\", 'after');
     setContextValue(ctx, \\"v3\\", true);
@@ -483,8 +483,8 @@ exports[`t-set t-set with t-value (truthy) and body 1`] = `
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"v3\\", 'Truthy');
     setContextValue(ctx, \\"v1\\", 'before');
-    let d1 = ctx['v1'];
-    let b2 = block2([d1]);
+    let txt1 = ctx['v1'];
+    let b2 = block2([txt1]);
     ctx[\`v2\`] = withDefault(ctx['v3'], b2);
     setContextValue(ctx, \\"v1\\", 'after');
     setContextValue(ctx, \\"v3\\", false);
@@ -510,8 +510,8 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 1 1`] = `
     } else {
       setContextValue(ctx, \\"ourvar\\", 0);
     }
-    let d1 = ctx['ourvar'];
-    return block1([d1]);
+    let txt1 = ctx['ourvar'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -532,8 +532,8 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 2 1`] = `
     } else {
       setContextValue(ctx, \\"ourvar\\", \`0\`);
     }
-    let d1 = ctx['ourvar'];
-    return block1([d1]);
+    let txt1 = ctx['ourvar'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -573,8 +573,8 @@ exports[`t-set value priority (with non text body 1`] = `
     ctx[isBoundary] = 1
     let b2 = block2();
     ctx[\`value\`] = withDefault(1, b2);
-    let d1 = ctx['value'];
-    return block1([d1]);
+    let txt1 = ctx['value'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -591,8 +591,8 @@ exports[`t-set value priority 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"value\\", withDefault(1, \`2\`));
-    let d1 = ctx['value'];
-    return block1([d1]);
+    let txt1 = ctx['value'];
+    return block1([txt1]);
   }
 }"
 `;

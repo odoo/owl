@@ -8,12 +8,12 @@ exports[`t-esc div with falsy values 1`] = `
   let block1 = createBlock(\`<div><p><block-text-0/></p><p><block-text-1/></p><p><block-text-2/></p><p><block-text-3/></p><p><block-text-4/></p></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['v1'];
-    let d2 = ctx['v2'];
-    let d3 = ctx['v3'];
-    let d4 = ctx['v4'];
-    let d5 = ctx['v5'];
-    return block1([d1, d2, d3, d4, d5]);
+    let txt1 = ctx['v1'];
+    let txt2 = ctx['v2'];
+    let txt3 = ctx['v3'];
+    let txt4 = ctx['v4'];
+    let txt5 = ctx['v5'];
+    return block1([txt1, txt2, txt3, txt4, txt5]);
   }
 }"
 `;
@@ -26,8 +26,8 @@ exports[`t-esc escaping 1`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['var'];
-    return block1([d1]);
+    let txt1 = ctx['var'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -40,8 +40,8 @@ exports[`t-esc escaping on a node 1`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = 'ok';
-    return block1([d1]);
+    let txt1 = 'ok';
+    return block1([txt1]);
   }
 }"
 `;
@@ -55,8 +55,8 @@ exports[`t-esc escaping on a node with a body 1`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = withDefault('ok', \`nope\`);
-    return block1([d1]);
+    let txt1 = withDefault('ok', \`nope\`);
+    return block1([txt1]);
   }
 }"
 `;
@@ -70,8 +70,8 @@ exports[`t-esc escaping on a node with a body, as a default 1`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = withDefault(ctx['var'], \`nope\`);
-    return block1([d1]);
+    let txt1 = withDefault(ctx['var'], \`nope\`);
+    return block1([txt1]);
   }
 }"
 `;
@@ -104,8 +104,8 @@ exports[`t-esc literal 1`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = 'ok';
-    return block1([d1]);
+    let txt1 = 'ok';
+    return block1([txt1]);
   }
 }"
 `;
@@ -124,8 +124,8 @@ exports[`t-esc t-esc is escaped 1`] = `
     ctx[isBoundary] = 1
     let b2 = block2();
     ctx[\`var\`] = b2;
-    let d1 = ctx['var'];
-    return block1([d1]);
+    let txt1 = ctx['var'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -138,8 +138,8 @@ exports[`t-esc t-esc work with spread operator 1`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = [...ctx['state'].list];
-    return block1([d1]);
+    let txt1 = [...ctx['state'].list];
+    return block1([txt1]);
   }
 }"
 `;
@@ -174,8 +174,8 @@ exports[`t-esc t-esc=0 is escaped 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx[zero];
-    return block1([d1]);
+    let txt1 = ctx[zero];
+    return block1([txt1]);
   }
 }"
 `;
@@ -188,8 +188,8 @@ exports[`t-esc variable 1`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['var'];
-    return block1([d1]);
+    let txt1 = ctx['var'];
+    return block1([txt1]);
   }
 }"
 `;

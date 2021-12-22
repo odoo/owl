@@ -33,8 +33,8 @@ exports[`basics no component catching error lead to full app destruction 2`] = `
   let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].flag&&ctx['state'].this.will.crash;
-    return block1([d1]);
+    let txt1 = ctx['props'].flag&&ctx['state'].this.will.crash;
+    return block1([txt1]);
   }
 }"
 `;
@@ -66,8 +66,8 @@ exports[`basics simple catchError 2`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['a'].b.c;
-    return block1([d1]);
+    let txt1 = ctx['a'].b.c;
+    return block1([txt1]);
   }
 }"
 `;
@@ -118,8 +118,8 @@ exports[`can catch errors can catch an error in a component render function 3`] 
   let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].flag&&ctx['state'].this.will.crash;
-    return block1([d1]);
+    let txt1 = ctx['props'].flag&&ctx['state'].this.will.crash;
+    return block1([txt1]);
   }
 }"
 `;
@@ -287,8 +287,8 @@ exports[`can catch errors can catch an error in the initial call of a component 
   let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['state'].this.will.crash;
-    return block1([d1]);
+    let txt1 = ctx['state'].this.will.crash;
+    return block1([txt1]);
   }
 }"
 `;
@@ -342,8 +342,8 @@ exports[`can catch errors can catch an error in the initial call of a component 
   let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['state'].this.will.crash;
-    return block1([d1]);
+    let txt1 = ctx['state'].this.will.crash;
+    return block1([txt1]);
   }
 }"
 `;
@@ -500,9 +500,9 @@ exports[`can catch errors can catch an error in the willPatch call 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['state'].message;
+    let txt1 = ctx['state'].message;
     let b3 = component(\`ErrorBoundary\`, {slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__3\`, node, ctx);
-    return block1([d1], [b3]);
+    return block1([txt1], [b3]);
   }
 }"
 `;
@@ -535,8 +535,8 @@ exports[`can catch errors can catch an error in the willPatch call 3`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].message;
-    return block1([d1]);
+    let txt1 = ctx['props'].message;
+    return block1([txt1]);
   }
 }"
 `;
@@ -699,8 +699,8 @@ exports[`can catch errors catchError in catchError 3`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['a'].b.c;
-    return block1([d1]);
+    let txt1 = ctx['a'].b.c;
+    return block1([txt1]);
   }
 }"
 `;
@@ -925,8 +925,8 @@ exports[`errors and promises a rendering error in a sub component will reject th
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = this.will.crash;
-    return block1([d1]);
+    let txt1 = this.will.crash;
+    return block1([txt1]);
   }
 }"
 `;
@@ -939,8 +939,8 @@ exports[`errors and promises a rendering error will reject the mount promise 1`]
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = this.will.crash;
-    return block1([d1]);
+    let txt1 = this.will.crash;
+    return block1([txt1]);
   }
 }"
 `;
@@ -954,8 +954,8 @@ exports[`errors and promises a rendering error will reject the render promise (w
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
-    let d1 = ctx['x'].y;
-    return block1([d1], [b2]);
+    let txt1 = ctx['x'].y;
+    return block1([txt1], [b2]);
   }
 }"
 `;
@@ -1011,8 +1011,8 @@ exports[`errors and promises an error in patched call will reject the render pro
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['val'];
-    return block1([d1]);
+    let txt1 = ctx['val'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -1025,8 +1025,8 @@ exports[`errors and promises an error in willPatch call will reject the render p
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['val'];
-    return block1([d1]);
+    let txt1 = ctx['val'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -1052,8 +1052,8 @@ exports[`errors and promises errors in rerender 1`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['state'].a.b;
-    return block1([d1]);
+    let txt1 = ctx['state'].a.b;
+    return block1([txt1]);
   }
 }"
 `;

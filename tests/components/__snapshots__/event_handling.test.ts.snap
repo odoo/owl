@@ -10,8 +10,8 @@ exports[`event handling handler receive the event as argument 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let hdlr1 = [ctx['inc'], ctx];
     let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
-    let txt2 = ctx['state'].value;
-    return block1([hdlr1, txt2], [b2]);
+    let txt1 = ctx['state'].value;
+    return block1([hdlr1, txt1], [b2]);
   }
 }"
 `;
@@ -64,8 +64,8 @@ exports[`event handling support for callable expression in event handler 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     let txt1 = ctx['state'].value;
-    let hdlr2 = [ctx['obj'].onInput, ctx];
-    return block1([txt1, hdlr2]);
+    let hdlr1 = [ctx['obj'].onInput, ctx];
+    return block1([txt1, hdlr1]);
   }
 }"
 `;

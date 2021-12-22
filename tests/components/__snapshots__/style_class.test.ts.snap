@@ -350,8 +350,8 @@ exports[`style and class handling error in subcomponent with class 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     let attr1 = ctx['props'].class;
-    let txt2 = this.will.crash;
-    return block1([attr1, txt2]);
+    let txt1 = this.will.crash;
+    return block1([attr1, txt1]);
   }
 }"
 `;

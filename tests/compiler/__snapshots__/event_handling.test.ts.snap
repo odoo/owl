@@ -157,10 +157,10 @@ exports[`t-on handler is bound to proper owner, part 3 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { getTemplate } = helpers;
-  const callTemplate_2 = getTemplate(\`sub\`);
+  const callTemplate_1 = getTemplate(\`sub\`);
   
   return function template(ctx, node, key = \\"\\") {
-    return callTemplate_2.call(this, ctx, node, key + \`__1\`);
+    return callTemplate_1.call(this, ctx, node, key + \`__1\`);
   }
 }"
 `;
@@ -184,7 +184,7 @@ exports[`t-on handler is bound to proper owner, part 4 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { prepareList, getTemplate, withKey } = helpers;
-  const callTemplate_2 = getTemplate(\`sub\`);
+  const callTemplate_1 = getTemplate(\`sub\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -196,7 +196,7 @@ exports[`t-on handler is bound to proper owner, part 4 1`] = `
       ctx[\`value_index\`] = i1;
       ctx[\`value_value\`] = k_block1[i1];
       let key1 = ctx['value'];
-      c_block1[i1] = withKey(callTemplate_2.call(this, ctx, node, key + \`__1__\${key1}\`), key1);
+      c_block1[i1] = withKey(callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}\`), key1);
     }
     return list(c_block1);
   }
@@ -255,8 +255,8 @@ exports[`t-on t-on modifiers (native listener) t-on combined with t-esc 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     let hdlr1 = [ctx['onClick'], ctx];
-    let txt2 = ctx['text'];
-    return block1([hdlr1, txt2]);
+    let txt1 = ctx['text'];
+    return block1([hdlr1, txt1]);
   }
 }"
 `;
@@ -354,8 +354,8 @@ exports[`t-on t-on modifiers (native listener) t-on with prevent modifier in t-f
       const v1 = ctx['onEdit'];
       const v2 = ctx['project'];
       let hdlr1 = [\\"prevent\\", ev=>v1(v2.id,ev), ctx];
-      let txt2 = ctx['project'].name;
-      c_block2[i1] = withKey(block3([hdlr1, txt2]), key1);
+      let txt1 = ctx['project'].name;
+      c_block2[i1] = withKey(block3([hdlr1, txt1]), key1);
     }
     let b2 = list(c_block2);
     return block1([], [b2]);
@@ -473,12 +473,12 @@ exports[`t-on t-on with t-call 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { getTemplate } = helpers;
-  const callTemplate_2 = getTemplate(\`sub\`);
+  const callTemplate_1 = getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
+    let b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
 }"
@@ -503,12 +503,12 @@ exports[`t-on t-on, with arguments and t-call 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { getTemplate } = helpers;
-  const callTemplate_2 = getTemplate(\`sub\`);
+  const callTemplate_1 = getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
+    let b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
 }"

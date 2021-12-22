@@ -22,7 +22,7 @@ exports[`misc complex template 1`] = `
     let attr2 = \`card bg-\${ctx['klass']}-light\`;
     let attr3 = \`/runbot/batch/\${ctx['batch'].id}\`;
     let attr4 = \`badge badge-\${ctx['batch'].has_warning?'warning':'light'}\`;
-    let txt5 = ctx['batch'].formated_age;
+    let txt1 = ctx['batch'].formated_age;
     if (ctx['batch'].has_warning) {
       b2 = block2();
     }
@@ -53,8 +53,8 @@ exports[`misc complex template 1`] = `
       ctx[\`commit_link\`] = v_block8[i1];
       let key1 = ctx['commit_link'].id;
       let b10,b11,b12,b13;
-      let attr6 = \`/runbot/commit/\${ctx['commit_link'].commit_id}\`;
-      let attr7 = \`badge badge-light batch_commit match_type_\${ctx['commit_link'].match_type}\`;
+      let attr5 = \`/runbot/commit/\${ctx['commit_link'].commit_id}\`;
+      let attr6 = \`badge badge-light batch_commit match_type_\${ctx['commit_link'].match_type}\`;
       if (ctx['commit_link'].match_type=='new') {
         b10 = block10();
       }
@@ -67,13 +67,13 @@ exports[`misc complex template 1`] = `
       if (ctx['commit_link'].match_type=='base_head') {
         b13 = block13();
       }
-      let txt8 = ctx['commit_link'].commit_dname;
-      let attr9 = 'https://%s/commit/%s'%(ctx['commit_link'].commit_remote_url,ctx['commit_link'].commit_name);
-      let txt10 = ctx['commit_link'].commit_subject;
-      c_block8[i1] = withKey(block9([attr6, attr7, txt8, attr9, txt10], [b10, b11, b12, b13]), key1);
+      let txt2 = ctx['commit_link'].commit_dname;
+      let attr7 = 'https://%s/commit/%s'%(ctx['commit_link'].commit_remote_url,ctx['commit_link'].commit_name);
+      let txt3 = ctx['commit_link'].commit_subject;
+      c_block8[i1] = withKey(block9([attr5, attr6, txt2, attr7, txt3], [b10, b11, b12, b13]), key1);
     }
     b8 = list(c_block8);
-    return block1([attr1, attr2, attr3, attr4, txt5], [b2, b3, b4, b6, b8]);
+    return block1([attr1, attr2, attr3, attr4, txt1], [b2, b3, b4, b6, b8]);
   }
 }"
 `;
@@ -83,11 +83,11 @@ exports[`misc global 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { prepareList, isBoundary, withDefault, setContextValue, getTemplate, zero, withKey } = helpers;
+  const callTemplate_1 = getTemplate(\`_callee-uses-foo\`);
   const callTemplate_2 = getTemplate(\`_callee-uses-foo\`);
-  const callTemplate_4 = getTemplate(\`_callee-uses-foo\`);
-  const callTemplate_6 = getTemplate(\`_callee-uses-foo\`);
-  const callTemplate_8 = getTemplate(\`_callee-asc\`);
-  const callTemplate_10 = getTemplate(\`_callee-asc-toto\`);
+  const callTemplate_3 = getTemplate(\`_callee-uses-foo\`);
+  const callTemplate_4 = getTemplate(\`_callee-asc\`);
+  const callTemplate_5 = getTemplate(\`_callee-asc-toto\`);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   let block4 = createBlock(\`<span><block-text-0/></span>\`);
@@ -111,20 +111,20 @@ exports[`misc global 1`] = `
       ctx = Object.create(ctx);
       ctx[isBoundary] = 1;
       setContextValue(ctx, \\"foo\\", 'aaa');
-      let b6 = callTemplate_2.call(this, ctx, node, key + \`__1__\${key1}\`);
+      let b6 = callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}\`);
       ctx = ctx.__proto__;
-      let b7 = callTemplate_4.call(this, ctx, node, key + \`__3__\${key1}\`);
+      let b7 = callTemplate_2.call(this, ctx, node, key + \`__2__\${key1}\`);
       setContextValue(ctx, \\"foo\\", 'bbb');
-      let b8 = callTemplate_6.call(this, ctx, node, key + \`__5__\${key1}\`);
+      let b8 = callTemplate_3.call(this, ctx, node, key + \`__3__\${key1}\`);
       let b5 = multi([b6, b7, b8]);
       ctx[zero] = b5;
-      let b9 = callTemplate_8.call(this, ctx, node, key + \`__7__\${key1}\`);
+      let b9 = callTemplate_4.call(this, ctx, node, key + \`__4__\${key1}\`);
       ctx = ctx.__proto__;
       c_block2[i1] = withKey(multi([b4, b9]), key1);
     }
     ctx = ctx.__proto__;
     let b2 = list(c_block2);
-    let b10 = callTemplate_10.call(this, ctx, node, key + \`__9\`);
+    let b10 = callTemplate_5.call(this, ctx, node, key + \`__5\`);
     return block1([], [b2, b10]);
   }
 }"
@@ -182,7 +182,7 @@ exports[`misc other complex template 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { prepareList, withKey, getTemplate } = helpers;
-  const callTemplate_2 = getTemplate(\`LOAD_INFOS_TEMPLATE\`);
+  const callTemplate_1 = getTemplate(\`LOAD_INFOS_TEMPLATE\`);
   
   let block1 = createBlock(\`<div><header><nav class=\\"navbar navbar-expand-md navbar-light bg-light\\"><a block-attribute-0=\\"href\\"><b style=\\"color:#777;\\"><block-text-1/></b></a><button type=\\"button\\" class=\\"navbar-toggler\\" data-toggle=\\"collapse\\" data-target=\\"#top_menu_collapse\\"><span class=\\"navbar-toggler-icon\\"/></button><div class=\\"collapse navbar-collapse\\" id=\\"top_menu_collapse\\" aria-expanded=\\"false\\"><ul class=\\"nav navbar-nav ml-auto text-right\\" id=\\"top_menu\\"><block-child-0/><li class=\\"nav-item divider\\"/><block-child-1/></ul><div><div class=\\"input-group input-group-sm\\"><div class=\\"input-group-prepend input-group-sm\\"><button class=\\"btn btn-default fa fa-cog\\" title=\\"Settings\\" block-handler-2=\\"click\\"/><button class=\\"btn btn-default\\" block-handler-3=\\"click\\"> More </button><block-child-2/></div><input class=\\"form-control\\" type=\\"text\\" placeholder=\\"Search\\" aria-label=\\"Search\\" name=\\"search\\" block-attribute-4=\\"value\\" block-handler-5=\\"keyup\\" block-handler-6=\\"change\\" block-ref=\\"7\\"/><div class=\\"input-group-append\\"><button class=\\"btn btn-default fa fa-eraser\\" block-handler-8=\\"click\\"/></div></div></div></div></nav></header><div class=\\"container-fluid\\" block-ref=\\"9\\"><div class=\\"row\\"><!--div class=\\"form-group col-md-6\\">
                       <h5>Search options</h5>
@@ -217,29 +217,29 @@ exports[`misc other complex template 1`] = `
     const refs = ctx.__owl__.refs;
     let b2,b4,b14,b17,b22,b23,b24,b25;
     let attr1 = \`/runbot/\${ctx['project'].slug}\`;
-    let txt2 = ctx['project'].name;
+    let txt1 = ctx['project'].name;
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['projects']);
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`project\`] = v_block2[i1];
       let key1 = ctx['project'].id;
-      let hdlr3 = [ctx['selectProject'](ctx['project']), ctx];
-      let txt4 = ctx['project'].name;
-      c_block2[i1] = withKey(block3([hdlr3, txt4]), key1);
+      let hdlr1 = [ctx['selectProject'](ctx['project']), ctx];
+      let txt2 = ctx['project'].name;
+      c_block2[i1] = withKey(block3([hdlr1, txt2]), key1);
     }
     ctx = ctx.__proto__;
     b2 = list(c_block2);
     if (ctx['user']) {
       let b5,b6;
       if (ctx['user'].public) {
-        let attr5 = \`/web/login?redirect=/\`;
-        b5 = block5([attr5]);
+        let attr2 = \`/web/login?redirect=/\`;
+        b5 = block5([attr2]);
       } else {
         let b7,b10,b13;
         if (ctx['nb_assigned_errors']&&ctx['nb_assigned_errors']>0) {
-          let attr6 = \`You have \${ctx['nb_assigned_errors']} random bug assigned\`;
-          let txt7 = ctx['nb_assigned_errors'];
-          let b8 = block8([attr6, txt7]);
+          let attr3 = \`You have \${ctx['nb_assigned_errors']} random bug assigned\`;
+          let txt3 = ctx['nb_assigned_errors'];
+          let b8 = block8([attr3, txt3]);
           let b9 = block9();
           b7 = multi([b8, b9]);
         } else if (ctx['nb_build_errors']&&ctx['nb_build_errors']>0) {
@@ -247,37 +247,37 @@ exports[`misc other complex template 1`] = `
           let b12 = block12();
           b10 = multi([b11, b12]);
         }
-        let txt8 = ctx['user'].name.length>25?ctx['user'].namesubstring(0,23)+'...':ctx['user'].name;
-        let attr9 = \`/web/session/logout?redirect=/\`;
-        let attr10 = \`/web\`;
-        b13 = block13([txt8, attr9, attr10]);
+        let txt4 = ctx['user'].name.length>25?ctx['user'].namesubstring(0,23)+'...':ctx['user'].name;
+        let attr4 = \`/web/session/logout?redirect=/\`;
+        let attr5 = \`/web\`;
+        b13 = block13([txt4, attr4, attr5]);
         b6 = multi([b7, b10, b13]);
       }
       b4 = multi([b5, b6]);
     }
-    let hdlr11 = [ctx['toggleSettingsMenu'], ctx];
-    let hdlr12 = [ctx['toggleMore'], ctx];
+    let hdlr2 = [ctx['toggleSettingsMenu'], ctx];
+    let hdlr3 = [ctx['toggleMore'], ctx];
     if (ctx['categories']&&ctx['categories'].length>1) {
       ctx = Object.create(ctx);
       const [k_block15, v_block15, l_block15, c_block15] = prepareList(ctx['categories']);
       for (let i1 = 0; i1 < l_block15; i1++) {
         ctx[\`category\`] = v_block15[i1];
         let key1 = ctx['category'].id;
-        let attr13 = ctx['category'].id;
-        let attr14 = ctx['category'].id==ctx['options'].active_category_id;
-        let txt15 = ctx['category'].name;
-        c_block15[i1] = withKey(block16([attr13, attr14, txt15]), key1);
+        let attr6 = ctx['category'].id;
+        let attr7 = ctx['category'].id==ctx['options'].active_category_id;
+        let txt5 = ctx['category'].name;
+        c_block15[i1] = withKey(block16([attr6, attr7, txt5]), key1);
       }
       ctx = ctx.__proto__;
       let b15 = list(c_block15);
       b14 = block14([], [b15]);
     }
-    let attr16 = ctx['search'].value;
-    let hdlr17 = [ctx['updateFilter'], ctx];
-    let hdlr18 = [ctx['updateFilter'], ctx];
-    let d19 = (el) => refs[\`search_input\`] = el;
-    let hdlr20 = [ctx['clearSearch'], ctx];
-    let d21 = (el) => refs[\`settings_menu\`] = el;
+    let attr8 = ctx['search'].value;
+    let hdlr4 = [ctx['updateFilter'], ctx];
+    let hdlr5 = [ctx['updateFilter'], ctx];
+    let d1 = (el) => refs[\`search_input\`] = el;
+    let hdlr6 = [ctx['clearSearch'], ctx];
+    let d2 = (el) => refs[\`settings_menu\`] = el;
     if (ctx['triggers']) {
       ctx = Object.create(ctx);
       const [k_block18, v_block18, l_block18, c_block18] = prepareList(ctx['triggers']);
@@ -286,41 +286,41 @@ exports[`misc other complex template 1`] = `
         let key1 = ctx['trigger'].id;
         let b20;
         if (!ctx['trigger'].manual&&ctx['trigger'].project_id===ctx['project'].id&&ctx['trigger'].category_id===ctx['options'].active_category_id) {
-          let attr22 = \`trigger_\${ctx['trigger'].id}\`;
-          let attr23 = \`trigger_\${ctx['trigger'].id}\`;
-          let attr24 = ctx['options'].trigger_display[ctx['trigger'].id];
-          let attr25 = ctx['trigger'].id;
-          let hdlr26 = [ctx['updateTriggerDisplay'], ctx];
-          let attr27 = \`trigger_\${ctx['trigger'].id}\`;
-          let txt28 = ctx['trigger'].name;
-          b20 = block20([attr22, attr23, attr24, attr25, hdlr26, attr27, txt28]);
+          let attr9 = \`trigger_\${ctx['trigger'].id}\`;
+          let attr10 = \`trigger_\${ctx['trigger'].id}\`;
+          let attr11 = ctx['options'].trigger_display[ctx['trigger'].id];
+          let attr12 = ctx['trigger'].id;
+          let hdlr7 = [ctx['updateTriggerDisplay'], ctx];
+          let attr13 = \`trigger_\${ctx['trigger'].id}\`;
+          let txt6 = ctx['trigger'].name;
+          b20 = block20([attr9, attr10, attr11, attr12, hdlr7, attr13, txt6]);
         }
         c_block18[i1] = withKey(multi([b20]), key1);
       }
       ctx = ctx.__proto__;
       let b18 = list(c_block18);
-      let hdlr29 = [ctx['triggerAll'], ctx];
-      let hdlr30 = [ctx['triggerNone'], ctx];
-      let hdlr31 = [ctx['triggerDefault'], ctx];
-      let hdlr32 = [ctx['toggleSettingsMenu'], ctx];
-      let b21 = block21([hdlr29, hdlr30, hdlr31, hdlr32]);
+      let hdlr8 = [ctx['triggerAll'], ctx];
+      let hdlr9 = [ctx['triggerNone'], ctx];
+      let hdlr10 = [ctx['triggerDefault'], ctx];
+      let hdlr11 = [ctx['toggleSettingsMenu'], ctx];
+      let b21 = block21([hdlr8, hdlr9, hdlr10, hdlr11]);
       b17 = multi([b18, b21]);
     }
     if (ctx['load_infos']) {
-      b22 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
+      b22 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     }
     if (ctx['message']) {
-      let txt33 = ctx['message'];
-      b23 = block23([txt33]);
+      let txt7 = ctx['message'];
+      b23 = block23([txt7]);
     }
     if (!ctx['project']) {
       b24 = block24();
     } else {
-      let b26 = component(\`BundlesList\`, {bundles: ctx['bundles'].sticky,category_custom_views: ctx['category_custom_views'],search: ctx['search']}, key + \`__3\`, node, ctx);
-      let b27 = component(\`BundlesList\`, {bundles: ctx['bundles'].dev,search: ctx['search']}, key + \`__4\`, node, ctx);
+      let b26 = component(\`BundlesList\`, {bundles: ctx['bundles'].sticky,category_custom_views: ctx['category_custom_views'],search: ctx['search']}, key + \`__2\`, node, ctx);
+      let b27 = component(\`BundlesList\`, {bundles: ctx['bundles'].dev,search: ctx['search']}, key + \`__3\`, node, ctx);
       b25 = block25([], [b26, b27]);
     }
-    return block1([attr1, txt2, hdlr11, hdlr12, attr16, hdlr17, hdlr18, d19, hdlr20, d21], [b2, b4, b14, b17, b22, b23, b24, b25]);
+    return block1([attr1, txt1, hdlr2, hdlr3, attr8, hdlr4, hdlr5, d1, hdlr6, d2], [b2, b4, b14, b17, b22, b23, b24, b25]);
   }
 }"
 `;

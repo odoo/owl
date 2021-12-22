@@ -491,8 +491,8 @@ exports[`lifecycle hooks onWillRender 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     let hdlr1 = [ctx['increment'], ctx];
-    let txt2 = ctx['state'].value;
-    return block1([hdlr1, txt2]);
+    let txt1 = ctx['state'].value;
+    return block1([hdlr1, txt1]);
   }
 }"
 `;

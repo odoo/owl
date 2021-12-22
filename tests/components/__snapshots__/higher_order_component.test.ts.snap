@@ -133,8 +133,8 @@ exports[`basics sub widget is interactive 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     let hdlr1 = [ctx['inc'], ctx];
-    let txt2 = ctx['state'].val;
-    return block1([hdlr1, txt2]);
+    let txt1 = ctx['state'].val;
+    return block1([hdlr1, txt1]);
   }
 }"
 `;

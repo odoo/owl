@@ -44,7 +44,11 @@ const xmlDoc = document.implementation.createDocument(null, null, null);
 
 class BlockDescription {
   static nextBlockId = 1;
-  static nextDataId = 1;
+  static nextDataIds: { [key: string]: number } = {};
+  static generateId(prefix: string) {
+    this.nextDataIds[prefix] = (this.nextDataIds[prefix] || 0) + 1;
+    return prefix + this.nextDataIds[prefix];
+  }
 
   varName: string;
   blockName: string;
@@ -70,7 +74,7 @@ class BlockDescription {
   }
 
   insertData(str: string, prefix: string = "d"): number {
-    const id = prefix + BlockDescription.nextDataId++;
+    const id = BlockDescription.generateId(prefix);
     this.target.addLine(`let ${id} = ${str};`);
     return this.data.push(id) - 1;
   }
@@ -189,7 +193,7 @@ const translationRE = /^(\s*)([\s\S]+?)(\s*)$/;
 
 export class CodeGenerator {
   blocks: BlockDescription[] = [];
-  nextId = 1;
+  ids: { [key: string]: number } = {};
   nextBlockId = 1;
   hasSafeContext: boolean;
   isDebug: boolean = false;
@@ -216,7 +220,7 @@ export class CodeGenerator {
     const ast = this.ast;
     this.isDebug = ast.type === ASTType.TDebug;
     BlockDescription.nextBlockId = 1;
-    BlockDescription.nextDataId = 1;
+    BlockDescription.nextDataIds = {};
     this.compileAST(ast, {
       block: null,
       index: 0,
@@ -282,7 +286,8 @@ export class CodeGenerator {
   }
 
   generateId(prefix: string = ""): string {
-    return `${prefix}${this.nextId++}`;
+    this.ids[prefix] = (this.ids[prefix] || 0) + 1;
+    return prefix + this.ids[prefix];
   }
 
   generateBlockName(): string {

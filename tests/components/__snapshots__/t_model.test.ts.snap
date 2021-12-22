@@ -11,9 +11,9 @@ exports[`t-model directive .lazy modifier 1`] = `
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     let attr1 = ctx['state']['text'];
-    let hdlr2 = [(ev) => { bExpr1['text'] = ev.target.value; }];
-    let txt3 = ctx['state'].text;
-    return block1([attr1, hdlr2, txt3]);
+    let hdlr1 = [(ev) => { bExpr1['text'] = ev.target.value; }];
+    let txt1 = ctx['state'].text;
+    return block1([attr1, hdlr1, txt1]);
   }
 }"
 `;
@@ -29,9 +29,9 @@ exports[`t-model directive .number modifier 1`] = `
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     let attr1 = ctx['state']['number'];
-    let hdlr2 = [(ev) => { bExpr1['number'] = toNumber(ev.target.value); }];
-    let txt3 = ctx['state'].number;
-    return block1([attr1, hdlr2, txt3]);
+    let hdlr1 = [(ev) => { bExpr1['number'] = toNumber(ev.target.value); }];
+    let txt1 = ctx['state'].number;
+    return block1([attr1, hdlr1, txt1]);
   }
 }"
 `;
@@ -47,9 +47,9 @@ exports[`t-model directive .trim modifier 1`] = `
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     let attr1 = ctx['state']['text'];
-    let hdlr2 = [(ev) => { bExpr1['text'] = ev.target.value.trim(); }];
-    let txt3 = ctx['state'].text;
-    return block1([attr1, hdlr2, txt3]);
+    let hdlr1 = [(ev) => { bExpr1['text'] = ev.target.value.trim(); }];
+    let txt1 = ctx['state'].text;
+    return block1([attr1, hdlr1, txt1]);
   }
 }"
 `;
@@ -65,9 +65,9 @@ exports[`t-model directive basic use, on an input 1`] = `
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     let attr1 = ctx['state']['text'];
-    let hdlr2 = [(ev) => { bExpr1['text'] = ev.target.value; }];
-    let txt3 = ctx['state'].text;
-    return block1([attr1, hdlr2, txt3]);
+    let hdlr1 = [(ev) => { bExpr1['text'] = ev.target.value; }];
+    let txt1 = ctx['state'].text;
+    return block1([attr1, hdlr1, txt1]);
   }
 }"
 `;
@@ -83,9 +83,9 @@ exports[`t-model directive basic use, on an input with bracket expression 1`] = 
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     let attr1 = ctx['state']['text'];
-    let hdlr2 = [(ev) => { bExpr1['text'] = ev.target.value; }];
-    let txt3 = ctx['state'].text;
-    return block1([attr1, hdlr2, txt3]);
+    let hdlr1 = [(ev) => { bExpr1['text'] = ev.target.value; }];
+    let txt1 = ctx['state'].text;
+    return block1([attr1, hdlr1, txt1]);
   }
 }"
 `;
@@ -101,9 +101,9 @@ exports[`t-model directive basic use, on another key in component 1`] = `
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['some'];
     let attr1 = ctx['some']['text'];
-    let hdlr2 = [(ev) => { bExpr1['text'] = ev.target.value; }];
-    let txt3 = ctx['some'].text;
-    return block1([attr1, hdlr2, txt3]);
+    let hdlr1 = [(ev) => { bExpr1['text'] = ev.target.value; }];
+    let txt1 = ctx['some'].text;
+    return block1([attr1, hdlr1, txt1]);
   }
 }"
 `;
@@ -119,9 +119,9 @@ exports[`t-model directive can also define t-on directive on same event, part 1 
   return function template(ctx, node, key = \\"\\") {
     let hdlr1 = [ctx['onInput'], ctx];
     const bExpr1 = ctx['state'];
-    let attr2 = ctx['state']['text'];
-    let hdlr3 = [(ev) => { bExpr1['text'] = ev.target.value; }];
-    return block1([hdlr1, attr2, hdlr3]);
+    let attr1 = ctx['state']['text'];
+    let hdlr2 = [(ev) => { bExpr1['text'] = ev.target.value; }];
+    return block1([hdlr1, attr1, hdlr2]);
   }
 }"
 `;
@@ -137,17 +137,17 @@ exports[`t-model directive can also define t-on directive on same event, part 2 
   return function template(ctx, node, key = \\"\\") {
     let hdlr1 = [ctx['onClick'], ctx];
     const bExpr1 = ctx['state'];
-    let attr2 = ctx['state']['choice'] === 'One';
-    let hdlr3 = [(ev) => { bExpr1['choice'] = ev.target.value; }];
-    let hdlr4 = [ctx['onClick'], ctx];
+    let attr1 = ctx['state']['choice'] === 'One';
+    let hdlr2 = [(ev) => { bExpr1['choice'] = ev.target.value; }];
+    let hdlr3 = [ctx['onClick'], ctx];
     const bExpr2 = ctx['state'];
-    let attr5 = ctx['state']['choice'] === 'Two';
-    let hdlr6 = [(ev) => { bExpr2['choice'] = ev.target.value; }];
-    let hdlr7 = [ctx['onClick'], ctx];
+    let attr2 = ctx['state']['choice'] === 'Two';
+    let hdlr4 = [(ev) => { bExpr2['choice'] = ev.target.value; }];
+    let hdlr5 = [ctx['onClick'], ctx];
     const bExpr3 = ctx['state'];
-    let attr8 = ctx['state']['choice'] === 'Three';
-    let hdlr9 = [(ev) => { bExpr3['choice'] = ev.target.value; }];
-    return block1([hdlr1, attr2, hdlr3, hdlr4, attr5, hdlr6, hdlr7, attr8, hdlr9]);
+    let attr3 = ctx['state']['choice'] === 'Three';
+    let hdlr6 = [(ev) => { bExpr3['choice'] = ev.target.value; }];
+    return block1([hdlr1, attr1, hdlr2, hdlr3, attr2, hdlr4, hdlr5, attr3, hdlr6]);
   }
 }"
 `;
@@ -166,8 +166,8 @@ exports[`t-model directive following a scope protecting directive (e.g. t-set) 1
     setContextValue(ctx, \\"admiral\\", 'Bruno');
     const bExpr1 = ctx['state'];
     let attr1 = ctx['state']['text'];
-    let hdlr2 = [(ev) => { bExpr1['text'] = ev.target.value; }];
-    return block1([attr1, hdlr2]);
+    let hdlr1 = [(ev) => { bExpr1['text'] = ev.target.value; }];
+    return block1([attr1, hdlr1]);
   }
 }"
 `;
@@ -189,8 +189,8 @@ exports[`t-model directive in a t-foreach 1`] = `
       let key1 = ctx['thing'].id;
       const bExpr1 = ctx['thing'];
       let attr1 = ctx['thing']['f'];
-      let hdlr2 = [(ev) => { bExpr1['f'] = ev.target.checked; }];
-      c_block2[i1] = withKey(block3([attr1, hdlr2]), key1);
+      let hdlr1 = [(ev) => { bExpr1['f'] = ev.target.checked; }];
+      c_block2[i1] = withKey(block3([attr1, hdlr1]), key1);
     }
     let b2 = list(c_block2);
     return block1([], [b2]);
@@ -216,8 +216,8 @@ exports[`t-model directive in a t-foreach, part 2 1`] = `
       let key1 = ctx['thing_index'];
       const bExpr1 = ctx['state'];
       let attr1 = ctx['state'][ctx['thing_index']];
-      let hdlr2 = [(ev) => { bExpr1[ctx['thing_index']] = ev.target.value; }];
-      c_block2[i1] = withKey(block3([attr1, hdlr2]), key1);
+      let hdlr1 = [(ev) => { bExpr1[ctx['thing_index']] = ev.target.value; }];
+      c_block2[i1] = withKey(block3([attr1, hdlr1]), key1);
     }
     let b2 = list(c_block2);
     return block1([], [b2]);
@@ -236,9 +236,9 @@ exports[`t-model directive on a select 1`] = `
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     let attr1 = ctx['state']['color'];
-    let hdlr2 = [(ev) => { bExpr1['color'] = ev.target.value; }];
-    let txt3 = ctx['state'].color;
-    return block1([attr1, hdlr2, txt3]);
+    let hdlr1 = [(ev) => { bExpr1['color'] = ev.target.value; }];
+    let txt1 = ctx['state'].color;
+    return block1([attr1, hdlr1, txt1]);
   }
 }"
 `;
@@ -254,8 +254,8 @@ exports[`t-model directive on a select, initial state 1`] = `
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     let attr1 = ctx['state']['color'];
-    let hdlr2 = [(ev) => { bExpr1['color'] = ev.target.value; }];
-    return block1([attr1, hdlr2]);
+    let hdlr1 = [(ev) => { bExpr1['color'] = ev.target.value; }];
+    return block1([attr1, hdlr1]);
   }
 }"
 `;
@@ -271,9 +271,9 @@ exports[`t-model directive on a sub state key 1`] = `
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'].something;
     let attr1 = ctx['state'].something['text'];
-    let hdlr2 = [(ev) => { bExpr1['text'] = ev.target.value; }];
-    let txt3 = ctx['state'].something.text;
-    return block1([attr1, hdlr2, txt3]);
+    let hdlr1 = [(ev) => { bExpr1['text'] = ev.target.value; }];
+    let txt1 = ctx['state'].something.text;
+    return block1([attr1, hdlr1, txt1]);
   }
 }"
 `;
@@ -289,12 +289,12 @@ exports[`t-model directive on an input type=radio 1`] = `
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     let attr1 = ctx['state']['choice'] === 'One';
-    let hdlr2 = [(ev) => { bExpr1['choice'] = ev.target.value; }];
+    let hdlr1 = [(ev) => { bExpr1['choice'] = ev.target.value; }];
     const bExpr2 = ctx['state'];
-    let attr3 = ctx['state']['choice'] === 'Two';
-    let hdlr4 = [(ev) => { bExpr2['choice'] = ev.target.value; }];
-    let txt5 = ctx['state'].choice;
-    return block1([attr1, hdlr2, attr3, hdlr4, txt5]);
+    let attr2 = ctx['state']['choice'] === 'Two';
+    let hdlr2 = [(ev) => { bExpr2['choice'] = ev.target.value; }];
+    let txt1 = ctx['state'].choice;
+    return block1([attr1, hdlr1, attr2, hdlr2, txt1]);
   }
 }"
 `;
@@ -310,11 +310,11 @@ exports[`t-model directive on an input type=radio, with initial value 1`] = `
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     let attr1 = ctx['state']['choice'] === 'One';
-    let hdlr2 = [(ev) => { bExpr1['choice'] = ev.target.value; }];
+    let hdlr1 = [(ev) => { bExpr1['choice'] = ev.target.value; }];
     const bExpr2 = ctx['state'];
-    let attr3 = ctx['state']['choice'] === 'Two';
-    let hdlr4 = [(ev) => { bExpr2['choice'] = ev.target.value; }];
-    return block1([attr1, hdlr2, attr3, hdlr4]);
+    let attr2 = ctx['state']['choice'] === 'Two';
+    let hdlr2 = [(ev) => { bExpr2['choice'] = ev.target.value; }];
+    return block1([attr1, hdlr1, attr2, hdlr2]);
   }
 }"
 `;
@@ -331,13 +331,13 @@ exports[`t-model directive on an input, type=checkbox 1`] = `
     let b2,b3;
     const bExpr1 = ctx['state'];
     let attr1 = ctx['state']['flag'];
-    let hdlr2 = [(ev) => { bExpr1['flag'] = ev.target.checked; }];
+    let hdlr1 = [(ev) => { bExpr1['flag'] = ev.target.checked; }];
     if (ctx['state'].flag) {
       b2 = text(\`yes\`);
     } else {
       b3 = text(\`no\`);
     }
-    return block1([attr1, hdlr2], [b2, b3]);
+    return block1([attr1, hdlr1], [b2, b3]);
   }
 }"
 `;
@@ -353,9 +353,9 @@ exports[`t-model directive on an textarea 1`] = `
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     let attr1 = ctx['state']['text'];
-    let hdlr2 = [(ev) => { bExpr1['text'] = ev.target.value; }];
-    let txt3 = ctx['state'].text;
-    return block1([attr1, hdlr2, txt3]);
+    let hdlr1 = [(ev) => { bExpr1['text'] = ev.target.value; }];
+    let txt1 = ctx['state'].text;
+    return block1([attr1, hdlr1, txt1]);
   }
 }"
 `;
@@ -375,14 +375,14 @@ exports[`t-model directive two inputs in a div alternating with a t-if 1`] = `
     if (ctx['state'].flag) {
       const bExpr1 = ctx['state'];
       let attr1 = ctx['state']['text1'];
-      let hdlr2 = [(ev) => { bExpr1['text1'] = ev.target.value; }];
-      b2 = block2([attr1, hdlr2]);
+      let hdlr1 = [(ev) => { bExpr1['text1'] = ev.target.value; }];
+      b2 = block2([attr1, hdlr1]);
     }
     if (!ctx['state'].flag) {
       const bExpr2 = ctx['state'];
-      let attr3 = ctx['state']['text2'];
-      let hdlr4 = [(ev) => { bExpr2['text2'] = ev.target.value; }];
-      b3 = block3([attr3, hdlr4]);
+      let attr2 = ctx['state']['text2'];
+      let hdlr2 = [(ev) => { bExpr2['text2'] = ev.target.value; }];
+      b3 = block3([attr2, hdlr2]);
     }
     return block1([], [b2, b3]);
   }

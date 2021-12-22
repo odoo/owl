@@ -76,10 +76,10 @@ exports[`basics can be clicked on and updated 1`] = `
   let block1 = createBlock(\`<div><block-text-0/><button block-handler-1=\\"click\\">Inc</button></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['state'].counter;
+    let txt1 = ctx['state'].counter;
     const v1 = ctx['state'];
-    let d2 = [()=>v1.counter++, ctx];
-    return block1([d1, d2]);
+    let hdlr2 = [()=>v1.counter++, ctx];
+    return block1([txt1, hdlr2]);
   }
 }"
 `;
@@ -106,8 +106,8 @@ exports[`basics can handle empty props 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].val;
-    return block1([d1]);
+    let txt1 = ctx['props'].val;
+    return block1([txt1]);
   }
 }"
 `;
@@ -133,8 +133,8 @@ exports[`basics can inject values in tagged templates 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['state'].n;
-    return block1([d1]);
+    let txt1 = ctx['state'].n;
+    return block1([txt1]);
   }
 }"
 `;
@@ -198,8 +198,8 @@ exports[`basics can mount a simple component with props 1`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].value;
-    return block1([d1]);
+    let txt1 = ctx['props'].value;
+    return block1([txt1]);
   }
 }"
 `;
@@ -234,8 +234,8 @@ exports[`basics class component with dynamic text 1`] = `
   let block1 = createBlock(\`<span>My value: <block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['value'];
-    return block1([d1]);
+    let txt1 = ctx['value'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -259,8 +259,8 @@ exports[`basics class parent, class child component with props 2`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].value;
-    return block1([d1]);
+    let txt1 = ctx['props'].value;
+    return block1([txt1]);
   }
 }"
 `;
@@ -273,8 +273,8 @@ exports[`basics component with dynamic content can be updated 1`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['value'];
-    return block1([d1]);
+    let txt1 = ctx['value'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -300,8 +300,8 @@ exports[`basics do not remove previously rendered dom if not necessary, variatio
   let block1 = createBlock(\`<div><h1>h1</h1><span><block-text-0/></span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['state'].value;
-    return block1([d1]);
+    let txt1 = ctx['state'].value;
+    return block1([txt1]);
   }
 }"
 `;
@@ -494,10 +494,10 @@ exports[`basics rerendering a widget with a sub widget 2`] = `
   let block1 = createBlock(\`<div><block-text-0/><button block-handler-1=\\"click\\">Inc</button></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['state'].counter;
+    let txt1 = ctx['state'].counter;
     const v1 = ctx['state'];
-    let d2 = [()=>v1.counter++, ctx];
-    return block1([d1, d2]);
+    let hdlr2 = [()=>v1.counter++, ctx];
+    return block1([txt1, hdlr2]);
   }
 }"
 `;
@@ -527,8 +527,8 @@ exports[`basics same t-keys in two different places 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].blip;
-    return block1([d1]);
+    let txt1 = ctx['props'].blip;
+    return block1([txt1]);
   }
 }"
 `;
@@ -541,8 +541,8 @@ exports[`basics simple component with a dynamic text 1`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['value'];
-    return block1([d1]);
+    let txt1 = ctx['value'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -555,8 +555,8 @@ exports[`basics simple component, useState 1`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['state'].value;
-    return block1([d1]);
+    let txt1 = ctx['state'].value;
+    return block1([txt1]);
   }
 }"
 `;
@@ -786,8 +786,8 @@ exports[`basics text after a conditional component 1`] = `
     if (ctx['state'].hasChild) {
       b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
     }
-    let d1 = ctx['state'].text;
-    return block1([d1], [b2]);
+    let txt1 = ctx['state'].text;
+    return block1([txt1], [b2]);
   }
 }"
 `;
@@ -901,9 +901,9 @@ exports[`basics update props of component without concrete own node 3`] = `
   let block1 = createBlock(\`<div class=\\"widget-subkey\\"><block-text-0/>__<block-text-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].key;
-    let d2 = ctx['props'].subKey;
-    return block1([d1, d2]);
+    let txt1 = ctx['props'].key;
+    let txt2 = ctx['props'].subKey;
+    return block1([txt1, txt2]);
   }
 }"
 `;

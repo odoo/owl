@@ -9,8 +9,8 @@ exports[`t-key can use t-key directive on a node 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['beer'].id;
-    let d1 = ctx['beer'].name;
-    return toggler(tKey_1, block1([d1]));
+    let txt1 = ctx['beer'].name;
+    return toggler(tKey_1, block1([txt1]));
   }
 }"
 `;
@@ -24,8 +24,8 @@ exports[`t-key can use t-key directive on a node 2 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['beer'].id;
-    let d1 = ctx['beer'].name;
-    return toggler(tKey_1, block1([d1]));
+    let txt1 = ctx['beer'].name;
+    return toggler(tKey_1, block1([txt1]));
   }
 }"
 `;
@@ -39,8 +39,8 @@ exports[`t-key can use t-key directive on a node as a function 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['getKey'](ctx['beer']);
-    let d1 = ctx['beer'].name;
-    return toggler(tKey_1, block1([d1]));
+    let txt1 = ctx['beer'].name;
+    return toggler(tKey_1, block1([txt1]));
   }
 }"
 `;
@@ -60,8 +60,8 @@ exports[`t-key t-key directive in a list 1`] = `
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`beer\`] = v_block2[i1];
       let key1 = ctx['beer'].id;
-      let d1 = ctx['beer'].name;
-      c_block2[i1] = withKey(block3([d1]), key1);
+      let txt1 = ctx['beer'].name;
+      c_block2[i1] = withKey(block3([txt1]), key1);
     }
     let b2 = list(c_block2);
     return block1([], [b2]);

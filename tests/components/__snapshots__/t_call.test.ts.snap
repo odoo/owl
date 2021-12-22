@@ -52,8 +52,8 @@ exports[`t-call handlers are properly bound through a dynamic t-call 1`] = `
   return function template(ctx, node, key = \\"\\") {
     const template2 = ('__template__999');
     let b2 = call(this, template2, ctx, node, key + \`__1\`);
-    let d1 = ctx['counter'];
-    return block1([d1], [b2]);
+    let txt1 = ctx['counter'];
+    return block1([txt1], [b2]);
   }
 }"
 `;
@@ -66,8 +66,8 @@ exports[`t-call handlers are properly bound through a dynamic t-call 2`] = `
   let block1 = createBlock(\`<p block-handler-0=\\"click\\">lucas</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = [()=>this.update(), ctx];
-    return block1([d1]);
+    let hdlr1 = [()=>this.update(), ctx];
+    return block1([hdlr1]);
   }
 }"
 `;
@@ -83,8 +83,8 @@ exports[`t-call handlers are properly bound through a t-call 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
-    let d1 = ctx['counter'];
-    return block1([d1], [b2]);
+    let txt1 = ctx['counter'];
+    return block1([txt1], [b2]);
   }
 }"
 `;
@@ -97,8 +97,8 @@ exports[`t-call handlers are properly bound through a t-call 2`] = `
   let block1 = createBlock(\`<p block-handler-0=\\"click\\">lucas</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = [ctx['update'], ctx];
-    return block1([d1]);
+    let hdlr1 = [ctx['update'], ctx];
+    return block1([hdlr1]);
   }
 }"
 `;
@@ -128,8 +128,8 @@ exports[`t-call handlers with arguments are properly bound through a t-call 2`] 
   
   return function template(ctx, node, key = \\"\\") {
     const v1 = ctx['a'];
-    let d1 = [()=>this.update(v1), ctx];
-    return block1([d1]);
+    let hdlr1 = [()=>this.update(v1), ctx];
+    return block1([hdlr1]);
   }
 }"
 `;
@@ -253,8 +253,8 @@ exports[`t-call sub components in two t-calls 3`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].val;
-    return block1([d1]);
+    let txt1 = ctx['props'].val;
+    return block1([txt1]);
   }
 }"
 `;
@@ -305,8 +305,8 @@ exports[`t-call t-call in t-foreach and children component 3`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].val;
-    return block1([d1]);
+    let txt1 = ctx['props'].val;
+    return block1([txt1]);
   }
 }"
 `;

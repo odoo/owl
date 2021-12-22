@@ -60,8 +60,8 @@ exports[`default props can set default values 2`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].p;
-    return block1([d1]);
+    let txt1 = ctx['props'].p;
+    return block1([txt1]);
   }
 }"
 `;
@@ -90,8 +90,8 @@ exports[`default props default values are also set whenever component is updated
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].p;
-    return block1([d1]);
+    let txt1 = ctx['props'].p;
+    return block1([txt1]);
   }
 }"
 `;
@@ -664,8 +664,8 @@ exports[`props validation default values are applied before validating props at 
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].p;
-    return block1([d1]);
+    let txt1 = ctx['props'].p;
+    return block1([txt1]);
   }
 }"
 `;
@@ -726,8 +726,8 @@ exports[`props validation props are validated in dev mode (code snapshot) 2`] = 
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].message;
-    return block1([d1]);
+    let txt1 = ctx['props'].message;
+    return block1([txt1]);
   }
 }"
 `;
@@ -756,8 +756,8 @@ exports[`props validation props are validated whenever component is updated 2`] 
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].p;
-    return block1([d1]);
+    let txt1 = ctx['props'].p;
+    return block1([txt1]);
   }
 }"
 `;

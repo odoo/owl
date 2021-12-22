@@ -42,8 +42,8 @@ exports[`Portal Portal composed with t-slot 3`] = `
   let block1 = createBlock(\`<div block-handler-0=\\"custom\\"><span id=\\"childSpan\\">child2</span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = [ctx['onCustom'], ctx];
-    return block1([d1]);
+    let hdlr1 = [ctx['onCustom'], ctx];
+    return block1([hdlr1]);
   }
 }"
 `;
@@ -118,8 +118,8 @@ exports[`Portal conditional use of Portal (with sub Component) 2`] = `
   let block1 = createBlock(\`<p><block-text-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].val;
-    return block1([d1]);
+    let txt1 = ctx['props'].val;
+    return block1([txt1]);
   }
 }"
 `;
@@ -176,8 +176,8 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 2`] 
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].val;
-    return block1([d1]);
+    let txt1 = ctx['props'].val;
+    return block1([txt1]);
   }
 }"
 `;
@@ -193,8 +193,8 @@ exports[`Portal portal could have dynamically no content 1`] = `
   function slot1(ctx, node, key = \\"\\") {
     let b3;
     if (ctx['state'].val) {
-      let d1 = ctx['state'].val;
-      b3 = block3([d1]);
+      let txt1 = ctx['state'].val;
+      b3 = block3([txt1]);
     }
     return multi([b3]);
   }
@@ -232,8 +232,8 @@ exports[`Portal portal destroys on crash 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].error&&this.will.crash;
-    return block1([d1]);
+    let txt1 = ctx['props'].error&&this.will.crash;
+    return block1([txt1]);
   }
 }"
 `;
@@ -264,8 +264,8 @@ exports[`Portal portal with child and props 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].val;
-    return block1([d1]);
+    let txt1 = ctx['props'].val;
+    return block1([txt1]);
   }
 }"
 `;
@@ -282,8 +282,8 @@ exports[`Portal portal with dynamic body 1`] = `
   function slot1(ctx, node, key = \\"\\") {
     let b3,b4;
     if (ctx['state'].val) {
-      let d1 = ctx['state'].val;
-      b3 = block3([d1]);
+      let txt1 = ctx['state'].val;
+      b3 = block3([txt1]);
     } else {
       b4 = block4();
     }
@@ -515,8 +515,8 @@ exports[`Portal: UI/UX focus is kept across re-renders 2`] = `
   let block1 = createBlock(\`<input id=\\"target-me\\" block-attribute-0=\\"placeholder\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].val;
-    return block1([d1]);
+    let attr1 = ctx['props'].val;
+    return block1([attr1]);
   }
 }"
 `;

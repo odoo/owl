@@ -126,8 +126,8 @@ exports[`lifecycle hooks components are unmounted and destroyed if no longer in 
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].n;
-    return block1([d1]);
+    let txt1 = ctx['props'].n;
+    return block1([txt1]);
   }
 }"
 `;
@@ -490,9 +490,9 @@ exports[`lifecycle hooks onWillRender 2`] = `
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = [ctx['increment'], ctx];
-    let d2 = ctx['state'].value;
-    return block1([d1, d2]);
+    let hdlr1 = [ctx['increment'], ctx];
+    let txt2 = ctx['state'].value;
+    return block1([hdlr1, txt2]);
   }
 }"
 `;
@@ -532,8 +532,8 @@ exports[`lifecycle hooks patched hook is called after updating State 1`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['state'].a;
-    return block1([d1]);
+    let txt1 = ctx['state'].a;
+    return block1([txt1]);
   }
 }"
 `;
@@ -546,8 +546,8 @@ exports[`lifecycle hooks render in mounted 1`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['patched'];
-    return block1([d1]);
+    let txt1 = ctx['patched'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -560,8 +560,8 @@ exports[`lifecycle hooks render in patched 1`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['patched'];
-    return block1([d1]);
+    let txt1 = ctx['patched'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -574,8 +574,8 @@ exports[`lifecycle hooks render in willPatch 1`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['patched'];
-    return block1([d1]);
+    let txt1 = ctx['patched'];
+    return block1([txt1]);
   }
 }"
 `;
@@ -644,8 +644,8 @@ exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents,
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].n;
-    return block1([d1]);
+    let txt1 = ctx['props'].n;
+    return block1([txt1]);
   }
 }"
 `;
@@ -752,8 +752,8 @@ exports[`lifecycle hooks willUpdateProps hook is called 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let d1 = ctx['props'].n;
-    return block1([d1]);
+    let txt1 = ctx['props'].n;
+    return block1([txt1]);
   }
 }"
 `;

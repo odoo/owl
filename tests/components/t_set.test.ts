@@ -156,4 +156,113 @@ describe("t-set", () => {
     expect(fixture.innerHTML).toBe("<div><p>source</p><div>childcalled</div><p>source</p></div>");
     expect((child as any).iter).toBe("child");
   });
+
+  test("t-set with something in body", async () => {
+    class Comp extends Component {
+      static template = xml`
+        <div>
+          <t t-set="v">
+            <p>coucou</p>
+          </t>
+          <div><t t-out="v"/></div>
+        </div>`;
+    }
+
+    await mount(Comp, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><div><p>coucou</p></div></div>");
+  });
+
+  test("t-set with a component in body", async () => {
+    class Child extends Component {
+      static template = xml`Child`;
+    }
+
+    class Comp extends Component {
+      static template = xml`
+        <div>
+          <t t-set="v">
+            <Child/>
+          </t>
+          <div><t t-out="v"/></div>
+        </div>`;
+      static components = { Child };
+    }
+
+    await mount(Comp, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><div>Child</div></div>");
+  });
+
+  test("slots with an unused t-set with a component in body", async () => {
+    class Child extends Component {
+      static template = xml`Child <t t-slot="default"/>`;
+    }
+
+    class Comp extends Component {
+      static template = xml`
+            <Child>
+              <t t-set="v">
+                <Child/>
+              </t>
+              in slot
+            </Child>`;
+      static components = { Child };
+    }
+
+    await mount(Comp, fixture);
+
+    expect(fixture.innerHTML).toBe("Child  in slot ");
+  });
+
+  test("slots with a t-set with a component in body", async () => {
+    class C extends Component {
+      static template = xml`C`;
+    }
+    class Child extends Component {
+      static template = xml`Child <t t-slot="default"/>`;
+    }
+
+    class Comp extends Component {
+      static template = xml`
+            <Child>
+              <t t-set="v">
+                <C/>
+              </t>
+              in slot
+              <t t-out="v" />
+            </Child>`;
+      static components = { Child, C };
+    }
+
+    await mount(Comp, fixture);
+
+    expect(fixture.innerHTML).toBe("Child  in slot C");
+  });
+
+  test("slots with an t-set with a component in body", async () => {
+    class Child extends Component {
+      static template = xml`Child`;
+    }
+    class Blorg extends Component {
+      static template = xml`Blorg <t t-slot="default"/>`;
+    }
+
+    class Comp extends Component {
+      static template = xml`
+        <Blorg>
+          <t t-set="v">
+            <Child/>
+            <div>coffee</div>
+          </t>
+          tea
+          <t t-out="v"/>
+        </Blorg>`;
+      static components = { Child, Blorg };
+    }
+
+    await mount(Comp, fixture);
+
+    expect(fixture.innerHTML).toBe("Blorg  tea Child<div>coffee</div>");
+  });
 });

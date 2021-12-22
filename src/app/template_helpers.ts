@@ -101,6 +101,25 @@ function shallowEqual(l1: any[], l2: any[]): boolean {
   return true;
 }
 
+class LazyValue {
+  fn: any;
+  ctx: any;
+  node: any;
+  constructor(fn: any, ctx: any, node: any) {
+    this.fn = fn;
+    this.ctx = capture(ctx);
+    this.node = node;
+  }
+
+  evaluate(): any {
+    return this.fn(this.ctx, this.node);
+  }
+
+  toString() {
+    return this.evaluate().toString();
+  }
+}
+
 /*
  * Safely outputs `value` as a block depending on the nature of `value`
  */
@@ -113,6 +132,9 @@ export function safeOutput(value: any): ReturnType<typeof toggler> {
   if (value instanceof Markup) {
     safeKey = `string_safe`;
     block = html(value as string);
+  } else if (value instanceof LazyValue) {
+    safeKey = `lazy_value`;
+    block = value.evaluate();
   } else if (typeof value === "string") {
     safeKey = "string_unsafe";
     block = text(value);
@@ -172,6 +194,7 @@ export const UTILS = {
   shallowEqual,
   toNumber,
   validateProps,
+  LazyValue,
   safeOutput,
   bind,
 };

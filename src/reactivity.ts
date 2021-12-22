@@ -130,7 +130,7 @@ const reactiveCache = new WeakMap<Target, WeakMap<Callback, Reactive>>();
  *  reactive has changed
  * @returns a proxy that tracks changes to it
  */
-export function reactive<T extends Target>(target: T, callback: Callback): Reactive<T> {
+export function reactive<T extends Target>(target: T, callback: Callback = () => {}): Reactive<T> {
   if (!canBeMadeReactive(target)) {
     throw new Error(`Cannot make the given value reactive`);
   }

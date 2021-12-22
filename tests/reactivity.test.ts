@@ -60,6 +60,13 @@ describe("Reactivity", () => {
     expect(Array.isArray(state)).toBe(true);
   });
 
+  test("work if there are no callback given", () => {
+    const state = reactive({ a: 1 });
+    expect(state.a).toBe(1);
+    state.a = 2;
+    expect(state.a).toBe(2);
+  });
+
   test("Throw error if value is not proxifiable", () => {
     expect(() => createReactive(1)).toThrow("Cannot make the given value reactive");
   });

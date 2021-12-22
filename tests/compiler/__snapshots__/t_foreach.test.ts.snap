@@ -216,7 +216,7 @@ exports[`t-foreach t-call with body in t-foreach in t-foreach 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { prepareList, isBoundary, withDefault, setContextValue, getTemplate, withKey } = helpers;
-  const callTemplate_2 = getTemplate(\`sub\`);
+  const callTemplate_1 = getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/><span>[<block-text-0/>][<block-text-1/>][<block-text-2/>]</span></div>\`);
   let block6 = createBlock(\`<span><block-text-0/></span>\`);
@@ -245,7 +245,7 @@ exports[`t-foreach t-call with body in t-foreach in t-foreach 1`] = `
         ctx = Object.create(ctx);
         ctx[isBoundary] = 1;
         setContextValue(ctx, \\"c\\", 'x'+'_'+ctx['a']+'_'+ctx['b']);
-        c_block4[i2] = withKey(callTemplate_2.call(this, ctx, node, key + \`__1__\${key1}__\${key2}\`), key2);
+        c_block4[i2] = withKey(callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}__\${key2}\`), key2);
         ctx = ctx.__proto__;
       }
       ctx = ctx.__proto__;
@@ -287,7 +287,7 @@ exports[`t-foreach t-call without body in t-foreach in t-foreach 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { prepareList, getTemplate, withKey } = helpers;
-  const callTemplate_2 = getTemplate(\`sub\`);
+  const callTemplate_1 = getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/><span>[<block-text-0/>][<block-text-1/>][<block-text-2/>]</span></div>\`);
   let block6 = createBlock(\`<span><block-text-0/></span>\`);
@@ -311,7 +311,7 @@ exports[`t-foreach t-call without body in t-foreach in t-foreach 1`] = `
         ctx[\`b_index\`] = i2;
         ctx[\`b_value\`] = k_block4[i2];
         let key2 = ctx['b'];
-        c_block4[i2] = withKey(callTemplate_2.call(this, ctx, node, key + \`__1__\${key1}__\${key2}\`), key2);
+        c_block4[i2] = withKey(callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}__\${key2}\`), key2);
       }
       ctx = ctx.__proto__;
       let b4 = list(c_block4);

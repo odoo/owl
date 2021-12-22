@@ -11,8 +11,8 @@ exports[`t-call dynamic t-call 1`] = `
     ctx[isBoundary] = 1;
     let b1 = text(\` owl \`);
     ctx[zero] = b1;
-    const template2 = (ctx['current'].template);
-    return call(this, template2, ctx, node, key + \`__1\`);
+    const template1 = (ctx['current'].template);
+    return call(this, template1, ctx, node, key + \`__1\`);
   }
 }"
 `;
@@ -50,8 +50,8 @@ exports[`t-call handlers are properly bound through a dynamic t-call 1`] = `
   let block1 = createBlock(\`<div><block-child-0/><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const template2 = ('__template__999');
-    let b2 = call(this, template2, ctx, node, key + \`__1\`);
+    const template1 = ('__template__999');
+    let b2 = call(this, template1, ctx, node, key + \`__1\`);
     let txt1 = ctx['counter'];
     return block1([txt1], [b2]);
   }
@@ -77,12 +77,12 @@ exports[`t-call handlers are properly bound through a t-call 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { getTemplate } = helpers;
-  const callTemplate_2 = getTemplate(\`__template__999\`);
+  const callTemplate_1 = getTemplate(\`__template__999\`);
   
   let block1 = createBlock(\`<div><block-child-0/><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
+    let b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     let txt1 = ctx['counter'];
     return block1([txt1], [b2]);
   }
@@ -108,12 +108,12 @@ exports[`t-call handlers with arguments are properly bound through a t-call 1`] 
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { getTemplate } = helpers;
-  const callTemplate_2 = getTemplate(\`__template__999\`);
+  const callTemplate_1 = getTemplate(\`__template__999\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
+    let b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
 }"
@@ -139,12 +139,12 @@ exports[`t-call parent is set within t-call 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { getTemplate } = helpers;
-  const callTemplate_2 = getTemplate(\`__template__999\`);
+  const callTemplate_1 = getTemplate(\`__template__999\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
+    let b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
 }"
@@ -179,10 +179,10 @@ exports[`t-call parent is set within t-call with no parentNode 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { getTemplate } = helpers;
-  const callTemplate_2 = getTemplate(\`__template__999\`);
+  const callTemplate_1 = getTemplate(\`__template__999\`);
   
   return function template(ctx, node, key = \\"\\") {
-    return callTemplate_2.call(this, ctx, node, key + \`__1\`);
+    return callTemplate_1.call(this, ctx, node, key + \`__1\`);
   }
 }"
 `;
@@ -216,17 +216,17 @@ exports[`t-call sub components in two t-calls 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { getTemplate } = helpers;
+  const callTemplate_1 = getTemplate(\`sub\`);
   const callTemplate_2 = getTemplate(\`sub\`);
-  const callTemplate_4 = getTemplate(\`sub\`);
   
   let block3 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2,b3;
     if (ctx['state'].val===1) {
-      b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
+      b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     } else {
-      let b4 = callTemplate_4.call(this, ctx, node, key + \`__3\`);
+      let b4 = callTemplate_2.call(this, ctx, node, key + \`__2\`);
       b3 = block3([], [b4]);
     }
     return multi([b2, b3]);
@@ -264,7 +264,7 @@ exports[`t-call t-call in t-foreach and children component 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { prepareList, getTemplate, withKey } = helpers;
-  const callTemplate_2 = getTemplate(\`__template__999\`);
+  const callTemplate_1 = getTemplate(\`__template__999\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -278,7 +278,7 @@ exports[`t-call t-call in t-foreach and children component 1`] = `
       ctx[\`val_index\`] = i1;
       ctx[\`val_value\`] = k_block2[i1];
       let key1 = ctx['val'];
-      c_block2[i1] = withKey(callTemplate_2.call(this, ctx, node, key + \`__1__\${key1}\`), key1);
+      c_block2[i1] = withKey(callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}\`), key1);
     }
     let b2 = list(c_block2);
     return block1([], [b2]);

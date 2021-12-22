@@ -36,12 +36,12 @@ exports[`t-ref ref in a t-call 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { getTemplate } = helpers;
-  const callTemplate_2 = getTemplate(\`sub\`);
+  const callTemplate_1 = getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
+    let b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
 }"
@@ -99,10 +99,10 @@ exports[`t-ref refs in a loop 1`] = `
       ctx[\`item\`] = v_block2[i1];
       let key1 = ctx['item'];
       const tKey_1 = ctx['item'];
-      const v2 = ctx['item'];
-      let ref1 = (el) => refs[\`\${v2}\`] = el;
-      let txt2 = ctx['item'];
-      c_block2[i1] = withKey(block3([ref1, txt2]), tKey_1 + key1);
+      const v1 = ctx['item'];
+      let ref1 = (el) => refs[\`\${v1}\`] = el;
+      let txt1 = ctx['item'];
+      c_block2[i1] = withKey(block3([ref1, txt1]), tKey_1 + key1);
     }
     let b2 = list(c_block2);
     return block1([], [b2]);

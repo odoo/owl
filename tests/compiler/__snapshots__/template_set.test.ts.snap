@@ -31,12 +31,12 @@ exports[`loading templates can load a few templates from a xml string 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { getTemplate } = helpers;
-  const callTemplate_2 = getTemplate(\`items\`);
+  const callTemplate_1 = getTemplate(\`items\`);
   
   let block1 = createBlock(\`<ul><block-child-0/></ul>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
+    let b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
 }"
@@ -63,12 +63,12 @@ exports[`loading templates can load a few templates from an XMLDocument 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { getTemplate } = helpers;
-  const callTemplate_2 = getTemplate(\`items\`);
+  const callTemplate_1 = getTemplate(\`items\`);
   
   let block1 = createBlock(\`<ul><block-child-0/></ul>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
+    let b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
 }"

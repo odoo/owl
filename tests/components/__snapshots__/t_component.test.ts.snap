@@ -8,8 +8,8 @@ exports[`t-component can switch between dynamic components without the need for 
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let Comp2 = ctx['constructor'].components[ctx['state'].child];
-    let b2 = toggler(Comp2, component(Comp2, {}, key + \`__1\`, node, ctx));
+    let Comp1 = ctx['constructor'].components[ctx['state'].child];
+    let b2 = toggler(Comp1, component(Comp1, {}, key + \`__1\`, node, ctx));
     return block1([], [b2]);
   }
 }"
@@ -48,8 +48,8 @@ exports[`t-component can use dynamic components (the class) if given (with diffe
   
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['state'].child;
-    let Comp3 = ctx['myComponent'];
-    return toggler(tKey_1, toggler(Comp3, component(Comp3, {}, tKey_1 + key + \`__2\`, node, ctx)));
+    let Comp1 = ctx['myComponent'];
+    return toggler(tKey_1, toggler(Comp1, component(Comp1, {}, tKey_1 + key + \`__1\`, node, ctx)));
   }
 }"
 `;
@@ -87,8 +87,8 @@ exports[`t-component can use dynamic components (the class) if given 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['state'].child;
-    let Comp3 = ctx['myComponent'];
-    return toggler(tKey_1, toggler(Comp3, component(Comp3, {}, tKey_1 + key + \`__2\`, node, ctx)));
+    let Comp1 = ctx['myComponent'];
+    return toggler(tKey_1, toggler(Comp1, component(Comp1, {}, tKey_1 + key + \`__1\`, node, ctx)));
   }
 }"
 `;
@@ -127,8 +127,8 @@ exports[`t-component modifying a sub widget 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let Comp2 = ctx['Counter'];
-    let b2 = toggler(Comp2, component(Comp2, {}, key + \`__1\`, node, ctx));
+    let Comp1 = ctx['Counter'];
+    let b2 = toggler(Comp1, component(Comp1, {}, key + \`__1\`, node, ctx));
     return block1([], [b2]);
   }
 }"
@@ -144,8 +144,8 @@ exports[`t-component modifying a sub widget 2`] = `
   return function template(ctx, node, key = \\"\\") {
     let txt1 = ctx['state'].counter;
     const v1 = ctx['state'];
-    let hdlr2 = [()=>v1.counter++, ctx];
-    return block1([txt1, hdlr2]);
+    let hdlr1 = [()=>v1.counter++, ctx];
+    return block1([txt1, hdlr1]);
   }
 }"
 `;
@@ -156,8 +156,8 @@ exports[`t-component switching dynamic component 1`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    let Comp2 = ctx['Child'];
-    return toggler(Comp2, component(Comp2, {}, key + \`__1\`, node, ctx));
+    let Comp1 = ctx['Child'];
+    return toggler(Comp1, component(Comp1, {}, key + \`__1\`, node, ctx));
   }
 }"
 `;
@@ -192,8 +192,8 @@ exports[`t-component t-component works in simple case 1`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    let Comp2 = ctx['Child'];
-    return toggler(Comp2, component(Comp2, {}, key + \`__1\`, node, ctx));
+    let Comp1 = ctx['Child'];
+    return toggler(Comp1, component(Comp1, {}, key + \`__1\`, node, ctx));
   }
 }"
 `;

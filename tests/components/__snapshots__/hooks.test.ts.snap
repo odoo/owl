@@ -282,8 +282,8 @@ exports[`hooks useRef hook: basic use 1`] = `
   return function template(ctx, node, key = \\"\\") {
     const refs = ctx.__owl__.refs;
     let d1 = (el) => refs[\`button\`] = el;
-    let txt2 = ctx['value'];
-    return block1([d1, txt2]);
+    let txt1 = ctx['value'];
+    return block1([d1, txt1]);
   }
 }"
 `;

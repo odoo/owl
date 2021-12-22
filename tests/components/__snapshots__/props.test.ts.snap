@@ -42,7 +42,7 @@ exports[`basics arrow functions as prop correctly capture their scope 1`] = `
       let key1 = ctx['item'].val;
       const v1 = ctx['onClick'];
       const v2 = ctx['item'];
-      c_block1[i1] = withKey(component(\`Child\`, {onClick: ev=>v1(v2.val,ev)}, key + \`__3__\${key1}\`, node, ctx), key1);
+      c_block1[i1] = withKey(component(\`Child\`, {onClick: ev=>v1(v2.val,ev)}, key + \`__1__\${key1}\`, node, ctx), key1);
     }
     return list(c_block1);
   }

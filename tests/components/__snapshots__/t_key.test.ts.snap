@@ -15,7 +15,7 @@ exports[`t-key t-foreach with t-key switch component position 1`] = `
       ctx[\`c\`] = v_block2[i1];
       let key1 = ctx['c'];
       const tKey_1 = ctx['key1'];
-      c_block2[i1] = withKey(component(\`Child\`, {key: ctx['c']+ctx['key1']}, tKey_1 + key + \`__2__\${key1}\`, node, ctx), tKey_1 + key1);
+      c_block2[i1] = withKey(component(\`Child\`, {key: ctx['c']+ctx['key1']}, tKey_1 + key + \`__1__\${key1}\`, node, ctx), tKey_1 + key1);
     }
     let b2 = list(c_block2);
     return block1([], [b2]);
@@ -44,7 +44,7 @@ exports[`t-key t-key on Component 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['key'];
-    return toggler(tKey_1, component(\`Child\`, {key: ctx['key']}, tKey_1 + key + \`__2\`, node, ctx));
+    return toggler(tKey_1, component(\`Child\`, {key: ctx['key']}, tKey_1 + key + \`__1\`, node, ctx));
   }
 }"
 `;
@@ -72,7 +72,7 @@ exports[`t-key t-key on Component as a function 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['key'];
-    let b2 = toggler(tKey_1, component(\`Child\`, {key: ctx['key']}, tKey_1 + key + \`__2\`, node, ctx));
+    let b2 = toggler(tKey_1, component(\`Child\`, {key: ctx['key']}, tKey_1 + key + \`__1\`, node, ctx));
     return block1([], [b2]);
   }
 }"
@@ -101,9 +101,9 @@ exports[`t-key t-key on multiple Components 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['key1'];
-    let b2 = toggler(tKey_1, component(\`Child\`, {key: ctx['key1']}, tKey_1 + key + \`__2\`, node, ctx));
-    const tKey_3 = ctx['key2'];
-    let b3 = toggler(tKey_3, component(\`Child\`, {key: ctx['key2']}, tKey_3 + key + \`__4\`, node, ctx));
+    let b2 = toggler(tKey_1, component(\`Child\`, {key: ctx['key1']}, tKey_1 + key + \`__1\`, node, ctx));
+    const tKey_2 = ctx['key2'];
+    let b3 = toggler(tKey_2, component(\`Child\`, {key: ctx['key2']}, tKey_2 + key + \`__2\`, node, ctx));
     return block1([], [b2, b3]);
   }
 }"
@@ -128,8 +128,8 @@ exports[`t-key t-key on multiple Components with t-call 1 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { isBoundary, withDefault, setContextValue, getTemplate } = helpers;
+  const callTemplate_1 = getTemplate(\`calledTemplate\`);
   const callTemplate_2 = getTemplate(\`calledTemplate\`);
-  const callTemplate_4 = getTemplate(\`calledTemplate\`);
   
   let block1 = createBlock(\`<span><block-child-0/><block-child-1/></span>\`);
   
@@ -139,12 +139,12 @@ exports[`t-key t-key on multiple Components with t-call 1 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
     setContextValue(ctx, \\"key\\", ctx['key1']);
-    let b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
+    let b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     ctx = ctx.__proto__;
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
     setContextValue(ctx, \\"key\\", ctx['key2']);
-    let b3 = callTemplate_4.call(this, ctx, node, key + \`__3\`);
+    let b3 = callTemplate_2.call(this, ctx, node, key + \`__2\`);
     return block1([], [b2, b3]);
   }
 }"
@@ -157,7 +157,7 @@ exports[`t-key t-key on multiple Components with t-call 1 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['key'];
-    return toggler(tKey_1, component(\`Child\`, {key: ctx['key']}, tKey_1 + key + \`__2\`, node, ctx));
+    return toggler(tKey_1, component(\`Child\`, {key: ctx['key']}, tKey_1 + key + \`__1\`, node, ctx));
   }
 }"
 `;
@@ -181,12 +181,12 @@ exports[`t-key t-key on multiple Components with t-call 2 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { getTemplate } = helpers;
-  const callTemplate_2 = getTemplate(\`calledTemplate\`);
+  const callTemplate_1 = getTemplate(\`calledTemplate\`);
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
+    let b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
 }"
@@ -199,9 +199,9 @@ exports[`t-key t-key on multiple Components with t-call 2 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['key1'];
-    let b2 = toggler(tKey_1, component(\`Child\`, {key: ctx['key1']}, tKey_1 + key + \`__2\`, node, ctx));
-    const tKey_3 = ctx['key2'];
-    let b3 = toggler(tKey_3, component(\`Child\`, {key: ctx['key2']}, tKey_3 + key + \`__4\`, node, ctx));
+    let b2 = toggler(tKey_1, component(\`Child\`, {key: ctx['key1']}, tKey_1 + key + \`__1\`, node, ctx));
+    const tKey_2 = ctx['key2'];
+    let b3 = toggler(tKey_2, component(\`Child\`, {key: ctx['key2']}, tKey_2 + key + \`__2\`, node, ctx));
     return multi([b2, b3]);
   }
 }"

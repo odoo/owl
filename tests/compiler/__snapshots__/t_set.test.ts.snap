@@ -188,7 +188,7 @@ exports[`t-set t-set can't alter from within callee 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { isBoundary, withDefault, setContextValue, getTemplate } = helpers;
-  const callTemplate_2 = getTemplate(\`sub\`);
+  const callTemplate_1 = getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><p><block-text-0/></p><block-child-0/><p><block-text-1/></p></div>\`);
   
@@ -197,7 +197,7 @@ exports[`t-set t-set can't alter from within callee 1`] = `
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"iter\\", 'source');
     let txt1 = ctx['iter'];
-    let b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
+    let b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     let txt2 = ctx['iter'];
     return block1([txt1, txt2], [b2]);
   }
@@ -228,7 +228,7 @@ exports[`t-set t-set can't alter in t-call body 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { isBoundary, withDefault, setContextValue, getTemplate } = helpers;
-  const callTemplate_2 = getTemplate(\`sub\`);
+  const callTemplate_1 = getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><p><block-text-0/></p><block-child-0/><p><block-text-1/></p></div>\`);
   
@@ -240,7 +240,7 @@ exports[`t-set t-set can't alter in t-call body 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
     setContextValue(ctx, \\"iter\\", 'inCall');
-    let b2 = callTemplate_2.call(this, ctx, node, key + \`__1\`);
+    let b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     ctx = ctx.__proto__;
     let txt2 = ctx['iter'];
     return block1([txt1, txt2], [b2]);

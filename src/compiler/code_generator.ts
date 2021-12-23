@@ -287,6 +287,18 @@ export class CodeGenerator {
     return code;
   }
 
+  compileInNewTarget(prefix: string, ast: AST, ctx: Context): string {
+    const name = this.generateId(prefix);
+    const initialTarget = this.target;
+    const target = new CodeTarget(name);
+    this.targets.push(target);
+    this.target = target;
+    const subCtx: Context = createContext(ctx);
+    this.compileAST(ast, subCtx);
+    this.target = initialTarget;
+    return name;
+  }
+
   addLine(line: string) {
     this.target.addLine(line);
   }
@@ -294,10 +306,6 @@ export class CodeGenerator {
   generateId(prefix: string = ""): string {
     this.ids[prefix] = (this.ids[prefix] || 0) + 1;
     return prefix + this.ids[prefix];
-  }
-
-  generateBlockName(): string {
-    return `block${this.blocks.length + 1}`;
   }
 
   insertAnchor(block: BlockDescription) {
@@ -966,15 +974,9 @@ export class CodeGenerator {
     this.helpers.add("isBoundary").add("withDefault");
     const expr = ast.value ? compileExpr(ast.value || "") : "null";
     if (ast.body) {
-      const initialTarget = this.target;
       this.helpers.add("LazyValue");
-      let name = this.generateId("value");
-      const fn = new CodeTarget(name);
-      this.targets.push(fn);
-      this.target = fn;
-      const subCtx: Context = createContext(ctx);
-      this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
-      this.target = initialTarget;
+      const bodyAst: AST = { type: ASTType.Multi, content: ast.body };
+      const name = this.compileInNewTarget("value", bodyAst, ctx);
       let value = `new LazyValue(${name}, ctx, node)`;
       value = ast.value ? (value ? `withDefault(${expr}, ${value})` : expr) : value;
       this.addLine(`ctx[\`${ast.name}\`] = ${value};`);
@@ -1036,14 +1038,9 @@ export class CodeGenerator {
         this.addLine(`const ${ctxStr} = capture(ctx);`);
       }
       let slotStr: string[] = [];
-      const initialTarget = this.target;
       for (let slotName in ast.slots) {
-        let name = this.generateId("slot");
-        const slot = new CodeTarget(name);
-        this.targets.push(slot);
-        this.target = slot;
-        const subCtx: Context = createContext(ctx);
-        this.compileAST(ast.slots[slotName].content, subCtx);
+        const slotAst = ast.slots[slotName].content;
+        const name = this.compileInNewTarget("slot", slotAst, ctx);
         const params = [`__render: ${name}, __ctx: ${ctxStr}`];
         const scope = ast.slots[slotName].scope;
         if (scope) {
@@ -1057,7 +1054,6 @@ export class CodeGenerator {
         const slotInfo = `{${params.join(", ")}}`;
         slotStr.push(`'${slotName}': ${slotInfo}`);
       }
-      this.target = initialTarget;
       slotDef = `{${slotStr.join(", ")}}`;
     }
 
@@ -1142,14 +1138,7 @@ export class CodeGenerator {
     }
 
     if (ast.defaultContent) {
-      let name = this.generateId("defaultContent");
-      const slot = new CodeTarget(name);
-      this.targets.push(slot);
-      const initialTarget = this.target;
-      const subCtx: Context = createContext(ctx);
-      this.target = slot;
-      this.compileAST(ast.defaultContent, subCtx);
-      this.target = initialTarget;
+      const name = this.compileInNewTarget("defaultContent", ast.defaultContent, ctx);
       blockString = `callSlot(ctx, node, key, ${slotName}, ${dynamic}, ${scope}, ${name})`;
     } else {
       if (dynamic) {

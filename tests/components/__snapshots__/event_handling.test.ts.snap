@@ -9,7 +9,7 @@ exports[`event handling handler receive the event as argument 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     let hdlr1 = [ctx['inc'], ctx];
-    let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    let b2 = component(\`Child\`, {}, key+\`__1\`,null, node, ctx);
     let txt1 = ctx['state'].value;
     return block1([hdlr1, txt1], [b2]);
   }

@@ -48,7 +48,7 @@ exports[`t-call dynamic t-call: key is propagated 1`] = `
   let { call } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    let b2 = component(\`Child\`, {}, key+\`__1\`,null, node, ctx);
     const template1 = (ctx['sub']);
     let b3 = call(this, template1, ctx, node, key + \`__2\`);
     return multi([b2, b3]);
@@ -76,7 +76,7 @@ exports[`t-call dynamic t-call: key is propagated 3`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    return component(\`Child\`, {}, key+\`__1\`,null, node, ctx);
   }
 }"
 `;
@@ -196,7 +196,7 @@ exports[`t-call parent is set within t-call 2`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    return component(\`Child\`, {}, key+\`__1\`,null, node, ctx);
   }
 }"
 `;
@@ -233,7 +233,7 @@ exports[`t-call parent is set within t-call with no parentNode 2`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    return component(\`Child\`, {}, key+\`__1\`,null, node, ctx);
   }
 }"
 `;
@@ -280,7 +280,7 @@ exports[`t-call sub components in two t-calls 2`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {val: ctx['state'].val}, key + \`__1\`, node, ctx);
+    return component(\`Child\`, {val: ctx['state'].val}, key+\`__1\`,null, node, ctx);
   }
 }"
 `;
@@ -332,7 +332,7 @@ exports[`t-call t-call in t-foreach and children component 2`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {val: ctx['val']}, key + \`__1\`, node, ctx);
+    return component(\`Child\`, {val: ctx['val']}, key+\`__1\`,null, node, ctx);
   }
 }"
 `;

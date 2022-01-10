@@ -6,7 +6,7 @@ exports[`style and class handling can set class on multi root component 1`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {class: 'fromparent'}, key + \`__1\`, node, ctx);
+    return component(\`Child\`, {class: 'fromparent'}, key+\`__1\`,null, node, ctx);
   }
 }"
 `;
@@ -34,7 +34,7 @@ exports[`style and class handling can set class on sub component, as prop 1`] = 
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {class: 'some-class'}, key + \`__1\`, node, ctx);
+    return component(\`Child\`, {class: 'some-class'}, key+\`__1\`,null, node, ctx);
   }
 }"
 `;
@@ -59,7 +59,7 @@ exports[`style and class handling can set class on sub sub component 1`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {class: 'fromparent'}, key + \`__1\`, node, ctx);
+    return component(\`Child\`, {class: 'fromparent'}, key+\`__1\`,null, node, ctx);
   }
 }"
 `;
@@ -70,7 +70,7 @@ exports[`style and class handling can set class on sub sub component 2`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`ChildChild\`, {class: (ctx['props'].class||'')+' fromchild'}, key + \`__1\`, node, ctx);
+    return component(\`ChildChild\`, {class: (ctx['props'].class||'')+' fromchild'}, key+\`__1\`,null, node, ctx);
   }
 }"
 `;
@@ -95,7 +95,7 @@ exports[`style and class handling can set more than one class on sub component 1
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {class: 'a  b'}, key + \`__1\`, node, ctx);
+    return component(\`Child\`, {class: 'a  b'}, key+\`__1\`,null, node, ctx);
   }
 }"
 `;
@@ -147,7 +147,7 @@ exports[`style and class handling class on sub component, which is switched to a
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {class: 'someclass',child: ctx['state'].child}, key + \`__1\`, node, ctx);
+    return component(\`Child\`, {class: 'someclass',child: ctx['state'].child}, key+\`__1\`,null, node, ctx);
   }
 }"
 `;
@@ -160,9 +160,9 @@ exports[`style and class handling class on sub component, which is switched to a
   return function template(ctx, node, key = \\"\\") {
     let b2,b3;
     if (ctx['props'].child==='a') {
-      b2 = component(\`ChildA\`, {class: ctx['props'].class}, key + \`__1\`, node, ctx);
+      b2 = component(\`ChildA\`, {class: ctx['props'].class}, key+\`__1\`,null, node, ctx);
     } else {
-      b3 = component(\`ChildB\`, {class: ctx['props'].class}, key + \`__2\`, node, ctx);
+      b3 = component(\`ChildB\`, {class: ctx['props'].class}, key+\`__2\`,null, node, ctx);
     }
     return multi([b2, b3]);
   }
@@ -205,7 +205,7 @@ exports[`style and class handling class with extra whitespaces (variation) 1`] =
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`Child\`, {class: 'a  b c   d'}, key + \`__1\`, node, ctx);
+    let b2 = component(\`Child\`, {class: 'a  b c   d'}, key+\`__1\`,null, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -231,7 +231,7 @@ exports[`style and class handling class with extra whitespaces 1`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {class: 'a  b c   d'}, key + \`__1\`, node, ctx);
+    return component(\`Child\`, {class: 'a  b c   d'}, key+\`__1\`,null, node, ctx);
   }
 }"
 `;
@@ -256,7 +256,7 @@ exports[`style and class handling component class and parent class combine toget
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {class: 'from parent'}, key + \`__1\`, node, ctx);
+    return component(\`Child\`, {class: 'from parent'}, key+\`__1\`,null, node, ctx);
   }
 }"
 `;
@@ -310,7 +310,7 @@ exports[`style and class handling empty class attribute is not added on widget r
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`Child\`, {class: undefined}, key + \`__1\`, node, ctx);
+    let b2 = component(\`Child\`, {class: undefined}, key+\`__1\`,null, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -336,7 +336,7 @@ exports[`style and class handling error in subcomponent with class 1`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {class: 'a'}, key + \`__1\`, node, ctx);
+    return component(\`Child\`, {class: 'a'}, key+\`__1\`,null, node, ctx);
   }
 }"
 `;
@@ -362,7 +362,7 @@ exports[`style and class handling no class is set is child ignores it 1`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {class: 'hey'}, key + \`__1\`, node, ctx);
+    return component(\`Child\`, {class: 'hey'}, key+\`__1\`,null, node, ctx);
   }
 }"
 `;
@@ -386,7 +386,7 @@ exports[`style and class handling no class is set is parent does not give it as 
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    return component(\`Child\`, {}, key+\`__1\`,null, node, ctx);
   }
 }"
 `;
@@ -411,7 +411,7 @@ exports[`style and class handling style is properly added on widget root el 1`] 
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {style: 'font-weight: bold;'}, key + \`__1\`, node, ctx);
+    return component(\`Child\`, {style: 'font-weight: bold;'}, key+\`__1\`,null, node, ctx);
   }
 }"
 `;
@@ -438,7 +438,7 @@ exports[`style and class handling t-att-class is properly added/removed on widge
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`Child\`, {class: {b:ctx['state'].b}}, key + \`__1\`, node, ctx);
+    let b2 = component(\`Child\`, {class: {b:ctx['state'].b}}, key+\`__1\`,null, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -464,7 +464,7 @@ exports[`style and class handling t-att-class is properly added/removed on widge
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {class: {a:true,b:ctx['state'].b}}, key + \`__1\`, node, ctx);
+    return component(\`Child\`, {class: {a:true,b:ctx['state'].b}}, key+\`__1\`,null, node, ctx);
   }
 }"
 `;

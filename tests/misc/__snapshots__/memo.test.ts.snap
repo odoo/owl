@@ -16,7 +16,7 @@ exports[`Memo if no prop change, prevent renderings from above  1`] = `
     let b2 = text(ctx['state'].a);
     let b3 = text(ctx['state'].b);
     let b4 = text(ctx['state'].c);
-    let b9 = component(\`Memo\`, {a: ctx['state'].a,b: ctx['state'].b,slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx);
+    let b9 = component(\`Memo\`, {a: ctx['state'].a,b: ctx['state'].b,slots: {'default': {__render: slot1, __ctx: ctx}}}, key+\`__1\`,null, node, ctx);
     return multi([b2, b3, b4, b9]);
   }
 }"
@@ -28,12 +28,12 @@ exports[`Memo if no props, prevent renderings from above  1`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   function slot1(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {value: ctx['state'].value}, key + \`__2\`, node, ctx);
+    return component(\`Child\`, {value: ctx['state'].value}, key+\`__2\`,null, node, ctx);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`Child\`, {value: ctx['state'].value}, key + \`__1\`, node, ctx);
-    let b4 = component(\`Memo\`, {slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__3\`, node, ctx);
+    let b2 = component(\`Child\`, {value: ctx['state'].value}, key+\`__1\`,null, node, ctx);
+    let b4 = component(\`Memo\`, {slots: {'default': {__render: slot1, __ctx: ctx}}}, key+\`__3\`,null, node, ctx);
     return multi([b2, b4]);
   }
 }"
@@ -61,7 +61,7 @@ exports[`Memo if no props, prevent renderings from above (work with simple html)
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = text(ctx['state'].value);
-    let b4 = component(\`Memo\`, {slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx);
+    let b4 = component(\`Memo\`, {slots: {'default': {__render: slot1, __ctx: ctx}}}, key+\`__1\`,null, node, ctx);
     return multi([b2, b4]);
   }
 }"

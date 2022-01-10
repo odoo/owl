@@ -1102,10 +1102,7 @@ export class CodeGenerator {
       this.insertAnchor(block);
     }
 
-    let keyArg = `key + \`${key}\``;
-    if (ctx.tKeyExpr) {
-      keyArg = `${ctx.tKeyExpr} + ${keyArg}`;
-    }
+    const keyArg = `key+\`${key}\`,${ctx.tKeyExpr}`;
     const blockArgs = `${expr}, ${propString}, ${keyArg}, node, ctx`;
     let blockExpr = `component(${blockArgs})`;
     if (ast.isDynamic) {

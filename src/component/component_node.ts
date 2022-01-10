@@ -27,15 +27,34 @@ export function component(
   name: string | typeof Component,
   props: any,
   key: string,
+  tKey: null | string,
   ctx: ComponentNode,
   parent: any
 ): ComponentNode {
-  let node: any = ctx.children[key];
+  const parentChildren = ctx.children;
+  const destroy = ComponentNode.prototype.destroy;
+
+  if (tKey) {
+    const parentMap = ctx.keyToTkey;
+    const oldTkey = parentMap[key];
+    if (oldTkey && oldTkey !== tKey) {
+      const oldKey = key + oldTkey;
+      const node = parentChildren[oldKey];
+      if (node && node.status < STATUS.MOUNTED) {
+        destroy.call(node);
+        delete parentChildren[oldKey];
+      }
+    }
+    parentMap[key] = tKey;
+    key = key + tKey;
+  }
+
+  let node: any = parentChildren[key];
   let isDynamic = typeof name !== "string";
 
   if (node) {
     if (node.status < STATUS.MOUNTED) {
-      node.destroy();
+      destroy.call(node);
       node = undefined;
     } else if (node.status === STATUS.DESTROYED) {
       node = undefined;
@@ -60,7 +79,7 @@ export function component(
       }
     }
     node = new ComponentNode(C, props, ctx.app, ctx);
-    ctx.children[key] = node;
+    parentChildren[key] = node;
 
     const fiber = makeChildFiber(node, parentFiber);
     node.initiateRender(fiber);
@@ -90,6 +109,7 @@ export class ComponentNode<T extends typeof Component = typeof Component>
   childEnv: Env;
   children: { [key: string]: ComponentNode } = Object.create(null);
   refs: any = {};
+  keyToTkey: any = {};
 
   willStart: LifecycleHook[] = [];
   willUpdateProps: LifecycleHook[] = [];

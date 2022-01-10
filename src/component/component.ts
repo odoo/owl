@@ -1,12 +1,14 @@
 import type { ComponentNode } from "./component_node";
 
+export type Props = { [key: string]: any };
+
 // -----------------------------------------------------------------------------
 //  Component Class
 // -----------------------------------------------------------------------------
 
 export class Component<Props = any, Env = any> {
   static template: string = "";
-  static props?: any;
+  static props?: Props;
 
   props: Props;
   env: Env;

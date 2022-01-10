@@ -41,6 +41,46 @@ exports[`t-call dynamic t-call 3`] = `
 }"
 `;
 
+exports[`t-call dynamic t-call: key is propagated 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { call } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    const template1 = (ctx['sub']);
+    let b3 = call(this, template1, ctx, node, key + \`__2\`);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`t-call dynamic t-call: key is propagated 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div block-attribute-0=\\"id\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let attr1 = ctx['id'];
+    return block1([attr1]);
+  }
+}"
+`;
+
+exports[`t-call dynamic t-call: key is propagated 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`Child\`, {}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
 exports[`t-call handlers are properly bound through a dynamic t-call 1`] = `
 "function anonymous(bdom, helpers
 ) {

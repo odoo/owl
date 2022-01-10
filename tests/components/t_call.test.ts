@@ -183,4 +183,27 @@ describe("t-call", () => {
     fixture.querySelector("p")!.click();
     expect(value).toBe(3);
   });
+
+  test("dynamic t-call: key is propagated", async () => {
+    let childId = 0;
+    class Child extends Component {
+      static template = xml`<div t-att-id="id" />`;
+      id: any;
+      setup() {
+        this.id = childId++;
+      }
+    }
+    const sub = xml`<Child />`;
+
+    class Parent extends Component {
+      static template = xml`<Child /><t t-call="{{ sub }}"/>`;
+      static components = { Child };
+
+      sub = sub;
+    }
+
+    await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe(`<div id="0"></div><div id="1"></div>`);
+  });
 });

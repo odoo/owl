@@ -1,3 +1,29 @@
+export type Callback = () => void;
+
+/**
+ * Creates a batched version of a callback so that all calls to it in the same
+ * microtick will only call the original callback once.
+ *
+ * @param callback the callback to batch
+ * @returns a batched version of the original callback
+ */
+export function batched(callback: Callback): Callback {
+  let called = false;
+  return async () => {
+    // This await blocks all calls to the callback here, then releases them sequentially
+    // in the next microtick. This line decides the granularity of the batch.
+    await Promise.resolve();
+    if (!called) {
+      called = true;
+      callback();
+      // wait for all calls in this microtick to fall through before resetting "called"
+      // so that only the first call to the batched function calls the original callback
+      await Promise.resolve();
+      called = false;
+    }
+  };
+}
+
 export class EventBus extends EventTarget {
   trigger(name: string, payload?: any) {
     this.dispatchEvent(new CustomEvent(name, { detail: payload }));

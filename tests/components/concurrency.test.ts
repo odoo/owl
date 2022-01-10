@@ -39,6 +39,8 @@ Scheduler.prototype.addFiber = function (fiber: Fiber) {
 
 afterEach(() => {
   if (lastScheduler && lastScheduler.tasks.size > 0) {
+    // we still clear the scheduler to prevent additional noise
+    lastScheduler.tasks.clear();
     throw new Error("we got a memory leak...");
   }
 });
@@ -521,7 +523,7 @@ test("properly behave when destroyed/unmounted while rendering ", async () => {
   }
 
   class Child extends Component {
-    static template = xml`<div><SubChild /></div>`;
+    static template = xml`<div><SubChild val="props.val"/></div>`;
     static components = { SubChild };
     setup() {
       useLogLifecycle();
@@ -1907,18 +1909,13 @@ test("concurrent renderings scenario 13", async () => {
   await nextTick(); // wait for this change to be applied
   expect([
     "Parent:willRender",
-    "Child:willUpdateProps",
     "Child:setup",
     "Child:willStart",
     "Parent:rendered",
     "Child:willRender",
     "Child:rendered",
-    "Child:willRender",
-    "Child:rendered",
     "Parent:willPatch",
-    "Child:willPatch",
     "Child:mounted",
-    "Child:patched",
     "Parent:patched",
     "Child:willRender",
     "Child:rendered",
@@ -2472,9 +2469,9 @@ test("two renderings initiated between willPatch and patched", async () => {
       useLogLifecycle();
       onMounted(() => {
         this.mounted = "Mounted";
-        parent.render();
+        parent.render(true);
       });
-      onWillUnmount(() => parent.render());
+      onWillUnmount(() => parent.render(true));
     }
   }
 
@@ -2507,15 +2504,11 @@ test("two renderings initiated between willPatch and patched", async () => {
     "Parent:rendered",
   ]).toBeLogged();
 
+  await nextMicroTick();
+  expect(["Panel:willRender", "Panel:rendered"]).toBeLogged();
+
   await nextTick();
-  expect([
-    "Panel:willRender",
-    "Panel:rendered",
-    "Parent:willPatch",
-    "Panel:willPatch",
-    "Panel:patched",
-    "Parent:patched",
-  ]).toBeLogged();
+  expect(["Parent:willPatch", "Panel:willPatch", "Panel:patched", "Parent:patched"]).toBeLogged();
   expect(fixture.innerHTML).toBe("<div><abc>Panel1Mounted</abc></div>");
 
   parent.state.panel = "Panel2";
@@ -2753,12 +2746,20 @@ test("delay willUpdateProps with rendering grandchild", async () => {
     static template = xml`<Parent state="state"/>`;
     static components = { Parent };
     state = { value: 0 };
+    setup() {
+      useLogLifecycle();
+    }
   }
+
   const parent = await mount(GrandParent, fixture);
   expect(fixture.innerHTML).toBe("0_0<div></div>");
   expect([
+    "GrandParent:setup",
+    "GrandParent:willStart",
+    "GrandParent:willRender",
     "Parent:setup",
     "Parent:willStart",
+    "GrandParent:rendered",
     "Parent:willRender",
     "DelayedChild:setup",
     "DelayedChild:willStart",
@@ -2772,20 +2773,23 @@ test("delay willUpdateProps with rendering grandchild", async () => {
     "ReactiveChild:mounted",
     "DelayedChild:mounted",
     "Parent:mounted",
+    "GrandParent:mounted",
   ]).toBeLogged();
 
   promise = makeDeferred();
   const prom1 = promise;
   parent.state.value = 1;
   child.render(); // trigger a root rendering first
-  parent.render();
+  parent.render(true);
   reactiveChild.render();
   await nextTick();
   expect(fixture.innerHTML).toBe("0_0<div></div>");
   expect([
     "DelayedChild:willRender",
     "DelayedChild:rendered",
+    "GrandParent:willRender",
     "Parent:willUpdateProps",
+    "GrandParent:rendered",
     "ReactiveChild:willRender",
     "ReactiveChild:rendered",
     "Parent:willRender",
@@ -2800,12 +2804,14 @@ test("delay willUpdateProps with rendering grandchild", async () => {
   const prom2 = promise;
   child.render(); // trigger a root rendering first
   parent.state.value = 2;
-  parent.render();
+  parent.render(true);
   reactiveChild.render();
   await nextTick();
   expect(fixture.innerHTML).toBe("0_0<div></div>");
   expect([
+    "GrandParent:willRender",
     "Parent:willUpdateProps",
+    "GrandParent:rendered",
     "ReactiveChild:willRender",
     "ReactiveChild:rendered",
     "Parent:willRender",
@@ -2822,12 +2828,14 @@ test("delay willUpdateProps with rendering grandchild", async () => {
   expect([
     "DelayedChild:willRender",
     "DelayedChild:rendered",
+    "GrandParent:willPatch",
     "Parent:willPatch",
     "ReactiveChild:willPatch",
     "DelayedChild:willPatch",
     "DelayedChild:patched",
     "ReactiveChild:patched",
     "Parent:patched",
+    "GrandParent:patched",
   ]).toBeLogged();
 
   prom1.resolve();

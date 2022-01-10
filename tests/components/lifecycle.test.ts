@@ -849,8 +849,9 @@ describe("lifecycle hooks", () => {
 
     class Parent extends Component {
       static template = xml`
-        <Child />`;
+        <Child someValue="state.value" />`;
       static components = { Child };
+      state = useState({ value: 1 });
       setup() {
         useLogLifecycle();
       }
@@ -871,7 +872,7 @@ describe("lifecycle hooks", () => {
       "Parent:mounted",
     ]).toBeLogged();
 
-    parent.render(); // to block child render
+    parent.state.value++; // to block child render
     await nextTick();
     expect(["Parent:willRender", "Child:willUpdateProps", "Parent:rendered"]).toBeLogged();
 
@@ -1008,20 +1009,15 @@ describe("lifecycle hooks", () => {
     await nextTick();
     expect([
       "C:willRender",
-      "D:willUpdateProps",
       "F:setup",
       "F:willStart",
       "C:rendered",
-      "D:willRender",
-      "D:rendered",
       "F:willRender",
       "F:rendered",
       "C:willPatch",
-      "D:willPatch",
       "E:willUnmount",
       "E:willDestroy",
       "F:mounted",
-      "D:patched",
       "C:patched",
     ]).toBeLogged();
   });

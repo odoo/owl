@@ -1081,11 +1081,9 @@ export class CodeGenerator {
 
     let propString = propStr;
     if (ast.dynamicProps) {
-      if (!props.length) {
-        propString = `${compileExpr(ast.dynamicProps)}`;
-      } else {
-        propString = `Object.assign({}, ${compileExpr(ast.dynamicProps)}, ${propStr})`;
-      }
+      propString = `Object.assign({}, ${compileExpr(ast.dynamicProps)}${
+        props.length ? ", " + propStr : ""
+      })`;
     }
 
     let propVar: string;

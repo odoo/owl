@@ -121,7 +121,7 @@ describe("basics", () => {
     class Test extends Component {
       static template = xml`<span>simple vnode</span>`;
       setup() {
-        expect(this.props).toBe(p);
+        expect(this.props).not.toBe(p);
       }
     }
 

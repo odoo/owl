@@ -13,7 +13,7 @@ export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
   return new Fiber(node, parent);
 }
 
-export function makeRootFiber(node: ComponentNode): Fiber {
+export function makeRootFiber(node: ComponentNode, force: boolean): Fiber {
   let current = node.fiber;
   if (current) {
     let root = current.root!;
@@ -21,6 +21,7 @@ export function makeRootFiber(node: ComponentNode): Fiber {
     current.children = [];
     root.counter++;
     current.bdom = null;
+    current.force = force;
     if (fibersInError.has(current)) {
       fibersInError.delete(current);
       fibersInError.delete(root);
@@ -35,7 +36,7 @@ export function makeRootFiber(node: ComponentNode): Fiber {
   if (node.patched.length) {
     fiber.patched.push(fiber);
   }
-
+  fiber.force = force;
   return fiber;
 }
 
@@ -62,11 +63,13 @@ export class Fiber {
   parent: Fiber | null;
   children: Fiber[] = [];
   appliedToDom = false;
+  force: boolean = false;
 
   constructor(node: ComponentNode, parent: Fiber | null) {
     this.node = node;
     this.parent = parent;
     if (parent) {
+      this.force = parent.force;
       const root = parent.root!;
       root.counter++;
       this.root = root;
@@ -109,7 +112,7 @@ export class RootFiber extends Fiber {
       current = undefined;
 
       // Step 2: patching the dom
-      node.patch();
+      node._patch();
       this.locked = false;
 
       // Step 4: calling all mounted lifecycle hooks

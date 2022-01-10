@@ -2,6 +2,8 @@ import { BDom, multi, text, toggler } from "../blockdom";
 import { validateProps } from "../component/props_validation";
 import { Markup } from "../utils";
 import { html } from "../blockdom/index";
+import { TARGET } from "../reactivity";
+
 /**
  * This file contains utility functions that will be injected in each template,
  * to perform various useful tasks in the compiled code.
@@ -21,7 +23,8 @@ function callSlot(
   defaultContent?: (ctx: any, node: any, key: string) => BDom
 ): BDom {
   key = key + "__slot_" + name;
-  const slots = (ctx.props && ctx.props.slots) || {};
+  const nonReactiveProps = ctx.props && ctx.props[TARGET];
+  const slots = nonReactiveProps ? nonReactiveProps.slots || {} : {};
   const { __render, __ctx, __scope } = slots[name] || {};
   const slotScope = Object.create(__ctx || {});
   if (__scope) {

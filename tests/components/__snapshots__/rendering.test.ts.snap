@@ -1,0 +1,163 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`force render in case of existing render 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`B\`, {val: ctx['state'].val}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`force render in case of existing render 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = component(\`C\`, {}, key + \`__1\`, node, ctx);
+    let b3 = text(ctx['props'].val);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`force render in case of existing render 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`C\`);
+  }
+}"
+`;
+
+exports[`rendering semantics can force a render to update sub tree 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = text(ctx['state'].value);
+    let b3 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`rendering semantics can force a render to update sub tree 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`child\`);
+  }
+}"
+`;
+
+exports[`rendering semantics can render a parent without rendering child 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = text(ctx['state'].value);
+    let b3 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`rendering semantics can render a parent without rendering child 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`child\`);
+  }
+}"
+`;
+
+exports[`rendering semantics props are reactive (nested prop) 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`Child\`, {a: ctx['state']}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`rendering semantics props are reactive (nested prop) 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['props'].a.b.c);
+  }
+}"
+`;
+
+exports[`rendering semantics props are reactive 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`Child\`, {a: ctx['state']}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`rendering semantics props are reactive 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['props'].a.b);
+  }
+}"
+`;
+
+exports[`rendering semantics rendering is atomic (for one subtree) 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = text(ctx['state'].obj.val);
+    let b3 = component(\`B\`, {obj: ctx['state'].obj}, key + \`__1\`, node, ctx);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`rendering semantics rendering is atomic (for one subtree) 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`C\`, {obj: ctx['props'].obj}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`rendering semantics rendering is atomic (for one subtree) 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['props'].obj.val);
+  }
+}"
+`;

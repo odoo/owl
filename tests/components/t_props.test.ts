@@ -65,7 +65,7 @@ describe("t-props", () => {
         `;
       setup() {
         expect(this.props).toEqual({ a: 1, b: 2 });
-        expect(this.props).toBe(props);
+        expect(this.props).not.toBe(props);
       }
     }
     class Parent extends Component {

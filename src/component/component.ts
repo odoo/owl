@@ -1,14 +1,12 @@
 import type { ComponentNode } from "./component_node";
 
-export type Props = { [key: string]: any };
-
 // -----------------------------------------------------------------------------
 //  Component Class
 // -----------------------------------------------------------------------------
 
 export class Component<Props = any, Env = any> {
   static template: string = "";
-  static props?: Props;
+  static props?: any;
 
   props: Props;
   env: Env;
@@ -22,7 +20,7 @@ export class Component<Props = any, Env = any> {
 
   setup() {}
 
-  render() {
-    this.__owl__.render();
+  render(force: boolean = false) {
+    this.__owl__.render(force);
   }
 }

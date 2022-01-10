@@ -7,7 +7,8 @@ import {
   useState,
   xml,
 } from "../src";
-import { batched, reactive } from "../src/reactivity";
+import { reactive } from "../src/reactivity";
+import { batched } from "../src/utils";
 import {
   makeDeferred,
   makeTestFixture,

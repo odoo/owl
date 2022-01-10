@@ -1,6 +1,9 @@
 import type { App, Env } from "../app/app";
 import { BDom, VNode } from "../blockdom";
+import { clearReactivesForCallback, NonReactive, Reactive, reactive } from "../reactivity";
+import { batched, Callback } from "../utils";
 import { Component, ComponentConstructor } from "./component";
+import { fibersInError, handleError } from "./error_handling";
 import {
   Fiber,
   makeChildFiber,
@@ -9,7 +12,6 @@ import {
   MountOptions,
   RootFiber,
 } from "./fibers";
-import { handleError, fibersInError } from "./error_handling";
 import { applyDefaultProps } from "./props_validation";
 import { STATUS } from "./status";
 
@@ -25,6 +27,37 @@ export function getCurrent(): ComponentNode {
 export function useComponent(): Component {
   return currentNode!.component;
 }
+
+// -----------------------------------------------------------------------------
+// Integration with reactivity system (useState)
+// -----------------------------------------------------------------------------
+
+const batchedRenderFunctions = new WeakMap<ComponentNode, Callback>();
+/**
+ * Creates a reactive object that will be observed by the current component.
+ * Reading data from the returned object (eg during rendering) will cause the
+ * component to subscribe to that data and be rerendered when it changes.
+ *
+ * @param state the state to observe
+ * @returns a reactive object that will cause the component to re-render on
+ *  relevant changes
+ * @see reactive
+ */
+export function useState<T extends object>(state: T): Reactive<T> | NonReactive<T> {
+  const node = getCurrent();
+  let render = batchedRenderFunctions.get(node)!;
+  if (!render) {
+    render = batched(node.render.bind(node));
+    batchedRenderFunctions.set(node, render);
+    // manual implementation of onWillDestroy to break cyclic dependency
+    node.willDestroy.push(clearReactivesForCallback.bind(null, render));
+  }
+  return reactive(state, render);
+}
+
+// -----------------------------------------------------------------------------
+// component function (used in compiled template code)
+// -----------------------------------------------------------------------------
 
 export function component(
   name: string | typeof Component,
@@ -72,7 +105,7 @@ export function component(
 }
 
 // -----------------------------------------------------------------------------
-//  Component VNode
+//  Component VNode class
 // -----------------------------------------------------------------------------
 
 type LifecycleHook = Function;

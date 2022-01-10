@@ -1,6 +1,4 @@
-import { onWillDestroy } from "./component/lifecycle_hooks";
-import { ComponentNode, getCurrent } from "./component/component_node";
-import { batched, Callback } from "./utils";
+import { Callback } from "./utils";
 
 // Allows to get the target of a Reactive (used for making a new Reactive from the underlying object)
 const TARGET = Symbol("Target");
@@ -17,7 +15,7 @@ export type Reactive<T extends Target = Target> = T & {
   [TARGET]: any;
 };
 
-type NonReactive<T extends Target = Target> = T & {
+export type NonReactive<T extends Target = Target> = T & {
   [SKIP]: any;
 };
 const objectToString = Object.prototype.toString;
@@ -115,7 +113,7 @@ const callbacksToTargets = new WeakMap<Callback, Set<Target>>();
  *
  * @param callback the callback for which the reactives need to be cleared
  */
-function clearReactivesForCallback(callback: Callback): void {
+export function clearReactivesForCallback(callback: Callback): void {
   const targetsToClear = callbacksToTargets.get(callback);
   if (!targetsToClear) {
     return;
@@ -225,29 +223,4 @@ export function reactive<T extends Target>(
     reactivesForTarget.set(callback, proxy);
   }
   return reactivesForTarget.get(callback) as Reactive<T>;
-}
-
-const batchedRenderFunctions = new WeakMap<ComponentNode, Callback>();
-/**
- * Creates a reactive object that will be observed by the current component.
- * Reading data from the returned object (eg during rendering) will cause the
- * component to subscribe to that data and be rerendered when it changes.
- *
- * @param state the state to observe
- * @returns a reactive object that will cause the component to re-render on
- *  relevant changes
- * @see reactive
- */
-export function useState<T extends object>(state: T): Reactive<T> | NonReactive<T> {
-  const node = getCurrent();
-  if (!batchedRenderFunctions.has(node)) {
-    batchedRenderFunctions.set(
-      node,
-      batched(() => node.render())
-    );
-    onWillDestroy(() => clearReactivesForCallback(render));
-  }
-  const render = batchedRenderFunctions.get(node)!;
-  const reactiveState = reactive(state, render);
-  return reactiveState;
 }

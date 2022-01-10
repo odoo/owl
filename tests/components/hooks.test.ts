@@ -238,7 +238,7 @@ describe("hooks", () => {
     expect(fixture.innerHTML).toBe("<div>maggot brain</div>");
     someVal = "brain";
     someVal2 = "maggot";
-    component.render();
+    component.render(true);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>brain maggot</div>");
   });
@@ -272,7 +272,7 @@ describe("hooks", () => {
     expect(fixture.innerHTML).toBe("<div>maggot brain</div>");
     someVal = "brain";
     someVal2 = "maggot";
-    component.render();
+    component.render(true);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>brain maggot</div>");
   });

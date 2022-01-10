@@ -14,11 +14,13 @@ import {
 } from "./blockdom";
 import { mainEventHandler } from "./component/handler";
 import { Portal } from "./portal";
+import { markRaw } from "./reactivity";
 export type { Reactive } from "./reactivity";
 
 config.shouldNormalizeDom = false;
 config.mainEventHandler = mainEventHandler;
 (UTILS as any).Portal = Portal;
+(UTILS as any).markRaw = markRaw;
 
 export const blockDom = {
   config,

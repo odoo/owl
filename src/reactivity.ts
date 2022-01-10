@@ -1,7 +1,7 @@
 import { Callback } from "./utils";
 
 // Allows to get the target of a Reactive (used for making a new Reactive from the underlying object)
-const TARGET = Symbol("Target");
+export const TARGET = Symbol("Target");
 // Escape hatch to prevent reactivity system to turn something into a reactive
 const SKIP = Symbol("Skip");
 // Special key to subscribe to, to be notified of key creation/deletion

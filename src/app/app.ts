@@ -29,7 +29,7 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
 
 export class App<
   T extends abstract new (...args: any) => any = any,
-  P = any,
+  P extends object = any,
   E = any
 > extends TemplateSet {
   static validateTarget = validateTarget;
@@ -102,7 +102,11 @@ export class App<
   }
 }
 
-export async function mount<T extends abstract new (...args: any) => any = any, P = any, E = any>(
+export async function mount<
+  T extends abstract new (...args: any) => any = any,
+  P extends object = any,
+  E = any
+>(
   C: T & ComponentConstructor<P, E>,
   target: HTMLElement,
   config: AppConfig<P, E> & MountOptions = {}

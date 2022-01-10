@@ -1657,7 +1657,7 @@ describe("Reactivity: useState", () => {
     expect([...steps]).toEqual(["list"]);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>3</div> Total: 3 Count: 1</div>");
-    expect([...steps]).toEqual(["list", "quantity1"]);
+    expect([...steps]).toEqual(["list"]);
     steps.clear();
 
     secondQuantity.quantity = 2;

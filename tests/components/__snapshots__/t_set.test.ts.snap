@@ -4,7 +4,7 @@ exports[`t-set slot setted value (with t-set) not accessible with t-esc 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, capture } = helpers;
+  let { isBoundary, withDefault, setContextValue, capture, markRaw } = helpers;
   
   let block1 = createBlock(\`<div><p><block-text-0/></p><block-child-0/><p><block-text-1/></p></div>\`);
   
@@ -21,7 +21,7 @@ exports[`t-set slot setted value (with t-set) not accessible with t-esc 1`] = `
     setContextValue(ctx, \\"iter\\", 'source');
     let txt1 = ctx['iter'];
     const ctx1 = capture(ctx);
-    let b2 = component(\`Childcomp\`, {slots: {'default': {__render: slot1, __ctx: ctx1}}}, key + \`__1\`, node, ctx);
+    let b2 = component(\`Childcomp\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx);
     let txt2 = ctx['iter'];
     return block1([txt1, txt2], [b2]);
   }
@@ -51,7 +51,7 @@ exports[`t-set slots with a t-set with a component in body 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { capture, isBoundary, withDefault, LazyValue, safeOutput } = helpers;
+  let { capture, isBoundary, withDefault, LazyValue, safeOutput, markRaw } = helpers;
   
   function slot1(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -68,7 +68,7 @@ exports[`t-set slots with a t-set with a component in body 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    return component(\`Child\`, {slots: {'default': {__render: slot1, __ctx: ctx1}}}, key + \`__2\`, node, ctx);
+    return component(\`Child\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2\`, node, ctx);
   }
 }"
 `;
@@ -102,7 +102,7 @@ exports[`t-set slots with an t-set with a component in body 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { capture, isBoundary, withDefault, LazyValue, safeOutput } = helpers;
+  let { capture, isBoundary, withDefault, LazyValue, safeOutput, markRaw } = helpers;
   
   let block4 = createBlock(\`<div>coffee</div>\`);
   
@@ -123,7 +123,7 @@ exports[`t-set slots with an t-set with a component in body 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    return component(\`Blorg\`, {slots: {'default': {__render: slot1, __ctx: ctx1}}}, key + \`__2\`, node, ctx);
+    return component(\`Blorg\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2\`, node, ctx);
   }
 }"
 `;
@@ -157,7 +157,7 @@ exports[`t-set slots with an unused t-set with a component in body 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { capture, isBoundary, withDefault, LazyValue } = helpers;
+  let { capture, isBoundary, withDefault, LazyValue, markRaw } = helpers;
   
   function slot1(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -172,7 +172,7 @@ exports[`t-set slots with an unused t-set with a component in body 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    return component(\`Child\`, {slots: {'default': {__render: slot1, __ctx: ctx1}}}, key + \`__2\`, node, ctx);
+    return component(\`Child\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2\`, node, ctx);
   }
 }"
 `;

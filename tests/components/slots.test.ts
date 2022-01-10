@@ -1675,4 +1675,60 @@ describe("slots", () => {
     await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div>SlotDisplay</div><div>Parent</div>");
   });
+
+  test("mix of slots, t-call, t-call with body, and giving own props child", async () => {
+    expect.assertions(11);
+
+    class C extends Component {
+      static template = xml`[C]<t t-slot="default" />`;
+    }
+    class B extends Component {
+      static template = xml`[B]<C slots="props.slots" />`;
+      static components = { C };
+    }
+
+    const subTemplate2 = xml`[sub2<t t-esc="v"/>]`;
+    const subTemplate1 = xml`[sub1]
+      <t t-set="dummy" t-value="validate"/>
+      <t t-call="${subTemplate2}">
+        <t t-set="v" t-value="props.number"/>
+      </t>`;
+
+    let a: any;
+    class A extends Component {
+      static components = { B };
+      static template = xml`<B>[A]<t t-call="${subTemplate1}"/></B>`;
+      setup() {
+        a = this;
+      }
+
+      get validate() {
+        // we check here that the actual component was not lost somehow
+        expect(this.__owl__.component === a).toBe(true);
+        return 1;
+      }
+    }
+
+    class P extends Component {
+      static components = { A };
+      static template = xml`<button t-on-click="inc">inc</button><A number="state.number"/>`;
+
+      state = useState({ number: 333 });
+      inc() {
+        this.state.number++;
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<P/>`;
+      static components = { P };
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<button>inc</button>[B][C][A][sub1] [sub2333]");
+
+    fixture.querySelector("button")!.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<button>inc</button>[B][C][A][sub1] [sub2334]");
+  });
 });

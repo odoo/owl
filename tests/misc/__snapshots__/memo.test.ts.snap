@@ -4,6 +4,7 @@ exports[`Memo if no prop change, prevent renderings from above  1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { markRaw } = helpers;
   
   function slot1(ctx, node, key = \\"\\") {
     let b6 = text(ctx['state'].a);
@@ -16,7 +17,7 @@ exports[`Memo if no prop change, prevent renderings from above  1`] = `
     let b2 = text(ctx['state'].a);
     let b3 = text(ctx['state'].b);
     let b4 = text(ctx['state'].c);
-    let b9 = component(\`Memo\`, {a: ctx['state'].a, b: ctx['state'].b,slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx);
+    let b9 = component(\`Memo\`, {a: ctx['state'].a, b: ctx['state'].b,slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx);
     return multi([b2, b3, b4, b9]);
   }
 }"
@@ -26,6 +27,7 @@ exports[`Memo if no props, prevent renderings from above  1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { markRaw } = helpers;
   
   function slot1(ctx, node, key = \\"\\") {
     return component(\`Child\`, {value: ctx['state'].value}, key + \`__2\`, node, ctx);
@@ -33,7 +35,7 @@ exports[`Memo if no props, prevent renderings from above  1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = component(\`Child\`, {value: ctx['state'].value}, key + \`__1\`, node, ctx);
-    let b4 = component(\`Memo\`, {slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__3\`, node, ctx);
+    let b4 = component(\`Memo\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__3\`, node, ctx);
     return multi([b2, b4]);
   }
 }"
@@ -54,6 +56,7 @@ exports[`Memo if no props, prevent renderings from above (work with simple html)
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { markRaw } = helpers;
   
   function slot1(ctx, node, key = \\"\\") {
     return text(ctx['state'].value);
@@ -61,7 +64,7 @@ exports[`Memo if no props, prevent renderings from above (work with simple html)
   
   return function template(ctx, node, key = \\"\\") {
     let b2 = text(ctx['state'].value);
-    let b4 = component(\`Memo\`, {slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx);
+    let b4 = component(\`Memo\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx);
     return multi([b2, b4]);
   }
 }"

@@ -1067,6 +1067,33 @@ exports[`delay willUpdateProps with rendering grandchild 4`] = `
 }"
 `;
 
+exports[`destroying/recreating a subcomponent, other scenario 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2,b3;
+    b2 = text(\`parent\`);
+    if (ctx['state'].hasChild) {
+      b3 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    }
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`destroying/recreating a subcomponent, other scenario 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`child\`);
+  }
+}"
+`;
+
 exports[`destroying/recreating a subwidget with different props (if start is not over) 1`] = `
 "function anonymous(bdom, helpers
 ) {
@@ -1145,7 +1172,7 @@ exports[`properly behave when destroyed/unmounted while rendering  2`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`SubChild\`, {}, key + \`__1\`, node, ctx);
+    let b2 = component(\`SubChild\`, {val: ctx['props'].val}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"

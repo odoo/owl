@@ -1,4 +1,4 @@
-import { App, Component, mount, status, useState, xml } from "../../src";
+import { App, Component, mount, status, toRaw, useState, xml } from "../../src";
 import { elem, makeTestFixture, nextTick, snapshotEverything, useLogLifecycle } from "../helpers";
 import { markup } from "../../src/utils";
 
@@ -121,7 +121,7 @@ describe("basics", () => {
     class Test extends Component {
       static template = xml`<span>simple vnode</span>`;
       setup() {
-        expect(this.props).toBe(p);
+        expect(toRaw(this.props)).toBe(p);
       }
     }
 

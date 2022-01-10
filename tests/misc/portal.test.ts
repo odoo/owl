@@ -421,6 +421,7 @@ describe("Portal", () => {
     addOutsideDiv(fixture);
     const parent = await mount(Parent, fixture);
     expect(steps).toEqual(["parent:mounted"]);
+    expect(fixture.innerHTML).toBe('<div id="outside"></div><div></div>');
 
     parent.state.hasChild = true;
     await nextTick();
@@ -430,6 +431,7 @@ describe("Portal", () => {
       "child:mounted",
       "parent:patched",
     ]);
+    expect(fixture.innerHTML).toBe('<div id="outside"><span>1</span></div><div></div>');
 
     parent.state.val = 2;
     await nextTick();
@@ -443,6 +445,7 @@ describe("Portal", () => {
       "child:patched",
       "parent:patched",
     ]);
+    expect(fixture.innerHTML).toBe('<div id="outside"><span>2</span></div><div></div>');
 
     parent.state.hasChild = false;
     await nextTick();
@@ -459,6 +462,7 @@ describe("Portal", () => {
       "child:willUnmount",
       "parent:patched",
     ]);
+    expect(fixture.innerHTML).toBe('<div id="outside"></div><div></div>');
   });
 
   test("portal destroys on crash", async () => {

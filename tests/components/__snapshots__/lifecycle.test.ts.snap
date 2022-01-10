@@ -527,7 +527,7 @@ exports[`lifecycle hooks onWillRender 1`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    return component(\`Child\`, {someValue: ctx['state'].value}, key + \`__1\`, node, ctx);
   }
 }"
 `;

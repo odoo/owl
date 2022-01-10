@@ -62,7 +62,7 @@ exports[`refs refs are properly bound in slots 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { capture } = helpers;
+  let { capture, markRaw } = helpers;
   
   let block1 = createBlock(\`<div><span class=\\"counter\\"><block-text-0/></span><block-child-0/></div>\`);
   let block2 = createBlock(\`<button block-handler-0=\\"click\\" block-ref=\\"1\\">do something</button>\`);
@@ -77,7 +77,7 @@ exports[`refs refs are properly bound in slots 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let txt1 = ctx['state'].val;
     const ctx1 = capture(ctx);
-    let b3 = component(\`Dialog\`, {slots: {'footer': {__render: slot1, __ctx: ctx1}}}, key + \`__1\`, node, ctx);
+    let b3 = component(\`Dialog\`, {slots: markRaw({'footer': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx);
     return block1([txt1], [b3]);
   }
 }"

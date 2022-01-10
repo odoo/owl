@@ -1125,18 +1125,17 @@ export class CodeGenerator {
     }
 
     if (slotDef && !(ast.dynamicProps || hasSlotsProp)) {
-      props.push(`slots: ${slotDef}`);
+      this.helpers.add("markRaw");
+      props.push(`slots: markRaw(${slotDef})`);
     }
 
     const propStr = `{${props.join(",")}}`;
 
     let propString = propStr;
     if (ast.dynamicProps) {
-      if (!props.length) {
-        propString = `Object.assign({}, ${compileExpr(ast.dynamicProps)})`;
-      } else {
-        propString = `Object.assign({}, ${compileExpr(ast.dynamicProps)}, ${propStr})`;
-      }
+      propString = `Object.assign({}, ${compileExpr(ast.dynamicProps)}${
+        props.length ? ", " + propStr : ""
+      })`;
     }
 
     let propVar: string;
@@ -1147,7 +1146,8 @@ export class CodeGenerator {
     }
 
     if (slotDef && (ast.dynamicProps || hasSlotsProp)) {
-      this.addLine(`${propVar!}.slots = Object.assign(${slotDef}, ${propVar!}.slots)`);
+      this.helpers.add("markRaw");
+      this.addLine(`${propVar!}.slots = markRaw(Object.assign(${slotDef}, ${propVar!}.slots))`);
     }
 
     // cmap key

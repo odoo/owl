@@ -149,6 +149,7 @@ exports[`Portal Portal composed with t-slot 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { markRaw } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -157,7 +158,7 @@ exports[`Portal Portal composed with t-slot 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = component(\`Child\`, {slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
+    let b3 = component(\`Child\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx);
     return block1([], [b3]);
   }
 }"

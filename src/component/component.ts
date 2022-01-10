@@ -36,7 +36,7 @@ export class Component<Props = any, Env = any> {
 
   setup() {}
 
-  render() {
-    this.__owl__.render();
+  render(deep: boolean = false) {
+    this.__owl__.render(deep);
   }
 }

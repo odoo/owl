@@ -1,6 +1,6 @@
 import type { App, Env } from "../app/app";
 import { BDom, VNode } from "../blockdom";
-import { clearReactivesForCallback, NonReactive, Reactive, reactive } from "../reactivity";
+import { clearReactivesForCallback, Reactive, reactive, TARGET, NonReactive } from "../reactivity";
 import { batched, Callback } from "../utils";
 import { Component, ComponentConstructor } from "./component";
 import { fibersInError, handleError } from "./error_handling";
@@ -58,14 +58,24 @@ export function useState<T extends object>(state: T): Reactive<T> | NonReactive<
 // -----------------------------------------------------------------------------
 // component function (used in compiled template code)
 // -----------------------------------------------------------------------------
+type Props = { [key: string]: any };
 
-export function component(
-  name: string | typeof Component,
-  props: any,
+function arePropsDifferent(props1: Props, props2: Props): boolean {
+  for (let k in props1) {
+    if (props1[k] !== props2[k]) {
+      return true;
+    }
+  }
+  return Object.keys(props1).length !== Object.keys(props2).length;
+}
+
+export function component<P extends object>(
+  name: string | ComponentConstructor<P>,
+  props: P,
   key: string,
   ctx: ComponentNode,
   parent: any
-): ComponentNode {
+): ComponentNode<P> {
   let node: any = ctx.children[key];
   let isDynamic = typeof name !== "string";
 
@@ -83,7 +93,10 @@ export function component(
 
   const parentFiber = ctx.fiber!;
   if (node) {
-    node.updateAndRender(props, parentFiber);
+    const currentProps = node.component.props[TARGET];
+    if (parentFiber.deep || arePropsDifferent(currentProps, props)) {
+      node.updateAndRender(props, parentFiber);
+    }
   } else {
     // new component
     let C;
@@ -98,8 +111,7 @@ export function component(
     node = new ComponentNode(C, props, ctx.app, ctx);
     ctx.children[key] = node;
 
-    const fiber = makeChildFiber(node, parentFiber);
-    node.initiateRender(fiber);
+    node.initiateRender(new Fiber(node, parentFiber));
   }
   return node;
 }
@@ -110,7 +122,7 @@ export function component(
 
 type LifecycleHook = Function;
 
-export class ComponentNode<P = any, E = any> implements VNode<ComponentNode<P, E>> {
+export class ComponentNode<P extends object = any, E = any> implements VNode<ComponentNode<P, E>> {
   el?: HTMLElement | Text | undefined;
   app: App;
   fiber: Fiber | null = null;
@@ -141,6 +153,7 @@ export class ComponentNode<P = any, E = any> implements VNode<ComponentNode<P, E
     applyDefaultProps(props, C);
     const env = (parent && parent.childEnv) || app.env;
     this.childEnv = env;
+    props = useState(props);
     this.component = new C(props, env, this) as any;
     this.renderFn = app.getTemplate(C.template).bind(this.component, this.component, this);
     this.component.setup();
@@ -170,21 +183,29 @@ export class ComponentNode<P = any, E = any> implements VNode<ComponentNode<P, E
     }
   }
 
-  async render() {
+  async render(deep: boolean = false) {
     let current = this.fiber;
     if (current && current.root!.locked) {
       await Promise.resolve();
       // situation may have changed after the microtask tick
       current = this.fiber;
     }
-    if (current && !current.bdom && !fibersInError.has(current)) {
-      return;
-    }
-    if (!this.bdom && !current) {
+    if (current) {
+      if (!current.bdom && !fibersInError.has(current)) {
+        if (deep) {
+          // we want the render from this point on to be with deep=true
+          current.deep = deep;
+        }
+        return;
+      }
+      // if current rendering was with deep=true, we want this one to be the same
+      deep = deep || current.deep;
+    } else if (!this.bdom) {
       return;
     }
 
     const fiber = makeRootFiber(this);
+    fiber.deep = deep;
     this.fiber = fiber;
     this.app.scheduler.addFiber(fiber);
     await Promise.resolve();
@@ -246,6 +267,10 @@ export class ComponentNode<P = any, E = any> implements VNode<ComponentNode<P, E
     this.fiber = fiber;
     const component = this.component;
     applyDefaultProps(props, component.constructor as any);
+
+    currentNode = this;
+    props = useState(props);
+    currentNode = null;
     const prom = Promise.all(this.willUpdateProps.map((f) => f.call(component, props)));
     await prom;
     if (fiber !== this.fiber) {
@@ -310,6 +335,14 @@ export class ComponentNode<P = any, E = any> implements VNode<ComponentNode<P, E
   }
 
   patch() {
+    if (this.fiber && this.fiber.parent) {
+      // we only patch here renderings coming from above. renderings initiated
+      // by the component will be patched independently in the appropriate
+      // fiber.complete
+      this._patch();
+    }
+  }
+  _patch() {
     const hasChildren = Object.keys(this.children).length > 0;
     this.bdom!.patch(this!.fiber!.bdom!, hasChildren);
     if (hasChildren) {

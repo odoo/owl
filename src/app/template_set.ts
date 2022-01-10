@@ -51,9 +51,9 @@ export class TemplateSet {
   translateFn?: (s: string) => string;
   translatableAttributes?: string[];
   utils: typeof UTILS = Object.assign({}, UTILS, {
-    call: (owner: any, subTemplate: string, ctx: any, parent: any) => {
+    call: (owner: any, subTemplate: string, ctx: any, parent: any, key: any) => {
       const template = this.getTemplate(subTemplate);
-      return toggler(subTemplate, template.call(owner, ctx, parent));
+      return toggler(subTemplate, template.call(owner, ctx, parent, key));
     },
     getTemplate: (name: string) => this.getTemplate(name),
   });

@@ -644,6 +644,7 @@ export class CodeGenerator {
           index: block!.childNumber,
           forceNewBlock: false,
           isLast: ctx.isLast && i === children.length - 1,
+          tKeyExpr: ctx.tKeyExpr,
         });
         this.compileAST(child, subCtx);
       }

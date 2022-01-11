@@ -1,5 +1,5 @@
 import { App, Component, mount, status, useState, xml } from "../../src";
-import { elem, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { elem, makeTestFixture, nextTick, snapshotEverything, useLogLifecycle } from "../helpers";
 import { markup } from "../../src/utils";
 
 let fixture: HTMLElement;
@@ -899,5 +899,74 @@ describe("t-out in components", () => {
     expect(fixture.innerHTML).toBe(
       "<div>&lt;b&gt;one&lt;/b&gt;<b>one</b>&lt;b&gt;two&lt;/b&gt;<b>two</b>&lt;b&gt;tree&lt;/b&gt;<b>tree</b></div>"
     );
+  });
+
+  test("component children doesn't leak (if case)", async () => {
+    class Child extends Component {
+      static template = xml`<div />`;
+      setup() {
+        useLogLifecycle();
+      }
+    }
+    class Parent extends Component {
+      static components = { Child };
+      static template = xml`<Child t-if="ifVar" />`;
+      ifVar = true;
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(Object.keys(parent.__owl__.children).length).toStrictEqual(1);
+    expect([
+      "Child:setup",
+      "Child:willStart",
+      "Child:willRender",
+      "Child:rendered",
+      "Child:mounted",
+    ]).toBeLogged();
+
+    parent.ifVar = false;
+    parent.render();
+    await nextTick();
+    expect(Object.keys(parent.__owl__.children).length).toStrictEqual(0);
+    expect(["Child:willUnmount", "Child:willDestroy"]).toBeLogged();
+  });
+
+  test("component children doesn't leak (t-key case)", async () => {
+    // This test should encompass the t-foreach and t-call cases too (because they also use a flavor of some key)
+    class Child extends Component {
+      static template = xml`<div />`;
+      setup() {
+        useLogLifecycle();
+      }
+    }
+    class Parent extends Component {
+      static components = { Child };
+      static template = xml`<Child t-key="keyVar" />`;
+      keyVar = 1;
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(Object.keys(parent.__owl__.children).length).toStrictEqual(1);
+    expect([
+      "Child:setup",
+      "Child:willStart",
+      "Child:willRender",
+      "Child:rendered",
+      "Child:mounted",
+    ]).toBeLogged();
+
+    parent.keyVar = 2;
+    parent.render();
+    await nextTick();
+    expect(Object.keys(parent.__owl__.children).length).toStrictEqual(1);
+    expect([
+      "Child:setup",
+      "Child:willStart",
+      "Child:willRender",
+      "Child:rendered",
+      "Child:willUnmount",
+      "Child:willDestroy",
+      "Child:mounted",
+    ]).toBeLogged();
   });
 });

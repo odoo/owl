@@ -20,6 +20,7 @@ export const enum ASTType {
   TSlot,
   TCallBlock,
   TTranslation,
+  TPortal,
 }
 
 export interface ASTText {
@@ -55,6 +56,7 @@ export interface ASTDomNode {
 export interface ASTMulti {
   type: ASTType.Multi;
   content: AST[];
+  deepRemove: boolean;
 }
 
 export interface ASTTEsc {
@@ -75,6 +77,7 @@ export interface ASTTif {
   content: AST;
   tElif: { condition: string; content: AST }[] | null;
   tElse: AST | null;
+  deepRemove: boolean;
 }
 
 export interface ASTTSet {
@@ -92,8 +95,7 @@ export interface ASTTForEach {
   key: string | null;
   body: AST;
   memo: string;
-  isOnlyChild: boolean;
-  hasNoComponent: boolean;
+  deepRemove: boolean;
   hasNoFirst: boolean;
   hasNoLast: boolean;
   hasNoIndex: boolean;
@@ -149,6 +151,12 @@ export interface ASTTranslation {
   content: AST | null;
 }
 
+export interface ASTTPortal {
+  type: ASTType.TPortal;
+  target: string;
+  content: AST;
+}
+
 export type AST =
   | ASTText
   | ASTComment
@@ -166,7 +174,8 @@ export type AST =
   | ASTTCallBlock
   | ASTLog
   | ASTDebug
-  | ASTTranslation;
+  | ASTTranslation
+  | ASTTPortal;
 
 // -----------------------------------------------------------------------------
 // Parser
@@ -195,6 +204,7 @@ function parseNode(node: ChildNode, ctx: ParsingContext): AST | null {
     parseTDebugLog(node, ctx) ||
     parseTForEach(node, ctx) ||
     parseTIf(node, ctx) ||
+    parseTPortal(node, ctx) ||
     parseTCall(node, ctx) ||
     parseTCallBlock(node, ctx) ||
     parseTEscNode(node, ctx) ||
@@ -351,9 +361,6 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
       attrs[attr] = value;
     }
   }
-  if (children.length === 1 && children[0].type === ASTType.TForEach) {
-    children[0].isOnlyChild = true;
-  }
   return {
     type: ASTType.DomNode,
     tag: tagName,
@@ -477,9 +484,8 @@ function parseTForEach(node: Element, ctx: ParsingContext): AST | null {
     elem,
     body,
     memo,
+    deepRemove: needDeepRemove(body),
     key,
-    isOnlyChild: false,
-    hasNoComponent: hasNoComponent(body),
     hasNoFirst,
     hasNoLast,
     hasNoIndex,
@@ -488,54 +494,40 @@ function parseTForEach(node: Element, ctx: ParsingContext): AST | null {
 }
 
 /**
- * @returns true if we are sure the ast does not contain any component
+ * @returns true if we are sure that a deep remove (without optimisation) is needed, for exemple
+ * if there is a portal.
  */
-function hasNoComponent(ast: AST): boolean {
+function needDeepRemove(ast: AST): boolean {
   switch (ast.type) {
+    case ASTType.Multi:
+    case ASTType.TForEach:
+    case ASTType.TIf:
+      return ast.deepRemove;
+
+    case ASTType.TPortal:
+      return true;
+
     case ASTType.TComponent:
     case ASTType.TOut:
     case ASTType.TCall:
     case ASTType.TCallBlock:
     case ASTType.TSlot:
-      return false;
-    case ASTType.TSet:
     case ASTType.Text:
     case ASTType.Comment:
     case ASTType.TEsc:
-      return true;
+      return false;
+
     case ASTType.TKey:
-      return hasNoComponent(ast.content);
+      return needDeepRemove(ast.content);
     case ASTType.TDebug:
     case ASTType.TLog:
     case ASTType.TTranslation:
-      return ast.content ? hasNoComponent(ast.content) : true;
-    case ASTType.TForEach:
-      return ast.hasNoComponent;
-    case ASTType.Multi:
-    case ASTType.DomNode: {
-      for (let elem of ast.content) {
-        if (!hasNoComponent(elem)) {
-          return false;
-        }
-      }
-      return true;
-    }
-    case ASTType.TIf: {
-      if (!hasNoComponent(ast.content)) {
-        return false;
-      }
-      if (ast.tElif) {
-        for (let elem of ast.tElif) {
-          if (!hasNoComponent(elem.content)) {
-            return false;
-          }
-        }
-      }
-      if (ast.tElse && !hasNoComponent(ast.tElse)) {
-        return false;
-      }
-      return true;
-    }
+      return ast.content ? needDeepRemove(ast.content) : false;
+    case ASTType.TSet:
+      return ast.body ? ast.body.some((ast) => needDeepRemove(ast)) : false;
+
+    case ASTType.DomNode:
+      return ast.content.some((ast) => needDeepRemove(ast));
   }
 }
 
@@ -636,12 +628,21 @@ function parseTIf(node: Element, ctx: ParsingContext): AST | null {
     nextElement.remove();
   }
 
+  let deepRemove = needDeepRemove(content);
+  if (tElifs) {
+    deepRemove = deepRemove || tElifs.some((ast) => needDeepRemove(ast));
+  }
+  if (tElse) {
+    deepRemove = deepRemove || needDeepRemove(tElse);
+  }
+
   return {
     type: ASTType.TIf,
     condition,
     content,
     tElif: tElifs.length ? tElifs : null,
     tElse,
+    deepRemove,
   };
 }
 
@@ -806,6 +807,35 @@ function parseTTranslation(node: Element, ctx: ParsingContext): AST | null {
 }
 
 // -----------------------------------------------------------------------------
+// Portal
+// -----------------------------------------------------------------------------
+
+function parseTPortal(node: Element, ctx: ParsingContext): AST | null {
+  if (!node.hasAttribute("t-portal")) {
+    return null;
+  }
+  if (node.tagName !== "t") {
+    throw new Error(
+      `Directive 't-portal' can only be used on <t> nodes (used on a <${node.tagName}>)`
+    );
+  }
+  const target = node.getAttribute("t-portal")!;
+  node.removeAttribute("t-portal");
+  const content = parseNode(node, ctx);
+  if (!content) {
+    return {
+      type: ASTType.Text,
+      value: "",
+    };
+  }
+  return {
+    type: ASTType.TPortal,
+    target,
+    content,
+  };
+}
+
+// -----------------------------------------------------------------------------
 // helpers
 // -----------------------------------------------------------------------------
 
@@ -839,7 +869,11 @@ function parseChildNodes(node: Node, ctx: ParsingContext): AST | null {
     case 1:
       return children[0];
     default:
-      return { type: ASTType.Multi, content: children };
+      return {
+        type: ASTType.Multi,
+        content: children,
+        deepRemove: children.some((ast) => needDeepRemove(ast)),
+      };
   }
 }
 

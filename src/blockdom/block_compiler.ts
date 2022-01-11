@@ -47,7 +47,7 @@ const cache: { [key: string]: BlockType } = {};
  * @param str
  * @returns a new block type, that can build concrete blocks
  */
-export function createBlock(str: string): BlockType {
+export function createBlock(str: string, deepRemove: boolean = false): BlockType {
   if (str in cache) {
     return cache[str];
   }
@@ -67,7 +67,7 @@ export function createBlock(str: string): BlockType {
 
   // step 3: build the final block class
   const template = tree.el as HTMLElement;
-  const Block = buildBlock(template, context);
+  const Block = buildBlock(template, context, deepRemove);
   cache[str] = Block;
   return Block;
 }
@@ -422,7 +422,7 @@ function updateCtx(ctx: BlockCtx, tree: IntermediateTree) {
 // building the concrete block class
 // -----------------------------------------------------------------------------
 
-function buildBlock(template: HTMLElement, ctx: BlockCtx): BlockType {
+function buildBlock(template: HTMLElement, ctx: BlockCtx, deepRemove: boolean): BlockType {
   let B = createBlockClass(template, ctx);
 
   if (ctx.cbRefs.length) {
@@ -447,6 +447,14 @@ function buildBlock(template: HTMLElement, ctx: BlockCtx): BlockType {
       }
     };
     B.prototype.beforeRemove = VMulti.prototype.beforeRemove;
+    if (deepRemove) {
+      const blockRemove = B.prototype.remove;
+      const vMultiRemove = VMulti.prototype.remove;
+      B.prototype.remove = function () {
+        blockRemove.call(this);
+        vMultiRemove.call(this);
+      };
+    }
     return (data?: any[], children: (VNode | undefined)[] = []) => new B(data, children);
   }
 

@@ -15,9 +15,11 @@ export class VMulti {
   anchors?: Node[] | undefined;
   parentEl?: HTMLElement | undefined;
   isOnlyChild?: boolean | undefined;
+  deepRemove: boolean;
 
-  constructor(children: (VNode | undefined)[]) {
+  constructor(children: (VNode | undefined)[], deepRemove: boolean) {
     this.children = children;
+    this.deepRemove = deepRemove;
   }
 
   mount(parent: HTMLElement, afterNode: Node | null) {
@@ -103,7 +105,7 @@ export class VMulti {
 
   remove() {
     const parentEl = this.parentEl;
-    if (this.isOnlyChild) {
+    if (this.isOnlyChild && !this.deepRemove) {
       nodeSetTextContent.call(parentEl, "");
     } else {
       const children = this.children;
@@ -129,6 +131,6 @@ export class VMulti {
   }
 }
 
-export function multi(children: (VNode | undefined)[]): VNode<VMulti> {
-  return new VMulti(children);
+export function multi(children: (VNode | undefined)[], deepRemove = false): VNode<VMulti> {
+  return new VMulti(children, deepRemove);
 }

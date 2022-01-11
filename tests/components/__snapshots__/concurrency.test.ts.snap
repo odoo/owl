@@ -1143,6 +1143,99 @@ exports[`rendering component again in next microtick 2`] = `
 }"
 `;
 
+exports[`t-foreach with dynamic async component 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { prepareList, withKey } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['list']);
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      ctx[\`arr\`] = v_block1[i1];
+      ctx[\`arr_index\`] = i1;
+      let key1 = ctx['arr_index'];
+      let b3;
+      if (ctx['arr']) {
+        let Comp1 = ctx['myComp'];
+        b3 = toggler(Comp1, component(Comp1, {key: ctx['arr'][0]}, key + \`__1__\${key1}\`, node, ctx));
+      }
+      c_block1[i1] = withKey(multi([b3]), key1);
+    }
+    return list(c_block1);
+  }
+}"
+`;
+
+exports[`t-foreach with dynamic async component 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let txt1 = ctx['props'].key;
+    return block1([txt1]);
+  }
+}"
+`;
+
+exports[`t-key on dom node having a component 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const tKey_1 = ctx['key'];
+    let Comp1 = ctx['myComp'];
+    let b2 = toggler(tKey_1, toggler(Comp1, component(Comp1, {key: ctx['key']}, tKey_1 + key + \`__1\`, node, ctx)));
+    return toggler(tKey_1, block1([], [b2]));
+  }
+}"
+`;
+
+exports[`t-key on dom node having a component 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['props'].key);
+  }
+}"
+`;
+
+exports[`t-key on dynamic async component (toggler is never patched) 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    const tKey_1 = ctx['key'];
+    let Comp1 = ctx['myComp'];
+    return toggler(tKey_1, toggler(Comp1, component(Comp1, {key: ctx['key']}, tKey_1 + key + \`__1\`, node, ctx)));
+  }
+}"
+`;
+
+exports[`t-key on dynamic async component (toggler is never patched) 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let txt1 = ctx['props'].key;
+    return block1([txt1]);
+  }
+}"
+`;
+
 exports[`two renderings initiated between willPatch and patched 1`] = `
 "function anonymous(bdom, helpers
 ) {

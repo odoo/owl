@@ -276,6 +276,7 @@ export class ComponentNode<T extends typeof Component = typeof Component>
 
   patch() {
     this.bdom!.patch(this!.fiber!.bdom!, false);
+    this.cleanOutdatedChildren();
     this.fiber!.appliedToDom = true;
     this.fiber = null;
   }
@@ -286,5 +287,22 @@ export class ComponentNode<T extends typeof Component = typeof Component>
 
   remove() {
     this.bdom!.remove();
+  }
+
+  cleanOutdatedChildren() {
+    const childrenEntries = Object.entries(this.children);
+    if (!childrenEntries.length) {
+      return;
+    }
+    const children = this.children;
+    for (const [key, node] of childrenEntries) {
+      const status = node.status;
+      if (status !== STATUS.MOUNTED) {
+        delete children[key];
+        if (status !== STATUS.DESTROYED) {
+          node.destroy();
+        }
+      }
+    }
   }
 }

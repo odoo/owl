@@ -144,6 +144,7 @@ export class RootFiber extends Fiber {
 
       // Step 2: patching the dom
       node.bdom!.patch(this.bdom!, Object.keys(node.children).length > 0);
+      node.cleanOutdatedChildren();
       this.appliedToDom = true;
 
       this.locked = false;

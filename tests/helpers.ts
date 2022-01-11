@@ -137,9 +137,12 @@ const steps: string[] = [];
 export function logStep(step: string) {
   steps.push(step);
 }
-export function useLogLifecycle() {
+export function useLogLifecycle(key?: string) {
   const component = useComponent();
-  const name = component.constructor.name;
+  let name = component.constructor.name;
+  if (key) {
+    name = `${name} (${key})`;
+  }
   logStep(`${name}:setup`);
   expect(name + ": " + status(component)).toBe(name + ": " + "new");
 

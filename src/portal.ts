@@ -1,7 +1,6 @@
-import type { ComponentNode } from "./component/component_node";
-import { Component } from "./component/component";
 import { xml } from "./app/template_set";
 import { BDom, text, VNode } from "./blockdom";
+import { Component } from "./component/component";
 
 const VText: any = text("").constructor;
 
@@ -60,12 +59,9 @@ export class Portal extends Component {
     slots: true,
   };
 
-  constructor(props: any, env: any, node: ComponentNode) {
-    super(props, env, node);
-    node._render = function (fiber: any) {
-      const bdom = new VPortal(props.target, this.renderFn());
-      fiber.bdom = bdom;
-      fiber.root.counter--;
-    };
+  setup() {
+    const node = this.__owl__;
+    const renderFn = node.renderFn;
+    node.renderFn = () => new VPortal(this.props.target, renderFn());
   }
 }

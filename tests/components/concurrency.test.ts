@@ -2907,6 +2907,181 @@ test("two sequential renderings before an animation frame", async () => {
   // we check here that the willPatch and patched hooks are called only once
   expect(["Parent:willPatch", "Child:willPatch", "Child:patched", "Parent:patched"]).toBeLogged();
 });
+
+test("t-key on dom node having a component", async () => {
+  let def: any;
+  class Child extends Component {
+    static template = xml`<t t-esc="props.key" />`;
+    setup() {
+      onWillStart(() => def);
+      useLogLifecycle(this.props.key);
+    }
+  }
+
+  class Parent extends Component {
+    key = 1;
+    myComp = Child;
+    static template = xml`<div t-key="key"><t t-component="myComp" key="key" /></div>`;
+  }
+
+  const parent = await mount(Parent, fixture);
+  expect(fixture.innerHTML).toBe("<div>1</div>");
+
+  def = makeDeferred();
+  parent.key = 2;
+  parent.render();
+
+  await nextTick();
+  expect([
+    "Child (1):setup",
+    "Child (1):willStart",
+    "Child (1):willRender",
+    "Child (1):rendered",
+    "Child (1):mounted",
+    "Child (2):setup",
+    "Child (2):willStart",
+  ]).toBeLogged();
+  expect(fixture.innerHTML).toBe("<div>1</div>");
+  parent.key = 3;
+  parent.render();
+
+  const prevDef = def;
+  def = undefined;
+
+  parent.key = 3;
+  parent.render();
+  prevDef.resolve();
+  await nextTick();
+
+  expect(fixture.innerHTML).toBe("<div>3</div>");
+  expect([
+    "Child (3):setup",
+    "Child (3):willStart",
+    "Child (3):willRender",
+    "Child (3):rendered",
+    "Child (1):willUnmount",
+    "Child (1):willDestroy",
+    "Child (2):willDestroy",
+    "Child (3):mounted",
+  ]).toBeLogged();
+});
+
+test("t-key on dynamic async component (toggler is never patched)", async () => {
+  let def: any;
+  class Child extends Component {
+    static template = xml`<div t-esc="props.key" />`;
+    setup() {
+      onWillStart(() => def);
+      useLogLifecycle(this.props.key);
+    }
+  }
+
+  class Parent extends Component {
+    key = 1;
+    myComp = Child;
+    static template = xml`<t t-component="myComp" t-key="key" key="key" />`;
+  }
+
+  const parent = await mount(Parent, fixture);
+  expect(fixture.innerHTML).toBe("<div>1</div>");
+
+  def = makeDeferred();
+  parent.key = 2;
+  parent.render();
+
+  await nextTick();
+  expect([
+    "Child (1):setup",
+    "Child (1):willStart",
+    "Child (1):willRender",
+    "Child (1):rendered",
+    "Child (1):mounted",
+    "Child (2):setup",
+    "Child (2):willStart",
+  ]).toBeLogged();
+  expect(fixture.innerHTML).toBe("<div>1</div>");
+  parent.key = 3;
+  parent.render();
+
+  const prevDef = def;
+  def = undefined;
+
+  parent.key = 3;
+  parent.render();
+  prevDef.resolve();
+  await nextTick();
+
+  expect(fixture.innerHTML).toBe("<div>3</div>");
+  expect([
+    "Child (3):setup",
+    "Child (3):willStart",
+    "Child (3):willRender",
+    "Child (3):rendered",
+    "Child (1):willUnmount",
+    "Child (1):willDestroy",
+    "Child (2):willDestroy",
+    "Child (3):mounted",
+  ]).toBeLogged();
+});
+
+test("t-foreach with dynamic async component", async () => {
+  let def: any;
+  class Child extends Component {
+    static template = xml`<div t-esc="props.key" />`;
+    setup() {
+      onWillStart(() => def);
+      useLogLifecycle(this.props.key);
+    }
+  }
+
+  class Parent extends Component {
+    list: any = [[1]];
+    myComp = Child;
+    static template = xml`<t t-foreach="list" t-as="arr" t-key="arr_index">
+        <t t-if="arr" t-component="myComp" key="arr[0]" />
+      </t>`;
+  }
+
+  const parent = await mount(Parent, fixture);
+  expect(fixture.innerHTML).toBe("<div>1</div>");
+
+  def = makeDeferred();
+  parent.list = [, [2]];
+  parent.render();
+
+  await nextTick();
+  expect([
+    "Child (1):setup",
+    "Child (1):willStart",
+    "Child (1):willRender",
+    "Child (1):rendered",
+    "Child (1):mounted",
+    "Child (2):setup",
+    "Child (2):willStart",
+  ]).toBeLogged();
+  expect(fixture.innerHTML).toBe("<div>1</div>");
+  parent.list = [, , [3]];
+  parent.render();
+
+  const prevDef = def;
+  def = undefined;
+
+  parent.render();
+  prevDef.resolve();
+  await nextTick();
+
+  expect(fixture.innerHTML).toBe("<div>3</div>");
+  expect([
+    "Child (3):setup",
+    "Child (3):willStart",
+    "Child (3):willRender",
+    "Child (3):rendered",
+    "Child (1):willUnmount",
+    "Child (1):willDestroy",
+    "Child (2):willDestroy",
+    "Child (3):mounted",
+  ]).toBeLogged();
+});
 //   test.skip("components with shouldUpdate=false", async () => {
 //     const state = { p: 1, cc: 10 };
 

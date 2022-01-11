@@ -68,6 +68,43 @@ describe("Portal", () => {
     expect(fixture.innerHTML).toBe('<div id="outside"><p>2</p></div><div><span>1</span></div>');
   });
 
+  test("simple catchError with portal", async () => {
+    class Boom extends Component {
+      static components = { Portal };
+      static template = xml`
+          <div>
+            <span>1</span>
+            <Portal target="'#outside'">
+              <p><t t-esc="a.b.c"/></p>
+            </Portal>
+          </div>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <t t-if="error">Error</t>
+          <t t-else="">
+            <Boom />
+          </t>
+        </div>`;
+      static components = { Boom };
+
+      error: any = false;
+
+      setup() {
+        onError((err) => {
+          this.error = err;
+          this.render();
+        });
+      }
+    }
+    addOutsideDiv(fixture);
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe('<div id="outside"></div><div>Error</div>');
+  });
+
   test("basic use of portal in dev mode", async () => {
     class Parent extends Component {
       static components = { Portal };

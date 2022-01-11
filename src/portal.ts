@@ -1,10 +1,8 @@
-import { xml } from "./app/template_set";
 import { BDom, text, VNode } from "./blockdom";
-import { Component } from "./component/component";
 
 const VText: any = text("").constructor;
 
-class VPortal extends VText implements Partial<VNode<VPortal>> {
+export class VPortal extends VText implements Partial<VNode<VPortal>> {
   //   selector: string;
   realBDom: BDom | null;
   target: HTMLElement | null = null;
@@ -47,21 +45,5 @@ class VPortal extends VText implements Partial<VNode<VPortal>> {
       this.realBDom = other.realBDom;
       this.realBDom!.mount(this.target!, null);
     }
-  }
-}
-
-export class Portal extends Component {
-  static template = xml`<t t-slot="default"/>`;
-  static props = {
-    target: {
-      type: String,
-    },
-    slots: true,
-  };
-
-  setup() {
-    const node = this.__owl__;
-    const renderFn = node.renderFn;
-    node.renderFn = () => new VPortal(this.props.target, renderFn());
   }
 }

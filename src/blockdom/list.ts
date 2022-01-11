@@ -17,9 +17,11 @@ class VList {
   anchor: Node | undefined;
   parentEl?: HTMLElement | undefined;
   isOnlyChild?: boolean | undefined;
+  deepRemove: boolean;
 
-  constructor(children: VNode[]) {
+  constructor(children: VNode[], deepRemove: boolean) {
     this.children = children;
+    this.deepRemove = deepRemove;
   }
 
   mount(parent: HTMLElement, afterNode: Node | null) {
@@ -75,7 +77,7 @@ class VList {
     const parent = this.parentEl!;
 
     // fast path: no new child => only remove
-    if (ch2.length === 0 && isOnlyChild) {
+    if (ch2.length === 0 && isOnlyChild && !this.deepRemove) {
       if (withBeforeRemove) {
         for (let i = 0, l = ch1.length; i < l; i++) {
           beforeRemove.call(ch1[i]);
@@ -98,7 +100,6 @@ class VList {
     let endVn2 = ch2[endIdx2];
 
     let mapping: any = undefined;
-    // let noFullRemove = this.hasNoComponent;
 
     while (startIdx1 <= endIdx1 && startIdx2 <= endIdx2) {
       // -------------------------------------------------------------------
@@ -202,7 +203,7 @@ class VList {
 
   remove() {
     const { parentEl, anchor } = this;
-    if (this.isOnlyChild) {
+    if (this.isOnlyChild && !this.deepRemove) {
       nodeSetTextContent.call(parentEl, "");
     } else {
       const children = this.children;
@@ -227,8 +228,8 @@ class VList {
   }
 }
 
-export function list(children: VNode[]): VNode<VList> {
-  return new VList(children);
+export function list(children: VNode[], deepRemove = false): VNode<VList> {
+  return new VList(children, deepRemove);
 }
 
 function createMapping(ch1: any[], startIdx1: number, endIdx2: number): { [key: string]: any } {

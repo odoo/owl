@@ -36,7 +36,6 @@ export { App, mount } from "./app/app";
 export { Component } from "./component/component";
 export { useComponent } from "./component/component_node";
 export { status } from "./component/status";
-export { Portal } from "./portal";
 export { Memo } from "./memo";
 export { xml } from "./app/template_set";
 export { useState, reactive } from "./reactivity";

@@ -8,9 +8,9 @@ import {
   onWillUnmount,
   useState,
 } from "../../src";
-import { Portal, xml } from "../../src/";
-import { elem, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { xml } from "../../src/";
 import { DEV_MSG } from "../../src/app/app";
+import { elem, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
 let originalconsoleWarn = console.warn;
@@ -52,13 +52,12 @@ afterEach(() => {
 describe("Portal", () => {
   test("basic use of portal", async () => {
     class Parent extends Component {
-      static components = { Portal };
       static template = xml`
           <div>
             <span>1</span>
-            <Portal target="'#outside'">
+            <t t-portal="'#outside'">
               <p>2</p>
-            </Portal>
+            </t>
           </div>`;
     }
 
@@ -70,13 +69,12 @@ describe("Portal", () => {
 
   test("simple catchError with portal", async () => {
     class Boom extends Component {
-      static components = { Portal };
       static template = xml`
           <div>
             <span>1</span>
-            <Portal target="'#outside'">
+            <t t-portal="'#outside'">
               <p><t t-esc="a.b.c"/></p>
-            </Portal>
+            </t>
           </div>`;
     }
 
@@ -107,13 +105,12 @@ describe("Portal", () => {
 
   test("basic use of portal in dev mode", async () => {
     class Parent extends Component {
-      static components = { Portal };
       static template = xml`
           <div>
             <span>1</span>
-            <Portal target="'#outside'">
+            <t t-portal="'#outside'">
               <p>2</p>
-            </Portal>
+            </t>
           </div>`;
     }
 
@@ -125,12 +122,11 @@ describe("Portal", () => {
 
   test("conditional use of Portal", async () => {
     class Parent extends Component {
-      static components = { Portal };
       static template = xml`
             <span>1</span>
-            <Portal target="'#outside'" t-if="state.hasPortal">
+            <t t-portal="'#outside'" t-if="state.hasPortal">
               <p>2</p>
-            </Portal>`;
+            </t>`;
 
       state = useState({ hasPortal: false });
     }
@@ -157,12 +153,12 @@ describe("Portal", () => {
       static template = xml`<p><t t-esc="props.val"/></p>`;
     }
     class Parent extends Component {
-      static components = { Portal, Child };
+      static components = { Child };
       static template = xml`
               <span>1</span>
-              <Portal t-if="state.hasPortal" target="'#outside'">
+              <t t-portal="'#outside'" t-if="state.hasPortal">
                 <Child val="state.val"/>
-              </Portal>`;
+              </t>`;
       state = useState({ hasPortal: false, val: 1 });
     }
 
@@ -190,14 +186,13 @@ describe("Portal", () => {
 
   test("with target in template (before portal)", async () => {
     class Parent extends Component {
-      static components = { Portal };
       static template = xml`
             <div>
               <div id="local-target"></div>
               <span>1</span>
-              <Portal target="'#local-target'">
+              <t t-portal="'#local-target'">
                 <p>2</p>
-              </Portal>
+              </t>
             </div>`;
     }
 
@@ -209,13 +204,12 @@ describe("Portal", () => {
 
   test("with target in template (after portal)", async () => {
     class Parent extends Component {
-      static components = { Portal };
       static template = xml`
             <div>
               <span>1</span>
-              <Portal target="'#local-target'">
+              <t t-portal="'#local-target'">
                 <p>2</p>
-              </Portal>
+              </t>
               <div id="local-target"></div>
             </div>`;
     }
@@ -228,12 +222,11 @@ describe("Portal", () => {
 
   test("portal with target not in dom", async () => {
     class Parent extends Component {
-      static components = { Portal };
       static template = xml`
             <div>
-              <Portal target="'#does-not-exist'">
+              <t t-portal="'#does-not-exist'">
                 <div>2</div>
-              </Portal>
+              </t>
             </div>`;
     }
 
@@ -269,12 +262,12 @@ describe("Portal", () => {
       }
     }
     class Parent extends Component {
-      static components = { Portal, Child };
+      static components = { Child };
       static template = xml`
             <div>
-              <Portal target="'#outside'">
+              <t t-portal="'#outside'">
                 <Child val="state.val"/>
-              </Portal>
+              </t>
             </div>`;
       state = useState({ val: 1 });
     }
@@ -292,12 +285,11 @@ describe("Portal", () => {
 
   test("portal with only text as content", async () => {
     class Parent extends Component {
-      static components = { Portal };
       static template = xml`
             <div>
-              <Portal target="'#outside'">
+              <t t-portal="'#outside'">
                 <t t-esc="'only text'"/>
-              </Portal>
+              </t>
             </div>`;
     }
 
@@ -308,12 +300,11 @@ describe("Portal", () => {
 
   test("portal with no content", async () => {
     class Parent extends Component {
-      static components = { Portal };
       static template = xml`
             <div>
-              <Portal target="'#outside'">
+              <t t-portal="'#outside'">
                 <t t-if="false" t-esc="'ABC'"/>
-              </Portal>
+              </t>
             </div>`;
     }
 
@@ -324,13 +315,12 @@ describe("Portal", () => {
 
   test("portal with many children", async () => {
     class Parent extends Component {
-      static components = { Portal };
       static template = xml`
             <div>
-              <Portal target="'#outside'">
+              <t t-portal="'#outside'">
                 <div>1</div>
                 <p>2</p>
-              </Portal>
+              </t>
             </div>`;
     }
     addOutsideDiv(fixture);
@@ -340,13 +330,12 @@ describe("Portal", () => {
 
   test("portal with dynamic body", async () => {
     class Parent extends Component {
-      static components = { Portal };
       static template = xml`
             <div>
-              <Portal target="'#outside'">
+              <t t-portal="'#outside'">
                 <span t-if="state.val" t-esc="state.val"/>
                 <div t-else=""/>
-              </Portal>
+              </t>
             </div>`;
       state = useState({ val: "ab" });
     }
@@ -363,12 +352,11 @@ describe("Portal", () => {
 
   test("portal could have dynamically no content", async () => {
     class Parent extends Component {
-      static components = { Portal };
       static template = xml`
             <div>
-              <Portal target="'#outside'">
+              <t t-portal="'#outside'">
                 <span t-if="state.val" t-esc="state.val"/>
-              </Portal>
+              </t>
             </div>`;
       state = useState({ val: "ab" });
     }
@@ -396,12 +384,12 @@ describe("Portal", () => {
     }
 
     class Parent extends Component {
-      static components = { Portal, Child };
+      static components = { Child };
       static template = xml`
             <div>
-              <Portal t-if="state.hasChild" target="'#outside'">
+              <t t-portal="'#outside'" t-if="state.hasChild">
                 <Child val="state.val"/>
-              </Portal>
+              </t>
             </div>`;
       state = useState({ hasChild: false, val: 1 });
       setup() {
@@ -461,12 +449,12 @@ describe("Portal", () => {
       state = {};
     }
     class Parent extends Component {
-      static components = { Portal, Child };
+      static components = { Child };
       static template = xml`
         <div>
-          <Portal target="'#outside'" >
+          <t t-portal="'#outside'" >
             <Child error="state.error"/>
-          </Portal>
+          </t>
         </div>`;
       state = { error: false };
       setup() {
@@ -492,12 +480,12 @@ describe("Portal", () => {
             <button>child</button>`;
     }
     class Parent extends Component {
-      static components = { Portal, Child };
+      static components = { Child };
       static template = xml`
             <div>
-              <Portal target="'#outside'">
+              <t t-portal="'#outside'">
                 <Child />
-              </Portal>
+              </t>
             </div>`;
     }
     const env = {};
@@ -519,11 +507,11 @@ describe("Portal", () => {
       }
     }
     class Child extends Component {
-      static components = { Portal, Child2 };
+      static components = { Child2 };
       static template = xml`
-            <Portal target="'#outside'">
+            <t t-portal="'#outside'">
               <t t-slot="default"/>
-            </Portal>`;
+            </t>`;
     }
     class Parent extends Component {
       static components = { Child, Child2 };
@@ -545,6 +533,111 @@ describe("Portal", () => {
     elem(childInst!).dispatchEvent(new CustomEvent("custom"));
     expect(steps).toEqual(["custom"]);
   });
+
+  test("Add and remove portals", async () => {
+    class Parent extends Component {
+      static template = xml`
+          <t t-portal="'#outside'" t-foreach="portalIds" t-as="portalId" t-key="portalId">
+            Portal<t t-esc="portalId"/>
+          </t>`;
+      portalIds = useState([] as any);
+    }
+
+    addOutsideDiv(fixture);
+    const parent = await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe('<div id="outside"></div>');
+
+    parent.portalIds.push(1);
+    await nextTick();
+    expect(fixture.innerHTML).toBe('<div id="outside"> Portal1</div>');
+
+    parent.portalIds.push(2);
+    await nextTick();
+    expect(fixture.innerHTML).toBe('<div id="outside"> Portal1 Portal2</div>');
+
+    parent.portalIds.pop();
+    await nextTick();
+    expect(fixture.innerHTML).toBe('<div id="outside"> Portal1</div>');
+
+    parent.portalIds.pop();
+    await nextTick();
+    expect(fixture.innerHTML).toBe('<div id="outside"></div>');
+  });
+
+  test("Add and remove portals with t-foreach", async () => {
+    class Parent extends Component {
+      static template = xml`
+          <t t-foreach="portalIds" t-as="portalId" t-key="portalId">
+            <div>
+              <t t-esc="portalId"/>
+              <t t-portal="'#outside'">
+                Portal<t t-esc="portalId"/>
+              </t>
+            </div>
+          </t>`;
+      portalIds = useState([] as any);
+    }
+
+    addOutsideDiv(fixture);
+    const parent = await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe('<div id="outside"></div>');
+
+    parent.portalIds.push(1);
+    await nextTick();
+    expect(fixture.innerHTML).toBe('<div id="outside"> Portal1</div><div>1</div>');
+
+    parent.portalIds.push(2);
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      '<div id="outside"> Portal1 Portal2</div><div>1</div><div>2</div>'
+    );
+
+    parent.portalIds.pop();
+    await nextTick();
+    expect(fixture.innerHTML).toBe('<div id="outside"> Portal1</div><div>1</div>');
+
+    parent.portalIds.pop();
+    await nextTick();
+    expect(fixture.innerHTML).toBe('<div id="outside"></div>');
+  });
+
+  test("conditional use of Portal with div", async () => {
+    class Parent extends Component {
+      static template = xml`
+              <t t-if="state.hasPortal">
+                <div>
+                  <span>hasPortal</span>
+                  <t t-portal="'#outside'">
+                    <p>thePortal</p>
+                  </t>
+                </div>
+              </t>`;
+
+      state = useState({ hasPortal: false });
+    }
+
+    addOutsideDiv(fixture);
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe('<div id="outside"></div>');
+
+    parent.state.hasPortal = true;
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      '<div id="outside"><p>thePortal</p></div><div><span>hasPortal</span></div>'
+    );
+
+    parent.state.hasPortal = false;
+    await nextTick();
+    expect(fixture.innerHTML).toBe('<div id="outside"></div>');
+
+    parent.state.hasPortal = true;
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      '<div id="outside"><p>thePortal</p></div><div><span>hasPortal</span></div>'
+    );
+  });
 });
 
 describe("Portal: UI/UX", () => {
@@ -554,12 +647,12 @@ describe("Portal: UI/UX", () => {
             <input id="target-me" t-att-placeholder="props.val"/>`;
     }
     class Parent extends Component {
-      static components = { Portal, Child };
+      static components = { Child };
       static template = xml`
             <div>
-              <Portal target="'#outside'">
+              <t t-portal="'#outside'">
                 <Child val="state.val"/>
-              </Portal>
+              </t>
             </div>`;
       state = useState({ val: "ab" });
     }
@@ -582,17 +675,13 @@ describe("Portal: UI/UX", () => {
 });
 
 describe("Portal: Props validation", () => {
-  test("target is mandatory", async () => {
-    const consoleInfo = console.info;
-    console.info = jest.fn();
-
+  test("target is mandatory 1", async () => {
     class Parent extends Component {
-      static components = { Portal };
       static template = xml`
         <div>
-          <Portal>
+          <t t-portal>
             <div>2</div>
-          </Portal>
+          </t>
         </div>`;
     }
     let error: Error;
@@ -602,21 +691,16 @@ describe("Portal: Props validation", () => {
       error = e as Error;
     }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe(`Missing props 'target' (component 'Portal')`);
-    console.info = consoleInfo;
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(error!.message).toContain(`attribute without value.`);
   });
 
-  test("target is not list", async () => {
-    const consoleInfo = console.info;
-    console.info = jest.fn();
+  test("target is mandatory 2", async () => {
     class Parent extends Component {
-      static components = { Portal };
       static template = xml`
         <div>
-          <Portal target="['body']">
+          <t t-portal="">
             <div>2</div>
-          </Portal>
+          </t>
         </div>`;
     }
     let error: Error;
@@ -626,8 +710,44 @@ describe("Portal: Props validation", () => {
       error = e as Error;
     }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe(`Invalid Prop 'target' in component 'Portal'`);
-    console.info = consoleInfo;
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(error!.message).toBe(`Unexpected token ','`);
+  });
+
+  test("target must be a valid selector", async () => {
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <t t-portal="' '">
+            <div>2</div>
+          </t>
+        </div>`;
+    }
+    let error: Error;
+    try {
+      await mount(Parent, fixture, { dev: true });
+    } catch (e) {
+      error = e as Error;
+    }
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe(`' ' is not a valid selector`);
+  });
+
+  test("target must be a valid selector 2", async () => {
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <t t-portal="'aa'">
+            <div>2</div>
+          </t>
+        </div>`;
+    }
+    let error: Error;
+    try {
+      await mount(Parent, fixture, { dev: true });
+    } catch (e) {
+      error = e as Error;
+    }
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe(`invalid portal target`);
   });
 });

@@ -146,6 +146,7 @@ describe("qweb parser", () => {
           content: [],
         },
       ],
+      deepRemove: false,
     });
   });
 
@@ -253,6 +254,7 @@ describe("qweb parser", () => {
           content: [],
         },
       ],
+      deepRemove: false,
     });
   });
 
@@ -503,6 +505,7 @@ describe("qweb parser", () => {
           },
           tElif: null,
           tElse: null,
+          deepRemove: false,
         },
       ],
     });
@@ -518,6 +521,7 @@ describe("qweb parser", () => {
       },
       tElif: null,
       tElse: null,
+      deepRemove: false,
     });
   });
 
@@ -538,6 +542,7 @@ describe("qweb parser", () => {
       },
       tElif: null,
       tElse: null,
+      deepRemove: false,
     });
   });
 
@@ -554,6 +559,7 @@ describe("qweb parser", () => {
         type: ASTType.Text,
         value: "else",
       },
+      deepRemove: false,
     });
   });
 
@@ -572,6 +578,7 @@ describe("qweb parser", () => {
         },
       ],
       tElse: null,
+      deepRemove: false,
     });
   });
 
@@ -593,6 +600,7 @@ describe("qweb parser", () => {
         type: ASTType.Text,
         value: "else",
       },
+      deepRemove: false,
     });
   });
 
@@ -650,6 +658,7 @@ describe("qweb parser", () => {
           },
         ],
       },
+      deepRemove: false,
     });
   });
 
@@ -731,6 +740,7 @@ describe("qweb parser", () => {
       },
       tElif: null,
       tElse: null,
+      deepRemove: false,
     });
   });
 
@@ -753,6 +763,7 @@ describe("qweb parser", () => {
           content: { type: ASTType.Text, value: "1" },
           tElif: null,
           tElse: { type: ASTType.TSet, name: "ourvar", value: "0", defaultValue: null, body: null },
+          deepRemove: false,
         },
       ],
     });
@@ -776,14 +787,13 @@ describe("qweb parser", () => {
       collection: "list",
       elem: "item",
       key: "item_index",
-      hasNoComponent: true,
-      isOnlyChild: false,
       body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
       memo: "",
       hasNoFirst: true,
       hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
+      deepRemove: false,
     });
   });
 
@@ -793,14 +803,13 @@ describe("qweb parser", () => {
       collection: "list",
       elem: "item",
       key: "item_index",
-      hasNoComponent: true,
-      isOnlyChild: false,
       body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
       memo: "",
       hasNoFirst: true,
       hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
+      deepRemove: false,
     });
   });
 
@@ -809,8 +818,6 @@ describe("qweb parser", () => {
       type: ASTType.TForEach,
       collection: "list",
       elem: "item",
-      hasNoComponent: true,
-      isOnlyChild: false,
       key: "item_index",
       body: {
         type: ASTType.DomNode,
@@ -828,6 +835,7 @@ describe("qweb parser", () => {
       hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
+      deepRemove: false,
     });
   });
 
@@ -836,8 +844,6 @@ describe("qweb parser", () => {
       type: ASTType.TForEach,
       collection: "list",
       elem: "item",
-      hasNoComponent: true,
-      isOnlyChild: false,
       key: "item.id",
       body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
       memo: "",
@@ -845,6 +851,7 @@ describe("qweb parser", () => {
       hasNoIndex: true,
       hasNoLast: true,
       hasNoValue: true,
+      deepRemove: false,
     });
   });
 
@@ -856,8 +863,6 @@ describe("qweb parser", () => {
       collection: "list",
       elem: "item",
       key: "item_index",
-      hasNoComponent: true,
-      isOnlyChild: false,
       body: {
         type: ASTType.DomNode,
         tag: "span",
@@ -874,6 +879,7 @@ describe("qweb parser", () => {
       hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
+      deepRemove: false,
     });
   });
 
@@ -887,13 +893,12 @@ describe("qweb parser", () => {
       collection: "list",
       elem: "item",
       key: "item_index",
-      hasNoComponent: true,
-      isOnlyChild: false,
       body: {
         type: ASTType.TIf,
         condition: "condition",
         tElif: null,
         tElse: null,
+        deepRemove: false,
         content: {
           type: ASTType.DomNode,
           tag: "span",
@@ -911,6 +916,7 @@ describe("qweb parser", () => {
       hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
+      deepRemove: false,
     });
   });
 
@@ -924,8 +930,6 @@ describe("qweb parser", () => {
       collection: "categories",
       elem: "category",
       key: "category_index",
-      hasNoComponent: true,
-      isOnlyChild: false,
       body: {
         type: ASTType.DomNode,
         tag: "option",
@@ -945,6 +949,7 @@ describe("qweb parser", () => {
       hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
+      deepRemove: false,
     });
   });
 
@@ -966,14 +971,13 @@ describe("qweb parser", () => {
           collection: "list",
           elem: "item",
           key: "item_index",
-          hasNoComponent: true,
-          isOnlyChild: true,
           body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
           memo: "",
           hasNoFirst: true,
           hasNoIndex: false,
           hasNoLast: true,
           hasNoValue: true,
+          deepRemove: false,
         },
       ],
     });
@@ -995,8 +999,6 @@ describe("qweb parser", () => {
       collection: "list",
       elem: "item",
       key: "item_index",
-      hasNoComponent: true,
-      isOnlyChild: false,
       body: {
         type: ASTType.DomNode,
         tag: "span",
@@ -1013,6 +1015,7 @@ describe("qweb parser", () => {
       hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
+      deepRemove: false,
     });
   });
 
@@ -1022,8 +1025,6 @@ describe("qweb parser", () => {
       collection: "list",
       elem: "item",
       key: "item_index",
-      hasNoComponent: false,
-      isOnlyChild: false,
       body: {
         type: ASTType.TComponent,
         isDynamic: false,
@@ -1037,6 +1038,7 @@ describe("qweb parser", () => {
       hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
+      deepRemove: false,
     });
   });
 
@@ -1048,8 +1050,6 @@ describe("qweb parser", () => {
       collection: "list",
       elem: "item",
       key: "item_index",
-      hasNoComponent: false,
-      isOnlyChild: false,
       body: {
         type: ASTType.TCall,
         name: "blap",
@@ -1060,6 +1060,7 @@ describe("qweb parser", () => {
       hasNoIndex: false,
       hasNoLast: false,
       hasNoValue: false,
+      deepRemove: false,
     });
   });
 
@@ -1073,14 +1074,13 @@ describe("qweb parser", () => {
       collection: "list",
       elem: "item",
       key: "item_index",
-      hasNoComponent: true,
-      isOnlyChild: false,
       body: { type: ASTType.TEsc, expr: "item", defaultValue: "" },
       memo: "[row.x]",
       hasNoFirst: true,
       hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
+      deepRemove: false,
     });
   });
 
@@ -1130,6 +1130,7 @@ describe("qweb parser", () => {
       condition: "condition",
       tElif: null,
       tElse: null,
+      deepRemove: false,
       content: {
         type: ASTType.TCall,
         name: "blabla",
@@ -1284,6 +1285,7 @@ describe("qweb parser", () => {
                 ns: null,
               },
             ],
+            deepRemove: false,
           },
         },
       },
@@ -1604,7 +1606,7 @@ describe("qweb parser", () => {
           attrs: {},
           content: [
             {
-              type: 0,
+              type: ASTType.Text,
               value: "word",
             },
           ],
@@ -1616,19 +1618,18 @@ describe("qweb parser", () => {
           type: ASTType.DomNode,
           ns: null,
         },
-        type: 16,
+        type: ASTType.TTranslation,
       },
       collection: "list",
       elem: "item",
-      hasNoComponent: true,
       hasNoFirst: true,
       hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
-      isOnlyChild: false,
       key: "item_index",
       memo: "",
-      type: 9,
+      deepRemove: false,
+      type: ASTType.TForEach,
     });
   });
 
@@ -1785,6 +1786,36 @@ describe("qweb parser", () => {
       dynamicTag: "theTag",
       model: null,
       ns: null,
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // t-portal
+  // ---------------------------------------------------------------------------
+  test("t-portal", async () => {
+    expect(parse(`<t t-portal="target">Content</t>`)).toEqual({
+      type: ASTType.TPortal,
+      target: "target",
+      content: { type: ASTType.Text, value: "Content" },
+    });
+  });
+
+  test("t-portal must be in a <t> node", async () => {
+    expect(() => parse(`<div t-portal="target">Content</div>`)).toThrowError();
+  });
+
+  test("t-portal with t-if", async () => {
+    expect(parse(`<t t-portal="target" t-if="condition">Content</t>`)).toEqual({
+      condition: "condition",
+      content: {
+        content: { type: ASTType.Text, value: "Content" },
+        target: "target",
+        type: ASTType.TPortal,
+      },
+      tElif: null,
+      tElse: null,
+      type: ASTType.TIf,
+      deepRemove: true,
     });
   });
 });

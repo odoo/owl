@@ -1,5 +1,59 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Portal Add and remove portals 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { prepareList, callPortal, withKey } = helpers;
+  
+  function portalContent1(ctx, node, key = \\"\\") {
+    let b3 = text(\` Portal\`);
+    let b4 = text(ctx['portalId']);
+    return multi([b3, b4]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['portalIds']);
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      ctx[\`portalId\`] = v_block1[i1];
+      let key1 = ctx['portalId'];
+      c_block1[i1] = withKey(callPortal(ctx, node, key, '#outside', portalContent1), key1);
+    }
+    return list(c_block1, true);
+  }
+}"
+`;
+
+exports[`Portal Add and remove portals with t-foreach 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { prepareList, callPortal, withKey } = helpers;
+  
+  let block2 = createBlock(\`<div><block-text-0/><block-child-0/></div>\`, true);
+  
+  function portalContent1(ctx, node, key = \\"\\") {
+    let b4 = text(\` Portal\`);
+    let b5 = text(ctx['portalId']);
+    return multi([b4, b5]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['portalIds']);
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      ctx[\`portalId\`] = v_block1[i1];
+      let key1 = ctx['portalId'];
+      let txt1 = ctx['portalId'];
+      let b6 = callPortal(ctx, node, key, '#outside', portalContent1);
+      c_block1[i1] = withKey(block2([txt1], [b6]), key1);
+    }
+    return list(c_block1, true);
+  }
+}"
+`;
+
 exports[`Portal Portal composed with t-slot 1`] = `
 "function anonymous(bdom, helpers
 ) {
@@ -22,14 +76,14 @@ exports[`Portal Portal composed with t-slot 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { callSlot } = helpers;
+  let { callPortal, callSlot } = helpers;
   
-  function slot1(ctx, node, key = \\"\\") {
+  function portalContent1(ctx, node, key = \\"\\") {
     return callSlot(ctx, node, key, 'default', false, {});
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx);
+    return callPortal(ctx, node, key, '#outside', portalContent1);
   }
 }"
 `;
@@ -52,16 +106,17 @@ exports[`Portal basic use of portal 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callPortal } = helpers;
   
   let block1 = createBlock(\`<div><span>1</span><block-child-0/></div>\`);
   let block2 = createBlock(\`<p>2</p>\`);
   
-  function slot1(ctx, node, key = \\"\\") {
+  function portalContent1(ctx, node, key = \\"\\") {
     return block2();
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx);
+    let b3 = callPortal(ctx, node, key, '#outside', portalContent1);
     return block1([], [b3]);
   }
 }"
@@ -71,18 +126,17 @@ exports[`Portal basic use of portal in dev mode 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callPortal } = helpers;
   
   let block1 = createBlock(\`<div><span>1</span><block-child-0/></div>\`);
   let block2 = createBlock(\`<p>2</p>\`);
   
-  function slot1(ctx, node, key = \\"\\") {
+  function portalContent1(ctx, node, key = \\"\\") {
     return block2();
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const props1 = {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}
-    helpers.validateProps(\`Portal\`, props1, ctx)
-    let b3 = component(\`Portal\`, props1, key + \`__1\`, node, ctx);
+    let b3 = callPortal(ctx, node, key, '#outside', portalContent1);
     return block1([], [b3]);
   }
 }"
@@ -92,10 +146,11 @@ exports[`Portal conditional use of Portal (with sub Component) 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callPortal } = helpers;
   
-  let block2 = createBlock(\`<span>1</span>\`);
+  let block2 = createBlock(\`<span>1</span>\`, true);
   
-  function slot1(ctx, node, key = \\"\\") {
+  function portalContent1(ctx, node, key = \\"\\") {
     return component(\`Child\`, {val: ctx['state'].val}, key + \`__1\`, node, ctx);
   }
   
@@ -103,9 +158,9 @@ exports[`Portal conditional use of Portal (with sub Component) 1`] = `
     let b2,b4;
     b2 = block2();
     if (ctx['state'].hasPortal) {
-      b4 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
+      b4 = callPortal(ctx, node, key, '#outside', portalContent1);
     }
-    return multi([b2, b4]);
+    return multi([b2, b4], true);
   }
 }"
 `;
@@ -128,11 +183,12 @@ exports[`Portal conditional use of Portal 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callPortal } = helpers;
   
-  let block2 = createBlock(\`<span>1</span>\`);
-  let block3 = createBlock(\`<p>2</p>\`);
+  let block2 = createBlock(\`<span>1</span>\`, true);
+  let block3 = createBlock(\`<p>2</p>\`, true);
   
-  function slot1(ctx, node, key = \\"\\") {
+  function portalContent1(ctx, node, key = \\"\\") {
     return block3();
   }
   
@@ -140,9 +196,33 @@ exports[`Portal conditional use of Portal 1`] = `
     let b2,b4;
     b2 = block2();
     if (ctx['state'].hasPortal) {
-      b4 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx);
+      b4 = callPortal(ctx, node, key, '#outside', portalContent1);
     }
-    return multi([b2, b4]);
+    return multi([b2, b4], true);
+  }
+}"
+`;
+
+exports[`Portal conditional use of Portal with div 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callPortal } = helpers;
+  
+  let block2 = createBlock(\`<div><span>hasPortal</span><block-child-0/></div>\`, true);
+  let block3 = createBlock(\`<p>thePortal</p>\`, true);
+  
+  function portalContent1(ctx, node, key = \\"\\") {
+    return block3();
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2;
+    if (ctx['state'].hasPortal) {
+      let b4 = callPortal(ctx, node, key, '#outside', portalContent1);
+      b2 = block2([], [b4]);
+    }
+    return multi([b2], true);
   }
 }"
 `;
@@ -151,17 +231,18 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 1`] 
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callPortal } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-0/></div>\`);
   
-  function slot1(ctx, node, key = \\"\\") {
+  function portalContent1(ctx, node, key = \\"\\") {
     return component(\`Child\`, {val: ctx['state'].val}, key + \`__1\`, node, ctx);
   }
   
   return function template(ctx, node, key = \\"\\") {
     let b3;
     if (ctx['state'].hasChild) {
-      b3 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
+      b3 = callPortal(ctx, node, key, '#outside', portalContent1);
     }
     return block1([], [b3]);
   }
@@ -186,11 +267,12 @@ exports[`Portal portal could have dynamically no content 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callPortal } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<span><block-text-0/></span>\`);
   
-  function slot1(ctx, node, key = \\"\\") {
+  function portalContent1(ctx, node, key = \\"\\") {
     let b3;
     if (ctx['state'].val) {
       let txt1 = ctx['state'].val;
@@ -200,7 +282,7 @@ exports[`Portal portal could have dynamically no content 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b4 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx);
+    let b4 = callPortal(ctx, node, key, '#outside', portalContent1);
     return block1([], [b4]);
   }
 }"
@@ -210,15 +292,16 @@ exports[`Portal portal destroys on crash 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callPortal } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  function slot1(ctx, node, key = \\"\\") {
+  function portalContent1(ctx, node, key = \\"\\") {
     return component(\`Child\`, {error: ctx['state'].error}, key + \`__1\`, node, ctx);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
+    let b3 = callPortal(ctx, node, key, '#outside', portalContent1);
     return block1([], [b3]);
   }
 }"
@@ -242,15 +325,16 @@ exports[`Portal portal with child and props 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callPortal } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  function slot1(ctx, node, key = \\"\\") {
+  function portalContent1(ctx, node, key = \\"\\") {
     return component(\`Child\`, {val: ctx['state'].val}, key + \`__1\`, node, ctx);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
+    let b3 = callPortal(ctx, node, key, '#outside', portalContent1);
     return block1([], [b3]);
   }
 }"
@@ -274,12 +358,13 @@ exports[`Portal portal with dynamic body 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callPortal } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<span><block-text-0/></span>\`);
   let block4 = createBlock(\`<div/>\`);
   
-  function slot1(ctx, node, key = \\"\\") {
+  function portalContent1(ctx, node, key = \\"\\") {
     let b3,b4;
     if (ctx['state'].val) {
       let txt1 = ctx['state'].val;
@@ -291,7 +376,7 @@ exports[`Portal portal with dynamic body 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b5 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx);
+    let b5 = callPortal(ctx, node, key, '#outside', portalContent1);
     return block1([], [b5]);
   }
 }"
@@ -301,19 +386,20 @@ exports[`Portal portal with many children 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callPortal } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<div>1</div>\`);
   let block4 = createBlock(\`<p>2</p>\`);
   
-  function slot1(ctx, node, key = \\"\\") {
+  function portalContent1(ctx, node, key = \\"\\") {
     let b3 = block3();
     let b4 = block4();
     return multi([b3, b4]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b5 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx);
+    let b5 = callPortal(ctx, node, key, '#outside', portalContent1);
     return block1([], [b5]);
   }
 }"
@@ -323,10 +409,11 @@ exports[`Portal portal with no content 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callPortal } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  function slot1(ctx, node, key = \\"\\") {
+  function portalContent1(ctx, node, key = \\"\\") {
     let b3;
     if (false) {
       b3 = text('ABC');
@@ -335,7 +422,7 @@ exports[`Portal portal with no content 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b4 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx);
+    let b4 = callPortal(ctx, node, key, '#outside', portalContent1);
     return block1([], [b4]);
   }
 }"
@@ -345,15 +432,16 @@ exports[`Portal portal with only text as content 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callPortal } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  function slot1(ctx, node, key = \\"\\") {
+  function portalContent1(ctx, node, key = \\"\\") {
     return text('only text');
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx);
+    let b3 = callPortal(ctx, node, key, '#outside', portalContent1);
     return block1([], [b3]);
   }
 }"
@@ -363,16 +451,17 @@ exports[`Portal portal with target not in dom 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callPortal } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<div>2</div>\`);
   
-  function slot1(ctx, node, key = \\"\\") {
+  function portalContent1(ctx, node, key = \\"\\") {
     return block2();
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = component(\`Portal\`, {target: '#does-not-exist',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx);
+    let b3 = callPortal(ctx, node, key, '#does-not-exist', portalContent1);
     return block1([], [b3]);
   }
 }"
@@ -382,15 +471,16 @@ exports[`Portal portal's parent's env is not polluted 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callPortal } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  function slot1(ctx, node, key = \\"\\") {
+  function portalContent1(ctx, node, key = \\"\\") {
     return component(\`Child\`, {}, key + \`__1\`, node, ctx);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
+    let b3 = callPortal(ctx, node, key, '#outside', portalContent1);
     return block1([], [b3]);
   }
 }"
@@ -432,17 +522,18 @@ exports[`Portal simple catchError with portal 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callPortal } = helpers;
   
   let block1 = createBlock(\`<div><span>1</span><block-child-0/></div>\`);
   let block2 = createBlock(\`<p><block-text-0/></p>\`);
   
-  function slot1(ctx, node, key = \\"\\") {
+  function portalContent1(ctx, node, key = \\"\\") {
     let txt1 = ctx['a'].b.c;
     return block2([txt1]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx);
+    let b3 = callPortal(ctx, node, key, '#outside', portalContent1);
     return block1([], [b3]);
   }
 }"
@@ -452,16 +543,17 @@ exports[`Portal with target in template (after portal) 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callPortal } = helpers;
   
   let block1 = createBlock(\`<div><span>1</span><block-child-0/><div id=\\"local-target\\"/></div>\`);
   let block2 = createBlock(\`<p>2</p>\`);
   
-  function slot1(ctx, node, key = \\"\\") {
+  function portalContent1(ctx, node, key = \\"\\") {
     return block2();
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = component(\`Portal\`, {target: '#local-target',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx);
+    let b3 = callPortal(ctx, node, key, '#local-target', portalContent1);
     return block1([], [b3]);
   }
 }"
@@ -471,58 +563,57 @@ exports[`Portal with target in template (before portal) 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callPortal } = helpers;
   
   let block1 = createBlock(\`<div><div id=\\"local-target\\"/><span>1</span><block-child-0/></div>\`);
   let block2 = createBlock(\`<p>2</p>\`);
   
-  function slot1(ctx, node, key = \\"\\") {
+  function portalContent1(ctx, node, key = \\"\\") {
     return block2();
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = component(\`Portal\`, {target: '#local-target',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx);
+    let b3 = callPortal(ctx, node, key, '#local-target', portalContent1);
     return block1([], [b3]);
   }
 }"
 `;
 
-exports[`Portal: Props validation target is mandatory 1`] = `
+exports[`Portal: Props validation target must be a valid selector 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callPortal } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<div>2</div>\`);
   
-  function slot1(ctx, node, key = \\"\\") {
+  function portalContent1(ctx, node, key = \\"\\") {
     return block2();
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const props1 = {slots: {'default': {__render: slot1, __ctx: ctx}}}
-    helpers.validateProps(\`Portal\`, props1, ctx)
-    let b3 = component(\`Portal\`, props1, key + \`__1\`, node, ctx);
+    let b3 = callPortal(ctx, node, key, ' ', portalContent1);
     return block1([], [b3]);
   }
 }"
 `;
 
-exports[`Portal: Props validation target is not list 1`] = `
+exports[`Portal: Props validation target must be a valid selector 2 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callPortal } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<div>2</div>\`);
   
-  function slot1(ctx, node, key = \\"\\") {
+  function portalContent1(ctx, node, key = \\"\\") {
     return block2();
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const props1 = {target: ['body'],slots: {'default': {__render: slot1, __ctx: ctx}}}
-    helpers.validateProps(\`Portal\`, props1, ctx)
-    let b3 = component(\`Portal\`, props1, key + \`__1\`, node, ctx);
+    let b3 = callPortal(ctx, node, key, 'aa', portalContent1);
     return block1([], [b3]);
   }
 }"
@@ -532,15 +623,16 @@ exports[`Portal: UI/UX focus is kept across re-renders 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callPortal } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  function slot1(ctx, node, key = \\"\\") {
+  function portalContent1(ctx, node, key = \\"\\") {
     return component(\`Child\`, {val: ctx['state'].val}, key + \`__1\`, node, ctx);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3 = component(\`Portal\`, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
+    let b3 = callPortal(ctx, node, key, '#outside', portalContent1);
     return block1([], [b3]);
   }
 }"

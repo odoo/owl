@@ -6,15 +6,15 @@
 - [Setting an Environment](#setting-an-environment)
 - [Using a sub environment](#using-a-sub-environment)
 - [Content of an Environment](#content-of-an-environment)
-- [Special keys](#special-keys)
 
 ## Overview
 
-An environment is an object which contains a [`QWeb` instance](qweb_engine.md). Whenever
-a root component is created, it is assigned an environment (see
-[below](#setting-an-environment) for more info on this). This environment is
-then automatically given to each sub component (and accessible in the `this.env`
-property).
+An environment is a shared object given to all components in a tree. It is not
+used by Owl itself, but it is useful for application developers to provide a
+simple communication channel between components (in addition to the props).
+
+The `env` given to the [`App`](app.md) is assigned to the `env` component
+property.
 
 ```
     Root
@@ -22,31 +22,14 @@ property).
    A    B
 ```
 
-This way, all components share the same `QWeb` instance. Owl internally requires
-that the environment has a `qweb` key which maps to a
-[`QWeb`](qweb_engine.md) instance. This is the QWeb instance that will be used to
-render each templates in this specific component tree. Note that if no `QWeb`
-instance is provided, Owl will simply generate it on the fly.
-
-The environment is mostly static. Each application is free to add anything to
-the environment, which is very useful, since this can be accessed by each sub
-component.
+Also, the `env` object is frozen when the application is started. This is done
+to ensure a simpler mental model of what's happening in runtime. Note that it
+is only shallowly frozen, so sub objects can be modified.
 
 ## Setting an environment
 
-An Owl application needs an [environment](environment.md) to be executed. The
-environment has an important key: the [QWeb](qweb_engine.md) instance, which will render
-all templates.
-
-Whenever a root component `App` is mounted, Owl will setup a valid environment by
-following the next steps:
-
-- take the `env` object defined on `App.env` (if no `env` was explicitly setup,
-  this will return the empty `env` object defined on `Component`)
-- if `env.qweb` is not set, then Owl will create a `QWeb` instance.
-
-The correct way to customize an environment is to simply set it up on the root
-component class, before the first component is created:
+The correct way to customize an environment is to simply give it to the `App`,
+whenever it is created.
 
 ```js
 const env = {
@@ -56,19 +39,12 @@ const env = {
         ...
     },
 };
-mount(App, { target: document.body, env });
+
+new App(Root, { env }).mount(document.body);
+
+// or alternatively
+mount(App, document.body, { env });
 ```
-
-It is also possible to simply share an environment between all root components,
-by simply doing this:
-
-```js
-Component.env = myEnv; // will be the default env for all components
-```
-
-Note that this environment is the global owl environment for an application. The
-next section explains how to extend an environment for a specific sub component
-and its children.
 
 ## Using a sub environment
 
@@ -79,58 +55,22 @@ solution presented above will not work, since it sets the global environment.
 There is a hook for this situation: [`useSubEnv`](hooks.md#usesubenv).
 
 ```js
-class FormComponent extends Component {
-  constructor(parent, props) {
-    super(parent, props);
-    useSubEnv({ myKey: someValue });
+class SomeComponent extends Component {
+  setup() {
+    useSubEnv({ myKey: someValue }); // myKey is now available for all child components
   }
 }
 ```
 
 ## Content of an Environment
 
-Some good use cases for additional keys in the environment are:
+The `env` object content is totally up to the application developer. However,
+some good use cases for additional keys in the environment are:
 
 - some configuration keys,
 - session information,
 - generic services (such as doing rpcs).
+- other utility functions that one want to inject, such as a translation function.
 
 Doing it this way means that components are easily testable: we can simply
 create a test environment with mock services.
-
-For example:
-
-```js
-async function myEnv() {
-  const templates = await loadTemplates();
-  const qweb = new QWeb({ templates });
-  const session = getSession();
-
-  return {
-    _t: myTranslateFunction,
-    session: session,
-    qweb: qweb,
-    services: {
-      localStorage: localStorage,
-      rpc: rpc,
-    },
-    debug: false,
-    inMobileMode: true,
-  };
-}
-
-async function start() {
-  const env = await myEnv();
-  mount(App, { target: document.body, env });
-}
-```
-
-## Special Keys
-
-There are two special key/value added by Owl if not provided in the environment:
-the `QWeb` instance and a `browser` object:
-
-- `qweb` will be set to an empty `QWeb` instance. This is absolutely necessary
-  for Owl to be able to render anything
-- `browser`: this is an object that contains some common access points to the
-  browser methods with a side effect. See [browser](browser.md) for more information. Note that the browser object will be removed from the environment in Owl 2.0.

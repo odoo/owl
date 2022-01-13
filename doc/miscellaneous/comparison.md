@@ -78,7 +78,7 @@ additional tools, we made a lot of effort to make the most of the web platform.
 
 For example, Owl uses the standard `xml` parser that comes with every browser.
 Because of that, Owl did not have to write its own template parser. Another
-example is the [`xml`](../reference/tags.md#xml-tag) tag helper function, which makes use of
+example is the [`xml`](../reference/templates.md#inline-templates) tag helper function, which makes use of
 native template literals to allow in a natural way to write `xml` templates
 directly in the javascript code. This can be easily integrated with editor
 plugins to have autocompletion inside the template.
@@ -126,7 +126,7 @@ structured than a template language. Note that the tooling is quite impressive:
 there is a syntax highlighter for jsx here on github!
 
 By comparison, here is the equivalent Owl component, written with the
-[`xml`](../reference/tags.md#xml-tag) tag helper:
+[`xml`](../reference/templates.md#inline-templates) tag helper:
 
 ```js
 class Clock extends Component {

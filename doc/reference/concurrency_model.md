@@ -11,7 +11,7 @@
 
 Owl was designed from the very beginning with asynchronous components. This comes
 from the `willStart` and the `willUpdateProps` lifecycle hooks. With these
-methods, it is possible to build complex highly concurrent applications.
+asynchronous hooks, it is possible to build complex highly concurrent applications.
 
 Owl concurrent mode has several benefits: it makes it possible to delay the
 rendering until some asynchronous operation is complete, it makes it possible
@@ -35,7 +35,8 @@ two phases: _virtual rendering_ and _patching_.
 
 ### Virtual rendering
 
-This phase represent the process of rendering a template, in memory, which create a virtual representation of the desired component html). The output of this phase is a
+This phase represent the process of rendering a template, in memory, which creates
+a virtual representation of the desired component html). The output of this phase is a
 virtual DOM.
 
 It is asynchronous: each subcomponents needs to either be created (so, `willStart`
@@ -94,7 +95,7 @@ component (with some code like `app.mount(document.body)`).
 5. The method `mounted` is called recursively on all components in the following
    order: `E`, `D`, `C`, `B`, `A`.
 
-**Scenario 2: rerendering a component**. Now, let's assume that the user clicked on some
+**Scenario 2: updating a component**. Now, let's assume that the user clicked on some
 button in `C`, and this results in a state update, which is supposed to:
 
 - update `D`,
@@ -136,8 +137,7 @@ Here is what Owl will do:
 6. `mounted` hook is called on `F`, `patched` hooks are called on `D`, `C`
 
 Tags are very small helpers to make it easy to write inline templates. There is
-only one currently available tag: `xml`, but we plan to add other tags later,
-such as a `css` tag, which will be used to write [single file components](../learning/how_to_write_sfc.md).
+only one currently available tag: `xml`.
 
 ### Asynchronous Rendering
 
@@ -160,22 +160,4 @@ Here are a few tips on how to work with asynchronous components:
 1. Minimize the use of asynchronous components!
 2. Lazy loading external libraries is a good use case for async rendering. This
    is mostly fine, because we can assume that it will only takes a fraction of a
-   second, and only once (see [`owl.utils.loadJS`](utils.md#loadjs))
-3. For all the other cases, the [`AsyncRoot`](misc.md#asyncroot) component is there to help you. When
-   this component is met, a new rendering
-   sub tree is created, such that the rendering of that component (and its
-   children) is not tied to the rendering of the rest of the interface. It can
-   be used on an asynchronous component, to prevent it from delaying the
-   rendering of the whole interface, or on a synchronous one, such that its
-   rendering isn't delayed by other (asynchronous) components. Note that this
-   directive has no effect on the first rendering, but only on subsequent ones
-   (triggered by state or props changes).
-
-   ```xml
-   <div t-name="ParentComponent">
-     <SyncChild />
-     <AsyncRoot>
-        <AsyncChild/>
-     </AsyncRoot>
-   </div>
-   ```
+   second, and only once.

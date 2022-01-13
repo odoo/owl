@@ -20,7 +20,12 @@ function callPortal(
   target: string,
   content: (ctx: any, node: any, key: string) => BDom
 ): BDom {
-  return new VPortal(target, content(ctx, parent, key)) as any;
+  const portal = new VPortal(target, content(ctx, parent, key)) as any;
+  // make sure we cleanup only once
+  if (!ctx.__owl)
+  ctx.__owl__.willDestroy.push(() => portal.cleanup());
+  ctx.__owl__.hasPortal = true;
+  return portal;
 }
 
 function callSlot(

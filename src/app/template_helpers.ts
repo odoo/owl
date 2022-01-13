@@ -20,7 +20,8 @@ function callPortal(
   target: string,
   content: (ctx: any, node: any, key: string) => BDom
 ): BDom {
-  return new VPortal(target, content(ctx, parent, key)) as any;
+  const portal = new VPortal(target, content(ctx, parent, key), ctx.__owl__) as any;
+  return portal;
 }
 
 function callSlot(

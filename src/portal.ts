@@ -1,4 +1,5 @@
 import { BDom, text, VNode } from "./blockdom";
+import { ComponentNode } from "./component/component_node";
 
 const VText: any = text("").constructor;
 
@@ -7,8 +8,9 @@ export class VPortal extends VText implements Partial<VNode<VPortal>> {
   realBDom: BDom | null;
   target: HTMLElement | null = null;
 
-  constructor(selector: string, realBDom: BDom) {
+  constructor(selector: string, realBDom: BDom, ownerComponent: ComponentNode) {
     super("");
+    this.ownerComponent = ownerComponent;
     this.selector = selector;
     this.realBDom = realBDom;
   }
@@ -26,6 +28,7 @@ export class VPortal extends VText implements Partial<VNode<VPortal>> {
       }
     }
     this.realBDom!.mount(this.target!, null);
+    this.ownerComponent.willDestroy.push(() => this.remove());
   }
 
   beforeRemove() {

@@ -7,13 +7,15 @@ export class VPortal extends VText implements Partial<VNode<VPortal>> {
   realBDom: BDom | null;
   target: HTMLElement | null = null;
 
-  constructor(selector: string, realBDom: BDom) {
+  constructor(selector: string, realBDom: BDom, ownerComponent: ComponentNode) {
     super("");
+    this.ownerComponent = ownerComponent;
     this.selector = selector;
     this.realBDom = realBDom;
   }
   mount(parent: HTMLElement, anchor: ChildNode) {
     super.mount(parent, anchor);
+    this.ownerComponent.willDestroy.push(() => this.cleanup());
     this.target = document.querySelector(this.selector) as any;
     if (!this.target) {
       let el: any = this.el;

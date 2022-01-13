@@ -116,7 +116,7 @@ class App extends Component {}
 App.template = xml`<div>todo app</div>`;
 ```
 
-Note 3: writing inline templates with the [`xml` helper](../reference/tags.md#xml-tag)
+Note 3: writing inline templates with the [`xml` helper](../reference/templates.md#inline-templates)
 is nice, but there is no syntax highlighting, and this makes it very easy to
 have malformed xml. Some editors support syntax highlighting for this situation.
 For example, VS Code has an addon `Comment tagged template`, which, if installed,
@@ -173,14 +173,14 @@ class Root extends Component {
 }
 ```
 
-The template contains a [`t-foreach`](../reference/qweb_templating_language.md#loops) loop to iterate
+The template contains a [`t-foreach`](../reference/templates.md#loops) loop to iterate
 through the tasks. It can find the `tasks` list from the component, since the
 component is the rendering context. Note that we use the `id` of each task as a
 `t-key`, which is very common. There are two css classes: `task-list` and `task`,
 that we will use in the next section.
 
 Finally, notice the use of the `t-att-checked` attribute:
-prefixing an attribute by [`t-att`](../reference/qweb_templating_language.md#dynamic-attributes) makes
+prefixing an attribute by [`t-att`](../reference/templates.md#dynamic-attributes) makes
 it dynamic. Owl will evaluate the expression and set it as the value of the
 attribute.
 
@@ -277,10 +277,10 @@ A lot of stuff happened here:
 - the `Task` component has a `props` key: this is only useful for validation
   purpose. It says that each `Task` should be given exactly one prop, named
   `task`. If this is not the case, Owl will throw an
-  [error](../reference/props_validation.md). This is extremely
+  [error](../reference/props.md#props-validation). This is extremely
   useful when refactoring components
 - finally, to activate the props validation, we need to set Owl's
-  [mode](../reference/config.md#mode) to `dev`. This is done in the last argument
+  [mode](../reference/app.md#configuration) to `dev`. This is done in the last argument
   of the `mount` function. Note that this should be removed when an app is used in a real
   production environment, since `dev` mode is slightly slower, due to extra
   checks and validations.

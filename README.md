@@ -16,8 +16,10 @@ framework, written in Typescript, taking the best ideas from React and Vue in a
 simple and consistent way. Owl's main features are:
 
 - a declarative component system,
-- a reactivity system based on hooks,
-- concurrent mode by default,
+- a fine grained reactivity system similar to Vue,
+- hooks
+- fragments
+- asynchronous rendering
 
 Owl components are defined with ES6 classes and xml templates, uses an
 underlying virtual DOM, integrates beautifully with hooks, and the rendering is
@@ -38,28 +40,26 @@ const { Component, useState, mount, xml } = owl;
 
 class Counter extends Component {
   static template = xml`
-    <button t-on-click="() => state.value++">
+    <button t-on-click="() => state.value = state.value + props.increment">
       Click Me! [<t t-esc="state.value"/>]
     </button>`;
 
   state = useState({ value: 0 });
 }
 
-class App extends Component {
+class Root extends Component {
   static template = xml`
-    <div>
-      <span>Hello Owl</span>
-      <Counter />
-    </div>`;
+    <span>Hello Owl</span>
+    <Counter increment="2"/>`;
 
   static components = { Counter };
 }
 
-mount(App, document.body);
+mount(Root, document.body);
 ```
 
 Note that the counter component is made reactive with the [`useState` hook](doc/reference/hooks.md#usestate).
-Also, all examples here uses the [`xml` helper](doc/reference/tags.md#xml-tag) to define inline templates.
+Also, all examples here uses the [`xml` helper](doc/reference/templates.md#inline-templates) to define inline templates.
 But this is not mandatory, many applications will load templates separately.
 
 More interesting examples can be found on the
@@ -74,47 +74,42 @@ Are you new to Owl? This is the place to start!
 - [Tutorial: create a TodoList application](doc/learning/tutorial_todoapp.md)
 - [How to start an Owl project](doc/learning/quick_start.md)
 - [How to test Components](doc/learning/how_to_test.md)
-- [How to write Single File Components](doc/learning/how_to_write_sfc.md)
 
 ### Reference
 
-You will find here a complete reference of every feature, class or object
-provided by Owl.
-
-- [Animations](doc/reference/animations.md)
-- [Browser](doc/reference/browser.md)
+- [Overview](doc/readme.md)
+- [App](doc/reference/app.md)
 - [Component](doc/reference/component.md)
-- [Content](doc/reference/content.md)
+- [Component Lifecycle](doc/reference/component.md#lifecycle)
 - [Concurrency Model](doc/reference/concurrency_model.md)
-- [Configuration](doc/reference/config.md)
-- [Context](doc/reference/context.md)
+- [Dynamic sub components](doc/reference/component.md#dynamic-sub-components)
 - [Environment](doc/reference/environment.md)
-- [Event Bus](doc/reference/event_bus.md)
-- [Event Handling](doc/reference/event_handling.md)
 - [Error Handling](doc/reference/error_handling.md)
+- [Event Handling](doc/reference/event_handling.md)
+- [Form Input Bindings](doc/reference/input_bindings.md)
+- [Fragments](doc/reference/templates.md#fragments)
 - [Hooks](doc/reference/hooks.md)
-- [Mounting a component](doc/reference/mounting.md)
-- [Miscellaneous Components](doc/reference/misc.md)
-- [Observer](doc/reference/observer.md)
+- [Loading Templates](doc/reference/app.md#loading-templates)
+- [Mounting a component](doc/reference/app.md#mount-helper)
+- [Portal](doc/reference/portal.md)
 - [Props](doc/reference/props.md)
-- [Props Validation](doc/reference/props_validation.md)
-- [QWeb Templating Language](doc/reference/qweb_templating_language.md)
-- [QWeb Engine](doc/reference/qweb_engine.md)
+- [Props Validation](doc/reference/props.md#props-validation)
+- [Reactivity](doc/reference/reactivity.md)
+- [Rendering SVG](doc/reference/templates.md#rendering-svg)
+- [Refs](doc/reference/refs.md)
 - [Slots](doc/reference/slots.md)
-- [Tags](doc/reference/tags.md)
+- [Sub components](doc/reference/component.md#sub-components)
+- [Sub templates](doc/reference/templates.md#sub-templates)
+- [Templates (Qweb)](doc/reference/templates.md)
+- [Translations](doc/reference/translations.md)
 - [Utils](doc/reference/utils.md)
 
 ### Other Topics
 
-This section provides miscellaneous document that explains some topics
-which cannot be considered either a tutorial, or reference documentation.
-
-- [Owl architecture: the Virtual DOM](doc/miscellaneous/vdom.md)
-- [Owl architecture: the rendering pipeline](doc/miscellaneous/rendering.md)
+- [Notes On Owl Architecture](doc/miscellaneous/architecture.md)
 - [Comparison with React/Vue](doc/miscellaneous/comparison.md)
-- [Why did Odoo built Owl?](doc/miscellaneous/why_owl.md)
-
-
+- [Why did Odoo build Owl?](doc/miscellaneous/why_owl.md)
+- [Changelog (from owl 1.x to 2.x)](CHANGELOG.md)
 
 ## Installing Owl
 

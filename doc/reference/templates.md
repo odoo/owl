@@ -1,12 +1,11 @@
-# 🦉 QWeb Templating Language🦉
+# 🦉 Templates 🦉
 
 ## Content
 
 - [Overview](#overview)
 - [Directives](#directives)
-- [Reference](#reference)
+- [QWeb Template reference](#qweb-template-reference)
   - [White Spaces](#white-spaces)
-  - [Root Nodes](#root-nodes)
   - [Expression Evaluation](#expression-evaluation)
   - [Static html Nodes](#static-html-nodes)
   - [Outputting Data](#outputting-data)
@@ -16,17 +15,19 @@
   - [Dynamic Class Attribute](#dynamic-class-attribute)
   - [Dynamic Tag Names](#dynamic-tag-names)
   - [Loops](#loops)
-  - [Rendering Sub Templates](#rendering-sub-templates)
+  - [Sub Templates](#sub-templates)
   - [Dynamic Sub Templates](#dynamic-sub-templates)
-  - [Translations](#translations)
   - [Debugging](#debugging)
+- [Fragments](#fragments)
+- [Inline templates](#inline-templates)
+- [Rendering svg](#rendering-svg)
 
 ## Overview
 
-[QWeb](https://www.odoo.com/documentation/13.0/reference/qweb.html) is the primary
-templating engine used by Odoo. It is based on the XML format, and used
+Owl templates are describe using the [QWeb](https://www.odoo.com/documentation/13.0/reference/qweb.html) specification. It is based on the XML format, and used
 mostly to generate HTML. In OWL, QWeb templates are compiled into functions that
-generate a virtual dom representation of the HTML.
+generate a virtual dom representation of the HTML. Also, since Owl is a live
+component system, there are additional directives specific to Owl (such as `t-on`).
 
 ```xml
 <div>
@@ -53,34 +54,33 @@ extensions.
 
 For reference, here is a list of all standard QWeb directives:
 
-| Name                           | Description                                                    |
-| ------------------------------ | -------------------------------------------------------------- |
-| `t-esc`                        | [Outputting safely a value](#outputting-data)                  |
-| `t-raw`                        | [Outputting value, without escaping](#outputting-data)         |
-| `t-set`, `t-value`             | [Setting variables](#setting-variables)                        |
-| `t-if`, `t-elif`, `t-else`,    | [conditionally rendering](#conditionals)                       |
-| `t-foreach`, `t-as`            | [Loops](#loops)                                                |
-| `t-att`, `t-attf-*`, `t-att-*` | [Dynamic attributes](#dynamic-attributes)                      |
-| `t-call`                       | [Rendering sub templates](#rendering-sub-templates)            |
-| `t-debug`, `t-log`             | [Debugging](#debugging)                                        |
-| `t-translation`                | [Disabling the translation of a node](#translations)           |
-| `t-name`                       | [Defining a template (not really a directive)](qweb_engine.md) |
+| Name                           | Description                                                     |
+| ------------------------------ | --------------------------------------------------------------- |
+| `t-esc`                        | [Outputting safely a value](#outputting-data)                   |
+| `t-out`                        | [Outputting value, possibly without escaping](#outputting-data) |
+| `t-set`, `t-value`             | [Setting variables](#setting-variables)                         |
+| `t-if`, `t-elif`, `t-else`,    | [conditionally rendering](#conditionals)                        |
+| `t-foreach`, `t-as`            | [Loops](#loops)                                                 |
+| `t-att`, `t-attf-*`, `t-att-*` | [Dynamic attributes](#dynamic-attributes)                       |
+| `t-call`                       | [Rendering sub templates](#sub-templates)                       |
+| `t-debug`, `t-log`             | [Debugging](#debugging)                                         |
+| `t-translation`                | [Disabling the translation of a node](translations.md)          |
 
 The component system in Owl requires additional directives, to express various
 needs. Here is a list of all Owl specific directives:
 
-| Name                     | Description                                                                     |
-| ------------------------ | ------------------------------------------------------------------------------- |
-| `t-component`, `t-props` | [Defining a sub component](component.md#composition)                            |
-| `t-ref`                  | [Setting a reference to a dom node or a sub component](component.md#references) |
-| `t-key`                  | [Defining a key (to help virtual dom reconciliation)](#loops)                   |
-| `t-on-*`                 | [Event handling](event_handling.md)                                             |
-| `t-transition`           | [Defining an animation](animations.md#css-transitions)                          |
-| `t-slot`                 | [Rendering a slot](slots.md)                                                    |
-| `t-model`                | [Form input bindings](component.md#form-input-bindings)                         |
-| `t-tag`                  | [Rendering nodes with dynamic tag name](#dynamic-tag-names)                     |
+| Name                     | Description                                                     |
+| ------------------------ | --------------------------------------------------------------- |
+| `t-component`, `t-props` | [Defining a sub component](component.md#sub-components)         |
+| `t-ref`                  | [Setting a reference to a dom node or a sub component](refs.md) |
+| `t-key`                  | [Defining a key (to help virtual dom reconciliation)](#loops)   |
+| `t-on-*`                 | [Event handling](event_handling.md)                             |
+| `t-portal`               | [Portal](portal.md)                                             |
+| `t-slot`                 | [Rendering a slot](slots.md)                                    |
+| `t-model`                | [Form input bindings](input_bindings.md)                        |
+| `t-tag`                  | [Rendering nodes with dynamic tag name](#dynamic-tag-names)     |
 
-## Reference
+## QWeb Template Reference
 
 ### White Spaces
 
@@ -89,32 +89,6 @@ White spaces in a template are handled in a special way:
 - consecutive whitespaces are always condensed to a single whitespace
 - if a whitespace-only text node contains a linebreak, it is ignored
 - the previous rules do not apply if we are in a `<pre>` tag
-
-### Root Nodes
-
-For many reasons, Owl QWeb templates should have a single root node. More
-precisely, the result of a template rendering should have a single root node:
-
-```xml
-<!–– not ok: two root nodes ––>
-<t>
-    <div>foo</div>
-    <div>bar</div>
-</t>
-
-<!–– ok: result has one single root node ––>
-<t>
-    <div t-if="someCondition">foo</div>
-    <span t-else="">bar</span>
-</t>
-```
-
-Extra root nodes will actually be ignored (even though they will be rendered
-in memory).
-
-Note: this does not apply to subtemplates (see the `t-call` directive). In that
-case, they will be inlined in the main template, and can actually have many
-root nodes.
 
 ### Expression Evaluation
 
@@ -190,24 +164,29 @@ rendered with the value `value` set to `42` in the rendering context yields:
 <p>42</p>
 ```
 
-The `t-raw` directive is almost the same as `t-esc`, but without the escaping.
-This is mostly useful to inject a raw html string somewhere. Obviously, this
-is unsafe to do in general, and should only be used for strings known to be safe.
+The `t-out` directive is almost the same as `t-esc`, but possibly without the
+escaping. The difference is that the value received by the `t-out` directive
+will only be not-escaped if it has been marked as such, using the `markup`
+utility function:
 
-```xml
-<p><t t-raw="value"/></p>
+For example, in the following component:
+
+```js
+const { markup, Component, xml } = owl;
+
+class SomeComponent extends Component {
+  static template = xml`
+    <t t-out="value1"/>
+    <t t-out="value2"/>`;
+
+  value1 = "<div>some text 1</div>";
+  value2 = markup("<div>some text 2</div>");
+}
 ```
 
-rendered with the value `value` set to `<span>foo</span>` in the rendering context yields:
-
-```html
-<p><span>foo</span></p>
-```
-
-Note that since the content of the expression is not known beforehand, the `t-raw`
-directive has to parse the html (and convert it to a virtual dom structure) for
-each rendering. So, it will be much slower than a regular template. It is
-therefore advised to limit the use of `t-raw` whenever possible.
+The first `t-out` will act as a `t-esc` directive, which means that the content
+of `value1` will be escaped. However, since `value2` has been tagged as a markup,
+this will be injected as html.
 
 ### Setting Variables
 
@@ -368,7 +347,7 @@ collection to iterate on, and a second parameter `t-as` providing the name to us
 for the current item of the iteration:
 
 ```xml
-<t t-foreach="[1, 2, 3]" t-as="i">
+<t t-foreach="[1, 2, 3]" t-as="i" t-key="i">
     <p><t t-esc="i"/></p>
 </t>
 ```
@@ -384,12 +363,16 @@ will be rendered as:
 Like conditions, `t-foreach` applies to the element bearing the directive’s attribute, and
 
 ```xml
-<p t-foreach="[1, 2, 3]" t-as="i">
+<p t-foreach="[1, 2, 3]" t-as="i" t-key="i">
     <t t-esc="i"/>
 </p>
 ```
 
 is equivalent to the previous example.
+
+An important difference should be made with the usual `QWeb` behaviour: Owl
+requires the presence of a `t-key` directive, to be able to properly reconcile
+renderings.
 
 `t-foreach` can iterate on an array (the current item will be the current value)
 or an object (the current item will be the current key).
@@ -416,7 +399,7 @@ into the global context.
 <t t-set="existing_variable" t-value="false"/>
 <!-- existing_variable now False -->
 
-<p t-foreach="Array(3)" t-as="i">
+<p t-foreach="Array(3)" t-as="i" t-key="i">
     <t t-set="existing_variable" t-value="true"/>
     <t t-set="new_variable" t-value="true"/>
     <!-- existing_variable and new_variable now true -->
@@ -430,17 +413,14 @@ Even though Owl tries to be as declarative as possible, the DOM does not fully
 expose its state declaratively in the DOM tree. For example, the scrolling state,
 the current user selection, the focused element or the state of an input are not
 set as attribute in the DOM tree. This is why we use a virtual dom
-algorithm to keep the actual DOM node as much as possible.
-
-However, in some situations, this is not enough, and we need to help Owl decide
-if an element is actually the same, or is a different element with the same
-properties.
+algorithm to make sure we keep the actual DOM node instead of replacing it with
+a new one.
 
 Consider the following situation: we have a list of two items `[{text: "a"}, {text: "b"}]`
 and we render them in this template:
 
 ```xml
-<p t-foreach="items" t-as="item"><t t-esc="item.text"/></p>
+<p t-foreach="items" t-as="item" t-key="item_index"><t t-esc="item.text"/></p>
 ```
 
 The result will be two `<p>` tags with text `a` and `b`. Now, if we swap them,
@@ -501,7 +481,7 @@ using the `...` javascript operator. For example:
 The `...` operator will convert the `Set` (or any other iterables) into a list,
 which will work with Owl QWeb.
 
-### Rendering Sub Templates
+### Sub Templates
 
 QWeb templates can be used for top level rendering, but they can also be used
 from within another template (to avoid duplication or give names to parts of
@@ -574,21 +554,6 @@ using string interpolation. For example:
 Here, the name of the template is obtained from the `template` value in the
 template rendering context.
 
-### Translations
-
-By default, QWeb specify that templates should be translated. If this behaviour
-is not wanted, there is a `t-translation` directive which can turn off
-translations (if it is set to the `off` value), with the following rules:
-
-- each text node will be replaced with its translation,
-- each of the following attribute values will be translated as well: `title`,
-  `placeholder`, `label` and `alt`,
-- translating text nodes can be disabled with the special attribute `t-translation`,
-  if its value is `off`.
-
-See [here](qweb_engine.md#translations) for more information on how to setup a
-translate function in Owl QWeb.
-
 ### Debugging
 
 The javascript QWeb implementation provides two useful debugging directives:
@@ -611,3 +576,101 @@ will stop execution if the browser dev tools are open.
 ```
 
 will print 42 to the console.
+
+## Fragments
+
+Owl 2 supports templates with an arbitrary number of root elements, or even just
+a text node. So, the following templates are all valid:
+
+```xml
+hello owl. This is just a text node!
+```
+
+```xml
+<div>hello</div>
+```
+
+```xml
+<div>hello</div>
+<div>ola</div>
+```
+
+```xml
+<div t-if="someCondition"><SomeChildComponent/></div>
+```
+
+## Inline templates
+
+Most real applications will define their templates in a XML file, to benefit
+from the XML ecosystem, and to do some additional processing, such as translating
+them. However, in some cases, it is convenient to be able to define a template
+inline. To do so, one can use the `xml` helper function:
+
+```js
+const { Component, xml } = owl;
+
+class MyComponent extends Component {
+  static template = xml`
+      <div>
+          <span t-if="somecondition">text</span>
+          <button t-on-click="someMethod">Click</button>
+      </div>
+  `;
+
+    ...
+}
+
+mount(MyComponent, document.body);
+```
+
+This function simply generates an unique string id, and register the template
+under that id in the internals of Owl, then return the id.
+
+## Rendering svg
+
+Owl components can be used to generate dynamic SVG graphs:
+
+```js
+class Node extends Component {
+  static template = xml`
+        <g>
+            <circle t-att-cx="props.x" t-att-cy="props.y" r="4" fill="black"/>
+            <text t-att-x="props.x - 5" t-att-y="props.y + 18"><t t-esc="props.node.label"/></text>
+            <t t-set="childx" t-value="props.x + 100"/>
+            <t t-set="height" t-value="props.height/(props.node.children || []).length"/>
+            <t t-foreach="props.node.children || []" t-as="child">
+                <t t-set="childy" t-value="props.y + child_index*height"/>
+                <line t-att-x1="props.x" t-att-y1="props.y" t-att-x2="childx" t-att-y2="childy" stroke="black" />
+                <Node x="childx" y="childy" node="child" height="height"/>
+            </t>
+        </g>
+    `;
+  static components = { Node };
+}
+
+class RootNode extends Component {
+  static template = xml`
+        <svg height="180">
+            <Node node="graph" x="10" y="20" height="180"/>
+        </svg>
+    `;
+  static components = { Node };
+  graph = {
+    label: "a",
+    children: [
+      { label: "b" },
+      { label: "c", children: [{ label: "d" }, { label: "e" }] },
+      { label: "f", children: [{ label: "g" }] },
+    ],
+  };
+}
+```
+
+This `RootNode` component will then display a live SVG representation of the
+graph described by the `graph` property. Note that there is a recursive structure
+here: the `Node` component uses itself as a subcomponent.
+
+Note that since SVG needs to be handled in a specific way (its namespace needs
+to be properly set), there is a small constraint for Owl components: if an owl
+component is supposed to be a part of an svg graph, then its root node needs to
+be a `g` tag, so Owl can properly set the namespace.

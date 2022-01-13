@@ -282,10 +282,12 @@ export class ComponentNode<T extends typeof Component = typeof Component>
   }
 
   beforeRemove() {
+    console.log('ddddddd')
     this._destroy();
   }
 
   remove() {
+    console.log('coucou')
     this.bdom!.remove();
   }
 

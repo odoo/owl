@@ -203,6 +203,94 @@ exports[`Portal conditional use of Portal 1`] = `
 }"
 `;
 
+exports[`Portal conditional use of Portal with child and div 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2;
+    if (ctx['state'].hasPortal) {
+      b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    }
+    return multi([b2]);
+  }
+}"
+`;
+
+exports[`Portal conditional use of Portal with child and div 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { prepareList, callPortal, withKey } = helpers;
+  
+  let block1 = createBlock(\`<div><span>hasPortal</span><block-child-0/></div>\`);
+  let block3 = createBlock(\`<p>thePortal</p>\`);
+  
+  function portalContent1(ctx, node, key = \\"\\") {
+    return block3();
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList([1]);
+    for (let i1 = 0; i1 < l_block2; i1++) {
+      ctx[\`elem\`] = v_block2[i1];
+      let key1 = ctx['elem'];
+      c_block2[i1] = withKey(callPortal(ctx, node, key, '#outside', portalContent1), key1);
+    }
+    let b2 = list(c_block2, true);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`Portal conditional use of Portal with child and div, variation 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block2 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2;
+    if (ctx['state'].hasPortal) {
+      let b3 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+      b2 = block2([], [b3]);
+    }
+    return multi([b2]);
+  }
+}"
+`;
+
+exports[`Portal conditional use of Portal with child and div, variation 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { prepareList, callPortal, withKey } = helpers;
+  
+  let block2 = createBlock(\`<span>hasPortal</span>\`, true);
+  let block4 = createBlock(\`<p>thePortal</p>\`, true);
+  
+  function portalContent1(ctx, node, key = \\"\\") {
+    return block4();
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = block2();
+    ctx = Object.create(ctx);
+    const [k_block3, v_block3, l_block3, c_block3] = prepareList([1]);
+    for (let i1 = 0; i1 < l_block3; i1++) {
+      ctx[\`elem\`] = v_block3[i1];
+      let key1 = ctx['elem'];
+      c_block3[i1] = withKey(callPortal(ctx, node, key, '#outside', portalContent1), key1);
+    }
+    let b3 = list(c_block3, true);
+    return multi([b2, b3], true);
+  }
+}"
+`;
+
 exports[`Portal conditional use of Portal with div 1`] = `
 "function anonymous(bdom, helpers
 ) {

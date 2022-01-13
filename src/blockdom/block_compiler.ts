@@ -498,6 +498,7 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
     beforeRemove() {}
 
     remove() {
+      console.log('ddd')
       elementRemove.call(this.el);
     }
 

@@ -638,6 +638,97 @@ describe("Portal", () => {
       '<div id="outside"><p>thePortal</p></div><div><span>hasPortal</span></div>'
     );
   });
+
+  test("conditional use of Portal with child and div", async () => {
+    class Child extends Component {
+      static template = xml`
+        <div>
+          <span>hasPortal</span>
+          <t t-foreach="[1]" t-as="elem" t-key="elem">
+            <t t-portal="'#outside'">
+              <p>thePortal</p>
+            </t>
+          </t>
+        </div>`;
+      
+    }
+    class Parent extends Component {
+      static template = xml`
+        <t t-if="state.hasPortal">
+          <Child />
+        </t>`;
+
+      static components = { Child };
+
+      state = useState({ hasPortal: false });
+    }
+
+    addOutsideDiv(fixture);
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe('<div id="outside"></div>');
+
+    parent.state.hasPortal = true;
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      '<div id="outside"><p>thePortal</p></div><div><span>hasPortal</span></div>'
+    );
+
+    parent.state.hasPortal = false;
+    await nextTick();
+    expect(fixture.innerHTML).toBe('<div id="outside"></div>');
+
+    parent.state.hasPortal = true;
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      '<div id="outside"><p>thePortal</p></div><div><span>hasPortal</span></div>'
+    );
+  });
+
+  test.only("conditional use of Portal with child and div, variation", async () => {
+    class Child extends Component {
+      static template = xml`
+          <span>hasPortal</span>
+          <t t-foreach="[1]" t-as="elem" t-key="elem">
+            <t t-portal="'#outside'">
+              <p>thePortal</p>
+            </t>
+          </t>`;
+      
+    }
+    class Parent extends Component {
+      static template = xml`
+        <t t-if="state.hasPortal">
+          <div>
+            <Child />
+          </div>
+        </t>`;
+
+      static components = { Child };
+
+      state = useState({ hasPortal: false });
+    }
+
+    addOutsideDiv(fixture);
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe('<div id="outside"></div>');
+
+    parent.state.hasPortal = true;
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      '<div id="outside"><p>thePortal</p></div><div><span>hasPortal</span></div>'
+    );
+
+    parent.state.hasPortal = false;
+    await nextTick();
+    expect(fixture.innerHTML).toBe('<div id="outside"></div>');
+
+    parent.state.hasPortal = true;
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      '<div id="outside"><p>thePortal</p></div><div><span>hasPortal</span></div>'
+    );
+  });
+
 });
 
 describe("Portal: UI/UX", () => {

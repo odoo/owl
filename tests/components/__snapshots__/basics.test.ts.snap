@@ -1,5 +1,45 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`basics GrandChild display is controlled by its GrandParent 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let Comp1 = ctx['myComp'];
+    return toggler(Comp1, component(Comp1, {displayGrandChild: ctx['displayGrandChild']}, key + \`__1\`, node, ctx));
+  }
+}"
+`;
+
+exports[`basics GrandChild display is controlled by its GrandParent 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2;
+    if (ctx['props'].displayGrandChild) {
+      b2 = component(\`GrandChild\`, {}, key + \`__1\`, node, ctx);
+    }
+    return multi([b2]);
+  }
+}"
+`;
+
+exports[`basics GrandChild display is controlled by its GrandParent 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`basics Multi root component 1`] = `
 "function anonymous(bdom, helpers
 ) {
@@ -1173,59 +1213,6 @@ exports[`t-out in components can render list of t-out  1`] = `
     }
     let b2 = list(c_block2);
     return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`t-out in components component children doesn't leak (if case) 1`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
-  return function template(ctx, node, key = \\"\\") {
-    let b2;
-    if (ctx['ifVar']) {
-      b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
-    }
-    return multi([b2]);
-  }
-}"
-`;
-
-exports[`t-out in components component children doesn't leak (if case) 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
-  let block1 = createBlock(\`<div/>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    return block1();
-  }
-}"
-`;
-
-exports[`t-out in components component children doesn't leak (t-key case) 1`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
-  return function template(ctx, node, key = \\"\\") {
-    const tKey_1 = ctx['keyVar'];
-    return toggler(tKey_1, component(\`Child\`, {}, tKey_1 + key + \`__1\`, node, ctx));
-  }
-}"
-`;
-
-exports[`t-out in components component children doesn't leak (t-key case) 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
-  let block1 = createBlock(\`<div/>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    return block1();
   }
 }"
 `;

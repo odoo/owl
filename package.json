@@ -16,7 +16,7 @@
     "build:bundle": "rollup -c",
     "build": "npm run build:bundle",
     "test": "jest",
-    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --watch",
+    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --watch --testTimeout=5000000",
     "test:watch": "jest --watch",
     "playground:serve": "python3 tools/server.py || python tools/server.py",
     "playground": "npm run build && npm run playground:serve",

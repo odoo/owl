@@ -143,14 +143,8 @@ export class RootFiber extends Fiber {
       current = undefined;
 
       // Step 2: patching the dom
-      node.bdom!.patch(this.bdom!, Object.keys(node.children).length > 0);
-      node.cleanOutdatedChildren();
-      this.appliedToDom = true;
-
+      node.patch();
       this.locked = false;
-      // unregistering the fiber before mounted since it can do another render
-      // and that the current rendering is obviously completed
-      node.fiber = null;
 
       // Step 4: calling all mounted lifecycle hooks
       let mountedFibers = this.mounted;

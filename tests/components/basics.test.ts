@@ -863,6 +863,43 @@ describe("basics", () => {
       "Child:mounted",
     ]).toBeLogged();
   });
+
+  test("GrandChild display is controlled by its GrandParent", async () => {
+    class GrandChild extends Component {
+      static template = xml`<div />`;
+      setup() {
+        useLogLifecycle();
+      }
+    }
+
+    class Child extends Component {
+      static components = { GrandChild };
+      static template = xml`<GrandChild t-if="props.displayGrandChild" />`;
+    }
+
+    class Parent extends Component {
+      static template = xml`<t t-component="myComp" displayGrandChild="displayGrandChild"/>`;
+      myComp = Child;
+      displayGrandChild = true;
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div></div>");
+    expect([
+      "GrandChild:setup",
+      "GrandChild:willStart",
+      "GrandChild:willRender",
+      "GrandChild:rendered",
+      "GrandChild:mounted",
+    ]).toBeLogged();
+
+    parent.displayGrandChild = false;
+    parent.render();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("");
+
+    expect(["GrandChild:willUnmount", "GrandChild:willDestroy"]).toBeLogged();
+  });
 });
 
 describe("mount targets", () => {

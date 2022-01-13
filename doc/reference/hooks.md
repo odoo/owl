@@ -3,24 +3,18 @@
 ## Content
 
 - [Overview](#overview)
-- [Example: Mouse Position](#example-mouse-position)
-- [Example: Autofocus](#example-autofocus)
-- [Reference](#reference)
-  - [One Rule](#one-rule)
+- [The Hook Rule](#the-hook-rule)
+- [Lifecycle hooks](#lifecycle-hooks)
+- [Other hooks](#other-hooks)
   - [`useState`](#usestate)
-  - [`onMounted`](#onmounted)
-  - [`onWillUnmount`](#onwillunmount)
-  - [`onWillPatch`](#onwillpatch)
-  - [`onPatched`](#onpatched)
-  - [`onWillStart`](#onwillstart)
-  - [`onWillUpdateProps`](#onwillupdateprops)
-  - [`useContext`](#usecontext)
   - [`useRef`](#useref)
   - [`useSubEnv`](#usesubenv)
   - [`useExternalListener`](#useexternallistener)
   - [`useComponent`](#usecomponent)
   - [`useEnv`](#useenv)
-  - [Making customized hooks](#making-customized-hooks)
+  - [`useEffect`](#useeffect)
+- [Example: Mouse Position](#example-mouse-position)
+- [Example: Autofocus](#example-autofocus)
 
 ## Overview
 
@@ -39,109 +33,14 @@ Hooks work beautifully with Owl components: they solve the problems mentioned
 above, and in particular, they are the perfect way to make your component
 reactive.
 
-## Example: mouse position
+## The Hook Rule
 
-Here is the classical example of a non trivial hook to track the mouse position.
-
-```js
-const { useState, onMounted, onWillUnmount } = owl.hooks;
-
-// We define here a custom behaviour: this hook tracks the state of the mouse
-// position
-function useMouse() {
-  const position = useState({ x: 0, y: 0 });
-
-  function update(e) {
-    position.x = e.clientX;
-    position.y = e.clientY;
-  }
-  onMounted(() => {
-    window.addEventListener("mousemove", update);
-  });
-  onWillUnmount(() => {
-    window.removeEventListener("mousemove", update);
-  });
-
-  return position;
-}
-
-// Main root component
-class App extends owl.Component {
-  static template = xml`
-    <div t-name="App">
-      <div>Mouse: <t t-esc="mouse.x"/>, <t t-esc="mouse.y"/></div>
-    </div>`;
-
-  // this hooks is bound to the 'mouse' property.
-  mouse = useMouse();
-}
-```
-
-Note that we use the prefix `use` for hooks, just like in React. This is just
-a convention.
-
-## Example: autofocus
-
-Hooks can be combined to create the desired effect. For example, the following
-hook combines the `useRef` hook with the `onPatched` and `onMounted` functions
-to create an easy way to focus an input whenever it appears in the DOM:
-
-```js
-function useAutofocus(name) {
-  let ref = useRef(name);
-  let isInDom = false;
-  function updateFocus() {
-    if (!isInDom && ref.el) {
-      isInDom = true;
-      ref.el.focus();
-    } else if (isInDom && !ref.el) {
-      isInDom = false;
-    }
-  }
-  onPatched(updateFocus);
-  onMounted(updateFocus);
-}
-```
-
-This hook takes the name of a valid `t-ref` directive, which should be present
-in the template. It then checks whenever the component is mounted or patched if
-the reference is not valid, and in this case, it will focus the node element.
-This hook can be used like this:
-
-```js
-class SomeComponent extends Component {
-  static template = xml`
-    <div>
-        <input />
-        <input t-ref="myinput"/>
-    </div>`;
-
-  constructor(...args) {
-    super(...args);
-    useAutofocus("myinput");
-  }
-}
-```
-
-## Reference
-
-### One rule
-
-There is only one rule: every hook for a component has to be called in the
-constructor, in the _setup_ method, or in class fields:
+There is only one rule: every hook for a component has to be called in the _setup_ method, or in class fields:
 
 ```js
 // ok
 class SomeComponent extends Component {
   state = useState({ value: 0 });
-}
-
-// also ok
-class SomeComponent extends Component {
-  constructor(...args) {
-    super(...args);
-    this.state = useState({ value: 0 });
-  }
 }
 
 // also ok
@@ -159,15 +58,24 @@ class SomeComponent extends Component {
 }
 ```
 
-As you can see, the `useState` hook does not need to be given a reference to
-the component. This is possible because there is a way to get a reference to the
-current component: the `Component.current` static property is the reference to the
-component instance that is currently being created.
+## Lifecycle Hooks
 
-Hooks need to be called in the constructor to ensure that this reference is
-properly set. This is also a good thing for performance reasons (Owl can use
-this to optimize its implementation), and for a clean architecture (this makes
-it easier for developers to understand what is really happening in a component).
+All lifecycle hooks are documented in detail in their specific [section](component.md#lifecycle).
+
+| Hook                                                  | Description                                                            |
+| ----------------------------------------------------- | ---------------------------------------------------------------------- |
+| **[onWillStart](component.md#willstart)**             | async, before first rendering                                          |
+| **[onWillRender](component.md#willrender)**           | just before component is rendered                                      |
+| **[onRendered](component.md#rendered)**               | just after component is rendered                                       |
+| **[onMounted](component.md#mounted)**                 | just after component is rendered and added to the DOM                  |
+| **[onWillUpdateProps](component.md#willupdateprops)** | async, before props update                                             |
+| **[onWillPatch](component.md#willpatch)**             | just before the DOM is patched                                         |
+| **[onPatched](component.md#patched)**                 | just after the DOM is patched                                          |
+| **[onWillUnmount](component.md#willunmount)**         | just before removing component from DOM                                |
+| **[onWillDestroy](component.md#willdestroy)**         | just before component is destroyed                                     |
+| **[onError](component.md#onerror)**                   | catch and handle errors (see [error handling page](error_handling.md)) |
+
+## Other Hooks
 
 ### `useState`
 
@@ -178,9 +86,9 @@ The `useState` hook has to be given an object or an array, and will return
 an observed version of it (using a `Proxy`).
 
 ```javascript
-const { useState } = owl.hooks;
+const { useState, Component } = owl;
 
-class Counter extends owl.Component {
+class Counter extends Component {
   static template = xml`
     <button t-on-click="increment">
         Click Me! [<t t-esc="state.value"/>]
@@ -197,128 +105,38 @@ class Counter extends owl.Component {
 It is important to remember that `useState` only works with objects or arrays. It
 is necessary, since Owl needs to react to a change in state.
 
-### `onMounted`
-
-`onMounted` is not a user hook, but is a building block designed to help make useful
-abstractions. `onMounted` registers a callback, which will be called when the component
-is mounted (see example on top of this page).
-
-### `onWillUnmount`
-
-`onWillUnmount` is not a user hook, but is a building block designed to help make useful
-abstractions. `onWillUnmount` registers a callback, which will be called when the component
-is unmounted (see example on top of this page).
-
-### `onWillPatch`
-
-`onWillPatch` is not a user hook, but is a building block designed to help make useful
-abstractions. `onWillPatch` registers a callback, which will be called just
-before the component patched.
-
-### `onPatched`
-
-`onPatched` is not a user hook, but is a building block designed to help make useful
-abstractions. `onPatched` registers a callback, which will be called just
-after the component patched.
-
-### `onWillStart`
-
-`onWillStart` is an asynchronous hook. This means that the function registered
-in the hook will be run just before the component is first rendered and can return a
-promise, to express the fact that it is an asynchronous operation.
-
-Note that if there are more than one `onWillStart` registered callback, then they
-will all be run in parallel.
-
-It can be used to load some initial data. For example, the following hook will
-automatically load some data from the server, and return an object that will
-be ready whenever the component is rendered:
-
-```js
-function useLoader() {
-  const component = Component.current;
-  const record = useState({});
-  onWillStart(async () => {
-    const recordId = component.props.id;
-    Object.assign(record, await fetchSomeRecord(recordId));
-  });
-  return record;
-}
-```
-
-Note that this example does not update the record value whenever props are
-updated. For that situation, we need to use the `onWillUpdateProps` hook.
-
-### `onWillUpdateProps`
-
-Just like `onWillStart`, `onWillUpdateProps` is an asynchronous hook. It is
-designed to be run whenever the component props are updated. This could be
-useful to perform some asynchronous task such as fetching updated data.
-
-```js
-function useLoader() {
-  const component = Component.current;
-  const record = useState({});
-
-  async function updateRecord(id) {
-    Object.assign(record, await fetchSomeRecord(id));
-  }
-
-  onWillStart(() => updateRecord(component.props.id));
-  onWillUpdateProps((nextProps) => updateRecord(nextProps.id));
-
-  return record;
-}
-```
-
-Note that if there are more than one `onWillUpdateProps` registered callback,
-then they will all be run in parallel.
-
-### `useContext`
-
-See [`useContext`](context.md#usecontext) for reference documentation.
-
 ### `useRef`
 
 The `useRef` hook is useful when we need a way to interact with some inside part
-of a component, rendered by Owl. It can work either on a DOM node, or on a component,
-tagged by the `t-ref` directive:
+of a component, rendered by Owl. It only work on a html element tagged by the
+`t-ref` directive:
 
 ```xml
 <div>
-    <div t-ref="someDiv"/>
-    <SubComponent t-ref="someComponent"/>
+    <input t-ref="someDiv"/>
+    <span>hello</span>
 </div>
 ```
 
 In this example, the component will be able to access the `div` and the component
-`SubComponent` using the `useRef` hook:
+`SubComponent` with the `useRef` hook:
 
 ```js
 class Parent extends Component {
-  subRef = useRef("someComponent");
-  divRef = useRef("someDiv");
+  inputRef = useRef("someComponent");
 
   someMethod() {
     // here, if component is mounted, refs are active:
-    // - this.divRef.el is the div HTMLElement
-    // - this.subRef.comp is the instance of the sub component
-    // - this.subRef.el is the root HTML node of the sub component (i.e. this.subRef.comp.el)
+    // - this.inputRef.el is the input HTMLElement
   }
 }
 ```
 
-As shown by the example above, html elements are accessed by using the `el`
-key, and components references are accessed with `comp`.
-
-Notes:
-
-- if used on a component, the reference will be set in the `refs`
-  variable between `willPatch` and `patched`,
-- on a component, accessing `ref.el` will get the root node of the component.
+As shown by the example above, the actual HTMLElement instance is accessed with
+the `el` key.
 
 The `t-ref` directive also accepts dynamic values with string interpolation
-(like the [`t-attf-`](qweb_templating_language.md#dynamic-attributes) and
+(like the [`t-attf-`](templates.md#dynamic-attributes) and
 `t-component` directives). For example,
 
 ```xml
@@ -343,13 +161,12 @@ all components. But sometimes, we want to _scope_ that knowledge to a subtree.
 For example, if we have a form view component, maybe we would like to make some
 `model` object available to all sub components, but not to the whole application.
 This is where the `useSubEnv` hook may be useful: it lets a component add some
-information to the environment in a way that only the component and its children
+information to the environment in a way that only its children
 can access it:
 
 ```js
 class FormComponent extends Component {
-  constructor(...args) {
-    super(...args);
+  setup() {
     const model = makeModel();
     useSubEnv({ model });
   }
@@ -377,70 +194,134 @@ useExternalListener(window, "click", this.closeMenu);
 The `useComponent` hook is useful as a building block for some customized hooks,
 that may need a reference to the component calling them.
 
+```js
+function useSomething() {
+  const component = useComponent();
+  // now, component is bound to the instance of the current component
+}
+```
+
 ### `useEnv`
 
 The `useEnv` hook is useful as a building block for some customized hooks,
 that may need a reference to the env of the component calling them.
 
-### Making customized hooks
+```js
+function useSomething() {
+  const env = useEnv();
+  // now, env is bound to the env of the current component
+}
+```
 
-Hooks are a wonderful way to organize the code of a complex component by feature
-instead of by lifecycle methods. They are like mixins, except that they can be
-easily composed together.
+### `useEffect`
 
-But, like every good things in life, hooks should be used with moderation. They are
-not the solution to every problem.
+This hook will run a callback when a component is mounted and patched, and
+will run a cleanup function before patching and before unmounting the
+the component (only if some dependencies have changed).
 
-- they may be overkill: if your component needs to perform some action specific
-  to itself (so, the specific code does not need to be shared), there is nothing
-  wrong with a simple class method:
+It has almost the same API as the React `useEffect` hook, except that the dependencies
+are defined by a function instead of just the dependencies.
 
-  ```js
-  // maybe overkill
-  class A extends Component {
-    constructor(...args) {
-      super(...args);
-      useMySpecificHook();
+The `useEffect` hook takes two function: the effect function and the dependency
+function. The effect function perform some task and return (optionally) a cleanup
+function. The dependency function returns a list of dependencies. If any of these
+dependencies changes, then the current effect will be cleaned up and reexecuted.
+
+Here is an example without any dependencies:
+
+```js
+useEffect(
+  () => {
+    window.addEventListener("mousemove", someHandler);
+    return () => window.removeEventListener("mousemove", someHandler);
+  },
+  () => []
+);
+```
+
+In the example above, the dependency list is empty, so the effect is only cleaned
+up when the component is unmounted.
+
+If the dependency function is skipped, then the effect will be cleaned up and
+rerun at every patch.
+
+## Example: mouse position
+
+Here is the classical example of a non trivial hook to track the mouse position.
+
+```js
+const { useState, onWillDestroy, Component } = owl;
+
+// We define here a custom behaviour: this hook tracks the state of the mouse
+// position
+function useMouse() {
+  const position = useState({ x: 0, y: 0 });
+
+  function update(e) {
+    position.x = e.clientX;
+    position.y = e.clientY;
+  }
+  window.addEventListener("mousemove", update);
+  onWillDestroy(() => {
+    window.removeEventListener("mousemove", update);
+  });
+
+  return position;
+}
+
+// Main root component
+class Root extends Component {
+  static template = xml`<div>Mouse: <t t-esc="mouse.x"/>, <t t-esc="mouse.y"/></div>`;
+
+  // this hooks is bound to the 'mouse' property.
+  mouse = useMouse();
+}
+```
+
+Note that we use the prefix `use` for hooks, just like in React. This is just
+a convention.
+
+## Example: autofocus
+
+Hooks can be combined to create the desired effect. For example, the following
+hook combines the `useRef` hook with the `onPatched` and `onMounted` functions
+to create an easy way to focus an input whenever it appears in the DOM:
+
+```js
+function useAutofocus(name) {
+  let ref = useRef(name);
+  let isInDom = false;
+  function updateFocus() {
+    if (!isInDom && ref.el) {
+      isInDom = true;
+      const current = ref.el.value;
+      ref.el.value = "";
+      ref.el.focus();
+      ref.el.value = current;
+    } else if (isInDom && !ref.el) {
+      isInDom = false;
     }
   }
+  onPatched(updateFocus);
+  onMounted(updateFocus);
+}
+```
 
-  // ok
-  class B extends Component {
-    constructor(...args) {
-      super(...args);
-      this.performSpecificTask();
-    }
+This hook takes the name of a valid `t-ref` directive, which should be present
+in the template. It then checks whenever the component is mounted or patched if
+the reference is not valid, and in this case, it will focus the node element.
+This hook can be used like this:
+
+```js
+class SomeComponent extends Component {
+  static template = xml`
+    <div>
+        <input />
+        <input t-ref="myinput"/>
+    </div>`;
+
+  setup() {
+    useAutofocus("myinput");
   }
-  ```
-
-  Note that the second solution is easier to extend in sub components.
-
-- they may be harder to test: if a customized hook injects some external side
-  effect dependency, then it is harder to test without doing some non obvious
-  manipulation. For example, assume that we want to give a reference to a
-  router in a `useRouter` hook. We could do this:
-
-  ```js
-  const router = new Router(...);
-
-  function useRouter() {
-      return router;
-  }
-  ```
-
-  As you can see, this does not _hook_ into the internal of the component. It
-  simply returns a global object, which is difficult to mock.
-
-  A better way would be to do something like this: get the reference from the
-  environment.
-
-  ```js
-  function useRouter() {
-    const env = useEnv();
-    return env.router;
-  }
-  ```
-
-  This means that we give control to the application developer to create the
-  router, which is good, so they can set it up, subclass it, ... And then, to
-  test our components, we can just add a mock router in the environment.
+}
+```

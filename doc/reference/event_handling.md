@@ -3,22 +3,13 @@
 ## Content
 
 - [Event Handling](#event-handling)
-- [Business DOM Events](#business-dom-events)
-- [Inline Event Handlers](#inline-event-handlers)
 - [Modifiers](#modifiers)
 
 ## Event Handling
 
 In a component's template, it is useful to be able to register handlers on DOM
-elements to some specific events. This is what makes a template _alive_. There
-are four different use cases.
-
-1. Register an event handler on a DOM node (_pure_ DOM event)
-2. Register an event handler on a component (_pure_ DOM event)
-3. Register an event handler on a DOM node (_business_ DOM event)
-4. Register an event handler on a component (_business_ DOM event)
-
-A _pure_ DOM event is directly triggered by a user interaction (e.g. a `click`).
+elements to some specific events. This is what makes a template _alive_. This
+is done with the `t-on` directive. For example:
 
 ```xml
 <button t-on-click="someMethod">Do something</button>
@@ -31,93 +22,28 @@ button.addEventListener("click", component.someMethod.bind(component));
 ```
 
 The suffix (`click` in this example) is simply the name of the actual DOM
-event.
-
-## Business DOM Events
-
-A _business_ DOM event is triggered by a call to `trigger` on a component.
-
-```xml
-<MyComponent t-on-menu-loaded="someMethod" />
-```
-
-```js
- class MyComponent {
-     someWhere() {
-         const payload = ...;
-         this.trigger('menu-loaded', payload);
-     }
- }
-```
-
-The call to `trigger` generates an `OwlEvent`, a subclass of [_CustomEvent_](https://developer.mozilla.org/docs/Web/Guide/Events/Creating_and_triggering_events)
-with an additional attribute `originalComponent` (the component that triggered
-the event). The generated event is of type `menu-loaded` and dispatches it on
-the component's DOM element (`this.el`). The event bubbles and is cancelable.
-The parent component listening to event `menu-loaded` will receive the payload
-in its `someMethod` handler (in the `detail` property of the event), whenever
-the event is triggered.
-
-```js
- class ParentComponent {
-     someMethod(ev) {
-         const payload = ev.detail;
-         ...
-     }
- }
-```
-
-By convention, we use KebabCase for the name of _business_ events.
-
-The `t-on` directive allows to prebind its arguments. For example,
+event. The value of the `t-on` expression should be a valid javascript expression
+that evaluates to a function in the context of the current component. So, one
+can get a reference to the event, or pass some additional arguments. For example,
+all the following expressions are valid:
 
 ```xml
-<button t-on-click="someMethod(expr)">Do something</button>
+<button t-on-click="someMethod">Do something</button>
+<button t-on-click="() => this.increment(3)">Add 3</button>
+<button t-on-click="ev => this.doStuff(ev, 'value')">Do something</button>
 ```
 
-Here, `expr` is a valid Owl expression, so it could be `true` or some variable
-from the rendering context.
+Notice the use of the `this` keyword in the lambda function: this is the
+correct way to call a method on the component in a lambda function.
 
-### Type Hinting
-
-Note that if you work with Typescript, the `trigger` method is generic on the type of the payload.
-
-You can then describe the type of the event, so you will see typing errors...
-
-```typescript
-this.trigger<MyCustomPayload>("my-custom-event", payload);
-```
-
-```typescript
-myCustomEventHandler(ev: OwlEvent<MyCustomPayload>) { ... }
-```
-
-## Inline Event Handlers
-
-One can also directly specify inline statements. For example,
+One could use the following expression:
 
 ```xml
-<button t-on-click="state.counter++">Increment counter</button>
+<button t-on-click="() => increment(3)">Add 3</button>
 ```
 
-Here, `state` must be defined in the rendering context (typically the component)
-as it will be translated to:
-
-```js
-button.addEventListener("click", () => {
-  context.state.counter++;
-});
-```
-
-Warning: inline expressions are evaluated in the context of the template. This
-means that they can access the component methods and properties. But if they set
-a key, the inline statement will actually not modify the component, but a key in
-a sub scope.
-
-```xml
-<button t-on-click="value = 1">Set value to 1 (does not work!!!)</button>
-<button t-on-click="state.value = 1">Set state.value to 1 (work as expected)</button>
-```
+But then, the increment function may be unbound (unless the component binds it
+in its setup function, for example).
 
 ## Modifiers
 

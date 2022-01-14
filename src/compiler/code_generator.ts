@@ -673,7 +673,7 @@ export class CodeGenerator {
         const children = block!.children.slice();
         let current = children.shift();
         for (let i = codeIdx; i < code.length; i++) {
-          if (code[i].trimStart().startsWith(`let ${current!.varName}`)) {
+          if (code[i].trimStart().startsWith(`let ${current!.varName} `)) {
             code[i] = code[i].replace(`let ${current!.varName}`, current!.varName);
             current = children.shift();
             if (!current) break;
@@ -768,7 +768,7 @@ export class CodeGenerator {
         const children = block!.children.slice();
         let current = children.shift();
         for (let i = codeIdx; i < code.length; i++) {
-          if (code[i].trimStart().startsWith(`let ${current!.varName}`)) {
+          if (code[i].trimStart().startsWith(`let ${current!.varName} `)) {
             code[i] = code[i].replace(`let ${current!.varName}`, current!.varName);
             current = children.shift();
             if (!current) break;
@@ -912,7 +912,7 @@ export class CodeGenerator {
           const children = block!.children.slice();
           let current = children.shift();
           for (let i = codeIdx; i < code.length; i++) {
-            if (code[i].trimStart().startsWith(`let ${current!.varName}`)) {
+            if (code[i].trimStart().startsWith(`let ${current!.varName} `)) {
               code[i] = code[i].replace(`let ${current!.varName}`, current!.varName);
               current = children.shift();
               if (!current) break;

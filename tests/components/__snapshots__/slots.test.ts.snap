@@ -1416,6 +1416,93 @@ exports[`slots slot are properly rendered if inner props are changed 3`] = `
 }"
 `;
 
+exports[`slots slot content has different key from other content -- dynamic slot 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  function slot1(ctx, node, key = \\"\\") {
+    return component(\`Child\`, {parent: 'Parent'}, key + \`__1\`, node, ctx);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`SlotDisplay\`, {slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
+  }
+}"
+`;
+
+exports[`slots slot content has different key from other content -- dynamic slot 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callSlot } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = component(\`Child\`, {parent: 'SlotDisplay'}, key + \`__1\`, node, ctx);
+    const slot1 = (ctx['slotName']);
+    let b3 = toggler(slot1, callSlot(ctx, node, key, slot1), true, {});
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`slots slot content has different key from other content -- dynamic slot 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let txt1 = ctx['props'].parent;
+    return block1([txt1]);
+  }
+}"
+`;
+
+exports[`slots slot content has different key from other content -- static slot 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  function slot1(ctx, node, key = \\"\\") {
+    return component(\`Child\`, {parent: 'Parent'}, key + \`__1\`, node, ctx);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`SlotDisplay\`, {slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx);
+  }
+}"
+`;
+
+exports[`slots slot content has different key from other content -- static slot 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callSlot } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = component(\`Child\`, {parent: 'SlotDisplay'}, key + \`__1\`, node, ctx);
+    let b3 = callSlot(ctx, node, key, 'default', false, {});
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`slots slot content has different key from other content -- static slot 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let txt1 = ctx['props'].parent;
+    return block1([txt1]);
+  }
+}"
+`;
+
 exports[`slots slot content is bound to caller (variation) 1`] = `
 "function anonymous(bdom, helpers
 ) {

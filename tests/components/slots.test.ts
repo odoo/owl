@@ -1544,4 +1544,49 @@ describe("slots", () => {
     }
     await mount(Parent, fixture);
   });
+
+  test("slot content has different key from other content -- static slot", async () => {
+    class Child extends Component {
+      static template = xml`<div t-esc="props.parent" />`;
+    }
+
+    class SlotDisplay extends Component {
+      static components = { Child };
+      static template = xml`<Child parent="'SlotDisplay'" /><t t-slot="default" />`;
+    }
+
+    class Parent extends Component {
+      static components = { Child, SlotDisplay };
+      static template = xml`
+         <SlotDisplay>
+           <Child parent="'Parent'" />
+         </SlotDisplay>`;
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div>SlotDisplay</div><div>Parent</div>");
+  });
+
+  test("slot content has different key from other content -- dynamic slot", async () => {
+    class Child extends Component {
+      static template = xml`<div t-esc="props.parent" />`;
+    }
+
+    class SlotDisplay extends Component {
+      static components = { Child };
+      slotName = "default";
+      static template = xml`<Child parent="'SlotDisplay'" /><t t-slot="{{ slotName }}" />`;
+    }
+
+    class Parent extends Component {
+      static components = { Child, SlotDisplay };
+      static template = xml`
+         <SlotDisplay>
+           <Child parent="'Parent'" />
+         </SlotDisplay>`;
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div>SlotDisplay</div><div>Parent</div>");
+  });
 });

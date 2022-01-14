@@ -251,6 +251,56 @@ exports[`t-call parent is set within t-call with no parentNode 3`] = `
 }"
 `;
 
+exports[`t-call recursive t-call binding this -- static t-call 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue, getTemplate } = helpers;
+  const callTemplate_1 = getTemplate(\`recursive\`);
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1;
+    setContextValue(ctx, \\"level\\", 0);
+    let b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`t-call recursive t-call binding this -- static t-call 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue, getTemplate } = helpers;
+  const callTemplate_1 = getTemplate(\`recursive\`);
+  
+  let block3 = createBlock(\`<div block-handler-0=\\"click.stop\\"><block-text-1/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    let b2;
+    if (ctx['level']<2) {
+      let hdlr1 = [\\"stop\\", ctx['onClicked'].bind(this), ctx];
+      let txt1 = ctx['level'];
+      let b3 = block3([hdlr1, txt1]);
+      ctx = Object.create(ctx);
+      ctx[isBoundary] = 1;
+      setContextValue(ctx, \\"level\\", ctx['level']+1);
+      let b4 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+      ctx = ctx.__proto__;
+      b2 = multi([b3, b4]);
+    }
+    return multi([b2]);
+  }
+}"
+`;
+
 exports[`t-call sub components in two t-calls 1`] = `
 "function anonymous(bdom, helpers
 ) {

@@ -96,7 +96,10 @@ export class TemplateSet {
       const templateFn = this._compileTemplate(name, rawTemplate);
       // first add a function to lazily get the template, in case there is a
       // recursive call to the template name
-      this.templates[name] = (context, parent) => this.templates[name](context, parent);
+      const templates = this.templates;
+      this.templates[name] = function (context, parent) {
+        return templates[name].call(this, context, parent);
+      };
       const template = templateFn(bdom, this.utils);
       this.templates[name] = template;
     }

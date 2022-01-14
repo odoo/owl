@@ -206,4 +206,42 @@ describe("t-call", () => {
 
     expect(fixture.innerHTML).toBe(`<div id="0"></div><div id="1"></div>`);
   });
+
+  test("recursive t-call binding this -- static t-call", async () => {
+    let clickCount = 0;
+    class Parent extends Component {
+      onClicked?: Function;
+      setup() {
+        const instance = this;
+
+        this.onClicked = function () {
+          clickCount++;
+          expect(this).toBe(instance);
+        };
+      }
+
+      static template = xml`
+          <div><t t-call="recursive"><t t-set="level" t-value="0" /></t></div>
+      `;
+    }
+
+    const app = new App(Parent);
+    app.addTemplate(
+      "recursive",
+      `
+        <t t-if="level &lt; 2" >
+          <div t-on-click.stop="onClicked.bind(this)" t-esc="level" />
+          <t t-call="recursive">
+            <t t-set="level" t-value="level + 1" />
+          </t>
+        </t>
+    `
+    );
+
+    await app.mount(fixture);
+    for (const div of fixture.querySelectorAll("div")) {
+      div.click();
+    }
+    expect(clickCount).toBe(2);
+  });
 });

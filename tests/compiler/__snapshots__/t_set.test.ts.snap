@@ -87,6 +87,31 @@ exports[`t-set set from attribute lookup 1`] = `
 }"
 `;
 
+exports[`t-set set from body literal (with t-if/t-else 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { isBoundary, withDefault, LazyValue } = helpers;
+  
+  function value1(ctx, node, key = \\"\\") {
+    let b2,b3;
+    if (ctx['condition']) {
+      b2 = text(\`true\`);
+    } else {
+      b3 = text(\`false\`);
+    }
+    return multi([b2, b3]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    ctx[\`value\`] = new LazyValue(value1, ctx, node);
+    return text(ctx['value']);
+  }
+}"
+`;
+
 exports[`t-set set from body literal 1`] = `
 "function anonymous(bdom, helpers
 ) {

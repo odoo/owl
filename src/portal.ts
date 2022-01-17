@@ -28,7 +28,13 @@ export class VPortal extends VText implements Partial<VNode<VPortal>> {
       }
     }
     this.realBDom!.mount(this.target!, null);
-    this.ownerComponent.willDestroy.push(() => this.remove());
+
+    this.ownerComponent.willDestroy.push(async () => {
+      await Promise.resolve();
+        if (this.realBDom) {
+          this.remove();
+        }
+    });
   }
 
   beforeRemove() {

@@ -6,7 +6,7 @@ import {
   onPatched,
   onWillPatch,
   onWillUnmount,
-  useState,
+  useState
 } from "../../src";
 import { xml } from "../../src/";
 import { DEV_MSG } from "../../src/app/app";
@@ -639,7 +639,7 @@ describe("Portal", () => {
     );
   });
 
-  test.skip("conditional use of Portal with child and div", async () => {
+  test("conditional use of Portal with child and div", async () => {
     class Child extends Component {
       static template = xml`
         <div>
@@ -725,6 +725,45 @@ describe("Portal", () => {
     expect(fixture.innerHTML).toBe(
       '<div id="outside"><p>thePortal</p></div><div><span>hasPortal</span></div>'
     );
+  });
+  test.skip("Add and remove portals with t-foreach inside div", async () => {
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <t t-foreach="portalIds" t-as="portalId" t-key="portalId">
+            <div>
+              <t t-esc="portalId"/>
+              <Portal target="'#outside'">
+                Portal<t t-esc="portalId"/>
+              </Portal>
+            </div>
+          </t>
+        </div>`;
+      portalIds = useState([] as any);
+    }
+
+    addOutsideDiv(fixture);
+    const parent = await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe('<div id="outside"></div><div></div>');
+
+    parent.portalIds.push(1);
+    await nextTick();
+    expect(fixture.innerHTML).toBe('<div id="outside"> Portal1</div><div><div>1</div></div>');
+
+    parent.portalIds.push(2);
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      '<div id="outside"> Portal1 Portal2</div><div><div>1</div><div>2</div></div>'
+    );
+
+    parent.portalIds.pop();
+    await nextTick();
+    expect(fixture.innerHTML).toBe('<div id="outside"> Portal1</div><div><div>1</div></div>');
+
+    parent.portalIds.pop();
+    await nextTick();
+    expect(fixture.innerHTML).toBe('<div id="outside"></div><div></div>');
   });
 
 });

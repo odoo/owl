@@ -95,12 +95,12 @@ describe("t-props", () => {
     class Parent extends Component {
       static template = xml`
           <div>
-              <Child t-props="props" a="1" b="2" />
+              <Child t-props="childProps" a="1" b="2" />
           </div>
         `;
       static components = { Child };
 
-      props = { a: "a", c: "c" };
+      childProps = { a: "a", c: "c" };
     }
 
     await mount(Parent, fixture);

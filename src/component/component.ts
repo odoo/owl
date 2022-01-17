@@ -1,19 +1,18 @@
-import type { Env } from "../app/app";
 import type { ComponentNode } from "./component_node";
 
 // -----------------------------------------------------------------------------
 //  Component Class
 // -----------------------------------------------------------------------------
 
-export class Component {
+export class Component<Props = any, Env = any> {
   static template: string = "";
   static props?: any;
 
-  props: any;
+  props: Props;
   env: Env;
   __owl__: ComponentNode;
 
-  constructor(props: any, env: Env, node: ComponentNode) {
+  constructor(props: Props, env: Env, node: ComponentNode) {
     this.props = props;
     this.env = env;
     this.__owl__ = node;

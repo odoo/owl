@@ -146,7 +146,6 @@ describe("qweb parser", () => {
           content: [],
         },
       ],
-      deepRemove: false,
     });
   });
 
@@ -254,7 +253,6 @@ describe("qweb parser", () => {
           content: [],
         },
       ],
-      deepRemove: false,
     });
   });
 
@@ -505,7 +503,6 @@ describe("qweb parser", () => {
           },
           tElif: null,
           tElse: null,
-          deepRemove: false,
         },
       ],
     });
@@ -521,7 +518,6 @@ describe("qweb parser", () => {
       },
       tElif: null,
       tElse: null,
-      deepRemove: false,
     });
   });
 
@@ -542,7 +538,6 @@ describe("qweb parser", () => {
       },
       tElif: null,
       tElse: null,
-      deepRemove: false,
     });
   });
 
@@ -559,7 +554,6 @@ describe("qweb parser", () => {
         type: ASTType.Text,
         value: "else",
       },
-      deepRemove: false,
     });
   });
 
@@ -578,7 +572,6 @@ describe("qweb parser", () => {
         },
       ],
       tElse: null,
-      deepRemove: false,
     });
   });
 
@@ -600,7 +593,6 @@ describe("qweb parser", () => {
         type: ASTType.Text,
         value: "else",
       },
-      deepRemove: false,
     });
   });
 
@@ -658,7 +650,6 @@ describe("qweb parser", () => {
           },
         ],
       },
-      deepRemove: false,
     });
   });
 
@@ -740,7 +731,6 @@ describe("qweb parser", () => {
       },
       tElif: null,
       tElse: null,
-      deepRemove: false,
     });
   });
 
@@ -763,7 +753,6 @@ describe("qweb parser", () => {
           content: { type: ASTType.Text, value: "1" },
           tElif: null,
           tElse: { type: ASTType.TSet, name: "ourvar", value: "0", defaultValue: null, body: null },
-          deepRemove: false,
         },
       ],
     });
@@ -793,7 +782,6 @@ describe("qweb parser", () => {
       hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
-      deepRemove: false,
     });
   });
 
@@ -809,7 +797,6 @@ describe("qweb parser", () => {
       hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
-      deepRemove: false,
     });
   });
 
@@ -835,7 +822,6 @@ describe("qweb parser", () => {
       hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
-      deepRemove: false,
     });
   });
 
@@ -851,7 +837,6 @@ describe("qweb parser", () => {
       hasNoIndex: true,
       hasNoLast: true,
       hasNoValue: true,
-      deepRemove: false,
     });
   });
 
@@ -879,7 +864,6 @@ describe("qweb parser", () => {
       hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
-      deepRemove: false,
     });
   });
 
@@ -898,7 +882,6 @@ describe("qweb parser", () => {
         condition: "condition",
         tElif: null,
         tElse: null,
-        deepRemove: false,
         content: {
           type: ASTType.DomNode,
           tag: "span",
@@ -916,7 +899,6 @@ describe("qweb parser", () => {
       hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
-      deepRemove: false,
     });
   });
 
@@ -949,7 +931,6 @@ describe("qweb parser", () => {
       hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
-      deepRemove: false,
     });
   });
 
@@ -977,7 +958,6 @@ describe("qweb parser", () => {
           hasNoIndex: false,
           hasNoLast: true,
           hasNoValue: true,
-          deepRemove: false,
         },
       ],
     });
@@ -1015,7 +995,6 @@ describe("qweb parser", () => {
       hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
-      deepRemove: false,
     });
   });
 
@@ -1038,7 +1017,6 @@ describe("qweb parser", () => {
       hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
-      deepRemove: false,
     });
   });
 
@@ -1060,7 +1038,6 @@ describe("qweb parser", () => {
       hasNoIndex: false,
       hasNoLast: false,
       hasNoValue: false,
-      deepRemove: false,
     });
   });
 
@@ -1080,7 +1057,6 @@ describe("qweb parser", () => {
       hasNoIndex: false,
       hasNoLast: true,
       hasNoValue: true,
-      deepRemove: false,
     });
   });
 
@@ -1130,7 +1106,6 @@ describe("qweb parser", () => {
       condition: "condition",
       tElif: null,
       tElse: null,
-      deepRemove: false,
       content: {
         type: ASTType.TCall,
         name: "blabla",
@@ -1285,7 +1260,6 @@ describe("qweb parser", () => {
                 ns: null,
               },
             ],
-            deepRemove: false,
           },
         },
       },
@@ -1628,7 +1602,6 @@ describe("qweb parser", () => {
       hasNoValue: true,
       key: "item_index",
       memo: "",
-      deepRemove: false,
       type: ASTType.TForEach,
     });
   });
@@ -1800,10 +1773,6 @@ describe("qweb parser", () => {
     });
   });
 
-  test("t-portal must be in a <t> node", async () => {
-    expect(() => parse(`<div t-portal="target">Content</div>`)).toThrowError();
-  });
-
   test("t-portal with t-if", async () => {
     expect(parse(`<t t-portal="target" t-if="condition">Content</t>`)).toEqual({
       condition: "condition",
@@ -1815,7 +1784,6 @@ describe("qweb parser", () => {
       tElif: null,
       tElse: null,
       type: ASTType.TIf,
-      deepRemove: true,
     });
   });
 });

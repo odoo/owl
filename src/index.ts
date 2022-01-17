@@ -1,3 +1,4 @@
+import { UTILS } from "./app/template_helpers";
 import {
   config,
   createBlock,
@@ -12,9 +13,11 @@ import {
   comment,
 } from "./blockdom";
 import { mainEventHandler } from "./component/handler";
+import { Portal } from "./portal";
 
 config.shouldNormalizeDom = false;
 config.mainEventHandler = mainEventHandler;
+(UTILS as any).Portal = Portal;
 
 export const blockDom = {
   config,

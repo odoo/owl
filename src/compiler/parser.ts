@@ -56,7 +56,6 @@ export interface ASTDomNode {
 export interface ASTMulti {
   type: ASTType.Multi;
   content: AST[];
-  deepRemove: boolean;
 }
 
 export interface ASTTEsc {
@@ -77,7 +76,6 @@ export interface ASTTif {
   content: AST;
   tElif: { condition: string; content: AST }[] | null;
   tElse: AST | null;
-  deepRemove: boolean;
 }
 
 export interface ASTTSet {
@@ -95,7 +93,6 @@ export interface ASTTForEach {
   key: string | null;
   body: AST;
   memo: string;
-  deepRemove: boolean;
   hasNoFirst: boolean;
   hasNoLast: boolean;
   hasNoIndex: boolean;
@@ -484,51 +481,12 @@ function parseTForEach(node: Element, ctx: ParsingContext): AST | null {
     elem,
     body,
     memo,
-    deepRemove: needDeepRemove(body),
     key,
     hasNoFirst,
     hasNoLast,
     hasNoIndex,
     hasNoValue,
   };
-}
-
-/**
- * @returns true if we are sure that a deep remove (without optimisation) is needed, for exemple
- * if there is a portal.
- */
-function needDeepRemove(ast: AST): boolean {
-  switch (ast.type) {
-    case ASTType.Multi:
-    case ASTType.TForEach:
-    case ASTType.TIf:
-      return ast.deepRemove;
-
-    case ASTType.TPortal:
-      return true;
-
-    case ASTType.TComponent:
-    case ASTType.TOut:
-    case ASTType.TCall:
-    case ASTType.TCallBlock:
-    case ASTType.TSlot:
-    case ASTType.Text:
-    case ASTType.Comment:
-    case ASTType.TEsc:
-      return false;
-
-    case ASTType.TKey:
-      return needDeepRemove(ast.content);
-    case ASTType.TDebug:
-    case ASTType.TLog:
-    case ASTType.TTranslation:
-      return ast.content ? needDeepRemove(ast.content) : false;
-    case ASTType.TSet:
-      return ast.body ? ast.body.some((ast) => needDeepRemove(ast)) : false;
-
-    case ASTType.DomNode:
-      return ast.content.some((ast) => needDeepRemove(ast));
-  }
 }
 
 function parseTKey(node: Element, ctx: ParsingContext): AST | null {
@@ -628,21 +586,12 @@ function parseTIf(node: Element, ctx: ParsingContext): AST | null {
     nextElement.remove();
   }
 
-  let deepRemove = needDeepRemove(content);
-  if (tElifs) {
-    deepRemove = deepRemove || tElifs.some((ast) => needDeepRemove(ast));
-  }
-  if (tElse) {
-    deepRemove = deepRemove || needDeepRemove(tElse);
-  }
-
   return {
     type: ASTType.TIf,
     condition,
     content,
     tElif: tElifs.length ? tElifs : null,
     tElse,
-    deepRemove,
   };
 }
 
@@ -814,11 +763,6 @@ function parseTPortal(node: Element, ctx: ParsingContext): AST | null {
   if (!node.hasAttribute("t-portal")) {
     return null;
   }
-  if (node.tagName !== "t") {
-    throw new Error(
-      `Directive 't-portal' can only be used on <t> nodes (used on a <${node.tagName}>)`
-    );
-  }
   const target = node.getAttribute("t-portal")!;
   node.removeAttribute("t-portal");
   const content = parseNode(node, ctx);
@@ -869,11 +813,7 @@ function parseChildNodes(node: Node, ctx: ParsingContext): AST | null {
     case 1:
       return children[0];
     default:
-      return {
-        type: ASTType.Multi,
-        content: children,
-        deepRemove: children.some((ast) => needDeepRemove(ast)),
-      };
+      return { type: ASTType.Multi, content: children };
   }
 }
 

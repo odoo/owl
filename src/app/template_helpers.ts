@@ -2,8 +2,6 @@ import { BDom, multi, text, toggler } from "../blockdom";
 import { validateProps } from "../component/props_validation";
 import { Markup } from "../utils";
 import { html } from "../blockdom/index";
-import { VPortal } from "../portal";
-
 /**
  * This file contains utility functions that will be injected in each template,
  * to perform various useful tasks in the compiled code.
@@ -11,16 +9,6 @@ import { VPortal } from "../portal";
 
 function withDefault(value: any, defaultValue: any): any {
   return value === undefined || value === null || value === false ? defaultValue : value;
-}
-
-function callPortal(
-  ctx: any,
-  parent: any,
-  key: string,
-  target: string,
-  content: (ctx: any, node: any, key: string) => BDom
-): BDom {
-  return new VPortal(target, content(ctx, parent, key)) as any;
 }
 
 function callSlot(
@@ -198,7 +186,6 @@ export const UTILS = {
   zero: Symbol("zero"),
   isBoundary,
   callSlot,
-  callPortal,
   capture,
   withKey,
   prepareList,

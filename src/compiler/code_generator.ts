@@ -65,15 +65,13 @@ class BlockDescription {
   type: BlockType;
   parentVar: string = "";
   id: number;
-  deepRemove: boolean;
 
-  constructor(target: CodeTarget, type: BlockType, deepRemove: boolean = false) {
+  constructor(target: CodeTarget, type: BlockType) {
     this.id = BlockDescription.nextBlockId++;
     this.varName = "b" + this.id;
     this.blockName = "block" + this.id;
     this.target = target;
     this.type = type;
-    this.deepRemove = deepRemove;
   }
 
   insertData(str: string, prefix: string = "d"): number {
@@ -102,7 +100,7 @@ class BlockDescription {
       }
       return `${this.blockName}(${params})`;
     } else if (this.type === "list") {
-      return `list(c_block${this.id}${this.deepRemove ? ", true" : ""})`;
+      return `list(c_block${this.id})`;
     }
     return expr;
   }
@@ -253,8 +251,6 @@ export class CodeGenerator {
       mainCode.push(`const ${id} = getTemplate(${template});`);
     }
 
-    const deepRemove = "deepRemove" in this.ast ? this.ast.deepRemove : false;
-
     // define all blocks
     if (this.blocks.length) {
       mainCode.push(``);
@@ -264,15 +260,9 @@ export class CodeGenerator {
           if (block.dynamicTagName) {
             xmlString = xmlString.replace(/^<\w+/, `<\${tag || '${block.dom.nodeName}'}`);
             xmlString = xmlString.replace(/\w+>$/, `\${tag || '${block.dom.nodeName}'}>`);
-            mainCode.push(
-              `let ${block.blockName} = tag => createBlock(\`${xmlString}\`${
-                deepRemove ? ", true" : ""
-              });`
-            );
+            mainCode.push(`let ${block.blockName} = tag => createBlock(\`${xmlString}\`);`);
           } else {
-            mainCode.push(
-              `let ${block.blockName} = createBlock(\`${xmlString}\`${deepRemove ? ", true" : ""});`
-            );
+            mainCode.push(`let ${block.blockName} = createBlock(\`${xmlString}\`);`);
           }
         }
       }
@@ -328,11 +318,10 @@ export class CodeGenerator {
   createBlock(
     parentBlock: BlockDescription | null,
     type: BlockType,
-    ctx: Context,
-    deepRemove: boolean = false
+    ctx: Context
   ): BlockDescription {
     const hasRoot = this.target.hasRoot;
-    const block = new BlockDescription(this.target, type, deepRemove);
+    const block = new BlockDescription(this.target, type);
     if (!hasRoot && !ctx.preventRoot) {
       this.target.hasRoot = true;
       block.isRoot = true;
@@ -718,7 +707,7 @@ export class CodeGenerator {
     if (ast.body) {
       const nextId = BlockDescription.nextBlockId;
       const subCtx: Context = createContext(ctx);
-      this.compileAST({ type: ASTType.Multi, content: ast.body, deepRemove: false }, subCtx);
+      this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
       this.helpers.add("withDefault");
       expr = `withDefault(${expr}, b${nextId})`;
     }
@@ -779,7 +768,7 @@ export class CodeGenerator {
 
       // note: this part is duplicated from end of compilemulti:
       const args = block!.children.map((c) => c.varName).join(", ");
-      this.insertBlock(`multi([${args}]${ast.deepRemove ? ", true" : ""})`, block!, ctx)!;
+      this.insertBlock(`multi([${args}])`, block!, ctx)!;
     }
   }
 
@@ -788,7 +777,7 @@ export class CodeGenerator {
     if (block) {
       this.insertAnchor(block);
     }
-    block = this.createBlock(block, "list", ctx, ast.deepRemove);
+    block = this.createBlock(block, "list", ctx);
     this.target.loopLevel++;
     const loopVar = `i${this.target.loopLevel}`;
     this.addLine(`ctx = Object.create(ctx);`);
@@ -923,7 +912,7 @@ export class CodeGenerator {
       }
 
       const args = block!.children.map((c) => c.varName).join(", ");
-      this.insertBlock(`multi([${args}]${ast.deepRemove ? ", true" : ""})`, block!, ctx)!;
+      this.insertBlock(`multi([${args}])`, block!, ctx)!;
     }
   }
 
@@ -935,7 +924,7 @@ export class CodeGenerator {
       this.helpers.add("isBoundary");
       const nextId = BlockDescription.nextBlockId;
       const subCtx: Context = createContext(ctx, { preventRoot: true });
-      this.compileAST({ type: ASTType.Multi, content: ast.body, deepRemove: false }, subCtx);
+      this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
       if (nextId !== BlockDescription.nextBlockId) {
         this.helpers.add("zero");
         this.addLine(`ctx[zero] = b${nextId};`);
@@ -990,7 +979,7 @@ export class CodeGenerator {
     const expr = ast.value ? compileExpr(ast.value || "") : "null";
     if (ast.body) {
       this.helpers.add("LazyValue");
-      const bodyAst: AST = { type: ASTType.Multi, content: ast.body, deepRemove: false };
+      const bodyAst: AST = { type: ASTType.Multi, content: ast.body };
       const name = this.compileInNewTarget("value", bodyAst, ctx);
       let value = `new LazyValue(${name}, ctx, node)`;
       value = ast.value ? (value ? `withDefault(${expr}, ${value})` : expr) : value;
@@ -1177,10 +1166,18 @@ export class CodeGenerator {
     }
   }
   compileTPortal(ast: ASTTPortal, ctx: Context) {
-    this.helpers.add("callPortal");
+    this.helpers.add("Portal");
+
     let { block } = ctx;
-    const name = this.compileInNewTarget("portalContent", ast.content, ctx);
-    const blockString = `callPortal(ctx, node, key, ${ast.target}, ${name})`;
+    const name = this.compileInNewTarget("slot", ast.content, ctx);
+    const key = this.generateComponentKey();
+    let ctxStr = "ctx";
+    if (this.target.loopLevel || !this.hasSafeContext) {
+      ctxStr = this.generateId("ctx");
+      this.helpers.add("capture");
+      this.addLine(`const ${ctxStr} = capture(ctx);`);
+    }
+    const blockString = `component(Portal, {target: ${ast.target},slots: {'default': {__render: ${name}, __ctx: ${ctxStr}}}}, key + \`${key}\`, node, ctx)`;
     if (block) {
       this.insertAnchor(block);
     }

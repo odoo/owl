@@ -1,8 +1,11 @@
+import { onWillUnmount } from ".";
+import { xml } from "./app/template_set";
 import { BDom, text, VNode } from "./blockdom";
+import { Component } from "./component/component";
 
 const VText: any = text("").constructor;
 
-export class VPortal extends VText implements Partial<VNode<VPortal>> {
+class VPortal extends VText implements Partial<VNode<VPortal>> {
   //   selector: string;
   realBDom: BDom | null;
   target: HTMLElement | null = null;
@@ -45,5 +48,27 @@ export class VPortal extends VText implements Partial<VNode<VPortal>> {
       this.realBDom = other.realBDom;
       this.realBDom!.mount(this.target!, null);
     }
+  }
+}
+
+export class Portal extends Component {
+  static template = xml`<t t-slot="default"/>`;
+  static props = {
+    target: {
+      type: String,
+    },
+    slots: true,
+  };
+
+  setup() {
+    const node = this.__owl__;
+    const renderFn = node.renderFn;
+    node.renderFn = () => new VPortal(this.props.target, renderFn());
+    onWillUnmount(async () => {
+      await Promise.resolve();
+      if (node.bdom && (node.bdom as any).realBDom) {
+        (node.bdom as any).realBDom.remove();
+      }
+    });
   }
 }

@@ -1,4 +1,5 @@
 import { filterOutModifiersFromData } from "../blockdom/config";
+import { STATUS } from "./status";
 
 export const mainEventHandler = (data: any, ev: Event, currentTarget?: EventTarget | null) => {
   const { data: _data, modifiers } = filterOutModifiersFromData(data);
@@ -30,7 +31,10 @@ export const mainEventHandler = (data: any, ev: Event, currentTarget?: EventTarg
   // We check this rather than data[0] being truthy (or typeof function) so that it crashes
   // as expected when there is a handler expression that evaluates to a falsy value
   if (Object.hasOwnProperty.call(data, 0)) {
-    data[0].call(data[1] ? data[1].__owl__.component : null, ev);
+    let node = data[1] ? data[1].__owl__ : null;
+    if (node ? node.status === STATUS.MOUNTED : true) {
+      data[0].call(node ? node.component : null, ev);
+    }
   }
   return stopped;
 };

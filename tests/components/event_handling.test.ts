@@ -1,5 +1,5 @@
-import { makeTestFixture, snapshotEverything, nextTick } from "../helpers";
-import { mount, Component, useState, xml } from "../../src/index";
+import { makeTestFixture, snapshotEverything, nextTick, logStep, nextMicroTick } from "../helpers";
+import { mount, Component, useState, xml, App } from "../../src/index";
 
 snapshotEverything();
 
@@ -92,5 +92,61 @@ describe("event handling", () => {
     (<HTMLElement>fixture.querySelector(".item")).click();
     expect(onClickArgs![0]).toBe(1);
     expect(onClickArgs![1]).toBeInstanceOf(MouseEvent);
+  });
+
+  test("handler is not called if component is destroyed", async () => {
+    class Parent extends Component {
+      static template = xml`<span t-on-click="click"/>`;
+      click() {
+        logStep("click");
+      }
+    }
+
+    const app = new App(Parent);
+    await app.mount(fixture);
+    const span = fixture.querySelector("span")!;
+
+    span.click();
+    expect(["click"]).toBeLogged();
+
+    app.destroy();
+    expect([]).toBeLogged();
+
+    span.click();
+    expect([]).toBeLogged();
+  });
+
+  test("input blur event is not called if component is destroyed", async () => {
+    class Child extends Component {
+      static template = xml`<input t-on-blur="blur"/>`;
+
+      blur() {
+        logStep("blur");
+      }
+    }
+    class Parent extends Component {
+      static template = xml`
+      <div>
+        <t t-if="state.cond"><Child/></t>
+        <textarea/>
+      </div>`;
+      static components = { Child };
+
+      state = useState({ cond: true });
+    }
+
+    const parent = await mount(Parent, fixture);
+
+    fixture.querySelector("input")!.focus();
+    await nextMicroTick();
+    // to unfocus input
+    fixture.querySelector("textarea")!.focus();
+    expect(["blur"]).toBeLogged();
+
+    fixture.querySelector("input")!.focus();
+    parent.state.cond = false;
+    await nextTick();
+    // input is removed when component is destroyed => nothing should happen
+    expect([]).toBeLogged();
   });
 });

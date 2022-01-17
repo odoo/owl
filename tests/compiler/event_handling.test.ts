@@ -2,6 +2,7 @@ import { TemplateSet } from "../../src/app/template_set";
 import { mount } from "../../src/blockdom";
 import { makeTestFixture, renderToBdom, renderToString, snapshotEverything } from "../helpers";
 import { markup } from "../../src/utils";
+import { STATUS } from "../../src/component/status";
 
 snapshotEverything();
 // -----------------------------------------------------------------------------
@@ -11,7 +12,7 @@ snapshotEverything();
 describe("t-on", () => {
   function mountToFixture(template: string, ctx: any = {}, node?: any): HTMLDivElement {
     if (!node) {
-      node = { component: ctx };
+      node = { component: ctx, status: STATUS.MOUNTED };
       ctx.__owl__ = node;
     }
     const block = renderToBdom(template, ctx, node);
@@ -156,7 +157,7 @@ describe("t-on", () => {
         expect(this).toBe(owner);
       },
     };
-    const node = { component: owner };
+    const node = { component: owner, status: STATUS.MOUNTED };
     owner.__owl__ = node;
     const fixture = makeTestFixture();
     const render = context.getTemplate("main");
@@ -181,7 +182,7 @@ describe("t-on", () => {
         expect(this).toBe(owner);
       },
     };
-    const node = { component: owner };
+    const node = { component: owner, status: STATUS.MOUNTED };
     owner.__owl__ = node;
     const fixture = makeTestFixture();
     const render = context.getTemplate("main");
@@ -260,7 +261,7 @@ describe("t-on", () => {
         expect(this).toBe(owner);
       },
     };
-    const node = { component: owner };
+    const node = { component: owner, status: STATUS.MOUNTED };
     owner.__owl__ = node;
 
     const fixture = makeTestFixture();
@@ -286,7 +287,7 @@ describe("t-on", () => {
       value: 444,
     };
 
-    const node = { component: owner };
+    const node = { component: owner, status: STATUS.MOUNTED };
     owner.__owl__ = node;
 
     const fixture = makeTestFixture();

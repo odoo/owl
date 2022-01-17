@@ -77,6 +77,11 @@ describe("multi blocks", () => {
     expect(fixture.innerHTML).toBe("ab");
   });
 
+  test("multi vnode can be used as text", () => {
+    mount(text(multi([text("a"), undefined]) as any), fixture);
+    expect(fixture.innerHTML).toBe("a");
+  });
+
   test("multi inside a block", async () => {
     const block = createBlock("<div><block-child-0/></div>");
     const tree = block([], [multi([text("foo"), text("bar")])]);

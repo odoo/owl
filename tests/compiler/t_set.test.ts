@@ -38,6 +38,19 @@ describe("t-set", () => {
     expect(renderToString(template)).toBe("ok");
   });
 
+  test("set from body literal (with t-if/t-else", () => {
+    const template = `
+      <t>
+        <t t-set="value">
+          <t t-if="condition">true</t>
+          <t t-else="">false</t>
+        </t>
+        <t t-esc="value"/>
+      </t>`;
+    expect(renderToString(template, { condition: true })).toBe("true");
+    expect(renderToString(template, { condition: false })).toBe("false");
+  });
+
   test("set from attribute lookup", () => {
     const template = `<div><t t-set="stuff" t-value="value"/><t t-esc="stuff"/></div>`;
     expect(renderToString(template, { value: "ok" })).toBe("<div>ok</div>");

@@ -599,6 +599,10 @@ hello owl. This is just a text node!
 <div t-if="someCondition"><SomeChildComponent/></div>
 ```
 
+```xml
+<t t-if="someCondition"><SomeChildComponent/></t>
+```
+
 ## Inline templates
 
 Most real applications will define their templates in a XML file, to benefit

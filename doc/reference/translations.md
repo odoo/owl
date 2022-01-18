@@ -1,8 +1,6 @@
 # 🦉 Translations 🦉
 
-take care of this and "cherry-pick" 8464a1b04e7469434f9dcb3d68a543f58cb61b8e
-
-If properly setup, Owl QWeb engine can translate all rendered templates. To do
+If properly setup, Owl can translate all rendered templates. To do
 so, it needs a translate function, which takes a string and returns a string.
 
 For example:
@@ -15,8 +13,12 @@ const translations = {
 };
 const translateFn = (str) => translations[str] || str;
 
-const qweb = new QWeb({ translateFn });
+const app = new App(Root, { templates, tranaslateFn });
+// ...
 ```
+
+See the [app configuration page](app.md#configuration) for more info on how to
+configure an Owl application.
 
 Once setup, all rendered templates will be translated using `translateFn`:
 
@@ -46,3 +48,12 @@ will be rendered as:
 
 Note that the translation is done during the compilation of the template, not
 when it is rendered.
+
+In some case, it is useful to be able to extend the list of translatable attributes.
+For example, one may want to also translate `data-title` attributes. To do that,
+we can define additional attributes with the `translatableAttributes` option:
+
+```js
+const app = new App(Root, { templates, tranaslateFn, translatalbeAttributes: ["data-title"] });
+// ...
+```

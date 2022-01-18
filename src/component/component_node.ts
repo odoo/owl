@@ -121,7 +121,7 @@ export class ComponentNode<T extends typeof Component = typeof Component>
   async initiateRender(fiber: Fiber | MountFiber) {
     this.fiber = fiber;
     if (this.mounted.length) {
-      fiber.root.mounted.push(fiber);
+      fiber.root!.mounted.push(fiber);
     }
     const component = this.component;
     try {
@@ -137,7 +137,7 @@ export class ComponentNode<T extends typeof Component = typeof Component>
 
   async render() {
     let current = this.fiber;
-    if (current && current.root.locked) {
+    if (current && current.root!.locked) {
       await Promise.resolve();
       // situation may have changed after the microtask tick
       current = this.fiber;
@@ -167,7 +167,7 @@ export class ComponentNode<T extends typeof Component = typeof Component>
     //   a root fiber to a child fiber in the previous microtick, because it was
     //   embedded in a rendering coming from above, so the fiber will be rendered
     //   in the next microtick anyway, so we should not render it again.
-    if (this.fiber && (current || !fiber.parent)) {
+    if (this.fiber === fiber && (current || !fiber.parent)) {
       this._render(fiber);
     }
   }
@@ -175,7 +175,7 @@ export class ComponentNode<T extends typeof Component = typeof Component>
   _render(fiber: Fiber | RootFiber) {
     try {
       fiber.bdom = this.renderFn();
-      fiber.root.counter--;
+      fiber.root!.counter--;
     } catch (e) {
       handleError({ node: this, error: e });
     }
@@ -218,7 +218,7 @@ export class ComponentNode<T extends typeof Component = typeof Component>
     }
     component.props = props;
     this._render(fiber);
-    const parentRoot = parentFiber.root;
+    const parentRoot = parentFiber.root!;
     if (this.willPatch.length) {
       parentRoot.willPatch.push(fiber);
     }

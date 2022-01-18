@@ -30,7 +30,7 @@ function _handleError(node: ComponentNode | null, error: any, isFirstRound = fal
 
     if (stopped) {
       if (isFirstRound && fiber) {
-        fiber.root.counter--;
+        fiber.root!.counter--;
       }
       return true;
     }
@@ -52,7 +52,7 @@ export function handleError(params: ErrorParams) {
     current = current.parent;
   } while (current);
 
-  fibersInError.set(fiber.root, error);
+  fibersInError.set(fiber.root!, error);
 
   const handled = _handleError(node, error, true);
   if (!handled) {

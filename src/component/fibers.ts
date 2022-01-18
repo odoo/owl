@@ -3,46 +3,12 @@ import type { ComponentNode } from "./component_node";
 import { fibersInError, handleError } from "./error_handling";
 import { STATUS } from "./status";
 
-/**
- * Cleans on the root fiber the patch and willPatch fiber lists
- * It is typically needed when the same root fiber needs to recycle on
- * of its children or grandchildren's fiber.
- */
-function cleanPatchableFiber(child: Fiber, root: RootFiber) {
-  const { willPatch, patched } = root;
-  let i = willPatch.indexOf(child);
-  if (i > -1) {
-    willPatch.splice(i, 1);
-  }
-  i = patched.indexOf(child);
-  if (i > -1) {
-    patched.splice(i, 1);
-  }
-}
-
 export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
   let current = node.fiber;
   if (current) {
-    // current is necessarily a rootfiber here
     let root = parent.root;
-    const isSameRoot = current.root === root;
     cancelFibers(root, current.children);
-    current.children = [];
-    current.parent = parent;
-    // only increment our rendering if we were not
-    // already accounted for, or that we have been rendered
-    // already (in which case our fiber was removed from the root rendering)
-    if (!isSameRoot || current.bdom) {
-      root.counter++;
-    }
-
-    if (isSameRoot) {
-      cleanPatchableFiber(current, root);
-    }
-
-    current.bdom = null;
-    current.root = root;
-    return current;
+    current.root = null;
   }
   return new Fiber(node, parent);
 }
@@ -50,7 +16,7 @@ export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
 export function makeRootFiber(node: ComponentNode): Fiber {
   let current = node.fiber;
   if (current) {
-    let root = current.root;
+    let root = current.root!;
     root.counter -= cancelFibers(root, current.children);
     current.children = [];
     root.counter++;
@@ -92,7 +58,7 @@ function cancelFibers(root: any, fibers: Fiber[]): number {
 export class Fiber {
   node: ComponentNode;
   bdom: BDom | null = null;
-  root: RootFiber;
+  root: RootFiber | null; // A Fiber that has been replaced by another has no root
   parent: Fiber | null;
   children: Fiber[] = [];
   appliedToDom = false;
@@ -101,7 +67,7 @@ export class Fiber {
     this.node = node;
     this.parent = parent;
     if (parent) {
-      const root = parent.root;
+      const root = parent.root!;
       root.counter++;
       this.root = root;
       parent.children.push(this);

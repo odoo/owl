@@ -3082,6 +3082,53 @@ test("t-foreach with dynamic async component", async () => {
     "Child (3):mounted",
   ]).toBeLogged();
 });
+
+test("Cascading renders after microtaskTick", async () => {
+  const state = [{ id: 0 }, { id: 1 }];
+  let child: any;
+  let parent: any;
+
+  class Element extends Component {
+    static template = xml`<t t-esc="props.id" />`;
+  }
+
+  class Child extends Component {
+    static components = { Element };
+    static template = xml`
+      <t t-foreach="state" t-as="elem" t-key="elem.id">
+        <Element id="elem.id"/>
+      </t>`;
+    state = state;
+    setup() {
+      child = this;
+    }
+  }
+
+  class Parent extends Component {
+    static components = { Child };
+    static template = xml`<Child /> _ <t t-foreach="state" t-as="elem" t-key="elem.id" t-esc="elem.id"/>`;
+    state = state;
+    setup() {
+      parent = this;
+    }
+  }
+
+  await mount(Parent, fixture);
+  expect(fixture.innerHTML).toBe("01 _ 01");
+
+  state.push({ id: 2 });
+  parent.render();
+  child.render();
+
+  await Promise.resolve();
+  expect(fixture.innerHTML).toBe("01 _ 01");
+  state.push({ id: 3 });
+  parent.render();
+  child.render();
+
+  await nextTick();
+  expect(fixture.innerHTML).toBe("0123 _ 0123");
+});
 //   test.skip("components with shouldUpdate=false", async () => {
 //     const state = { p: 1, cc: 10 };
 

@@ -69,16 +69,16 @@ For reference, here is a list of all standard QWeb directives:
 The component system in Owl requires additional directives, to express various
 needs. Here is a list of all Owl specific directives:
 
-| Name                     | Description                                                     |
-| ------------------------ | --------------------------------------------------------------- |
-| `t-component`, `t-props` | [Defining a sub component](component.md#sub-components)         |
-| `t-ref`                  | [Setting a reference to a dom node or a sub component](refs.md) |
-| `t-key`                  | [Defining a key (to help virtual dom reconciliation)](#loops)   |
-| `t-on-*`                 | [Event handling](event_handling.md)                             |
-| `t-portal`               | [Portal](portal.md)                                             |
-| `t-slot`                 | [Rendering a slot](slots.md)                                    |
-| `t-model`                | [Form input bindings](input_bindings.md)                        |
-| `t-tag`                  | [Rendering nodes with dynamic tag name](#dynamic-tag-names)     |
+| Name                                   | Description                                                     |
+| -------------------------------------- | --------------------------------------------------------------- |
+| `t-component`, `t-props`               | [Defining a sub component](component.md#sub-components)         |
+| `t-ref`                                | [Setting a reference to a dom node or a sub component](refs.md) |
+| `t-key`                                | [Defining a key (to help virtual dom reconciliation)](#loops)   |
+| `t-on-*`                               | [Event handling](event_handling.md)                             |
+| `t-portal`                             | [Portal](portal.md)                                             |
+| `t-slot`, `t-set-slot`, `t-slot-scope` | [Rendering a slot](slots.md)                                    |
+| `t-model`                              | [Form input bindings](input_bindings.md)                        |
+| `t-tag`                                | [Rendering nodes with dynamic tag name](#dynamic-tag-names)     |
 
 ## QWeb Template Reference
 

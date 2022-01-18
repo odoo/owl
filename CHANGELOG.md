@@ -10,11 +10,13 @@ removed after.
 
 ## Changes
 
+All changes are documented here in no particular order.
+
 **Components**
 
 - components can now have empty content or multiple root nodes (htmlelement or text) ([details](#31-components-can-now-have-arbitrary-content))
-- new `useEffect` hook
-- new `onDestroyed`, `onWillRender` and `onRendered` hooks
+- new `useEffect` hook ([doc](doc/reference/hooks.md#useeffect))
+- new `onDestroyed`, `onWillRender` and `onRendered` hooks ([doc](doc/reference/component.md#lifecycle))
 - breaking: lifecycle methods are removed ([details](#1-component-lifecycle-methods-are-removed))
 - breaking: can no longer be mounted on detached DOM ([details](#2-components-can-no-longer-be-mounted-in-a-detached-dom-element))
 - breaking: standalone `mount` method API is simpler ([details](#4-mount-method-api-is-simpler))
@@ -22,14 +24,18 @@ removed after.
 - breaking: components can no longer be unmounted/remounted ([details](#6-components-can-no-longer-be-unmountedremounted))
 - breaking: template name is no longer inferred from the class name ([details](#7-template-name-is-no-longer-inferred-from-the-class-name))
 - breaking: components no longer have a `shouldUpdate` method ([details](#8-components-no-longer-have-a-shouldupdate-method))
-- breaking: component.el may be a text node, and is no longer `null` ([details](#9-componentel-may-be-a-text-node-and-is-no-longer-null))
+- breaking: component.el is removed ([details](#9-componentel-is-removed))
 - breaking: style/class on components are now regular props ([details](#10-styleclass-on-components-are-now-regular-props))
 - breaking: components can no longer be mounted with position=self ([details](#11-components-can-no-longer-be-mounted-with-positionself))
 - breaking: `t-on` does not work on components any more ([details](#12-t-on-does-not-work-on-components-any-more))
 - breaking: `t-component` no longer accepts strings ([details](#17-t-component-no-longer-accepts-strings))
+- breaking: `render` method does not return a promise anymore ([details](#35-render-method-does-not-return-a-promise-anymore))
+- breaking: `catchError` method is replaced by `onError` hook ([details](#36-catcherror-method-is-replaced-by-onerror-hook))
+
 
 **Portal**
 
+- Portal are now defined with `t-portal` ([details](#33-portal-are-now-defined-with-t-portal))
 - portals can now have arbitrary content (no longer restricted to one single child)
 - breaking: does no longer transfer dom events ([details](#13-portal-does-no-longer-transfer-dom-events))
 - breaking: does render as an empty text node instead of `<portal/>` ([details](#14-portal-does-render-as-an-empty-text-node-instead-of-portal))
@@ -37,6 +43,10 @@ removed after.
 **Slots**
 
 - breaking: `t-set` does not define a slot any more ([details](#3-t-set-will-no-longer-work-to-define-a-slot))
+- slots capabilities have been improved ([doc](doc/reference/slots.md))
+  - params can be give to slot content (to pass information from slot owner to slot user)
+  - slots are given as a `prop` (and can be manipulated/propagated to sub components )
+  - slots can define scopes (to pass information from slot user to slot owner)
 
 **Miscellaneous**
 
@@ -46,6 +56,7 @@ removed after.
 - finer grained reactivity: sub components can reobserve state
 - new App class to encapsulate a root Owl component (with the config for that application)
 - new `Memo` component
+- new [`useEffect`](doc/reference/hooks.md#useeffect) hook
 - breaking: `Context` is removed ([details](#15-context-is-removed))
 - breaking: `env` is now totally empty ([details](#16-env-is-now-totally-empty))
 - breaking: most exports are exported at top level ([details](#18-most-exports-are-exported-at-top-level))
@@ -62,7 +73,7 @@ removed after.
 - breaking: `t-ref` does not work on components ([details](#29-t-ref-does-not-work-on-component))
 - breaking: `t-on` does not accept expressions, only functions ([details](#30-t-on-does-not-accept-expressions-only-functions))
 - breaking: `renderToString` function on qweb has been removed ([details](#32-rendertostring-on-qweb-has-been-removed))
-
+- breaking: `debounce` utility function has been removed ([details](#34-debounce-utility-function-has-been-removed))
 
 ## Details/Rationale/Migration
 
@@ -95,6 +106,8 @@ class MyComponent extends Component {
   }
 }
 ```
+
+Documentation: [Component Lifecycle](doc/reference/component.md#lifecycle)
 
 ### 2. components can no longer be mounted in a detached dom element
 
@@ -146,6 +159,8 @@ Rationale: the `mount` method is only useful anyway for small toy examples,
 because real applications will need to configure the templates, the translations,
 and other stuff. All complex usecases need to go through the new `App` class,
 that encapsulates the root of an owl application.
+
+Documentation: [Mounting a component](doc/reference/app.md#mount-helper)
 
 ### 5. components can no longer be instantiated and mounted by hand
 
@@ -240,10 +255,14 @@ ideas may help:
     </Memo>
   ```
 
-### 9. component.el may be a text node, and is no longer `null`
+### 9. component.el is removed
 
-This comes from the fact that Owl 2 supports fragments (arbitrary content). When
-it is not defined, it was `null` in Owl 1 and is `undefined` in owl 2.
+This comes from the fact that Owl 2 supports fragments (arbitrary content).
+
+Migration: if one need a reference to the root htmlelement of a template, it is
+suggested to simply add a `ref` on it, and access the reference as needed.
+
+Documentation: [Refs](doc/reference/refs.md)
 
 ### 10. style/class on components are now regular props
 
@@ -286,7 +305,13 @@ compatible with the fact that a component can have a root `<div>` then later,
 change it to something else, or even a text node.
 
 Migration: no real way to do the same. Owl application needs to be appended or
-prepended in something, maybe a `div`.
+prepended in something, maybe a `div`. Remember that you the root component
+can have multiple roots
+
+Documentation:
+- [Fragments](doc/reference/templates.md#fragments)
+- [Mounting a component](doc/reference/app.md#mount-helper)
+
 
 ### 12. `t-on` does not work on components any more
 
@@ -372,6 +397,8 @@ Migration: there is no proper way to get an equivalent. The closest is to get
 a reference to the root App using `this.__owl__.app`. If you need to do this,
 let us know. If this is a legitimate usecase, we may add a `useApp` hook.
 
+Documentation: [Environment](doc/reference/environment.md)
+
 ### 17. `t-component` no longer accepts strings
 
 In owl 1, we could write this:
@@ -396,6 +423,8 @@ the implementation is slightly simpler.
 
 Migration: simply using `constructor.components.Coucou` instead of `Coucou` will
 do the trick.
+
+Documentation: [Component](doc/reference/component.md#dynamic-sub-components)
 
 ### 18. most exports are exported at top level
 
@@ -452,6 +481,8 @@ Migration: most bus methods need to be adapted. So, `bus.on("event-type", owner,
 rewritten like this: `bus.addEventListener("event-type", (({detail: info}) => {...}).bind(owner))`.
 
 Do not forget to similarly replace `bus.off(...)` by `bus.removeEventListener(...)`
+
+Documentation: [EventBus](doc/reference/utils.md#eventbus)
 
 ### 22. `Store` is removed
 
@@ -522,6 +553,7 @@ AND the component. It now only defines an environment for the children.
 Rationale: This was a subtle cause for bugs: some code had to be rrun
 before the call to `useSubEnv`, otherwise it could interfere with the sub environment.
 
+Documentation: [Hooks](doc/reference/hooks.md#usesubenv)
 
 ### 28. `env` is now frozen
 
@@ -535,6 +567,8 @@ components. This use case still works with `useSubEnv`.
 
 Migration: use `useSubEnv` instead of writing directly to the env.  Also, note
 that the environment given to the App can initially contain anything.
+
+Documentation: [Environment](doc/reference/environment.md)
 
 ### 29. `t-ref` does not work on component
 
@@ -576,6 +610,8 @@ adapted like this:
 <button t-on-click="() => this.someFunction(someVar)">blabla</button>
 ```
 
+Documentation: [Event Handling](doc/reference/event_handling.md)
+
 ### 31. components can now have arbitrary content
 
 Before Owl 2, components had to limit themselves to one single htmlelement as
@@ -587,6 +623,8 @@ So, the following template works for components:
   <div>2</div>
   hello
 ```
+
+Documentation: [Fragments](doc/reference/templates.md#fragments)
 
 ### 32. `renderToString` on QWeb has been removed
 
@@ -610,3 +648,54 @@ export async function renderToString(template, context) {
   div.remove();
   return result;
 }
+```
+
+### 33. Portal are now defined with `t-portal`
+
+Before Owl 2, one could use the `Portal` component by importing it and using it.
+Now, it is no longer available. Instead, we can simply use the `t-portal` directive:
+
+```xml
+<div>
+  some content
+  <span t-portal="'body'">
+    portalled content
+  </span>
+<div>
+```
+
+Rationale: it makes it slightly simpler to use (just need the directive, instead
+of having to import and use a sub component), it makes the implementation slightly
+simpler as well. Also, it prevents subclassing the Portal component, which could
+be dangerous, since it is really doing weird stuff under the hood, and could
+easily be broken inadvertendly.
+
+### 34. `debounce` utility function has been removed
+
+Rationale: it did not really help that much, is available as utility function
+elsewhere, so, we decided to have a smaller footprint by focusing Owl on what
+it does best.
+
+### 35. `render` method does not return a promise anymore
+
+Rationale: using the `render` method directly and waiting for it to complete
+was slightly un-declarative. Also, it can be done using the lifecycle hooks
+any way.
+
+Migration: if necessary, one can use the lifecycle hooks to execute code after
+the next mounted/patched operation.
+
+### 36. `catchError` method is replaced by `onError` hook
+
+The `catchError` method was used to provide a way to components to handle errors
+occurring during the component lifecycle. This has been replaced by a `onError`
+hook, with a similar API.
+
+Rationale: `catchError` felt a little big awkward, when most of the way we
+interact with componentss is via hooks.  Using hooks felt more natural and
+consistent.
+
+Migration: mostly replace all `catchError` methods by `onError` hooks in the
+`setup` method.
+
+Documentation: [Error Handling](doc/reference/error_handling.md)

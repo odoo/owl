@@ -1,5 +1,57 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Cascading renders after microtaskTick 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { prepareList, withKey } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    let b3 = text(\` _ \`);
+    ctx = Object.create(ctx);
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['state']);
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`elem\`] = v_block4[i1];
+      let key1 = ctx['elem'].id;
+      c_block4[i1] = withKey(text(ctx['elem'].id), key1);
+    }
+    let b4 = list(c_block4);
+    return multi([b2, b3, b4]);
+  }
+}"
+`;
+
+exports[`Cascading renders after microtaskTick 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { prepareList, withKey } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['state']);
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      ctx[\`elem\`] = v_block1[i1];
+      let key1 = ctx['elem'].id;
+      c_block1[i1] = withKey(component(\`Element\`, {id: ctx['elem'].id}, key + \`__1__\${key1}\`, node, ctx), key1);
+    }
+    return list(c_block1);
+  }
+}"
+`;
+
+exports[`Cascading renders after microtaskTick 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['props'].id);
+  }
+}"
+`;
+
 exports[`async rendering destroying a widget before start is over 1`] = `
 "function anonymous(bdom, helpers
 ) {

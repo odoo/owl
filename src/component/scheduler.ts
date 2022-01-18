@@ -25,7 +25,7 @@ export class Scheduler {
   }
 
   addFiber(fiber: Fiber) {
-    this.tasks.add(fiber.root);
+    this.tasks.add(fiber.root!);
     if (!this.isRunning) {
       this.start();
     }

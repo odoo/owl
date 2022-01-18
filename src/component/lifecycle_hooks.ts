@@ -7,44 +7,44 @@ import { nodeErrorHandlers } from "./error_handling";
 
 export function onWillStart(fn: () => Promise<void> | void | any) {
   const node = getCurrent()!;
-  node.willStart.push(fn);
+  node.willStart.push(fn.bind(node.component));
 }
 
 export function onWillUpdateProps(fn: (nextProps: any) => Promise<void> | void | any) {
   const node = getCurrent()!;
-  node.willUpdateProps.push(fn);
+  node.willUpdateProps.push(fn.bind(node.component));
 }
 
 export function onMounted(fn: () => void | any) {
   const node = getCurrent()!;
-  node.mounted.push(fn);
+  node.mounted.push(fn.bind(node.component));
 }
 
 export function onWillPatch(fn: () => Promise<void> | any | void) {
   const node = getCurrent()!;
-  node.willPatch.unshift(fn);
+  node.willPatch.unshift(fn.bind(node.component));
 }
 
 export function onPatched(fn: () => void | any) {
   const node = getCurrent()!;
-  node.patched.push(fn);
+  node.patched.push(fn.bind(node.component));
 }
 
 export function onWillUnmount(fn: () => Promise<void> | void | any) {
   const node = getCurrent()!;
-  node.willUnmount.unshift(fn);
+  node.willUnmount.unshift(fn.bind(node.component));
 }
 
 export function onWillDestroy(fn: () => Promise<void> | void | any) {
   const node = getCurrent()!;
-  node.willDestroy.push(fn);
+  node.willDestroy.push(fn.bind(node.component));
 }
 
 export function onWillRender(fn: () => void | any) {
   const node = getCurrent()!;
   const renderFn = node.renderFn;
   node.renderFn = () => {
-    fn();
+    fn.call(node.component);
     return renderFn();
   };
 }
@@ -54,7 +54,7 @@ export function onRendered(fn: () => void | any) {
   const renderFn = node.renderFn;
   node.renderFn = () => {
     const result = renderFn();
-    fn();
+    fn.call(node.component);
     return result;
   };
 }
@@ -67,5 +67,5 @@ export function onError(callback: OnErrorCallback) {
     handlers = [];
     nodeErrorHandlers.set(node, handlers);
   }
-  handlers.push(callback);
+  handlers.push(callback.bind(node.component));
 }

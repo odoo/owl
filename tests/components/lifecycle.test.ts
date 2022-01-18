@@ -5,10 +5,13 @@ import {
   onPatched,
   onWillUpdateProps,
   onWillRender,
+  onWillDestroy,
+  onRendered,
 } from "../../src/component/lifecycle_hooks";
 import { status } from "../../src/component/status";
 import {
   elem,
+  logStep,
   makeDeferred,
   makeTestFixture,
   nextTick,
@@ -1195,5 +1198,59 @@ describe("lifecycle hooks", () => {
     await nextTick();
     expect(["Parent:willPatch", "Parent:patched"]).toBeLogged();
     expect(fixture.innerHTML).toBe("<span>Patched</span>");
+  });
+
+  test("lifecycle callbacks are bound to component", async () => {
+    expect.assertions(14);
+    let instance: any;
+
+    class Test extends Component {
+      static template = xml`<t t-esc="props.rev" />`;
+      setup() {
+        instance = this;
+        onWillStart(this.logger("onWillStart"));
+        onMounted(this.logger("onMounted"));
+        onWillUpdateProps(this.logger("onWillUpdateProps"));
+        onWillPatch(this.logger("onWillPatch"));
+        onPatched(this.logger("onPatched"));
+        onWillUnmount(this.logger("onWillUnmount"));
+        onWillDestroy(this.logger("onWillDestroy"));
+        onWillRender(this.logger("onWillRender"));
+        onRendered(this.logger("onRendered"));
+      }
+      logger(hookName: string) {
+        return function (this: Test) {
+          logStep(hookName);
+          expect(this === instance).toBe(true);
+        };
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<Test rev="rev" />`;
+      static components = { Test };
+      rev = 0;
+    }
+
+    const app = new App(Parent);
+    const comp = await app.mount(fixture);
+    comp.rev++;
+    comp.render();
+    await nextTick();
+    app.destroy();
+
+    expect([
+      "onWillStart",
+      "onWillRender",
+      "onRendered",
+      "onMounted",
+      "onWillUpdateProps",
+      "onWillRender",
+      "onRendered",
+      "onWillPatch",
+      "onPatched",
+      "onWillUnmount",
+      "onWillDestroy",
+    ]).toBeLogged();
   });
 });

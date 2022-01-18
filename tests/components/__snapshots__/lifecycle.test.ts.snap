@@ -187,6 +187,28 @@ exports[`lifecycle hooks hooks are called in proper order in widget creation/des
 }"
 `;
 
+exports[`lifecycle hooks lifecycle callbacks are bound to component 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`Test\`, {rev: ctx['rev']}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`lifecycle hooks lifecycle callbacks are bound to component 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['props'].rev);
+  }
+}"
+`;
+
 exports[`lifecycle hooks lifecycle semantics 1`] = `
 "function anonymous(bdom, helpers
 ) {

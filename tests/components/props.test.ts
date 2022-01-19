@@ -142,17 +142,16 @@ describe("basics", () => {
   });
 
   test("support prop names that aren't valid bare object property names", async () => {
-    expect.assertions(4);
+    expect.assertions(3);
     class Child extends Component {
       static template = xml`<button t-on-click="props.onClick"/>`;
       setup() {
         expect(this.props["some-dashed-prop"]).toBe(5);
-        expect(this.props["a.b"]).toBe("keyword prop");
       }
     }
 
     class Parent extends Component {
-      static template = xml`<Child some-dashed-prop="5" a.b="'keyword prop'"/>`;
+      static template = xml`<Child some-dashed-prop="5"/>`;
       static components = { Child };
     }
     await mount(Parent, fixture);
@@ -224,4 +223,19 @@ test("bound functions is referentially equal after update", async () => {
   await nextTick();
   expect(fixture.innerHTML).toBe("3");
   expect(isEqual).toBe(true);
+});
+
+test("throw if prop uses an unknown suffix", async () => {
+  class Child extends Component {
+    static template = xml`<t t-esc="props.val"/>`;
+  }
+
+  class Parent extends Component {
+    static template = xml`<Child val.somesuffix="state.val"/>`;
+    static components = { Child };
+  }
+
+  await expect(async () => {
+    await mount(Parent, fixture);
+  }).rejects.toThrowError("Invalid prop suffix");
 });

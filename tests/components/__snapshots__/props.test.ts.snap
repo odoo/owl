@@ -122,7 +122,7 @@ exports[`basics support prop names that aren't valid bare object property names 
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {'some-dashed-prop': 5,'a.b': 'keyword prop'}, key + \`__1\`, node, ctx);
+    return component(\`Child\`, {'some-dashed-prop': 5}, key + \`__1\`, node, ctx);
   }
 }"
 `;

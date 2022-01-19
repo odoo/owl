@@ -480,6 +480,14 @@ describe("t-on", () => {
       button.click();
     });
 
+    test("t-on crashes when used with unknown modifier", async () => {
+      const template = `<div t-on-click.somemodifier="onClick" />`;
+
+      let owner = { onClick(e: Event) {} };
+
+      expect(() => mountToFixture(template, owner)).toThrowError("Unknown event modifier");
+    });
+
     test("t-on combined with t-esc", async () => {
       expect.assertions(3);
       const template = `<div><button t-on-click="onClick" t-esc="text"/></div>`;

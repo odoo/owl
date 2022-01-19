@@ -31,6 +31,9 @@ All changes are documented here in no particular order.
 - breaking: `t-component` no longer accepts strings ([details](#17-t-component-no-longer-accepts-strings))
 - breaking: `render` method does not return a promise anymore ([details](#35-render-method-does-not-return-a-promise-anymore))
 - breaking: `catchError` method is replaced by `onError` hook ([details](#36-catcherror-method-is-replaced-by-onerror-hook))
+- new: components can use the `.bind` suffix to bind function props ([doc](doc/reference/props.md#binding-function-props))
+- breaking: Support for inline css (`css` tag and static `style`) has been removed ([details](#37-support-for-inline-css-css-tag-and-static-style-has-been-removed))
+- new: prop validation system can now describe that additional props are allowed (with `*`) ([doc](doc/reference/props.md#props-validation))
 
 
 **Portal**
@@ -74,6 +77,7 @@ All changes are documented here in no particular order.
 - breaking: `t-on` does not accept expressions, only functions ([details](#30-t-on-does-not-accept-expressions-only-functions))
 - breaking: `renderToString` function on qweb has been removed ([details](#32-rendertostring-on-qweb-has-been-removed))
 - breaking: `debounce` utility function has been removed ([details](#34-debounce-utility-function-has-been-removed))
+- breaking: `t-raw` directive has been removed (replaced by `t-out`) ([details](#38-t-raw-directive-has-been-removed-replaced-by-t-out))
 
 ## Details/Rationale/Migration
 
@@ -338,7 +342,15 @@ the component API to accept explicitely a callback as props.
 
 ```xml
 <SomeComponent onSomeEvent="doSomething"/>
+<!-- or alternatively: -->
+<SomeComponent onSomeEvent.bind="doSomething"/>
 ```
+
+Note that one of the example above uses the `.bind` suffix, to bind the function
+prop to the component.  Most of the time, binding the function is necessary, and
+using the `.bind` suffix is very helpful in that case.
+
+Documentation: [Binding function props](doc/reference/props.md#binding-function-props)
 
 ### 13. Portal does no longer transfer DOM events
 
@@ -699,3 +711,39 @@ Migration: mostly replace all `catchError` methods by `onError` hooks in the
 `setup` method.
 
 Documentation: [Error Handling](doc/reference/error_handling.md)
+
+
+## 37. Support for inline css (`css` tag and static `style`) has been removed
+
+Rationale: Owl tries to focus on what it does best, and supporting inline css
+was not a priority.  It used to support some simplified scss language, but it
+was feared that it would cause more trouble than it was worth. Also, it seems
+like it can be done in userspace.
+
+Migration: it seems possible to implement an equivalent solution using hooks. A
+simple implementation could look like this:
+
+```js
+let cache = {};
+
+function useStyle(css) {
+  if (!css in cache) {
+    const sheet = document.createElement("style");
+    sheet.innerHTML = css;
+    cache[css] = sheet;
+    document.head.appendChild(sheet);
+  }
+}
+```
+
+## 38. `t-raw` directive has been removed (replaced by `t-out`)
+
+To match the Odoo qweb server implementation, Owl does no longer implement `t-raw`.
+It is replaced by the `t-out` directive, which is safer: it requires the data
+to be marked explicitely as markup if it is to be inserted without escaping.
+Otherwise, it will be escaped (just like `t-esc`).
+
+Migration: replace all `t-raw` uses by `t-out`, and uses the `markup` function
+to mark all the js values.
+
+Documentation: [Outputting data](doc/reference/templates.md#outputting-data)

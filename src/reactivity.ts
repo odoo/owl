@@ -9,7 +9,7 @@ const KEYCHANGES = Symbol("Key changes");
 type ObjectKey = string | number | symbol;
 type Target = object;
 type Callback = () => void;
-type Reactive<T extends Target = Target> = T & {
+export type Reactive<T extends Target = Target> = T & {
   [TARGET]: any;
 };
 

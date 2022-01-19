@@ -1,4 +1,5 @@
 import {
+  App,
   Component,
   mount,
   onError,
@@ -650,6 +651,41 @@ describe("Portal", () => {
 
     parent.portalIds.pop();
     await nextTick();
+    expect(fixture.innerHTML).toBe('<div id="outside"></div>');
+  });
+
+  test("Add and remove portals with t-foreach and destroy", async () => {
+    class Parent extends Component {
+      static template = xml`
+          <t t-foreach="portalIds" t-as="portalId" t-key="portalId">
+            <div>
+              <t t-esc="portalId"/>
+              <t t-portal="'#outside'">
+                Portal<t t-esc="portalId"/>
+              </t>
+            </div>
+          </t>`;
+      portalIds = useState([] as any);
+    }
+
+    addOutsideDiv(fixture);
+    const app = new App(Parent);
+    const parent = await app.mount(fixture);
+
+    expect(fixture.innerHTML).toBe('<div id="outside"></div>');
+
+    parent.portalIds.push(1);
+    await nextTick();
+    expect(fixture.innerHTML).toBe('<div id="outside"> Portal1</div><div>1</div>');
+
+    parent.portalIds.push(2);
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      '<div id="outside"> Portal1 Portal2</div><div>1</div><div>2</div>'
+    );
+
+    app.destroy();
+    //This will test explicitly that we don't use an await nextTick(); after the destroy.
     expect(fixture.innerHTML).toBe('<div id="outside"></div>');
   });
 

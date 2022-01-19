@@ -26,7 +26,7 @@ normal state.
 
 Whenever the `onError` lifecycle hook is used, all errors coming from
 sub components rendering and/or lifecycle method calls will be caught and given
-to the `catchError` method. This allows us to properly handle the error, and to
+to the `onError` method. This allows us to properly handle the error, and to
 not break the application.
 
 There are important things to know:

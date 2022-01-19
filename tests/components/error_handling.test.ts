@@ -1033,4 +1033,56 @@ describe("can catch errors", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>Sibling</div>");
   });
+
+  test("catching in child makes parent render", async () => {
+    class Child extends Component {
+      static template = xml`<div t-esc="'Child ' + props.id" />`;
+    }
+
+    class ErrorComp extends Component {
+      static template = xml`<div />`;
+      setup() {
+        throw new Error("Error Component");
+      }
+    }
+
+    class Catch extends Component {
+      static template = xml`<t t-slot="default" />`;
+      setup() {
+        onError((error) => {
+          this.props.onError(error);
+        });
+      }
+    }
+
+    const steps: any[] = [];
+    class Parent extends Component {
+      static components = { Catch };
+      static template = xml`
+        <t t-foreach="Object.entries(this.elements)" t-as="elem" t-key="elem[0]">
+          <Catch onError="(error) => this.onError(elem[0], error)">
+            <t t-component="elem[1]" id="elem[0]" />
+          </Catch>
+        </t>
+      `;
+
+      elements: any = {};
+
+      onError(id: any, error: Error) {
+        steps.push(error.message);
+        delete this.elements[id];
+        this.elements[2] = Child;
+        this.render();
+      }
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("");
+
+    parent.elements[1] = ErrorComp;
+    parent.render();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>Child 2</div>");
+    expect(steps).toEqual(["Error Component"]);
+  });
 });

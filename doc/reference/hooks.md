@@ -14,7 +14,6 @@
   - [`useEnv`](#useenv)
   - [`useEffect`](#useeffect)
 - [Example: Mouse Position](#example-mouse-position)
-- [Example: Autofocus](#example-autofocus)
 
 ## Overview
 
@@ -245,6 +244,38 @@ up when the component is unmounted.
 If the dependency function is skipped, then the effect will be cleaned up and
 rerun at every patch.
 
+Here is another example, of how one could implement a `useAutofocus` hook with
+the `useEffect` hook:
+
+```js
+function useAutofocus(name) {
+  let ref = useRef(name);
+  useEffect(
+    (el) => el && el.focus(),
+    () => [ref.el]
+  );
+}
+```
+
+This hook takes the name of a valid `t-ref` directive, which should be present
+in the template. It then checks whenever the component is mounted or patched if
+the reference is not valid, and in this case, it will focus the node element.
+This hook can be used like this:
+
+```js
+class SomeComponent extends Component {
+  static template = xml`
+    <div>
+        <input />
+        <input t-ref="myinput"/>
+    </div>`;
+
+  setup() {
+    useAutofocus("myinput");
+  }
+}
+```
+
 ## Example: mouse position
 
 Here is the classical example of a non trivial hook to track the mouse position.
@@ -280,48 +311,3 @@ class Root extends Component {
 
 Note that we use the prefix `use` for hooks, just like in React. This is just
 a convention.
-
-## Example: autofocus
-
-Hooks can be combined to create the desired effect. For example, the following
-hook combines the `useRef` hook with the `onPatched` and `onMounted` functions
-to create an easy way to focus an input whenever it appears in the DOM:
-
-```js
-function useAutofocus(name) {
-  let ref = useRef(name);
-  let isInDom = false;
-  function updateFocus() {
-    if (!isInDom && ref.el) {
-      isInDom = true;
-      const current = ref.el.value;
-      ref.el.value = "";
-      ref.el.focus();
-      ref.el.value = current;
-    } else if (isInDom && !ref.el) {
-      isInDom = false;
-    }
-  }
-  onPatched(updateFocus);
-  onMounted(updateFocus);
-}
-```
-
-This hook takes the name of a valid `t-ref` directive, which should be present
-in the template. It then checks whenever the component is mounted or patched if
-the reference is not valid, and in this case, it will focus the node element.
-This hook can be used like this:
-
-```js
-class SomeComponent extends Component {
-  static template = xml`
-    <div>
-        <input />
-        <input t-ref="myinput"/>
-    </div>`;
-
-  setup() {
-    useAutofocus("myinput");
-  }
-}
-```

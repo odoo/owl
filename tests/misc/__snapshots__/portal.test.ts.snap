@@ -83,6 +83,36 @@ exports[`Portal Add and remove portals with t-foreach 1`] = `
 }"
 `;
 
+exports[`Portal Add and remove portals with t-foreach and destroy 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { prepareList, Portal, capture, withKey } = helpers;
+  
+  let block2 = createBlock(\`<div><block-text-0/><block-child-0/></div>\`);
+  
+  function slot1(ctx, node, key = \\"\\") {
+    let b4 = text(\` Portal\`);
+    let b5 = text(ctx['portalId']);
+    return multi([b4, b5]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['portalIds']);
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      ctx[\`portalId\`] = v_block1[i1];
+      let key1 = ctx['portalId'];
+      let txt1 = ctx['portalId'];
+      const ctx1 = capture(ctx);
+      let b6 = component(Portal, {target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx);
+      c_block1[i1] = withKey(block2([txt1], [b6]), key1);
+    }
+    return list(c_block1);
+  }
+}"
+`;
+
 exports[`Portal Add and remove portals with t-foreach inside div 1`] = `
 "function anonymous(bdom, helpers
 ) {

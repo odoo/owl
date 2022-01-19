@@ -35,9 +35,11 @@ class VPortal extends VText implements Partial<VNode<VPortal>> {
     this.realBDom!.beforeRemove();
   }
   remove() {
-    super.remove();
-    this.realBDom!.remove();
-    this.realBDom = null;
+    if (this.realBDom) {
+      super.remove();
+      this.realBDom!.remove();
+      this.realBDom = null;
+    }
   }
 
   patch(other: VPortal) {
@@ -64,10 +66,9 @@ export class Portal extends Component {
     const node = this.__owl__;
     const renderFn = node.renderFn;
     node.renderFn = () => new VPortal(this.props.target, renderFn());
-    onWillUnmount(async () => {
-      await Promise.resolve();
-      if (node.bdom && (node.bdom as any).realBDom) {
-        (node.bdom as any).realBDom.remove();
+    onWillUnmount(() => {
+      if (node.bdom) {
+        node.bdom.remove();
       }
     });
   }

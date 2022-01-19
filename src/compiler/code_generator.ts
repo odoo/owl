@@ -39,6 +39,7 @@ export interface CodeGenOptions extends Config {
 // of HTML (as we will parse it as xml later)
 const xmlDoc = document.implementation.createDocument(null, null, null);
 
+const MODS = new Set(["stop", "capture", "prevent", "self", "synthetic"]);
 // -----------------------------------------------------------------------------
 // BlockDescription
 // -----------------------------------------------------------------------------
@@ -504,7 +505,12 @@ export class CodeGenerator {
     const modifiers = rawEvent
       .split(".")
       .slice(1)
-      .map((m) => `"${m}"`);
+      .map((m) => {
+        if (!MODS.has(m)) {
+          throw new Error(`Unknown event modifier: '${m}'`);
+        }
+        return `"${m}"`;
+      });
     let modifiersCode = "";
     if (modifiers.length) {
       modifiersCode = `${modifiers.join(",")}, `;
@@ -1022,6 +1028,8 @@ export class CodeGenerator {
           this.helpers.add("bind");
           propName = name;
           propValue = `bind(ctx, ${propValue})`;
+        } else {
+          throw new Error("Invalid prop suffix");
         }
       }
       propName = /^[a-z_]+$/i.test(propName) ? propName : `'${propName}'`;

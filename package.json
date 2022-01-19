@@ -13,7 +13,7 @@
     "node": ">=12.18.3"
   },
   "scripts": {
-    "build:bundle": "rollup -c",
+    "build:bundle": "rollup -c --failAfterWarnings",
     "build": "npm run build:bundle",
     "test": "jest",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --watch --testTimeout=5000000",

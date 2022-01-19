@@ -1,4 +1,4 @@
-import { onWillUnmount } from ".";
+import { onWillUnmount } from "./component/lifecycle_hooks";
 import { xml } from "./app/template_set";
 import { BDom, text, VNode } from "./blockdom";
 import { Component } from "./component/component";

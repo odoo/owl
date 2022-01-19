@@ -8,13 +8,14 @@ patching the `setup` method of `Component` to auto register all the lifecycle
 methods as hooks). This will be done for the transition period, but will be
 removed after.
 
-## Changes
+## From Owl 1.x to Owl 2.0
 
 All changes are documented here in no particular order.
 
 **Components**
 
 - components can now have empty content or multiple root nodes (htmlelement or text) ([details](#31-components-can-now-have-arbitrary-content))
+- breaking: component.el is removed ([details](#9-componentel-is-removed))
 - new `useEffect` hook ([doc](doc/reference/hooks.md#useeffect))
 - new `onWillDestroy`, `onWillRender` and `onRendered` hooks ([doc](doc/reference/component.md#lifecycle))
 - breaking: lifecycle methods are removed ([details](#1-component-lifecycle-methods-are-removed))
@@ -24,24 +25,25 @@ All changes are documented here in no particular order.
 - breaking: components can no longer be unmounted/remounted ([details](#6-components-can-no-longer-be-unmountedremounted))
 - breaking: template name is no longer inferred from the class name ([details](#7-template-name-is-no-longer-inferred-from-the-class-name))
 - breaking: components no longer have a `shouldUpdate` method ([details](#8-components-no-longer-have-a-shouldupdate-method))
-- breaking: component.el is removed ([details](#9-componentel-is-removed))
-- breaking: style/class on components are now regular props ([details](#10-styleclass-on-components-are-now-regular-props))
 - breaking: components can no longer be mounted with position=self ([details](#11-components-can-no-longer-be-mounted-with-positionself))
-- breaking: `t-on` does not work on components any more ([details](#12-t-on-does-not-work-on-components-any-more))
-- breaking: `t-component` no longer accepts strings ([details](#17-t-component-no-longer-accepts-strings))
 - breaking: `render` method does not return a promise anymore ([details](#35-render-method-does-not-return-a-promise-anymore))
 - breaking: `catchError` method is replaced by `onError` hook ([details](#36-catcherror-method-is-replaced-by-onerror-hook))
-- new: components can use the `.bind` suffix to bind function props ([doc](doc/reference/props.md#binding-function-props))
 - breaking: Support for inline css (`css` tag and static `style`) has been removed ([details](#37-support-for-inline-css-css-tag-and-static-style-has-been-removed))
 - new: prop validation system can now describe that additional props are allowed (with `*`) ([doc](doc/reference/props.md#props-validation))
 
 
-**Portal**
+**Templates**
 
-- Portal are now defined with `t-portal` ([details](#33-portal-are-now-defined-with-t-portal))
-- portals can now have arbitrary content (no longer restricted to one single child)
-- breaking: does no longer transfer dom events ([details](#13-portal-does-no-longer-transfer-dom-events))
-- breaking: does render as an empty text node instead of `<portal/>` ([details](#14-portal-does-render-as-an-empty-text-node-instead-of-portal))
+- breaking: `t-foreach` should always have a corresponding `t-key` ([details](#20-t-foreach-should-always-have-a-corresponding-t-key))
+- breaking: `t-ref` does not work on components ([details](#29-t-ref-does-not-work-on-component))
+- breaking: `t-on` does not accept expressions, only functions ([details](#30-t-on-does-not-accept-expressions-only-functions))
+- breaking: `t-raw` directive has been removed (replaced by `t-out`) ([details](#38-t-raw-directive-has-been-removed-replaced-by-t-out))
+- new: add support for synthetic events ([doc](doc/reference/event_handling.md#synthetic-events))
+- breaking: style/class on components are now regular props ([details](#10-styleclass-on-components-are-now-regular-props))
+- new: components can use the `.bind` suffix to bind function props ([doc](doc/reference/props.md#binding-function-props))
+- breaking: `t-on` does not work on components any more ([details](#12-t-on-does-not-work-on-components-any-more))
+- breaking: `t-component` no longer accepts strings ([details](#17-t-component-no-longer-accepts-strings))
+
 
 **Slots**
 
@@ -51,20 +53,28 @@ All changes are documented here in no particular order.
   - slots are given as a `prop` (and can be manipulated/propagated to sub components )
   - slots can define scopes (to pass information from slot user to slot owner)
 
+
+**Portal**
+
+- Portal are now defined with `t-portal` ([details](#33-portal-are-now-defined-with-t-portal))
+- portals can now have arbitrary content (no longer restricted to one single child)
+- breaking: does no longer transfer dom events ([details](#13-portal-does-no-longer-transfer-dom-events))
+- breaking: does render as an empty text node instead of `<portal/>` ([details](#14-portal-does-render-as-an-empty-text-node-instead-of-portal))
+
+
 **Miscellaneous**
 
 - improved performance
 - much simpler code 
 - finer grained reactivity: owl 2 tracks change per key/component
 - finer grained reactivity: sub components can reobserve state
-- new App class to encapsulate a root Owl component (with the config for that application)
+- new App class to encapsulate a root Owl component (with the config for that application) ([doc](doc/reference/app.md))
 - new `Memo` component
-- new [`useEffect`](doc/reference/hooks.md#useeffect) hook
+- new `useEffect` hook ([doc](doc/reference/hooks.md#useeffect))
 - breaking: `Context` is removed ([details](#15-context-is-removed))
 - breaking: `env` is now totally empty ([details](#16-env-is-now-totally-empty))
 - breaking: most exports are exported at top level ([details](#18-most-exports-are-exported-at-top-level))
 - breaking: properties are no longer set as attributes ([details](#19-properties-are-no-longer-set-as-attributes))
-- breaking: `t-foreach` should always have a corresponding `t-key` ([details](#20-t-foreach-should-always-have-a-corresponding-t-key))
 - breaking: `EventBus` api changed: it is now an `EventTarget` ([details](#21-eventbus-api-changed-it-is-now-an-eventtarget))
 - breaking: `Store` is removed ([details](#22-store-is-removed))
 - breaking: `Router` is removed ([details](#23-router-is-removed))
@@ -73,12 +83,8 @@ All changes are documented here in no particular order.
 - breaking: `AsyncRoot` utility component is removed ([details](#26-asyncroot-utility-component-is-removed))
 - breaking: `useSubEnv` only applies to child components ([details](#27-usesubenv-only-applies-to-child-components))
 - breaking: `env` is now frozen ([details](#28-env-is-now-frozen))
-- breaking: `t-ref` does not work on components ([details](#29-t-ref-does-not-work-on-component))
-- breaking: `t-on` does not accept expressions, only functions ([details](#30-t-on-does-not-accept-expressions-only-functions))
 - breaking: `renderToString` function on qweb has been removed ([details](#32-rendertostring-on-qweb-has-been-removed))
 - breaking: `debounce` utility function has been removed ([details](#34-debounce-utility-function-has-been-removed))
-- breaking: `t-raw` directive has been removed (replaced by `t-out`) ([details](#38-t-raw-directive-has-been-removed-replaced-by-t-out))
-- new: add support for synthetic events ([doc](doc/reference/event_handling.md#synthetic-events))
 
 ## Details/Rationale/Migration
 

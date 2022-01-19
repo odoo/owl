@@ -14,6 +14,9 @@ import {
 } from "./blockdom";
 import { mainEventHandler } from "./component/handler";
 import { Portal } from "./portal";
+export type { Reactive } from "./reactivity";
+
+
 
 config.shouldNormalizeDom = false;
 config.mainEventHandler = mainEventHandler;

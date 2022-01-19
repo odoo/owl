@@ -19,7 +19,7 @@
   - [`onError`](#onerror)
 - [Sub components](#sub-components)
 - [Dynamic Sub components](#dynamic-sub-components)
-- [`status` helper]
+- [`status` helper](#status-helper)
 
 ## Overview
 

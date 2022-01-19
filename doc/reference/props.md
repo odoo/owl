@@ -144,9 +144,36 @@ of the props. Here is how it works in Owl:
 - props are only validated in `dev` mode (see [how to configure an app](app.md#configuration))
 - if a key does not match the description, an error is thrown
 - it validates keys defined in (static) `props`. Additional keys given by the
-  parent will cause an error.
+  parent will cause an error (unless the special prop `*` is present).
+- it is an object or a list of strings
+- a list of strings is a simplified props definition, which only lists the name
+  of the props. Also, if the name ends with `?`, it is considered optional.
+- all props are by default required, unless they are defined with `optional: true`
+  (in that case, it is only done if there is a value)
+- valid types are: `Number, String, Boolean, Object, Array, Date, Function`, and all
+  constructor functions (so, if you have a `Person` class, it can be used as a type)
+- arrays are homogeneous (all elements have the same type/shape)
 
-For example:
+For each key, a `prop` definition is either a boolean, a constructor, a list of constructors, or an object:
+
+- a boolean: indicate that the props exists, and is mandatory.
+- a constructor: this should describe the type, for example: `id: Number` describe
+  the props `id` as a number
+- a list of constructors. In that case, this means that we allow more than one
+  type. For example, `id: [Number, String]` means that `id` can be either a string
+  or a number.
+- an object. This makes it possible to have more expressive definition. The following sub keys are then allowed (but not mandatory):
+  - `type`: the main type of the prop being validated
+  - `element`: if the type was `Array`, then the `element` key describes the type of each element in the array. If it is not set, then we only validate the array, not its elements,
+  - `shape`: if the type was `Object`, then the `shape` key describes the interface of the object. If it is not set, then we only validate the object, not its elements,
+  - `validate`: this is a function which should return a boolean to determine if
+    the value is valid or not. Useful for custom validation logic.
+
+There is a special `*` prop that means that additional prop are allowed. This is
+sometimes useful for generic components that will propagate some or all their
+props to their child components.
+
+Examples:
 
 ```js
 class ComponentA extends owl.Component {
@@ -170,35 +197,14 @@ class ComponentB extends owl.Component {
 }
 ```
 
-- it is an object or a list of strings
-- a list of strings is a simplified props definition, which only lists the name
-  of the props. Also, if the name ends with `?`, it is considered optional.
-- all props are by default required, unless they are defined with `optional: true`
-  (in that case, validation is only done if there is a value)
-- valid types are: `Number, String, Boolean, Object, Array, Date, Function`, and all
-  constructor functions (so, if you have a `Person` class, it can be used as a type)
-- arrays are homogeneous (all elements have the same type/shape)
-
-For each key, a `prop` definition is either a boolean, a constructor, a list of constructors, or an object:
-
-- a boolean: indicate that the props exists, and is mandatory.
-- a constructor: this should describe the type, for example: `id: Number` describe
-  the props `id` as a number
-- a list of constructors. In that case, this means that we allow more than one
-  type. For example, `id: [Number, String]` means that `id` can be either a string
-  or a number.
-- an object. This makes it possible to have more expressive definition. The following sub keys are then allowed (but not mandatory):
-  - `type`: the main type of the prop being validated
-  - `element`: if the type was `Array`, then the `element` key describes the type of each element in the array. If it is not set, then we only validate the array, not its elements,
-  - `shape`: if the type was `Object`, then the `shape` key describes the interface of the object. If it is not set, then we only validate the object, not its elements,
-  - `validate`: this is a function which should return a boolean to determine if
-    the value is valid or not. Useful for custom validation logic.
-
-Examples:
-
 ```js
   // only the existence of those 3 keys is documented
   static props = ['message', 'id', 'date'];
+```
+
+```js
+  // only the existence of those 3 keys is documented. any other key is allowed.
+  static props = ['message', 'id', 'date', '*'];
 ```
 
 ```js

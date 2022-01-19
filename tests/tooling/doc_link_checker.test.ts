@@ -60,6 +60,7 @@ function getFiles(path: string[] = []): FileData[] {
   if (path.length === 0) {
     const baseFiles: FileData[] = [
       { name: "README.md", path: [], links: [], sections: [], fullName: "README.md" },
+      { name: "CHANGELOG.md", path: [], links: [], sections: [], fullName: "CHANGELOG.md" },
       { name: "roadmap.md", path: [], links: [], sections: [], fullName: "roadmap.md" },
     ];
     const rest = getFiles(["doc"]);

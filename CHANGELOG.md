@@ -78,6 +78,7 @@ All changes are documented here in no particular order.
 - breaking: `renderToString` function on qweb has been removed ([details](#32-rendertostring-on-qweb-has-been-removed))
 - breaking: `debounce` utility function has been removed ([details](#34-debounce-utility-function-has-been-removed))
 - breaking: `t-raw` directive has been removed (replaced by `t-out`) ([details](#38-t-raw-directive-has-been-removed-replaced-by-t-out))
+- new: add support for synthetic events ([doc](doc/reference/event_handling.md#synthetic-events))
 
 ## Details/Rationale/Migration
 

@@ -4,6 +4,7 @@
 
 - [Event Handling](#event-handling)
 - [Modifiers](#modifiers)
+- [Synthetic Events](#synthetic-events)
 
 ## Event Handling
 
@@ -51,12 +52,13 @@ In order to remove the DOM event details from the event handlers (like calls to
 `event.preventDefault`) and let them focus on data logic, _modifiers_ can be
 specified as additional suffixes of the `t-on` directive.
 
-| Modifier   | Description                                                                                                              |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `.stop`    | calls `event.stopPropagation()` before calling the method                                                                |
-| `.prevent` | calls `event.preventDefault()` before calling the method                                                                 |
-| `.self`    | calls the method only if the `event.target` is the element itself                                                        |
-| `.capture` | bind the event handler in [capture](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener) mode. |
+| Modifier     | Description                                                                                                              |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `.stop`      | calls `event.stopPropagation()` before calling the method                                                                |
+| `.prevent`   | calls `event.preventDefault()` before calling the method                                                                 |
+| `.self`      | calls the method only if the `event.target` is the element itself                                                        |
+| `.capture`   | bind the event handler in [capture](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener) mode. |
+| `.synthetic` | define a synthetic event handler (see below)                                                                             |
 
 ```xml
 <button t-on-click.stop="someMethod">Do something</button>
@@ -75,3 +77,26 @@ modifiers. For example,
 ```
 
 This will simply stop the propagation of the event.
+
+## Synthetic Events
+
+In some cases, attaching an event handler for each element of large lists has
+a non trivial cost. Owl provides a way to efficiently improve the performance:
+with synthetic event, it actually adds only one handler on the document body,
+and will properly call the handler, just as expected.
+
+The only difference with regular events is that the event is caught at the document
+body, so it cannot be stopped before it actually gets there. Since it may be
+surprising in some cases, it is not enabled by default.
+
+To enable it, one can just use the `.synthetic` suffix:
+
+```xml
+<div>
+    <t t-foreach="largeList" t-as="elem" t-key="elem.id">
+        <button t-on-click.synthetic="doSomething" ...>
+            <!-- some content -->
+        </button>
+    </t>
+</div>
+```

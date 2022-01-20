@@ -1260,28 +1260,37 @@ const { Component, useState, mount, useRef, reactive, useEnv, onMounted } = owl;
 class WindowManager {
   // contains all components with metadata
   static Windows = {};
-  static nextZIndex = 1;
-  activeWindows = [];
+  windows = {}; // mapping id => info
   nextId = 1;
 
   add(type) {
     const Comp = WindowManager.Windows[type];
-    const left = Math.round(Math.random()*(window.innerHeight - Comp.defaultHeight));
-    const top = Math.round(Math.random()*(window.innerWidth - Comp.defaultWidth));
-    this.activeWindows.push({
-      id: this.nextId++,
+    const left = 50 + Math.round(Math.random()*(window.innerWidth - 50 - Comp.defaultWidth));
+    const top = 50 + Math.round(Math.random()*(window.innerHeight - 100 - Comp.defaultHeight));
+    const id = this.nextId++;
+    this.windows[id] = {
+      id, 
       title: Comp.defaultTitle,
       width: Comp.defaultWidth,
       height: Comp.defaultHeight,
-      top,
       left,
+      top,
       Component: Comp,
-    });
+    };
   }
   
   close(id) {
-    const index = this.activeWindows.findIndex(w => w.id === id);
-    this.activeWindows.splice(index, 1);
+    delete this.windows[id];
+  }
+
+  updatePosition(id, left, top) {
+    const w = this.windows[id];
+    w.left = left;
+    w.top = top;
+  }
+
+  getWindows() {
+    return Object.values(this.windows);
   }
 }
 
@@ -1300,7 +1309,9 @@ function useWindowService() {
 
 class Window extends Component {
   static template = "Window";
-    
+  static nextZIndex = 1;
+  zIndex = 0;
+
   setup() {
     this.windowService = useWindowService();
     this.root = useRef('root');
@@ -1309,7 +1320,7 @@ class Window extends Component {
 
   get style() {
     let { width, height, top, left } = this.props.info;
-    return \`width: $\{width}px;height: $\{height}px;top:$\{top}px;left:$\{left}px\`;
+    return \`width: $\{width}px;height: $\{height}px;top:$\{top}px;left:$\{left}px;z-index:\${this.zIndex}\`;
   }
 
   close() {
@@ -1318,7 +1329,9 @@ class Window extends Component {
 
   startDragAndDrop(ev) {
     this.updateZIndex();
+    const self = this;
     const root = this.root;
+
     const el = root.el;
     el.classList.add('dragging');
 
@@ -1341,14 +1354,14 @@ class Window extends Component {
       el.classList.remove('dragging');
 
       if (top !== undefined && left !== undefined) {
-        current.top = top;
-        current.left = left
+        self.windowService.updatePosition(current.id, left, top);
       }
     }
   }
 
   updateZIndex() {
-      this.root.el.style['z-index'] = WindowManager.neztZIndex++;
+    this.zIndex = Window.nextZIndex++;
+    this.root.el.style['z-index'] = this.zIndex;
   }
 }
 
@@ -1433,7 +1446,7 @@ const WMS_XML =/*xml*/`
   </div>
 
   <div t-name="WindowContainer" class="window-manager">
-    <Window t-foreach="windowService.activeWindows" t-as="w" t-key="w.id" info="w" setWindowPosition="setWindowPosition" updateZIndex="updateZIndex">
+    <Window t-foreach="windowService.getWindows()" t-as="w" t-key="w.id" info="w">
       <t t-component="w.Component"/>
     </Window>
   </div>

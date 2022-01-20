@@ -1,5 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`event handling Invalid handler throws an error 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\">click</button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let hdlr1 = [ctx['dosomething'], ctx];
+    return block1([hdlr1]);
+  }
+}"
+`;
+
 exports[`event handling handler is not called if component is destroyed 1`] = `
 "function anonymous(bdom, helpers
 ) {

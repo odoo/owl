@@ -31,9 +31,13 @@ export const mainEventHandler = (data: any, ev: Event, currentTarget?: EventTarg
   // We check this rather than data[0] being truthy (or typeof function) so that it crashes
   // as expected when there is a handler expression that evaluates to a falsy value
   if (Object.hasOwnProperty.call(data, 0)) {
+    const handler = data[0];
+    if (typeof handler !== "function") {
+      throw new Error(`Invalid handler (expected a function, received: '${handler}')`);
+    }
     let node = data[1] ? data[1].__owl__ : null;
     if (node ? node.status === STATUS.MOUNTED : true) {
-      data[0].call(node ? node.component : null, ev);
+      handler.call(node ? node.component : null, ev);
     }
   }
   return stopped;

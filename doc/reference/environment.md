@@ -22,7 +22,7 @@ property.
    A    B
 ```
 
-Also, the `env` object is frozen when the application is started. This is done
+Note that `env` object is frozen when the application is started (unless the `unsafeEnv` [setting](app.md#configuration) is activated). This is done
 to ensure a simpler mental model of what's happening in runtime. Note that it
 is only shallowly frozen, so sub objects can be modified.
 

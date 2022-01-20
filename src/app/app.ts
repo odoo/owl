@@ -14,6 +14,7 @@ export interface Env {
 export interface AppConfig extends TemplateSetConfig {
   env?: Env;
   props?: any;
+  unsafeEnv?: boolean;
 }
 
 export const DEV_MSG = `Owl is running in 'dev' mode.
@@ -25,18 +26,25 @@ export class App<T extends typeof Component = any> extends TemplateSet {
   Root: T;
   props: any;
   env: Env;
+  shouldFreezeEnv: boolean;
   scheduler = new Scheduler();
   root: ComponentNode | null = null;
 
   constructor(Root: T, config: AppConfig = {}) {
     super(config);
     this.Root = Root;
+    this.shouldFreezeEnv = !(config.unsafeEnv || false);
     if (config.dev) {
       console.info(DEV_MSG);
+    } else if (config.unsafeEnv) {
+      throw new Error("The config 'unsafeEnv' should only be used in dev mode");
     }
-    const descrs = Object.getOwnPropertyDescriptors(config.env || {});
-    this.env = Object.freeze(Object.defineProperties({}, descrs));
+    this.env = config.env || {};
     this.props = config.props || {};
+    if (this.shouldFreezeEnv) {
+      const descrs = Object.getOwnPropertyDescriptors(config.env || {});
+      this.env = Object.freeze(Object.defineProperties({}, descrs));
+    }
   }
 
   mount(target: HTMLElement, options?: MountOptions): Promise<InstanceType<T>> {

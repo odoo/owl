@@ -39,9 +39,10 @@ export function useEnv<E extends Env>(): E {
  */
 export function useSubEnv(envExtension: Env) {
   const node = getCurrent()!;
-  const env = Object.create(node.childEnv);
+  const subEnv = Object.create(node.childEnv);
   const descrs = Object.getOwnPropertyDescriptors(envExtension);
-  node.childEnv = Object.freeze(Object.defineProperties(env, descrs));
+  Object.defineProperties(subEnv, descrs);
+  node.childEnv = node.app.shouldFreezeEnv ? Object.freeze(subEnv) : subEnv;
 }
 
 // -----------------------------------------------------------------------------

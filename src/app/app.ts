@@ -25,7 +25,7 @@ export class App<T extends typeof Component = any> extends TemplateSet {
   Root: T;
   props: any;
   env: Env;
-  scheduler = new Scheduler(window.requestAnimationFrame.bind(window));
+  scheduler = new Scheduler();
   root: ComponentNode | null = null;
 
   constructor(Root: T, config: AppConfig = {}) {

@@ -43,4 +43,24 @@ describe("t-key", () => {
       })
     ).toBe("<ul><li>Chimay Rouge</li></ul>");
   });
+
+  test("t-key on sub dom node pushes a child block in its parent", async () => {
+    const template = `
+      <div>
+        <t t-if="hasSpan"><span /></t>
+        <div t-key="key"><h1 /></div>
+      </div>
+    `;
+
+    expect(renderToString(template, { key: "1" })).toBe("<div><div><h1></h1></div></div>");
+    expect(renderToString(template, { hasSpan: true, key: "1" })).toBe(
+      "<div><span></span><div><h1></h1></div></div>"
+    );
+
+    const template2 = `
+        <div t-key="key"><h1 /></div>
+    `;
+
+    expect(renderToString(template2, { key: "1" })).toBe("<div><h1></h1></div>");
+  });
 });

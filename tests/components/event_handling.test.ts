@@ -33,6 +33,28 @@ describe("event handling", () => {
     expect(fixture.innerHTML).toBe("<span><div>simple vnode</div>2</span>");
   });
 
+  test("Invalid handler throws an error", async () => {
+    window.addEventListener(
+      "error",
+      (ev) => {
+        logStep(ev.error.message);
+        ev.preventDefault();
+      },
+      { once: true }
+    );
+
+    class Parent extends Component {
+      static template = xml`<button t-on-click="dosomething">click</button>`;
+
+      doSomething() {}
+    }
+
+    await mount(Parent, fixture);
+    expect([]).toBeLogged();
+    fixture.querySelector("button")!.click();
+    expect(["Invalid handler (expected a function, received: 'undefined')"]).toBeLogged();
+  });
+
   test("support for callable expression in event handler", async () => {
     class Counter extends Component {
       static template = xml`

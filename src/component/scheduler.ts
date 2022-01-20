@@ -9,13 +9,13 @@ import { STATUS } from "./status";
 export class Scheduler {
   // capture the value of requestAnimationFrame as soon as possible, to avoid
   // interactions with other code, such as test frameworks that override them
-  static requestAnimationFrame = window.requestAnimationFrame.bind(this);
+  static requestAnimationFrame = window.requestAnimationFrame.bind(window);
   tasks: Set<RootFiber> = new Set();
   isRunning: boolean = false;
   requestAnimationFrame: Window["requestAnimationFrame"];
 
   constructor() {
-    this.requestAnimationFrame = requestAnimationFrame;
+    this.requestAnimationFrame = Scheduler.requestAnimationFrame;
   }
 
   start() {

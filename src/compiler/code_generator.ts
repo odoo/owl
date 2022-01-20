@@ -523,7 +523,7 @@ export class CodeGenerator {
     const isNewBlock = !block || forceNewBlock || ast.dynamicTag !== null;
     let codeIdx = this.target.code.length;
     if (isNewBlock) {
-      if (ast.dynamicTag && ctx.block) {
+      if ((ast.dynamicTag || ctx.tKeyExpr) && ctx.block) {
         this.insertAnchor(ctx.block!);
       }
       block = this.createBlock(block, "block", ctx);

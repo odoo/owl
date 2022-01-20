@@ -85,7 +85,7 @@ All changes are documented here in no particular order.
 - breaking: `env` is now frozen ([details](#28-env-is-now-frozen))
 - breaking: `renderToString` function on qweb has been removed ([details](#32-rendertostring-on-qweb-has-been-removed))
 - breaking: `debounce` utility function has been removed ([details](#34-debounce-utility-function-has-been-removed))
-- breaking: `browser` object has been removed ([details](#browser-object-has-been-removed))
+- breaking: `browser` object has been removed ([details](#39-browser-object-has-been-removed))
 
 ## Details/Rationale/Migration
 

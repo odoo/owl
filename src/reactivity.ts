@@ -4,13 +4,21 @@ import { batched, Callback } from "./utils";
 
 // Allows to get the target of a Reactive (used for making a new Reactive from the underlying object)
 const TARGET = Symbol("Target");
+// Escape hatch to prevent reactivity system to turn something into a reactive
+const SKIP = Symbol("Skip");
 // Special key to subscribe to, to be notified of key creation/deletion
 const KEYCHANGES = Symbol("Key changes");
 
 type ObjectKey = string | number | symbol;
+
 type Target = object;
+
 export type Reactive<T extends Target = Target> = T & {
   [TARGET]: any;
+};
+
+type NonReactive<T extends Target = Target> = T & {
+  [SKIP]: any;
 };
 
 /**
@@ -28,6 +36,27 @@ function canBeMadeReactive(value: any): boolean {
     !(value instanceof String) &&
     !(value instanceof Number)
   );
+}
+
+/**
+ * Mark an object or array so that it is ignored by the reactivity system
+ *
+ * @param value the value to mark
+ * @returns the object itself
+ */
+export function markRaw<T extends Target>(value: T): NonReactive<T> {
+  (value as any)[SKIP] = true;
+  return value as NonReactive<T>;
+}
+
+/**
+ * Given a reactive objet, return the raw (non reactive) underlying object
+ *
+ * @param value a reactive value
+ * @returns the underlying value
+ */
+export function toRaw<T extends object>(value: Reactive<T>): T {
+  return value[TARGET];
 }
 
 const targetToKeysToCallbacks = new WeakMap<Target, Map<ObjectKey, Set<Callback>>>();
@@ -130,9 +159,15 @@ const reactiveCache = new WeakMap<Target, WeakMap<Callback, Reactive>>();
  *  reactive has changed
  * @returns a proxy that tracks changes to it
  */
-export function reactive<T extends Target>(target: T, callback: Callback = () => {}): Reactive<T> {
+export function reactive<T extends Target>(
+  target: T,
+  callback: Callback = () => {}
+): Reactive<T> | NonReactive<T> {
   if (!canBeMadeReactive(target)) {
     throw new Error(`Cannot make the given value reactive`);
+  }
+  if (SKIP in target) {
+    return target as NonReactive<T>;
   }
   const originalTarget = (target as Reactive)[TARGET];
   if (originalTarget) {
@@ -202,7 +237,7 @@ const batchedRenderFunctions = new WeakMap<ComponentNode, Callback>();
  *  relevant changes
  * @see reactive
  */
-export function useState<T extends object>(state: T): Reactive<T> {
+export function useState<T extends object>(state: T): Reactive<T> | NonReactive<T> {
   const node = getCurrent()!;
   if (!batchedRenderFunctions.has(node)) {
     batchedRenderFunctions.set(

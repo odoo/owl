@@ -127,6 +127,7 @@ interface Context {
   isLast?: boolean;
   translate: boolean;
   tKeyExpr: string | null;
+  nameSpace?: string;
 }
 
 function createContext(parentCtx: Context, params?: Partial<Context>) {
@@ -137,6 +138,7 @@ function createContext(parentCtx: Context, params?: Partial<Context>) {
       forceNewBlock: true,
       translate: parentCtx.translate,
       tKeyExpr: null,
+      nameSpace: parentCtx.nameSpace,
     },
     params
   );
@@ -536,9 +538,10 @@ export class CodeGenerator {
     }
     // attributes
     const attrs: { [key: string]: string } = {};
-    if (ast.ns) {
+    const nameSpace = ast.ns || ctx.nameSpace;
+    if (nameSpace && isNewBlock) {
       // specific namespace uri
-      attrs["block-ns"] = ast.ns;
+      attrs["block-ns"] = nameSpace;
     }
     for (let key in ast.attrs) {
       if (key.startsWith("t-attf")) {
@@ -654,6 +657,7 @@ export class CodeGenerator {
           forceNewBlock: false,
           isLast: ctx.isLast && i === children.length - 1,
           tKeyExpr: ctx.tKeyExpr,
+          nameSpace,
         });
         this.compileAST(child, subCtx);
       }

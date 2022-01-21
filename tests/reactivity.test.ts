@@ -1093,6 +1093,19 @@ describe("Reactivity", () => {
     expect(n).toBe(1);
     expect(state.k).toEqual({ n: 2 });
   });
+
+  test("can add collections set/weakset/map/weakmap in a reactive object", () => {
+    const rawSet = new Set();
+    const rawWeakSet = new WeakSet();
+    const rawMap = new Map();
+    const rawWeakMap = new WeakMap();
+
+    const obj = reactive({ rawSet, rawWeakSet, rawMap, rawWeakMap });
+    expect(obj.rawSet).toBe(rawSet);
+    expect(obj.rawWeakSet).toBe(rawWeakSet);
+    expect(obj.rawMap).toBe(rawMap);
+    expect(obj.rawWeakMap).toBe(rawWeakMap);
+  });
 });
 
 describe("markRaw", () => {

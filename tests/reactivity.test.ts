@@ -6,8 +6,10 @@ import {
   onWillUpdateProps,
   useState,
   xml,
+  markRaw,
+  toRaw,
 } from "../src";
-import { reactive } from "../src/reactivity";
+import { reactive, Reactive } from "../src/reactivity";
 import { batched } from "../src/utils";
 import {
   makeDeferred,
@@ -1090,6 +1092,31 @@ describe("Reactivity", () => {
     await nextMicroTick();
     expect(n).toBe(1);
     expect(state.k).toEqual({ n: 2 });
+  });
+});
+
+describe("markRaw", () => {
+  test("markRaw works as expected: value is not observed", () => {
+    const obj1: any = markRaw({ value: 1 });
+    const obj2 = { value: 1 };
+    let n = 0;
+    const r = reactive({ obj1, obj2 }, () => n++);
+    expect(n).toBe(0);
+    r.obj1.value = r.obj1.value + 1;
+    expect(n).toBe(0);
+    r.obj2.value = r.obj2.value + 1;
+    expect(n).toBe(1);
+    expect(r.obj1).toBe(obj1);
+    expect(r.obj2).not.toBe(obj2);
+  });
+});
+
+describe("toRaw", () => {
+  test("toRaw works as expected", () => {
+    const obj = { value: 1 };
+    const reactiveObj = reactive(obj);
+    expect(reactiveObj).not.toBe(obj);
+    expect(toRaw(reactiveObj as Reactive<typeof obj>)).toBe(obj);
   });
 });
 

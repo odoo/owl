@@ -57,7 +57,7 @@ exports[`properly support svg svg namespace added to sub-blocks (t-call) 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { getTemplate } = helpers;
-  const callTemplate_1 = getTemplate(\`path\`);
+  const callTemplate_1 = getTemplate(\`path\`, \\"http://www.w3.org/2000/svg\\");
   
   let block1 = createBlock(\`<svg block-ns=\\"http://www.w3.org/2000/svg\\"><block-child-0/></svg>\`);
   

@@ -8,6 +8,7 @@ export type TemplateFunction = (blocks: any, utils: any) => Template;
 
 interface CompileOptions extends Config {
   name?: string;
+  nameSpace?: string,
 }
 export function compile(template: string | Node, options: CompileOptions = {}): TemplateFunction {
   // parsing
@@ -20,8 +21,10 @@ export function compile(template: string | Node, options: CompileOptions = {}): 
       : !template.includes("t-set") && !template.includes("t-call");
 
   // code generation
+  console.log("compile", options)
   const codeGenerator = new CodeGenerator(ast, { ...options, hasSafeContext });
   const code = codeGenerator.generateCode();
+  console.log(code)
   // template function
   return new Function("bdom, helpers", code) as TemplateFunction;
 }

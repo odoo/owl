@@ -55,7 +55,7 @@ export class TemplateSet {
       const template = this.getTemplate(subTemplate);
       return toggler(subTemplate, template.call(owner, ctx, parent, key));
     },
-    getTemplate: (name: string) => this.getTemplate(name),
+    getTemplate: (name: string, nameSpace?: string) => this.getTemplate(name, nameSpace),
   });
 
   constructor(config: TemplateSetConfig = {}) {
@@ -87,13 +87,15 @@ export class TemplateSet {
     }
   }
 
-  getTemplate(name: string): Template {
+  getTemplate(name: string, nameSpace?: string): Template {
+
     if (!(name in this.templates)) {
       const rawTemplate = this.rawTemplates[name];
       if (rawTemplate === undefined) {
         throw new Error(`Missing template: "${name}"`);
       }
-      const templateFn = this._compileTemplate(name, rawTemplate);
+          console.log("getTemplate", nameSpace);
+      const templateFn = this._compileTemplate(name, rawTemplate, nameSpace);
       // first add a function to lazily get the template, in case there is a
       // recursive call to the template name
       const templates = this.templates;
@@ -106,12 +108,14 @@ export class TemplateSet {
     return this.templates[name];
   }
 
-  _compileTemplate(name: string, template: string | Node) {
+  _compileTemplate(name: string, template: string | Node, nameSpace?: string) {
+    console.log("CompileTpm", nameSpace)
     return compile(template, {
       name,
       dev: this.dev,
       translateFn: this.translateFn,
       translatableAttributes: this.translatableAttributes,
+      nameSpace: nameSpace,
     });
   }
 }

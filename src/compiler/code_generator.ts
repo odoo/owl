@@ -33,6 +33,7 @@ export interface Config {
 export interface CodeGenOptions extends Config {
   hasSafeContext?: boolean;
   name?: string;
+  nameSpace?: string;
 }
 
 // using a non-html document so that <inner/outer>HTML serializes as XML instead
@@ -214,8 +215,9 @@ export class CodeGenerator {
   translateFn: (s: string) => string;
   translatableAttributes: string[];
   ast: AST;
-  staticCalls: { id: string; template: string }[] = [];
+  staticCalls: { id: string; template: string, nameSpace?: string }[] = [];
   helpers: Set<string> = new Set();
+  nameSpace?: string;
 
   constructor(ast: AST, options: CodeGenOptions) {
     this.translateFn = options.translateFn || ((s: string) => s);
@@ -224,6 +226,8 @@ export class CodeGenerator {
     this.dev = options.dev || false;
     this.ast = ast;
     this.templateName = options.name;
+    this.nameSpace = options.nameSpace;
+    console.log('ThisNS', this.nameSpace)
   }
 
   generateCode(): string {
@@ -238,6 +242,7 @@ export class CodeGenerator {
       isLast: true,
       translate: true,
       tKeyExpr: null,
+      nameSpace: this.nameSpace,
     });
     // define blocks and utility functions
     let mainCode = [
@@ -250,8 +255,12 @@ export class CodeGenerator {
       mainCode.push(`// Template name: "${this.templateName}"`);
     }
 
-    for (let { id, template } of this.staticCalls) {
-      mainCode.push(`const ${id} = getTemplate(${template});`);
+    for (let { id, template, nameSpace } of this.staticCalls) {
+      let ns;
+      if (nameSpace) {
+        ns = `, "${nameSpace}"`;
+      }
+      mainCode.push(`const ${id} = getTemplate(${template}${ns});`);
     }
 
     // define all blocks
@@ -539,6 +548,7 @@ export class CodeGenerator {
     // attributes
     const attrs: { [key: string]: string } = {};
     const nameSpace = ast.ns || ctx.nameSpace;
+    console.log(nameSpace)
     if (nameSpace && isNewBlock) {
       // specific namespace uri
       attrs["block-ns"] = nameSpace;
@@ -960,7 +970,7 @@ export class CodeGenerator {
     } else {
       const id = this.generateId(`callTemplate_`);
       this.helpers.add("getTemplate");
-      this.staticCalls.push({ id, template: subTemplate });
+      this.staticCalls.push({ id, template: subTemplate, nameSpace: ctx.nameSpace });
       block = this.createBlock(block, "multi", ctx);
       this.insertBlock(`${id}.call(this, ctx, node, ${key})`, block!, {
         ...ctx,

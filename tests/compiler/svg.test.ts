@@ -1,5 +1,5 @@
-import { renderToString, snapshotEverything } from "../helpers";
-
+import { renderToString, renderToBdom, snapshotEverything, makeTestFixture } from "../helpers";
+import { mount } from "../../src/blockdom";
 // NB: check the snapshots to see where the SVG namespaces are added
 snapshotEverything();
 
@@ -25,6 +25,31 @@ describe("properly support svg", () => {
 
   test("namespace to svg tags added even if already in svg namespace", () => {
     const template = `<svg><svg/></svg>`;
-    expect(renderToString(template)).toBe(`<svg><svg></svg></svg>`);
+    const bdom = renderToBdom(template);
+    const fixture = makeTestFixture();
+
+    mount(bdom, fixture);
+    const elems = fixture.querySelectorAll("svg");
+    expect(elems.length).toEqual(2);
+    for (const el of elems) {
+      expect(el.namespaceURI).toBe("http://www.w3.org/2000/svg");
+    }
+  });
+
+  test("svg namespace added to sub-blocks", () => {
+    const template = `<svg><path t-if="path"/></svg>`;
+
+    expect(renderToString(template, { path: false })).toBe(`<svg></svg>`);
+    expect(renderToString(template, { path: true })).toBe(`<svg><path></path></svg>`);
+
+    const bdom = renderToBdom(template, { path: true });
+    const fixture = makeTestFixture();
+
+    mount(bdom, fixture);
+    const elems = fixture.querySelectorAll("svg, path");
+    expect(elems.length).toEqual(2);
+    for (const el of elems) {
+      expect(el.namespaceURI).toBe("http://www.w3.org/2000/svg");
+    }
   });
 });

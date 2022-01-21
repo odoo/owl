@@ -20,6 +20,7 @@ export type Reactive<T extends Target = Target> = T & {
 type NonReactive<T extends Target = Target> = T & {
   [SKIP]: any;
 };
+const objectToString = Object.prototype.toString;
 
 /**
  * Checks whether a given value can be made into a reactive object.
@@ -28,14 +29,14 @@ type NonReactive<T extends Target = Target> = T & {
  * @returns whether the value can be made reactive
  */
 function canBeMadeReactive(value: any): boolean {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    !(value instanceof Date) &&
-    !(value instanceof Promise) &&
-    !(value instanceof String) &&
-    !(value instanceof Number)
-  );
+  if (typeof value !== "object") {
+    return false;
+  }
+  // extract "RawType" from strings like "[object RawType]" => this lets us
+  // ignore many native objects such as Promise (whose toString is [object Promise])
+  // or Date ([object Date]).
+  const rawType = objectToString.call(value).slice(8, -1);
+  return rawType === "Object" || rawType === "Array";
 }
 
 /**

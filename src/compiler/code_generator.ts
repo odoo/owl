@@ -128,6 +128,7 @@ interface Context {
   translate: boolean;
   tKeyExpr: string | null;
   nameSpace?: string;
+  tModelSelectedExpr?: string;
 }
 
 function createContext(parentCtx: Context, params?: Partial<Context>) {
@@ -139,6 +140,7 @@ function createContext(parentCtx: Context, params?: Partial<Context>) {
       translate: parentCtx.translate,
       tKeyExpr: null,
       nameSpace: parentCtx.nameSpace,
+      tModelSelectedExpr: parentCtx.tModelSelectedExpr,
     },
     params
   );
@@ -543,23 +545,35 @@ export class CodeGenerator {
       // specific namespace uri
       attrs["block-ns"] = nameSpace;
     }
+
     for (let key in ast.attrs) {
+      let expr, attrName;
       if (key.startsWith("t-attf")) {
-        let expr = interpolate(ast.attrs[key]);
+        expr = interpolate(ast.attrs[key]);
         const idx = block!.insertData(expr, "attr");
-        attrs["block-attribute-" + idx] = key.slice(7);
+
+        attrName = key.slice(7);
+        attrs["block-attribute-" + idx] = attrName;
       } else if (key.startsWith("t-att")) {
-        let expr = compileExpr(ast.attrs[key]);
+        expr = compileExpr(ast.attrs[key]);
         const idx = block!.insertData(expr, "attr");
         if (key === "t-att") {
           attrs[`block-attributes`] = String(idx);
         } else {
-          attrs[`block-attribute-${idx}`] = key.slice(6);
+          attrName = key.slice(6);
+          attrs[`block-attribute-${idx}`] = attrName;
         }
       } else if (this.translatableAttributes.includes(key)) {
         attrs[key] = this.translateFn(ast.attrs[key]);
       } else {
+        expr = `"${ast.attrs[key]}"`;
+        attrName = key;
         attrs[key] = ast.attrs[key];
+      }
+
+      if (attrName === "value" && ctx.tModelSelectedExpr) {
+        let selectedId = block!.insertData(`${ctx.tModelSelectedExpr} === ${expr}`, "attr");
+        attrs[`block-attribute-${selectedId}`] = "selected";
       }
     }
 
@@ -600,8 +614,10 @@ export class CodeGenerator {
     }
 
     // t-model
+    let tModelSelectedExpr;
     if (ast.model) {
       const {
+        hasDynamicChildren,
         baseExpr,
         expr,
         eventType,
@@ -624,6 +640,9 @@ export class CodeGenerator {
           "attr"
         );
         attrs[`block-attribute-${idx}`] = specialInitTargetAttr;
+      } else if (hasDynamicChildren) {
+        tModelSelectedExpr = `bValue${id}`;
+        this.addLine(`let ${tModelSelectedExpr} = ${baseExpression}[${expression}]`);
       } else {
         idx = block!.insertData(`${baseExpression}[${expression}]`, "attr");
         attrs[`block-attribute-${idx}`] = targetAttr;
@@ -658,6 +677,7 @@ export class CodeGenerator {
           isLast: ctx.isLast && i === children.length - 1,
           tKeyExpr: ctx.tKeyExpr,
           nameSpace,
+          tModelSelectedExpr,
         });
         this.compileAST(child, subCtx);
       }

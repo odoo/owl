@@ -33,6 +33,17 @@ export interface ASTComment {
   value: string;
 }
 
+interface TModelInfo {
+  hasDynamicChildren?: boolean;
+  baseExpr: string;
+  expr: string;
+  targetAttr: string;
+  specialInitTargetAttr: string | null;
+  eventType: "change" | "click" | "input";
+  shouldTrim: boolean;
+  shouldNumberize: boolean;
+}
+
 export interface ASTDomNode {
   type: ASTType.DomNode;
   tag: string;
@@ -41,15 +52,7 @@ export interface ASTDomNode {
   content: AST[];
   ref: string | null;
   on: { [key: string]: string };
-  model: {
-    baseExpr: string;
-    expr: string;
-    targetAttr: string;
-    specialInitTargetAttr: string | null;
-    eventType: "change" | "click" | "input";
-    shouldTrim: boolean;
-    shouldNumberize: boolean;
-  } | null;
+  model?: TModelInfo | null;
   ns: string | null;
 }
 
@@ -178,6 +181,7 @@ export type AST =
 // Parser
 // -----------------------------------------------------------------------------
 interface ParsingContext {
+  tModelInfo?: TModelInfo | null;
   inPreTag: boolean;
   inSVG: boolean;
 }
@@ -298,12 +302,10 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
   const ref = node.getAttribute("t-ref");
   node.removeAttribute("t-ref");
 
-  const children = parseChildren(node, ctx);
-
   const nodeAttrsNames = node.getAttributeNames();
   const attrs: ASTDomNode["attrs"] = {};
   const on: ASTDomNode["on"] = {};
-  let model: ASTDomNode["model"] = null;
+  let model: TModelInfo | null = null;
 
   for (let attr of nodeAttrsNames) {
     const value = node.getAttribute(attr)!;
@@ -351,13 +353,24 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
         shouldTrim: hasTrimMod && (isOtherInput || isTextarea),
         shouldNumberize: hasNumberMod && (isOtherInput || isTextarea),
       };
+      if (isSelect) {
+        // don't pollute the original ctx
+        ctx = Object.assign({}, ctx);
+        ctx.tModelInfo = model;
+      }
     } else {
       if (attr.startsWith("t-") && !attr.startsWith("t-att")) {
         throw new Error(`Unknown QWeb directive: '${attr}'`);
       }
+      const tModel = ctx.tModelInfo;
+      if (tModel && ["t-att-value", "t-attf-value"].includes(attr)) {
+        tModel.hasDynamicChildren = true;
+      }
       attrs[attr] = value;
     }
   }
+
+  const children = parseChildren(node, ctx);
   return {
     type: ASTType.DomNode,
     tag: tagName,

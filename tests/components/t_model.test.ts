@@ -452,4 +452,116 @@ describe("t-model directive", () => {
     expect(comp.state.choice).toBe("Three");
     expect(comp.state.lastClicked).toBe("Three");
   });
+
+  test("t-model on select with static options", async () => {
+    class Test extends Component {
+      static template = xml`
+        <div>
+          <select t-model="state.model">
+             <option value="a" t-esc="'a'"/>
+             <option value="b" t-esc="'b'"/>
+             <option value="c" t-esc="'c'"/>
+          </select>
+        </div>
+      `;
+      state: any;
+      options: any;
+      setup() {
+        this.state = useState({ model: "b" });
+        this.options = ["a", "b", "c"];
+      }
+    }
+
+    await mount(Test, fixture);
+    expect(fixture.querySelector("select")!.value).toEqual("b");
+  });
+
+  test("t-model with dynamic values on select options", async () => {
+    class Test extends Component {
+      static template = xml`
+        <div>
+          <select t-model="state.model">
+             <option t-att-value="options[0]" t-esc="options[0]"/>
+             <option t-att-value="options[1]" t-esc="options[1]"/>
+          </select>
+        </div>
+      `;
+      state: any;
+      options: any;
+      setup() {
+        this.state = useState({ model: "b" });
+        this.options = ["a", "b"];
+      }
+    }
+
+    await mount(Test, fixture);
+    expect(fixture.querySelector("select")!.value).toEqual("b");
+  });
+
+  test("t-model with dynamic values on select options -- 2", async () => {
+    class Test extends Component {
+      static template = xml`
+        <div>
+          <select t-model="state.model">
+             <option t-att-value="options[0]" t-esc="options[0]"/>
+             <option t-attf-value="{{ options[1] }}" t-esc="options[1]"/>
+          </select>
+        </div>
+      `;
+      state: any;
+      options: any;
+      setup() {
+        this.state = useState({ model: "b" });
+        this.options = ["a", "b"];
+      }
+    }
+
+    await mount(Test, fixture);
+    expect(fixture.querySelector("select")!.value).toEqual("b");
+  });
+
+  test("t-model with dynamic values on select options -- 3", async () => {
+    class Test extends Component {
+      static template = xml`
+        <div>
+          <select t-model="state.model">
+             <option t-att-value="options[0]" t-esc="options[0]"/>
+             <option value="b" t-esc="options[1]"/>
+          </select>
+        </div>
+      `;
+      state: any;
+      options: any;
+      setup() {
+        this.state = useState({ model: "b" });
+        this.options = ["a", "b"];
+      }
+    }
+
+    await mount(Test, fixture);
+    expect(fixture.querySelector("select")!.value).toEqual("b");
+  });
+
+  test("t-model with dynamic values on select options in foreach", async () => {
+    class Test extends Component {
+      static template = xml`
+        <div>
+          <select t-model="state.model">
+            <t t-foreach="options" t-as="v" t-key="v">
+                <option t-att-value="v" t-esc="v"/>
+            </t>
+          </select>
+          </div>
+      `;
+      state: any;
+      options: any;
+      setup() {
+        this.state = useState({ model: "b" });
+        this.options = ["a", "b", "c"];
+      }
+    }
+
+    await mount(Test, fixture);
+    expect(fixture.querySelector("select")!.value).toEqual("b");
+  });
 });

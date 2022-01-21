@@ -1133,6 +1133,81 @@ describe("qweb parser", () => {
   });
 
   // ---------------------------------------------------------------------------
+  // t-model
+  // ---------------------------------------------------------------------------
+
+  test("t-model select", async () => {
+    expect(parse(`<select t-model="state.model"><option value="1" /></select>`)).toEqual({
+      type: 2,
+      tag: "select",
+      dynamicTag: null,
+      attrs: {},
+      on: {},
+      ref: null,
+      content: [
+        {
+          type: 2,
+          tag: "option",
+          dynamicTag: null,
+          attrs: { value: "1" },
+          on: {},
+          ref: null,
+          content: [],
+          model: null,
+          ns: null,
+        },
+      ],
+      model: {
+        baseExpr: "state",
+        expr: "'model'",
+        targetAttr: "value",
+        specialInitTargetAttr: null,
+        eventType: "change",
+        shouldTrim: false,
+        shouldNumberize: false,
+      },
+      ns: null,
+    });
+  });
+
+  test("t-model select dynamic options", async () => {
+    expect(
+      parse(`<select t-model="state.model"><option t-att-value="valueVar" /></select>`)
+    ).toEqual({
+      type: 2,
+      tag: "select",
+      dynamicTag: null,
+      attrs: {},
+      on: {},
+      ref: null,
+      content: [
+        {
+          type: 2,
+          tag: "option",
+          dynamicTag: null,
+          attrs: { "t-att-value": "valueVar" },
+          on: {},
+          ref: null,
+          content: [],
+          model: null,
+          ns: null,
+        },
+      ],
+      model: {
+        baseExpr: "state",
+        expr: "'model'",
+        targetAttr: "value",
+        specialInitTargetAttr: null,
+        eventType: "change",
+        shouldTrim: false,
+        shouldNumberize: false,
+        hasDynamicChildren: true,
+      },
+      ns: null,
+    });
+  });
+
+  // ---------------------------------------------------------------------------
   // t-component
   // ---------------------------------------------------------------------------
 

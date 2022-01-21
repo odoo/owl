@@ -360,6 +360,123 @@ exports[`t-model directive on an textarea 1`] = `
 }"
 `;
 
+exports[`t-model directive t-model on select with static options 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><select block-attribute-0=\\"value\\" block-handler-1=\\"change\\"><option value=\\"a\\"><block-text-2/></option><option value=\\"b\\"><block-text-3/></option><option value=\\"c\\"><block-text-4/></option></select></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const bExpr1 = ctx['state'];
+    let attr1 = ctx['state']['model'];
+    let hdlr1 = [(ev) => { bExpr1['model'] = ev.target.value; }];
+    let txt1 = 'a';
+    let txt2 = 'b';
+    let txt3 = 'c';
+    return block1([attr1, hdlr1, txt1, txt2, txt3]);
+  }
+}"
+`;
+
+exports[`t-model directive t-model with dynamic values on select options -- 2 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><select block-handler-0=\\"change\\"><option block-attribute-1=\\"value\\" block-attribute-2=\\"selected\\"><block-text-3/></option><option block-attribute-4=\\"value\\" block-attribute-5=\\"selected\\"><block-text-6/></option></select></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const bExpr1 = ctx['state'];
+    let bValue1 = ctx['state']['model']
+    let hdlr1 = [(ev) => { bExpr1['model'] = ev.target.value; }];
+    let attr1 = ctx['options'][0];
+    let attr2 = bValue1 === ctx['options'][0];
+    let txt1 = ctx['options'][0];
+    let attr3 = (ctx['options'][1]);
+    let attr4 = bValue1 === (ctx['options'][1]);
+    let txt2 = ctx['options'][1];
+    return block1([hdlr1, attr1, attr2, txt1, attr3, attr4, txt2]);
+  }
+}"
+`;
+
+exports[`t-model directive t-model with dynamic values on select options -- 3 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><select block-handler-0=\\"change\\"><option block-attribute-1=\\"value\\" block-attribute-2=\\"selected\\"><block-text-3/></option><option value=\\"b\\" block-attribute-4=\\"selected\\"><block-text-5/></option></select></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const bExpr1 = ctx['state'];
+    let bValue1 = ctx['state']['model']
+    let hdlr1 = [(ev) => { bExpr1['model'] = ev.target.value; }];
+    let attr1 = ctx['options'][0];
+    let attr2 = bValue1 === ctx['options'][0];
+    let txt1 = ctx['options'][0];
+    let attr3 = bValue1 === \\"b\\";
+    let txt2 = ctx['options'][1];
+    return block1([hdlr1, attr1, attr2, txt1, attr3, txt2]);
+  }
+}"
+`;
+
+exports[`t-model directive t-model with dynamic values on select options 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><select block-handler-0=\\"change\\"><option block-attribute-1=\\"value\\" block-attribute-2=\\"selected\\"><block-text-3/></option><option block-attribute-4=\\"value\\" block-attribute-5=\\"selected\\"><block-text-6/></option></select></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const bExpr1 = ctx['state'];
+    let bValue1 = ctx['state']['model']
+    let hdlr1 = [(ev) => { bExpr1['model'] = ev.target.value; }];
+    let attr1 = ctx['options'][0];
+    let attr2 = bValue1 === ctx['options'][0];
+    let txt1 = ctx['options'][0];
+    let attr3 = ctx['options'][1];
+    let attr4 = bValue1 === ctx['options'][1];
+    let txt2 = ctx['options'][1];
+    return block1([hdlr1, attr1, attr2, txt1, attr3, attr4, txt2]);
+  }
+}"
+`;
+
+exports[`t-model directive t-model with dynamic values on select options in foreach 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { toNumber, prepareList, withKey } = helpers;
+  
+  let block1 = createBlock(\`<div><select block-handler-0=\\"change\\"><block-child-0/></select></div>\`);
+  let block3 = createBlock(\`<option block-attribute-0=\\"value\\" block-attribute-1=\\"selected\\"><block-text-2/></option>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const bExpr1 = ctx['state'];
+    let bValue1 = ctx['state']['model']
+    let hdlr1 = [(ev) => { bExpr1['model'] = ev.target.value; }];
+    ctx = Object.create(ctx);
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['options']);
+    for (let i1 = 0; i1 < l_block2; i1++) {
+      ctx[\`v\`] = v_block2[i1];
+      let key1 = ctx['v'];
+      let attr1 = ctx['v'];
+      let attr2 = bValue1 === ctx['v'];
+      let txt1 = ctx['v'];
+      c_block2[i1] = withKey(block3([attr1, attr2, txt1]), key1);
+    }
+    let b2 = list(c_block2);
+    return block1([hdlr1], [b2]);
+  }
+}"
+`;
+
 exports[`t-model directive two inputs in a div alternating with a t-if 1`] = `
 "function anonymous(bdom, helpers
 ) {

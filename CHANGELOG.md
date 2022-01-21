@@ -659,16 +659,44 @@ Also, this can easily be done in userspace, by mounting a component in a div.  F
 export async function renderToString(template, context) {
   class C extends Component {
     static template = template;
+    setup () {
+        Object.assign(this, context);
+    }
   }
   const div = document.createElement('div');
   document.body.appendChild(div);
-  const component = await mount(C, div);
+  const app = new App(C);
+  await app.mount(div);
   const result = div.innerHTML;
   app.destroy();
   div.remove();
   return result;
 }
 ```
+
+The function above works for most cases, but is asynchronous.  An alternative
+function could look like this:
+
+```js
+const { App, blockDom } = owl;
+const app = new App(Component); // act as a template repository
+
+function renderToString(template, context = {}) {
+  app.addTemplate(template, template, { allowDuplicate: true });
+  const templateFn = app.getTemplate(template);
+  const bdom = templateFn(context, {});
+  const div = document.createElement('div')
+  blockDom.mount(bdom, div);
+  return div.innerHTML;
+}
+```
+
+This is a synchronous function, so it will not work with components, but it should
+be useful for most simple templates.
+
+Also note that these two examples do not translate their templates. To do that,
+they need to be modified to pass the proper translate function to the `App`
+configuration.
 
 ### 33. Portal are now defined with `t-portal`
 

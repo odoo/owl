@@ -5,6 +5,8 @@
 - [Overview](#overview)
 - [`useState`](#usestate)
 - [`reactive`](#reactive)
+- [`markRaw`](#markraw)
+- [`toRaw`](#toraw)
 
 ## Overview
 
@@ -78,3 +80,40 @@ obj2.b = 3; // log 'observer1' and 'observer2'
 
 Obviously, one can use `reactive` on the result of a `useState` if wanted, this
 is the proper way to watch for some state changes.
+
+## `markRaw`
+
+Marks an object so that it is ignored by the reactivity system. This function returns its argument.
+
+```js
+const someObject = markRaw(...);
+const state = useState({
+  a: 1,
+  obj: someObject
+});
+// here, state.obj === someObject
+```
+
+This is useful in some rare cases. For example, some complex and large object such
+that going through the reactivity system may cause a non trivial performance slowdown.
+
+However, use this function with caution: this is an escape hatch from the reactivity
+system, and as such, using it may cause subtle and unintended issues!
+
+## `toRaw`
+
+Given a reactive object, this function returns the underlying, non-reactive,
+corresponding object.
+
+```js
+// in setup
+const state = useState({ value: 1 });
+
+// later:
+const rawState = toRaw(this.state);
+rawState.value = 3; // will NOT be picked up by the reactivity system!!!
+```
+
+Here again, this is useful in some situations where we want to explicitely bypass
+Owl, but using this function means that the responsability of coordinating
+state update is given to the user code, instead of Owl. Subtle bugs may arise!

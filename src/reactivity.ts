@@ -1,4 +1,4 @@
-import { onWillUnmount } from "./component/lifecycle_hooks";
+import { onWillDestroy } from "./component/lifecycle_hooks";
 import { ComponentNode, getCurrent } from "./component/component_node";
 import { batched, Callback } from "./utils";
 
@@ -245,7 +245,7 @@ export function useState<T extends object>(state: T): Reactive<T> | NonReactive<
       node,
       batched(() => node.render())
     );
-    onWillUnmount(() => clearReactivesForCallback(render));
+    onWillDestroy(() => clearReactivesForCallback(render));
   }
   const render = batchedRenderFunctions.get(node)!;
   const reactiveState = reactive(state, render);

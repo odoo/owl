@@ -43,7 +43,7 @@ export { status } from "./component/status";
 export { Memo } from "./memo";
 export { xml } from "./app/template_set";
 export { useState, reactive, markRaw, toRaw } from "./reactivity";
-export { useEffect, useEnv, useExternalListener, useRef, useSubEnv } from "./hooks";
+export { useEffect, useEnv, useExternalListener, useRef, useChildSubEnv, useSubEnv } from "./hooks";
 export { EventBus, whenReady, loadFile, markup } from "./utils";
 export {
   onWillStart,

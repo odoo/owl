@@ -8,7 +8,7 @@
 - [Other hooks](#other-hooks)
   - [`useState`](#usestate)
   - [`useRef`](#useref)
-  - [`useSubEnv`](#usesubenv)
+  - [`useSubEnv` and `useChildSubEnv`](#usesubenv-and-usechildsubenv)
   - [`useExternalListener`](#useexternallistener)
   - [`useComponent`](#usecomponent)
   - [`useEnv`](#useenv)
@@ -152,14 +152,14 @@ this.ref2 = useRef("component_2");
 References are only guaranteed to be active while the parent component is mounted.
 If this is not the case, accessing `el` or `comp` on it will return `null`.
 
-### `useSubEnv`
+### `useSubEnv` and `useChildSubEnv`
 
 The environment is sometimes useful to share some common information between
 all components. But sometimes, we want to _scope_ that knowledge to a subtree.
 
 For example, if we have a form view component, maybe we would like to make some
 `model` object available to all sub components, but not to the whole application.
-This is where the `useSubEnv` hook may be useful: it lets a component add some
+This is where the `useChildSubEnv` hook may be useful: it lets a component add some
 information to the environment in a way that only its children
 can access it:
 
@@ -167,15 +167,26 @@ can access it:
 class FormComponent extends Component {
   setup() {
     const model = makeModel();
+    // model will be available on this.env for this component and all children
     useSubEnv({ model });
+    // someKey will be available on this.env for all children
+    useChildSubEnv({ someKey: "value" });
   }
 }
 ```
 
-The `useSubEnv` takes one argument: an object which contains some key/value that
-will be added to the parent environment. Note that it will extend, not replace
-the parent environment. And of course, the parent environment will not be
-affected.
+The `useSubEnv` and `useChildSubEnv` hooks take one argument: an object which
+contains some key/value that will be added to the current environment. These hooks
+will create a new env object with the new information:
+
+- `useSubEnv` will assign this new `env` to itself and to all children components
+- `useChildSubEnv` will only assign this new `env` to all children components.
+
+As usual in Owl, [environments](environment.md) created with these two hooks are
+frozen, to prevent unwanted modifications.
+
+Note that both these hooks can be called an arbitrary number of times. The `env`
+will then be updated accordingly.
 
 ### `useExternalListener`
 

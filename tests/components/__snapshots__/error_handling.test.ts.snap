@@ -6,8 +6,8 @@ exports[`basics display a nice error if it cannot find component (in dev mode) 1
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    const props1 = {}
-    helpers.validateProps(\`SomeMispelledComponent\`, props1, ctx)
+    const props1 = {};
+    helpers.validateProps(\`SomeMispelledComponent\`, props1, ctx);
     return component(\`SomeMispelledComponent\`, props1, key + \`__1\`, node, ctx);
   }
 }"

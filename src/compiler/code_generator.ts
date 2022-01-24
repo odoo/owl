@@ -1111,7 +1111,7 @@ export class CodeGenerator {
     let propVar: string;
     if ((slotDef && (ast.dynamicProps || hasSlotsProp)) || this.dev) {
       propVar = this.generateId("props");
-      this.addLine(`const ${propVar!} = ${propString}`);
+      this.addLine(`const ${propVar!} = ${propString};`);
       propString = propVar!;
     }
 
@@ -1130,7 +1130,7 @@ export class CodeGenerator {
     }
 
     if (this.dev) {
-      this.addLine(`helpers.validateProps(${expr}, ${propVar!}, ctx)`);
+      this.addLine(`helpers.validateProps(${expr}, ${propVar!}, ctx);`);
     }
 
     if (block && (ctx.forceNewBlock === false || ctx.tKeyExpr)) {

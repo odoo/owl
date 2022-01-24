@@ -39,6 +39,11 @@ export const validateProps = function (name: string | typeof Component, props: a
     typeof name !== "string" ? name : parent.constructor.components[name]
   ) as typeof Component;
 
+  if (!ComponentClass) {
+    // this is an error, wrong component. We silently return here instead so the
+    // error is triggered by the usual path ('component' function)
+    return;
+  }
   applyDefaultProps(props, ComponentClass);
 
   let propsDef = getPropDescription(ComponentClass.props);

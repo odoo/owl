@@ -36,7 +36,8 @@ Other hooks:
 - [`useEnv`](reference/hooks.md#useenv): return a reference to the current env
 - [`useExternalListener`](reference/hooks.md#useexternallistener): add a listener outside of a component DOM
 - [`useRef`](reference/hooks.md#useref): get an object representing a reference (`t-ref`)
-- [`useSubEnv`](reference/hooks.md#usesubenv): extend the current env with additional information for child components
+- [`useChildSubEnv`](reference/hooks.md#usesubenv-and-usechildsubenv): extend the current env with additional information (for child components)
+- [`useSubEnv`](reference/hooks.md#usesubenv-and-usechildsubenv): extend the current env with additional information (for current component and child components)
 
 Utility/helpers:
 

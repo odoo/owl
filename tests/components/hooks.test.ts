@@ -14,6 +14,7 @@ import {
   useExternalListener,
   useRef,
   useState,
+  useChildSubEnv,
   useSubEnv,
   xml,
 } from "../../src/index";
@@ -180,7 +181,7 @@ describe("hooks", () => {
     expect(fixture.innerHTML).toBe("<div>1</div>");
   });
 
-  test("use sub env does not pollute user env", async () => {
+  test("useSubEnv modifies user env", async () => {
     class Test extends Component {
       static template = xml`<div><t t-esc="env.val"/></div>`;
       setup() {
@@ -190,11 +191,25 @@ describe("hooks", () => {
     const env = { val: 3 };
     const component = await mount(Test, fixture, { env });
     expect(fixture.innerHTML).toBe("<div>3</div>");
+    expect(component.env).toHaveProperty("val2");
+    expect(component.env).toHaveProperty("val");
+  });
+
+  test("useChildSubEnv does not pollute user env", async () => {
+    class Test extends Component {
+      static template = xml`<div><t t-esc="env.val"/></div>`;
+      setup() {
+        useChildSubEnv({ val2: 1 });
+      }
+    }
+    const env = { val: 3 };
+    const component = await mount(Test, fixture, { env });
+    expect(fixture.innerHTML).toBe("<div>3</div>");
     expect(component.env).not.toHaveProperty("val2");
     expect(component.env).toHaveProperty("val");
   });
 
-  test("use sub env supports arbitrary descriptor", async () => {
+  test("useSubEnv supports arbitrary descriptor", async () => {
     let someVal = "maggot";
     let someVal2 = "brain";
 
@@ -207,6 +222,40 @@ describe("hooks", () => {
       static components = { Child };
       setup() {
         useSubEnv({
+          get someVal2() {
+            return someVal2;
+          },
+        });
+      }
+    }
+
+    const env = {
+      get someVal() {
+        return someVal;
+      },
+    };
+    const component = await mount(Test, fixture, { env });
+    expect(fixture.innerHTML).toBe("<div>maggot brain</div>");
+    someVal = "brain";
+    someVal2 = "maggot";
+    component.render();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>brain maggot</div>");
+  });
+
+  test("useChildSubEnv supports arbitrary descriptor", async () => {
+    let someVal = "maggot";
+    let someVal2 = "brain";
+
+    class Child extends Component {
+      static template = xml`<div><t t-esc="env.someVal" /> <t t-esc="env.someVal2" /></div>`;
+    }
+
+    class Test extends Component {
+      static template = xml`<Child />`;
+      static components = { Child };
+      setup() {
+        useChildSubEnv({
           get someVal2() {
             return someVal2;
           },
@@ -239,7 +288,7 @@ describe("hooks", () => {
     await mount(Test, fixture);
   });
 
-  test("parent and child env", async () => {
+  test("parent and child env (with useSubEnv)", async () => {
     class Child extends Component {
       static template = xml`<div><t t-esc="env.val"/></div>`;
     }
@@ -249,6 +298,23 @@ describe("hooks", () => {
       static components = { Child };
       setup() {
         useSubEnv({ val: 5 });
+      }
+    }
+    const env = { val: 3 };
+    await mount(Parent, fixture, { env });
+    expect(fixture.innerHTML).toBe("5<div>5</div>");
+  });
+
+  test("parent and child env (with useChildSubEnv)", async () => {
+    class Child extends Component {
+      static template = xml`<div><t t-esc="env.val"/></div>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`<t t-esc="env.val"/><Child/>`;
+      static components = { Child };
+      setup() {
+        useChildSubEnv({ val: 5 });
       }
     }
     const env = { val: 3 };

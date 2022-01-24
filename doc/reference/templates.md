@@ -674,7 +674,9 @@ This `RootNode` component will then display a live SVG representation of the
 graph described by the `graph` property. Note that there is a recursive structure
 here: the `Node` component uses itself as a subcomponent.
 
-Note that since SVG needs to be handled in a specific way (its namespace needs
-to be properly set), there is a small constraint for Owl components: if an owl
-component is supposed to be a part of an svg graph, then its root node needs to
-be a `g` tag, so Owl can properly set the namespace.
+**Important note:** Owl needs to properly set the namespace for each svg elements.
+Since Owl compile each template separately, it is not able to determine easily
+if a template is supposed to be included in a svg namespace or not. Therefore,
+Owl depends on a heuristic: if a tag is either `svg`, `g` or `path`, then it will
+be considered as svg. In practice, this means that each component or each sub
+templates (included with `t-call`) should have one of these tag as root tag.

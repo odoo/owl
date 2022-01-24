@@ -285,6 +285,8 @@ function parseTDebugLog(node: Element, ctx: ParsingContext): AST | null {
 const hasDotAtTheEnd = /\.[\w_]+\s*$/;
 const hasBracketsAtTheEnd = /\[[^\[]+\]\s*$/;
 
+const ROOT_SVG_TAGS = new Set(["svg", "g", "path"]);
+
 function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
   const { tagName } = node;
   const dynamicTag = node.getAttribute("t-tag");
@@ -296,7 +298,7 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
   if (tagName === "pre") {
     ctx.inPreTag = true;
   }
-  const shouldAddSVGNS = tagName === "svg" || (tagName === "g" && !ctx.inSVG);
+  const shouldAddSVGNS = ROOT_SVG_TAGS.has(tagName) && !ctx.inSVG;
   ctx.inSVG = ctx.inSVG || shouldAddSVGNS;
   const ns = shouldAddSVGNS ? "http://www.w3.org/2000/svg" : null;
   const ref = node.getAttribute("t-ref");

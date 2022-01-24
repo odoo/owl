@@ -73,6 +73,8 @@ All changes are documented here in no particular order.
 - new `useEffect` hook ([doc](doc/reference/hooks.md#useeffect))
 - breaking: `Context` is removed ([details](#15-context-is-removed))
 - breaking: `env` is now totally empty ([details](#16-env-is-now-totally-empty))
+- breaking: `env` is now frozen ([details](#28-env-is-now-frozen))
+- new hook: `useChildSubEnv` (only applies to child components) ([details](#27-usechildsubenv-only-applies-to-child-components))
 - breaking: most exports are exported at top level ([details](#18-most-exports-are-exported-at-top-level))
 - breaking: properties are no longer set as attributes ([details](#19-properties-are-no-longer-set-as-attributes))
 - breaking: `EventBus` api changed: it is now an `EventTarget` ([details](#21-eventbus-api-changed-it-is-now-an-eventtarget))
@@ -81,8 +83,6 @@ All changes are documented here in no particular order.
 - breaking: transition system is removed ([details](#24-transition-system-is-removed))
 - breaking: no more global components or templates ([details](#25-no-more-global-components-or-templates))
 - breaking: `AsyncRoot` utility component is removed ([details](#26-asyncroot-utility-component-is-removed))
-- breaking: `useSubEnv` only applies to child components ([details](#27-usesubenv-only-applies-to-child-components))
-- breaking: `env` is now frozen ([details](#28-env-is-now-frozen))
 - breaking: `renderToString` function on qweb has been removed ([details](#32-rendertostring-on-qweb-has-been-removed))
 - breaking: `debounce` utility function has been removed ([details](#34-debounce-utility-function-has-been-removed))
 - breaking: `browser` object has been removed ([details](#39-browser-object-has-been-removed))
@@ -565,15 +565,12 @@ either a fallback when the data is not ready, or the actual component with data
 as props.  If there is no escape, and `AsyncRoot` is needed, please reach out to
 us so we can study this usecase.
 
-### 27. `useSubEnv` only applies to child components
+### 27. `useChildSubEnv` (only applies to child components)
 
-In Owl 1, a call to `useSubEnv` would define a new environment for the children
-AND the component. It now only defines an environment for the children.
-
-Rationale: This was a subtle cause for bugs: some code had to be rrun
-before the call to `useSubEnv`, otherwise it could interfere with the sub environment.
-
-Documentation: [Hooks](doc/reference/hooks.md#usesubenv)
+In Owl, a call to `useSubEnv` would define a new environment for the children
+AND the component. It is very useful, but in some cases, one only need to update
+the children component environment. This can now be done with a new hook:
+[`useChildSubEnv`](doc/reference/hooks.md#usesubenv-and-usechildsubenv)
 
 ### 28. `env` is now frozen
 

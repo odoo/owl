@@ -52,7 +52,7 @@ It is sometimes useful to add one (or more) specific keys to the environment,
 from the perspective of a specific component and its children. In that case, the
 solution presented above will not work, since it sets the global environment.
 
-There is a hook for this situation: [`useSubEnv`](hooks.md#usesubenv).
+There are two hooks for this situation: [`useSubEnv` and `useChildSubEnv`](hooks.md#usesubenv-and-usechildsubenv).
 
 ```js
 class SomeComponent extends Component {

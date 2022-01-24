@@ -32,6 +32,12 @@ export function useEnv<E extends Env>(): E {
   return getCurrent()!.component.env as any;
 }
 
+function extendEnv(currentEnv: Object, extension: Object): Object {
+  const env = Object.create(currentEnv);
+  const descrs = Object.getOwnPropertyDescriptors(extension);
+  return Object.freeze(Object.defineProperties(env, descrs));
+}
+
 /**
  * This hook is a simple way to let components use a sub environment.  Note that
  * like for all hooks, it is important that this is only called in the
@@ -39,11 +45,15 @@ export function useEnv<E extends Env>(): E {
  */
 export function useSubEnv(envExtension: Env) {
   const node = getCurrent()!;
-  const env = Object.create(node.childEnv);
-  const descrs = Object.getOwnPropertyDescriptors(envExtension);
-  node.childEnv = Object.freeze(Object.defineProperties(env, descrs));
+  const newEnv = extendEnv(node.component.env as any, envExtension);
+  node.component.env = extendEnv(node.component.env as any, envExtension);
+  node.childEnv = newEnv;
 }
 
+export function useChildSubEnv(envExtension: Env) {
+  const node = getCurrent()!;
+  node.childEnv = extendEnv(node.childEnv, envExtension);
+}
 // -----------------------------------------------------------------------------
 // useEffect
 // -----------------------------------------------------------------------------

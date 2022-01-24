@@ -81,6 +81,29 @@ describe("basics", () => {
     expect(mockConsoleWarn).toBeCalledTimes(1);
   });
 
+  test("display a nice error if it cannot find component (in dev mode)", async () => {
+    const info = console.info;
+    console.info = jest.fn(() => {}); // dev mode message
+    class SomeComponent extends Component {}
+    class Parent extends Component {
+      static template = xml`<SomeMispelledComponent />`;
+      static components = { SomeComponent };
+    }
+    let error: Error;
+    try {
+      await mount(Parent, fixture, { dev: true });
+    } catch (e) {
+      error = e as Error;
+    }
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe('Cannot find the definition of component "SomeMispelledComponent"');
+    expect(console.error).toBeCalledTimes(0);
+    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(console.info).toBeCalledTimes(1);
+    console.info = info;
+  });
+
   test("simple catchError", async () => {
     class Boom extends Component {
       static template = xml`<div t-esc="a.b.c"/>`;

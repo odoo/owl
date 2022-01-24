@@ -1,5 +1,7 @@
 import { renderToString, renderToBdom, snapshotEverything, makeTestFixture } from "../helpers";
 import { mount } from "../../src/blockdom";
+import { mount as mountComponent, Component } from "../../src/index";
+
 // NB: check the snapshots to see where the SVG namespaces are added
 snapshotEverything();
 
@@ -46,6 +48,26 @@ describe("properly support svg", () => {
     const fixture = makeTestFixture();
 
     mount(bdom, fixture);
+    const elems = fixture.querySelectorAll("svg, path");
+    expect(elems.length).toEqual(2);
+    for (const el of elems) {
+      expect(el.namespaceURI).toBe("http://www.w3.org/2000/svg");
+    }
+  });
+
+  test("svg namespace added to sub templates if root tag is path", async () => {
+    const templates = `<t>
+      <t t-name="svg"><svg><t t-call="path" /></svg></t>
+      <t t-name="path"><path /></t>
+    </t>
+    `;
+    const fixture = makeTestFixture();
+
+    class Svg extends Component {
+      static template = "svg";
+    }
+
+    await mountComponent(Svg, fixture, { templates });
     const elems = fixture.querySelectorAll("svg, path");
     expect(elems.length).toEqual(2);
     for (const el of elems) {

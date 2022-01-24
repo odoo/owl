@@ -215,13 +215,13 @@ For other kind of advanced use cases, the content of a slot may depends on some
 specific information specific to the generic component. This is the opposite
 of the slot params.
 
-To solve this kind of problems, one can use the `t-set-scope` directive along
+To solve this kind of problems, one can use the `t-slot-scope` directive along
 with the `t-set-slot`. This defines the name of a variable that can access
 everything given by the child component:
 
 ```xml
 <div>
-    <t t-set-slot="foo" t-set-scope="scope">
+    <t t-set-slot="foo" t-slot-scope="scope">
         content
         <t t-esc="scope.bool"/>
         <t t-esc="scope.num"/>

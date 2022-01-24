@@ -1217,6 +1217,20 @@ exports[`t-out in components can render list of t-out  1`] = `
 }"
 `;
 
+exports[`t-out in components can switch the contents of two t-out repeatedly 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = safeOutput(ctx['state'].a);
+    let b3 = safeOutput(ctx['state'].b);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
 exports[`t-out in components update properly on state changes 1`] = `
 "function anonymous(bdom, helpers
 ) {

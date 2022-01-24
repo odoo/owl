@@ -61,6 +61,7 @@ class VHtml {
       // remove current content
       this.remove();
       this.content = content;
+      this.html = other.html;
     }
   }
 

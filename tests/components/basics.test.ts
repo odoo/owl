@@ -1006,4 +1006,31 @@ describe("t-out in components", () => {
       "<div>&lt;b&gt;one&lt;/b&gt;<b>one</b>&lt;b&gt;two&lt;/b&gt;<b>two</b>&lt;b&gt;tree&lt;/b&gt;<b>tree</b></div>"
     );
   });
+
+  test("can switch the contents of two t-out repeatedly", async () => {
+    class Test extends Component {
+      static template = xml`
+        <t t-out="state.a"/>
+        <t t-out="state.b"/>
+      `;
+      state = useState({
+        a: markup("<div>1</div>"),
+        b: markup("<div>2</div>"),
+      });
+
+      reverse() {
+        const { state } = this;
+        [state.a, state.b] = [state.b, state.a];
+      }
+    }
+
+    const comp = await mount(Test, fixture);
+    expect(fixture.innerHTML).toBe("<div>1</div><div>2</div>");
+    comp.reverse();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>2</div><div>1</div>");
+    comp.reverse();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>1</div><div>2</div>");
+  });
 });

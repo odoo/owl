@@ -524,10 +524,10 @@ export class CodeGenerator {
 
   compileTDomNode(ast: ASTDomNode, ctx: Context) {
     let { block, forceNewBlock } = ctx;
-    const isNewBlock = !block || forceNewBlock || ast.dynamicTag !== null;
+    const isNewBlock = !block || forceNewBlock || ast.dynamicTag !== null || ast.ns;
     let codeIdx = this.target.code.length;
     if (isNewBlock) {
-      if ((ast.dynamicTag || ctx.tKeyExpr) && ctx.block) {
+      if ((ast.dynamicTag || ctx.tKeyExpr || ast.ns) && ctx.block) {
         this.insertAnchor(ctx.block!);
       }
       block = this.createBlock(block, "block", ctx);

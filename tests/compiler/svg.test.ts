@@ -1,6 +1,6 @@
 import { renderToString, renderToBdom, snapshotEverything, makeTestFixture } from "../helpers";
 import { mount } from "../../src/blockdom";
-import { mount as mountComponent, Component } from "../../src/index";
+import { mount as mountComponent, Component, xml } from "../../src/index";
 
 // NB: check the snapshots to see where the SVG namespaces are added
 snapshotEverything();
@@ -70,6 +70,46 @@ describe("properly support svg", () => {
     await mountComponent(Svg, fixture, { templates });
     const elems = fixture.querySelectorAll("svg, path");
     expect(elems.length).toEqual(2);
+    for (const el of elems) {
+      expect(el.namespaceURI).toBe("http://www.w3.org/2000/svg");
+    }
+  });
+
+  test("svg creates new block if it is within html", async () => {
+    class Test extends Component {
+      static template = xml`
+        <div>
+          <svg>
+            <polygon fill="#000000" points="0 0 4 4 8 0" transform="translate(5 7)"/>
+          </svg>
+        </div>
+      `;
+    }
+    const fixture = makeTestFixture();
+    await mountComponent(Test, fixture);
+    const elems = fixture.querySelectorAll("svg, polygon");
+    expect(elems.length).toEqual(2);
+    for (const el of elems) {
+      expect(el.namespaceURI).toBe("http://www.w3.org/2000/svg");
+    }
+  });
+
+  test("svg creates new block if it is within html -- 2", async () => {
+    class Test extends Component {
+      static template = xml`
+        <div>
+          <svg>
+            <polygon fill="#000000" points="0 0 4 4 8 0" transform="translate(5 7)"/>
+            <path t-if="hasPath" />
+          </svg>
+        </div>
+      `;
+      hasPath = true;
+    }
+    const fixture = makeTestFixture();
+    await mountComponent(Test, fixture);
+    const elems = fixture.querySelectorAll("svg, polygon, path");
+    expect(elems.length).toEqual(3);
     for (const el of elems) {
       expect(el.namespaceURI).toBe("http://www.w3.org/2000/svg");
     }

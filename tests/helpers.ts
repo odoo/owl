@@ -123,7 +123,7 @@ export function snapshotEverything() {
   });
 
   const originalCompileTemplate = TemplateSet.prototype._compileTemplate;
-  TemplateSet.prototype._compileTemplate = function (name: string, template: string | Node) {
+  TemplateSet.prototype._compileTemplate = function (name: string, template: string | Element) {
     const fn = originalCompileTemplate.call(this, "", template);
     if (!globalTemplateNames.has(name)) {
       expect(fn.toString()).toMatchSnapshot();

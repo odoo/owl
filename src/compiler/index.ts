@@ -9,7 +9,10 @@ export type TemplateFunction = (blocks: any, utils: any) => Template;
 interface CompileOptions extends Config {
   name?: string;
 }
-export function compile(template: string | Node, options: CompileOptions = {}): TemplateFunction {
+export function compile(
+  template: string | Element,
+  options: CompileOptions = {}
+): TemplateFunction {
   // parsing
   const ast = parse(template);
 

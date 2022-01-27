@@ -1,5 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`loading templates addTemplates does not modify its xml document in place 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let txt1 = ctx['value'];
+    return block1([txt1]);
+  }
+}"
+`;
+
 exports[`loading templates can initialize qweb with a string 1`] = `
 "function anonymous(bdom, helpers
 ) {

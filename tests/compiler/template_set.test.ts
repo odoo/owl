@@ -24,6 +24,17 @@ describe("loading templates", () => {
     expect(context.renderToString("hey")).toBe("<div>jupiler</div>");
   });
 
+  test("addTemplates does not modify its xml document in place", () => {
+    const data = `<?xml version="1.0" encoding="UTF-8"?>
+      <templates id="template" xml:space="preserve"><div t-name="hey"><t t-esc="value"/></div></templates>`;
+    const xml = new DOMParser().parseFromString(data, "text/xml");
+    const context = new TestContext();
+    expect(xml.firstElementChild!.innerHTML).toBe(`<div t-name="hey"><t t-esc="value"/></div>`);
+    context.addTemplates(xml);
+    expect(context.renderToString("hey", { value: 123 })).toBe("<div>123</div>");
+    expect(xml.firstElementChild!.innerHTML).toBe(`<div t-name="hey"><t t-esc="value"/></div>`);
+  });
+
   test("can load a few templates from a xml string", () => {
     const data = `<?xml version="1.0" encoding="UTF-8"?>
       <templates id="template" xml:space="preserve">

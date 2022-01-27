@@ -53,7 +53,7 @@ describe("t-props", () => {
   });
 
   test("basic use", async () => {
-    expect.assertions(5);
+    expect.assertions(4);
 
     let props = { a: 1, b: 2 };
 
@@ -65,7 +65,6 @@ describe("t-props", () => {
         `;
       setup() {
         expect(this.props).toEqual({ a: 1, b: 2 });
-        expect(this.props).toBe(props);
       }
     }
     class Parent extends Component {
@@ -104,5 +103,24 @@ describe("t-props", () => {
     }
 
     await mount(Parent, fixture);
+  });
+
+  test("child receives a copy of the t-props object, not the original", async () => {
+    class Child extends Component {
+      static template = xml`<div/>`;
+      setup() {
+        expect(this.props).toEqual({ a: 1, b: 2 });
+        this.props.d = 5;
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<Child t-props="childProps"/>`;
+      static components = { Child };
+
+      childProps = { a: 1, b: 2 };
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(parent.childProps).not.toHaveProperty("d");
   });
 });

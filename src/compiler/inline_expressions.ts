@@ -330,6 +330,8 @@ export function compileExprToArray(expr: string): Token[] {
   // This assumes the expression has only one scope (incorrect but "good enough for now")
   for (const token of tokens) {
     if (token.type === "SYMBOL" && localVars.has(token.value)) {
+      token.originalValue = token.value;
+      token.value = `_${token.value}`;
       token.isLocal = true;
     }
   }

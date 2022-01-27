@@ -1,6 +1,6 @@
 import type { App, Env } from "../app/app";
 import { BDom, VNode } from "../blockdom";
-import { Component } from "./component";
+import { Component, ComponentConstructor } from "./component";
 import {
   Fiber,
   makeChildFiber,
@@ -74,13 +74,11 @@ export function component(
 
 type LifecycleHook = Function;
 
-export class ComponentNode<T extends typeof Component = typeof Component>
-  implements VNode<ComponentNode>
-{
+export class ComponentNode<P = any, E = any> implements VNode<ComponentNode<P, E>> {
   el?: HTMLElement | Text | undefined;
   app: App;
   fiber: Fiber | null = null;
-  component: InstanceType<T>;
+  component: Component<P, E>;
   bdom: BDom | null = null;
   status: STATUS = STATUS.NEW;
 
@@ -99,7 +97,7 @@ export class ComponentNode<T extends typeof Component = typeof Component>
   patched: LifecycleHook[] = [];
   willDestroy: LifecycleHook[] = [];
 
-  constructor(C: T, props: any, app: App, parent?: ComponentNode) {
+  constructor(C: ComponentConstructor<P, E>, props: P, app: App, parent?: ComponentNode) {
     currentNode = this;
     this.app = app;
     this.parent = parent || null;

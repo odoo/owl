@@ -1,4 +1,4 @@
-import { Component } from "../component/component";
+import { Component, ComponentConstructor } from "../component/component";
 import { ComponentNode } from "../component/component_node";
 import { MountOptions } from "../component/fibers";
 import { Scheduler } from "../component/scheduler";
@@ -11,9 +11,9 @@ export interface Env {
   [key: string]: any;
 }
 
-export interface AppConfig extends TemplateSetConfig {
-  env?: Env;
-  props?: any;
+export interface AppConfig<P, E> extends TemplateSetConfig {
+  props?: P;
+  env?: E;
 }
 
 export const DEV_MSG = `Owl is running in 'dev' mode.
@@ -21,25 +21,29 @@ export const DEV_MSG = `Owl is running in 'dev' mode.
 This is not suitable for production use.
 See https://github.com/odoo/owl/blob/master/doc/reference/config.md#mode for more information.`;
 
-export class App<T extends typeof Component = any> extends TemplateSet {
-  Root: T;
-  props: any;
-  env: Env;
+export class App<
+  T extends abstract new (...args: any) => any = any,
+  P = any,
+  E = any
+> extends TemplateSet {
+  Root: ComponentConstructor<P, E>;
+  props: P;
+  env: E;
   scheduler = new Scheduler();
-  root: ComponentNode | null = null;
+  root: ComponentNode<P, E> | null = null;
 
-  constructor(Root: T, config: AppConfig = {}) {
+  constructor(Root: ComponentConstructor<P, E>, config: AppConfig<P, E> = {}) {
     super(config);
     this.Root = Root;
     if (config.dev) {
       console.info(DEV_MSG);
     }
     const descrs = Object.getOwnPropertyDescriptors(config.env || {});
-    this.env = Object.freeze(Object.defineProperties({}, descrs));
-    this.props = config.props || {};
+    this.env = Object.freeze(Object.defineProperties({}, descrs)) as E;
+    this.props = config.props || ({} as P);
   }
 
-  mount(target: HTMLElement, options?: MountOptions): Promise<InstanceType<T>> {
+  mount(target: HTMLElement, options?: MountOptions): Promise<Component<P, E> & InstanceType<T>> {
     this.checkTarget(target);
     const node = this.makeNode(this.Root, this.props);
     const prom = this.mountNode(node, target, options);
@@ -56,7 +60,7 @@ export class App<T extends typeof Component = any> extends TemplateSet {
     }
   }
 
-  makeNode(Component: T, props: any): ComponentNode {
+  makeNode(Component: ComponentConstructor, props: any): ComponentNode {
     return new ComponentNode(Component, props, this);
   }
 
@@ -96,10 +100,10 @@ export class App<T extends typeof Component = any> extends TemplateSet {
   }
 }
 
-export async function mount<T extends typeof Component>(
-  C: T,
+export async function mount<T extends abstract new (...args: any) => any = any, P = any, E = any>(
+  C: T & ComponentConstructor<P, E>,
   target: HTMLElement,
-  config: AppConfig & MountOptions = {}
-): Promise<InstanceType<T>> {
+  config: AppConfig<P, E> & MountOptions = {}
+): Promise<Component<P, E> & InstanceType<T>> {
   return new App(C, config).mount(target, config);
 }

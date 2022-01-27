@@ -1,16 +1,16 @@
-import { Component } from "./component";
+import { ComponentConstructor } from "./component";
 
 /**
  * Apply default props (only top level).
  *
  * Note that this method does modify in place the props
  */
-export function applyDefaultProps(props: { [key: string]: any }, ComponentClass: typeof Component) {
-  const defaultProps = (ComponentClass as any).defaultProps;
+export function applyDefaultProps<P>(props: P, ComponentClass: ComponentConstructor<P>) {
+  const defaultProps = ComponentClass.defaultProps;
   if (defaultProps) {
     for (let propName in defaultProps) {
-      if (props![propName] === undefined) {
-        props![propName] = defaultProps[propName];
+      if ((props as any)[propName] === undefined) {
+        (props as any)[propName] = defaultProps[propName];
       }
     }
   }
@@ -34,10 +34,11 @@ function getPropDescription(staticProps: any) {
  * visit recursively the props and all the children to check if they are valid.
  * This is why it is only done in 'dev' mode.
  */
-export const validateProps = function (name: string | typeof Component, props: any, parent?: any) {
-  const ComponentClass = (
-    typeof name !== "string" ? name : parent.constructor.components[name]
-  ) as typeof Component;
+export function validateProps<P>(name: string | ComponentConstructor<P>, props: P, parent?: any) {
+  const ComponentClass =
+    typeof name !== "string"
+      ? name
+      : (parent.constructor.components[name] as ComponentConstructor<P> | undefined);
 
   if (!ComponentClass) {
     // this is an error, wrong component. We silently return here instead so the
@@ -53,7 +54,7 @@ export const validateProps = function (name: string | typeof Component, props: a
     if (propName === "*") {
       continue;
     }
-    if (props[propName] === undefined) {
+    if ((props as any)[propName] === undefined) {
       if (propsDef[propName] && !propsDef[propName].optional) {
         throw new Error(`Missing props '${propName}' (component '${ComponentClass.name}')`);
       } else {
@@ -62,7 +63,7 @@ export const validateProps = function (name: string | typeof Component, props: a
     }
     let isValid;
     try {
-      isValid = isValidProp(props[propName], propsDef[propName]);
+      isValid = isValidProp((props as any)[propName], propsDef[propName]);
     } catch (e) {
       (e as Error).message = `Invalid prop '${propName}' in component ${ComponentClass.name} (${
         (e as Error).message
@@ -80,7 +81,7 @@ export const validateProps = function (name: string | typeof Component, props: a
       }
     }
   }
-};
+}
 
 /**
  * Check if an invidual prop value matches its (static) prop definition

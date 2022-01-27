@@ -246,6 +246,34 @@ describe("t-model directive", () => {
     expect(fixture.innerHTML).toBe("<div><input><span>test</span></div>");
   });
 
+  test("with expression having a changing key", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+        <div>
+          <input t-model="state.something[text.key]"/>
+          <span><t t-esc="state.something[text.key]"/></span>
+        </div>
+      `;
+      state: { something: { [key: string]: string } } = useState({ something: {} });
+      text = useState({ key: "foo" });
+    }
+    const comp = await mount(SomeComponent, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><input><span></span></div>");
+
+    let input = fixture.querySelector("input")!;
+    await editInput(input, "footest");
+    expect(comp.state.something[comp.text.key]).toBe("footest");
+    expect(fixture.innerHTML).toBe("<div><input><span>footest</span></div>");
+
+    comp.text.key = "bar";
+    await nextTick();
+    input = fixture.querySelector("input")!;
+    await editInput(input, "test bar");
+    expect(comp.state.something[comp.text.key]).toBe("test bar");
+    expect(fixture.innerHTML).toBe("<div><input><span>test bar</span></div>");
+  });
+
   test(".lazy modifier", async () => {
     class SomeComponent extends Component {
       static template = xml`
@@ -358,6 +386,26 @@ describe("t-model directive", () => {
     const input = fixture.querySelectorAll("input")[1]!;
     await editInput(input, "uncle iroh");
     expect(comp.state).toEqual(["zuko", "uncle iroh"]);
+  });
+
+  test("in a t-foreach, part 3", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+        <div>
+          <t t-foreach="names" t-as="name" t-key="name_index">
+            <input t-model="state.values[name]"/>
+          </t>
+        </div>
+      `;
+      names = ["Crusher", "Data", "Riker", "Worf"];
+      state = useState({ values: {} });
+    }
+    const comp = await mount(SomeComponent, fixture);
+    expect(comp.state).toEqual({ values: {} });
+
+    const input = fixture.querySelectorAll("input")[1]!;
+    await editInput(input, "Commander");
+    expect(comp.state).toEqual({ values: { Data: "Commander" } });
   });
 
   test("two inputs in a div alternating with a t-if", async () => {

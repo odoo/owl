@@ -628,23 +628,25 @@ export class CodeGenerator {
       } = ast.model;
 
       const baseExpression = compileExpr(baseExpr);
-      const id = this.generateId();
-      this.addLine(`const bExpr${id} = ${baseExpression};`);
+      const bExprId = this.generateId("bExpr");
+      this.addLine(`const ${bExprId} = ${baseExpression};`);
 
       const expression = compileExpr(expr);
+      const exprId = this.generateId("expr");
+      this.addLine(`const ${exprId} = ${expression};`);
+
+      const fullExpression = `${bExprId}[${exprId}]`;
 
       let idx: number;
       if (specialInitTargetAttr) {
-        idx = block!.insertData(
-          `${baseExpression}[${expression}] === '${attrs[targetAttr]}'`,
-          "attr"
-        );
+        idx = block!.insertData(`${fullExpression} === '${attrs[targetAttr]}'`, "attr");
         attrs[`block-attribute-${idx}`] = specialInitTargetAttr;
       } else if (hasDynamicChildren) {
-        tModelSelectedExpr = `bValue${id}`;
-        this.addLine(`let ${tModelSelectedExpr} = ${baseExpression}[${expression}]`);
+        const bValueId = this.generateId("bValue");
+        tModelSelectedExpr = `${bValueId}`;
+        this.addLine(`let ${tModelSelectedExpr} = ${fullExpression}`);
       } else {
-        idx = block!.insertData(`${baseExpression}[${expression}]`, "attr");
+        idx = block!.insertData(`${fullExpression}`, "attr");
         attrs[`block-attribute-${idx}`] = targetAttr;
       }
       this.helpers.add("toNumber");
@@ -652,7 +654,7 @@ export class CodeGenerator {
       valueCode = shouldTrim ? `${valueCode}.trim()` : valueCode;
       valueCode = shouldNumberize ? `toNumber(${valueCode})` : valueCode;
 
-      const handler = `[(ev) => { bExpr${id}[${expression}] = ${valueCode}; }]`;
+      const handler = `[(ev) => { ${fullExpression} = ${valueCode}; }]`;
       idx = block!.insertData(handler, "hdlr");
       attrs[`block-handler-${idx}`] = eventType;
     }

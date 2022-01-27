@@ -160,6 +160,34 @@ exports[`lifecycle hooks components are unmounted destroyed if no longer in DOM 
 }"
 `;
 
+exports[`lifecycle hooks destroy new children before being mountged 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2,b3,b4;
+    b2 = text(\`before\`);
+    if (ctx['state'].flag) {
+      b3 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    }
+    b4 = text(\`after\`);
+    return multi([b2, b3, b4]);
+  }
+}"
+`;
+
+exports[`lifecycle hooks destroy new children before being mountged 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`child\`);
+  }
+}"
+`;
+
 exports[`lifecycle hooks hooks are called in proper order in widget creation/destruction 1`] = `
 "function anonymous(bdom, helpers
 ) {

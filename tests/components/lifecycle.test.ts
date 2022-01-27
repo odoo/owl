@@ -1253,4 +1253,56 @@ describe("lifecycle hooks", () => {
       "onWillDestroy",
     ]).toBeLogged();
   });
+
+  test("destroy new children before being mountged", async () => {
+    class Child extends Component {
+      static template = xml`child`;
+      setup() {
+        useLogLifecycle();
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`before<Child t-if="state.flag"/>after`;
+      static components = { Child };
+
+      state = useState({ flag: false });
+      setup() {
+        useLogLifecycle();
+        onRendered(async () => {
+          // we destroy here the app after the new child component has been
+          // created, but before this rendering has been patched to the DOM
+          if (this.state.flag) {
+            await Promise.resolve();
+            app.destroy();
+          }
+        });
+      }
+    }
+
+    const app = new App(Parent);
+    const parent = await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("beforeafter");
+    expect([
+      "Parent:setup",
+      "Parent:willStart",
+      "Parent:willRender",
+      "Parent:rendered",
+      "Parent:mounted",
+    ]).toBeLogged();
+
+    parent.state.flag = true;
+
+    await nextTick();
+    expect(fixture.innerHTML).toBe("");
+    expect([
+      "Parent:willRender",
+      "Child:setup",
+      "Child:willStart",
+      "Parent:rendered",
+      "Parent:willUnmount",
+      "Child:willDestroy",
+      "Parent:willDestroy",
+    ]).toBeLogged();
+  });
 });

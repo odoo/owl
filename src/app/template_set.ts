@@ -5,7 +5,7 @@ import { UTILS } from "./template_helpers";
 
 const bdom = { text, createBlock, list, multi, html, toggler, component, comment };
 
-export const globalTemplates: { [key: string]: string | Node } = {};
+export const globalTemplates: { [key: string]: string | Element } = {};
 
 function parseXML(xml: string): Document {
   const parser = new DOMParser();
@@ -67,7 +67,11 @@ export class TemplateSet {
     }
   }
 
-  addTemplate(name: string, template: string | Node, options: { allowDuplicate?: boolean } = {}) {
+  addTemplate(
+    name: string,
+    template: string | Element,
+    options: { allowDuplicate?: boolean } = {}
+  ) {
     if (name in this.rawTemplates && !options.allowDuplicate) {
       throw new Error(`Template ${name} already defined`);
     }
@@ -82,7 +86,6 @@ export class TemplateSet {
     xml = xml instanceof Document ? xml : parseXML(xml);
     for (const template of xml.querySelectorAll("[t-name]")) {
       const name = template.getAttribute("t-name")!;
-      template.removeAttribute("t-name");
       this.addTemplate(name, template, options);
     }
   }
@@ -106,7 +109,7 @@ export class TemplateSet {
     return this.templates[name];
   }
 
-  _compileTemplate(name: string, template: string | Node) {
+  _compileTemplate(name: string, template: string | Element) {
     return compile(template, {
       name,
       dev: this.dev,

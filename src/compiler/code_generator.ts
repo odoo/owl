@@ -1104,7 +1104,7 @@ export class CodeGenerator {
     let propString = propStr;
     if (ast.dynamicProps) {
       if (!props.length) {
-        propString = `${compileExpr(ast.dynamicProps)}`;
+        propString = `Object.assign({}, ${compileExpr(ast.dynamicProps)})`;
       } else {
         propString = `Object.assign({}, ${compileExpr(ast.dynamicProps)}, ${propStr})`;
       }

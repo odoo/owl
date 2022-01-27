@@ -30,7 +30,7 @@ exports[`misc complex template 1`] = `
       b3 = block3();
     }
     ctx = Object.create(ctx);
-    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['batch'].slot_ids.filter(slot=>slot.build_id.id&&!slot.trigger_id.manual&&(ctx['options'].trigger_display[slot.trigger_id.id])));
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['batch'].slot_ids.filter(_slot=>_slot.build_id.id&&!_slot.trigger_id.manual&&(ctx['options'].trigger_display[_slot.trigger_id.id])));
     for (let i1 = 0; i1 < l_block4; i1++) {
       ctx[\`slot\`] = v_block4[i1];
       let key1 = ctx['slot'].id;

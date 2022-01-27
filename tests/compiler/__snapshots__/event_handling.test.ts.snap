@@ -353,7 +353,7 @@ exports[`t-on t-on modifiers (native listener) t-on with prevent modifier in t-f
       let key1 = ctx['project'];
       const v1 = ctx['onEdit'];
       const v2 = ctx['project'];
-      let hdlr1 = [\\"prevent\\", ev=>v1(v2.id,ev), ctx];
+      let hdlr1 = [\\"prevent\\", _ev=>v1(v2.id,_ev), ctx];
       let txt1 = ctx['project'].name;
       c_block2[i1] = withKey(block3([hdlr1, txt1]), key1);
     }

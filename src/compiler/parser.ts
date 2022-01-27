@@ -180,24 +180,35 @@ export type AST =
 // -----------------------------------------------------------------------------
 // Parser
 // -----------------------------------------------------------------------------
+const cache: WeakMap<Element, AST> = new WeakMap();
+
+export function parse(xml: string | Element): AST {
+  if (typeof xml === "string") {
+    const elem = parseXML(`<t>${xml}</t>`).firstChild as Element;
+    return _parse(elem);
+  }
+  let ast = cache.get(xml);
+  if (!ast) {
+    // we clone here the xml to prevent modifying it in place
+    ast = _parse(xml.cloneNode(true) as Element);
+    cache.set(xml, ast);
+  }
+  return ast;
+}
+
+function _parse(xml: Element): AST {
+  normalizeXML(xml);
+  const ctx = { inPreTag: false, inSVG: false };
+  return parseNode(xml, ctx) || { type: ASTType.Text, value: "" };
+}
+
 interface ParsingContext {
   tModelInfo?: TModelInfo | null;
   inPreTag: boolean;
   inSVG: boolean;
 }
 
-export function parse(xml: string | Node): AST {
-  const node = xml instanceof Element ? xml : (parseXML(`<t>${xml}</t>`).firstChild! as Element);
-  normalizeXML(node);
-  const ctx = { inPreTag: false, inSVG: false };
-  const ast = parseNode(node, ctx);
-  if (!ast) {
-    return { type: ASTType.Text, value: "" };
-  }
-  return ast;
-}
-
-function parseNode(node: ChildNode, ctx: ParsingContext): AST | null {
+function parseNode(node: Node, ctx: ParsingContext): AST | null {
   if (!(node instanceof Element)) {
     return parseTextCommentNode(node, ctx);
   }
@@ -237,7 +248,7 @@ function parseTNode(node: Element, ctx: ParsingContext): AST | null {
 const lineBreakRE = /[\r\n]/;
 const whitespaceRE = /\s+/g;
 
-function parseTextCommentNode(node: ChildNode, ctx: ParsingContext): AST | null {
+function parseTextCommentNode(node: Node, ctx: ParsingContext): AST | null {
   if (node.nodeType === Node.TEXT_NODE) {
     let value = node.textContent || "";
     if (!ctx.inPreTag) {
@@ -360,7 +371,7 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
         ctx = Object.assign({}, ctx);
         ctx.tModelInfo = model;
       }
-    } else {
+    } else if (attr !== "t-name") {
       if (attr.startsWith("t-") && !attr.startsWith("t-att")) {
         throw new Error(`Unknown QWeb directive: '${attr}'`);
       }
@@ -801,7 +812,7 @@ function parseTPortal(node: Element, ctx: ParsingContext): AST | null {
 /**
  * Parse all the child nodes of a given node and return a list of ast elements
  */
-function parseChildren(node: Node, ctx: ParsingContext): AST[] {
+function parseChildren(node: Element, ctx: ParsingContext): AST[] {
   const children: AST[] = [];
   for (let child of node.childNodes) {
     const childAst = parseNode(child, ctx);
@@ -820,7 +831,7 @@ function parseChildren(node: Node, ctx: ParsingContext): AST[] {
  * Parse all the child nodes of a given node and return an ast if possible.
  * In the case there are multiple children, they are wrapped in a astmulti.
  */
-function parseChildNodes(node: Node, ctx: ParsingContext): AST | null {
+function parseChildNodes(node: Element, ctx: ParsingContext): AST | null {
   const children = parseChildren(node, ctx);
   switch (children.length) {
     case 0:

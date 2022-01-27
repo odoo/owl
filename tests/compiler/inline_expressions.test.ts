@@ -163,17 +163,18 @@ describe("expression evaluation", () => {
   });
 
   test("arrow functions", () => {
-    expect(compileExpr("list.map(e => e.val)")).toBe("ctx['list'].map(e=>e.val)");
-    expect(compileExpr("list.map(e => a + e)")).toBe("ctx['list'].map(e=>ctx['a']+e)");
-    expect(compileExpr("list.map((e) => e)")).toBe("ctx['list'].map((e)=>e)");
+    expect(compileExpr("list.map(e => e.val)")).toBe("ctx['list'].map(_e=>_e.val)");
+    expect(compileExpr("list.map(e => a + e)")).toBe("ctx['list'].map(_e=>ctx['a']+_e)");
+    expect(compileExpr("list.map((e) => e)")).toBe("ctx['list'].map((_e)=>_e)");
     expect(compileExpr("list.map((elem, index) => elem + index)")).toBe(
-      "ctx['list'].map((elem,index)=>elem+index)"
+      "ctx['list'].map((_elem,_index)=>_elem+_index)"
     );
-    expect(compileExpr("(ev => ev)(e)")).toBe("(ev=>ev)(ctx['e'])");
+    expect(compileExpr("(ev => ev)(e)")).toBe("(_ev=>_ev)(ctx['e'])");
+    expect(compileExpr("(v1) => myFunc(v1)")).toBe("(_v1)=>ctx['myFunc'](_v1)");
   });
   test.skip("arrow functions: not yet supported", () => {
     // e is added to localvars in inline_expression but not removed after the arrow func body
-    expect(compileExpr("(e => e)(e)")).toBe("(e=>e)(ctx['e'])");
+    expect(compileExpr("(e => e)(e)")).toBe("(_e=>_e)(ctx['e'])");
   });
 
   test("assignation", () => {

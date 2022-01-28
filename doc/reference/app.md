@@ -3,6 +3,7 @@
 ## Content
 
 - [Overview](#overview)
+- [API](#api)
 - [Configuration](#configuration)
 - [`mount` helper](#mount-helper)
 - [Loading templates](#loading-templates)
@@ -26,24 +27,10 @@ The basic workflow is: create an `App` instance configured with the root
 component, the templates, and possibly other settings. Then, we mount that
 instance somewhere in the DOM.
 
-## Configuration
+## API
 
 - **`constructor(Root[, config])`**: first argument should be a component class (not
-  an instance), and the optional second argument is a configuration object.
-
-  The `config` object is an object with some of the following keys:
-
-  - **`env (object)`**: if given, this will be the shared `env` given to each component
-  - **`props (object)`**: the props given to the root component
-  - **`dev (boolean, default=false)`**: if `true`, the application is rendered in `dev`
-    mode, which activates some additional checks (in particular, the props validation
-    code is only performed in dev mode)
-  - **`translatableAttributes (string[])`**: a list of additional attributes that should
-    be translated (see [translations](translations.md))
-  - **`translateFn (function)`**: a function that will be called by owl to translate
-    templates (see [translations](translations.md))
-  - **`templates (string | xml document)`**: all the templates that will be used by
-    the components created by the application.
+  an instance), and the optional second argument is a configuration object (see below).
 
 - **`mount(target, options)`**: first argument is an html element, and the optional
   second argument is an object with mounting options (see below). Mount the app
@@ -57,6 +44,24 @@ instance somewhere in the DOM.
     the position of the application in the target: either first or last child.
 
 - **`destroy()`**: destroys the application
+
+## Configuration
+
+The `config` object is an object with some of the following keys:
+
+- **`env (object)`**: if given, this will be the shared `env` given to each component
+- **`props (object)`**: the props given to the root component
+- **`dev (boolean, default=false)`**: if `true`, the application is rendered in `dev`
+  mode, which activates some additional checks (in particular, the props validation
+  code is only performed in dev mode)
+- **`test (boolean, default=false)`**: `test` mode is the same as `dev` mode, except
+  that Owll will not log a message to warn that Owl is in `dev` mode.
+- **`translatableAttributes (string[])`**: a list of additional attributes that should
+  be translated (see [translations](translations.md))
+- **`translateFn (function)`**: a function that will be called by owl to translate
+  templates (see [translations](translations.md))
+- **`templates (string | xml document)`**: all the templates that will be used by
+  the components created by the application.
 
 ## `mount` helper
 

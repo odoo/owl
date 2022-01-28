@@ -14,6 +14,7 @@ export interface Env {
 export interface AppConfig<P, E> extends TemplateSetConfig {
   props?: P;
   env?: E;
+  test?: boolean;
 }
 
 export const DEV_MSG = `Owl is running in 'dev' mode.
@@ -35,7 +36,10 @@ export class App<
   constructor(Root: ComponentConstructor<P, E>, config: AppConfig<P, E> = {}) {
     super(config);
     this.Root = Root;
-    if (config.dev) {
+    if (config.test) {
+      this.dev = true;
+    }
+    if (this.dev && !config.test) {
       console.info(DEV_MSG);
     }
     const descrs = Object.getOwnPropertyDescriptors(config.env || {});

@@ -4,6 +4,7 @@ import { MountOptions } from "../component/fibers";
 import { Scheduler } from "../component/scheduler";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
 import { nodeErrorHandlers } from "../component/error_handling";
+import { validateTarget } from "../utils";
 
 // reimplement dev mode stuff see last change in 0f7a8289a6fb8387c3c1af41c6664b2a8448758f
 
@@ -48,20 +49,11 @@ export class App<
   }
 
   mount(target: HTMLElement, options?: MountOptions): Promise<Component<P, E> & InstanceType<T>> {
-    this.checkTarget(target);
+    validateTarget(target);
     const node = this.makeNode(this.Root, this.props);
     const prom = this.mountNode(node, target, options);
     this.root = node;
     return prom;
-  }
-
-  checkTarget(target: HTMLElement) {
-    if (!(target instanceof HTMLElement)) {
-      throw new Error("Cannot mount component: the target is not a valid DOM element");
-    }
-    if (!document.body.contains(target)) {
-      throw new Error("Cannot mount a component on a detached dom node");
-    }
   }
 
   makeNode(Component: ComponentConstructor, props: any): ComponentNode {

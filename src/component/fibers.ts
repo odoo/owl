@@ -1,4 +1,5 @@
 import { BDom, mount } from "../blockdom";
+import { validateTarget } from "../utils";
 import type { ComponentNode } from "./component_node";
 import { fibersInError, handleError } from "./error_handling";
 import { STATUS } from "./status";
@@ -158,6 +159,7 @@ export class MountFiber extends RootFiber {
   complete() {
     let current: Fiber | undefined = this;
     try {
+      validateTarget(this.target);
       const node = this.node;
       if (node.bdom) {
         // this is a complicated situation: if we mount a fiber with an existing

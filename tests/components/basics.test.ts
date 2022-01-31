@@ -171,6 +171,27 @@ describe("basics", () => {
     expect(error!.message).toBe("Cannot mount a component on a detached dom node");
   });
 
+  test("a component cannot be mounted in a detached node (even if node is detached later)", async () => {
+    const warn = console.warn;
+    console.warn = jest.fn();
+    class Test extends Component {
+      static template = xml`<div/>`;
+    }
+    let error: Error;
+    const prom = mount(Test, fixture);
+    await Promise.resolve();
+    fixture.remove();
+    try {
+      await prom;
+    } catch (e) {
+      error = e as Error;
+    }
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe("Cannot mount a component on a detached dom node");
+    expect(console.warn).toBeCalledTimes(1);
+    console.warn = warn;
+  });
+
   test("crashes if it cannot find a template", async () => {
     class Test extends Component {
       static template = "wrongtemplate";

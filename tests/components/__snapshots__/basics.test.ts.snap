@@ -81,6 +81,19 @@ exports[`basics a class component inside a class component, no external dom 2`] 
 }"
 `;
 
+exports[`basics a component cannot be mounted in a detached node (even if node is detached later 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`basics a component inside a component 1`] = `
 "function anonymous(bdom, helpers
 ) {

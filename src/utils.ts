@@ -24,6 +24,15 @@ export function batched(callback: Callback): Callback {
   };
 }
 
+export function validateTarget(target: HTMLElement) {
+  if (!(target instanceof HTMLElement)) {
+    throw new Error("Cannot mount component: the target is not a valid DOM element");
+  }
+  if (!document.body.contains(target)) {
+    throw new Error("Cannot mount a component on a detached dom node");
+  }
+}
+
 export class EventBus extends EventTarget {
   trigger(name: string, payload?: any) {
     this.dispatchEvent(new CustomEvent(name, { detail: payload }));

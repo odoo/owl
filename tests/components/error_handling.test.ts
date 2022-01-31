@@ -374,6 +374,28 @@ describe("can catch errors", () => {
     expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
+  test("calling a hook outside setup should crash", async () => {
+    class Root extends Component {
+      static template = xml`<t t-esc="state.value"/>`;
+      state = useState({ value: 1 });
+
+      setup() {
+        onWillStart(() => {
+          this.state = useState({ value: 2 });
+        });
+      }
+    }
+    let e: any = null;
+    try {
+      await mount(Root, fixture);
+    } catch (error) {
+      e = error;
+    }
+    expect(e.message).toBe(
+      "No active component (a hook function should only be called in 'setup')"
+    );
+  });
+
   test("can catch an error in the initial call of a component render function (parent mounted)", async () => {
     class ErrorComponent extends Component {
       static template = xml`<div>hey<t t-esc="state.this.will.crash"/></div>`;

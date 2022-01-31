@@ -15,7 +15,10 @@ import { STATUS } from "./status";
 
 let currentNode: ComponentNode | null = null;
 
-export function getCurrent(): ComponentNode | null {
+export function getCurrent(): ComponentNode {
+  if (!currentNode) {
+    throw new Error("No active component (a hook function should only be called in 'setup')");
+  }
   return currentNode;
 }
 
@@ -108,6 +111,7 @@ export class ComponentNode<P = any, E = any> implements VNode<ComponentNode<P, E
     this.component = new C(props, env, this) as any;
     this.renderFn = app.getTemplate(C.template).bind(this.component, this.component, this);
     this.component.setup();
+    currentNode = null;
   }
 
   mountComponent(target: any, options?: MountOptions) {

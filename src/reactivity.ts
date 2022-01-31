@@ -239,7 +239,7 @@ const batchedRenderFunctions = new WeakMap<ComponentNode, Callback>();
  * @see reactive
  */
 export function useState<T extends object>(state: T): Reactive<T> | NonReactive<T> {
-  const node = getCurrent()!;
+  const node = getCurrent();
   if (!batchedRenderFunctions.has(node)) {
     batchedRenderFunctions.set(
       node,

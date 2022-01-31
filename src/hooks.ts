@@ -11,7 +11,7 @@ import { onMounted, onPatched, onWillUnmount } from "./component/lifecycle_hooks
  * html node or component.
  */
 export function useRef<T extends HTMLElement = HTMLElement>(name: string): { el: T | null } {
-  const node = getCurrent()!;
+  const node = getCurrent();
   const refs = node.refs;
   return {
     get el(): T | null {
@@ -29,7 +29,7 @@ export function useRef<T extends HTMLElement = HTMLElement>(name: string): { el:
  * need a reference to the env of the component calling them.
  */
 export function useEnv<E extends Env>(): E {
-  return getCurrent()!.component.env as any;
+  return getCurrent().component.env as any;
 }
 
 function extendEnv(currentEnv: Object, extension: Object): Object {
@@ -44,13 +44,13 @@ function extendEnv(currentEnv: Object, extension: Object): Object {
  * constructor method.
  */
 export function useSubEnv(envExtension: Env) {
-  const node = getCurrent()!;
+  const node = getCurrent();
   node.component.env = extendEnv(node.component.env as any, envExtension);
   useChildSubEnv(envExtension);
 }
 
 export function useChildSubEnv(envExtension: Env) {
-  const node = getCurrent()!;
+  const node = getCurrent();
   node.childEnv = extendEnv(node.childEnv, envExtension);
 }
 // -----------------------------------------------------------------------------
@@ -121,7 +121,7 @@ export function useExternalListener(
   handler: EventListener,
   eventParams?: AddEventListenerOptions
 ) {
-  const node = getCurrent()!;
+  const node = getCurrent();
   const boundHandler = handler.bind(node.component);
   onMounted(() => target.addEventListener(eventName, boundHandler, eventParams));
   onWillUnmount(() => target.removeEventListener(eventName, boundHandler, eventParams));

@@ -85,6 +85,17 @@ exports[`basics simple catchError 2`] = `
 }"
 `;
 
+exports[`can catch errors calling a hook outside setup should crash 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['state'].value);
+  }
+}"
+`;
+
 exports[`can catch errors can catch an error in a component render function 1`] = `
 "function anonymous(bdom, helpers
 ) {

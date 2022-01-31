@@ -322,6 +322,24 @@ describe("hooks", () => {
     expect(fixture.innerHTML).toBe("3<div>5</div>");
   });
 
+  test("parent and child env (with useChildSubEnv then useSubEnv)", async () => {
+    class Child extends Component {
+      static template = xml`<div t-if="env.hasParent"><t t-esc="env.val"/></div>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`<t t-esc="env.val"/><Child/>`;
+      static components = { Child };
+      setup() {
+        useChildSubEnv({ hasParent: true });
+        useSubEnv({ val: 5 });
+      }
+    }
+    const env = { val: 3 };
+    await mount(Parent, fixture, { env });
+    expect(fixture.innerHTML).toBe("5<div>5</div>");
+  });
+
   test("can use onWillStart, onWillUpdateProps", async () => {
     const steps: string[] = [];
     async function slow(): Promise<string> {

@@ -45,9 +45,8 @@ function extendEnv(currentEnv: Object, extension: Object): Object {
  */
 export function useSubEnv(envExtension: Env) {
   const node = getCurrent()!;
-  const newEnv = extendEnv(node.component.env as any, envExtension);
   node.component.env = extendEnv(node.component.env as any, envExtension);
-  node.childEnv = newEnv;
+  useChildSubEnv(envExtension);
 }
 
 export function useChildSubEnv(envExtension: Env) {

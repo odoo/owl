@@ -28,6 +28,8 @@ export class App<
   P = any,
   E = any
 > extends TemplateSet {
+  static validateTarget = validateTarget;
+
   Root: ComponentConstructor<P, E>;
   props: P;
   env: E;
@@ -49,7 +51,7 @@ export class App<
   }
 
   mount(target: HTMLElement, options?: MountOptions): Promise<Component<P, E> & InstanceType<T>> {
-    validateTarget(target);
+    App.validateTarget(target);
     const node = this.makeNode(this.Root, this.props);
     const prom = this.mountNode(node, target, options);
     this.root = node;

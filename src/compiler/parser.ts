@@ -677,6 +677,9 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
   const dynamicProps = node.getAttribute("t-props");
   node.removeAttribute("t-props");
 
+  const defaultSlotScope = node.getAttribute("t-slot-scope");
+  node.removeAttribute("t-slot-scope");
+
   const props: ASTComponent["props"] = {};
   for (let name of node.getAttributeNames()) {
     const value = node.getAttribute(name)!;
@@ -742,6 +745,9 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
     const defaultContent = parseChildNodes(clone, ctx);
     if (defaultContent) {
       slots.default = { content: defaultContent };
+      if (defaultSlotScope) {
+        slots.default.scope = defaultSlotScope;
+      }
     }
   }
   return { type: ASTType.TComponent, name, isDynamic, dynamicProps, props, slots };

@@ -424,6 +424,42 @@ exports[`slots default slot next to named slot, with default content 2`] = `
 }"
 `;
 
+exports[`slots default slot with slot scope: shorthand syntax 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  function slot1(ctx, node, key = \\"\\") {
+    let b2,b3;
+    if (ctx['slotScope'].bool) {
+      b2 = text(\`some text\`);
+    } else {
+      b3 = text(\`other text\`);
+    }
+    return multi([b2, b3]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`Child\`, {slots: {'default': {__render: slot1, __ctx: ctx, __scope: \\"slotScope\\"}}}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`slots default slot with slot scope: shorthand syntax 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callSlot } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'default', false, {bool: ctx['state'].bool});
+    return block1([], [b2]);
+  }
+}"
+`;
+
 exports[`slots default slot work with text nodes (variation) 1`] = `
 "function anonymous(bdom, helpers
 ) {
@@ -1139,44 +1175,6 @@ exports[`slots simple default slot with params 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { capture } = helpers;
-  
-  function slot1(ctx, node, key = \\"\\") {
-    let b2,b3;
-    if (ctx['slotScope'].bool) {
-      b2 = text(\`some text\`);
-    } else {
-      b3 = text(\`other text\`);
-    }
-    return multi([b2, b3]);
-  }
-  
-  return function template(ctx, node, key = \\"\\") {
-    const ctx1 = capture(ctx);
-    return component(\`Child\`, {slots: {'default': {__render: slot1, __ctx: ctx1, __scope: \\"slotScope\\"}}}, key + \`__1\`, node, ctx);
-  }
-}"
-`;
-
-exports[`slots simple default slot with params 2`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { callSlot } = helpers;
-  
-  let block1 = createBlock(\`<span><block-child-0/></span>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    let b2 = callSlot(ctx, node, key, 'default', false, {bool: ctx['state'].bool});
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`slots simple default slot with params 3`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   function slot1(ctx, node, key = \\"\\") {
     let b2,b3;
@@ -1194,7 +1192,7 @@ exports[`slots simple default slot with params 3`] = `
 }"
 `;
 
-exports[`slots simple default slot with params 4`] = `
+exports[`slots simple default slot with params 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -1232,6 +1230,44 @@ exports[`slots simple default slot, variation 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     return callSlot(ctx, node, key, 'default', false, {});
+  }
+}"
+`;
+
+exports[`slots simple slot with slot scope 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { capture } = helpers;
+  
+  function slot1(ctx, node, key = \\"\\") {
+    let b2,b3;
+    if (ctx['slotScope'].bool) {
+      b2 = text(\`some text\`);
+    } else {
+      b3 = text(\`other text\`);
+    }
+    return multi([b2, b3]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx1 = capture(ctx);
+    return component(\`Child\`, {slots: {'slotName': {__render: slot1, __ctx: ctx1, __scope: \\"slotScope\\"}}}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`slots simple slot with slot scope 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callSlot } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = callSlot(ctx, node, key, 'slotName', false, {bool: ctx['state'].bool});
+    return block1([], [b2]);
   }
 }"
 `;

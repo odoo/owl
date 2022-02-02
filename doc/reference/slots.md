@@ -87,8 +87,8 @@ grandparent of the slot content).
 
 ## Default Slot
 
-The first element inside the component which is not a named slot will
-be considered the `default` slot. For example:
+All elements inside the component which are not a named slot will be treated as
+part of the content of the `default` slot. For example:
 
 ```xml
 <div t-name="Parent">
@@ -110,6 +110,7 @@ One can mix default slot and named slots:
     default content
     <t t-set-slot="footer">
       content for footer slot here
+    </t>
   </Child>
 </div>
 ```
@@ -211,28 +212,37 @@ use this `Notebook` component:
 
 ## Slot scopes
 
-For other kind of advanced use cases, the content of a slot may depends on some
-specific information specific to the generic component. This is the opposite
-of the slot params.
+For other kinds of advanced use cases, the content of a slot may depends on some
+information specific to the generic component. This is the opposite of the slot
+params.
 
 To solve this kind of problems, one can use the `t-slot-scope` directive along
 with the `t-set-slot`. This defines the name of a variable that can access
 everything given by the child component:
 
 ```xml
-<div>
+<MyComponent>
     <t t-set-slot="foo" t-slot-scope="scope">
         content
         <t t-esc="scope.bool"/>
         <t t-esc="scope.num"/>
     </t>
-</div>
+</MyComponent>
 ```
 
 And the child component that includes the slot can provide values like this:
 
 ```xml
-<div>
-    <t t-slot="foo" bool="other_var" num="5">
-</div>
+<t t-slot="foo" bool="other_var" num="5">
+```
+
+In the case of the default slot, you may declare the slot scope directly on the
+component itself:
+
+```xml
+<MyComponent t-slot-scope="scope">
+    content
+    <t t-esc="scope.bool"/>
+    <t t-esc="scope.num"/>
+</MyComponent>
 ```

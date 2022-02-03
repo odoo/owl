@@ -59,18 +59,20 @@ describe("translation support", () => {
     );
   });
 
-  test("can set translatable attributes", async () => {
+  test("can set and remove translatable attributes", async () => {
     class SomeComponent extends Component {
       static template = xml`
-        <div tomato="word" potato="word" title="word">text</div>
+        <div tomato="word" potato="word" title="word" label="word">text</div>
       `;
     }
 
     await mount(SomeComponent, fixture, {
       translateFn: (expr: string) => (expr === "word" ? "mot" : expr),
-      translatableAttributes: ["potato"],
+      translatableAttributes: ["potato", "-label"],
     });
-    expect(fixture.innerHTML).toBe('<div tomato="word" potato="mot" title="word">text</div>');
+    expect(fixture.innerHTML).toBe(
+      '<div tomato="word" potato="mot" title="mot" label="word">text</div>'
+    );
   });
 
   test("translation is done on the trimmed text, with extra spaces readded after", async () => {

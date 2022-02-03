@@ -1,11 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`translation support can set translatable attributes 1`] = `
+exports[`translation support can set and remove translatable attributes 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
-  let block1 = createBlock(\`<div tomato=\\"word\\" potato=\\"mot\\" title=\\"word\\">text</div>\`);
+  let block1 = createBlock(\`<div tomato=\\"word\\" potato=\\"mot\\" title=\\"mot\\" label=\\"word\\">text</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     return block1();

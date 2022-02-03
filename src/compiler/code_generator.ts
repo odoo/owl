@@ -214,14 +214,24 @@ export class CodeGenerator {
   templateName?: string;
   dev: boolean;
   translateFn: (s: string) => string;
-  translatableAttributes: string[];
+  translatableAttributes: string[] = TRANSLATABLE_ATTRS;
   ast: AST;
   staticCalls: { id: string; template: string }[] = [];
   helpers: Set<string> = new Set();
 
   constructor(ast: AST, options: CodeGenOptions) {
     this.translateFn = options.translateFn || ((s: string) => s);
-    this.translatableAttributes = options.translatableAttributes || TRANSLATABLE_ATTRS;
+    if (options.translatableAttributes) {
+      const attrs = new Set(TRANSLATABLE_ATTRS);
+      for (let attr of options.translatableAttributes) {
+        if (attr.startsWith("-")) {
+          attrs.delete(attr.slice(1));
+        } else {
+          attrs.add(attr);
+        }
+      }
+      this.translatableAttributes = [...attrs];
+    }
     this.hasSafeContext = options.hasSafeContext || false;
     this.dev = options.dev || false;
     this.ast = ast;

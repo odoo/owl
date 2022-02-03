@@ -43,6 +43,7 @@ All changes are documented here in no particular order.
 - new: components can use the `.bind` suffix to bind function props ([doc](doc/reference/props.md#binding-function-props))
 - breaking: `t-on` does not work on components any more ([details](#12-t-on-does-not-work-on-components-any-more))
 - breaking: `t-component` no longer accepts strings ([details](#17-t-component-no-longer-accepts-strings))
+- new: the `this` variable in template expressions is now bound to the component
 
 
 **Slots**
@@ -53,6 +54,13 @@ All changes are documented here in no particular order.
   - slots are given as a `prop` (and can be manipulated/propagated to sub components )
   - slots can define scopes (to pass information from slot user to slot owner)
 
+**Reactivity**
+
+- finer grained reactivity: owl 2 tracks change per key/component
+- finer grained reactivity: sub components can reobserve state ([doc](doc/reference/reactivity.md))
+- new: `reactive` function: create reactive state (without being linked to a component) ([doc](doc/reference/reactivity.md#reactive))
+- new: `markRaw` function: mark an object or array so that it is ignored by the reactivity system ([doc](doc/reference/reactivity.md#markraw))
+- new: `toRaw` function: given a reactive objet, return the raw (non reactive) underlying object ([doc](doc/reference/reactivity.md#toraw))
 
 **Portal**
 
@@ -66,8 +74,6 @@ All changes are documented here in no particular order.
 
 - improved performance
 - much simpler code 
-- finer grained reactivity: owl 2 tracks change per key/component
-- finer grained reactivity: sub components can reobserve state
 - new App class to encapsulate a root Owl component (with the config for that application) ([doc](doc/reference/app.md))
 - new `Memo` component
 - new `useEffect` hook ([doc](doc/reference/hooks.md#useeffect))

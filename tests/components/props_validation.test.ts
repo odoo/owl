@@ -684,7 +684,7 @@ describe("props validation", () => {
   test("default values are applied before validating props at update", async () => {
     // need to do something about errors catched in render
     class SubComp extends Component {
-      static props = { p: { type: Number } };
+      static props = { p: { type: Number, optional: true } };
       static template = xml`<div><t t-esc="props.p"/></div>`;
       static defaultProps = { p: 4 };
     }
@@ -791,9 +791,9 @@ describe("default props", () => {
     expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
   });
 
-  test("can set default required boolean values", async () => {
+  test("can set default boolean values", async () => {
     class SubComp extends Component {
-      static props = ["p", "q"];
+      static props = ["p?", "q?"];
       static defaultProps = { p: true, q: false };
       static template = xml`<span><t t-if="props.p">hey</t><t t-if="!props.q">hey</t></span>`;
     }
@@ -803,5 +803,29 @@ describe("default props", () => {
     }
     await mount(Parent, fixture, { dev: true });
     expect(fixture.innerHTML).toBe("<div><span>heyhey</span></div>");
+  });
+
+  test("a default prop cannot be defined on a mandatory prop", async () => {
+    class Child extends Component {
+      static props = {
+        mandatory: Number,
+      };
+      static defaultProps = { mandatory: 3 };
+      static template = xml` <div><t t-esc="props.mandatory"/></div>`;
+    }
+    class Parent extends Component {
+      static components = { Child };
+      static template = xml`<Child/>`;
+    }
+    let error: Error;
+    try {
+      await mount(Parent, fixture, { dev: true });
+    } catch (e) {
+      error = e as Error;
+    }
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe(
+      "A default value cannot be defined for a mandatory prop (name: 'mandatory', component: Child"
+    );
   });
 });

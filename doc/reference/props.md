@@ -168,10 +168,14 @@ For each key, a `prop` definition is either a boolean, a constructor, a list of 
   - `shape`: if the type was `Object`, then the `shape` key describes the interface of the object. If it is not set, then we only validate the object, not its elements,
   - `validate`: this is a function which should return a boolean to determine if
     the value is valid or not. Useful for custom validation logic.
+  - `optional`: if true, the prop is not mandatory
 
 There is a special `*` prop that means that additional prop are allowed. This is
 sometimes useful for generic components that will propagate some or all their
 props to their child components.
+
+Note that default values cannot be defined for a mandatory props. Doing so will
+result in a prop validation error.
 
 Examples:
 
@@ -190,7 +194,8 @@ class ComponentB extends owl.Component {
       element: {type: Object, shape: {id: Boolean, text: String }
     },
    date: Date,
-   combinedVal: [Number, Boolean]
+   combinedVal: [Number, Boolean],
+   optionalProp: { type: Number, optional: true }
   };
 
   ...

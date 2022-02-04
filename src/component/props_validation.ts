@@ -62,7 +62,7 @@ export function validateProps<P>(name: string | ComponentConstructor<P>, props: 
     }
     if (isMandatory && propName in defaultProps) {
       throw new Error(
-        `A default value cannot be defined for a mandatory prop (name: '${propName}', component: ${ComponentClass.name}`
+        `A default value cannot be defined for a mandatory prop (name: '${propName}', component: ${ComponentClass.name})`
       );
     }
     if ((props as any)[propName] === undefined) {

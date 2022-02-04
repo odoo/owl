@@ -38,14 +38,24 @@ All changes are documented here in no particular order.
 
 - breaking: `t-foreach` should always have a corresponding `t-key` ([details](#20-t-foreach-should-always-have-a-corresponding-t-key))
 - breaking: `t-ref` does not work on components ([details](#29-t-ref-does-not-work-on-component))
-- breaking: `t-on` does not accept expressions, only functions ([details](#30-t-on-does-not-accept-expressions-only-functions))
 - breaking: `t-raw` directive has been removed (replaced by `t-out`) ([details](#38-t-raw-directive-has-been-removed-replaced-by-t-out))
 - new: add support for synthetic events ([doc](doc/reference/event_handling.md#synthetic-events))
 - breaking: style/class on components are now regular props ([details](#10-styleclass-on-components-are-now-regular-props))
 - new: components can use the `.bind` suffix to bind function props ([doc](doc/reference/props.md#binding-function-props))
+- breaking: `t-on` does not accept expressions, only functions ([details](#30-t-on-does-not-accept-expressions-only-functions))
 - breaking: `t-on` does not work on components any more ([details](#12-t-on-does-not-work-on-components-any-more))
+- new: an error is thrown if an handler defined in a `t-on-` directive is not a function (failed silently previously in some cases)
 - breaking: `t-component` no longer accepts strings ([details](#17-t-component-no-longer-accepts-strings))
 - new: the `this` variable in template expressions is now bound to the component
+
+
+**Reactivity**
+
+- finer grained reactivity: owl 2 tracks change per key/component
+- finer grained reactivity: sub components can reobserve state ([doc](doc/reference/reactivity.md))
+- new: `reactive` function: create reactive state (without being linked to a component) ([doc](doc/reference/reactivity.md#reactive))
+- new: `markRaw` function: mark an object or array so that it is ignored by the reactivity system ([doc](doc/reference/reactivity.md#markraw))
+- new: `toRaw` function: given a reactive objet, return the raw (non reactive) underlying object ([doc](doc/reference/reactivity.md#toraw))
 
 
 **Slots**
@@ -56,13 +66,6 @@ All changes are documented here in no particular order.
   - slots are given as a `prop` (and can be manipulated/propagated to sub components )
   - slots can define scopes (to pass information from slot user to slot owner)
 
-**Reactivity**
-
-- finer grained reactivity: owl 2 tracks change per key/component
-- finer grained reactivity: sub components can reobserve state ([doc](doc/reference/reactivity.md))
-- new: `reactive` function: create reactive state (without being linked to a component) ([doc](doc/reference/reactivity.md#reactive))
-- new: `markRaw` function: mark an object or array so that it is ignored by the reactivity system ([doc](doc/reference/reactivity.md#markraw))
-- new: `toRaw` function: given a reactive objet, return the raw (non reactive) underlying object ([doc](doc/reference/reactivity.md#toraw))
 
 **Portal**
 

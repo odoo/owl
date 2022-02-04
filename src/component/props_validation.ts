@@ -47,6 +47,7 @@ export function validateProps<P>(name: string | ComponentConstructor<P>, props: 
   }
   applyDefaultProps(props, ComponentClass);
 
+  const defaultProps = ComponentClass.defaultProps || {};
   let propsDef = getPropDescription(ComponentClass.props);
   const allowAdditionalProps = "*" in propsDef;
 
@@ -54,8 +55,18 @@ export function validateProps<P>(name: string | ComponentConstructor<P>, props: 
     if (propName === "*") {
       continue;
     }
+    const propDef = propsDef[propName];
+    let isMandatory = !!propDef;
+    if (typeof propDef === "object" && "optional" in propDef) {
+      isMandatory = !propDef.optional;
+    }
+    if (isMandatory && propName in defaultProps) {
+      throw new Error(
+        `A default value cannot be defined for a mandatory prop (name: '${propName}', component: ${ComponentClass.name}`
+      );
+    }
     if ((props as any)[propName] === undefined) {
-      if (propsDef[propName] && !propsDef[propName].optional) {
+      if (isMandatory) {
         throw new Error(`Missing props '${propName}' (component '${ComponentClass.name}')`);
       } else {
         continue;
@@ -63,7 +74,7 @@ export function validateProps<P>(name: string | ComponentConstructor<P>, props: 
     }
     let isValid;
     try {
-      isValid = isValidProp((props as any)[propName], propsDef[propName]);
+      isValid = isValidProp((props as any)[propName], propDef);
     } catch (e) {
       (e as Error).message = `Invalid prop '${propName}' in component ${ComponentClass.name} (${
         (e as Error).message

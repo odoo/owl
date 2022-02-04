@@ -1,6 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`default props can set default required boolean values 1`] = `
+exports[`default props a default prop cannot be defined on a mandatory prop 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    const props1 = {};
+    helpers.validateProps(\`Child\`, props1, ctx);
+    return component(\`Child\`, props1, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`default props can set default boolean values 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -16,7 +29,7 @@ exports[`default props can set default required boolean values 1`] = `
 }"
 `;
 
-exports[`default props can set default required boolean values 2`] = `
+exports[`default props can set default boolean values 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;

@@ -825,7 +825,7 @@ describe("default props", () => {
     }
     expect(error!).toBeDefined();
     expect(error!.message).toBe(
-      "A default value cannot be defined for a mandatory prop (name: 'mandatory', component: Child"
+      "A default value cannot be defined for a mandatory prop (name: 'mandatory', component: Child)"
     );
   });
 });

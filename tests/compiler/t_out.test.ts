@@ -37,6 +37,26 @@ describe("t-out", () => {
     expect(renderToString(template, { var: "ok" })).toBe("<span>ok</span>");
   });
 
+  test("with a String class", () => {
+    const template = `<span><t t-out="var"/></span>`;
+    expect(renderToString(template, { var: new String("ok") })).toBe("<span>ok</span>");
+  });
+
+  test("with an extended String class", () => {
+    class LoveString extends String {
+      valueOf(): string {
+        return `<3 ${super.valueOf()} <3`;
+      }
+      toString(): string {
+        return this.valueOf();
+      }
+    }
+    const template = `<span><t t-out="var"/></span>`;
+    expect(renderToString(template, { var: new LoveString("ok") })).toBe(
+      "<span>&lt;3 ok &lt;3</span>"
+    );
+  });
+
   test("not escaping", () => {
     const template = `<div><t t-out="var"/></div>`;
     expect(renderToString(template, { var: markup("<ok></ok>") })).toBe("<div><ok></ok></div>");

@@ -273,7 +273,7 @@ exports[`bound functions is referentially equal after update 1`] = `
   let { bind } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {val: ctx['state'].val,fn: bind(ctx, ctx['someFunction'])}, key + \`__1\`, node, ctx);
+    return component(\`Child\`, {val: ctx['state'].val, fn: bind(ctx, ctx['someFunction'])}, key + \`__1\`, node, ctx);
   }
 }"
 `;

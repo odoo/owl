@@ -16,7 +16,7 @@ exports[`Memo if no prop change, prevent renderings from above  1`] = `
     let b2 = text(ctx['state'].a);
     let b3 = text(ctx['state'].b);
     let b4 = text(ctx['state'].c);
-    let b9 = component(\`Memo\`, {a: ctx['state'].a,b: ctx['state'].b,slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx);
+    let b9 = component(\`Memo\`, {a: ctx['state'].a, b: ctx['state'].b,slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx);
     return multi([b2, b3, b4, b9]);
   }
 }"

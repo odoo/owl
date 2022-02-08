@@ -1050,29 +1050,50 @@ export class CodeGenerator {
     return parts.join("__");
   }
 
+  /**
+   * Formats a prop name and value into a string suitable to be inserted in the
+   * generated code. For example:
+   *
+   * Name              Value            Result
+   * ---------------------------------------------------------
+   * "number"          "state"          "number: ctx['state']"
+   * "something"       ""               "something: undefined"
+   * "some-prop"       "state"          "'some-prop': ctx['state']"
+   * "onClick.bind"    "onClick"        "onClick: bind(ctx, ctx['onClick'])"
+   */
+  formatProp(name: string, value: string): string {
+    value = this.captureExpression(value);
+    if (name.includes(".")) {
+      let [_name, suffix] = name.split(".");
+      if (suffix === "bind") {
+        this.helpers.add("bind");
+        name = _name;
+        value = `bind(ctx, ${value || undefined})`;
+      } else {
+        throw new Error("Invalid prop suffix");
+      }
+    }
+    name = /^[a-z_]+$/i.test(name) ? name : `'${name}'`;
+    return `${name}: ${value || undefined}`;
+  }
+
+  formatPropObject(obj: { [prop: string]: any }): string {
+    const params = [];
+    for (const [n, v] of Object.entries(obj)) {
+      params.push(this.formatProp(n, v));
+    }
+    return params.join(", ");
+  }
+
   compileComponent(ast: ASTComponent, ctx: Context) {
     let { block } = ctx;
 
     // props
+    const hasSlotsProp = "slots" in ast.props;
     const props: string[] = [];
-    let hasSlotsProp = false;
-    for (let propName in ast.props) {
-      let propValue = this.captureExpression(ast.props[propName]) || undefined;
-      if (propName.includes(".")) {
-        let [name, suffix] = propName.split(".");
-        if (suffix === "bind") {
-          this.helpers.add("bind");
-          propName = name;
-          propValue = `bind(ctx, ${propValue})`;
-        } else {
-          throw new Error("Invalid prop suffix");
-        }
-      }
-      propName = /^[a-z_]+$/i.test(propName) ? propName : `'${propName}'`;
-      props.push(`${propName}: ${propValue}`);
-      if (propName === "slots") {
-        hasSlotsProp = true;
-      }
+    const propExpr = this.formatPropObject(ast.props);
+    if (propExpr) {
+      props.push(propExpr);
     }
 
     // slots
@@ -1095,9 +1116,7 @@ export class CodeGenerator {
           params.push(`__scope: "${scope}"`);
         }
         if (ast.slots[slotName].attrs) {
-          for (const [n, v] of Object.entries(ast.slots[slotName].attrs!)) {
-            params.push(`${n}: ${compileExpr(v) || undefined}`);
-          }
+          params.push(this.formatPropObject(ast.slots[slotName].attrs!));
         }
         const slotInfo = `{${params.join(", ")}}`;
         slotStr.push(`'${slotName}': ${slotInfo}`);
@@ -1176,15 +1195,7 @@ export class CodeGenerator {
       slotName = "'" + ast.name + "'";
     }
 
-    let scope = null;
-    if (ast.attrs) {
-      const params = [];
-      for (const [n, v] of Object.entries(ast.attrs!)) {
-        params.push(`${n}: ${compileExpr(v) || undefined}`);
-      }
-      scope = `{${params.join(", ")}}`;
-    }
-
+    const scope = ast.attrs ? `{${this.formatPropObject(ast.attrs)}}` : null;
     if (ast.defaultContent) {
       const name = this.compileInNewTarget("defaultContent", ast.defaultContent, ctx);
       blockString = `callSlot(ctx, node, key, ${slotName}, ${dynamic}, ${scope}, ${name})`;

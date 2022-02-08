@@ -407,6 +407,36 @@ exports[`t-out variable 1`] = `
 }"
 `;
 
+exports[`t-out with a String class 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = safeOutput(ctx['var']);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`t-out with an extended String class 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2 = safeOutput(ctx['var']);
+    return block1([], [b2]);
+  }
+}"
+`;
+
 exports[`t-raw is deprecated should warn 1`] = `
 "function anonymous(bdom, helpers
 ) {

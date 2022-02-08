@@ -994,7 +994,7 @@ exports[`basics update props of component without concrete own node 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['props'].subKey;
-    return toggler(tKey_1, component(\`Custom\`, {key: ctx['props'].key,subKey: ctx['props'].subKey}, tKey_1 + key + \`__1\`, node, ctx));
+    return toggler(tKey_1, component(\`Custom\`, {key: ctx['props'].key, subKey: ctx['props'].subKey}, tKey_1 + key + \`__1\`, node, ctx));
   }
 }"
 `;

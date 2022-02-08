@@ -135,7 +135,7 @@ export function safeOutput(value: any): ReturnType<typeof toggler> {
   } else if (value instanceof LazyValue) {
     safeKey = `lazy_value`;
     block = value.evaluate();
-  } else if (typeof value === "string") {
+  } else if (value instanceof String || typeof value === "string") {
     safeKey = "string_unsafe";
     block = text(value);
   } else {

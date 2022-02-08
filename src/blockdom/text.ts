@@ -9,11 +9,11 @@ const characterDataSetData = getDescriptor(characterDataProto, "data").set!;
 const nodeRemoveChild = nodeProto.removeChild;
 
 abstract class VSimpleNode {
-  text: string;
+  text: string | String;
   parentEl?: HTMLElement | undefined;
   el?: any;
 
-  constructor(text: string) {
+  constructor(text: string | String) {
     this.text = text;
   }
 
@@ -65,7 +65,7 @@ class VComment extends VSimpleNode {
   patch() {}
 }
 
-export function text(str: string): VNode<VText> {
+export function text(str: string | String): VNode<VText> {
   return new VText(str);
 }
 

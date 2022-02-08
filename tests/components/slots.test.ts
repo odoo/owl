@@ -126,6 +126,41 @@ describe("slots", () => {
     expect(mockConsoleWarn).toBeCalledTimes(1);
   });
 
+  test("simple default slot with params and bound function", async () => {
+    class Child extends Component {
+      static template = xml`<t t-slot="default" fn.bind="getValue"/>`;
+      state = useState({ value: 123 });
+      getValue() {
+        return this.state.value;
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <Child t-slot-scope="slotScope"><t t-esc="slotScope.fn()"/></Child>`;
+      static components = { Child };
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("123");
+  });
+
+  test("default slot with params with - in it", async () => {
+    class Child extends Component {
+      static template = xml`<t t-slot="default" some-value="state.value"/>`;
+      state = useState({ value: 123 });
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <Child t-slot-scope="slotScope"><t t-esc="slotScope['some-value']"/></Child>`;
+      static components = { Child };
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("123");
+  });
+
   test("fun: two calls to the same slot", async () => {
     class Child extends Component {
       static template = xml`<t t-slot="default"/><t t-slot="default"/>`;
@@ -240,6 +275,30 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe(
       "<div><div>3<div><span>header</span></div>5<div><span>footer</span></div></div></div>"
     );
+  });
+
+  test("can define and call slots with bound params", async () => {
+    class Child extends Component {
+      static template = xml`
+        <t t-slot="abc"/>
+        <t t-esc="props.slots['abc'].getValue()"/>`;
+    }
+
+    class Parent extends Component {
+      static components = { Child };
+      static template = xml`
+          <Child>
+            <t t-set-slot="abc" getValue.bind="getValue">abc</t>
+          </Child>`;
+      state = useState({ value: 444 });
+      getValue() {
+        return this.state.value;
+      }
+    }
+
+    await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe("abc444");
   });
 
   test("no named slot content => just no children", async () => {

@@ -177,7 +177,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
       for (let i2 = 0; i2 < l_block4; i2++) {
         ctx[\`col\`] = v_block4[i2];
         let key2 = ctx['col'];
-        let b6 = component(\`Child\`, {row: ctx['row'],col: ctx['col']}, key + \`__1__\${key1}__\${key2}\`, node, ctx);
+        let b6 = component(\`Child\`, {row: ctx['row'], col: ctx['col']}, key + \`__1__\${key1}__\${key2}\`, node, ctx);
         c_block4[i2] = withKey(block5([], [b6]), key2);
       }
       ctx = ctx.__proto__;

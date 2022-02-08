@@ -210,6 +210,9 @@ use this `Notebook` component:
 </Notebook>
 ```
 
+Slot params works like normal props, so one can use the `.bind` suffix to
+bind a function if needed.
+
 ## Slot scopes
 
 For other kinds of advanced use cases, the content of a slot may depends on some
@@ -246,3 +249,6 @@ component itself:
     <t t-esc="scope.num"/>
 </MyComponent>
 ```
+
+Slot values works like normal props, so one can use the `.bind` suffix to
+bind a function if needed.

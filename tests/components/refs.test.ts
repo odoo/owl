@@ -1,5 +1,5 @@
-import { Component, mount, useRef, useState } from "../../src/index";
-import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { Component, mount, onMounted, useRef, useState } from "../../src/index";
+import { logStep, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 import { xml } from "../../src/index";
 
 snapshotEverything();
@@ -99,5 +99,28 @@ describe("refs", () => {
     }).rejects.toThrowError("Cannot have 2 elements with same ref name at the same time");
     expect(console.warn).toBeCalledTimes(1);
     console.warn = consoleWarn;
+  });
+
+  test("refs and recursive templates", async () => {
+    class Test extends Component {
+      static components = {};
+      static template = xml`
+        <p t-ref="root">
+          <t t-esc="props.tree.value"/>
+          <t t-if="props.tree.child"><Test tree="props.tree.child"/></t>
+        </p>`;
+      root = useRef("root");
+
+      setup() {
+        onMounted(() => logStep(this.root.el!.outerHTML));
+      }
+    }
+    Test.components = { Test };
+
+    const tree = { value: "a", child: { value: "b", child: null } };
+
+    await mount(Test, fixture, { props: { tree } });
+    expect(fixture.innerHTML).toBe("<p>a<p>b</p></p>");
+    expect(["<p>b</p>", "<p>a<p>b</p></p>"]).toBeLogged();
   });
 });

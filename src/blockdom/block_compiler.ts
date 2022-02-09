@@ -299,7 +299,7 @@ interface BlockCtx {
   locations: IndexedLocation[];
   children: Child[];
   cbRefs: number[];
-  refList: (() => void)[];
+  refList: (() => void)[][];
 }
 
 function buildContext(tree: IntermediateTree, ctx?: BlockCtx, fromIdx?: number): BlockCtx {
@@ -409,8 +409,7 @@ function updateCtx(ctx: BlockCtx, tree: IntermediateTree) {
         break;
       }
       case "ref":
-        const index = ctx.refList.push(NO_OP) - 1;
-        ctx.cbRefs.push(info.idx);
+        const index = ctx.cbRefs.push(info.idx) - 1;
         ctx.locations.push({
           idx: info.idx,
           refIdx: info.refIdx!,
@@ -430,10 +429,12 @@ function buildBlock(template: HTMLElement, ctx: BlockCtx): BlockType {
   if (ctx.cbRefs.length) {
     const cbRefs = ctx.cbRefs;
     const refList = ctx.refList;
+    let cbRefsNumber = cbRefs.length;
     B = class extends B {
       mount(parent: HTMLElement, afterNode: Node | null) {
+        refList.push(new Array(cbRefsNumber));
         super.mount(parent, afterNode);
-        for (let cbRef of refList) {
+        for (let cbRef of refList.pop()!) {
           cbRef();
         }
       }
@@ -620,8 +621,8 @@ function setText(this: Text, value: any) {
   characterDataSetData.call(this, toText(value));
 }
 
-function makeRefSetter(index: number, refs: (() => void)[]): Setter<HTMLElement> {
+function makeRefSetter(index: number, refs: (() => void)[][]): Setter<HTMLElement> {
   return function setRef(this: HTMLElement, fn: any) {
-    refs[index] = () => fn(this);
+    refs[refs.length - 1][index] = () => fn(this);
   };
 }

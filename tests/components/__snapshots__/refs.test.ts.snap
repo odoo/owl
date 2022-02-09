@@ -38,6 +38,26 @@ exports[`refs can use 2 refs with same name in a t-if/t-else situation 1`] = `
 }"
 `;
 
+exports[`refs refs and recursive templates 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<p block-ref=\\"0\\"><block-text-1/><block-child-0/></p>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const refs = ctx.__owl__.refs;
+    const ref1 = (el) => refs[\`root\`] = el;
+    let b2;
+    let txt1 = ctx['props'].tree.value;
+    if (ctx['props'].tree.child) {
+      b2 = component(\`Test\`, {tree: ctx['props'].tree.child}, key + \`__1\`, node, ctx);
+    }
+    return block1([ref1, txt1], [b2]);
+  }
+}"
+`;
+
 exports[`refs refs are properly bound in slots 1`] = `
 "function anonymous(bdom, helpers
 ) {

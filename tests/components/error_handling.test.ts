@@ -82,8 +82,6 @@ describe("basics", () => {
   });
 
   test("display a nice error if it cannot find component (in dev mode)", async () => {
-    const info = console.info;
-    console.info = jest.fn(() => {}); // dev mode message
     class SomeComponent extends Component {}
     class Parent extends Component {
       static template = xml`<SomeMispelledComponent />`;
@@ -91,7 +89,7 @@ describe("basics", () => {
     }
     let error: Error;
     try {
-      await mount(Parent, fixture, { dev: true });
+      await mount(Parent, fixture, { test: true });
     } catch (e) {
       error = e as Error;
     }
@@ -100,8 +98,6 @@ describe("basics", () => {
     expect(console.error).toBeCalledTimes(0);
     expect(mockConsoleError).toBeCalledTimes(0);
     expect(mockConsoleWarn).toBeCalledTimes(1);
-    expect(console.info).toBeCalledTimes(1);
-    console.info = info;
   });
 
   test("simple catchError", async () => {
@@ -179,6 +175,30 @@ describe("errors and promises", () => {
     expect(mockConsoleWarn).toBeCalledTimes(1);
   });
 
+  test("an error in onMounted callback will have the component's setup in its stack trace", async () => {
+    class App extends Component {
+      static template = xml`<div>abc</div>`;
+      setup() {
+        onMounted(() => {
+          throw new Error("boom");
+        });
+      }
+    }
+
+    let error: Error;
+    try {
+      await mount(App, fixture, { test: true });
+    } catch (e) {
+      error = e as Error;
+    }
+    expect(error!).toBeDefined();
+    expect(error!.stack).toContain("App.setup");
+    expect(error!.stack).toContain("error_handling.test.ts");
+    expect(fixture.innerHTML).toBe("");
+    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toBeCalledTimes(1);
+  });
+
   test("an error in willPatch call will reject the render promise", async () => {
     class Root extends Component {
       static template = xml`<div><t t-esc="val"/></div>`;
@@ -191,13 +211,13 @@ describe("errors and promises", () => {
       }
     }
 
-    const root = await mount(Root, fixture);
+    const root = await mount(Root, fixture, { test: true });
     root.val = 4;
     let error: Error;
     root.render();
     await nextTick();
     expect(error!).toBeDefined();
-    expect(error!.message).toBe("boom");
+    expect(error!.message).toBe(`The following error occurred in onWillPatch: "boom"`);
     expect(mockConsoleError).toBeCalledTimes(0);
     expect(mockConsoleWarn).toBeCalledTimes(0);
   });
@@ -214,13 +234,13 @@ describe("errors and promises", () => {
       }
     }
 
-    const root = await mount(Root, fixture);
+    const root = await mount(Root, fixture, { test: true });
     root.val = 4;
     let error: Error;
     root.render();
     await nextTick();
     expect(error!).toBeDefined();
-    expect(error!.message).toBe("boom");
+    expect(error!.message).toBe(`The following error occurred in onPatched: "boom"`);
     expect(mockConsoleError).toBeCalledTimes(0);
     expect(mockConsoleWarn).toBeCalledTimes(0);
   });
@@ -296,7 +316,6 @@ describe("errors and promises", () => {
   });
 
   test("errors in mounted and in willUnmount", async () => {
-    expect.assertions(4);
     class Example extends Component {
       static template = xml`<div/>`;
       val: any;
@@ -313,9 +332,11 @@ describe("errors and promises", () => {
     }
 
     try {
-      await mount(Example, fixture);
+      await mount(Example, fixture, { test: true });
     } catch (e) {
-      expect((e as Error).message).toBe("Error in mounted");
+      expect((e as Error).message).toBe(
+        `The following error occurred in onMounted: "Error in mounted"`
+      );
     }
     // 1 additional error is logged because the destruction of the app causes
     // the onWillUnmount hook to be called and to fail
@@ -385,14 +406,14 @@ describe("can catch errors", () => {
         });
       }
     }
-    let e: any = null;
+    let e: Error;
     try {
-      await mount(Root, fixture);
+      await mount(Root, fixture, { test: true });
     } catch (error) {
-      e = error;
+      e = error as Error;
     }
-    expect(e.message).toBe(
-      "No active component (a hook function should only be called in 'setup')"
+    expect(e!.message).toBe(
+      `The following error occurred in onWillStart: "No active component (a hook function should only be called in 'setup')"`
     );
   });
 

@@ -1092,6 +1092,19 @@ exports[`errors and promises an error in mounted call will reject the mount prom
 }"
 `;
 
+exports[`errors and promises an error in onMounted callback will have the component's setup in its stack trace 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div>abc</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`errors and promises an error in patched call will reject the render promise 1`] = `
 "function anonymous(bdom, helpers
 ) {

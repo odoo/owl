@@ -1,9 +1,11 @@
-const COMPONENTS = `// In this example, we show how components can be defined and created.
+const COMPONENTS = /*js*/ `
+// In this example, we show how components can be defined and created.
 const { Component, useState, mount } = owl;
 
 class Greeter extends Component {
-    constructor() {
-        super(...arguments);
+    static template = "Greeter";
+    
+    setup() {
         this.state = useState({ word: 'Hello' });
     }
 
@@ -13,30 +15,32 @@ class Greeter extends Component {
 }
 
 // Main root component
-class App extends Component {
-    constructor() {
-        super(...arguments);
+class Root extends Component {
+    static components = { Greeter };
+    static template = "Root"
+
+    setup() {
         this.state = useState({ name: 'World'});
     }
 }
-App.components = { Greeter };
 
 // Application setup
-mount(App, { target: document.body });
-`;
+mount(Root, document.body, { templates: TEMPLATES, dev: true });`;
 
-const COMPONENTS_XML = `<templates>
+const COMPONENTS_XML = /*xml*/`
+<templates>
   <div t-name="Greeter" class="greeter" t-on-click="toggle">
     <t t-esc="state.word"/>, <t t-esc="props.name"/>
   </div>
 
-  <div t-name="App">
+  <t t-name="Root">
     <Greeter name="state.name"/>
-  </div>
+  </t>
 </templates>
 `;
 
-const COMPONENTS_CSS = `.greeter {
+const COMPONENTS_CSS = /*css*/`
+.greeter {
     font-size: 20px;
     width: 300px;
     height: 100px;
@@ -47,184 +51,47 @@ const COMPONENTS_CSS = `.greeter {
     user-select: none;
 }`;
 
-const ANIMATION = `// The goal of this component is to see how the t-transition directive can be
-// used to generate simple transition effects.
-const { Component, useState, mount } = owl;
-
-class Counter extends Component {
-    constructor() {
-        super(...arguments);
-        this.state = useState({ value: 0 });
-    }
-
-    increment() {
-        this.state.value++;
-    }
-}
-
-class App extends Component {
-    constructor() {
-        super(...arguments);
-        this.state = useState({ flag: false, componentFlag: false, numbers: [] });
-    }
-
-    toggle(key) {
-        this.state[key] = !this.state[key];
-    }
-
-    addNumber() {
-        const n = this.state.numbers.length + 1;
-        this.state.numbers.push(n);
-    }
-}
-App.components = { Counter };
-
-mount(App, { target: document.body });
-`;
-
-const ANIMATION_XML = `<templates>
-   <button t-name="Counter" t-on-click="increment" class="clickcounter">
-      Click Me! [<t t-esc="state.value"/>]
-    </button>
-
-    <div t-name="App">
-      <h2>Transition on DOM element</h2>
-
-      <div class="demo">
-        <button t-on-click="toggle('flag')">Toggle square</button>
-        <div>
-          <div t-if="state.flag" class="square" t-transition="fade">Hello</div>
-        </div>
-      </div>
-
-      <h2>Transition on sub components</h2>
-
-      <div class="demo">
-        <button t-on-click="toggle('componentFlag')">Toggle component</button>
-        <div>
-          <Counter t-if="state.componentFlag" t-transition="fade"/>
-        </div>
-      </div>
-
-      <h2>Transition on lists</h2>
-      <p>Transitions can also be applied on lists</p>
-      <div class="demo">
-        <button t-on-click="addNumber">Add a number</button>
-        <div>
-          <t t-foreach="state.numbers" t-as="n">
-            <span t-transition="fade" class="numberspan" t-key="n"><t t-esc="n"/></span>
-          </t>
-        </div>
-      </div>
-
-      <h2>Simple CSS animation</h2>
-      <p>Remember, normal CSS still apply: for example, a simple flash animation with pure css </p>
-      <div><a class="btn flash">Click</a>
-    </div>
-  </div>
-</templates>
-`;
-
-const ANIMATION_CSS = `button {
-    font-size: 18px;
-    height: 35px;
-}
-
-.btn {
-    cursor: pointer;
-    padding: 5px;
-    margin: 5px;
-    background-color: #dddddd;
-}
-
-.flash {
-    background-position: center;
-    transition: background .6s;
-}
-
-.flash:active {
-  background-color: gray;
-  transition: background 0s;
-}
-
-.square {
-    background-color: red;
-    width: 100px;
-    height: 70px;
-    color: white;
-    margin: 0 20px;
-    font-size: 24px;
-    line-height: 70px;
-    text-align: center;
-}
-
-.fade-enter-active, .fade-leave-active {
-    transition: opacity .6s;
-}
-
-.fade-enter, .fade-leave-to {
-    opacity: 0;
-}
-
-.demo {
-    display: flex;
-    height: 80px;
-}
-
-.clickcounter {
-    margin-left: 20px;
-    height: 50px;
-    background-color: blue;
-    color: white;
-}
-
-.numberspan {
-    border: 1px solid green;
-    margin: 5px;
-    padding: 5px;
-}
-`;
-
-const LIFECYCLE_DEMO = `// This example shows all the possible lifecycle hooks
+const LIFECYCLE_DEMO = /*js*/`
+// This example shows all the possible lifecycle hooks
 //
 // The root component controls a sub component (DemoComponent). It logs all its lifecycle
 // methods in the console.  Try modifying its state by clicking on it, or by
 // clicking on the two main buttons, and look into the console to see what
 // happens.
-const { Component, useState, mount } = owl;
+const { Component, useState, mount, useComponent, onWillStart, onMounted, onWillUnmount, onWillUpdateProps, onPatched, onWillPatch, onWillRender, onRendered, onWillDestroy} = owl;
+
+function useLogLifecycle() {
+    const component = useComponent();
+    const name = component.constructor.name;
+    onWillStart(() => console.log(\`\${name}:willStart\`));
+    onMounted(() => console.log(\`\${name}:mounted\`));
+    onWillUpdateProps(() => console.log(\`\${name}:willUpdateProps\`));
+    onWillRender(() => console.log(\`\${name}:willRender\`));
+    onRendered(() => console.log(\`\${name}:rendered\`));
+    onWillPatch(() => console.log(\`\${name}:willPatch\`));
+    onPatched(() => console.log(\`\${name}:patched\`));
+    onWillUnmount(() => console.log(\`\${name}:willUnmount\`));
+    onWillDestroy(() => console.log(\`\${name}:willDestroy\`));
+}
 
 class DemoComponent extends Component {
-    constructor() {
-        super(...arguments);
+    static template = "DemoComponent";
+
+    setup() {
+        useLogLifecycle();
         this.state = useState({ n: 0 });
-        console.log("constructor");
-    }
-    async willStart() {
-        console.log("willstart");
-    }
-    mounted() {
-        console.log("mounted");
-    }
-    async willUpdateProps(nextProps) {
-        console.log("willUpdateProps", nextProps);
-    }
-    willPatch() {
-        console.log("willPatch");
-    }
-    patched() {
-        console.log("patched");
-    }
-    willUnmount() {
-        console.log("willUnmount");
     }
     increment() {
         this.state.n++;
     }
 }
 
-class App extends Component {
-    constructor() {
-        super(...arguments);
+class Root extends Component {
+    static template = "Root";
+    static components = { DemoComponent };
+
+    setup() {
+        useLogLifecycle();
         this.state = useState({ n: 0, flag: true });
     }
 
@@ -236,19 +103,19 @@ class App extends Component {
         this.state.flag = !this.state.flag;
     }
 }
-App.components = { DemoComponent };
 
-mount(App, { target: document.body });
+mount(Root, document.body, { templates: TEMPLATES, dev: true });
 `;
 
-const LIFECYCLE_DEMO_XML = `<templates>
+const LIFECYCLE_DEMO_XML = /*xml*/ `
+<templates>
   <div t-name="DemoComponent" t-on-click="increment" class="demo">
     <div>Demo Sub Component</div>
     <div>(click on me to update me)</div>
     <div>Props: <t t-esc="props.n"/>, State: <t t-esc="state.n"/>. </div>
   </div>
 
-  <div t-name="App">
+  <div t-name="Root">
     <button t-on-click="increment">Increment Parent State</button>
     <button t-on-click="toggleSubComponent">Toggle SubComponent</button>
     <div t-if="state.flag">
@@ -257,7 +124,8 @@ const LIFECYCLE_DEMO_XML = `<templates>
   </div>
 </templates>`;
 
-const LIFECYCLE_CSS = `button {
+const LIFECYCLE_CSS = /*css*/`
+button {
     font-size: 18px;
     margin: 5px;
 }
@@ -269,9 +137,9 @@ const LIFECYCLE_CSS = `button {
     width: 250px;
 }`;
 
-const HOOKS_DEMO = `// In this example, we show how hooks can be used or defined.
-const { hooks, mount } = owl;
-const {useState, onMounted, onWillUnmount} = hooks;
+const HOOKS_DEMO = /*js*/ `
+// In this example, we show how hooks can be used or defined.
+const { Component, mount, useState, onWillDestroy } = owl;
 
 // We define here a custom behaviour: this hook tracks the state of the mouse
 // position
@@ -279,13 +147,11 @@ function useMouse() {
     const position = useState({x:0, y: 0});
 
     function update(e) {
-        position.x = e.clientX;
-        position.y = e.clientY;
+      position.x = e.clientX;
+      position.y = e.clientY;
     }
-    onMounted(() => {
-        window.addEventListener('mousemove', update);
-    });
-    onWillUnmount(() => {
+    window.addEventListener('mousemove', update);
+    onWillDestroy(() => {
         window.removeEventListener('mousemove', update);
     });
 
@@ -294,9 +160,10 @@ function useMouse() {
 
 
 // Main root component
-class App extends owl.Component {
-    constructor() {
-        super(...arguments);
+class Root extends Component {
+    static template = "Root";
+
+    setup() {
         // simple state hook (reactive object)
         this.counter = useState({ value: 0 });
 
@@ -310,89 +177,32 @@ class App extends owl.Component {
 }
 
 // Application setup
-mount(App, { target: document.body });
+mount(Root, document.body, { templates: TEMPLATES, dev: true });
 `;
 
-const HOOKS_DEMO_XML = `<templates>
-  <div t-name="App">
+const HOOKS_DEMO_XML = /*xml*/ `
+<templates>
+  <div t-name="Root">
     <button t-on-click="increment">Click! <t t-esc="counter.value"/></button>
     <div>Mouse: <t t-esc="mouse.x"/>, <t t-esc="mouse.y"/></div>
   </div>
 </templates>
 `;
 
-const HOOKS_CSS = `button {
+const HOOKS_CSS = /*css*/ `button {
     width: 120px;
     height: 35px;
     font-size: 16px;
 }`;
 
-const CONTEXT_JS = `// In this example, we show how components can use the Context and 'useContext'
-// hook to share information between them.
-const { Component, Context, mount } = owl;
-const { useContext } = owl.hooks;
+const TODO_APP_REACTIVITY = /*js*/ `
 
-class ToolbarButton extends Component {
-    constructor() {
-        super(...arguments);
-        this.theme = useContext(this.env.themeContext);
-    }
-
-    get style () {
-        const theme = this.theme;
-        return \`background-color: \${theme.background}; color: \${theme.foreground}\`;
-    }
-}
-
-class Toolbar extends Component {}
-Toolbar.components = { ToolbarButton };
-
-// Main root component
-class App extends Component {
-    toggleTheme() {
-        const { background, foreground } = this.env.themeContext.state;
-        this.env.themeContext.state.background = foreground;
-        this.env.themeContext.state.foreground = background;
-    }
-}
-App.components = { Toolbar };
-
-// Application setup
-const themeContext = new Context({
-   background: '#000',
-   foreground: '#fff',
-});
-// Add the themeContext the environment to make it available to all components
-App.env.themeContext = themeContext;
-mount(App, { target: document.body });
-`;
-
-const CONTEXT_XML = `<templates>
-  <button t-name="ToolbarButton" t-att-style="style">
-    <t t-esc="props.name"/>
-  </button>
-
-  <div t-name="Toolbar">
-    <ToolbarButton name="'A'"/>
-    <ToolbarButton name="'B'"/>
-    <ToolbarButton name="'C'"/>
-  </div>
-
-  <div t-name="App">
-    <button t-on-click="toggleTheme">Toggle Mode</button>
-    <Toolbar/>
-  </div>
-</templates>
-`;
-
-const TODO_APP_STORE = `// This example is an implementation of the TodoList application, from the
+// This example is an implementation of the TodoList application, from the
 // www.todomvc.com project.  This is a non trivial application with some
 // interesting user interactions. It uses the local storage for persistence.
 //
-// In this implementation, we use the owl Store class to manage the state.  It
-// is very similar to the VueX store.
-const { Component, useState, mount } = owl;
-const { useRef, useStore, useDispatch, onPatched, onMounted } = owl.hooks;
+// In this implementation, we use the owl reactivity mechanism.
+const { Component, useState, mount, useRef, onPatched, onMounted, reactive, useEnv, useEffect } = owl;
 
 //------------------------------------------------------------------------------
 // Constants, helpers
@@ -402,124 +212,147 @@ const ESC_KEY = 27;
 const LOCALSTORAGE_KEY = "todomvc";
 
 function useAutofocus(name) {
-  let ref = useRef(name);
-  let isInDom = false;
-  function updateFocus() {
-    if (!isInDom && ref.el) {
-      isInDom = true;
-      const current = ref.el.value;
-      ref.el.value = "";
-      ref.el.focus();
-      ref.el.value = current;
-    } else if (isInDom && !ref.el) {
-      isInDom = false;
-    }
-  }
-  onPatched(updateFocus);
-  onMounted(updateFocus);
+    let ref = useRef(name);
+    useEffect(el => el && el.focus(), () => [ref.el]);
+}
+
+function useStore() {
+    const env = useEnv();
+    return useState(env.store);
 }
 
 //------------------------------------------------------------------------------
-// Store
+// Task store
 //------------------------------------------------------------------------------
-const initialState = { todos: [], nextId: 1};
+class TaskList {
+    constructor(tasks) {
+        this.tasks = tasks || [];
+        const taskIds = this.tasks.map((t) => t.id);
+        this.nextId = taskIds.length ? Math.max(...taskIds) + 1 : 1;
+    }
 
-const actions = {
-    addTodo({ state }, title) {
-        const todo = {
-            id: state.nextId++,
-            title,
-            completed: false
+    addTask(text) {
+        text = text.trim();
+        if (text) {
+            const task = {
+                id: this.nextId++,
+                text: text,
+                isCompleted: false,
+            };
+            this.tasks.push(task);
         }
-        state.todos.push(todo);
-    },
-    removeTodo({ state }, id) {
-        const index = state.todos.findIndex(t => t.id === id);
-        state.todos.splice(index, 1);
-    },
-    updateTodo({state, dispatch}, {id, title}) {
-        const value = title.trim();
+    }
+
+    toggleTask(task) {
+        task.isCompleted = !task.isCompleted;
+    }
+
+    toggleTask(id) {
+        const task = this.tasks.find(t => t.id === id);
+        task.isCompleted = !task.isCompleted;
+    }
+
+    toggleAll(value) {
+        for (let task of this.tasks) {
+            task.isCompleted = value;
+        }
+    }
+    
+    clearCompleted() {
+        const tasks = this.tasks.filter(t => t.isCompleted);
+        for (let task of tasks) {
+            this.deleteTask(task);
+        }
+    }
+    
+    deleteTask(id) {
+        const index = this.tasks.findIndex((t) => t.id === id);
+        this.tasks.splice(index, 1);
+    }
+    
+    updateTask(id, text) {
+        const value = text.trim();
         if (!value) {
-            dispatch('removeTodo', id);
+            this.deleteTask(id);
         } else {
-            const todo = state.todos.find(t => t.id === id);
-            todo.title = value;
+            const task = this.tasks.find(t => t.id === id);
+            task.text = value;
         }
-    },
-    toggleTodo({ state }, id) {
-        const todo = state.todos.find(t => t.id === id);
-        todo.completed = !todo.completed;
-    },
-    clearCompleted({ state, dispatch }) {
-        for (let todo of state.todos.slice()) {
-            if (todo.completed) {
-                dispatch("removeTodo", todo.id);
-            }
-        }
-    },
-    toggleAll({ state, dispatch }, completed) {
-        for (let todo of state.todos) {
-            todo.completed = completed;
-        }
-    },
-};
+    }
+}
 
+function createTaskStore() {
+    const saveTasks = () => localStorage.setItem("todoapp", JSON.stringify(taskStore.tasks));
+    const initialTasks = JSON.parse(localStorage.getItem("todoapp") || "[]");
+    const taskStore = reactive(new TaskList(initialTasks), saveTasks);
+    saveTasks();
+    return taskStore;
+}
+  
 //------------------------------------------------------------------------------
-// TodoItem
+// Todo
 //------------------------------------------------------------------------------
-class TodoItem extends Component {
-    constructor() {
-        super(...arguments);
+class Todo extends Component {
+    static template = "Todo";
+    
+    setup() {
         useAutofocus("input");
-        this.state = useState({ isEditing: false });
-        this.dispatch = useDispatch();
+        this.store = useStore();
+        this.state = useState({
+            isEditing: false
+        });
     }
 
     handleKeyup(ev) {
         if (ev.keyCode === ENTER_KEY) {
-            this.updateTitle(ev.target.value);
+            this.updateText(ev.target.value);
         }
         if (ev.keyCode === ESC_KEY) {
-            ev.target.value = this.props.title;
+            ev.target.value = this.props.text;
             this.state.isEditing = false;
         }
     }
 
     handleBlur(ev) {
-        this.updateTitle(ev.target.value);
+        this.updateText(ev.target.value);
     }
 
-    updateTitle(title) {
-        this.dispatch("updateTodo", {title, id: this.props.id});
+    updateText(text) {
+        this.store.updateTask(this.props.id, text);
         this.state.isEditing = false;
     }
 }
 
 //------------------------------------------------------------------------------
-// TodoApp
+// TodoList
 //------------------------------------------------------------------------------
-class TodoApp extends Component {
-    constructor() {
-        super(...arguments);
+class TodoList extends Component {
+    static template = "TodoList";
+    static components = { Todo };
+    
+    setup() {
+        this.store = useStore();
         this.state = useState({ filter: "all" });
-        this.todos = useStore(state => state.todos);
-        this.dispatch = useDispatch();
     }
 
-    get visibleTodos() {
-        switch (this.state.filter) {
-            case "active": return this.todos.filter(t => !t.completed);
-            case "completed": return this.todos.filter(t => t.completed);
-            case "all": return this.todos;
-        }
+    get displayedTasks() {
+      const tasks = this.store.tasks;
+      switch (this.state.filter) {
+        case "active":
+          return tasks.filter((t) => !t.isCompleted);
+        case "completed":
+          return tasks.filter((t) => t.isCompleted);
+        case "all":
+          return tasks;
+      }
     }
-
+    
     get allChecked() {
-        return this.todos.every(todo => todo.completed);
+        return this.store.tasks.every(todo => todo.isCompleted);
     }
 
     get remaining() {
-        return this.todos.filter(todo => !todo.completed).length;
+        return this.store.tasks.filter(todo => !todo.isCompleted).length;
     }
 
     get remainingText() {
@@ -529,9 +362,9 @@ class TodoApp extends Component {
 
     addTodo(ev) {
         if (ev.keyCode === ENTER_KEY) {
-            const title = ev.target.value;
-            if (title.trim()) {
-                this.dispatch("addTodo", title);
+            const text = ev.target.value;
+            if (text.trim()) {
+                this.store.addTask(text);
             }
             ev.target.value = "";
         }
@@ -541,48 +374,31 @@ class TodoApp extends Component {
         this.state.filter = filter;
     }
 }
-TodoApp.components = { TodoItem };
 
 //------------------------------------------------------------------------------
 // App Initialization
 //------------------------------------------------------------------------------
-
-function makeStore() {
-    function saveState(state) {
-        const str = JSON.stringify(state);
-        window.localStorage.setItem(LOCALSTORAGE_KEY, str);
-    }
-    function loadState() {
-        const localState = window.localStorage.getItem(LOCALSTORAGE_KEY);
-        return localState ? JSON.parse(localState) : initialState;
-    }
-
-    const state = loadState();
-    const store = new owl.Store({ state, actions });
-    store.on("update", null, () => saveState(store.state));
-    return store;
-}
-
-TodoApp.env.store = makeStore();
-mount(TodoApp, { target: document.body });
+const env = { store: createTaskStore() };
+mount(TodoList, document.body, { env, templates: TEMPLATES, dev: true });
 `;
 
-const TODO_APP_STORE_XML = `<templates>
-  <section t-name="TodoApp" class="todoapp">
+const TODO_APP_REACTIVITY_XML = /*xml*/ `
+<templates>
+  <section t-name="TodoList" class="todoapp">
     <header class="header">
       <h1>todos</h1>
       <input class="new-todo" autofocus="true" autocomplete="off" placeholder="What needs to be done?" t-on-keyup="addTodo"/>
     </header>
-    <section class="main" t-if="todos.length">
-      <input class="toggle-all" id="toggle-all" type="checkbox" t-att-checked="allChecked" t-on-click="dispatch('toggleAll', !allChecked)"/>
+    <section class="main" t-if="store.tasks.length">
+      <input class="toggle-all" id="toggle-all" type="checkbox" t-att-checked="allChecked" t-on-click="() => store.toggleAll(!allChecked)"/>
       <label for="toggle-all"></label>
       <ul class="todo-list">
-        <t t-foreach="visibleTodos" t-as="todo">
-          <TodoItem t-key="todo.id" id="todo.id" completed="todo.completed" title="todo.title"/>
+        <t t-foreach="displayedTasks" t-as="todo" t-key="todo.id">
+          <Todo id="todo.id" isCompleted="todo.isCompleted" text="todo.text"/>
         </t>
       </ul>
     </section>
-    <footer class="footer" t-if="todos.length">
+    <footer class="footer" t-if="store.tasks.length">
       <span class="todo-count">
         <strong>
             <t t-esc="remaining"/>
@@ -591,35 +407,35 @@ const TODO_APP_STORE_XML = `<templates>
       </span>
       <ul class="filters">
         <li>
-          <a t-on-click="setFilter('all')" t-att-class="{selected: state.filter === 'all'}">All</a>
+          <a t-on-click="() => this.setFilter('all')" t-att-class="{selected: state.filter === 'all'}">All</a>
         </li>
         <li>
-          <a t-on-click="setFilter('active')" t-att-class="{selected: state.filter === 'active'}">Active</a>
+          <a t-on-click="() => this.setFilter('active')" t-att-class="{selected: state.filter === 'active'}">Active</a>
         </li>
         <li>
-          <a t-on-click="setFilter('completed')" t-att-class="{selected: state.filter === 'completed'}">Completed</a>
+          <a t-on-click="() => this.setFilter('completed')" t-att-class="{selected: state.filter === 'completed'}">Completed</a>
         </li>
       </ul>
-      <button class="clear-completed" t-if="todos.length gt remaining" t-on-click="dispatch('clearCompleted')">
+      <button class="clear-completed" t-if="store.tasks.length gt remaining" t-on-click="() => store.clearCompleted()">
         Clear completed
       </button>
     </footer>
   </section>
 
-  <li t-name="TodoItem" class="todo" t-att-class="{completed: props.completed, editing: state.isEditing}">
+  <li t-name="Todo" class="todo" t-att-class="{completed: props.isCompleted, editing: state.isEditing}">
     <div class="view">
-      <input class="toggle" type="checkbox" t-on-change="dispatch('toggleTodo', props.id)" t-att-checked="props.completed"/>
-      <label t-on-dblclick="state.isEditing = true">
-        <t t-esc="props.title"/>
+      <input class="toggle" type="checkbox" t-on-change="() => store.toggleTask(props.id)" t-att-checked="props.completed"/>
+      <label t-on-dblclick="() => state.isEditing = true">
+        <t t-esc="props.text"/>
       </label>
-      <button class="destroy" t-on-click="dispatch('removeTodo', props.id)"></button>
+      <button class="destroy" t-on-click="() => store.deleteTask(props.id)"></button>
     </div>
-    <input class="edit" t-ref="input" t-if="state.isEditing" t-att-value="props.title" t-on-keyup="handleKeyup" t-on-blur="handleBlur"/>
+    <input class="edit" t-ref="input" t-if="state.isEditing" t-att-value="props.text" t-on-keyup="handleKeyup" t-on-blur="handleBlur"/>
   </li>
 </templates>`;
 
-const TODO_APP_STORE_CSS = `html,
-body {
+const TODO_APP_REACTIVITY_CSS = /*css*/`
+html,body {
   margin: 0;
   padding: 0;
 }
@@ -1000,8 +816,9 @@ html .clear-completed:active {
 }
 `;
 
-const RESPONSIVE = `// In this example, we show how we can modify keys in the global environment to
-// make a responsive application.
+const RESPONSIVE = /*js*/ `
+// In this example, we show how one can design an application that is responsive:
+// its UI is different in mobile mode or in desktop mode.
 //
 // The main idea is to have a "isMobile" key in the environment, then listen
 // to resize events and update the env if needed.  Then, the whole interface
@@ -1009,71 +826,134 @@ const RESPONSIVE = `// In this example, we show how we can modify keys in the gl
 //
 // To see this in action, try resizing the window.  The application will switch
 // to mobile mode whenever it has less than 768px.
+const { Component, useState, mount, reactive, useEnv } = owl;
+
+//------------------------------------------------------------------------------
+// Helpers
+//------------------------------------------------------------------------------
+
+function debounce(func, wait, immediate) {
+  let timeout;
+  return function () {
+    const context = this;
+    const args = arguments;
+    function later() {
+      timeout = null;
+      if (!immediate) {
+        func.apply(context, args);
+      }
+    }
+    const callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) {
+      func.apply(context, args);
+    }
+  };
+}
+
+//------------------------------------------------------------------------------
+// Responsive hook
+//------------------------------------------------------------------------------
+
+function createUI() {
+  const getIsMobile = () => window.innerWidth <= 768;
+
+  const ui = reactive({ isMobile: getIsMobile() });
+
+    const updateEnv = debounce(() => {
+      const isMobile = getIsMobile();
+        if (ui.isMobile !== isMobile) {
+            ui.isMobile = isMobile;
+        }
+    }, 15);
+    window.addEventListener("resize", updateEnv);
+    return ui;
+}
+
+function useUI() {
+  const env = useEnv();
+  return useState(env.ui);
+}
+
 
 //------------------------------------------------------------------------------
 // Components
 //------------------------------------------------------------------------------
-class Navbar extends owl.Component {}
+class Navbar extends owl.Component {
+  static template = "Navbar";
+}
 
-class MobileSearchView extends owl.Component {}
+class MobileSearchView extends Component {
+  static template = "MobileSearchView";
+}
 
-class ControlPanel extends owl.Component {}
-ControlPanel.components = { MobileSearchView };
+class ControlPanel extends Component {
+  static template = "ControlPanel";
+  static components = { MobileSearchView };
+  setup() {
+    this.ui = useUI();
+  }
+}
 
-class AdvancedComponent extends owl.Component {}
+class AdvancedComponent extends Component {
+  static template = "AdvancedComponent";
+}
 
-class FormView extends owl.Component {}
-FormView.components = { AdvancedComponent };
+class FormView extends Component {
+  static template = "FormView";
+  static components = { AdvancedComponent };
+  setup() {
+    this.ui = useUI();
+  }
+}
 
-class Chatter extends owl.Component {
-    constructor() {
-        super(...arguments);
+class Chatter extends Component {
+    static template = "Chatter";
+
+    setup() {
         this.messages = Array.from(Array(100).keys());
     }
 }
 
-class App extends owl.Component {}
-App.components = { Navbar, ControlPanel, FormView, Chatter };
+class Root extends Component {
+  static template = "Root";
+  static components = { Navbar, ControlPanel, FormView, Chatter };
 
-//------------------------------------------------------------------------------
-// Responsive plugin
-//------------------------------------------------------------------------------
-function setupResponsivePlugin(env) {
-    const isMobile = () => window.innerWidth <= 768;
-    env.isMobile = isMobile();
-    const updateEnv = owl.utils.debounce(() => {
-        if (env.isMobile !== isMobile()) {
-            env.isMobile = !env.isMobile;
-            env.qweb.forceUpdate();
-        }
-    }, 15);
-    window.addEventListener("resize", updateEnv);
+  setup() {
+    this.ui = useUI();
+  }
 }
+
+
 
 //------------------------------------------------------------------------------
 // Application Startup
 //------------------------------------------------------------------------------
-setupResponsivePlugin(App.env);
+const env = {
+  ui: createUI()
+};
 
-owl.mount(App, { target: document.body });
+mount(Root, document.body, { templates: TEMPLATES, env });
 `;
 
-const RESPONSIVE_XML = `<templates>
+const RESPONSIVE_XML = /*xml*/`
+<templates>
   <div t-name="Navbar" class="navbar">Navbar</div>
 
   <div t-name="ControlPanel" class="controlpanel">
     <h2>Control Panel</h2>
-    <MobileSearchView t-if="env.isMobile" />
+    <MobileSearchView t-if="ui.isMobile" />
   </div>
 
   <div t-name="FormView" class="formview">
     <h2>Form View</h2>
-    <AdvancedComponent t-if="!env.isMobile" />
+    <AdvancedComponent t-if="!ui.isMobile" />
   </div>
 
   <div t-name="Chatter" class="chatter">
     <h2>Chatter</h2>
-    <t t-foreach="messages" t-as="item"><div>Message <t t-esc="item"/></div></t>
+    <t t-foreach="messages" t-as="item" t-key="item"><div>Message <t t-esc="item"/></div></t>
   </div>
 
   <div t-name="MobileSearchView">Mobile searchview</div>
@@ -1087,10 +967,10 @@ const RESPONSIVE_XML = `<templates>
     <FormView />
     <Chatter />
   </t>
-  <div t-name="App" class="app" t-att-class="{mobile: env.isMobile, desktop: !env.isMobile}">
+  <div t-name="Root" class="app" t-att-class="{mobile: ui.isMobile, desktop: !ui.isMobile}">
     <Navbar/>
     <ControlPanel/>
-    <div class="content-wrapper" t-if="!env.isMobile">
+    <div class="content-wrapper" t-if="!ui.isMobile">
       <div class="content">
         <t t-call="maincontent"/>
       </div>
@@ -1102,7 +982,8 @@ const RESPONSIVE_XML = `<templates>
 </templates>
 `;
 
-const RESPONSIVE_CSS = `body {
+const RESPONSIVE_CSS = /*css*/`
+body {
     margin: 0;
 }
 
@@ -1160,55 +1041,61 @@ const RESPONSIVE_CSS = `body {
 }
 `;
 
-const SLOTS = `// We show here how slots can be used to create generic components.
+const SLOTS = /*js*/ `
+
+// We show here how slots can be used to create generic components.
 // In this example, the Card component is basically only a container. It is not
 // aware of its content. It just knows where it should be (with t-slot).
 // The parent component define the content with t-set-slot.
 //
-// Note that the t-on-click event, defined in the App template, is executed in
-// the context of the App component, even though it is inside the Card component
+// Note that the t-on-click event, defined in the Root template, is executed in
+// the context of the Root component, even though it is inside the Card component
 const { Component, useState, mount } = owl;
 
 class Card extends Component {
-    constructor() {
-        super(...arguments);
-        this.state = useState({ showContent: true });
-    }
+  static template = "Card";
+  
+  setup() {
+    this.state = useState({ showContent: true });
+  }
 
-    toggleDisplay() {
-        this.state.showContent = !this.state.showContent;
-    }
+  toggleDisplay() {
+    this.state.showContent = !this.state.showContent;
+  }
 }
 
 class Counter extends Component {
-    constructor() {
-        super(...arguments);
-        this.state = useState({val: 1});
-    }
+  static template = "Counter";
+  
+  setup() {
+    this.state = useState({val: 1});
+  }
 
-    inc() {
-        this.state.val++;
-    }
+  inc() {
+    this.state.val++;
+  }
 }
 
 // Main root component
-class App extends Component {
-    constructor() {
-        super(...arguments);
-        this.state = useState({a: 1, b: 3});
-    }
+class Root extends Component {
+  static template = "Root"
+  static components = { Card, Counter };
+  
+  setup() {
+    this.state = useState({a: 1, b: 3});
+  }
 
-    inc(key, delta) {
-        this.state[key] += delta;
-    }
+  inc(key, delta) {
+    this.state[key] += delta;
+  }
 }
-App.components = {Card, Counter};
 
 // Application setup
-mount(App, { target: document.body });
+mount(Root, document.body, { templates: TEMPLATES, dev: true});
 `;
 
-const SLOTS_XML = `<templates>
+const SLOTS_XML = /*xml*/`
+<templates>
   <div t-name="Card" class="card" t-att-class="state.showContent ? 'full' : 'small'">
     <div class="card-title">
       <t t-esc="props.title"/><button t-on-click="toggleDisplay">Toggle</button>
@@ -1227,22 +1114,24 @@ const SLOTS_XML = `<templates>
     <t t-esc="state.val"/><button t-on-click="inc">Inc</button>
   </div>
 
-  <div t-name="App" class="main">
+  <div t-name="Root" class="main">
     <Card title="'Title card A'">
       <t t-set-slot="content">Content of card 1...  [<t t-esc="state.a"/>]</t>
-      <t t-set-slot="footer"><button t-on-click="inc('a', 1)">Increment A</button></t>
+      <t t-set-slot="footer"><button t-on-click="() => this.inc('a', 1)">Increment A</button></t>
     </Card>
     <Card title="'Title card B'">
       <t t-set-slot="content">
         <div>Card 2... [<t t-esc="state.b"/>]</div>
         <Counter />
       </t>
-      <t t-set-slot="footer"><button t-on-click="inc('b', -1)">Decrement B</button></t>
+      <t t-set-slot="footer"><button t-on-click="() => this.inc('b', -1)">Decrement B</button></t>
     </Card>
   </div>
-</templates>`;
+</templates>
+`;
 
-const SLOTS_CSS = `.main {
+const SLOTS_CSS = /*css*/ `
+.main {
     display: flex;
 }
 
@@ -1286,118 +1175,33 @@ const SLOTS_CSS = `.main {
     border-top: 1px solid white;
 }`;
 
-const ASYNC_COMPONENTS = `// This example will not work if your browser does not support ESNext class fields
-
-// In this example, we have 2 sub components, one of them being async (slow).
-// However, we don't want renderings of the other sub component to be delayed
-// because of the slow component. We use the AsyncRoot component for this
-// purpose. Try removing it to see the difference.
-const { Component, useState, mount } = owl;
-const { AsyncRoot } = owl.misc;
-
-class SlowComponent extends Component {
-    willUpdateProps() {
-        // simulate a component that needs to perform async stuff (e.g. an RPC)
-        // with the updated props before re-rendering itself
-        return new Promise(resolve => setTimeout(resolve, 1500));
-    }
-}
-
-class NotificationList extends Component {}
-
-class App extends Component {
-    constructor() {
-        super(...arguments);
-        this.state = useState({ value: 0, notifs: [] });
-    }
-
-    increment() {
-        this.state.value++;
-        const notif = "Value will be set to " + this.state.value;
-        this.state.notifs.push(notif);
-        setTimeout(() => {
-            var index = this.state.notifs.indexOf(notif);
-            this.state.notifs.splice(index, 1);
-        }, 3000);
-    }
-}
-App.components = {SlowComponent, NotificationList, AsyncRoot};
-
-mount(App, { target: document.body });
-`;
-
-const ASYNC_COMPONENTS_XML = `<templates>
-  <div t-name="App" class="app">
-    <button t-on-click="increment">Increment</button>
-    <SlowComponent value="state.value"/>
-    <AsyncRoot>
-      <NotificationList notifications="state.notifs"/>
-    </AsyncRoot>
-  </div>
-  <div t-name="SlowComponent" class="value" >
-    Current value: <t t-esc="props.value"/>
-  </div>
-
-  <div t-name="NotificationList" class="notification-list">
-    <t t-foreach="props.notifications" t-as="notif">
-      <div class="notification"><t t-esc="notif"/></div>
-    </t>
-  </div>
-</templates>`;
-
-const ASYNC_COMPONENTS_CSS = `.app {
-    width: 70%;
-}
-
-button {
-    color: darkred;
-    font-size: 30px;
-    width: 220px;
-}
-
-.value {
-    font-size: 26px;
-    padding: 20px;
-}
-
-.notification-list {
-    position: absolute;
-    top: 0;
-    right: 0;
-}
-
-.notification {
-    width: 150px;
-    margin: 4px 8px;
-    padding: 16px;
-    border: 1px solid: black;
-    background-color: lightgray;
-}`;
-
-const FORM = `// This example illustrate how the t-model directive can be used to synchronize
+const FORM = /*js*/`
+// This example illustrate how the t-model directive can be used to synchronize
 // data between html inputs (and select/textareas) and the state of a component.
 // Note that there are two controls with t-model="color": they are totally
 // synchronized.
 const { Component, useState, mount } = owl;
 
 class Form extends Component {
-    constructor() {
-        super(...arguments);
-        this.state = useState({
-            text: "",
-            othertext: "",
-            number: 11,
-            color: "",
-            bool: false
-        });
-    }
+  static template = "Form";
+
+  setup() {
+    this.state = useState({
+      text: "",
+      othertext: "",
+      number: 11,
+      color: "",
+      bool: false
+    });
+  }
 }
 
 // Application setup
-mount(Form, { target: document.body });
+mount(Form, document.body, { templates: TEMPLATES, dev: true });
 `;
 
-const FORM_XML = `<templates>
+const FORM_XML = /*xml*/ `
+<templates>
   <div t-name="Form">
     <h1>Form</h1>
     <div>
@@ -1436,111 +1240,8 @@ const FORM_XML = `<templates>
 </templates>
 `;
 
-const PORTAL_COMPONENTS = `
-// This shows the expected use case of Portal
-// which is to implement something similar
-// to bootstrap modal
-const { Component, useState, mount } = owl;
-const { Portal } = owl.misc;
-
-class Modal extends Component {}
-Modal.components = { Portal };
-
-class Dialog extends Component {}
-Dialog.components = { Modal };
-
-class Interstellar extends Component {}
-
-// Main root component
-class App extends Component {
-    state = useState({
-        name: 'Portal used for Dialog (Modal)',
-        dialog: false,
-        text: 'Hello !',
-    });
-}
-App.components = { Dialog , Interstellar };
-
-// Application setup
-mount(App, { target: document.body });
-`;
-
-const PORTAL_XML = `
-<templates>
-  <t t-name="Modal">
-    <Portal target="'body'">
-        <div class="owl-modal-supercontainer">
-          <div class="owl-modal-backdrop"></div>
-          <div class="owl-modal-container">
-            <t t-slot="default" />
-          </div>
-        </div>
-    </Portal>
-  </t>
-
-  <t t-name="Dialog">
-    <Modal>
-      <div class="owl-dialog-body">
-        <t t-slot="default" />
-      </div>
-    </Modal>
-  </t>
-
-  <div t-name="Interstellar" class="owl-interstellar">
-    <h4>This is a subComponent</h4>
-    <p>The events it triggers will go through the Portal and be teleported
-    on the other side of the wormhole it has created</p>
-    <button t-on-click="trigger('collapse-all')">Close the wormhole</button>
-  </div>
-
-  <div t-name="App" t-on-collapse-all="state.dialog=false">
-    <div t-esc="state.name"/>
-    <button t-on-click="state.dialog = true">Open Dialog</button>
-    <Dialog t-if="state.dialog">
-      <div t-esc="state.text"/>
-      <Interstellar />
-    </Dialog>
-  </div>
-</templates>
-`;
-
-const PORTAL_CSS = `
-.owl-modal-supercontainer {
-  position: static;
-}
-.owl-modal-backdrop {
-    position: fixed;
-    top: 0;
-    left:0;
-    background-color: #000000;
-    opacity: 0.5;
-    width: 100vw;
-    height: 100vh;
-    z-index: 1000;
-}
-.owl-modal-container {
-    opacity:1;
-    z-index: 1050;
-    position: fixed;
-    top: 0;
-    left:0;
-    width: 100%;
-    height: 100%;
-}
-.owl-dialog-body {
-    max-width: 500px;
-    margin: 0 auto;
-    position: relative;
-    text-align: center;
-    padding: 2rem;
-    background-color: #FFFFFF;
-    max-height: 100%;
-}
-.owl-interstellar {
-    border: groove;
-}`
-
-const WMS = `// This example is slightly more complex than usual. We demonstrate
+const WMS = /*js*/`
+// This example is slightly more complex than usual. We demonstrate
 // here a way to manage sub windows in Owl, declaratively. This is still just a
 // demonstration. Managing windows can be as complex as we want.  For example,
 // we could implement the following features:
@@ -1550,43 +1251,95 @@ const WMS = `// This example is slightly more complex than usual. We demonstrate
 // - minimal width/height
 // - better heuristic for initial window position
 // - ...
-const { Component, useState, mount } = owl;
-const { useRef } = owl.hooks;
+const { Component, useState, mount, useRef, reactive, useEnv, onMounted } = owl;
 
-class HelloWorld extends Component {}
+// -----------------------------------------------------------------------------
+// Window manager code
+// -----------------------------------------------------------------------------
 
-class Counter extends Component {
-  constructor() {
-    super(...arguments);
-    this.state = useState({ value: 0 });
+class WindowManager {
+  // contains all components with metadata
+  static Windows = {};
+  windows = {}; // mapping id => info
+  nextId = 1;
+
+  add(type) {
+    const Comp = WindowManager.Windows[type];
+    const left = 50 + Math.round(Math.random()*(window.innerWidth - 50 - Comp.defaultWidth));
+    const top = 50 + Math.round(Math.random()*(window.innerHeight - 100 - Comp.defaultHeight));
+    const id = this.nextId++;
+    this.windows[id] = {
+      id, 
+      title: Comp.defaultTitle,
+      width: Comp.defaultWidth,
+      height: Comp.defaultHeight,
+      left,
+      top,
+      Component: Comp,
+    };
+  }
+  
+  close(id) {
+    delete this.windows[id];
   }
 
-  inc() {
-    this.state.value++;
+  updatePosition(id, left, top) {
+    const w = this.windows[id];
+    w.left = left;
+    w.top = top;
+  }
+
+  getWindows() {
+    return Object.values(this.windows);
   }
 }
 
+function createWindowService() {
+  return reactive(new WindowManager());
+}
+
+function useWindowService() {
+  const env = useEnv();
+  return useState(env.windowService);
+}
+
+// -----------------------------------------------------------------------------
+// Generic Window Component
+// -----------------------------------------------------------------------------
+
 class Window extends Component {
+  static template = "Window";
+  static nextZIndex = 1;
+  zIndex = 0;
+
+  setup() {
+    this.windowService = useWindowService();
+    this.root = useRef('root');
+    onMounted(this.updateZIndex);
+  }
 
   get style() {
-    let { width, height, top, left, zindex } = this.props.info;
-
-    return \`width: \${width}px;height: \${height}px;top:\${top}px;left:\${left}px;z-index:\${zindex}\`;
+    let { width, height, top, left } = this.props.info;
+    return \`width: $\{width}px;height: $\{height}px;top:$\{top}px;left:$\{left}px;z-index:\${this.zIndex}\`;
   }
 
   close() {
-    this.trigger("close-window", { id: this.props.info.id });
+    this.windowService.close(this.props.info.id);
   }
 
   startDragAndDrop(ev) {
     this.updateZIndex();
-    this.el.classList.add('dragging');
-    const offsetX = this.props.info.left - ev.pageX;
-    const offsetY = this.props.info.top - ev.pageY;
+    const self = this;
+    const root = this.root;
+
+    const el = root.el;
+    el.classList.add('dragging');
+
+    const current = this.props.info;
+    const offsetX = current.left - ev.pageX;
+    const offsetY = current.top - ev.pageY;
     let left, top;
 
-    const el = this.el;
-    const self = this;
     window.addEventListener("mousemove", moveWindow);
     window.addEventListener("mouseup", stopDnD, { once: true });
 
@@ -1598,103 +1351,93 @@ class Window extends Component {
     }
     function stopDnD() {
       window.removeEventListener("mousemove", moveWindow);
-      const options = { id: self.props.info.id, left, top };
-      self.el.classList.remove('dragging');
-      self.trigger("set-window-position", options);
+      el.classList.remove('dragging');
+
+      if (top !== undefined && left !== undefined) {
+        self.windowService.updatePosition(current.id, left, top);
+      }
     }
   }
 
   updateZIndex() {
-    this.trigger("update-z-index", { id: this.props.info.id });
+    this.zIndex = Window.nextZIndex++;
+    this.root.el.style['z-index'] = this.zIndex;
   }
 }
 
-class WindowManager extends Component {
-  constructor() {
-    super(...arguments);
-    this.windows = [];
-    this.nextId = 1;
-    this.currentZindex = 1;
-    this.nextLeft = 0;
-    this.nextTop = 0;
-  }
+// -----------------------------------------------------------------------------
+// Two concrete Window type implementations
+// -----------------------------------------------------------------------------
 
-  addWindow(name) {
-    const info = this.env.windows.find(w => w.name === name);
-    this.nextLeft = this.nextLeft + 30;
-    this.nextTop = this.nextTop + 30;
-    this.windows.push({
-      id: this.nextId++,
-      title: info.title,
-      width: info.defaultWidth,
-      height: info.defaultHeight,
-      top: this.nextTop,
-      left: this.nextLeft,
-      zindex: this.currentZindex++,
-      component: info.component
-    });
-    this.render();
-  }
+class HelloWorld extends Component {
+  static template = "HelloWorld";
+  static defaultTitle = "Hello Owl!";
+  static defaultWidth = 200;
+  static defaultHeight = 100;
+}
 
-  closeWindow(ev) {
-    const id = ev.detail.id;
-    delete this.constructor.components[id];
-    const index = this.windows.findIndex(w => w.id === id);
-    this.windows.splice(index, 1);
-    this.render();
-  }
 
-  setWindowPosition(ev) {
-    const id = ev.detail.id;
-    const w = this.windows.find(w => w.id === id);
-    w.top = ev.detail.top;
-    w.left = ev.detail.left;
-  }
-
-  updateZIndex(ev) {
-    const id = ev.detail.id;
-    const w = this.windows.find(w => w.id === id);
-    w.zindex = this.currentZindex++;
-    ev.target.style["z-index"] = w.zindex;
+class Counter extends Component {
+  static template = "Counter";
+  static defaultTitle = "Click Counter";
+  static defaultWidth = 300;
+  static defaultHeight = 120;
+  
+  state = useState({ value: 0 });
+  
+  inc() {
+    this.state.value++;
   }
 }
-WindowManager.components = { Window };
 
-class App extends Component {
-  constructor() {
-    super(...arguments);
-    this.wmRef = useRef("wm");
-  }
+// register window components
+WindowManager.Windows.Hello = HelloWorld;
+WindowManager.Windows.Counter = Counter;
 
-  addWindow(name) {
-    this.wmRef.comp.addWindow(name);
+// -----------------------------------------------------------------------------
+// Window Container
+// -----------------------------------------------------------------------------
+
+class WindowContainer extends Component {
+  static template = "WindowContainer";
+  static components = { Window };
+    
+  setup() {
+    this.windowService = useWindowService();
   }
 }
-App.components = { WindowManager };
 
-const windows = [
-  {
-    name: "Hello",
-    title: "Hello",
-    component: HelloWorld,
-    defaultWidth: 200,
-    defaultHeight: 100
-  },
-  {
-    name: "Counter",
-    title: "Click Counter",
-    component: Counter,
-    defaultWidth: 300,
-    defaultHeight: 120
+// -----------------------------------------------------------------------------
+// Root Component
+// -----------------------------------------------------------------------------
+
+class Root extends Component {
+  static template = "Root";
+  static components = { WindowContainer };
+    
+  setup() {
+    this.windowService = useWindowService();
   }
-];
+  
+  addWindow(type) {
+    this.windowService.add(type);
+  }
+}
 
-App.env.windows = windows;
-mount(App, { target: document.body });
+// -----------------------------------------------------------------------------
+// Setup
+// -----------------------------------------------------------------------------
+
+const env = {
+  windowService: createWindowService(),
+};
+
+mount(Root, document.body, { templates: TEMPLATES, env, dev: true });
 `;
 
-const WMS_XML = `<templates>
-  <div t-name="Window" class="window" t-att-style="style" t-on-click="updateZIndex">
+const WMS_XML =/*xml*/`
+<templates>
+  <div t-name="Window" class="window" t-att-style="style" t-on-click="updateZIndex" t-ref="root">
     <div class="header">
       <span t-on-mousedown="startDragAndDrop"><t t-esc="props.info.title"/></span>
       <span class="close" t-on-click.stop="close">×</span>
@@ -1702,35 +1445,33 @@ const WMS_XML = `<templates>
     <t t-slot="default"/>
   </div>
 
-  <div t-name="WindowManager" class="window-manager"
-       t-on-close-window="closeWindow"
-       t-on-update-z-index="updateZIndex"
-       t-on-set-window-position="setWindowPosition">
-    <Window t-foreach="windows" t-as="w" t-key="w.id" info="w">
-      <t t-component="w.component"/>
+  <div t-name="WindowContainer" class="window-manager">
+    <Window t-foreach="windowService.getWindows()" t-as="w" t-key="w.id" info="w">
+      <t t-component="w.Component"/>
     </Window>
   </div>
 
-  <div t-name="App" class="app">
-    <WindowManager t-ref="wm"/>
+  <div t-name="Root" class="app">
+    <WindowContainer/>
     <div class="menubar">
-      <button t-on-click="addWindow('Hello')">Say Hello</button>
-      <button t-on-click="addWindow('Counter')">Counter</button>
+      <button t-on-click="() => this.addWindow('Hello')">Say Hello</button>
+      <button t-on-click="() => this.addWindow('Counter')">Counter</button>
     </div>
   </div>
 
   <div t-name="HelloWorld">
-    World
+    Some content here...
   </div>
 
   <div t-name="Counter" class="counter">
-    <button t-on-click="inc">Inc</button>
+    <button t-on-click="inc">Click</button>
     <span><t t-esc="state.value"/></span>
   </div>
 </templates>
 `;
 
-const WMS_CSS = `body {
+const WMS_CSS=  /*css*/`
+body {
     margin: 0;
 }
 
@@ -1801,46 +1542,220 @@ const WMS_CSS = `body {
     font-size: 20px;
 }`;
 
-const SFC = `// This example illustrates how Owl enables single file components,
-// which include code, template and style.
-//
-// This is very useful in some situations, such as testing or quick prototyping.
-// Note that this example has no external xml or css file, everything is
-// contained in a single js file.
+const SFC =/*js*/`
+// This example illustrates how one can write Owl components with
+// inline templates.
 
-const { Component, useState, tags, mount } = owl;
-const { xml, css } = tags;
+const { Component, useState, xml, css, mount } = owl;
 
 // Counter component
-const COUNTER_TEMPLATE = xml\`
-  <button t-on-click="state.value++">
-    Click! [<t t-esc="state.value"/>]
-  </button>\`;
-
-const COUNTER_STYLE = css\`
-  button {
-    color: blue;
-  }\`;
-
 class Counter extends Component {
+  static template = xml\`
+    <button t-on-click="() => state.value++">
+      Click! [<t t-esc="state.value"/>]
+    </button>\`;
+
   state = useState({ value: 0})
 }
-Counter.template = COUNTER_TEMPLATE;
-Counter.style = COUNTER_STYLE;
 
-// App
-const APP_TEMPLATE = xml\`
-  <div>
-    <Counter/>
-    <Counter/>
-  </div>\`;
-
-class App extends Component {}
-App.template = APP_TEMPLATE;
-App.components = { Counter };
+// Root
+class Root extends Component {
+  static template = xml\`
+    <div>
+      <Counter/>
+      <Counter/>
+    </div>\`;
+  
+  static components = { Counter };
+}
 
 // Application setup
-mount(App, { target: document.body });
+mount(Root, document.body, { templates: TEMPLATES, dev: true});
+`;
+
+const BENCHMARK_JS = `
+const { Component, mount, xml, useState, onWillRender, onPatched} = owl;
+
+// -----------------------------------------------------------------------------
+// Data generation
+// -----------------------------------------------------------------------------
+
+let idCounter = 1;
+const adjectives = [
+    "pretty", "large", "big", "small", "tall", "short", "long", "handsome", "plain",
+    "quaint", "clean", "elegant", "easy", "angry", "crazy", "helpful", "mushy", "odd",
+    "unsightly", "adorable", "important", "inexpensive", "cheap", "expensive", "fancy"];
+const colours = ["red", "yellow", "blue", "green", "pink", "brown", "purple", "brown", "white", "black", "orange"];
+const nouns = ["table", "chair", "house", "bbq", "desk", "car", "pony", "cookie", "sandwich", "burger", "pizza", "mouse", "keyboard"];
+
+function _random (max) { return Math.round(Math.random() * 1000) % max; };
+
+function buildData(count) {
+    const data = new Array(count);
+    for (let i = 0; i < count; i++) {
+        const label = \`\${adjectives[_random(adjectives.length)]} \${colours[_random(colours.length)]} \${nouns[_random(nouns.length)]}\`;
+        data[i] = {
+            id: idCounter++,
+            label,
+        };
+    }
+    return data;
+}
+
+// -----------------------------------------------------------------------------
+// Components
+// -----------------------------------------------------------------------------
+class Button extends Component {
+  static template = xml\`
+      <div class='col-sm-6 smallpad'>
+          <button t-att-id="props.id" class='btn btn-primary btn-block' type='button' t-on-click="props.onClick">
+              <t t-esc="props.text"/>
+          </button>
+      </div>\`;
+}
+
+
+class Row extends Component {
+  static template = xml\`
+      <tr t-att-class="props.isSelected ? 'danger' : ''">
+          <td class="col-md-1" t-esc="props.row.id" />
+          <td class="col-md-4">
+              <a t-on-click="() => props.onSelect(props.row.id)" t-esc="props.row.label" />
+          </td>
+          <td class="col-md-1">
+              <a t-on-click="() =>  props.onRemove(props.row.id)" class="remove">[x]
+                <span class='glyphicon glyphicon-remove' aria-hidden="true" />
+              </a>
+          </td>
+          <td class='col-md-6'/>
+      </tr>\`
+}
+
+class Root extends Component {
+  static template = xml\`
+      <div class='container'>
+        <div class='jumbotron'>
+          <div class='row'>
+            <div class='col-md-6'>
+              <h1>Owl Keyed</h1>
+            </div>
+            <div class='col-md-6'>
+              <div class='row'>
+                <Button id="'run'" onClick.bind="run" text="'Create 1,000 rows'" />
+                <Button id="'runlots'" onClick.bind="runLots" text="'Create 10,000 rows'" />
+                <Button id="'add'" onClick.bind="add" text="'Append 1,000 rows'" />
+                <Button id="'update'" onClick.bind="update" text="'Update every 10th row'" />
+                <Button id="'clear'" onClick.bind="clear" text="'Clear'" />
+                <Button id="'swaprows'" onClick.bind="swapRows" text="'Swap Rows'" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <table class='table table-hover table-striped test-data'>
+          <tbody>
+            <t t-foreach="state.rows" t-as="row" t-key="row.id">
+                <Row row="row" isSelected="row.id === state.selectedRowId" onSelect.bind="selectRow" onRemove.bind="removeRow"/>
+            </t>
+          </tbody>
+        </table>
+        <span class='preloadicon glyphicon glyphicon-remove' aria-hidden="true" />
+      </div>\`;
+
+  static components = { Button, Row };
+
+  setup() {
+      this.state = useState({
+          rows: [],
+          selectedRowId: null
+      });
+      this.benchmarking = false;
+      onPatched(() => {
+          if (this.benchmarking) {
+              this.stop();
+          }
+      });
+    }
+    
+    start(descr) {
+        this.benchmarking = \`[\${descr}]\`;
+        console.time(this.benchmarking);
+    }
+    stop() {
+        console.timeEnd(this.benchmarking);
+        this.benchmarking = false;  
+    }
+
+    run() {
+        this.start('add1000');
+        this.state.rows = buildData(1000);
+        this.state.selectedRowId = null;
+    }
+    
+    runLots() {
+        this.start('add10_000');
+        this.state.rows = buildData(10_000);
+        this.state.selectedRowId = null;
+    }
+    
+    add() {
+        this.start('append1000');
+        this.state.rows = this.state.rows.concat(buildData(1000));
+    }
+    
+    update() {
+        this.start('update1/10th');
+        let index = 0;
+        const rows = this.state.rows;
+        while (index < rows.length) {
+            rows[index].label = rows[index].label + " !!!";
+            index += 10;
+        }
+    }
+    
+    clear() {
+        this.start('clear');
+        this.state.rows = [];
+        this.state.selectedRowId = null;
+    }
+    
+    swapRows() {
+        this.start('swap');
+        const rows = this.state.rows;
+        if (rows.length > 998) {
+            let tmp = rows[1];
+            rows[1] = rows[998];
+            rows[998] = tmp;
+        }
+    }
+    
+    selectRow(id) {
+        this.start('select');
+        this.state.selectedRowId = id;
+    }
+    
+    removeRow(id) {
+        this.start('remove1');
+        const rows = this.state.rows;
+        rows.splice(rows.findIndex(row => row.id === id), 1);
+    }
+}
+
+
+mount(Root, document.body, { templates: TEMPLATES, dev: true });
+
+`;
+
+const BENCHMARK_CSS =  `
+tr.danger {
+  font-weight: bold;
+}
+
+.remove:hover {
+  font-weight: bold;
+}
+.remove {
+  cursor: pointer;
+}
 `;
 
 export const SAMPLES = [
@@ -1856,14 +1771,8 @@ export const SAMPLES = [
     xml: FORM_XML
   },
   {
-    description: "Single File Components",
+    description: "Inline templates",
     code: SFC
-  },
-  {
-    description: "Animations",
-    code: ANIMATION,
-    xml: ANIMATION_XML,
-    css: ANIMATION_CSS
   },
   {
     description: "Lifecycle demo",
@@ -1872,21 +1781,16 @@ export const SAMPLES = [
     css: LIFECYCLE_CSS
   },
   {
-    description: "Hooks",
+    description: "Customized hook",
     code: HOOKS_DEMO,
     xml: HOOKS_DEMO_XML,
     css: HOOKS_CSS
   },
   {
-    description: "Context",
-    code: CONTEXT_JS,
-    xml: CONTEXT_XML,
-  },
-  {
-    description: "Todo List App (with store)",
-    code: TODO_APP_STORE,
-    css: TODO_APP_STORE_CSS,
-    xml: TODO_APP_STORE_XML
+    description: "Todo List App (with reactivity)",
+    code: TODO_APP_REACTIVITY,
+    css: TODO_APP_REACTIVITY_CSS,
+    xml: TODO_APP_REACTIVITY_XML
   },
   {
     description: "Responsive app",
@@ -1901,21 +1805,14 @@ export const SAMPLES = [
     css: SLOTS_CSS
   },
   {
-      description: "Window Management System",
-      code: WMS,
-      xml: WMS_XML,
-      css: WMS_CSS,
+    description: "Window Management System",
+    code: WMS,
+    xml: WMS_XML,
+    css: WMS_CSS,
   },
   {
-    description: "Asynchronous components",
-    code: ASYNC_COMPONENTS,
-    xml: ASYNC_COMPONENTS_XML,
-    css: ASYNC_COMPONENTS_CSS
-  },
-  {
-    description: "Portal (Dialog)",
-    code: PORTAL_COMPONENTS,
-    xml: PORTAL_XML,
-    css: PORTAL_CSS,
+    description: "Benchmark example",
+    code: BENCHMARK_JS,
+    css: BENCHMARK_CSS,
   },
 ];

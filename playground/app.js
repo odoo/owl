@@ -1,19 +1,11 @@
 import { SAMPLES } from "./samples.js";
-const { mount, hooks } = owl;
-const { useState, useRef, onMounted, onWillUnmount } = hooks;
+import { debounce, loadJS } from "./utils.js";
+import { exportStandaloneApp } from "./export_snippet.js";
+const { useState, useRef, onMounted, onWillUnmount, onPatched, onWillUpdateProps } = owl;
+
 //------------------------------------------------------------------------------
 // Constants, helpers, utils
 //------------------------------------------------------------------------------
-let owlJS;
-
-async function owlSourceCode() {
-  if (owlJS) {
-    return owlJS;
-  }
-  const result = await fetch("../owl.js");
-  owlJS = await result.text();
-  return owlJS;
-}
 
 const MODES = {
   js: "ace/mode/javascript",
@@ -24,77 +16,32 @@ const MODES = {
 const DEFAULT_XML = `<templates>
 </templates>`;
 
-const DEFAULT_HTML = `<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>OWL App</title>
-    <link rel="icon" href="data:,">
-
-    <script src="owl.js"></script>
-    <link rel="stylesheet" href="app.css">
-    <script src="app.js"></script>
-  </head>
-  <body>
-  </body>
-</html>
-`;
-
-const APP_PY = `#!/usr/bin/env python3
-
-import threading
-import time
-
-from http.server import SimpleHTTPRequestHandler, HTTPServer
-
-def start_server():
-    SimpleHTTPRequestHandler.extensions_map['.js'] = 'application/javascript'
-    httpd = HTTPServer(('0.0.0.0', 3600), SimpleHTTPRequestHandler)
-    httpd.serve_forever()
-
-url = 'http://127.0.0.1:3600'
-
-if __name__ == "__main__":
-    print("Owl Application")
-    print("---------------")
-    print("Server running on: {}".format(url))
-    threading.Thread(target=start_server, daemon=True).start()
-
-    while True:
-        try:
-            time.sleep(1)
-        except KeyboardInterrupt:
-            httpd.server_close()
-            quit(0)
-`;
-
 /**
  * Make an iframe, with all the js, css and xml properly injected.
  */
 function makeCodeIframe(js, css, xml) {
-  const sanitizedXML = xml.replace(/<!--[\s\S]*?-->/g, "");
-
+  const sanitizedXML = xml.replace(/<!--[\s\S]*?-->/g, "").replace(/`/g, '\\\`');
 
   // create iframe
   const iframe = document.createElement("iframe");
 
   iframe.onload = () => {
     const doc = iframe.contentDocument;
+    const utilsMod = doc.createElement("script");
+    utilsMod.setAttribute("type", "module");
+    utilsMod.setAttribute("src", "utils.js");
+    doc.head.appendChild(utilsMod);
     // inject js
     const owlScript = doc.createElement("script");
     owlScript.type = "text/javascript";
     owlScript.src = "../owl.js";
     owlScript.addEventListener("load", () => {
       const script = doc.createElement("script");
-      script.type = "text/javascript";
+      script.type = "module";
       const content = `
-        {
-          owl.config.mode = 'dev';
-          let templates = \`${sanitizedXML}\`;
-          const qweb = new owl.QWeb({ templates });
-          owl.Component.env = { qweb };
-        }
-        ${js}`;
+        (async function(TEMPLATES) {
+          ${js}
+        })(\`${sanitizedXML}\`)`;
       script.innerHTML = content;
       doc.body.appendChild(script);
     });
@@ -106,58 +53,6 @@ function makeCodeIframe(js, css, xml) {
     doc.head.appendChild(style);
   };
   return iframe;
-}
-
-/**
- * Make a zip file containing a functioning application
- */
-async function makeApp(js, css, xml) {
-  await owl.utils.loadJS("libs/jszip.min.js");
-
-  const zip = new JSZip();
-  const processedJS = js
-    .split("\n")
-    .map(l => (l === "" ? "" : "  " + l))
-    .join("\n");
-
-  const JS = `
-/**
- * This is the javascript code defined in the playground.
- * In a larger application, this code should probably be moved in different
- * sub files.
- */
-function app() {
-${processedJS}
-}
-
-/**
- * Initialization code
- * This code load templates, and make sure everything is properly connected.
- */
-async function start() {
-  let templates;
-  try {
-    templates = await owl.utils.loadFile('app.xml');
-  } catch(e) {
-    console.error(\`This app requires a static server.  If you have python installed, try 'python app.py'\`);
-    return;
-  }
-  const env = { qweb: new owl.QWeb({templates})};
-  owl.Component.env = env;
-  await owl.utils.whenReady();
-  app();
-}
-
-start();
-`;
-
-  zip.file("app.js", JS);
-  zip.file("app.css", css);
-  zip.file("app.py", APP_PY);
-  zip.file("app.xml", xml);
-  zip.file("index.html", DEFAULT_HTML);
-  zip.file("owl.js", owlSourceCode());
-  return zip.generateAsync({ type: "blob" });
 }
 
 //------------------------------------------------------------------------------
@@ -189,7 +84,7 @@ function deleteLocalSample() {
 
 function useSamples() {
   const samples = loadSamples();
-  const component = owl.Component.current;
+  const component = owl.useComponent();
   let interval;
 
   onMounted(() => {
@@ -205,57 +100,57 @@ function useSamples() {
   });
   return samples;
 }
+
 //------------------------------------------------------------------------------
 // Tabbed editor
 //------------------------------------------------------------------------------
 class TabbedEditor extends owl.Component {
-  constructor(parent, props) {
-    super(parent, props);
+  setup() {
+    const props = this.props;
     this.state = useState({
       currentTab: props.js !== false ? "js" : props.xml ? "xml" : "css"
     });
-    this.setTab = owl.utils.debounce(this.setTab, 250, true);
+    this.setTab = debounce(this.setTab.bind(this), 250, true);
 
     this.sessions = {};
     this._setupSessions(props);
     this.editorNode = useRef("editor");
     this._updateCode = this._updateCode.bind(this);
-  }
 
-  mounted() {
-    this.editor = this.editor || ace.edit(this.editorNode.el);
+    onMounted(() => {
+      this.editor = this.editor || ace.edit(this.editorNode.el);
 
-    this.editor.setValue(this.props[this.state.currentTab], -1);
-    this.editor.setFontSize("12px");
-    this.editor.setTheme("ace/theme/monokai");
-    this.editor.setSession(this.sessions[this.state.currentTab]);
-    const tabSize = this.state.currentTab === "xml" ? 2 : 4;
-    this.editor.session.setOption("tabSize", tabSize);
-    this.editor.on("blur", this._updateCode);
-    this.interval = setInterval(this._updateCode, 3000);
-  }
+      this.editor.setValue(this.props[this.state.currentTab], -1);
+      this.editor.setFontSize("12px");
+      this.editor.setTheme("ace/theme/monokai");
+      this.editor.setSession(this.sessions[this.state.currentTab]);
+      const tabSize = this.state.currentTab === "xml" ? 2 : 4;
+      this.editor.session.setOption("tabSize", tabSize);
+      this.editor.on("blur", this._updateCode);
+      this.interval = setInterval(this._updateCode, 3000);
+    });
 
-  willUnmount() {
-    clearInterval(this.interval);
-    this.editor.off("blur", this._updateCode);
-  }
-  willUpdateProps(nextProps) {
-    this._setupSessions(nextProps);
-  }
+    onPatched(() => {
+      const session = this.sessions[this.state.currentTab];
+      let content = this.props[this.state.currentTab];
+      if (content === false) {
+        const tab = this.props.js !== false ? "js" : this.props.xml ? "xml" : "css";
+        content = this.props[tab];
+        this.state.currentTab = tab;
+      }
+      if (this.editor.getValue() !== content) {
+        session.setValue(content, -1);
+        this.editor.setSession(session);
+        this.editor.resize();
+      }
+    });
 
-  patched() {
-    const session = this.sessions[this.state.currentTab];
-    let content = this.props[this.state.currentTab];
-    if (content === false) {
-      const tab = this.props.js !== false ? "js" : this.props.xml ? "xml" : "css";
-      content = this.props[tab];
-      this.state.currentTab = tab;
-    }
-    if (this.editor.getValue() !== content) {
-      session.setValue(content, -1);
-      this.editor.setSession(session);
-      this.editor.resize();
-    }
+    onWillUpdateProps((nextProps) => this._setupSessions(nextProps));
+
+    onWillUnmount(() => {
+      clearInterval(this.interval);
+      this.editor.off("blur", this._updateCode);
+    });
   }
 
   setTab(tab) {
@@ -298,20 +193,20 @@ class TabbedEditor extends owl.Component {
     const editorValue = this.editor.getValue();
     const propsValue = this.props[this.state.currentTab];
     if (editorValue !== propsValue) {
-      this.trigger("updateCode", {
+      this.props.updateCode({
         type: this.state.currentTab,
         value: editorValue
       });
     }
   }
 }
+TabbedEditor.template = "TabbedEditor";
 
 //------------------------------------------------------------------------------
 // MAIN APP
 //------------------------------------------------------------------------------
 class App extends owl.Component {
-  constructor(...args) {
-    super(...args);
+  setup() {
     this.version = owl.__info__.version;
     this.SAMPLES = useSamples();
     this.isDirty = false;
@@ -326,10 +221,11 @@ class App extends owl.Component {
       topPanelHeight: null
     });
 
-    this.toggleLayout = owl.utils.debounce(this.toggleLayout, 250, true);
-    this.runCode = owl.utils.debounce(this.runCode, 250, true);
-    this.downloadCode = owl.utils.debounce(this.downloadCode, 250, true);
+    this.toggleLayout = debounce(this.toggleLayout, 250, true);
+    this.runCode = debounce(this.runCode, 250, true);
+    this.downloadCode = debounce(this.downloadCode, 250, true);
     this.content = useRef("content");
+    this.updateCode = this.updateCode.bind(this);
   }
 
   runCode() {
@@ -379,9 +275,9 @@ class App extends owl.Component {
       }
     });
   }
-  updateCode(ev) {
-    if (this.state[ev.detail.type] !== ev.detail.value) {
-      this.state[ev.detail.type] = ev.detail.value;
+  updateCode({type, value}) {
+    if (this.state[type] !== value) {
+      this.state[type] = value;
       this.isDirty = true;
     }
   }
@@ -401,12 +297,13 @@ class App extends owl.Component {
 
   async downloadCode() {
     const { js, css, xml } = this.state;
-    const content = await makeApp(js, css, xml);
-    await owl.utils.loadJS("libs/FileSaver.min.js");
+    const content = await exportStandaloneApp(js, css, xml);
+    await loadJS("libs/FileSaver.min.js");
     saveAs(content, "app.zip");
   }
 }
 App.components = { TabbedEditor };
+App.template = "App";
 
 //------------------------------------------------------------------------------
 // Application initialization
@@ -416,12 +313,13 @@ async function start() {
   const commit = `https://github.com/odoo/owl/commit/${owl.__info__.hash}`;
   console.info(`This application is using Owl built with the following commit:`, commit);
   const [templates] = await Promise.all([
-    owl.utils.loadFile("templates.xml"),
-    owl.utils.whenReady()
+    owl.loadFile("templates.xml"),
+    owl.whenReady()
   ]);
-  const qweb = new owl.QWeb({ templates });
-  const env = { qweb };
-  await mount(App, {target: document.body, env});
+  const rootApp = new owl.App(App);
+  rootApp.addTemplates(templates);
+
+  await  rootApp.mount(document.body);
 }
 
 start();

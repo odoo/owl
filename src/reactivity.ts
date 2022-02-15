@@ -57,7 +57,7 @@ export function markRaw<T extends Target>(value: T): NonReactive<T> {
  * @returns the underlying value
  */
 export function toRaw<T extends object>(value: Reactive<T>): T {
-  return value[TARGET];
+  return value[TARGET] || value;
 }
 
 const targetToKeysToCallbacks = new WeakMap<Target, Map<ObjectKey, Set<Callback>>>();

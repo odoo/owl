@@ -1131,6 +1131,11 @@ describe("toRaw", () => {
     expect(reactiveObj).not.toBe(obj);
     expect(toRaw(reactiveObj as Reactive<typeof obj>)).toBe(obj);
   });
+
+  test("giving a non reactive to toRaw return the object itself", () => {
+    const obj = { value: 1 };
+    expect(toRaw(obj as Reactive<typeof obj>)).toBe(obj);
+  });
 });
 
 describe("Reactivity: useState", () => {

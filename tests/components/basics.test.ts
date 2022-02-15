@@ -204,7 +204,7 @@ describe("basics", () => {
       error = e as Error;
     }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe('Missing template: "wrongtemplate"');
+    expect(error!.message).toBe('Missing template: "wrongtemplate" (for component "Test")');
   });
 
   test("class component with dynamic text", async () => {

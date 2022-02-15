@@ -1,6 +1,6 @@
 import { createBlock, html, list, multi, text, toggler, comment } from "../blockdom";
 import { compile, Template } from "../compiler";
-import { component } from "../component/component_node";
+import { component, getCurrent } from "../component/component_node";
 import { UTILS } from "./template_helpers";
 
 const bdom = { text, createBlock, list, multi, html, toggler, component, comment };
@@ -94,7 +94,12 @@ export class TemplateSet {
     if (!(name in this.templates)) {
       const rawTemplate = this.rawTemplates[name];
       if (rawTemplate === undefined) {
-        throw new Error(`Missing template: "${name}"`);
+        let extraInfo = "";
+        try {
+          const componentName = getCurrent().component.constructor.name;
+          extraInfo = ` (for component "${componentName}")`;
+        } catch {}
+        throw new Error(`Missing template: "${name}"${extraInfo}`);
       }
       const templateFn = this._compileTemplate(name, rawTemplate);
       // first add a function to lazily get the template, in case there is a

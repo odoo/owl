@@ -24,8 +24,8 @@ class Root extends Component {
     }
 }
 
-// Application setup
-mount(Root, document.body, { templates: TEMPLATES, dev: true });`;
+// dev=false for benchmarking. we don't want to benchmark dev code!
+mount(Root, document.body, { templates: TEMPLATES, dev: false });`;
 
 const COMPONENTS_XML = /*xml*/`
 <templates>

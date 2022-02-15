@@ -29,7 +29,7 @@ snapshotEverything();
 
 beforeAll(() => {
   console.info = (message: any) => {
-    if (message === DEV_MSG) {
+    if (message === DEV_MSG()) {
       return;
     }
     info(message);

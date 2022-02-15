@@ -18,10 +18,14 @@ export interface AppConfig<P, E> extends TemplateSetConfig {
   test?: boolean;
 }
 
-export const DEV_MSG = `Owl is running in 'dev' mode.
+export const DEV_MSG = () => {
+  const hash = (window as any).owl ? (window as any).owl.__info__.hash : "master";
+
+  return `Owl is running in 'dev' mode.
 
 This is not suitable for production use.
-See https://github.com/odoo/owl/blob/master/doc/reference/config.md#mode for more information.`;
+See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration for more information.`;
+};
 
 export class App<
   T extends abstract new (...args: any) => any = any,
@@ -43,7 +47,7 @@ export class App<
       this.dev = true;
     }
     if (this.dev && !config.test) {
-      console.info(DEV_MSG);
+      console.info(DEV_MSG());
     }
     const descrs = Object.getOwnPropertyDescriptors(config.env || {});
     this.env = Object.freeze(Object.defineProperties({}, descrs)) as E;

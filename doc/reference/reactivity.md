@@ -117,3 +117,10 @@ rawState.value = 3; // will NOT be picked up by the reactivity system!!!
 Here again, this is useful in some situations where we want to explicitely bypass
 Owl, but using this function means that the responsability of coordinating
 state update is given to the user code, instead of Owl. Subtle bugs may arise!
+
+Also, normal (non-reactive objects) will be directly returned by `toRaw`:
+
+```js
+const obj = { a: 1 };
+console.log(toRaw(obj) === obj); // true
+```

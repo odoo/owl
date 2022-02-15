@@ -410,6 +410,24 @@ exports[`t-model directive on an textarea 1`] = `
 }"
 `;
 
+exports[`t-model directive t-model on an input with an undefined value 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { toNumber } = helpers;
+  
+  let block1 = createBlock(\`<input block-attribute-0=\\"value\\" block-handler-1=\\"input\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const bExpr1 = ctx['state'];
+    const expr1 = 'text';
+    let attr1 = bExpr1[expr1];
+    let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
+    return block1([attr1, hdlr1]);
+  }
+}"
+`;
+
 exports[`t-model directive t-model on select with static options 1`] = `
 "function anonymous(bdom, helpers
 ) {

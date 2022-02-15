@@ -30,6 +30,19 @@ describe("t-model directive", () => {
     expect(fixture.innerHTML).toBe("<div><input><span>test</span></div>");
   });
 
+  test("t-model on an input with an undefined value", async () => {
+    class SomeComponent extends Component {
+      static template = xml`<input t-model="state.text"/>`;
+      state = useState({ text: undefined });
+    }
+    await mount(SomeComponent, fixture);
+
+    expect(fixture.innerHTML).toBe("<input>");
+
+    const input = fixture.querySelector("input")!;
+    expect(input.value).toBe("");
+  });
+
   test("basic use, on an input with bracket expression", async () => {
     class SomeComponent extends Component {
       static template = xml`

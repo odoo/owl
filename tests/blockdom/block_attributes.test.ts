@@ -169,6 +169,15 @@ describe("properties", () => {
     expect(input.value).toBe("potato");
   });
 
+  test("input with value attribute, and undefined given", () => {
+    const block = createBlock(`<input block-attribute-0="value"/>`);
+
+    const tree = block([undefined]);
+    mount(tree, fixture);
+    const input = fixture.querySelector("input")!;
+    expect(input.value).toBe("");
+  });
+
   test("input type=checkbox with checked attribute", () => {
     // render input with initial value
     const block = createBlock(`<input type="checkbox" block-attribute-0="checked"/>`);

@@ -139,7 +139,7 @@ export function updateClass(this: HTMLElement, val: any, oldVal: any) {
 
 export function makePropSetter(name: string): Setter<HTMLElement> {
   return function setProp(this: HTMLElement, value: any) {
-    (this as any)[name] = value;
+    (this as any)[name] = value || "";
   };
 }
 

@@ -21,6 +21,7 @@
 - [Fragments](#fragments)
 - [Inline templates](#inline-templates)
 - [Rendering svg](#rendering-svg)
+- [Restrictions](#restrictions)
 
 ## Overview
 
@@ -680,3 +681,13 @@ if a template is supposed to be included in a svg namespace or not. Therefore,
 Owl depends on a heuristic: if a tag is either `svg`, `g` or `path`, then it will
 be considered as svg. In practice, this means that each component or each sub
 templates (included with `t-call`) should have one of these tag as root tag.
+
+## Restrictions
+
+Note that Owl templates forbid the use of tag and or attributes starting with
+the `block-` string. This restriction prevents name collision with the internal
+code of Owl.
+
+```xml
+<div><block-1>this will not be accepted by Owl</block-1></div>
+```

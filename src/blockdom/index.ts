@@ -42,3 +42,7 @@ export function withKey(vnode: VNode, key: any) {
   vnode.key = key;
   return vnode;
 }
+
+export function hydrate(vnode: VNode, target: HTMLElement) {
+  (vnode as any).hydrate(target.parentElement, target);
+}

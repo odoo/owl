@@ -23,6 +23,12 @@ abstract class VSimpleNode {
     this.el = node;
   }
 
+  hydrate(parent: HTMLElement, elem: Node) {
+    this.parentEl = parent;
+    this.el = elem;
+    // this.mountNode(elem, parent, elem.nextSibling);
+  }
+
   moveBefore(other: VText | null, afterNode: Node | null) {
     const target = other ? other.el! : afterNode;
     nodeInsertBefore.call(this.parentEl, this.el!, target);

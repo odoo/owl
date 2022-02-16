@@ -525,6 +525,54 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
       this.parentEl = parent;
     }
     patch(other: Block, withBeforeRemove: boolean) {}
+
+    hydrate(parent: HTMLElement, el: HTMLElement) {
+      this.parentEl = parent;
+      this.el = el;
+      const refs: Node[] = new Array(refN);
+      this.refs = refs;
+      refs[0] = el;
+      for (let i = 0; i < colN; i++) {
+        const w = collectors[i];
+        refs[w.idx] = w.getVal.call(refs[w.prevIdx]);
+      }
+
+      // applying data to all update points
+      if (locN) {
+        const data = this.data!;
+        for (let i = 0; i < locN; i++) {
+          const loc = locations[i];
+          loc.setData.call(refs[loc.refIdx], data[i]);
+        }
+      }
+
+      // preparing all children
+      if (childN) {
+        const children = this.children;
+        for (let i = 0; i < childN; i++) {
+          const child = children![i];
+          if (child) {
+            const loc = childrenLocs[i];
+            let target: HTMLElement;
+            if (loc.afterRefIdx) {
+              target = refs[loc.afterRefIdx] as HTMLElement;
+              const afterNode = document.createTextNode("");
+              target.parentElement!.insertBefore(afterNode, target.nextSibling);
+              refs[loc.afterRefIdx!] = afterNode;
+            } else {
+              target = refs[loc.parentRefIdx].firstChild! as HTMLElement;
+            }
+
+            // const target = (loc.afterRefIdx ? refs[loc.afterRefIdx] : null) as HTMLElement;
+            // const afterNode = document.createTextNode("");
+            // target.parentElement!.insertBefore(afterNode, target.nextSibling);
+            // refs[loc.afterRefIdx!] = afterNode;
+            child.isOnlyChild = loc.isOnlyChild;
+            (child as any).hydrate(target.parentElement, target);
+          }
+        }
+      }
+    }
   }
 
   if (isDynamic) {

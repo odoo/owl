@@ -305,6 +305,9 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
   if (tagName === "t" && !dynamicTag) {
     return null;
   }
+  if (tagName.startsWith("block-")) {
+    throw new Error(`Invalid tag name: '${tagName}'`);
+  }
   ctx = Object.assign({}, ctx);
   if (tagName === "pre") {
     ctx.inPreTag = true;
@@ -371,6 +374,8 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
         ctx = Object.assign({}, ctx);
         ctx.tModelInfo = model;
       }
+    } else if (attr.startsWith("block-")) {
+      throw new Error(`Invalid attribute: '${attr}'`);
     } else if (attr !== "t-name") {
       if (attr.startsWith("t-") && !attr.startsWith("t-att")) {
         throw new Error(`Unknown QWeb directive: '${attr}'`);

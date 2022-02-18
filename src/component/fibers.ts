@@ -6,8 +6,7 @@ import { STATUS } from "./status";
 export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
   let current = node.fiber;
   if (current) {
-    let root = parent.root;
-    cancelFibers(root, current.children);
+    cancelFibers(current.children);
     current.root = null;
   }
   return new Fiber(node, parent);
@@ -17,7 +16,7 @@ export function makeRootFiber(node: ComponentNode): Fiber {
   let current = node.fiber;
   if (current) {
     let root = current.root!;
-    root.counter -= cancelFibers(root, current.children);
+    root.counter -= cancelFibers(current.children);
     current.children = [];
     root.counter++;
     current.bdom = null;
@@ -42,15 +41,14 @@ export function makeRootFiber(node: ComponentNode): Fiber {
 /**
  * @returns number of not-yet rendered fibers cancelled
  */
-function cancelFibers(root: any, fibers: Fiber[]): number {
+function cancelFibers(fibers: Fiber[]): number {
   let result = 0;
   for (let fiber of fibers) {
     fiber.node.fiber = null;
-    fiber.root = root;
     if (!fiber.bdom) {
       result++;
     }
-    result += cancelFibers(root, fiber.children);
+    result += cancelFibers(fiber.children);
   }
   return result;
 }

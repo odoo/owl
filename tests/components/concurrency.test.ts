@@ -97,17 +97,14 @@ test("destroying/recreating a subwidget with different props (if start is not ov
   expect(["W:setup", "W:willStart", "W:willRender", "W:rendered", "W:mounted"]).toBeLogged();
 
   expect(n).toBe(0);
-
   w.state.val = 2;
-  await nextMicroTick();
-  await nextMicroTick();
+  await new Promise(requestAnimationFrame); // calls to _render are batched per animation frame
   expect(n).toBe(1);
 
   expect(["W:willRender", "Child:setup", "Child:willStart", "W:rendered"]).toBeLogged();
 
   w.state.val = 3;
-  await nextMicroTick();
-  await nextMicroTick();
+  await new Promise(requestAnimationFrame);
   expect(n).toBe(2);
 
   expect([

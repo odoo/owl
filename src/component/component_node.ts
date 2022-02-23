@@ -120,20 +120,30 @@ export class ComponentNode<P = any, E = any> implements VNode<ComponentNode<P, E
     this.initiateRender(fiber);
   }
 
-  async initiateRender(fiber: Fiber | MountFiber) {
+  initiateRender(fiber: Fiber | MountFiber) {
     this.fiber = fiber;
     if (this.mounted.length) {
       fiber.root!.mounted.push(fiber);
     }
     const component = this.component;
+    const finish = () => {
+      if (this.status === STATUS.NEW && this.fiber === fiber) {
+        this._render(fiber);
+      }
+    }
+    let willStartResults;
     try {
-      await Promise.all(this.willStart.map((f) => f.call(component)));
+      willStartResults = this.willStart.map((f) => f.call(component));
     } catch (e) {
       handleError({ node: this, error: e });
       return;
     }
-    if (this.status === STATUS.NEW && this.fiber === fiber) {
-      this._render(fiber);
+    if (willStartResults.some(result => result instanceof Promise)) {
+      Promise.all(willStartResults)
+        .then(finish)
+        .catch(e => handleError({ node: this, error: e }));
+    } else {
+      finish();
     }
   }
 
@@ -153,25 +163,27 @@ export class ComponentNode<P = any, E = any> implements VNode<ComponentNode<P, E
 
     const fiber = makeRootFiber(this);
     this.fiber = fiber;
+    debugger;
+    window.requestAnimationFrame(() => {
+      if (this.status === STATUS.DESTROYED) {
+        return;
+      }
+      // We only want to actually render the component if the following two
+      // conditions are true:
+      // * this.fiber: it could be null, in which case the render has been cancelled
+      // * (current || !fiber.parent): if current is not null, this means that the
+      //   render function was called when a render was already occurring. In this
+      //   case, the pending rendering was cancelled, and the fiber needs to be
+      //   rendered to complete the work.  If current is null, we check that the
+      //   fiber has no parent.  If that is the case, the fiber was downgraded from
+      //   a root fiber to a child fiber in the previous microtick, because it was
+      //   embedded in a rendering coming from above, so the fiber will be rendered
+      //   in the next microtick anyway, so we should not render it again.
+      if (this.fiber === fiber && (current || !fiber.parent)) {
+        this._render(fiber);
+      }
+    });
     this.app.scheduler.addFiber(fiber);
-    await Promise.resolve();
-    if (this.status === STATUS.DESTROYED) {
-      return;
-    }
-    // We only want to actually render the component if the following two
-    // conditions are true:
-    // * this.fiber: it could be null, in which case the render has been cancelled
-    // * (current || !fiber.parent): if current is not null, this means that the
-    //   render function was called when a render was already occurring. In this
-    //   case, the pending rendering was cancelled, and the fiber needs to be
-    //   rendered to complete the work.  If current is null, we check that the
-    //   fiber has no parent.  If that is the case, the fiber was downgraded from
-    //   a root fiber to a child fiber in the previous microtick, because it was
-    //   embedded in a rendering coming from above, so the fiber will be rendered
-    //   in the next microtick anyway, so we should not render it again.
-    if (this.fiber === fiber && (current || !fiber.parent)) {
-      this._render(fiber);
-    }
   }
 
   _render(fiber: Fiber | RootFiber) {
@@ -207,25 +219,32 @@ export class ComponentNode<P = any, E = any> implements VNode<ComponentNode<P, E
     this.status = STATUS.DESTROYED;
   }
 
-  async updateAndRender(props: any, parentFiber: Fiber) {
+  updateAndRender(props: any, parentFiber: Fiber) {
     // update
     const fiber = makeChildFiber(this, parentFiber);
     this.fiber = fiber;
     const component = this.component;
     applyDefaultProps(props, component.constructor as any);
-    const prom = Promise.all(this.willUpdateProps.map((f) => f.call(component, props)));
-    await prom;
-    if (fiber !== this.fiber) {
-      return;
+
+    const finish = () => {
+      if (fiber !== this.fiber) {
+        return;
+      }
+      component.props = props;
+      this._render(fiber);
+      const parentRoot = parentFiber.root!;
+      if (this.willPatch.length) {
+        parentRoot.willPatch.push(fiber);
+      }
+      if (this.patched.length) {
+        parentRoot.patched.push(fiber);
+      }
     }
-    component.props = props;
-    this._render(fiber);
-    const parentRoot = parentFiber.root!;
-    if (this.willPatch.length) {
-      parentRoot.willPatch.push(fiber);
-    }
-    if (this.patched.length) {
-      parentRoot.patched.push(fiber);
+    const willUpdatePropsResults = this.willUpdateProps.map((f) => f.call(component, props));
+    if (willUpdatePropsResults.some(res => res instanceof Promise)) {
+      Promise.all(willUpdatePropsResults).then(finish);
+    } else {
+      finish();
     }
   }
 

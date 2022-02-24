@@ -31,6 +31,7 @@ All changes are documented here in no particular order.
 - breaking: Support for inline css (`css` tag and static `style`) has been removed ([details](#37-support-for-inline-css-css-tag-and-static-style-has-been-removed))
 - new: prop validation system can now describe that additional props are allowed (with `*`) ([doc](doc/reference/props.md#props-validation))
 - breaking: prop validation system does not allow default prop on a mandatory (not optional) prop ([doc](doc/reference/props.md#props-validation))
+- breaking: rendering a component does not necessarily render child components ([details](#40-rendering-a-component-does-not-necessarily-render-child-components))
 
 
 
@@ -799,3 +800,27 @@ seems like this should be done in user space, not at the framework level.
 
 Migration: code should just be adapted to either use another browser object,
 or to use native browser function (and then, just mock them directly).
+
+## 40. Rendering a component does not necessarily render child components
+
+Before, if one had the following component tree:
+
+```mermaid
+  graph TD;
+      A-->B;
+      A-->C;
+```
+
+when `A` would render, it would also render `B` and `C`. Now, in Owl 2, it will 
+(shallow) compare the before and after props, and `B` or `C` will only be rerendered
+if their props have changed.
+
+Now, the question is what happens if the props have changed, but in a deeper way?
+In that case, Owl will know, because each props are now reactive. So, if some
+inner value read by `B` was changed, then only `B` will be updated.
+
+Rationale: This was just not possible in Owl 1, but it now possible. This is
+due to the rewriteof the underlying rendering engine and the reactivity
+system. The goal is to have a big performance boost in large screen with many
+components: now Owl only rerender what is strictly useful.
+

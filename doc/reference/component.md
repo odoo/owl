@@ -68,11 +68,15 @@ The `Component` class has a very small API.
   component will go through the following lifecycle methods: `willUpdateProps`,
   `willPatch` and `patched`.
 
-* **`render()`**: calling this method directly will cause a rerender. Note
+* **`render(deep[=false])`**: calling this method directly will cause a rerender. Note
   that with the reactivity system, this should be rare to have to do it manually.
   Also, the rendering operation is asynchronous, so the DOM will only be updated
   slightly later (at the next animation frame, if no component delays the
   rendering)
+
+  By default, the render initiated by this method will stop at each child
+  component if their props are (shallow) equal. To force a render to update
+  all child components, one can use the optional `deep` argument.
 
 ## Static Properties
 

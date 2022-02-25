@@ -171,6 +171,8 @@ describe("Reactivity", () => {
     expect(n).toBe(2);
   });
 
+  // Skipped because the hasOwnProperty trap is tripped by *writing*. We
+  // (probably) do not want to subscribe to changes on writes.
   test.skip("hasOwnProperty causes the key's presence to be observed", async () => {
     let n = 0;
     const state = createReactive({}, () => n++);
@@ -1093,18 +1095,482 @@ describe("Reactivity", () => {
     expect(n).toBe(1);
     expect(state.k).toEqual({ n: 2 });
   });
+});
 
-  test("can add collections set/weakset/map/weakmap in a reactive object", () => {
-    const rawSet = new Set();
-    const rawWeakSet = new WeakSet();
-    const rawMap = new Map();
-    const rawWeakMap = new WeakMap();
+describe("Collections", () => {
+  describe("Set", () => {
+    test("can make reactive Set", () => {
+      const set = new Set<number>();
+      const obj = reactive(set);
+      expect(obj).not.toBe(set);
+    });
 
-    const obj = reactive({ rawSet, rawWeakSet, rawMap, rawWeakMap });
-    expect(obj.rawSet).toBe(rawSet);
-    expect(obj.rawWeakSet).toBe(rawWeakSet);
-    expect(obj.rawMap).toBe(rawMap);
-    expect(obj.rawWeakMap).toBe(rawWeakMap);
+    test("can read", async () => {
+      const state = reactive(new Set([1]));
+      expect(state.has(1)).toBe(true);
+      expect(state.has(0)).toBe(false);
+    });
+
+    test("can add entries", () => {
+      const state = reactive(new Set());
+      state.add(1);
+      expect(state.has(1)).toBe(true);
+    });
+
+    test("can remove entries", () => {
+      const state = reactive(new Set([1]));
+      state.delete(1);
+      expect(state.has(1)).toBe(false);
+    });
+
+    test("can clear entries", () => {
+      const state = reactive(new Set([1]));
+      expect(state.size).toBe(1);
+      state.clear();
+      expect(state.size).toBe(0);
+    });
+
+    test("act like a Set", () => {
+      const state = reactive(new Set([1]));
+      expect([...state.entries()]).toEqual([[1, 1]]);
+      expect([...state.values()]).toEqual([1]);
+      expect([...state.keys()]).toEqual([1]);
+      expect([...state]).toEqual([1]); // Checks Symbol.iterator
+      expect(state.size).toBe(1);
+      expect(typeof state).toBe("object");
+      expect(state).toBeInstanceOf(Set);
+    });
+
+    test("reactive Set contains its keys", () => {
+      const state = reactive(new Set([{}]));
+      expect(state.has(state.keys().next().value)).toBe(true);
+    });
+
+    test("reactive Set contains its values", () => {
+      const state = reactive(new Set([{}]));
+      expect(state.has(state.values().next().value)).toBe(true);
+    });
+
+    test("reactive Set contains its entries' keys and values", () => {
+      const state = reactive(new Set([{}]));
+      const [key, val] = state.entries().next().value;
+      expect(state.has(key)).toBe(true);
+      expect(state.has(val)).toBe(true);
+    });
+
+    test("checking for a key subscribes the callback to changes to that key", () => {
+      const observer = jest.fn();
+      const state = reactive(new Set([1]), observer);
+
+      expect(state.has(2)).toBe(false); // subscribe to 2
+      expect(observer).toHaveBeenCalledTimes(0);
+      state.add(2);
+      expect(observer).toHaveBeenCalledTimes(1);
+      expect(state.has(2)).toBe(true); // subscribe to 2
+      state.delete(2);
+      expect(observer).toHaveBeenCalledTimes(2);
+      state.add(2);
+      expect(state.has(2)).toBe(true); // subscribe to 2
+      state.clear();
+      expect(observer).toHaveBeenCalledTimes(3);
+      expect(state.has(2)).toBe(false); // subscribe to 2
+      state.clear(); // clearing again doesn't notify again
+      expect(observer).toHaveBeenCalledTimes(3);
+
+      state.add(3); // setting unobserved key doesn't notify
+      expect(observer).toHaveBeenCalledTimes(3);
+    });
+
+    test("iterating on keys returns reactives", async () => {
+      const obj = { a: 2 };
+      const observer = jest.fn();
+      const state = reactive(new Set([obj]), observer);
+      const reactiveObj = state.keys().next().value;
+      expect(reactiveObj).not.toBe(obj);
+      expect(toRaw(reactiveObj as any)).toBe(obj);
+      reactiveObj.a = 0;
+      expect(observer).toHaveBeenCalledTimes(0);
+      reactiveObj.a; // observe key "a" in sub-reactive;
+      reactiveObj.a = 1;
+      expect(observer).toHaveBeenCalledTimes(1);
+      reactiveObj.a = 1; // setting same value again shouldn't notify
+      expect(observer).toHaveBeenCalledTimes(1);
+    });
+
+    test("iterating on values returns reactives", async () => {
+      const obj = { a: 2 };
+      const observer = jest.fn();
+      const state = reactive(new Set([obj]), observer);
+      const reactiveObj = state.values().next().value;
+      expect(reactiveObj).not.toBe(obj);
+      expect(toRaw(reactiveObj as any)).toBe(obj);
+      reactiveObj.a = 0;
+      expect(observer).toHaveBeenCalledTimes(0);
+      reactiveObj.a; // observe key "a" in sub-reactive;
+      reactiveObj.a = 1;
+      expect(observer).toHaveBeenCalledTimes(1);
+      reactiveObj.a = 1; // setting same value again shouldn't notify
+      expect(observer).toHaveBeenCalledTimes(1);
+    });
+
+    test("iterating on entries returns reactives", async () => {
+      const obj = { a: 2 };
+      const observer = jest.fn();
+      const state = reactive(new Set([obj]), observer);
+      const [reactiveObj, reactiveObj2] = state.entries().next().value;
+      expect(reactiveObj2).toBe(reactiveObj);
+      expect(reactiveObj).not.toBe(obj);
+      expect(toRaw(reactiveObj as any)).toBe(obj);
+      reactiveObj.a = 0;
+      expect(observer).toHaveBeenCalledTimes(0);
+      reactiveObj.a; // observe key "a" in sub-reactive;
+      reactiveObj.a = 1;
+      expect(observer).toHaveBeenCalledTimes(1);
+      reactiveObj.a = 1; // setting same value again shouldn't notify
+      expect(observer).toHaveBeenCalledTimes(1);
+    });
+
+    test("iterating on reactive Set returns reactives", async () => {
+      const obj = { a: 2 };
+      const observer = jest.fn();
+      const state = reactive(new Set([obj]), observer);
+      const reactiveObj = state[Symbol.iterator]().next().value;
+      expect(reactiveObj).not.toBe(obj);
+      expect(toRaw(reactiveObj as any)).toBe(obj);
+      reactiveObj.a = 0;
+      expect(observer).toHaveBeenCalledTimes(0);
+      reactiveObj.a; // observe key "a" in sub-reactive;
+      reactiveObj.a = 1;
+      expect(observer).toHaveBeenCalledTimes(1);
+      reactiveObj.a = 1; // setting same value again shouldn't notify
+      expect(observer).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("WeakSet", () => {
+    test("cannot make reactive WeakSet", () => {
+      const set = new WeakSet();
+      expect(() => reactive(set)).toThrowError("Cannot make the given value reactive");
+    });
+
+    test("WeakSet in reactive is original WeakSet", () => {
+      const obj = { set: new WeakSet() };
+      const state = reactive(obj);
+      expect(state.set).toBe(obj.set);
+    });
+  });
+
+  describe("Map", () => {
+    test("can make reactive Map", () => {
+      const map = new Map();
+      const obj = reactive(map);
+      expect(obj).not.toBe(map);
+    });
+
+    test("can read", async () => {
+      const state = reactive(new Map([[1, 0]]));
+      expect(state.has(1)).toBe(true);
+      expect(state.has(0)).toBe(false);
+      expect(state.get(1)).toBe(0);
+      expect(state.get(0)).toBeUndefined();
+    });
+
+    test("can add entries", () => {
+      const state = reactive(new Map());
+      state.set(1, 2);
+      expect(state.has(1)).toBe(true);
+      expect(state.get(1)).toBe(2);
+    });
+
+    test("can remove entries", () => {
+      const state = reactive(new Map([[1, 2]]));
+      state.delete(1);
+      expect(state.has(1)).toBe(false);
+      expect(state.get(1)).toBeUndefined();
+    });
+
+    test("can clear entries", () => {
+      const state = reactive(new Map([[1, 2]]));
+      expect(state.size).toBe(1);
+      state.clear();
+      expect(state.size).toBe(0);
+    });
+
+    test("act like a Map", () => {
+      const state = reactive(new Map([[1, 2]]));
+      expect([...state.entries()]).toEqual([[1, 2]]);
+      expect([...state.values()]).toEqual([2]);
+      expect([...state.keys()]).toEqual([1]);
+      expect([...state]).toEqual([[1, 2]]); // Checks Symbol.iterator
+      expect(state.size).toBe(1);
+      expect(typeof state).toBe("object");
+      expect(state).toBeInstanceOf(Map);
+    });
+
+    test("reactive Map contains its keys", () => {
+      const state = reactive(new Map([[{}, 1]]));
+      expect(state.has(state.keys().next().value)).toBe(true);
+    });
+
+    test("reactive Map values are equal to doing a get on the appropriate key", () => {
+      const state = reactive(new Map([[1, {}]]));
+      expect(state.get(1)).toBe(state.values().next().value);
+    });
+
+    test("reactive Map contains its entries' keys, and the associated value is the same as doing get", () => {
+      const state = reactive(new Map([[{}, {}]]));
+      const [key, val] = state.entries().next().value;
+      expect(state.has(key)).toBe(true);
+      expect(val).toBe(state.get(key));
+    });
+
+    test("checking for a key with 'has' subscribes the callback to changes to that key", () => {
+      const observer = jest.fn();
+      const state = reactive(new Map([[1, 2]]), observer);
+
+      expect(state.has(2)).toBe(false); // subscribe to 2
+      expect(observer).toHaveBeenCalledTimes(0);
+      state.set(2, 3);
+      expect(observer).toHaveBeenCalledTimes(1);
+      expect(state.has(2)).toBe(true); // subscribe to 2
+      state.delete(2);
+      expect(observer).toHaveBeenCalledTimes(2);
+      state.set(2, 3);
+      expect(state.has(2)).toBe(true); // subscribe to 2
+      state.clear();
+      expect(observer).toHaveBeenCalledTimes(3);
+      expect(state.has(2)).toBe(false); // subscribe to 2
+      state.clear(); // clearing again doesn't notify again
+      expect(observer).toHaveBeenCalledTimes(3);
+
+      state.set(3, 4); // setting unobserved key doesn't notify
+      expect(observer).toHaveBeenCalledTimes(3);
+    });
+
+    test("checking for a key with 'get' subscribes the callback to changes to that key", () => {
+      const observer = jest.fn();
+      const state = reactive(new Map([[1, 2]]), observer);
+
+      expect(state.get(2)).toBeUndefined(); // subscribe to 2
+      expect(observer).toHaveBeenCalledTimes(0);
+      state.set(2, 3);
+      expect(observer).toHaveBeenCalledTimes(1);
+      expect(state.get(2)).toBe(3); // subscribe to 2
+      state.delete(2);
+      expect(observer).toHaveBeenCalledTimes(2);
+      state.delete(2); // deleting again doesn't notify again
+      expect(observer).toHaveBeenCalledTimes(2);
+      state.set(2, 3);
+      expect(state.get(2)).toBe(3); // subscribe to 2
+      state.clear();
+      expect(observer).toHaveBeenCalledTimes(3);
+      expect(state.get(2)).toBeUndefined(); // subscribe to 2
+      state.clear(); // clearing again doesn't notify again
+      expect(observer).toHaveBeenCalledTimes(3);
+
+      state.set(3, 4); // setting unobserved key doesn't notify
+      expect(observer).toHaveBeenCalledTimes(3);
+    });
+
+    test("getting values returns a reactive", async () => {
+      const obj = { a: 2 };
+      const observer = jest.fn();
+      const state = reactive(new Map([[1, obj]]), observer);
+      const reactiveObj = state.get(1)!;
+      expect(reactiveObj).not.toBe(obj);
+      expect(toRaw(reactiveObj as any)).toBe(obj);
+      reactiveObj.a = 0;
+      expect(observer).toHaveBeenCalledTimes(0);
+      reactiveObj.a; // observe key "a" in sub-reactive;
+      reactiveObj.a = 1;
+      expect(observer).toHaveBeenCalledTimes(1);
+      reactiveObj.a = 1; // setting same value again shouldn't notify
+      expect(observer).toHaveBeenCalledTimes(1);
+    });
+
+    test("iterating on values returns reactives", async () => {
+      const obj = { a: 2 };
+      const observer = jest.fn();
+      const state = reactive(new Map([[1, obj]]), observer);
+      const reactiveObj = state.values().next().value;
+      expect(reactiveObj).not.toBe(obj);
+      expect(toRaw(reactiveObj as any)).toBe(obj);
+      reactiveObj.a = 0;
+      expect(observer).toHaveBeenCalledTimes(0);
+      reactiveObj.a; // observe key "a" in sub-reactive;
+      reactiveObj.a = 1;
+      expect(observer).toHaveBeenCalledTimes(1);
+      reactiveObj.a = 1; // setting same value again shouldn't notify
+      expect(observer).toHaveBeenCalledTimes(1);
+    });
+
+    test("iterating on keys returns reactives", async () => {
+      const obj = { a: 2 };
+      const observer = jest.fn();
+      const state = reactive(new Map([[obj, 1]]), observer);
+      const reactiveObj = state.keys().next().value;
+      expect(reactiveObj).not.toBe(obj);
+      expect(toRaw(reactiveObj as any)).toBe(obj);
+      reactiveObj.a = 0;
+      expect(observer).toHaveBeenCalledTimes(0);
+      reactiveObj.a; // observe key "a" in sub-reactive;
+      reactiveObj.a = 1;
+      expect(observer).toHaveBeenCalledTimes(1);
+      reactiveObj.a = 1; // setting same value again shouldn't notify
+      expect(observer).toHaveBeenCalledTimes(1);
+    });
+
+    test("iterating on reactive map returns reactives", async () => {
+      const keyObj = { a: 2 };
+      const valObj = { a: 2 };
+      const observer = jest.fn();
+      const state = reactive(new Map([[keyObj, valObj]]), observer);
+      const [reactiveKeyObj, reactiveValObj] = state[Symbol.iterator]().next().value;
+      expect(reactiveKeyObj).not.toBe(keyObj);
+      expect(reactiveValObj).not.toBe(valObj);
+      expect(toRaw(reactiveKeyObj as any)).toBe(keyObj);
+      expect(toRaw(reactiveValObj as any)).toBe(valObj);
+      reactiveKeyObj.a = 0;
+      reactiveValObj.a = 0;
+      expect(observer).toHaveBeenCalledTimes(0);
+      reactiveKeyObj.a; // observe key "a" in key sub-reactive;
+      reactiveKeyObj.a = 1;
+      expect(observer).toHaveBeenCalledTimes(1);
+      reactiveValObj.a; // observe key "a" in val sub-reactive;
+      reactiveValObj.a = 1;
+      expect(observer).toHaveBeenCalledTimes(2);
+      reactiveKeyObj.a = 1; // setting same value again shouldn't notify
+      reactiveValObj.a = 1;
+      expect(observer).toHaveBeenCalledTimes(2);
+    });
+
+    test("iterating on entries returns reactives", async () => {
+      const keyObj = { a: 2 };
+      const valObj = { a: 2 };
+      const observer = jest.fn();
+      const state = reactive(new Map([[keyObj, valObj]]), observer);
+      const [reactiveKeyObj, reactiveValObj] = state.entries().next().value;
+      expect(reactiveKeyObj).not.toBe(keyObj);
+      expect(reactiveValObj).not.toBe(valObj);
+      expect(toRaw(reactiveKeyObj as any)).toBe(keyObj);
+      expect(toRaw(reactiveValObj as any)).toBe(valObj);
+      reactiveKeyObj.a = 0;
+      reactiveValObj.a = 0;
+      expect(observer).toHaveBeenCalledTimes(0);
+      reactiveKeyObj.a; // observe key "a" in key sub-reactive;
+      reactiveKeyObj.a = 1;
+      expect(observer).toHaveBeenCalledTimes(1);
+      reactiveValObj.a; // observe key "a" in val sub-reactive;
+      reactiveValObj.a = 1;
+      expect(observer).toHaveBeenCalledTimes(2);
+      reactiveKeyObj.a = 1; // setting same value again shouldn't notify
+      reactiveValObj.a = 1;
+      expect(observer).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe("WeakMap", () => {
+    test("can make reactive WeakMap", () => {
+      const map = new WeakMap();
+      const obj = reactive(map);
+      expect(obj).not.toBe(map);
+    });
+
+    test("can read", async () => {
+      const obj = {};
+      const obj2 = {};
+      const state = reactive(new WeakMap([[obj, 0]]));
+      expect(state.has(obj)).toBe(true);
+      expect(state.has(obj2)).toBe(false);
+      expect(state.get(obj)).toBe(0);
+      expect(state.get(obj2)).toBeUndefined();
+    });
+
+    test("can add entries", () => {
+      const obj = {};
+      const state = reactive(new WeakMap());
+      state.set(obj, 2);
+      expect(state.has(obj)).toBe(true);
+      expect(state.get(obj)).toBe(2);
+    });
+
+    test("can remove entries", () => {
+      const obj = {};
+      const state = reactive(new WeakMap([[obj, 2]]));
+      state.delete(obj);
+      expect(state.has(obj)).toBe(false);
+      expect(state.get(obj)).toBeUndefined();
+    });
+
+    test("act like a WeakMap", () => {
+      const obj = {};
+      const state = reactive(new WeakMap([[obj, 2]]));
+      expect(typeof state).toBe("object");
+      expect(state).toBeInstanceOf(WeakMap);
+    });
+
+    test("checking for a key with 'has' subscribes the callback to changes to that key", () => {
+      const observer = jest.fn();
+      const obj = {};
+      const obj2 = {};
+      const obj3 = {};
+      const state = reactive(new WeakMap([[obj2, 2]]), observer);
+
+      expect(state.has(obj)).toBe(false); // subscribe to obj
+      expect(observer).toHaveBeenCalledTimes(0);
+      state.set(obj, 3);
+      expect(observer).toHaveBeenCalledTimes(1);
+      expect(state.has(obj)).toBe(true); // subscribe to obj
+      state.delete(obj);
+      expect(observer).toHaveBeenCalledTimes(2);
+      state.set(obj, 3);
+      state.delete(obj);
+      expect(observer).toHaveBeenCalledTimes(2);
+      expect(state.has(obj)).toBe(false); // subscribe to obj
+
+      state.set(obj3, 4); // setting unobserved key doesn't notify
+      expect(observer).toHaveBeenCalledTimes(2);
+    });
+
+    test("checking for a key with 'get' subscribes the callback to changes to that key", () => {
+      const observer = jest.fn();
+      const obj = {};
+      const obj2 = {};
+      const obj3 = {};
+      const state = reactive(new WeakMap([[obj2, 2]]), observer);
+
+      expect(state.get(obj)).toBeUndefined(); // subscribe to obj
+      expect(observer).toHaveBeenCalledTimes(0);
+      state.set(obj, 3);
+      expect(observer).toHaveBeenCalledTimes(1);
+      expect(state.get(obj)).toBe(3); // subscribe to obj
+      state.delete(obj);
+      expect(observer).toHaveBeenCalledTimes(2);
+      state.set(obj, 3);
+      state.delete(obj);
+      expect(observer).toHaveBeenCalledTimes(2);
+      expect(state.get(obj)).toBeUndefined(); // subscribe to obj
+
+      state.set(obj3, 4); // setting unobserved key doesn't notify
+      expect(observer).toHaveBeenCalledTimes(2);
+    });
+
+    test("getting values returns a reactive", async () => {
+      const keyObj = {};
+      const valObj = { a: 2 };
+      const observer = jest.fn();
+      const state = reactive(new WeakMap([[keyObj, valObj]]), observer);
+      const reactiveObj = state.get(keyObj)!;
+      expect(reactiveObj).not.toBe(valObj);
+      expect(toRaw(reactiveObj as any)).toBe(valObj);
+      reactiveObj.a = 0;
+      expect(observer).toHaveBeenCalledTimes(0);
+      reactiveObj.a; // observe key "a" in sub-reactive;
+      reactiveObj.a = 1;
+      expect(observer).toHaveBeenCalledTimes(1);
+      reactiveObj.a = 1; // setting same value again shouldn't notify
+      expect(observer).toHaveBeenCalledTimes(1);
+    });
   });
 });
 

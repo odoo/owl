@@ -53,6 +53,18 @@ describe("reactivity in lifecycle", () => {
     expect(n).toBe(2); // no new rendering occured: b was never read via state!
   });
 
+  test("can use a state hook on Map", async () => {
+    class Counter extends Component {
+      static template = xml`<div><t t-esc="counter.get('value')"/></div>`;
+      counter = useState(new Map([["value", 42]]));
+    }
+    const counter = await mount(Counter, fixture);
+    expect(fixture.innerHTML).toBe("<div>42</div>");
+    counter.counter.set("value", 3);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>3</div>");
+  });
+
   test("state changes in willUnmount do not trigger rerender", async () => {
     const steps: string[] = [];
     class Child extends Component {

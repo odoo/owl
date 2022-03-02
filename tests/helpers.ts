@@ -15,10 +15,11 @@ import {
   useComponent,
   xml,
 } from "../src";
-import { UTILS } from "../src/app/template_helpers";
-import { globalTemplates, TemplateSet } from "../src/app/template_set";
+import { helpers } from "../src/app/template_helpers";
+import { TemplateSet } from "../src/app/template_set";
 import { BDom } from "../src/blockdom";
 import { compile } from "../src/compiler";
+import { globalTemplates } from "../src/utils";
 
 const mount = blockDom.mount;
 
@@ -91,7 +92,7 @@ export function renderToBdom(template: string, context: any = {}, node?: any): B
     snapshottedTemplates.add(template);
     expect(fn.toString()).toMatchSnapshot();
   }
-  return fn(blockDom, UTILS)(context, node);
+  return fn(blockDom, helpers)(context, node);
 }
 
 export function renderToString(template: string, context: any = {}, node?: any): string {

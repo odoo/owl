@@ -183,7 +183,7 @@ function multiRefSetter(refs: RefMap, name: string): RefSetter {
   };
 }
 
-export const UTILS = {
+export const helpers = {
   withDefault,
   zero: Symbol("zero"),
   isBoundary,

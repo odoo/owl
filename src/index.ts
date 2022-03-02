@@ -1,4 +1,3 @@
-import { UTILS } from "./app/template_helpers";
 import {
   config,
   createBlock,
@@ -13,14 +12,10 @@ import {
   comment,
 } from "./blockdom";
 import { mainEventHandler } from "./component/handler";
-import { Portal } from "./portal";
-import { markRaw } from "./reactivity";
 export type { Reactive } from "./reactivity";
 
 config.shouldNormalizeDom = false;
 config.mainEventHandler = mainEventHandler;
-(UTILS as any).Portal = Portal;
-(UTILS as any).markRaw = markRaw;
 
 export const blockDom = {
   config,
@@ -42,10 +37,9 @@ export { App, mount } from "./app/app";
 export { Component } from "./component/component";
 export { useComponent, useState } from "./component/component_node";
 export { status } from "./component/status";
-export { xml } from "./app/template_set";
 export { reactive, markRaw, toRaw } from "./reactivity";
 export { useEffect, useEnv, useExternalListener, useRef, useChildSubEnv, useSubEnv } from "./hooks";
-export { EventBus, whenReady, loadFile, markup } from "./utils";
+export { EventBus, whenReady, loadFile, markup, xml } from "./utils";
 export {
   onWillStart,
   onMounted,

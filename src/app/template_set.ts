@@ -1,11 +1,12 @@
 import { createBlock, html, list, multi, text, toggler, comment } from "../blockdom";
 import { compile, Template } from "../compiler";
+import { markRaw } from "../reactivity";
+import { Portal } from "../portal";
 import { component, getCurrent } from "../component/component_node";
-import { UTILS } from "./template_helpers";
+import { helpers } from "./template_helpers";
+import { globalTemplates } from "../utils";
 
 const bdom = { text, createBlock, list, multi, html, toggler, component, comment };
-
-export const globalTemplates: { [key: string]: string | Element } = {};
 
 function parseXML(xml: string): Document {
   const parser = new DOMParser();
@@ -37,6 +38,22 @@ function parseXML(xml: string): Document {
   return doc;
 }
 
+/**
+ * Returns the helpers object that will be injected in each template closure
+ * function
+ */
+function makeHelpers(getTemplate: (name: string) => Template): any {
+  return Object.assign({}, helpers, {
+    Portal,
+    markRaw,
+    getTemplate,
+    call: (owner: any, subTemplate: string, ctx: any, parent: any, key: any) => {
+      const template = getTemplate(subTemplate);
+      return toggler(subTemplate, template.call(owner, ctx, parent, key));
+    },
+  });
+}
+
 export interface TemplateSetConfig {
   dev?: boolean;
   translatableAttributes?: string[];
@@ -50,13 +67,7 @@ export class TemplateSet {
   templates: { [name: string]: Template } = {};
   translateFn?: (s: string) => string;
   translatableAttributes?: string[];
-  utils: typeof UTILS = Object.assign({}, UTILS, {
-    call: (owner: any, subTemplate: string, ctx: any, parent: any, key: any) => {
-      const template = this.getTemplate(subTemplate);
-      return toggler(subTemplate, template.call(owner, ctx, parent, key));
-    },
-    getTemplate: (name: string) => this.getTemplate(name),
-  });
+  helpers: any;
 
   constructor(config: TemplateSetConfig = {}) {
     this.dev = config.dev || false;
@@ -65,6 +76,7 @@ export class TemplateSet {
     if (config.templates) {
       this.addTemplates(config.templates);
     }
+    this.helpers = makeHelpers(this.getTemplate.bind(this));
   }
 
   addTemplate(
@@ -108,7 +120,7 @@ export class TemplateSet {
       this.templates[name] = function (context, parent) {
         return templates[name].call(this, context, parent);
       };
-      const template = templateFn(bdom, this.utils);
+      const template = templateFn(bdom, this.helpers);
       this.templates[name] = template;
     }
     return this.templates[name];
@@ -123,15 +135,3 @@ export class TemplateSet {
     });
   }
 }
-
-// -----------------------------------------------------------------------------
-//  xml tag helper
-// -----------------------------------------------------------------------------
-export function xml(...args: Parameters<typeof String.raw>) {
-  const name = `__template__${xml.nextId++}`;
-  const value = String.raw(...args);
-  globalTemplates[name] = value;
-  return name;
-}
-
-xml.nextId = 1;

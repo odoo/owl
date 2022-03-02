@@ -1,5 +1,5 @@
 import { onWillUnmount } from "./component/lifecycle_hooks";
-import { xml } from "./app/template_set";
+import { xml } from "./utils";
 import { BDom, text, VNode } from "./blockdom";
 import { Component } from "./component/component";
 

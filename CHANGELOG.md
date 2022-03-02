@@ -81,7 +81,6 @@ All changes are documented here in no particular order.
 - improved performance
 - much simpler code 
 - new App class to encapsulate a root Owl component (with the config for that application) ([doc](doc/reference/app.md))
-- new `Memo` component
 - new `useEffect` hook ([doc](doc/reference/hooks.md#useeffect))
 - breaking: `Context` is removed ([details](#15-context-is-removed))
 - breaking: `env` is now totally empty ([details](#16-env-is-now-totally-empty))
@@ -249,35 +248,12 @@ Rationale: `shouldUpdate` is a dangerous method to use, that may cause a lot of
 issues. Vue does not have such a mechanism (see https://github.com/vuejs/vue/issues/4255),
 because the reactivity system in Vue is smart enough to only rerender the minimal
 subset of components that is subscribed to a piece of state. Now, Owl 2 features
-a much more powerful reactivity system.
+a much more powerful reactivity system, so the same rationale applies: in a way,
+it's like each Owl 2 component has a `shouldUpdate` method that precisely tracks
+every value used by the component.
 
-Migration code: remove the `shouldUpdate` methods. Then, maybe the following
-ideas may help:
-
-- try to organize the state/architecture to minimize the number of state updates
-- take advantage of the finer reactivity system. For example, if we have a list
-  of items, with a component for each item, we can write this:
-
-  ```js
-  class Item extends Component {
-      setup() {
-          this.item = useState(this.props.item); // and only use this, not props.item
-      }
-  }
-  ```
-  Doing so will make it that each `Item` component will register itself as an
-  observer of its own item, and will be the only component being rerendered when
-  its item object is updated.
-- use the `Memo` component to wrap some piece of template. `Memo` memoize its
-  content, and only update itself if its props are different (shallow comparison):
-  
-  ```xml
-    <Memo a="state.a" b="state.b"> 
-        <t t-esc="state.a"/>
-        <t t-esc="state.b"/>
-        <t t-esc="state.c"/>
-    </Memo>
-  ```
+Migration code: remove the `shouldUpdate` methods, and it should work as well
+as before.
 
 ### 9. component.el is removed
 

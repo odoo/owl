@@ -18,6 +18,8 @@ export interface AppConfig<P, E> extends TemplateSetConfig {
   test?: boolean;
 }
 
+let hasBeenLogged = false;
+
 export const DEV_MSG = () => {
   const hash = (window as any).owl ? (window as any).owl.__info__.hash : "master";
 
@@ -46,8 +48,9 @@ export class App<
     if (config.test) {
       this.dev = true;
     }
-    if (this.dev && !config.test) {
+    if (this.dev && !config.test && !hasBeenLogged) {
       console.info(DEV_MSG());
+      hasBeenLogged = true;
     }
     const descrs = Object.getOwnPropertyDescriptors(config.env || {});
     this.env = Object.freeze(Object.defineProperties({}, descrs)) as E;

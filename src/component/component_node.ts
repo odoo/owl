@@ -1,6 +1,13 @@
 import type { App, Env } from "../app/app";
 import { BDom, VNode } from "../blockdom";
-import { clearReactivesForCallback, Reactive, reactive, TARGET, NonReactive } from "../reactivity";
+import {
+  clearReactivesForCallback,
+  Reactive,
+  reactive,
+  TARGET,
+  NonReactive,
+  getSubscriptions,
+} from "../reactivity";
 import { batched, Callback } from "../utils";
 import { Component, ComponentConstructor } from "./component";
 import { fibersInError, handleError } from "./error_handling";
@@ -51,6 +58,13 @@ export function useState<T extends object>(state: T): Reactive<T> | NonReactive<
     batchedRenderFunctions.set(node, render);
     // manual implementation of onWillDestroy to break cyclic dependency
     node.willDestroy.push(clearReactivesForCallback.bind(null, render));
+    if (node.app.dev) {
+      Object.defineProperty(node, "subscriptions", {
+        get() {
+          return getSubscriptions(render);
+        },
+      });
+    }
   }
   return reactive(state, render);
 }

@@ -153,6 +153,17 @@ export function clearReactivesForCallback(callback: Callback): void {
   targetsToClear.clear();
 }
 
+export function getSubscriptions(callback: Callback) {
+  const targets = callbacksToTargets.get(callback) || [];
+  return [...targets].map((target) => {
+    const keysToCallbacks = targetToKeysToCallbacks.get(target);
+    return {
+      target,
+      keys: keysToCallbacks ? [...keysToCallbacks.keys()] : [],
+    };
+  });
+}
+
 const reactiveCache = new WeakMap<Target, WeakMap<Callback, Reactive>>();
 /**
  * Creates a reactive proxy for an object. Reading data on the reactive object

@@ -3189,6 +3189,71 @@ test("Cascading renders after microtaskTick", async () => {
   await nextTick();
   expect(fixture.innerHTML).toBe("0123 _ 0123");
 });
+
+test("rendering parent twice, with different props on child and stuff", async () => {
+  class Child extends Component {
+    static template = xml`<t t-esc="props.value"/>`;
+    setup() {
+      useLogLifecycle();
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`<Child value="state.value"/>`;
+    static components = { Child };
+    state = useState({ value: 1 });
+    setup() {
+      useLogLifecycle();
+    }
+  }
+
+  const parent = await mount(Parent, fixture);
+  expect(fixture.innerHTML).toBe("1");
+  expect([
+    "Parent:setup",
+    "Parent:willStart",
+    "Parent:willRender",
+    "Child:setup",
+    "Child:willStart",
+    "Parent:rendered",
+    "Child:willRender",
+    "Child:rendered",
+    "Child:mounted",
+    "Parent:mounted",
+  ]).toBeLogged();
+
+  parent.state.value = 2;
+  // wait for child to be rendered
+  await nextMicroTick();
+  await nextMicroTick();
+  await nextMicroTick();
+  await nextMicroTick();
+  expect([
+    "Parent:willRender",
+    "Child:willUpdateProps",
+    "Parent:rendered",
+    "Child:willRender",
+    "Child:rendered",
+  ]).toBeLogged();
+  expect(fixture.innerHTML).toBe("1");
+
+  // trigger a render, but keep the props for child the same
+  parent.render();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("2");
+  expect([
+    "Parent:willRender",
+    "Child:willUpdateProps",
+    "Parent:rendered",
+    "Child:willRender",
+    "Child:rendered",
+    "Parent:willPatch",
+    "Child:willPatch",
+    "Child:patched",
+    "Parent:patched",
+  ]).toBeLogged();
+});
+
 //   test.skip("components with shouldUpdate=false", async () => {
 //     const state = { p: 1, cc: 10 };
 

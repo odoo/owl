@@ -107,8 +107,14 @@ export function component<P extends object>(
 
   const parentFiber = ctx.fiber!;
   if (node) {
-    const currentProps = node.component.props[TARGET];
-    if (parentFiber.deep || arePropsDifferent(currentProps, props)) {
+    let shouldRender = node.forceNextRender;
+    if (shouldRender) {
+      node.forceNextRender = false;
+    } else {
+      const currentProps = node.component.props[TARGET];
+      shouldRender = parentFiber.deep || arePropsDifferent(currentProps, props);
+    }
+    if (shouldRender) {
       node.updateAndRender(props, parentFiber);
     }
   } else {
@@ -143,6 +149,7 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
   component: Component<P, E>;
   bdom: BDom | null = null;
   status: STATUS = STATUS.NEW;
+  forceNextRender: boolean = false;
 
   renderFn: Function;
   parent: ComponentNode | null;

@@ -52,8 +52,9 @@ export class App<
       console.info(DEV_MSG());
       hasBeenLogged = true;
     }
-    const descrs = Object.getOwnPropertyDescriptors(config.env || {});
-    this.env = Object.freeze(Object.defineProperties({}, descrs)) as E;
+    const env = config.env || {};
+    const descrs = Object.getOwnPropertyDescriptors(env);
+    this.env = Object.freeze(Object.create(Object.getPrototypeOf(env), descrs));
     this.props = config.props || ({} as P);
   }
 

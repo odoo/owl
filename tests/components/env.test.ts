@@ -49,5 +49,7 @@ describe("env handling", () => {
 
     await new App(Test, { env }).mount(fixture);
     expect(child.env).toEqual(env);
+    // we check that the frozen env maintain the same prototype chain
+    expect(Object.getPrototypeOf(child.env)).toBe(Object.getPrototypeOf(env));
   });
 });

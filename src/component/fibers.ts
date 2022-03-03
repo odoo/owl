@@ -43,7 +43,15 @@ function cancelFibers(fibers: Fiber[]): number {
   let result = 0;
   for (let fiber of fibers) {
     fiber.node.fiber = null;
-    if (!fiber.bdom) {
+    if (fiber.bdom) {
+      // if fiber has been rendered, this means that the component props have
+      // been updated. however, this fiber will not be patched to the dom, so
+      // it could happen that the next render compare the current props with
+      // the same props, and skip the render completely. With the next line,
+      // we kindly request the component code to force a render, so it works as
+      // expected.
+      fiber.node.forceNextRender = true;
+    } else {
       result++;
     }
     result += cancelFibers(fiber.children);

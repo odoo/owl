@@ -1,4 +1,4 @@
-import { BDom, multi, text, toggler } from "../blockdom";
+import { BDom, multi, text, toggler, createCatcher } from "../blockdom";
 import { validateProps } from "../component/props_validation";
 import { Markup } from "../utils";
 import { html } from "../blockdom/index";
@@ -199,4 +199,5 @@ export const helpers = {
   LazyValue,
   safeOutput,
   bind,
+  createCatcher,
 };

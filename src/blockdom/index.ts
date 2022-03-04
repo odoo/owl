@@ -6,6 +6,7 @@ export { list } from "./list";
 export { multi } from "./multi";
 export { text, comment } from "./text";
 export { html } from "./html";
+export { createCatcher } from "./event_catcher";
 
 export interface VNode<T = any> {
   mount(parent: HTMLElement, afterNode: Node | null): void;

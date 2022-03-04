@@ -1011,6 +1011,7 @@ describe("qweb parser", () => {
         dynamicProps: null,
         props: {},
         slots: {},
+        on: null,
       },
       memo: "",
       hasNoFirst: true,
@@ -1217,6 +1218,7 @@ describe("qweb parser", () => {
       name: "MyComponent",
       dynamicProps: null,
       props: {},
+      on: null,
       slots: {},
       isDynamic: false,
     });
@@ -1229,6 +1231,7 @@ describe("qweb parser", () => {
       dynamicProps: null,
       props: { a: "1", b: "'b'" },
       isDynamic: false,
+      on: null,
       slots: {},
     });
   });
@@ -1240,14 +1243,21 @@ describe("qweb parser", () => {
       dynamicProps: "state",
       props: { a: "1" },
       isDynamic: false,
+      on: null,
       slots: {},
     });
   });
 
   test("component with event handler", async () => {
-    expect(() => parse(`<MyComponent t-on-click="someMethod"/>`)).toThrow(
-      "t-on is no longer supported on components. Consider passing a callback in props."
-    );
+    expect(parse(`<MyComponent t-on-click="someMethod"/>`)).toEqual({
+      type: ASTType.TComponent,
+      name: "MyComponent",
+      dynamicProps: null,
+      props: {},
+      isDynamic: false,
+      on: { click: "someMethod" },
+      slots: {},
+    });
   });
 
   test("component with t-ref", async () => {
@@ -1281,6 +1291,7 @@ describe("qweb parser", () => {
       dynamicProps: null,
       props: {},
       isDynamic: false,
+      on: null,
       slots: { default: { content: { type: ASTType.Text, value: "foo" } } },
     });
   });
@@ -1294,6 +1305,7 @@ describe("qweb parser", () => {
       dynamicProps: null,
       props: {},
       isDynamic: false,
+      on: null,
       slots: {
         default: { content: { type: ASTType.Text, value: "foo" }, attrs: { param: "param" } },
       },
@@ -1307,6 +1319,7 @@ describe("qweb parser", () => {
       isDynamic: false,
       dynamicProps: null,
       props: {},
+      on: null,
       slots: {
         default: {
           content: {
@@ -1348,6 +1361,7 @@ describe("qweb parser", () => {
       isDynamic: false,
       dynamicProps: null,
       props: {},
+      on: null,
       slots: { name: { content: { type: ASTType.Text, value: "foo" } } },
     });
   });
@@ -1359,6 +1373,7 @@ describe("qweb parser", () => {
       isDynamic: false,
       dynamicProps: null,
       props: {},
+      on: null,
       slots: { name: { content: { type: ASTType.Text, value: "foo" }, attrs: { param: "param" } } },
     });
   });
@@ -1376,6 +1391,7 @@ describe("qweb parser", () => {
       dynamicProps: null,
       props: {},
       isDynamic: false,
+      on: null,
       slots: {
         default: { content: { type: ASTType.Text, value: " " } },
         name: { content: { type: ASTType.Text, value: "foo" } },
@@ -1395,6 +1411,7 @@ describe("qweb parser", () => {
       dynamicProps: null,
       props: {},
       isDynamic: false,
+      on: null,
       slots: {
         a: { content: { type: ASTType.Text, value: "foo" } },
         b: { content: { type: ASTType.Text, value: "bar" } },
@@ -1409,6 +1426,7 @@ describe("qweb parser", () => {
       dynamicProps: null,
       props: {},
       isDynamic: true,
+      on: null,
       slots: {},
     });
   });
@@ -1420,6 +1438,7 @@ describe("qweb parser", () => {
       dynamicProps: null,
       props: { a: "1", b: "'b'" },
       isDynamic: true,
+      on: null,
       slots: {},
     });
   });
@@ -1431,6 +1450,7 @@ describe("qweb parser", () => {
       dynamicProps: "state",
       props: { a: "1" },
       isDynamic: true,
+      on: null,
       slots: {},
     });
   });
@@ -1454,6 +1474,7 @@ describe("qweb parser", () => {
       dynamicProps: null,
       props: {},
       isDynamic: false,
+      on: null,
       slots: { default: { content: { body: null, name: "subTemplate", type: ASTType.TCall } } },
     });
   });
@@ -1472,6 +1493,7 @@ describe("qweb parser", () => {
       dynamicProps: null,
       props: {},
       isDynamic: false,
+      on: null,
       slots: {
         default: {
           content: {
@@ -1480,6 +1502,7 @@ describe("qweb parser", () => {
             name: "Child",
             dynamicProps: null,
             props: {},
+            on: null,
             slots: { brol: { content: { type: ASTType.Text, value: "coucou" } } },
           },
         },
@@ -1501,6 +1524,7 @@ describe("qweb parser", () => {
       dynamicProps: null,
       props: {},
       isDynamic: false,
+      on: null,
       slots: {
         default: {
           content: {
@@ -1509,6 +1533,7 @@ describe("qweb parser", () => {
             name: "Child",
             dynamicProps: null,
             props: {},
+            on: null,
             slots: { brol: { content: { type: ASTType.Text, value: "coucou" } } },
           },
         },

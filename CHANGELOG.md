@@ -44,7 +44,6 @@ All changes are documented here in no particular order.
 - breaking: style/class on components are now regular props ([details](#10-styleclass-on-components-are-now-regular-props))
 - new: components can use the `.bind` suffix to bind function props ([doc](doc/reference/props.md#binding-function-props))
 - breaking: `t-on` does not accept expressions, only functions ([details](#30-t-on-does-not-accept-expressions-only-functions))
-- breaking: `t-on` does not work on components any more ([details](#12-t-on-does-not-work-on-components-any-more))
 - new: an error is thrown if an handler defined in a `t-on-` directive is not a function (failed silently previously in some cases)
 - breaking: `t-component` no longer accepts strings ([details](#17-t-component-no-longer-accepts-strings))
 - new: the `this` variable in template expressions is now bound to the component
@@ -312,41 +311,6 @@ Documentation:
 - [Fragments](doc/reference/templates.md#fragments)
 - [Mounting a component](doc/reference/app.md#mount-helper)
 
-
-### 12. `t-on` does not work on components any more
-
-In owl 1, it was possible to bind an event listener on a component tag in a
-template:
-
-```xml
-<SomeComponent t-on-some-event="doSomething"/>
-```
-
-This does not work any more.
-
-Rationale: with the support of fragments, there is no longer a canonical html
-element that we can refer. So, this makes it difficult to implement correctly
-and efficiently. Also, we noticed in practice that the event system was an issue
-in some cases, when components need to communicate before they are mounted. In
-those cases, the better solution is to directly use a callback.  Also, another
-conceptual issue with this is that it kind of breaks the component encapsulation.
-The child component kind of leak its own implementation to the outside world.
-
-Migration: a quick fix that may work in some cases is to simply bind the event
-handler on a parent htmlelement. A better way to do it, if possible, is to change
-the component API to accept explicitely a callback as props. 
-
-```xml
-<SomeComponent onSomeEvent="doSomething"/>
-<!-- or alternatively: -->
-<SomeComponent onSomeEvent.bind="doSomething"/>
-```
-
-Note that one of the example above uses the `.bind` suffix, to bind the function
-prop to the component.  Most of the time, binding the function is necessary, and
-using the `.bind` suffix is very helpful in that case.
-
-Documentation: [Binding function props](doc/reference/props.md#binding-function-props)
 
 ### 13. Portal does no longer transfer DOM events
 

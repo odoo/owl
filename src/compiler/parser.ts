@@ -119,6 +119,7 @@ export interface ASTComponent {
   name: string;
   isDynamic: boolean;
   dynamicProps: string | null;
+  on: null | { [key: string]: string };
   props: { [name: string]: string };
   slots: { [name: string]: { content: AST; attrs?: { [key: string]: string }; scope?: string } };
 }
@@ -650,7 +651,6 @@ function parseTSetNode(node: Element, ctx: ParsingContext): AST | null {
 
 // Error messages when trying to use an unsupported directive on a component
 const directiveErrorMap = new Map([
-  ["t-on", "t-on is no longer supported on components. Consider passing a callback in props."],
   [
     "t-ref",
     "t-ref is no longer supported on components. Consider exposing only the public part of the component's API through a callback prop.",
@@ -684,13 +684,19 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
 
   const defaultSlotScope = node.getAttribute("t-slot-scope");
   node.removeAttribute("t-slot-scope");
+  let on: ASTComponent["on"] = null;
 
   const props: ASTComponent["props"] = {};
   for (let name of node.getAttributeNames()) {
     const value = node.getAttribute(name)!;
     if (name.startsWith("t-")) {
-      const message = directiveErrorMap.get(name.split("-").slice(0, 2).join("-"));
-      throw new Error(message || `unsupported directive on Component: ${name}`);
+      if (name.startsWith("t-on-")) {
+        on = on || {};
+        on[name.slice(5)] = value;
+      } else {
+        const message = directiveErrorMap.get(name.split("-").slice(0, 2).join("-"));
+        throw new Error(message || `unsupported directive on Component: ${name}`);
+      }
     } else {
       props[name] = value;
     }
@@ -755,7 +761,7 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
       }
     }
   }
-  return { type: ASTType.TComponent, name, isDynamic, dynamicProps, props, slots };
+  return { type: ASTType.TComponent, name, isDynamic, dynamicProps, props, slots, on };
 }
 
 // -----------------------------------------------------------------------------

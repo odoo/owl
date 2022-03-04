@@ -5,6 +5,7 @@ type EventHandlerSetter = (this: HTMLElement, data: any) => void;
 interface EventHandlerCreator {
   setup: EventHandlerSetter;
   update: EventHandlerSetter;
+  remove: (this: HTMLElement) => void;
 }
 
 export function createEventHandler(rawEvent: string): EventHandlerCreator {
@@ -38,11 +39,15 @@ function createElementHandler(evName: string, capture: boolean = false): EventHa
     this.addEventListener(evName, listener, { capture });
   }
 
+  function remove(this: HTMLElement) {
+    delete (this as any)[eventKey];
+    this.removeEventListener(evName, listener, { capture });
+  }
   function update(this: HTMLElement, data: any) {
     (this as any)[eventKey] = data;
   }
 
-  return { setup, update };
+  return { setup, update, remove };
 }
 
 // Synthetic handler: a form of event delegation that allows placing only one
@@ -60,7 +65,12 @@ function createSyntheticHandler(evName: string, capture: boolean = false): Event
     _data[currentId] = data;
     (this as any)[eventKey] = _data;
   }
-  return { setup, update: setup };
+
+  function remove(this: HTMLElement) {
+    delete (this as any)[eventKey];
+  }
+
+  return { setup, update: setup, remove };
 }
 
 function nativeToSyntheticEvent(eventKey: string, event: Event) {

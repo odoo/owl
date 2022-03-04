@@ -217,6 +217,9 @@ export class CodeGenerator {
   translatableAttributes: string[] = TRANSLATABLE_ATTRS;
   ast: AST;
   staticCalls: { id: string; template: string }[] = [];
+  // todo: merge with staticCalls
+  // todo: add a setCodeValue function => 2 args, call addLine, use it instead of addlin
+  eventCatchers: { id: string; expr: string }[] = [];
   helpers: Set<string> = new Set();
 
   constructor(ast: AST, options: CodeGenOptions) {
@@ -264,6 +267,9 @@ export class CodeGenerator {
 
     for (let { id, template } of this.staticCalls) {
       mainCode.push(`const ${id} = getTemplate(${template});`);
+    }
+    for (let { id, expr } of this.eventCatchers) {
+      mainCode.push(`const ${id} = ${expr};`);
     }
 
     // define all blocks
@@ -1177,6 +1183,23 @@ export class CodeGenerator {
     let blockExpr = `component(${blockArgs})`;
     if (ast.isDynamic) {
       blockExpr = `toggler(${expr}, ${blockExpr})`;
+    }
+
+    // event handling
+    if (ast.on) {
+      this.helpers.add("createCatcher");
+      let name = this.generateId("catcher");
+      let spec: any = {};
+      let handlers: any[] = [];
+      for (let ev in ast.on) {
+        let handlerId = this.generateId("hdlr");
+        let idx = handlers.push(handlerId) - 1;
+        spec[ev] = idx;
+        const handler = this.generateHandlerCode(ev, ast.on[ev]);
+        this.addLine(`let ${handlerId} = ${handler};`);
+      }
+      blockExpr = `${name}(${blockExpr}, [${handlers.join(",")}])`;
+      this.eventCatchers.push({ id: name, expr: `createCatcher(${JSON.stringify(spec)})` });
     }
     block = this.createBlock(block, "multi", ctx);
     this.insertBlock(blockExpr, block, ctx);

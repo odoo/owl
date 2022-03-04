@@ -142,4 +142,58 @@ describe("t-on", () => {
     buttons[1].click();
     expect(comp.otherState.vals).toStrictEqual(["0_0", "1_1"]);
   });
+
+  test("t-on on components", async () => {
+    class Child extends Component {
+      static template = xml`<button t-esc="props.value"/>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child t-on-click="increment" value="state.value"/>`;
+      static components = { Child };
+      state = useState({ value: 1 });
+      increment() {
+        this.state.value++;
+      }
+    }
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<button>1</button>");
+    fixture.querySelector("button")!.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<button>2</button>");
+  });
+
+  test("t-on on components, variation", async () => {
+    class Child extends Component {
+      static template = xml`<button t-esc="props.value"/>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <span/>
+          <Child t-on-click="increment" value="state.value"/>
+          <p/>
+        </div>`;
+      static components = { Child };
+      state = useState({ value: 1 });
+      increment() {
+        this.state.value++;
+      }
+    }
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div><span></span><button>1</button><p></p></div>");
+
+    fixture.querySelector("span")!.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span></span><button>1</button><p></p></div>");
+
+    fixture.querySelector("button")!.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span></span><button>2</button><p></p></div>");
+
+    fixture.querySelector("p")!.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span></span><button>2</button><p></p></div>");
+  });
 });

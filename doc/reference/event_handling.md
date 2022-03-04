@@ -5,6 +5,7 @@
 - [Event Handling](#event-handling)
 - [Modifiers](#modifiers)
 - [Synthetic Events](#synthetic-events)
+- [On Components](#on-components)
 
 ## Event Handling
 
@@ -100,3 +101,19 @@ To enable it, one can just use the `.synthetic` suffix:
     </t>
 </div>
 ```
+
+## On Components
+
+The `t-on` directive also works on a child component:
+
+```xml
+<div>
+    in some template
+    <Child t-on-click="dosomething"/>
+</div>
+```
+
+This will catch all click events on any html element contained in the `Child`
+sub component. Note that if the child component is reduced to one (or more) text
+nodes, then clicking on it will not call the handler, since the event will be
+dispatched by the browser on the parent element (a `div` in this case).

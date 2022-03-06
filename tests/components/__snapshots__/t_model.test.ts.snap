@@ -194,17 +194,17 @@ exports[`t-model directive in a t-foreach 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state']);
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`thing\`] = v_block2[i1];
-      let key1 = ctx['thing'].id;
+      const key1 = ctx['thing'].id;
       const bExpr1 = ctx['thing'];
       const expr1 = 'f';
       let attr1 = bExpr1[expr1];
       let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.checked; }];
       c_block2[i1] = withKey(block3([attr1, hdlr1]), key1);
     }
-    let b2 = list(c_block2);
+    const b2 = list(c_block2);
     return block1([], [b2]);
   }
 }"
@@ -221,18 +221,18 @@ exports[`t-model directive in a t-foreach, part 2 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state']);
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`thing\`] = v_block2[i1];
       ctx[\`thing_index\`] = i1;
-      let key1 = ctx['thing_index'];
+      const key1 = ctx['thing_index'];
       const bExpr1 = ctx['state'];
       const expr1 = ctx['thing_index'];
       let attr1 = bExpr1[expr1];
       let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
       c_block2[i1] = withKey(block3([attr1, hdlr1]), key1);
     }
-    let b2 = list(c_block2);
+    const b2 = list(c_block2);
     return block1([], [b2]);
   }
 }"
@@ -249,18 +249,18 @@ exports[`t-model directive in a t-foreach, part 3 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['names']);
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['names']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`name\`] = v_block2[i1];
       ctx[\`name_index\`] = i1;
-      let key1 = ctx['name_index'];
+      const key1 = ctx['name_index'];
       const bExpr1 = ctx['state'].values;
       const expr1 = ctx['name'];
       let attr1 = bExpr1[expr1];
       let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
       c_block2[i1] = withKey(block3([attr1, hdlr1]), key1);
     }
-    let b2 = list(c_block2);
+    const b2 = list(c_block2);
     return block1([], [b2]);
   }
 }"
@@ -460,7 +460,7 @@ exports[`t-model directive t-model with dynamic values on select options -- 2 1`
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     const expr1 = 'model';
-    let bValue1 = bExpr1[expr1]
+    const bValue1 = bExpr1[expr1];
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
     let attr1 = ctx['options'][0];
     let attr2 = bValue1 === ctx['options'][0];
@@ -484,7 +484,7 @@ exports[`t-model directive t-model with dynamic values on select options -- 3 1`
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     const expr1 = 'model';
-    let bValue1 = bExpr1[expr1]
+    const bValue1 = bExpr1[expr1];
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
     let attr1 = ctx['options'][0];
     let attr2 = bValue1 === ctx['options'][0];
@@ -507,7 +507,7 @@ exports[`t-model directive t-model with dynamic values on select options 1`] = `
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     const expr1 = 'model';
-    let bValue1 = bExpr1[expr1]
+    const bValue1 = bExpr1[expr1];
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
     let attr1 = ctx['options'][0];
     let attr2 = bValue1 === ctx['options'][0];
@@ -532,19 +532,19 @@ exports[`t-model directive t-model with dynamic values on select options in fore
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     const expr1 = 'model';
-    let bValue1 = bExpr1[expr1]
+    const bValue1 = bExpr1[expr1];
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['options']);
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['options']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`v\`] = v_block2[i1];
-      let key1 = ctx['v'];
+      const key1 = ctx['v'];
       let attr1 = ctx['v'];
       let attr2 = bValue1 === ctx['v'];
       let txt1 = ctx['v'];
       c_block2[i1] = withKey(block3([attr1, attr2, txt1]), key1);
     }
-    let b2 = list(c_block2);
+    const b2 = list(c_block2);
     return block1([hdlr1], [b2]);
   }
 }"

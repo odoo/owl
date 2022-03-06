@@ -208,7 +208,7 @@ exports[`t-set t-set body is evaluated immediately 1`] = `
     setContextValue(ctx, \\"v1\\", 'before');
     ctx[\`v2\`] = new LazyValue(value1, ctx, node);
     setContextValue(ctx, \\"v1\\", 'after');
-    let b3 = safeOutput(ctx['v2']);
+    const b3 = safeOutput(ctx['v2']);
     return block1([], [b3]);
   }
 }"
@@ -228,7 +228,7 @@ exports[`t-set t-set can't alter from within callee 1`] = `
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"iter\\", 'source');
     let txt1 = ctx['iter'];
-    let b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     let txt2 = ctx['iter'];
     return block1([txt1, txt2], [b2]);
   }
@@ -271,7 +271,7 @@ exports[`t-set t-set can't alter in t-call body 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
     setContextValue(ctx, \\"iter\\", 'inCall');
-    let b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     ctx = ctx.__proto__;
     let txt2 = ctx['iter'];
     return block1([txt1, txt2], [b2]);
@@ -349,16 +349,16 @@ exports[`t-set t-set outside modified in t-foreach 1`] = `
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"iter\\", 0);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(['a','b']);
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(['a','b']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`val\`] = v_block2[i1];
-      let key1 = ctx['val'];
+      const key1 = ctx['val'];
       let txt1 = ctx['iter'];
       c_block2[i1] = withKey(block3([txt1]), key1);
       setContextValue(ctx, \\"iter\\", ctx['iter']+1);
     }
     ctx = ctx.__proto__;
-    let b2 = list(c_block2);
+    const b2 = list(c_block2);
     let txt2 = ctx['iter'];
     return block1([txt2], [b2]);
   }
@@ -379,16 +379,16 @@ exports[`t-set t-set outside modified in t-foreach increment-after operator 1`] 
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"iter\\", 0);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(['a','b']);
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(['a','b']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`val\`] = v_block2[i1];
-      let key1 = ctx['val'];
+      const key1 = ctx['val'];
       let txt1 = ctx['iter'];
       c_block2[i1] = withKey(block3([txt1]), key1);
       setContextValue(ctx, \\"iter\\", ctx['iter']++);
     }
     ctx = ctx.__proto__;
-    let b2 = list(c_block2);
+    const b2 = list(c_block2);
     let txt2 = ctx['iter'];
     return block1([txt2], [b2]);
   }
@@ -409,16 +409,16 @@ exports[`t-set t-set outside modified in t-foreach increment-before operator 1`]
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"iter\\", 0);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(['a','b']);
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(['a','b']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`val\`] = v_block2[i1];
-      let key1 = ctx['val'];
+      const key1 = ctx['val'];
       let txt1 = ctx['iter'];
       c_block2[i1] = withKey(block3([txt1]), key1);
       setContextValue(ctx, \\"iter\\", ++ctx['iter']);
     }
     ctx = ctx.__proto__;
-    let b2 = list(c_block2);
+    const b2 = list(c_block2);
     let txt2 = ctx['iter'];
     return block1([txt2], [b2]);
   }
@@ -439,16 +439,16 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"v\\", 1);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['list']);
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['list']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`elem\`] = v_block2[i1];
       ctx[\`elem_index\`] = i1;
-      let key1 = ctx['elem_index'];
+      const key1 = ctx['elem_index'];
       let txt1 = ctx['v'];
       setContextValue(ctx, \\"v\\", ctx['elem']);
       c_block2[i1] = withKey(block3([txt1]), key1);
     }
-    let b2 = list(c_block2);
+    const b2 = list(c_block2);
     return block1([], [b2]);
   }
 }"
@@ -463,8 +463,8 @@ exports[`t-set t-set with content and sub t-esc 1`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   function value1(ctx, node, key = \\"\\") {
-    let b3 = text(ctx['beep']);
-    let b4 = text(\` boop\`);
+    const b3 = text(ctx['beep']);
+    const b4 = text(\` boop\`);
     return multi([b3, b4]);
   }
   
@@ -500,7 +500,7 @@ exports[`t-set t-set with t-value (falsy) and body 1`] = `
     ctx[\`v2\`] = withDefault(ctx['v3'], new LazyValue(value1, ctx, node));
     setContextValue(ctx, \\"v1\\", 'after');
     setContextValue(ctx, \\"v3\\", true);
-    let b3 = safeOutput(ctx['v2']);
+    const b3 = safeOutput(ctx['v2']);
     return block1([], [b3]);
   }
 }"
@@ -528,7 +528,7 @@ exports[`t-set t-set with t-value (truthy) and body 1`] = `
     ctx[\`v2\`] = withDefault(ctx['v3'], new LazyValue(value1, ctx, node));
     setContextValue(ctx, \\"v1\\", 'after');
     setContextValue(ctx, \\"v3\\", false);
-    let b3 = safeOutput(ctx['v2']);
+    const b3 = safeOutput(ctx['v2']);
     return block1([], [b3]);
   }
 }"

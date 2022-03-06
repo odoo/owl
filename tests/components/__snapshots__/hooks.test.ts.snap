@@ -109,8 +109,8 @@ exports[`hooks parent and child env (with useChildSubEnv then useSubEnv) 1`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = text(ctx['env'].val);
-    let b3 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    const b2 = text(ctx['env'].val);
+    const b3 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
     return multi([b2, b3]);
   }
 }"
@@ -140,8 +140,8 @@ exports[`hooks parent and child env (with useChildSubEnv) 1`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = text(ctx['env'].val);
-    let b3 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    const b2 = text(ctx['env'].val);
+    const b3 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
     return multi([b2, b3]);
   }
 }"
@@ -167,8 +167,8 @@ exports[`hooks parent and child env (with useSubEnv) 1`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = text(ctx['env'].val);
-    let b3 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    const b2 = text(ctx['env'].val);
+    const b3 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
     return multi([b2, b3]);
   }
 }"

@@ -20,9 +20,9 @@ exports[`style and class handling can set class on multi root component 2`] = `
   let block3 = createBlock(\`<span block-attribute-0=\\"class\\">b</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = block2();
+    const b2 = block2();
     let attr1 = ctx['props'].class;
-    let b3 = block3([attr1]);
+    const b3 = block3([attr1]);
     return multi([b2, b3]);
   }
 }"
@@ -205,7 +205,7 @@ exports[`style and class handling class with extra whitespaces (variation) 1`] =
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`Child\`, {class: 'a  b c   d'}, key + \`__1\`, node, ctx);
+    const b2 = component(\`Child\`, {class: 'a  b c   d'}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -310,7 +310,7 @@ exports[`style and class handling empty class attribute is not added on widget r
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`Child\`, {class: undefined}, key + \`__1\`, node, ctx);
+    const b2 = component(\`Child\`, {class: undefined}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -438,7 +438,7 @@ exports[`style and class handling t-att-class is properly added/removed on widge
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`Child\`, {class: {b:ctx['state'].b}}, key + \`__1\`, node, ctx);
+    const b2 = component(\`Child\`, {class: {b:ctx['state'].b}}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"

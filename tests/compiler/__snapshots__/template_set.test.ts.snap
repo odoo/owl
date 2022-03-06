@@ -50,7 +50,7 @@ exports[`loading templates can load a few templates from a xml string 1`] = `
   let block1 = createBlock(\`<ul><block-child-0/></ul>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
 }"
@@ -65,8 +65,8 @@ exports[`loading templates can load a few templates from a xml string 2`] = `
   let block3 = createBlock(\`<li>foo</li>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = block2();
-    let b3 = block3();
+    const b2 = block2();
+    const b3 = block3();
     return multi([b2, b3]);
   }
 }"
@@ -82,7 +82,7 @@ exports[`loading templates can load a few templates from an XMLDocument 1`] = `
   let block1 = createBlock(\`<ul><block-child-0/></ul>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
 }"
@@ -97,8 +97,8 @@ exports[`loading templates can load a few templates from an XMLDocument 2`] = `
   let block3 = createBlock(\`<li>foo</li>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = block2();
-    let b3 = block3();
+    const b2 = block2();
+    const b3 = block3();
     return multi([b2, b3]);
   }
 }"

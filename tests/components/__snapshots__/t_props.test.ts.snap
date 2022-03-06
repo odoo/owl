@@ -8,7 +8,7 @@ exports[`t-props basic use 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`Child\`, Object.assign({}, ctx['some'].obj), key + \`__1\`, node, ctx);
+    const b2 = component(\`Child\`, Object.assign({}, ctx['some'].obj), key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -60,7 +60,7 @@ exports[`t-props t-props and other props 1`] = `
   let block1 = createBlock(\`<div><div><block-child-0/></div></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`Comp\`, Object.assign({}, ctx['state1'], {a: ctx['a']}), key + \`__1\`, node, ctx);
+    const b2 = component(\`Comp\`, Object.assign({}, ctx['state1'], {a: ctx['a']}), key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -89,7 +89,7 @@ exports[`t-props t-props only 1`] = `
   let block1 = createBlock(\`<div><div><block-child-0/></div></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`Comp\`, Object.assign({}, ctx['state']), key + \`__1\`, node, ctx);
+    const b2 = component(\`Comp\`, Object.assign({}, ctx['state']), key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -117,7 +117,7 @@ exports[`t-props t-props with props 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`Child\`, Object.assign({}, ctx['childProps'], {a: 1, b: 2}), key + \`__1\`, node, ctx);
+    const b2 = component(\`Child\`, Object.assign({}, ctx['childProps'], {a: 1, b: 2}), key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"

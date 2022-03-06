@@ -29,8 +29,8 @@ exports[`t-if a t-if with two inner nodes 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['condition']) {
-      let b3 = block3();
-      let b4 = block4();
+      const b3 = block3();
+      const b4 = block4();
       b2 = multi([b3, b4]);
     }
     return multi([b2]);
@@ -187,8 +187,8 @@ exports[`t-if div containing a t-if with two inner nodes 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['condition']) {
-      let b3 = block3();
-      let b4 = block4();
+      const b3 = block3();
+      const b4 = block4();
       b2 = multi([b3, b4]);
     }
     return block1([], [b2]);
@@ -208,8 +208,8 @@ exports[`t-if dynamic content after t-if with two children nodes 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['condition']) {
-      let b3 = block3();
-      let b4 = block4();
+      const b3 = block3();
+      const b4 = block4();
       b2 = multi([b3, b4]);
     }
     let txt1 = ctx['text'];
@@ -318,8 +318,8 @@ exports[`t-if t-if and t-else with two nodes 1`] = `
     if (ctx['condition']) {
       b2 = text(\`1\`);
     } else {
-      let b4 = block4();
-      let b5 = block5();
+      const b4 = block4();
+      const b5 = block5();
       b3 = multi([b4, b5]);
     }
     return multi([b2, b3]);
@@ -526,8 +526,8 @@ exports[`t-if two t-ifs next to each other 1`] = `
       b2 = block2([txt1]);
     }
     if (ctx['condition']) {
-      let b4 = block4();
-      let b5 = block5();
+      const b4 = block4();
+      const b5 = block5();
       b3 = multi([b4, b5]);
     }
     return block1([], [b2, b3]);

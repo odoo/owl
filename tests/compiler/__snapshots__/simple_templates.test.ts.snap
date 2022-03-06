@@ -211,8 +211,8 @@ exports[`simple templates, mostly static multiple root nodes 1`] = `
   let block3 = createBlock(\`<span>hey</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = block2();
-    let b3 = block3();
+    const b2 = block2();
+    const b3 = block3();
     return multi([b2, b3]);
   }
 }"
@@ -246,8 +246,8 @@ exports[`simple templates, mostly static static text and dynamic text (no t tag)
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = text(\`hello \`);
-    let b3 = text(ctx['text']);
+    const b2 = text(\`hello \`);
+    const b3 = text(ctx['text']);
     return multi([b2, b3]);
   }
 }"
@@ -259,8 +259,8 @@ exports[`simple templates, mostly static static text and dynamic text 1`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = text(\`hello \`);
-    let b3 = text(ctx['text']);
+    const b2 = text(\`hello \`);
+    const b3 = text(ctx['text']);
     return multi([b2, b3]);
   }
 }"
@@ -347,8 +347,8 @@ exports[`simple templates, mostly static two t-escs next to each other 1`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = text(ctx['text1']);
-    let b3 = text(ctx['text2']);
+    const b2 = text(ctx['text1']);
+    const b3 = text(ctx['text2']);
     return multi([b2, b3]);
   }
 }"
@@ -360,8 +360,8 @@ exports[`simple templates, mostly static two t-escs next to each other 2`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = text(ctx['text1']);
-    let b3 = text(ctx['text2']);
+    const b2 = text(ctx['text1']);
+    const b3 = text(ctx['text2']);
     return multi([b2, b3]);
   }
 }"

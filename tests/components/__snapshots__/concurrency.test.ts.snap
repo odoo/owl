@@ -7,16 +7,16 @@ exports[`Cascading renders after microtaskTick 1`] = `
   let { prepareList, withKey } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
-    let b3 = text(\` _ \`);
+    const b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    const b3 = text(\` _ \`);
     ctx = Object.create(ctx);
-    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['state']);
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['state']);;
     for (let i1 = 0; i1 < l_block4; i1++) {
       ctx[\`elem\`] = v_block4[i1];
-      let key1 = ctx['elem'].id;
+      const key1 = ctx['elem'].id;
       c_block4[i1] = withKey(text(ctx['elem'].id), key1);
     }
-    let b4 = list(c_block4);
+    const b4 = list(c_block4);
     return multi([b2, b3, b4]);
   }
 }"
@@ -30,10 +30,10 @@ exports[`Cascading renders after microtaskTick 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['state']);
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['state']);;
     for (let i1 = 0; i1 < l_block1; i1++) {
       ctx[\`elem\`] = v_block1[i1];
-      let key1 = ctx['elem'].id;
+      const key1 = ctx['elem'].id;
       c_block1[i1] = withKey(component(\`Element\`, {id: ctx['elem'].id}, key + \`__1__\${key1}\`, node, ctx), key1);
     }
     return list(c_block1);
@@ -169,7 +169,7 @@ exports[`concurrent renderings scenario 1 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -183,7 +183,7 @@ exports[`concurrent renderings scenario 1 2`] = `
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`ComponentC\`, {fromA: ctx['props'].fromA, fromB: ctx['state'].fromB}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ComponentC\`, {fromA: ctx['props'].fromA, fromB: ctx['state'].fromB}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -213,7 +213,7 @@ exports[`concurrent renderings scenario 2 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     let txt1 = ctx['state'].fromA;
-    let b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
     return block1([txt1], [b2]);
   }
 }"
@@ -227,7 +227,7 @@ exports[`concurrent renderings scenario 2 2`] = `
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`ComponentC\`, {fromA: ctx['props'].fromA, fromB: ctx['state'].fromB}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ComponentC\`, {fromA: ctx['props'].fromA, fromB: ctx['state'].fromB}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -256,7 +256,7 @@ exports[`concurrent renderings scenario 2bis 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -270,7 +270,7 @@ exports[`concurrent renderings scenario 2bis 2`] = `
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`ComponentC\`, {fromA: ctx['props'].fromA, fromB: ctx['state'].fromB}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ComponentC\`, {fromA: ctx['props'].fromA, fromB: ctx['state'].fromB}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -299,7 +299,7 @@ exports[`concurrent renderings scenario 3 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -313,7 +313,7 @@ exports[`concurrent renderings scenario 3 2`] = `
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`ComponentC\`, {fromA: ctx['props'].fromA}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ComponentC\`, {fromA: ctx['props'].fromA}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -327,7 +327,7 @@ exports[`concurrent renderings scenario 3 3`] = `
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`ComponentD\`, {fromA: ctx['props'].fromA, fromC: ctx['state'].fromC}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ComponentD\`, {fromA: ctx['props'].fromA, fromC: ctx['state'].fromC}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -356,7 +356,7 @@ exports[`concurrent renderings scenario 4 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -370,7 +370,7 @@ exports[`concurrent renderings scenario 4 2`] = `
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`ComponentC\`, {fromA: ctx['props'].fromA}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ComponentC\`, {fromA: ctx['props'].fromA}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -384,7 +384,7 @@ exports[`concurrent renderings scenario 4 3`] = `
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`ComponentD\`, {fromA: ctx['props'].fromA, fromC: ctx['state'].fromC}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ComponentD\`, {fromA: ctx['props'].fromA, fromC: ctx['state'].fromC}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -413,7 +413,7 @@ exports[`concurrent renderings scenario 5 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -441,7 +441,7 @@ exports[`concurrent renderings scenario 6 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -469,7 +469,7 @@ exports[`concurrent renderings scenario 7 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -498,7 +498,7 @@ exports[`concurrent renderings scenario 8 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -528,8 +528,8 @@ exports[`concurrent renderings scenario 9 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     let txt1 = ctx['state'].fromA;
-    let b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
-    let b3 = component(\`ComponentC\`, {fromA: ctx['state'].fromA}, key + \`__2\`, node, ctx);
+    const b2 = component(\`ComponentB\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
+    const b3 = component(\`ComponentC\`, {fromA: ctx['state'].fromA}, key + \`__2\`, node, ctx);
     return block1([txt1], [b2, b3]);
   }
 }"
@@ -557,7 +557,7 @@ exports[`concurrent renderings scenario 9 3`] = `
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`ComponentD\`, {fromA: ctx['props'].fromA, fromC: ctx['state'].fromC}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ComponentD\`, {fromA: ctx['props'].fromA, fromC: ctx['state'].fromC}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -586,7 +586,7 @@ exports[`concurrent renderings scenario 10 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`ComponentB\`, {value: ctx['state'].value}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ComponentB\`, {value: ctx['state'].value}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -631,7 +631,7 @@ exports[`concurrent renderings scenario 11 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`Child\`, {val: ctx['state'].valA}, key + \`__1\`, node, ctx);
+    const b2 = component(\`Child\`, {val: ctx['state'].valA}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -660,7 +660,7 @@ exports[`concurrent renderings scenario 12 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`Child\`, {val: ctx['val']}, key + \`__1\`, node, ctx);
+    const b2 = component(\`Child\`, {val: ctx['val']}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -720,7 +720,7 @@ exports[`concurrent renderings scenario 14 1`] = `
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`B\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
+    const b2 = component(\`B\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -734,7 +734,7 @@ exports[`concurrent renderings scenario 14 2`] = `
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`C\`, {fromB: ctx['state'].fromB, fromA: ctx['props'].fromA}, key + \`__1\`, node, ctx);
+    const b2 = component(\`C\`, {fromB: ctx['state'].fromB, fromA: ctx['props'].fromA}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -764,7 +764,7 @@ exports[`concurrent renderings scenario 15 1`] = `
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`B\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
+    const b2 = component(\`B\`, {fromA: ctx['state'].fromA}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -778,7 +778,7 @@ exports[`concurrent renderings scenario 15 2`] = `
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`C\`, {fromB: ctx['state'].fromB, fromA: ctx['props'].fromA}, key + \`__1\`, node, ctx);
+    const b2 = component(\`C\`, {fromB: ctx['state'].fromB, fromA: ctx['props'].fromA}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -1008,9 +1008,9 @@ exports[`delay willUpdateProps 2`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = text(ctx['props'].value);
-    let b3 = text(\`_\`);
-    let b4 = text(ctx['state'].int);
+    const b2 = text(ctx['props'].value);
+    const b3 = text(\`_\`);
+    const b4 = text(ctx['state'].int);
     return multi([b2, b3, b4]);
   }
 }"
@@ -1033,8 +1033,8 @@ exports[`delay willUpdateProps with rendering grandchild 2`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`DelayedChild\`, {value: ctx['props'].state.value}, key + \`__1\`, node, ctx);
-    let b3 = component(\`ReactiveChild\`, {}, key + \`__2\`, node, ctx);
+    const b2 = component(\`DelayedChild\`, {value: ctx['props'].state.value}, key + \`__1\`, node, ctx);
+    const b3 = component(\`ReactiveChild\`, {}, key + \`__2\`, node, ctx);
     return multi([b2, b3]);
   }
 }"
@@ -1046,9 +1046,9 @@ exports[`delay willUpdateProps with rendering grandchild 3`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = text(ctx['props'].value);
-    let b3 = text(\`_\`);
-    let b4 = text(ctx['state'].int);
+    const b2 = text(ctx['props'].value);
+    const b3 = text(\`_\`);
+    const b4 = text(ctx['state'].int);
     return multi([b2, b3, b4]);
   }
 }"
@@ -1172,7 +1172,7 @@ exports[`properly behave when destroyed/unmounted while rendering  2`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`SubChild\`, {val: ctx['props'].val}, key + \`__1\`, node, ctx);
+    const b2 = component(\`SubChild\`, {val: ctx['props'].val}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -1252,14 +1252,14 @@ exports[`t-foreach with dynamic async component 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['list']);
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['list']);;
     for (let i1 = 0; i1 < l_block1; i1++) {
       ctx[\`arr\`] = v_block1[i1];
       ctx[\`arr_index\`] = i1;
-      let key1 = ctx['arr_index'];
+      const key1 = ctx['arr_index'];
       let b3;
       if (ctx['arr']) {
-        let Comp1 = ctx['myComp'];
+        const Comp1 = ctx['myComp'];
         b3 = toggler(Comp1, component(Comp1, {key: ctx['arr'][0]}, key + \`__1__\${key1}\`, node, ctx));
       }
       c_block1[i1] = withKey(multi([b3]), key1);
@@ -1292,8 +1292,8 @@ exports[`t-key on dom node having a component 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['key'];
-    let Comp1 = ctx['myComp'];
-    let b2 = toggler(tKey_1, toggler(Comp1, component(Comp1, {key: ctx['key']}, tKey_1 + key + \`__1\`, node, ctx)));
+    const Comp1 = ctx['myComp'];
+    const b2 = toggler(tKey_1, toggler(Comp1, component(Comp1, {key: ctx['key']}, tKey_1 + key + \`__1\`, node, ctx)));
     return toggler(tKey_1, block1([], [b2]));
   }
 }"
@@ -1317,7 +1317,7 @@ exports[`t-key on dynamic async component (toggler is never patched) 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['key'];
-    let Comp1 = ctx['myComp'];
+    const Comp1 = ctx['myComp'];
     return toggler(tKey_1, toggler(Comp1, component(Comp1, {key: ctx['key']}, tKey_1 + key + \`__1\`, node, ctx)));
   }
 }"
@@ -1400,7 +1400,7 @@ exports[`update a sub-component twice in the same frame 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`ChildA\`, {val: ctx['state'].valA}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ChildA\`, {val: ctx['state'].valA}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -1428,7 +1428,7 @@ exports[`update a sub-component twice in the same frame, 2 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = component(\`ChildA\`, {val: ctx['state'].valA}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ChildA\`, {val: ctx['state'].valA}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"

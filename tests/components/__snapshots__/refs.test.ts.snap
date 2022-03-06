@@ -77,7 +77,7 @@ exports[`refs refs are properly bound in slots 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let txt1 = ctx['state'].val;
     const ctx1 = capture(ctx);
-    let b3 = component(\`Dialog\`, {slots: markRaw({'footer': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx);
+    const b3 = component(\`Dialog\`, {slots: markRaw({'footer': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx);
     return block1([txt1], [b3]);
   }
 }"
@@ -92,7 +92,7 @@ exports[`refs refs are properly bound in slots 2`] = `
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2 = callSlot(ctx, node, key, 'footer', false, {});
+    const b2 = callSlot(ctx, node, key, 'footer', false, {});
     return block1([], [b2]);
   }
 }"
@@ -110,8 +110,8 @@ exports[`refs throws if there are 2 same refs at the same time 1`] = `
   return function template(ctx, node, key = \\"\\") {
     const refs = ctx.__owl__.refs;
     const ref1 = multiRefSetter(refs, \`coucou\`);
-    let b2 = block2([ref1]);
-    let b3 = block3([ref1]);
+    const b2 = block2([ref1]);
+    const b3 = block3([ref1]);
     return multi([b2, b3]);
   }
 }"

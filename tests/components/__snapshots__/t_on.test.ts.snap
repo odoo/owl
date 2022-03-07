@@ -210,3 +210,79 @@ exports[`t-on t-on on destroyed components 2`] = `
   }
 }"
 `;
+
+exports[`t-on t-on on t-set-slots 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { capture, createCatcher, markRaw } = helpers;
+  const catcher1 = createCatcher({\\"click\\":0});
+  
+  let block6 = createBlock(\`<p>something</p>\`);
+  let block7 = createBlock(\`<p>paragraph</p>\`);
+  
+  function slot1(ctx, node, key = \\"\\") {
+    const b6 = block6();
+    const b7 = block7();
+    const hdlr1 = [()=>this.state.count++, ctx];
+    return catcher1(multi([b6, b7]), [hdlr1]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\` [\`);
+    const b3 = text(ctx['state'].count);
+    const b4 = text(\`] \`);
+    const ctx1 = capture(ctx);
+    const b8 = component(\`Child\`, {slots: markRaw({'myslot': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx);
+    return multi([b2, b3, b4, b8]);
+  }
+}"
+`;
+
+exports[`t-on t-on on t-set-slots 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callSlot } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return callSlot(ctx, node, key, 'myslot', false, {});
+  }
+}"
+`;
+
+exports[`t-on t-on on t-slots 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { markRaw } = helpers;
+  
+  let block1 = createBlock(\`<p>something</p>\`);
+  
+  function slot1(ctx, node, key = \\"\\") {
+    return block1();
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`Child\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`t-on t-on on t-slots 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callSlot, createCatcher } = helpers;
+  const catcher1 = createCatcher({\\"click\\":0});
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\` [\`);
+    const b3 = text(ctx['state'].count);
+    const b4 = text(\`] \`);
+    const hdlr1 = [()=>this.state.count++, ctx];
+    const b5 = catcher1(callSlot(ctx, node, key, 'default', false, {}), [hdlr1]);
+    return multi([b2, b3, b4, b5]);
+  }
+}"
+`;

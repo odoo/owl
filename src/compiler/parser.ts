@@ -114,6 +114,13 @@ export interface ASTTCall {
   body: AST[] | null;
 }
 
+interface SlotDefinition {
+  content: AST;
+  attrs?: { [key: string]: string };
+  scope?: string;
+  on?: null | { [key: string]: string };
+}
+
 export interface ASTComponent {
   type: ASTType.TComponent;
   name: string;
@@ -121,13 +128,14 @@ export interface ASTComponent {
   dynamicProps: string | null;
   on: null | { [key: string]: string };
   props: { [name: string]: string };
-  slots: { [name: string]: { content: AST; attrs?: { [key: string]: string }; scope?: string } };
+  slots: { [name: string]: SlotDefinition };
 }
 
 export interface ASTSlot {
   type: ASTType.TSlot;
   name: string;
   attrs: { [key: string]: string };
+  on: null | { [key: string]: string };
   defaultContent: AST | null;
 }
 
@@ -736,17 +744,25 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
       const slotAst = parseNode(slotNode, ctx);
       if (slotAst) {
         const slotInfo: any = { content: slotAst };
+        let on: SlotDefinition["on"] = null;
         const attrs: { [key: string]: string } = {};
         for (let attributeName of slotNode.getAttributeNames()) {
           const value = slotNode.getAttribute(attributeName)!;
           if (attributeName === "t-slot-scope") {
             slotInfo.scope = value;
             continue;
+          } else if (attributeName.startsWith("t-on-")) {
+            on = on || {};
+            on[attributeName.slice(5)] = value;
+          } else {
+            attrs[attributeName] = value;
           }
-          attrs[attributeName] = value;
         }
         if (Object.keys(attrs).length) {
           slotInfo.attrs = attrs;
+        }
+        if (on) {
+          slotInfo.on = on;
         }
         slots[name] = slotInfo;
       }
@@ -775,14 +791,21 @@ function parseTSlot(node: Element, ctx: ParsingContext): AST | null {
   const name = node.getAttribute("t-slot")!;
   node.removeAttribute("t-slot");
   const attrs: { [key: string]: string } = {};
+  let on: ASTComponent["on"] = null;
   for (let attributeName of node.getAttributeNames()) {
     const value = node.getAttribute(attributeName)!;
-    attrs[attributeName] = value;
+    if (attributeName.startsWith("t-on-")) {
+      on = on || {};
+      on[attributeName.slice(5)] = value;
+    } else {
+      attrs[attributeName] = value;
+    }
   }
   return {
     type: ASTType.TSlot,
     name,
     attrs,
+    on,
     defaultContent: parseChildNodes(node, ctx),
   };
 }

@@ -157,9 +157,11 @@ class CodeTarget {
   // maps ref name to [id, expr]
   refInfo: { [name: string]: [string, string] } = {};
   shouldProtectScope: boolean = false;
+  on?: { [key: string]: string };
 
-  constructor(name: string) {
+  constructor(name: string, on?: { [key: string]: string }) {
     this.name = name;
+    this.on = on;
   }
 
   addLine(line: string, idx?: number) {
@@ -303,14 +305,18 @@ export class CodeGenerator {
     return code;
   }
 
-  compileInNewTarget(prefix: string, ast: AST, ctx: Context): string {
+  compileInNewTarget(
+    prefix: string,
+    ast: AST,
+    ctx: Context,
+    on?: { [key: string]: string }
+  ): string {
     const name = this.generateId(prefix);
     const initialTarget = this.target;
-    const target = new CodeTarget(name);
+    const target = new CodeTarget(name, on);
     this.targets.push(target);
     this.target = target;
-    const subCtx: Context = createContext(ctx);
-    this.compileAST(ast, subCtx);
+    this.compileAST(ast, createContext(ctx));
     this.target = initialTarget;
     return name;
   }
@@ -372,6 +378,9 @@ export class CodeGenerator {
     }
 
     if (block.isRoot && !ctx.preventRoot) {
+      if (this.target.on) {
+        blockExpr = this.wrapWithEventCatcher(blockExpr, this.target.on);
+      }
       this.addLine(`return ${blockExpr};`);
     } else {
       this.define(block.varName, blockExpr);
@@ -1110,8 +1119,8 @@ export class CodeGenerator {
       }
       let slotStr: string[] = [];
       for (let slotName in ast.slots) {
-        const slotAst = ast.slots[slotName].content;
-        const name = this.compileInNewTarget("slot", slotAst, ctx);
+        const slotAst = ast.slots[slotName];
+        const name = this.compileInNewTarget("slot", slotAst.content, ctx, slotAst.on || undefined);
         const params = [`__render: ${name}, __ctx: ${ctxStr}`];
         const scope = ast.slots[slotName].scope;
         if (scope) {
@@ -1183,22 +1192,27 @@ export class CodeGenerator {
 
     // event handling
     if (ast.on) {
-      this.helpers.add("createCatcher");
-      let name = this.generateId("catcher");
-      let spec: any = {};
-      let handlers: any[] = [];
-      for (let ev in ast.on) {
-        let handlerId = this.generateId("hdlr");
-        let idx = handlers.push(handlerId) - 1;
-        spec[ev] = idx;
-        const handler = this.generateHandlerCode(ev, ast.on[ev]);
-        this.define(handlerId, handler);
-      }
-      blockExpr = `${name}(${blockExpr}, [${handlers.join(",")}])`;
-      this.staticDefs.push({ id: name, expr: `createCatcher(${JSON.stringify(spec)})` });
+      blockExpr = this.wrapWithEventCatcher(blockExpr, ast.on);
     }
+
     block = this.createBlock(block, "multi", ctx);
     this.insertBlock(blockExpr, block, ctx);
+  }
+
+  wrapWithEventCatcher(expr: string, on: { [key: string]: string }): string {
+    this.helpers.add("createCatcher");
+    let name = this.generateId("catcher");
+    let spec: any = {};
+    let handlers: any[] = [];
+    for (let ev in on) {
+      let handlerId = this.generateId("hdlr");
+      let idx = handlers.push(handlerId) - 1;
+      spec[ev] = idx;
+      const handler = this.generateHandlerCode(ev, on[ev]);
+      this.define(handlerId, handler);
+    }
+    this.staticDefs.push({ id: name, expr: `createCatcher(${JSON.stringify(spec)})` });
+    return `${name}(${expr}, [${handlers.join(",")}])`;
   }
 
   compileTSlot(ast: ASTSlot, ctx: Context) {
@@ -1227,6 +1241,11 @@ export class CodeGenerator {
         blockString = `callSlot(ctx, node, key, ${slotName}, ${dynamic}, ${scope})`;
       }
     }
+    // event handling
+    if (ast.on) {
+      blockString = this.wrapWithEventCatcher(blockString, ast.on);
+    }
+
     if (block) {
       this.insertAnchor(block);
     }

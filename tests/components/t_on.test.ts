@@ -196,4 +196,53 @@ describe("t-on", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span></span><button>2</button><p></p></div>");
   });
+
+  test("t-on on t-slots", async () => {
+    class Child extends Component {
+      static template = xml`
+        [<t t-esc="state.count"/>]
+        <t t-slot="default" t-on-click="() => this.state.count++"/>`;
+
+      state = useState({ count: 0 });
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <Child>
+          <p>something</p>
+        </Child>`;
+      static components = { Child };
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe(" [0] <p>something</p>");
+    fixture.querySelector("p")!.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe(" [1] <p>something</p>");
+  });
+
+  test("t-on on t-set-slots", async () => {
+    class Child extends Component {
+      static template = xml`<t t-slot="myslot"/>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        [<t t-esc="state.count"/>]
+        <Child>
+          <t t-set-slot="myslot" t-on-click="() => this.state.count++">
+            <p>something</p>
+            <p>paragraph</p>
+          </t>
+        </Child>`;
+      static components = { Child };
+      state = useState({ count: 0 });
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe(" [0] <p>something</p><p>paragraph</p>");
+    fixture.querySelector("p")!.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe(" [1] <p>something</p><p>paragraph</p>");
+  });
 });

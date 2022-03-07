@@ -1378,6 +1378,25 @@ describe("qweb parser", () => {
     });
   });
 
+  test("a component with a named slot with t-on", async () => {
+    expect(
+      parse(`<MyComponent><t t-set-slot="name" t-on-click="doStuff">foo</t></MyComponent>`)
+    ).toEqual({
+      type: ASTType.TComponent,
+      name: "MyComponent",
+      isDynamic: false,
+      dynamicProps: null,
+      props: {},
+      on: null,
+      slots: {
+        name: {
+          content: { type: ASTType.Text, value: "foo" },
+          on: { click: "doStuff" },
+        },
+      },
+    });
+  });
+
   test("a component with a named slot with div tag", async () => {
     expect(() =>
       parse(`<MyComponent><div t-set-slot="name">foo</div></MyComponent>`)
@@ -1550,6 +1569,7 @@ describe("qweb parser", () => {
       type: ASTType.TSlot,
       name: "default",
       attrs: {},
+      on: null,
       defaultContent: null,
     });
   });
@@ -1559,7 +1579,18 @@ describe("qweb parser", () => {
       type: ASTType.TSlot,
       name: "header",
       attrs: {},
+      on: null,
       defaultContent: { type: ASTType.Text, value: "default content" },
+    });
+  });
+
+  test("t-slot with t-on-", async () => {
+    expect(parse(`<t t-slot="default" t-on-click.prevent="doSomething"/>`)).toEqual({
+      type: ASTType.TSlot,
+      name: "default",
+      attrs: {},
+      on: { "click.prevent": "doSomething" },
+      defaultContent: null,
     });
   });
 

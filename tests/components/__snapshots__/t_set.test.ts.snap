@@ -81,7 +81,7 @@ exports[`t-set slots with a t-set with a component in body 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b2 = text(\`Child \`);
-    const b3 = callSlot(ctx, node, key, 'default', false, {});
+    const b3 = callSlot(ctx, node, key, 'default', false, null);
     return multi([b2, b3]);
   }
 }"
@@ -136,7 +136,7 @@ exports[`t-set slots with an t-set with a component in body 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b2 = text(\`Blorg \`);
-    const b3 = callSlot(ctx, node, key, 'default', false, {});
+    const b3 = callSlot(ctx, node, key, 'default', false, null);
     return multi([b2, b3]);
   }
 }"
@@ -185,7 +185,7 @@ exports[`t-set slots with an unused t-set with a component in body 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b2 = text(\`Child \`);
-    const b3 = callSlot(ctx, node, key, 'default', false, {});
+    const b3 = callSlot(ctx, node, key, 'default', false, null);
     return multi([b2, b3]);
   }
 }"

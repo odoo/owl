@@ -2,6 +2,9 @@
 // AST Type definition
 // -----------------------------------------------------------------------------
 
+export type EventHandlers = { [eventName: string]: string };
+export type Attrs = { [attrs: string]: string };
+
 export const enum ASTType {
   Text,
   Comment,
@@ -34,25 +37,25 @@ export interface ASTComment {
 }
 
 interface TModelInfo {
-  hasDynamicChildren?: boolean;
   baseExpr: string;
   expr: string;
   targetAttr: string;
-  specialInitTargetAttr: string | null;
   eventType: "change" | "click" | "input";
   shouldTrim: boolean;
   shouldNumberize: boolean;
+  hasDynamicChildren: boolean;
+  specialInitTargetAttr: string | null;
 }
 
 export interface ASTDomNode {
   type: ASTType.DomNode;
   tag: string;
-  dynamicTag: string | null;
-  attrs: { [key: string]: string };
   content: AST[];
+  attrs: Attrs | null;
   ref: string | null;
-  on: { [key: string]: string };
-  model?: TModelInfo | null;
+  on: EventHandlers | null;
+  model: TModelInfo | null;
+  dynamicTag: string | null;
   ns: string | null;
 }
 
@@ -93,13 +96,13 @@ export interface ASTTForEach {
   type: ASTType.TForEach;
   collection: string;
   elem: string;
-  key: string | null;
   body: AST;
   memo: string;
   hasNoFirst: boolean;
   hasNoLast: boolean;
   hasNoIndex: boolean;
   hasNoValue: boolean;
+  key: string | null;
 }
 
 export interface ASTTKey {
@@ -116,9 +119,9 @@ export interface ASTTCall {
 
 interface SlotDefinition {
   content: AST;
-  attrs?: { [key: string]: string };
-  scope?: string;
-  on?: null | { [key: string]: string };
+  scope: string | null;
+  on: EventHandlers | null;
+  attrs: Attrs | null;
 }
 
 export interface ASTComponent {
@@ -126,16 +129,16 @@ export interface ASTComponent {
   name: string;
   isDynamic: boolean;
   dynamicProps: string | null;
-  on: null | { [key: string]: string };
-  props: { [name: string]: string };
-  slots: { [name: string]: SlotDefinition };
+  on: EventHandlers | null;
+  props: { [name: string]: string } | null;
+  slots: { [name: string]: SlotDefinition } | null;
 }
 
 export interface ASTSlot {
   type: ASTType.TSlot;
   name: string;
-  attrs: { [key: string]: string };
-  on: null | { [key: string]: string };
+  attrs: Attrs | null;
+  on: EventHandlers | null;
   defaultContent: AST | null;
 }
 
@@ -328,8 +331,8 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
   node.removeAttribute("t-ref");
 
   const nodeAttrsNames = node.getAttributeNames();
-  const attrs: ASTDomNode["attrs"] = {};
-  const on: ASTDomNode["on"] = {};
+  let attrs: ASTDomNode["attrs"] = null;
+  let on: EventHandlers | null = null;
   let model: TModelInfo | null = null;
 
   for (let attr of nodeAttrsNames) {
@@ -338,6 +341,7 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
       if (attr === "t-on") {
         throw new Error("Missing event name with t-on directive");
       }
+      on = on || {};
       on[attr.slice(5)] = value;
     } else if (attr.startsWith("t-model")) {
       if (!["input", "select", "textarea"].includes(tagName)) {
@@ -375,6 +379,7 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
         targetAttr: isCheckboxInput ? "checked" : "value",
         specialInitTargetAttr: isRadioInput ? "checked" : null,
         eventType,
+        hasDynamicChildren: false,
         shouldTrim: hasTrimMod && (isOtherInput || isTextarea),
         shouldNumberize: hasNumberMod && (isOtherInput || isTextarea),
       };
@@ -393,6 +398,7 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
       if (tModel && ["t-att-value", "t-attf-value"].includes(attr)) {
         tModel.hasDynamicChildren = true;
       }
+      attrs = attrs || {};
       attrs[attr] = value;
     }
   }
@@ -563,7 +569,7 @@ function parseTCall(node: Element, ctx: ParsingContext): AST | null {
     if (ast && ast.type === ASTType.TComponent) {
       return {
         ...ast,
-        slots: { default: { content: tcall } },
+        slots: { default: { content: tcall, scope: null, on: null, attrs: null } },
       };
     }
   }
@@ -694,7 +700,7 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
   node.removeAttribute("t-slot-scope");
   let on: ASTComponent["on"] = null;
 
-  const props: ASTComponent["props"] = {};
+  let props: ASTComponent["props"] = null;
   for (let name of node.getAttributeNames()) {
     const value = node.getAttribute(name)!;
     if (name.startsWith("t-")) {
@@ -706,11 +712,12 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
         throw new Error(message || `unsupported directive on Component: ${name}`);
       }
     } else {
+      props = props || {};
       props[name] = value;
     }
   }
 
-  const slots: ASTComponent["slots"] = {};
+  let slots: ASTComponent["slots"] | null = null;
   if (node.hasChildNodes()) {
     const clone = <Element>node.cloneNode(true);
 
@@ -743,38 +750,32 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
       slotNode.remove();
       const slotAst = parseNode(slotNode, ctx);
       if (slotAst) {
-        const slotInfo: any = { content: slotAst };
         let on: SlotDefinition["on"] = null;
-        const attrs: { [key: string]: string } = {};
+        let attrs: Attrs | null = null;
+        let scope: string | null = null;
         for (let attributeName of slotNode.getAttributeNames()) {
           const value = slotNode.getAttribute(attributeName)!;
           if (attributeName === "t-slot-scope") {
-            slotInfo.scope = value;
+            scope = value;
             continue;
           } else if (attributeName.startsWith("t-on-")) {
             on = on || {};
             on[attributeName.slice(5)] = value;
           } else {
+            attrs = attrs || {};
             attrs[attributeName] = value;
           }
         }
-        if (Object.keys(attrs).length) {
-          slotInfo.attrs = attrs;
-        }
-        if (on) {
-          slotInfo.on = on;
-        }
-        slots[name] = slotInfo;
+        slots = slots || {};
+        slots[name] = { content: slotAst, on, attrs, scope };
       }
     }
 
     // default slot
     const defaultContent = parseChildNodes(clone, ctx);
     if (defaultContent) {
-      slots.default = { content: defaultContent };
-      if (defaultSlotScope) {
-        slots.default.scope = defaultSlotScope;
-      }
+      slots = slots || {};
+      slots.default = { content: defaultContent, on, attrs: null, scope: defaultSlotScope };
     }
   }
   return { type: ASTType.TComponent, name, isDynamic, dynamicProps, props, slots, on };
@@ -790,7 +791,7 @@ function parseTSlot(node: Element, ctx: ParsingContext): AST | null {
   }
   const name = node.getAttribute("t-slot")!;
   node.removeAttribute("t-slot");
-  const attrs: { [key: string]: string } = {};
+  let attrs: Attrs | null = null;
   let on: ASTComponent["on"] = null;
   for (let attributeName of node.getAttributeNames()) {
     const value = node.getAttribute(attributeName)!;
@@ -798,6 +799,7 @@ function parseTSlot(node: Element, ctx: ParsingContext): AST | null {
       on = on || {};
       on[attributeName.slice(5)] = value;
     } else {
+      attrs = attrs || {};
       attrs[attributeName] = value;
     }
   }

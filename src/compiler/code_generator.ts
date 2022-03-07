@@ -20,6 +20,8 @@ import {
   ASTTranslation,
   ASTType,
   ASTTPortal,
+  EventHandlers,
+  Attrs,
 } from "./parser";
 
 type BlockType = "block" | "text" | "multi" | "list" | "html" | "comment";
@@ -157,11 +159,11 @@ class CodeTarget {
   // maps ref name to [id, expr]
   refInfo: { [name: string]: [string, string] } = {};
   shouldProtectScope: boolean = false;
-  on?: { [key: string]: string };
+  on: EventHandlers | null;
 
-  constructor(name: string, on?: { [key: string]: string }) {
+  constructor(name: string, on?: EventHandlers | null) {
     this.name = name;
-    this.on = on;
+    this.on = on || null;
   }
 
   addLine(line: string, idx?: number) {
@@ -305,12 +307,7 @@ export class CodeGenerator {
     return code;
   }
 
-  compileInNewTarget(
-    prefix: string,
-    ast: AST,
-    ctx: Context,
-    on?: { [key: string]: string }
-  ): string {
+  compileInNewTarget(prefix: string, ast: AST, ctx: Context, on?: EventHandlers | null): string {
     const name = this.generateId(prefix);
     const initialTarget = this.target;
     const target = new CodeTarget(name, on);
@@ -562,7 +559,7 @@ export class CodeGenerator {
       }
     }
     // attributes
-    const attrs: { [key: string]: string } = {};
+    const attrs: Attrs = {};
     const nameSpace = ast.ns || ctx.nameSpace;
     if (nameSpace && isNewBlock) {
       // specific namespace uri
@@ -1098,19 +1095,17 @@ export class CodeGenerator {
 
   compileComponent(ast: ASTComponent, ctx: Context) {
     let { block } = ctx;
-
     // props
-    const hasSlotsProp = "slots" in ast.props;
+    const hasSlotsProp = "slots" in (ast.props || {});
     const props: string[] = [];
-    const propExpr = this.formatPropObject(ast.props);
+    const propExpr = this.formatPropObject(ast.props || {});
     if (propExpr) {
       props.push(propExpr);
     }
 
     // slots
-    const hasSlot = !!Object.keys(ast.slots).length;
     let slotDef: string = "";
-    if (hasSlot) {
+    if (ast.slots) {
       let ctxStr = "ctx";
       if (this.target.loopLevel || !this.hasSafeContext) {
         ctxStr = this.generateId("ctx");
@@ -1120,7 +1115,7 @@ export class CodeGenerator {
       let slotStr: string[] = [];
       for (let slotName in ast.slots) {
         const slotAst = ast.slots[slotName];
-        const name = this.compileInNewTarget("slot", slotAst.content, ctx, slotAst.on || undefined);
+        const name = this.compileInNewTarget("slot", slotAst.content, ctx, slotAst.on);
         const params = [`__render: ${name}, __ctx: ${ctxStr}`];
         const scope = ast.slots[slotName].scope;
         if (scope) {
@@ -1199,7 +1194,7 @@ export class CodeGenerator {
     this.insertBlock(blockExpr, block, ctx);
   }
 
-  wrapWithEventCatcher(expr: string, on: { [key: string]: string }): string {
+  wrapWithEventCatcher(expr: string, on: EventHandlers): string {
     this.helpers.add("createCatcher");
     let name = this.generateId("catcher");
     let spec: any = {};

@@ -27,7 +27,7 @@ function callSlot(
   const { __render, __ctx, __scope } = slots[name] || {};
   const slotScope = Object.create(__ctx || {});
   if (__scope) {
-    slotScope[__scope] = extra || {};
+    slotScope[__scope] = extra;
   }
   const slotBDom = __render ? __render.call(__ctx.__owl__.component, slotScope, parent, key) : null;
   if (defaultContent) {

@@ -246,7 +246,7 @@ exports[`t-on t-on on t-set-slots 2`] = `
   let { callSlot } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    return callSlot(ctx, node, key, 'myslot', false, {});
+    return callSlot(ctx, node, key, 'myslot', false, null);
   }
 }"
 `;
@@ -281,7 +281,7 @@ exports[`t-on t-on on t-slots 2`] = `
     const b3 = text(ctx['state'].count);
     const b4 = text(\`] \`);
     const hdlr1 = [()=>this.state.count++, ctx];
-    const b5 = catcher1(callSlot(ctx, node, key, 'default', false, {}), [hdlr1]);
+    const b5 = catcher1(callSlot(ctx, node, key, 'default', false, null), [hdlr1]);
     return multi([b2, b3, b4, b5]);
   }
 }"

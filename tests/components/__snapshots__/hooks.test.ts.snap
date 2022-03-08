@@ -301,6 +301,19 @@ exports[`hooks useEffect hook effect with empty dependency list never reruns 1`]
 }"
 `;
 
+exports[`hooks useEffect hook properly behaves when the effect function throws 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`hooks useExternalListener 1`] = `
 "function anonymous(bdom, helpers
 ) {

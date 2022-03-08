@@ -199,24 +199,30 @@ const TOKENIZERS = [
 export function tokenize(expr: string): Token[] {
   const result: Token[] = [];
   let token: boolean | Token = true;
+  let error: any;
+  let current = expr;
 
-  while (token) {
-    expr = expr.trim();
-    if (expr) {
-      for (let tokenizer of TOKENIZERS) {
-        token = tokenizer(expr);
-        if (token) {
-          result.push(token);
-          expr = expr.slice(token.size || token.value.length);
-          break;
+  try {
+    while (token) {
+      current = current.trim();
+      if (current) {
+        for (let tokenizer of TOKENIZERS) {
+          token = tokenizer(current);
+          if (token) {
+            result.push(token);
+            current = current.slice(token.size || token.value.length);
+            break;
+          }
         }
+      } else {
+        token = false;
       }
-    } else {
-      token = false;
     }
+  } catch (e) {
+    error = e; // Silence all errors and throw a generic error below
   }
-  if (expr.length) {
-    throw new Error(`Tokenizer error: could not tokenize "${expr}"`);
+  if (current.length || error) {
+    throw new Error(`Tokenizer error: could not tokenize \`${expr}\``);
   }
   return result;
 }

@@ -51,11 +51,10 @@ The `config` object is an object with some of the following keys:
 
 - **`env (object)`**: if given, this will be the shared `env` given to each component
 - **`props (object)`**: the props given to the root component
-- **`dev (boolean, default=false)`**: if `true`, the application is rendered in `dev`
-  mode, which activates some additional checks (in particular, the props validation
-  code is only performed in dev mode)
+- **`dev (boolean, default=false)`**: if `true`, the application is rendered in
+  [`dev` mode](#dev-mode);
 - **`test (boolean, default=false)`**: `test` mode is the same as `dev` mode, except
-  that Owll will not log a message to warn that Owl is in `dev` mode.
+  that Owl will not log a message to warn that Owl is in `dev` mode.
 - **`translatableAttributes (string[])`**: a list of additional attributes that should
   be translated (see [translations](translations.md))
 - **`translateFn (function)`**: a function that will be called by owl to translate
@@ -110,3 +109,15 @@ const { loadFile, mount } = owl;
   mount(Root, document.body, { env });
 })();
 ```
+
+## Dev mode
+
+Dev mode activates some additional checks and developer amenities:
+
+- [Props validation](./props.md#props-validation) is performed
+- [t-foreach](./templates.md#loops) loops check for key unicity
+- Lifecycle hooks are wrapped to report their errors in a more developer-friendly way
+- Component nodes (the `__owl__` property on components) have an additional "subscriptions"
+  property, containing a list of objects that the component is observing through the reactivity
+  system, as well as which keys are observed for each object, which can be useful for
+  debugging extraneous or missing renders

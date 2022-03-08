@@ -82,6 +82,7 @@ Are you new to Owl? This is the place to start!
 - [Component](doc/reference/component.md)
 - [Component Lifecycle](doc/reference/component.md#lifecycle)
 - [Concurrency Model](doc/reference/concurrency_model.md)
+- [Dev mode](doc/reference/app.md#dev-mode)
 - [Dynamic sub components](doc/reference/component.md#dynamic-sub-components)
 - [Environment](doc/reference/environment.md)
 - [Error Handling](doc/reference/error_handling.md)

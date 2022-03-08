@@ -65,14 +65,14 @@ describe("tokenizer", () => {
   });
 
   test("strings", () => {
-    expect(() => tokenize("'")).toThrow("Invalid expression");
-    expect(() => tokenize("'\\")).toThrow("Invalid expression");
-    expect(() => tokenize("'\\'")).toThrow("Invalid expression");
+    expect(() => tokenize("'")).toThrow("Tokenizer error: could not tokenize `'`");
+    expect(() => tokenize("'\\")).toThrow("Tokenizer error: could not tokenize `'\\`");
+    expect(() => tokenize("'\\'")).toThrow("Tokenizer error: could not tokenize `'\\'`");
     expect(tokenize("'hello ged'")).toEqual([{ type: "VALUE", value: "'hello ged'" }]);
     expect(tokenize("'hello \\'ged\\''")).toEqual([{ type: "VALUE", value: "'hello \\'ged\\''" }]);
 
-    expect(() => tokenize('"')).toThrow("Invalid expression");
-    expect(() => tokenize('"\\"')).toThrow("Invalid expression");
+    expect(() => tokenize('"')).toThrow('Tokenizer error: could not tokenize `"`');
+    expect(() => tokenize('"\\"')).toThrow('Tokenizer error: could not tokenize `"\\"`');
     expect(tokenize('"hello ged"')).toEqual([{ type: "VALUE", value: '"hello ged"' }]);
     expect(tokenize('"hello ged"}')).toEqual([
       { type: "VALUE", value: '"hello ged"' },

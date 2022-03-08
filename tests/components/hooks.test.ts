@@ -632,5 +632,35 @@ describe("hooks", () => {
         "cleaning up for 1",
       ]);
     });
+
+    test("properly behaves when the effect function throws", async () => {
+      let originalconsoleError = console.error;
+      let originalconsoleWarn = console.warn;
+      console.error = jest.fn(() => {});
+      console.warn = jest.fn(() => {});
+      class MyComponent extends Component {
+        static template = xml`<div/>`;
+        setup() {
+          useEffect(
+            () => {
+              throw new Error("Intentional error");
+            },
+            () => []
+          );
+        }
+      }
+
+      try {
+        await mount(MyComponent, fixture);
+      } catch (e: any) {
+        expect(e.message).toBe("Intentional error");
+      }
+      // no console.error because the error has been caught in this test
+      expect(console.error).toHaveBeenCalledTimes(0);
+      console.error = originalconsoleError;
+      // 1 console.warn because app is destroyed
+      expect(console.warn).toHaveBeenCalledTimes(1);
+      console.warn = originalconsoleWarn;
+    });
   });
 });

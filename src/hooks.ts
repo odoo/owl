@@ -57,7 +57,6 @@ export function useChildSubEnv(envExtension: Env) {
 // useEffect
 // -----------------------------------------------------------------------------
 
-const NO_OP = () => {};
 /**
  * @param {...any} dependencies the dependencies computed by computeDependencies
  * @returns {void|(()=>void)} a cleanup function that reverses the side
@@ -78,11 +77,11 @@ type Effect = (...dependencies: any[]) => void | (() => void);
  *      NaN !== NaN, which will cause the effect to rerun on every patch.
  */
 export function useEffect(effect: Effect, computeDependencies: () => any[] = () => [NaN]) {
-  let cleanup: () => void;
+  let cleanup: (() => void) | void;
   let dependencies: any[];
   onMounted(() => {
     dependencies = computeDependencies();
-    cleanup = effect(...dependencies) || NO_OP;
+    cleanup = effect(...dependencies);
   });
 
   onPatched(() => {
@@ -90,12 +89,14 @@ export function useEffect(effect: Effect, computeDependencies: () => any[] = () 
     const shouldReapply = newDeps.some((val, i) => val !== dependencies[i]);
     if (shouldReapply) {
       dependencies = newDeps;
-      cleanup();
-      cleanup = effect(...dependencies) || NO_OP;
+      if (cleanup) {
+        cleanup();
+      }
+      cleanup = effect(...dependencies);
     }
   });
 
-  onWillUnmount(() => cleanup());
+  onWillUnmount(() => cleanup && cleanup());
 }
 
 // -----------------------------------------------------------------------------

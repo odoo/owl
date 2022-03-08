@@ -5,6 +5,8 @@ import {
   onPatched,
   onWillPatch,
   onWillStart,
+  onWillRender,
+  onRendered,
   onWillUnmount,
   useState,
   xml,
@@ -197,6 +199,50 @@ describe("errors and promises", () => {
     expect(fixture.innerHTML).toBe("");
     expect(mockConsoleError).toBeCalledTimes(0);
     expect(mockConsoleWarn).toBeCalledTimes(1);
+  });
+
+  test("errors in onWillRender/onRender aren't wrapped more than once", async () => {
+    class App extends Component {
+      static template = xml`<div>abc</div>`;
+      setup() {
+        onWillRender(() => {
+          throw new Error("boom in onWillRender");
+        });
+        onRendered(() => {
+          throw new Error("boom in onRendered");
+        });
+      }
+    }
+
+    let error: Error;
+    try {
+      await mount(App, fixture, { test: true });
+    } catch (e) {
+      error = e as Error;
+    }
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe(
+      `The following error occurred in onWillRender: "boom in onWillRender"`
+    );
+  });
+
+  test("error while rendering component isn't wrapped by onWillRender/onRendered", async () => {
+    class App extends Component {
+      static template = xml`<div t-att-class="{ 'invalid: 5 }">abc</div>`;
+      setup() {
+        onWillRender(() => {});
+        onRendered(() => {});
+      }
+    }
+
+    let error: Error;
+    try {
+      await mount(App, fixture, { test: true });
+    } catch (e) {
+      error = e as Error;
+    }
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe("Tokenizer error: could not tokenize `{ 'invalid: 5 }`");
   });
 
   test("an error in willPatch call will reject the render promise", async () => {

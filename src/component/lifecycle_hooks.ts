@@ -77,21 +77,23 @@ export function onWillRender(fn: () => void | any) {
   const node = getCurrent();
   const renderFn = node.renderFn;
   const decorate = node.app.dev ? wrapError : (fn: any) => fn;
-  node.renderFn = decorate(() => {
-    fn.call(node.component);
+  fn = decorate(fn.bind(node.component), "onWillRender");
+  node.renderFn = () => {
+    fn();
     return renderFn();
-  }, "onWillRender");
+  };
 }
 
 export function onRendered(fn: () => void | any) {
   const node = getCurrent();
   const renderFn = node.renderFn;
   const decorate = node.app.dev ? wrapError : (fn: any) => fn;
-  node.renderFn = decorate(() => {
+  fn = decorate(fn.bind(node.component), "onRendered");
+  node.renderFn = () => {
     const result = renderFn();
-    fn.call(node.component);
+    fn();
     return result;
-  }, "onRendered");
+  };
 }
 
 type OnErrorCallback = (error: any) => void | any;

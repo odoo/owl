@@ -37,11 +37,17 @@ function parseXML(xml: string): Document {
   return doc;
 }
 
+const sharedTemplates: Map<
+  Function | undefined,
+  { [key: string]: { [name: string]: TemplateFunction } }
+> = new Map();
+
 export interface TemplateSetConfig {
   dev?: boolean;
   translatableAttributes?: string[];
   translateFn?: (s: string) => string;
   templates?: string | Document;
+  shareTemplates?: boolean;
 }
 
 export class TemplateSet {
@@ -51,12 +57,27 @@ export class TemplateSet {
   dev: boolean;
   rawTemplates: typeof globalTemplates = Object.create(globalTemplates);
   templates: { [name: string]: Template } = {};
+  templateFunctions: { [name: string]: TemplateFunction } = {};
   translateFn?: (s: string) => string;
   translatableAttributes?: string[];
   Portal = Portal;
 
   constructor(config: TemplateSetConfig = {}) {
     this.dev = config.dev || false;
+    if (config.shareTemplates) {
+      let cache = sharedTemplates.get(this.translateFn);
+      if (!cache) {
+        cache = {};
+        sharedTemplates.set(this.translateFn, cache);
+      }
+      let key = `${this.dev ? "d" : "p"}${(this.translatableAttributes || []).toString()}`;
+      let templates = cache[key];
+      if (!templates) {
+        cache[key] = {};
+        templates = cache[key];
+      }
+      this.templateFunctions = templates;
+    }
     this.translateFn = config.translateFn;
     this.translatableAttributes = config.translatableAttributes;
     if (config.templates) {
@@ -96,17 +117,21 @@ export class TemplateSet {
 
   getTemplate(name: string): Template {
     if (!(name in this.templates)) {
-      const rawTemplate = this.rawTemplates[name];
-      if (rawTemplate === undefined) {
-        let extraInfo = "";
-        try {
-          const componentName = getCurrent().component.constructor.name;
-          extraInfo = ` (for component "${componentName}")`;
-        } catch {}
-        throw new OwlError(`Missing template: "${name}"${extraInfo}`);
+      let templateFn = this.templateFunctions[name];
+      if (!templateFn) {
+        const rawTemplate = this.rawTemplates[name];
+        if (rawTemplate === undefined) {
+          let extraInfo = "";
+          try {
+            const componentName = getCurrent().component.constructor.name;
+            extraInfo = ` (for component "${componentName}")`;
+          } catch {}
+          throw new OwlError(`Missing template: "${name}"${extraInfo}`);
+        }
+        const isFn = typeof rawTemplate === "function" && !(rawTemplate instanceof Element);
+        templateFn = isFn ? rawTemplate : this._compileTemplate(name, rawTemplate);
+        this.templateFunctions[name] = templateFn;
       }
-      const isFn = typeof rawTemplate === "function" && !(rawTemplate instanceof Element);
-      const templateFn = isFn ? rawTemplate : this._compileTemplate(name, rawTemplate);
       // first add a function to lazily get the template, in case there is a
       // recursive call to the template name
       const templates = this.templates;

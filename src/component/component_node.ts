@@ -58,13 +58,6 @@ export function useState<T extends object>(state: T): Reactive<T> | NonReactive<
     batchedRenderFunctions.set(node, render);
     // manual implementation of onWillDestroy to break cyclic dependency
     node.willDestroy.push(clearReactivesForCallback.bind(null, render));
-    if (node.app.dev) {
-      Object.defineProperty(node, "subscriptions", {
-        get() {
-          return getSubscriptions(render);
-        },
-      });
-    }
   }
   return reactive(state, render);
 }
@@ -393,5 +386,17 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
         }
       }
     }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Some debug helpers
+  // ---------------------------------------------------------------------------
+  get name(): string {
+    return this.component.constructor.name;
+  }
+
+  get subscriptions(): ReturnType<typeof getSubscriptions> {
+    const render = batchedRenderFunctions.get(this);
+    return render ? getSubscriptions(render) : [];
   }
 }

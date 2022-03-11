@@ -117,7 +117,3 @@ Dev mode activates some additional checks and developer amenities:
 - [Props validation](./props.md#props-validation) is performed
 - [t-foreach](./templates.md#loops) loops check for key unicity
 - Lifecycle hooks are wrapped to report their errors in a more developer-friendly way
-- Component nodes (the `__owl__` property on components) have an additional "subscriptions"
-  property, containing a list of objects that the component is observing through the reactivity
-  system, as well as which keys are observed for each object, which can be useful for
-  debugging extraneous or missing renders

@@ -309,6 +309,28 @@ function makeIteratorObserver(
   };
 }
 /**
+ * Creates a forEach function that will delegate to forEach on the underlying
+ * collection while observing key changes, and keys as they're iterated over,
+ * and making the passed keys/values reactive.
+ *
+ * @param target @see reactive
+ * @param callback @see reactive
+ */
+function makeForEachObserver(target: any, callback: Callback) {
+  return function forEach(forEachCb: (val: any, key: any, target: any) => void, thisArg: any) {
+    observeTargetKey(target, KEYCHANGES, callback);
+    target.forEach(function (val: any, key: any, targetObj: any) {
+      observeTargetKey(target, key, callback);
+      forEachCb.call(
+        thisArg,
+        possiblyReactive(val, callback),
+        possiblyReactive(key, callback),
+        possiblyReactive(targetObj, callback)
+      );
+    }, thisArg);
+  };
+}
+/**
  * Creates a function that will delegate to an underlying method, and check if
  * that method has modified the presence or value of a key, and notify the
  * reactives appropriately.
@@ -370,6 +392,7 @@ const rawTypeToFuncHandlers = {
     values: makeIteratorObserver("values", target, callback),
     entries: makeIteratorObserver("entries", target, callback),
     [Symbol.iterator]: makeIteratorObserver(Symbol.iterator, target, callback),
+    forEach: makeForEachObserver(target, callback),
     clear: makeClearNotifier(target),
     get size() {
       observeTargetKey(target, KEYCHANGES, callback);
@@ -385,6 +408,7 @@ const rawTypeToFuncHandlers = {
     values: makeIteratorObserver("values", target, callback),
     entries: makeIteratorObserver("entries", target, callback),
     [Symbol.iterator]: makeIteratorObserver(Symbol.iterator, target, callback),
+    forEach: makeForEachObserver(target, callback),
     clear: makeClearNotifier(target),
     get size() {
       observeTargetKey(target, KEYCHANGES, callback);

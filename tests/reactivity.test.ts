@@ -1245,6 +1245,33 @@ describe("Collections", () => {
       reactiveObj.a = 1; // setting same value again shouldn't notify
       expect(observer).toHaveBeenCalledTimes(1);
     });
+
+    test("iterating with forEach returns reactives", async () => {
+      const keyObj = { a: 2 };
+      const thisArg = {};
+      const observer = jest.fn();
+      const state = reactive(new Set([keyObj]), observer);
+      let reactiveKeyObj: any, reactiveValObj: any, thisObj: any, mapObj: any;
+      state.forEach(function (this: any, val, key, map) {
+        [reactiveValObj, reactiveKeyObj, mapObj, thisObj] = [val, key, map, this];
+      }, thisArg);
+      expect(reactiveKeyObj).not.toBe(keyObj);
+      expect(reactiveValObj).not.toBe(keyObj);
+      expect(mapObj).toBe(state); // third argument should be the reactive
+      expect(thisObj).toBe(thisArg); // thisArg should not be made reactive
+      expect(toRaw(reactiveKeyObj as any)).toBe(keyObj);
+      expect(toRaw(reactiveValObj as any)).toBe(keyObj);
+      expect(reactiveKeyObj).toBe(reactiveValObj); // reactiveKeyObj and reactiveValObj should be the same object
+      reactiveKeyObj!.a = 0;
+      reactiveValObj!.a = 0;
+      expect(observer).toHaveBeenCalledTimes(0);
+      reactiveKeyObj!.a; // observe key "a" in key sub-reactive;
+      reactiveKeyObj!.a = 1;
+      expect(observer).toHaveBeenCalledTimes(1);
+      reactiveKeyObj!.a = 1; // setting same value again shouldn't notify
+      reactiveValObj!.a = 1;
+      expect(observer).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe("WeakSet", () => {
@@ -1465,6 +1492,36 @@ describe("Collections", () => {
       expect(observer).toHaveBeenCalledTimes(2);
       reactiveKeyObj.a = 1; // setting same value again shouldn't notify
       reactiveValObj.a = 1;
+      expect(observer).toHaveBeenCalledTimes(2);
+    });
+
+    test("iterating with forEach returns reactives", async () => {
+      const keyObj = { a: 2 };
+      const valObj = { a: 2 };
+      const thisArg = {};
+      const observer = jest.fn();
+      const state = reactive(new Map([[keyObj, valObj]]), observer);
+      let reactiveKeyObj: any, reactiveValObj: any, thisObj: any, mapObj: any;
+      state.forEach(function (this: any, val, key, map) {
+        [reactiveValObj, reactiveKeyObj, mapObj, thisObj] = [val, key, map, this];
+      }, thisArg);
+      expect(reactiveKeyObj).not.toBe(keyObj);
+      expect(reactiveValObj).not.toBe(valObj);
+      expect(mapObj).toBe(state); // third argument should be the reactive
+      expect(thisObj).toBe(thisArg); // thisArg should not be made reactive
+      expect(toRaw(reactiveKeyObj as any)).toBe(keyObj);
+      expect(toRaw(reactiveValObj as any)).toBe(valObj);
+      reactiveKeyObj!.a = 0;
+      reactiveValObj!.a = 0;
+      expect(observer).toHaveBeenCalledTimes(0);
+      reactiveKeyObj!.a; // observe key "a" in key sub-reactive;
+      reactiveKeyObj!.a = 1;
+      expect(observer).toHaveBeenCalledTimes(1);
+      reactiveValObj!.a; // observe key "a" in val sub-reactive;
+      reactiveValObj!.a = 1;
+      expect(observer).toHaveBeenCalledTimes(2);
+      reactiveKeyObj!.a = 1; // setting same value again shouldn't notify
+      reactiveValObj!.a = 1;
       expect(observer).toHaveBeenCalledTimes(2);
     });
   });

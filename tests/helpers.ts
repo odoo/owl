@@ -49,7 +49,7 @@ export async function nextTick(): Promise<void> {
 
 interface Deferred extends Promise<any> {
   resolve(val?: any): void;
-  reject(): void;
+  reject(val?: any): void;
 }
 
 export function makeDeferred(): Deferred {

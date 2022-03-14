@@ -658,6 +658,43 @@ exports[`lifecycle hooks sub widget (inside sub node): hooks are correctly calle
 }"
 `;
 
+exports[`lifecycle hooks timeout in onWillStart emits a warning 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<span/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`lifecycle hooks timeout in onWillUpdateProps emits a warning 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    const props1 = {prop: ctx['state'].prop};
+    helpers.validateProps(\`Child\`, props1, ctx);
+    return component(\`Child\`, props1, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`lifecycle hooks timeout in onWillUpdateProps emits a warning 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`\`);
+  }
+}"
+`;
+
 exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents, in proper order 1`] = `
 "function anonymous(bdom, helpers
 ) {

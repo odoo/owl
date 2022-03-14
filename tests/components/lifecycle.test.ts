@@ -14,6 +14,7 @@ import {
   logStep,
   makeDeferred,
   makeTestFixture,
+  nextMicroTick,
   nextTick,
   snapshotEverything,
   useLogLifecycle,
@@ -102,6 +103,83 @@ describe("lifecycle hooks", () => {
     }
 
     await mount(Test, fixture);
+  });
+
+  test("timeout in onWillStart emits a warning", async () => {
+    const { warn } = console;
+    let warnArgs: any[];
+    console.warn = jest.fn((...args) => (warnArgs = args));
+    const { setTimeout } = window;
+    let timeoutCbs: any = {};
+    let timeoutId = 0;
+    window.setTimeout = ((cb: any) => {
+      timeoutCbs[++timeoutId] = cb;
+      return timeoutId;
+    }) as any;
+    class Test extends Component {
+      static template = xml`<span/>`;
+      setup() {
+        onWillStart(() => new Promise(() => {}));
+      }
+    }
+    mount(Test, fixture, { test: true });
+    nextTick();
+    for (const id in timeoutCbs) {
+      timeoutCbs[id]();
+      delete timeoutCbs[id];
+    }
+    await nextMicroTick();
+    await nextMicroTick();
+    expect(console.warn).toHaveBeenCalledTimes(1);
+    expect(warnArgs![0]!.message).toBe("onWillStart's promise hasn't resolved after 3 seconds");
+    console.warn = warn;
+    window.setTimeout = setTimeout;
+  });
+
+  test("timeout in onWillUpdateProps emits a warning", async () => {
+    class Child extends Component {
+      static template = xml``;
+      setup() {
+        onWillUpdateProps(() => new Promise(() => {}));
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<Child prop="state.prop"/>`;
+      static components = { Child };
+      state = useState({ prop: 1 });
+    }
+    const parent = await mount(Parent, fixture, { test: true });
+
+    const { warn } = console;
+    let warnArgs: any[];
+    console.warn = jest.fn((...args) => (warnArgs = args));
+    const { setTimeout } = window;
+    let timeoutCbs: any = {};
+    let timeoutId = 0;
+    window.setTimeout = ((cb: any) => {
+      timeoutCbs[++timeoutId] = cb;
+      return timeoutId;
+    }) as any;
+
+    parent.state.prop = 2;
+    let tick = nextTick();
+    for (const id in timeoutCbs) {
+      timeoutCbs[id]();
+      delete timeoutCbs[id];
+    }
+    await tick;
+    tick = nextTick();
+    for (const id in timeoutCbs) {
+      timeoutCbs[id]();
+      delete timeoutCbs[id];
+    }
+    await tick;
+    expect(console.warn).toHaveBeenCalledTimes(1);
+    expect(warnArgs![0]!.message).toBe(
+      "onWillUpdateProps's promise hasn't resolved after 3 seconds"
+    );
+    console.warn = warn;
+    window.setTimeout = setTimeout;
   });
 
   test("mounted hook is called if mounted in DOM", async () => {

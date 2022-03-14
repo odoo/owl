@@ -13,13 +13,13 @@ import {
   onWillUpdateProps,
   status,
   useComponent,
-  xml,
 } from "../src";
 import { helpers } from "../src/app/template_helpers";
 import { TemplateSet } from "../src/app/template_set";
 import { BDom } from "../src/blockdom";
 import { compile } from "../src/compiler";
-import { globalTemplates } from "../src/utils";
+import { Portal } from "../src/portal";
+// import { globalTemplates } from "../src/utils";
 
 const mount = blockDom.mount;
 
@@ -39,9 +39,6 @@ export function makeTestFixture() {
   return fixture;
 }
 
-beforeEach(() => {
-  xml.nextId = 999;
-});
 export async function nextTick(): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve));
   await new Promise((resolve) => requestAnimationFrame(resolve));
@@ -117,16 +114,29 @@ export function snapshotEverything() {
     // this function has already been called
     return;
   }
-  const globalTemplateNames = new Set(Object.keys(globalTemplates));
   shouldSnapshot = true;
   beforeEach(() => {
     snapshottedTemplates.clear();
   });
 
+  const getTemplate = TemplateSet.prototype.getTemplate;
+  TemplateSet.prototype.getTemplate = function (this: any, name: string) {
+    if (name === Portal.template) {
+      this.skipSnapshot = true;
+    }
+    const result = getTemplate.call(this, name);
+    this.skipSnapshot = false;
+    return result;
+  };
+
   const originalCompileTemplate = TemplateSet.prototype._compileTemplate;
-  TemplateSet.prototype._compileTemplate = function (name: string, template: string | Element) {
+  TemplateSet.prototype._compileTemplate = function (
+    this: any,
+    name: string,
+    template: string | Element
+  ) {
     const fn = originalCompileTemplate.call(this, "", template);
-    if (!globalTemplateNames.has(name)) {
+    if (!this.skipSnapshot) {
       expect(fn.toString()).toMatchSnapshot();
     }
     return fn;

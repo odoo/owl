@@ -249,11 +249,11 @@ exports[`slots can use t-call in default-content of t-slot 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { callSlot, getTemplate } = helpers;
-  const callTemplate_1 = getTemplate(\`__template__999\`);
+  let { callSlot, call } = helpers;
   
   function defaultContent1(ctx, node, key = \\"\\") {
-    return callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    const template1 = (ctx['__owl__'].subTemplates.__template__3(ctx['__owl__'].app));
+    return call(this, template1, ctx, node, key + \`__1\`);
   }
   
   return function template(ctx, node, key = \\"\\") {
@@ -772,12 +772,12 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { capture, getTemplate, markRaw } = helpers;
-  const callTemplate_1 = getTemplate(\`__template__1002\`);
+  let { capture, call, markRaw } = helpers;
   
   function slot1(ctx, node, key = \\"\\") {
     const b2 = text(\`[A]\`);
-    const b3 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    const template1 = (ctx['__owl__'].subTemplates.__template__5(ctx['__owl__'].app));
+    const b3 = call(this, template1, ctx, node, key + \`__1\`);
     return multi([b2, b3]);
   }
   
@@ -792,41 +792,6 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, getTemplate } = helpers;
-  const callTemplate_1 = getTemplate(\`__template__1001\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    const b2 = text(\`[sub1] \`);
-    setContextValue(ctx, \\"dummy\\", ctx['validate']);
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1;
-    setContextValue(ctx, \\"v\\", ctx['props'].number);
-    const b3 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
-    return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`slots mix of slots, t-call, t-call with body, and giving own props child 5`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = text(\`[sub2\`);
-    const b3 = text(ctx['v']);
-    const b4 = text(\`]\`);
-    return multi([b2, b3, b4]);
-  }
-}"
-`;
-
-exports[`slots mix of slots, t-call, t-call with body, and giving own props child 6`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
     const b2 = text(\`[B]\`);
@@ -836,7 +801,7 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 }"
 `;
 
-exports[`slots mix of slots, t-call, t-call with body, and giving own props child 7`] = `
+exports[`slots mix of slots, t-call, t-call with body, and giving own props child 5`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
@@ -846,6 +811,41 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
     const b2 = text(\`[C]\`);
     const b3 = callSlot(ctx, node, key, 'default', false, null);
     return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`slots mix of slots, t-call, t-call with body, and giving own props child 6`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue, call } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    const b2 = text(\`[sub1] \`);
+    setContextValue(ctx, \\"dummy\\", ctx['validate']);
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1;
+    setContextValue(ctx, \\"v\\", ctx['props'].number);
+    const template1 = (ctx['__owl__'].subTemplates.__template__4(ctx['__owl__'].app));
+    const b3 = call(this, template1, ctx, node, key + \`__1\`);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`slots mix of slots, t-call, t-call with body, and giving own props child 7`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`[sub2\`);
+    const b3 = text(ctx['v']);
+    const b4 = text(\`]\`);
+    return multi([b2, b3, b4]);
   }
 }"
 `;
@@ -1486,13 +1486,13 @@ exports[`slots slot and (inline) t-call 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { capture, getTemplate, markRaw } = helpers;
-  const callTemplate_1 = getTemplate(\`__template__999\`);
+  let { capture, call, markRaw } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    const template1 = (ctx['__owl__'].subTemplates.__template__2(ctx['__owl__'].app));
+    return call(this, template1, ctx, node, key + \`__1\`);
   }
   
   return function template(ctx, node, key = \\"\\") {
@@ -1507,19 +1507,6 @@ exports[`slots slot and (inline) t-call 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  
-  let block1 = createBlock(\`<p>sokka</p>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    return block1();
-  }
-}"
-`;
-
-exports[`slots slot and (inline) t-call 3`] = `
-"function anonymous(bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -1531,17 +1518,30 @@ exports[`slots slot and (inline) t-call 3`] = `
 }"
 `;
 
+exports[`slots slot and (inline) t-call 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<p>sokka</p>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`slots slot and t-call 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { capture, getTemplate, markRaw } = helpers;
-  const callTemplate_1 = getTemplate(\`__template__999\`);
+  let { capture, call, markRaw } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    const template1 = (ctx['__owl__'].subTemplates.__template__1(ctx['__owl__'].app));
+    return call(this, template1, ctx, node, key + \`__1\`);
   }
   
   return function template(ctx, node, key = \\"\\") {
@@ -1556,11 +1556,13 @@ exports[`slots slot and t-call 2`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callSlot } = helpers;
   
-  let block1 = createBlock(\`<p>sokka</p>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    return block1();
+    const b2 = callSlot(ctx, node, key, 'default', false, null);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -1569,13 +1571,11 @@ exports[`slots slot and t-call 3`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { callSlot } = helpers;
   
-  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  let block1 = createBlock(\`<p>sokka</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = callSlot(ctx, node, key, 'default', false, null);
-    return block1([], [b2]);
+    return block1();
   }
 }"
 `;

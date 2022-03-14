@@ -444,6 +444,7 @@ describe("hooks", () => {
       let cleanupRun = 0;
       let steps = [];
       class MyComponent extends Component {
+        static template = xml`<div/>`;
         state = useState({
           value: 0,
         });
@@ -455,7 +456,6 @@ describe("hooks", () => {
           });
         }
       }
-      MyComponent.template = xml`<div/>`;
 
       const component = await mount(MyComponent, fixture);
 
@@ -512,6 +512,7 @@ describe("hooks", () => {
     test("dependencies prevent effects from rerunning when unchanged", async () => {
       let steps = [];
       class MyComponent extends Component {
+        static template = xml`<div/>`;
         state = useState({
           a: 0,
           b: 0,
@@ -540,7 +541,6 @@ describe("hooks", () => {
           );
         }
       }
-      MyComponent.template = xml`<div/>`;
       steps.push("before mount");
       const component = await mount(MyComponent, fixture);
       steps.push("after mount");
@@ -597,6 +597,7 @@ describe("hooks", () => {
     test("effect with empty dependency list never reruns", async () => {
       let steps = [];
       class MyComponent extends Component {
+        static template = xml`<div t-esc="state.value"/>`;
         state = useState({
           value: 0,
         });
@@ -610,7 +611,6 @@ describe("hooks", () => {
           );
         }
       }
-      MyComponent.template = xml`<div t-esc="state.value"/>`;
 
       const component = await mount(MyComponent, fixture);
 

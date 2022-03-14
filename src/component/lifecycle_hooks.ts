@@ -1,14 +1,28 @@
 import { getCurrent } from "./component_node";
 import { nodeErrorHandlers } from "./error_handling";
 
+const TIMEOUT = Symbol("timeout");
 function wrapError(fn: (...args: any[]) => any, hookName: string) {
   const error = new Error(`The following error occurred in ${hookName}: `) as Error & {
     cause: any;
   };
+  const timeoutError = new Error(`${hookName}'s promise hasn't resolved after 3 seconds`);
+  const node = getCurrent();
   return (...args: any[]) => {
     try {
       const result = fn(...args);
       if (result instanceof Promise) {
+        if (hookName === "onWillStart" || hookName === "onWillUpdateProps") {
+          const fiber = node.fiber;
+          Promise.race([
+            result,
+            new Promise((resolve) => setTimeout(() => resolve(TIMEOUT), 3000)),
+          ]).then((res) => {
+            if (res === TIMEOUT && node.fiber === fiber) {
+              console.warn(timeoutError);
+            }
+          });
+        }
         return result.catch((cause) => {
           error.cause = cause;
           if (cause instanceof Error) {

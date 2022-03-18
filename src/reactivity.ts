@@ -232,6 +232,11 @@ function basicProxyHandler<T extends Target>(callback: Callback): ProxyHandler<T
       if (key === TARGET) {
         return target;
       }
+      // non-writable non-configurable properties cannot be made reactive
+      const desc = Object.getOwnPropertyDescriptor(target, key);
+      if (desc && !desc.writable && !desc.configurable) {
+        return Reflect.get(target, key, proxy);
+      }
       observeTargetKey(target, key, callback);
       return possiblyReactive(Reflect.get(target, key, proxy), callback);
     },

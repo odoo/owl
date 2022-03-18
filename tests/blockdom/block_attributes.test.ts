@@ -169,12 +169,24 @@ describe("properties", () => {
     expect(input.value).toBe("potato");
   });
 
-  test("input with value attribute, and undefined given", () => {
+  test("input with value attribute, and falsy value given", () => {
     const block = createBlock(`<input block-attribute-0="value"/>`);
 
     const tree = block([undefined]);
     mount(tree, fixture);
     const input = fixture.querySelector("input")!;
+    expect(input.value).toBe("");
+
+    patch(tree, block([null]));
+    expect(input.value).toBe("");
+
+    patch(tree, block([0]));
+    expect(input.value).toBe("0");
+
+    patch(tree, block([""]));
+    expect(input.value).toBe("");
+
+    patch(tree, block([false]));
     expect(input.value).toBe("");
   });
 

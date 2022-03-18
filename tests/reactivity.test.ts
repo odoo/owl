@@ -1095,6 +1095,13 @@ describe("Reactivity", () => {
     expect(n).toBe(1);
     expect(state.k).toEqual({ n: 2 });
   });
+
+  test("can access properties on reactive of frozen objects", async () => {
+    const obj = Object.freeze({ a: {} });
+    const state = createReactive(obj);
+    expect(() => state.a).not.toThrow();
+    expect(state.a).toBe(obj.a);
+  });
 });
 
 describe("Collections", () => {

@@ -58,6 +58,11 @@ class VToggler {
   toString(): string {
     return this.child.toString();
   }
+
+  *childNodes() {
+    yield this.child;
+    yield* this.child.childNodes();
+  }
 }
 
 export function toggler(key: string, child: VNode): VNode<VToggler> {

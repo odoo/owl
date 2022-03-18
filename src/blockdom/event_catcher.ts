@@ -81,6 +81,11 @@ export function createCatcher(eventsSpec: EventsSpec): Catcher {
     toString(): string {
       return this.child.toString();
     }
+
+    *childNodes() {
+      yield this.child;
+      yield* this.child.childNodes();
+    }
   }
 
   return function (child: VNode, handlers: any[]): VNode<VCatcher> {

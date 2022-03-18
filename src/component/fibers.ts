@@ -39,7 +39,7 @@ export function makeRootFiber(node: ComponentNode): Fiber {
 /**
  * @returns number of not-yet rendered fibers cancelled
  */
-function cancelFibers(fibers: Fiber[]): number {
+export function cancelFibers(fibers: Fiber[]): number {
   let result = 0;
   for (let fiber of fibers) {
     fiber.node.fiber = null;

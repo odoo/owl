@@ -524,6 +524,17 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
       this.el = el;
       this.parentEl = parent;
     }
+
+    *childNodes() {
+      if (this.children) {
+        for (const child of this.children) {
+          if (child) {
+            yield child;
+            yield* child.childNodes();
+          }
+        }
+      }
+    }
     patch(other: Block, withBeforeRemove: boolean) {}
   }
 

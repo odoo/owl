@@ -81,6 +81,8 @@ class VHtml {
   toString() {
     return this.html;
   }
+
+  *childNodes() {}
 }
 
 export function html(str: string): VNode<VHtml> {

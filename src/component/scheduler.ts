@@ -34,6 +34,10 @@ export class Scheduler {
     }
   }
 
+  get lowestLevel() {
+    return Math.min(...[...this.tasks].filter((f) => !f.bdom).map((f) => f.node.level));
+  }
+
   /**
    * Process all current tasks. This only applies to the fibers that are ready.
    * Other tasks are left unchanged.
@@ -54,7 +58,7 @@ export class Scheduler {
         return;
       }
 
-      if (fiber.counter === 0) {
+      if (fiber.counter === 0 && !fiber.node.dead) {
         if (!hasError) {
           fiber.complete();
         }

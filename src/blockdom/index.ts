@@ -15,6 +15,7 @@ export interface VNode<T = any> {
   beforeRemove(): void;
   remove(): void;
   firstNode(): Node | undefined;
+  childNodes(): Iterable<VNode>;
 
   el?: undefined | HTMLElement | Text;
   parentEl?: undefined | HTMLElement;

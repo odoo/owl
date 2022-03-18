@@ -155,4 +155,29 @@ describe("reactivity in lifecycle", () => {
     expect(steps).toEqual([2]);
     expect(fixture.innerHTML).toBe("<div>2</div>");
   });
+
+  test("Child component doesn't render when state they depend on changes but their parent is about to unmount them", async () => {
+    const steps: string[] = [];
+    class Child extends Component {
+      static template = xml`<t t-esc="props.state.content.a"/>`;
+      setup() {
+        onWillRender(() => {
+          steps.push("child render");
+        });
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<Child t-if="state.renderChild" state="state"/>`;
+      static components = { Child };
+      state: any = useState({ renderChild: true, content: { a: 2 } });
+    }
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("2");
+    expect(steps).toEqual(["child render"]);
+    steps.splice(0);
+    parent.state.content = null;
+    parent.state.renderChild = false;
+    await nextTick();
+    expect(steps).toEqual([]);
+  });
 });

@@ -127,6 +127,15 @@ export class VMulti {
   toString(): string {
     return this.children.map((c) => (c ? c!.toString() : "")).join("");
   }
+
+  *childNodes() {
+    for (const child of this.children) {
+      if (child) {
+        yield child;
+        yield* child.childNodes();
+      }
+    }
+  }
 }
 
 export function multi(children: (VNode | undefined)[]): VNode<VMulti> {

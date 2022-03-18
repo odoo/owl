@@ -18,6 +18,7 @@ import {
   MountFiber,
   MountOptions,
   RootFiber,
+  cancelFibers,
 } from "./fibers";
 import { applyDefaultProps } from "./props_validation";
 import { STATUS } from "./status";
@@ -121,7 +122,7 @@ export function component<P extends object>(
         throw new Error(`Cannot find the definition of component "${name}"`);
       }
     }
-    node = new ComponentNode(C, props, ctx.app, ctx);
+    node = new ComponentNode(C, props, ctx.app, ctx, key);
     ctx.children[key] = node;
 
     node.initiateRender(new Fiber(node, parentFiber));
@@ -158,8 +159,16 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
   willPatch: LifecycleHook[] = [];
   patched: LifecycleHook[] = [];
   willDestroy: LifecycleHook[] = [];
+  dead: boolean = false;
+  key?: string;
 
-  constructor(C: ComponentConstructor<P, E>, props: P, app: App, parent?: ComponentNode) {
+  constructor(
+    C: ComponentConstructor<P, E>,
+    props: P,
+    app: App,
+    parent?: ComponentNode,
+    key?: string
+  ) {
     currentNode = this;
     this.app = app;
     this.parent = parent || null;
@@ -172,6 +181,7 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
     this.renderFn = app.getTemplate(C.template).bind(this.component, this.component, this);
     this.component.setup();
     currentNode = null;
+    this.key = key;
   }
 
   mountComponent(target: any, options?: MountOptions) {
@@ -242,10 +252,37 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
     }
   }
 
-  _render(fiber: Fiber | RootFiber) {
+  async _render(fiber: Fiber | RootFiber) {
     try {
-      fiber.bdom = this.renderFn();
-      fiber.root!.counter--;
+      const lowestLevel = this.app.scheduler.lowestLevel;
+      if (isFinite(lowestLevel)) {
+        let ticksToWait = this.level - lowestLevel;
+        while (ticksToWait--) {
+          await Promise.resolve();
+        }
+      }
+      if (!this.dead) {
+        fiber.bdom = this.renderFn();
+        if (Object.keys(this.children).length > 0) {
+          const newChildrenKeys = new Set([...(fiber.bdom?.childNodes() || [])].map((n) => n.key));
+          if (fiber.bdom) {
+            newChildrenKeys.add(fiber.bdom.key);
+          }
+          for (const key in this.children) {
+            if (!newChildrenKeys.has(key)) {
+              this.children[key].dead = true;
+            }
+          }
+        }
+        for (const child of fiber.bdom!.childNodes()) {
+          if (child.constructor === ComponentNode) {
+            (child as any).dead = false;
+          }
+        }
+        fiber.root && fiber.root.counter--;
+      } else {
+        fiber.root!.counter -= cancelFibers([fiber]);
+      }
     } catch (e) {
       handleError({ node: this, error: e });
     }
@@ -291,7 +328,7 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
       return;
     }
     component.props = props;
-    this._render(fiber);
+    await this._render(fiber);
     const parentRoot = parentFiber.root!;
     if (this.willPatch.length) {
       parentRoot.willPatch.push(fiber);
@@ -385,6 +422,13 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
           node.destroy();
         }
       }
+    }
+  }
+
+  *childNodes() {
+    if (this.bdom) {
+      yield this.bdom;
+      yield* this.bdom.childNodes();
     }
   }
 

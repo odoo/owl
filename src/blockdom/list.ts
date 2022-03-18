@@ -224,6 +224,13 @@ class VList {
   toString(): string {
     return this.children.map((c) => c!.toString()).join("");
   }
+
+  *childNodes() {
+    for (const child of this.children) {
+      yield child;
+      yield* child.childNodes();
+    }
+  }
 }
 
 export function list(children: VNode[]): VNode<VList> {

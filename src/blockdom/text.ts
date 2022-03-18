@@ -41,6 +41,8 @@ abstract class VSimpleNode {
   toString() {
     return this.text;
   }
+
+  *childNodes() {}
 }
 
 class VText extends VSimpleNode {

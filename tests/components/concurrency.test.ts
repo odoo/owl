@@ -40,6 +40,7 @@ Scheduler.prototype.addFiber = function (fiber: Fiber) {
 afterEach(() => {
   if (lastScheduler && lastScheduler.tasks.size > 0) {
     // we still clear the scheduler to prevent additional noise
+    console.log([...lastScheduler.tasks].map((t) => t.counter));
     lastScheduler.tasks.clear();
     throw new Error("we got a memory leak...");
   }
@@ -2715,11 +2716,11 @@ test("delay willUpdateProps", async () => {
   await nextTick();
   expect(fixture.innerHTML).toBe("0_0");
   expect([
-    "Child:willRender",
-    "Child:rendered",
     "Parent:willRender",
     "Child:willUpdateProps",
     "Parent:rendered",
+    "Child:willRender",
+    "Child:rendered",
   ]).toBeLogged();
 
   promise = makeDeferred();
@@ -2837,13 +2838,13 @@ test("delay willUpdateProps with rendering grandchild", async () => {
   await nextTick();
   expect(fixture.innerHTML).toBe("0_0<div></div>");
   expect([
-    "DelayedChild:willRender",
-    "DelayedChild:rendered",
     "GrandParent:willRender",
     "Parent:willUpdateProps",
     "GrandParent:rendered",
     "ReactiveChild:willRender",
     "ReactiveChild:rendered",
+    "DelayedChild:willRender",
+    "DelayedChild:rendered",
     "Parent:willRender",
     "DelayedChild:willUpdateProps",
     "ReactiveChild:willUpdateProps",

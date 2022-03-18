@@ -51,6 +51,13 @@ class VPortal extends VText implements Partial<VNode<VPortal>> {
       this.realBDom!.mount(this.target!, null);
     }
   }
+
+  *childNodes() {
+    if (this.realBDom) {
+      yield this.realBDom;
+      yield* this.realBDom.childNodes();
+    }
+  }
 }
 
 export class Portal extends Component {

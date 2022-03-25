@@ -240,7 +240,7 @@ class Task extends Component {
   static template = xml /* xml */`
     <div class="task" t-att-class="props.task.isCompleted ? 'done' : ''">
       <input type="checkbox" t-att-checked="props.task.isCompleted"/>
-      <span><t t-esc="props.task.title"/></span>
+      <span><t t-esc="props.task.text"/></span>
     </div>`;
   static props = ["task"];
 }
@@ -743,7 +743,7 @@ the user experience.
 ```xml
 <input type="checkbox" t-att-checked="props.task.isCompleted"
     t-att-id="props.task.id"
-    t-on-click="dispatch('toggleTask', props.task.id)"/>
+    t-on-click="() => store.toggleTask(props.task)"/>
 <label t-att-for="props.task.id"><t t-esc="props.task.text"/></label>
 ```
 

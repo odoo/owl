@@ -8,6 +8,10 @@ export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
   if (current) {
     cancelFibers(current.children);
     current.root = null;
+    if (current instanceof RootFiber && current.delayedRenders.length) {
+      let root = parent.root!;
+      root.delayedRenders = root.delayedRenders.concat(current.delayedRenders);
+    }
   }
   return new Fiber(node, parent);
 }
@@ -19,6 +23,9 @@ export function makeRootFiber(node: ComponentNode): Fiber {
     root.setCounter(root.counter + 1 - cancelFibers(current.children));
     current.children = [];
     current.bdom = null;
+    if (current === root) {
+      root.reachedChildren = new WeakSet();
+    }
     if (fibersInError.has(current)) {
       fibersInError.delete(current);
       fibersInError.delete(root);
@@ -81,6 +88,46 @@ export class Fiber {
       this.root = this as any;
     }
   }
+
+  render() {
+    // if some parent has a fiber => register in followup
+    let prev = this.root!.node;
+    let current = prev.parent;
+    while (current) {
+      if (current.fiber) {
+        let root = current.fiber.root!;
+        if (root.counter) {
+          root.delayedRenders.push(this);
+          return;
+        } else {
+          if (!root.reachedChildren.has(prev)) {
+            // is dead
+            this.node.app.scheduler.shouldClear = true;
+            return;
+          }
+          current = root.node;
+        }
+      }
+      prev = current;
+      current = current.parent;
+    }
+
+    // there are no current rendering from above => we can render
+    this._render();
+  }
+
+  _render() {
+    const node = this.node;
+    const root = this.root;
+    if (root) {
+      try {
+        this.bdom = node.renderFn();
+        root.setCounter(root.counter - 1);
+      } catch (e) {
+        handleError({ node, error: e });
+      }
+    }
+  }
 }
 
 export class RootFiber extends Fiber {
@@ -93,6 +140,9 @@ export class RootFiber extends Fiber {
   // A fiber is typically locked when it is completing and the patch has not, or is being applied.
   // i.e.: render triggered in onWillUnmount or in willPatch will be delayed
   locked: boolean = false;
+
+  delayedRenders: Fiber[] = [];
+  reachedChildren: WeakSet<ComponentNode> = new WeakSet();
 
   complete() {
     const node = this.node;
@@ -148,6 +198,14 @@ export class RootFiber extends Fiber {
   setCounter(newValue: number) {
     this.counter = newValue;
     if (newValue === 0) {
+      if (this.delayedRenders.length) {
+        for (let f of this.delayedRenders) {
+          if (f.root) {
+            f.render();
+          }
+        }
+        this.delayedRenders = [];
+      }
       this.node.app.scheduler.flush();
     }
   }

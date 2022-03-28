@@ -2,23 +2,16 @@ import type { App, Env } from "../app/app";
 import { BDom, VNode } from "../blockdom";
 import {
   clearReactivesForCallback,
+  getSubscriptions,
+  NonReactive,
   Reactive,
   reactive,
   TARGET,
-  NonReactive,
-  getSubscriptions,
 } from "../reactivity";
 import { batched, Callback } from "../utils";
 import { Component, ComponentConstructor } from "./component";
 import { fibersInError, handleError } from "./error_handling";
-import {
-  Fiber,
-  makeChildFiber,
-  makeRootFiber,
-  MountFiber,
-  MountOptions,
-  RootFiber,
-} from "./fibers";
+import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";
 import { applyDefaultProps } from "./props_validation";
 import { STATUS } from "./status";
 
@@ -126,6 +119,7 @@ export function component<P extends object>(
 
     node.initiateRender(new Fiber(node, parentFiber));
   }
+  parentFiber.root!.reachedChildren.add(node);
   return node;
 }
 
@@ -193,7 +187,7 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
       return;
     }
     if (this.status === STATUS.NEW && this.fiber === fiber) {
-      this._render(fiber);
+      fiber.render();
     }
   }
 
@@ -238,17 +232,7 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
     //   embedded in a rendering coming from above, so the fiber will be rendered
     //   in the next microtick anyway, so we should not render it again.
     if (this.fiber === fiber && (current || !fiber.parent)) {
-      this._render(fiber);
-    }
-  }
-
-  _render(fiber: Fiber | RootFiber) {
-    try {
-      fiber.bdom = this.renderFn();
-      const root = fiber.root!;
-      root.setCounter(root.counter - 1);
-    } catch (e) {
-      handleError({ node: this, error: e });
+      fiber.render();
     }
   }
 
@@ -292,7 +276,7 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
       return;
     }
     component.props = props;
-    this._render(fiber);
+    fiber.render();
     const parentRoot = parentFiber.root!;
     if (this.willPatch.length) {
       parentRoot.willPatch.push(fiber);

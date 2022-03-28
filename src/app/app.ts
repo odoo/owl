@@ -101,6 +101,7 @@ export class App<
 
   destroy() {
     if (this.root) {
+      this.scheduler.flush();
       this.root.destroy();
     }
   }

@@ -16,7 +16,7 @@ export function makeRootFiber(node: ComponentNode): Fiber {
   let current = node.fiber;
   if (current) {
     let root = current.root!;
-    root.counter = root.counter + 1 - cancelFibers(current.children);
+    root.setCounter(root.counter + 1 - cancelFibers(current.children));
     current.children = [];
     current.bdom = null;
     if (fibersInError.has(current)) {
@@ -74,7 +74,7 @@ export class Fiber {
     if (parent) {
       this.deep = parent.deep;
       const root = parent.root!;
-      root.counter++;
+      root.setCounter(root.counter + 1);
       this.root = root;
       parent.children.push(this);
     } else {
@@ -142,6 +142,13 @@ export class RootFiber extends Fiber {
     } catch (e) {
       this.locked = false;
       handleError({ fiber: current || this, error: e });
+    }
+  }
+
+  setCounter(newValue: number) {
+    this.counter = newValue;
+    if (newValue === 0) {
+      this.node.app.scheduler.flush();
     }
   }
 }

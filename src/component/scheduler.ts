@@ -11,27 +11,15 @@ export class Scheduler {
   // interactions with other code, such as test frameworks that override them
   static requestAnimationFrame = window.requestAnimationFrame.bind(window);
   tasks: Set<RootFiber> = new Set();
-  isRunning: boolean = false;
   requestAnimationFrame: Window["requestAnimationFrame"];
+  frame: number = 0;
 
   constructor() {
     this.requestAnimationFrame = Scheduler.requestAnimationFrame;
   }
 
-  start() {
-    this.isRunning = true;
-    this.scheduleTasks();
-  }
-
-  stop() {
-    this.isRunning = false;
-  }
-
   addFiber(fiber: Fiber) {
     this.tasks.add(fiber.root!);
-    if (!this.isRunning) {
-      this.start();
-    }
   }
 
   /**
@@ -39,39 +27,34 @@ export class Scheduler {
    * Other tasks are left unchanged.
    */
   flush() {
-    this.tasks.forEach((fiber) => {
-      if (fiber.root !== fiber) {
-        this.tasks.delete(fiber);
-        return;
-      }
-      const hasError = fibersInError.has(fiber);
-      if (hasError && fiber.counter !== 0) {
-        this.tasks.delete(fiber);
-        return;
-      }
-      if (fiber.node.status === STATUS.DESTROYED) {
-        this.tasks.delete(fiber);
-        return;
-      }
-
-      if (fiber.counter === 0) {
-        if (!hasError) {
-          fiber.complete();
-        }
-        this.tasks.delete(fiber);
-      }
-    });
-    if (this.tasks.size === 0) {
-      this.stop();
+    if (this.frame === 0) {
+      this.frame = this.requestAnimationFrame(() => {
+        this.frame = 0;
+        this.tasks.forEach((fiber) => this.processFiber(fiber));
+      });
     }
   }
 
-  scheduleTasks() {
-    this.requestAnimationFrame(() => {
-      this.flush();
-      if (this.isRunning) {
-        this.scheduleTasks();
+  processFiber(fiber: RootFiber) {
+    if (fiber.root !== fiber) {
+      this.tasks.delete(fiber);
+      return;
+    }
+    const hasError = fibersInError.has(fiber);
+    if (hasError && fiber.counter !== 0) {
+      this.tasks.delete(fiber);
+      return;
+    }
+    if (fiber.node.status === STATUS.DESTROYED) {
+      this.tasks.delete(fiber);
+      return;
+    }
+
+    if (fiber.counter === 0) {
+      if (!hasError) {
+        fiber.complete();
       }
-    });
+      this.tasks.delete(fiber);
+    }
   }
 }

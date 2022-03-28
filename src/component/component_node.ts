@@ -245,7 +245,8 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
   _render(fiber: Fiber | RootFiber) {
     try {
       fiber.bdom = this.renderFn();
-      fiber.root!.counter--;
+      const root = fiber.root!;
+      root.setCounter(root.counter - 1);
     } catch (e) {
       handleError({ node: this, error: e });
     }

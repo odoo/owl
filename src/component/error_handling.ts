@@ -30,7 +30,8 @@ function _handleError(node: ComponentNode | null, error: any, isFirstRound = fal
 
     if (stopped) {
       if (isFirstRound && fiber && fiber.node.fiber) {
-        fiber.root!.counter--;
+        const root = fiber.root!;
+        root.setCounter(root.counter - 1);
       }
       return true;
     }

@@ -1067,6 +1067,184 @@ exports[`delay willUpdateProps with rendering grandchild 4`] = `
 }"
 `;
 
+exports[`delayed rendering, but then initial rendering is cancelled by yet another render 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`B\`, {value: ctx['state'].value}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`delayed rendering, but then initial rendering is cancelled by yet another render 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`C\`, {value: ctx['state'].someValue+ctx['props'].value}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`delayed rendering, but then initial rendering is cancelled by yet another render 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block3 = createBlock(\`<p><block-text-0/></p>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = component(\`D\`, {}, key + \`__1\`, node, ctx);
+    let txt1 = ctx['props'].value;
+    const b3 = block3([txt1]);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`delayed rendering, but then initial rendering is cancelled by yet another render 4`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let hdlr1 = [ctx['increment'], ctx];
+    let txt1 = ctx['state'].val;
+    return block1([hdlr1, txt1]);
+  }
+}"
+`;
+
+exports[`delayed rendering, reusing fiber and stuff 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`B\`, {value: ctx['state'].value}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`delayed rendering, reusing fiber and stuff 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(ctx['props'].value);
+    const b3 = component(\`C\`, {}, key + \`__1\`, node, ctx);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`delayed rendering, reusing fiber and stuff 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let hdlr1 = [ctx['increment'], ctx];
+    let txt1 = ctx['state'].val;
+    return block1([hdlr1, txt1]);
+  }
+}"
+`;
+
+exports[`delayed rendering, reusing fiber then component is destroyed and  stuff 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2,b3;
+    b2 = text(\`A\`);
+    if (ctx['state'].value<15) {
+      b3 = component(\`B\`, {value: ctx['state'].value}, key + \`__1\`, node, ctx);
+    }
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`delayed rendering, reusing fiber then component is destroyed and  stuff 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(ctx['props'].value);
+    const b3 = component(\`C\`, {}, key + \`__1\`, node, ctx);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`delayed rendering, reusing fiber then component is destroyed and  stuff 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let hdlr1 = [ctx['increment'], ctx];
+    let txt1 = ctx['state'].val;
+    return block1([hdlr1, txt1]);
+  }
+}"
+`;
+
+exports[`delayed rendering, then component is destroyed and  stuff 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`B\`, {value: ctx['state'].value}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`delayed rendering, then component is destroyed and  stuff 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2,b3;
+    b2 = text(ctx['props'].value);
+    if (ctx['props'].value<10) {
+      b3 = component(\`C\`, {}, key + \`__1\`, node, ctx);
+    }
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`delayed rendering, then component is destroyed and  stuff 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let hdlr1 = [ctx['increment'], ctx];
+    let txt1 = ctx['state'].val;
+    return block1([hdlr1, txt1]);
+  }
+}"
+`;
+
 exports[`destroying/recreating a subcomponent, other scenario 1`] = `
 "function anonymous(bdom, helpers
 ) {

@@ -8,7 +8,7 @@ import {
   useState,
   xml,
 } from "../../src";
-import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { makeTestFixture, nextTick, snapshotEverything, useLogLifecycle } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -154,5 +154,49 @@ describe("reactivity in lifecycle", () => {
     await prom;
     expect(steps).toEqual([2]);
     expect(fixture.innerHTML).toBe("<div>2</div>");
+  });
+
+  test("Child component doesn't render when state they depend on changes but their parent is about to unmount them", async () => {
+    class Child extends Component {
+      static template = xml`<t t-esc="props.state.content.a"/>`;
+      setup() {
+        useLogLifecycle();
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<Child t-if="state.renderChild" state="state"/>`;
+      static components = { Child };
+      state: any = useState({ renderChild: true, content: { a: 2 } });
+      setup() {
+        useLogLifecycle();
+      }
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("2");
+    expect([
+      "Parent:setup",
+      "Parent:willStart",
+      "Parent:willRender",
+      "Child:setup",
+      "Child:willStart",
+      "Parent:rendered",
+      "Child:willRender",
+      "Child:rendered",
+      "Child:mounted",
+      "Parent:mounted",
+    ]).toBeLogged();
+
+    parent.state.content = null;
+    parent.state.renderChild = false;
+    await nextTick();
+    expect([
+      "Parent:willRender",
+      "Parent:rendered",
+      "Parent:willPatch",
+      "Child:willUnmount",
+      "Child:willDestroy",
+      "Parent:patched",
+    ]).toBeLogged();
   });
 });

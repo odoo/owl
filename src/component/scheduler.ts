@@ -13,6 +13,7 @@ export class Scheduler {
   tasks: Set<RootFiber> = new Set();
   requestAnimationFrame: Window["requestAnimationFrame"];
   frame: number = 0;
+  shouldClear: boolean = false;
 
   constructor() {
     this.requestAnimationFrame = Scheduler.requestAnimationFrame;
@@ -31,6 +32,14 @@ export class Scheduler {
       this.frame = this.requestAnimationFrame(() => {
         this.frame = 0;
         this.tasks.forEach((fiber) => this.processFiber(fiber));
+        if (this.shouldClear) {
+          this.shouldClear = false;
+          for (let task of this.tasks) {
+            if (task.node.status === STATUS.DESTROYED) {
+              this.tasks.delete(task);
+            }
+          }
+        }
       });
     }
   }

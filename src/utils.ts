@@ -15,11 +15,13 @@ export function batched(callback: Callback): Callback {
     await Promise.resolve();
     if (!called) {
       called = true;
-      callback();
       // wait for all calls in this microtick to fall through before resetting "called"
-      // so that only the first call to the batched function calls the original callback
-      await Promise.resolve();
-      called = false;
+      // so that only the first call to the batched function calls the original callback.
+      // Schedule this before calling the callback so that calls to the batched function
+      // within the callback will proceed only after resetting called to false, and have
+      // a chance to execute the callback again
+      Promise.resolve().then(() => (called = false));
+      callback();
     }
   };
 }

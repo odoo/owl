@@ -1370,6 +1370,25 @@ describe("qweb parser", () => {
     });
   });
 
+  test("a component with an empty named slot", async () => {
+    expect(parse(`<MyComponent><t t-set-slot="mySlot"></t></MyComponent>`)).toEqual({
+      dynamicProps: null,
+      isDynamic: false,
+      name: "MyComponent",
+      on: null,
+      props: null,
+      slots: {
+        mySlot: {
+          attrs: null,
+          content: null,
+          on: null,
+          scope: null,
+        },
+      },
+      type: 11,
+    });
+  });
+
   test("a component with a named slot", async () => {
     expect(parse(`<MyComponent><t t-set-slot="name">foo</t></MyComponent>`)).toEqual({
       type: ASTType.TComponent,

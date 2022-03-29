@@ -118,7 +118,7 @@ export interface ASTTCall {
 }
 
 interface SlotDefinition {
-  content: AST;
+  content: AST | null;
   scope: string | null;
   on: EventHandlers | null;
   attrs: Attrs | null;
@@ -749,26 +749,24 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
       slotNode.removeAttribute("t-set-slot");
       slotNode.remove();
       const slotAst = parseNode(slotNode, ctx);
-      if (slotAst) {
-        let on: SlotDefinition["on"] = null;
-        let attrs: Attrs | null = null;
-        let scope: string | null = null;
-        for (let attributeName of slotNode.getAttributeNames()) {
-          const value = slotNode.getAttribute(attributeName)!;
-          if (attributeName === "t-slot-scope") {
-            scope = value;
-            continue;
-          } else if (attributeName.startsWith("t-on-")) {
-            on = on || {};
-            on[attributeName.slice(5)] = value;
-          } else {
-            attrs = attrs || {};
-            attrs[attributeName] = value;
-          }
+      let on: SlotDefinition["on"] = null;
+      let attrs: Attrs | null = null;
+      let scope: string | null = null;
+      for (let attributeName of slotNode.getAttributeNames()) {
+        const value = slotNode.getAttribute(attributeName)!;
+        if (attributeName === "t-slot-scope") {
+          scope = value;
+          continue;
+        } else if (attributeName.startsWith("t-on-")) {
+          on = on || {};
+          on[attributeName.slice(5)] = value;
+        } else {
+          attrs = attrs || {};
+          attrs[attributeName] = value;
         }
-        slots = slots || {};
-        slots[name] = { content: slotAst, on, attrs, scope };
       }
+      slots = slots || {};
+      slots[name] = { content: slotAst, on, attrs, scope };
     }
 
     // default slot

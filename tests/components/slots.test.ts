@@ -74,6 +74,43 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<span>other text</span>");
   });
 
+  test("simple named and empty slot", async () => {
+    class Child extends Component {
+      static template = xml`<span><t t-slot="default" /><t t-slot="myEmptySlot"/></span>`;
+
+      setup() {
+        expect(this.props.slots["myEmptySlot"]).toBeTruthy();
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child>some text<t t-set-slot="myEmptySlot" /></Child>`;
+      static components = { Child };
+    }
+    await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe("<span>some text</span>");
+  });
+
+  test("simple named and empty slot -- 2", async () => {
+    class Child extends Component {
+      static template = xml`<span><t t-slot="myEmptySlot">default empty</t></span>`;
+
+      setup() {
+        expect(this.props.slots["myEmptySlot"]).toBeTruthy();
+        expect(this.props.slots["myEmptySlot"].myProp).toBe("myProp text");
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child><t t-set-slot="myEmptySlot" myProp="'myProp text'" /></Child>`;
+      static components = { Child };
+    }
+    await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe("<span>default empty</span>");
+  });
+
   test("default slot with slot scope: shorthand syntax", async () => {
     let child: any;
     class Child extends Component {

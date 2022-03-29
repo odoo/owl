@@ -1444,6 +1444,71 @@ exports[`slots simple default slot, variation 2`] = `
 }"
 `;
 
+exports[`slots simple named and empty slot -- 2 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { capture, markRaw } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx1 = capture(ctx);
+    return component(\`Child\`, {slots: markRaw({'myEmptySlot': {myProp: 'myProp text'}})}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`slots simple named and empty slot -- 2 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callSlot } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  function defaultContent1(ctx, node, key = \\"\\") {
+    return text(\`default empty\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b3 = callSlot(ctx, node, key, 'myEmptySlot', false, null, defaultContent1);
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`slots simple named and empty slot 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { capture, markRaw } = helpers;
+  
+  function slot1(ctx, node, key = \\"\\") {
+    return text(\`some text\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx1 = capture(ctx);
+    return component(\`Child\`, {slots: markRaw({'myEmptySlot': {}, 'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`slots simple named and empty slot 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callSlot } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/><block-child-1/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = callSlot(ctx, node, key, 'default', false, null);
+    const b3 = callSlot(ctx, node, key, 'myEmptySlot', false, null);
+    return block1([], [b2, b3]);
+  }
+}"
+`;
+
 exports[`slots simple slot with slot scope 1`] = `
 "function anonymous(bdom, helpers
 ) {

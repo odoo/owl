@@ -1115,8 +1115,11 @@ export class CodeGenerator {
       let slotStr: string[] = [];
       for (let slotName in ast.slots) {
         const slotAst = ast.slots[slotName];
-        const name = this.compileInNewTarget("slot", slotAst.content, ctx, slotAst.on);
-        const params = [`__render: ${name}, __ctx: ${ctxStr}`];
+        const params = [];
+        if (slotAst.content) {
+          const name = this.compileInNewTarget("slot", slotAst.content, ctx, slotAst.on);
+          params.push(`__render: ${name}, __ctx: ${ctxStr}`);
+        }
         const scope = ast.slots[slotName].scope;
         if (scope) {
           params.push(`__scope: "${scope}"`);

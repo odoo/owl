@@ -52,6 +52,50 @@ exports[`Cascading renders after microtaskTick 3`] = `
 }"
 `;
 
+exports[`another scenario with delayed rendering 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2,b3;
+    b2 = text(\`A\`);
+    if (ctx['state'].value<15) {
+      b3 = component(\`B\`, {value: ctx['state'].value}, key + \`__1\`, node, ctx);
+    }
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`another scenario with delayed rendering 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(ctx['props'].value);
+    const b3 = component(\`C\`, {}, key + \`__1\`, node, ctx);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`another scenario with delayed rendering 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let hdlr1 = [ctx['increment'], ctx];
+    let txt1 = ctx['state'].val;
+    return block1([hdlr1, txt1]);
+  }
+}"
+`;
+
 exports[`async rendering destroying a widget before start is over 1`] = `
 "function anonymous(bdom, helpers
 ) {

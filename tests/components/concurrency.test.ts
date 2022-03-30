@@ -114,8 +114,8 @@ test("destroying/recreating a subwidget with different props (if start is not ov
   expect(n).toBe(2);
 
   expect([
-    "W:willRender",
     "Child:willDestroy",
+    "W:willRender",
     "Child:setup",
     "Child:willStart",
     "W:rendered",
@@ -244,8 +244,8 @@ test("creating two async components, scenario 1", async () => {
   await nextTick();
   expect(fixture.innerHTML).toBe("");
   expect([
-    "Parent:willRender",
     "ChildA:willDestroy",
+    "Parent:willRender",
     "ChildA:setup",
     "ChildA:willStart",
     "ChildB:setup",
@@ -696,8 +696,8 @@ test("rendering component again in next microtick", async () => {
     "Child:setup",
     "Child:willStart",
     "Parent:rendered",
-    "Parent:willRender",
     "Child:willDestroy",
+    "Parent:willRender",
     "Child:setup",
     "Child:willStart",
     "Parent:rendered",
@@ -1725,6 +1725,7 @@ test("concurrent renderings scenario 10", async () => {
   expect(fixture.innerHTML).toBe("<div><p></p></div>");
   expect([
     "ComponentA:willRender",
+    "ComponentC:willDestroy",
     "ComponentB:willUpdateProps",
     "ComponentA:rendered",
   ]).toBeLogged();
@@ -1735,7 +1736,6 @@ test("concurrent renderings scenario 10", async () => {
   expect(rendered).toBe(1);
   expect([
     "ComponentB:willRender",
-    "ComponentC:willDestroy",
     "ComponentC:setup",
     "ComponentC:willStart",
     "ComponentB:rendered",
@@ -2275,11 +2275,11 @@ test("concurrent renderings scenario 16", async () => {
     "D:setup",
     "D:willStart",
     "C:rendered",
+    "D:willDestroy",
     "B:willRender",
     "C:willUpdateProps",
     "B:rendered",
     "C:willRender",
-    "D:willDestroy",
     "D:setup",
     "D:willStart",
     "C:rendered",
@@ -2990,13 +2990,13 @@ test("t-key on dom node having a component", async () => {
 
   expect(fixture.innerHTML).toBe("<div>3</div>");
   expect([
+    "Child (2):willDestroy",
     "Child (3):setup",
     "Child (3):willStart",
     "Child (3):willRender",
     "Child (3):rendered",
     "Child (1):willUnmount",
     "Child (1):willDestroy",
-    "Child (2):willDestroy",
     "Child (3):mounted",
   ]).toBeLogged();
 });
@@ -3048,13 +3048,13 @@ test("t-key on dynamic async component (toggler is never patched)", async () => 
 
   expect(fixture.innerHTML).toBe("<div>3</div>");
   expect([
+    "Child (2):willDestroy",
     "Child (3):setup",
     "Child (3):willStart",
     "Child (3):willRender",
     "Child (3):rendered",
     "Child (1):willUnmount",
     "Child (1):willDestroy",
-    "Child (2):willDestroy",
     "Child (3):mounted",
   ]).toBeLogged();
 });
@@ -3107,13 +3107,13 @@ test("t-foreach with dynamic async component", async () => {
 
   expect(fixture.innerHTML).toBe("<div>3</div>");
   expect([
+    "Child (2):willDestroy",
     "Child (3):setup",
     "Child (3):willStart",
     "Child (3):willRender",
     "Child (3):rendered",
     "Child (1):willUnmount",
     "Child (1):willDestroy",
-    "Child (2):willDestroy",
     "Child (3):mounted",
   ]).toBeLogged();
 });

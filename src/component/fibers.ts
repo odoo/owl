@@ -18,6 +18,7 @@ export function makeRootFiber(node: ComponentNode): Fiber {
     let root = current.root!;
     root.setCounter(root.counter + 1 - cancelFibers(current.children));
     current.children = [];
+    current.childrenMap = {};
     current.bdom = null;
     if (current === root) {
       root.reachedChildren = new WeakSet();
@@ -45,7 +46,11 @@ export function makeRootFiber(node: ComponentNode): Fiber {
 function cancelFibers(fibers: Fiber[]): number {
   let result = 0;
   for (let fiber of fibers) {
-    fiber.node.fiber = null;
+    let node = fiber.node;
+    if (node.status === STATUS.NEW) {
+      node.destroy();
+    }
+    node.fiber = null;
     if (fiber.bdom) {
       // if fiber has been rendered, this means that the component props have
       // been updated. however, this fiber will not be patched to the dom, so
@@ -53,7 +58,7 @@ function cancelFibers(fibers: Fiber[]): number {
       // the same props, and skip the render completely. With the next line,
       // we kindly request the component code to force a render, so it works as
       // expected.
-      fiber.node.forceNextRender = true;
+      node.forceNextRender = true;
     } else {
       result++;
     }
@@ -70,6 +75,7 @@ export class Fiber {
   children: Fiber[] = [];
   appliedToDom = false;
   deep: boolean = false;
+  childrenMap: ComponentNode["children"] = {};
 
   constructor(node: ComponentNode, parent: Fiber | null) {
     this.node = node;
@@ -218,6 +224,7 @@ export class MountFiber extends RootFiber {
     let current: Fiber | undefined = this;
     try {
       const node = this.node;
+      node.children = this.childrenMap;
       (node.app.constructor as any).validateTarget(this.target);
       if (node.bdom) {
         // this is a complicated situation: if we mount a fiber with an existing

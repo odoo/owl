@@ -13,7 +13,7 @@ export class Scheduler {
   tasks: Set<RootFiber> = new Set();
   requestAnimationFrame: Window["requestAnimationFrame"];
   frame: number = 0;
-  shouldClear: boolean = false;
+  delayedRenders: Fiber[] = [];
 
   constructor() {
     this.requestAnimationFrame = Scheduler.requestAnimationFrame;
@@ -28,16 +28,23 @@ export class Scheduler {
    * Other tasks are left unchanged.
    */
   flush() {
+    if (this.delayedRenders.length) {
+      let renders = this.delayedRenders;
+      this.delayedRenders = [];
+      for (let f of renders) {
+        if (f.root) {
+          f.render();
+        }
+      }
+    }
+
     if (this.frame === 0) {
       this.frame = this.requestAnimationFrame(() => {
         this.frame = 0;
         this.tasks.forEach((fiber) => this.processFiber(fiber));
-        if (this.shouldClear) {
-          this.shouldClear = false;
-          for (let task of this.tasks) {
-            if (task.node.status === STATUS.DESTROYED) {
-              this.tasks.delete(task);
-            }
+        for (let task of this.tasks) {
+          if (task.node.status === STATUS.DESTROYED) {
+            this.tasks.delete(task);
           }
         }
       });

@@ -3591,6 +3591,105 @@ test("delayed rendering, reusing fiber then component is destroyed and  stuff", 
   ]).toBeLogged();
 });
 
+test("another scenario with delayed rendering", async () => {
+  let prom1 = makeDeferred();
+  let onSecondRenderA = makeDeferred();
+
+  class C extends Component {
+    static template = xml`<button t-on-click="increment"><t t-esc="state.val"/></button>`;
+    state = useState({ val: 1 });
+    setup() {
+      useLogLifecycle();
+    }
+    increment() {
+      this.state.val++;
+    }
+  }
+
+  class B extends Component {
+    static template = xml`<t t-esc="props.value"/><C />`;
+    static components = { C };
+    setup() {
+      useLogLifecycle();
+      onWillUpdateProps(() => prom1);
+    }
+  }
+
+  class A extends Component {
+    static template = xml`A<t t-if="state.value lt 15"><B value="state.value"/></t>`;
+    static components = { B };
+    state = useState({ value: 3 });
+    setup() {
+      useLogLifecycle();
+      let n = 0;
+      onRendered(() => {
+        n++;
+        if (n === 2) {
+          onSecondRenderA.resolve();
+        }
+      });
+    }
+  }
+
+  const parent = await mount(A, fixture);
+  expect(fixture.innerHTML).toBe("A3<button>1</button>");
+  expect([
+    "A:setup",
+    "A:willStart",
+    "A:willRender",
+    "B:setup",
+    "B:willStart",
+    "A:rendered",
+    "B:willRender",
+    "C:setup",
+    "C:willStart",
+    "B:rendered",
+    "C:willRender",
+    "C:rendered",
+    "C:mounted",
+    "B:mounted",
+    "A:mounted",
+  ]).toBeLogged();
+
+  // initiate a render in A, but is blocked in B
+  parent.state.value = 5;
+  await nextTick();
+  expect(["A:willRender", "B:willUpdateProps", "A:rendered"]).toBeLogged();
+
+  // initiate a render in C (will be delayed because of render in A)
+  fixture.querySelector("button")!.click();
+  await nextTick();
+  expect([]).toBeLogged();
+
+  // initiate a render in A, that will destroy B
+  parent.state.value = 23;
+  await onSecondRenderA;
+  await nextMicroTick();
+  expect(["A:willRender", "A:rendered"]).toBeLogged();
+
+  // rerender A, but without destroying B
+  parent.state.value = 7;
+  await nextTick();
+  expect(["A:willRender", "B:willUpdateProps", "A:rendered"]).toBeLogged();
+
+  prom1.resolve();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("A7<button>2</button>");
+
+  expect([
+    "B:willRender",
+    "B:rendered",
+    "C:willRender",
+    "C:rendered",
+    "A:willPatch",
+    "B:willPatch",
+    "B:patched",
+    "A:patched",
+    "C:willPatch",
+    "C:patched",
+  ]).toBeLogged();
+});
+
 //   test.skip("components with shouldUpdate=false", async () => {
 //     const state = { p: 1, cc: 10 };
 

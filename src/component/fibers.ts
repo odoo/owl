@@ -8,10 +8,6 @@ export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
   if (current) {
     cancelFibers(current.children);
     current.root = null;
-    if (current instanceof RootFiber && current.delayedRenders.length) {
-      let root = parent.root!;
-      root.delayedRenders = root.delayedRenders.concat(current.delayedRenders);
-    }
   }
   return new Fiber(node, parent);
 }
@@ -92,17 +88,18 @@ export class Fiber {
   render() {
     // if some parent has a fiber => register in followup
     let prev = this.root!.node;
+    let scheduler = prev.app.scheduler;
     let current = prev.parent;
     while (current) {
       if (current.fiber) {
         let root = current.fiber.root!;
         if (root.counter) {
-          root.delayedRenders.push(this);
+          scheduler.delayedRenders.push(this);
           return;
         } else {
           if (!root.reachedChildren.has(prev)) {
-            // is dead
-            this.node.app.scheduler.shouldClear = true;
+            // is dead. but we keep the render around just in case
+            scheduler.delayedRenders.push(this);
             return;
           }
           current = root.node;
@@ -141,7 +138,6 @@ export class RootFiber extends Fiber {
   // i.e.: render triggered in onWillUnmount or in willPatch will be delayed
   locked: boolean = false;
 
-  delayedRenders: Fiber[] = [];
   reachedChildren: WeakSet<ComponentNode> = new WeakSet();
 
   complete() {
@@ -198,14 +194,6 @@ export class RootFiber extends Fiber {
   setCounter(newValue: number) {
     this.counter = newValue;
     if (newValue === 0) {
-      if (this.delayedRenders.length) {
-        for (let f of this.delayedRenders) {
-          if (f.root) {
-            f.render();
-          }
-        }
-        this.delayedRenders = [];
-      }
       this.node.app.scheduler.flush();
     }
   }

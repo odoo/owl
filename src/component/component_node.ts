@@ -116,9 +116,10 @@ export function component<P extends object>(
     }
     node = new ComponentNode(C, props, ctx.app, ctx);
     ctx.children[key] = node;
-
     node.initiateRender(new Fiber(node, parentFiber));
   }
+  parentFiber.childrenMap[key] = node;
+
   parentFiber.root!.reachedChildren.add(node);
   return node;
 }
@@ -326,6 +327,7 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
     bdom.mount(parent, anchor);
     this.status = STATUS.MOUNTED;
     this.fiber!.appliedToDom = true;
+    this.children = this.fiber!.childrenMap;
     this.fiber = null;
   }
 
@@ -343,10 +345,8 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
   }
   _patch() {
     const hasChildren = Object.keys(this.children).length > 0;
+    this.children = this.fiber!.childrenMap;
     this.bdom!.patch(this!.fiber!.bdom!, hasChildren);
-    if (hasChildren) {
-      this.cleanOutdatedChildren();
-    }
     this.fiber!.appliedToDom = true;
     this.fiber = null;
   }
@@ -357,20 +357,6 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
 
   remove() {
     this.bdom!.remove();
-  }
-
-  cleanOutdatedChildren() {
-    const children = this.children;
-    for (const key in children) {
-      const node = children[key];
-      const status = node.status;
-      if (status !== STATUS.MOUNTED) {
-        delete children[key];
-        if (status !== STATUS.DESTROYED) {
-          node.destroy();
-        }
-      }
-    }
   }
 
   // ---------------------------------------------------------------------------

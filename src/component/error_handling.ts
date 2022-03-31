@@ -5,7 +5,7 @@ import type { Fiber } from "./fibers";
 export const fibersInError: WeakMap<Fiber, any> = new WeakMap();
 export const nodeErrorHandlers: WeakMap<ComponentNode, ((error: any) => void)[]> = new WeakMap();
 
-function _handleError(node: ComponentNode | null, error: any, isFirstRound = false): boolean {
+function _handleError(node: ComponentNode | null, error: any): boolean {
   if (!node) {
     return false;
   }
@@ -16,23 +16,19 @@ function _handleError(node: ComponentNode | null, error: any, isFirstRound = fal
 
   const errorHandlers = nodeErrorHandlers.get(node);
   if (errorHandlers) {
-    let stopped = false;
+    let handled = false;
     // execute in the opposite order
     for (let i = errorHandlers.length - 1; i >= 0; i--) {
       try {
         errorHandlers[i](error);
-        stopped = true;
+        handled = true;
         break;
       } catch (e) {
         error = e;
       }
     }
 
-    if (stopped) {
-      if (isFirstRound && fiber && fiber.node.fiber) {
-        const root = fiber.root!;
-        root.setCounter(root.counter - 1);
-      }
+    if (handled) {
       return true;
     }
   }
@@ -55,7 +51,7 @@ export function handleError(params: ErrorParams) {
 
   fibersInError.set(fiber.root!, error);
 
-  const handled = _handleError(node, error, true);
+  const handled = _handleError(node, error);
   if (!handled) {
     console.warn(`[Owl] Unhandled error. Destroying the root component`);
     try {

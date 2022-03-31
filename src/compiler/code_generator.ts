@@ -1234,7 +1234,7 @@ export class CodeGenerator {
       if (dynamic) {
         let name = this.generateId("slot");
         this.define(name, slotName);
-        blockString = `toggler(${name}, callSlot(ctx, node, key, ${name}), ${dynamic}, ${scope})`;
+        blockString = `toggler(${name}, callSlot(ctx, node, key, ${name}, ${dynamic}, ${scope}))`;
       } else {
         blockString = `callSlot(ctx, node, key, ${slotName}, ${dynamic}, ${scope})`;
       }

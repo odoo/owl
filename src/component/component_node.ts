@@ -80,10 +80,7 @@ export function component<P extends object>(
   let isDynamic = typeof name !== "string";
 
   if (node) {
-    if (node.status < STATUS.MOUNTED) {
-      node.destroy();
-      node = undefined;
-    } else if (node.status === STATUS.DESTROYED) {
+    if (node.status === STATUS.DESTROYED) {
       node = undefined;
     }
   }
@@ -194,7 +191,7 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
 
   async render(deep: boolean = false) {
     let current = this.fiber;
-    if (current && current.root!.locked) {
+    if (current && (current.root!.locked || (current as any).bdom === true)) {
       await Promise.resolve();
       // situation may have changed after the microtask tick
       current = this.fiber;
@@ -216,6 +213,7 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
     const fiber = makeRootFiber(this);
     fiber.deep = deep;
     this.fiber = fiber;
+
     this.app.scheduler.addFiber(fiber);
     await Promise.resolve();
     if (this.status === STATUS.DESTROYED) {
@@ -255,8 +253,14 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
     for (let child of Object.values(this.children)) {
       child._destroy();
     }
-    for (let cb of this.willDestroy) {
-      cb.call(component);
+    if (this.willDestroy.length) {
+      try {
+        for (let cb of this.willDestroy) {
+          cb.call(component);
+        }
+      } catch (e) {
+        handleError({ error: e, node: this });
+      }
     }
     this.status = STATUS.DESTROYED;
   }

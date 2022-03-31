@@ -1,4 +1,4 @@
-import { Component, mount } from "../../src";
+import { Component, mount, onWillDestroy } from "../../src";
 import {
   onError,
   onMounted,
@@ -1196,5 +1196,127 @@ describe("can catch errors", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>Child 2</div>");
     expect(steps).toEqual(["Error Component"]);
+  });
+
+  test("an error in onWillDestroy", async () => {
+    class Child extends Component {
+      static template = xml`<div>abc</div>`;
+      setup() {
+        useLogLifecycle();
+        onWillDestroy(() => {
+          throw new Error("boom");
+        });
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <t t-esc="state.value"/>
+        <t t-if="state.hasChild"><Child/></t>`;
+      static components = { Child };
+
+      state = useState({ value: 1, hasChild: true });
+      setup() {
+        useLogLifecycle();
+        onError(() => {
+          this.state.value++;
+        });
+      }
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("1<div>abc</div>");
+    expect([
+      "Parent:setup",
+      "Parent:willStart",
+      "Parent:willRender",
+      "Child:setup",
+      "Child:willStart",
+      "Parent:rendered",
+      "Child:willRender",
+      "Child:rendered",
+      "Child:mounted",
+      "Parent:mounted",
+    ]).toBeLogged();
+    parent.state.hasChild = false;
+    await nextTick();
+    await nextTick();
+    await nextTick();
+    await nextTick();
+    expect([
+      "Parent:willRender",
+      "Parent:rendered",
+      "Parent:willPatch",
+      "Child:willUnmount",
+      "Child:willDestroy",
+      "Parent:willRender",
+      "Parent:rendered",
+      "Parent:willPatch",
+      "Parent:patched",
+    ]).toBeLogged();
+    expect(fixture.innerHTML).toBe("2");
+  });
+
+  test("an error in onWillDestroy, variation", async () => {
+    class Child extends Component {
+      static template = xml`<div>abc</div>`;
+      setup() {
+        useLogLifecycle();
+        onWillDestroy(() => {
+          throw new Error("boom");
+        });
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <t t-esc="state.value"/>
+        <t t-if="state.hasChild"><Child/></t>`;
+      static components = { Child };
+
+      state = useState({ value: 1, hasChild: false });
+      setup() {
+        useLogLifecycle();
+        onError(() => {
+          this.state.value++;
+        });
+      }
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("1");
+
+    expect([
+      "Parent:setup",
+      "Parent:willStart",
+      "Parent:willRender",
+      "Parent:rendered",
+      "Parent:mounted",
+    ]).toBeLogged();
+
+    parent.state.hasChild = true;
+    await nextMicroTick();
+    await nextMicroTick();
+    await nextMicroTick();
+    await nextMicroTick();
+    await nextMicroTick();
+    expect([
+      "Parent:willRender",
+      "Child:setup",
+      "Child:willStart",
+      "Parent:rendered",
+      "Child:willRender",
+      "Child:rendered",
+    ]).toBeLogged();
+    parent.state.hasChild = false;
+    await nextTick();
+    expect([
+      "Child:willDestroy",
+      "Parent:willRender",
+      "Parent:rendered",
+      "Parent:willPatch",
+      "Parent:patched",
+    ]).toBeLogged();
+    expect(fixture.innerHTML).toBe("2");
   });
 });

@@ -85,6 +85,64 @@ exports[`basics simple catchError 2`] = `
 }"
 `;
 
+exports[`can catch errors an error in onWillDestroy 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2,b3;
+    b2 = text(ctx['state'].value);
+    if (ctx['state'].hasChild) {
+      b3 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    }
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`can catch errors an error in onWillDestroy 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div>abc</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`can catch errors an error in onWillDestroy, variation 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2,b3;
+    b2 = text(ctx['state'].value);
+    if (ctx['state'].hasChild) {
+      b3 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    }
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`can catch errors an error in onWillDestroy, variation 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div>abc</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`can catch errors calling a hook outside setup should crash 1`] = `
 "function anonymous(bdom, helpers
 ) {

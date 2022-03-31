@@ -124,11 +124,12 @@ export class Fiber {
     const root = this.root;
     if (root) {
       try {
+        (this.bdom as any) = true;
         this.bdom = node.renderFn();
-        root.setCounter(root.counter - 1);
       } catch (e) {
         handleError({ node, error: e });
       }
+      root.setCounter(root.counter - 1);
     }
   }
 }

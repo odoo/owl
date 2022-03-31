@@ -9,7 +9,14 @@ export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
     cancelFibers(current.children);
     current.root = null;
   }
-  return new Fiber(node, parent);
+  let fiber = new Fiber(node);
+  fiber.deep = parent.deep;
+  const root = parent.root!;
+  fiber.root = root;
+  parent.children.push(fiber);
+  fiber.parent = parent;
+  root.setCounter(root.counter + 1);
+  return fiber;
 }
 
 export function makeRootFiber(node: ComponentNode): Fiber {
@@ -29,7 +36,8 @@ export function makeRootFiber(node: ComponentNode): Fiber {
     }
     return current;
   }
-  const fiber = new RootFiber(node, null);
+  const fiber = new RootFiber(node);
+  fiber.root = fiber;
   if (node.willPatch.length) {
     fiber.willPatch.push(fiber);
   }
@@ -65,24 +73,14 @@ function cancelFibers(fibers: Fiber[]): number {
 export class Fiber {
   node: ComponentNode;
   bdom: BDom | null = null;
-  root: RootFiber | null; // A Fiber that has been replaced by another has no root
-  parent: Fiber | null;
+  root: RootFiber | null = null; // A Fiber that has been replaced by another has no root
+  parent: Fiber | null = null;
   children: Fiber[] = [];
   appliedToDom = false;
   deep: boolean = false;
 
-  constructor(node: ComponentNode, parent: Fiber | null) {
+  constructor(node: ComponentNode) {
     this.node = node;
-    this.parent = parent;
-    if (parent) {
-      this.deep = parent.deep;
-      const root = parent.root!;
-      root.setCounter(root.counter + 1);
-      this.root = root;
-      parent.children.push(this);
-    } else {
-      this.root = this as any;
-    }
   }
 
   render() {
@@ -210,8 +208,9 @@ export class MountFiber extends RootFiber {
   position: Position;
 
   constructor(node: ComponentNode, target: HTMLElement, options: MountOptions = {}) {
-    super(node, null);
+    super(node);
     this.target = target;
+    this.root = this;
     this.position = options.position || "last-child";
   }
   complete() {

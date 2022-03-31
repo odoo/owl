@@ -117,7 +117,7 @@ export function component<P extends object>(
     node = new ComponentNode(C, props, ctx.app, ctx);
     ctx.children[key] = node;
 
-    node.initiateRender(new Fiber(node, parentFiber));
+    node.initiateRender(makeChildFiber(node, parentFiber));
   }
   parentFiber.root!.reachedChildren.add(node);
   return node;

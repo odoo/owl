@@ -4,6 +4,7 @@ import {
   mount,
   onMounted,
   onRendered,
+  onWillDestroy,
   onWillStart,
   onWillUnmount,
   onWillUpdateProps,
@@ -3693,6 +3694,93 @@ test("another scenario with delayed rendering", async () => {
     "C:willPatch",
     "C:patched",
   ]).toBeLogged();
+});
+
+test("destroyed component causes other soon to be destroyed component to rerender, weird stuff happens", async () => {
+  let def = makeDeferred();
+  let c: any = null;
+
+  class B extends Component {
+    static template = xml`<t t-esc="props.value"/>`;
+    setup() {
+      useLogLifecycle();
+      onRendered(() => {
+        def.resolve();
+      });
+      onWillDestroy(() => {
+        c.state.val++;
+        c.render();
+      });
+    }
+  }
+  class C extends Component {
+    static template = xml`<t t-esc="state.val + props.value"/>`;
+    state = useState({ val: 0 });
+    setup() {
+      c = this;
+      useLogLifecycle();
+    }
+  }
+
+  class A extends Component {
+    static template = xml`
+      A
+      <t t-if="state.flag">
+        <B value="state.valueB"/>
+        <C value="state.valueC"/>
+      </t>`;
+    static components = { B, C };
+    state = useState({ flag: false, valueB: 1, valueC: 2 });
+    setup() {
+      useLogLifecycle();
+    }
+  }
+
+  const parent = await mount(A, fixture);
+  expect(fixture.innerHTML).toBe(" A ");
+  expect(["A:setup", "A:willStart", "A:willRender", "A:rendered", "A:mounted"]).toBeLogged();
+
+  // initiate a render in A, but is blocked in B
+  parent.state.flag = true;
+
+  await def;
+  await nextMicroTick();
+  expect([
+    "A:willRender",
+    "B:setup",
+    "B:willStart",
+    "C:setup",
+    "C:willStart",
+    "A:rendered",
+    "B:willRender",
+    "B:rendered",
+    "C:willRender",
+    "C:rendered",
+  ]).toBeLogged();
+
+  // initiate render in A => will cancel renders in B/C and restarts
+  parent.state.valueB = 2;
+  await nextTick();
+  expect([
+    "B:willDestroy",
+    "C:willDestroy",
+    "A:willRender",
+    "B:setup",
+    "B:willStart",
+    "C:setup",
+    "C:willStart",
+    "A:rendered",
+    "B:willRender",
+    "B:rendered",
+    "C:willRender",
+    "C:rendered",
+    "A:willPatch",
+    "C:mounted",
+    "B:mounted",
+    "A:patched",
+  ]).toBeLogged();
+
+  expect(fixture.innerHTML).toBe(" A 22");
 });
 
 //   test.skip("components with shouldUpdate=false", async () => {

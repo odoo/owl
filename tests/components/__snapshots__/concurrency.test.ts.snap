@@ -1289,6 +1289,46 @@ exports[`delayed rendering, then component is destroyed and  stuff 3`] = `
 }"
 `;
 
+exports[`destroyed component causes other soon to be destroyed component to rerender, weird stuff happens 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2,b3;
+    b2 = text(\` A \`);
+    if (ctx['state'].flag) {
+      const b4 = component(\`B\`, {value: ctx['state'].valueB}, key + \`__1\`, node, ctx);
+      const b5 = component(\`C\`, {value: ctx['state'].valueC}, key + \`__2\`, node, ctx);
+      b3 = multi([b4, b5]);
+    }
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`destroyed component causes other soon to be destroyed component to rerender, weird stuff happens 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['props'].value);
+  }
+}"
+`;
+
+exports[`destroyed component causes other soon to be destroyed component to rerender, weird stuff happens 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['state'].val+ctx['props'].value);
+  }
+}"
+`;
+
 exports[`destroying/recreating a subcomponent, other scenario 1`] = `
 "function anonymous(bdom, helpers
 ) {

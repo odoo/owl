@@ -16,7 +16,12 @@ export function makeRootFiber(node: ComponentNode): Fiber {
   let current = node.fiber;
   if (current) {
     let root = current.root!;
+    // lock root fiber because canceling children fibers may destroy components,
+    // which means any arbitrary code can be run in onWillDestroy, which may
+    // trigger new renderings
+    root.locked = true;
     root.setCounter(root.counter + 1 - cancelFibers(current.children));
+    root.locked = false;
     current.children = [];
     current.childrenMap = {};
     current.bdom = null;

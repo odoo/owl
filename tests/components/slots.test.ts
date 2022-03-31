@@ -74,6 +74,35 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<span>other text</span>");
   });
 
+  test("simple dynamic slot with slot scope", async () => {
+    let child: any;
+    class Child extends Component {
+      static template = xml`<span><t t-slot="{{ 'slotName' }}" bool="state.bool"/></span>`;
+      state = useState({ bool: true });
+      setup() {
+        child = this;
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <Child>
+          <t t-set-slot="slotName" t-slot-scope="slotScope">
+            <t t-if="slotScope.bool">some text</t>
+            <t t-else="slotScope.bool">other text</t>
+          </t>
+        </Child>`;
+      static components = { Child };
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<span>some text</span>");
+
+    child.state.bool = false;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span>other text</span>");
+  });
+
   test("simple named and empty slot", async () => {
     class Child extends Component {
       static template = xml`<span><t t-slot="default" /><t t-slot="myEmptySlot"/></span>`;

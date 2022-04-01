@@ -3783,6 +3783,106 @@ test("destroyed component causes other soon to be destroyed component to rerende
   expect(fixture.innerHTML).toBe(" A 22");
 });
 
+test("delayed rendering, destruction, stuff happens", async () => {
+  const promC = makeDeferred();
+  let stateB: any = null;
+
+  class D extends Component {
+    static template = xml`D<button t-on-click="increment"><t t-esc="state.val"/></button>`;
+    state = useState({ val: 1 });
+    setup() {
+      useLogLifecycle();
+    }
+    increment() {
+      this.state.val++;
+    }
+  }
+
+  class C extends Component {
+    static template = xml`C<D/><p><t t-esc="props.value"/></p>`;
+    static components = { D };
+    setup() {
+      useLogLifecycle();
+      onWillUpdateProps(() => promC);
+    }
+  }
+
+  class B extends Component {
+    static template = xml`B<t t-if="state.hasChild"><C value="state.someValue + props.value"/></t>`;
+    static components = { C };
+    state = useState({ someValue: 3, hasChild: true });
+    setup() {
+      useLogLifecycle();
+      stateB = this.state;
+    }
+  }
+
+  class A extends Component {
+    static template = xml`A<B value="state.value"/>`;
+    static components = { B };
+    state = useState({ value: 33 });
+    setup() {
+      useLogLifecycle();
+    }
+  }
+
+  const parent = await mount(A, fixture);
+  expect(fixture.innerHTML).toBe("ABCD<button>1</button><p>36</p>");
+  expect([
+    "A:setup",
+    "A:willStart",
+    "A:willRender",
+    "B:setup",
+    "B:willStart",
+    "A:rendered",
+    "B:willRender",
+    "C:setup",
+    "C:willStart",
+    "B:rendered",
+    "C:willRender",
+    "D:setup",
+    "D:willStart",
+    "C:rendered",
+    "D:willRender",
+    "D:rendered",
+    "D:mounted",
+    "C:mounted",
+    "B:mounted",
+    "A:mounted",
+  ]).toBeLogged();
+
+  // render in A, it updates B and C, but render is blocked in C
+  parent.state.value = 50;
+  await nextTick();
+  expect([
+    "A:willRender",
+    "B:willUpdateProps",
+    "A:rendered",
+    "B:willRender",
+    "C:willUpdateProps",
+    "B:rendered",
+  ]).toBeLogged();
+
+  // update B => removes child C
+  stateB.hasChild = false;
+  // update D => render should be delayed, because AB is currently rendering
+  fixture.querySelector("button")!.click();
+  await nextTick();
+  expect([
+    "B:willRender",
+    "B:rendered",
+    "A:willPatch",
+    "B:willPatch",
+    "C:willUnmount",
+    "D:willUnmount",
+    "D:willDestroy",
+    "C:willDestroy",
+    "B:patched",
+    "A:patched",
+  ]).toBeLogged();
+  expect(fixture.innerHTML).toBe("AB");
+});
+
 //   test.skip("components with shouldUpdate=false", async () => {
 //     const state = { p: 1, cc: 10 };
 

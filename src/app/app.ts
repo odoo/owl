@@ -67,7 +67,7 @@ export class App<
   }
 
   makeNode(Component: ComponentConstructor, props: any): ComponentNode {
-    return new ComponentNode(Component, props, this);
+    return new ComponentNode(Component, props, this, null, null);
   }
 
   mountNode(node: ComponentNode, target: HTMLElement, options?: MountOptions) {

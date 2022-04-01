@@ -1164,6 +1164,69 @@ exports[`delayed rendering, but then initial rendering is cancelled by yet anoth
 }"
 `;
 
+exports[`delayed rendering, destruction, stuff happens 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`A\`);
+    const b3 = component(\`B\`, {value: ctx['state'].value}, key + \`__1\`, node, ctx);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`delayed rendering, destruction, stuff happens 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2,b3;
+    b2 = text(\`B\`);
+    if (ctx['state'].hasChild) {
+      b3 = component(\`C\`, {value: ctx['state'].someValue+ctx['props'].value}, key + \`__1\`, node, ctx);
+    }
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`delayed rendering, destruction, stuff happens 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block4 = createBlock(\`<p><block-text-0/></p>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`C\`);
+    const b3 = component(\`D\`, {}, key + \`__1\`, node, ctx);
+    let txt1 = ctx['props'].value;
+    const b4 = block4([txt1]);
+    return multi([b2, b3, b4]);
+  }
+}"
+`;
+
+exports[`delayed rendering, destruction, stuff happens 4`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block3 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`D\`);
+    let hdlr1 = [ctx['increment'], ctx];
+    let txt1 = ctx['state'].val;
+    const b3 = block3([hdlr1, txt1]);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
 exports[`delayed rendering, reusing fiber and stuff 1`] = `
 "function anonymous(bdom, helpers
 ) {

@@ -109,13 +109,11 @@ export function component<P extends object>(
         throw new Error(`Cannot find the definition of component "${name}"`);
       }
     }
-    node = new ComponentNode(C, props, ctx.app, ctx);
+    node = new ComponentNode(C, props, ctx.app, ctx, key);
     ctx.children[key] = node;
     node.initiateRender(new Fiber(node, parentFiber));
   }
   parentFiber.childrenMap[key] = node;
-
-  parentFiber.root!.reachedChildren.add(node);
   return node;
 }
 
@@ -133,6 +131,7 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
   bdom: BDom | null = null;
   status: STATUS = STATUS.NEW;
   forceNextRender: boolean = false;
+  parentKey: string | null;
 
   renderFn: Function;
   parent: ComponentNode | null;
@@ -149,10 +148,17 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
   patched: LifecycleHook[] = [];
   willDestroy: LifecycleHook[] = [];
 
-  constructor(C: ComponentConstructor<P, E>, props: P, app: App, parent?: ComponentNode) {
+  constructor(
+    C: ComponentConstructor<P, E>,
+    props: P,
+    app: App,
+    parent: ComponentNode | null,
+    parentKey: string | null
+  ) {
     currentNode = this;
     this.app = app;
-    this.parent = parent || null;
+    this.parent = parent;
+    this.parentKey = parentKey;
     this.level = parent ? parent.level + 1 : 0;
     applyDefaultProps(props, C);
     const env = (parent && parent.childEnv) || app.env;

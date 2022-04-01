@@ -25,9 +25,6 @@ export function makeRootFiber(node: ComponentNode): Fiber {
     current.children = [];
     current.childrenMap = {};
     current.bdom = null;
-    if (current === root) {
-      root.reachedChildren = new WeakSet();
-    }
     if (fibersInError.has(current)) {
       fibersInError.delete(current);
       fibersInError.delete(root);
@@ -108,7 +105,7 @@ export class Fiber {
           scheduler.delayedRenders.push(this);
           return;
         } else {
-          if (!root.reachedChildren.has(prev)) {
+          if (!(prev.parentKey! in current.fiber.childrenMap)) {
             // is dead. but we keep the render around just in case
             scheduler.delayedRenders.push(this);
             return;
@@ -149,8 +146,6 @@ export class RootFiber extends Fiber {
   // A fiber is typically locked when it is completing and the patch has not, or is being applied.
   // i.e.: render triggered in onWillUnmount or in willPatch will be delayed
   locked: boolean = false;
-
-  reachedChildren: WeakSet<ComponentNode> = new WeakSet();
 
   complete() {
     const node = this.node;

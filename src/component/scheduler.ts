@@ -32,7 +32,7 @@ export class Scheduler {
       let renders = this.delayedRenders;
       this.delayedRenders = [];
       for (let f of renders) {
-        if (f.root) {
+        if (f.root && f.node.status !== STATUS.DESTROYED) {
           f.render();
         }
       }

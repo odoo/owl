@@ -3883,6 +3883,107 @@ test("delayed rendering, destruction, stuff happens", async () => {
   expect(fixture.innerHTML).toBe("AB");
 });
 
+test("renderings, destruction, patch, stuff, ... yet another variation", async () => {
+  const promB = makeDeferred();
+
+  class D extends Component {
+    static template = xml`D<p t-on-click="increment"><t t-esc="state.val"/></p>`;
+    state = useState({ val: 1 });
+    setup() {
+      useLogLifecycle();
+    }
+    increment() {
+      this.state.val++;
+    }
+  }
+
+  // almost the same as D
+  class C extends Component {
+    static template = xml`C<span t-on-click="increment"><t t-esc="state.val"/></span>`;
+    state = useState({ val: 1 });
+    setup() {
+      useLogLifecycle();
+    }
+    increment() {
+      this.state.val++;
+    }
+  }
+
+  class B extends Component {
+    static template = xml`B<t t-if="props.value === 33"><C/></t>`;
+    static components = { C };
+    setup() {
+      useLogLifecycle();
+      onWillUpdateProps(() => promB);
+    }
+  }
+
+  class A extends Component {
+    static template = xml`A<B value="state.value"/><D/>`;
+    static components = { B, D };
+    state = useState({ value: 33 });
+    setup() {
+      useLogLifecycle();
+    }
+  }
+
+  const parent = await mount(A, fixture);
+  expect(fixture.innerHTML).toBe("ABC<span>1</span>D<p>1</p>");
+  expect([
+    "A:setup",
+    "A:willStart",
+    "A:willRender",
+    "B:setup",
+    "B:willStart",
+    "D:setup",
+    "D:willStart",
+    "A:rendered",
+    "B:willRender",
+    "C:setup",
+    "C:willStart",
+    "B:rendered",
+    "D:willRender",
+    "D:rendered",
+    "C:willRender",
+    "C:rendered",
+    "C:mounted",
+    "D:mounted",
+    "B:mounted",
+    "A:mounted",
+  ]).toBeLogged();
+
+  // render in A, it updates B, will remove C, stopped in B
+  parent.state.value = 50;
+  await nextTick();
+  expect(["A:willRender", "B:willUpdateProps", "A:rendered"]).toBeLogged();
+
+  // update C => render should be delayed, because AB is currently rendering
+  fixture.querySelector("span")!.click();
+  await nextTick();
+  expect([]).toBeLogged();
+
+  // resolve prom B => render is done, component C is destroyed
+  promB.resolve();
+  await nextTick();
+  expect([
+    "B:willRender",
+    "B:rendered",
+    "A:willPatch",
+    "B:willPatch",
+    "C:willUnmount",
+    "C:willDestroy",
+    "B:patched",
+    "A:patched",
+  ]).toBeLogged();
+  expect(fixture.innerHTML).toBe("ABD<p>1</p>");
+
+  // update D => should just render completely independently
+  fixture.querySelector("p")!.click();
+  await nextTick();
+  expect(["D:willRender", "D:rendered", "D:willPatch", "D:patched"]).toBeLogged();
+  expect(fixture.innerHTML).toBe("ABD<p>2</p>");
+});
+
 //   test.skip("components with shouldUpdate=false", async () => {
 //     const state = { p: 1, cc: 10 };
 

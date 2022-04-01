@@ -101,16 +101,11 @@ export class Fiber {
     while (current) {
       if (current.fiber) {
         let root = current.fiber.root!;
-        if (root.counter) {
+        if (root.counter === 0 && prev.parentKey! in current.fiber.childrenMap) {
+          current = root.node;
+        } else {
           scheduler.delayedRenders.push(this);
           return;
-        } else {
-          if (!(prev.parentKey! in current.fiber.childrenMap)) {
-            // is dead. but we keep the render around just in case
-            scheduler.delayedRenders.push(this);
-            return;
-          }
-          current = root.node;
         }
       }
       prev = current;

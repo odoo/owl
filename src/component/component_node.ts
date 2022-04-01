@@ -334,6 +334,7 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
   }
 
   patch() {
+    debugger
     if (this.fiber && this.fiber.parent) {
       // we only patch here renderings coming from above. renderings initiated
       // by the component will be patched independently in the appropriate

@@ -870,6 +870,7 @@ test("concurrent renderings scenario 2", async () => {
     "ComponentB:rendered",
   ]).toBeLogged();
 
+  debugger; 
   stateB.fromB = "c";
   await nextTick();
   expect(fixture.innerHTML).toBe("<div>1<p><span>1b</span></p></div>");
@@ -881,7 +882,7 @@ test("concurrent renderings scenario 2", async () => {
 
   defs[1].resolve(); // resolve rendering initiated in B
   await nextTick();
-  expect(fixture.innerHTML).toBe("<div>2<p><span>2c</span></p></div>");
+  debugger
   expect([
     "ComponentC:willRender",
     "ComponentC:rendered",
@@ -892,6 +893,7 @@ test("concurrent renderings scenario 2", async () => {
     "ComponentB:patched",
     "ComponentA:patched",
   ]).toBeLogged();
+  expect(fixture.innerHTML).toBe("<div>2<p><span>2c</span></p></div>");
 
   defs[0].resolve(); // resolve rendering initiated in A
   await nextTick();

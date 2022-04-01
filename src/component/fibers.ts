@@ -1,6 +1,6 @@
 import { BDom, mount } from "../blockdom";
 import type { ComponentNode } from "./component_node";
-import { fibersInError, handleError } from "./error_handling";
+import { handleError } from "./error_handling";
 import { STATUS } from "./status";
 
 export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
@@ -22,19 +22,56 @@ export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
 export function makeRootFiber(node: ComponentNode): Fiber {
   let current = node.fiber;
   if (current) {
-    let root = current.root!;
-    root.setCounter(root.counter + 1 - cancelFibers(current.children));
-    current.children = [];
-    current.bdom = null;
-    if (current === root) {
-      root.reachedChildren = new WeakSet();
+    debugger;
+    let parent = current.parent;
+    let n = cancelFibers(current.children);
+    current.root = null;
+    // current.bdom = null;
+    if (parent) {
+      let fiber = new Fiber(node);
+      fiber.deep = parent.deep;
+      const root = parent.root!;
+      fiber.root = root;
+      let index = parent.children.indexOf(current);
+      parent.children[index] = fiber;
+      // parent.children.push(fiber);
+      fiber.parent = parent;
+      // node.fiber = 
+      root.setCounter(root.counter + 1 - n);
+      if (node.willPatch.length) {
+        let index = root.willPatch.indexOf(current);
+        if (index >= 0) {
+          root.willPatch[index] = fiber;
+        }
+      }
+      if (node.patched.length) {
+        let index = root.patched.indexOf(current);
+        if (index >= 0) {
+          root.patched[index] = fiber;
+        }
+      }
+    
+      return fiber;
     }
-    if (fibersInError.has(current)) {
-      fibersInError.delete(current);
-      fibersInError.delete(root);
-      current.appliedToDom = false;
-    }
-    return current;
+    // let parent = current.parent;
+    // let fiber = new Fiber(node);
+    // return fiber;
+
+    // cancelFibers(current.children);
+    // current.root = null;
+    // let root = current.root!;
+    // root.setCounter(root.counter + 1 - cancelFibers(current.children));
+    // current.children = [];
+    // current.bdom = null;
+    // if (current === root) {
+    //   root.reachedChildren = new WeakSet();
+    // }
+    // if (fibersInError.has(current)) {
+    //   fibersInError.delete(current);
+    //   fibersInError.delete(root);
+    //   current.appliedToDom = false;
+    // }
+    // return current;
   }
   const fiber = new RootFiber(node);
   fiber.root = fiber;
@@ -70,6 +107,8 @@ function cancelFibers(fibers: Fiber[]): number {
   return result;
 }
 
+(window as any).fibers = [];
+
 export class Fiber {
   node: ComponentNode;
   bdom: BDom | null = null;
@@ -81,6 +120,7 @@ export class Fiber {
 
   constructor(node: ComponentNode) {
     this.node = node;
+    (window as any).fibers.push(this);
   }
 
   render() {
@@ -190,6 +230,7 @@ export class RootFiber extends Fiber {
   }
 
   setCounter(newValue: number) {
+    debugger;
     this.counter = newValue;
     if (newValue === 0) {
       this.node.app.scheduler.flush();

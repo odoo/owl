@@ -121,6 +121,9 @@ export class Fiber {
 
   _render() {
     const node = this.node;
+    if (node.status > STATUS.MOUNTED) {
+      return;
+    }
     const root = this.root;
     if (root) {
       try {

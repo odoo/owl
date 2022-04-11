@@ -47,7 +47,7 @@ export function useState<T extends object>(state: T): Reactive<T> | NonReactive<
   const node = getCurrent();
   let render = batchedRenderFunctions.get(node)!;
   if (!render) {
-    render = batched(node.render.bind(node));
+    render = batched(node.render.bind(node, false));
     batchedRenderFunctions.set(node, render);
     // manual implementation of onWillDestroy to break cyclic dependency
     node.willDestroy.push(clearReactivesForCallback.bind(null, render));
@@ -193,7 +193,7 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
     }
   }
 
-  async render(deep: boolean = false) {
+  async render(deep: boolean) {
     let current = this.fiber;
     if (current && (current.root!.locked || (current as any).bdom === true)) {
       await Promise.resolve();

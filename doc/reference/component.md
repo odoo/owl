@@ -76,7 +76,8 @@ The `Component` class has a very small API.
 
   By default, the render initiated by this method will stop at each child
   component if their props are (shallow) equal. To force a render to update
-  all child components, one can use the optional `deep` argument.
+  all child components, one can use the optional `deep` argument. Note that the
+  value of the `deep` argument needs to be a boolean, not a truthy value.
 
 ## Static Properties
 

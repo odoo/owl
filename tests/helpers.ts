@@ -138,7 +138,7 @@ const steps: string[] = [];
 export function logStep(step: string) {
   steps.push(step);
 }
-export function useLogLifecycle(key?: string) {
+export function useLogLifecycle(key?: string, skipAsyncHooks: boolean = false) {
   const component = useComponent();
   let name = component.constructor.name;
   if (key) {
@@ -147,20 +147,24 @@ export function useLogLifecycle(key?: string) {
   logStep(`${name}:setup`);
   expect(name + ": " + status(component)).toBe(name + ": " + "new");
 
-  onWillStart(() => {
-    expect(name + ": " + status(component)).toBe(name + ": " + "new");
-    logStep(`${name}:willStart`);
-  });
+  if (!skipAsyncHooks) {
+    onWillStart(() => {
+      expect(name + ": " + status(component)).toBe(name + ": " + "new");
+      logStep(`${name}:willStart`);
+    });
+  }
 
   onMounted(() => {
     expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
     logStep(`${name}:mounted`);
   });
 
-  onWillUpdateProps(() => {
-    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
-    logStep(`${name}:willUpdateProps`);
-  });
+  if (!skipAsyncHooks) {
+    onWillUpdateProps(() => {
+      expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+      logStep(`${name}:willUpdateProps`);
+    });
+  }
 
   onWillRender(() => {
     logStep(`${name}:willRender`);

@@ -1111,6 +1111,56 @@ exports[`delay willUpdateProps with rendering grandchild 4`] = `
 }"
 `;
 
+exports[`delayed fiber does not get rendered if it was cancelled 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`A\`);
+    const b3 = component(\`B\`, {}, key + \`__1\`, node, ctx);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`delayed fiber does not get rendered if it was cancelled 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`B\`);
+    const b3 = component(\`C\`, {}, key + \`__1\`, node, ctx);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`delayed fiber does not get rendered if it was cancelled 3`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`C\`);
+    const b3 = component(\`D\`, {}, key + \`__1\`, node, ctx);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`delayed fiber does not get rendered if it was cancelled 4`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`D\`);
+  }
+}"
+`;
+
 exports[`delayed rendering, but then initial rendering is cancelled by yet another render 1`] = `
 "function anonymous(bdom, helpers
 ) {

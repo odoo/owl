@@ -42,6 +42,10 @@ export function makeRootFiber(node: ComponentNode): Fiber {
   return fiber;
 }
 
+function throwOnRender() {
+  throw new Error("Attempted to render cancelled fiber");
+}
+
 /**
  * @returns number of not-yet rendered fibers cancelled
  */
@@ -49,6 +53,7 @@ function cancelFibers(fibers: Fiber[]): number {
   let result = 0;
   for (let fiber of fibers) {
     let node = fiber.node;
+    fiber.render = throwOnRender;
     if (node.status === STATUS.NEW) {
       node.destroy();
     }

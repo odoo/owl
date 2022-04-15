@@ -3696,6 +3696,89 @@ test("another scenario with delayed rendering", async () => {
   ]).toBeLogged();
 });
 
+test("delayed fiber does not get rendered if it was cancelled", async () => {
+  class D extends Component {
+    static template = xml`D`;
+    setup() {
+      useLogLifecycle("", true);
+    }
+  }
+
+  class C extends Component {
+    static template = xml`C<D/>`;
+    static components = { D };
+    setup() {
+      useLogLifecycle("", true);
+      c = this;
+    }
+  }
+  let c: C;
+
+  class B extends Component {
+    static template = xml`B<C/>`;
+    static components = { C };
+    setup() {
+      useLogLifecycle("", true);
+    }
+  }
+
+  class A extends Component {
+    static template = xml`A<B/>`;
+    static components = { B };
+    setup() {
+      useLogLifecycle("", true);
+    }
+  }
+
+  const a = await mount(A, fixture);
+  expect(fixture.innerHTML).toBe("ABCD");
+  expect([
+    "A:setup",
+    "A:willRender",
+    "B:setup",
+    "A:rendered",
+    "B:willRender",
+    "C:setup",
+    "B:rendered",
+    "C:willRender",
+    "D:setup",
+    "C:rendered",
+    "D:willRender",
+    "D:rendered",
+    "D:mounted",
+    "C:mounted",
+    "B:mounted",
+    "A:mounted",
+  ]).toBeLogged();
+  // Start a render in C
+  c!.render(true);
+  await nextMicroTick();
+  expect(["C:willRender", "C:rendered"]).toBeLogged();
+  // Start a render in A such that C is already rendered, but D will be delayed
+  // (because A is rendering) then cancelled (when the render from A reaches C)
+  a.render(true);
+  // Make sure the render can go to completion (Cancelled fibers will throw when rendered)
+  await nextTick();
+  expect([
+    "A:willRender",
+    "A:rendered",
+    "B:willRender",
+    "B:rendered",
+    "C:willRender",
+    "C:rendered",
+    "D:willRender",
+    "D:rendered",
+    "A:willPatch",
+    "B:willPatch",
+    "C:willPatch",
+    "D:willPatch",
+    "D:patched",
+    "C:patched",
+    "B:patched",
+    "A:patched",
+  ]).toBeLogged();
+});
+
 test("destroyed component causes other soon to be destroyed component to rerender, weird stuff happens", async () => {
   let def = makeDeferred();
   let c: any = null;

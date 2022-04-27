@@ -79,18 +79,20 @@ export class TemplateSet {
     this.helpers = makeHelpers(this.getTemplate.bind(this));
   }
 
-  addTemplate(
-    name: string,
-    template: string | Element,
-    options: { allowDuplicate?: boolean } = {}
-  ) {
-    if (name in this.rawTemplates && !options.allowDuplicate) {
-      throw new Error(`Template ${name} already defined`);
+  addTemplate(name: string, template: string | Element) {
+    if (name in this.rawTemplates) {
+      const rawTemplate = this.rawTemplates[name];
+      const currentAsString = typeof rawTemplate === "string" ? rawTemplate : rawTemplate.outerHTML;
+      const newAsString = typeof template === "string" ? template : template.outerHTML;
+      if (currentAsString === newAsString) {
+        return;
+      }
+      throw new Error(`Template ${name} already defined with different content`);
     }
     this.rawTemplates[name] = template;
   }
 
-  addTemplates(xml: string | Document, options: { allowDuplicate?: boolean } = {}) {
+  addTemplates(xml: string | Document) {
     if (!xml) {
       // empty string
       return;
@@ -98,7 +100,7 @@ export class TemplateSet {
     xml = xml instanceof Document ? xml : parseXML(xml);
     for (const template of xml.querySelectorAll("[t-name]")) {
       const name = template.getAttribute("t-name")!;
-      this.addTemplate(name, template, options);
+      this.addTemplate(name, template);
     }
   }
 

@@ -11,11 +11,12 @@ describe("basic validation", () => {
     expect(() => context.getTemplate("invalidname")).toThrow("Missing template");
   });
 
-  test("cannot add twice the same template", () => {
+  test("cannot add a different template with the same name", () => {
     const context = new TemplateSet();
-    expect(() => context.addTemplate("test", "<div/>", { allowDuplicate: true })).not.toThrow(
-      "already defined"
-    );
+    context.addTemplate("test", `<t/>`);
+    // Same template with the same name is fine
+    expect(() => context.addTemplate("test", "<t/>")).not.toThrow();
+    // Different template with the same name crashes
     expect(() => context.addTemplate("test", "<div/>")).toThrow("already defined");
   });
 

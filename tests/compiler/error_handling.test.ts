@@ -12,15 +12,6 @@ describe("error handling", () => {
     expect(() => context.renderToString("invalidname")).toThrow("Missing template");
   });
 
-  test("cannot add twice the same template", () => {
-    const context = new TestContext();
-    context.addTemplate("test", `<t></t>`);
-    expect(() => context.addTemplate("test", "<div/>", { allowDuplicate: true })).not.toThrow(
-      "already defined"
-    );
-    expect(() => context.addTemplate("test", "<div/>")).toThrow("already defined");
-  });
-
   test("addTemplates throw if parser error", () => {
     const context = new TestContext();
     expect(() => {

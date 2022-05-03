@@ -67,6 +67,25 @@ describe("Portal", () => {
 
     expect(fixture.innerHTML).toBe('<div id="outside"><p>2</p></div><div><span>1</span></div>');
   });
+
+  test("basic use of portal, variation", async () => {
+    class Parent extends Component {
+      static template = xml`
+          <div>
+            <span>1</span>
+            <t t-portal="target">
+              <p>2</p>
+            </t>
+          </div>`;
+      target = "#outside";
+    }
+
+    addOutsideDiv(fixture);
+    await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe('<div id="outside"><p>2</p></div><div><span>1</span></div>');
+  });
+
   test("basic use of portal on div", async () => {
     class Parent extends Component {
       static template = xml`

@@ -1268,7 +1268,8 @@ export class CodeGenerator {
       this.helpers.add("capture");
       this.define(ctxStr, `capture(ctx);`);
     }
-    const blockString = `component(Portal, {target: ${ast.target},slots: {'default': {__render: ${name}, __ctx: ${ctxStr}}}}, key + \`${key}\`, node, ctx)`;
+    const target = compileExpr(ast.target);
+    const blockString = `component(Portal, {target: ${target},slots: {'default': {__render: ${name}, __ctx: ${ctxStr}}}}, key + \`${key}\`, node, ctx)`;
     if (block) {
       this.insertAnchor(block);
     }

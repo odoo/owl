@@ -197,6 +197,36 @@ describe("t-on", () => {
     expect(fixture.innerHTML).toBe("<div><span></span><button>2</button><p></p></div>");
   });
 
+  test("t-on on component next to t-on on div", async () => {
+    class Child extends Component {
+      static template = xml`<button t-esc="props.value"/>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <Child t-on-click="increment" value="state.value"/>
+          <p t-on-click="decrement">dec</p>
+        </div>`;
+      static components = { Child };
+      state = useState({ value: 1 });
+      increment() {
+        this.state.value++;
+      }
+      decrement() {
+        this.state.value--;
+      }
+    }
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div><button>1</button><p>dec</p></div>");
+    fixture.querySelector("button")!.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><button>2</button><p>dec</p></div>");
+    fixture.querySelector("p")!.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><button>1</button><p>dec</p></div>");
+  });
+
   test("t-on on t-slots", async () => {
     class Child extends Component {
       static template = xml`

@@ -121,6 +121,38 @@ exports[`t-on t-on method call in t-foreach 1`] = `
 }"
 `;
 
+exports[`t-on t-on on component next to t-on on div 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { createCatcher } = helpers;
+  const catcher1 = createCatcher({\\"click\\":0});
+  
+  let block1 = createBlock(\`<div><block-child-0/><p block-handler-0=\\"click\\">dec</p></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const hdlr1 = [ctx['increment'], ctx];
+    const b2 = catcher1(component(\`Child\`, {value: ctx['state'].value}, key + \`__1\`, node, ctx), [hdlr1]);
+    let hdlr2 = [ctx['decrement'], ctx];
+    return block1([hdlr2], [b2]);
+  }
+}"
+`;
+
+exports[`t-on t-on on component next to t-on on div 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<button><block-text-0/></button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let txt1 = ctx['props'].value;
+    return block1([txt1]);
+  }
+}"
+`;
+
 exports[`t-on t-on on components 1`] = `
 "function anonymous(bdom, helpers
 ) {

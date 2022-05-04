@@ -42,17 +42,20 @@ export interface CodeGenOptions extends Config {
 const xmlDoc = document.implementation.createDocument(null, null, null);
 
 const MODS = new Set(["stop", "capture", "prevent", "self", "synthetic"]);
+
+let nextDataIds: { [key: string]: number } = {};
+
+function generateId(prefix: string = "") {
+  nextDataIds[prefix] = (nextDataIds[prefix] || 0) + 1;
+  return prefix + nextDataIds[prefix];
+}
+
 // -----------------------------------------------------------------------------
 // BlockDescription
 // -----------------------------------------------------------------------------
 
 class BlockDescription {
   static nextBlockId = 1;
-  static nextDataIds: { [key: string]: number } = {};
-  static generateId(prefix: string) {
-    this.nextDataIds[prefix] = (this.nextDataIds[prefix] || 0) + 1;
-    return prefix + this.nextDataIds[prefix];
-  }
 
   varName: string;
   blockName: string;
@@ -78,7 +81,7 @@ class BlockDescription {
   }
 
   insertData(str: string, prefix: string = "d"): number {
-    const id = BlockDescription.generateId(prefix);
+    const id = generateId(prefix);
     this.target.addLine(`let ${id} = ${str};`);
     return this.data.push(id) - 1;
   }
@@ -209,7 +212,6 @@ const translationRE = /^(\s*)([\s\S]+?)(\s*)$/;
 
 export class CodeGenerator {
   blocks: BlockDescription[] = [];
-  ids: { [key: string]: number } = {};
   nextBlockId = 1;
   hasSafeContext: boolean;
   isDebug: boolean = false;
@@ -246,7 +248,7 @@ export class CodeGenerator {
     const ast = this.ast;
     this.isDebug = ast.type === ASTType.TDebug;
     BlockDescription.nextBlockId = 1;
-    BlockDescription.nextDataIds = {};
+    nextDataIds = {};
     this.compileAST(ast, {
       block: null,
       index: 0,
@@ -308,7 +310,7 @@ export class CodeGenerator {
   }
 
   compileInNewTarget(prefix: string, ast: AST, ctx: Context, on?: EventHandlers | null): string {
-    const name = this.generateId(prefix);
+    const name = generateId(prefix);
     const initialTarget = this.target;
     const target = new CodeTarget(name, on);
     this.targets.push(target);
@@ -324,11 +326,6 @@ export class CodeGenerator {
 
   define(varName: string, expr: string) {
     this.addLine(`const ${varName} = ${expr};`);
-  }
-
-  generateId(prefix: string = ""): string {
-    this.ids[prefix] = (this.ids[prefix] || 0) + 1;
-    return prefix + this.ids[prefix];
   }
 
   insertAnchor(block: BlockDescription) {
@@ -407,7 +404,7 @@ export class CodeGenerator {
       .map((tok) => {
         if (tok.varName && !tok.isLocal) {
           if (!mapping.has(tok.varName)) {
-            const varId = this.generateId("v");
+            const varId = generateId("v");
             mapping.set(tok.varName, varId);
             this.define(varId, tok.value);
           }
@@ -553,7 +550,7 @@ export class CodeGenerator {
       block = this.createBlock(block, "block", ctx);
       this.blocks.push(block);
       if (ast.dynamicTag) {
-        const tagExpr = this.generateId("tag");
+        const tagExpr = generateId("tag");
         this.define(tagExpr, compileExpr(ast.dynamicTag));
         block.dynamicTagName = tagExpr;
       }
@@ -625,7 +622,7 @@ export class CodeGenerator {
           attrs["block-ref"] = String(index);
           info[1] = `multiRefSetter(refs, \`${name}\`)`;
         } else {
-          let id = this.generateId("ref");
+          let id = generateId("ref");
           this.target.refInfo[name] = [id, `(el) => refs[\`${name}\`] = el`];
           const index = block!.data.push(id) - 1;
           attrs["block-ref"] = String(index);
@@ -648,11 +645,11 @@ export class CodeGenerator {
       } = ast.model;
 
       const baseExpression = compileExpr(baseExpr);
-      const bExprId = this.generateId("bExpr");
+      const bExprId = generateId("bExpr");
       this.define(bExprId, baseExpression);
 
       const expression = compileExpr(expr);
-      const exprId = this.generateId("expr");
+      const exprId = generateId("expr");
       this.define(exprId, expression);
 
       const fullExpression = `${bExprId}[${exprId}]`;
@@ -662,7 +659,7 @@ export class CodeGenerator {
         idx = block!.insertData(`${fullExpression} === '${attrs[targetAttr]}'`, "attr");
         attrs[`block-attribute-${idx}`] = specialInitTargetAttr;
       } else if (hasDynamicChildren) {
-        const bValueId = this.generateId("bValue");
+        const bValueId = generateId("bValue");
         tModelSelectedExpr = `${bValueId}`;
         this.define(tModelSelectedExpr, fullExpression);
       } else {
@@ -869,7 +866,7 @@ export class CodeGenerator {
     let id: string;
     if (ast.memo) {
       this.target.hasCache = true;
-      id = this.generateId();
+      id = generateId();
       this.define(`memo${id}`, compileExpr(ast.memo));
       this.define(`vnode${id}`, `cache[key${this.target.loopLevel}];`);
       this.addLine(`if (vnode${id}) {`);
@@ -904,7 +901,7 @@ export class CodeGenerator {
   }
 
   compileTKey(ast: ASTTKey, ctx: Context) {
-    const tKeyExpr = this.generateId("tKey_");
+    const tKeyExpr = generateId("tKey_");
     this.define(tKeyExpr, compileExpr(ast.expr));
     ctx = createContext(ctx, {
       tKeyExpr,
@@ -989,7 +986,7 @@ export class CodeGenerator {
     }
     const key = `key + \`${this.generateComponentKey()}\``;
     if (isDynamic) {
-      const templateVar = this.generateId("template");
+      const templateVar = generateId("template");
       this.define(templateVar, subTemplate);
       block = this.createBlock(block, "multi", ctx);
       this.helpers.add("call");
@@ -998,7 +995,7 @@ export class CodeGenerator {
         forceNewBlock: !block,
       });
     } else {
-      const id = this.generateId(`callTemplate_`);
+      const id = generateId(`callTemplate_`);
       this.helpers.add("getTemplate");
       this.staticDefs.push({ id, expr: `getTemplate(${subTemplate})` });
       block = this.createBlock(block, "multi", ctx);
@@ -1051,7 +1048,7 @@ export class CodeGenerator {
   }
 
   generateComponentKey() {
-    const parts = [this.generateId("__")];
+    const parts = [generateId("__")];
     for (let i = 0; i < this.target.loopLevel; i++) {
       parts.push(`\${key${i + 1}}`);
     }
@@ -1108,7 +1105,7 @@ export class CodeGenerator {
     if (ast.slots) {
       let ctxStr = "ctx";
       if (this.target.loopLevel || !this.hasSafeContext) {
-        ctxStr = this.generateId("ctx");
+        ctxStr = generateId("ctx");
         this.helpers.add("capture");
         this.define(ctxStr, `capture(ctx)`);
       }
@@ -1149,7 +1146,7 @@ export class CodeGenerator {
 
     let propVar: string;
     if ((slotDef && (ast.dynamicProps || hasSlotsProp)) || this.dev) {
-      propVar = this.generateId("props");
+      propVar = generateId("props");
       this.define(propVar!, propString);
       propString = propVar!;
     }
@@ -1163,7 +1160,7 @@ export class CodeGenerator {
     const key = this.generateComponentKey();
     let expr: string;
     if (ast.isDynamic) {
-      expr = this.generateId("Comp");
+      expr = generateId("Comp");
       this.define(expr, compileExpr(ast.name));
     } else {
       expr = `\`${ast.name}\``;
@@ -1199,11 +1196,11 @@ export class CodeGenerator {
 
   wrapWithEventCatcher(expr: string, on: EventHandlers): string {
     this.helpers.add("createCatcher");
-    let name = this.generateId("catcher");
+    let name = generateId("catcher");
     let spec: any = {};
     let handlers: any[] = [];
     for (let ev in on) {
-      let handlerId = this.generateId("hdlr");
+      let handlerId = generateId("hdlr");
       let idx = handlers.push(handlerId) - 1;
       spec[ev] = idx;
       const handler = this.generateHandlerCode(ev, on[ev]);
@@ -1232,7 +1229,7 @@ export class CodeGenerator {
       blockString = `callSlot(ctx, node, key, ${slotName}, ${dynamic}, ${scope}, ${name})`;
     } else {
       if (dynamic) {
-        let name = this.generateId("slot");
+        let name = generateId("slot");
         this.define(name, slotName);
         blockString = `toggler(${name}, callSlot(ctx, node, key, ${name}, ${dynamic}, ${scope}))`;
       } else {
@@ -1264,7 +1261,7 @@ export class CodeGenerator {
     const key = this.generateComponentKey();
     let ctxStr = "ctx";
     if (this.target.loopLevel || !this.hasSafeContext) {
-      ctxStr = this.generateId("ctx");
+      ctxStr = generateId("ctx");
       this.helpers.add("capture");
       this.define(ctxStr, `capture(ctx);`);
     }

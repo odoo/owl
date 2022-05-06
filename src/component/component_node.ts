@@ -107,6 +107,8 @@ export function component<P extends object>(
       C = parent.constructor.components[name as any];
       if (!C) {
         throw new Error(`Cannot find the definition of component "${name}"`);
+      } else if (!(C.prototype instanceof Component)) {
+        throw new Error(`"${name}" is not a Component. It must inherit from the Component class`);
       }
     }
     node = new ComponentNode(C, props, ctx.app, ctx, key);

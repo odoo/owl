@@ -1,5 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`basics display a nice error if a component is not a component 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`SomeComponent\`, {}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
 exports[`basics display a nice error if it cannot find component (in dev mode) 1`] = `
 "function anonymous(bdom, helpers
 ) {

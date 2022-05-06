@@ -102,6 +102,25 @@ describe("basics", () => {
     expect(mockConsoleWarn).toBeCalledTimes(1);
   });
 
+  test("display a nice error if a component is not a component", async () => {
+    function notAComponentConstructor() {}
+    class Parent extends Component {
+      static template = xml`<SomeComponent />`;
+      static components = { SomeComponent: notAComponentConstructor };
+    }
+    let error: Error;
+    try {
+      // @ts-expect-error
+      await mount(Parent, fixture);
+    } catch (e) {
+      error = e as Error;
+    }
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe(
+      '"SomeComponent" is not a Component. It must inherit from the Component class'
+    );
+  });
+
   test("simple catchError", async () => {
     class Boom extends Component {
       static template = xml`<div t-esc="a.b.c"/>`;

@@ -10,6 +10,7 @@ interface StaticComponentProperties {
   template: string;
   defaultProps?: any;
   props?: any;
+  components?: { [componentName: string]: ComponentConstructor };
 }
 
 export type ComponentConstructor<P extends Props = any, E = any> = (new (

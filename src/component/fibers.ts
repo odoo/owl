@@ -1,4 +1,4 @@
-import { BDom, mount } from "../blockdom";
+import { BDom, hydrate, mount } from "../blockdom";
 import type { ComponentNode } from "./component_node";
 import { fibersInError, handleError } from "./error_handling";
 import { STATUS } from "./status";
@@ -210,15 +210,18 @@ type Position = "first-child" | "last-child";
 
 export interface MountOptions {
   position?: Position;
+  hydrate?: boolean;
 }
 
 export class MountFiber extends RootFiber {
   target: HTMLElement;
   position: Position;
+  hydrate?: boolean;
 
   constructor(node: ComponentNode, target: HTMLElement, options: MountOptions = {}) {
     super(node, null);
     this.target = target;
+    this.hydrate = options.hydrate;
     this.position = options.position || "last-child";
   }
   complete() {
@@ -235,7 +238,9 @@ export class MountFiber extends RootFiber {
         node.updateDom();
       } else {
         node.bdom = this.bdom;
-        if (this.position === "last-child" || this.target.childNodes.length === 0) {
+        if (this.hydrate) {
+          hydrate(node.bdom!, this.target);
+        } else if (this.position === "last-child" || this.target.childNodes.length === 0) {
           mount(node.bdom!, this.target);
         } else {
           const firstChild = this.target.childNodes[0];

@@ -341,6 +341,15 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
     this.fiber = null;
   }
 
+  hydrate(parent: HTMLElement, el: HTMLElement) {
+    const bdom = this.fiber!.bdom!;
+    this.bdom = bdom;
+    (bdom as any).hydrate(parent, el);
+    this.status = STATUS.MOUNTED;
+    this.fiber!.appliedToDom = true;
+    this.fiber = null;
+  }
+
   moveBefore(other: ComponentNode | null, afterNode: Node | null) {
     this.bdom!.moveBefore(other ? other.bdom : null, afterNode);
   }

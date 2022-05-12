@@ -134,7 +134,9 @@ describe("props validation", () => {
         error = e as Error;
       }
       expect(error!).toBeDefined();
-      expect(error!.message).toBe("Invalid Prop 'p' in component '_a'");
+      expect(error!.message).toBe(
+        `Invalid Prop 'p' in component '_a': type of p is not ${test.type.name}`
+      );
     }
   });
 
@@ -184,7 +186,9 @@ describe("props validation", () => {
         error = e as Error;
       }
       expect(error!).toBeDefined();
-      expect(error!.message).toBe("Invalid Prop 'p' in component '_a'");
+      expect(error!.message).toBe(
+        `Invalid Prop 'p' in component '_a': type of p is not ${test.type.name}`
+      );
     }
   });
 
@@ -223,7 +227,9 @@ describe("props validation", () => {
       error = e as Error;
     }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe("Invalid Prop 'p' in component 'SubComp'");
+    expect(error!.message).toBe(
+      "Invalid Prop 'p' in component 'SubComp': type of p is not String and type of p is not Boolean"
+    );
   });
 
   test("can validate an optional props", async () => {
@@ -261,7 +267,7 @@ describe("props validation", () => {
       error = e as Error;
     }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe("Invalid Prop 'p' in component 'SubComp'");
+    expect(error!.message).toBe("Invalid Prop 'p' in component 'SubComp': type of p is not String");
   });
 
   test("can validate an array with given primitive type", async () => {
@@ -350,7 +356,9 @@ describe("props validation", () => {
       error = e as Error;
     }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe("Invalid Prop 'p' in component 'SubComp'");
+    expect(error!.message).toBe(
+      "Invalid Prop 'p' in component 'SubComp': type of p[1] is not String and type of p[1] is not Boolean"
+    );
   });
 
   test("can validate an object with simple shape", async () => {
@@ -383,7 +391,7 @@ describe("props validation", () => {
       error = e as Error;
     }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe("Invalid prop 'p' in component SubComp (unknown prop 'extra')");
+    expect(error!.message).toBe("Invalid Prop 'p' in component 'SubComp': unknown prop p['extra']");
     try {
       props = { p: { id: "1", url: "url" } };
       await mount(Parent, fixture, { dev: true });
@@ -391,7 +399,9 @@ describe("props validation", () => {
       error = e as Error;
     }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe("Invalid Prop 'p' in component 'SubComp'");
+    expect(error!.message).toBe(
+      "Invalid Prop 'p' in component 'SubComp': type of p['id'] is not Number"
+    );
     error = undefined;
     try {
       props = { p: { id: 1 } };
@@ -400,7 +410,9 @@ describe("props validation", () => {
       error = e as Error;
     }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe("Invalid Prop 'p' in component 'SubComp'");
+    expect(error!.message).toBe(
+      "Invalid Prop 'p' in component 'SubComp': type of p['url'] is not String"
+    );
   });
 
   test("can validate recursively complicated prop def", async () => {
@@ -446,7 +458,9 @@ describe("props validation", () => {
       error = e as Error;
     }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe("Invalid Prop 'p' in component 'SubComp'");
+    expect(error!.message).toBe(
+      "Invalid Prop 'p' in component 'SubComp': p['url'] is not an instance of Boolean and type of p['url'][1] is not Number"
+    );
   });
 
   test("can validate optional attributes in nested sub props", () => {
@@ -477,7 +491,7 @@ describe("props validation", () => {
     }
     expect(error!).toBeDefined();
     expect(error!.message).toBe(
-      "Invalid prop 'myprop' in component TestComponent (unknown prop 'a')"
+      "Invalid Prop 'myprop' in component 'TestComponent': unknown prop myprop[0]['a']"
     );
   });
 
@@ -502,7 +516,9 @@ describe("props validation", () => {
       error = e as Error;
     }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe("Invalid Prop 'size' in component 'TestComponent'");
+    expect(error!.message).toBe(
+      "Invalid Prop 'size' in component 'TestComponent': size could not be validated by `validate` function"
+    );
   });
 
   test("can validate with a custom validator, and a type", () => {
@@ -529,7 +545,9 @@ describe("props validation", () => {
       error = e as Error;
     }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe("Invalid Prop 'n' in component 'TestComponent'");
+    expect(error!.message).toBe(
+      "Invalid Prop 'n' in component 'TestComponent': type of n is not Number"
+    );
     expect(validator).toBeCalledTimes(1);
     error = undefined;
     try {
@@ -538,7 +556,9 @@ describe("props validation", () => {
       error = e as Error;
     }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe("Invalid Prop 'n' in component 'TestComponent'");
+    expect(error!.message).toBe(
+      "Invalid Prop 'n' in component 'TestComponent': n could not be validated by `validate` function"
+    );
     expect(validator).toBeCalledTimes(2);
   });
 

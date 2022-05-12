@@ -1,3 +1,4 @@
+import { Schema } from "../validation";
 import type { ComponentNode } from "./component_node";
 
 // -----------------------------------------------------------------------------
@@ -9,7 +10,7 @@ type Props = { [key: string]: any };
 interface StaticComponentProperties {
   template: string;
   defaultProps?: any;
-  props?: any;
+  props?: Schema;
   components?: { [componentName: string]: ComponentConstructor };
 }
 

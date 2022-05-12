@@ -13,7 +13,6 @@ import { batched, Callback } from "../utils";
 import { Component, ComponentConstructor } from "./component";
 import { fibersInError, handleError } from "./error_handling";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";
-import { applyDefaultProps } from "./props_validation";
 import { STATUS } from "./status";
 
 let currentNode: ComponentNode | null = null;
@@ -29,6 +28,18 @@ export function useComponent(): Component {
   return currentNode!.component;
 }
 
+/**
+ * Apply default props (only top level).
+ *
+ * Note that this method does modify in place the props
+ */
+function applyDefaultProps<P>(props: P, defaultProps: Partial<P>) {
+  for (let propName in defaultProps) {
+    if ((props as any)[propName] === undefined) {
+      (props as any)[propName] = defaultProps[propName];
+    }
+  }
+}
 // -----------------------------------------------------------------------------
 // Integration with reactivity system (useState)
 // -----------------------------------------------------------------------------
@@ -165,7 +176,10 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     this.parent = parent;
     this.parentKey = parentKey;
     this.level = parent ? parent.level + 1 : 0;
-    applyDefaultProps(props, C);
+    const defaultProps = C.defaultProps;
+    if (defaultProps) {
+      applyDefaultProps(props, defaultProps);
+    }
     const env = (parent && parent.childEnv) || app.env;
     this.childEnv = env;
     for (const key in props) {
@@ -284,7 +298,10 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     const fiber = makeChildFiber(this, parentFiber);
     this.fiber = fiber;
     const component = this.component;
-    applyDefaultProps(props, component.constructor as any);
+    const defaultProps = (component.constructor as any).defaultProps;
+    if (defaultProps) {
+      applyDefaultProps(props, defaultProps);
+    }
 
     currentNode = this;
     for (const key in props) {

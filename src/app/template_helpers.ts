@@ -1,7 +1,8 @@
 import { BDom, multi, text, toggler, createCatcher } from "../blockdom";
-import { validateProps } from "../component/props_validation";
 import { Markup } from "../utils";
 import { html } from "../blockdom/index";
+import { isOptional, validateSchema } from "../validation";
+import { ComponentConstructor } from "../component/component";
 
 /**
  * This file contains utility functions that will be injected in each template,
@@ -180,6 +181,49 @@ function multiRefSetter(refs: RefMap, name: string): RefSetter {
       refs[name] = el;
     }
   };
+}
+
+/**
+ * Validate the component props (or next props) against the (static) props
+ * description.  This is potentially an expensive operation: it may needs to
+ * visit recursively the props and all the children to check if they are valid.
+ * This is why it is only done in 'dev' mode.
+ */
+export function validateProps<P>(name: string | ComponentConstructor<P>, props: P, parent?: any) {
+  const ComponentClass =
+    typeof name !== "string"
+      ? name
+      : (parent.constructor.components[name] as ComponentConstructor<P> | undefined);
+
+  if (!ComponentClass) {
+    // this is an error, wrong component. We silently return here instead so the
+    // error is triggered by the usual path ('component' function)
+    return;
+  }
+
+  const schema = ComponentClass.props;
+  if (!schema) {
+    return;
+  }
+  const defaultProps = ComponentClass.defaultProps;
+  if (defaultProps) {
+    let isMandatory = (name: string) =>
+      Array.isArray(schema)
+        ? schema.includes(name)
+        : name in schema && !("*" in schema) && !isOptional(schema[name]);
+    for (let p in defaultProps) {
+      if (isMandatory(p)) {
+        throw new Error(
+          `A default value cannot be defined for a mandatory prop (name: '${p}', component: ${ComponentClass.name})`
+        );
+      }
+    }
+  }
+
+  const errors = validateSchema(props, schema);
+  if (errors.length) {
+    throw new Error(`Invalid props for component '${ComponentClass.name}': ` + errors.join(", "));
+  }
 }
 
 export const helpers = {

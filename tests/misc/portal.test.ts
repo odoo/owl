@@ -78,7 +78,9 @@ describe("Portal: Props validation", () => {
       error = e;
     }
     expect(error).toBeDefined();
-    expect(error.message).toBe(`Invalid Prop 'target' in component 'Portal'`);
+    expect(error.message).toBe(
+      "Invalid Prop 'target' in component 'Portal': target is not an instance of String"
+    );
 
     QWeb.dev = dev;
   });

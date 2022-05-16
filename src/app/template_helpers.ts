@@ -2,7 +2,6 @@ import { BDom, multi, text, toggler, createCatcher } from "../blockdom";
 import { validateProps } from "../component/props_validation";
 import { Markup } from "../utils";
 import { html } from "../blockdom/index";
-import { TARGET } from "../reactivity";
 
 /**
  * This file contains utility functions that will be injected in each template,
@@ -23,7 +22,7 @@ function callSlot(
   defaultContent?: (ctx: any, node: any, key: string) => BDom
 ): BDom {
   key = key + "__slot_" + name;
-  const slots = ctx.props[TARGET].slots || {};
+  const slots = ctx.props.slots || {};
   const { __render, __ctx, __scope } = slots[name] || {};
   const slotScope = Object.create(__ctx || {});
   if (__scope) {

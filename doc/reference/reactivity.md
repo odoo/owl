@@ -26,9 +26,9 @@ To solve this issue, Owl provides two reactivity primitives:
 Most of the time, the `useState` hook is the best solution.
 
 Since version 2.0, Owl applies the fine grained reactivity at the component
-level: props are automatically turned into reactive object, so Owl can track
-which part of these props are consumed by each component, and is therefore able
-to only rerender the impacted components.
+level: reactive objects received as props are automatically subscribed to by the
+component, so Owl can track which part of these props are consumed by each
+component, and is therefore able to only rerender the impacted components.
 
 ## `useState`
 

@@ -6,6 +6,7 @@ import {
   NonReactive,
   Reactive,
   reactive,
+  toRaw,
   TARGET,
 } from "../reactivity";
 import { batched, Callback } from "../utils";
@@ -62,14 +63,16 @@ type Props = { [key: string]: any };
 
 function arePropsDifferent(props1: Props, props2: Props): boolean {
   for (let k in props1) {
-    if (props1[k] !== props2[k]) {
+    const prop1 = props1[k] && typeof props1[k] === "object" ? toRaw(props1[k]) : props1[k];
+    const prop2 = props2[k] && typeof props2[k] === "object" ? toRaw(props2[k]) : props2[k];
+    if (prop1 !== prop2) {
       return true;
     }
   }
   return Object.keys(props1).length !== Object.keys(props2).length;
 }
 
-export function component<P extends object>(
+export function component<P extends Props>(
   name: string | ComponentConstructor<P>,
   props: P,
   key: string,
@@ -92,7 +95,7 @@ export function component<P extends object>(
     if (shouldRender) {
       node.forceNextRender = false;
     } else {
-      const currentProps = node.component.props[TARGET];
+      const currentProps = node.component.props;
       shouldRender = parentFiber.deep || arePropsDifferent(currentProps, props);
     }
     if (shouldRender) {
@@ -125,7 +128,7 @@ export function component<P extends object>(
 
 type LifecycleHook = Function;
 
-export class ComponentNode<P extends object = any, E = any> implements VNode<ComponentNode<P, E>> {
+export class ComponentNode<P extends Props = any, E = any> implements VNode<ComponentNode<P, E>> {
   el?: HTMLElement | Text | undefined;
   app: App;
   fiber: Fiber | null = null;
@@ -165,7 +168,12 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
     applyDefaultProps(props, C);
     const env = (parent && parent.childEnv) || app.env;
     this.childEnv = env;
-    props = useState(props);
+    for (const key in props) {
+      const prop = props[key];
+      if (prop && typeof prop === "object" && prop[TARGET]) {
+        props[key] = useState(prop);
+      }
+    }
     this.component = new C(props, env, this) as any;
     this.renderFn = app.getTemplate(C.template).bind(this.component, this.component, this);
     this.component.setup();
@@ -271,7 +279,7 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
     this.status = STATUS.DESTROYED;
   }
 
-  async updateAndRender(props: any, parentFiber: Fiber) {
+  async updateAndRender(props: P, parentFiber: Fiber) {
     // update
     const fiber = makeChildFiber(this, parentFiber);
     this.fiber = fiber;
@@ -279,7 +287,12 @@ export class ComponentNode<P extends object = any, E = any> implements VNode<Com
     applyDefaultProps(props, component.constructor as any);
 
     currentNode = this;
-    props = useState(props);
+    for (const key in props) {
+      const prop = props[key];
+      if (prop && typeof prop === "object" && prop[TARGET]) {
+        props[key] = useState(prop);
+      }
+    }
     currentNode = null;
     const prom = Promise.all(this.willUpdateProps.map((f) => f.call(component, props)));
     await prom;

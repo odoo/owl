@@ -199,4 +199,36 @@ describe("reactivity in lifecycle", () => {
       "Parent:patched",
     ]).toBeLogged();
   });
+
+  test("Component is automatically subscribed to reactive object received as prop", async () => {
+    let childRenderCount = 0;
+    let parentRenderCount = 0;
+    class Child extends Component {
+      static template = xml`<t t-esc="props.obj.a"/><t t-esc="props.reactiveObj.b"/>`;
+      setup() {
+        onWillRender(() => childRenderCount++);
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<Child obj="obj" reactiveObj="reactiveObj"/>`;
+      static components = { Child };
+      obj = { a: 1 };
+      reactiveObj = useState({ b: 2 });
+      setup() {
+        onWillRender(() => parentRenderCount++);
+      }
+    }
+    const comp = await mount(Parent, fixture);
+    expect([parentRenderCount, childRenderCount]).toEqual([1, 1]);
+    expect(fixture.innerHTML).toBe("12");
+    comp.obj.a = 3; // non reactive object, shouldn't cause render
+    await nextTick();
+    expect([parentRenderCount, childRenderCount]).toEqual([1, 1]);
+    expect(fixture.innerHTML).toBe("12");
+    comp.reactiveObj.b = 4;
+    await nextTick();
+    // Only child should be rendered: the parent never read the b key in reactiveObj
+    expect([parentRenderCount, childRenderCount]).toEqual([1, 2]);
+    expect(fixture.innerHTML).toBe("34");
+  });
 });

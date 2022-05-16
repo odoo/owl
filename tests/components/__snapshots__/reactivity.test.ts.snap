@@ -26,6 +26,30 @@ exports[`reactivity in lifecycle Child component doesn't render when state they 
 }"
 `;
 
+exports[`reactivity in lifecycle Component is automatically subscribed to reactive object received as prop 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`Child\`, {obj: ctx['obj'], reactiveObj: ctx['reactiveObj']}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`reactivity in lifecycle Component is automatically subscribed to reactive object received as prop 2`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(ctx['props'].obj.a);
+    const b3 = text(ctx['props'].reactiveObj.b);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
 exports[`reactivity in lifecycle can use a state hook 1`] = `
 "function anonymous(bdom, helpers
 ) {

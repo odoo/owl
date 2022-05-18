@@ -85,8 +85,10 @@ const STATIC_TOKEN_MAP: { [key: string]: TKind } = Object.assign(Object.create(n
 });
 
 // note that the space after typeof is relevant. It makes sure that the formatted
-// expression has a space after typeof
-const OPERATORS = "...,.,===,==,+,!==,!=,!,||,&&,>=,>,<=,<,?,-,*,/,%,typeof ,=>,=,;,in ".split(",");
+// expression has a space after typeof. Currently we don't support delete and void
+const OPERATORS = "...,.,===,==,+,!==,!=,!,||,&&,>=,>,<=,<,?,-,*,/,%,typeof ,=>,=,;,in ,new ".split(
+  ","
+);
 
 type Tokenizer = (expr: string) => Token | false;
 
@@ -344,9 +346,12 @@ export function compileExprToArray(expr: string): Token[] {
   return tokens;
 }
 
+// Leading spaces are trimmed during tokenization, so they need to be added back for some values
+const paddedValues = new Map([["in ", " in "]]);
+
 export function compileExpr(expr: string): string {
   return compileExprToArray(expr)
-    .map((t) => t.value)
+    .map((t) => paddedValues.get(t.value) || t.value)
     .join("");
 }
 

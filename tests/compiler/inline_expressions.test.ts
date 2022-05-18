@@ -135,7 +135,7 @@ describe("expression evaluation", () => {
     expect(compileExpr("color === 'black'")).toBe("ctx['color']==='black'");
     expect(compileExpr("'li_'+item")).toBe("'li_'+ctx['item']");
     expect(compileExpr("state.val > 1")).toBe("ctx['state'].val>1");
-    expect(compileExpr("a in b")).toBe("ctx['a']in ctx['b']");
+    expect(compileExpr("a in b")).toBe("ctx['a'] in ctx['b']");
   });
 
   test("boolean operations", () => {
@@ -214,5 +214,11 @@ describe("expression evaluation", () => {
     expect(compileExpr("[a, b, c]")).toBe("[ctx['a'],ctx['b'],ctx['c']]");
     expect(compileExpr("[a, {b, c},d]")).toBe("[ctx['a'],{b:ctx['b'],c:ctx['c']},ctx['d']]");
     expect(compileExpr("{a:[b, {c, d: e}]}")).toBe("{a:[ctx['b'],{c:ctx['c'],d:ctx['e']}]}");
+  });
+
+  test("preserving spaces where needed for text operators", () => {
+    expect(compileExpr("new Date()")).toBe("new Date()");
+    expect(compileExpr("a.c in b")).toBe("ctx['a'].c in ctx['b']");
+    expect(compileExpr("typeof val")).toBe("typeof ctx['val']");
   });
 });

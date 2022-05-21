@@ -1,4 +1,6 @@
 import type { ComponentNode } from "./component_node";
+import type { TemplateFunction } from "../compiler/index";
+import type { App } from "..";
 
 // -----------------------------------------------------------------------------
 //  Component Class
@@ -21,7 +23,7 @@ export type ComponentConstructor<P extends Props = any, E = any> = (new (
   StaticComponentProperties;
 
 export class Component<Props = any, Env = any> {
-  static template: string = "";
+  static template: string | ((app: App) => TemplateFunction) = "";
   static props?: any;
   static defaultProps?: any;
 

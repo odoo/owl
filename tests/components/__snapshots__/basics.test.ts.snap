@@ -169,11 +169,11 @@ exports[`basics can inject values in tagged templates 1`] = `
 "function anonymous(bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { getTemplate } = helpers;
-  const callTemplate_1 = getTemplate(\`__template__999\`);
+  let { call } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    return callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    const template1 = (ctx['__owl__'].subTemplates.__template__1(ctx['__owl__'].app));
+    return call(this, template1, ctx, node, key + \`__1\`);
   }
 }"
 `;

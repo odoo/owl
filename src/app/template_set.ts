@@ -1,10 +1,9 @@
 import { createBlock, html, list, multi, text, toggler, comment } from "../blockdom";
-import { compile, Template } from "../compiler";
+import { compile, Template, TemplateFunction } from "../compiler";
 import { markRaw } from "../reactivity";
 import { Portal } from "../portal";
 import { component, getCurrent } from "../component/component_node";
 import { helpers } from "./template_helpers";
-import { globalTemplates } from "../utils";
 
 const bdom = { text, createBlock, list, multi, html, toggler, component, comment };
 
@@ -48,7 +47,7 @@ function makeHelpers(getTemplate: (name: string) => Template): any {
     markRaw,
     getTemplate,
     call: (owner: any, subTemplate: string, ctx: any, parent: any, key: any) => {
-      const template = getTemplate(subTemplate);
+      const template = typeof subTemplate === "string" ? getTemplate(subTemplate) : subTemplate;
       return toggler(subTemplate, template.call(owner, ctx, parent, key));
     },
   });
@@ -63,11 +62,12 @@ export interface TemplateSetConfig {
 
 export class TemplateSet {
   dev: boolean;
-  rawTemplates: typeof globalTemplates = Object.create(globalTemplates);
+  rawTemplates: any = {}; //typeof globalTemplates = Object.create(globalTemplates);
   templates: { [name: string]: Template } = {};
   translateFn?: (s: string) => string;
   translatableAttributes?: string[];
   helpers: any;
+  bdom: any = bdom;
 
   constructor(config: TemplateSetConfig = {}) {
     this.dev = config.dev || false;
@@ -104,8 +104,11 @@ export class TemplateSet {
     }
   }
 
-  getTemplate(name: string): Template {
+  getTemplate(name: string | any): Template {
     if (!(name in this.templates)) {
+      if (typeof name === "function") {
+        return name(this);
+      }
       const rawTemplate = this.rawTemplates[name];
       if (rawTemplate === undefined) {
         let extraInfo = "";
@@ -128,7 +131,7 @@ export class TemplateSet {
     return this.templates[name];
   }
 
-  _compileTemplate(name: string, template: string | Element) {
+  _compileTemplate(name: string, template: string | Element): TemplateFunction {
     return compile(template, {
       name,
       dev: this.dev,

@@ -77,13 +77,41 @@ export function markup(value: any) {
 // -----------------------------------------------------------------------------
 //  xml tag helper
 // -----------------------------------------------------------------------------
-export const globalTemplates: { [key: string]: string | Element } = {};
 
-export function xml(...args: Parameters<typeof String.raw>) {
-  const name = `__template__${xml.nextId++}`;
+export function xml(...args: Parameters<typeof String.raw>): any {
+  const subTemplates: any = {};
+  let hasSubTemplates = false;
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    if (typeof arg === "function") {
+      hasSubTemplates = true;
+      const id = `__template__${xml.nextId++}`;
+      subTemplates[id] = arg;
+      args[i] = `{{__owl__.subTemplates.${id}(__owl__.app)}}`;
+    }
+  }
   const value = String.raw(...args);
-  globalTemplates[name] = value;
-  return name;
+
+  let cache = new WeakMap();
+
+  return (app: any) => {
+    debugger;
+    let renderFn = cache.get(app);
+    if (!renderFn) {
+      let templateFn = app._compileTemplate("", value);
+      renderFn = templateFn(app.bdom, app.helpers);
+      if (hasSubTemplates) {
+        let origRenderFn = renderFn;
+        renderFn = (context: any, vnode: any, key?: any) => {
+          debugger;
+          context.__owl__.subTemplates = subTemplates;
+          return origRenderFn(context, vnode, key);
+        };
+      }
+      cache.set(app, renderFn);
+    }
+    return renderFn;
+  };
 }
 
 xml.nextId = 1;

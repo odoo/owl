@@ -203,6 +203,9 @@ export function validateProps<P>(name: string | ComponentConstructor<P>, props: 
 
   const schema = ComponentClass.props;
   if (!schema) {
+    if (parent.__owl__.app.warnIfNoStaticProps) {
+      console.warn(`Component '${ComponentClass.name}' does not have a static props description`);
+    }
     return;
   }
   const defaultProps = ComponentClass.defaultProps;

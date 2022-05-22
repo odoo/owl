@@ -41,3 +41,17 @@ exports[`app destroy remove the widget from the DOM 1`] = `
   }
 }"
 `;
+
+exports[`app warnIfNoStaticProps works as expected 1`] = `
+"function anonymous(bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let txt1 = ctx['message'];
+    return block1([txt1]);
+  }
+}"
+`;

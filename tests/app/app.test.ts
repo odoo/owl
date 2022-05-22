@@ -1,4 +1,4 @@
-import { App, Component, xml } from "../../src";
+import { App, Component, mount, xml } from "../../src";
 import { status } from "../../src/component/status";
 import { makeTestFixture, snapshotEverything, nextTick, elem } from "../helpers";
 
@@ -58,5 +58,22 @@ describe("app", () => {
     const app = new App(SomeComponent, { props: { value: 333 } });
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("<div>333</div>");
+  });
+
+  test("warnIfNoStaticProps works as expected", async () => {
+    let originalconsoleWarn = console.warn;
+    let mockConsoleWarn = jest.fn(() => {});
+    console.warn = mockConsoleWarn;
+
+    class Root extends Component {
+      static template = xml`<div t-esc="message"/>`;
+    }
+
+    await mount(Root, fixture, { dev: true, props: { messge: "hey" }, warnIfNoStaticProps: true });
+
+    console.warn = originalconsoleWarn;
+    expect(mockConsoleWarn).toBeCalledWith(
+      "Component 'Root' does not have a static props description"
+    );
   });
 });

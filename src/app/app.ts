@@ -16,6 +16,7 @@ export interface AppConfig<P, E> extends TemplateSetConfig {
   props?: P;
   env?: E;
   test?: boolean;
+  warnIfNoStaticProps?: boolean;
 }
 
 let hasBeenLogged = false;
@@ -41,6 +42,7 @@ export class App<
   env: E;
   scheduler = new Scheduler();
   root: ComponentNode<P, E> | null = null;
+  warnIfNoStaticProps: boolean;
 
   constructor(Root: ComponentConstructor<P, E>, config: AppConfig<P, E> = {}) {
     super(config);
@@ -48,6 +50,7 @@ export class App<
     if (config.test) {
       this.dev = true;
     }
+    this.warnIfNoStaticProps = config.warnIfNoStaticProps || false;
     if (this.dev && !config.test && !hasBeenLogged) {
       console.info(DEV_MSG());
       hasBeenLogged = true;
@@ -61,7 +64,7 @@ export class App<
   mount(target: HTMLElement, options?: MountOptions): Promise<Component<P, E> & InstanceType<T>> {
     App.validateTarget(target);
     if (this.dev) {
-      this.helpers.validateProps(this.Root, this.props);
+      this.helpers.validateProps(this.Root, this.props, { __owl__: { app: this } });
     }
     const node = this.makeNode(this.Root, this.props);
     const prom = this.mountNode(node, target, options);

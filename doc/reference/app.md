@@ -61,6 +61,8 @@ The `config` object is an object with some of the following keys:
   templates (see [translations](translations.md))
 - **`templates (string | xml document)`**: all the templates that will be used by
   the components created by the application.
+- **`warnIfNoStaticProps (boolean, default=false)`**: if true, Owl will log a warning
+  whenever it encounters a component that does not provide a [static props description](props.md#props-validation).
 
 ## `mount` helper
 

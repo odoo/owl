@@ -87,6 +87,22 @@ describe("props validation", () => {
     expect(error!.message).toBe("Invalid props for component 'SubComp': 'message' is missing");
   });
 
+  test("validate props for root component", async () => {
+    class Root extends Component {
+      static props = ["message"];
+      static template = xml`<div t-esc="message"/>`;
+    }
+
+    let error: Error;
+    try {
+      await mount(Root, fixture, { dev: true });
+    } catch (e) {
+      error = e as Error;
+    }
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe("Invalid props for component 'Root': 'message' is missing");
+  });
+
   test("validate simple types", async () => {
     const Tests = [
       { type: Number, ok: 1, ko: "1" },

@@ -243,6 +243,8 @@ class ComponentB extends owl.Component {
   };
 ```
 
+Note: the props validation code is done by using the [validate utility function](utils.md#validate).
+
 ## Good Practices
 
 A `props` object is a collection of values that come from the parent. As such,

@@ -52,5 +52,6 @@ export {
   onWillDestroy,
   onError,
 } from "./component/lifecycle_hooks";
+export { validate } from "./validation";
 
 export const __info__ = {};

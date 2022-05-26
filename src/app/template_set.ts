@@ -1,9 +1,8 @@
 import { createBlock, html, list, multi, text, toggler, comment } from "../blockdom";
-import { compile, Template } from "../compiler";
-import { Portal } from "../portal";
+import { compile, Template, TemplateFunction } from "../compiler";
+import { Portal, portalTemplate } from "../portal";
 import { component, getCurrent } from "../component/component_node";
 import { helpers } from "./template_helpers";
-import { globalTemplates } from "../utils";
 
 const bdom = { text, createBlock, list, multi, html, toggler, component, comment };
 
@@ -45,6 +44,9 @@ export interface TemplateSetConfig {
 }
 
 export class TemplateSet {
+  static registerTemplate(name: string, fn: TemplateFunction) {
+    globalTemplates[name] = fn;
+  }
   dev: boolean;
   rawTemplates: typeof globalTemplates = Object.create(globalTemplates);
   templates: { [name: string]: Template } = {};
@@ -64,7 +66,12 @@ export class TemplateSet {
   addTemplate(name: string, template: string | Element) {
     if (name in this.rawTemplates) {
       const rawTemplate = this.rawTemplates[name];
-      const currentAsString = typeof rawTemplate === "string" ? rawTemplate : rawTemplate.outerHTML;
+      const currentAsString =
+        typeof rawTemplate === "string"
+          ? rawTemplate
+          : rawTemplate instanceof Element
+          ? rawTemplate.outerHTML
+          : rawTemplate.toString();
       const newAsString = typeof template === "string" ? template : template.outerHTML;
       if (currentAsString === newAsString) {
         return;
@@ -97,7 +104,8 @@ export class TemplateSet {
         } catch {}
         throw new Error(`Missing template: "${name}"${extraInfo}`);
       }
-      const templateFn = this._compileTemplate(name, rawTemplate);
+      const isFn = typeof rawTemplate === "function" && !(rawTemplate instanceof Element);
+      const templateFn = isFn ? rawTemplate : this._compileTemplate(name, rawTemplate);
       // first add a function to lazily get the template, in case there is a
       // recursive call to the template name
       const templates = this.templates;
@@ -124,3 +132,19 @@ export class TemplateSet {
     return toggler(subTemplate, template.call(owner, ctx, parent, key));
   }
 }
+
+// -----------------------------------------------------------------------------
+//  xml tag helper
+// -----------------------------------------------------------------------------
+export const globalTemplates: { [key: string]: string | Element | TemplateFunction } = {};
+
+export function xml(...args: Parameters<typeof String.raw>) {
+  const name = `__template__${xml.nextId++}`;
+  const value = String.raw(...args);
+  globalTemplates[name] = value;
+  return name;
+}
+
+xml.nextId = 1;
+
+TemplateSet.registerTemplate("__portal__", portalTemplate);

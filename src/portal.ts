@@ -1,5 +1,5 @@
 import { onWillUnmount } from "./component/lifecycle_hooks";
-import { xml } from "./utils";
+// import { xml } from "./app/template_set";
 import { BDom, text, VNode } from "./blockdom";
 import { Component } from "./component/component";
 
@@ -53,8 +53,17 @@ class VPortal extends VText implements Partial<VNode<VPortal>> {
   }
 }
 
+/**
+ * <t t-slot="default"/>
+ */
+export function portalTemplate(app: any, bdom: any, helpers: any) {
+  let { callSlot } = helpers;
+  return function template(ctx: any, node: any, key = "") {
+    return callSlot(ctx, node, key, "default", false, null);
+  };
+}
 export class Portal extends Component {
-  static template = xml`<t t-slot="default"/>`;
+  static template = "__portal__";
   static props = {
     target: {
       type: String,

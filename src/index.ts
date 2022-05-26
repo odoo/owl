@@ -34,12 +34,13 @@ export const blockDom = {
 };
 
 export { App, mount } from "./app/app";
+export { xml } from "./app/template_set";
 export { Component } from "./component/component";
 export { useComponent, useState } from "./component/component_node";
 export { status } from "./component/status";
 export { reactive, markRaw, toRaw } from "./reactivity";
 export { useEffect, useEnv, useExternalListener, useRef, useChildSubEnv, useSubEnv } from "./hooks";
-export { EventBus, whenReady, loadFile, markup, xml } from "./utils";
+export { EventBus, whenReady, loadFile, markup } from "./utils";
 export {
   onWillStart,
   onMounted,

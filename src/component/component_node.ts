@@ -188,7 +188,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
         props[key] = useState(prop);
       }
     }
-    this.component = new C(props, env, this) as any;
+    this.component = new C(props, env, this);
     this.renderFn = app.getTemplate(C.template).bind(this.component, this.component, this);
     this.component.setup();
     currentNode = null;

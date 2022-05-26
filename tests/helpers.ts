@@ -16,10 +16,9 @@ import {
   xml,
 } from "../src";
 import { helpers } from "../src/app/template_helpers";
-import { TemplateSet } from "../src/app/template_set";
+import { TemplateSet, globalTemplates } from "../src/app/template_set";
 import { BDom } from "../src/blockdom";
 import { compile } from "../src/compiler";
-import { globalTemplates } from "../src/utils";
 
 const mount = blockDom.mount;
 

@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`t-on can bind event handler 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -15,7 +15,7 @@ exports[`t-on can bind event handler 1`] = `
 `;
 
 exports[`t-on can bind handlers with arguments 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -30,7 +30,7 @@ exports[`t-on can bind handlers with arguments 1`] = `
 `;
 
 exports[`t-on can bind handlers with empty  object 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -45,7 +45,7 @@ exports[`t-on can bind handlers with empty  object 1`] = `
 `;
 
 exports[`t-on can bind handlers with empty object (with non empty inner string) 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -60,7 +60,7 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
 `;
 
 exports[`t-on can bind handlers with empty object (with non empty inner string) 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { prepareList, withKey } = helpers;
@@ -87,7 +87,7 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
 `;
 
 exports[`t-on can bind handlers with object arguments 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -102,7 +102,7 @@ exports[`t-on can bind handlers with object arguments 1`] = `
 `;
 
 exports[`t-on can bind two event handlers 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -117,7 +117,7 @@ exports[`t-on can bind two event handlers 1`] = `
 `;
 
 exports[`t-on handler is bound to proper owner 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -131,7 +131,7 @@ exports[`t-on handler is bound to proper owner 1`] = `
 `;
 
 exports[`t-on handler is bound to proper owner, part 2 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { prepareList, withKey } = helpers;
@@ -153,11 +153,10 @@ exports[`t-on handler is bound to proper owner, part 2 1`] = `
 `;
 
 exports[`t-on handler is bound to proper owner, part 3 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { getTemplate } = helpers;
-  const callTemplate_1 = getTemplate(\`sub\`);
+  const callTemplate_1 = app.getTemplate(\`sub\`);
   
   return function template(ctx, node, key = \\"\\") {
     return callTemplate_1.call(this, ctx, node, key + \`__1\`);
@@ -166,7 +165,7 @@ exports[`t-on handler is bound to proper owner, part 3 1`] = `
 `;
 
 exports[`t-on handler is bound to proper owner, part 3 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -180,11 +179,11 @@ exports[`t-on handler is bound to proper owner, part 3 2`] = `
 `;
 
 exports[`t-on handler is bound to proper owner, part 4 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { prepareList, getTemplate, withKey } = helpers;
-  const callTemplate_1 = getTemplate(\`sub\`);
+  let { prepareList, withKey } = helpers;
+  const callTemplate_1 = app.getTemplate(\`sub\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -204,7 +203,7 @@ exports[`t-on handler is bound to proper owner, part 4 1`] = `
 `;
 
 exports[`t-on handler is bound to proper owner, part 4 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -218,7 +217,7 @@ exports[`t-on handler is bound to proper owner, part 4 2`] = `
 `;
 
 exports[`t-on receive event in first argument 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -232,7 +231,7 @@ exports[`t-on receive event in first argument 1`] = `
 `;
 
 exports[`t-on t-on modifiers (native listener) basic support for native listener 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -247,7 +246,7 @@ exports[`t-on t-on modifiers (native listener) basic support for native listener
 `;
 
 exports[`t-on t-on modifiers (native listener) t-on combined with t-esc 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -262,7 +261,7 @@ exports[`t-on t-on modifiers (native listener) t-on combined with t-esc 1`] = `
 `;
 
 exports[`t-on t-on modifiers (native listener) t-on combined with t-out 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { safeOutput } = helpers;
@@ -278,7 +277,7 @@ exports[`t-on t-on modifiers (native listener) t-on combined with t-out 1`] = `
 `;
 
 exports[`t-on t-on modifiers (native listener) t-on with .capture modifier 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -293,7 +292,7 @@ exports[`t-on t-on modifiers (native listener) t-on with .capture modifier 1`] =
 `;
 
 exports[`t-on t-on modifiers (native listener) t-on with empty handler (only modifiers) 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -307,7 +306,7 @@ exports[`t-on t-on modifiers (native listener) t-on with empty handler (only mod
 `;
 
 exports[`t-on t-on modifiers (native listener) t-on with prevent and self modifiers (order matters) 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -321,7 +320,7 @@ exports[`t-on t-on modifiers (native listener) t-on with prevent and self modifi
 `;
 
 exports[`t-on t-on modifiers (native listener) t-on with prevent and/or stop modifiers 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -337,7 +336,7 @@ exports[`t-on t-on modifiers (native listener) t-on with prevent and/or stop mod
 `;
 
 exports[`t-on t-on modifiers (native listener) t-on with prevent modifier in t-foreach 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { prepareList, withKey } = helpers;
@@ -364,7 +363,7 @@ exports[`t-on t-on modifiers (native listener) t-on with prevent modifier in t-f
 `;
 
 exports[`t-on t-on modifiers (native listener) t-on with self and prevent modifiers (order matters) 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -378,7 +377,7 @@ exports[`t-on t-on modifiers (native listener) t-on with self and prevent modifi
 `;
 
 exports[`t-on t-on modifiers (native listener) t-on with self modifier 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -393,7 +392,7 @@ exports[`t-on t-on modifiers (native listener) t-on with self modifier 1`] = `
 `;
 
 exports[`t-on t-on modifiers (synthetic listener) basic support for synthetic 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -408,7 +407,7 @@ exports[`t-on t-on modifiers (synthetic listener) basic support for synthetic 1`
 `;
 
 exports[`t-on t-on with inline statement (function call) 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -423,7 +422,7 @@ exports[`t-on t-on with inline statement (function call) 1`] = `
 `;
 
 exports[`t-on t-on with inline statement 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -438,7 +437,7 @@ exports[`t-on t-on with inline statement 1`] = `
 `;
 
 exports[`t-on t-on with inline statement, part 2 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -453,7 +452,7 @@ exports[`t-on t-on with inline statement, part 2 1`] = `
 `;
 
 exports[`t-on t-on with inline statement, part 3 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -469,11 +468,10 @@ exports[`t-on t-on with inline statement, part 3 1`] = `
 `;
 
 exports[`t-on t-on with t-call 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { getTemplate } = helpers;
-  const callTemplate_1 = getTemplate(\`sub\`);
+  const callTemplate_1 = app.getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -485,7 +483,7 @@ exports[`t-on t-on with t-call 1`] = `
 `;
 
 exports[`t-on t-on with t-call 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -499,11 +497,10 @@ exports[`t-on t-on with t-call 2`] = `
 `;
 
 exports[`t-on t-on, with arguments and t-call 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { getTemplate } = helpers;
-  const callTemplate_1 = getTemplate(\`sub\`);
+  const callTemplate_1 = app.getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -515,7 +512,7 @@ exports[`t-on t-on, with arguments and t-call 1`] = `
 `;
 
 exports[`t-on t-on, with arguments and t-call 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   

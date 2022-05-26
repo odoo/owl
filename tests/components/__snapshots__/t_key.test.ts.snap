@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`t-key t-foreach with t-key switch component position 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { prepareList, withKey } = helpers;
@@ -24,7 +24,7 @@ exports[`t-key t-foreach with t-key switch component position 1`] = `
 `;
 
 exports[`t-key t-foreach with t-key switch component position 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -38,7 +38,7 @@ exports[`t-key t-foreach with t-key switch component position 2`] = `
 `;
 
 exports[`t-key t-key on Component 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -50,7 +50,7 @@ exports[`t-key t-key on Component 1`] = `
 `;
 
 exports[`t-key t-key on Component 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -64,7 +64,7 @@ exports[`t-key t-key on Component 2`] = `
 `;
 
 exports[`t-key t-key on Component as a function 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -79,7 +79,7 @@ exports[`t-key t-key on Component as a function 1`] = `
 `;
 
 exports[`t-key t-key on Component as a function 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -93,7 +93,7 @@ exports[`t-key t-key on Component as a function 2`] = `
 `;
 
 exports[`t-key t-key on multiple Components 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -110,7 +110,7 @@ exports[`t-key t-key on multiple Components 1`] = `
 `;
 
 exports[`t-key t-key on multiple Components 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -124,12 +124,12 @@ exports[`t-key t-key on multiple Components 2`] = `
 `;
 
 exports[`t-key t-key on multiple Components with t-call 1 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, getTemplate } = helpers;
-  const callTemplate_1 = getTemplate(\`calledTemplate\`);
-  const callTemplate_2 = getTemplate(\`calledTemplate\`);
+  let { isBoundary, withDefault, setContextValue } = helpers;
+  const callTemplate_1 = app.getTemplate(\`calledTemplate\`);
+  const callTemplate_2 = app.getTemplate(\`calledTemplate\`);
   
   let block1 = createBlock(\`<span><block-child-0/><block-child-1/></span>\`);
   
@@ -151,7 +151,7 @@ exports[`t-key t-key on multiple Components with t-call 1 1`] = `
 `;
 
 exports[`t-key t-key on multiple Components with t-call 1 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -163,7 +163,7 @@ exports[`t-key t-key on multiple Components with t-call 1 2`] = `
 `;
 
 exports[`t-key t-key on multiple Components with t-call 1 3`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -177,11 +177,10 @@ exports[`t-key t-key on multiple Components with t-call 1 3`] = `
 `;
 
 exports[`t-key t-key on multiple Components with t-call 2 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { getTemplate } = helpers;
-  const callTemplate_1 = getTemplate(\`calledTemplate\`);
+  const callTemplate_1 = app.getTemplate(\`calledTemplate\`);
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -193,7 +192,7 @@ exports[`t-key t-key on multiple Components with t-call 2 1`] = `
 `;
 
 exports[`t-key t-key on multiple Components with t-call 2 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -208,7 +207,7 @@ exports[`t-key t-key on multiple Components with t-call 2 2`] = `
 `;
 
 exports[`t-key t-key on multiple Components with t-call 2 3`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   

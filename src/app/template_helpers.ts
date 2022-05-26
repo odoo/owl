@@ -2,7 +2,8 @@ import { BDom, multi, text, toggler, createCatcher } from "../blockdom";
 import { Markup } from "../utils";
 import { html } from "../blockdom/index";
 import { isOptional, validateSchema } from "../validation";
-import { ComponentConstructor } from "../component/component";
+import type { ComponentConstructor } from "../component/component";
+import { markRaw } from "../reactivity";
 
 /**
  * This file contains utility functions that will be injected in each template,
@@ -246,4 +247,5 @@ export const helpers = {
   safeOutput,
   bind,
   createCatcher,
+  markRaw,
 };

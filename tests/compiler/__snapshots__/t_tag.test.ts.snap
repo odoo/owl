@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`qweb t-tag can fallback if falsy tag 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -15,7 +15,7 @@ exports[`qweb t-tag can fallback if falsy tag 1`] = `
 `;
 
 exports[`qweb t-tag can update 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -29,7 +29,7 @@ exports[`qweb t-tag can update 1`] = `
 `;
 
 exports[`qweb t-tag simple usecases 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -43,7 +43,7 @@ exports[`qweb t-tag simple usecases 1`] = `
 `;
 
 exports[`qweb t-tag simple usecases 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -57,7 +57,7 @@ exports[`qweb t-tag simple usecases 2`] = `
 `;
 
 exports[`qweb t-tag with multiple attributes 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -71,7 +71,7 @@ exports[`qweb t-tag with multiple attributes 1`] = `
 `;
 
 exports[`qweb t-tag with multiple child nodes 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -85,7 +85,7 @@ exports[`qweb t-tag with multiple child nodes 1`] = `
 `;
 
 exports[`qweb t-tag with multiple t-tag in same template 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -102,7 +102,7 @@ exports[`qweb t-tag with multiple t-tag in same template 1`] = `
 `;
 
 exports[`qweb t-tag with multiple t-tag in same template, part 2 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   

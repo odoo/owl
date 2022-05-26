@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`misc complex template 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { prepareList, withKey } = helpers;
@@ -79,15 +79,15 @@ exports[`misc complex template 1`] = `
 `;
 
 exports[`misc global 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { prepareList, isBoundary, withDefault, setContextValue, getTemplate, zero, withKey } = helpers;
-  const callTemplate_1 = getTemplate(\`_callee-uses-foo\`);
-  const callTemplate_2 = getTemplate(\`_callee-uses-foo\`);
-  const callTemplate_3 = getTemplate(\`_callee-uses-foo\`);
-  const callTemplate_4 = getTemplate(\`_callee-asc\`);
-  const callTemplate_5 = getTemplate(\`_callee-asc-toto\`);
+  let { prepareList, isBoundary, withDefault, setContextValue, zero, withKey } = helpers;
+  const callTemplate_1 = app.getTemplate(\`_callee-uses-foo\`);
+  const callTemplate_2 = app.getTemplate(\`_callee-uses-foo\`);
+  const callTemplate_3 = app.getTemplate(\`_callee-uses-foo\`);
+  const callTemplate_4 = app.getTemplate(\`_callee-asc\`);
+  const callTemplate_5 = app.getTemplate(\`_callee-asc-toto\`);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   let block4 = createBlock(\`<span><block-text-0/></span>\`);
@@ -131,7 +131,7 @@ exports[`misc global 1`] = `
 `;
 
 exports[`misc global 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { withDefault } = helpers;
@@ -146,7 +146,7 @@ exports[`misc global 2`] = `
 `;
 
 exports[`misc global 3`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { zero } = helpers;
@@ -162,7 +162,7 @@ exports[`misc global 3`] = `
 `;
 
 exports[`misc global 4`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { safeOutput, withDefault } = helpers;
@@ -178,11 +178,11 @@ exports[`misc global 4`] = `
 `;
 
 exports[`misc other complex template 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { prepareList, withKey, getTemplate } = helpers;
-  const callTemplate_1 = getTemplate(\`LOAD_INFOS_TEMPLATE\`);
+  let { prepareList, withKey } = helpers;
+  const callTemplate_1 = app.getTemplate(\`LOAD_INFOS_TEMPLATE\`);
   
   let block1 = createBlock(\`<div><header><nav class=\\"navbar navbar-expand-md navbar-light bg-light\\"><a block-attribute-0=\\"href\\"><b style=\\"color:#777;\\"><block-text-1/></b></a><button type=\\"button\\" class=\\"navbar-toggler\\" data-toggle=\\"collapse\\" data-target=\\"#top_menu_collapse\\"><span class=\\"navbar-toggler-icon\\"/></button><div class=\\"collapse navbar-collapse\\" id=\\"top_menu_collapse\\" aria-expanded=\\"false\\"><ul class=\\"nav navbar-nav ml-auto text-right\\" id=\\"top_menu\\"><block-child-0/><li class=\\"nav-item divider\\"/><block-child-1/></ul><div><div class=\\"input-group input-group-sm\\"><div class=\\"input-group-prepend input-group-sm\\"><button class=\\"btn btn-default fa fa-cog\\" title=\\"Settings\\" block-handler-2=\\"click\\"/><button class=\\"btn btn-default\\" block-handler-3=\\"click\\"> More </button><block-child-2/></div><input class=\\"form-control\\" type=\\"text\\" placeholder=\\"Search\\" aria-label=\\"Search\\" name=\\"search\\" block-attribute-4=\\"value\\" block-handler-5=\\"keyup\\" block-handler-6=\\"change\\" block-ref=\\"7\\"/><div class=\\"input-group-append\\"><button class=\\"btn btn-default fa fa-eraser\\" block-handler-8=\\"click\\"/></div></div></div></div></nav></header><div class=\\"container-fluid\\" block-ref=\\"9\\"><div class=\\"row\\"><!--div class=\\"form-group col-md-6\\">
                       <h5>Search options</h5>

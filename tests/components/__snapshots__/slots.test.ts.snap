@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`slots can define a default content 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -15,7 +15,7 @@ exports[`slots can define a default content 1`] = `
 `;
 
 exports[`slots can define a default content 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -34,7 +34,7 @@ exports[`slots can define a default content 2`] = `
 `;
 
 exports[`slots can define and call slots 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, markRaw } = helpers;
@@ -60,7 +60,7 @@ exports[`slots can define and call slots 1`] = `
 `;
 
 exports[`slots can define and call slots 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -76,7 +76,7 @@ exports[`slots can define and call slots 2`] = `
 `;
 
 exports[`slots can define and call slots with bound params 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, bind, markRaw } = helpers;
@@ -93,7 +93,7 @@ exports[`slots can define and call slots with bound params 1`] = `
 `;
 
 exports[`slots can define and call slots with bound params 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -107,7 +107,7 @@ exports[`slots can define and call slots with bound params 2`] = `
 `;
 
 exports[`slots can define and call slots with params 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, markRaw } = helpers;
@@ -133,7 +133,7 @@ exports[`slots can define and call slots with params 1`] = `
 `;
 
 exports[`slots can define and call slots with params 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -151,7 +151,7 @@ exports[`slots can define and call slots with params 2`] = `
 `;
 
 exports[`slots can render node with t-ref and Component in same slot 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -173,7 +173,7 @@ exports[`slots can render node with t-ref and Component in same slot 1`] = `
 `;
 
 exports[`slots can render node with t-ref and Component in same slot 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -185,7 +185,7 @@ exports[`slots can render node with t-ref and Component in same slot 2`] = `
 `;
 
 exports[`slots can render only empty slot 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -197,7 +197,7 @@ exports[`slots can render only empty slot 1`] = `
 `;
 
 exports[`slots can use component in default-content of t-slot 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -208,7 +208,7 @@ exports[`slots can use component in default-content of t-slot 1`] = `
 `;
 
 exports[`slots can use component in default-content of t-slot 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -224,7 +224,7 @@ exports[`slots can use component in default-content of t-slot 2`] = `
 `;
 
 exports[`slots can use component in default-content of t-slot 3`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -235,7 +235,7 @@ exports[`slots can use component in default-content of t-slot 3`] = `
 `;
 
 exports[`slots can use t-call in default-content of t-slot 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -246,11 +246,11 @@ exports[`slots can use t-call in default-content of t-slot 1`] = `
 `;
 
 exports[`slots can use t-call in default-content of t-slot 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { callSlot, getTemplate } = helpers;
-  const callTemplate_1 = getTemplate(\`__template__999\`);
+  let { callSlot } = helpers;
+  const callTemplate_1 = app.getTemplate(\`__template__999\`);
   
   function defaultContent1(ctx, node, key = \\"\\") {
     return callTemplate_1.call(this, ctx, node, key + \`__1\`);
@@ -263,7 +263,7 @@ exports[`slots can use t-call in default-content of t-slot 2`] = `
 `;
 
 exports[`slots can use t-call in default-content of t-slot 3`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -274,7 +274,7 @@ exports[`slots can use t-call in default-content of t-slot 3`] = `
 `;
 
 exports[`slots content is the default slot (variation) 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -292,7 +292,7 @@ exports[`slots content is the default slot (variation) 1`] = `
 `;
 
 exports[`slots content is the default slot (variation) 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -304,7 +304,7 @@ exports[`slots content is the default slot (variation) 2`] = `
 `;
 
 exports[`slots content is the default slot 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -324,7 +324,7 @@ exports[`slots content is the default slot 1`] = `
 `;
 
 exports[`slots content is the default slot 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -339,7 +339,7 @@ exports[`slots content is the default slot 2`] = `
 `;
 
 exports[`slots default content is not rendered if named slot is provided 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, markRaw } = helpers;
@@ -359,7 +359,7 @@ exports[`slots default content is not rendered if named slot is provided 1`] = `
 `;
 
 exports[`slots default content is not rendered if named slot is provided 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -378,7 +378,7 @@ exports[`slots default content is not rendered if named slot is provided 2`] = `
 `;
 
 exports[`slots default content is not rendered if slot is provided 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -397,7 +397,7 @@ exports[`slots default content is not rendered if slot is provided 1`] = `
 `;
 
 exports[`slots default content is not rendered if slot is provided 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -416,7 +416,7 @@ exports[`slots default content is not rendered if slot is provided 2`] = `
 `;
 
 exports[`slots default slot next to named slot, with default content 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, markRaw } = helpers;
@@ -436,7 +436,7 @@ exports[`slots default slot next to named slot, with default content 1`] = `
 `;
 
 exports[`slots default slot next to named slot, with default content 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -460,7 +460,7 @@ exports[`slots default slot next to named slot, with default content 2`] = `
 `;
 
 exports[`slots default slot with params with - in it 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -476,7 +476,7 @@ exports[`slots default slot with params with - in it 1`] = `
 `;
 
 exports[`slots default slot with params with - in it 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -488,7 +488,7 @@ exports[`slots default slot with params with - in it 2`] = `
 `;
 
 exports[`slots default slot with slot scope: shorthand syntax 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -510,7 +510,7 @@ exports[`slots default slot with slot scope: shorthand syntax 1`] = `
 `;
 
 exports[`slots default slot with slot scope: shorthand syntax 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -525,7 +525,7 @@ exports[`slots default slot with slot scope: shorthand syntax 2`] = `
 `;
 
 exports[`slots default slot work with text nodes (variation) 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -541,7 +541,7 @@ exports[`slots default slot work with text nodes (variation) 1`] = `
 `;
 
 exports[`slots default slot work with text nodes (variation) 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -553,7 +553,7 @@ exports[`slots default slot work with text nodes (variation) 2`] = `
 `;
 
 exports[`slots default slot work with text nodes 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -572,7 +572,7 @@ exports[`slots default slot work with text nodes 1`] = `
 `;
 
 exports[`slots default slot work with text nodes 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -587,7 +587,7 @@ exports[`slots default slot work with text nodes 2`] = `
 `;
 
 exports[`slots dynamic t-slot call 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, markRaw } = helpers;
@@ -616,7 +616,7 @@ exports[`slots dynamic t-slot call 1`] = `
 `;
 
 exports[`slots dynamic t-slot call 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -633,7 +633,7 @@ exports[`slots dynamic t-slot call 2`] = `
 `;
 
 exports[`slots dynamic t-slot call with default 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, markRaw } = helpers;
@@ -662,7 +662,7 @@ exports[`slots dynamic t-slot call with default 1`] = `
 `;
 
 exports[`slots dynamic t-slot call with default 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -682,7 +682,7 @@ exports[`slots dynamic t-slot call with default 2`] = `
 `;
 
 exports[`slots fun: two calls to the same slot 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -698,7 +698,7 @@ exports[`slots fun: two calls to the same slot 1`] = `
 `;
 
 exports[`slots fun: two calls to the same slot 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -712,7 +712,7 @@ exports[`slots fun: two calls to the same slot 2`] = `
 `;
 
 exports[`slots missing slots are ignored 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -726,7 +726,7 @@ exports[`slots missing slots are ignored 1`] = `
 `;
 
 exports[`slots missing slots are ignored 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -742,7 +742,7 @@ exports[`slots missing slots are ignored 2`] = `
 `;
 
 exports[`slots mix of slots, t-call, t-call with body, and giving own props child 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -753,7 +753,7 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 `;
 
 exports[`slots mix of slots, t-call, t-call with body, and giving own props child 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -769,11 +769,11 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 `;
 
 exports[`slots mix of slots, t-call, t-call with body, and giving own props child 3`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { capture, getTemplate, markRaw } = helpers;
-  const callTemplate_1 = getTemplate(\`__template__1002\`);
+  let { capture, markRaw } = helpers;
+  const callTemplate_1 = app.getTemplate(\`__template__1002\`);
   
   function slot1(ctx, node, key = \\"\\") {
     const b2 = text(\`[A]\`);
@@ -789,11 +789,11 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 `;
 
 exports[`slots mix of slots, t-call, t-call with body, and giving own props child 4`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, getTemplate } = helpers;
-  const callTemplate_1 = getTemplate(\`__template__1001\`);
+  let { isBoundary, withDefault, setContextValue } = helpers;
+  const callTemplate_1 = app.getTemplate(\`__template__1001\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -810,7 +810,7 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 `;
 
 exports[`slots mix of slots, t-call, t-call with body, and giving own props child 5`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -824,7 +824,7 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 `;
 
 exports[`slots mix of slots, t-call, t-call with body, and giving own props child 6`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -837,7 +837,7 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 `;
 
 exports[`slots mix of slots, t-call, t-call with body, and giving own props child 7`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -851,7 +851,7 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 `;
 
 exports[`slots multiple roots are allowed in a default slot 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -874,7 +874,7 @@ exports[`slots multiple roots are allowed in a default slot 1`] = `
 `;
 
 exports[`slots multiple roots are allowed in a default slot 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -889,7 +889,7 @@ exports[`slots multiple roots are allowed in a default slot 2`] = `
 `;
 
 exports[`slots multiple roots are allowed in a named slot 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, markRaw } = helpers;
@@ -913,7 +913,7 @@ exports[`slots multiple roots are allowed in a named slot 1`] = `
 `;
 
 exports[`slots multiple roots are allowed in a named slot 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -928,7 +928,7 @@ exports[`slots multiple roots are allowed in a named slot 2`] = `
 `;
 
 exports[`slots multiple slots containing components 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, markRaw } = helpers;
@@ -949,7 +949,7 @@ exports[`slots multiple slots containing components 1`] = `
 `;
 
 exports[`slots multiple slots containing components 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -965,7 +965,7 @@ exports[`slots multiple slots containing components 2`] = `
 `;
 
 exports[`slots multiple slots containing components 3`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -979,7 +979,7 @@ exports[`slots multiple slots containing components 3`] = `
 `;
 
 exports[`slots named slot inside slot 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, markRaw } = helpers;
@@ -1012,7 +1012,7 @@ exports[`slots named slot inside slot 1`] = `
 `;
 
 exports[`slots named slot inside slot 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -1028,7 +1028,7 @@ exports[`slots named slot inside slot 2`] = `
 `;
 
 exports[`slots named slot inside slot, part 3 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, markRaw } = helpers;
@@ -1061,7 +1061,7 @@ exports[`slots named slot inside slot, part 3 1`] = `
 `;
 
 exports[`slots named slot inside slot, part 3 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -1077,7 +1077,7 @@ exports[`slots named slot inside slot, part 3 2`] = `
 `;
 
 exports[`slots named slots can define a default content 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -1091,7 +1091,7 @@ exports[`slots named slots can define a default content 1`] = `
 `;
 
 exports[`slots named slots can define a default content 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -1110,7 +1110,7 @@ exports[`slots named slots can define a default content 2`] = `
 `;
 
 exports[`slots named slots inside slot, again 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, markRaw } = helpers;
@@ -1143,7 +1143,7 @@ exports[`slots named slots inside slot, again 1`] = `
 `;
 
 exports[`slots named slots inside slot, again 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -1168,7 +1168,7 @@ exports[`slots named slots inside slot, again 2`] = `
 `;
 
 exports[`slots nested slots in same template 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -1191,7 +1191,7 @@ exports[`slots nested slots in same template 1`] = `
 `;
 
 exports[`slots nested slots in same template 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -1206,7 +1206,7 @@ exports[`slots nested slots in same template 2`] = `
 `;
 
 exports[`slots nested slots in same template 3`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -1221,7 +1221,7 @@ exports[`slots nested slots in same template 3`] = `
 `;
 
 exports[`slots nested slots in same template 4`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -1234,7 +1234,7 @@ exports[`slots nested slots in same template 4`] = `
 `;
 
 exports[`slots nested slots: evaluation context and parented relationship 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -1250,7 +1250,7 @@ exports[`slots nested slots: evaluation context and parented relationship 1`] = 
 `;
 
 exports[`slots nested slots: evaluation context and parented relationship 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot, markRaw } = helpers;
@@ -1266,7 +1266,7 @@ exports[`slots nested slots: evaluation context and parented relationship 2`] = 
 `;
 
 exports[`slots nested slots: evaluation context and parented relationship 3`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -1281,7 +1281,7 @@ exports[`slots nested slots: evaluation context and parented relationship 3`] = 
 `;
 
 exports[`slots nested slots: evaluation context and parented relationship 4`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -1295,7 +1295,7 @@ exports[`slots nested slots: evaluation context and parented relationship 4`] = 
 `;
 
 exports[`slots no named slot content => just no children 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -1306,7 +1306,7 @@ exports[`slots no named slot content => just no children 1`] = `
 `;
 
 exports[`slots no named slot content => just no children 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -1321,7 +1321,7 @@ exports[`slots no named slot content => just no children 2`] = `
 `;
 
 exports[`slots simple default slot 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -1337,7 +1337,7 @@ exports[`slots simple default slot 1`] = `
 `;
 
 exports[`slots simple default slot 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -1352,7 +1352,7 @@ exports[`slots simple default slot 2`] = `
 `;
 
 exports[`slots simple default slot with params 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -1374,7 +1374,7 @@ exports[`slots simple default slot with params 1`] = `
 `;
 
 exports[`slots simple default slot with params 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -1389,7 +1389,7 @@ exports[`slots simple default slot with params 2`] = `
 `;
 
 exports[`slots simple default slot with params and bound function 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -1405,7 +1405,7 @@ exports[`slots simple default slot with params and bound function 1`] = `
 `;
 
 exports[`slots simple default slot with params and bound function 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot, bind } = helpers;
@@ -1417,7 +1417,7 @@ exports[`slots simple default slot with params and bound function 2`] = `
 `;
 
 exports[`slots simple default slot, variation 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -1433,7 +1433,7 @@ exports[`slots simple default slot, variation 1`] = `
 `;
 
 exports[`slots simple default slot, variation 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -1445,7 +1445,7 @@ exports[`slots simple default slot, variation 2`] = `
 `;
 
 exports[`slots simple dynamic slot with slot scope 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, markRaw } = helpers;
@@ -1468,7 +1468,7 @@ exports[`slots simple dynamic slot with slot scope 1`] = `
 `;
 
 exports[`slots simple dynamic slot with slot scope 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -1484,7 +1484,7 @@ exports[`slots simple dynamic slot with slot scope 2`] = `
 `;
 
 exports[`slots simple named and empty slot -- 2 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, markRaw } = helpers;
@@ -1497,7 +1497,7 @@ exports[`slots simple named and empty slot -- 2 1`] = `
 `;
 
 exports[`slots simple named and empty slot -- 2 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -1516,7 +1516,7 @@ exports[`slots simple named and empty slot -- 2 2`] = `
 `;
 
 exports[`slots simple named and empty slot 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, markRaw } = helpers;
@@ -1533,7 +1533,7 @@ exports[`slots simple named and empty slot 1`] = `
 `;
 
 exports[`slots simple named and empty slot 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -1549,7 +1549,7 @@ exports[`slots simple named and empty slot 2`] = `
 `;
 
 exports[`slots simple slot with slot scope 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, markRaw } = helpers;
@@ -1572,7 +1572,7 @@ exports[`slots simple slot with slot scope 1`] = `
 `;
 
 exports[`slots simple slot with slot scope 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -1587,11 +1587,11 @@ exports[`slots simple slot with slot scope 2`] = `
 `;
 
 exports[`slots slot and (inline) t-call 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { capture, getTemplate, markRaw } = helpers;
-  const callTemplate_1 = getTemplate(\`__template__999\`);
+  let { capture, markRaw } = helpers;
+  const callTemplate_1 = app.getTemplate(\`__template__999\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1608,7 +1608,7 @@ exports[`slots slot and (inline) t-call 1`] = `
 `;
 
 exports[`slots slot and (inline) t-call 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -1621,7 +1621,7 @@ exports[`slots slot and (inline) t-call 2`] = `
 `;
 
 exports[`slots slot and (inline) t-call 3`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -1636,11 +1636,11 @@ exports[`slots slot and (inline) t-call 3`] = `
 `;
 
 exports[`slots slot and t-call 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { capture, getTemplate, markRaw } = helpers;
-  const callTemplate_1 = getTemplate(\`__template__999\`);
+  let { capture, markRaw } = helpers;
+  const callTemplate_1 = app.getTemplate(\`__template__999\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1657,7 +1657,7 @@ exports[`slots slot and t-call 1`] = `
 `;
 
 exports[`slots slot and t-call 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -1670,7 +1670,7 @@ exports[`slots slot and t-call 2`] = `
 `;
 
 exports[`slots slot and t-call 3`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -1685,7 +1685,7 @@ exports[`slots slot and t-call 3`] = `
 `;
 
 exports[`slots slot and t-esc 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -1704,7 +1704,7 @@ exports[`slots slot and t-esc 1`] = `
 `;
 
 exports[`slots slot and t-esc 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -1719,7 +1719,7 @@ exports[`slots slot and t-esc 2`] = `
 `;
 
 exports[`slots slot are properly rendered if inner props are changed 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -1740,7 +1740,7 @@ exports[`slots slot are properly rendered if inner props are changed 1`] = `
 `;
 
 exports[`slots slot are properly rendered if inner props are changed 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -1755,7 +1755,7 @@ exports[`slots slot are properly rendered if inner props are changed 2`] = `
 `;
 
 exports[`slots slot are properly rendered if inner props are changed 3`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -1769,7 +1769,7 @@ exports[`slots slot are properly rendered if inner props are changed 3`] = `
 `;
 
 exports[`slots slot content has different key from other content -- dynamic slot 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -1785,7 +1785,7 @@ exports[`slots slot content has different key from other content -- dynamic slot
 `;
 
 exports[`slots slot content has different key from other content -- dynamic slot 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -1800,7 +1800,7 @@ exports[`slots slot content has different key from other content -- dynamic slot
 `;
 
 exports[`slots slot content has different key from other content -- dynamic slot 3`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -1814,7 +1814,7 @@ exports[`slots slot content has different key from other content -- dynamic slot
 `;
 
 exports[`slots slot content has different key from other content -- static slot 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -1830,7 +1830,7 @@ exports[`slots slot content has different key from other content -- static slot 
 `;
 
 exports[`slots slot content has different key from other content -- static slot 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -1844,7 +1844,7 @@ exports[`slots slot content has different key from other content -- static slot 
 `;
 
 exports[`slots slot content has different key from other content -- static slot 3`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -1858,7 +1858,7 @@ exports[`slots slot content has different key from other content -- static slot 
 `;
 
 exports[`slots slot content is bound to caller (variation) 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, isBoundary, withDefault, setContextValue, markRaw } = helpers;
@@ -1881,7 +1881,7 @@ exports[`slots slot content is bound to caller (variation) 1`] = `
 `;
 
 exports[`slots slot content is bound to caller (variation) 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -1896,7 +1896,7 @@ exports[`slots slot content is bound to caller (variation) 2`] = `
 `;
 
 exports[`slots slot content is bound to caller 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -1915,7 +1915,7 @@ exports[`slots slot content is bound to caller 1`] = `
 `;
 
 exports[`slots slot content is bound to caller 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -1930,7 +1930,7 @@ exports[`slots slot content is bound to caller 2`] = `
 `;
 
 exports[`slots slot preserves properly parented relationship 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -1949,7 +1949,7 @@ exports[`slots slot preserves properly parented relationship 1`] = `
 `;
 
 exports[`slots slot preserves properly parented relationship 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -1961,7 +1961,7 @@ exports[`slots slot preserves properly parented relationship 2`] = `
 `;
 
 exports[`slots slot preserves properly parented relationship 3`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -1972,11 +1972,11 @@ exports[`slots slot preserves properly parented relationship 3`] = `
 `;
 
 exports[`slots slot preserves properly parented relationship, even through t-call 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { capture, getTemplate, markRaw } = helpers;
-  const callTemplate_1 = getTemplate(\`sub\`);
+  let { capture, markRaw } = helpers;
+  const callTemplate_1 = app.getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1993,7 +1993,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
 `;
 
 exports[`slots slot preserves properly parented relationship, even through t-call 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -2004,7 +2004,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
 `;
 
 exports[`slots slot preserves properly parented relationship, even through t-call 3`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -2016,7 +2016,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
 `;
 
 exports[`slots slot preserves properly parented relationship, even through t-call 4`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -2027,7 +2027,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
 `;
 
 exports[`slots slots and wrapper components 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -2043,7 +2043,7 @@ exports[`slots slots and wrapper components 1`] = `
 `;
 
 exports[`slots slots and wrapper components 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -2058,7 +2058,7 @@ exports[`slots slots and wrapper components 2`] = `
 `;
 
 exports[`slots slots are properly bound to correct component 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -2069,7 +2069,7 @@ exports[`slots slots are properly bound to correct component 1`] = `
 `;
 
 exports[`slots slots are properly bound to correct component 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot, isBoundary, withDefault, setContextValue } = helpers;
@@ -2092,7 +2092,7 @@ exports[`slots slots are properly bound to correct component 2`] = `
 `;
 
 exports[`slots slots are rendered with proper context 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, markRaw } = helpers;
@@ -2115,7 +2115,7 @@ exports[`slots slots are rendered with proper context 1`] = `
 `;
 
 exports[`slots slots are rendered with proper context 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -2130,7 +2130,7 @@ exports[`slots slots are rendered with proper context 2`] = `
 `;
 
 exports[`slots slots are rendered with proper context, part 2 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { prepareList, capture, markRaw, withKey } = helpers;
@@ -2161,7 +2161,7 @@ exports[`slots slots are rendered with proper context, part 2 1`] = `
 `;
 
 exports[`slots slots are rendered with proper context, part 2 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -2177,7 +2177,7 @@ exports[`slots slots are rendered with proper context, part 2 2`] = `
 `;
 
 exports[`slots slots are rendered with proper context, part 3 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { prepareList, isBoundary, withDefault, setContextValue, capture, markRaw, withKey } = helpers;
@@ -2209,7 +2209,7 @@ exports[`slots slots are rendered with proper context, part 3 1`] = `
 `;
 
 exports[`slots slots are rendered with proper context, part 3 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -2225,7 +2225,7 @@ exports[`slots slots are rendered with proper context, part 3 2`] = `
 `;
 
 exports[`slots slots are rendered with proper context, part 4 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { isBoundary, withDefault, setContextValue, capture, markRaw } = helpers;
@@ -2248,7 +2248,7 @@ exports[`slots slots are rendered with proper context, part 4 1`] = `
 `;
 
 exports[`slots slots are rendered with proper context, part 4 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -2264,7 +2264,7 @@ exports[`slots slots are rendered with proper context, part 4 2`] = `
 `;
 
 exports[`slots slots in slots, with vars 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { isBoundary, withDefault, setContextValue, capture, markRaw } = helpers;
@@ -2289,7 +2289,7 @@ exports[`slots slots in slots, with vars 1`] = `
 `;
 
 exports[`slots slots in slots, with vars 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot, markRaw } = helpers;
@@ -2308,7 +2308,7 @@ exports[`slots slots in slots, with vars 2`] = `
 `;
 
 exports[`slots slots in slots, with vars 3`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -2323,7 +2323,7 @@ exports[`slots slots in slots, with vars 3`] = `
 `;
 
 exports[`slots slots in t-foreach and re-rendering 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { prepareList, capture, markRaw, withKey } = helpers;
@@ -2351,7 +2351,7 @@ exports[`slots slots in t-foreach and re-rendering 1`] = `
 `;
 
 exports[`slots slots in t-foreach and re-rendering 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -2367,7 +2367,7 @@ exports[`slots slots in t-foreach and re-rendering 2`] = `
 `;
 
 exports[`slots slots in t-foreach in t-foreach 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { prepareList, capture, markRaw, withKey } = helpers;
@@ -2410,7 +2410,7 @@ exports[`slots slots in t-foreach in t-foreach 1`] = `
 `;
 
 exports[`slots slots in t-foreach in t-foreach 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -2425,7 +2425,7 @@ exports[`slots slots in t-foreach in t-foreach 2`] = `
 `;
 
 exports[`slots slots in t-foreach with t-set and re-rendering 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { prepareList, isBoundary, withDefault, setContextValue, capture, markRaw, withKey } = helpers;
@@ -2456,7 +2456,7 @@ exports[`slots slots in t-foreach with t-set and re-rendering 1`] = `
 `;
 
 exports[`slots slots in t-foreach with t-set and re-rendering 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -2472,7 +2472,7 @@ exports[`slots slots in t-foreach with t-set and re-rendering 2`] = `
 `;
 
 exports[`slots t-debug on a t-set-slot (defining a slot) 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, markRaw } = helpers;
@@ -2493,7 +2493,7 @@ exports[`slots t-debug on a t-set-slot (defining a slot) 1`] = `
 `;
 
 exports[`slots t-debug on a t-set-slot (defining a slot) 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -2508,7 +2508,7 @@ exports[`slots t-debug on a t-set-slot (defining a slot) 2`] = `
 `;
 
 exports[`slots t-set t-value in a slot 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, isBoundary, withDefault, setContextValue, markRaw } = helpers;
@@ -2531,7 +2531,7 @@ exports[`slots t-set t-value in a slot 1`] = `
 `;
 
 exports[`slots t-set t-value in a slot 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -2546,11 +2546,11 @@ exports[`slots t-set t-value in a slot 2`] = `
 `;
 
 exports[`slots t-slot in recursive templates 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { capture, prepareList, isBoundary, withDefault, setContextValue, getTemplate, withKey, markRaw } = helpers;
-  const callTemplate_1 = getTemplate(\`_test_recursive_template\`);
+  let { capture, prepareList, isBoundary, withDefault, setContextValue, withKey, markRaw } = helpers;
+  const callTemplate_1 = app.getTemplate(\`_test_recursive_template\`);
   
   function slot1(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -2591,7 +2591,7 @@ exports[`slots t-slot in recursive templates 1`] = `
 `;
 
 exports[`slots t-slot in recursive templates 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -2606,7 +2606,7 @@ exports[`slots t-slot in recursive templates 2`] = `
 `;
 
 exports[`slots t-slot nested within another slot 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -2625,7 +2625,7 @@ exports[`slots t-slot nested within another slot 1`] = `
 `;
 
 exports[`slots t-slot nested within another slot 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot, markRaw } = helpers;
@@ -2648,7 +2648,7 @@ exports[`slots t-slot nested within another slot 2`] = `
 `;
 
 exports[`slots t-slot nested within another slot 3`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -2663,7 +2663,7 @@ exports[`slots t-slot nested within another slot 3`] = `
 `;
 
 exports[`slots t-slot nested within another slot 4`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -2678,7 +2678,7 @@ exports[`slots t-slot nested within another slot 4`] = `
 `;
 
 exports[`slots t-slot nested within another slot 5`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -2691,7 +2691,7 @@ exports[`slots t-slot nested within another slot 5`] = `
 `;
 
 exports[`slots t-slot scope context 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -2709,7 +2709,7 @@ exports[`slots t-slot scope context 1`] = `
 `;
 
 exports[`slots t-slot scope context 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot, markRaw } = helpers;
@@ -2729,7 +2729,7 @@ exports[`slots t-slot scope context 2`] = `
 `;
 
 exports[`slots t-slot scope context 3`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -2741,10 +2741,11 @@ exports[`slots t-slot scope context 3`] = `
 `;
 
 exports[`slots t-slot within dynamic t-call 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
-  let { capture, call, markRaw } = helpers;
+  let { capture, markRaw } = helpers;
+  const call = app.callTemplate.bind(app);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -2762,7 +2763,7 @@ exports[`slots t-slot within dynamic t-call 1`] = `
 `;
 
 exports[`slots t-slot within dynamic t-call 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -2777,7 +2778,7 @@ exports[`slots t-slot within dynamic t-call 2`] = `
 `;
 
 exports[`slots t-slot within dynamic t-call 3`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -2791,7 +2792,7 @@ exports[`slots t-slot within dynamic t-call 3`] = `
 `;
 
 exports[`slots t-slot within dynamic t-call 4`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -2804,7 +2805,7 @@ exports[`slots t-slot within dynamic t-call 4`] = `
 `;
 
 exports[`slots template can just return a slot 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -2823,7 +2824,7 @@ exports[`slots template can just return a slot 1`] = `
 `;
 
 exports[`slots template can just return a slot 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -2835,7 +2836,7 @@ exports[`slots template can just return a slot 2`] = `
 `;
 
 exports[`slots template can just return a slot 3`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   

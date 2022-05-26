@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`hooks autofocus hook input in a t-if 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -22,7 +22,7 @@ exports[`hooks autofocus hook input in a t-if 1`] = `
 `;
 
 exports[`hooks autofocus hook simple input 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -38,7 +38,7 @@ exports[`hooks autofocus hook simple input 1`] = `
 `;
 
 exports[`hooks can use onWillStart, onWillUpdateProps 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -49,7 +49,7 @@ exports[`hooks can use onWillStart, onWillUpdateProps 1`] = `
 `;
 
 exports[`hooks can use onWillStart, onWillUpdateProps 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -63,7 +63,7 @@ exports[`hooks can use onWillStart, onWillUpdateProps 2`] = `
 `;
 
 exports[`hooks can use useComponent 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -76,7 +76,7 @@ exports[`hooks can use useComponent 1`] = `
 `;
 
 exports[`hooks can use useEnv 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -90,7 +90,7 @@ exports[`hooks can use useEnv 1`] = `
 `;
 
 exports[`hooks mounted callbacks should be called in reverse order from willUnmount callbacks 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -104,7 +104,7 @@ exports[`hooks mounted callbacks should be called in reverse order from willUnmo
 `;
 
 exports[`hooks parent and child env (with useChildSubEnv then useSubEnv) 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -117,7 +117,7 @@ exports[`hooks parent and child env (with useChildSubEnv then useSubEnv) 1`] = `
 `;
 
 exports[`hooks parent and child env (with useChildSubEnv then useSubEnv) 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -135,7 +135,7 @@ exports[`hooks parent and child env (with useChildSubEnv then useSubEnv) 2`] = `
 `;
 
 exports[`hooks parent and child env (with useChildSubEnv) 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -148,7 +148,7 @@ exports[`hooks parent and child env (with useChildSubEnv) 1`] = `
 `;
 
 exports[`hooks parent and child env (with useChildSubEnv) 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -162,7 +162,7 @@ exports[`hooks parent and child env (with useChildSubEnv) 2`] = `
 `;
 
 exports[`hooks parent and child env (with useSubEnv) 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -175,7 +175,7 @@ exports[`hooks parent and child env (with useSubEnv) 1`] = `
 `;
 
 exports[`hooks parent and child env (with useSubEnv) 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -189,7 +189,7 @@ exports[`hooks parent and child env (with useSubEnv) 2`] = `
 `;
 
 exports[`hooks two different call to willPatch/patched should work 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -203,7 +203,7 @@ exports[`hooks two different call to willPatch/patched should work 1`] = `
 `;
 
 exports[`hooks useChildSubEnv does not pollute user env 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -217,7 +217,7 @@ exports[`hooks useChildSubEnv does not pollute user env 1`] = `
 `;
 
 exports[`hooks useChildSubEnv supports arbitrary descriptor 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -228,7 +228,7 @@ exports[`hooks useChildSubEnv supports arbitrary descriptor 1`] = `
 `;
 
 exports[`hooks useChildSubEnv supports arbitrary descriptor 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -243,7 +243,7 @@ exports[`hooks useChildSubEnv supports arbitrary descriptor 2`] = `
 `;
 
 exports[`hooks useEffect hook dependencies prevent effects from rerunning when unchanged 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -256,7 +256,7 @@ exports[`hooks useEffect hook dependencies prevent effects from rerunning when u
 `;
 
 exports[`hooks useEffect hook effect can depend on stuff in dom 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -275,7 +275,7 @@ exports[`hooks useEffect hook effect can depend on stuff in dom 1`] = `
 `;
 
 exports[`hooks useEffect hook effect runs on mount, is reapplied on patch, and is cleaned up on unmount and before reapplying 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -288,7 +288,7 @@ exports[`hooks useEffect hook effect runs on mount, is reapplied on patch, and i
 `;
 
 exports[`hooks useEffect hook effect with empty dependency list never reruns 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -302,7 +302,7 @@ exports[`hooks useEffect hook effect with empty dependency list never reruns 1`]
 `;
 
 exports[`hooks useEffect hook properly behaves when the effect function throws 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -315,7 +315,7 @@ exports[`hooks useEffect hook properly behaves when the effect function throws 1
 `;
 
 exports[`hooks useExternalListener 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -330,7 +330,7 @@ exports[`hooks useExternalListener 1`] = `
 `;
 
 exports[`hooks useExternalListener 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -344,7 +344,7 @@ exports[`hooks useExternalListener 2`] = `
 `;
 
 exports[`hooks useRef hook: basic use 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -360,7 +360,7 @@ exports[`hooks useRef hook: basic use 1`] = `
 `;
 
 exports[`hooks useSubEnv modifies user env 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -374,7 +374,7 @@ exports[`hooks useSubEnv modifies user env 1`] = `
 `;
 
 exports[`hooks useSubEnv supports arbitrary descriptor 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -385,7 +385,7 @@ exports[`hooks useSubEnv supports arbitrary descriptor 1`] = `
 `;
 
 exports[`hooks useSubEnv supports arbitrary descriptor 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   

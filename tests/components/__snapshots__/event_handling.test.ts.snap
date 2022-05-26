@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`event handling Invalid handler throws an error 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -15,7 +15,7 @@ exports[`event handling Invalid handler throws an error 1`] = `
 `;
 
 exports[`event handling handler is not called if component is destroyed 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -29,7 +29,7 @@ exports[`event handling handler is not called if component is destroyed 1`] = `
 `;
 
 exports[`event handling handler receive the event as argument 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -45,7 +45,7 @@ exports[`event handling handler receive the event as argument 1`] = `
 `;
 
 exports[`event handling handler receive the event as argument 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -58,7 +58,7 @@ exports[`event handling handler receive the event as argument 2`] = `
 `;
 
 exports[`event handling input blur event is not called if component is destroyed 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -75,7 +75,7 @@ exports[`event handling input blur event is not called if component is destroyed
 `;
 
 exports[`event handling input blur event is not called if component is destroyed 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -89,7 +89,7 @@ exports[`event handling input blur event is not called if component is destroyed
 `;
 
 exports[`event handling objects from scope are properly captured by t-on 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { prepareList, withKey } = helpers;
@@ -115,7 +115,7 @@ exports[`event handling objects from scope are properly captured by t-on 1`] = `
 `;
 
 exports[`event handling support for callable expression in event handler 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -130,7 +130,7 @@ exports[`event handling support for callable expression in event handler 1`] = `
 `;
 
 exports[`event handling t-on with handler bound to dynamic argument on a t-foreach 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { prepareList, withKey } = helpers;

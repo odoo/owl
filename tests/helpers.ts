@@ -92,7 +92,7 @@ export function renderToBdom(template: string, context: any = {}, node?: any): B
     snapshottedTemplates.add(template);
     expect(fn.toString()).toMatchSnapshot();
   }
-  return fn(blockDom, helpers)(context, node);
+  return fn(null as any, blockDom, helpers)(context, node);
 }
 
 export function renderToString(template: string, context: any = {}, node?: any): string {

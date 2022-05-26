@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`t-set slot setted value (with t-set) not accessible with t-esc 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { isBoundary, withDefault, setContextValue, capture, markRaw } = helpers;
@@ -29,7 +29,7 @@ exports[`t-set slot setted value (with t-set) not accessible with t-esc 1`] = `
 `;
 
 exports[`t-set slot setted value (with t-set) not accessible with t-esc 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
@@ -48,7 +48,7 @@ exports[`t-set slot setted value (with t-set) not accessible with t-esc 2`] = `
 `;
 
 exports[`t-set slots with a t-set with a component in body 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, isBoundary, withDefault, LazyValue, safeOutput, markRaw } = helpers;
@@ -74,7 +74,7 @@ exports[`t-set slots with a t-set with a component in body 1`] = `
 `;
 
 exports[`t-set slots with a t-set with a component in body 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -88,7 +88,7 @@ exports[`t-set slots with a t-set with a component in body 2`] = `
 `;
 
 exports[`t-set slots with a t-set with a component in body 3`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -99,7 +99,7 @@ exports[`t-set slots with a t-set with a component in body 3`] = `
 `;
 
 exports[`t-set slots with an t-set with a component in body 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, isBoundary, withDefault, LazyValue, safeOutput, markRaw } = helpers;
@@ -129,7 +129,7 @@ exports[`t-set slots with an t-set with a component in body 1`] = `
 `;
 
 exports[`t-set slots with an t-set with a component in body 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -143,7 +143,7 @@ exports[`t-set slots with an t-set with a component in body 2`] = `
 `;
 
 exports[`t-set slots with an t-set with a component in body 3`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -154,7 +154,7 @@ exports[`t-set slots with an t-set with a component in body 3`] = `
 `;
 
 exports[`t-set slots with an unused t-set with a component in body 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, isBoundary, withDefault, LazyValue, markRaw } = helpers;
@@ -178,7 +178,7 @@ exports[`t-set slots with an unused t-set with a component in body 1`] = `
 `;
 
 exports[`t-set slots with an unused t-set with a component in body 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -192,7 +192,7 @@ exports[`t-set slots with an unused t-set with a component in body 2`] = `
 `;
 
 exports[`t-set t-set can't alter component even if key in component 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
@@ -211,7 +211,7 @@ exports[`t-set t-set can't alter component even if key in component 1`] = `
 `;
 
 exports[`t-set t-set can't alter component if key not in component 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
@@ -230,7 +230,7 @@ exports[`t-set t-set can't alter component if key not in component 1`] = `
 `;
 
 exports[`t-set t-set in t-if 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
@@ -255,7 +255,7 @@ exports[`t-set t-set in t-if 1`] = `
 `;
 
 exports[`t-set t-set not altered by child comp 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
@@ -275,7 +275,7 @@ exports[`t-set t-set not altered by child comp 1`] = `
 `;
 
 exports[`t-set t-set not altered by child comp 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
@@ -294,7 +294,7 @@ exports[`t-set t-set not altered by child comp 2`] = `
 `;
 
 exports[`t-set t-set outside modified in t-if 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
@@ -320,7 +320,7 @@ exports[`t-set t-set outside modified in t-if 1`] = `
 `;
 
 exports[`t-set t-set with a component in body 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { isBoundary, withDefault, LazyValue, safeOutput } = helpers;
@@ -342,7 +342,7 @@ exports[`t-set t-set with a component in body 1`] = `
 `;
 
 exports[`t-set t-set with a component in body 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -353,7 +353,7 @@ exports[`t-set t-set with a component in body 2`] = `
 `;
 
 exports[`t-set t-set with something in body 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { isBoundary, withDefault, LazyValue, safeOutput } = helpers;

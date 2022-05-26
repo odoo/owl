@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`white space handling consecutives whitespaces are condensed into a single space 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -14,7 +14,7 @@ exports[`white space handling consecutives whitespaces are condensed into a sing
 `;
 
 exports[`white space handling nothing is done in pre tags 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -27,7 +27,7 @@ exports[`white space handling nothing is done in pre tags 1`] = `
 `;
 
 exports[`white space handling nothing is done in pre tags 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -42,7 +42,7 @@ exports[`white space handling nothing is done in pre tags 2`] = `
 `;
 
 exports[`white space handling nothing is done in pre tags 3`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -57,7 +57,7 @@ exports[`white space handling nothing is done in pre tags 3`] = `
 `;
 
 exports[`white space handling pre inside a div with a new line 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -70,7 +70,7 @@ exports[`white space handling pre inside a div with a new line 1`] = `
 `;
 
 exports[`white space handling white space only text nodes are condensed into a single space 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -83,7 +83,7 @@ exports[`white space handling white space only text nodes are condensed into a s
 `;
 
 exports[`white space handling whitespace only text nodes with newlines are removed 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   

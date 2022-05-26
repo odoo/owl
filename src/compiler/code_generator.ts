@@ -987,17 +987,18 @@ export class CodeGenerator {
     const key = `key + \`${this.generateComponentKey()}\``;
     if (isDynamic) {
       const templateVar = generateId("template");
+      if (!this.staticDefs.find((d) => d.id === "call")) {
+        this.staticDefs.push({ id: "call", expr: `app.callTemplate.bind(app)` });
+      }
       this.define(templateVar, subTemplate);
       block = this.createBlock(block, "multi", ctx);
-      this.helpers.add("call");
       this.insertBlock(`call(this, ${templateVar}, ctx, node, ${key})`, block!, {
         ...ctx,
         forceNewBlock: !block,
       });
     } else {
       const id = generateId(`callTemplate_`);
-      this.helpers.add("getTemplate");
-      this.staticDefs.push({ id, expr: `getTemplate(${subTemplate})` });
+      this.staticDefs.push({ id, expr: `app.getTemplate(${subTemplate})` });
       block = this.createBlock(block, "multi", ctx);
       this.insertBlock(`${id}.call(this, ctx, node, ${key})`, block!, {
         ...ctx,
@@ -1254,7 +1255,9 @@ export class CodeGenerator {
     }
   }
   compileTPortal(ast: ASTTPortal, ctx: Context) {
-    this.helpers.add("Portal");
+    if (!this.staticDefs.find((d) => d.id === "Portal")) {
+      this.staticDefs.push({ id: "Portal", expr: `app.Portal` });
+    }
 
     let { block } = ctx;
     const name = this.compileInNewTarget("slot", ast.content, ctx);

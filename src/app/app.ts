@@ -5,6 +5,7 @@ import { Scheduler } from "../component/scheduler";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
 import { nodeErrorHandlers } from "../component/error_handling";
 import { validateTarget } from "../utils";
+import { validateProps } from "./template_helpers";
 
 // reimplement dev mode stuff see last change in 0f7a8289a6fb8387c3c1af41c6664b2a8448758f
 
@@ -64,7 +65,7 @@ export class App<
   mount(target: HTMLElement, options?: MountOptions): Promise<Component<P, E> & InstanceType<T>> {
     App.validateTarget(target);
     if (this.dev) {
-      this.helpers.validateProps(this.Root, this.props, { __owl__: { app: this } });
+      validateProps(this.Root, this.props, { __owl__: { app: this } });
     }
     const node = this.makeNode(this.Root, this.props);
     const prom = this.mountNode(node, target, options);

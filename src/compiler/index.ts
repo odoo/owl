@@ -1,10 +1,11 @@
+import type { TemplateSet } from "../app/template_set";
 import type { BDom } from "../blockdom";
 import { CodeGenerator, Config } from "./code_generator";
 import { parse } from "./parser";
 
 export type Template = (context: any, vnode: any, key?: string) => BDom;
 
-export type TemplateFunction = (blocks: any, utils: any) => Template;
+export type TemplateFunction = (app: TemplateSet, bdom: any, helpers: any) => Template;
 
 interface CompileOptions extends Config {
   name?: string;
@@ -26,5 +27,5 @@ export function compile(
   const codeGenerator = new CodeGenerator(ast, { ...options, hasSafeContext });
   const code = codeGenerator.generateCode();
   // template function
-  return new Function("bdom, helpers", code) as TemplateFunction;
+  return new Function("app, bdom, helpers", code) as TemplateFunction;
 }

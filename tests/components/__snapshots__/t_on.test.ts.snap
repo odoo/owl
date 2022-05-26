@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`t-on t-on expression captured in t-foreach 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { isBoundary, withDefault, setContextValue, prepareList, withKey } = helpers;
@@ -31,7 +31,7 @@ exports[`t-on t-on expression captured in t-foreach 1`] = `
 `;
 
 exports[`t-on t-on expression in t-foreach 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { prepareList, withKey } = helpers;
@@ -60,7 +60,7 @@ exports[`t-on t-on expression in t-foreach 1`] = `
 `;
 
 exports[`t-on t-on expression in t-foreach with t-set 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { isBoundary, withDefault, setContextValue, prepareList, withKey } = helpers;
@@ -94,7 +94,7 @@ exports[`t-on t-on expression in t-foreach with t-set 1`] = `
 `;
 
 exports[`t-on t-on method call in t-foreach 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { prepareList, withKey } = helpers;
@@ -122,7 +122,7 @@ exports[`t-on t-on method call in t-foreach 1`] = `
 `;
 
 exports[`t-on t-on on component next to t-on on div 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { createCatcher } = helpers;
@@ -140,7 +140,7 @@ exports[`t-on t-on on component next to t-on on div 1`] = `
 `;
 
 exports[`t-on t-on on component next to t-on on div 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -154,7 +154,7 @@ exports[`t-on t-on on component next to t-on on div 2`] = `
 `;
 
 exports[`t-on t-on on components 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { createCatcher } = helpers;
@@ -168,7 +168,7 @@ exports[`t-on t-on on components 1`] = `
 `;
 
 exports[`t-on t-on on components 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -182,7 +182,7 @@ exports[`t-on t-on on components 2`] = `
 `;
 
 exports[`t-on t-on on components, variation 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { createCatcher } = helpers;
@@ -199,7 +199,7 @@ exports[`t-on t-on on components, variation 1`] = `
 `;
 
 exports[`t-on t-on on components, variation 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -213,7 +213,7 @@ exports[`t-on t-on on components, variation 2`] = `
 `;
 
 exports[`t-on t-on on destroyed components 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -230,7 +230,7 @@ exports[`t-on t-on on destroyed components 1`] = `
 `;
 
 exports[`t-on t-on on destroyed components 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -244,7 +244,7 @@ exports[`t-on t-on on destroyed components 2`] = `
 `;
 
 exports[`t-on t-on on t-set-slots 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { capture, createCatcher, markRaw } = helpers;
@@ -272,7 +272,7 @@ exports[`t-on t-on on t-set-slots 1`] = `
 `;
 
 exports[`t-on t-on on t-set-slots 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot } = helpers;
@@ -284,7 +284,7 @@ exports[`t-on t-on on t-set-slots 2`] = `
 `;
 
 exports[`t-on t-on on t-slots 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { markRaw } = helpers;
@@ -302,7 +302,7 @@ exports[`t-on t-on on t-slots 1`] = `
 `;
 
 exports[`t-on t-on on t-slots 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { callSlot, createCatcher } = helpers;

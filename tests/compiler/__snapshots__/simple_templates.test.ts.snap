@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`simple templates, mostly static can render a table row 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -14,7 +14,7 @@ exports[`simple templates, mostly static can render a table row 1`] = `
 `;
 
 exports[`simple templates, mostly static div with a class attribute 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -27,7 +27,7 @@ exports[`simple templates, mostly static div with a class attribute 1`] = `
 `;
 
 exports[`simple templates, mostly static div with a class attribute with a quote 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -40,7 +40,7 @@ exports[`simple templates, mostly static div with a class attribute with a quote
 `;
 
 exports[`simple templates, mostly static div with a span child node 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -53,7 +53,7 @@ exports[`simple templates, mostly static div with a span child node 1`] = `
 `;
 
 exports[`simple templates, mostly static div with an arbitrary attribute with a quote 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -66,7 +66,7 @@ exports[`simple templates, mostly static div with an arbitrary attribute with a 
 `;
 
 exports[`simple templates, mostly static div with an empty class attribute 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -79,7 +79,7 @@ exports[`simple templates, mostly static div with an empty class attribute 1`] =
 `;
 
 exports[`simple templates, mostly static div with content 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -92,7 +92,7 @@ exports[`simple templates, mostly static div with content 1`] = `
 `;
 
 exports[`simple templates, mostly static dom node with t-esc 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -106,7 +106,7 @@ exports[`simple templates, mostly static dom node with t-esc 1`] = `
 `;
 
 exports[`simple templates, mostly static dom node with t-esc 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -120,7 +120,7 @@ exports[`simple templates, mostly static dom node with t-esc 2`] = `
 `;
 
 exports[`simple templates, mostly static dynamic text value 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -131,7 +131,7 @@ exports[`simple templates, mostly static dynamic text value 1`] = `
 `;
 
 exports[`simple templates, mostly static empty div 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -144,7 +144,7 @@ exports[`simple templates, mostly static empty div 1`] = `
 `;
 
 exports[`simple templates, mostly static empty string 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -155,7 +155,7 @@ exports[`simple templates, mostly static empty string 1`] = `
 `;
 
 exports[`simple templates, mostly static empty string in a template set 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -166,7 +166,7 @@ exports[`simple templates, mostly static empty string in a template set 1`] = `
 `;
 
 exports[`simple templates, mostly static inline template string in t-esc 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -177,7 +177,7 @@ exports[`simple templates, mostly static inline template string in t-esc 1`] = `
 `;
 
 exports[`simple templates, mostly static inline template string with content in t-esc 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
@@ -192,7 +192,7 @@ exports[`simple templates, mostly static inline template string with content in 
 `;
 
 exports[`simple templates, mostly static inline template string with variable in context 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -203,7 +203,7 @@ exports[`simple templates, mostly static inline template string with variable in
 `;
 
 exports[`simple templates, mostly static multiple root nodes 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -219,7 +219,7 @@ exports[`simple templates, mostly static multiple root nodes 1`] = `
 `;
 
 exports[`simple templates, mostly static simple string 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -230,7 +230,7 @@ exports[`simple templates, mostly static simple string 1`] = `
 `;
 
 exports[`simple templates, mostly static simple string in t tag 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -241,7 +241,7 @@ exports[`simple templates, mostly static simple string in t tag 1`] = `
 `;
 
 exports[`simple templates, mostly static static text and dynamic text (no t tag) 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -254,7 +254,7 @@ exports[`simple templates, mostly static static text and dynamic text (no t tag)
 `;
 
 exports[`simple templates, mostly static static text and dynamic text 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -267,7 +267,7 @@ exports[`simple templates, mostly static static text and dynamic text 1`] = `
 `;
 
 exports[`simple templates, mostly static t-esc in dom node 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -281,7 +281,7 @@ exports[`simple templates, mostly static t-esc in dom node 1`] = `
 `;
 
 exports[`simple templates, mostly static t-esc in dom node, variations 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -295,7 +295,7 @@ exports[`simple templates, mostly static t-esc in dom node, variations 1`] = `
 `;
 
 exports[`simple templates, mostly static t-esc in dom node, variations 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -309,7 +309,7 @@ exports[`simple templates, mostly static t-esc in dom node, variations 2`] = `
 `;
 
 exports[`simple templates, mostly static template with multiple t tag with multiple content 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -325,7 +325,7 @@ exports[`simple templates, mostly static template with multiple t tag with multi
 `;
 
 exports[`simple templates, mostly static template with t tag with multiple content 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -342,7 +342,7 @@ exports[`simple templates, mostly static template with t tag with multiple conte
 `;
 
 exports[`simple templates, mostly static two t-escs next to each other 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -355,7 +355,7 @@ exports[`simple templates, mostly static two t-escs next to each other 1`] = `
 `;
 
 exports[`simple templates, mostly static two t-escs next to each other 2`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
@@ -368,7 +368,7 @@ exports[`simple templates, mostly static two t-escs next to each other 2`] = `
 `;
 
 exports[`simple templates, mostly static two t-escs next to each other, in a div 1`] = `
-"function anonymous(bdom, helpers
+"function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   

@@ -14,6 +14,8 @@
   },
   "scripts": {
     "build:bundle": "rollup -c --failAfterWarnings",
+    "build:runtime": "rollup -c --failAfterWarnings runtime",
+    "build:compiler": "rollup -c --failAfterWarnings compiler",
     "build": "npm run build:bundle",
     "test": "jest",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --watch --testTimeout=5000000",
@@ -25,7 +27,8 @@
     "prettier": "prettier {src/*.ts,src/**/*.ts,tests/*.ts,tests/**/*.ts,doc/*.md,doc/**/*.md} --write",
     "check-formatting": "prettier {src/*.ts,src/**/*.ts,tests/*.ts,tests/**/*.ts,doc/*.md,doc/**/*.md} --check",
     "publish": "npm run build && npm publish",
-    "release": "node tools/release.js"
+    "release": "node tools/release.js",
+    "compile_templates": "node tools/compile_xml.js"
   },
   "repository": {
     "type": "git",

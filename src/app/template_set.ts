@@ -118,13 +118,8 @@ export class TemplateSet {
     return this.templates[name];
   }
 
-  _compileTemplate(name: string, template: string | Element) {
-    return compile(template, {
-      name,
-      dev: this.dev,
-      translateFn: this.translateFn,
-      translatableAttributes: this.translatableAttributes,
-    });
+  _compileTemplate(name: string, template: string | Element): ReturnType<typeof compile> {
+    throw new Error(`Unable to compile a template. Please use owl full build instead`);
   }
 
   callTemplate(owner: any, subTemplate: string, ctx: any, parent: any, key: any): any {

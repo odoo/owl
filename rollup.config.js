@@ -3,13 +3,9 @@ import git from "git-rev-sync";
 import typescript from 'rollup-plugin-typescript2';
 import { terser } from "rollup-plugin-terser";
 
-const name = "owl";
-const extend = true;
 
-/**
- * Meta data to be added on the __info__ object.
- * Used to let external tools know the current owl version.
- */
+let input, output;
+
 const outro = `
 __info__.version = '${pkg.version}';
 __info__.date = '${new Date().toISOString()}';
@@ -17,13 +13,39 @@ __info__.hash = '${git.short()}';
 __info__.url = 'https://github.com/odoo/owl';
 `;
 
+switch (process.argv[4]) {
+  case "compiler": 
+    input = "src/compiler/index.ts",
+    output = [
+      getConfigForFormat('cjs', 'dist/compiler.js', ''),
+    ]
+    break;
+  case "runtime":
+    input = "src/index.runtime.ts";
+    output = [
+      getConfigForFormat('esm', addSuffix(pkg.module,  'runtime'), outro),
+      getConfigForFormat('cjs', addSuffix(pkg.main,  'runtime'), outro),
+      getConfigForFormat('iife', addSuffix(pkg.browser,  'runtime'), outro),
+      getConfigForFormat('iife', addSuffix(pkg.browser,  'runtime'), outro, true),
+    ]
+    break;
+  default:
+    input = "src/index.ts",
+    output = [
+      getConfigForFormat('esm', pkg.module, outro),
+      getConfigForFormat('cjs', pkg.main, outro),
+      getConfigForFormat('iife', pkg.browser, outro),
+      getConfigForFormat('iife', pkg.browser, outro, true),
+    ]
+  }
+
 /**
  * Generate from a string depicting a path a new path for the minified version.
  * @param {string} pkgFileName file name
  */
-function generateMinifiedNameFromPkgName(pkgFileName) {
+function addSuffix(pkgFileName, suffix) {
   const parts = pkgFileName.split('.');
-  parts.splice(parts.length - 1, 0, "min");
+  parts.splice(parts.length - 1, 0, suffix);
   return parts.join('.');
 }
 
@@ -33,12 +55,12 @@ function generateMinifiedNameFromPkgName(pkgFileName) {
  * @param {string} generatedFileName generated file name
  * @param {boolean} minified should it be minified
  */
-function getConfigForFormat(format, generatedFileName, minified = false) {
+function getConfigForFormat(format, generatedFileName, outro, minified = false) {
   return {
-    file: minified ? generateMinifiedNameFromPkgName(generatedFileName) : generatedFileName,
+    file: minified ? addSuffix(generatedFileName, "min") : generatedFileName,
     format: format,
-    name: name,
-    extend: extend,
+    name: "owl",
+    extend: true,
     outro: outro,
     freeze: false,
     plugins: minified ? [terser()] : [],
@@ -47,22 +69,8 @@ function getConfigForFormat(format, generatedFileName, minified = false) {
 }
 
 export default {
-  input: "src/index.ts",
-  output: [
-
-    /**
-     * Read about module formats:
-     *  https://auth0.com/blog/javascript-module-systems-showdown/
-     *  https://medium.com/@kelin2025/so-you-wanna-use-es6-modules-714f48b3a953
-     */
-
-    getConfigForFormat('esm', pkg.module),
-    getConfigForFormat('esm', pkg.module, true),
-    getConfigForFormat('cjs', pkg.main),
-    getConfigForFormat('cjs', pkg.main, true),
-    getConfigForFormat('iife', pkg.browser),
-    getConfigForFormat('iife', pkg.browser, true),
-  ],
+  input,
+  output,
   plugins: [
     typescript({
       useTsconfigDeclarationDir: true

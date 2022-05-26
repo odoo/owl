@@ -1,5 +1,5 @@
-import type { App, Env } from "../app/app";
-import { BDom, VNode } from "../blockdom";
+import type { App, Env } from "./app";
+import { BDom, VNode } from "./blockdom";
 import {
   clearReactivesForCallback,
   getSubscriptions,
@@ -8,8 +8,8 @@ import {
   reactive,
   toRaw,
   TARGET,
-} from "../reactivity";
-import { batched, Callback } from "../utils";
+} from "./reactivity";
+import { batched, Callback } from "./utils";
 import { Component, ComponentConstructor } from "./component";
 import { fibersInError, handleError } from "./error_handling";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";

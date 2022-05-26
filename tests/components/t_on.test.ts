@@ -1,6 +1,6 @@
 import { Component, mount, onMounted, useState, xml } from "../../src/index";
 import { elem, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
-import { status } from "../../src/component/status";
+import { status } from "../../src/runtime/status";
 
 snapshotEverything();
 

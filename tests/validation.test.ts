@@ -1,4 +1,4 @@
-import { Schema, validateSchema } from "../src/validation";
+import { Schema, validateSchema } from "../src/runtime/validation";
 
 describe("validateSchema", () => {
   test("simple use", () => {

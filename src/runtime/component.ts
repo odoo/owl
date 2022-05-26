@@ -1,4 +1,4 @@
-import { Schema } from "../validation";
+import { Schema } from "./validation";
 import type { ComponentNode } from "./component_node";
 
 // -----------------------------------------------------------------------------

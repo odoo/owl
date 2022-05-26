@@ -5,7 +5,7 @@ import {
   TestContext,
   makeTestFixture,
 } from "../helpers";
-import { mount, patch } from "../../src/blockdom";
+import { mount, patch } from "../../src/runtime/blockdom";
 
 snapshotEverything();
 

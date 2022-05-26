@@ -1,4 +1,4 @@
-import { createBlock, mount, patch, remove } from "../../src/blockdom";
+import { createBlock, mount, patch, remove } from "../../src/runtime/blockdom";
 import { logStep } from "../helpers";
 import { makeTestFixture } from "./helpers";
 

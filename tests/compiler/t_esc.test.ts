@@ -1,4 +1,4 @@
-import { mount } from "../../src/blockdom";
+import { mount } from "../../src/runtime/blockdom";
 import {
   makeTestFixture,
   renderToBdom,

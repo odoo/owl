@@ -1,4 +1,4 @@
-import { batched, EventBus } from "../src/utils";
+import { batched, EventBus } from "../src/runtime/utils";
 import { nextMicroTick } from "./helpers";
 
 describe("event bus behaviour", () => {

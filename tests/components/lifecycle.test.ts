@@ -7,8 +7,8 @@ import {
   onWillRender,
   onWillDestroy,
   onRendered,
-} from "../../src/component/lifecycle_hooks";
-import { status } from "../../src/component/status";
+} from "../../src/runtime/lifecycle_hooks";
+import { status } from "../../src/runtime/status";
 import {
   elem,
   logStep,

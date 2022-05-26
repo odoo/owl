@@ -1,6 +1,6 @@
 import { App, Component, mount, status, toRaw, useState, xml } from "../../src";
 import { elem, makeTestFixture, nextTick, snapshotEverything, useLogLifecycle } from "../helpers";
-import { markup } from "../../src/utils";
+import { markup } from "../../src/runtime/utils";
 
 let fixture: HTMLElement;
 

@@ -1,8 +1,8 @@
-import { TemplateSet } from "../../src/app/template_set";
-import { mount } from "../../src/blockdom";
+import { TemplateSet } from "../../src/runtime/template_set";
+import { mount } from "../../src/runtime/blockdom";
 import { makeTestFixture, renderToBdom, renderToString, snapshotEverything } from "../helpers";
-import { markup } from "../../src/utils";
-import { STATUS } from "../../src/component/status";
+import { markup } from "../../src/runtime/utils";
+import { STATUS } from "../../src/runtime/status";
 
 snapshotEverything();
 // -----------------------------------------------------------------------------

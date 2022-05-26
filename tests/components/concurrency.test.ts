@@ -11,9 +11,9 @@ import {
   useState,
   xml,
 } from "../../src";
-import { Fiber } from "../../src/component/fibers";
-import { Scheduler } from "../../src/component/scheduler";
-import { status } from "../../src/component/status";
+import { Fiber } from "../../src/runtime/fibers";
+import { Scheduler } from "../../src/runtime/scheduler";
+import { status } from "../../src/runtime/status";
 import {
   makeDeferred,
   makeTestFixture,

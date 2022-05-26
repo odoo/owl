@@ -1,4 +1,4 @@
-import { mount, patch } from "../../src/blockdom";
+import { mount, patch } from "../../src/runtime/blockdom";
 import { makeTestFixture, renderToBdom, renderToString, snapshotEverything } from "../helpers";
 
 snapshotEverything();

@@ -1,7 +1,7 @@
-import { TemplateSet } from "./app/template_set";
+import { TemplateSet } from "./runtime/template_set";
 import { compile } from "./compiler";
 
-export * from "./index.runtime";
+export * from "./runtime";
 
 TemplateSet.prototype._compileTemplate = function _compileTemplate(
   name: string,

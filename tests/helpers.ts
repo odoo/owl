@@ -15,9 +15,9 @@ import {
   useComponent,
   xml,
 } from "../src";
-import { helpers } from "../src/app/template_helpers";
-import { TemplateSet, globalTemplates } from "../src/app/template_set";
-import { BDom } from "../src/blockdom";
+import { helpers } from "../src/runtime/template_helpers";
+import { TemplateSet, globalTemplates } from "../src/runtime/template_set";
+import { BDom } from "../src/runtime/blockdom";
 import { compile } from "../src/compiler";
 
 const mount = blockDom.mount;

@@ -1,5 +1,5 @@
-import { TemplateSet } from "../../src/app/template_set";
-import { mount } from "../../src/blockdom";
+import { TemplateSet } from "../../src/runtime/template_set";
+import { mount } from "../../src/runtime/blockdom";
 import { renderToBdom, snapshotEverything } from "../helpers";
 
 snapshotEverything();

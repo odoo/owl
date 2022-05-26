@@ -10,7 +10,7 @@ import {
   useState,
 } from "../../src";
 import { xml } from "../../src/";
-import { DEV_MSG } from "../../src/app/app";
+import { DEV_MSG } from "../../src/runtime/app";
 import { elem, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;

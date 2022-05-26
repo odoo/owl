@@ -1,7 +1,7 @@
-import { createBlock, html, list, multi, text, toggler, comment } from "../blockdom";
+import { createBlock, html, list, multi, text, toggler, comment } from "./blockdom";
 import { compile, Template, TemplateFunction } from "../compiler";
-import { Portal, portalTemplate } from "../portal";
-import { component, getCurrent } from "../component/component_node";
+import { Portal, portalTemplate } from "./portal";
+import { component, getCurrent } from "./component_node";
 import { helpers } from "./template_helpers";
 
 const bdom = { text, createBlock, list, multi, html, toggler, component, comment };

@@ -1,4 +1,4 @@
-import { BDom, mount } from "../blockdom";
+import { BDom, mount } from "./blockdom";
 import type { ComponentNode } from "./component_node";
 import { fibersInError, handleError } from "./error_handling";
 import { STATUS } from "./status";

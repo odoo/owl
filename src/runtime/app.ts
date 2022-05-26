@@ -1,10 +1,10 @@
-import { Component, ComponentConstructor } from "../component/component";
-import { ComponentNode } from "../component/component_node";
-import { MountOptions } from "../component/fibers";
-import { Scheduler } from "../component/scheduler";
+import { Component, ComponentConstructor } from "./component";
+import { ComponentNode } from "./component_node";
+import { MountOptions } from "./fibers";
+import { Scheduler } from "./scheduler";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
-import { nodeErrorHandlers } from "../component/error_handling";
-import { validateTarget } from "../utils";
+import { nodeErrorHandlers } from "./error_handling";
+import { validateTarget } from "./utils";
 import { validateProps } from "./template_helpers";
 
 // reimplement dev mode stuff see last change in 0f7a8289a6fb8387c3c1af41c6664b2a8448758f

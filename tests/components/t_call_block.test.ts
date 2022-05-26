@@ -1,4 +1,4 @@
-import { text } from "../../src/blockdom";
+import { text } from "../../src/runtime/blockdom";
 import { Component, mount, xml } from "../../src/index";
 import { makeTestFixture, snapshotEverything } from "../helpers";
 

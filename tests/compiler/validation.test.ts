@@ -1,4 +1,4 @@
-import { TemplateSet } from "../../src/app/template_set";
+import { TemplateSet } from "../../src/runtime/template_set";
 import { renderToString, snapshotTemplate, TestContext } from "../helpers";
 
 // -----------------------------------------------------------------------------

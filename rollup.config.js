@@ -21,7 +21,7 @@ switch (process.argv[4]) {
     ]
     break;
   case "runtime":
-    input = "src/index.runtime.ts";
+    input = "src/runtime/index.ts";
     output = [
       getConfigForFormat('esm', addSuffix(pkg.module,  'runtime'), outro),
       getConfigForFormat('cjs', addSuffix(pkg.main,  'runtime'), outro),

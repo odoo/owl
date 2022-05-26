@@ -9,8 +9,8 @@ import {
   markRaw,
   toRaw,
 } from "../src";
-import { reactive, Reactive } from "../src/reactivity";
-import { batched } from "../src/utils";
+import { reactive, Reactive } from "../src/runtime/reactivity";
+import { batched } from "../src/runtime/utils";
 import {
   makeDeferred,
   makeTestFixture,

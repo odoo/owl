@@ -1,5 +1,5 @@
 import { renderToString, renderToBdom, snapshotEverything, makeTestFixture } from "../helpers";
-import { mount, patch } from "../../src/blockdom/index";
+import { mount, patch } from "../../src/runtime/blockdom/index";
 
 snapshotEverything();
 

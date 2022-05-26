@@ -1,6 +1,6 @@
-import type { Env } from "./app/app";
-import { getCurrent } from "./component/component_node";
-import { onMounted, onPatched, onWillUnmount } from "./component/lifecycle_hooks";
+import type { Env } from "./app";
+import { getCurrent } from "./component_node";
+import { onMounted, onPatched, onWillUnmount } from "./lifecycle_hooks";
 
 // -----------------------------------------------------------------------------
 // useRef

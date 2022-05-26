@@ -1,4 +1,4 @@
-import { comment, mount } from "../../src/blockdom";
+import { comment, mount } from "../../src/runtime/blockdom";
 import { makeTestFixture } from "./helpers";
 
 //------------------------------------------------------------------------------

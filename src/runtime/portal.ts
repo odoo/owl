@@ -1,6 +1,6 @@
-import { onWillUnmount } from "./component/lifecycle_hooks";
+import { onWillUnmount } from "./lifecycle_hooks";
 import { BDom, text, VNode } from "./blockdom";
-import { Component } from "./component/component";
+import { Component } from "./component";
 
 const VText: any = text("").constructor;
 

@@ -5,9 +5,9 @@ import {
   TestContext,
   makeTestFixture,
 } from "../helpers";
-import { mount, patch } from "../../src/blockdom";
-import { createBlock } from "../../src/blockdom/index";
-import { markup } from "../../src/utils";
+import { mount, patch } from "../../src/runtime/blockdom";
+import { createBlock } from "../../src/runtime/blockdom/index";
+import { markup } from "../../src/runtime/utils";
 
 snapshotEverything();
 

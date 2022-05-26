@@ -1,4 +1,4 @@
-import { Component } from "../../src/component/component";
+import { Component } from "../../src/runtime/component";
 import { mount, useState, xml } from "../../src/index";
 import { editInput, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 

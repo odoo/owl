@@ -1,8 +1,8 @@
 import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 import { Component, onError, xml, mount } from "../../src";
-import { DEV_MSG } from "../../src/app/app";
-import { validateProps } from "../../src/app/template_helpers";
-import { Schema } from "../../src/validation";
+import { DEV_MSG } from "../../src/runtime/app";
+import { validateProps } from "../../src/runtime/template_helpers";
+import { Schema } from "../../src/runtime/validation";
 
 let fixture: HTMLElement;
 

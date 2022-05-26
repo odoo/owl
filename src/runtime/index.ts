@@ -11,7 +11,7 @@ import {
   toggler,
   comment,
 } from "./blockdom";
-import { mainEventHandler } from "./component/handler";
+import { mainEventHandler } from "./handler";
 export type { Reactive } from "./reactivity";
 
 config.shouldNormalizeDom = false;
@@ -33,11 +33,11 @@ export const blockDom = {
   comment,
 };
 
-export { App, mount } from "./app/app";
-export { xml } from "./app/template_set";
-export { Component } from "./component/component";
-export { useComponent, useState } from "./component/component_node";
-export { status } from "./component/status";
+export { App, mount } from "./app";
+export { xml } from "./template_set";
+export { Component } from "./component";
+export { useComponent, useState } from "./component_node";
+export { status } from "./status";
 export { reactive, markRaw, toRaw } from "./reactivity";
 export { useEffect, useEnv, useExternalListener, useRef, useChildSubEnv, useSubEnv } from "./hooks";
 export { EventBus, whenReady, loadFile, markup } from "./utils";
@@ -52,7 +52,7 @@ export {
   onRendered,
   onWillDestroy,
   onError,
-} from "./component/lifecycle_hooks";
+} from "./lifecycle_hooks";
 export { validate } from "./validation";
 
 export const __info__ = {};

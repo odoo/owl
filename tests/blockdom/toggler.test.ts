@@ -1,4 +1,4 @@
-import { createBlock, mount, patch, text, toggler } from "../../src/blockdom";
+import { createBlock, mount, patch, text, toggler } from "../../src/runtime/blockdom";
 import { makeTestFixture } from "./helpers";
 
 //------------------------------------------------------------------------------

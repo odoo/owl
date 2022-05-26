@@ -1,4 +1,4 @@
-import { filterOutModifiersFromData } from "../blockdom/config";
+import { filterOutModifiersFromData } from "./blockdom/config";
 import { STATUS } from "./status";
 
 export const mainEventHandler = (data: any, ev: Event, currentTarget?: EventTarget | null) => {

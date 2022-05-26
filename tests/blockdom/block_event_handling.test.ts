@@ -1,4 +1,4 @@
-import { mount, createBlock, multi, config, patch } from "../../src/blockdom";
+import { mount, createBlock, multi, config, patch } from "../../src/runtime/blockdom";
 // import { defaultHandler, setupMainHandler } from "../../src/bdom/block";
 import { makeTestFixture } from "./helpers";
 

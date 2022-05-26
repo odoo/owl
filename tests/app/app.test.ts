@@ -1,5 +1,5 @@
 import { App, Component, mount, xml } from "../../src";
-import { status } from "../../src/component/status";
+import { status } from "../../src/runtime/status";
 import { makeTestFixture, snapshotEverything, nextTick, elem } from "../helpers";
 
 let fixture: HTMLElement;

@@ -93,6 +93,7 @@ Are you new to Owl? This is the place to start!
 - [Loading Templates](doc/reference/app.md#loading-templates)
 - [Mounting a component](doc/reference/app.md#mount-helper)
 - [Portal](doc/reference/portal.md)
+- [Precompiling templates](doc/reference/precompiling_templates.md)
 - [Props](doc/reference/props.md)
 - [Props Validation](doc/reference/props.md#props-validation)
 - [Reactivity](doc/reference/reactivity.md)

@@ -1,6 +1,6 @@
 import { config, createBlock, createCatcher, mount } from "../../src/runtime/blockdom";
 import { makeTestFixture } from "./helpers";
-import { mainEventHandler } from "../../src/runtime/handler";
+import { mainEventHandler } from "../../src/runtime/event_handling";
 
 //------------------------------------------------------------------------------
 // Setup and helpers

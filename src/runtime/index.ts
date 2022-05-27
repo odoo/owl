@@ -11,7 +11,7 @@ import {
   toggler,
   comment,
 } from "./blockdom";
-import { mainEventHandler } from "./handler";
+import { mainEventHandler } from "./event_handling";
 export type { Reactive } from "./reactivity";
 
 config.shouldNormalizeDom = false;

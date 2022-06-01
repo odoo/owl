@@ -33,9 +33,12 @@ export function createCatcher(eventsSpec: EventsSpec): Catcher {
       this.afterNode = afterNode;
       this.child.mount(parent, afterNode);
       for (let i = 0; i < n; i++) {
-        let origFn = this.handlers[i][0];
+        let handler = this.handlers[i];
+        // handler = [...mods, fn, comp], so we need to replace second to last elem
+        let idx = handler.length - 2;
+        let origFn = handler[idx];
         const self = this;
-        this.handlers[i][0] = function (ev: any) {
+        handler[idx] = function (ev: any) {
           const target = ev.target;
           let currentNode: any = self.child.firstNode();
           const afterNode = self.afterNode;

@@ -212,6 +212,34 @@ exports[`t-on t-on on components, variation 2`] = `
 }"
 `;
 
+exports[`t-on t-on on components, with 'prevent' modifier 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { createCatcher } = helpers;
+  const catcher1 = createCatcher({\\"click.prevent\\":0});
+  
+  return function template(ctx, node, key = \\"\\") {
+    const hdlr1 = [\\"prevent\\", ctx['increment'], ctx];
+    return catcher1(component(\`Child\`, {value: ctx['state'].value}, key + \`__1\`, node, ctx), [hdlr1]);
+  }
+}"
+`;
+
+exports[`t-on t-on on components, with 'prevent' modifier 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<button><block-text-0/></button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let txt1 = ctx['props'].value;
+    return block1([txt1]);
+  }
+}"
+`;
+
 exports[`t-on t-on on destroyed components 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -239,6 +267,38 @@ exports[`t-on t-on on destroyed components 2`] = `
   return function template(ctx, node, key = \\"\\") {
     let hdlr1 = [ctx['onClick'], ctx];
     return block1([hdlr1]);
+  }
+}"
+`;
+
+exports[`t-on t-on on slot, with 'prevent' modifier 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { markRaw } = helpers;
+  
+  let block1 = createBlock(\`<button>button</button>\`);
+  
+  function slot1(ctx, node, key = \\"\\") {
+    return block1();
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    return component(\`Child\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx);
+  }
+}"
+`;
+
+exports[`t-on t-on on slot, with 'prevent' modifier 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { callSlot, createCatcher } = helpers;
+  const catcher1 = createCatcher({\\"click.prevent\\":0});
+  
+  return function template(ctx, node, key = \\"\\") {
+    const hdlr1 = [\\"prevent\\", ctx['doSomething'], ctx];
+    return catcher1(callSlot(ctx, node, key, 'default', false, null), [hdlr1]);
   }
 }"
 `;

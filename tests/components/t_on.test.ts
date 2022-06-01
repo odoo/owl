@@ -1,5 +1,5 @@
 import { Component, mount, onMounted, useState, xml } from "../../src/index";
-import { elem, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { elem, logStep, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 import { status } from "../../src/runtime/status";
 
 snapshotEverything();
@@ -274,5 +274,49 @@ describe("t-on", () => {
     fixture.querySelector("p")!.click();
     await nextTick();
     expect(fixture.innerHTML).toBe(" [1] <p>something</p><p>paragraph</p>");
+  });
+
+  test("t-on on components, with 'prevent' modifier", async () => {
+    expect.assertions(4); // 2 snaps and 2 expects
+    class Child extends Component {
+      static template = xml`<button t-esc="props.value"/>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child t-on-click.prevent="increment" value="state.value"/>`;
+      static components = { Child };
+      state = useState({ value: 1 });
+      increment(ev: MouseEvent) {
+        expect(ev.defaultPrevented).toBe(true);
+        this.state.value++;
+      }
+    }
+    await mount(Parent, fixture);
+    fixture.querySelector("button")!.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<button>2</button>");
+  });
+
+  test("t-on on slot, with 'prevent' modifier", async () => {
+    class Child extends Component {
+      static template = xml`<t t-slot="default" t-on-click.prevent="doSomething"/>`;
+      doSomething(ev: MouseEvent) {
+        expect(ev.defaultPrevented).toBe(true);
+        logStep("hey");
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <Child>
+          <button>button</button>
+        </Child>`;
+      static components = { Child };
+    }
+    await mount(Parent, fixture);
+    fixture.querySelector("button")!.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<button>button</button>");
+    expect(["hey"]).toBeLogged();
   });
 });

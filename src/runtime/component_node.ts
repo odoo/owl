@@ -30,15 +30,15 @@ export function useComponent(): Component {
 
 /**
  * Apply default props (only top level).
- *
- * Note that this method does modify in place the props
  */
-function applyDefaultProps<P>(props: P, defaultProps: Partial<P>) {
+function applyDefaultProps<P extends object>(props: P, defaultProps: Partial<P>): P {
+  const result = Object.create(props);
   for (let propName in defaultProps) {
-    if ((props as any)[propName] === undefined) {
-      (props as any)[propName] = defaultProps[propName];
+    if (props[propName] === undefined) {
+      result[propName] = defaultProps[propName];
     }
   }
+  return result;
 }
 // -----------------------------------------------------------------------------
 // Integration with reactivity system (useState)
@@ -106,7 +106,7 @@ export function component<P extends Props>(
     if (shouldRender) {
       node.forceNextRender = false;
     } else {
-      const currentProps = node.component.props;
+      const currentProps = node.props;
       shouldRender = parentFiber.deep || arePropsDifferent(currentProps, props);
     }
     if (shouldRender) {
@@ -148,6 +148,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
   status: STATUS = STATUS.NEW;
   forceNextRender: boolean = false;
   parentKey: string | null;
+  props: P;
 
   renderFn: Function;
   parent: ComponentNode | null;
@@ -174,11 +175,12 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     currentNode = this;
     this.app = app;
     this.parent = parent;
+    this.props = props;
     this.parentKey = parentKey;
     this.level = parent ? parent.level + 1 : 0;
     const defaultProps = C.defaultProps;
     if (defaultProps) {
-      applyDefaultProps(props, defaultProps);
+      props = applyDefaultProps(props, defaultProps);
     }
     const env = (parent && parent.childEnv) || app.env;
     this.childEnv = env;
@@ -294,13 +296,14 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
   }
 
   async updateAndRender(props: P, parentFiber: Fiber) {
+    const rawProps = props;
     // update
     const fiber = makeChildFiber(this, parentFiber);
     this.fiber = fiber;
     const component = this.component;
     const defaultProps = (component.constructor as any).defaultProps;
     if (defaultProps) {
-      applyDefaultProps(props, defaultProps);
+      props = applyDefaultProps(props, defaultProps);
     }
 
     currentNode = this;
@@ -317,6 +320,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
       return;
     }
     component.props = props;
+    this.props = rawProps;
     fiber.render();
     const parentRoot = parentFiber.root!;
     if (this.willPatch.length) {

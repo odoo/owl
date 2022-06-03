@@ -129,6 +129,36 @@ describe("basics", () => {
     await app.mount(fixture);
   });
 
+  test("props value are own property of props object", async () => {
+    expect.assertions(2);
+    const p = { a: 1 };
+    class Test extends Component {
+      static template = xml`<span>simple vnode</span>`;
+      setup() {
+        expect(Object.prototype.hasOwnProperty.call(this.props, "a")).toBe(true);
+      }
+    }
+
+    const app = new App(Test, { props: p });
+    await app.mount(fixture);
+  });
+
+  test("props value are own property of props object, even with default values", async () => {
+    expect.assertions(3);
+    const p = { a: 1 };
+    class Test extends Component {
+      static template = xml`<span>simple vnode</span>`;
+      static defaultProps = { b: 1 };
+      setup() {
+        expect(Object.prototype.hasOwnProperty.call(this.props, "a")).toBe(true);
+        expect(Object.prototype.hasOwnProperty.call(this.props, "b")).toBe(true);
+      }
+    }
+
+    const app = new App(Test, { props: p });
+    await app.mount(fixture);
+  });
+
   test("some simple sanity checks (el/status)", async () => {
     expect.assertions(3);
     class Test extends Component {

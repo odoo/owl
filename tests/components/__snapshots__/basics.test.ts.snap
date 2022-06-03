@@ -551,6 +551,32 @@ exports[`basics props is set on root component 1`] = `
 }"
 `;
 
+exports[`basics props value are own property of props object 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<span>simple vnode</span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`basics props value are own property of props object, even with default values 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<span>simple vnode</span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`basics reconciliation alg is not confused in some specific situation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

@@ -32,7 +32,7 @@ export function useComponent(): Component {
  * Apply default props (only top level).
  */
 function applyDefaultProps<P extends object>(props: P, defaultProps: Partial<P>): P {
-  const result = Object.create(props);
+  const result = Object.assign({} as any, props);
   for (let propName in defaultProps) {
     if (props[propName] === undefined) {
       result[propName] = defaultProps[propName];

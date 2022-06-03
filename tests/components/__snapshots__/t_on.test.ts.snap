@@ -181,6 +181,42 @@ exports[`t-on t-on on components 2`] = `
 }"
 `;
 
+exports[`t-on t-on on components and t-foreach 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { prepareList, createCatcher, withKey } = helpers;
+  const catcher1 = createCatcher({\\"click\\":0});
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(['John','Raoul','Gérald']);;
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      ctx[\`name\`] = v_block1[i1];
+      const key1 = ctx['name'];
+      const v1 = ctx['name'];
+      const hdlr1 = [()=>this.log(v1), ctx];
+      c_block1[i1] = withKey(catcher1(component(\`Child\`, {value: ctx['name']}, key + \`__1__\${key1}\`, node, ctx), [hdlr1]), key1);
+    }
+    return list(c_block1);
+  }
+}"
+`;
+
+exports[`t-on t-on on components and t-foreach 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let txt1 = ctx['props'].value;
+    return block1([txt1]);
+  }
+}"
+`;
+
 exports[`t-on t-on on components, variation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -232,6 +268,38 @@ exports[`t-on t-on on components, with 'prevent' modifier 2`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   let block1 = createBlock(\`<button><block-text-0/></button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let txt1 = ctx['props'].value;
+    return block1([txt1]);
+  }
+}"
+`;
+
+exports[`t-on t-on on components, with a handler update 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue, createCatcher } = helpers;
+  const catcher1 = createCatcher({\\"click\\":0});
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    setContextValue(ctx, \\"name\\", ctx['state'].name);
+    const v1 = ctx['name'];
+    const hdlr1 = [()=>this.log(v1), ctx];
+    return catcher1(component(\`Child\`, {value: ctx['name']}, key + \`__1\`, node, ctx), [hdlr1]);
+  }
+}"
+`;
+
+exports[`t-on t-on on components, with a handler update 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].value;

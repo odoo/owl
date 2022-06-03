@@ -477,3 +477,52 @@ test("force render in case of existing render", async () => {
     "A:patched",
   ]).toBeLogged();
 });
+
+test("children, default props and renderings", async () => {
+  class Child extends Component {
+    static template = xml`child`;
+    static defaultProps = { value: 1 };
+    setup() {
+      useLogLifecycle();
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`
+      <t t-esc="state.value"/>
+      <Child />
+    `;
+    static components = { Child };
+
+    state = useState({ value: "A" });
+    setup() {
+      useLogLifecycle();
+    }
+  }
+
+  const parent = await mount(Parent, fixture);
+
+  expect(fixture.innerHTML).toBe("Achild");
+  expect([
+    "Parent:setup",
+    "Parent:willStart",
+    "Parent:willRender",
+    "Child:setup",
+    "Child:willStart",
+    "Parent:rendered",
+    "Child:willRender",
+    "Child:rendered",
+    "Child:mounted",
+    "Parent:mounted",
+  ]).toBeLogged();
+
+  parent.state.value = "B";
+  await nextTick();
+  expect(fixture.innerHTML).toBe("Bchild");
+  expect([
+    "Parent:willRender",
+    "Parent:rendered",
+    "Parent:willPatch",
+    "Parent:patched",
+  ]).toBeLogged();
+});

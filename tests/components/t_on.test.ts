@@ -319,4 +319,68 @@ describe("t-on", () => {
     expect(fixture.innerHTML).toBe("<button>button</button>");
     expect(["hey"]).toBeLogged();
   });
+
+  test("t-on on components and t-foreach", async () => {
+    class Child extends Component {
+      static template = xml`<div t-esc="props.value"/>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <t t-foreach="['John', 'Raoul', 'Gérald']" t-as="name" t-key="name">
+          <Child t-on-click="() => this.log(name)" value="name"/>
+        </t>`;
+      static components = { Child };
+      log(name: string) {
+        logStep(name);
+      }
+    }
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div>John</div><div>Raoul</div><div>Gérald</div>");
+    expect([]).toBeLogged();
+    fixture.querySelectorAll("div")[0].click();
+    await nextTick();
+    expect(["John"]).toBeLogged();
+
+    fixture.querySelectorAll("div")[1].click();
+    await nextTick();
+    expect(["Raoul"]).toBeLogged();
+
+    fixture.querySelectorAll("div")[2].click();
+    await nextTick();
+    expect(["Gérald"]).toBeLogged();
+  });
+
+  test("t-on on components, with a handler update", async () => {
+    class Child extends Component {
+      static template = xml`<div t-esc="props.value"/>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`
+          <t t-set="name" t-value="state.name"/>
+          <Child value="name" t-on-click="() => this.log(name)"
+        />`;
+      static components = { Child };
+      state = useState({ name: "aaron" });
+      log(name: string) {
+        logStep(name);
+      }
+    }
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div>aaron</div>");
+    expect([]).toBeLogged();
+
+    fixture.querySelectorAll("div")[0].click();
+    await nextTick();
+    expect(["aaron"]).toBeLogged();
+
+    parent.state.name = "lucas";
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div>lucas</div>");
+
+    fixture.querySelectorAll("div")[0].click();
+    await nextTick();
+    expect(["lucas"]).toBeLogged();
+  });
 });

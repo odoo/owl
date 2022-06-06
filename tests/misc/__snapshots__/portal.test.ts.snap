@@ -177,7 +177,7 @@ exports[`Portal Portal composed with t-slot 2`] = `
   const Portal = app.Portal;
   
   function slot1(ctx, node, key = \\"\\") {
-    return callSlot(ctx, node, key, 'default', false, null);
+    return callSlot(ctx, node, key, 'default', false, {});
   }
   
   return function template(ctx, node, key = \\"\\") {

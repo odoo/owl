@@ -239,6 +239,12 @@ And the child component that includes the slot can provide values like this:
 <t t-slot="foo" bool="other_var" num="5">
 ```
 
+or this:
+
+```xml
+<t t-slot="foo" t-props="someObject">
+```
+
 In the case of the default slot, you may declare the slot scope directly on the
 component itself:
 

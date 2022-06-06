@@ -117,7 +117,7 @@ exports[`t-props t-props with props 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = component(\`Child\`, Object.assign({}, ctx['childProps'], {a: 1, b: 2}), key + \`__1\`, node, ctx);
+    const b2 = component(\`Child\`, Object.assign({}, ctx['childProps'], {a: 1,b: 2}), key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"

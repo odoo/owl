@@ -115,7 +115,7 @@ exports[`props validation can specify that additional props are allowed (array) 
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    const props1 = {message: 'm', otherProp: 'o'};
+    const props1 = {message: 'm',otherProp: 'o'};
     helpers.validateProps(\`Child\`, props1, ctx);
     return component(\`Child\`, props1, key + \`__1\`, node, ctx);
   }
@@ -141,7 +141,7 @@ exports[`props validation can specify that additional props are allowed (object)
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    const props1 = {message: 'm', otherProp: 'o'};
+    const props1 = {message: 'm',otherProp: 'o'};
     helpers.validateProps(\`Child\`, props1, ctx);
     return component(\`Child\`, props1, key + \`__1\`, node, ctx);
   }

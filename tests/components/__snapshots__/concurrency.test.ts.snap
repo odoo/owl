@@ -227,7 +227,7 @@ exports[`concurrent renderings scenario 1 2`] = `
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = component(\`ComponentC\`, {fromA: ctx['props'].fromA, fromB: ctx['state'].fromB}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ComponentC\`, {fromA: ctx['props'].fromA,fromB: ctx['state'].fromB}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -271,7 +271,7 @@ exports[`concurrent renderings scenario 2 2`] = `
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = component(\`ComponentC\`, {fromA: ctx['props'].fromA, fromB: ctx['state'].fromB}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ComponentC\`, {fromA: ctx['props'].fromA,fromB: ctx['state'].fromB}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -314,7 +314,7 @@ exports[`concurrent renderings scenario 2bis 2`] = `
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = component(\`ComponentC\`, {fromA: ctx['props'].fromA, fromB: ctx['state'].fromB}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ComponentC\`, {fromA: ctx['props'].fromA,fromB: ctx['state'].fromB}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -371,7 +371,7 @@ exports[`concurrent renderings scenario 3 3`] = `
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = component(\`ComponentD\`, {fromA: ctx['props'].fromA, fromC: ctx['state'].fromC}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ComponentD\`, {fromA: ctx['props'].fromA,fromC: ctx['state'].fromC}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -428,7 +428,7 @@ exports[`concurrent renderings scenario 4 3`] = `
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = component(\`ComponentD\`, {fromA: ctx['props'].fromA, fromC: ctx['state'].fromC}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ComponentD\`, {fromA: ctx['props'].fromA,fromC: ctx['state'].fromC}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -601,7 +601,7 @@ exports[`concurrent renderings scenario 9 3`] = `
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = component(\`ComponentD\`, {fromA: ctx['props'].fromA, fromC: ctx['state'].fromC}, key + \`__1\`, node, ctx);
+    const b2 = component(\`ComponentD\`, {fromA: ctx['props'].fromA,fromC: ctx['state'].fromC}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -778,7 +778,7 @@ exports[`concurrent renderings scenario 14 2`] = `
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = component(\`C\`, {fromB: ctx['state'].fromB, fromA: ctx['props'].fromA}, key + \`__1\`, node, ctx);
+    const b2 = component(\`C\`, {fromB: ctx['state'].fromB,fromA: ctx['props'].fromA}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -822,7 +822,7 @@ exports[`concurrent renderings scenario 15 2`] = `
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = component(\`C\`, {fromB: ctx['state'].fromB, fromA: ctx['props'].fromA}, key + \`__1\`, node, ctx);
+    const b2 = component(\`C\`, {fromB: ctx['state'].fromB,fromA: ctx['props'].fromA}, key + \`__1\`, node, ctx);
     return block1([], [b2]);
   }
 }"
@@ -861,7 +861,7 @@ exports[`concurrent renderings scenario 16 2`] = `
   let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`C\`, {fromB: ctx['state'].fromB, fromA: ctx['props'].fromA}, key + \`__1\`, node, ctx);
+    return component(\`C\`, {fromB: ctx['state'].fromB,fromA: ctx['props'].fromA}, key + \`__1\`, node, ctx);
   }
 }"
 `;

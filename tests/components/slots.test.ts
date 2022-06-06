@@ -74,6 +74,28 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<span>other text</span>");
   });
 
+  test("slot with slot scope and t-props", async () => {
+    class Child extends Component {
+      static template = xml`
+        <t t-slot="slotName" t-props="info"/>`;
+      info = { a: 1, b: 2 };
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <Child>
+          <t t-set-slot="slotName" t-slot-scope="info">
+            <p t-esc="info.a"/>
+            <p t-esc="info.b"/>
+          </t>
+        </Child>`;
+      static components = { Child };
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<p>1</p><p>2</p>");
+  });
+
   test("simple dynamic slot with slot scope", async () => {
     let child: any;
     class Child extends Component {

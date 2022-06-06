@@ -1083,23 +1083,25 @@ export class CodeGenerator {
     return `${name}: ${value || undefined}`;
   }
 
-  formatPropObject(obj: { [prop: string]: any }): string {
-    const params = [];
-    for (const [n, v] of Object.entries(obj)) {
-      params.push(this.formatProp(n, v));
+  formatPropObject(obj: { [prop: string]: any }): string[] {
+    return Object.entries(obj).map(([k, v]) => this.formatProp(k, v));
+  }
+
+  getPropString(props: string[], dynProps: string | null): string {
+    let propString = `{${props.join(",")}}`;
+    if (dynProps) {
+      propString = `Object.assign({}, ${compileExpr(dynProps)}${
+        props.length ? ", " + propString : ""
+      })`;
     }
-    return params.join(", ");
+    return propString;
   }
 
   compileComponent(ast: ASTComponent, ctx: Context) {
     let { block } = ctx;
     // props
     const hasSlotsProp = "slots" in (ast.props || {});
-    const props: string[] = [];
-    const propExpr = this.formatPropObject(ast.props || {});
-    if (propExpr) {
-      props.push(propExpr);
-    }
+    const props: string[] = ast.props ? this.formatPropObject(ast.props) : [];
 
     // slots
     let slotDef: string = "";
@@ -1123,7 +1125,7 @@ export class CodeGenerator {
           params.push(`__scope: "${scope}"`);
         }
         if (ast.slots[slotName].attrs) {
-          params.push(this.formatPropObject(ast.slots[slotName].attrs!));
+          params.push(...this.formatPropObject(ast.slots[slotName].attrs!));
         }
         const slotInfo = `{${params.join(", ")}}`;
         slotStr.push(`'${slotName}': ${slotInfo}`);
@@ -1136,14 +1138,7 @@ export class CodeGenerator {
       props.push(`slots: markRaw(${slotDef})`);
     }
 
-    const propStr = `{${props.join(",")}}`;
-
-    let propString = propStr;
-    if (ast.dynamicProps) {
-      propString = `Object.assign({}, ${compileExpr(ast.dynamicProps)}${
-        props.length ? ", " + propStr : ""
-      })`;
-    }
+    let propString = this.getPropString(props, ast.dynamicProps);
 
     let propVar: string;
     if ((slotDef && (ast.dynamicProps || hasSlotsProp)) || this.dev) {
@@ -1223,8 +1218,12 @@ export class CodeGenerator {
     } else {
       slotName = "'" + ast.name + "'";
     }
-
-    const scope = ast.attrs ? `{${this.formatPropObject(ast.attrs)}}` : null;
+    const dynProps = ast.attrs ? ast.attrs["t-props"] : null;
+    if (ast.attrs) {
+      delete ast.attrs["t-props"];
+    }
+    const props = ast.attrs ? this.formatPropObject(ast.attrs) : [];
+    const scope = this.getPropString(props, dynProps);
     if (ast.defaultContent) {
       const name = this.compileInNewTarget("defaultContent", ast.defaultContent, ctx);
       blockString = `callSlot(ctx, node, key, ${slotName}, ${dynamic}, ${scope}, ${name})`;

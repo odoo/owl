@@ -197,7 +197,7 @@ exports[`can catch errors can catch an error in a component render function 2`] 
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
-      b3 = callSlot(ctx, node, key, 'default', false, null);
+      b3 = callSlot(ctx, node, key, 'default', false, {});
     }
     return block1([], [b2, b3]);
   }
@@ -250,7 +250,7 @@ exports[`can catch errors can catch an error in the constructor call of a compon
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
-      b3 = callSlot(ctx, node, key, 'default', false, null);
+      b3 = callSlot(ctx, node, key, 'default', false, {});
     }
     return block1([], [b2, b3]);
   }
@@ -291,7 +291,7 @@ exports[`can catch errors can catch an error in the constructor call of a compon
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
-      b3 = callSlot(ctx, node, key, 'default', false, null);
+      b3 = callSlot(ctx, node, key, 'default', false, {});
     }
     return block1([], [b2, b3]);
   }
@@ -369,7 +369,7 @@ exports[`can catch errors can catch an error in the initial call of a component 
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
-      b3 = callSlot(ctx, node, key, 'default', false, null);
+      b3 = callSlot(ctx, node, key, 'default', false, {});
     }
     return block1([], [b2, b3]);
   }
@@ -425,7 +425,7 @@ exports[`can catch errors can catch an error in the initial call of a component 
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
-      b3 = callSlot(ctx, node, key, 'default', false, null);
+      b3 = callSlot(ctx, node, key, 'default', false, {});
     }
     return block1([], [b2, b3]);
   }
@@ -567,7 +567,7 @@ exports[`can catch errors can catch an error in the mounted call 2`] = `
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
-      b3 = callSlot(ctx, node, key, 'default', false, null);
+      b3 = callSlot(ctx, node, key, 'default', false, {});
     }
     return block1([], [b2, b3]);
   }
@@ -620,7 +620,7 @@ exports[`can catch errors can catch an error in the willPatch call 2`] = `
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
-      b3 = callSlot(ctx, node, key, 'default', false, null);
+      b3 = callSlot(ctx, node, key, 'default', false, {});
     }
     return block1([], [b2, b3]);
   }
@@ -673,7 +673,7 @@ exports[`can catch errors can catch an error in the willStart call 2`] = `
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
-      b3 = callSlot(ctx, node, key, 'default', false, null);
+      b3 = callSlot(ctx, node, key, 'default', false, {});
     }
     return block1([], [b2, b3]);
   }
@@ -727,7 +727,7 @@ exports[`can catch errors can catch an error origination from a child's willStar
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
-      b3 = callSlot(ctx, node, key, 'default', false, null);
+      b3 = callSlot(ctx, node, key, 'default', false, {});
     }
     return block1([], [b2, b3]);
   }
@@ -840,7 +840,7 @@ exports[`can catch errors catching error, rethrow, render parent  -- a main comp
   let { callSlot } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    return callSlot(ctx, node, key, 'default', false, null);
+    return callSlot(ctx, node, key, 'default', false, {});
   }
 }"
 `;
@@ -915,7 +915,7 @@ exports[`can catch errors catching in child makes parent render 2`] = `
   let { callSlot } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    return callSlot(ctx, node, key, 'default', false, null);
+    return callSlot(ctx, node, key, 'default', false, {});
   }
 }"
 `;
@@ -991,7 +991,7 @@ exports[`can catch errors error in mounted on a component with a sibling (proper
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
-      b3 = callSlot(ctx, node, key, 'default', false, null);
+      b3 = callSlot(ctx, node, key, 'default', false, {});
     }
     return block1([], [b2, b3]);
   }

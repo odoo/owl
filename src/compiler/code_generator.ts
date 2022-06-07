@@ -1,4 +1,10 @@
-import { compileExpr, compileExprToArray, interpolate, INTERP_REGEXP } from "./inline_expressions";
+import {
+  compileExpr,
+  compileExprToArray,
+  interpolate,
+  INTERP_REGEXP,
+  replaceDynamicParts,
+} from "./inline_expressions";
 import {
   AST,
   ASTComment,
@@ -606,11 +612,8 @@ export class CodeGenerator {
       this.target.hasRef = true;
       const isDynamic = INTERP_REGEXP.test(ast.ref);
       if (isDynamic) {
-        const str = ast.ref.replace(
-          INTERP_REGEXP,
-          (expr) => "${" + this.captureExpression(expr.slice(2, -2), true) + "}"
-        );
-        const idx = block!.insertData(`(el) => refs[\`${str}\`] = el`, "ref");
+        const str = replaceDynamicParts(ast.ref, (expr) => this.captureExpression(expr, true));
+        const idx = block!.insertData(`(el) => refs[${str}] = el`, "ref");
         attrs["block-ref"] = String(idx);
       } else {
         let name = ast.ref;

@@ -16,6 +16,22 @@ exports[`t-ref can get a dynamic ref on a node 1`] = `
 }"
 `;
 
+exports[`t-ref can get a dynamic ref on a node, alternate syntax 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><span block-ref=\\"0\\"/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const refs = ctx.__owl__.refs;
+    const v1 = ctx['id'];
+    let ref1 = (el) => refs[\`myspan\${v1}\`] = el;
+    return block1([ref1]);
+  }
+}"
+`;
+
 exports[`t-ref can get a ref on a node 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -99,7 +115,7 @@ exports[`t-ref refs in a loop 1`] = `
       const key1 = ctx['item'];
       const tKey_1 = ctx['item'];
       const v1 = ctx['item'];
-      let ref1 = (el) => refs[\`\${v1}\`] = el;
+      let ref1 = (el) => refs[(v1)] = el;
       let txt1 = ctx['item'];
       c_block2[i1] = withKey(block3([ref1, txt1]), tKey_1 + key1);
     }

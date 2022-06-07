@@ -27,6 +27,15 @@ describe("t-ref", () => {
     expect(refs.myspan3.tagName).toBe("SPAN");
   });
 
+  test("can get a dynamic ref on a node, alternate syntax", () => {
+    const template = `<div><span t-ref="myspan#{id}"/></div>`;
+    const refs: any = {};
+    const bdom = renderToBdom(template, { id: 3, __owl__: { refs } });
+    expect(refs).toEqual({});
+    mount(bdom, document.createElement("div"));
+    expect(refs.myspan3.tagName).toBe("SPAN");
+  });
+
   test("refs in a loop", () => {
     const template = `<div>
         <t t-foreach="items" t-as="item" t-key="item">

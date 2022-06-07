@@ -355,15 +355,20 @@ export function compileExpr(expr: string): string {
     .join("");
 }
 
-export const INTERP_REGEXP = /\{\{.*?\}\}/g;
-const INTERP_GROUP_REGEXP = /\{\{.*?\}\}/g;
+export const INTERP_REGEXP = /\{\{.*?\}\}|\#\{.*?\}/g;
 
-export function interpolate(s: string): string {
+export function replaceDynamicParts(s: string, replacer: (s: string) => string) {
   let matches = s.match(INTERP_REGEXP);
   if (matches && matches[0].length === s.length) {
-    return `(${compileExpr(s.slice(2, -2))})`;
+    return `(${replacer(s.slice(2, matches[0][0] === "{" ? -2 : -1))})`;
   }
 
-  let r = s.replace(INTERP_GROUP_REGEXP, (s) => "${" + compileExpr(s.slice(2, -2)) + "}");
+  let r = s.replace(
+    INTERP_REGEXP,
+    (s) => "${" + replacer(s.slice(2, s[0] === "{" ? -2 : -1)) + "}"
+  );
   return "`" + r + "`";
+}
+export function interpolate(s: string): string {
+  return replaceDynamicParts(s, compileExpr);
 }

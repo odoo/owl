@@ -27,6 +27,11 @@ describe("t-out", () => {
     expect(renderToString(template)).toBe("<span>ok</span>");
   });
 
+  test("number literal", () => {
+    const template = `<span><t t-out="1"/></span>`;
+    expect(renderToString(template)).toBe("<span>1</span>");
+  });
+
   test("literal, no outside html element", () => {
     const template = `<t t-out="'ok'"/>`;
     expect(renderToString(template)).toBe("ok");

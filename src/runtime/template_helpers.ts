@@ -132,19 +132,30 @@ export function safeOutput(value: any): ReturnType<typeof toggler> {
   }
   let safeKey;
   let block;
-  if (value instanceof Markup) {
-    safeKey = `string_safe`;
-    block = html(value as string);
-  } else if (value instanceof LazyValue) {
-    safeKey = `lazy_value`;
-    block = value.evaluate();
-  } else if (value instanceof String || typeof value === "string") {
-    safeKey = "string_unsafe";
-    block = text(value);
-  } else {
-    // Assuming it is a block
-    safeKey = "block_safe";
-    block = value;
+  switch (typeof value) {
+    case "object":
+      if (value instanceof Markup) {
+        safeKey = `string_safe`;
+        block = html(value as string);
+      } else if (value instanceof LazyValue) {
+        safeKey = `lazy_value`;
+        block = value.evaluate();
+      } else if (value instanceof String) {
+        safeKey = "string_unsafe";
+        block = text(value);
+      } else {
+        // Assuming it is a block
+        safeKey = "block_safe";
+        block = value;
+      }
+      break;
+    case "string":
+      safeKey = "string_unsafe";
+      block = text(value);
+      break;
+    default:
+      safeKey = "string_unsafe";
+      block = text(String(value));
   }
   return toggler(safeKey, block);
 }

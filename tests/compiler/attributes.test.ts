@@ -131,6 +131,12 @@ describe("attributes", () => {
     expect(result).toBe(`<div foo="bar"></div>`);
   });
 
+  test("string interpolation, alternate syntax", () => {
+    const template = `<div t-attf-foo="b#{value}r"/>`;
+    const result = renderToString(template, { value: "a" });
+    expect(result).toBe(`<div foo="bar"></div>`);
+  });
+
   test("t-attf-class", () => {
     const template = `<div t-attf-class="hello"/>`;
     const result = renderToString(template);

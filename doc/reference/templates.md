@@ -290,10 +290,11 @@ If an expression evaluates to a falsy value, it will not be set at all:
 
 It is sometimes convenient to format an attribute with string interpolation. In
 that case, the `t-attf-` directive can be used. It is useful when we need to mix
-literal and dynamic elements, such as css classes.
+literal and dynamic elements, such as css classes. The dynamic elements can be
+specified with either `{{...}}` or `#{...}`:
 
 ```xml
-<div t-attf-foo="a {{value1}} is {{value2}} of {{value3}} ]"/>
+<div t-attf-foo="a {{value1}} is #{value2} of {{value3}} ]"/>
 <!-- result if values are set to 1,2 and 3: <div foo="a 0 is 1 of 2 ]"></div> -->
 ```
 

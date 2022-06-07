@@ -387,6 +387,20 @@ exports[`attributes static attributes with dashes 1`] = `
 }"
 `;
 
+exports[`attributes string interpolation, alternate syntax 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  
+  let block1 = createBlock(\`<div block-attribute-0=\\"foo\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let attr1 = \`b\${ctx['value']}r\`;
+    return block1([attr1]);
+  }
+}"
+`;
+
 exports[`attributes t-att-class and class should combine together 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

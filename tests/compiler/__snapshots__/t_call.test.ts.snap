@@ -3,7 +3,7 @@
 exports[`t-call (template calling) basic caller 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const callTemplate_1 = app.getTemplate(\`_basic-callee\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -18,7 +18,7 @@ exports[`t-call (template calling) basic caller 1`] = `
 exports[`t-call (template calling) basic caller 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span>ok</span>\`);
   
@@ -31,7 +31,7 @@ exports[`t-call (template calling) basic caller 2`] = `
 exports[`t-call (template calling) basic caller, no parent node 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const callTemplate_1 = app.getTemplate(\`_basic-callee\`);
   
   return function template(ctx, node, key = \\"\\") {
@@ -43,7 +43,7 @@ exports[`t-call (template calling) basic caller, no parent node 1`] = `
 exports[`t-call (template calling) basic caller, no parent node 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span>ok</span>\`);
   
@@ -56,7 +56,7 @@ exports[`t-call (template calling) basic caller, no parent node 2`] = `
 exports[`t-call (template calling) call with several sub nodes on same line 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, zero } = helpers;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
@@ -81,7 +81,7 @@ exports[`t-call (template calling) call with several sub nodes on same line 1`] 
 exports[`t-call (template calling) call with several sub nodes on same line 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { zero } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -96,7 +96,7 @@ exports[`t-call (template calling) call with several sub nodes on same line 2`] 
 exports[`t-call (template calling) cascading t-call t-out='0' 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, zero } = helpers;
   const callTemplate_1 = app.getTemplate(\`subTemplate\`);
   
@@ -121,7 +121,7 @@ exports[`t-call (template calling) cascading t-call t-out='0' 1`] = `
 exports[`t-call (template calling) cascading t-call t-out='0' 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, zero } = helpers;
   const callTemplate_1 = app.getTemplate(\`subSubTemplate\`);
   
@@ -144,7 +144,7 @@ exports[`t-call (template calling) cascading t-call t-out='0' 2`] = `
 exports[`t-call (template calling) cascading t-call t-out='0' 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, zero } = helpers;
   const callTemplate_1 = app.getTemplate(\`finalTemplate\`);
   
@@ -167,7 +167,7 @@ exports[`t-call (template calling) cascading t-call t-out='0' 3`] = `
 exports[`t-call (template calling) cascading t-call t-out='0' 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { zero } = helpers;
   
   let block1 = createBlock(\`<div><span>cascade 2</span><block-child-0/></div>\`);
@@ -182,7 +182,7 @@ exports[`t-call (template calling) cascading t-call t-out='0' 4`] = `
 exports[`t-call (template calling) cascading t-call t-out='0', without external divs 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, zero } = helpers;
   const callTemplate_1 = app.getTemplate(\`subTemplate\`);
   
@@ -205,7 +205,7 @@ exports[`t-call (template calling) cascading t-call t-out='0', without external 
 exports[`t-call (template calling) cascading t-call t-out='0', without external divs 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, zero } = helpers;
   const callTemplate_1 = app.getTemplate(\`subSubTemplate\`);
   
@@ -226,7 +226,7 @@ exports[`t-call (template calling) cascading t-call t-out='0', without external 
 exports[`t-call (template calling) cascading t-call t-out='0', without external divs 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, zero } = helpers;
   const callTemplate_1 = app.getTemplate(\`finalTemplate\`);
   
@@ -247,7 +247,7 @@ exports[`t-call (template calling) cascading t-call t-out='0', without external 
 exports[`t-call (template calling) cascading t-call t-out='0', without external divs 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { zero } = helpers;
   
   let block2 = createBlock(\`<span>cascade 2</span>\`);
@@ -263,7 +263,7 @@ exports[`t-call (template calling) cascading t-call t-out='0', without external 
 exports[`t-call (template calling) dynamic t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const call = app.callTemplate.bind(app);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -279,7 +279,7 @@ exports[`t-call (template calling) dynamic t-call 1`] = `
 exports[`t-call (template calling) dynamic t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<foo><block-text-0/></foo>\`);
   
@@ -293,7 +293,7 @@ exports[`t-call (template calling) dynamic t-call 2`] = `
 exports[`t-call (template calling) dynamic t-call 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<bar><block-text-0/></bar>\`);
   
@@ -307,7 +307,7 @@ exports[`t-call (template calling) dynamic t-call 3`] = `
 exports[`t-call (template calling) inherit context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
@@ -326,7 +326,7 @@ exports[`t-call (template calling) inherit context 1`] = `
 exports[`t-call (template calling) inherit context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
     return text(ctx['foo']);
@@ -337,7 +337,7 @@ exports[`t-call (template calling) inherit context 2`] = `
 exports[`t-call (template calling) recursive template, part 1 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const callTemplate_1 = app.getTemplate(\`recursive\`);
   
   let block1 = createBlock(\`<div><span>hey</span><block-child-0/></div>\`);
@@ -355,7 +355,7 @@ exports[`t-call (template calling) recursive template, part 1 1`] = `
 exports[`t-call (template calling) recursive template, part 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   const callTemplate_1 = app.getTemplate(\`nodeTemplate\`);
   
@@ -376,7 +376,7 @@ exports[`t-call (template calling) recursive template, part 2 1`] = `
 exports[`t-call (template calling) recursive template, part 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, isBoundary, withDefault, setContextValue, withKey } = helpers;
   const callTemplate_1 = app.getTemplate(\`nodeTemplate\`);
   
@@ -410,7 +410,7 @@ exports[`t-call (template calling) recursive template, part 2 2`] = `
 exports[`t-call (template calling) recursive template, part 3 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   const callTemplate_1 = app.getTemplate(\`nodeTemplate\`);
   
@@ -431,7 +431,7 @@ exports[`t-call (template calling) recursive template, part 3 1`] = `
 exports[`t-call (template calling) recursive template, part 3 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, isBoundary, withDefault, setContextValue, withKey } = helpers;
   const callTemplate_1 = app.getTemplate(\`nodeTemplate\`);
   
@@ -465,7 +465,7 @@ exports[`t-call (template calling) recursive template, part 3 2`] = `
 exports[`t-call (template calling) recursive template, part 4: with t-set recursive index 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   const callTemplate_1 = app.getTemplate(\`nodeTemplate\`);
   
@@ -487,7 +487,7 @@ exports[`t-call (template calling) recursive template, part 4: with t-set recurs
 exports[`t-call (template calling) recursive template, part 4: with t-set recursive index 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue, prepareList, withKey } = helpers;
   const callTemplate_1 = app.getTemplate(\`nodeTemplate\`);
   
@@ -523,7 +523,7 @@ exports[`t-call (template calling) recursive template, part 4: with t-set recurs
 exports[`t-call (template calling) scoped parameters 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
@@ -546,7 +546,7 @@ exports[`t-call (template calling) scoped parameters 1`] = `
 exports[`t-call (template calling) scoped parameters 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
     return text(\`ok\`);
@@ -557,7 +557,7 @@ exports[`t-call (template calling) scoped parameters 2`] = `
 exports[`t-call (template calling) scoped parameters, part 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
@@ -581,7 +581,7 @@ exports[`t-call (template calling) scoped parameters, part 2 1`] = `
 exports[`t-call (template calling) scoped parameters, part 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
     return text(ctx['foo']);
@@ -592,7 +592,7 @@ exports[`t-call (template calling) scoped parameters, part 2 2`] = `
 exports[`t-call (template calling) t-call allowed on a non t node 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -607,7 +607,7 @@ exports[`t-call (template calling) t-call allowed on a non t node 1`] = `
 exports[`t-call (template calling) t-call allowed on a non t node 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span>ok</span>\`);
   
@@ -620,7 +620,7 @@ exports[`t-call (template calling) t-call allowed on a non t node 2`] = `
 exports[`t-call (template calling) t-call with body content as root of a template 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, zero } = helpers;
   const callTemplate_1 = app.getTemplate(\`antony\`);
   
@@ -639,7 +639,7 @@ exports[`t-call (template calling) t-call with body content as root of a templat
 exports[`t-call (template calling) t-call with body content as root of a template 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { zero } = helpers;
   
   let block1 = createBlock(\`<foo><block-child-0/></foo>\`);
@@ -654,7 +654,7 @@ exports[`t-call (template calling) t-call with body content as root of a templat
 exports[`t-call (template calling) t-call with t-if 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -672,7 +672,7 @@ exports[`t-call (template calling) t-call with t-if 1`] = `
 exports[`t-call (template calling) t-call with t-if 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span>ok</span>\`);
   
@@ -685,7 +685,7 @@ exports[`t-call (template calling) t-call with t-if 2`] = `
 exports[`t-call (template calling) t-call with t-set inside and body text content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
@@ -706,7 +706,7 @@ exports[`t-call (template calling) t-call with t-set inside and body text conten
 exports[`t-call (template calling) t-call with t-set inside and body text content 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<p><block-text-0/></p>\`);
   
@@ -720,7 +720,7 @@ exports[`t-call (template calling) t-call with t-set inside and body text conten
 exports[`t-call (template calling) t-call with t-set inside and outside 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, isBoundary, withDefault, setContextValue, withKey } = helpers;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
@@ -754,7 +754,7 @@ exports[`t-call (template calling) t-call with t-set inside and outside 1`] = `
 exports[`t-call (template calling) t-call with t-set inside and outside 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
@@ -768,7 +768,7 @@ exports[`t-call (template calling) t-call with t-set inside and outside 2`] = `
 exports[`t-call (template calling) t-call with t-set inside and outside. 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   const callTemplate_1 = app.getTemplate(\`main\`);
   
@@ -787,7 +787,7 @@ exports[`t-call (template calling) t-call with t-set inside and outside. 2 1`] =
 exports[`t-call (template calling) t-call with t-set inside and outside. 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, isBoundary, withDefault, setContextValue, withKey } = helpers;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
@@ -821,7 +821,7 @@ exports[`t-call (template calling) t-call with t-set inside and outside. 2 2`] =
 exports[`t-call (template calling) t-call with t-set inside and outside. 2 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block2 = createBlock(\`<span><block-text-0/></span>\`);
   
@@ -837,7 +837,7 @@ exports[`t-call (template calling) t-call with t-set inside and outside. 2 3`] =
 exports[`t-call (template calling) t-call, conditional and t-set in t-call body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   const callTemplate_1 = app.getTemplate(\`callee1\`);
   const callTemplate_2 = app.getTemplate(\`callee2\`);
@@ -866,7 +866,7 @@ exports[`t-call (template calling) t-call, conditional and t-set in t-call body 
 exports[`t-call (template calling) t-call, conditional and t-set in t-call body 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>callee1</div>\`);
   
@@ -879,7 +879,7 @@ exports[`t-call (template calling) t-call, conditional and t-set in t-call body 
 exports[`t-call (template calling) t-call, conditional and t-set in t-call body 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>callee2 <block-text-0/></div>\`);
   
@@ -893,7 +893,7 @@ exports[`t-call (template calling) t-call, conditional and t-set in t-call body 
 exports[`t-call (template calling) t-esc inside t-call, with t-set outside 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
@@ -912,7 +912,7 @@ exports[`t-call (template calling) t-esc inside t-call, with t-set outside 1`] =
 exports[`t-call (template calling) t-esc inside t-call, with t-set outside 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
@@ -926,7 +926,7 @@ exports[`t-call (template calling) t-esc inside t-call, with t-set outside 2`] =
 exports[`t-call (template calling) with unused body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, zero } = helpers;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
@@ -943,7 +943,7 @@ exports[`t-call (template calling) with unused body 1`] = `
 exports[`t-call (template calling) with unused body 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>ok</div>\`);
   
@@ -956,7 +956,7 @@ exports[`t-call (template calling) with unused body 2`] = `
 exports[`t-call (template calling) with unused setbody 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
@@ -974,7 +974,7 @@ exports[`t-call (template calling) with unused setbody 1`] = `
 exports[`t-call (template calling) with unused setbody 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>ok</div>\`);
   
@@ -987,7 +987,7 @@ exports[`t-call (template calling) with unused setbody 2`] = `
 exports[`t-call (template calling) with used body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, zero } = helpers;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
@@ -1004,7 +1004,7 @@ exports[`t-call (template calling) with used body 1`] = `
 exports[`t-call (template calling) with used body 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { zero } = helpers;
   
   let block1 = createBlock(\`<h1><block-text-0/></h1>\`);
@@ -1019,7 +1019,7 @@ exports[`t-call (template calling) with used body 2`] = `
 exports[`t-call (template calling) with used setbody 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
@@ -1040,7 +1040,7 @@ exports[`t-call (template calling) with used setbody 1`] = `
 exports[`t-call (template calling) with used setbody 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
     return text(ctx['foo']);

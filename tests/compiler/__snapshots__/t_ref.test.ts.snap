@@ -3,7 +3,7 @@
 exports[`t-ref can get a dynamic ref on a node 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><span block-ref=\\"0\\"/></div>\`);
   
@@ -19,7 +19,7 @@ exports[`t-ref can get a dynamic ref on a node 1`] = `
 exports[`t-ref can get a dynamic ref on a node, alternate syntax 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><span block-ref=\\"0\\"/></div>\`);
   
@@ -35,7 +35,7 @@ exports[`t-ref can get a dynamic ref on a node, alternate syntax 1`] = `
 exports[`t-ref can get a ref on a node 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><span block-ref=\\"0\\"/></div>\`);
   
@@ -50,7 +50,7 @@ exports[`t-ref can get a ref on a node 1`] = `
 exports[`t-ref ref in a t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -65,7 +65,7 @@ exports[`t-ref ref in a t-call 1`] = `
 exports[`t-ref ref in a t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>1<span block-ref=\\"0\\"/>2</div>\`);
   
@@ -80,7 +80,7 @@ exports[`t-ref ref in a t-call 2`] = `
 exports[`t-ref ref in a t-if 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<span block-ref=\\"0\\"/>\`);
@@ -100,7 +100,7 @@ exports[`t-ref ref in a t-if 1`] = `
 exports[`t-ref refs in a loop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -128,7 +128,7 @@ exports[`t-ref refs in a loop 1`] = `
 exports[`t-ref two refs, one in a t-if 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-child-0/><p block-ref=\\"0\\"/></div>\`);
   let block2 = createBlock(\`<span block-ref=\\"0\\"/>\`);

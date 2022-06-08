@@ -3,7 +3,7 @@
 exports[`translation support can set and remove translatable attributes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div tomato=\\"word\\" potato=\\"mot\\" title=\\"mot\\" label=\\"word\\">text</div>\`);
   
@@ -16,7 +16,7 @@ exports[`translation support can set and remove translatable attributes 1`] = `
 exports[`translation support can translate node content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>mot</div>\`);
   
@@ -29,7 +29,7 @@ exports[`translation support can translate node content 1`] = `
 exports[`translation support does not translate node content if disabled 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><span>mot</span><span>word</span></div>\`);
   
@@ -42,7 +42,7 @@ exports[`translation support does not translate node content if disabled 1`] = `
 exports[`translation support some attributes are translated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><p label=\\"mot\\">mot</p><p title=\\"mot\\">mot</p><p placeholder=\\"mot\\">mot</p><p alt=\\"mot\\">mot</p><p something=\\"word\\">mot</p></div>\`);
   
@@ -55,7 +55,7 @@ exports[`translation support some attributes are translated 1`] = `
 exports[`translation support translation is done on the trimmed text, with extra spaces readded after 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div> mot </div>\`);
   

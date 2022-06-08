@@ -3,7 +3,7 @@
 exports[`t-call-block simple t-call-block with static text 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   

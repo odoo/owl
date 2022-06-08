@@ -264,9 +264,7 @@ export class CodeGenerator {
       tKeyExpr: null,
     });
     // define blocks and utility functions
-    let mainCode = [
-      `  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;`,
-    ];
+    let mainCode = [`  let { text, createBlock, list, multi, html, toggler, comment } = bdom;`];
     if (this.helpers.size) {
       mainCode.push(`let { ${[...this.helpers].join(", ")} } = helpers;`);
     }
@@ -1178,8 +1176,15 @@ export class CodeGenerator {
     if (ctx.tKeyExpr) {
       keyArg = `${ctx.tKeyExpr} + ${keyArg}`;
     }
-    const blockArgs = `${expr}, ${propString}, ${keyArg}, node, ctx`;
-    let blockExpr = `component(${blockArgs})`;
+    let id = generateId("comp");
+    this.staticDefs.push({
+      id,
+      expr: `app.createComponent(${
+        ast.isDynamic ? null : expr
+      }, ${!ast.isDynamic}, ${!!ast.slots}, ${!!ast.dynamicProps})`,
+    });
+
+    let blockExpr = `${id}(${propString}, ${keyArg}, node, ctx, ${ast.isDynamic ? expr : null})`;
     if (ast.isDynamic) {
       blockExpr = `toggler(${expr}, ${blockExpr})`;
     }
@@ -1270,8 +1275,14 @@ export class CodeGenerator {
       this.helpers.add("capture");
       this.define(ctxStr, `capture(ctx)`);
     }
+    let id = generateId("comp");
+    this.staticDefs.push({
+      id,
+      expr: `app.createComponent(null, false, true, false)`,
+    });
+
     const target = compileExpr(ast.target);
-    const blockString = `component(Portal, {target: ${target},slots: {'default': {__render: ${name}, __ctx: ${ctxStr}}}}, key + \`${key}\`, node, ctx)`;
+    const blockString = `${id}({target: ${target},slots: {'default': {__render: ${name}, __ctx: ${ctxStr}}}}, key + \`${key}\`, node, ctx, Portal)`;
     if (block) {
       this.insertAnchor(block);
     }

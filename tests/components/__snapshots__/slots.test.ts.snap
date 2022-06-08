@@ -3,12 +3,13 @@
 exports[`slots can define a default content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Dialog\`, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = component(\`Dialog\`, {}, key + \`__1\`, node, ctx);
+    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
     return block1([], [b2]);
   }
 }"
@@ -17,7 +18,7 @@ exports[`slots can define a default content 1`] = `
 exports[`slots can define a default content 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -36,8 +37,9 @@ exports[`slots can define a default content 2`] = `
 exports[`slots can define and call slots 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Dialog\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<span>header</span>\`);
@@ -53,7 +55,7 @@ exports[`slots can define and call slots 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    const b4 = component(\`Dialog\`, {slots: markRaw({'header': {__render: slot1, __ctx: ctx1}, 'footer': {__render: slot2, __ctx: ctx1}})}, key + \`__1\`, node, ctx);
+    const b4 = comp1({slots: markRaw({'header': {__render: slot1, __ctx: ctx1}, 'footer': {__render: slot2, __ctx: ctx1}})}, key + \`__1\`, node, ctx, null);
     return block1([], [b4]);
   }
 }"
@@ -62,7 +64,7 @@ exports[`slots can define and call slots 1`] = `
 exports[`slots can define and call slots 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><div><block-child-0/></div><div><block-child-1/></div></div>\`);
@@ -78,8 +80,9 @@ exports[`slots can define and call slots 2`] = `
 exports[`slots can define and call slots with bound params 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, bind, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false);
   
   function slot1(ctx, node, key = \\"\\") {
     return text(\`abc\`);
@@ -87,7 +90,7 @@ exports[`slots can define and call slots with bound params 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    return component(\`Child\`, {slots: markRaw({'abc': {__render: slot1, __ctx: ctx1, getValue: bind(ctx, ctx['getValue'])}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'abc': {__render: slot1, __ctx: ctx1, getValue: bind(ctx, ctx['getValue'])}})}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -95,7 +98,7 @@ exports[`slots can define and call slots with bound params 1`] = `
 exports[`slots can define and call slots with bound params 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -109,8 +112,9 @@ exports[`slots can define and call slots with bound params 2`] = `
 exports[`slots can define and call slots with params 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Dialog\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<span>header</span>\`);
@@ -126,7 +130,7 @@ exports[`slots can define and call slots with params 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    const b4 = component(\`Dialog\`, {slots: markRaw({'header': {__render: slot1, __ctx: ctx1, param: ctx['var']}, 'footer': {__render: slot2, __ctx: ctx1, param: '5'}})}, key + \`__1\`, node, ctx);
+    const b4 = comp1({slots: markRaw({'header': {__render: slot1, __ctx: ctx1, param: ctx['var']}, 'footer': {__render: slot2, __ctx: ctx1, param: '5'}})}, key + \`__1\`, node, ctx, null);
     return block1([], [b4]);
   }
 }"
@@ -135,7 +139,7 @@ exports[`slots can define and call slots with params 1`] = `
 exports[`slots can define and call slots with params 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-text-0/><div><block-child-0/></div><block-text-1/><div><block-child-1/></div></div>\`);
@@ -153,8 +157,10 @@ exports[`slots can define and call slots with params 2`] = `
 exports[`slots can render node with t-ref and Component in same slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp2 = app.createComponent(\`Child\`, true, true, false);
   
   let block2 = createBlock(\`<div block-ref=\\"0\\"/>\`);
   
@@ -162,12 +168,12 @@ exports[`slots can render node with t-ref and Component in same slot 1`] = `
     const refs = ctx.__owl__.refs;
     const ref1 = (el) => refs[\`div\`] = el;
     const b2 = block2([ref1]);
-    const b3 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    const b3 = comp1({}, key + \`__1\`, node, ctx, null);
     return multi([b2, b3]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx);
+    return comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
   }
 }"
 `;
@@ -175,7 +181,7 @@ exports[`slots can render node with t-ref and Component in same slot 1`] = `
 exports[`slots can render node with t-ref and Component in same slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -187,7 +193,7 @@ exports[`slots can render node with t-ref and Component in same slot 2`] = `
 exports[`slots can render only empty slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -199,10 +205,11 @@ exports[`slots can render only empty slot 1`] = `
 exports[`slots can use component in default-content of t-slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    return comp1({}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -210,11 +217,12 @@ exports[`slots can use component in default-content of t-slot 1`] = `
 exports[`slots can use component in default-content of t-slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
+  const comp1 = app.createComponent(\`GrandChild\`, true, false, false);
   
   function defaultContent1(ctx, node, key = \\"\\") {
-    return component(\`GrandChild\`, {}, key + \`__1\`, node, ctx);
+    return comp1({}, key + \`__1\`, node, ctx, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
@@ -226,7 +234,7 @@ exports[`slots can use component in default-content of t-slot 2`] = `
 exports[`slots can use component in default-content of t-slot 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
     return text(\`\`);
@@ -237,10 +245,11 @@ exports[`slots can use component in default-content of t-slot 3`] = `
 exports[`slots can use t-call in default-content of t-slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    return comp1({}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -248,7 +257,7 @@ exports[`slots can use t-call in default-content of t-slot 1`] = `
 exports[`slots can use t-call in default-content of t-slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   const callTemplate_1 = app.getTemplate(\`__template__999\`);
   
@@ -265,7 +274,7 @@ exports[`slots can use t-call in default-content of t-slot 2`] = `
 exports[`slots can use t-call in default-content of t-slot 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
     return text(\`\`);
@@ -276,8 +285,9 @@ exports[`slots can use t-call in default-content of t-slot 3`] = `
 exports[`slots content is the default slot (variation) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Dialog\`, true, true, false);
   
   let block1 = createBlock(\`<span>sts rocks</span>\`);
   
@@ -286,7 +296,7 @@ exports[`slots content is the default slot (variation) 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Dialog\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -294,7 +304,7 @@ exports[`slots content is the default slot (variation) 1`] = `
 exports[`slots content is the default slot (variation) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -306,8 +316,9 @@ exports[`slots content is the default slot (variation) 2`] = `
 exports[`slots content is the default slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Dialog\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<span>sts rocks</span>\`);
@@ -317,7 +328,7 @@ exports[`slots content is the default slot 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = component(\`Dialog\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx);
+    const b3 = comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx, null);
     return block1([], [b3]);
   }
 }"
@@ -326,7 +337,7 @@ exports[`slots content is the default slot 1`] = `
 exports[`slots content is the default slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -341,8 +352,9 @@ exports[`slots content is the default slot 2`] = `
 exports[`slots default content is not rendered if named slot is provided 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Dialog\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -352,7 +364,7 @@ exports[`slots default content is not rendered if named slot is provided 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    const b3 = component(\`Dialog\`, {slots: markRaw({'header': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx);
+    const b3 = comp1({slots: markRaw({'header': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx, null);
     return block1([], [b3]);
   }
 }"
@@ -361,7 +373,7 @@ exports[`slots default content is not rendered if named slot is provided 1`] = `
 exports[`slots default content is not rendered if named slot is provided 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -380,8 +392,9 @@ exports[`slots default content is not rendered if named slot is provided 2`] = `
 exports[`slots default content is not rendered if slot is provided 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Dialog\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -390,7 +403,7 @@ exports[`slots default content is not rendered if slot is provided 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = component(\`Dialog\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx);
+    const b3 = comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx, null);
     return block1([], [b3]);
   }
 }"
@@ -399,7 +412,7 @@ exports[`slots default content is not rendered if slot is provided 1`] = `
 exports[`slots default content is not rendered if slot is provided 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -418,8 +431,9 @@ exports[`slots default content is not rendered if slot is provided 2`] = `
 exports[`slots default slot next to named slot, with default content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Dialog\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -429,7 +443,7 @@ exports[`slots default slot next to named slot, with default content 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    const b3 = component(\`Dialog\`, {slots: markRaw({'footer': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx);
+    const b3 = comp1({slots: markRaw({'footer': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx, null);
     return block1([], [b3]);
   }
 }"
@@ -438,7 +452,7 @@ exports[`slots default slot next to named slot, with default content 1`] = `
 exports[`slots default slot next to named slot, with default content 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div class=\\"Dialog\\"><div class=\\"content\\"><block-child-0/></div><div class=\\"footer\\"><block-child-1/></div></div>\`);
@@ -462,15 +476,16 @@ exports[`slots default slot next to named slot, with default content 2`] = `
 exports[`slots default slot with params with - in it 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false);
   
   function slot1(ctx, node, key = \\"\\") {
     return text(ctx['slotScope']['some-value']);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx, __scope: \\"slotScope\\"}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx, __scope: \\"slotScope\\"}})}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -478,7 +493,7 @@ exports[`slots default slot with params with - in it 1`] = `
 exports[`slots default slot with params with - in it 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -490,8 +505,9 @@ exports[`slots default slot with params with - in it 2`] = `
 exports[`slots default slot with slot scope: shorthand syntax 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false);
   
   function slot1(ctx, node, key = \\"\\") {
     let b2,b3;
@@ -504,7 +520,7 @@ exports[`slots default slot with slot scope: shorthand syntax 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx, __scope: \\"slotScope\\"}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx, __scope: \\"slotScope\\"}})}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -512,7 +528,7 @@ exports[`slots default slot with slot scope: shorthand syntax 1`] = `
 exports[`slots default slot with slot scope: shorthand syntax 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -527,15 +543,16 @@ exports[`slots default slot with slot scope: shorthand syntax 2`] = `
 exports[`slots default slot work with text nodes (variation) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Dialog\`, true, true, false);
   
   function slot1(ctx, node, key = \\"\\") {
     return text(\`sts rocks\`);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Dialog\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -543,7 +560,7 @@ exports[`slots default slot work with text nodes (variation) 1`] = `
 exports[`slots default slot work with text nodes (variation) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -555,8 +572,9 @@ exports[`slots default slot work with text nodes (variation) 2`] = `
 exports[`slots default slot work with text nodes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Dialog\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -565,7 +583,7 @@ exports[`slots default slot work with text nodes 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = component(\`Dialog\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx);
+    const b3 = comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx, null);
     return block1([], [b3]);
   }
 }"
@@ -574,7 +592,7 @@ exports[`slots default slot work with text nodes 1`] = `
 exports[`slots default slot work with text nodes 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -589,8 +607,9 @@ exports[`slots default slot work with text nodes 2`] = `
 exports[`slots dynamic t-slot call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Toggler\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<p>slot1</p>\`);
@@ -609,7 +628,7 @@ exports[`slots dynamic t-slot call 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    const b6 = component(\`Toggler\`, {slots: markRaw({'slot1': {__render: slot1, __ctx: ctx1}, 'slot2': {__render: slot2, __ctx: ctx1}})}, key + \`__1\`, node, ctx);
+    const b6 = comp1({slots: markRaw({'slot1': {__render: slot1, __ctx: ctx1}, 'slot2': {__render: slot2, __ctx: ctx1}})}, key + \`__1\`, node, ctx, null);
     return block1([], [b6]);
   }
 }"
@@ -618,7 +637,7 @@ exports[`slots dynamic t-slot call 1`] = `
 exports[`slots dynamic t-slot call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-child-0/></button>\`);
@@ -635,8 +654,9 @@ exports[`slots dynamic t-slot call 2`] = `
 exports[`slots dynamic t-slot call with default 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Toggler\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<p>slot1</p>\`);
@@ -655,7 +675,7 @@ exports[`slots dynamic t-slot call with default 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    const b6 = component(\`Toggler\`, {slots: markRaw({'slot1': {__render: slot1, __ctx: ctx1}, 'slot2': {__render: slot2, __ctx: ctx1}})}, key + \`__1\`, node, ctx);
+    const b6 = comp1({slots: markRaw({'slot1': {__render: slot1, __ctx: ctx1}, 'slot2': {__render: slot2, __ctx: ctx1}})}, key + \`__1\`, node, ctx, null);
     return block1([], [b6]);
   }
 }"
@@ -664,7 +684,7 @@ exports[`slots dynamic t-slot call with default 1`] = `
 exports[`slots dynamic t-slot call with default 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-child-0/></button>\`);
@@ -684,15 +704,16 @@ exports[`slots dynamic t-slot call with default 2`] = `
 exports[`slots fun: two calls to the same slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false);
   
   function slot1(ctx, node, key = \\"\\") {
     return text(\`some text\`);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -700,7 +721,7 @@ exports[`slots fun: two calls to the same slot 1`] = `
 exports[`slots fun: two calls to the same slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -714,12 +735,13 @@ exports[`slots fun: two calls to the same slot 2`] = `
 exports[`slots missing slots are ignored 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Dialog\`, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = component(\`Dialog\`, {}, key + \`__1\`, node, ctx);
+    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
     return block1([], [b2]);
   }
 }"
@@ -728,7 +750,7 @@ exports[`slots missing slots are ignored 1`] = `
 exports[`slots missing slots are ignored 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/><span>some content</span><block-child-1/></span>\`);
@@ -744,10 +766,11 @@ exports[`slots missing slots are ignored 2`] = `
 exports[`slots mix of slots, t-call, t-call with body, and giving own props child 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`P\`, true, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`P\`, {}, key + \`__1\`, node, ctx);
+    return comp1({}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -755,14 +778,15 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 exports[`slots mix of slots, t-call, t-call with body, and giving own props child 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`A\`, true, false, false);
   
   let block2 = createBlock(\`<button block-handler-0=\\"click\\">inc</button>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let hdlr1 = [ctx['inc'], ctx];
     const b2 = block2([hdlr1]);
-    const b3 = component(\`A\`, {number: ctx['state'].number}, key + \`__1\`, node, ctx);
+    const b3 = comp1({number: ctx['state'].number}, key + \`__1\`, node, ctx, null);
     return multi([b2, b3]);
   }
 }"
@@ -771,9 +795,10 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 exports[`slots mix of slots, t-call, t-call with body, and giving own props child 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const callTemplate_1 = app.getTemplate(\`__template__1002\`);
+  const comp1 = app.createComponent(\`B\`, true, true, false);
   
   function slot1(ctx, node, key = \\"\\") {
     const b2 = text(\`[A]\`);
@@ -783,7 +808,7 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    return component(\`B\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2\`, node, ctx);
+    return comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2\`, node, ctx, null);
   }
 }"
 `;
@@ -791,7 +816,7 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 exports[`slots mix of slots, t-call, t-call with body, and giving own props child 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   const callTemplate_1 = app.getTemplate(\`__template__1001\`);
   
@@ -812,7 +837,7 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 exports[`slots mix of slots, t-call, t-call with body, and giving own props child 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
     const b2 = text(\`[sub2\`);
@@ -826,11 +851,12 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 exports[`slots mix of slots, t-call, t-call with body, and giving own props child 6`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`C\`, true, false, false);
   
   return function template(ctx, node, key = \\"\\") {
     const b2 = text(\`[B]\`);
-    const b3 = component(\`C\`, {slots: ctx['props'].slots}, key + \`__1\`, node, ctx);
+    const b3 = comp1({slots: ctx['props'].slots}, key + \`__1\`, node, ctx, null);
     return multi([b2, b3]);
   }
 }"
@@ -839,7 +865,7 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 exports[`slots mix of slots, t-call, t-call with body, and giving own props child 7`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -853,8 +879,9 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 exports[`slots multiple roots are allowed in a default slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Dialog\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<span>sts</span>\`);
@@ -867,7 +894,7 @@ exports[`slots multiple roots are allowed in a default slot 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b5 = component(\`Dialog\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx);
+    const b5 = comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx, null);
     return block1([], [b5]);
   }
 }"
@@ -876,7 +903,7 @@ exports[`slots multiple roots are allowed in a default slot 1`] = `
 exports[`slots multiple roots are allowed in a default slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -891,8 +918,9 @@ exports[`slots multiple roots are allowed in a default slot 2`] = `
 exports[`slots multiple roots are allowed in a named slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Dialog\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<span>sts</span>\`);
@@ -906,7 +934,7 @@ exports[`slots multiple roots are allowed in a named slot 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    const b5 = component(\`Dialog\`, {slots: markRaw({'content': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx);
+    const b5 = comp1({slots: markRaw({'content': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx, null);
     return block1([], [b5]);
   }
 }"
@@ -915,7 +943,7 @@ exports[`slots multiple roots are allowed in a named slot 1`] = `
 exports[`slots multiple roots are allowed in a named slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -930,20 +958,23 @@ exports[`slots multiple roots are allowed in a named slot 2`] = `
 exports[`slots multiple slots containing components 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`C\`, true, false, false);
+  const comp2 = app.createComponent(\`C\`, true, false, false);
+  const comp3 = app.createComponent(\`B\`, true, true, false);
   
   function slot1(ctx, node, key = \\"\\") {
-    return component(\`C\`, {val: 1}, key + \`__1\`, node, ctx);
+    return comp1({val: 1}, key + \`__1\`, node, ctx, null);
   }
   
   function slot2(ctx, node, key = \\"\\") {
-    return component(\`C\`, {val: 2}, key + \`__2\`, node, ctx);
+    return comp2({val: 2}, key + \`__2\`, node, ctx, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    return component(\`B\`, {slots: markRaw({'s1': {__render: slot1, __ctx: ctx1}, 's2': {__render: slot2, __ctx: ctx1}})}, key + \`__3\`, node, ctx);
+    return comp3({slots: markRaw({'s1': {__render: slot1, __ctx: ctx1}, 's2': {__render: slot2, __ctx: ctx1}})}, key + \`__3\`, node, ctx, null);
   }
 }"
 `;
@@ -951,7 +982,7 @@ exports[`slots multiple slots containing components 1`] = `
 exports[`slots multiple slots containing components 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
@@ -967,7 +998,7 @@ exports[`slots multiple slots containing components 2`] = `
 exports[`slots multiple slots containing components 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
@@ -981,8 +1012,10 @@ exports[`slots multiple slots containing components 3`] = `
 exports[`slots named slot inside slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false);
+  const comp2 = app.createComponent(\`Child\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<p>A<block-text-0/></p>\`);
@@ -995,7 +1028,7 @@ exports[`slots named slot inside slot 1`] = `
   
   function slot2(ctx, node, key = \\"\\") {
     const ctx2 = capture(ctx);
-    return component(\`Child\`, {slots: markRaw({'brol': {__render: slot3, __ctx: ctx2}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'brol': {__render: slot3, __ctx: ctx2}})}, key + \`__1\`, node, ctx, null);
   }
   
   function slot3(ctx, node, key = \\"\\") {
@@ -1005,7 +1038,7 @@ exports[`slots named slot inside slot 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    const b5 = component(\`Child\`, {slots: markRaw({'brol': {__render: slot1, __ctx: ctx1}, 'default': {__render: slot2, __ctx: ctx1}})}, key + \`__2\`, node, ctx);
+    const b5 = comp2({slots: markRaw({'brol': {__render: slot1, __ctx: ctx1}, 'default': {__render: slot2, __ctx: ctx1}})}, key + \`__2\`, node, ctx, null);
     return block1([], [b5]);
   }
 }"
@@ -1014,7 +1047,7 @@ exports[`slots named slot inside slot 1`] = `
 exports[`slots named slot inside slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
@@ -1030,8 +1063,10 @@ exports[`slots named slot inside slot 2`] = `
 exports[`slots named slot inside slot, part 3 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false);
+  const comp2 = app.createComponent(\`Child\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<p>A<block-text-0/></p>\`);
@@ -1044,7 +1079,7 @@ exports[`slots named slot inside slot, part 3 1`] = `
   
   function slot2(ctx, node, key = \\"\\") {
     const ctx2 = capture(ctx);
-    return component(\`Child\`, {slots: markRaw({'brol': {__render: slot3, __ctx: ctx2}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'brol': {__render: slot3, __ctx: ctx2}})}, key + \`__1\`, node, ctx, null);
   }
   
   function slot3(ctx, node, key = \\"\\") {
@@ -1054,7 +1089,7 @@ exports[`slots named slot inside slot, part 3 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    const b5 = component(\`Child\`, {slots: markRaw({'brol': {__render: slot1, __ctx: ctx1}, 'default': {__render: slot2, __ctx: ctx1}})}, key + \`__2\`, node, ctx);
+    const b5 = comp2({slots: markRaw({'brol': {__render: slot1, __ctx: ctx1}, 'default': {__render: slot2, __ctx: ctx1}})}, key + \`__2\`, node, ctx, null);
     return block1([], [b5]);
   }
 }"
@@ -1063,7 +1098,7 @@ exports[`slots named slot inside slot, part 3 1`] = `
 exports[`slots named slot inside slot, part 3 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
@@ -1079,12 +1114,13 @@ exports[`slots named slot inside slot, part 3 2`] = `
 exports[`slots named slots can define a default content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Dialog\`, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = component(\`Dialog\`, {}, key + \`__1\`, node, ctx);
+    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
     return block1([], [b2]);
   }
 }"
@@ -1093,7 +1129,7 @@ exports[`slots named slots can define a default content 1`] = `
 exports[`slots named slots can define a default content 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -1112,8 +1148,10 @@ exports[`slots named slots can define a default content 2`] = `
 exports[`slots named slots inside slot, again 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false);
+  const comp2 = app.createComponent(\`Child\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<p>A<block-text-0/></p>\`);
@@ -1126,7 +1164,7 @@ exports[`slots named slots inside slot, again 1`] = `
   
   function slot2(ctx, node, key = \\"\\") {
     const ctx2 = capture(ctx);
-    return component(\`Child\`, {slots: markRaw({'brol2': {__render: slot3, __ctx: ctx2}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'brol2': {__render: slot3, __ctx: ctx2}})}, key + \`__1\`, node, ctx, null);
   }
   
   function slot3(ctx, node, key = \\"\\") {
@@ -1136,7 +1174,7 @@ exports[`slots named slots inside slot, again 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    const b5 = component(\`Child\`, {slots: markRaw({'brol1': {__render: slot1, __ctx: ctx1}, 'default': {__render: slot2, __ctx: ctx1}})}, key + \`__2\`, node, ctx);
+    const b5 = comp2({slots: markRaw({'brol1': {__render: slot1, __ctx: ctx1}, 'default': {__render: slot2, __ctx: ctx1}})}, key + \`__2\`, node, ctx, null);
     return block1([], [b5]);
   }
 }"
@@ -1145,7 +1183,7 @@ exports[`slots named slots inside slot, again 1`] = `
 exports[`slots named slots inside slot, again 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<child><block-child-0/><block-child-1/><block-child-2/></child>\`);
@@ -1170,21 +1208,24 @@ exports[`slots named slots inside slot, again 2`] = `
 exports[`slots nested slots in same template 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child3\`, true, false, false);
+  const comp2 = app.createComponent(\`Child2\`, true, true, false);
+  const comp3 = app.createComponent(\`Child\`, true, true, false);
   
   let block1 = createBlock(\`<span id=\\"parent\\"><block-child-0/></span>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return component(\`Child2\`, {slots: markRaw({'default': {__render: slot2, __ctx: ctx}})}, key + \`__2\`, node, ctx);
+    return comp2({slots: markRaw({'default': {__render: slot2, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
   }
   
   function slot2(ctx, node, key = \\"\\") {
-    return component(\`Child3\`, {}, key + \`__1\`, node, ctx);
+    return comp1({}, key + \`__1\`, node, ctx, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b4 = component(\`Child\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__3\`, node, ctx);
+    const b4 = comp3({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__3\`, node, ctx, null);
     return block1([], [b4]);
   }
 }"
@@ -1193,7 +1234,7 @@ exports[`slots nested slots in same template 1`] = `
 exports[`slots nested slots in same template 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span id=\\"c1\\"><div><block-child-0/></div></span>\`);
@@ -1208,7 +1249,7 @@ exports[`slots nested slots in same template 2`] = `
 exports[`slots nested slots in same template 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span id=\\"c2\\"><block-child-0/></span>\`);
@@ -1223,7 +1264,7 @@ exports[`slots nested slots in same template 3`] = `
 exports[`slots nested slots in same template 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span>Child 3</span>\`);
   
@@ -1236,15 +1277,17 @@ exports[`slots nested slots in same template 4`] = `
 exports[`slots nested slots: evaluation context and parented relationship 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Slot\`, true, false, false);
+  const comp2 = app.createComponent(\`Child\`, true, true, false);
   
   function slot1(ctx, node, key = \\"\\") {
-    return component(\`Slot\`, {val: ctx['state'].val}, key + \`__1\`, node, ctx);
+    return comp1({val: ctx['state'].val}, key + \`__1\`, node, ctx, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx);
+    return comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
   }
 }"
 `;
@@ -1252,15 +1295,16 @@ exports[`slots nested slots: evaluation context and parented relationship 1`] = 
 exports[`slots nested slots: evaluation context and parented relationship 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot, markRaw } = helpers;
+  const comp1 = app.createComponent(\`GrandChild\`, true, true, false);
   
   function slot1(ctx, node, key = \\"\\") {
     return callSlot(ctx, node, key, 'default', false, {});
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`GrandChild\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -1268,7 +1312,7 @@ exports[`slots nested slots: evaluation context and parented relationship 2`] = 
 exports[`slots nested slots: evaluation context and parented relationship 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -1283,7 +1327,7 @@ exports[`slots nested slots: evaluation context and parented relationship 3`] = 
 exports[`slots nested slots: evaluation context and parented relationship 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
@@ -1297,10 +1341,11 @@ exports[`slots nested slots: evaluation context and parented relationship 4`] = 
 exports[`slots no named slot content => just no children 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Dialog\`, true, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Dialog\`, {}, key + \`__1\`, node, ctx);
+    return comp1({}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -1308,7 +1353,7 @@ exports[`slots no named slot content => just no children 1`] = `
 exports[`slots no named slot content => just no children 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -1323,15 +1368,16 @@ exports[`slots no named slot content => just no children 2`] = `
 exports[`slots simple default slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false);
   
   function slot1(ctx, node, key = \\"\\") {
     return text(\`some text\`);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -1339,7 +1385,7 @@ exports[`slots simple default slot 1`] = `
 exports[`slots simple default slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -1354,8 +1400,9 @@ exports[`slots simple default slot 2`] = `
 exports[`slots simple default slot with params 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false);
   
   function slot1(ctx, node, key = \\"\\") {
     let b2,b3;
@@ -1368,7 +1415,7 @@ exports[`slots simple default slot with params 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -1376,7 +1423,7 @@ exports[`slots simple default slot with params 1`] = `
 exports[`slots simple default slot with params 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -1391,15 +1438,16 @@ exports[`slots simple default slot with params 2`] = `
 exports[`slots simple default slot with params and bound function 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false);
   
   function slot1(ctx, node, key = \\"\\") {
     return text(ctx['slotScope'].fn());
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx, __scope: \\"slotScope\\"}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx, __scope: \\"slotScope\\"}})}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -1407,7 +1455,7 @@ exports[`slots simple default slot with params and bound function 1`] = `
 exports[`slots simple default slot with params and bound function 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot, bind } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -1419,15 +1467,16 @@ exports[`slots simple default slot with params and bound function 2`] = `
 exports[`slots simple default slot, variation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false);
   
   function slot1(ctx, node, key = \\"\\") {
     return text(\`some text\`);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -1435,7 +1484,7 @@ exports[`slots simple default slot, variation 1`] = `
 exports[`slots simple default slot, variation 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -1447,8 +1496,9 @@ exports[`slots simple default slot, variation 2`] = `
 exports[`slots simple dynamic slot with slot scope 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false);
   
   function slot1(ctx, node, key = \\"\\") {
     let b2,b3;
@@ -1462,7 +1512,7 @@ exports[`slots simple dynamic slot with slot scope 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    return component(\`Child\`, {slots: markRaw({'slotName': {__render: slot1, __ctx: ctx1, __scope: \\"slotScope\\"}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'slotName': {__render: slot1, __ctx: ctx1, __scope: \\"slotScope\\"}})}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -1470,7 +1520,7 @@ exports[`slots simple dynamic slot with slot scope 1`] = `
 exports[`slots simple dynamic slot with slot scope 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -1486,12 +1536,13 @@ exports[`slots simple dynamic slot with slot scope 2`] = `
 exports[`slots simple named and empty slot -- 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false);
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    return component(\`Child\`, {slots: markRaw({'myEmptySlot': {myProp: 'myProp text'}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'myEmptySlot': {myProp: 'myProp text'}})}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -1499,7 +1550,7 @@ exports[`slots simple named and empty slot -- 2 1`] = `
 exports[`slots simple named and empty slot -- 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -1518,8 +1569,9 @@ exports[`slots simple named and empty slot -- 2 2`] = `
 exports[`slots simple named and empty slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false);
   
   function slot1(ctx, node, key = \\"\\") {
     return text(\`some text\`);
@@ -1527,7 +1579,7 @@ exports[`slots simple named and empty slot 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    return component(\`Child\`, {slots: markRaw({'myEmptySlot': {}, 'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'myEmptySlot': {}, 'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -1535,7 +1587,7 @@ exports[`slots simple named and empty slot 1`] = `
 exports[`slots simple named and empty slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/><block-child-1/></span>\`);
@@ -1551,8 +1603,9 @@ exports[`slots simple named and empty slot 2`] = `
 exports[`slots simple slot with slot scope 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false);
   
   function slot1(ctx, node, key = \\"\\") {
     let b2,b3;
@@ -1566,7 +1619,7 @@ exports[`slots simple slot with slot scope 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    return component(\`Child\`, {slots: markRaw({'slotName': {__render: slot1, __ctx: ctx1, __scope: \\"slotScope\\"}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'slotName': {__render: slot1, __ctx: ctx1, __scope: \\"slotScope\\"}})}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -1574,7 +1627,7 @@ exports[`slots simple slot with slot scope 1`] = `
 exports[`slots simple slot with slot scope 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -1589,9 +1642,10 @@ exports[`slots simple slot with slot scope 2`] = `
 exports[`slots slot and (inline) t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const callTemplate_1 = app.getTemplate(\`__template__999\`);
+  const comp1 = app.createComponent(\`Dialog\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1601,7 +1655,7 @@ exports[`slots slot and (inline) t-call 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    const b3 = component(\`Dialog\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2\`, node, ctx);
+    const b3 = comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2\`, node, ctx, null);
     return block1([], [b3]);
   }
 }"
@@ -1610,7 +1664,7 @@ exports[`slots slot and (inline) t-call 1`] = `
 exports[`slots slot and (inline) t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<p>sokka</p>\`);
   
@@ -1623,7 +1677,7 @@ exports[`slots slot and (inline) t-call 2`] = `
 exports[`slots slot and (inline) t-call 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -1638,9 +1692,10 @@ exports[`slots slot and (inline) t-call 3`] = `
 exports[`slots slot and t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const callTemplate_1 = app.getTemplate(\`__template__999\`);
+  const comp1 = app.createComponent(\`Dialog\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1650,7 +1705,7 @@ exports[`slots slot and t-call 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    const b3 = component(\`Dialog\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2\`, node, ctx);
+    const b3 = comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2\`, node, ctx, null);
     return block1([], [b3]);
   }
 }"
@@ -1659,7 +1714,7 @@ exports[`slots slot and t-call 1`] = `
 exports[`slots slot and t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<p>sokka</p>\`);
   
@@ -1672,7 +1727,7 @@ exports[`slots slot and t-call 2`] = `
 exports[`slots slot and t-call 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -1687,8 +1742,9 @@ exports[`slots slot and t-call 3`] = `
 exports[`slots slot and t-esc 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Dialog\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1697,7 +1753,7 @@ exports[`slots slot and t-esc 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = component(\`Dialog\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx);
+    const b3 = comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx, null);
     return block1([], [b3]);
   }
 }"
@@ -1706,7 +1762,7 @@ exports[`slots slot and t-esc 1`] = `
 exports[`slots slot and t-esc 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -1721,19 +1777,21 @@ exports[`slots slot and t-esc 2`] = `
 exports[`slots slot are properly rendered if inner props are changed 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`SomeComponent\`, true, false, false);
+  const comp2 = app.createComponent(\`GenericComponent\`, true, true, false);
   
   let block1 = createBlock(\`<div><button block-handler-0=\\"click\\">Inc[<block-text-1/>]</button><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return component(\`SomeComponent\`, {val: ctx['state'].val}, key + \`__1\`, node, ctx);
+    return comp1({val: ctx['state'].val}, key + \`__1\`, node, ctx, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
     let hdlr1 = [ctx['inc'], ctx];
     let txt1 = ctx['state'].val;
-    const b3 = component(\`GenericComponent\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx);
+    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
     return block1([hdlr1, txt1], [b3]);
   }
 }"
@@ -1742,7 +1800,7 @@ exports[`slots slot are properly rendered if inner props are changed 1`] = `
 exports[`slots slot are properly rendered if inner props are changed 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -1757,7 +1815,7 @@ exports[`slots slot are properly rendered if inner props are changed 2`] = `
 exports[`slots slot are properly rendered if inner props are changed 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div> SC:<block-text-0/></div>\`);
   
@@ -1771,15 +1829,17 @@ exports[`slots slot are properly rendered if inner props are changed 3`] = `
 exports[`slots slot content has different key from other content -- dynamic slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp2 = app.createComponent(\`SlotDisplay\`, true, true, false);
   
   function slot1(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {parent: 'Parent'}, key + \`__1\`, node, ctx);
+    return comp1({parent: 'Parent'}, key + \`__1\`, node, ctx, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`SlotDisplay\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx);
+    return comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
   }
 }"
 `;
@@ -1787,11 +1847,12 @@ exports[`slots slot content has different key from other content -- dynamic slot
 exports[`slots slot content has different key from other content -- dynamic slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = component(\`Child\`, {parent: 'SlotDisplay'}, key + \`__1\`, node, ctx);
+    const b2 = comp1({parent: 'SlotDisplay'}, key + \`__1\`, node, ctx, null);
     const slot1 = (ctx['slotName']);
     const b3 = toggler(slot1, callSlot(ctx, node, key, slot1, true, {}));
     return multi([b2, b3]);
@@ -1802,7 +1863,7 @@ exports[`slots slot content has different key from other content -- dynamic slot
 exports[`slots slot content has different key from other content -- dynamic slot 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
@@ -1816,15 +1877,17 @@ exports[`slots slot content has different key from other content -- dynamic slot
 exports[`slots slot content has different key from other content -- static slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp2 = app.createComponent(\`SlotDisplay\`, true, true, false);
   
   function slot1(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {parent: 'Parent'}, key + \`__1\`, node, ctx);
+    return comp1({parent: 'Parent'}, key + \`__1\`, node, ctx, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`SlotDisplay\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx);
+    return comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
   }
 }"
 `;
@@ -1832,11 +1895,12 @@ exports[`slots slot content has different key from other content -- static slot 
 exports[`slots slot content has different key from other content -- static slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = component(\`Child\`, {parent: 'SlotDisplay'}, key + \`__1\`, node, ctx);
+    const b2 = comp1({parent: 'SlotDisplay'}, key + \`__1\`, node, ctx, null);
     const b3 = callSlot(ctx, node, key, 'default', false, {});
     return multi([b2, b3]);
   }
@@ -1846,7 +1910,7 @@ exports[`slots slot content has different key from other content -- static slot 
 exports[`slots slot content has different key from other content -- static slot 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
@@ -1860,8 +1924,9 @@ exports[`slots slot content has different key from other content -- static slot 
 exports[`slots slot content is bound to caller (variation) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, isBoundary, withDefault, setContextValue, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false);
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\">some text</button>\`);
   
@@ -1875,7 +1940,7 @@ exports[`slots slot content is bound to caller (variation) 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    return component(\`Child\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -1883,7 +1948,7 @@ exports[`slots slot content is bound to caller (variation) 1`] = `
 exports[`slots slot content is bound to caller (variation) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -1898,8 +1963,9 @@ exports[`slots slot content is bound to caller (variation) 2`] = `
 exports[`slots slot content is bound to caller 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false);
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\">some text</button>\`);
   
@@ -1909,7 +1975,7 @@ exports[`slots slot content is bound to caller 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -1917,7 +1983,7 @@ exports[`slots slot content is bound to caller 1`] = `
 exports[`slots slot content is bound to caller 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -1932,17 +1998,19 @@ exports[`slots slot content is bound to caller 2`] = `
 exports[`slots slot preserves properly parented relationship 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`GrandChild\`, true, false, false);
+  const comp2 = app.createComponent(\`Child\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return component(\`GrandChild\`, {}, key + \`__1\`, node, ctx);
+    return comp1({}, key + \`__1\`, node, ctx, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = component(\`Child\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx);
+    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
     return block1([], [b3]);
   }
 }"
@@ -1951,7 +2019,7 @@ exports[`slots slot preserves properly parented relationship 1`] = `
 exports[`slots slot preserves properly parented relationship 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -1963,7 +2031,7 @@ exports[`slots slot preserves properly parented relationship 2`] = `
 exports[`slots slot preserves properly parented relationship 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
     return text(\`Grand Child\`);
@@ -1974,9 +2042,10 @@ exports[`slots slot preserves properly parented relationship 3`] = `
 exports[`slots slot preserves properly parented relationship, even through t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const callTemplate_1 = app.getTemplate(\`sub\`);
+  const comp1 = app.createComponent(\`Child\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1986,7 +2055,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    const b3 = component(\`Child\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2\`, node, ctx);
+    const b3 = comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2\`, node, ctx, null);
     return block1([], [b3]);
   }
 }"
@@ -1995,10 +2064,11 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
 exports[`slots slot preserves properly parented relationship, even through t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`GrandChild\`, true, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`GrandChild\`, {}, key + \`__1\`, node, ctx);
+    return comp1({}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -2006,7 +2076,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
 exports[`slots slot preserves properly parented relationship, even through t-call 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -2018,7 +2088,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
 exports[`slots slot preserves properly parented relationship, even through t-call 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
     return text(\`Grand Child\`);
@@ -2029,8 +2099,9 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
 exports[`slots slot with slot scope and t-props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false);
   
   let block2 = createBlock(\`<p><block-text-0/></p>\`);
   let block3 = createBlock(\`<p><block-text-0/></p>\`);
@@ -2045,7 +2116,7 @@ exports[`slots slot with slot scope and t-props 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    return component(\`Child\`, {slots: markRaw({'slotName': {__render: slot1, __ctx: ctx1, __scope: \\"info\\"}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'slotName': {__render: slot1, __ctx: ctx1, __scope: \\"info\\"}})}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -2053,7 +2124,7 @@ exports[`slots slot with slot scope and t-props 1`] = `
 exports[`slots slot with slot scope and t-props 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -2065,15 +2136,16 @@ exports[`slots slot with slot scope and t-props 2`] = `
 exports[`slots slots and wrapper components 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Link\`, true, true, false);
   
   function slot1(ctx, node, key = \\"\\") {
     return text(\`hey\`);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Link\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -2081,7 +2153,7 @@ exports[`slots slots and wrapper components 1`] = `
 exports[`slots slots and wrapper components 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<a href=\\"abc\\"><block-child-0/></a>\`);
@@ -2096,10 +2168,11 @@ exports[`slots slots and wrapper components 2`] = `
 exports[`slots slots are properly bound to correct component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    return comp1({}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -2107,7 +2180,7 @@ exports[`slots slots are properly bound to correct component 1`] = `
 exports[`slots slots are properly bound to correct component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot, isBoundary, withDefault, setContextValue } = helpers;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
@@ -2130,8 +2203,9 @@ exports[`slots slots are properly bound to correct component 2`] = `
 exports[`slots slots are rendered with proper context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Dialog\`, true, true, false);
   
   let block1 = createBlock(\`<div><span class=\\"counter\\"><block-text-0/></span><block-child-0/></div>\`);
   let block2 = createBlock(\`<button block-handler-0=\\"click\\">do something</button>\`);
@@ -2144,7 +2218,7 @@ exports[`slots slots are rendered with proper context 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let txt1 = ctx['state'].val;
     const ctx1 = capture(ctx);
-    const b3 = component(\`Dialog\`, {slots: markRaw({'footer': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx);
+    const b3 = comp1({slots: markRaw({'footer': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx, null);
     return block1([txt1], [b3]);
   }
 }"
@@ -2153,7 +2227,7 @@ exports[`slots slots are rendered with proper context 1`] = `
 exports[`slots slots are rendered with proper context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -2168,8 +2242,9 @@ exports[`slots slots are rendered with proper context 2`] = `
 exports[`slots slots are rendered with proper context, part 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, capture, markRaw, withKey } = helpers;
+  const comp1 = app.createComponent(\`Link\`, true, true, false);
   
   let block1 = createBlock(\`<div><u><block-child-0/></u></div>\`);
   let block3 = createBlock(\`<li><block-child-0/></li>\`);
@@ -2187,7 +2262,7 @@ exports[`slots slots are rendered with proper context, part 2 1`] = `
       ctx[\`user\`] = v_block2[i1];
       const key1 = ctx['user'].id;
       const ctx1 = capture(ctx);
-      const b7 = component(\`Link\`, {to: '/user/'+ctx['user'].id,slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1__\${key1}\`, node, ctx);
+      const b7 = comp1({to: '/user/'+ctx['user'].id,slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1__\${key1}\`, node, ctx, null);
       c_block2[i1] = withKey(block3([], [b7]), key1);
     }
     const b2 = list(c_block2);
@@ -2199,7 +2274,7 @@ exports[`slots slots are rendered with proper context, part 2 1`] = `
 exports[`slots slots are rendered with proper context, part 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<a block-attribute-0=\\"href\\"><block-child-0/></a>\`);
@@ -2215,8 +2290,9 @@ exports[`slots slots are rendered with proper context, part 2 2`] = `
 exports[`slots slots are rendered with proper context, part 3 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, isBoundary, withDefault, setContextValue, capture, markRaw, withKey } = helpers;
+  const comp1 = app.createComponent(\`Link\`, true, true, false);
   
   let block1 = createBlock(\`<div><u><block-child-0/></u></div>\`);
   let block3 = createBlock(\`<li><block-child-0/></li>\`);
@@ -2235,7 +2311,7 @@ exports[`slots slots are rendered with proper context, part 3 1`] = `
       const key1 = ctx['user'].id;
       setContextValue(ctx, \\"userdescr\\", 'User '+ctx['user'].name);
       const ctx1 = capture(ctx);
-      const b5 = component(\`Link\`, {to: '/user/'+ctx['user'].id,slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1__\${key1}\`, node, ctx);
+      const b5 = comp1({to: '/user/'+ctx['user'].id,slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1__\${key1}\`, node, ctx, null);
       c_block2[i1] = withKey(block3([], [b5]), key1);
     }
     const b2 = list(c_block2);
@@ -2247,7 +2323,7 @@ exports[`slots slots are rendered with proper context, part 3 1`] = `
 exports[`slots slots are rendered with proper context, part 3 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<a block-attribute-0=\\"href\\"><block-child-0/></a>\`);
@@ -2263,8 +2339,9 @@ exports[`slots slots are rendered with proper context, part 3 2`] = `
 exports[`slots slots are rendered with proper context, part 4 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue, capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Link\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -2277,7 +2354,7 @@ exports[`slots slots are rendered with proper context, part 4 1`] = `
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"userdescr\\", 'User '+ctx['state'].user.name);
     const ctx1 = capture(ctx);
-    const b3 = component(\`Link\`, {to: '/user/'+ctx['state'].user.id,slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx);
+    const b3 = comp1({to: '/user/'+ctx['state'].user.id,slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx, null);
     return block1([], [b3]);
   }
 }"
@@ -2286,7 +2363,7 @@ exports[`slots slots are rendered with proper context, part 4 1`] = `
 exports[`slots slots are rendered with proper context, part 4 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<a block-attribute-0=\\"href\\"><block-child-0/></a>\`);
@@ -2302,8 +2379,9 @@ exports[`slots slots are rendered with proper context, part 4 2`] = `
 exports[`slots slots in slots, with vars 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue, capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`A\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<p>hey<block-text-0/></p>\`);
@@ -2318,7 +2396,7 @@ exports[`slots slots in slots, with vars 1`] = `
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"test\\", ctx['state'].name);
     const ctx1 = capture(ctx);
-    const b3 = component(\`A\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx);
+    const b3 = comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx, null);
     return block1([], [b3]);
   }
 }"
@@ -2327,8 +2405,9 @@ exports[`slots slots in slots, with vars 1`] = `
 exports[`slots slots in slots, with vars 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot, markRaw } = helpers;
+  const comp1 = app.createComponent(\`B\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -2337,7 +2416,7 @@ exports[`slots slots in slots, with vars 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = component(\`B\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx);
+    const b3 = comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx, null);
     return block1([], [b3]);
   }
 }"
@@ -2346,7 +2425,7 @@ exports[`slots slots in slots, with vars 2`] = `
 exports[`slots slots in slots, with vars 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -2361,8 +2440,9 @@ exports[`slots slots in slots, with vars 3`] = `
 exports[`slots slots in t-foreach and re-rendering 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, capture, markRaw, withKey } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -2378,7 +2458,7 @@ exports[`slots slots in t-foreach and re-rendering 1`] = `
       ctx[\`n_index\`] = i1;
       const key1 = ctx['n_index'];
       const ctx1 = capture(ctx);
-      c_block2[i1] = withKey(component(\`Child\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1__\${key1}\`, node, ctx), key1);
+      c_block2[i1] = withKey(comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1__\${key1}\`, node, ctx, null), key1);
     }
     const b2 = list(c_block2);
     return block1([], [b2]);
@@ -2389,7 +2469,7 @@ exports[`slots slots in t-foreach and re-rendering 1`] = `
 exports[`slots slots in t-foreach and re-rendering 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/><block-child-0/></span>\`);
@@ -2405,8 +2485,9 @@ exports[`slots slots in t-foreach and re-rendering 2`] = `
 exports[`slots slots in t-foreach in t-foreach 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, capture, markRaw, withKey } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block4 = createBlock(\`<div><block-text-0/></div>\`);
@@ -2432,7 +2513,7 @@ exports[`slots slots in t-foreach in t-foreach 1`] = `
         ctx[\`node2\`] = v_block6[i2];
         const key2 = ctx['node2'].key;
         const ctx1 = capture(ctx);
-        c_block6[i2] = withKey(component(\`Child\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1__\${key1}__\${key2}\`, node, ctx), key2);
+        c_block6[i2] = withKey(comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1__\${key1}__\${key2}\`, node, ctx, null), key2);
       }
       ctx = ctx.__proto__;
       const b6 = list(c_block6);
@@ -2448,7 +2529,7 @@ exports[`slots slots in t-foreach in t-foreach 1`] = `
 exports[`slots slots in t-foreach in t-foreach 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -2463,8 +2544,9 @@ exports[`slots slots in t-foreach in t-foreach 2`] = `
 exports[`slots slots in t-foreach with t-set and re-rendering 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, isBoundary, withDefault, setContextValue, capture, markRaw, withKey } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -2483,7 +2565,7 @@ exports[`slots slots in t-foreach with t-set and re-rendering 1`] = `
       const key1 = ctx['n_index'];
       setContextValue(ctx, \\"dummy\\", ctx['n_index']);
       const ctx1 = capture(ctx);
-      c_block2[i1] = withKey(component(\`Child\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1__\${key1}\`, node, ctx), key1);
+      c_block2[i1] = withKey(comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1__\${key1}\`, node, ctx, null), key1);
     }
     const b2 = list(c_block2);
     return block1([], [b2]);
@@ -2494,7 +2576,7 @@ exports[`slots slots in t-foreach with t-set and re-rendering 1`] = `
 exports[`slots slots in t-foreach with t-set and re-rendering 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/><block-child-0/></span>\`);
@@ -2510,8 +2592,9 @@ exports[`slots slots in t-foreach with t-set and re-rendering 2`] = `
 exports[`slots t-debug on a t-set-slot (defining a slot) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Dialog\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -2522,7 +2605,7 @@ exports[`slots t-debug on a t-set-slot (defining a slot) 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    const b3 = component(\`Dialog\`, {slots: markRaw({'content': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx);
+    const b3 = comp1({slots: markRaw({'content': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx, null);
     return block1([], [b3]);
   }
 }"
@@ -2531,7 +2614,7 @@ exports[`slots t-debug on a t-set-slot (defining a slot) 1`] = `
 exports[`slots t-debug on a t-set-slot (defining a slot) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -2546,8 +2629,9 @@ exports[`slots t-debug on a t-set-slot (defining a slot) 2`] = `
 exports[`slots t-set t-value in a slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, isBoundary, withDefault, setContextValue, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Dialog\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -2560,7 +2644,7 @@ exports[`slots t-set t-value in a slot 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    const b3 = component(\`Dialog\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx);
+    const b3 = comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx, null);
     return block1([], [b3]);
   }
 }"
@@ -2569,7 +2653,7 @@ exports[`slots t-set t-value in a slot 1`] = `
 exports[`slots t-set t-value in a slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
@@ -2584,9 +2668,10 @@ exports[`slots t-set t-value in a slot 2`] = `
 exports[`slots t-slot in recursive templates 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, prepareList, isBoundary, withDefault, setContextValue, withKey, markRaw } = helpers;
   const callTemplate_1 = app.getTemplate(\`_test_recursive_template\`);
+  const comp1 = app.createComponent(\`Wrapper\`, true, true, false);
   
   function slot1(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -2621,7 +2706,7 @@ exports[`slots t-slot in recursive templates 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    return component(\`Wrapper\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2\`, node, ctx);
+    return comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2\`, node, ctx, null);
   }
 }"
 `;
@@ -2629,7 +2714,7 @@ exports[`slots t-slot in recursive templates 1`] = `
 exports[`slots t-slot in recursive templates 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<wrapper><block-child-0/></wrapper>\`);
@@ -2644,17 +2729,19 @@ exports[`slots t-slot in recursive templates 2`] = `
 exports[`slots t-slot nested within another slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child3\`, true, false, false);
+  const comp2 = app.createComponent(\`Dialog\`, true, true, false);
   
   let block1 = createBlock(\`<span id=\\"c1\\"><block-child-0/></span>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return component(\`Child3\`, {}, key + \`__1\`, node, ctx);
+    return comp1({}, key + \`__1\`, node, ctx, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = component(\`Dialog\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx);
+    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
     return block1([], [b3]);
   }
 }"
@@ -2663,13 +2750,15 @@ exports[`slots t-slot nested within another slot 1`] = `
 exports[`slots t-slot nested within another slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Portal\`, true, true, false);
+  const comp2 = app.createComponent(\`Modal\`, true, true, false);
   
   let block1 = createBlock(\`<span id=\\"c2\\"><block-child-0/></span>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return component(\`Portal\`, {slots: markRaw({'default': {__render: slot2, __ctx: ctx}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'default': {__render: slot2, __ctx: ctx}})}, key + \`__1\`, node, ctx, null);
   }
   
   function slot2(ctx, node, key = \\"\\") {
@@ -2677,7 +2766,7 @@ exports[`slots t-slot nested within another slot 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b4 = component(\`Modal\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx);
+    const b4 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
     return block1([], [b4]);
   }
 }"
@@ -2686,7 +2775,7 @@ exports[`slots t-slot nested within another slot 2`] = `
 exports[`slots t-slot nested within another slot 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span id=\\"modal\\"><block-child-0/></span>\`);
@@ -2701,7 +2790,7 @@ exports[`slots t-slot nested within another slot 3`] = `
 exports[`slots t-slot nested within another slot 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<span id=\\"portal\\"><block-child-0/></span>\`);
@@ -2716,7 +2805,7 @@ exports[`slots t-slot nested within another slot 4`] = `
 exports[`slots t-slot nested within another slot 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span>Child 3</span>\`);
   
@@ -2729,8 +2818,9 @@ exports[`slots t-slot nested within another slot 5`] = `
 exports[`slots t-slot scope context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Dialog\`, true, true, false);
   
   let block1 = createBlock(\`<button>The Button</button>\`);
   
@@ -2739,7 +2829,7 @@ exports[`slots t-slot scope context 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Dialog\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -2747,8 +2837,9 @@ exports[`slots t-slot scope context 1`] = `
 exports[`slots t-slot scope context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Wrapper\`, true, true, false);
   
   let block1 = createBlock(\`<div block-handler-0=\\"click\\"><block-child-0/></div>\`);
   
@@ -2759,7 +2850,7 @@ exports[`slots t-slot scope context 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Wrapper\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx);
+    return comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -2767,7 +2858,7 @@ exports[`slots t-slot scope context 2`] = `
 exports[`slots t-slot scope context 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -2779,9 +2870,10 @@ exports[`slots t-slot scope context 3`] = `
 exports[`slots t-slot within dynamic t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const call = app.callTemplate.bind(app);
+  const comp1 = app.createComponent(\`Slotted\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -2792,7 +2884,7 @@ exports[`slots t-slot within dynamic t-call 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    const b3 = component(\`Slotted\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2\`, node, ctx);
+    const b3 = comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2\`, node, ctx, null);
     return block1([], [b3]);
   }
 }"
@@ -2801,7 +2893,7 @@ exports[`slots t-slot within dynamic t-call 1`] = `
 exports[`slots t-slot within dynamic t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div class=\\"slotted\\"><block-child-0/></div>\`);
@@ -2816,12 +2908,13 @@ exports[`slots t-slot within dynamic t-call 2`] = `
 exports[`slots t-slot within dynamic t-call 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false);
   
   let block1 = createBlock(\`<div class=\\"slot\\"><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
     return block1([], [b2]);
   }
 }"
@@ -2830,7 +2923,7 @@ exports[`slots t-slot within dynamic t-call 3`] = `
 exports[`slots t-slot within dynamic t-call 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div class=\\"child\\"/>\`);
   
@@ -2843,17 +2936,19 @@ exports[`slots t-slot within dynamic t-call 4`] = `
 exports[`slots template can just return a slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp2 = app.createComponent(\`SlotComponent\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return component(\`Child\`, {value: ctx['state'].value}, key + \`__1\`, node, ctx);
+    return comp1({value: ctx['state'].value}, key + \`__1\`, node, ctx, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = component(\`SlotComponent\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx);
+    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
     return block1([], [b3]);
   }
 }"
@@ -2862,7 +2957,7 @@ exports[`slots template can just return a slot 1`] = `
 exports[`slots template can just return a slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -2874,7 +2969,7 @@ exports[`slots template can just return a slot 2`] = `
 exports[`slots template can just return a slot 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   

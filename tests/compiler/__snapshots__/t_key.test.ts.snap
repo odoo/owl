@@ -3,7 +3,7 @@
 exports[`t-key can use t-key directive on a node 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
@@ -18,7 +18,7 @@ exports[`t-key can use t-key directive on a node 1`] = `
 exports[`t-key can use t-key directive on a node 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
@@ -33,7 +33,7 @@ exports[`t-key can use t-key directive on a node 2 1`] = `
 exports[`t-key can use t-key directive on a node as a function 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
@@ -48,7 +48,7 @@ exports[`t-key can use t-key directive on a node as a function 1`] = `
 exports[`t-key t-key directive in a list 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   
   let block1 = createBlock(\`<ul><block-child-0/></ul>\`);
@@ -72,7 +72,7 @@ exports[`t-key t-key directive in a list 1`] = `
 exports[`t-key t-key on sub dom node pushes a child block in its parent 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   let block2 = createBlock(\`<span/>\`);
@@ -93,7 +93,7 @@ exports[`t-key t-key on sub dom node pushes a child block in its parent 1`] = `
 exports[`t-key t-key on sub dom node pushes a child block in its parent 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><h1/></div>\`);
   

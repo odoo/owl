@@ -3,7 +3,7 @@
 exports[`loading templates addTemplates does not modify its xml document in place 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
@@ -17,7 +17,7 @@ exports[`loading templates addTemplates does not modify its xml document in plac
 exports[`loading templates can initialize qweb with a string 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>jupiler</div>\`);
   
@@ -30,7 +30,7 @@ exports[`loading templates can initialize qweb with a string 1`] = `
 exports[`loading templates can initialize qweb with an XMLDocument 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>jupiler</div>\`);
   
@@ -43,7 +43,7 @@ exports[`loading templates can initialize qweb with an XMLDocument 1`] = `
 exports[`loading templates can load a few templates from a xml string 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const callTemplate_1 = app.getTemplate(\`items\`);
   
   let block1 = createBlock(\`<ul><block-child-0/></ul>\`);
@@ -58,7 +58,7 @@ exports[`loading templates can load a few templates from a xml string 1`] = `
 exports[`loading templates can load a few templates from a xml string 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block2 = createBlock(\`<li>ok</li>\`);
   let block3 = createBlock(\`<li>foo</li>\`);
@@ -74,7 +74,7 @@ exports[`loading templates can load a few templates from a xml string 2`] = `
 exports[`loading templates can load a few templates from an XMLDocument 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const callTemplate_1 = app.getTemplate(\`items\`);
   
   let block1 = createBlock(\`<ul><block-child-0/></ul>\`);
@@ -89,7 +89,7 @@ exports[`loading templates can load a few templates from an XMLDocument 1`] = `
 exports[`loading templates can load a few templates from an XMLDocument 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block2 = createBlock(\`<li>ok</li>\`);
   let block3 = createBlock(\`<li>foo</li>\`);

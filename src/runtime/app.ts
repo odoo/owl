@@ -1,11 +1,12 @@
-import { Component, ComponentConstructor } from "./component";
+import { Component, ComponentConstructor, Props } from "./component";
 import { ComponentNode } from "./component_node";
-import { MountOptions } from "./fibers";
-import { Scheduler } from "./scheduler";
-import { TemplateSet, TemplateSetConfig } from "./template_set";
 import { nodeErrorHandlers } from "./error_handling";
-import { validateTarget } from "./utils";
+import { Fiber, MountOptions } from "./fibers";
+import { Scheduler } from "./scheduler";
+import { STATUS } from "./status";
 import { validateProps } from "./template_helpers";
+import { TemplateSet, TemplateSetConfig } from "./template_set";
+import { validateTarget } from "./utils";
 
 // reimplement dev mode stuff see last change in 0f7a8289a6fb8387c3c1af41c6664b2a8448758f
 
@@ -111,6 +112,67 @@ export class App<
       this.scheduler.flush();
       this.root.destroy();
     }
+  }
+
+  createComponent<P extends Props>(
+    name: string | null,
+    isStatic: boolean,
+    hasSlotsProp: boolean,
+    hasDynamicPropList: boolean
+  ) {
+    const isDynamic = !isStatic;
+    function _arePropsDifferent(props1: Props, props2: Props): boolean {
+      for (let k in props1) {
+        if (props1[k] !== props2[k]) {
+          return true;
+        }
+      }
+      return hasDynamicPropList && Object.keys(props1).length !== Object.keys(props2).length;
+    }
+    const arePropsDifferent = hasSlotsProp ? () => true : _arePropsDifferent;
+
+    return (props: P, key: string, ctx: ComponentNode, parent: any, C: any) => {
+      let children = ctx.children;
+      let node: any = children[key];
+
+      if (node && node.status === STATUS.DESTROYED) {
+        node = undefined;
+      }
+      if (isDynamic && node && node.component.constructor !== C) {
+        node = undefined;
+      }
+
+      const parentFiber = ctx.fiber!;
+      if (node) {
+        let shouldRender = node.forceNextRender;
+        if (shouldRender) {
+          node.forceNextRender = false;
+        } else {
+          const currentProps = node.props;
+          shouldRender = parentFiber.deep || arePropsDifferent(currentProps, props);
+        }
+        if (shouldRender) {
+          node.updateAndRender(props, parentFiber);
+        }
+      } else {
+        // new component
+        if (isStatic) {
+          C = parent.constructor.components[name as any];
+          if (!C) {
+            throw new Error(`Cannot find the definition of component "${name}"`);
+          } else if (!(C.prototype instanceof Component)) {
+            throw new Error(
+              `"${name}" is not a Component. It must inherit from the Component class`
+            );
+          }
+        }
+        node = new ComponentNode(C, props, this, ctx, key);
+        children[key] = node;
+        node.initiateRender(new Fiber(node, parentFiber));
+      }
+      parentFiber.childrenMap[key] = node;
+      return node;
+    };
   }
 }
 

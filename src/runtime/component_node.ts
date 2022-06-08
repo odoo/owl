@@ -1,19 +1,18 @@
 import type { App, Env } from "./app";
 import { BDom, VNode } from "./blockdom";
+import { Component, ComponentConstructor, Props } from "./component";
+import { fibersInError, handleError } from "./error_handling";
+import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";
 import {
   clearReactivesForCallback,
   getSubscriptions,
   NonReactive,
   Reactive,
   reactive,
-  toRaw,
   TARGET,
 } from "./reactivity";
-import { batched, Callback } from "./utils";
-import { Component, ComponentConstructor } from "./component";
-import { fibersInError, handleError } from "./error_handling";
-import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";
 import { STATUS } from "./status";
+import { batched, Callback } from "./utils";
 
 let currentNode: ComponentNode | null = null;
 
@@ -31,14 +30,12 @@ export function useComponent(): Component {
 /**
  * Apply default props (only top level).
  */
-function applyDefaultProps<P extends object>(props: P, defaultProps: Partial<P>): P {
-  const result = Object.assign({} as any, props);
+function applyDefaultProps<P extends object>(props: P, defaultProps: Partial<P>) {
   for (let propName in defaultProps) {
     if (props[propName] === undefined) {
-      result[propName] = defaultProps[propName];
+      (props as any)[propName] = defaultProps[propName];
     }
   }
-  return result;
 }
 // -----------------------------------------------------------------------------
 // Integration with reactivity system (useState)
@@ -65,72 +62,6 @@ export function useState<T extends object>(state: T): Reactive<T> | NonReactive<
     node.willDestroy.push(clearReactivesForCallback.bind(null, render));
   }
   return reactive(state, render);
-}
-
-// -----------------------------------------------------------------------------
-// component function (used in compiled template code)
-// -----------------------------------------------------------------------------
-type Props = { [key: string]: any };
-
-function arePropsDifferent(props1: Props, props2: Props): boolean {
-  for (let k in props1) {
-    const prop1 = props1[k] && typeof props1[k] === "object" ? toRaw(props1[k]) : props1[k];
-    const prop2 = props2[k] && typeof props2[k] === "object" ? toRaw(props2[k]) : props2[k];
-    if (prop1 !== prop2) {
-      return true;
-    }
-  }
-  return Object.keys(props1).length !== Object.keys(props2).length;
-}
-
-export function component<P extends Props>(
-  name: string | ComponentConstructor<P>,
-  props: P,
-  key: string,
-  ctx: ComponentNode,
-  parent: any
-): ComponentNode<P> {
-  let node: any = ctx.children[key];
-  let isDynamic = typeof name !== "string";
-
-  if (node && node.status === STATUS.DESTROYED) {
-    node = undefined;
-  }
-  if (isDynamic && node && node.component.constructor !== name) {
-    node = undefined;
-  }
-
-  const parentFiber = ctx.fiber!;
-  if (node) {
-    let shouldRender = node.forceNextRender;
-    if (shouldRender) {
-      node.forceNextRender = false;
-    } else {
-      const currentProps = node.props;
-      shouldRender = parentFiber.deep || arePropsDifferent(currentProps, props);
-    }
-    if (shouldRender) {
-      node.updateAndRender(props, parentFiber);
-    }
-  } else {
-    // new component
-    let C;
-    if (isDynamic) {
-      C = name;
-    } else {
-      C = parent.constructor.components[name as any];
-      if (!C) {
-        throw new Error(`Cannot find the definition of component "${name}"`);
-      } else if (!(C.prototype instanceof Component)) {
-        throw new Error(`"${name}" is not a Component. It must inherit from the Component class`);
-      }
-    }
-    node = new ComponentNode(C, props, ctx.app, ctx, key);
-    ctx.children[key] = node;
-    node.initiateRender(new Fiber(node, parentFiber));
-  }
-  parentFiber.childrenMap[key] = node;
-  return node;
 }
 
 // -----------------------------------------------------------------------------
@@ -179,8 +110,9 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     this.parentKey = parentKey;
     this.level = parent ? parent.level + 1 : 0;
     const defaultProps = C.defaultProps;
+    props = Object.assign({}, props);
     if (defaultProps) {
-      props = applyDefaultProps(props, defaultProps);
+      applyDefaultProps(props, defaultProps);
     }
     const env = (parent && parent.childEnv) || app.env;
     this.childEnv = env;
@@ -297,13 +229,14 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
 
   async updateAndRender(props: P, parentFiber: Fiber) {
     const rawProps = props;
+    props = Object.assign({}, props);
     // update
     const fiber = makeChildFiber(this, parentFiber);
     this.fiber = fiber;
     const component = this.component;
     const defaultProps = (component.constructor as any).defaultProps;
     if (defaultProps) {
-      props = applyDefaultProps(props, defaultProps);
+      applyDefaultProps(props, defaultProps);
     }
 
     currentNode = this;

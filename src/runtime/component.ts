@@ -5,7 +5,7 @@ import type { ComponentNode } from "./component_node";
 //  Component Class
 // -----------------------------------------------------------------------------
 
-type Props = { [key: string]: any };
+export type Props = { [key: string]: any };
 
 interface StaticComponentProperties {
   template: string;

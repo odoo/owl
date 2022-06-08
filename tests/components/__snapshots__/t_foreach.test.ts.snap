@@ -3,8 +3,9 @@
 exports[`list of components components in a node in a t-foreach  1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, false, false);
   
   let block1 = createBlock(\`<div><ul><block-child-0/></ul></div>\`);
   let block3 = createBlock(\`<li><block-child-0/></li>\`);
@@ -15,7 +16,7 @@ exports[`list of components components in a node in a t-foreach  1`] = `
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`item\`] = v_block2[i1];
       const key1 = 'li_'+ctx['item'];
-      const b4 = component(\`Child\`, {item: ctx['item']}, key + \`__1__\${key1}\`, node, ctx);
+      const b4 = comp1({item: ctx['item']}, key + \`__1__\${key1}\`, node, ctx, null);
       c_block2[i1] = withKey(block3([], [b4]), key1);
     }
     const b2 = list(c_block2);
@@ -27,7 +28,7 @@ exports[`list of components components in a node in a t-foreach  1`] = `
 exports[`list of components components in a node in a t-foreach  2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
@@ -41,8 +42,9 @@ exports[`list of components components in a node in a t-foreach  2`] = `
 exports[`list of components crash on duplicate key in dev mode 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, false, false);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -55,7 +57,7 @@ exports[`list of components crash on duplicate key in dev mode 1`] = `
       keys1.add(key1);
       const props1 = {};
       helpers.validateProps(\`Child\`, props1, ctx);
-      c_block1[i1] = withKey(component(\`Child\`, props1, key + \`__1__\${key1}\`, node, ctx), key1);
+      c_block1[i1] = withKey(comp1(props1, key + \`__1__\${key1}\`, node, ctx, null), key1);
     }
     return list(c_block1);
   }
@@ -65,7 +67,7 @@ exports[`list of components crash on duplicate key in dev mode 1`] = `
 exports[`list of components crash on duplicate key in dev mode 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
     return text(\`\`);
@@ -76,8 +78,9 @@ exports[`list of components crash on duplicate key in dev mode 2`] = `
 exports[`list of components list of sub components inside other nodes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  const comp1 = app.createComponent(\`SubComponent\`, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<div><block-child-0/></div>\`);
@@ -88,7 +91,7 @@ exports[`list of components list of sub components inside other nodes 1`] = `
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`blip\`] = v_block2[i1];
       const key1 = ctx['blip'].id;
-      const b4 = component(\`SubComponent\`, {}, key + \`__1__\${key1}\`, node, ctx);
+      const b4 = comp1({}, key + \`__1__\${key1}\`, node, ctx, null);
       c_block2[i1] = withKey(block3([], [b4]), key1);
     }
     const b2 = list(c_block2);
@@ -100,7 +103,7 @@ exports[`list of components list of sub components inside other nodes 1`] = `
 exports[`list of components list of sub components inside other nodes 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span>asdf</span>\`);
   
@@ -113,8 +116,9 @@ exports[`list of components list of sub components inside other nodes 2`] = `
 exports[`list of components reconciliation alg works for t-foreach in t-foreach 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -131,7 +135,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
         ctx[\`blip\`] = v_block3[i2];
         ctx[\`blip_index\`] = i2;
         const key2 = ctx['blip_index'];
-        c_block3[i2] = withKey(component(\`Child\`, {blip: ctx['blip']}, key + \`__1__\${key1}__\${key2}\`, node, ctx), key2);
+        c_block3[i2] = withKey(comp1({blip: ctx['blip']}, key + \`__1__\${key1}__\${key2}\`, node, ctx, null), key2);
       }
       ctx = ctx.__proto__;
       c_block2[i1] = withKey(list(c_block3), key1);
@@ -145,7 +149,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
 exports[`list of components reconciliation alg works for t-foreach in t-foreach 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
@@ -159,8 +163,9 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
 exports[`list of components reconciliation alg works for t-foreach in t-foreach, 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<p><block-child-0/></p>\`);
@@ -177,7 +182,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
       for (let i2 = 0; i2 < l_block4; i2++) {
         ctx[\`col\`] = v_block4[i2];
         const key2 = ctx['col'];
-        const b6 = component(\`Child\`, {row: ctx['row'],col: ctx['col']}, key + \`__1__\${key1}__\${key2}\`, node, ctx);
+        const b6 = comp1({row: ctx['row'],col: ctx['col']}, key + \`__1__\${key1}__\${key2}\`, node, ctx, null);
         c_block4[i2] = withKey(block5([], [b6]), key2);
       }
       ctx = ctx.__proto__;
@@ -193,7 +198,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
 exports[`list of components reconciliation alg works for t-foreach in t-foreach, 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
@@ -207,8 +212,9 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
 exports[`list of components simple list 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, false, false);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -216,7 +222,7 @@ exports[`list of components simple list 1`] = `
     for (let i1 = 0; i1 < l_block1; i1++) {
       ctx[\`elem\`] = v_block1[i1];
       const key1 = ctx['elem'].id;
-      c_block1[i1] = withKey(component(\`Child\`, {value: ctx['elem'].value}, key + \`__1__\${key1}\`, node, ctx), key1);
+      c_block1[i1] = withKey(comp1({value: ctx['elem'].value}, key + \`__1__\${key1}\`, node, ctx, null), key1);
     }
     return list(c_block1);
   }
@@ -226,7 +232,7 @@ exports[`list of components simple list 1`] = `
 exports[`list of components simple list 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
@@ -240,8 +246,9 @@ exports[`list of components simple list 2`] = `
 exports[`list of components sub components rendered in a loop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -251,7 +258,7 @@ exports[`list of components sub components rendered in a loop 1`] = `
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`number\`] = v_block2[i1];
       const key1 = ctx['number'];
-      c_block2[i1] = withKey(component(\`Child\`, {n: ctx['number']}, key + \`__1__\${key1}\`, node, ctx), key1);
+      c_block2[i1] = withKey(comp1({n: ctx['number']}, key + \`__1__\${key1}\`, node, ctx, null), key1);
     }
     const b2 = list(c_block2);
     return block1([], [b2]);
@@ -262,7 +269,7 @@ exports[`list of components sub components rendered in a loop 1`] = `
 exports[`list of components sub components rendered in a loop 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<p><block-text-0/></p>\`);
   
@@ -276,8 +283,9 @@ exports[`list of components sub components rendered in a loop 2`] = `
 exports[`list of components sub components with some state rendered in a loop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -287,7 +295,7 @@ exports[`list of components sub components with some state rendered in a loop 1`
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`number\`] = v_block2[i1];
       const key1 = ctx['number'];
-      c_block2[i1] = withKey(component(\`Child\`, {}, key + \`__1__\${key1}\`, node, ctx), key1);
+      c_block2[i1] = withKey(comp1({}, key + \`__1__\${key1}\`, node, ctx, null), key1);
     }
     const b2 = list(c_block2);
     return block1([], [b2]);
@@ -298,7 +306,7 @@ exports[`list of components sub components with some state rendered in a loop 1`
 exports[`list of components sub components with some state rendered in a loop 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<p><block-text-0/></p>\`);
   
@@ -312,8 +320,9 @@ exports[`list of components sub components with some state rendered in a loop 2`
 exports[`list of components switch component position 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, false, false);
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -323,7 +332,7 @@ exports[`list of components switch component position 1`] = `
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`c\`] = v_block2[i1];
       const key1 = ctx['c'];
-      c_block2[i1] = withKey(component(\`Child\`, {key: ctx['c']}, key + \`__1__\${key1}\`, node, ctx), key1);
+      c_block2[i1] = withKey(comp1({key: ctx['c']}, key + \`__1__\${key1}\`, node, ctx, null), key1);
     }
     const b2 = list(c_block2);
     return block1([], [b2]);
@@ -334,7 +343,7 @@ exports[`list of components switch component position 1`] = `
 exports[`list of components switch component position 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
@@ -348,8 +357,9 @@ exports[`list of components switch component position 2`] = `
 exports[`list of components t-foreach with t-component, and update 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -360,7 +370,7 @@ exports[`list of components t-foreach with t-component, and update 1`] = `
       ctx[\`n\`] = v_block2[i1];
       ctx[\`n_index\`] = i1;
       const key1 = ctx['n_index'];
-      c_block2[i1] = withKey(component(\`Child\`, {val: ctx['n_index']}, key + \`__1__\${key1}\`, node, ctx), key1);
+      c_block2[i1] = withKey(comp1({val: ctx['n_index']}, key + \`__1__\${key1}\`, node, ctx, null), key1);
     }
     const b2 = list(c_block2);
     return block1([], [b2]);
@@ -371,7 +381,7 @@ exports[`list of components t-foreach with t-component, and update 1`] = `
 exports[`list of components t-foreach with t-component, and update 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
   

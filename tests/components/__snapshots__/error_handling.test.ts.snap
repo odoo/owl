@@ -3,10 +3,11 @@
 exports[`basics display a nice error if a component is not a component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`SomeComponent\`, true, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`SomeComponent\`, {}, key + \`__1\`, node, ctx);
+    return comp1({}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -14,12 +15,13 @@ exports[`basics display a nice error if a component is not a component 1`] = `
 exports[`basics display a nice error if it cannot find component (in dev mode) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`SomeMispelledComponent\`, true, false, false);
   
   return function template(ctx, node, key = \\"\\") {
     const props1 = {};
     helpers.validateProps(\`SomeMispelledComponent\`, props1, ctx);
-    return component(\`SomeMispelledComponent\`, props1, key + \`__1\`, node, ctx);
+    return comp1(props1, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -27,10 +29,11 @@ exports[`basics display a nice error if it cannot find component (in dev mode) 1
 exports[`basics display a nice error if it cannot find component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`SomeMispelledComponent\`, true, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`SomeMispelledComponent\`, {}, key + \`__1\`, node, ctx);
+    return comp1({}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -38,12 +41,13 @@ exports[`basics display a nice error if it cannot find component 1`] = `
 exports[`basics no component catching error lead to full app destruction 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`ErrorComponent\`, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = component(\`ErrorComponent\`, {flag: ctx['state'].flag}, key + \`__1\`, node, ctx);
+    const b2 = comp1({flag: ctx['state'].flag}, key + \`__1\`, node, ctx, null);
     return block1([], [b2]);
   }
 }"
@@ -52,7 +56,7 @@ exports[`basics no component catching error lead to full app destruction 1`] = `
 exports[`basics no component catching error lead to full app destruction 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
   
@@ -66,7 +70,8 @@ exports[`basics no component catching error lead to full app destruction 2`] = `
 exports[`basics simple catchError 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Boom\`, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -75,7 +80,7 @@ exports[`basics simple catchError 1`] = `
     if (ctx['error']) {
       b2 = text(\`Error\`);
     } else {
-      b3 = component(\`Boom\`, {}, key + \`__1\`, node, ctx);
+      b3 = comp1({}, key + \`__1\`, node, ctx, null);
     }
     return block1([], [b2, b3]);
   }
@@ -85,7 +90,7 @@ exports[`basics simple catchError 1`] = `
 exports[`basics simple catchError 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
@@ -99,13 +104,14 @@ exports[`basics simple catchError 2`] = `
 exports[`can catch errors an error in onWillDestroy 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false);
   
   return function template(ctx, node, key = \\"\\") {
     let b2,b3;
     b2 = text(ctx['state'].value);
     if (ctx['state'].hasChild) {
-      b3 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+      b3 = comp1({}, key + \`__1\`, node, ctx, null);
     }
     return multi([b2, b3]);
   }
@@ -115,7 +121,7 @@ exports[`can catch errors an error in onWillDestroy 1`] = `
 exports[`can catch errors an error in onWillDestroy 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>abc</div>\`);
   
@@ -128,13 +134,14 @@ exports[`can catch errors an error in onWillDestroy 2`] = `
 exports[`can catch errors an error in onWillDestroy, variation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false);
   
   return function template(ctx, node, key = \\"\\") {
     let b2,b3;
     b2 = text(ctx['state'].value);
     if (ctx['state'].hasChild) {
-      b3 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+      b3 = comp1({}, key + \`__1\`, node, ctx, null);
     }
     return multi([b2, b3]);
   }
@@ -144,7 +151,7 @@ exports[`can catch errors an error in onWillDestroy, variation 1`] = `
 exports[`can catch errors an error in onWillDestroy, variation 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>abc</div>\`);
   
@@ -157,7 +164,7 @@ exports[`can catch errors an error in onWillDestroy, variation 2`] = `
 exports[`can catch errors calling a hook outside setup should crash 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
     return text(ctx['state'].value);
@@ -168,17 +175,19 @@ exports[`can catch errors calling a hook outside setup should crash 1`] = `
 exports[`can catch errors can catch an error in a component render function 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`ErrorComponent\`, true, false, false);
+  const comp2 = app.createComponent(\`ErrorBoundary\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return component(\`ErrorComponent\`, {flag: ctx['state'].flag}, key + \`__1\`, node, ctx);
+    return comp1({flag: ctx['state'].flag}, key + \`__1\`, node, ctx, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = component(\`ErrorBoundary\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx);
+    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
     return block1([], [b3]);
   }
 }"
@@ -187,7 +196,7 @@ exports[`can catch errors can catch an error in a component render function 1`] 
 exports[`can catch errors can catch an error in a component render function 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-1/></div>\`);
@@ -207,7 +216,7 @@ exports[`can catch errors can catch an error in a component render function 2`] 
 exports[`can catch errors can catch an error in a component render function 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
   
@@ -221,17 +230,19 @@ exports[`can catch errors can catch an error in a component render function 3`] 
 exports[`can catch errors can catch an error in the constructor call of a component render function 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`ErrorComponent\`, true, false, false);
+  const comp2 = app.createComponent(\`ErrorBoundary\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return component(\`ErrorComponent\`, {}, key + \`__1\`, node, ctx);
+    return comp1({}, key + \`__1\`, node, ctx, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = component(\`ErrorBoundary\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx);
+    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
     return block1([], [b3]);
   }
 }"
@@ -240,7 +251,7 @@ exports[`can catch errors can catch an error in the constructor call of a compon
 exports[`can catch errors can catch an error in the constructor call of a component render function 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-1/></div>\`);
@@ -260,19 +271,22 @@ exports[`can catch errors can catch an error in the constructor call of a compon
 exports[`can catch errors can catch an error in the constructor call of a component render function 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`ClassicCompoent\`, true, false, false);
+  const comp2 = app.createComponent(\`ErrorComponent\`, true, false, false);
+  const comp3 = app.createComponent(\`ErrorBoundary\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    const b3 = component(\`ClassicCompoent\`, {}, key + \`__1\`, node, ctx);
-    const b4 = component(\`ErrorComponent\`, {}, key + \`__2\`, node, ctx);
+    const b3 = comp1({}, key + \`__1\`, node, ctx, null);
+    const b4 = comp2({}, key + \`__2\`, node, ctx, null);
     return multi([b3, b4]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b5 = component(\`ErrorBoundary\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__3\`, node, ctx);
+    const b5 = comp3({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__3\`, node, ctx, null);
     return block1([], [b5]);
   }
 }"
@@ -281,7 +295,7 @@ exports[`can catch errors can catch an error in the constructor call of a compon
 exports[`can catch errors can catch an error in the constructor call of a component render function 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-1/></div>\`);
@@ -301,7 +315,7 @@ exports[`can catch errors can catch an error in the constructor call of a compon
 exports[`can catch errors can catch an error in the constructor call of a component render function 2 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>classic</div>\`);
   
@@ -314,7 +328,7 @@ exports[`can catch errors can catch an error in the constructor call of a compon
 exports[`can catch errors can catch an error in the constructor call of a component render function 2 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>Some text</div>\`);
   
@@ -327,7 +341,7 @@ exports[`can catch errors can catch an error in the constructor call of a compon
 exports[`can catch errors can catch an error in the constructor call of a component render function 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>Some text</div>\`);
   
@@ -340,17 +354,19 @@ exports[`can catch errors can catch an error in the constructor call of a compon
 exports[`can catch errors can catch an error in the initial call of a component render function (parent mounted) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`ErrorComponent\`, true, false, false);
+  const comp2 = app.createComponent(\`ErrorBoundary\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return component(\`ErrorComponent\`, {}, key + \`__1\`, node, ctx);
+    return comp1({}, key + \`__1\`, node, ctx, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = component(\`ErrorBoundary\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx);
+    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
     return block1([], [b3]);
   }
 }"
@@ -359,7 +375,7 @@ exports[`can catch errors can catch an error in the initial call of a component 
 exports[`can catch errors can catch an error in the initial call of a component render function (parent mounted) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-1/></div>\`);
@@ -379,7 +395,7 @@ exports[`can catch errors can catch an error in the initial call of a component 
 exports[`can catch errors can catch an error in the initial call of a component render function (parent mounted) 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
   
@@ -393,19 +409,21 @@ exports[`can catch errors can catch an error in the initial call of a component 
 exports[`can catch errors can catch an error in the initial call of a component render function (parent updated) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`ErrorComponent\`, true, false, false);
+  const comp2 = app.createComponent(\`ErrorBoundary\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return component(\`ErrorComponent\`, {}, key + \`__1\`, node, ctx);
+    return comp1({}, key + \`__1\`, node, ctx, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
     let b3;
     if (ctx['state'].flag) {
-      b3 = component(\`ErrorBoundary\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx);
+      b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
     }
     return block1([], [b3]);
   }
@@ -415,7 +433,7 @@ exports[`can catch errors can catch an error in the initial call of a component 
 exports[`can catch errors can catch an error in the initial call of a component render function (parent updated) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-1/></div>\`);
@@ -435,7 +453,7 @@ exports[`can catch errors can catch an error in the initial call of a component 
 exports[`can catch errors can catch an error in the initial call of a component render function (parent updated) 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
   
@@ -449,10 +467,11 @@ exports[`can catch errors can catch an error in the initial call of a component 
 exports[`can catch errors can catch an error in the mounted call (in child of child) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`B\`, true, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`B\`, {}, key + \`__1\`, node, ctx);
+    return comp1({}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -460,12 +479,13 @@ exports[`can catch errors can catch an error in the mounted call (in child of ch
 exports[`can catch errors can catch an error in the mounted call (in child of child) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`C\`, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = component(\`C\`, {}, key + \`__1\`, node, ctx);
+    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
     return block1([], [b2]);
   }
 }"
@@ -474,7 +494,8 @@ exports[`can catch errors can catch an error in the mounted call (in child of ch
 exports[`can catch errors can catch an error in the mounted call (in child of child) 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Boom\`, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -483,7 +504,7 @@ exports[`can catch errors can catch an error in the mounted call (in child of ch
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
-      b3 = component(\`Boom\`, {}, key + \`__1\`, node, ctx);
+      b3 = comp1({}, key + \`__1\`, node, ctx, null);
     }
     return block1([], [b2, b3]);
   }
@@ -493,7 +514,7 @@ exports[`can catch errors can catch an error in the mounted call (in child of ch
 exports[`can catch errors can catch an error in the mounted call (in child of child) 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>Some text</div>\`);
   
@@ -506,7 +527,8 @@ exports[`can catch errors can catch an error in the mounted call (in child of ch
 exports[`can catch errors can catch an error in the mounted call (in root component) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`ErrorComponent\`, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -515,7 +537,7 @@ exports[`can catch errors can catch an error in the mounted call (in root compon
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
-      b3 = component(\`ErrorComponent\`, {}, key + \`__1\`, node, ctx);
+      b3 = comp1({}, key + \`__1\`, node, ctx, null);
     }
     return block1([], [b2, b3]);
   }
@@ -525,7 +547,7 @@ exports[`can catch errors can catch an error in the mounted call (in root compon
 exports[`can catch errors can catch an error in the mounted call (in root component) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>Some text</div>\`);
   
@@ -538,17 +560,19 @@ exports[`can catch errors can catch an error in the mounted call (in root compon
 exports[`can catch errors can catch an error in the mounted call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`ErrorComponent\`, true, false, false);
+  const comp2 = app.createComponent(\`ErrorBoundary\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return component(\`ErrorComponent\`, {}, key + \`__1\`, node, ctx);
+    return comp1({}, key + \`__1\`, node, ctx, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = component(\`ErrorBoundary\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx);
+    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
     return block1([], [b3]);
   }
 }"
@@ -557,7 +581,7 @@ exports[`can catch errors can catch an error in the mounted call 1`] = `
 exports[`can catch errors can catch an error in the mounted call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-1/></div>\`);
@@ -577,7 +601,7 @@ exports[`can catch errors can catch an error in the mounted call 2`] = `
 exports[`can catch errors can catch an error in the mounted call 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>Some text</div>\`);
   
@@ -590,18 +614,20 @@ exports[`can catch errors can catch an error in the mounted call 3`] = `
 exports[`can catch errors can catch an error in the willPatch call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`ErrorComponent\`, true, false, false);
+  const comp2 = app.createComponent(\`ErrorBoundary\`, true, true, false);
   
   let block1 = createBlock(\`<div><span><block-text-0/></span><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return component(\`ErrorComponent\`, {message: ctx['state'].message}, key + \`__1\`, node, ctx);
+    return comp1({message: ctx['state'].message}, key + \`__1\`, node, ctx, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
     let txt1 = ctx['state'].message;
-    const b3 = component(\`ErrorBoundary\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx);
+    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
     return block1([txt1], [b3]);
   }
 }"
@@ -610,7 +636,7 @@ exports[`can catch errors can catch an error in the willPatch call 1`] = `
 exports[`can catch errors can catch an error in the willPatch call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-1/></div>\`);
@@ -630,7 +656,7 @@ exports[`can catch errors can catch an error in the willPatch call 2`] = `
 exports[`can catch errors can catch an error in the willPatch call 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
@@ -644,17 +670,19 @@ exports[`can catch errors can catch an error in the willPatch call 3`] = `
 exports[`can catch errors can catch an error in the willStart call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`ErrorComponent\`, true, false, false);
+  const comp2 = app.createComponent(\`ErrorBoundary\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return component(\`ErrorComponent\`, {}, key + \`__1\`, node, ctx);
+    return comp1({}, key + \`__1\`, node, ctx, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = component(\`ErrorBoundary\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx);
+    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
     return block1([], [b3]);
   }
 }"
@@ -663,7 +691,7 @@ exports[`can catch errors can catch an error in the willStart call 1`] = `
 exports[`can catch errors can catch an error in the willStart call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-1/></div>\`);
@@ -683,7 +711,7 @@ exports[`can catch errors can catch an error in the willStart call 2`] = `
 exports[`can catch errors can catch an error in the willStart call 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>Some text</div>\`);
   
@@ -696,19 +724,22 @@ exports[`can catch errors can catch an error in the willStart call 3`] = `
 exports[`can catch errors can catch an error origination from a child's willStart function 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`ClassicCompoent\`, true, false, false);
+  const comp2 = app.createComponent(\`ErrorComponent\`, true, false, false);
+  const comp3 = app.createComponent(\`ErrorBoundary\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    const b3 = component(\`ClassicCompoent\`, {}, key + \`__1\`, node, ctx);
-    const b4 = component(\`ErrorComponent\`, {}, key + \`__2\`, node, ctx);
+    const b3 = comp1({}, key + \`__1\`, node, ctx, null);
+    const b4 = comp2({}, key + \`__2\`, node, ctx, null);
     return multi([b3, b4]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b5 = component(\`ErrorBoundary\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__3\`, node, ctx);
+    const b5 = comp3({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__3\`, node, ctx, null);
     return block1([], [b5]);
   }
 }"
@@ -717,7 +748,7 @@ exports[`can catch errors can catch an error origination from a child's willStar
 exports[`can catch errors can catch an error origination from a child's willStart function 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-1/></div>\`);
@@ -737,7 +768,7 @@ exports[`can catch errors can catch an error origination from a child's willStar
 exports[`can catch errors can catch an error origination from a child's willStart function 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>classic</div>\`);
   
@@ -750,7 +781,7 @@ exports[`can catch errors can catch an error origination from a child's willStar
 exports[`can catch errors can catch an error origination from a child's willStart function 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>Some text</div>\`);
   
@@ -763,7 +794,8 @@ exports[`can catch errors can catch an error origination from a child's willStar
 exports[`can catch errors catchError in catchError 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -772,7 +804,7 @@ exports[`can catch errors catchError in catchError 1`] = `
     if (ctx['error']) {
       b2 = text(\`Error\`);
     } else {
-      b3 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+      b3 = comp1({}, key + \`__1\`, node, ctx, null);
     }
     return block1([], [b2, b3]);
   }
@@ -782,12 +814,13 @@ exports[`can catch errors catchError in catchError 1`] = `
 exports[`can catch errors catchError in catchError 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Boom\`, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = component(\`Boom\`, {}, key + \`__1\`, node, ctx);
+    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
     return block1([], [b2]);
   }
 }"
@@ -796,7 +829,7 @@ exports[`can catch errors catchError in catchError 2`] = `
 exports[`can catch errors catchError in catchError 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
@@ -810,12 +843,14 @@ exports[`can catch errors catchError in catchError 3`] = `
 exports[`can catch errors catching error, rethrow, render parent  -- a main component loop implementation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, capture, markRaw, withKey } = helpers;
+  const comp1 = app.createComponent(null, false, false, false);
+  const comp2 = app.createComponent(\`ErrorHandler\`, true, true, false);
   
   function slot1(ctx, node, key = \\"\\") {
     const Comp1 = ctx['cp'].Comp;
-    return toggler(Comp1, component(Comp1, {}, key + \`__1\`, node, ctx));
+    return toggler(Comp1, comp1({}, key + \`__1\`, node, ctx, Comp1));
   }
   
   return function template(ctx, node, key = \\"\\") {
@@ -826,7 +861,7 @@ exports[`can catch errors catching error, rethrow, render parent  -- a main comp
       const key1 = ctx['cp'].id;
       const v1 = ctx['cp'];
       const ctx1 = capture(ctx);
-      c_block1[i1] = withKey(component(\`ErrorHandler\`, {onError: ()=>this.cleanUp(v1.id),slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2__\${key1}\`, node, ctx), key1);
+      c_block1[i1] = withKey(comp2({onError: ()=>this.cleanUp(v1.id),slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2__\${key1}\`, node, ctx, null), key1);
     }
     return list(c_block1);
   }
@@ -836,7 +871,7 @@ exports[`can catch errors catching error, rethrow, render parent  -- a main comp
 exports[`can catch errors catching error, rethrow, render parent  -- a main component loop implementation 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -848,10 +883,11 @@ exports[`can catch errors catching error, rethrow, render parent  -- a main comp
 exports[`can catch errors catching error, rethrow, render parent  -- a main component loop implementation 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`ErrorComponent\`, true, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`ErrorComponent\`, {}, key + \`__1\`, node, ctx);
+    return comp1({}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -859,7 +895,7 @@ exports[`can catch errors catching error, rethrow, render parent  -- a main comp
 exports[`can catch errors catching error, rethrow, render parent  -- a main component loop implementation 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
@@ -872,7 +908,7 @@ exports[`can catch errors catching error, rethrow, render parent  -- a main comp
 exports[`can catch errors catching error, rethrow, render parent  -- a main component loop implementation 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>Sibling</div>\`);
   
@@ -885,12 +921,14 @@ exports[`can catch errors catching error, rethrow, render parent  -- a main comp
 exports[`can catch errors catching in child makes parent render 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, capture, markRaw, withKey } = helpers;
+  const comp1 = app.createComponent(null, false, false, false);
+  const comp2 = app.createComponent(\`Catch\`, true, true, false);
   
   function slot1(ctx, node, key = \\"\\") {
     const Comp1 = ctx['elem'][1];
-    return toggler(Comp1, component(Comp1, {id: ctx['elem'][0]}, key + \`__1\`, node, ctx));
+    return toggler(Comp1, comp1({id: ctx['elem'][0]}, key + \`__1\`, node, ctx, Comp1));
   }
   
   return function template(ctx, node, key = \\"\\") {
@@ -901,7 +939,7 @@ exports[`can catch errors catching in child makes parent render 1`] = `
       const key1 = ctx['elem'][0];
       const v1 = ctx['elem'];
       const ctx1 = capture(ctx);
-      c_block1[i1] = withKey(component(\`Catch\`, {onError: (_error)=>this.onError(v1[0],_error),slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2__\${key1}\`, node, ctx), key1);
+      c_block1[i1] = withKey(comp2({onError: (_error)=>this.onError(v1[0],_error),slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2__\${key1}\`, node, ctx, null), key1);
     }
     return list(c_block1);
   }
@@ -911,7 +949,7 @@ exports[`can catch errors catching in child makes parent render 1`] = `
 exports[`can catch errors catching in child makes parent render 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
@@ -923,7 +961,7 @@ exports[`can catch errors catching in child makes parent render 2`] = `
 exports[`can catch errors catching in child makes parent render 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
@@ -936,7 +974,7 @@ exports[`can catch errors catching in child makes parent render 3`] = `
 exports[`can catch errors catching in child makes parent render 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
@@ -950,18 +988,21 @@ exports[`can catch errors catching in child makes parent render 4`] = `
 exports[`can catch errors error in mounted on a component with a sibling (properly mounted) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`OK\`, true, false, false);
+  const comp2 = app.createComponent(\`ErrorComponent\`, true, false, false);
+  const comp3 = app.createComponent(\`ErrorBoundary\`, true, true, false);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return component(\`ErrorComponent\`, {}, key + \`__2\`, node, ctx);
+    return comp2({}, key + \`__2\`, node, ctx, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = component(\`OK\`, {}, key + \`__1\`, node, ctx);
-    const b4 = component(\`ErrorBoundary\`, {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__3\`, node, ctx);
+    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
+    const b4 = comp3({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__3\`, node, ctx, null);
     return block1([], [b2, b4]);
   }
 }"
@@ -970,7 +1011,7 @@ exports[`can catch errors error in mounted on a component with a sibling (proper
 exports[`can catch errors error in mounted on a component with a sibling (properly mounted) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
     return text(\`OK\`);
@@ -981,7 +1022,7 @@ exports[`can catch errors error in mounted on a component with a sibling (proper
 exports[`can catch errors error in mounted on a component with a sibling (properly mounted) 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-1/></div>\`);
@@ -1001,7 +1042,7 @@ exports[`can catch errors error in mounted on a component with a sibling (proper
 exports[`can catch errors error in mounted on a component with a sibling (properly mounted) 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>Some text</div>\`);
   
@@ -1014,10 +1055,11 @@ exports[`can catch errors error in mounted on a component with a sibling (proper
 exports[`can catch errors onError in class inheritance is called if rethrown 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Concrete\`, true, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Concrete\`, {}, key + \`__1\`, node, ctx);
+    return comp1({}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -1025,7 +1067,7 @@ exports[`can catch errors onError in class inheritance is called if rethrown 1`]
 exports[`can catch errors onError in class inheritance is called if rethrown 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -1044,10 +1086,11 @@ exports[`can catch errors onError in class inheritance is called if rethrown 2`]
 exports[`can catch errors onError in class inheritance is not called if no rethrown 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Concrete\`, true, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    return component(\`Concrete\`, {}, key + \`__1\`, node, ctx);
+    return comp1({}, key + \`__1\`, node, ctx, null);
   }
 }"
 `;
@@ -1055,7 +1098,7 @@ exports[`can catch errors onError in class inheritance is not called if no rethr
 exports[`can catch errors onError in class inheritance is not called if no rethrown 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -1074,12 +1117,13 @@ exports[`can catch errors onError in class inheritance is not called if no rethr
 exports[`errors and promises a rendering error in a sub component will reject the mount promise 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
     return block1([], [b2]);
   }
 }"
@@ -1088,7 +1132,7 @@ exports[`errors and promises a rendering error in a sub component will reject th
 exports[`errors and promises a rendering error in a sub component will reject the mount promise 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
@@ -1102,7 +1146,7 @@ exports[`errors and promises a rendering error in a sub component will reject th
 exports[`errors and promises a rendering error will reject the mount promise 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
@@ -1116,12 +1160,13 @@ exports[`errors and promises a rendering error will reject the mount promise 1`]
 exports[`errors and promises a rendering error will reject the render promise (with sub components) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = component(\`Child\`, {}, key + \`__1\`, node, ctx);
+    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
     let txt1 = ctx['x'].y;
     return block1([txt1], [b2]);
   }
@@ -1131,7 +1176,7 @@ exports[`errors and promises a rendering error will reject the render promise (w
 exports[`errors and promises a rendering error will reject the render promise (with sub components) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span/>\`);
   
@@ -1144,7 +1189,7 @@ exports[`errors and promises a rendering error will reject the render promise (w
 exports[`errors and promises a rendering error will reject the render promise 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1161,7 +1206,7 @@ exports[`errors and promises a rendering error will reject the render promise 1`
 exports[`errors and promises an error in mounted call will reject the mount promise 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>abc</div>\`);
   
@@ -1174,7 +1219,7 @@ exports[`errors and promises an error in mounted call will reject the mount prom
 exports[`errors and promises an error in onMounted callback will have the component's setup in its stack trace 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>abc</div>\`);
   
@@ -1187,7 +1232,7 @@ exports[`errors and promises an error in onMounted callback will have the compon
 exports[`errors and promises an error in patched call will reject the render promise 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
@@ -1201,7 +1246,7 @@ exports[`errors and promises an error in patched call will reject the render pro
 exports[`errors and promises an error in willPatch call will reject the render promise 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
@@ -1215,7 +1260,7 @@ exports[`errors and promises an error in willPatch call will reject the render p
 exports[`errors and promises errors in mounted and in willUnmount 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
@@ -1228,7 +1273,7 @@ exports[`errors and promises errors in mounted and in willUnmount 1`] = `
 exports[`errors and promises errors in onWillRender/onRender aren't wrapped more than once 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>abc</div>\`);
   
@@ -1241,7 +1286,7 @@ exports[`errors and promises errors in onWillRender/onRender aren't wrapped more
 exports[`errors and promises errors in rerender 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   

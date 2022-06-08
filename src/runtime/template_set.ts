@@ -1,10 +1,10 @@
-import { createBlock, html, list, multi, text, toggler, comment } from "./blockdom";
 import { compile, Template, TemplateFunction } from "../compiler";
+import { comment, createBlock, html, list, multi, text, toggler } from "./blockdom";
+import { getCurrent } from "./component_node";
 import { Portal, portalTemplate } from "./portal";
-import { component, getCurrent } from "./component_node";
 import { helpers } from "./template_helpers";
 
-const bdom = { text, createBlock, list, multi, html, toggler, component, comment };
+const bdom = { text, createBlock, list, multi, html, toggler, comment };
 
 function parseXML(xml: string): Document {
   const parser = new DOMParser();

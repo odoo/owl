@@ -3,7 +3,7 @@
 exports[`app App supports env with getters/setters 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/> <block-text-1/></div>\`);
   
@@ -18,7 +18,7 @@ exports[`app App supports env with getters/setters 1`] = `
 exports[`app can configure an app with props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
@@ -32,7 +32,7 @@ exports[`app can configure an app with props 1`] = `
 exports[`app destroy remove the widget from the DOM 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
   
@@ -45,7 +45,7 @@ exports[`app destroy remove the widget from the DOM 1`] = `
 exports[`app warnIfNoStaticProps works as expected 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
-  let { text, createBlock, list, multi, html, toggler, component, comment } = bdom;
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   

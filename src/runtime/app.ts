@@ -130,29 +130,23 @@ export class App<
       return hasDynamicPropList && Object.keys(props1).length !== Object.keys(props2).length;
     }
     const arePropsDifferent = hasSlotsProp ? () => true : _arePropsDifferent;
+    const updateAndRender = ComponentNode.prototype.updateAndRender;
+    const initiateRender = ComponentNode.prototype.initiateRender;
 
     return (props: P, key: string, ctx: ComponentNode, parent: any, C: any) => {
       let children = ctx.children;
       let node: any = children[key];
-
-      if (node && node.status === STATUS.DESTROYED) {
+      if (
+        node &&
+        (node.status === STATUS.DESTROYED || (isDynamic && node.component.constructor !== C))
+      ) {
         node = undefined;
       }
-      if (isDynamic && node && node.component.constructor !== C) {
-        node = undefined;
-      }
-
       const parentFiber = ctx.fiber!;
       if (node) {
-        let shouldRender = node.forceNextRender;
-        if (shouldRender) {
+        if (arePropsDifferent(node.props, props) || parentFiber.deep || node.forceNextRender) {
           node.forceNextRender = false;
-        } else {
-          const currentProps = node.props;
-          shouldRender = parentFiber.deep || arePropsDifferent(currentProps, props);
-        }
-        if (shouldRender) {
-          node.updateAndRender(props, parentFiber);
+          updateAndRender.call(node, props, parentFiber);
         }
       } else {
         // new component
@@ -168,7 +162,7 @@ export class App<
         }
         node = new ComponentNode(C, props, this, ctx, key);
         children[key] = node;
-        node.initiateRender(new Fiber(node, parentFiber));
+        initiateRender.call(node, new Fiber(node, parentFiber));
       }
       parentFiber.childrenMap[key] = node;
       return node;

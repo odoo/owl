@@ -321,10 +321,15 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     }
   }
   _patch() {
-    const hasChildren = Object.keys(this.children).length > 0;
-    this.children = this.fiber!.childrenMap;
-    this.bdom!.patch(this!.fiber!.bdom!, hasChildren);
-    this.fiber!.appliedToDom = true;
+    let hasChildren = false;
+    for (let _k in this.children) {
+      hasChildren = true;
+      break;
+    }
+    const fiber = this.fiber!;
+    this.children = fiber.childrenMap;
+    this.bdom!.patch(fiber.bdom!, hasChildren);
+    fiber.appliedToDom = true;
     this.fiber = null;
   }
 

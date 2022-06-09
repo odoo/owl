@@ -126,7 +126,7 @@ exports[`t-on t-on on component next to t-on on div 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { createCatcher } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   const catcher1 = createCatcher({\\"click\\":0});
   
   let block1 = createBlock(\`<div><block-child-0/><p block-handler-0=\\"click\\">dec</p></div>\`);
@@ -159,7 +159,7 @@ exports[`t-on t-on on components 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { createCatcher } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   const catcher1 = createCatcher({\\"click\\":0});
   
   return function template(ctx, node, key = \\"\\") {
@@ -188,7 +188,7 @@ exports[`t-on t-on on components and t-foreach 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, createCatcher, withKey } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   const catcher1 = createCatcher({\\"click\\":0});
   
   return function template(ctx, node, key = \\"\\") {
@@ -225,7 +225,7 @@ exports[`t-on t-on on components, variation 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { createCatcher } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   const catcher1 = createCatcher({\\"click\\":0});
   
   let block1 = createBlock(\`<div><span/><block-child-0/><p/></div>\`);
@@ -257,7 +257,7 @@ exports[`t-on t-on on components, with 'prevent' modifier 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { createCatcher } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   const catcher1 = createCatcher({\\"click.prevent\\":0});
   
   return function template(ctx, node, key = \\"\\") {
@@ -286,7 +286,7 @@ exports[`t-on t-on on components, with a handler update 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue, createCatcher } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   const catcher1 = createCatcher({\\"click\\":0});
   
   return function template(ctx, node, key = \\"\\") {
@@ -318,7 +318,7 @@ exports[`t-on t-on on destroyed components 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -351,7 +351,7 @@ exports[`t-on t-on on slot, with 'prevent' modifier 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, true, false);
+  const comp1 = app.createComponent(\`Child\`, true, true, false, true);
   
   let block1 = createBlock(\`<button>button</button>\`);
   
@@ -385,7 +385,7 @@ exports[`t-on t-on on t-set-slots 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, createCatcher, markRaw } = helpers;
   const catcher1 = createCatcher({\\"click\\":0});
-  const comp1 = app.createComponent(\`Child\`, true, true, false);
+  const comp1 = app.createComponent(\`Child\`, true, true, false, true);
   
   let block6 = createBlock(\`<p>something</p>\`);
   let block7 = createBlock(\`<p>paragraph</p>\`);
@@ -425,7 +425,7 @@ exports[`t-on t-on on t-slots 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, true, false);
+  const comp1 = app.createComponent(\`Child\`, true, true, false, true);
   
   let block1 = createBlock(\`<p>something</p>\`);
   

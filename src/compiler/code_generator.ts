@@ -1181,7 +1181,9 @@ export class CodeGenerator {
       id,
       expr: `app.createComponent(${
         ast.isDynamic ? null : expr
-      }, ${!ast.isDynamic}, ${!!ast.slots}, ${!!ast.dynamicProps})`,
+      }, ${!ast.isDynamic}, ${!!ast.slots}, ${!!ast.dynamicProps}, ${
+        !ast.props && !ast.dynamicProps
+      })`,
     });
 
     let blockExpr = `${id}(${propString}, ${keyArg}, node, ctx, ${ast.isDynamic ? expr : null})`;
@@ -1278,7 +1280,7 @@ export class CodeGenerator {
     let id = generateId("comp");
     this.staticDefs.push({
       id,
-      expr: `app.createComponent(null, false, true, false)`,
+      expr: `app.createComponent(null, false, true, false, false)`,
     });
 
     const target = compileExpr(ast.target);

@@ -118,7 +118,8 @@ export class App<
     name: string | null,
     isStatic: boolean,
     hasSlotsProp: boolean,
-    hasDynamicPropList: boolean
+    hasDynamicPropList: boolean,
+    hasNoProp: boolean
   ) {
     const isDynamic = !isStatic;
     function _arePropsDifferent(props1: Props, props2: Props): boolean {
@@ -129,7 +130,11 @@ export class App<
       }
       return hasDynamicPropList && Object.keys(props1).length !== Object.keys(props2).length;
     }
-    const arePropsDifferent = hasSlotsProp ? () => true : _arePropsDifferent;
+    const arePropsDifferent = hasSlotsProp
+      ? (_1: any, _2: any) => true
+      : hasNoProp
+      ? (_1: any, _2: any) => false
+      : _arePropsDifferent;
     const updateAndRender = ComponentNode.prototype.updateAndRender;
     const initiateRender = ComponentNode.prototype.initiateRender;
 

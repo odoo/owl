@@ -46,7 +46,7 @@ exports[`t-call dynamic t-call: key is propagated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   const call = app.callTemplate.bind(app);
   
   return function template(ctx, node, key = \\"\\") {
@@ -76,7 +76,7 @@ exports[`t-call dynamic t-call: key is propagated 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
     return comp1({}, key + \`__1\`, node, ctx, null);
@@ -194,7 +194,7 @@ exports[`t-call parent is set within t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
     return comp1({}, key + \`__1\`, node, ctx, null);
@@ -231,7 +231,7 @@ exports[`t-call parent is set within t-call with no parentNode 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
     return comp1({}, key + \`__1\`, node, ctx, null);
@@ -328,7 +328,7 @@ exports[`t-call sub components in two t-calls 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   return function template(ctx, node, key = \\"\\") {
     return comp1({val: ctx['state'].val}, key + \`__1\`, node, ctx, null);
@@ -381,7 +381,7 @@ exports[`t-call t-call in t-foreach and children component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   return function template(ctx, node, key = \\"\\") {
     return comp1({val: ctx['val']}, key + \`__1\`, node, ctx, null);

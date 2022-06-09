@@ -4,7 +4,7 @@ exports[`basics accept ES6-like syntax for props (with getters) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -34,7 +34,7 @@ exports[`basics arrow functions as prop correctly capture their scope 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -69,7 +69,7 @@ exports[`basics explicit object prop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -98,7 +98,7 @@ exports[`basics prop names can contain - 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   return function template(ctx, node, key = \\"\\") {
     return comp1({'prop-name': 7}, key + \`__1\`, node, ctx, null);
@@ -124,7 +124,7 @@ exports[`basics support prop names that aren't valid bare object property names 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   return function template(ctx, node, key = \\"\\") {
     return comp1({'some-dashed-prop': 5}, key + \`__1\`, node, ctx, null);
@@ -151,7 +151,7 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, LazyValue } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<p>43</p>\`);
@@ -191,7 +191,7 @@ exports[`basics t-set with a body expression can be used as textual prop 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -224,7 +224,7 @@ exports[`basics t-set works  1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -256,7 +256,7 @@ exports[`basics template string in prop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   return function template(ctx, node, key = \\"\\") {
     return comp1({propName: \`1\${ctx['someVal']}3\`}, key + \`__1\`, node, ctx, null);
@@ -280,7 +280,7 @@ exports[`bound functions is referentially equal after update 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { bind } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   return function template(ctx, node, key = \\"\\") {
     return comp1({val: ctx['state'].val,fn: bind(ctx, ctx['someFunction'])}, key + \`__1\`, node, ctx, null);
@@ -304,7 +304,7 @@ exports[`can bind function prop with bind suffix 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { bind } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   return function template(ctx, node, key = \\"\\") {
     return comp1({doSomething: bind(ctx, ctx['doSomething'])}, key + \`__1\`, node, ctx, null);

@@ -5,6 +5,7 @@ import { isOptional, validateSchema } from "./validation";
 import type { ComponentConstructor } from "./component";
 import { markRaw } from "./reactivity";
 
+const ObjectCreate = Object.create;
 /**
  * This file contains utility functions that will be injected in each template,
  * to perform various useful tasks in the compiled code.
@@ -26,7 +27,7 @@ function callSlot(
   key = key + "__slot_" + name;
   const slots = ctx.props.slots || {};
   const { __render, __ctx, __scope } = slots[name] || {};
-  const slotScope = Object.create(__ctx || {});
+  const slotScope = ObjectCreate(__ctx || {});
   if (__scope) {
     slotScope[__scope] = extra;
   }
@@ -46,7 +47,7 @@ function callSlot(
 
 function capture(ctx: any): any {
   const component = ctx.__owl__.component;
-  const result = Object.create(component);
+  const result = ObjectCreate(component);
   for (let k in ctx) {
     result[k] = ctx[k];
   }
@@ -161,18 +162,20 @@ export function safeOutput(value: any): ReturnType<typeof toggler> {
 }
 
 let boundFunctions = new WeakMap();
+const WeakMapGet = WeakMap.prototype.get;
+const WeakMapSet = WeakMap.prototype.set;
 
 function bind(ctx: any, fn: Function): Function {
   let component = ctx.__owl__.component;
-  let boundFnMap = boundFunctions.get(component);
+  let boundFnMap = WeakMapGet.call(boundFunctions, component);
   if (!boundFnMap) {
     boundFnMap = new WeakMap();
-    boundFunctions.set(component, boundFnMap);
+    WeakMapSet.call(boundFunctions, component, boundFnMap);
   }
-  let boundFn = boundFnMap.get(fn);
+  let boundFn = WeakMapGet.call(boundFnMap, fn);
   if (!boundFn) {
     boundFn = fn.bind(component);
-    boundFnMap.set(fn, boundFn);
+    WeakMapSet.call(boundFnMap, fn, boundFn);
   }
   return boundFn;
 }

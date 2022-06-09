@@ -2,7 +2,7 @@ import pkg from "./package.json";
 import git from "git-rev-sync";
 import typescript from 'rollup-plugin-typescript2';
 import { terser } from "rollup-plugin-terser";
-
+import dts from "rollup-plugin-dts";
 
 let input, output;
 
@@ -68,12 +68,19 @@ function getConfigForFormat(format, generatedFileName, outro, minified = false) 
   };
 }
 
-export default {
-  input,
-  output,
-  plugins: [
-    typescript({
-      useTsconfigDeclarationDir: true
-    }),
-  ]
-};
+export default [
+  {
+    input,
+    output,
+    plugins: [
+      typescript({
+        useTsconfigDeclarationDir: true
+      }),
+    ]
+  },
+  {
+    input: "dist/types/index.d.ts",
+    output: [{ file: "dist/types/owl.d.ts", format: "es" }],
+    plugins: [dts()],
+  },
+];

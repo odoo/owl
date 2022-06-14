@@ -8,9 +8,6 @@ type BaseType =
   | true
   | "*";
 
-type UnionType = (TypeInfo | BaseType)[];
-type TypeDescription = BaseType | UnionType | TypeInfo;
-
 interface TypeInfo {
   type?: TypeDescription;
   optional?: boolean;
@@ -19,6 +16,9 @@ interface TypeInfo {
   element?: TypeDescription;
 }
 
+type ValueType = { value: any };
+
+type TypeDescription = BaseType | TypeInfo | ValueType | TypeDescription[];
 type SimplifiedSchema = string[];
 type NormalizedSchema = { [key: string]: TypeDescription };
 export type Schema = SimplifiedSchema | NormalizedSchema;
@@ -26,8 +26,10 @@ export type Schema = SimplifiedSchema | NormalizedSchema;
 // -----------------------------------------------------------------------------
 // helpers
 // -----------------------------------------------------------------------------
-const isUnionType = (t: TypeDescription): t is UnionType => Array.isArray(t);
+const isUnionType = (t: TypeDescription): t is TypeDescription[] => Array.isArray(t);
 const isBaseType = (t: TypeDescription): t is BaseType => typeof t !== "object";
+const isValueType = (t: TypeDescription): t is ValueType =>
+  typeof t === "object" && t && "value" in t;
 
 export function isOptional(t: TypeDescription): Boolean {
   return typeof t === "object" && "optional" in t ? t.optional || false : false;
@@ -42,6 +44,8 @@ function describe(info: TypeDescription): string {
     return describeType(info);
   } else if (isUnionType(info)) {
     return info.map(describe).join(" or ");
+  } else if (isValueType(info)) {
+    return String(info.value);
   }
   if ("element" in info) {
     return `list of ${describe({ type: info.element, optional: false })}s`;
@@ -134,6 +138,8 @@ function validateType(key: string, value: any, descr: TypeDescription): string |
     return isOptional(descr) ? null : `'${key}' is undefined (should be a ${describe(descr)})`;
   } else if (isBaseType(descr)) {
     return validateBaseType(key, value, descr);
+  } else if (isValueType(descr)) {
+    return value === descr.value ? null : `'${key}' is not equal to '${descr.value}'`;
   } else if (isUnionType(descr)) {
     let validDescr = descr.find((p) => !validateType(key, value, p));
     return validDescr ? null : `'${key}' is not a ${describe(descr)}`;

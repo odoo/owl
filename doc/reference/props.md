@@ -159,6 +159,7 @@ For each key, a `prop` definition is either a boolean, a constructor, a list of 
 - a boolean: indicate that the props exists, and is mandatory.
 - a constructor: this should describe the type, for example: `id: Number` describe
   the props `id` as a number
+- an object describing a value as type. This is done by using the `value` key. For example, `{value: false}` specifies that the corresponding value should be equal to false.
 - a list of constructors. In that case, this means that we allow more than one
   type. For example, `id: [Number, String]` means that `id` can be either a string
   or a number.
@@ -240,6 +241,7 @@ class ComponentB extends owl.Component {
     size: {
       validate:  e => ["small", "medium", "large"].includes(e)
     },
+    someId: [Number, {value: false}], // either a number or false
   };
 ```
 

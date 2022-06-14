@@ -248,4 +248,30 @@ describe("validateSchema", () => {
     expect(validateSchema({ size: "sall" }, schema)).toEqual(["'size' is not valid"]);
     expect(validateSchema({ size: 1 }, schema)).toEqual(["'size' is not a string"]);
   });
+
+  test("value as type", () => {
+    expect(validateSchema({ a: false }, { a: { value: false } })).toEqual([]);
+    expect(validateSchema({ a: true }, { a: { value: false } })).toEqual([
+      "'a' is not equal to 'false'",
+    ]);
+  });
+
+  test("value as type (some other values)", () => {
+    expect(validateSchema({ a: null }, { a: { value: null } })).toEqual([]);
+    expect(validateSchema({ a: false }, { a: { value: null } })).toEqual([
+      "'a' is not equal to 'null'",
+    ]);
+    expect(validateSchema({ a: "hey" }, { a: { value: "hey" } })).toEqual([]);
+    expect(validateSchema({ a: true }, { a: { value: "hey" } })).toEqual([
+      "'a' is not equal to 'hey'",
+    ]);
+  });
+
+  test("value as type work in union type", () => {
+    expect(validateSchema({ a: false }, { a: [String, { value: false }] })).toEqual([]);
+    expect(validateSchema({ a: true }, { a: [String, { value: false }] })).toEqual([
+      "'a' is not a string or false",
+    ]);
+    expect(validateSchema({ a: "string" }, { a: [String, { value: false }] })).toEqual([]);
+  });
 });

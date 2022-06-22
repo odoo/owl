@@ -22,6 +22,12 @@ describe("attributes", () => {
     expect(renderToString(template)).toBe(`<div aria-label="Close"></div>`);
   });
 
+  test("static attributes with backticks", () => {
+    const template = '<div foo="`bar`"></div>';
+    const result = renderToString(template);
+    expect(result).toBe('<div foo="`bar`"></div>');
+  });
+
   test("static attributes on void elements", () => {
     const template = `<img src="/test.skip.jpg" alt="Test"/>`;
     expect(renderToString(template)).toBe(`<img src="/test.skip.jpg" alt="Test">`);
@@ -29,6 +35,12 @@ describe("attributes", () => {
 
   test("dynamic attributes", () => {
     const template = `<div t-att-foo="'bar'"/>`;
+    const result = renderToString(template);
+    expect(result).toBe(`<div foo="bar"></div>`);
+  });
+
+  test("dynamic attributes with backticks", () => {
+    const template = '<div t-att-foo="`bar`"/>';
     const result = renderToString(template);
     expect(result).toBe(`<div foo="bar"></div>`);
   });

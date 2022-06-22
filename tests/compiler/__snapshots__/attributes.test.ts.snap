@@ -126,6 +126,20 @@ exports[`attributes dynamic attributes 1`] = `
 }"
 `;
 
+exports[`attributes dynamic attributes with backticks 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div block-attribute-0=\\"foo\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let attr1 = \`bar\`;
+    return block1([attr1]);
+  }
+}"
+`;
+
 exports[`attributes dynamic class attribute 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -367,6 +381,19 @@ exports[`attributes static attributes on void elements 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<img src=\\"/test.skip.jpg\\" alt=\\"Test\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`attributes static attributes with backticks 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div foo=\\"\\\\\`bar\\\\\`\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
     return block1();

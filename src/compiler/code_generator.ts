@@ -140,6 +140,7 @@ interface Context {
   tKeyExpr: string | null;
   nameSpace?: string;
   tModelSelectedExpr?: string;
+  ctxVar?: string;
 }
 
 function createContext(parentCtx: Context, params?: Partial<Context>) {
@@ -967,16 +968,21 @@ export class CodeGenerator {
 
   compileTCall(ast: ASTTCall, ctx: Context) {
     let { block, forceNewBlock } = ctx;
+    let ctxVar = ctx.ctxVar || "ctx";
+    if (ast.context) {
+      ctxVar = generateId("ctx");
+      this.addLine(`let ${ctxVar} = ${compileExpr(ast.context)};`);
+    }
     if (ast.body) {
-      this.addLine(`ctx = Object.create(ctx);`);
-      this.addLine(`ctx[isBoundary] = 1;`);
+      this.addLine(`${ctxVar} = Object.create(${ctxVar});`);
+      this.addLine(`${ctxVar}[isBoundary] = 1;`);
       this.helpers.add("isBoundary");
       const nextId = BlockDescription.nextBlockId;
-      const subCtx: Context = createContext(ctx, { preventRoot: true });
+      const subCtx: Context = createContext(ctx, { preventRoot: true, ctxVar });
       this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
       if (nextId !== BlockDescription.nextBlockId) {
         this.helpers.add("zero");
-        this.addLine(`ctx[zero] = b${nextId};`);
+        this.addLine(`${ctxVar}[zero] = b${nextId};`);
       }
     }
     const isDynamic = INTERP_REGEXP.test(ast.name);
@@ -994,7 +1000,7 @@ export class CodeGenerator {
       }
       this.define(templateVar, subTemplate);
       block = this.createBlock(block, "multi", ctx);
-      this.insertBlock(`call(this, ${templateVar}, ctx, node, ${key})`, block!, {
+      this.insertBlock(`call(this, ${templateVar}, ${ctxVar}, node, ${key})`, block!, {
         ...ctx,
         forceNewBlock: !block,
       });
@@ -1002,13 +1008,13 @@ export class CodeGenerator {
       const id = generateId(`callTemplate_`);
       this.staticDefs.push({ id, expr: `app.getTemplate(${subTemplate})` });
       block = this.createBlock(block, "multi", ctx);
-      this.insertBlock(`${id}.call(this, ctx, node, ${key})`, block!, {
+      this.insertBlock(`${id}.call(this, ${ctxVar}, node, ${key})`, block!, {
         ...ctx,
         forceNewBlock: !block,
       });
     }
     if (ast.body && !ctx.isLast) {
-      this.addLine(`ctx = ctx.__proto__;`);
+      this.addLine(`${ctxVar} = ${ctxVar}.__proto__;`);
     }
   }
 
@@ -1046,7 +1052,7 @@ export class CodeGenerator {
         value = expr;
       }
       this.helpers.add("setContextValue");
-      this.addLine(`setContextValue(ctx, "${ast.name}", ${value});`);
+      this.addLine(`setContextValue(${ctx.ctxVar || "ctx"}, "${ast.name}", ${value});`);
     }
   }
 

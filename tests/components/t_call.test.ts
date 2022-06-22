@@ -244,4 +244,47 @@ describe("t-call", () => {
     }
     expect(clickCount).toBe(2);
   });
+
+  test("t-call with t-call-context, simple use", async () => {
+    class Root extends Component {
+      static template = xml`
+          <t t-call="someTemplate" t-call-context="subctx"/>`;
+
+      subctx = { aab: "aaron", lpe: "lucas" };
+    }
+
+    await mount(Root, fixture, {
+      templates: `
+        <templates>
+          <t t-name="someTemplate"><t t-esc="aab"/><t t-esc="lpe"/></t>
+        </templates>`,
+    });
+    expect(fixture.innerHTML).toBe("aaronlucas");
+  });
+
+  test("t-call with t-call-context and subcomponent", async () => {
+    class Child extends Component {
+      static template = xml`child<t t-esc="props.name"/>`;
+    }
+
+    class Root extends Component {
+      static template = xml`
+          <t t-call="someTemplate" t-call-context="subctx"/>`;
+
+      static components = { Child };
+
+      subctx = { aab: "aaron", lpe: "lucas" };
+    }
+
+    await mount(Root, fixture, {
+      templates: `
+        <templates>
+          <t t-name="someTemplate">
+            <Child name="aab"/>
+            <Child name="lpe"/>
+          </t>
+        </templates>`,
+    });
+    expect(fixture.innerHTML).toBe("childaaronchildlucas");
+  });
 });

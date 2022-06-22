@@ -1033,6 +1033,7 @@ describe("qweb parser", () => {
         type: ASTType.TCall,
         name: "blap",
         body: null,
+        context: null,
       },
       memo: "",
       hasNoFirst: false,
@@ -1070,6 +1071,7 @@ describe("qweb parser", () => {
       type: ASTType.TCall,
       name: "blabla",
       body: null,
+      context: null,
     });
   });
 
@@ -1077,7 +1079,17 @@ describe("qweb parser", () => {
     expect(parse(`<t t-call="sub">ok</t>`)).toEqual({
       type: ASTType.TCall,
       name: "sub",
+      context: null,
       body: [{ type: ASTType.Text, value: "ok" }],
+    });
+  });
+
+  test("t-call expression with t-call-context", async () => {
+    expect(parse(`<t t-call="blabla" t-call-context="someContext"/>`)).toEqual({
+      type: ASTType.TCall,
+      name: "blabla",
+      body: null,
+      context: "someContext",
     });
   });
 
@@ -1096,6 +1108,7 @@ describe("qweb parser", () => {
           type: ASTType.TCall,
           name: "blabla",
           body: null,
+          context: null,
         },
       ],
     });
@@ -1111,6 +1124,7 @@ describe("qweb parser", () => {
         type: ASTType.TCall,
         name: "blabla",
         body: null,
+        context: null,
       },
     });
   });
@@ -1547,7 +1561,7 @@ describe("qweb parser", () => {
       on: null,
       slots: {
         default: {
-          content: { body: null, name: "subTemplate", type: ASTType.TCall },
+          content: { body: null, name: "subTemplate", type: ASTType.TCall, context: null },
           attrs: null,
           scope: null,
           on: null,

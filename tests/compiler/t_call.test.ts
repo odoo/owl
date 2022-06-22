@@ -445,4 +445,38 @@ describe("t-call (template calling)", () => {
     const expected2 = "<div><bar>quux</bar></div>";
     expect(context.renderToString("main", { template: "bar", val: "quux" })).toBe(expected2);
   });
+
+  test("t-call-context", () => {
+    const context = new TestContext();
+    context.addTemplate("sub", `<span><t t-esc="value"/></span>`);
+    context.addTemplate("main", `<t t-call="sub" t-call-context="obj"/>`);
+
+    expect(context.renderToString("main", { obj: { value: 123 } })).toBe("<span>123</span>");
+  });
+
+  test("t-call on a div with t-call-context", () => {
+    const context = new TestContext();
+    context.addTemplate("sub", `<span><t t-esc="value"/></span>`);
+    context.addTemplate("main", `<div t-call="sub" t-call-context="obj"/>`);
+
+    expect(context.renderToString("main", { obj: { value: 123 } })).toBe(
+      "<div><span>123</span></div>"
+    );
+  });
+
+  test("t-call-context and value in body", () => {
+    const context = new TestContext();
+    context.addTemplate("sub", `<span><t t-esc="value1"/><t t-esc="value2"/></span>`);
+    context.addTemplate(
+      "main",
+      `
+      <t t-call="sub" t-call-context="obj">
+        <t t-set="value2" t-value="aaron" />
+      </t>`
+    );
+
+    expect(context.renderToString("main", { obj: { value1: 123 }, aaron: "lucas" })).toBe(
+      "<span>123lucas</span>"
+    );
+  });
 });

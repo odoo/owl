@@ -540,6 +540,15 @@ This can be used to define variables scoped to a sub template:
 <!-- "var" does not exist here -->
 ```
 
+Note: by default, the rendering context for a sub template is simply the current
+rendering context (so, the current component). However, it may be useful to be
+able to specify a specific object as context. This can be done by using the
+`t-call-context` directive:
+
+```xml
+<t t-call="other-template" t-call-context="obj"/>
+```
+
 ### Dynamic sub templates
 
 The `t-call` directive can also be used to dynamically call a sub template,

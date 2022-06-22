@@ -115,6 +115,7 @@ export interface ASTTCall {
   type: ASTType.TCall;
   name: string;
   body: AST[] | null;
+  context: string | null;
 }
 
 interface SlotDefinition {
@@ -557,11 +558,13 @@ function parseTCall(node: Element, ctx: ParsingContext): AST | null {
     return null;
   }
   const subTemplate = node.getAttribute("t-call")!;
-
+  const context = node.getAttribute("t-call-context");
   node.removeAttribute("t-call");
+  node.removeAttribute("t-call-context");
+
   if (node.tagName !== "t") {
     const ast = parseNode(node, ctx);
-    const tcall: AST = { type: ASTType.TCall, name: subTemplate, body: null };
+    const tcall: AST = { type: ASTType.TCall, name: subTemplate, body: null, context };
     if (ast && ast.type === ASTType.DomNode) {
       ast.content = [tcall];
       return ast;
@@ -579,6 +582,7 @@ function parseTCall(node: Element, ctx: ParsingContext): AST | null {
     type: ASTType.TCall,
     name: subTemplate,
     body: body.length ? body : null,
+    context,
   };
 }
 

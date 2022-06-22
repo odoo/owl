@@ -1031,7 +1031,7 @@ export class CodeGenerator {
       this.helpers.add("LazyValue");
       const bodyAst: AST = { type: ASTType.Multi, content: ast.body };
       const name = this.compileInNewTarget("value", bodyAst, ctx);
-      let value = `new LazyValue(${name}, ctx, node)`;
+      let value = `new LazyValue(${name}, ctx, this, node)`;
       value = ast.value ? (value ? `withDefault(${expr}, ${value})` : expr) : value;
       this.addLine(`ctx[\`${ast.name}\`] = ${value};`);
     } else {
@@ -1187,7 +1187,7 @@ export class CodeGenerator {
       })`,
     });
 
-    let blockExpr = `${id}(${propString}, ${keyArg}, node, ctx, ${ast.isDynamic ? expr : null})`;
+    let blockExpr = `${id}(${propString}, ${keyArg}, node, this, ${ast.isDynamic ? expr : null})`;
     if (ast.isDynamic) {
       blockExpr = `toggler(${expr}, ${blockExpr})`;
     }

@@ -35,7 +35,7 @@ exports[`misc complex template 1`] = `
     for (let i1 = 0; i1 < l_block4; i1++) {
       ctx[\`slot\`] = v_block4[i1];
       const key1 = ctx['slot'].id;
-      c_block4[i1] = withKey(comp1({class: ctx['slot_container'],slot: ctx['slot']}, key + \`__1__\${key1}\`, node, ctx, null), key1);
+      c_block4[i1] = withKey(comp1({class: ctx['slot_container'],slot: ctx['slot']}, key + \`__1__\${key1}\`, node, this, null), key1);
     }
     ctx = ctx.__proto__;
     b4 = list(c_block4);
@@ -319,8 +319,8 @@ exports[`misc other complex template 1`] = `
     if (!ctx['project']) {
       b24 = block24();
     } else {
-      const b26 = comp1({bundles: ctx['bundles'].sticky,category_custom_views: ctx['category_custom_views'],search: ctx['search']}, key + \`__2\`, node, ctx, null);
-      const b27 = comp2({bundles: ctx['bundles'].dev,search: ctx['search']}, key + \`__3\`, node, ctx, null);
+      const b26 = comp1({bundles: ctx['bundles'].sticky,category_custom_views: ctx['category_custom_views'],search: ctx['search']}, key + \`__2\`, node, this, null);
+      const b27 = comp2({bundles: ctx['bundles'].dev,search: ctx['search']}, key + \`__3\`, node, this, null);
       b25 = block25([], [b26, b27]);
     }
     return block1([attr1, txt1, hdlr2, hdlr3, attr8, hdlr4, hdlr5, ref1, hdlr6, ref2], [b2, b4, b14, b17, b22, b23, b24, b25]);

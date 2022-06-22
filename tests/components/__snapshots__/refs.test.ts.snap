@@ -52,7 +52,7 @@ exports[`refs refs and recursive templates 1`] = `
     let b2;
     let txt1 = ctx['props'].tree.value;
     if (ctx['props'].tree.child) {
-      b2 = comp1({tree: ctx['props'].tree.child}, key + \`__1\`, node, ctx, null);
+      b2 = comp1({tree: ctx['props'].tree.child}, key + \`__1\`, node, this, null);
     }
     return block1([ref1, txt1], [b2]);
   }
@@ -79,7 +79,7 @@ exports[`refs refs are properly bound in slots 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let txt1 = ctx['state'].val;
     const ctx1 = capture(ctx);
-    const b3 = comp1({slots: markRaw({'footer': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx, null);
+    const b3 = comp1({slots: markRaw({'footer': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, this, null);
     return block1([txt1], [b3]);
   }
 }"

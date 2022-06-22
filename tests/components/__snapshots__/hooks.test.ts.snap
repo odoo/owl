@@ -44,7 +44,7 @@ exports[`hooks can use onWillStart, onWillUpdateProps 1`] = `
   const comp1 = app.createComponent(\`MyComponent\`, true, false, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({value: ctx['state'].value}, key + \`__1\`, node, ctx, null);
+    return comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -112,7 +112,7 @@ exports[`hooks parent and child env (with useChildSubEnv then useSubEnv) 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b2 = text(ctx['env'].val);
-    const b3 = comp1({}, key + \`__1\`, node, ctx, null);
+    const b3 = comp1({}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
   }
 }"
@@ -144,7 +144,7 @@ exports[`hooks parent and child env (with useChildSubEnv) 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b2 = text(ctx['env'].val);
-    const b3 = comp1({}, key + \`__1\`, node, ctx, null);
+    const b3 = comp1({}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
   }
 }"
@@ -172,7 +172,7 @@ exports[`hooks parent and child env (with useSubEnv) 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b2 = text(ctx['env'].val);
-    const b3 = comp1({}, key + \`__1\`, node, ctx, null);
+    const b3 = comp1({}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
   }
 }"
@@ -227,7 +227,7 @@ exports[`hooks useChildSubEnv supports arbitrary descriptor 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -328,7 +328,7 @@ exports[`hooks useExternalListener 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].flag) {
-      b2 = comp1({}, key + \`__1\`, node, ctx, null);
+      b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return multi([b2]);
   }
@@ -386,7 +386,7 @@ exports[`hooks useSubEnv supports arbitrary descriptor 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
 `;

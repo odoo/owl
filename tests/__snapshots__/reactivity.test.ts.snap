@@ -57,7 +57,7 @@ exports[`Reactivity: useState destroyed component before being mounted is inacti
   return function template(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].flag) {
-      b2 = comp1({}, key + \`__1\`, node, ctx, null);
+      b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return block1([], [b2]);
   }
@@ -89,7 +89,7 @@ exports[`Reactivity: useState destroyed component is inactive 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].flag) {
-      b2 = comp1({}, key + \`__1\`, node, ctx, null);
+      b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return block1([], [b2]);
   }
@@ -134,7 +134,7 @@ exports[`Reactivity: useState parent and children subscribed to same context 1`]
   let block1 = createBlock(\`<div><block-child-0/><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
+    const b2 = comp1({}, key + \`__1\`, node, this, null);
     let txt1 = ctx['contextObj'].b;
     return block1([txt1], [b2]);
   }
@@ -228,8 +228,8 @@ exports[`Reactivity: useState two components are updated in parallel 1`] = `
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
-    const b3 = comp2({}, key + \`__2\`, node, ctx, null);
+    const b2 = comp1({}, key + \`__1\`, node, this, null);
+    const b3 = comp2({}, key + \`__2\`, node, this, null);
     return block1([], [b2, b3]);
   }
 }"
@@ -259,8 +259,8 @@ exports[`Reactivity: useState two components can subscribe to same context 1`] =
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
-    const b3 = comp2({}, key + \`__2\`, node, ctx, null);
+    const b2 = comp1({}, key + \`__1\`, node, this, null);
+    const b3 = comp2({}, key + \`__2\`, node, this, null);
     return block1([], [b2, b3]);
   }
 }"
@@ -290,8 +290,8 @@ exports[`Reactivity: useState two independent components on different levels are
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
-    const b3 = comp2({}, key + \`__2\`, node, ctx, null);
+    const b2 = comp1({}, key + \`__1\`, node, this, null);
+    const b3 = comp2({}, key + \`__2\`, node, this, null);
     return block1([], [b2, b3]);
   }
 }"
@@ -320,7 +320,7 @@ exports[`Reactivity: useState two independent components on different levels are
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
+    const b2 = comp1({}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -355,7 +355,7 @@ exports[`Reactivity: useState useless atoms should be deleted 1`] = `
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`id\`] = v_block2[i1];
       const key1 = ctx['id'];
-      c_block2[i1] = withKey(comp1({id: ctx['id']}, key + \`__1__\${key1}\`, node, ctx, null), key1);
+      c_block2[i1] = withKey(comp1({id: ctx['id']}, key + \`__1__\${key1}\`, node, this, null), key1);
     }
     ctx = ctx.__proto__;
     const b2 = list(c_block2);

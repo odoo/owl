@@ -108,15 +108,17 @@ function shallowEqual(l1: any[], l2: any[]): boolean {
 class LazyValue {
   fn: any;
   ctx: any;
+  component: any;
   node: any;
-  constructor(fn: any, ctx: any, node: any) {
+  constructor(fn: any, ctx: any, component: any, node: any) {
     this.fn = fn;
     this.ctx = capture(ctx);
+    this.component = component;
     this.node = node;
   }
 
   evaluate(): any {
-    return this.fn(this.ctx, this.node);
+    return this.fn.call(this.component, this.ctx, this.node);
   }
 
   toString() {

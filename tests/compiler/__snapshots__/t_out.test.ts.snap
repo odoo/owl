@@ -161,7 +161,7 @@ exports[`t-out t-out bdom 1`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    ctx[\`var\`] = new LazyValue(value1, ctx, node);
+    ctx[\`var\`] = new LazyValue(value1, ctx, this, node);
     const b3 = safeOutput(ctx['var']);
     return block1([], [b3]);
   }
@@ -310,7 +310,7 @@ exports[`t-out t-out switch markup on bdom 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     let b3,b5;
-    ctx[\`bdom\`] = new LazyValue(value1, ctx, node);
+    ctx[\`bdom\`] = new LazyValue(value1, ctx, this, node);
     if (ctx['hasBdom']) {
       const b4 = safeOutput(ctx['bdom']);
       b3 = block3([], [b4]);

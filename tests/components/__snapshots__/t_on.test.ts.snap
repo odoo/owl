@@ -133,7 +133,7 @@ exports[`t-on t-on on component next to t-on on div 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const hdlr1 = [ctx['increment'], ctx];
-    const b2 = catcher1(comp1({value: ctx['state'].value}, key + \`__1\`, node, ctx, null), [hdlr1]);
+    const b2 = catcher1(comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null), [hdlr1]);
     let hdlr2 = [ctx['decrement'], ctx];
     return block1([hdlr2], [b2]);
   }
@@ -164,7 +164,7 @@ exports[`t-on t-on on components 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const hdlr1 = [ctx['increment'], ctx];
-    return catcher1(comp1({value: ctx['state'].value}, key + \`__1\`, node, ctx, null), [hdlr1]);
+    return catcher1(comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null), [hdlr1]);
   }
 }"
 `;
@@ -199,7 +199,7 @@ exports[`t-on t-on on components and t-foreach 1`] = `
       const key1 = ctx['name'];
       const v1 = ctx['name'];
       const hdlr1 = [()=>this.log(v1), ctx];
-      c_block1[i1] = withKey(catcher1(comp1({value: ctx['name']}, key + \`__1__\${key1}\`, node, ctx, null), [hdlr1]), key1);
+      c_block1[i1] = withKey(catcher1(comp1({value: ctx['name']}, key + \`__1__\${key1}\`, node, this, null), [hdlr1]), key1);
     }
     return list(c_block1);
   }
@@ -232,7 +232,7 @@ exports[`t-on t-on on components, variation 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const hdlr1 = [ctx['increment'], ctx];
-    const b2 = catcher1(comp1({value: ctx['state'].value}, key + \`__1\`, node, ctx, null), [hdlr1]);
+    const b2 = catcher1(comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null), [hdlr1]);
     return block1([], [b2]);
   }
 }"
@@ -262,7 +262,7 @@ exports[`t-on t-on on components, with 'prevent' modifier 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const hdlr1 = [\\"prevent\\", ctx['increment'], ctx];
-    return catcher1(comp1({value: ctx['state'].value}, key + \`__1\`, node, ctx, null), [hdlr1]);
+    return catcher1(comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null), [hdlr1]);
   }
 }"
 `;
@@ -295,7 +295,7 @@ exports[`t-on t-on on components, with a handler update 1`] = `
     setContextValue(ctx, \\"name\\", ctx['state'].name);
     const v1 = ctx['name'];
     const hdlr1 = [()=>this.log(v1), ctx];
-    return catcher1(comp1({value: ctx['name']}, key + \`__1\`, node, ctx, null), [hdlr1]);
+    return catcher1(comp1({value: ctx['name']}, key + \`__1\`, node, this, null), [hdlr1]);
   }
 }"
 `;
@@ -325,7 +325,7 @@ exports[`t-on t-on on destroyed components 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].flag) {
-      b2 = comp1({}, key + \`__1\`, node, ctx, null);
+      b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return block1([], [b2]);
   }
@@ -360,7 +360,7 @@ exports[`t-on t-on on slot, with 'prevent' modifier 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx, null);
+    return comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -402,7 +402,7 @@ exports[`t-on t-on on t-set-slots 1`] = `
     const b3 = text(ctx['state'].count);
     const b4 = text(\`] \`);
     const ctx1 = capture(ctx);
-    const b8 = comp1({slots: markRaw({'myslot': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx, null);
+    const b8 = comp1({slots: markRaw({'myslot': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, this, null);
     return multi([b2, b3, b4, b8]);
   }
 }"
@@ -434,7 +434,7 @@ exports[`t-on t-on on t-slots 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, ctx, null);
+    return comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__1\`, node, this, null);
   }
 }"
 `;

@@ -7,7 +7,7 @@ exports[`basics display a nice error if a component is not a component 1`] = `
   const comp1 = app.createComponent(\`SomeComponent\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -21,7 +21,7 @@ exports[`basics display a nice error if it cannot find component (in dev mode) 1
   return function template(ctx, node, key = \\"\\") {
     const props1 = {};
     helpers.validateProps(\`SomeMispelledComponent\`, props1, ctx);
-    return comp1(props1, key + \`__1\`, node, ctx, null);
+    return comp1(props1, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -33,7 +33,7 @@ exports[`basics display a nice error if it cannot find component 1`] = `
   const comp1 = app.createComponent(\`SomeMispelledComponent\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -47,7 +47,7 @@ exports[`basics no component catching error lead to full app destruction 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({flag: ctx['state'].flag}, key + \`__1\`, node, ctx, null);
+    const b2 = comp1({flag: ctx['state'].flag}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -80,7 +80,7 @@ exports[`basics simple catchError 1`] = `
     if (ctx['error']) {
       b2 = text(\`Error\`);
     } else {
-      b3 = comp1({}, key + \`__1\`, node, ctx, null);
+      b3 = comp1({}, key + \`__1\`, node, this, null);
     }
     return block1([], [b2, b3]);
   }
@@ -111,7 +111,7 @@ exports[`can catch errors an error in onWillDestroy 1`] = `
     let b2,b3;
     b2 = text(ctx['state'].value);
     if (ctx['state'].hasChild) {
-      b3 = comp1({}, key + \`__1\`, node, ctx, null);
+      b3 = comp1({}, key + \`__1\`, node, this, null);
     }
     return multi([b2, b3]);
   }
@@ -141,7 +141,7 @@ exports[`can catch errors an error in onWillDestroy, variation 1`] = `
     let b2,b3;
     b2 = text(ctx['state'].value);
     if (ctx['state'].hasChild) {
-      b3 = comp1({}, key + \`__1\`, node, ctx, null);
+      b3 = comp1({}, key + \`__1\`, node, this, null);
     }
     return multi([b2, b3]);
   }
@@ -183,11 +183,11 @@ exports[`can catch errors can catch an error in a component render function 1`] 
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return comp1({flag: ctx['state'].flag}, key + \`__1\`, node, ctx, null);
+    return comp1({flag: ctx['state'].flag}, key + \`__1\`, node, this, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
+    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, this, null);
     return block1([], [b3]);
   }
 }"
@@ -238,11 +238,11 @@ exports[`can catch errors can catch an error in the constructor call of a compon
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
+    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, this, null);
     return block1([], [b3]);
   }
 }"
@@ -280,13 +280,13 @@ exports[`can catch errors can catch an error in the constructor call of a compon
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    const b3 = comp1({}, key + \`__1\`, node, ctx, null);
-    const b4 = comp2({}, key + \`__2\`, node, ctx, null);
+    const b3 = comp1({}, key + \`__1\`, node, this, null);
+    const b4 = comp2({}, key + \`__2\`, node, this, null);
     return multi([b3, b4]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b5 = comp3({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__3\`, node, ctx, null);
+    const b5 = comp3({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__3\`, node, this, null);
     return block1([], [b5]);
   }
 }"
@@ -362,11 +362,11 @@ exports[`can catch errors can catch an error in the initial call of a component 
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
+    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, this, null);
     return block1([], [b3]);
   }
 }"
@@ -417,13 +417,13 @@ exports[`can catch errors can catch an error in the initial call of a component 
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
     let b3;
     if (ctx['state'].flag) {
-      b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
+      b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, this, null);
     }
     return block1([], [b3]);
   }
@@ -471,7 +471,7 @@ exports[`can catch errors can catch an error in the mounted call (in child of ch
   const comp1 = app.createComponent(\`B\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -485,7 +485,7 @@ exports[`can catch errors can catch an error in the mounted call (in child of ch
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
+    const b2 = comp1({}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -504,7 +504,7 @@ exports[`can catch errors can catch an error in the mounted call (in child of ch
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
-      b3 = comp1({}, key + \`__1\`, node, ctx, null);
+      b3 = comp1({}, key + \`__1\`, node, this, null);
     }
     return block1([], [b2, b3]);
   }
@@ -537,7 +537,7 @@ exports[`can catch errors can catch an error in the mounted call (in root compon
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
-      b3 = comp1({}, key + \`__1\`, node, ctx, null);
+      b3 = comp1({}, key + \`__1\`, node, this, null);
     }
     return block1([], [b2, b3]);
   }
@@ -568,11 +568,11 @@ exports[`can catch errors can catch an error in the mounted call 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
+    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, this, null);
     return block1([], [b3]);
   }
 }"
@@ -622,12 +622,12 @@ exports[`can catch errors can catch an error in the willPatch call 1`] = `
   let block1 = createBlock(\`<div><span><block-text-0/></span><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return comp1({message: ctx['state'].message}, key + \`__1\`, node, ctx, null);
+    return comp1({message: ctx['state'].message}, key + \`__1\`, node, this, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
     let txt1 = ctx['state'].message;
-    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
+    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, this, null);
     return block1([txt1], [b3]);
   }
 }"
@@ -678,11 +678,11 @@ exports[`can catch errors can catch an error in the willStart call 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
+    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, this, null);
     return block1([], [b3]);
   }
 }"
@@ -733,13 +733,13 @@ exports[`can catch errors can catch an error origination from a child's willStar
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    const b3 = comp1({}, key + \`__1\`, node, ctx, null);
-    const b4 = comp2({}, key + \`__2\`, node, ctx, null);
+    const b3 = comp1({}, key + \`__1\`, node, this, null);
+    const b4 = comp2({}, key + \`__2\`, node, this, null);
     return multi([b3, b4]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b5 = comp3({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__3\`, node, ctx, null);
+    const b5 = comp3({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__3\`, node, this, null);
     return block1([], [b5]);
   }
 }"
@@ -804,7 +804,7 @@ exports[`can catch errors catchError in catchError 1`] = `
     if (ctx['error']) {
       b2 = text(\`Error\`);
     } else {
-      b3 = comp1({}, key + \`__1\`, node, ctx, null);
+      b3 = comp1({}, key + \`__1\`, node, this, null);
     }
     return block1([], [b2, b3]);
   }
@@ -820,7 +820,7 @@ exports[`can catch errors catchError in catchError 2`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
+    const b2 = comp1({}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -850,7 +850,7 @@ exports[`can catch errors catching error, rethrow, render parent  -- a main comp
   
   function slot1(ctx, node, key = \\"\\") {
     const Comp1 = ctx['cp'].Comp;
-    return toggler(Comp1, comp1({}, key + \`__1\`, node, ctx, Comp1));
+    return toggler(Comp1, comp1({}, key + \`__1\`, node, this, Comp1));
   }
   
   return function template(ctx, node, key = \\"\\") {
@@ -861,7 +861,7 @@ exports[`can catch errors catching error, rethrow, render parent  -- a main comp
       const key1 = ctx['cp'].id;
       const v1 = ctx['cp'];
       const ctx1 = capture(ctx);
-      c_block1[i1] = withKey(comp2({onError: ()=>this.cleanUp(v1.id),slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2__\${key1}\`, node, ctx, null), key1);
+      c_block1[i1] = withKey(comp2({onError: ()=>this.cleanUp(v1.id),slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2__\${key1}\`, node, this, null), key1);
     }
     return list(c_block1);
   }
@@ -887,7 +887,7 @@ exports[`can catch errors catching error, rethrow, render parent  -- a main comp
   const comp1 = app.createComponent(\`ErrorComponent\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -928,7 +928,7 @@ exports[`can catch errors catching in child makes parent render 1`] = `
   
   function slot1(ctx, node, key = \\"\\") {
     const Comp1 = ctx['elem'][1];
-    return toggler(Comp1, comp1({id: ctx['elem'][0]}, key + \`__1\`, node, ctx, Comp1));
+    return toggler(Comp1, comp1({id: ctx['elem'][0]}, key + \`__1\`, node, this, Comp1));
   }
   
   return function template(ctx, node, key = \\"\\") {
@@ -939,7 +939,7 @@ exports[`can catch errors catching in child makes parent render 1`] = `
       const key1 = ctx['elem'][0];
       const v1 = ctx['elem'];
       const ctx1 = capture(ctx);
-      c_block1[i1] = withKey(comp2({onError: (_error)=>this.onError(v1[0],_error),slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2__\${key1}\`, node, ctx, null), key1);
+      c_block1[i1] = withKey(comp2({onError: (_error)=>this.onError(v1[0],_error),slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2__\${key1}\`, node, this, null), key1);
     }
     return list(c_block1);
   }
@@ -997,12 +997,12 @@ exports[`can catch errors error in mounted on a component with a sibling (proper
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return comp2({}, key + \`__2\`, node, ctx, null);
+    return comp2({}, key + \`__2\`, node, this, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
-    const b4 = comp3({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__3\`, node, ctx, null);
+    const b2 = comp1({}, key + \`__1\`, node, this, null);
+    const b4 = comp3({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__3\`, node, this, null);
     return block1([], [b2, b4]);
   }
 }"
@@ -1059,7 +1059,7 @@ exports[`can catch errors onError in class inheritance is called if rethrown 1`]
   const comp1 = app.createComponent(\`Concrete\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -1090,7 +1090,7 @@ exports[`can catch errors onError in class inheritance is not called if no rethr
   const comp1 = app.createComponent(\`Concrete\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -1123,7 +1123,7 @@ exports[`errors and promises a rendering error in a sub component will reject th
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
+    const b2 = comp1({}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -1166,7 +1166,7 @@ exports[`errors and promises a rendering error will reject the render promise (w
   let block1 = createBlock(\`<div><block-child-0/><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
+    const b2 = comp1({}, key + \`__1\`, node, this, null);
     let txt1 = ctx['x'].y;
     return block1([txt1], [b2]);
   }

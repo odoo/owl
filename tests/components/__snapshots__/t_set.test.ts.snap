@@ -22,7 +22,7 @@ exports[`t-set slot setted value (with t-set) not accessible with t-esc 1`] = `
     setContextValue(ctx, \\"iter\\", 'source');
     let txt1 = ctx['iter'];
     const ctx1 = capture(ctx);
-    const b2 = comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, ctx, null);
+    const b2 = comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, this, null);
     let txt2 = ctx['iter'];
     return block1([txt1, txt2], [b2]);
   }
@@ -59,19 +59,19 @@ exports[`t-set slots with a t-set with a component in body 1`] = `
   function slot1(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    ctx[\`v\`] = new LazyValue(value1, ctx, node);
+    ctx[\`v\`] = new LazyValue(value1, ctx, this, node);
     const b3 = text(\` in slot \`);
     const b4 = safeOutput(ctx['v']);
     return multi([b3, b4]);
   }
   
   function value1(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    return comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2\`, node, ctx, null);
+    return comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2\`, node, this, null);
   }
 }"
 `;
@@ -114,21 +114,21 @@ exports[`t-set slots with an t-set with a component in body 1`] = `
   function slot1(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    ctx[\`v\`] = new LazyValue(value1, ctx, node);
+    ctx[\`v\`] = new LazyValue(value1, ctx, this, node);
     const b5 = text(\` tea \`);
     const b6 = safeOutput(ctx['v']);
     return multi([b5, b6]);
   }
   
   function value1(ctx, node, key = \\"\\") {
-    const b3 = comp1({}, key + \`__1\`, node, ctx, null);
+    const b3 = comp1({}, key + \`__1\`, node, this, null);
     const b4 = block4();
     return multi([b3, b4]);
   }
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    return comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2\`, node, ctx, null);
+    return comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2\`, node, this, null);
   }
 }"
 `;
@@ -169,17 +169,17 @@ exports[`t-set slots with an unused t-set with a component in body 1`] = `
   function slot1(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    ctx[\`v\`] = new LazyValue(value1, ctx, node);
+    ctx[\`v\`] = new LazyValue(value1, ctx, this, node);
     return text(\` in slot \`);
   }
   
   function value1(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    return comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2\`, node, ctx, null);
+    return comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__2\`, node, this, null);
   }
 }"
 `;
@@ -275,7 +275,7 @@ exports[`t-set t-set not altered by child comp 1`] = `
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"iter\\", 'source');
     let txt1 = ctx['iter'];
-    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
+    const b2 = comp1({}, key + \`__1\`, node, this, null);
     let txt2 = ctx['iter'];
     return block1([txt1, txt2], [b2]);
   }
@@ -337,13 +337,13 @@ exports[`t-set t-set with a component in body 1`] = `
   let block1 = createBlock(\`<div><div><block-child-0/></div></div>\`);
   
   function value1(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    ctx[\`v\`] = new LazyValue(value1, ctx, node);
+    ctx[\`v\`] = new LazyValue(value1, ctx, this, node);
     const b3 = safeOutput(ctx['v']);
     return block1([], [b3]);
   }
@@ -377,7 +377,7 @@ exports[`t-set t-set with something in body 1`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    ctx[\`v\`] = new LazyValue(value1, ctx, node);
+    ctx[\`v\`] = new LazyValue(value1, ctx, this, node);
     const b3 = safeOutput(ctx['v']);
     return block1([], [b3]);
   }

@@ -168,6 +168,48 @@ exports[`attributes dynamic class attribute evaluating to 0 1`] = `
 }"
 `;
 
+exports[`attributes dynamic class attribute that starts and ends with a space 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let attr1 = ctx['c'];
+    return block1([attr1]);
+  }
+}"
+`;
+
+exports[`attributes dynamic class attribute which is only a space 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let attr1 = ctx['c'];
+    return block1([attr1]);
+  }
+}"
+`;
+
+exports[`attributes dynamic class attribute with multiple consecutive spaces 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let attr1 = ctx['c'];
+    return block1([attr1]);
+  }
+}"
+`;
+
 exports[`attributes dynamic empty class attribute 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -470,6 +512,20 @@ exports[`attributes t-att-class with multiple classes 2`] = `
 }"
 `;
 
+exports[`attributes t-att-class with multiple classes 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let attr1 = {'a  b  c':ctx['value']};
+    return block1([attr1]);
+  }
+}"
+`;
+
 exports[`attributes t-att-class with multiple classes, some of which are duplicate 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -493,6 +549,34 @@ exports[`attributes t-att-class with object 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     let attr1 = {a:ctx['b'],c:ctx['d'],e:ctx['f']};
+    return block1([attr1]);
+  }
+}"
+`;
+
+exports[`attributes t-att-class with object 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let attr1 = {' a ':ctx['value']};
+    return block1([attr1]);
+  }
+}"
+`;
+
+exports[`attributes t-att-class with object 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let attr1 = {' ':ctx['value']};
     return block1([attr1]);
   }
 }"

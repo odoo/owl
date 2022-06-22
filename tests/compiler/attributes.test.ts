@@ -63,6 +63,24 @@ describe("attributes", () => {
     expect(result).toBe(`<div></div>`);
   });
 
+  test("dynamic class attribute which is only a space", () => {
+    const template = `<div t-att-class="c"/>`;
+    const result = renderToString(template, { c: " " });
+    expect(result).toBe(`<div></div>`);
+  });
+
+  test("dynamic class attribute with multiple consecutive spaces", () => {
+    const template = `<div t-att-class="c"/>`;
+    const result = renderToString(template, { c: "a  b" });
+    expect(result).toBe(`<div class="a b"></div>`);
+  });
+
+  test("dynamic class attribute that starts and ends with a space", () => {
+    const template = `<div t-att-class="c"/>`;
+    const result = renderToString(template, { c: " a " });
+    expect(result).toBe(`<div class="a"></div>`);
+  });
+
   test("dynamic undefined generic attribute", () => {
     const template = `<div t-att-thing="c"/>`;
     const result = renderToString(template, { c: undefined });
@@ -260,6 +278,14 @@ describe("attributes", () => {
     const template = `<div class="static" t-att-class="{a: b, c: d, e: f}"/>`;
     const result = renderToString(template, { b: true, d: false, f: true });
     expect(result).toBe(`<div class="static a e"></div>`);
+    // leading and trailing space in the key
+    expect(renderToString(`<div t-att-class="{' a ': value}" />`, { value: true })).toBe(
+      '<div class="a"></div>'
+    );
+    // whitespace only key
+    expect(renderToString(`<div t-att-class="{' ': value}" />`, { value: true })).toBe(
+      "<div></div>"
+    );
   });
 
   test("t-att-class with multiple classes", () => {
@@ -267,6 +293,10 @@ describe("attributes", () => {
       '<div class="a b c"></div>'
     );
     expect(renderToString(`<div t-att-class="{['a b c']: value}" />`, { value: true })).toBe(
+      '<div class="a b c"></div>'
+    );
+    // multiple spaces between classes
+    expect(renderToString(`<div t-att-class="{'a  b  c': value}" />`, { value: true })).toBe(
       '<div class="a b c"></div>'
     );
   });

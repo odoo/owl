@@ -93,6 +93,10 @@ function toClassObj(expr: string | number | { [c: string]: any }) {
       for (let key in expr as any) {
         const value = (expr as any)[key];
         if (value) {
+          key = trim.call(key);
+          if (!key) {
+            continue;
+          }
           const words = split.call(key, wordRegexp);
           for (let word of words) {
             result[word] = value;

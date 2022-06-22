@@ -8,7 +8,7 @@ exports[`basics GrandChild display is controlled by its GrandParent 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const Comp1 = ctx['myComp'];
-    return toggler(Comp1, comp1({displayGrandChild: ctx['displayGrandChild']}, key + \`__1\`, node, ctx, Comp1));
+    return toggler(Comp1, comp1({displayGrandChild: ctx['displayGrandChild']}, key + \`__1\`, node, this, Comp1));
   }
 }"
 `;
@@ -22,7 +22,7 @@ exports[`basics GrandChild display is controlled by its GrandParent 2`] = `
   return function template(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['props'].displayGrandChild) {
-      b2 = comp1({}, key + \`__1\`, node, ctx, null);
+      b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return multi([b2]);
   }
@@ -66,7 +66,7 @@ exports[`basics a class component inside a class component, no external dom 1`] 
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -106,7 +106,7 @@ exports[`basics a component inside a component 1`] = `
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
+    const b2 = comp1({}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -150,7 +150,7 @@ exports[`basics can handle empty props 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({val: undefined}, key + \`__1\`, node, ctx, null);
+    const b2 = comp1({val: undefined}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -268,7 +268,7 @@ exports[`basics child can be updated 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({value: ctx['state'].counter}, key + \`__1\`, node, ctx, null);
+    return comp1({value: ctx['state'].counter}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -305,7 +305,7 @@ exports[`basics class parent, class child component with props 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({value: 42}, key + \`__1\`, node, ctx, null);
+    return comp1({value: 42}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -333,7 +333,7 @@ exports[`basics component children doesn't leak (if case) 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['ifVar']) {
-      b2 = comp1({}, key + \`__1\`, node, ctx, null);
+      b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return multi([b2]);
   }
@@ -361,7 +361,7 @@ exports[`basics component children doesn't leak (t-key case) 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['keyVar'];
-    return toggler(tKey_1, comp1({}, tKey_1 + key + \`__1\`, node, ctx, null));
+    return toggler(tKey_1, comp1({}, tKey_1 + key + \`__1\`, node, this, null));
   }
 }"
 `;
@@ -427,7 +427,7 @@ exports[`basics higher order components parent and child 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({child: ctx['state'].child}, key + \`__1\`, node, ctx, null);
+    return comp1({child: ctx['state'].child}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -442,9 +442,9 @@ exports[`basics higher order components parent and child 2`] = `
   return function template(ctx, node, key = \\"\\") {
     let b2,b3;
     if (ctx['props'].child==='a') {
-      b2 = comp1({}, key + \`__1\`, node, ctx, null);
+      b2 = comp1({}, key + \`__1\`, node, this, null);
     } else {
-      b3 = comp2({}, key + \`__2\`, node, ctx, null);
+      b3 = comp2({}, key + \`__2\`, node, this, null);
     }
     return multi([b2, b3]);
   }
@@ -494,8 +494,8 @@ exports[`basics list of two sub components inside other nodes 1`] = `
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`blip\`] = v_block2[i1];
       const key1 = ctx['blip'].id;
-      const b4 = comp1({}, key + \`__1__\${key1}\`, node, ctx, null);
-      const b5 = comp2({}, key + \`__2__\${key1}\`, node, ctx, null);
+      const b4 = comp1({}, key + \`__1__\${key1}\`, node, this, null);
+      const b5 = comp2({}, key + \`__2__\${key1}\`, node, this, null);
       c_block2[i1] = withKey(block3([], [b4, b5]), key1);
     }
     const b2 = list(c_block2);
@@ -524,7 +524,7 @@ exports[`basics parent, child and grandchild 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -536,7 +536,7 @@ exports[`basics parent, child and grandchild 2`] = `
   const comp1 = app.createComponent(\`GrandChild\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -603,9 +603,9 @@ exports[`basics reconciliation alg is not confused in some specific situation 1`
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
+    const b2 = comp1({}, key + \`__1\`, node, this, null);
     const tKey_1 = 4;
-    const b3 = toggler(tKey_1, comp2({}, tKey_1 + key + \`__2\`, node, ctx, null));
+    const b3 = toggler(tKey_1, comp2({}, tKey_1 + key + \`__2\`, node, this, null));
     return block1([], [b2, b3]);
   }
 }"
@@ -631,7 +631,7 @@ exports[`basics rerendering a widget with a sub widget 1`] = `
   const comp1 = app.createComponent(\`Counter\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -663,9 +663,9 @@ exports[`basics same t-keys in two different places 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = 1;
-    const b2 = toggler(tKey_1, comp1({blip: '1'}, tKey_1 + key + \`__1\`, node, ctx, null));
+    const b2 = toggler(tKey_1, comp1({blip: '1'}, tKey_1 + key + \`__1\`, node, this, null));
     const tKey_2 = 1;
-    const b3 = toggler(tKey_2, comp2({blip: '2'}, tKey_2 + key + \`__2\`, node, ctx, null));
+    const b3 = toggler(tKey_2, comp2({blip: '2'}, tKey_2 + key + \`__2\`, node, this, null));
     return block1([], [b2, b3]);
   }
 }"
@@ -744,7 +744,7 @@ exports[`basics sub components between t-ifs 1`] = `
     } else {
       b3 = block3();
     }
-    b4 = comp1({}, key + \`__1\`, node, ctx, null);
+    b4 = comp1({}, key + \`__1\`, node, this, null);
     if (ctx['state'].flag) {
       b5 = block5();
     }
@@ -780,7 +780,7 @@ exports[`basics t-elif works with t-component 1`] = `
     if (ctx['state'].flag) {
       b2 = block2();
     } else if (!ctx['state'].flag) {
-      b3 = comp1({}, key + \`__1\`, node, ctx, null);
+      b3 = comp1({}, key + \`__1\`, node, this, null);
     }
     return block1([], [b2, b3]);
   }
@@ -814,7 +814,7 @@ exports[`basics t-else with empty string works with t-component 1`] = `
     if (ctx['state'].flag) {
       b2 = block2();
     } else {
-      b3 = comp1({}, key + \`__1\`, node, ctx, null);
+      b3 = comp1({}, key + \`__1\`, node, this, null);
     }
     return block1([], [b2, b3]);
   }
@@ -848,7 +848,7 @@ exports[`basics t-else works with t-component 1`] = `
     if (ctx['state'].flag) {
       b2 = block2();
     } else {
-      b3 = comp1({}, key + \`__1\`, node, ctx, null);
+      b3 = comp1({}, key + \`__1\`, node, this, null);
     }
     return block1([], [b2, b3]);
   }
@@ -879,7 +879,7 @@ exports[`basics t-if works with t-component 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].flag) {
-      b2 = comp1({}, key + \`__1\`, node, ctx, null);
+      b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return block1([], [b2]);
   }
@@ -912,9 +912,9 @@ exports[`basics t-key on a component with t-if, and a sibling component 1`] = `
     let b2,b3;
     if (false) {
       const tKey_1 = 'str';
-      b2 = toggler(tKey_1, comp1({}, tKey_1 + key + \`__1\`, node, ctx, null));
+      b2 = toggler(tKey_1, comp1({}, tKey_1 + key + \`__1\`, node, this, null));
     }
-    b3 = comp2({}, key + \`__2\`, node, ctx, null);
+    b3 = comp2({}, key + \`__2\`, node, this, null);
     return block1([], [b2, b3]);
   }
 }"
@@ -944,7 +944,7 @@ exports[`basics text after a conditional component 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].hasChild) {
-      b2 = comp1({}, key + \`__1\`, node, ctx, null);
+      b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     let txt1 = ctx['state'].text;
     return block1([txt1], [b2]);
@@ -972,7 +972,7 @@ exports[`basics three level of components with collapsing root nodes 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -984,7 +984,7 @@ exports[`basics three level of components with collapsing root nodes 2`] = `
   const comp1 = app.createComponent(\`GrandChild\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -1010,8 +1010,8 @@ exports[`basics two child components 1`] = `
   const comp2 = app.createComponent(\`Child\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
-    const b3 = comp2({}, key + \`__2\`, node, ctx, null);
+    const b2 = comp1({}, key + \`__1\`, node, this, null);
+    const b3 = comp2({}, key + \`__2\`, node, this, null);
     return multi([b2, b3]);
   }
 }"
@@ -1040,7 +1040,7 @@ exports[`basics update props of component without concrete own node 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['childProps'].key;
-    const b2 = toggler(tKey_1, comp1(Object.assign({}, ctx['childProps']), tKey_1 + key + \`__1\`, node, ctx, null));
+    const b2 = toggler(tKey_1, comp1(Object.assign({}, ctx['childProps']), tKey_1 + key + \`__1\`, node, this, null));
     return block1([], [b2]);
   }
 }"
@@ -1054,7 +1054,7 @@ exports[`basics update props of component without concrete own node 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['props'].subKey;
-    return toggler(tKey_1, comp1({key: ctx['props'].key,subKey: ctx['props'].subKey}, tKey_1 + key + \`__1\`, node, ctx, null));
+    return toggler(tKey_1, comp1({key: ctx['props'].key,subKey: ctx['props'].subKey}, tKey_1 + key + \`__1\`, node, this, null));
   }
 }"
 `;
@@ -1100,7 +1100,7 @@ exports[`basics updating widget immediately 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({flag: ctx['state'].flag}, key + \`__1\`, node, ctx, null);
+    return comp1({flag: ctx['state'].flag}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -1142,7 +1142,7 @@ exports[`basics widget after a t-foreach 1`] = `
     }
     ctx = ctx.__proto__;
     const b2 = list(c_block2);
-    const b4 = comp1({}, key + \`__1\`, node, ctx, null);
+    const b4 = comp1({}, key + \`__1\`, node, this, null);
     return block1([], [b2, b4]);
   }
 }"
@@ -1170,7 +1170,7 @@ exports[`basics zero or one child components 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].hasChild) {
-      b2 = comp1({}, key + \`__1\`, node, ctx, null);
+      b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return multi([b2]);
   }
@@ -1251,7 +1251,7 @@ exports[`support svg components add proper namespace to svg 1`] = `
   let block1 = createBlock(\`<svg block-ns=\\"http://www.w3.org/2000/svg\\"><block-child-0/></svg>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
+    const b2 = comp1({}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"

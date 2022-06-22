@@ -38,7 +38,7 @@ exports[`event handling handler receive the event as argument 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     let hdlr1 = [ctx['inc'], ctx];
-    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
+    const b2 = comp1({}, key + \`__1\`, node, this, null);
     let txt1 = ctx['state'].value;
     return block1([hdlr1, txt1], [b2]);
   }
@@ -69,7 +69,7 @@ exports[`event handling input blur event is not called if component is destroyed
   return function template(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].cond) {
-      b2 = comp1({}, key + \`__1\`, node, ctx, null);
+      b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return block1([], [b2]);
   }

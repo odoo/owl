@@ -166,11 +166,11 @@ exports[`Portal Portal composed with t-slot 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return comp1({customHandler: ctx['_handled']}, key + \`__1\`, node, ctx, null);
+    return comp1({customHandler: ctx['_handled']}, key + \`__1\`, node, this, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, ctx, null);
+    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, this, null);
     return block1([], [b3]);
   }
 }"
@@ -303,7 +303,7 @@ exports[`Portal conditional use of Portal (with sub Component) 1`] = `
   let block2 = createBlock(\`<span>1</span>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return comp1({val: ctx['state'].val}, key + \`__1\`, node, ctx, null);
+    return comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
@@ -365,7 +365,7 @@ exports[`Portal conditional use of Portal with child and div 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].hasPortal) {
-      b2 = comp1({}, key + \`__1\`, node, ctx, null);
+      b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return multi([b2]);
   }
@@ -413,7 +413,7 @@ exports[`Portal conditional use of Portal with child and div, variation 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].hasPortal) {
-      const b3 = comp1({}, key + \`__1\`, node, ctx, null);
+      const b3 = comp1({}, key + \`__1\`, node, this, null);
       b2 = block2([], [b3]);
     }
     return multi([b2]);
@@ -488,7 +488,7 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 1`] 
   let block1 = createBlock(\`<div><block-child-0/><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return comp1({val: ctx['state'].val}, key + \`__1\`, node, ctx, null);
+    return comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
@@ -552,7 +552,7 @@ exports[`Portal portal destroys on crash 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return comp1({error: ctx['state'].error}, key + \`__1\`, node, ctx, null);
+    return comp1({error: ctx['state'].error}, key + \`__1\`, node, this, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
@@ -587,7 +587,7 @@ exports[`Portal portal with child and props 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return comp1({val: ctx['state'].val}, key + \`__1\`, node, ctx, null);
+    return comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
@@ -740,7 +740,7 @@ exports[`Portal portal's parent's env is not polluted 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
   
   return function template(ctx, node, key = \\"\\") {
@@ -776,7 +776,7 @@ exports[`Portal simple catchError with portal 1`] = `
     if (ctx['error']) {
       b2 = text(\`Error\`);
     } else {
-      b3 = comp1({}, key + \`__1\`, node, ctx, null);
+      b3 = comp1({}, key + \`__1\`, node, this, null);
     }
     return block1([], [b2, b3]);
   }
@@ -900,7 +900,7 @@ exports[`Portal: UI/UX focus is kept across re-renders 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return comp1({val: ctx['state'].val}, key + \`__1\`, node, ctx, null);
+    return comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
   }
   
   return function template(ctx, node, key = \\"\\") {

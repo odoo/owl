@@ -50,7 +50,7 @@ exports[`t-call dynamic t-call: key is propagated 1`] = `
   const call = app.callTemplate.bind(app);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({}, key + \`__1\`, node, ctx, null);
+    const b2 = comp1({}, key + \`__1\`, node, this, null);
     const template1 = (ctx['sub']);
     const b3 = call(this, template1, ctx, node, key + \`__2\`);
     return multi([b2, b3]);
@@ -79,7 +79,7 @@ exports[`t-call dynamic t-call: key is propagated 3`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -197,7 +197,7 @@ exports[`t-call parent is set within t-call 2`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -234,7 +234,7 @@ exports[`t-call parent is set within t-call with no parentNode 2`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, ctx, null);
+    return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -331,7 +331,7 @@ exports[`t-call sub components in two t-calls 2`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({val: ctx['state'].val}, key + \`__1\`, node, ctx, null);
+    return comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -384,7 +384,7 @@ exports[`t-call t-call in t-foreach and children component 2`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({val: ctx['val']}, key + \`__1\`, node, ctx, null);
+    return comp1({val: ctx['val']}, key + \`__1\`, node, this, null);
   }
 }"
 `;

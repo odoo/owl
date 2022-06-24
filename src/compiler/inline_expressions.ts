@@ -86,9 +86,8 @@ const STATIC_TOKEN_MAP: { [key: string]: TKind } = Object.assign(Object.create(n
 
 // note that the space after typeof is relevant. It makes sure that the formatted
 // expression has a space after typeof. Currently we don't support delete and void
-const OPERATORS = "...,.,===,==,+,!==,!=,!,||,&&,>=,>,<=,<,?,-,*,/,%,typeof ,=>,=,;,in ,new ".split(
-  ","
-);
+const OPERATORS =
+  "...,.,===,==,+,!==,!=,!,||,&&,>=,>,<=,<,?,-,*,/,%,typeof ,=>,=,;,in ,new ,|,&,^,~".split(",");
 
 type Tokenizer = (expr: string) => Token | false;
 

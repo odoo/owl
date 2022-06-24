@@ -1713,13 +1713,13 @@ describe("Reactivity: useState", () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
+      "Child:willRender",
+      "Child:rendered",
       "Child:setup",
       "Child:willStart",
+      "Child:willRender",
+      "Child:rendered",
       "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:willRender",
-      "Child:rendered",
       "Child:mounted",
       "Child:mounted",
       "Parent:mounted",
@@ -1767,13 +1767,13 @@ describe("Reactivity: useState", () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
+      "Child:willRender",
+      "Child:rendered",
       "Child:setup",
       "Child:willStart",
+      "Child:willRender",
+      "Child:rendered",
       "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:willRender",
-      "Child:rendered",
       "Child:mounted",
       "Child:mounted",
       "Parent:mounted",
@@ -1781,18 +1781,17 @@ describe("Reactivity: useState", () => {
 
     expect(fixture.innerHTML).toBe("<div><span>123</span><span>123</span></div>");
     testContext.value = 321;
-    await nextMicroTick();
-    await nextMicroTick();
+    await nextTick();
     expect([
       "Child:willRender",
       "Child:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Child:willPatch",
+      "Child:patched",
+      "Child:willPatch",
+      "Child:patched"
     ]).toBeLogged();
-    expect(fixture.innerHTML).toBe("<div><span>123</span><span>123</span></div>");
-
-    await nextTick();
-    expect(["Child:willPatch", "Child:patched", "Child:willPatch", "Child:patched"]).toBeLogged();
     expect(fixture.innerHTML).toBe("<div><span>321</span><span>321</span></div>");
   });
 
@@ -1832,17 +1831,17 @@ describe("Reactivity: useState", () => {
       "GrandFather:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:setup",
-      "Parent:willStart",
-      "GrandFather:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:setup",
+      "Parent:willStart",
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
+      "GrandFather:rendered",
       "Child:mounted",
       "Parent:mounted",
       "Child:mounted",
@@ -1850,19 +1849,18 @@ describe("Reactivity: useState", () => {
     ]).toBeLogged();
 
     testContext.value = 321;
-    await nextMicroTick();
-    await nextMicroTick();
-    expect(fixture.innerHTML).toBe("<div><span>123</span><div><span>123</span></div></div>");
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>321</span><div><span>321</span></div></div>");
     expect([
       "Child:willRender",
       "Child:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Child:willPatch", 
+      "Child:patched", 
+      "Child:willPatch", 
+      "Child:patched"
     ]).toBeLogged();
-
-    await nextTick();
-    expect(fixture.innerHTML).toBe("<div><span>321</span><div><span>321</span></div></div>");
-    expect(["Child:willPatch", "Child:patched", "Child:willPatch", "Child:patched"]).toBeLogged();
   });
 
   test("one components can subscribe twice to same context", async () => {
@@ -2044,9 +2042,9 @@ describe("Reactivity: useState", () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]).toBeLogged();
@@ -2163,8 +2161,7 @@ describe("Reactivity: useState", () => {
     steps.clear();
 
     delete testContext[2];
-    await nextMicroTick();
-    await nextMicroTick();
+    await nextTick();
     expect([...steps]).toEqual(["list"]);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>3</div> Total: 3 Count: 1</div>");

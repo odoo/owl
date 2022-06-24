@@ -180,9 +180,9 @@ describe("reactivity in lifecycle", () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]).toBeLogged();

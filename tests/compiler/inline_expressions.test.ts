@@ -221,4 +221,11 @@ describe("expression evaluation", () => {
     expect(compileExpr("a.c in b")).toBe("ctx['a'].c in ctx['b']");
     expect(compileExpr("typeof val")).toBe("typeof ctx['val']");
   });
+
+  test("binary operators", () => {
+    expect(compileExpr("1 | 1")).toBe("1|1");
+    expect(compileExpr("1 & 1")).toBe("1&1");
+    expect(compileExpr("1 ^ 1")).toBe("1^1");
+    expect(compileExpr("~1")).toBe("~1");
+  });
 });

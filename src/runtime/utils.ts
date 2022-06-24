@@ -10,6 +10,7 @@ export type Callback = () => void;
 export function batched(callback: Callback): Callback {
   let called = false;
   return async () => {
+    debugger;
     // This await blocks all calls to the callback here, then releases them sequentially
     // in the next microtick. This line decides the granularity of the batch.
     await Promise.resolve();

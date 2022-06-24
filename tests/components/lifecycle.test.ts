@@ -461,9 +461,9 @@ describe("lifecycle hooks", () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]).toBeLogged();
@@ -474,9 +474,9 @@ describe("lifecycle hooks", () => {
     expect([
       "Parent:willRender",
       "Child:willUpdateProps",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Parent:willPatch",
       "Child:willPatch",
       "Child:patched",
@@ -520,9 +520,9 @@ describe("lifecycle hooks", () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]).toBeLogged();
@@ -638,9 +638,9 @@ describe("lifecycle hooks", () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]).toBeLogged();
@@ -694,13 +694,13 @@ describe("lifecycle hooks", () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "GrandChild:setup",
       "GrandChild:willStart",
-      "Child:rendered",
       "GrandChild:willRender",
       "GrandChild:rendered",
+      "Child:rendered",
+      "Parent:rendered",
       "Parent:willPatch",
       "GrandChild:mounted",
       "Child:mounted",
@@ -803,11 +803,11 @@ describe("lifecycle hooks", () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "GrandChild:setup",
       "GrandChild:willStart",
       "Child:rendered",
+      "Parent:rendered",
     ]).toBeLogged();
 
     app.destroy();
@@ -843,9 +843,9 @@ describe("lifecycle hooks", () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]).toBeLogged();
@@ -886,9 +886,9 @@ describe("lifecycle hooks", () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]).toBeLogged();
@@ -898,9 +898,9 @@ describe("lifecycle hooks", () => {
     expect([
       "Parent:willRender",
       "Child:willUpdateProps",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Parent:willPatch",
       "Child:willPatch",
       "Child:patched",
@@ -943,9 +943,9 @@ describe("lifecycle hooks", () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]).toBeLogged();
@@ -1060,21 +1060,21 @@ describe("lifecycle hooks", () => {
       "A:willRender",
       "B:setup",
       "B:willStart",
-      "C:setup",
-      "C:willStart",
-      "A:rendered",
       "B:willRender",
       "B:rendered",
+      "C:setup",
+      "C:willStart",
       "C:willRender",
       "D:setup",
       "D:willStart",
-      "E:setup",
-      "E:willStart",
-      "C:rendered",
       "D:willRender",
       "D:rendered",
+      "E:setup",
+      "E:willStart",
       "E:willRender",
       "E:rendered",
+      "C:rendered",
+      "A:rendered",
       "E:mounted",
       "D:mounted",
       "C:mounted",
@@ -1089,9 +1089,9 @@ describe("lifecycle hooks", () => {
       "C:willRender",
       "F:setup",
       "F:willStart",
-      "C:rendered",
       "F:willRender",
       "F:rendered",
+      "C:rendered",
       "C:willPatch",
       "E:willUnmount",
       "E:willDestroy",
@@ -1124,9 +1124,9 @@ describe("lifecycle hooks", () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]).toBeLogged();
@@ -1148,9 +1148,9 @@ describe("lifecycle hooks", () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Parent:willPatch",
       "Child:mounted",
       "Parent:patched",
@@ -1171,7 +1171,7 @@ describe("lifecycle hooks", () => {
     }
 
     await mount(Parent, fixture);
-    expect(fixture.innerHTML).toBe("<span></span>");
+    expect(fixture.innerHTML).toBe("<span>Patched</span>");
     expect([
       "Parent:setup",
       "Parent:willStart",
@@ -1180,11 +1180,13 @@ describe("lifecycle hooks", () => {
       "Parent:mounted",
       "Parent:willRender",
       "Parent:rendered",
+      "Parent:willPatch",
+      "Parent:patched",
     ]).toBeLogged();
 
     await nextTick();
     expect(fixture.innerHTML).toBe("<span>Patched</span>");
-    expect(["Parent:willPatch", "Parent:patched"]).toBeLogged();
+    expect([]).toBeLogged();
   });
 
   test("render in patched", async () => {
@@ -1215,7 +1217,7 @@ describe("lifecycle hooks", () => {
 
     parent.render();
     await nextTick();
-    expect(fixture.innerHTML).toBe("<span></span>");
+    expect(fixture.innerHTML).toBe("<span>Patched</span>");
     expect([
       "Parent:willRender",
       "Parent:rendered",
@@ -1223,11 +1225,13 @@ describe("lifecycle hooks", () => {
       "Parent:patched",
       "Parent:willRender",
       "Parent:rendered",
+      "Parent:willPatch",
+      "Parent:patched",
     ]).toBeLogged();
 
     await nextTick();
     expect(fixture.innerHTML).toBe("<span>Patched</span>");
-    expect(["Parent:willPatch", "Parent:patched"]).toBeLogged();
+    expect([]).toBeLogged();
   });
 
   test("render in willPatch", async () => {
@@ -1265,12 +1269,15 @@ describe("lifecycle hooks", () => {
       "Parent:rendered",
       "Parent:willPatch",
       "Parent:patched",
-      "Parent:willRender",
-      "Parent:rendered",
     ]).toBeLogged();
 
     await nextTick();
-    expect(["Parent:willPatch", "Parent:patched"]).toBeLogged();
+    expect([
+      "Parent:willRender",
+      "Parent:rendered",
+      "Parent:willPatch",
+      "Parent:patched",
+    ]).toBeLogged();
     expect(fixture.innerHTML).toBe("<span>Patched</span>");
   });
 
@@ -1333,6 +1340,9 @@ describe("lifecycle hooks", () => {
       static template = xml`child`;
       setup() {
         useLogLifecycle();
+        onWillStart(async () => {
+          await nextMicroTick();
+        });
       }
     }
 

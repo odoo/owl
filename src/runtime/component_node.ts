@@ -12,7 +12,7 @@ import {
   TARGET,
 } from "./reactivity";
 import { STATUS } from "./status";
-import { batched, Callback } from "./utils";
+import { Callback } from "./utils";
 
 let currentNode: ComponentNode | null = null;
 
@@ -56,7 +56,7 @@ export function useState<T extends object>(state: T): Reactive<T> | NonReactive<
   const node = getCurrent();
   let render = batchedRenderFunctions.get(node)!;
   if (!render) {
-    render = batched(node.render.bind(node, false));
+    render = node.render.bind(node, false);
     batchedRenderFunctions.set(node, render);
     // manual implementation of onWillDestroy to break cyclic dependency
     node.willDestroy.push(clearReactivesForCallback.bind(null, render));
@@ -140,11 +140,22 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
       fiber.root!.mounted.push(fiber);
     }
     const component = this.component;
-    try {
-      await Promise.all(this.willStart.map((f) => f.call(component)));
-    } catch (e) {
-      handleError({ node: this, error: e });
-      return;
+    if (this.willStart.length) {
+      let willStartResults;
+      try {
+        willStartResults = this.willStart.map((f) => f.call(component));
+      } catch (e) {
+        handleError({ node: this, error: e });
+        return;
+      }
+      if (willStartResults.some((result) => result instanceof Promise)) {
+        try {
+          await Promise.all(willStartResults);
+        } catch (e) {
+          handleError({ node: this, error: e });
+          return;
+        }
+      }
     }
     if (this.status === STATUS.NEW && this.fiber === fiber) {
       fiber.render();
@@ -153,7 +164,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
 
   async render(deep: boolean) {
     let current = this.fiber;
-    if (current && (current.root!.locked || (current as any).bdom === true)) {
+    if (current && (current.root!.locked )) {
       await Promise.resolve();
       // situation may have changed after the microtask tick
       current = this.fiber;
@@ -175,26 +186,28 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     const fiber = makeRootFiber(this);
     fiber.deep = deep;
     this.fiber = fiber;
+    const scheduler = this.app.scheduler;
 
-    this.app.scheduler.addFiber(fiber);
-    await Promise.resolve();
-    if (this.status === STATUS.DESTROYED) {
-      return;
-    }
-    // We only want to actually render the component if the following two
-    // conditions are true:
-    // * this.fiber: it could be null, in which case the render has been cancelled
-    // * (current || !fiber.parent): if current is not null, this means that the
-    //   render function was called when a render was already occurring. In this
-    //   case, the pending rendering was cancelled, and the fiber needs to be
-    //   rendered to complete the work.  If current is null, we check that the
-    //   fiber has no parent.  If that is the case, the fiber was downgraded from
-    //   a root fiber to a child fiber in the previous microtick, because it was
-    //   embedded in a rendering coming from above, so the fiber will be rendered
-    //   in the next microtick anyway, so we should not render it again.
-    if (this.fiber === fiber && (current || !fiber.parent)) {
-      fiber.render();
-    }
+    scheduler.requestAnimationFrame(() => {
+      if (this.status === STATUS.DESTROYED) {
+        return;
+      }
+      // We only want to actually render the component if the following two
+      // conditions are true:
+      // * this.fiber: it could be null, in which case the render has been cancelled
+      // * (current || !fiber.parent): if current is not null, this means that the
+      //   render function was called when a render was already occurring. In this
+      //   case, the pending rendering was cancelled, and the fiber needs to be
+      //   rendered to complete the work.  If current is null, we check that the
+      //   fiber has no parent.  If that is the case, the fiber was downgraded from
+      //   a root fiber to a child fiber in the previous microtick, because it was
+      //   embedded in a rendering coming from above, so the fiber will be rendered
+      //   in the next microtick anyway, so we should not render it again.
+      if (this.fiber === fiber && (current || !fiber.parent)) {
+        fiber.render();
+      }
+    });
+    scheduler.addFiber(fiber);
   }
 
   destroy() {
@@ -247,14 +260,17 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
       }
     }
     currentNode = null;
-    const prom = Promise.all(this.willUpdateProps.map((f) => f.call(component, props)));
-    await prom;
-    if (fiber !== this.fiber) {
-      return;
+    if (this.willUpdateProps.length) {
+      const willUpdatePropsResults = this.willUpdateProps.map((f) => f.call(component, props));
+      if (willUpdatePropsResults.some((res) => res instanceof Promise)) {
+        await Promise.all(willUpdatePropsResults);
+      }
+      if (fiber !== this.fiber) {
+        return;
+      }
     }
     component.props = props;
     this.props = rawProps;
-    fiber.render();
     const parentRoot = parentFiber.root!;
     if (this.willPatch.length) {
       parentRoot.willPatch.push(fiber);
@@ -262,6 +278,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     if (this.patched.length) {
       parentRoot.patched.push(fiber);
     }
+    fiber.render();
   }
 
   /**

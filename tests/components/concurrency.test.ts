@@ -2235,13 +2235,13 @@ test("concurrent renderings scenario 16", async () => {
     "A:willRender",
     "B:setup",
     "B:willStart",
-    "A:rendered",
     "B:willRender",
     "C:setup",
     "C:willStart",
-    "B:rendered",
     "C:willRender",
     "C:rendered",
+    "B:rendered",
+    "A:rendered",
     "C:mounted",
     "B:mounted",
     "A:mounted",
@@ -2906,9 +2906,9 @@ test("two sequential renderings before an animation frame", async () => {
     "Parent:willRender",
     "Child:setup",
     "Child:willStart",
-    "Parent:rendered",
     "Child:willRender",
     "Child:rendered",
+    "Parent:rendered",
     "Child:mounted",
     "Parent:mounted",
   ]).toBeLogged();
@@ -2920,13 +2920,7 @@ test("two sequential renderings before an animation frame", async () => {
   await nextMicroTick();
   await nextMicroTick();
   expect(fixture.innerHTML).toBe("0");
-  expect([
-    "Parent:willRender",
-    "Child:willUpdateProps",
-    "Parent:rendered",
-    "Child:willRender",
-    "Child:rendered",
-  ]).toBeLogged();
+  expect([]).toBeLogged();
 
   parent.state.value = 2;
   // enough microticks to wait for render + willupdateprops
@@ -2936,17 +2930,21 @@ test("two sequential renderings before an animation frame", async () => {
   await nextMicroTick();
   await nextMicroTick();
   expect(fixture.innerHTML).toBe("0");
-  expect([
-    "Parent:willRender",
-    "Child:willUpdateProps",
-    "Parent:rendered",
-    "Child:willRender",
-    "Child:rendered",
-  ]).toBeLogged();
+  expect([]).toBeLogged();
 
   await nextTick();
   // we check here that the willPatch and patched hooks are called only once
-  expect(["Parent:willPatch", "Child:willPatch", "Child:patched", "Parent:patched"]).toBeLogged();
+  expect([
+    "Parent:willRender",
+    "Child:willUpdateProps",
+    "Child:willRender",
+    "Child:rendered",
+    "Parent:rendered",
+    "Parent:willPatch",
+    "Child:willPatch",
+    "Child:patched",
+    "Parent:patched",
+  ]).toBeLogged();
 });
 
 test("t-key on dom node having a component", async () => {
@@ -3736,15 +3734,15 @@ test("delayed fiber does not get rendered if it was cancelled", async () => {
     "A:setup",
     "A:willRender",
     "B:setup",
-    "A:rendered",
     "B:willRender",
     "C:setup",
-    "B:rendered",
     "C:willRender",
     "D:setup",
-    "C:rendered",
     "D:willRender",
     "D:rendered",
+    "C:rendered",
+    "B:rendered",
+    "A:rendered",
     "D:mounted",
     "C:mounted",
     "B:mounted",
@@ -3753,7 +3751,7 @@ test("delayed fiber does not get rendered if it was cancelled", async () => {
   // Start a render in C
   c!.render(true);
   await nextMicroTick();
-  expect(["C:willRender", "C:rendered"]).toBeLogged();
+  expect(["C:willRender", "D:willRender", "D:rendered", "C:rendered"]).toBeLogged();
   // Start a render in A such that C is already rendered, but D will be delayed
   // (because A is rendering) then cancelled (when the render from A reaches C)
   a.render(true);
@@ -3761,13 +3759,13 @@ test("delayed fiber does not get rendered if it was cancelled", async () => {
   await nextTick();
   expect([
     "A:willRender",
-    "A:rendered",
     "B:willRender",
-    "B:rendered",
     "C:willRender",
-    "C:rendered",
     "D:willRender",
     "D:rendered",
+    "C:rendered",
+    "B:rendered",
+    "A:rendered",
     "A:willPatch",
     "B:willPatch",
     "C:willPatch",

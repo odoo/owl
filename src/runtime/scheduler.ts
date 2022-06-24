@@ -11,12 +11,29 @@ export class Scheduler {
   // interactions with other code, such as test frameworks that override them
   static requestAnimationFrame = window.requestAnimationFrame.bind(window);
   tasks: Set<RootFiber> = new Set();
-  requestAnimationFrame: Window["requestAnimationFrame"];
+  _requestAnimationFrame: Window["requestAnimationFrame"];
+  cbs: Function[] = [];
   frame: number = 0;
   delayedRenders: Fiber[] = [];
+  shouldFlush = false;
 
   constructor() {
-    this.requestAnimationFrame = Scheduler.requestAnimationFrame;
+    this._requestAnimationFrame = Scheduler.requestAnimationFrame;
+  }
+
+  requestAnimationFrame(cb: Function) {
+    this.cbs.push(cb);
+    if (this.frame === 0) {
+      this.frame = this._requestAnimationFrame(() => {
+        // note that some callbacks may be added to this.cbs while this look is
+        // running, and they will be executed immediately
+        for (let i = 0; i < this.cbs.length; i++) {
+          this.cbs[i]();
+        }
+        this.cbs = [];
+        this.frame = 0;
+      });
+    }
   }
 
   addFiber(fiber: Fiber) {
@@ -37,18 +54,18 @@ export class Scheduler {
         }
       }
     }
-
-    if (this.frame === 0) {
-      this.frame = this.requestAnimationFrame(() => {
-        this.frame = 0;
-        this.tasks.forEach((fiber) => this.processFiber(fiber));
-        for (let task of this.tasks) {
-          if (task.node.status === STATUS.DESTROYED) {
-            this.tasks.delete(task);
-          }
+    // if (this.shouldFlush === false) {
+    // this.shouldFlush = true;
+    this.requestAnimationFrame(() => {
+      // this.shouldFlush = false;
+      this.tasks.forEach((fiber) => this.processFiber(fiber));
+      for (let task of this.tasks) {
+        if (task.node.status === STATUS.DESTROYED) {
+          this.tasks.delete(task);
         }
-      });
-    }
+      }
+    });
+    // }
   }
 
   processFiber(fiber: RootFiber) {

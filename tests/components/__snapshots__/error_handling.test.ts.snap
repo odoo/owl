@@ -131,6 +131,19 @@ exports[`can catch errors an error in onWillDestroy 2`] = `
 }"
 `;
 
+exports[`can catch errors an error in onWillDestroy 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div>abc</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`can catch errors an error in onWillDestroy, variation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

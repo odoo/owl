@@ -3,6 +3,7 @@
 exports[`qweb t-tag can fallback if falsy tag 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = tag => createBlock(\`<\${tag || 'fallback'}/>\`);
@@ -17,6 +18,7 @@ exports[`qweb t-tag can fallback if falsy tag 1`] = `
 exports[`qweb t-tag can update 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = tag => createBlock(\`<\${tag || 't'}/>\`);
@@ -31,6 +33,7 @@ exports[`qweb t-tag can update 1`] = `
 exports[`qweb t-tag simple usecases 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = tag => createBlock(\`<\${tag || 't'}/>\`);
@@ -45,6 +48,7 @@ exports[`qweb t-tag simple usecases 1`] = `
 exports[`qweb t-tag simple usecases 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = tag => createBlock(\`<\${tag || 't'}>text</\${tag || 't'}>\`);
@@ -59,6 +63,7 @@ exports[`qweb t-tag simple usecases 2`] = `
 exports[`qweb t-tag with multiple attributes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = tag => createBlock(\`<\${tag || 't'} class=\\"blueberry\\" taste=\\"raspberry\\">gooseberry</\${tag || 't'}>\`);
@@ -73,6 +78,7 @@ exports[`qweb t-tag with multiple attributes 1`] = `
 exports[`qweb t-tag with multiple child nodes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = tag => createBlock(\`<\${tag || 't'}> pear <span>apple</span> strawberry </\${tag || 't'}>\`);
@@ -87,6 +93,7 @@ exports[`qweb t-tag with multiple child nodes 1`] = `
 exports[`qweb t-tag with multiple t-tag in same template 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = tag => createBlock(\`<\${tag || 't'}><block-child-0/></\${tag || 't'}>\`);
@@ -104,6 +111,7 @@ exports[`qweb t-tag with multiple t-tag in same template 1`] = `
 exports[`qweb t-tag with multiple t-tag in same template, part 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block2 = tag => createBlock(\`<\${tag || 't'}>bar</\${tag || 't'}>\`);

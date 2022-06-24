@@ -3,6 +3,7 @@
 exports[`slots can define a default content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Dialog\`, true, false, false, true);
   
@@ -18,6 +19,7 @@ exports[`slots can define a default content 1`] = `
 exports[`slots can define a default content 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -37,6 +39,7 @@ exports[`slots can define a default content 2`] = `
 exports[`slots can define and call slots 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const comp1 = app.createComponent(\`Dialog\`, true, true, false, true);
@@ -64,6 +67,7 @@ exports[`slots can define and call slots 1`] = `
 exports[`slots can define and call slots 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -80,6 +84,7 @@ exports[`slots can define and call slots 2`] = `
 exports[`slots can define and call slots with bound params 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, bind, markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, true);
@@ -98,6 +103,7 @@ exports[`slots can define and call slots with bound params 1`] = `
 exports[`slots can define and call slots with bound params 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -112,6 +118,7 @@ exports[`slots can define and call slots with bound params 2`] = `
 exports[`slots can define and call slots with params 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const comp1 = app.createComponent(\`Dialog\`, true, true, false, true);
@@ -139,6 +146,7 @@ exports[`slots can define and call slots with params 1`] = `
 exports[`slots can define and call slots with params 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -157,6 +165,7 @@ exports[`slots can define and call slots with params 2`] = `
 exports[`slots can render node with t-ref and Component in same slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
@@ -181,6 +190,7 @@ exports[`slots can render node with t-ref and Component in same slot 1`] = `
 exports[`slots can render node with t-ref and Component in same slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -193,6 +203,7 @@ exports[`slots can render node with t-ref and Component in same slot 2`] = `
 exports[`slots can render only empty slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -205,6 +216,7 @@ exports[`slots can render only empty slot 1`] = `
 exports[`slots can use component in default-content of t-slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -217,6 +229,7 @@ exports[`slots can use component in default-content of t-slot 1`] = `
 exports[`slots can use component in default-content of t-slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   const comp1 = app.createComponent(\`GrandChild\`, true, false, false, true);
@@ -234,6 +247,7 @@ exports[`slots can use component in default-content of t-slot 2`] = `
 exports[`slots can use component in default-content of t-slot 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -245,6 +259,7 @@ exports[`slots can use component in default-content of t-slot 3`] = `
 exports[`slots can use t-call in default-content of t-slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -257,6 +272,7 @@ exports[`slots can use t-call in default-content of t-slot 1`] = `
 exports[`slots can use t-call in default-content of t-slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   const callTemplate_1 = app.getTemplate(\`__template__999\`);
@@ -274,6 +290,7 @@ exports[`slots can use t-call in default-content of t-slot 2`] = `
 exports[`slots can use t-call in default-content of t-slot 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -285,6 +302,7 @@ exports[`slots can use t-call in default-content of t-slot 3`] = `
 exports[`slots content is the default slot (variation) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Dialog\`, true, true, false, true);
@@ -304,6 +322,7 @@ exports[`slots content is the default slot (variation) 1`] = `
 exports[`slots content is the default slot (variation) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -316,6 +335,7 @@ exports[`slots content is the default slot (variation) 2`] = `
 exports[`slots content is the default slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Dialog\`, true, true, false, true);
@@ -337,6 +357,7 @@ exports[`slots content is the default slot 1`] = `
 exports[`slots content is the default slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -352,6 +373,7 @@ exports[`slots content is the default slot 2`] = `
 exports[`slots default content is not rendered if named slot is provided 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const comp1 = app.createComponent(\`Dialog\`, true, true, false, true);
@@ -373,6 +395,7 @@ exports[`slots default content is not rendered if named slot is provided 1`] = `
 exports[`slots default content is not rendered if named slot is provided 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -392,6 +415,7 @@ exports[`slots default content is not rendered if named slot is provided 2`] = `
 exports[`slots default content is not rendered if slot is provided 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Dialog\`, true, true, false, true);
@@ -412,6 +436,7 @@ exports[`slots default content is not rendered if slot is provided 1`] = `
 exports[`slots default content is not rendered if slot is provided 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -431,6 +456,7 @@ exports[`slots default content is not rendered if slot is provided 2`] = `
 exports[`slots default slot next to named slot, with default content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const comp1 = app.createComponent(\`Dialog\`, true, true, false, true);
@@ -452,6 +478,7 @@ exports[`slots default slot next to named slot, with default content 1`] = `
 exports[`slots default slot next to named slot, with default content 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -476,6 +503,7 @@ exports[`slots default slot next to named slot, with default content 2`] = `
 exports[`slots default slot with params with - in it 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, true);
@@ -493,6 +521,7 @@ exports[`slots default slot with params with - in it 1`] = `
 exports[`slots default slot with params with - in it 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -505,6 +534,7 @@ exports[`slots default slot with params with - in it 2`] = `
 exports[`slots default slot with slot scope: shorthand syntax 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, true);
@@ -528,6 +558,7 @@ exports[`slots default slot with slot scope: shorthand syntax 1`] = `
 exports[`slots default slot with slot scope: shorthand syntax 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -543,6 +574,7 @@ exports[`slots default slot with slot scope: shorthand syntax 2`] = `
 exports[`slots default slot work with text nodes (variation) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Dialog\`, true, true, false, true);
@@ -560,6 +592,7 @@ exports[`slots default slot work with text nodes (variation) 1`] = `
 exports[`slots default slot work with text nodes (variation) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -572,6 +605,7 @@ exports[`slots default slot work with text nodes (variation) 2`] = `
 exports[`slots default slot work with text nodes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Dialog\`, true, true, false, true);
@@ -592,6 +626,7 @@ exports[`slots default slot work with text nodes 1`] = `
 exports[`slots default slot work with text nodes 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -607,6 +642,7 @@ exports[`slots default slot work with text nodes 2`] = `
 exports[`slots dynamic t-slot call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const comp1 = app.createComponent(\`Toggler\`, true, true, false, true);
@@ -637,6 +673,7 @@ exports[`slots dynamic t-slot call 1`] = `
 exports[`slots dynamic t-slot call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -654,6 +691,7 @@ exports[`slots dynamic t-slot call 2`] = `
 exports[`slots dynamic t-slot call with default 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const comp1 = app.createComponent(\`Toggler\`, true, true, false, true);
@@ -684,6 +722,7 @@ exports[`slots dynamic t-slot call with default 1`] = `
 exports[`slots dynamic t-slot call with default 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -704,6 +743,7 @@ exports[`slots dynamic t-slot call with default 2`] = `
 exports[`slots fun: two calls to the same slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, true);
@@ -721,6 +761,7 @@ exports[`slots fun: two calls to the same slot 1`] = `
 exports[`slots fun: two calls to the same slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -735,6 +776,7 @@ exports[`slots fun: two calls to the same slot 2`] = `
 exports[`slots missing slots are ignored 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Dialog\`, true, false, false, true);
   
@@ -750,6 +792,7 @@ exports[`slots missing slots are ignored 1`] = `
 exports[`slots missing slots are ignored 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -766,6 +809,7 @@ exports[`slots missing slots are ignored 2`] = `
 exports[`slots mix of slots, t-call, t-call with body, and giving own props child 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`P\`, true, false, false, true);
   
@@ -778,6 +822,7 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 exports[`slots mix of slots, t-call, t-call with body, and giving own props child 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`A\`, true, false, false, false);
   
@@ -795,6 +840,7 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 exports[`slots mix of slots, t-call, t-call with body, and giving own props child 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const callTemplate_1 = app.getTemplate(\`__template__1002\`);
@@ -816,6 +862,7 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 exports[`slots mix of slots, t-call, t-call with body, and giving own props child 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   const callTemplate_1 = app.getTemplate(\`__template__1001\`);
@@ -837,6 +884,7 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 exports[`slots mix of slots, t-call, t-call with body, and giving own props child 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -851,6 +899,7 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 exports[`slots mix of slots, t-call, t-call with body, and giving own props child 6`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`C\`, true, false, false, false);
   
@@ -865,6 +914,7 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 exports[`slots mix of slots, t-call, t-call with body, and giving own props child 7`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -879,6 +929,7 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 exports[`slots multiple roots are allowed in a default slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Dialog\`, true, true, false, true);
@@ -903,6 +954,7 @@ exports[`slots multiple roots are allowed in a default slot 1`] = `
 exports[`slots multiple roots are allowed in a default slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -918,6 +970,7 @@ exports[`slots multiple roots are allowed in a default slot 2`] = `
 exports[`slots multiple roots are allowed in a named slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const comp1 = app.createComponent(\`Dialog\`, true, true, false, true);
@@ -943,6 +996,7 @@ exports[`slots multiple roots are allowed in a named slot 1`] = `
 exports[`slots multiple roots are allowed in a named slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -958,6 +1012,7 @@ exports[`slots multiple roots are allowed in a named slot 2`] = `
 exports[`slots multiple slots containing components 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const comp1 = app.createComponent(\`C\`, true, false, false, false);
@@ -982,6 +1037,7 @@ exports[`slots multiple slots containing components 1`] = `
 exports[`slots multiple slots containing components 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -998,6 +1054,7 @@ exports[`slots multiple slots containing components 2`] = `
 exports[`slots multiple slots containing components 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -1012,6 +1069,7 @@ exports[`slots multiple slots containing components 3`] = `
 exports[`slots named slot inside slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, true);
@@ -1047,6 +1105,7 @@ exports[`slots named slot inside slot 1`] = `
 exports[`slots named slot inside slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -1063,6 +1122,7 @@ exports[`slots named slot inside slot 2`] = `
 exports[`slots named slot inside slot, part 3 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, true);
@@ -1098,6 +1158,7 @@ exports[`slots named slot inside slot, part 3 1`] = `
 exports[`slots named slot inside slot, part 3 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -1114,6 +1175,7 @@ exports[`slots named slot inside slot, part 3 2`] = `
 exports[`slots named slots can define a default content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Dialog\`, true, false, false, true);
   
@@ -1129,6 +1191,7 @@ exports[`slots named slots can define a default content 1`] = `
 exports[`slots named slots can define a default content 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -1148,6 +1211,7 @@ exports[`slots named slots can define a default content 2`] = `
 exports[`slots named slots inside slot, again 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, true);
@@ -1183,6 +1247,7 @@ exports[`slots named slots inside slot, again 1`] = `
 exports[`slots named slots inside slot, again 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -1208,6 +1273,7 @@ exports[`slots named slots inside slot, again 2`] = `
 exports[`slots nested slots in same template 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Child3\`, true, false, false, true);
@@ -1234,6 +1300,7 @@ exports[`slots nested slots in same template 1`] = `
 exports[`slots nested slots in same template 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -1249,6 +1316,7 @@ exports[`slots nested slots in same template 2`] = `
 exports[`slots nested slots in same template 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -1264,6 +1332,7 @@ exports[`slots nested slots in same template 3`] = `
 exports[`slots nested slots in same template 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span>Child 3</span>\`);
@@ -1277,6 +1346,7 @@ exports[`slots nested slots in same template 4`] = `
 exports[`slots nested slots: evaluation context and parented relationship 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Slot\`, true, false, false, false);
@@ -1295,6 +1365,7 @@ exports[`slots nested slots: evaluation context and parented relationship 1`] = 
 exports[`slots nested slots: evaluation context and parented relationship 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot, markRaw } = helpers;
   const comp1 = app.createComponent(\`GrandChild\`, true, true, false, true);
@@ -1312,6 +1383,7 @@ exports[`slots nested slots: evaluation context and parented relationship 2`] = 
 exports[`slots nested slots: evaluation context and parented relationship 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -1327,6 +1399,7 @@ exports[`slots nested slots: evaluation context and parented relationship 3`] = 
 exports[`slots nested slots: evaluation context and parented relationship 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -1341,6 +1414,7 @@ exports[`slots nested slots: evaluation context and parented relationship 4`] = 
 exports[`slots no named slot content => just no children 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Dialog\`, true, false, false, true);
   
@@ -1353,6 +1427,7 @@ exports[`slots no named slot content => just no children 1`] = `
 exports[`slots no named slot content => just no children 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -1368,6 +1443,7 @@ exports[`slots no named slot content => just no children 2`] = `
 exports[`slots simple default slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, true);
@@ -1385,6 +1461,7 @@ exports[`slots simple default slot 1`] = `
 exports[`slots simple default slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -1400,6 +1477,7 @@ exports[`slots simple default slot 2`] = `
 exports[`slots simple default slot with params 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, true);
@@ -1423,6 +1501,7 @@ exports[`slots simple default slot with params 1`] = `
 exports[`slots simple default slot with params 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -1438,6 +1517,7 @@ exports[`slots simple default slot with params 2`] = `
 exports[`slots simple default slot with params and bound function 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, true);
@@ -1455,6 +1535,7 @@ exports[`slots simple default slot with params and bound function 1`] = `
 exports[`slots simple default slot with params and bound function 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot, bind } = helpers;
   
@@ -1467,6 +1548,7 @@ exports[`slots simple default slot with params and bound function 2`] = `
 exports[`slots simple default slot, variation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, true);
@@ -1484,6 +1566,7 @@ exports[`slots simple default slot, variation 1`] = `
 exports[`slots simple default slot, variation 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -1496,6 +1579,7 @@ exports[`slots simple default slot, variation 2`] = `
 exports[`slots simple dynamic slot with slot scope 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, true);
@@ -1520,6 +1604,7 @@ exports[`slots simple dynamic slot with slot scope 1`] = `
 exports[`slots simple dynamic slot with slot scope 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -1536,6 +1621,7 @@ exports[`slots simple dynamic slot with slot scope 2`] = `
 exports[`slots simple named and empty slot -- 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, true);
@@ -1550,6 +1636,7 @@ exports[`slots simple named and empty slot -- 2 1`] = `
 exports[`slots simple named and empty slot -- 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -1569,6 +1656,7 @@ exports[`slots simple named and empty slot -- 2 2`] = `
 exports[`slots simple named and empty slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, true);
@@ -1587,6 +1675,7 @@ exports[`slots simple named and empty slot 1`] = `
 exports[`slots simple named and empty slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -1603,6 +1692,7 @@ exports[`slots simple named and empty slot 2`] = `
 exports[`slots simple slot with slot scope 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, true);
@@ -1627,6 +1717,7 @@ exports[`slots simple slot with slot scope 1`] = `
 exports[`slots simple slot with slot scope 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -1642,6 +1733,7 @@ exports[`slots simple slot with slot scope 2`] = `
 exports[`slots slot and (inline) t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const callTemplate_1 = app.getTemplate(\`__template__999\`);
@@ -1664,6 +1756,7 @@ exports[`slots slot and (inline) t-call 1`] = `
 exports[`slots slot and (inline) t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<p>sokka</p>\`);
@@ -1677,6 +1770,7 @@ exports[`slots slot and (inline) t-call 2`] = `
 exports[`slots slot and (inline) t-call 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -1692,6 +1786,7 @@ exports[`slots slot and (inline) t-call 3`] = `
 exports[`slots slot and t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const callTemplate_1 = app.getTemplate(\`__template__999\`);
@@ -1714,6 +1809,7 @@ exports[`slots slot and t-call 1`] = `
 exports[`slots slot and t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<p>sokka</p>\`);
@@ -1727,6 +1823,7 @@ exports[`slots slot and t-call 2`] = `
 exports[`slots slot and t-call 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -1742,6 +1839,7 @@ exports[`slots slot and t-call 3`] = `
 exports[`slots slot and t-esc 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Dialog\`, true, true, false, true);
@@ -1762,6 +1860,7 @@ exports[`slots slot and t-esc 1`] = `
 exports[`slots slot and t-esc 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -1777,6 +1876,7 @@ exports[`slots slot and t-esc 2`] = `
 exports[`slots slot are properly rendered if inner props are changed 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`SomeComponent\`, true, false, false, false);
@@ -1800,6 +1900,7 @@ exports[`slots slot are properly rendered if inner props are changed 1`] = `
 exports[`slots slot are properly rendered if inner props are changed 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -1815,6 +1916,7 @@ exports[`slots slot are properly rendered if inner props are changed 2`] = `
 exports[`slots slot are properly rendered if inner props are changed 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div> SC:<block-text-0/></div>\`);
@@ -1829,6 +1931,7 @@ exports[`slots slot are properly rendered if inner props are changed 3`] = `
 exports[`slots slot content has different key from other content -- dynamic slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -1847,6 +1950,7 @@ exports[`slots slot content has different key from other content -- dynamic slot
 exports[`slots slot content has different key from other content -- dynamic slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -1863,6 +1967,7 @@ exports[`slots slot content has different key from other content -- dynamic slot
 exports[`slots slot content has different key from other content -- dynamic slot 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -1877,6 +1982,7 @@ exports[`slots slot content has different key from other content -- dynamic slot
 exports[`slots slot content has different key from other content -- static slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -1895,6 +2001,7 @@ exports[`slots slot content has different key from other content -- static slot 
 exports[`slots slot content has different key from other content -- static slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -1910,6 +2017,7 @@ exports[`slots slot content has different key from other content -- static slot 
 exports[`slots slot content has different key from other content -- static slot 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -1924,6 +2032,7 @@ exports[`slots slot content has different key from other content -- static slot 
 exports[`slots slot content is bound to caller (variation) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, isBoundary, withDefault, setContextValue, markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, true);
@@ -1948,6 +2057,7 @@ exports[`slots slot content is bound to caller (variation) 1`] = `
 exports[`slots slot content is bound to caller (variation) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -1963,6 +2073,7 @@ exports[`slots slot content is bound to caller (variation) 2`] = `
 exports[`slots slot content is bound to caller 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, true);
@@ -1983,6 +2094,7 @@ exports[`slots slot content is bound to caller 1`] = `
 exports[`slots slot content is bound to caller 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -1998,6 +2110,7 @@ exports[`slots slot content is bound to caller 2`] = `
 exports[`slots slot preserves properly parented relationship 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`GrandChild\`, true, false, false, true);
@@ -2019,6 +2132,7 @@ exports[`slots slot preserves properly parented relationship 1`] = `
 exports[`slots slot preserves properly parented relationship 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -2031,6 +2145,7 @@ exports[`slots slot preserves properly parented relationship 2`] = `
 exports[`slots slot preserves properly parented relationship 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -2042,6 +2157,7 @@ exports[`slots slot preserves properly parented relationship 3`] = `
 exports[`slots slot preserves properly parented relationship, even through t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const callTemplate_1 = app.getTemplate(\`sub\`);
@@ -2064,6 +2180,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
 exports[`slots slot preserves properly parented relationship, even through t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`GrandChild\`, true, false, false, true);
   
@@ -2076,6 +2193,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
 exports[`slots slot preserves properly parented relationship, even through t-call 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -2088,6 +2206,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
 exports[`slots slot preserves properly parented relationship, even through t-call 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -2099,6 +2218,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
 exports[`slots slot with slot scope and t-props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, true);
@@ -2124,6 +2244,7 @@ exports[`slots slot with slot scope and t-props 1`] = `
 exports[`slots slot with slot scope and t-props 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -2136,6 +2257,7 @@ exports[`slots slot with slot scope and t-props 2`] = `
 exports[`slots slots and wrapper components 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Link\`, true, true, false, true);
@@ -2153,6 +2275,7 @@ exports[`slots slots and wrapper components 1`] = `
 exports[`slots slots and wrapper components 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -2168,6 +2291,7 @@ exports[`slots slots and wrapper components 2`] = `
 exports[`slots slots are properly bound to correct component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -2180,6 +2304,7 @@ exports[`slots slots are properly bound to correct component 1`] = `
 exports[`slots slots are properly bound to correct component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot, isBoundary, withDefault, setContextValue } = helpers;
   
@@ -2203,6 +2328,7 @@ exports[`slots slots are properly bound to correct component 2`] = `
 exports[`slots slots are rendered with proper context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const comp1 = app.createComponent(\`Dialog\`, true, true, false, true);
@@ -2227,6 +2353,7 @@ exports[`slots slots are rendered with proper context 1`] = `
 exports[`slots slots are rendered with proper context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -2242,6 +2369,7 @@ exports[`slots slots are rendered with proper context 2`] = `
 exports[`slots slots are rendered with proper context, part 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, capture, markRaw, withKey } = helpers;
   const comp1 = app.createComponent(\`Link\`, true, true, false, false);
@@ -2274,6 +2402,7 @@ exports[`slots slots are rendered with proper context, part 2 1`] = `
 exports[`slots slots are rendered with proper context, part 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -2290,6 +2419,7 @@ exports[`slots slots are rendered with proper context, part 2 2`] = `
 exports[`slots slots are rendered with proper context, part 3 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, isBoundary, withDefault, setContextValue, capture, markRaw, withKey } = helpers;
   const comp1 = app.createComponent(\`Link\`, true, true, false, false);
@@ -2323,6 +2453,7 @@ exports[`slots slots are rendered with proper context, part 3 1`] = `
 exports[`slots slots are rendered with proper context, part 3 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -2339,6 +2470,7 @@ exports[`slots slots are rendered with proper context, part 3 2`] = `
 exports[`slots slots are rendered with proper context, part 4 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue, capture, markRaw } = helpers;
   const comp1 = app.createComponent(\`Link\`, true, true, false, false);
@@ -2363,6 +2495,7 @@ exports[`slots slots are rendered with proper context, part 4 1`] = `
 exports[`slots slots are rendered with proper context, part 4 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -2379,6 +2512,7 @@ exports[`slots slots are rendered with proper context, part 4 2`] = `
 exports[`slots slots in slots, with vars 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue, capture, markRaw } = helpers;
   const comp1 = app.createComponent(\`A\`, true, true, false, true);
@@ -2405,6 +2539,7 @@ exports[`slots slots in slots, with vars 1`] = `
 exports[`slots slots in slots, with vars 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot, markRaw } = helpers;
   const comp1 = app.createComponent(\`B\`, true, true, false, true);
@@ -2425,6 +2560,7 @@ exports[`slots slots in slots, with vars 2`] = `
 exports[`slots slots in slots, with vars 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -2440,6 +2576,7 @@ exports[`slots slots in slots, with vars 3`] = `
 exports[`slots slots in t-foreach and re-rendering 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, capture, markRaw, withKey } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, true);
@@ -2469,6 +2606,7 @@ exports[`slots slots in t-foreach and re-rendering 1`] = `
 exports[`slots slots in t-foreach and re-rendering 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -2485,6 +2623,7 @@ exports[`slots slots in t-foreach and re-rendering 2`] = `
 exports[`slots slots in t-foreach in t-foreach 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, capture, markRaw, withKey } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, true);
@@ -2529,6 +2668,7 @@ exports[`slots slots in t-foreach in t-foreach 1`] = `
 exports[`slots slots in t-foreach in t-foreach 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -2544,6 +2684,7 @@ exports[`slots slots in t-foreach in t-foreach 2`] = `
 exports[`slots slots in t-foreach with t-set and re-rendering 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, isBoundary, withDefault, setContextValue, capture, markRaw, withKey } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, true);
@@ -2576,6 +2717,7 @@ exports[`slots slots in t-foreach with t-set and re-rendering 1`] = `
 exports[`slots slots in t-foreach with t-set and re-rendering 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -2592,6 +2734,7 @@ exports[`slots slots in t-foreach with t-set and re-rendering 2`] = `
 exports[`slots t-debug on a t-set-slot (defining a slot) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const comp1 = app.createComponent(\`Dialog\`, true, true, false, true);
@@ -2614,6 +2757,7 @@ exports[`slots t-debug on a t-set-slot (defining a slot) 1`] = `
 exports[`slots t-debug on a t-set-slot (defining a slot) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -2629,6 +2773,7 @@ exports[`slots t-debug on a t-set-slot (defining a slot) 2`] = `
 exports[`slots t-set t-value in a slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, isBoundary, withDefault, setContextValue, markRaw } = helpers;
   const comp1 = app.createComponent(\`Dialog\`, true, true, false, true);
@@ -2653,6 +2798,7 @@ exports[`slots t-set t-value in a slot 1`] = `
 exports[`slots t-set t-value in a slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -2668,6 +2814,7 @@ exports[`slots t-set t-value in a slot 2`] = `
 exports[`slots t-slot in recursive templates 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, prepareList, isBoundary, withDefault, setContextValue, withKey, markRaw } = helpers;
   const callTemplate_1 = app.getTemplate(\`_test_recursive_template\`);
@@ -2714,6 +2861,7 @@ exports[`slots t-slot in recursive templates 1`] = `
 exports[`slots t-slot in recursive templates 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -2729,6 +2877,7 @@ exports[`slots t-slot in recursive templates 2`] = `
 exports[`slots t-slot nested within another slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Child3\`, true, false, false, true);
@@ -2750,6 +2899,7 @@ exports[`slots t-slot nested within another slot 1`] = `
 exports[`slots t-slot nested within another slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot, markRaw } = helpers;
   const comp1 = app.createComponent(\`Portal\`, true, true, false, true);
@@ -2775,6 +2925,7 @@ exports[`slots t-slot nested within another slot 2`] = `
 exports[`slots t-slot nested within another slot 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -2790,6 +2941,7 @@ exports[`slots t-slot nested within another slot 3`] = `
 exports[`slots t-slot nested within another slot 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -2805,6 +2957,7 @@ exports[`slots t-slot nested within another slot 4`] = `
 exports[`slots t-slot nested within another slot 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span>Child 3</span>\`);
@@ -2818,6 +2971,7 @@ exports[`slots t-slot nested within another slot 5`] = `
 exports[`slots t-slot scope context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Dialog\`, true, true, false, true);
@@ -2837,6 +2991,7 @@ exports[`slots t-slot scope context 1`] = `
 exports[`slots t-slot scope context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot, markRaw } = helpers;
   const comp1 = app.createComponent(\`Wrapper\`, true, true, false, true);
@@ -2858,6 +3013,7 @@ exports[`slots t-slot scope context 2`] = `
 exports[`slots t-slot scope context 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -2870,6 +3026,7 @@ exports[`slots t-slot scope context 3`] = `
 exports[`slots t-slot within dynamic t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const call = app.callTemplate.bind(app);
@@ -2893,6 +3050,7 @@ exports[`slots t-slot within dynamic t-call 1`] = `
 exports[`slots t-slot within dynamic t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -2908,6 +3066,7 @@ exports[`slots t-slot within dynamic t-call 2`] = `
 exports[`slots t-slot within dynamic t-call 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -2923,6 +3082,7 @@ exports[`slots t-slot within dynamic t-call 3`] = `
 exports[`slots t-slot within dynamic t-call 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div class=\\"child\\"/>\`);
@@ -2936,6 +3096,7 @@ exports[`slots t-slot within dynamic t-call 4`] = `
 exports[`slots template can just return a slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -2957,6 +3118,7 @@ exports[`slots template can just return a slot 1`] = `
 exports[`slots template can just return a slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -2969,6 +3131,7 @@ exports[`slots template can just return a slot 2`] = `
 exports[`slots template can just return a slot 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);

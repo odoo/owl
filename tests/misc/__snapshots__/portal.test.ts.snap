@@ -3,6 +3,7 @@
 exports[`Portal Add and remove portals 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, capture, withKey } = helpers;
   const Portal = app.Portal;
@@ -31,6 +32,7 @@ exports[`Portal Add and remove portals 1`] = `
 exports[`Portal Add and remove portals on div 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, capture, withKey } = helpers;
   const Portal = app.Portal;
@@ -60,6 +62,7 @@ exports[`Portal Add and remove portals on div 1`] = `
 exports[`Portal Add and remove portals with t-foreach 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, capture, withKey } = helpers;
   const Portal = app.Portal;
@@ -92,6 +95,7 @@ exports[`Portal Add and remove portals with t-foreach 1`] = `
 exports[`Portal Add and remove portals with t-foreach and destroy 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, capture, withKey } = helpers;
   const Portal = app.Portal;
@@ -124,6 +128,7 @@ exports[`Portal Add and remove portals with t-foreach and destroy 1`] = `
 exports[`Portal Add and remove portals with t-foreach inside div 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, capture, withKey } = helpers;
   const Portal = app.Portal;
@@ -158,6 +163,7 @@ exports[`Portal Add and remove portals with t-foreach inside div 1`] = `
 exports[`Portal Portal composed with t-slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Child2\`, true, false, false, false);
@@ -179,6 +185,7 @@ exports[`Portal Portal composed with t-slot 1`] = `
 exports[`Portal Portal composed with t-slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   const Portal = app.Portal;
@@ -197,6 +204,7 @@ exports[`Portal Portal composed with t-slot 2`] = `
 exports[`Portal Portal composed with t-slot 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div block-handler-0=\\"custom\\"><span id=\\"childSpan\\">child2</span></div>\`);
@@ -211,6 +219,7 @@ exports[`Portal Portal composed with t-slot 3`] = `
 exports[`Portal basic use of portal 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
@@ -232,6 +241,7 @@ exports[`Portal basic use of portal 1`] = `
 exports[`Portal basic use of portal in dev mode 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
@@ -253,6 +263,7 @@ exports[`Portal basic use of portal in dev mode 1`] = `
 exports[`Portal basic use of portal on div 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
@@ -274,6 +285,7 @@ exports[`Portal basic use of portal on div 1`] = `
 exports[`Portal basic use of portal, variation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
@@ -295,6 +307,7 @@ exports[`Portal basic use of portal, variation 1`] = `
 exports[`Portal conditional use of Portal (with sub Component) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const Portal = app.Portal;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -320,6 +333,7 @@ exports[`Portal conditional use of Portal (with sub Component) 1`] = `
 exports[`Portal conditional use of Portal (with sub Component) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<p><block-text-0/></p>\`);
@@ -334,6 +348,7 @@ exports[`Portal conditional use of Portal (with sub Component) 2`] = `
 exports[`Portal conditional use of Portal 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
@@ -359,6 +374,7 @@ exports[`Portal conditional use of Portal 1`] = `
 exports[`Portal conditional use of Portal with child and div 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -375,6 +391,7 @@ exports[`Portal conditional use of Portal with child and div 1`] = `
 exports[`Portal conditional use of Portal with child and div 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, capture, withKey } = helpers;
   const Portal = app.Portal;
@@ -405,6 +422,7 @@ exports[`Portal conditional use of Portal with child and div 2`] = `
 exports[`Portal conditional use of Portal with child and div, variation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -424,6 +442,7 @@ exports[`Portal conditional use of Portal with child and div, variation 1`] = `
 exports[`Portal conditional use of Portal with child and div, variation 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, capture, withKey } = helpers;
   const Portal = app.Portal;
@@ -455,6 +474,7 @@ exports[`Portal conditional use of Portal with child and div, variation 2`] = `
 exports[`Portal conditional use of Portal with div 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
@@ -480,6 +500,7 @@ exports[`Portal conditional use of Portal with div 1`] = `
 exports[`Portal lifecycle hooks of portal sub component are properly called 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const Portal = app.Portal;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -504,6 +525,7 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 1`] 
 exports[`Portal lifecycle hooks of portal sub component are properly called 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -518,6 +540,7 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 2`] 
 exports[`Portal portal could have dynamically no content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
@@ -544,6 +567,7 @@ exports[`Portal portal could have dynamically no content 1`] = `
 exports[`Portal portal destroys on crash 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const Portal = app.Portal;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -565,6 +589,7 @@ exports[`Portal portal destroys on crash 1`] = `
 exports[`Portal portal destroys on crash 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -579,6 +604,7 @@ exports[`Portal portal destroys on crash 2`] = `
 exports[`Portal portal with child and props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const Portal = app.Portal;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -600,6 +626,7 @@ exports[`Portal portal with child and props 1`] = `
 exports[`Portal portal with child and props 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -614,6 +641,7 @@ exports[`Portal portal with child and props 2`] = `
 exports[`Portal portal with dynamic body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
@@ -643,6 +671,7 @@ exports[`Portal portal with dynamic body 1`] = `
 exports[`Portal portal with many children 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
@@ -667,6 +696,7 @@ exports[`Portal portal with many children 1`] = `
 exports[`Portal portal with no content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
@@ -691,6 +721,7 @@ exports[`Portal portal with no content 1`] = `
 exports[`Portal portal with only text as content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
@@ -711,6 +742,7 @@ exports[`Portal portal with only text as content 1`] = `
 exports[`Portal portal with target not in dom 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
@@ -732,6 +764,7 @@ exports[`Portal portal with target not in dom 1`] = `
 exports[`Portal portal's parent's env is not polluted 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const Portal = app.Portal;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
@@ -753,6 +786,7 @@ exports[`Portal portal's parent's env is not polluted 1`] = `
 exports[`Portal portal's parent's env is not polluted 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<button>child</button>\`);
@@ -766,6 +800,7 @@ exports[`Portal portal's parent's env is not polluted 2`] = `
 exports[`Portal simple catchError with portal 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Boom\`, true, false, false, true);
   
@@ -786,6 +821,7 @@ exports[`Portal simple catchError with portal 1`] = `
 exports[`Portal simple catchError with portal 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
@@ -808,6 +844,7 @@ exports[`Portal simple catchError with portal 2`] = `
 exports[`Portal with target in template (after portal) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
@@ -829,6 +866,7 @@ exports[`Portal with target in template (after portal) 1`] = `
 exports[`Portal with target in template (before portal) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
@@ -850,6 +888,7 @@ exports[`Portal with target in template (before portal) 1`] = `
 exports[`Portal: Props validation target must be a valid selector 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
@@ -871,6 +910,7 @@ exports[`Portal: Props validation target must be a valid selector 1`] = `
 exports[`Portal: Props validation target must be a valid selector 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
@@ -892,6 +932,7 @@ exports[`Portal: Props validation target must be a valid selector 2 1`] = `
 exports[`Portal: UI/UX focus is kept across re-renders 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const Portal = app.Portal;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -913,6 +954,7 @@ exports[`Portal: UI/UX focus is kept across re-renders 1`] = `
 exports[`Portal: UI/UX focus is kept across re-renders 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<input id=\\"target-me\\" block-attribute-0=\\"placeholder\\"/>\`);

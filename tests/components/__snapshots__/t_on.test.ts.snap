@@ -3,6 +3,7 @@
 exports[`t-on t-on expression captured in t-foreach 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue, prepareList, withKey } = helpers;
   
@@ -33,6 +34,7 @@ exports[`t-on t-on expression captured in t-foreach 1`] = `
 exports[`t-on t-on expression in t-foreach 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   
@@ -62,6 +64,7 @@ exports[`t-on t-on expression in t-foreach 1`] = `
 exports[`t-on t-on expression in t-foreach with t-set 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue, prepareList, withKey } = helpers;
   
@@ -96,6 +99,7 @@ exports[`t-on t-on expression in t-foreach with t-set 1`] = `
 exports[`t-on t-on method call in t-foreach 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   
@@ -124,6 +128,7 @@ exports[`t-on t-on method call in t-foreach 1`] = `
 exports[`t-on t-on on component next to t-on on div 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { createCatcher } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -143,6 +148,7 @@ exports[`t-on t-on on component next to t-on on div 1`] = `
 exports[`t-on t-on on component next to t-on on div 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<button><block-text-0/></button>\`);
@@ -157,6 +163,7 @@ exports[`t-on t-on on component next to t-on on div 2`] = `
 exports[`t-on t-on on components 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { createCatcher } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -172,6 +179,7 @@ exports[`t-on t-on on components 1`] = `
 exports[`t-on t-on on components 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<button><block-text-0/></button>\`);
@@ -186,6 +194,7 @@ exports[`t-on t-on on components 2`] = `
 exports[`t-on t-on on components and t-foreach 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, createCatcher, withKey } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -209,6 +218,7 @@ exports[`t-on t-on on components and t-foreach 1`] = `
 exports[`t-on t-on on components and t-foreach 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -223,6 +233,7 @@ exports[`t-on t-on on components and t-foreach 2`] = `
 exports[`t-on t-on on components, variation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { createCatcher } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -241,6 +252,7 @@ exports[`t-on t-on on components, variation 1`] = `
 exports[`t-on t-on on components, variation 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<button><block-text-0/></button>\`);
@@ -255,6 +267,7 @@ exports[`t-on t-on on components, variation 2`] = `
 exports[`t-on t-on on components, with 'prevent' modifier 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { createCatcher } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -270,6 +283,7 @@ exports[`t-on t-on on components, with 'prevent' modifier 1`] = `
 exports[`t-on t-on on components, with 'prevent' modifier 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<button><block-text-0/></button>\`);
@@ -284,6 +298,7 @@ exports[`t-on t-on on components, with 'prevent' modifier 2`] = `
 exports[`t-on t-on on components, with a handler update 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue, createCatcher } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -303,6 +318,7 @@ exports[`t-on t-on on components, with a handler update 1`] = `
 exports[`t-on t-on on components, with a handler update 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -317,6 +333,7 @@ exports[`t-on t-on on components, with a handler update 2`] = `
 exports[`t-on t-on on destroyed components 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -335,6 +352,7 @@ exports[`t-on t-on on destroyed components 1`] = `
 exports[`t-on t-on on destroyed components 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div block-handler-0=\\"click\\"/>\`);
@@ -349,6 +367,7 @@ exports[`t-on t-on on destroyed components 2`] = `
 exports[`t-on t-on on slot, with 'prevent' modifier 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, true);
@@ -368,6 +387,7 @@ exports[`t-on t-on on slot, with 'prevent' modifier 1`] = `
 exports[`t-on t-on on slot, with 'prevent' modifier 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot, createCatcher } = helpers;
   const catcher1 = createCatcher({\\"click.prevent\\":0});
@@ -382,6 +402,7 @@ exports[`t-on t-on on slot, with 'prevent' modifier 2`] = `
 exports[`t-on t-on on t-set-slots 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, createCatcher, markRaw } = helpers;
   const catcher1 = createCatcher({\\"click\\":0});
@@ -411,6 +432,7 @@ exports[`t-on t-on on t-set-slots 1`] = `
 exports[`t-on t-on on t-set-slots 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -423,6 +445,7 @@ exports[`t-on t-on on t-set-slots 2`] = `
 exports[`t-on t-on on t-slots 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, true);
@@ -442,6 +465,7 @@ exports[`t-on t-on on t-slots 1`] = `
 exports[`t-on t-on on t-slots 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot, createCatcher } = helpers;
   const catcher1 = createCatcher({\\"click\\":0});

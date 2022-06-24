@@ -3,6 +3,7 @@
 exports[`debugging t-debug 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -23,6 +24,7 @@ exports[`debugging t-debug 1`] = `
 exports[`debugging t-debug on sub template 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<p>coucou</p>\`);
@@ -37,6 +39,7 @@ exports[`debugging t-debug on sub template 1`] = `
 exports[`debugging t-debug on sub template 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
@@ -52,6 +55,7 @@ exports[`debugging t-debug on sub template 2`] = `
 exports[`debugging t-log 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   

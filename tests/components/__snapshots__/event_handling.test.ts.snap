@@ -3,6 +3,7 @@
 exports[`event handling Invalid handler throws an error 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\">click</button>\`);
@@ -17,6 +18,7 @@ exports[`event handling Invalid handler throws an error 1`] = `
 exports[`event handling handler is not called if component is destroyed 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span block-handler-0=\\"click\\"/>\`);
@@ -31,6 +33,7 @@ exports[`event handling handler is not called if component is destroyed 1`] = `
 exports[`event handling handler receive the event as argument 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -48,6 +51,7 @@ exports[`event handling handler receive the event as argument 1`] = `
 exports[`event handling handler receive the event as argument 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>simple vnode</div>\`);
@@ -61,6 +65,7 @@ exports[`event handling handler receive the event as argument 2`] = `
 exports[`event handling input blur event is not called if component is destroyed 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -79,6 +84,7 @@ exports[`event handling input blur event is not called if component is destroyed
 exports[`event handling input blur event is not called if component is destroyed 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<input block-handler-0=\\"blur\\"/>\`);
@@ -93,6 +99,7 @@ exports[`event handling input blur event is not called if component is destroyed
 exports[`event handling objects from scope are properly captured by t-on 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   
@@ -119,6 +126,7 @@ exports[`event handling objects from scope are properly captured by t-on 1`] = `
 exports[`event handling support for callable expression in event handler 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/><input type=\\"text\\" block-handler-1=\\"input\\"/></div>\`);
@@ -134,6 +142,7 @@ exports[`event handling support for callable expression in event handler 1`] = `
 exports[`event handling t-on with handler bound to dynamic argument on a t-foreach 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   

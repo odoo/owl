@@ -3,6 +3,7 @@
 exports[`properly support svg add proper namespace to g tags 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<g block-ns=\\"http://www.w3.org/2000/svg\\"><circle cx=\\"50\\" cy=\\"50\\" r=\\"4\\" stroke=\\"green\\" stroke-width=\\"1\\" fill=\\"yellow\\"/> </g>\`);
@@ -16,6 +17,7 @@ exports[`properly support svg add proper namespace to g tags 1`] = `
 exports[`properly support svg add proper namespace to svg 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<svg block-ns=\\"http://www.w3.org/2000/svg\\" width=\\"100px\\" height=\\"90px\\"><circle cx=\\"50\\" cy=\\"50\\" r=\\"4\\" stroke=\\"green\\" stroke-width=\\"1\\" fill=\\"yellow\\"/> </svg>\`);
@@ -29,6 +31,7 @@ exports[`properly support svg add proper namespace to svg 1`] = `
 exports[`properly support svg namespace to g tags not added if already in svg namespace 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<svg block-ns=\\"http://www.w3.org/2000/svg\\"><g/></svg>\`);
@@ -42,6 +45,7 @@ exports[`properly support svg namespace to g tags not added if already in svg na
 exports[`properly support svg namespace to svg tags added even if already in svg namespace 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<svg block-ns=\\"http://www.w3.org/2000/svg\\"><svg/></svg>\`);
@@ -55,6 +59,7 @@ exports[`properly support svg namespace to svg tags added even if already in svg
 exports[`properly support svg svg creates new block if it is within html -- 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -75,6 +80,7 @@ exports[`properly support svg svg creates new block if it is within html -- 2 1`
 exports[`properly support svg svg creates new block if it is within html 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -90,6 +96,7 @@ exports[`properly support svg svg creates new block if it is within html 1`] = `
 exports[`properly support svg svg namespace added to sub templates if root tag is path 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const callTemplate_1 = app.getTemplate(\`path\`);
   
@@ -105,6 +112,7 @@ exports[`properly support svg svg namespace added to sub templates if root tag i
 exports[`properly support svg svg namespace added to sub templates if root tag is path 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<path block-ns=\\"http://www.w3.org/2000/svg\\"/>\`);
@@ -118,6 +126,7 @@ exports[`properly support svg svg namespace added to sub templates if root tag i
 exports[`properly support svg svg namespace added to sub-blocks 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<svg block-ns=\\"http://www.w3.org/2000/svg\\"><block-child-0/></svg>\`);

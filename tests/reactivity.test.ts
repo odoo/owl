@@ -10,7 +10,6 @@ import {
   toRaw,
 } from "../src";
 import { reactive, Reactive } from "../src/runtime/reactivity";
-import { batched } from "../src/runtime/utils";
 import {
   makeDeferred,
   makeTestFixture,
@@ -188,64 +187,6 @@ describe("Reactivity", () => {
     Object.hasOwnProperty.call(state, "a");
     delete state.a;
     expect(n).toBe(2);
-  });
-
-  test("batched: callback is called after batch of operation", async () => {
-    let n = 0;
-    const state = createReactive(
-      { a: 1, b: 2 },
-      batched(() => n++)
-    );
-    state.a = 2;
-    expect(n).toBe(0);
-    await nextMicroTick();
-    expect(n).toBe(0); // key has not be read yet
-    state.a = state.a + 5; // key is read and then modified
-    expect(n).toBe(0);
-    state.b = state.b + 5; // key is read and then modified
-    expect(n).toBe(0);
-    await nextMicroTick();
-    expect(n).toBe(1); // two operations but only one notification
-  });
-
-  test("batched: modifying the reactive in the callback doesn't break reactivity", async () => {
-    let n = 0;
-    let obj = { a: 1 };
-    const state = createReactive(
-      obj,
-      batched(() => {
-        state.a; // subscribe to a
-        state.a = 2;
-        n++;
-      })
-    );
-    expect(n).toBe(0);
-    state.a = 2;
-    expect(n).toBe(0);
-    await nextMicroTick();
-    expect(n).toBe(0); // key has not be read yet
-    state.a = state.a + 5; // key is read and then modified
-    expect(n).toBe(0);
-    await nextMicroTick();
-    expect(n).toBe(1);
-    // the write a = 2 inside the batched callback triggered another notification, wait for it
-    await nextMicroTick();
-    expect(n).toBe(2);
-    // Should now be stable as we're writing the same value again
-    await nextMicroTick();
-    expect(n).toBe(2);
-
-    // Do it again to check it's not broken
-    state.a = state.a + 5; // key is read and then modified
-    expect(n).toBe(2);
-    await nextMicroTick();
-    expect(n).toBe(3);
-    // the write a = 2 inside the batched callback triggered another notification, wait for it
-    await nextMicroTick();
-    expect(n).toBe(4);
-    // Should now be stable as we're writing the same value again
-    await nextMicroTick();
-    expect(n).toBe(4);
   });
 
   test("setting property to same value does not trigger callback", async () => {

@@ -41,7 +41,7 @@ function applyDefaultProps<P extends object>(props: P, defaultProps: Partial<P>)
 // Integration with reactivity system (useState)
 // -----------------------------------------------------------------------------
 
-const batchedRenderFunctions = new WeakMap<ComponentNode, Callback>();
+const renderFunctions = new WeakMap<ComponentNode, Callback>();
 /**
  * Creates a reactive object that will be observed by the current component.
  * Reading data from the returned object (eg during rendering) will cause the
@@ -54,10 +54,10 @@ const batchedRenderFunctions = new WeakMap<ComponentNode, Callback>();
  */
 export function useState<T extends object>(state: T): Reactive<T> | NonReactive<T> {
   const node = getCurrent();
-  let render = batchedRenderFunctions.get(node)!;
+  let render = renderFunctions.get(node)!;
   if (!render) {
     render = node.render.bind(node, false);
-    batchedRenderFunctions.set(node, render);
+    renderFunctions.set(node, render);
     // manual implementation of onWillDestroy to break cyclic dependency
     node.willDestroy.push(clearReactivesForCallback.bind(null, render));
   }
@@ -366,7 +366,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
   }
 
   get subscriptions(): ReturnType<typeof getSubscriptions> {
-    const render = batchedRenderFunctions.get(this);
+    const render = renderFunctions.get(this);
     return render ? getSubscriptions(render) : [];
   }
 }

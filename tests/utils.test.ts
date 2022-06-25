@@ -1,5 +1,4 @@
 import { EventBus } from "../src/runtime/utils";
-import { nextMicroTick } from "./helpers";
 
 describe("event bus behaviour", () => {
   test("can subscribe and be notified", () => {

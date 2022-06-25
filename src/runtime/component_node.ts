@@ -164,10 +164,9 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
 
   async render(deep: boolean) {
     let current = this.fiber;
-    if (current && (current.root!.locked )) {
-      await Promise.resolve();
-      // situation may have changed after the microtask tick
-      current = this.fiber;
+    if (current && (current.root!.locked || current as any).bdom === true) {
+      this.app.scheduler.requestAnimationFrame(() => this.render(deep));
+      return;
     }
     if (current) {
       if (!current.bdom && !fibersInError.has(current)) {

@@ -3,7 +3,6 @@ import { ComponentNode } from "./component_node";
 import { nodeErrorHandlers } from "./error_handling";
 import { Fiber, MountOptions } from "./fibers";
 import { Scheduler } from "./scheduler";
-import { STATUS } from "./status";
 import { validateProps } from "./template_helpers";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
 import { validateTarget } from "./utils";
@@ -141,10 +140,7 @@ export class App<
     return (props: P, key: string, ctx: ComponentNode, parent: any, C: any) => {
       let children = ctx.children;
       let node: any = children[key];
-      if (
-        node &&
-        (node.status === STATUS.DESTROYED || (isDynamic && node.component.constructor !== C))
-      ) {
+      if (isDynamic && node && node.component.constructor !== C) {
         node = undefined;
       }
       const parentFiber = ctx.fiber!;

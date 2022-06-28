@@ -170,6 +170,10 @@
                 for (let key in expr) {
                     const value = expr[key];
                     if (value) {
+                        key = trim.call(key);
+                        if (!key) {
+                            continue;
+                        }
                         const words = split.call(key, wordRegexp);
                         for (let word of words) {
                             result[word] = value;
@@ -1486,6 +1490,7 @@
             fiber.render = throwOnRender;
             if (node.status === 0 /* NEW */) {
                 node.destroy();
+                delete node.parent.children[node.parentKey];
             }
             node.fiber = null;
             if (fiber.bdom) {
@@ -2874,13 +2879,14 @@
         return true;
     }
     class LazyValue {
-        constructor(fn, ctx, node) {
+        constructor(fn, ctx, component, node) {
             this.fn = fn;
             this.ctx = capture(ctx);
+            this.component = component;
             this.node = node;
         }
         evaluate() {
-            return this.fn(this.ctx, this.node);
+            return this.fn.call(this.component, this.ctx, this.node);
         }
         toString() {
             return this.evaluate().toString();
@@ -2889,9 +2895,9 @@
     /*
      * Safely outputs `value` as a block depending on the nature of `value`
      */
-    function safeOutput(value) {
-        if (!value) {
-            return value;
+    function safeOutput(value, defaultValue) {
+        if (value === undefined) {
+            return defaultValue ? toggler("default", defaultValue) : toggler("undefined", text(""));
         }
         let safeKey;
         let block;
@@ -3177,7 +3183,7 @@
     });
     // note that the space after typeof is relevant. It makes sure that the formatted
     // expression has a space after typeof. Currently we don't support delete and void
-    const OPERATORS = "...,.,===,==,+,!==,!=,!,||,&&,>=,>,<=,<,?,-,*,/,%,typeof ,=>,=,;,in ,new ".split(",");
+    const OPERATORS = "...,.,===,==,+,!==,!=,!,||,&&,>=,>,<=,<,?,-,*,/,%,typeof ,=>,=,;,in ,new ,|,&,^,~".split(",");
     let tokenizeString = function (expr) {
         let s = expr[0];
         let start = s;
@@ -4064,16 +4070,24 @@
                 this.insertAnchor(block);
             }
             block = this.createBlock(block, "html", ctx);
-            this.helpers.add(ast.expr === "0" ? "zero" : "safeOutput");
-            let expr = ast.expr === "0" ? "ctx[zero]" : `safeOutput(${compileExpr(ast.expr)})`;
-            if (ast.body) {
-                const nextId = BlockDescription.nextBlockId;
+            let blockStr;
+            if (ast.expr === "0") {
+                this.helpers.add("zero");
+                blockStr = `ctx[zero]`;
+            }
+            else if (ast.body) {
+                let bodyValue = null;
+                bodyValue = BlockDescription.nextBlockId;
                 const subCtx = createContext(ctx);
                 this.compileAST({ type: 3 /* Multi */, content: ast.body }, subCtx);
-                this.helpers.add("withDefault");
-                expr = `withDefault(${expr}, b${nextId})`;
+                this.helpers.add("safeOutput");
+                blockStr = `safeOutput(${compileExpr(ast.expr)}, b${bodyValue})`;
             }
-            this.insertBlock(`${expr}`, block, ctx);
+            else {
+                this.helpers.add("safeOutput");
+                blockStr = `safeOutput(${compileExpr(ast.expr)})`;
+            }
+            this.insertBlock(blockStr, block, ctx);
         }
         compileTIf(ast, ctx, nextNode) {
             let { block, forceNewBlock, index } = ctx;
@@ -4266,16 +4280,21 @@
         }
         compileTCall(ast, ctx) {
             let { block, forceNewBlock } = ctx;
+            let ctxVar = ctx.ctxVar || "ctx";
+            if (ast.context) {
+                ctxVar = generateId("ctx");
+                this.addLine(`let ${ctxVar} = ${compileExpr(ast.context)};`);
+            }
             if (ast.body) {
-                this.addLine(`ctx = Object.create(ctx);`);
-                this.addLine(`ctx[isBoundary] = 1;`);
+                this.addLine(`${ctxVar} = Object.create(${ctxVar});`);
+                this.addLine(`${ctxVar}[isBoundary] = 1;`);
                 this.helpers.add("isBoundary");
                 const nextId = BlockDescription.nextBlockId;
-                const subCtx = createContext(ctx, { preventRoot: true });
+                const subCtx = createContext(ctx, { preventRoot: true, ctxVar });
                 this.compileAST({ type: 3 /* Multi */, content: ast.body }, subCtx);
                 if (nextId !== BlockDescription.nextBlockId) {
                     this.helpers.add("zero");
-                    this.addLine(`ctx[zero] = b${nextId};`);
+                    this.addLine(`${ctxVar}[zero] = b${nextId};`);
                 }
             }
             const isDynamic = INTERP_REGEXP.test(ast.name);
@@ -4293,7 +4312,7 @@
                 }
                 this.define(templateVar, subTemplate);
                 block = this.createBlock(block, "multi", ctx);
-                this.insertBlock(`call(this, ${templateVar}, ctx, node, ${key})`, block, {
+                this.insertBlock(`call(this, ${templateVar}, ${ctxVar}, node, ${key})`, block, {
                     ...ctx,
                     forceNewBlock: !block,
                 });
@@ -4302,13 +4321,13 @@
                 const id = generateId(`callTemplate_`);
                 this.staticDefs.push({ id, expr: `app.getTemplate(${subTemplate})` });
                 block = this.createBlock(block, "multi", ctx);
-                this.insertBlock(`${id}.call(this, ctx, node, ${key})`, block, {
+                this.insertBlock(`${id}.call(this, ${ctxVar}, node, ${key})`, block, {
                     ...ctx,
                     forceNewBlock: !block,
                 });
             }
             if (ast.body && !ctx.isLast) {
-                this.addLine(`ctx = ctx.__proto__;`);
+                this.addLine(`${ctxVar} = ${ctxVar}.__proto__;`);
             }
         }
         compileTCallBlock(ast, ctx) {
@@ -4329,7 +4348,7 @@
                 this.helpers.add("LazyValue");
                 const bodyAst = { type: 3 /* Multi */, content: ast.body };
                 const name = this.compileInNewTarget("value", bodyAst, ctx);
-                let value = `new LazyValue(${name}, ctx, node)`;
+                let value = `new LazyValue(${name}, ctx, this, node)`;
                 value = ast.value ? (value ? `withDefault(${expr}, ${value})` : expr) : value;
                 this.addLine(`ctx[\`${ast.name}\`] = ${value};`);
             }
@@ -4347,7 +4366,7 @@
                     value = expr;
                 }
                 this.helpers.add("setContextValue");
-                this.addLine(`setContextValue(ctx, "${ast.name}", ${value});`);
+                this.addLine(`setContextValue(${ctx.ctxVar || "ctx"}, "${ast.name}", ${value});`);
             }
         }
         generateComponentKey() {
@@ -4469,7 +4488,7 @@
                 id,
                 expr: `app.createComponent(${ast.isDynamic ? null : expr}, ${!ast.isDynamic}, ${!!ast.slots}, ${!!ast.dynamicProps}, ${!ast.props && !ast.dynamicProps})`,
             });
-            let blockExpr = `${id}(${propString}, ${keyArg}, node, ctx, ${ast.isDynamic ? expr : null})`;
+            let blockExpr = `${id}(${propString}, ${keyArg}, node, this, ${ast.isDynamic ? expr : null})`;
             if (ast.isDynamic) {
                 blockExpr = `toggler(${expr}, ${blockExpr})`;
             }
@@ -4902,10 +4921,12 @@
             return null;
         }
         const subTemplate = node.getAttribute("t-call");
+        const context = node.getAttribute("t-call-context");
         node.removeAttribute("t-call");
+        node.removeAttribute("t-call-context");
         if (node.tagName !== "t") {
             const ast = parseNode(node, ctx);
-            const tcall = { type: 7 /* TCall */, name: subTemplate, body: null };
+            const tcall = { type: 7 /* TCall */, name: subTemplate, body: null, context };
             if (ast && ast.type === 2 /* DomNode */) {
                 ast.content = [tcall];
                 return ast;
@@ -4922,6 +4943,7 @@
             type: 7 /* TCall */,
             name: subTemplate,
             body: body.length ? body : null,
+            context,
         };
     }
     // -----------------------------------------------------------------------------
@@ -5525,8 +5547,7 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
             return (props, key, ctx, parent, C) => {
                 let children = ctx.children;
                 let node = children[key];
-                if (node &&
-                    (node.status === 2 /* DESTROYED */ || (isDynamic && node.component.constructor !== C))) {
+                if (isDynamic && node && node.component.constructor !== C) {
                     node = undefined;
                 }
                 const parentFiber = ctx.fiber;
@@ -5737,9 +5758,9 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
     Object.defineProperty(exports, '__esModule', { value: true });
 
 
-    __info__.version = '2.0.0-beta-10';
-    __info__.date = '2022-06-22T08:33:34.385Z';
-    __info__.hash = '2e03332';
+    __info__.version = '2.0.0-beta-11';
+    __info__.date = '2022-06-28T13:28:35.399Z';
+    __info__.hash = '76c389a';
     __info__.url = 'https://github.com/odoo/owl';
 
 

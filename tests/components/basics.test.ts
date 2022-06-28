@@ -1097,7 +1097,7 @@ describe("t-out in components", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("");
 
-    comp.state.a = "hello"
+    comp.state.a = "hello";
     await nextTick();
     expect(fixture.innerHTML).toBe("hello");
 

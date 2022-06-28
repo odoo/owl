@@ -166,13 +166,13 @@ exports[`misc global 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput, withDefault } = helpers;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const b3 = text(\`toto default\`);
-    const b2 = withDefault(safeOutput(ctx['toto']), b3);
+    const b2 = safeOutput(ctx['toto'], b3);
     return block1([], [b2]);
   }
 }"

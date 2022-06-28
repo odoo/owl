@@ -754,16 +754,22 @@ export class CodeGenerator {
       this.insertAnchor(block);
     }
     block = this.createBlock(block, "html", ctx);
-    this.helpers.add(ast.expr === "0" ? "zero" : "safeOutput");
-    let expr = ast.expr === "0" ? "ctx[zero]" : `safeOutput(${compileExpr(ast.expr)})`;
-    if (ast.body) {
-      const nextId = BlockDescription.nextBlockId;
+    let blockStr;
+    if (ast.expr === "0") {
+      this.helpers.add("zero");
+      blockStr = `ctx[zero]`;
+    } else if (ast.body) {
+      let bodyValue = null;
+      bodyValue = BlockDescription.nextBlockId;
       const subCtx: Context = createContext(ctx);
       this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
-      this.helpers.add("withDefault");
-      expr = `withDefault(${expr}, b${nextId})`;
+      this.helpers.add("safeOutput");
+      blockStr = `safeOutput(${compileExpr(ast.expr)}, b${bodyValue})`;
+    } else {
+      this.helpers.add("safeOutput");
+      blockStr = `safeOutput(${compileExpr(ast.expr)})`;
     }
-    this.insertBlock(`${expr}`, block, ctx);
+    this.insertBlock(blockStr, block, ctx);
   }
 
   compileTIf(ast: ASTTif, ctx: Context, nextNode?: ASTDomNode) {

@@ -217,13 +217,13 @@ exports[`t-out t-out on a node with a body, as a default 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput, withDefault } = helpers;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const b3 = text(\`nope\`);
-    const b2 = withDefault(safeOutput(ctx['var']), b3);
+    const b2 = safeOutput(ctx['var'], b3);
     return block1([], [b2]);
   }
 }"
@@ -233,14 +233,14 @@ exports[`t-out t-out on a node with a dom node in body, as a default 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput, withDefault } = helpers;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   let block3 = createBlock(\`<div>nope</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const b3 = block3();
-    const b2 = withDefault(safeOutput(ctx['var']), b3);
+    const b2 = safeOutput(ctx['var'], b3);
     return block1([], [b2]);
   }
 }"
@@ -396,6 +396,45 @@ exports[`t-out t-out with comment 1`] = `
 `;
 
 exports[`t-out t-out with just a t-set t-value in body 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return safeOutput(ctx['var']);
+  }
+}"
+`;
+
+exports[`t-out t-out with the 0 number 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return safeOutput(ctx['var']);
+  }
+}"
+`;
+
+exports[`t-out t-out with the 0 number, in a p 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<p><block-child-0/></p>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = safeOutput(ctx['var']);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`t-out top level t-out with undefined 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

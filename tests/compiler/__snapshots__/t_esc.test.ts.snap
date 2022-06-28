@@ -133,6 +133,31 @@ exports[`t-esc t-esc is escaped 1`] = `
 }"
 `;
 
+exports[`t-esc t-esc with the 0 number 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['var']);
+  }
+}"
+`;
+
+exports[`t-esc t-esc with the 0 number, in a p 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<p><block-text-0/></p>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let txt1 = ctx['var'];
+    return block1([txt1]);
+  }
+}"
+`;
+
 exports[`t-esc t-esc work with spread operator 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -179,6 +204,17 @@ exports[`t-esc t-esc=0 is escaped 2`] = `
   return function template(ctx, node, key = \\"\\") {
     let txt1 = ctx[zero];
     return block1([txt1]);
+  }
+}"
+`;
+
+exports[`t-esc top level t-esc with undefined 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['var']);
   }
 }"
 `;

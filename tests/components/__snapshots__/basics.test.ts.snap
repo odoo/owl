@@ -1308,6 +1308,18 @@ exports[`t-out in components can switch the contents of two t-out repeatedly 1`]
 }"
 `;
 
+exports[`t-out in components t-out and updating falsy values,  1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return safeOutput(ctx['state'].a);
+  }
+}"
+`;
+
 exports[`t-out in components update properly on state changes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

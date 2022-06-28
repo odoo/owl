@@ -47,6 +47,21 @@ describe("t-out", () => {
     expect(renderToString(template, { var: new String("ok") })).toBe("<span>ok</span>");
   });
 
+  test("t-out with the 0 number", () => {
+    const template = `<t t-out="var"/>`;
+    expect(renderToString(template, { var: 0 })).toBe("0");
+  });
+
+  test("t-out with the 0 number, in a p", () => {
+    const template = `<p><t t-out="var"/></p>`;
+    expect(renderToString(template, { var: 0 })).toBe("<p>0</p>");
+  });
+
+  test("top level t-out with undefined", () => {
+    const template = `<t t-out="var"/>`;
+    expect(renderToString(template, { var: undefined })).toBe("");
+  });
+
   test("with an extended String class", () => {
     class LoveString extends String {
       valueOf(): string {

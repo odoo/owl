@@ -67,6 +67,21 @@ describe("t-esc", () => {
     );
   });
 
+  test("t-esc with the 0 number", () => {
+    const template = `<t t-esc="var"/>`;
+    expect(renderToString(template, { var: 0 })).toBe("0");
+  });
+
+  test("t-esc with the 0 number, in a p", () => {
+    const template = `<p><t t-esc="var"/></p>`;
+    expect(renderToString(template, { var: 0 })).toBe("<p>0</p>");
+  });
+
+  test("top level t-esc with undefined", () => {
+    const template = `<t t-esc="var"/>`;
+    expect(renderToString(template, { var: undefined })).toBe("");
+  });
+
   test("falsy values in text nodes", () => {
     const template = `
         <t t-esc="v1"/>:<t t-esc="v2"/>:<t t-esc="v3"/>:<t t-esc="v4"/>:<t t-esc="v5"/>`;

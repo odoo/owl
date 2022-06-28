@@ -1084,4 +1084,25 @@ describe("t-out in components", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>1</div><div>2</div>");
   });
+
+  test("t-out and updating falsy values, ", async () => {
+    class Test extends Component {
+      static template = xml`<t t-out="state.a"/>`;
+      state: any = useState({ a: 0 });
+    }
+
+    const comp = await mount(Test, fixture);
+    expect(fixture.innerHTML).toBe("0");
+    comp.state.a = undefined;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("");
+
+    comp.state.a = "hello"
+    await nextTick();
+    expect(fixture.innerHTML).toBe("hello");
+
+    comp.state.a = false;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("false");
+  });
 });

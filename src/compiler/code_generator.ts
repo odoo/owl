@@ -143,7 +143,7 @@ interface Context {
   ctxVar?: string;
 }
 
-function createContext(parentCtx: Context, params?: Partial<Context>) {
+function createContext(parentCtx: Context, params?: Partial<Context>): Context {
   return Object.assign(
     {
       block: null,
@@ -334,8 +334,8 @@ export class CodeGenerator {
     this.addLine(`const ${varName} = ${expr};`);
   }
 
-  insertAnchor(block: BlockDescription) {
-    const tag = `block-child-${block.children.length}`;
+  insertAnchor(block: BlockDescription, index: number = block.children.length) {
+    const tag = `block-child-${index}`;
     const anchor = xmlDoc.createElement(tag);
     block.insert(anchor);
   }
@@ -692,7 +692,7 @@ export class CodeGenerator {
       const children = ast.content;
       for (let i = 0; i < children.length; i++) {
         const child = ast.content[i];
-        const subCtx: Context = createContext(ctx, {
+        const subCtx = createContext(ctx, {
           block,
           index: block!.childNumber,
           forceNewBlock: false,
@@ -761,7 +761,7 @@ export class CodeGenerator {
     } else if (ast.body) {
       let bodyValue = null;
       bodyValue = BlockDescription.nextBlockId;
-      const subCtx: Context = createContext(ctx);
+      const subCtx = createContext(ctx);
       this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
       this.helpers.add("safeOutput");
       blockStr = `safeOutput(${compileExpr(ast.expr)}, b${bodyValue})`;
@@ -772,9 +772,19 @@ export class CodeGenerator {
     this.insertBlock(blockStr, block, ctx);
   }
 
+  compileTIfBranch(content: AST, block: BlockDescription, ctx: Context) {
+    this.target.indentLevel++;
+    let childN = block.children.length;
+    this.compileAST(content, createContext(ctx, { block, index: ctx.index }));
+    if (block.children.length > childN) {
+      // we have some content => need to insert an anchor at correct index
+      this.insertAnchor(block!, childN);
+    }
+    this.target.indentLevel--;
+  }
+
   compileTIf(ast: ASTTif, ctx: Context, nextNode?: ASTDomNode) {
-    let { block, forceNewBlock, index } = ctx;
-    let currentIndex = index;
+    let { block, forceNewBlock } = ctx;
     const codeIdx = this.target.code.length;
     const isNewBlock = !block || (block.type !== "multi" && forceNewBlock);
     if (block) {
@@ -784,28 +794,16 @@ export class CodeGenerator {
       block = this.createBlock(block, "multi", ctx);
     }
     this.addLine(`if (${compileExpr(ast.condition)}) {`);
-    this.target.indentLevel++;
-    this.insertAnchor(block!);
-    const subCtx: Context = createContext(ctx, { block, index: currentIndex });
-    this.compileAST(ast.content, subCtx);
-    this.target.indentLevel--;
+    this.compileTIfBranch(ast.content, block, ctx);
     if (ast.tElif) {
       for (let clause of ast.tElif) {
         this.addLine(`} else if (${compileExpr(clause.condition)}) {`);
-        this.target.indentLevel++;
-        this.insertAnchor(block);
-        const subCtx: Context = createContext(ctx, { block, index: currentIndex });
-        this.compileAST(clause.content, subCtx);
-        this.target.indentLevel--;
+        this.compileTIfBranch(clause.content, block, ctx);
       }
     }
     if (ast.tElse) {
       this.addLine(`} else {`);
-      this.target.indentLevel++;
-      this.insertAnchor(block);
-      const subCtx: Context = createContext(ctx, { block, index: currentIndex });
-      this.compileAST(ast.tElse, subCtx);
-      this.target.indentLevel--;
+      this.compileTIfBranch(ast.tElse, block, ctx);
     }
     this.addLine("}");
     if (isNewBlock) {
@@ -891,7 +889,7 @@ export class CodeGenerator {
       this.addLine("}");
     }
 
-    const subCtx: Context = createContext(ctx, { block, index: loopVar });
+    const subCtx = createContext(ctx, { block, index: loopVar });
     this.compileAST(ast.body, subCtx);
     if (ast.memo) {
       this.addLine(
@@ -938,7 +936,7 @@ export class CodeGenerator {
     for (let i = 0, l = ast.content.length; i < l; i++) {
       const child = ast.content[i];
       const isTSet = child.type === ASTType.TSet;
-      const subCtx: Context = createContext(ctx, {
+      const subCtx = createContext(ctx, {
         block,
         index,
         forceNewBlock: !isTSet,
@@ -984,7 +982,7 @@ export class CodeGenerator {
       this.addLine(`${ctxVar}[isBoundary] = 1;`);
       this.helpers.add("isBoundary");
       const nextId = BlockDescription.nextBlockId;
-      const subCtx: Context = createContext(ctx, { preventRoot: true, ctxVar });
+      const subCtx = createContext(ctx, { preventRoot: true, ctxVar });
       this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
       if (nextId !== BlockDescription.nextBlockId) {
         this.helpers.add("zero");

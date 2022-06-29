@@ -33,6 +33,22 @@ describe("t-set", () => {
     expect(renderToString(template, { value: "ok" })).toBe("<div>grimbergen</div>");
   });
 
+  test("t-set, multiple t-ifs, and a specific configuration", () => {
+    const template = `
+      <p>
+        <div>
+          <t t-if="flag" t-set="bouh" t-value="2"/>
+          <span>First div</span>
+        </div>
+        <div>
+          <t t-if="!flag">Second</t>
+        </div>
+      </p>`;
+    expect(renderToString(template)).toBe(
+      "<p><div><span>First div</span></div><div>Second</div></p>"
+    );
+  });
+
   test("set from body literal", () => {
     const template = `<t><t t-set="value">ok</t><t t-esc="value"/></t>`;
     expect(renderToString(template)).toBe("ok");

@@ -242,7 +242,7 @@ exports[`t-set t-set in t-if 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/><block-child-0/><block-child-0/><p><block-text-0/></p></div>\`);
+  let block1 = createBlock(\`<div><p><block-text-0/></p></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -307,7 +307,7 @@ exports[`t-set t-set outside modified in t-if 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/><block-child-0/><block-child-0/><p><block-text-0/></p></div>\`);
+  let block1 = createBlock(\`<div><p><block-text-0/></p></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);

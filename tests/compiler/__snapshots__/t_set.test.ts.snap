@@ -534,13 +534,36 @@ exports[`t-set t-set with t-value (truthy) and body 1`] = `
 }"
 `;
 
+exports[`t-set t-set, multiple t-ifs, and a specific configuration 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<p><div><span>First div</span></div><div><block-child-0/></div></p>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    let b2;
+    if (ctx['flag']) {
+      setContextValue(ctx, \\"bouh\\", 2);
+    }
+    if (!ctx['flag']) {
+      b2 = text(\`Second\`);
+    }
+    return block1([], [b2]);
+  }
+}"
+`;
+
 exports[`t-set t-set, t-if, and mix of expression/body lookup, 1 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/><block-child-0/><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -562,7 +585,7 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 2 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/><block-child-0/><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);

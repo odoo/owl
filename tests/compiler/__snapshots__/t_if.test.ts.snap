@@ -44,17 +44,19 @@ exports[`t-if boolean value condition elif (no outside node) 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3,b4,b5;
+    let b2,b3,b4,b5,b6;
+    b2 = text(\`
+ \`);
     if (ctx['color']=='black') {
-      b2 = text(\`black pearl\`);
+      b3 = text(\`black pearl\`);
     } else if (ctx['color']=='yellow') {
-      b3 = text(\`yellow submarine\`);
+      b4 = text(\`yellow submarine\`);
     } else if (ctx['color']=='red') {
-      b4 = text(\`red is dead\`);
+      b5 = text(\`red is dead\`);
     } else {
-      b5 = text(\`beer\`);
+      b6 = text(\`beer\`);
     }
-    return multi([b2, b3, b4, b5]);
+    return multi([b2, b3, b4, b5, b6]);
   }
 }"
 `;
@@ -64,20 +66,25 @@ exports[`t-if boolean value condition elif 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-2/><block-child-3/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/><block-child-1/><block-child-2/><block-child-3/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3,b4,b5;
+    const b2 = text(\`
+ \`);
+    let b4,b5,b6,b7;
     if (ctx['color']=='black') {
-      b2 = text(\`black pearl\`);
+      b4 = text(\`black pearl\`);
     } else if (ctx['color']=='yellow') {
-      b3 = text(\`yellow submarine\`);
+      b5 = text(\`yellow submarine\`);
     } else if (ctx['color']=='red') {
-      b4 = text(\`red is dead\`);
+      b6 = text(\`red is dead\`);
     } else {
-      b5 = text(\`beer\`);
+      b7 = text(\`beer\`);
     }
-    return block1([], [b2, b3, b4, b5]);
+    const b3 = block3([], [b4, b5, b6, b7]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -87,16 +94,23 @@ exports[`t-if boolean value condition else 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><span>begin</span><block-child-0/><block-child-1/><span>end</span></div>\`);
+  let block3 = createBlock(\`<div>
+ <span>begin</span>
+ <block-child-0/><block-child-1/>
+ <span>end</span>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    const b2 = text(\`
+ \`);
+    let b4,b5;
     if (ctx['condition']) {
-      b2 = text(\`ok\`);
+      b4 = text(\`ok\`);
     } else {
-      b3 = text(\`ok-else\`);
+      b5 = text(\`ok-else\`);
     }
-    return block1([], [b2, b3]);
+    const b3 = block3([], [b4, b5]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -106,16 +120,19 @@ exports[`t-if boolean value condition false else 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><span>begin</span><block-child-0/><block-child-1/><span>end</span></div>\`);
+  let block3 = createBlock(\`<div><span>begin</span><block-child-0/><block-child-1/><span>end</span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    const b2 = text(\`
+ \`);
+    let b4,b5;
     if (ctx['condition']) {
-      b2 = text(\`fail\`);
+      b4 = text(\`fail\`);
     } else {
-      b3 = text(\`fail-else\`);
+      b5 = text(\`fail-else\`);
     }
-    return block1([], [b2, b3]);
+    const b3 = block3([], [b4, b5]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -142,35 +159,47 @@ exports[`t-if can use some boolean operators in expressions 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-2/><block-child-3/><block-child-4/><block-child-5/><block-child-6/><block-child-7/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ <block-child-1/>
+ <block-child-2/>
+ <block-child-3/>
+ <block-child-4/>
+ <block-child-5/>
+ <block-child-6/>
+ <block-child-7/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3,b4,b5,b6,b7,b8,b9;
+    const b2 = text(\`
+ \`);
+    let b4,b5,b6,b7,b8,b9,b10,b11;
     if (ctx['cond1']&&ctx['cond2']) {
-      b2 = text(\`and\`);
+      b4 = text(\`and\`);
     }
     if (ctx['cond1']&&ctx['cond3']) {
-      b3 = text(\`nope\`);
-    }
-    if (ctx['cond1']||ctx['cond3']) {
-      b4 = text(\`or\`);
-    }
-    if (ctx['cond3']||ctx['cond4']) {
       b5 = text(\`nope\`);
     }
+    if (ctx['cond1']||ctx['cond3']) {
+      b6 = text(\`or\`);
+    }
+    if (ctx['cond3']||ctx['cond4']) {
+      b7 = text(\`nope\`);
+    }
     if (ctx['m']>3) {
-      b6 = text(\`mgt\`);
+      b8 = text(\`mgt\`);
     }
     if (ctx['n']>3) {
-      b7 = text(\`ngt\`);
+      b9 = text(\`ngt\`);
     }
     if (ctx['m']<3) {
-      b8 = text(\`mlt\`);
+      b10 = text(\`mlt\`);
     }
     if (ctx['n']<3) {
-      b9 = text(\`nlt\`);
+      b11 = text(\`nlt\`);
     }
-    return block1([], [b2, b3, b4, b5, b6, b7, b8, b9]);
+    const b3 = block3([], [b4, b5, b6, b7, b8, b9, b10, b11]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -407,17 +436,23 @@ exports[`t-if t-set, then t-if 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ 
+ <block-child-0/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    let b2;
+    const b2 = text(\`
+ \`);
+    let b4;
     setContextValue(ctx, \\"title\\", 'test');
     if (ctx['title']) {
-      b2 = text(ctx['title']);
+      b4 = text(ctx['title']);
     }
-    return block1([], [b2]);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -428,19 +463,26 @@ exports[`t-if t-set, then t-if, part 2 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block2 = createBlock(\`<span>COUCOU</span>\`);
+  let block3 = createBlock(\`<div>
+ 
+ 
+ <block-child-0/>
+ </div>\`);
+  let block4 = createBlock(\`<span>COUCOU</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    let b2;
+    const b2 = text(\`
+ \`);
+    let b4;
     setContextValue(ctx, \\"y\\", true);
     setContextValue(ctx, \\"x\\", ctx['y']);
     if (ctx['x']) {
-      b2 = block2();
+      b4 = block4();
     }
-    return block1([], [b2]);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -451,22 +493,29 @@ exports[`t-if t-set, then t-if, part 3 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
-  let block2 = createBlock(\`<span>AAA</span>\`);
-  let block3 = createBlock(\`<span>BBB</span>\`);
+  let block3 = createBlock(\`<div>
+ 
+ 
+ <block-child-0/><block-child-1/>
+ </div>\`);
+  let block4 = createBlock(\`<span>AAA</span>\`);
+  let block5 = createBlock(\`<span>BBB</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    let b2,b3;
+    const b2 = text(\`
+ \`);
+    let b4,b5;
     setContextValue(ctx, \\"y\\", false);
     setContextValue(ctx, \\"x\\", ctx['y']);
     if (ctx['x']) {
-      b2 = block2();
+      b4 = block4();
     } else if (!ctx['x']) {
-      b3 = block3();
+      b5 = block5();
     }
-    return block1([], [b2, b3]);
+    const b3 = block3([], [b4, b5]);
+    return multi([b2, b3]);
   }
 }"
 `;

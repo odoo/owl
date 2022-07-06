@@ -75,11 +75,18 @@ exports[`qweb t-tag with multiple child nodes 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = tag => createBlock(\`<\${tag || 't'}> pear <span>apple</span> strawberry </\${tag || 't'}>\`);
+  let block3 = tag => createBlock(\`<\${tag || 't'}>
+ pear
+ <span>apple</span>
+ strawberry
+ </\${tag || 't'}>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     const tag1 = ctx['tag'];
-    return toggler(tag1, block1(tag1)());
+    const b3 = toggler(tag1, block3(tag1)());
+    return multi([b2, b3]);
   }
 }"
 `;

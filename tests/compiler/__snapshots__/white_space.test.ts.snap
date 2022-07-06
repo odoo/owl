@@ -61,7 +61,8 @@ exports[`white space handling pre inside a div with a new line 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><pre>SomeText</pre></div>\`);
+  let block1 = createBlock(\`<div><pre>SomeText</pre>
+</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     return block1();
@@ -87,7 +88,9 @@ exports[`white space handling whitespace only text nodes with newlines are remov
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><span>abc</span></div>\`);
+  let block1 = createBlock(\`<div>
+ <span>abc</span>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     return block1();

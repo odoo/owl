@@ -5,10 +5,15 @@ exports[`translation support can set and remove translatable attributes 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div tomato=\\"word\\" potato=\\"mot\\" title=\\"mot\\" label=\\"word\\">text</div>\`);
+  let block3 = createBlock(\`<div tomato=\\"word\\" potato=\\"mot\\" title=\\"mot\\" label=\\"word\\">text</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    return block1();
+    const b2 = text(\`
+ \`);
+    const b3 = block3();
+    const b4 = text(\`
+ \`);
+    return multi([b2, b3, b4]);
   }
 }"
 `;
@@ -31,10 +36,18 @@ exports[`translation support does not translate node content if disabled 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><span>mot</span><span>word</span></div>\`);
+  let block3 = createBlock(\`<div>
+ <span>mot</span>
+ <span>word</span>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    return block1();
+    const b2 = text(\`
+ \`);
+    const b3 = block3();
+    const b4 = text(\`
+ \`);
+    return multi([b2, b3, b4]);
   }
 }"
 `;
@@ -44,10 +57,21 @@ exports[`translation support some attributes are translated 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><p label=\\"mot\\">mot</p><p title=\\"mot\\">mot</p><p placeholder=\\"mot\\">mot</p><p alt=\\"mot\\">mot</p><p something=\\"word\\">mot</p></div>\`);
+  let block3 = createBlock(\`<div>
+ <p label=\\"mot\\">mot</p>
+ <p title=\\"mot\\">mot</p>
+ <p placeholder=\\"mot\\">mot</p>
+ <p alt=\\"mot\\">mot</p>
+ <p something=\\"word\\">mot</p>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    return block1();
+    const b2 = text(\`
+ \`);
+    const b3 = block3();
+    const b4 = text(\`
+ \`);
+    return multi([b2, b3, b4]);
   }
 }"
 `;
@@ -57,10 +81,15 @@ exports[`translation support translation is done on the trimmed text, with extra
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div> mot </div>\`);
+  let block3 = createBlock(\`<div> mot </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    return block1();
+    const b2 = text(\`
+ \`);
+    const b3 = block3();
+    const b4 = text(\`
+ \`);
+    return multi([b2, b3, b4]);
   }
 }"
 `;

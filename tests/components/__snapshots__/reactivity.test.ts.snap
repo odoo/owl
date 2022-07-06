@@ -99,11 +99,16 @@ exports[`reactivity in lifecycle change state while mounting component 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block3 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     let txt1 = ctx['state'].val;
-    return block1([txt1]);
+    const b3 = block3([txt1]);
+    const b4 = text(\`
+ \`);
+    return multi([b2, b3, b4]);
   }
 }"
 `;
@@ -114,14 +119,21 @@ exports[`reactivity in lifecycle state changes in willUnmount do not trigger rer
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2;
+    const b2 = text(\`
+ \`);
+    let b4;
     if (ctx['state'].flag) {
-      b2 = comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
+      b4 = comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
     }
-    return block1([], [b2]);
+    const b3 = block3([], [b4]);
+    const b5 = text(\`
+ \`);
+    return multi([b2, b3, b5]);
   }
 }"
 `;
@@ -131,12 +143,17 @@ exports[`reactivity in lifecycle state changes in willUnmount do not trigger rer
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
+  let block3 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     let txt1 = ctx['props'].val;
     let txt2 = ctx['state'].n;
-    return block1([txt1, txt2]);
+    const b3 = block3([txt1, txt2]);
+    const b4 = text(\`
+ \`);
+    return multi([b2, b3, b4]);
   }
 }"
 `;

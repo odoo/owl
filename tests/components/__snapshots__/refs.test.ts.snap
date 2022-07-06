@@ -21,19 +21,31 @@ exports[`refs can use 2 refs with same name in a t-if/t-else situation 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { multiRefSetter } = helpers;
   
-  let block2 = createBlock(\`<div block-ref=\\"0\\"/>\`);
-  let block3 = createBlock(\`<span block-ref=\\"0\\"/>\`);
+  let block5 = createBlock(\`<div block-ref=\\"0\\"/>\`);
+  let block9 = createBlock(\`<span block-ref=\\"0\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const refs = ctx.__owl__.refs;
     const ref1 = multiRefSetter(refs, \`coucou\`);
-    let b2,b3;
+    let b2,b3,b7;
+    b2 = text(\`
+ \`);
     if (ctx['state'].value) {
-      b2 = block2([ref1]);
+      const b4 = text(\`
+ \`);
+      const b5 = block5([ref1]);
+      const b6 = text(\`
+ \`);
+      b3 = multi([b4, b5, b6]);
     } else {
-      b3 = block3([ref1]);
+      const b8 = text(\`
+ \`);
+      const b9 = block9([ref1]);
+      const b10 = text(\`
+ \`);
+      b7 = multi([b8, b9, b10]);
     }
-    return multi([b2, b3]);
+    return multi([b2, b3, b7]);
   }
 }"
 `;
@@ -44,17 +56,23 @@ exports[`refs refs and recursive templates 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Test\`, true, false, false, false);
   
-  let block1 = createBlock(\`<p block-ref=\\"0\\"><block-text-1/><block-child-0/></p>\`);
+  let block3 = createBlock(\`<p block-ref=\\"0\\">
+ <block-text-1/>
+ <block-child-0/>
+ </p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const refs = ctx.__owl__.refs;
     const ref1 = (el) => refs[\`root\`] = el;
-    let b2;
+    const b2 = text(\`
+ \`);
+    let b4;
     let txt1 = ctx['props'].tree.value;
     if (ctx['props'].tree.child) {
-      b2 = comp1({tree: ctx['props'].tree.child}, key + \`__1\`, node, this, null);
+      b4 = comp1({tree: ctx['props'].tree.child}, key + \`__1\`, node, this, null);
     }
-    return block1([ref1, txt1], [b2]);
+    const b3 = block3([ref1, txt1], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -66,21 +84,37 @@ exports[`refs refs are properly bound in slots 1`] = `
   let { capture, markRaw } = helpers;
   const comp1 = app.createComponent(\`Dialog\`, true, true, false, true);
   
-  let block1 = createBlock(\`<div><span class=\\"counter\\"><block-text-0/></span><block-child-0/></div>\`);
-  let block2 = createBlock(\`<button block-handler-0=\\"click\\" block-ref=\\"1\\">do something</button>\`);
+  let block3 = createBlock(\`<div>
+ <span class=\\"counter\\"><block-text-0/></span>
+ <block-child-0/>
+ </div>\`);
+  let block4 = createBlock(\`<button block-handler-0=\\"click\\" block-ref=\\"1\\">do something</button>\`);
   
   function slot1(ctx, node, key = \\"\\") {
     const refs = ctx.__owl__.refs;
     const ref1 = (el) => refs[\`myButton\`] = el;
     let hdlr1 = [ctx['doSomething'], ctx];
-    return block2([hdlr1, ref1]);
+    return block4([hdlr1, ref1]);
+  }
+  
+  function slot2(ctx, node, key = \\"\\") {
+    const b6 = text(\`
+ \`);
+    const b7 = text(\`
+ \`);
+    return multi([b6, b7]);
   }
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     let txt1 = ctx['state'].val;
     const ctx1 = capture(ctx);
-    const b3 = comp1({slots: markRaw({'footer': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, this, null);
-    return block1([txt1], [b3]);
+    const b8 = comp1({slots: markRaw({'footer': {__render: slot1, __ctx: ctx1}, 'default': {__render: slot2, __ctx: ctx1}})}, key + \`__1\`, node, this, null);
+    const b3 = block3([txt1], [b8]);
+    const b9 = text(\`
+ \`);
+    return multi([b2, b3, b9]);
   }
 }"
 `;
@@ -106,15 +140,19 @@ exports[`refs throws if there are 2 same refs at the same time 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { multiRefSetter } = helpers;
   
-  let block2 = createBlock(\`<div block-ref=\\"0\\"/>\`);
-  let block3 = createBlock(\`<span block-ref=\\"0\\"/>\`);
+  let block3 = createBlock(\`<div block-ref=\\"0\\"/>\`);
+  let block5 = createBlock(\`<span block-ref=\\"0\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const refs = ctx.__owl__.refs;
     const ref1 = multiRefSetter(refs, \`coucou\`);
-    const b2 = block2([ref1]);
+    const b2 = text(\`
+ \`);
     const b3 = block3([ref1]);
-    return multi([b2, b3]);
+    const b4 = text(\`
+ \`);
+    const b5 = block5([ref1]);
+    return multi([b2, b3, b4, b5]);
   }
 }"
 `;

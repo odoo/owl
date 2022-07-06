@@ -313,13 +313,22 @@ exports[`simple templates, mostly static template with multiple t tag with multi
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><block-text-0/><block-text-1/>Loading<block-text-2/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-text-0/>
+ 
+ <block-text-1/>
+ Loading<block-text-2/>
+ 
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     let txt1 = ctx['a'];
     let txt2 = ctx['b'];
     let txt3 = ctx['c'];
-    return block1([txt1, txt2, txt3]);
+    const b3 = block3([txt1, txt2, txt3]);
+    return multi([b2, b3]);
   }
 }"
 `;

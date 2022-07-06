@@ -347,21 +347,33 @@ exports[`Reactivity: useState useless atoms should be deleted 1`] = `
   let { prepareList, withKey } = helpers;
   const comp1 = app.createComponent(\`Quantity\`, true, false, false, false);
   
-  let block1 = createBlock(\`<div><block-child-0/> Total: <block-text-0/> Count: <block-text-1/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ Total: <block-text-0/>
+ Count: <block-text-1/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(Object.keys(ctx['state']));;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`id\`] = v_block2[i1];
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList(Object.keys(ctx['state']));;
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`id\`] = v_block4[i1];
       const key1 = ctx['id'];
-      c_block2[i1] = withKey(comp1({id: ctx['id']}, key + \`__1__\${key1}\`, node, this, null), key1);
+      const b6 = text(\`
+ \`);
+      const b7 = comp1({id: ctx['id']}, key + \`__1__\${key1}\`, node, this, null);
+      const b8 = text(\`
+ \`);
+      c_block4[i1] = withKey(multi([b6, b7, b8]), key1);
     }
     ctx = ctx.__proto__;
-    const b2 = list(c_block2);
+    const b4 = list(c_block4);
     let txt1 = ctx['total'];
     let txt2 = Object.keys(ctx['state']).length;
-    return block1([txt1, txt2], [b2]);
+    const b3 = block3([txt1, txt2], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;

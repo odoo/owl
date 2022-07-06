@@ -34,16 +34,27 @@ exports[`t-out multiple calls to t-out 1`] = `
   let { isBoundary, zero } = helpers;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block2 = createBlock(\`<span>coucou</span>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
+  let block6 = createBlock(\`<span>coucou</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
-    const b2 = block2();
-    ctx[zero] = b2;
-    const b3 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
-    return block1([], [b3]);
+    const b5 = text(\`
+ \`);
+    const b6 = block6();
+    const b7 = text(\`
+ \`);
+    const b4 = multi([b5, b6, b7]);
+    ctx[zero] = b4;
+    const b8 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    ctx = ctx.__proto__;
+    const b3 = block3([], [b8]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -54,12 +65,19 @@ exports[`t-out multiple calls to t-out 2`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { zero } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/><div>Greeter</div><block-child-1/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ <div>Greeter</div>
+ <block-child-1/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = ctx[zero];
-    const b3 = ctx[zero];
-    return block1([], [b2, b3]);
+    const b2 = text(\`
+ \`);
+    const b4 = ctx[zero];
+    const b5 = ctx[zero];
+    const b3 = block3([], [b4, b5]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -297,10 +315,13 @@ exports[`t-out t-out switch markup on bdom 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, LazyValue, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
+  let block1 = createBlock(\`<div>
+ 
+ <block-child-0/><block-child-1/>
+ </div>\`);
   let block2 = createBlock(\`<ol>set</ol>\`);
-  let block3 = createBlock(\`<span><block-child-0/></span>\`);
   let block5 = createBlock(\`<span><block-child-0/></span>\`);
+  let block10 = createBlock(\`<span><block-child-0/></span>\`);
   
   function value1(ctx, node, key = \\"\\") {
     return block2();
@@ -309,16 +330,26 @@ exports[`t-out t-out switch markup on bdom 1`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    let b3,b5;
+    let b3,b8;
     ctx[\`bdom\`] = new LazyValue(value1, ctx, this, node);
     if (ctx['hasBdom']) {
-      const b4 = safeOutput(ctx['bdom']);
-      b3 = block3([], [b4]);
+      const b4 = text(\`
+ \`);
+      const b6 = safeOutput(ctx['bdom']);
+      const b5 = block5([], [b6]);
+      const b7 = text(\`
+ \`);
+      b3 = multi([b4, b5, b7]);
     } else {
-      const b6 = safeOutput(ctx['var']);
-      b5 = block5([], [b6]);
+      const b9 = text(\`
+ \`);
+      const b11 = safeOutput(ctx['var']);
+      const b10 = block10([], [b11]);
+      const b12 = text(\`
+ \`);
+      b8 = multi([b9, b10, b12]);
     }
-    return block1([], [b3, b5]);
+    return block1([], [b3, b8]);
   }
 }"
 `;

@@ -9,21 +9,27 @@ exports[`Portal Add and remove portals 1`] = `
   const comp1 = app.createComponent(null, false, true, false, false);
   
   function slot1(ctx, node, key = \\"\\") {
-    const b3 = text(\` Portal\`);
-    const b4 = text(ctx['portalId']);
-    return multi([b3, b4]);
+    const b5 = text(\`
+ Portal\`);
+    const b6 = text(ctx['portalId']);
+    const b7 = text(\`
+ \`);
+    return multi([b5, b6, b7]);
   }
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['portalIds']);;
-    for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`portalId\`] = v_block1[i1];
+    const [k_block3, v_block3, l_block3, c_block3] = prepareList(ctx['portalIds']);;
+    for (let i1 = 0; i1 < l_block3; i1++) {
+      ctx[\`portalId\`] = v_block3[i1];
       const key1 = ctx['portalId'];
       const ctx1 = capture(ctx);
-      c_block1[i1] = withKey(comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal), key1);
+      c_block3[i1] = withKey(comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal), key1);
     }
-    return list(c_block1);
+    const b3 = list(c_block3);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -36,23 +42,28 @@ exports[`Portal Add and remove portals on div 1`] = `
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
-  let block2 = createBlock(\`<div> Portal<block-text-0/></div>\`);
+  let block4 = createBlock(\`<div>
+ Portal<block-text-0/>
+ </div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
     let txt1 = ctx['portalId'];
-    return block2([txt1]);
+    return block4([txt1]);
   }
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['portalIds']);;
-    for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`portalId\`] = v_block1[i1];
+    const [k_block3, v_block3, l_block3, c_block3] = prepareList(ctx['portalIds']);;
+    for (let i1 = 0; i1 < l_block3; i1++) {
+      ctx[\`portalId\`] = v_block3[i1];
       const key1 = ctx['portalId'];
       const ctx1 = capture(ctx);
-      c_block1[i1] = withKey(comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal), key1);
+      c_block3[i1] = withKey(comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal), key1);
     }
-    return list(c_block1);
+    const b3 = list(c_block3);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -65,26 +76,40 @@ exports[`Portal Add and remove portals with t-foreach 1`] = `
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
-  let block2 = createBlock(\`<div><block-text-0/><block-child-0/></div>\`);
+  let block6 = createBlock(\`<div>
+ <block-text-0/>
+ <block-child-0/>
+ </div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    const b4 = text(\` Portal\`);
-    const b5 = text(ctx['portalId']);
-    return multi([b4, b5]);
+    const b8 = text(\`
+ Portal\`);
+    const b9 = text(ctx['portalId']);
+    const b10 = text(\`
+ \`);
+    return multi([b8, b9, b10]);
   }
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['portalIds']);;
-    for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`portalId\`] = v_block1[i1];
+    const [k_block3, v_block3, l_block3, c_block3] = prepareList(ctx['portalIds']);;
+    for (let i1 = 0; i1 < l_block3; i1++) {
+      ctx[\`portalId\`] = v_block3[i1];
       const key1 = ctx['portalId'];
+      const b5 = text(\`
+ \`);
       let txt1 = ctx['portalId'];
       const ctx1 = capture(ctx);
-      const b6 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal);
-      c_block1[i1] = withKey(block2([txt1], [b6]), key1);
+      const b11 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal);
+      const b6 = block6([txt1], [b11]);
+      const b12 = text(\`
+ \`);
+      c_block3[i1] = withKey(multi([b5, b6, b12]), key1);
     }
-    return list(c_block1);
+    const b3 = list(c_block3);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -97,26 +122,40 @@ exports[`Portal Add and remove portals with t-foreach and destroy 1`] = `
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
-  let block2 = createBlock(\`<div><block-text-0/><block-child-0/></div>\`);
+  let block6 = createBlock(\`<div>
+ <block-text-0/>
+ <block-child-0/>
+ </div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    const b4 = text(\` Portal\`);
-    const b5 = text(ctx['portalId']);
-    return multi([b4, b5]);
+    const b8 = text(\`
+ Portal\`);
+    const b9 = text(ctx['portalId']);
+    const b10 = text(\`
+ \`);
+    return multi([b8, b9, b10]);
   }
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['portalIds']);;
-    for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`portalId\`] = v_block1[i1];
+    const [k_block3, v_block3, l_block3, c_block3] = prepareList(ctx['portalIds']);;
+    for (let i1 = 0; i1 < l_block3; i1++) {
+      ctx[\`portalId\`] = v_block3[i1];
       const key1 = ctx['portalId'];
+      const b5 = text(\`
+ \`);
       let txt1 = ctx['portalId'];
       const ctx1 = capture(ctx);
-      const b6 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal);
-      c_block1[i1] = withKey(block2([txt1], [b6]), key1);
+      const b11 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal);
+      const b6 = block6([txt1], [b11]);
+      const b12 = text(\`
+ \`);
+      c_block3[i1] = withKey(multi([b5, b6, b12]), key1);
     }
-    return list(c_block1);
+    const b3 = list(c_block3);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -129,28 +168,45 @@ exports[`Portal Add and remove portals with t-foreach inside div 1`] = `
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<div><block-text-0/><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
+  let block7 = createBlock(\`<div>
+ <block-text-0/>
+ <block-child-0/>
+ </div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    const b5 = text(\` Portal\`);
-    const b6 = text(ctx['portalId']);
-    return multi([b5, b6]);
+    const b9 = text(\`
+ Portal\`);
+    const b10 = text(ctx['portalId']);
+    const b11 = text(\`
+ \`);
+    return multi([b9, b10, b11]);
   }
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['portalIds']);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`portalId\`] = v_block2[i1];
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['portalIds']);;
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`portalId\`] = v_block4[i1];
       const key1 = ctx['portalId'];
+      const b6 = text(\`
+ \`);
       let txt1 = ctx['portalId'];
       const ctx1 = capture(ctx);
-      const b7 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal);
-      c_block2[i1] = withKey(block3([txt1], [b7]), key1);
+      const b12 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal);
+      const b7 = block7([txt1], [b12]);
+      const b13 = text(\`
+ \`);
+      c_block4[i1] = withKey(multi([b6, b7, b13]), key1);
     }
-    const b2 = list(c_block2);
-    return block1([], [b2]);
+    ctx = ctx.__proto__;
+    const b4 = list(c_block4);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -163,15 +219,25 @@ exports[`Portal Portal composed with t-slot 1`] = `
   const comp1 = app.createComponent(\`Child2\`, true, false, false, false);
   const comp2 = app.createComponent(\`Child\`, true, true, false, true);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return comp1({customHandler: ctx['_handled']}, key + \`__1\`, node, this, null);
+    const b5 = text(\`
+ \`);
+    const b6 = comp1({customHandler: ctx['_handled']}, key + \`__1\`, node, this, null);
+    const b7 = text(\`
+ \`);
+    return multi([b5, b6, b7]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, this, null);
-    return block1([], [b3]);
+    const b2 = text(\`
+ \`);
+    const b8 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, this, null);
+    const b3 = block3([], [b8]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -185,11 +251,19 @@ exports[`Portal Portal composed with t-slot 2`] = `
   const comp1 = app.createComponent(null, false, true, false, false);
   
   function slot1(ctx, node, key = \\"\\") {
-    return callSlot(ctx, node, key, 'default', false, {});
+    const b4 = text(\`
+ \`);
+    const b5 = callSlot(ctx, node, key, 'default', false, {});
+    const b6 = text(\`
+ \`);
+    return multi([b4, b5, b6]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b2 = text(\`
+ \`);
+    const b7 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    return multi([b2, b7]);
   }
 }"
 `;
@@ -215,16 +289,27 @@ exports[`Portal basic use of portal 1`] = `
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
-  let block1 = createBlock(\`<div><span>1</span><block-child-0/></div>\`);
-  let block2 = createBlock(\`<p>2</p>\`);
+  let block3 = createBlock(\`<div>
+ <span>1</span>
+ <block-child-0/>
+ </div>\`);
+  let block6 = createBlock(\`<p>2</p>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return block2();
+    const b5 = text(\`
+ \`);
+    const b6 = block6();
+    const b7 = text(\`
+ \`);
+    return multi([b5, b6, b7]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
-    return block1([], [b3]);
+    const b2 = text(\`
+ \`);
+    const b8 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = block3([], [b8]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -236,16 +321,27 @@ exports[`Portal basic use of portal in dev mode 1`] = `
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
-  let block1 = createBlock(\`<div><span>1</span><block-child-0/></div>\`);
-  let block2 = createBlock(\`<p>2</p>\`);
+  let block3 = createBlock(\`<div>
+ <span>1</span>
+ <block-child-0/>
+ </div>\`);
+  let block6 = createBlock(\`<p>2</p>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return block2();
+    const b5 = text(\`
+ \`);
+    const b6 = block6();
+    const b7 = text(\`
+ \`);
+    return multi([b5, b6, b7]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
-    return block1([], [b3]);
+    const b2 = text(\`
+ \`);
+    const b8 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = block3([], [b8]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -257,16 +353,24 @@ exports[`Portal basic use of portal on div 1`] = `
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
-  let block1 = createBlock(\`<div><span>1</span><block-child-0/></div>\`);
-  let block2 = createBlock(\`<div><p>2</p></div>\`);
+  let block3 = createBlock(\`<div>
+ <span>1</span>
+ <block-child-0/>
+ </div>\`);
+  let block4 = createBlock(\`<div>
+ <p>2</p>
+ </div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return block2();
+    return block4();
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
-    return block1([], [b3]);
+    const b2 = text(\`
+ \`);
+    const b5 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = block3([], [b5]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -278,16 +382,27 @@ exports[`Portal basic use of portal, variation 1`] = `
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
-  let block1 = createBlock(\`<div><span>1</span><block-child-0/></div>\`);
-  let block2 = createBlock(\`<p>2</p>\`);
+  let block3 = createBlock(\`<div>
+ <span>1</span>
+ <block-child-0/>
+ </div>\`);
+  let block6 = createBlock(\`<p>2</p>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return block2();
+    const b5 = text(\`
+ \`);
+    const b6 = block6();
+    const b7 = text(\`
+ \`);
+    return multi([b5, b6, b7]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp1({target: ctx['target'],slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
-    return block1([], [b3]);
+    const b2 = text(\`
+ \`);
+    const b8 = comp1({target: ctx['target'],slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = block3([], [b8]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -300,19 +415,28 @@ exports[`Portal conditional use of Portal (with sub Component) 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   const comp2 = app.createComponent(null, false, true, false, false);
   
-  let block2 = createBlock(\`<span>1</span>\`);
+  let block3 = createBlock(\`<span>1</span>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
+    const b6 = text(\`
+ \`);
+    const b7 = comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
+    const b8 = text(\`
+ \`);
+    return multi([b6, b7, b8]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b4;
-    b2 = block2();
+    let b2,b3,b4,b9;
+    b2 = text(\`
+ \`);
+    b3 = block3();
+    b4 = text(\`
+ \`);
     if (ctx['state'].hasPortal) {
-      b4 = comp2({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
+      b9 = comp2({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
     }
-    return multi([b2, b4]);
+    return multi([b2, b3, b4, b9]);
   }
 }"
 `;
@@ -338,20 +462,29 @@ exports[`Portal conditional use of Portal 1`] = `
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
-  let block2 = createBlock(\`<span>1</span>\`);
-  let block3 = createBlock(\`<p>2</p>\`);
+  let block3 = createBlock(\`<span>1</span>\`);
+  let block7 = createBlock(\`<p>2</p>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return block3();
+    const b6 = text(\`
+ \`);
+    const b7 = block7();
+    const b8 = text(\`
+ \`);
+    return multi([b6, b7, b8]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b4;
-    b2 = block2();
+    let b2,b3,b4,b9;
+    b2 = text(\`
+ \`);
+    b3 = block3();
+    b4 = text(\`
+ \`);
     if (ctx['state'].hasPortal) {
-      b4 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+      b9 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     }
-    return multi([b2, b4]);
+    return multi([b2, b3, b4, b9]);
   }
 }"
 `;
@@ -363,11 +496,18 @@ exports[`Portal conditional use of Portal with child and div 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2;
+    let b2,b3;
+    b2 = text(\`
+ \`);
     if (ctx['state'].hasPortal) {
-      b2 = comp1({}, key + \`__1\`, node, this, null);
+      const b4 = text(\`
+ \`);
+      const b5 = comp1({}, key + \`__1\`, node, this, null);
+      const b6 = text(\`
+ \`);
+      b3 = multi([b4, b5, b6]);
     }
-    return multi([b2]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -408,15 +548,24 @@ exports[`Portal conditional use of Portal with child and div, variation 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
-  let block2 = createBlock(\`<div><block-child-0/></div>\`);
+  let block5 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2;
+    let b2,b3;
+    b2 = text(\`
+ \`);
     if (ctx['state'].hasPortal) {
-      const b3 = comp1({}, key + \`__1\`, node, this, null);
-      b2 = block2([], [b3]);
+      const b4 = text(\`
+ \`);
+      const b6 = comp1({}, key + \`__1\`, node, this, null);
+      const b5 = block5([], [b6]);
+      const b7 = text(\`
+ \`);
+      b3 = multi([b4, b5, b7]);
     }
-    return multi([b2]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -459,20 +608,35 @@ exports[`Portal conditional use of Portal with div 1`] = `
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
-  let block2 = createBlock(\`<div><span>hasPortal</span><block-child-0/></div>\`);
-  let block3 = createBlock(\`<p>thePortal</p>\`);
+  let block5 = createBlock(\`<div>
+ <span>hasPortal</span>
+ <block-child-0/>
+ </div>\`);
+  let block8 = createBlock(\`<p>thePortal</p>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return block3();
+    const b7 = text(\`
+ \`);
+    const b8 = block8();
+    const b9 = text(\`
+ \`);
+    return multi([b7, b8, b9]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b2;
+    let b2,b3;
+    b2 = text(\`
+ \`);
     if (ctx['state'].hasPortal) {
-      const b4 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
-      b2 = block2([], [b4]);
+      const b4 = text(\`
+ \`);
+      const b10 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+      const b5 = block5([], [b10]);
+      const b11 = text(\`
+ \`);
+      b3 = multi([b4, b5, b11]);
     }
-    return multi([b2]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -485,18 +649,28 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 1`] 
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   const comp2 = app.createComponent(null, false, true, false, false);
   
-  let block1 = createBlock(\`<div><block-child-0/><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/><block-child-0/>
+ </div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
+    const b5 = text(\`
+ \`);
+    const b6 = comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
+    const b7 = text(\`
+ \`);
+    return multi([b5, b6, b7]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b3;
+    const b2 = text(\`
+ \`);
+    let b8;
     if (ctx['state'].hasChild) {
-      b3 = comp2({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
+      b8 = comp2({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
     }
-    return block1([], [b3]);
+    const b3 = block3([], [b8]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -522,21 +696,30 @@ exports[`Portal portal could have dynamically no content 1`] = `
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<span><block-text-0/></span>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
+  let block6 = createBlock(\`<span><block-text-0/></span>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    let b3;
+    let b5,b6,b7;
+    b5 = text(\`
+ \`);
     if (ctx['state'].val) {
       let txt1 = ctx['state'].val;
-      b3 = block3([txt1]);
+      b6 = block6([txt1]);
     }
-    return multi([b3]);
+    b7 = text(\`
+ \`);
+    return multi([b5, b6, b7]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b4 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
-    return block1([], [b4]);
+    const b2 = text(\`
+ \`);
+    const b8 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = block3([], [b8]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -549,15 +732,25 @@ exports[`Portal portal destroys on crash 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   const comp2 = app.createComponent(null, false, true, false, false);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return comp1({error: ctx['state'].error}, key + \`__1\`, node, this, null);
+    const b5 = text(\`
+ \`);
+    const b6 = comp1({error: ctx['state'].error}, key + \`__1\`, node, this, null);
+    const b7 = text(\`
+ \`);
+    return multi([b5, b6, b7]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp2({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
-    return block1([], [b3]);
+    const b2 = text(\`
+ \`);
+    const b8 = comp2({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
+    const b3 = block3([], [b8]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -584,15 +777,25 @@ exports[`Portal portal with child and props 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   const comp2 = app.createComponent(null, false, true, false, false);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
+    const b5 = text(\`
+ \`);
+    const b6 = comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
+    const b7 = text(\`
+ \`);
+    return multi([b5, b6, b7]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp2({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
-    return block1([], [b3]);
+    const b2 = text(\`
+ \`);
+    const b8 = comp2({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
+    const b3 = block3([], [b8]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -618,24 +821,33 @@ exports[`Portal portal with dynamic body 1`] = `
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<span><block-text-0/></span>\`);
-  let block4 = createBlock(\`<div/>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
+  let block6 = createBlock(\`<span><block-text-0/></span>\`);
+  let block7 = createBlock(\`<div/>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    let b3,b4;
+    let b5,b6,b7,b8;
+    b5 = text(\`
+ \`);
     if (ctx['state'].val) {
       let txt1 = ctx['state'].val;
-      b3 = block3([txt1]);
+      b6 = block6([txt1]);
     } else {
-      b4 = block4();
+      b7 = block7();
     }
-    return multi([b3, b4]);
+    b8 = text(\`
+ \`);
+    return multi([b5, b6, b7, b8]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b5 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
-    return block1([], [b5]);
+    const b2 = text(\`
+ \`);
+    const b9 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = block3([], [b9]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -647,19 +859,30 @@ exports[`Portal portal with many children 1`] = `
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<div>1</div>\`);
-  let block4 = createBlock(\`<p>2</p>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
+  let block6 = createBlock(\`<div>1</div>\`);
+  let block8 = createBlock(\`<p>2</p>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    const b3 = block3();
-    const b4 = block4();
-    return multi([b3, b4]);
+    const b5 = text(\`
+ \`);
+    const b6 = block6();
+    const b7 = text(\`
+ \`);
+    const b8 = block8();
+    const b9 = text(\`
+ \`);
+    return multi([b5, b6, b7, b8, b9]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b5 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
-    return block1([], [b5]);
+    const b2 = text(\`
+ \`);
+    const b10 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = block3([], [b10]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -671,19 +894,28 @@ exports[`Portal portal with no content 1`] = `
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    let b3;
+    let b5,b6,b7;
+    b5 = text(\`
+ \`);
     if (false) {
-      b3 = text('ABC');
+      b6 = text('ABC');
     }
-    return multi([b3]);
+    b7 = text(\`
+ \`);
+    return multi([b5, b6, b7]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b4 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
-    return block1([], [b4]);
+    const b2 = text(\`
+ \`);
+    const b8 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = block3([], [b8]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -695,15 +927,25 @@ exports[`Portal portal with only text as content 1`] = `
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return text('only text');
+    const b5 = text(\`
+ \`);
+    const b6 = text('only text');
+    const b7 = text(\`
+ \`);
+    return multi([b5, b6, b7]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
-    return block1([], [b3]);
+    const b2 = text(\`
+ \`);
+    const b8 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = block3([], [b8]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -715,16 +957,26 @@ exports[`Portal portal with target not in dom 1`] = `
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block2 = createBlock(\`<div>2</div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
+  let block6 = createBlock(\`<div>2</div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return block2();
+    const b5 = text(\`
+ \`);
+    const b6 = block6();
+    const b7 = text(\`
+ \`);
+    return multi([b5, b6, b7]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp1({target: '#does-not-exist',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
-    return block1([], [b3]);
+    const b2 = text(\`
+ \`);
+    const b8 = comp1({target: '#does-not-exist',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = block3([], [b8]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -737,15 +989,25 @@ exports[`Portal portal's parent's env is not polluted 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   const comp2 = app.createComponent(null, false, true, false, false);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return comp1({}, key + \`__1\`, node, this, null);
+    const b5 = text(\`
+ \`);
+    const b6 = comp1({}, key + \`__1\`, node, this, null);
+    const b7 = text(\`
+ \`);
+    return multi([b5, b6, b7]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp2({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
-    return block1([], [b3]);
+    const b2 = text(\`
+ \`);
+    const b8 = comp2({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
+    const b3 = block3([], [b8]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -755,10 +1017,13 @@ exports[`Portal portal's parent's env is not polluted 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<button>child</button>\`);
+  let block3 = createBlock(\`<button>child</button>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    return block1();
+    const b2 = text(\`
+ \`);
+    const b3 = block3();
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -769,16 +1034,26 @@ exports[`Portal simple catchError with portal 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Boom\`, true, false, false, true);
   
-  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/><block-child-1/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    const b2 = text(\`
+ \`);
+    let b4,b5;
     if (ctx['error']) {
-      b2 = text(\`Error\`);
+      b4 = text(\`Error\`);
     } else {
-      b3 = comp1({}, key + \`__1\`, node, this, null);
+      const b6 = text(\`
+ \`);
+      const b7 = comp1({}, key + \`__1\`, node, this, null);
+      const b8 = text(\`
+ \`);
+      b5 = multi([b6, b7, b8]);
     }
-    return block1([], [b2, b3]);
+    const b3 = block3([], [b4, b5]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -790,17 +1065,28 @@ exports[`Portal simple catchError with portal 2`] = `
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
-  let block1 = createBlock(\`<div><span>1</span><block-child-0/></div>\`);
-  let block2 = createBlock(\`<p><block-text-0/></p>\`);
+  let block3 = createBlock(\`<div>
+ <span>1</span>
+ <block-child-0/>
+ </div>\`);
+  let block6 = createBlock(\`<p><block-text-0/></p>\`);
   
   function slot1(ctx, node, key = \\"\\") {
+    const b5 = text(\`
+ \`);
     let txt1 = ctx['a'].b.c;
-    return block2([txt1]);
+    const b6 = block6([txt1]);
+    const b7 = text(\`
+ \`);
+    return multi([b5, b6, b7]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
-    return block1([], [b3]);
+    const b2 = text(\`
+ \`);
+    const b8 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = block3([], [b8]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -812,16 +1098,28 @@ exports[`Portal with target in template (after portal) 1`] = `
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
-  let block1 = createBlock(\`<div><span>1</span><block-child-0/><div id=\\"local-target\\"/></div>\`);
-  let block2 = createBlock(\`<p>2</p>\`);
+  let block3 = createBlock(\`<div>
+ <span>1</span>
+ <block-child-0/>
+ <div id=\\"local-target\\"/>
+ </div>\`);
+  let block6 = createBlock(\`<p>2</p>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return block2();
+    const b5 = text(\`
+ \`);
+    const b6 = block6();
+    const b7 = text(\`
+ \`);
+    return multi([b5, b6, b7]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp1({target: '#local-target',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
-    return block1([], [b3]);
+    const b2 = text(\`
+ \`);
+    const b8 = comp1({target: '#local-target',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = block3([], [b8]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -833,16 +1131,28 @@ exports[`Portal with target in template (before portal) 1`] = `
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
-  let block1 = createBlock(\`<div><div id=\\"local-target\\"/><span>1</span><block-child-0/></div>\`);
-  let block2 = createBlock(\`<p>2</p>\`);
+  let block3 = createBlock(\`<div>
+ <div id=\\"local-target\\"/>
+ <span>1</span>
+ <block-child-0/>
+ </div>\`);
+  let block6 = createBlock(\`<p>2</p>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return block2();
+    const b5 = text(\`
+ \`);
+    const b6 = block6();
+    const b7 = text(\`
+ \`);
+    return multi([b5, b6, b7]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp1({target: '#local-target',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
-    return block1([], [b3]);
+    const b2 = text(\`
+ \`);
+    const b8 = comp1({target: '#local-target',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = block3([], [b8]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -854,16 +1164,26 @@ exports[`Portal: Props validation target must be a valid selector 1`] = `
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block2 = createBlock(\`<div>2</div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
+  let block6 = createBlock(\`<div>2</div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return block2();
+    const b5 = text(\`
+ \`);
+    const b6 = block6();
+    const b7 = text(\`
+ \`);
+    return multi([b5, b6, b7]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp1({target: ' ',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
-    return block1([], [b3]);
+    const b2 = text(\`
+ \`);
+    const b8 = comp1({target: ' ',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = block3([], [b8]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -875,16 +1195,26 @@ exports[`Portal: Props validation target must be a valid selector 2 1`] = `
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block2 = createBlock(\`<div>2</div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
+  let block6 = createBlock(\`<div>2</div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return block2();
+    const b5 = text(\`
+ \`);
+    const b6 = block6();
+    const b7 = text(\`
+ \`);
+    return multi([b5, b6, b7]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp1({target: 'aa',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
-    return block1([], [b3]);
+    const b2 = text(\`
+ \`);
+    const b8 = comp1({target: 'aa',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = block3([], [b8]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -897,15 +1227,25 @@ exports[`Portal: UI/UX focus is kept across re-renders 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   const comp2 = app.createComponent(null, false, true, false, false);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    return comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
+    const b5 = text(\`
+ \`);
+    const b6 = comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
+    const b7 = text(\`
+ \`);
+    return multi([b5, b6, b7]);
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp2({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
-    return block1([], [b3]);
+    const b2 = text(\`
+ \`);
+    const b8 = comp2({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
+    const b3 = block3([], [b8]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -915,11 +1255,14 @@ exports[`Portal: UI/UX focus is kept across re-renders 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<input id=\\"target-me\\" block-attribute-0=\\"placeholder\\"/>\`);
+  let block3 = createBlock(\`<input id=\\"target-me\\" block-attribute-0=\\"placeholder\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     let attr1 = ctx['props'].val;
-    return block1([attr1]);
+    const b3 = block3([attr1]);
+    return multi([b2, b3]);
   }
 }"
 `;

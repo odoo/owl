@@ -37,16 +37,27 @@ exports[`basics arrow functions as prop correctly capture their scope 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['items']);;
-    for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`item\`] = v_block1[i1];
+    const [k_block3, v_block3, l_block3, c_block3] = prepareList(ctx['items']);;
+    for (let i1 = 0; i1 < l_block3; i1++) {
+      ctx[\`item\`] = v_block3[i1];
       const key1 = ctx['item'].val;
+      const b5 = text(\`
+ \`);
       const v1 = ctx['onClick'];
       const v2 = ctx['item'];
-      c_block1[i1] = withKey(comp1({onClick: _ev=>v1(v2.val,_ev)}, key + \`__1__\${key1}\`, node, this, null), key1);
+      const b6 = comp1({onClick: _ev=>v1(v2.val,_ev)}, key + \`__1__\${key1}\`, node, this, null);
+      const b7 = text(\`
+ \`);
+      c_block3[i1] = withKey(multi([b5, b6, b7]), key1);
     }
-    return list(c_block1);
+    ctx = ctx.__proto__;
+    const b3 = list(c_block3);
+    const b8 = text(\`
+ \`);
+    return multi([b2, b3, b8]);
   }
 }"
 `;
@@ -153,19 +164,25 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
   let { isBoundary, withDefault, LazyValue } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block2 = createBlock(\`<p>43</p>\`);
+  let block3 = createBlock(\`<div>
+ 
+ <block-child-0/>
+ </div>\`);
+  let block4 = createBlock(\`<p>43</p>\`);
   
   function value1(ctx, node, key = \\"\\") {
-    return block2();
+    return block4();
   }
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
+    const b2 = text(\`
+ \`);
     ctx[\`abc\`] = new LazyValue(value1, ctx, this, node);
-    const b3 = comp1({val: ctx['abc']}, key + \`__1\`, node, this, null);
-    return block1([], [b3]);
+    const b5 = comp1({val: ctx['abc']}, key + \`__1\`, node, this, null);
+    const b3 = block3([], [b5]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -176,12 +193,18 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/><block-child-0/></span>\`);
+  let block3 = createBlock(\`<span>
+ <block-text-0/>
+ <block-child-0/>
+ </span>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     let txt1 = ctx['props'].val;
-    const b2 = safeOutput(ctx['props'].val);
-    return block1([txt1], [b2]);
+    const b4 = safeOutput(ctx['props'].val);
+    const b3 = block3([txt1], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -193,14 +216,20 @@ exports[`basics t-set with a body expression can be used as textual prop 1`] = `
   let { isBoundary, withDefault, setContextValue } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ 
+ <block-child-0/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
+    const b2 = text(\`
+ \`);
     setContextValue(ctx, \\"abc\\", \`42\`);
-    const b2 = comp1({val: ctx['abc']}, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
+    const b4 = comp1({val: ctx['abc']}, key + \`__1\`, node, this, null);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -226,14 +255,20 @@ exports[`basics t-set works  1`] = `
   let { isBoundary, withDefault, setContextValue } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ 
+ <block-child-0/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
+    const b2 = text(\`
+ \`);
     setContextValue(ctx, \\"val\\", 42);
-    const b2 = comp1({val: ctx['val']}, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
+    const b4 = comp1({val: ctx['val']}, key + \`__1\`, node, this, null);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;

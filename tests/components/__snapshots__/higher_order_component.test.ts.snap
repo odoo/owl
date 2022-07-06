@@ -34,14 +34,24 @@ exports[`basics can select a sub widget  1`] = `
   const comp2 = app.createComponent(\`OtherChild\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2,b3,b4,b5,b6,b7,b8;
+    b2 = text(\`
+ \`);
+    b3 = text(\`
+ \`);
     if (ctx['env'].options.flag) {
-      b2 = comp1({}, key + \`__1\`, node, this, null);
+      b4 = comp1({}, key + \`__1\`, node, this, null);
     }
+    b5 = text(\`
+ \`);
     if (!ctx['env'].options.flag) {
-      b3 = comp2({}, key + \`__2\`, node, this, null);
+      b6 = comp2({}, key + \`__2\`, node, this, null);
     }
-    return multi([b2, b3]);
+    b7 = text(\`
+ \`);
+    b8 = text(\`
+ \`);
+    return multi([b2, b3, b4, b5, b6, b7, b8]);
   }
 }"
 `;
@@ -80,14 +90,24 @@ exports[`basics can select a sub widget, part 2 1`] = `
   const comp2 = app.createComponent(\`OtherChild\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2,b3,b4,b5,b6,b7,b8;
+    b2 = text(\`
+ \`);
+    b3 = text(\`
+ \`);
     if (ctx['state'].flag) {
-      b2 = comp1({}, key + \`__1\`, node, this, null);
+      b4 = comp1({}, key + \`__1\`, node, this, null);
     }
+    b5 = text(\`
+ \`);
     if (!ctx['state'].flag) {
-      b3 = comp2({}, key + \`__2\`, node, this, null);
+      b6 = comp2({}, key + \`__2\`, node, this, null);
     }
-    return multi([b2, b3]);
+    b7 = text(\`
+ \`);
+    b8 = text(\`
+ \`);
+    return multi([b2, b3, b4, b5, b6, b7, b8]);
   }
 }"
 `;
@@ -135,12 +155,17 @@ exports[`basics sub widget is interactive 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<span><button block-handler-0=\\"click\\">click</button>child<block-text-1/></span>\`);
+  let block3 = createBlock(\`<span>
+ <button block-handler-0=\\"click\\">click</button>child<block-text-1/>
+ </span>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     let hdlr1 = [ctx['inc'], ctx];
     let txt1 = ctx['state'].val;
-    return block1([hdlr1, txt1]);
+    const b3 = block3([hdlr1, txt1]);
+    return multi([b2, b3]);
   }
 }"
 `;

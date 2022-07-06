@@ -55,7 +55,10 @@ exports[`debugging t-log 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   
-  let block1 = createBlock(\`<div/>\`);
+  let block1 = createBlock(\`<div>
+ 
+ 
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);

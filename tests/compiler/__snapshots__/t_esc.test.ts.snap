@@ -5,15 +5,24 @@ exports[`t-esc div with falsy values 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><p><block-text-0/></p><p><block-text-1/></p><p><block-text-2/></p><p><block-text-3/></p><p><block-text-4/></p></div>\`);
+  let block3 = createBlock(\`<div>
+ <p><block-text-0/></p>
+ <p><block-text-1/></p>
+ <p><block-text-2/></p>
+ <p><block-text-3/></p>
+ <p><block-text-4/></p>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     let txt1 = ctx['v1'];
     let txt2 = ctx['v2'];
     let txt3 = ctx['v3'];
     let txt4 = ctx['v4'];
     let txt5 = ctx['v5'];
-    return block1([txt1, txt2, txt3, txt4, txt5]);
+    const b3 = block3([txt1, txt2, txt3, txt4, txt5]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -82,16 +91,18 @@ exports[`t-esc falsy values in text nodes 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = text(ctx['v1']);
-    const b3 = text(\`:\`);
-    const b4 = text(ctx['v2']);
-    const b5 = text(\`:\`);
-    const b6 = text(ctx['v3']);
-    const b7 = text(\`:\`);
-    const b8 = text(ctx['v4']);
-    const b9 = text(\`:\`);
-    const b10 = text(ctx['v5']);
-    return multi([b2, b3, b4, b5, b6, b7, b8, b9, b10]);
+    const b2 = text(\`
+ \`);
+    const b3 = text(ctx['v1']);
+    const b4 = text(\`:\`);
+    const b5 = text(ctx['v2']);
+    const b6 = text(\`:\`);
+    const b7 = text(ctx['v3']);
+    const b8 = text(\`:\`);
+    const b9 = text(ctx['v4']);
+    const b10 = text(\`:\`);
+    const b11 = text(ctx['v5']);
+    return multi([b2, b3, b4, b5, b6, b7, b8, b9, b10, b11]);
   }
 }"
 `;

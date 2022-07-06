@@ -124,10 +124,15 @@ exports[`style and class handling can set style and class inside component 1`] =
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div style=\\"font-weight:bold;\\" class=\\"some-class\\">world</div>\`);
+  let block3 = createBlock(\`<div style=\\"font-weight:bold;\\" class=\\"some-class\\">world</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    return block1();
+    const b2 = text(\`
+ \`);
+    const b3 = block3();
+    const b4 = text(\`
+ \`);
+    return multi([b2, b3, b4]);
   }
 }"
 `;
@@ -452,11 +457,16 @@ exports[`style and class handling t-att-class is properly added/removed on widge
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({class: {b:ctx['state'].b}}, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
+    const b2 = text(\`
+ \`);
+    const b4 = comp1({class: {b:ctx['state'].b}}, key + \`__1\`, node, this, null);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;

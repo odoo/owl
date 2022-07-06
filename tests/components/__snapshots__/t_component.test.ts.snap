@@ -6,12 +6,17 @@ exports[`t-component can switch between dynamic components without the need for 
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(null, false, false, false, true);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     const Comp1 = ctx['constructor'].components[ctx['state'].child];
-    const b2 = toggler(Comp1, comp1({}, key + \`__1\`, node, this, Comp1));
-    return block1([], [b2]);
+    const b4 = toggler(Comp1, comp1({}, key + \`__1\`, node, this, Comp1));
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -143,13 +148,16 @@ exports[`t-component modifying a sub widget 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><block-text-0/><button block-handler-1=\\"click\\">Inc</button></div>\`);
+  let block3 = createBlock(\`<div><block-text-0/><button block-handler-1=\\"click\\">Inc</button></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     let txt1 = ctx['state'].counter;
     const v1 = ctx['state'];
     let hdlr1 = [()=>v1.counter++, ctx];
-    return block1([txt1, hdlr1]);
+    const b3 = block3([txt1, hdlr1]);
+    return multi([b2, b3]);
   }
 }"
 `;

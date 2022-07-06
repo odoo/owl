@@ -6,18 +6,24 @@ exports[`t-foreach does not pollute the rendering context 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList([1]);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`item\`] = v_block2[i1];
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList([1]);;
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`item\`] = v_block4[i1];
       const key1 = ctx['item'];
-      c_block2[i1] = withKey(text(ctx['item']), key1);
+      c_block4[i1] = withKey(text(ctx['item']), key1);
     }
-    const b2 = list(c_block2);
-    return block1([], [b2]);
+    ctx = ctx.__proto__;
+    const b4 = list(c_block4);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -28,20 +34,26 @@ exports[`t-foreach iterate on items (on a element node) 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<span><block-text-0/></span>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
+  let block5 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList([1,2]);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`item\`] = v_block2[i1];
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList([1,2]);;
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`item\`] = v_block4[i1];
       const key1 = ctx['item'];
       let txt1 = ctx['item'];
-      c_block2[i1] = withKey(block3([txt1]), key1);
+      c_block4[i1] = withKey(block5([txt1]), key1);
     }
-    const b2 = list(c_block2);
-    return block1([], [b2]);
+    ctx = ctx.__proto__;
+    const b4 = list(c_block4);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -52,27 +64,35 @@ exports[`t-foreach iterate on items 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList([3,2,1]);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`item\`] = v_block2[i1];
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList([3,2,1]);;
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`item\`] = v_block4[i1];
       ctx[\`item_index\`] = i1;
-      ctx[\`item_value\`] = k_block2[i1];
+      ctx[\`item_value\`] = k_block4[i1];
       const key1 = ctx['item'];
-      const b4 = text(\` [\`);
-      const b5 = text(ctx['item_index']);
-      const b6 = text(\`: \`);
-      const b7 = text(ctx['item']);
-      const b8 = text(\` \`);
-      const b9 = text(ctx['item_value']);
-      const b10 = text(\`] \`);
-      c_block2[i1] = withKey(multi([b4, b5, b6, b7, b8, b9, b10]), key1);
+      const b6 = text(\`
+ [\`);
+      const b7 = text(ctx['item_index']);
+      const b8 = text(\`: \`);
+      const b9 = text(ctx['item']);
+      const b10 = text(\` \`);
+      const b11 = text(ctx['item_value']);
+      const b12 = text(\`]
+ \`);
+      c_block4[i1] = withKey(multi([b6, b7, b8, b9, b10, b11, b12]), key1);
     }
-    const b2 = list(c_block2);
-    return block1([], [b2]);
+    ctx = ctx.__proto__;
+    const b4 = list(c_block4);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -83,27 +103,35 @@ exports[`t-foreach iterate, dict param 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['value']);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`item\`] = v_block2[i1];
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['value']);;
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`item\`] = v_block4[i1];
       ctx[\`item_index\`] = i1;
-      ctx[\`item_value\`] = k_block2[i1];
+      ctx[\`item_value\`] = k_block4[i1];
       const key1 = ctx['item_index'];
-      const b4 = text(\` [\`);
-      const b5 = text(ctx['item_index']);
-      const b6 = text(\`: \`);
-      const b7 = text(ctx['item']);
-      const b8 = text(\` \`);
-      const b9 = text(ctx['item_value']);
-      const b10 = text(\`] \`);
-      c_block2[i1] = withKey(multi([b4, b5, b6, b7, b8, b9, b10]), key1);
+      const b6 = text(\`
+ [\`);
+      const b7 = text(ctx['item_index']);
+      const b8 = text(\`: \`);
+      const b9 = text(ctx['item']);
+      const b10 = text(\` \`);
+      const b11 = text(ctx['item_value']);
+      const b12 = text(\`]
+ \`);
+      c_block4[i1] = withKey(multi([b6, b7, b8, b9, b10, b11, b12]), key1);
     }
-    const b2 = list(c_block2);
-    return block1([], [b2]);
+    ctx = ctx.__proto__;
+    const b4 = list(c_block4);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -114,32 +142,40 @@ exports[`t-foreach iterate, position 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(Array(5));;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`elem\`] = v_block2[i1];
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList(Array(5));;
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`elem\`] = v_block4[i1];
       ctx[\`elem_first\`] = i1 === 0;
-      ctx[\`elem_last\`] = i1 === v_block2.length - 1;
+      ctx[\`elem_last\`] = i1 === v_block4.length - 1;
       ctx[\`elem_index\`] = i1;
       const key1 = ctx['elem'];
-      let b4,b5,b6,b7,b8,b9;
-      b4 = text(\` -\`);
+      let b6,b7,b8,b9,b10,b11;
+      b6 = text(\`
+ -\`);
       if (ctx['elem_first']) {
-        b5 = text(\` first\`);
+        b7 = text(\` first\`);
       }
       if (ctx['elem_last']) {
-        b6 = text(\` last\`);
+        b8 = text(\` last\`);
       }
-      b7 = text(\` (\`);
-      b8 = text(ctx['elem_index']);
-      b9 = text(\`) \`);
-      c_block2[i1] = withKey(multi([b4, b5, b6, b7, b8, b9]), key1);
+      b9 = text(\` (\`);
+      b10 = text(ctx['elem_index']);
+      b11 = text(\`)
+ \`);
+      c_block4[i1] = withKey(multi([b6, b7, b8, b9, b10, b11]), key1);
     }
-    const b2 = list(c_block2);
-    return block1([], [b2]);
+    ctx = ctx.__proto__;
+    const b4 = list(c_block4);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -150,18 +186,24 @@ exports[`t-foreach simple iteration (in a node) 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList([3,2,1]);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`item\`] = v_block2[i1];
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList([3,2,1]);;
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`item\`] = v_block4[i1];
       const key1 = ctx['item'];
-      c_block2[i1] = withKey(text(ctx['item']), key1);
+      c_block4[i1] = withKey(text(ctx['item']), key1);
     }
-    const b2 = list(c_block2);
-    return block1([], [b2]);
+    ctx = ctx.__proto__;
+    const b4 = list(c_block4);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -191,22 +233,31 @@ exports[`t-foreach simple iteration with two nodes inside 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   
-  let block3 = createBlock(\`<span>a<block-text-0/></span>\`);
-  let block4 = createBlock(\`<span>b<block-text-0/></span>\`);
+  let block6 = createBlock(\`<span>a<block-text-0/></span>\`);
+  let block8 = createBlock(\`<span>b<block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList([3,2,1]);;
-    for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`item\`] = v_block1[i1];
+    const [k_block3, v_block3, l_block3, c_block3] = prepareList([3,2,1]);;
+    for (let i1 = 0; i1 < l_block3; i1++) {
+      ctx[\`item\`] = v_block3[i1];
       const key1 = ctx['item'];
+      const b5 = text(\`
+ \`);
       let txt1 = ctx['item'];
-      const b3 = block3([txt1]);
+      const b6 = block6([txt1]);
+      const b7 = text(\`
+ \`);
       let txt2 = ctx['item'];
-      const b4 = block4([txt2]);
-      c_block1[i1] = withKey(multi([b3, b4]), key1);
+      const b8 = block8([txt2]);
+      const b9 = text(\`
+ \`);
+      c_block3[i1] = withKey(multi([b5, b6, b7, b8, b9]), key1);
     }
-    return list(c_block1);
+    const b3 = list(c_block3);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -215,51 +266,74 @@ exports[`t-foreach t-call with body in t-foreach in t-foreach 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, isBoundary, withDefault, setContextValue, withKey } = helpers;
+  let { prepareList, isBoundary, withDefault, setContextValue, zero, withKey } = helpers;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
-  let block1 = createBlock(\`<div><block-child-0/><span>[<block-text-0/>][<block-text-1/>][<block-text-2/>]</span></div>\`);
-  let block6 = createBlock(\`<span><block-text-0/></span>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ <span>[<block-text-0/>][<block-text-1/>][<block-text-2/>]</span>
+ </div>\`);
+  let block16 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['numbers']);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`a\`] = v_block2[i1];
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['numbers']);;
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`a\`] = v_block4[i1];
       ctx[\`a_first\`] = i1 === 0;
-      ctx[\`a_last\`] = i1 === v_block2.length - 1;
+      ctx[\`a_last\`] = i1 === v_block4.length - 1;
       ctx[\`a_index\`] = i1;
-      ctx[\`a_value\`] = k_block2[i1];
+      ctx[\`a_value\`] = k_block4[i1];
       const key1 = ctx['a'];
+      const b6 = text(\`
+ \`);
       ctx = Object.create(ctx);
-      const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['letters']);;
-      for (let i2 = 0; i2 < l_block4; i2++) {
-        ctx[\`b\`] = v_block4[i2];
+      const [k_block7, v_block7, l_block7, c_block7] = prepareList(ctx['letters']);;
+      for (let i2 = 0; i2 < l_block7; i2++) {
+        ctx[\`b\`] = v_block7[i2];
         ctx[\`b_first\`] = i2 === 0;
-        ctx[\`b_last\`] = i2 === v_block4.length - 1;
+        ctx[\`b_last\`] = i2 === v_block7.length - 1;
         ctx[\`b_index\`] = i2;
-        ctx[\`b_value\`] = k_block4[i2];
+        ctx[\`b_value\`] = k_block7[i2];
         const key2 = ctx['b'];
+        const b9 = text(\`
+ \`);
         ctx = Object.create(ctx);
         ctx[isBoundary] = 1;
+        const b11 = text(\`
+ \`);
         setContextValue(ctx, \\"c\\", 'x'+'_'+ctx['a']+'_'+ctx['b']);
-        c_block4[i2] = withKey(callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}__\${key2}\`), key2);
+        const b12 = text(\`
+ \`);
+        const b10 = multi([b11, b12]);
+        ctx[zero] = b10;
+        const b13 = callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}__\${key2}\`);
         ctx = ctx.__proto__;
+        const b14 = text(\`
+ \`);
+        c_block7[i2] = withKey(multi([b9, b13, b14]), key2);
       }
       ctx = ctx.__proto__;
-      const b4 = list(c_block4);
+      const b7 = list(c_block7);
+      const b15 = text(\`
+ \`);
       let txt1 = ctx['c'];
-      const b6 = block6([txt1]);
-      c_block2[i1] = withKey(multi([b4, b6]), key1);
+      const b16 = block16([txt1]);
+      const b17 = text(\`
+ \`);
+      c_block4[i1] = withKey(multi([b6, b7, b15, b16, b17]), key1);
     }
     ctx = ctx.__proto__;
-    const b2 = list(c_block2);
+    const b4 = list(c_block4);
     let txt2 = ctx['a'];
     let txt3 = ctx['b'];
     let txt4 = ctx['c'];
-    return block1([txt2, txt3, txt4], [b2]);
+    const b3 = block3([txt2, txt3, txt4], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -270,14 +344,20 @@ exports[`t-foreach t-call with body in t-foreach in t-foreach 2`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = text(\` [\`);
-    const b3 = text(ctx['a']);
-    const b4 = text(\`] [\`);
-    const b5 = text(ctx['b']);
-    const b6 = text(\`] [\`);
-    const b7 = text(ctx['c']);
-    const b8 = text(\`] \`);
-    return multi([b2, b3, b4, b5, b6, b7, b8]);
+    const b2 = text(\`
+ \`);
+    const b3 = text(\`
+ [\`);
+    const b4 = text(ctx['a']);
+    const b5 = text(\`]
+ [\`);
+    const b6 = text(ctx['b']);
+    const b7 = text(\`]
+ [\`);
+    const b8 = text(ctx['c']);
+    const b9 = text(\`]
+ \`);
+    return multi([b2, b3, b4, b5, b6, b7, b8, b9]);
   }
 }"
 `;
@@ -289,42 +369,59 @@ exports[`t-foreach t-call without body in t-foreach in t-foreach 1`] = `
   let { prepareList, withKey } = helpers;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
-  let block1 = createBlock(\`<div><block-child-0/><span>[<block-text-0/>][<block-text-1/>][<block-text-2/>]</span></div>\`);
-  let block6 = createBlock(\`<span><block-text-0/></span>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ <span>[<block-text-0/>][<block-text-1/>][<block-text-2/>]</span>
+ </div>\`);
+  let block13 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['numbers']);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`a\`] = v_block2[i1];
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['numbers']);;
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`a\`] = v_block4[i1];
       ctx[\`a_first\`] = i1 === 0;
-      ctx[\`a_last\`] = i1 === v_block2.length - 1;
+      ctx[\`a_last\`] = i1 === v_block4.length - 1;
       ctx[\`a_index\`] = i1;
-      ctx[\`a_value\`] = k_block2[i1];
+      ctx[\`a_value\`] = k_block4[i1];
       const key1 = ctx['a'];
+      const b6 = text(\`
+ \`);
       ctx = Object.create(ctx);
-      const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['letters']);;
-      for (let i2 = 0; i2 < l_block4; i2++) {
-        ctx[\`b\`] = v_block4[i2];
+      const [k_block7, v_block7, l_block7, c_block7] = prepareList(ctx['letters']);;
+      for (let i2 = 0; i2 < l_block7; i2++) {
+        ctx[\`b\`] = v_block7[i2];
         ctx[\`b_first\`] = i2 === 0;
-        ctx[\`b_last\`] = i2 === v_block4.length - 1;
+        ctx[\`b_last\`] = i2 === v_block7.length - 1;
         ctx[\`b_index\`] = i2;
-        ctx[\`b_value\`] = k_block4[i2];
+        ctx[\`b_value\`] = k_block7[i2];
         const key2 = ctx['b'];
-        c_block4[i2] = withKey(callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}__\${key2}\`), key2);
+        const b9 = text(\`
+ \`);
+        const b10 = callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}__\${key2}\`);
+        const b11 = text(\`
+ \`);
+        c_block7[i2] = withKey(multi([b9, b10, b11]), key2);
       }
       ctx = ctx.__proto__;
-      const b4 = list(c_block4);
+      const b7 = list(c_block7);
+      const b12 = text(\`
+ \`);
       let txt1 = ctx['c'];
-      const b6 = block6([txt1]);
-      c_block2[i1] = withKey(multi([b4, b6]), key1);
+      const b13 = block13([txt1]);
+      const b14 = text(\`
+ \`);
+      c_block4[i1] = withKey(multi([b6, b7, b12, b13, b14]), key1);
     }
     ctx = ctx.__proto__;
-    const b2 = list(c_block2);
+    const b4 = list(c_block4);
     let txt2 = ctx['a'];
     let txt3 = ctx['b'];
     let txt4 = ctx['c'];
-    return block1([txt2, txt3, txt4], [b2]);
+    const b3 = block3([txt2, txt3, txt4], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -338,15 +435,23 @@ exports[`t-foreach t-call without body in t-foreach in t-foreach 2`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
+    const b2 = text(\`
+ \`);
+    const b3 = text(\`
+ \`);
     setContextValue(ctx, \\"c\\", 'x'+'_'+ctx['a']+'_'+ctx['b']);
-    const b2 = text(\` [\`);
-    const b3 = text(ctx['a']);
-    const b4 = text(\`] [\`);
-    const b5 = text(ctx['b']);
-    const b6 = text(\`] [\`);
-    const b7 = text(ctx['c']);
-    const b8 = text(\`] \`);
-    return multi([b2, b3, b4, b5, b6, b7, b8]);
+    const b4 = text(\`
+ [\`);
+    const b5 = text(ctx['a']);
+    const b6 = text(\`]
+ [\`);
+    const b7 = text(ctx['b']);
+    const b8 = text(\`]
+ [\`);
+    const b9 = text(ctx['c']);
+    const b10 = text(\`]
+ \`);
+    return multi([b2, b3, b4, b5, b6, b7, b8, b9, b10]);
   }
 }"
 `;
@@ -357,30 +462,43 @@ exports[`t-foreach t-foreach in t-foreach 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['numbers']);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`number\`] = v_block2[i1];
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['numbers']);;
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`number\`] = v_block4[i1];
       const key1 = ctx['number'];
+      const b6 = text(\`
+ \`);
       ctx = Object.create(ctx);
-      const [k_block3, v_block3, l_block3, c_block3] = prepareList(ctx['letters']);;
-      for (let i2 = 0; i2 < l_block3; i2++) {
-        ctx[\`letter\`] = v_block3[i2];
+      const [k_block7, v_block7, l_block7, c_block7] = prepareList(ctx['letters']);;
+      for (let i2 = 0; i2 < l_block7; i2++) {
+        ctx[\`letter\`] = v_block7[i2];
         const key2 = ctx['letter'];
-        const b5 = text(\` [\`);
-        const b6 = text(ctx['number']);
-        const b7 = text(ctx['letter']);
-        const b8 = text(\`] \`);
-        c_block3[i2] = withKey(multi([b5, b6, b7, b8]), key2);
+        const b9 = text(\`
+ [\`);
+        const b10 = text(ctx['number']);
+        const b11 = text(ctx['letter']);
+        const b12 = text(\`]
+ \`);
+        c_block7[i2] = withKey(multi([b9, b10, b11, b12]), key2);
       }
       ctx = ctx.__proto__;
-      c_block2[i1] = withKey(list(c_block3), key1);
+      const b7 = list(c_block7);
+      const b13 = text(\`
+ \`);
+      c_block4[i1] = withKey(multi([b6, b7, b13]), key1);
     }
-    const b2 = list(c_block2);
-    return block1([], [b2]);
+    ctx = ctx.__proto__;
+    const b4 = list(c_block4);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -391,22 +509,29 @@ exports[`t-foreach t-foreach with t-if inside (no external node) 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   
-  let block3 = createBlock(\`<span><block-text-0/></span>\`);
+  let block6 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['elems']);;
-    for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`elem\`] = v_block1[i1];
+    const [k_block3, v_block3, l_block3, c_block3] = prepareList(ctx['elems']);;
+    for (let i1 = 0; i1 < l_block3; i1++) {
+      ctx[\`elem\`] = v_block3[i1];
       const key1 = ctx['elem'].id;
-      let b3;
+      let b5,b6,b7;
+      b5 = text(\`
+ \`);
       if (ctx['elem'].id<3) {
         let txt1 = ctx['elem'].text;
-        b3 = block3([txt1]);
+        b6 = block6([txt1]);
       }
-      c_block1[i1] = withKey(multi([b3]), key1);
+      b7 = text(\`
+ \`);
+      c_block3[i1] = withKey(multi([b5, b6, b7]), key1);
     }
-    return list(c_block1);
+    const b3 = list(c_block3);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -417,24 +542,34 @@ exports[`t-foreach t-foreach with t-if inside 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block4 = createBlock(\`<span><block-text-0/></span>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
+  let block7 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['elems']);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`elem\`] = v_block2[i1];
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['elems']);;
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`elem\`] = v_block4[i1];
       const key1 = ctx['elem'].id;
-      let b4;
+      let b6,b7,b8;
+      b6 = text(\`
+ \`);
       if (ctx['elem'].id<3) {
         let txt1 = ctx['elem'].text;
-        b4 = block4([txt1]);
+        b7 = block7([txt1]);
       }
-      c_block2[i1] = withKey(multi([b4]), key1);
+      b8 = text(\`
+ \`);
+      c_block4[i1] = withKey(multi([b6, b7, b8]), key1);
     }
-    const b2 = list(c_block2);
-    return block1([], [b2]);
+    ctx = ctx.__proto__;
+    const b4 = list(c_block4);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -445,19 +580,30 @@ exports[`t-foreach t-key on t-foreach 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<span/>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
+  let block7 = createBlock(\`<span/>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['things']);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`thing\`] = v_block2[i1];
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['things']);;
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`thing\`] = v_block4[i1];
       const key1 = ctx['thing'];
-      c_block2[i1] = withKey(block3(), key1);
+      const b6 = text(\`
+ \`);
+      const b7 = block7();
+      const b8 = text(\`
+ \`);
+      c_block4[i1] = withKey(multi([b6, b7, b8]), key1);
     }
-    const b2 = list(c_block2);
-    return block1([], [b2]);
+    ctx = ctx.__proto__;
+    const b4 = list(c_block4);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -493,33 +639,42 @@ exports[`t-foreach with t-memo 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<p><block-text-0/><block-text-1/></p>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
+  let block5 = createBlock(\`<p>
+ <block-text-0/>
+ <block-text-1/>
+ </p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let cache = ctx.cache || {};
     let nextCache = ctx.cache = {};
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['items']);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`item\`] = v_block2[i1];
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['items']);;
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`item\`] = v_block4[i1];
       const key1 = ctx['item'].id;
       const memo1 = [ctx['item'].x];
       const vnode1 = cache[key1];;
       if (vnode1) {
         if (shallowEqual(vnode1.memo, memo1)) {
-          c_block2[i1] = vnode1;
+          c_block4[i1] = vnode1;
           nextCache[key1] = vnode1;
           continue;
         }
       }
       let txt1 = ctx['item'].x;
       let txt2 = ctx['item'].y;
-      c_block2[i1] = withKey(block3([txt1, txt2]), key1);
-      nextCache[key1] = Object.assign(c_block2[i1], {memo: memo1});
+      c_block4[i1] = withKey(block5([txt1, txt2]), key1);
+      nextCache[key1] = Object.assign(c_block4[i1], {memo: memo1});
     }
-    const b2 = list(c_block2);
-    return block1([], [b2]);
+    ctx = ctx.__proto__;
+    const b4 = list(c_block4);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;

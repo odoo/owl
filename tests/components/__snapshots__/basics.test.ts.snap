@@ -130,13 +130,16 @@ exports[`basics can be clicked on and updated 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><block-text-0/><button block-handler-1=\\"click\\">Inc</button></div>\`);
+  let block3 = createBlock(\`<div><block-text-0/><button block-handler-1=\\"click\\">Inc</button></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     let txt1 = ctx['state'].counter;
     const v1 = ctx['state'];
     let hdlr1 = [()=>v1.counter++, ctx];
-    return block1([txt1, hdlr1]);
+    const b3 = block3([txt1, hdlr1]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -485,21 +488,30 @@ exports[`basics list of two sub components inside other nodes 1`] = `
   const comp1 = app.createComponent(\`SubWidget\`, true, false, false, true);
   const comp2 = app.createComponent(\`SubWidget\`, true, false, false, true);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
+  let block5 = createBlock(\`<div>
+ <block-child-0/>
+ <block-child-1/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].blips);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`blip\`] = v_block2[i1];
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['state'].blips);;
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`blip\`] = v_block4[i1];
       const key1 = ctx['blip'].id;
-      const b4 = comp1({}, key + \`__1__\${key1}\`, node, this, null);
-      const b5 = comp2({}, key + \`__2__\${key1}\`, node, this, null);
-      c_block2[i1] = withKey(block3([], [b4, b5]), key1);
+      const b6 = comp1({}, key + \`__1__\${key1}\`, node, this, null);
+      const b7 = comp2({}, key + \`__2__\${key1}\`, node, this, null);
+      c_block4[i1] = withKey(block5([], [b6, b7]), key1);
     }
-    const b2 = list(c_block2);
-    return block1([], [b2]);
+    ctx = ctx.__proto__;
+    const b4 = list(c_block4);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -600,13 +612,21 @@ exports[`basics reconciliation alg is not confused in some specific situation 1`
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   const comp2 = app.createComponent(\`Child\`, true, false, false, true);
   
-  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ <block-child-1/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({}, key + \`__1\`, node, this, null);
+    const b2 = text(\`
+ \`);
+    const b4 = comp1({}, key + \`__1\`, node, this, null);
     const tKey_1 = 4;
-    const b3 = toggler(tKey_1, comp2({}, tKey_1 + key + \`__2\`, node, this, null));
-    return block1([], [b2, b3]);
+    const b5 = toggler(tKey_1, comp2({}, tKey_1 + key + \`__2\`, node, this, null));
+    const b3 = block3([], [b4, b5]);
+    const b6 = text(\`
+ \`);
+    return multi([b2, b3, b6]);
   }
 }"
 `;
@@ -641,13 +661,16 @@ exports[`basics rerendering a widget with a sub widget 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><block-text-0/><button block-handler-1=\\"click\\">Inc</button></div>\`);
+  let block3 = createBlock(\`<div><block-text-0/><button block-handler-1=\\"click\\">Inc</button></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     let txt1 = ctx['state'].counter;
     const v1 = ctx['state'];
     let hdlr1 = [()=>v1.counter++, ctx];
-    return block1([txt1, hdlr1]);
+    const b3 = block3([txt1, hdlr1]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -659,14 +682,20 @@ exports[`basics same t-keys in two different places 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   const comp2 = app.createComponent(\`Child\`, true, false, false, false);
   
-  let block1 = createBlock(\`<div><div><block-child-0/></div><div><block-child-1/></div></div>\`);
+  let block3 = createBlock(\`<div>
+ <div><block-child-0/></div>
+ <div><block-child-1/></div>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     const tKey_1 = 1;
-    const b2 = toggler(tKey_1, comp1({blip: '1'}, tKey_1 + key + \`__1\`, node, this, null));
+    const b4 = toggler(tKey_1, comp1({blip: '1'}, tKey_1 + key + \`__1\`, node, this, null));
     const tKey_2 = 1;
-    const b3 = toggler(tKey_2, comp2({blip: '2'}, tKey_2 + key + \`__2\`, node, this, null));
-    return block1([], [b2, b3]);
+    const b5 = toggler(tKey_2, comp2({blip: '2'}, tKey_2 + key + \`__2\`, node, this, null));
+    const b3 = block3([], [b4, b5]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -732,23 +761,30 @@ exports[`basics sub components between t-ifs 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
-  let block1 = createBlock(\`<div><block-child-0/><block-child-1/><span><block-child-2/></span><block-child-3/></div>\`);
-  let block2 = createBlock(\`<h1>hey</h1>\`);
-  let block3 = createBlock(\`<h2>noo</h2>\`);
-  let block5 = createBlock(\`<span>test</span>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/><block-child-1/>
+ <span><block-child-2/></span>
+ <block-child-3/>
+ </div>\`);
+  let block4 = createBlock(\`<h1>hey</h1>\`);
+  let block5 = createBlock(\`<h2>noo</h2>\`);
+  let block7 = createBlock(\`<span>test</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3,b4,b5;
+    const b2 = text(\`
+ \`);
+    let b4,b5,b6,b7;
     if (ctx['state'].flag) {
-      b2 = block2();
+      b4 = block4();
     } else {
-      b3 = block3();
-    }
-    b4 = comp1({}, key + \`__1\`, node, this, null);
-    if (ctx['state'].flag) {
       b5 = block5();
     }
-    return block1([], [b2, b3, b4, b5]);
+    b6 = comp1({}, key + \`__1\`, node, this, null);
+    if (ctx['state'].flag) {
+      b7 = block7();
+    }
+    const b3 = block3([], [b4, b5, b6, b7]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -772,17 +808,22 @@ exports[`basics t-elif works with t-component 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
-  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
-  let block2 = createBlock(\`<div>somediv</div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/><block-child-1/>
+ </div>\`);
+  let block4 = createBlock(\`<div>somediv</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    const b2 = text(\`
+ \`);
+    let b4,b5;
     if (ctx['state'].flag) {
-      b2 = block2();
+      b4 = block4();
     } else if (!ctx['state'].flag) {
-      b3 = comp1({}, key + \`__1\`, node, this, null);
+      b5 = comp1({}, key + \`__1\`, node, this, null);
     }
-    return block1([], [b2, b3]);
+    const b3 = block3([], [b4, b5]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -806,17 +847,22 @@ exports[`basics t-else with empty string works with t-component 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
-  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
-  let block2 = createBlock(\`<div>somediv</div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/><block-child-1/>
+ </div>\`);
+  let block4 = createBlock(\`<div>somediv</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    const b2 = text(\`
+ \`);
+    let b4,b5;
     if (ctx['state'].flag) {
-      b2 = block2();
+      b4 = block4();
     } else {
-      b3 = comp1({}, key + \`__1\`, node, this, null);
+      b5 = comp1({}, key + \`__1\`, node, this, null);
     }
-    return block1([], [b2, b3]);
+    const b3 = block3([], [b4, b5]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -840,17 +886,22 @@ exports[`basics t-else works with t-component 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
-  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
-  let block2 = createBlock(\`<div>somediv</div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/><block-child-1/>
+ </div>\`);
+  let block4 = createBlock(\`<div>somediv</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    const b2 = text(\`
+ \`);
+    let b4,b5;
     if (ctx['state'].flag) {
-      b2 = block2();
+      b4 = block4();
     } else {
-      b3 = comp1({}, key + \`__1\`, node, this, null);
+      b5 = comp1({}, key + \`__1\`, node, this, null);
     }
-    return block1([], [b2, b3]);
+    const b3 = block3([], [b4, b5]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -906,16 +957,22 @@ exports[`basics t-key on a component with t-if, and a sibling component 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   const comp2 = app.createComponent(\`Child\`, true, false, false, true);
   
-  let block1 = createBlock(\`<div><block-child-0/><block-child-0/><block-child-1/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/><block-child-0/>
+ <block-child-1/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    const b2 = text(\`
+ \`);
+    let b4,b5;
     if (false) {
       const tKey_1 = 'str';
-      b2 = toggler(tKey_1, comp1({}, tKey_1 + key + \`__1\`, node, this, null));
+      b4 = toggler(tKey_1, comp1({}, tKey_1 + key + \`__1\`, node, this, null));
     }
-    b3 = comp2({}, key + \`__2\`, node, this, null);
-    return block1([], [b2, b3]);
+    b5 = comp2({}, key + \`__2\`, node, this, null);
+    const b3 = block3([], [b4, b5]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -939,15 +996,21 @@ exports[`basics text after a conditional component 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
-  let block1 = createBlock(\`<div><block-child-0/><span><block-text-0/></span></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ <span><block-text-0/></span>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2;
+    const b2 = text(\`
+ \`);
+    let b4;
     if (ctx['state'].hasChild) {
-      b2 = comp1({}, key + \`__1\`, node, this, null);
+      b4 = comp1({}, key + \`__1\`, node, this, null);
     }
     let txt1 = ctx['state'].text;
-    return block1([txt1], [b2]);
+    const b3 = block3([txt1], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -1036,12 +1099,17 @@ exports[`basics update props of component without concrete own node 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, true, false);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     const tKey_1 = ctx['childProps'].key;
-    const b2 = toggler(tKey_1, comp1(Object.assign({}, ctx['childProps']), tKey_1 + key + \`__1\`, node, this, null));
-    return block1([], [b2]);
+    const b4 = toggler(tKey_1, comp1(Object.assign({}, ctx['childProps']), tKey_1 + key + \`__1\`, node, this, null));
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -1053,8 +1121,11 @@ exports[`basics update props of component without concrete own node 2`] = `
   const comp1 = app.createComponent(\`Custom\`, true, false, false, false);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     const tKey_1 = ctx['props'].subKey;
-    return toggler(tKey_1, comp1({key: ctx['props'].key,subKey: ctx['props'].subKey}, tKey_1 + key + \`__1\`, node, this, null));
+    const b3 = toggler(tKey_1, comp1({key: ctx['props'].key,subKey: ctx['props'].subKey}, tKey_1 + key + \`__1\`, node, this, null));
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -1064,12 +1135,17 @@ exports[`basics update props of component without concrete own node 3`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div class=\\"widget-subkey\\"><block-text-0/>__<block-text-1/></div>\`);
+  let block3 = createBlock(\`<div class=\\"widget-subkey\\">
+ <block-text-0/>__<block-text-1/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     let txt1 = ctx['props'].key;
     let txt2 = ctx['props'].subKey;
-    return block1([txt1, txt2]);
+    const b3 = block3([txt1, txt2]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -1081,14 +1157,22 @@ exports[`basics updating a component with t-foreach as root 1`] = `
   let { prepareList, withKey } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['items']);;
-    for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`item\`] = v_block1[i1];
+    const [k_block3, v_block3, l_block3, c_block3] = prepareList(ctx['items']);;
+    for (let i1 = 0; i1 < l_block3; i1++) {
+      ctx[\`item\`] = v_block3[i1];
       const key1 = ctx['item'];
-      c_block1[i1] = withKey(text(ctx['item']), key1);
+      const b5 = text(\`
+ \`);
+      const b6 = text(ctx['item']);
+      const b7 = text(\`
+ \`);
+      c_block3[i1] = withKey(multi([b5, b6, b7]), key1);
     }
-    return list(c_block1);
+    const b3 = list(c_block3);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -1248,11 +1332,16 @@ exports[`support svg components add proper namespace to svg 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`GComp\`, true, false, false, true);
   
-  let block1 = createBlock(\`<svg block-ns=\\"http://www.w3.org/2000/svg\\"><block-child-0/></svg>\`);
+  let block3 = createBlock(\`<svg block-ns=\\"http://www.w3.org/2000/svg\\">
+ <block-child-0/>
+ </svg>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = comp1({}, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
+    const b2 = text(\`
+ \`);
+    const b4 = comp1({}, key + \`__1\`, node, this, null);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -1262,10 +1351,15 @@ exports[`support svg components add proper namespace to svg 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<g block-ns=\\"http://www.w3.org/2000/svg\\"><circle cx=\\"50\\" cy=\\"50\\" r=\\"4\\" stroke=\\"green\\" stroke-width=\\"1\\" fill=\\"yellow\\"/></g>\`);
+  let block3 = createBlock(\`<g block-ns=\\"http://www.w3.org/2000/svg\\">
+ <circle cx=\\"50\\" cy=\\"50\\" r=\\"4\\" stroke=\\"green\\" stroke-width=\\"1\\" fill=\\"yellow\\"/>
+ </g>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    return block1();
+    const b2 = text(\`
+ \`);
+    const b3 = block3();
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -1276,20 +1370,32 @@ exports[`t-out in components can render list of t-out  1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, safeOutput, withKey } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].items);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`item\`] = v_block2[i1];
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['state'].items);;
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`item\`] = v_block4[i1];
       const key1 = ctx['item'];
-      const b4 = text(ctx['item']);
-      const b5 = safeOutput(ctx['item']);
-      c_block2[i1] = withKey(multi([b4, b5]), key1);
+      const b6 = text(\`
+ \`);
+      const b7 = text(ctx['item']);
+      const b8 = text(\`
+ \`);
+      const b9 = safeOutput(ctx['item']);
+      const b10 = text(\`
+ \`);
+      c_block4[i1] = withKey(multi([b6, b7, b8, b9, b10]), key1);
     }
-    const b2 = list(c_block2);
-    return block1([], [b2]);
+    ctx = ctx.__proto__;
+    const b4 = list(c_block4);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -1301,9 +1407,15 @@ exports[`t-out in components can switch the contents of two t-out repeatedly 1`]
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = safeOutput(ctx['state'].a);
-    const b3 = safeOutput(ctx['state'].b);
-    return multi([b2, b3]);
+    const b2 = text(\`
+ \`);
+    const b3 = safeOutput(ctx['state'].a);
+    const b4 = text(\`
+ \`);
+    const b5 = safeOutput(ctx['state'].b);
+    const b6 = text(\`
+ \`);
+    return multi([b2, b3, b4, b5, b6]);
   }
 }"
 `;

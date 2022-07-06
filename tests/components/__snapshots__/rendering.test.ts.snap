@@ -7,9 +7,15 @@ exports[`children, default props and renderings 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = text(ctx['state'].value);
-    const b3 = comp1({}, key + \`__1\`, node, this, null);
-    return multi([b2, b3]);
+    const b2 = text(\`
+ \`);
+    const b3 = text(ctx['state'].value);
+    const b4 = text(\`
+ \`);
+    const b5 = comp1({}, key + \`__1\`, node, this, null);
+    const b6 = text(\`
+ \`);
+    return multi([b2, b3, b4, b5, b6]);
   }
 }"
 `;
@@ -69,9 +75,15 @@ exports[`rendering semantics can force a render to update sub tree 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = text(ctx['state'].value);
-    const b3 = comp1({}, key + \`__1\`, node, this, null);
-    return multi([b2, b3]);
+    const b2 = text(\`
+ \`);
+    const b3 = text(ctx['state'].value);
+    const b4 = text(\`
+ \`);
+    const b5 = comp1({}, key + \`__1\`, node, this, null);
+    const b6 = text(\`
+ \`);
+    return multi([b2, b3, b4, b5, b6]);
   }
 }"
 `;
@@ -94,9 +106,15 @@ exports[`rendering semantics can render a parent without rendering child 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = text(ctx['state'].value);
-    const b3 = comp1({}, key + \`__1\`, node, this, null);
-    return multi([b2, b3]);
+    const b2 = text(\`
+ \`);
+    const b3 = text(ctx['state'].value);
+    const b4 = text(\`
+ \`);
+    const b5 = comp1({}, key + \`__1\`, node, this, null);
+    const b6 = text(\`
+ \`);
+    return multi([b2, b3, b4, b5, b6]);
   }
 }"
 `;
@@ -119,7 +137,12 @@ exports[`rendering semantics props are reactive (nested prop) 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({a: ctx['state']}, key + \`__1\`, node, this, null);
+    const b2 = text(\`
+ \`);
+    const b3 = comp1({a: ctx['state']}, key + \`__1\`, node, this, null);
+    const b4 = text(\`
+ \`);
+    return multi([b2, b3, b4]);
   }
 }"
 `;
@@ -142,7 +165,12 @@ exports[`rendering semantics props are reactive 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({a: ctx['state']}, key + \`__1\`, node, this, null);
+    const b2 = text(\`
+ \`);
+    const b3 = comp1({a: ctx['state']}, key + \`__1\`, node, this, null);
+    const b4 = text(\`
+ \`);
+    return multi([b2, b3, b4]);
   }
 }"
 `;
@@ -165,9 +193,15 @@ exports[`rendering semantics render need a boolean = true to be 'deep' 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = text(ctx['state'].value);
-    const b3 = comp1({}, key + \`__1\`, node, this, null);
-    return multi([b2, b3]);
+    const b2 = text(\`
+ \`);
+    const b3 = text(ctx['state'].value);
+    const b4 = text(\`
+ \`);
+    const b5 = comp1({}, key + \`__1\`, node, this, null);
+    const b6 = text(\`
+ \`);
+    return multi([b2, b3, b4, b5, b6]);
   }
 }"
 `;
@@ -255,7 +289,12 @@ exports[`rendering semantics works as expected for dynamic number of props 1`] =
   const comp1 = app.createComponent(\`Child\`, true, false, true, false);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1(Object.assign({}, ctx['state']), key + \`__1\`, node, this, null);
+    const b2 = text(\`
+ \`);
+    const b3 = comp1(Object.assign({}, ctx['state']), key + \`__1\`, node, this, null);
+    const b4 = text(\`
+ \`);
+    return multi([b2, b3, b4]);
   }
 }"
 `;

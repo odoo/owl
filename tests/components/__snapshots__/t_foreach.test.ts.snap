@@ -7,20 +7,35 @@ exports[`list of components components in a node in a t-foreach  1`] = `
   let { prepareList, withKey } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
-  let block1 = createBlock(\`<div><ul><block-child-0/></ul></div>\`);
-  let block3 = createBlock(\`<li><block-child-0/></li>\`);
+  let block3 = createBlock(\`<div>
+ <ul>
+ <block-child-0/>
+ </ul>
+ </div>\`);
+  let block7 = createBlock(\`<li>
+ <block-child-0/>
+ </li>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['items']);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`item\`] = v_block2[i1];
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['items']);;
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`item\`] = v_block4[i1];
       const key1 = 'li_'+ctx['item'];
-      const b4 = comp1({item: ctx['item']}, key + \`__1__\${key1}\`, node, this, null);
-      c_block2[i1] = withKey(block3([], [b4]), key1);
+      const b6 = text(\`
+ \`);
+      const b8 = comp1({item: ctx['item']}, key + \`__1__\${key1}\`, node, this, null);
+      const b7 = block7([], [b8]);
+      const b9 = text(\`
+ \`);
+      c_block4[i1] = withKey(multi([b6, b7, b9]), key1);
     }
-    const b2 = list(c_block2);
-    return block1([], [b2]);
+    ctx = ctx.__proto__;
+    const b4 = list(c_block4);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -47,19 +62,30 @@ exports[`list of components crash on duplicate key in dev mode 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList([1,2]);;
-    const keys1 = new Set();
-    for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`item\`] = v_block1[i1];
+    const [k_block3, v_block3, l_block3, c_block3] = prepareList([1,2]);;
+    const keys3 = new Set();
+    for (let i1 = 0; i1 < l_block3; i1++) {
+      ctx[\`item\`] = v_block3[i1];
       const key1 = 'child';
-      if (keys1.has(key1)) { throw new Error(\`Got duplicate key in t-foreach: \${key1}\`)}
-      keys1.add(key1);
+      if (keys3.has(key1)) { throw new Error(\`Got duplicate key in t-foreach: \${key1}\`)}
+      keys3.add(key1);
+      const b5 = text(\`
+ \`);
       const props1 = {};
       helpers.validateProps(\`Child\`, props1, ctx);
-      c_block1[i1] = withKey(comp1(props1, key + \`__1__\${key1}\`, node, this, null), key1);
+      const b6 = comp1(props1, key + \`__1__\${key1}\`, node, this, null);
+      const b7 = text(\`
+ \`);
+      c_block3[i1] = withKey(multi([b5, b6, b7]), key1);
     }
-    return list(c_block1);
+    ctx = ctx.__proto__;
+    const b3 = list(c_block3);
+    const b8 = text(\`
+ \`);
+    return multi([b2, b3, b8]);
   }
 }"
 `;
@@ -82,20 +108,28 @@ exports[`list of components list of sub components inside other nodes 1`] = `
   let { prepareList, withKey } = helpers;
   const comp1 = app.createComponent(\`SubComponent\`, true, false, false, true);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
+  let block5 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].blips);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`blip\`] = v_block2[i1];
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['state'].blips);;
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`blip\`] = v_block4[i1];
       const key1 = ctx['blip'].id;
-      const b4 = comp1({}, key + \`__1__\${key1}\`, node, this, null);
-      c_block2[i1] = withKey(block3([], [b4]), key1);
+      const b6 = comp1({}, key + \`__1__\${key1}\`, node, this, null);
+      c_block4[i1] = withKey(block5([], [b6]), key1);
     }
-    const b2 = list(c_block2);
-    return block1([], [b2]);
+    ctx = ctx.__proto__;
+    const b4 = list(c_block4);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -120,28 +154,44 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
   let { prepareList, withKey } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].s);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`section\`] = v_block2[i1];
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['state'].s);;
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`section\`] = v_block4[i1];
       ctx[\`section_index\`] = i1;
       const key1 = ctx['section_index'];
+      const b6 = text(\`
+ \`);
       ctx = Object.create(ctx);
-      const [k_block3, v_block3, l_block3, c_block3] = prepareList(ctx['section'].blips);;
-      for (let i2 = 0; i2 < l_block3; i2++) {
-        ctx[\`blip\`] = v_block3[i2];
+      const [k_block7, v_block7, l_block7, c_block7] = prepareList(ctx['section'].blips);;
+      for (let i2 = 0; i2 < l_block7; i2++) {
+        ctx[\`blip\`] = v_block7[i2];
         ctx[\`blip_index\`] = i2;
         const key2 = ctx['blip_index'];
-        c_block3[i2] = withKey(comp1({blip: ctx['blip']}, key + \`__1__\${key1}__\${key2}\`, node, this, null), key2);
+        const b9 = text(\`
+ \`);
+        const b10 = comp1({blip: ctx['blip']}, key + \`__1__\${key1}__\${key2}\`, node, this, null);
+        const b11 = text(\`
+ \`);
+        c_block7[i2] = withKey(multi([b9, b10, b11]), key2);
       }
       ctx = ctx.__proto__;
-      c_block2[i1] = withKey(list(c_block3), key1);
+      const b7 = list(c_block7);
+      const b12 = text(\`
+ \`);
+      c_block4[i1] = withKey(multi([b6, b7, b12]), key1);
     }
-    const b2 = list(c_block2);
-    return block1([], [b2]);
+    ctx = ctx.__proto__;
+    const b4 = list(c_block4);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -167,30 +217,40 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
   let { prepareList, withKey } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<p><block-child-0/></p>\`);
-  let block5 = createBlock(\`<p><block-child-0/></p>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
+  let block5 = createBlock(\`<p>
+ <block-child-0/>
+ </p>\`);
+  let block7 = createBlock(\`<p>
+ <block-child-0/>
+ </p>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].rows);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`row\`] = v_block2[i1];
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['state'].rows);;
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`row\`] = v_block4[i1];
       const key1 = ctx['row'];
       ctx = Object.create(ctx);
-      const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['state'].cols);;
-      for (let i2 = 0; i2 < l_block4; i2++) {
-        ctx[\`col\`] = v_block4[i2];
+      const [k_block6, v_block6, l_block6, c_block6] = prepareList(ctx['state'].cols);;
+      for (let i2 = 0; i2 < l_block6; i2++) {
+        ctx[\`col\`] = v_block6[i2];
         const key2 = ctx['col'];
-        const b6 = comp1({row: ctx['row'],col: ctx['col']}, key + \`__1__\${key1}__\${key2}\`, node, this, null);
-        c_block4[i2] = withKey(block5([], [b6]), key2);
+        const b8 = comp1({row: ctx['row'],col: ctx['col']}, key + \`__1__\${key1}__\${key2}\`, node, this, null);
+        c_block6[i2] = withKey(block7([], [b8]), key2);
       }
       ctx = ctx.__proto__;
-      const b4 = list(c_block4);
-      c_block2[i1] = withKey(block3([], [b4]), key1);
+      const b6 = list(c_block6);
+      c_block4[i1] = withKey(block5([], [b6]), key1);
     }
-    const b2 = list(c_block2);
-    return block1([], [b2]);
+    ctx = ctx.__proto__;
+    const b4 = list(c_block4);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -217,14 +277,22 @@ exports[`list of components simple list 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['state'].elems);;
-    for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`elem\`] = v_block1[i1];
+    const [k_block3, v_block3, l_block3, c_block3] = prepareList(ctx['state'].elems);;
+    for (let i1 = 0; i1 < l_block3; i1++) {
+      ctx[\`elem\`] = v_block3[i1];
       const key1 = ctx['elem'].id;
-      c_block1[i1] = withKey(comp1({value: ctx['elem'].value}, key + \`__1__\${key1}\`, node, this, null), key1);
+      const b5 = text(\`
+ \`);
+      const b6 = comp1({value: ctx['elem'].value}, key + \`__1__\${key1}\`, node, this, null);
+      const b7 = text(\`
+ \`);
+      c_block3[i1] = withKey(multi([b5, b6, b7]), key1);
     }
-    return list(c_block1);
+    const b3 = list(c_block3);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -250,18 +318,29 @@ exports[`list of components sub components rendered in a loop 1`] = `
   let { prepareList, withKey } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].numbers);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`number\`] = v_block2[i1];
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['state'].numbers);;
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`number\`] = v_block4[i1];
       const key1 = ctx['number'];
-      c_block2[i1] = withKey(comp1({n: ctx['number']}, key + \`__1__\${key1}\`, node, this, null), key1);
+      const b6 = text(\`
+ \`);
+      const b7 = comp1({n: ctx['number']}, key + \`__1__\${key1}\`, node, this, null);
+      const b8 = text(\`
+ \`);
+      c_block4[i1] = withKey(multi([b6, b7, b8]), key1);
     }
-    const b2 = list(c_block2);
-    return block1([], [b2]);
+    ctx = ctx.__proto__;
+    const b4 = list(c_block4);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -287,18 +366,29 @@ exports[`list of components sub components with some state rendered in a loop 1`
   let { prepareList, withKey } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].numbers);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`number\`] = v_block2[i1];
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['state'].numbers);;
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`number\`] = v_block4[i1];
       const key1 = ctx['number'];
-      c_block2[i1] = withKey(comp1({}, key + \`__1__\${key1}\`, node, this, null), key1);
+      const b6 = text(\`
+ \`);
+      const b7 = comp1({}, key + \`__1__\${key1}\`, node, this, null);
+      const b8 = text(\`
+ \`);
+      c_block4[i1] = withKey(multi([b6, b7, b8]), key1);
     }
-    const b2 = list(c_block2);
-    return block1([], [b2]);
+    ctx = ctx.__proto__;
+    const b4 = list(c_block4);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -324,7 +414,9 @@ exports[`list of components switch component position 1`] = `
   let { prepareList, withKey } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
-  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  let block1 = createBlock(\`<span>
+ <block-child-0/>
+ </span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -332,8 +424,14 @@ exports[`list of components switch component position 1`] = `
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`c\`] = v_block2[i1];
       const key1 = ctx['c'];
-      c_block2[i1] = withKey(comp1({key: ctx['c']}, key + \`__1__\${key1}\`, node, this, null), key1);
+      const b4 = text(\`
+ \`);
+      const b5 = comp1({key: ctx['c']}, key + \`__1__\${key1}\`, node, this, null);
+      const b6 = text(\`
+ \`);
+      c_block2[i1] = withKey(multi([b4, b5, b6]), key1);
     }
+    ctx = ctx.__proto__;
     const b2 = list(c_block2);
     return block1([], [b2]);
   }
@@ -361,19 +459,30 @@ exports[`list of components t-foreach with t-component, and update 1`] = `
   let { prepareList, withKey } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div>
+ <block-child-0/>
+ </div>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(Array(2));;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`n\`] = v_block2[i1];
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList(Array(2));;
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`n\`] = v_block4[i1];
       ctx[\`n_index\`] = i1;
       const key1 = ctx['n_index'];
-      c_block2[i1] = withKey(comp1({val: ctx['n_index']}, key + \`__1__\${key1}\`, node, this, null), key1);
+      const b6 = text(\`
+ \`);
+      const b7 = comp1({val: ctx['n_index']}, key + \`__1__\${key1}\`, node, this, null);
+      const b8 = text(\`
+ \`);
+      c_block4[i1] = withKey(multi([b6, b7, b8]), key1);
     }
-    const b2 = list(c_block2);
-    return block1([], [b2]);
+    ctx = ctx.__proto__;
+    const b4 = list(c_block4);
+    const b3 = block3([], [b4]);
+    return multi([b2, b3]);
   }
 }"
 `;
@@ -383,12 +492,18 @@ exports[`list of components t-foreach with t-component, and update 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
+  let block3 = createBlock(\`<span>
+ <block-text-0/>
+ <block-text-1/>
+ </span>\`);
   
   return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`
+ \`);
     let txt1 = ctx['state'].val;
     let txt2 = ctx['props'].val;
-    return block1([txt1, txt2]);
+    const b3 = block3([txt1, txt2]);
+    return multi([b2, b3]);
   }
 }"
 `;

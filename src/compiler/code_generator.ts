@@ -1,3 +1,4 @@
+import { isProp } from "../runtime/blockdom/attributes";
 import {
   compileExpr,
   compileExprToArray,
@@ -22,12 +23,12 @@ import {
   ASTTif,
   ASTTKey,
   ASTTOut,
-  ASTTSet,
-  ASTTranslation,
-  ASTType,
   ASTTPortal,
-  EventHandlers,
+  ASTTranslation,
+  ASTTSet,
+  ASTType,
   Attrs,
+  EventHandlers,
 } from "./parser";
 
 type BlockType = "block" | "text" | "multi" | "list" | "html" | "comment";
@@ -578,13 +579,18 @@ export class CodeGenerator {
         attrName = key.slice(7);
         attrs["block-attribute-" + idx] = attrName;
       } else if (key.startsWith("t-att")) {
+        attrName = key === "t-att" ? null : key.slice(6);
         expr = compileExpr(ast.attrs[key]);
+        if (attrName && isProp(ast.tag, attrName)) {
+          // we force a new string or new boolean to bypass the equality check in blockdom when patching same value
+          const C = attrName === "value" ? "String" : "Boolean";
+          expr = `new ${C}(${expr})`;
+        }
         const idx = block!.insertData(expr, "attr");
         if (key === "t-att") {
           attrs[`block-attributes`] = String(idx);
         } else {
-          attrName = key.slice(6);
-          attrs[`block-attribute-${idx}`] = attrName;
+          attrs[`block-attribute-${idx}`] = attrName!;
         }
       } else if (this.translatableAttributes.includes(key)) {
         attrs[key] = this.translateFn(ast.attrs[key]);

@@ -1,6 +1,6 @@
 {
   "name": "@odoo/owl",
-  "version": "2.0.0-beta-12",
+  "version": "2.0.0-beta-14",
   "description": "Odoo Web Library (OWL)",
   "main": "dist/owl.cjs.js",
   "browser": "dist/owl.iife.js",

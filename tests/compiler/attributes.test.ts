@@ -429,6 +429,42 @@ describe("special cases for some specific html attributes/properties", () => {
     expect(input.value).toBe("potato");
   });
 
+  test("input with t-att-value (patching with same value", () => {
+    // render input with initial value
+    const template = `<input t-att-value="v"/>`;
+    const bnode1 = renderToBdom(template, { v: "zucchini" });
+    const fixture = makeTestFixture();
+    mount(bnode1, fixture);
+    const input = fixture.querySelector("input")!;
+    expect(input.value).toBe("zucchini");
+
+    // change value manually in input, to simulate user input
+    input.value = "tomato";
+    expect(input.value).toBe("tomato");
+
+    const bnode2 = renderToBdom(template, { v: "zucchini" });
+    patch(bnode1, bnode2);
+    expect(input.value).toBe("zucchini");
+  });
+
+  test("input, type checkbox, with t-att-checked (patching with same value", () => {
+    // render input with initial value
+    const template = `<input type="checkbox" t-att-checked="v"/>`;
+    const bnode1 = renderToBdom(template, { v: true });
+    const fixture = makeTestFixture();
+    mount(bnode1, fixture);
+    const input = fixture.querySelector("input")!;
+    expect(input.checked).toBe(true);
+
+    // change checked manually in input, to simulate user input
+    input.checked = false;
+    expect(input.checked).toBe(false);
+
+    const bnode2 = renderToBdom(template, { v: true });
+    patch(bnode1, bnode2);
+    expect(input.checked).toBe(true);
+  });
+
   test("input of type checkbox with t-att-indeterminate", () => {
     const template = `<input type="checkbox" t-att-indeterminate="v"/>`;
     const bnode1 = renderToBdom(template, { v: true });

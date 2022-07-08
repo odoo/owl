@@ -269,7 +269,7 @@ exports[`misc other complex template 1`] = `
         ctx[\`category\`] = v_block15[i1];
         const key1 = ctx['category'].id;
         let attr6 = ctx['category'].id;
-        let attr7 = ctx['category'].id==ctx['options'].active_category_id;
+        let attr7 = new Boolean(ctx['category'].id==ctx['options'].active_category_id);
         let txt5 = ctx['category'].name;
         c_block15[i1] = withKey(block16([attr6, attr7, txt5]), key1);
       }
@@ -277,7 +277,7 @@ exports[`misc other complex template 1`] = `
       const b15 = list(c_block15);
       b14 = block14([], [b15]);
     }
-    let attr8 = ctx['search'].value;
+    let attr8 = new String(ctx['search'].value);
     let hdlr4 = [ctx['updateFilter'], ctx];
     let hdlr5 = [ctx['updateFilter'], ctx];
     let hdlr6 = [ctx['clearSearch'], ctx];
@@ -291,7 +291,7 @@ exports[`misc other complex template 1`] = `
         if (!ctx['trigger'].manual&&ctx['trigger'].project_id===ctx['project'].id&&ctx['trigger'].category_id===ctx['options'].active_category_id) {
           let attr9 = \`trigger_\${ctx['trigger'].id}\`;
           let attr10 = \`trigger_\${ctx['trigger'].id}\`;
-          let attr11 = ctx['options'].trigger_display[ctx['trigger'].id];
+          let attr11 = new Boolean(ctx['options'].trigger_display[ctx['trigger'].id]);
           let attr12 = ctx['trigger'].id;
           let hdlr7 = [ctx['updateTriggerDisplay'], ctx];
           let attr13 = \`trigger_\${ctx['trigger'].id}\`;

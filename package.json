@@ -3,7 +3,6 @@
   "version": "2.0.0-beta-14",
   "description": "Odoo Web Library (OWL)",
   "main": "dist/owl.cjs.js",
-  "browser": "dist/owl.iife.js",
   "module": "dist/owl.es.js",
   "types": "dist/types/owl.d.ts",
   "files": [

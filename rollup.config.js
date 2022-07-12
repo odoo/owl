@@ -6,6 +6,14 @@ import dts from "rollup-plugin-dts";
 
 let input, output;
 
+const IIFE_FILENAME = "dist/owl.iife.js";
+const CJS_FILENAME = "dist/owl.cjs.js";
+const ES_FILENAME = "dist/owl.es.js";
+
+if (pkg.module !== ES_FILENAME || pkg.main !== CJS_FILENAME) {
+  throw new Error("package.json has been modified. Build script should be updated accordingly");
+}  
+
 const outro = `
 __info__.version = '${pkg.version}';
 __info__.date = '${new Date().toISOString()}';
@@ -23,19 +31,19 @@ switch (process.argv[4]) {
   case "runtime":
     input = "src/runtime/index.ts";
     output = [
-      getConfigForFormat('esm', addSuffix(pkg.module,  'runtime'), outro),
-      getConfigForFormat('cjs', addSuffix(pkg.main,  'runtime'), outro),
-      getConfigForFormat('iife', addSuffix(pkg.browser,  'runtime'), outro),
-      getConfigForFormat('iife', addSuffix(pkg.browser,  'runtime'), outro, true),
+      getConfigForFormat('esm', addSuffix(ES_FILENAME,  'runtime'), outro),
+      getConfigForFormat('cjs', addSuffix(CJS_FILENAME,  'runtime'), outro),
+      getConfigForFormat('iife', addSuffix(IIFE_FILENAME,  'runtime'), outro),
+      getConfigForFormat('iife', addSuffix(IIFE_FILENAME,  'runtime'), outro, true),
     ]
     break;
   default:
     input = "src/index.ts",
     output = [
-      getConfigForFormat('esm', pkg.module, outro),
-      getConfigForFormat('cjs', pkg.main, outro),
-      getConfigForFormat('iife', pkg.browser, outro),
-      getConfigForFormat('iife', pkg.browser, outro, true),
+      getConfigForFormat('esm', ES_FILENAME, outro),
+      getConfigForFormat('cjs', CJS_FILENAME, outro),
+      getConfigForFormat('iife', IIFE_FILENAME, outro),
+      getConfigForFormat('iife', IIFE_FILENAME, outro, true),
     ]
   }
 

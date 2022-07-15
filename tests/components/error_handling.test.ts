@@ -264,6 +264,30 @@ describe("errors and promises", () => {
     expect(error!.message).toBe("Tokenizer error: could not tokenize `{ 'invalid: 5 }`");
   });
 
+  test("wrapped errors in async code are correctly caught", async () => {
+    class Root extends Component {
+      static template = xml`<div>abc</div>`;
+      setup() {
+        onWillStart(async () => {
+          await Promise.resolve();
+          throw new Error("boom in onWillStart");
+        });
+      }
+    }
+
+    let error: any;
+    try {
+      await mount(Root, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe(
+      `The following error occurred in onWillStart: "boom in onWillStart"`
+    );
+    await new Promise((r) => setTimeout(r, 0)); // wait for the rejection event to bubble
+  });
+
   test("an error in willPatch call will reject the render promise", async () => {
     class Root extends Component {
       static template = xml`<div><t t-esc="val"/></div>`;

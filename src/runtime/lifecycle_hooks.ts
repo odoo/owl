@@ -15,7 +15,7 @@ function wrapError(fn: (...args: any[]) => any, hookName: string) {
         if (hookName === "onWillStart" || hookName === "onWillUpdateProps") {
           const fiber = node.fiber;
           Promise.race([
-            result,
+            result.catch(() => {}),
             new Promise((resolve) => setTimeout(() => resolve(TIMEOUT), 3000)),
           ]).then((res) => {
             if (res === TIMEOUT && node.fiber === fiber) {

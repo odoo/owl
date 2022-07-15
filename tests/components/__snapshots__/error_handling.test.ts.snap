@@ -1257,6 +1257,19 @@ exports[`errors and promises an error in willPatch call will reject the render p
 }"
 `;
 
+exports[`errors and promises error type is kept when it is wrapped 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div>abc</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`errors and promises errors in mounted and in willUnmount 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -1293,6 +1306,19 @@ exports[`errors and promises errors in rerender 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let txt1 = ctx['state'].a.b;
     return block1([txt1]);
+  }
+}"
+`;
+
+exports[`errors and promises wrapped errors in async code are correctly caught 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div>abc</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
   }
 }"
 `;

@@ -30,6 +30,7 @@ import {
   Attrs,
   EventHandlers,
 } from "./parser";
+import { OwlError } from "../runtime/error_handling";
 
 type BlockType = "block" | "text" | "multi" | "list" | "html" | "comment";
 
@@ -535,7 +536,7 @@ export class CodeGenerator {
       .slice(1)
       .map((m) => {
         if (!MODS.has(m)) {
-          throw new Error(`Unknown event modifier: '${m}'`);
+          throw new OwlError(`Unknown event modifier: '${m}'`);
         }
         return `"${m}"`;
       });
@@ -871,8 +872,9 @@ export class CodeGenerator {
     this.define(`key${this.target.loopLevel}`, ast.key ? compileExpr(ast.key) : loopVar);
     if (this.dev) {
       // Throw error on duplicate keys in dev mode
+      this.helpers.add("OwlError");
       this.addLine(
-        `if (keys${block.id}.has(key${this.target.loopLevel})) { throw new Error(\`Got duplicate key in t-foreach: \${key${this.target.loopLevel}}\`)}`
+        `if (keys${block.id}.has(key${this.target.loopLevel})) { throw new OwlError(\`Got duplicate key in t-foreach: \${key${this.target.loopLevel}}\`)}`
       );
       this.addLine(`keys${block.id}.add(key${this.target.loopLevel});`);
     }
@@ -1094,7 +1096,7 @@ export class CodeGenerator {
         name = _name;
         value = `bind(ctx, ${value || undefined})`;
       } else {
-        throw new Error("Invalid prop suffix");
+        throw new OwlError("Invalid prop suffix");
       }
     }
     name = /^[a-z_]+$/i.test(name) ? name : `'${name}'`;

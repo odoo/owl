@@ -1,7 +1,7 @@
 import type { App, Env } from "./app";
 import { BDom, VNode } from "./blockdom";
 import { Component, ComponentConstructor, Props } from "./component";
-import { fibersInError, handleError } from "./error_handling";
+import { fibersInError, handleError, OwlError } from "./error_handling";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";
 import {
   clearReactivesForCallback,
@@ -18,7 +18,7 @@ let currentNode: ComponentNode | null = null;
 
 export function getCurrent(): ComponentNode {
   if (!currentNode) {
-    throw new Error("No active component (a hook function should only be called in 'setup')");
+    throw new OwlError("No active component (a hook function should only be called in 'setup')");
   }
   return currentNode;
 }

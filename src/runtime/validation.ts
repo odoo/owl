@@ -1,3 +1,5 @@
+import { OwlError } from "./error_handling";
+
 type BaseType =
   | typeof String
   | typeof Boolean
@@ -70,7 +72,7 @@ function toSchema(spec: SimplifiedSchema): NormalizedSchema {
 export function validate(obj: { [key: string]: any }, spec: Schema) {
   let errors = validateSchema(obj, spec);
   if (errors.length) {
-    throw new Error("Invalid object: " + errors.join(", "));
+    throw new OwlError("Invalid object: " + errors.join(", "));
   }
 }
 

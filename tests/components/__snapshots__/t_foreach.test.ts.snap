@@ -43,7 +43,7 @@ exports[`list of components crash on duplicate key in dev mode 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, withKey } = helpers;
+  let { prepareList, OwlError, withKey } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
   return function template(ctx, node, key = \\"\\") {
@@ -53,7 +53,7 @@ exports[`list of components crash on duplicate key in dev mode 1`] = `
     for (let i1 = 0; i1 < l_block1; i1++) {
       ctx[\`item\`] = v_block1[i1];
       const key1 = 'child';
-      if (keys1.has(key1)) { throw new Error(\`Got duplicate key in t-foreach: \${key1}\`)}
+      if (keys1.has(key1)) { throw new OwlError(\`Got duplicate key in t-foreach: \${key1}\`)}
       keys1.add(key1);
       const props1 = {};
       helpers.validateProps(\`Child\`, props1, ctx);

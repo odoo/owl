@@ -653,7 +653,7 @@ describe("hooks", () => {
       try {
         await mount(MyComponent, fixture);
       } catch (e: any) {
-        expect(e.message).toBe("Intentional error");
+        expect(e.cause.message).toBe("Intentional error");
       }
       // no console.error because the error has been caught in this test
       expect(console.error).toHaveBeenCalledTimes(0);

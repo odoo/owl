@@ -1,6 +1,6 @@
 import { BDom, mount } from "./blockdom";
 import type { ComponentNode } from "./component_node";
-import { fibersInError, handleError } from "./error_handling";
+import { fibersInError, handleError, OwlError } from "./error_handling";
 import { STATUS } from "./status";
 
 export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
@@ -43,7 +43,7 @@ export function makeRootFiber(node: ComponentNode): Fiber {
 }
 
 function throwOnRender() {
-  throw new Error("Attempted to render cancelled fiber");
+  throw new OwlError("Attempted to render cancelled fiber");
 }
 
 /**

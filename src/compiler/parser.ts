@@ -1,3 +1,5 @@
+import { OwlError } from "../runtime/error_handling";
+
 // -----------------------------------------------------------------------------
 // AST Type definition
 // -----------------------------------------------------------------------------
@@ -319,7 +321,7 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
     return null;
   }
   if (tagName.startsWith("block-")) {
-    throw new Error(`Invalid tag name: '${tagName}'`);
+    throw new OwlError(`Invalid tag name: '${tagName}'`);
   }
   ctx = Object.assign({}, ctx);
   if (tagName === "pre") {
@@ -340,13 +342,15 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
     const value = node.getAttribute(attr)!;
     if (attr.startsWith("t-on")) {
       if (attr === "t-on") {
-        throw new Error("Missing event name with t-on directive");
+        throw new OwlError("Missing event name with t-on directive");
       }
       on = on || {};
       on[attr.slice(5)] = value;
     } else if (attr.startsWith("t-model")) {
       if (!["input", "select", "textarea"].includes(tagName)) {
-        throw new Error("The t-model directive only works with <input>, <textarea> and <select>");
+        throw new OwlError(
+          "The t-model directive only works with <input>, <textarea> and <select>"
+        );
       }
 
       let baseExpr, expr;
@@ -359,7 +363,7 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
         baseExpr = value.slice(0, index);
         expr = value.slice(index + 1, -1);
       } else {
-        throw new Error(`Invalid t-model expression: "${value}" (it should be assignable)`);
+        throw new OwlError(`Invalid t-model expression: "${value}" (it should be assignable)`);
       }
 
       const typeAttr = node.getAttribute("type");
@@ -390,10 +394,10 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
         ctx.tModelInfo = model;
       }
     } else if (attr.startsWith("block-")) {
-      throw new Error(`Invalid attribute: '${attr}'`);
+      throw new OwlError(`Invalid attribute: '${attr}'`);
     } else if (attr !== "t-name") {
       if (attr.startsWith("t-") && !attr.startsWith("t-att")) {
-        throw new Error(`Unknown QWeb directive: '${attr}'`);
+        throw new OwlError(`Unknown QWeb directive: '${attr}'`);
       }
       const tModel = ctx.tModelInfo;
       if (tModel && ["t-att-value", "t-attf-value"].includes(attr)) {
@@ -447,7 +451,7 @@ function parseTEscNode(node: Element, ctx: ParsingContext): AST | null {
     };
   }
   if (ast.type === ASTType.TComponent) {
-    throw new Error("t-esc is not supported on Component nodes");
+    throw new OwlError("t-esc is not supported on Component nodes");
   }
   return tesc;
 }
@@ -503,7 +507,7 @@ function parseTForEach(node: Element, ctx: ParsingContext): AST | null {
   node.removeAttribute("t-as");
   const key = node.getAttribute("t-key");
   if (!key) {
-    throw new Error(
+    throw new OwlError(
       `"Directive t-foreach should always be used with a t-key!" (expression: t-foreach="${collection}" t-as="${elem}")`
     );
   }
@@ -686,7 +690,9 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
   let isDynamic = node.hasAttribute("t-component");
 
   if (isDynamic && name !== "t") {
-    throw new Error(`Directive 't-component' can only be used on <t> nodes (used on a <${name}>)`);
+    throw new OwlError(
+      `Directive 't-component' can only be used on <t> nodes (used on a <${name}>)`
+    );
   }
 
   if (!(firstLetter === firstLetter.toUpperCase() || isDynamic)) {
@@ -713,7 +719,7 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
         on[name.slice(5)] = value;
       } else {
         const message = directiveErrorMap.get(name.split("-").slice(0, 2).join("-"));
-        throw new Error(message || `unsupported directive on Component: ${name}`);
+        throw new OwlError(message || `unsupported directive on Component: ${name}`);
       }
     } else {
       props = props || {};
@@ -729,7 +735,7 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
     const slotNodes = Array.from(clone.querySelectorAll("[t-set-slot]"));
     for (let slotNode of slotNodes) {
       if (slotNode.tagName !== "t") {
-        throw new Error(
+        throw new OwlError(
           `Directive 't-set-slot' can only be used on <t> nodes (used on a <${slotNode.tagName}>)`
         );
       }
@@ -904,7 +910,7 @@ function normalizeTIf(el: Element) {
     let nattr = (name: string) => +!!node.getAttribute(name);
     if (prevElem && (pattr("t-if") || pattr("t-elif"))) {
       if (pattr("t-foreach")) {
-        throw new Error(
+        throw new OwlError(
           "t-if cannot stay at the same level as t-foreach when using t-elif or t-else"
         );
       }
@@ -913,19 +919,19 @@ function normalizeTIf(el: Element) {
           return a + b;
         }) > 1
       ) {
-        throw new Error("Only one conditional branching directive is allowed per node");
+        throw new OwlError("Only one conditional branching directive is allowed per node");
       }
       // All text (with only spaces) and comment nodes (nodeType 8) between
       // branch nodes are removed
       let textNode;
       while ((textNode = node.previousSibling) !== prevElem) {
         if (textNode!.nodeValue!.trim().length && textNode!.nodeType !== 8) {
-          throw new Error("text is not allowed between branching directives");
+          throw new OwlError("text is not allowed between branching directives");
         }
         textNode!.remove();
       }
     } else {
-      throw new Error(
+      throw new OwlError(
         "t-elif and t-else directives must be preceded by a t-if or t-elif directive"
       );
     }
@@ -946,7 +952,7 @@ function normalizeTEsc(el: Element) {
   );
   for (const el of elements) {
     if (el.childNodes.length) {
-      throw new Error("Cannot have t-esc on a component that already has content");
+      throw new OwlError("Cannot have t-esc on a component that already has content");
     }
     const value = el.getAttribute("t-esc");
     el.removeAttribute("t-esc");
@@ -1000,7 +1006,7 @@ function parseXML(xml: string): XMLDocument {
         }
       }
     }
-    throw new Error(msg);
+    throw new OwlError(msg);
   }
 
   return doc;

@@ -1,6 +1,6 @@
 import { Component, ComponentConstructor, Props } from "./component";
 import { ComponentNode } from "./component_node";
-import { nodeErrorHandlers } from "./error_handling";
+import { nodeErrorHandlers, OwlError } from "./error_handling";
 import { Fiber, MountOptions } from "./fibers";
 import { Scheduler } from "./scheduler";
 import { validateProps } from "./template_helpers";
@@ -154,9 +154,9 @@ export class App<
         if (isStatic) {
           C = parent.constructor.components[name as any];
           if (!C) {
-            throw new Error(`Cannot find the definition of component "${name}"`);
+            throw new OwlError(`Cannot find the definition of component "${name}"`);
           } else if (!(C.prototype instanceof Component)) {
-            throw new Error(
+            throw new OwlError(
               `"${name}" is not a Component. It must inherit from the Component class`
             );
           }

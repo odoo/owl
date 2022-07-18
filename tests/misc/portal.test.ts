@@ -1,3 +1,4 @@
+import { OwlError } from "../../src/runtime/error_handling";
 import {
   App,
   Component,
@@ -499,7 +500,7 @@ describe("Portal", () => {
         </div>`;
       state = { error: false };
       setup() {
-        onError((e) => (error = e));
+        onError(({ cause }) => (error = cause));
       }
     }
     addOutsideDiv(fixture);
@@ -958,14 +959,15 @@ describe("Portal: Props validation", () => {
           </t>
         </div>`;
     }
-    let error: Error;
+    let error: OwlError;
     try {
       await mount(Parent, fixture, { dev: true });
     } catch (e) {
-      error = e as Error;
+      error = e as OwlError;
     }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe(`' ' is not a valid selector`);
+    expect(error!.cause).toBeDefined();
+    expect(error!.cause.message).toBe(`' ' is not a valid selector`);
   });
 
   test("target must be a valid selector 2", async () => {

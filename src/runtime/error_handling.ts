@@ -1,6 +1,11 @@
 import type { ComponentNode } from "./component_node";
 import type { Fiber } from "./fibers";
 
+// Custom error class that wraps error that happen in the owl lifecycle
+export class OwlError extends Error {
+  cause?: any;
+}
+
 // Maps fibers to thrown errors
 export const fibersInError: WeakMap<Fiber, any> = new WeakMap();
 export const nodeErrorHandlers: WeakMap<ComponentNode, ((error: any) => void)[]> = new WeakMap();
@@ -37,7 +42,11 @@ function _handleError(node: ComponentNode | null, error: any): boolean {
 
 type ErrorParams = { error: any } & ({ node: ComponentNode } | { fiber: Fiber });
 export function handleError(params: ErrorParams) {
-  const error = params.error;
+  let { error } = params;
+  // Wrap error if it wasn't wrapped by wrapError (ie when not in dev mode)
+  if (!(error instanceof OwlError)) {
+    error = Object.assign(new OwlError("An error occured in the owl lifecycle"), { cause: error });
+  }
   const node = "node" in params ? params.node : params.fiber.node;
   const fiber = "fiber" in params ? params.fiber : node.fiber!;
 

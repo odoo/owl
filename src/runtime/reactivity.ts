@@ -1,4 +1,5 @@
 import { Callback } from "./utils";
+import { OwlError } from "./error_handling";
 
 // Allows to get the target of a Reactive (used for making a new Reactive from the underlying object)
 export const TARGET = Symbol("Target");
@@ -197,7 +198,7 @@ export function reactive<T extends Target>(
   callback: Callback = () => {}
 ): Reactive<T> | NonReactive<T> {
   if (!canBeMadeReactive(target)) {
-    throw new Error(`Cannot make the given value reactive`);
+    throw new OwlError(`Cannot make the given value reactive`);
   }
   if (SKIP in target) {
     return target as NonReactive<T>;

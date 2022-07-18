@@ -103,15 +103,13 @@ test("destroying/recreating a subwidget with different props (if start is not ov
   expect(n).toBe(0);
 
   w.state.val = 2;
-  await nextMicroTick();
-  await nextMicroTick();
+  await nextTick();
   expect(n).toBe(1);
 
   expect(["W:willRender", "Child:setup", "Child:willStart", "W:rendered"]).toBeLogged();
 
   w.state.val = 3;
-  await nextMicroTick();
-  await nextMicroTick();
+  await nextTick();
   expect(n).toBe(2);
 
   expect([
@@ -176,14 +174,16 @@ test("destroying/recreating a subcomponent, other scenario", async () => {
     "Parent:willRender",
     "Child:setup",
     "Child:willStart",
+    "Child:willRender",
+    "Child:rendered",
     "Parent:rendered",
     "Child:willDestroy",
     "Parent:willRender",
     "Child:setup",
     "Child:willStart",
-    "Parent:rendered",
     "Child:willRender",
     "Child:rendered",
+    "Parent:rendered",
     "Parent:willPatch",
     "Child:mounted",
     "Parent:patched",
@@ -319,9 +319,9 @@ test("creating two async components, scenario 2", async () => {
     "Parent:willRender",
     "ChildA:setup",
     "ChildA:willStart",
-    "Parent:rendered",
     "ChildA:willRender",
     "ChildA:rendered",
+    "Parent:rendered",
     "ChildA:mounted",
     "Parent:mounted",
   ]).toBeLogged();
@@ -2235,13 +2235,13 @@ test("concurrent renderings scenario 16", async () => {
     "A:willRender",
     "B:setup",
     "B:willStart",
-    "A:rendered",
     "B:willRender",
     "C:setup",
     "C:willStart",
-    "B:rendered",
     "C:willRender",
     "C:rendered",
+    "B:rendered",
+    "A:rendered",
     "C:mounted",
     "B:mounted",
     "A:mounted",
@@ -2906,9 +2906,9 @@ test("two sequential renderings before an animation frame", async () => {
     "Parent:willRender",
     "Child:setup",
     "Child:willStart",
-    "Parent:rendered",
     "Child:willRender",
     "Child:rendered",
+    "Parent:rendered",
     "Child:mounted",
     "Parent:mounted",
   ]).toBeLogged();
@@ -2920,13 +2920,7 @@ test("two sequential renderings before an animation frame", async () => {
   await nextMicroTick();
   await nextMicroTick();
   expect(fixture.innerHTML).toBe("0");
-  expect([
-    "Parent:willRender",
-    "Child:willUpdateProps",
-    "Parent:rendered",
-    "Child:willRender",
-    "Child:rendered",
-  ]).toBeLogged();
+  expect([]).toBeLogged();
 
   parent.state.value = 2;
   // enough microticks to wait for render + willupdateprops
@@ -2936,17 +2930,21 @@ test("two sequential renderings before an animation frame", async () => {
   await nextMicroTick();
   await nextMicroTick();
   expect(fixture.innerHTML).toBe("0");
-  expect([
-    "Parent:willRender",
-    "Child:willUpdateProps",
-    "Parent:rendered",
-    "Child:willRender",
-    "Child:rendered",
-  ]).toBeLogged();
+  expect([]).toBeLogged();
 
   await nextTick();
   // we check here that the willPatch and patched hooks are called only once
-  expect(["Parent:willPatch", "Child:willPatch", "Child:patched", "Parent:patched"]).toBeLogged();
+  expect([
+    "Parent:willRender",
+    "Child:willUpdateProps",
+    "Child:willRender",
+    "Child:rendered",
+    "Parent:rendered",
+    "Parent:willPatch",
+    "Child:willPatch",
+    "Child:patched",
+    "Parent:patched",
+  ]).toBeLogged();
 });
 
 test("t-key on dom node having a component", async () => {
@@ -3736,15 +3734,15 @@ test("delayed fiber does not get rendered if it was cancelled", async () => {
     "A:setup",
     "A:willRender",
     "B:setup",
-    "A:rendered",
     "B:willRender",
     "C:setup",
-    "B:rendered",
     "C:willRender",
     "D:setup",
-    "C:rendered",
     "D:willRender",
     "D:rendered",
+    "C:rendered",
+    "B:rendered",
+    "A:rendered",
     "D:mounted",
     "C:mounted",
     "B:mounted",
@@ -3753,7 +3751,7 @@ test("delayed fiber does not get rendered if it was cancelled", async () => {
   // Start a render in C
   c!.render(true);
   await nextMicroTick();
-  expect(["C:willRender", "C:rendered"]).toBeLogged();
+  expect(["C:willRender", "D:willRender", "D:rendered", "C:rendered"]).toBeLogged();
   // Start a render in A such that C is already rendered, but D will be delayed
   // (because A is rendering) then cancelled (when the render from A reaches C)
   a.render(true);
@@ -3761,13 +3759,13 @@ test("delayed fiber does not get rendered if it was cancelled", async () => {
   await nextTick();
   expect([
     "A:willRender",
-    "A:rendered",
     "B:willRender",
-    "B:rendered",
     "C:willRender",
-    "C:rendered",
     "D:willRender",
     "D:rendered",
+    "C:rendered",
+    "B:rendered",
+    "A:rendered",
     "A:willPatch",
     "B:willPatch",
     "C:willPatch",
@@ -3779,7 +3777,7 @@ test("delayed fiber does not get rendered if it was cancelled", async () => {
   ]).toBeLogged();
 });
 
-test("destroyed component causes other soon to be destroyed component to rerender, weird stuff happens", async () => {
+test.only("destroyed component causes other soon to be destroyed component to rerender, weird stuff happens", async () => {
   let def = makeDeferred();
   let c: any = null;
 
@@ -3787,6 +3785,9 @@ test("destroyed component causes other soon to be destroyed component to rerende
     static template = xml`<t t-esc="props.value"/>`;
     setup() {
       useLogLifecycle();
+      onWillStart(async () => {
+        await nextMicroTick();
+      });
       onRendered(() => {
         def.resolve();
       });
@@ -3802,6 +3803,9 @@ test("destroyed component causes other soon to be destroyed component to rerende
     setup() {
       c = this;
       useLogLifecycle();
+      onWillStart(async () => {
+        await nextMicroTick();
+      })
     }
   }
 
@@ -3816,6 +3820,9 @@ test("destroyed component causes other soon to be destroyed component to rerende
     state = useState({ flag: false, valueB: 1, valueC: 2 });
     setup() {
       useLogLifecycle();
+      onWillStart(async () => {
+        await nextMicroTick();
+      })
     }
   }
 
@@ -3917,17 +3924,17 @@ test("delayed rendering, destruction, stuff happens", async () => {
     "A:willRender",
     "B:setup",
     "B:willStart",
-    "A:rendered",
     "B:willRender",
     "C:setup",
     "C:willStart",
-    "B:rendered",
     "C:willRender",
     "D:setup",
     "D:willStart",
-    "C:rendered",
     "D:willRender",
     "D:rendered",
+    "C:rendered",
+    "B:rendered",
+    "A:rendered",
     "D:mounted",
     "C:mounted",
     "B:mounted",
@@ -3940,10 +3947,10 @@ test("delayed rendering, destruction, stuff happens", async () => {
   expect([
     "A:willRender",
     "B:willUpdateProps",
-    "A:rendered",
     "B:willRender",
     "C:willUpdateProps",
     "B:rendered",
+    "A:rendered",
   ]).toBeLogged();
 
   // update B => removes child C
@@ -4018,19 +4025,19 @@ test("renderings, destruction, patch, stuff, ... yet another variation", async (
     "A:willRender",
     "B:setup",
     "B:willStart",
-    "D:setup",
-    "D:willStart",
-    "A:rendered",
     "B:willRender",
     "C:setup",
     "C:willStart",
-    "B:rendered",
-    "D:willRender",
-    "D:rendered",
     "C:willRender",
     "C:rendered",
-    "C:mounted",
+    "B:rendered",
+    "D:setup",
+    "D:willStart",
+    "D:willRender",
+    "D:rendered",
+    "A:rendered",
     "D:mounted",
+    "C:mounted",
     "B:mounted",
     "A:mounted",
   ]).toBeLogged();

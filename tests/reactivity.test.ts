@@ -10,7 +10,6 @@ import {
   toRaw,
 } from "../src";
 import { reactive, Reactive } from "../src/runtime/reactivity";
-import { batched } from "../src/runtime/utils";
 import {
   makeDeferred,
   makeTestFixture,
@@ -188,64 +187,6 @@ describe("Reactivity", () => {
     Object.hasOwnProperty.call(state, "a");
     delete state.a;
     expect(n).toBe(2);
-  });
-
-  test("batched: callback is called after batch of operation", async () => {
-    let n = 0;
-    const state = createReactive(
-      { a: 1, b: 2 },
-      batched(() => n++)
-    );
-    state.a = 2;
-    expect(n).toBe(0);
-    await nextMicroTick();
-    expect(n).toBe(0); // key has not be read yet
-    state.a = state.a + 5; // key is read and then modified
-    expect(n).toBe(0);
-    state.b = state.b + 5; // key is read and then modified
-    expect(n).toBe(0);
-    await nextMicroTick();
-    expect(n).toBe(1); // two operations but only one notification
-  });
-
-  test("batched: modifying the reactive in the callback doesn't break reactivity", async () => {
-    let n = 0;
-    let obj = { a: 1 };
-    const state = createReactive(
-      obj,
-      batched(() => {
-        state.a; // subscribe to a
-        state.a = 2;
-        n++;
-      })
-    );
-    expect(n).toBe(0);
-    state.a = 2;
-    expect(n).toBe(0);
-    await nextMicroTick();
-    expect(n).toBe(0); // key has not be read yet
-    state.a = state.a + 5; // key is read and then modified
-    expect(n).toBe(0);
-    await nextMicroTick();
-    expect(n).toBe(1);
-    // the write a = 2 inside the batched callback triggered another notification, wait for it
-    await nextMicroTick();
-    expect(n).toBe(2);
-    // Should now be stable as we're writing the same value again
-    await nextMicroTick();
-    expect(n).toBe(2);
-
-    // Do it again to check it's not broken
-    state.a = state.a + 5; // key is read and then modified
-    expect(n).toBe(2);
-    await nextMicroTick();
-    expect(n).toBe(3);
-    // the write a = 2 inside the batched callback triggered another notification, wait for it
-    await nextMicroTick();
-    expect(n).toBe(4);
-    // Should now be stable as we're writing the same value again
-    await nextMicroTick();
-    expect(n).toBe(4);
   });
 
   test("setting property to same value does not trigger callback", async () => {
@@ -1772,13 +1713,13 @@ describe("Reactivity: useState", () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
+      "Child:willRender",
+      "Child:rendered",
       "Child:setup",
       "Child:willStart",
+      "Child:willRender",
+      "Child:rendered",
       "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:willRender",
-      "Child:rendered",
       "Child:mounted",
       "Child:mounted",
       "Parent:mounted",
@@ -1826,13 +1767,13 @@ describe("Reactivity: useState", () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
+      "Child:willRender",
+      "Child:rendered",
       "Child:setup",
       "Child:willStart",
+      "Child:willRender",
+      "Child:rendered",
       "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:willRender",
-      "Child:rendered",
       "Child:mounted",
       "Child:mounted",
       "Parent:mounted",
@@ -1840,18 +1781,17 @@ describe("Reactivity: useState", () => {
 
     expect(fixture.innerHTML).toBe("<div><span>123</span><span>123</span></div>");
     testContext.value = 321;
-    await nextMicroTick();
-    await nextMicroTick();
+    await nextTick();
     expect([
       "Child:willRender",
       "Child:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Child:willPatch",
+      "Child:patched",
+      "Child:willPatch",
+      "Child:patched"
     ]).toBeLogged();
-    expect(fixture.innerHTML).toBe("<div><span>123</span><span>123</span></div>");
-
-    await nextTick();
-    expect(["Child:willPatch", "Child:patched", "Child:willPatch", "Child:patched"]).toBeLogged();
     expect(fixture.innerHTML).toBe("<div><span>321</span><span>321</span></div>");
   });
 
@@ -1891,17 +1831,17 @@ describe("Reactivity: useState", () => {
       "GrandFather:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:setup",
-      "Parent:willStart",
-      "GrandFather:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:setup",
+      "Parent:willStart",
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
+      "GrandFather:rendered",
       "Child:mounted",
       "Parent:mounted",
       "Child:mounted",
@@ -1909,19 +1849,18 @@ describe("Reactivity: useState", () => {
     ]).toBeLogged();
 
     testContext.value = 321;
-    await nextMicroTick();
-    await nextMicroTick();
-    expect(fixture.innerHTML).toBe("<div><span>123</span><div><span>123</span></div></div>");
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><span>321</span><div><span>321</span></div></div>");
     expect([
       "Child:willRender",
       "Child:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Child:willPatch", 
+      "Child:patched", 
+      "Child:willPatch", 
+      "Child:patched"
     ]).toBeLogged();
-
-    await nextTick();
-    expect(fixture.innerHTML).toBe("<div><span>321</span><div><span>321</span></div></div>");
-    expect(["Child:willPatch", "Child:patched", "Child:willPatch", "Child:patched"]).toBeLogged();
   });
 
   test("one components can subscribe twice to same context", async () => {
@@ -2103,9 +2042,9 @@ describe("Reactivity: useState", () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]).toBeLogged();
@@ -2222,8 +2161,7 @@ describe("Reactivity: useState", () => {
     steps.clear();
 
     delete testContext[2];
-    await nextMicroTick();
-    await nextMicroTick();
+    await nextTick();
     expect([...steps]).toEqual(["list"]);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>3</div> Total: 3 Count: 1</div>");

@@ -1,5 +1,4 @@
-import { batched, EventBus } from "../src/runtime/utils";
-import { nextMicroTick } from "./helpers";
+import { EventBus } from "../src/runtime/utils";
 
 describe("event bus behaviour", () => {
   test("can subscribe and be notified", () => {
@@ -32,42 +31,5 @@ describe("event bus behaviour", () => {
     const bus = new EventBus();
     bus.addEventListener("event", (ev: any) => expect(ev.detail).toBe("hello world"));
     bus.trigger("event", "hello world");
-  });
-});
-
-describe("batched", () => {
-  test("callback is called only once after operations", async () => {
-    let n = 0;
-    let fn = batched(() => n++);
-
-    expect(n).toBe(0);
-    fn();
-    fn();
-    expect(n).toBe(0);
-
-    await nextMicroTick();
-    expect(n).toBe(1);
-    await nextMicroTick();
-    expect(n).toBe(1);
-  });
-
-  test("calling batched function from within the callback is not treated as part of the original batch", async () => {
-    let n = 0;
-    let fn = batched(() => {
-      n++;
-      if (n === 1) {
-        fn();
-      }
-    });
-
-    expect(n).toBe(0);
-    fn();
-    expect(n).toBe(0);
-    await nextMicroTick(); // First batch
-    expect(n).toBe(1);
-    await nextMicroTick(); // Second batch initiated from within the callback
-    expect(n).toBe(2);
-    await nextMicroTick();
-    expect(n).toBe(2);
   });
 });

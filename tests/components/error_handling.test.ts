@@ -3,10 +3,10 @@ import {
   onError,
   onMounted,
   onPatched,
-  onWillPatch,
-  onWillStart,
-  onWillRender,
   onRendered,
+  onWillPatch,
+  onWillRender,
+  onWillStart,
   onWillUnmount,
   useState,
   xml,
@@ -14,8 +14,8 @@ import {
 import {
   logStep,
   makeTestFixture,
-  nextTick,
   nextMicroTick,
+  nextTick,
   snapshotEverything,
   useLogLifecycle,
 } from "../helpers";
@@ -1370,9 +1370,9 @@ describe("can catch errors", () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]).toBeLogged();
@@ -1395,7 +1395,7 @@ describe("can catch errors", () => {
     expect(fixture.innerHTML).toBe("2");
   });
 
-  test("an error in onWillDestroy, variation", async () => {
+  test.only("an error in onWillDestroy, variation", async () => {
     class Child extends Component {
       static template = xml`<div>abc</div>`;
       setup() {
@@ -1433,27 +1433,26 @@ describe("can catch errors", () => {
     ]).toBeLogged();
 
     parent.state.hasChild = true;
-    await nextMicroTick();
-    await nextMicroTick();
-    await nextMicroTick();
-    await nextMicroTick();
-    await nextMicroTick();
+    await nextTick();
     expect([
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
+      "Parent:willPatch",
+      "Child:mounted",
+      "Parent:patched",
     ]).toBeLogged();
     parent.state.hasChild = false;
     await nextTick();
     expect([
-      "Child:willDestroy",
       "Parent:willRender",
       "Parent:rendered",
       "Parent:willPatch",
-      "Parent:patched",
+      "Child:willUnmount",
+      "Child:willDestroy",
     ]).toBeLogged();
     expect(fixture.innerHTML).toBe("2");
   });

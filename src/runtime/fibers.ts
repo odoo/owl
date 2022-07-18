@@ -20,6 +20,7 @@ export function makeRootFiber(node: ComponentNode): Fiber {
     // which means any arbitrary code can be run in onWillDestroy, which may
     // trigger new renderings
     root.locked = true;
+    debugger
     root.setCounter(root.counter + 1 - cancelFibers(current.children));
     root.locked = false;
     current.children = [];
@@ -55,6 +56,7 @@ function cancelFibers(fibers: Fiber[]): number {
     let node = fiber.node;
     fiber.render = throwOnRender;
     if (node.status === STATUS.NEW) {
+      console.log('asdfasdfsdf')
       node.destroy();
       delete node.parent!.children[node.parentKey!];
     }
@@ -151,6 +153,7 @@ export class RootFiber extends Fiber {
   complete() {
     const node = this.node;
     this.locked = true;
+    debugger
     let current: Fiber | undefined = undefined;
     try {
       // Step 1: calling all willPatch lifecycle hooks

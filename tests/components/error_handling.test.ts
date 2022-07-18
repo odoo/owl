@@ -19,6 +19,7 @@ import {
   snapshotEverything,
   useLogLifecycle,
 } from "../helpers";
+import { OwlError } from "../../src/runtime/error_handling";
 
 let fixture: HTMLElement;
 
@@ -159,16 +160,17 @@ describe("errors and promises", () => {
       static template = xml`<div><t t-esc="this.will.crash"/></div>`;
     }
 
-    let error: Error;
+    let error: OwlError;
     try {
       await mount(App, fixture);
     } catch (e) {
-      error = e as Error;
+      error = e as OwlError;
     }
     expect(error!).toBeDefined();
+    expect(error!.cause).toBeDefined();
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
-    expect(error!.message).toMatch(regexp);
+    expect(error!.cause.message).toMatch(regexp);
     expect(mockConsoleError).toBeCalledTimes(0);
     expect(mockConsoleError).toBeCalledTimes(0);
   });
@@ -183,14 +185,15 @@ describe("errors and promises", () => {
       }
     }
 
-    let error: Error;
+    let error: OwlError;
     try {
       await mount(App, fixture);
     } catch (e) {
-      error = e as Error;
+      error = e as OwlError;
     }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe("boom");
+    expect(error!.cause).toBeDefined();
+    expect(error!.cause.message).toBe("boom");
     expect(fixture.innerHTML).toBe("");
     expect(mockConsoleError).toBeCalledTimes(0);
     expect(mockConsoleWarn).toBeCalledTimes(1);
@@ -344,16 +347,17 @@ describe("errors and promises", () => {
       static components = { Child };
     }
 
-    let error: Error;
+    let error: OwlError;
     try {
       await mount(App, fixture);
     } catch (e) {
-      error = e as Error;
+      error = e as OwlError;
     }
     expect(error!).toBeDefined();
+    expect(error!.cause).toBeDefined();
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
-    expect(error!.message).toMatch(regexp);
+    expect(error!.cause.message).toMatch(regexp);
     expect(mockConsoleError).toBeCalledTimes(0);
     expect(mockConsoleWarn).toBeCalledTimes(1);
   });
@@ -363,7 +367,7 @@ describe("errors and promises", () => {
       static template = xml`<div><t t-if="flag" t-esc="this.will.crash"/></div>`;
       flag = false;
       setup() {
-        onError((e) => (error = e));
+        onError(({ cause }) => (error = cause));
       }
     }
 
@@ -390,16 +394,17 @@ describe("errors and promises", () => {
       static components = { Child };
     }
 
-    let error: Error;
+    let error: OwlError;
     try {
       await mount(Parent, fixture);
     } catch (e) {
-      error = e as Error;
+      error = e as OwlError;
     }
     expect(error!).toBeDefined();
+    expect(error!.cause).toBeDefined();
     const regexp =
       /Cannot read properties of undefined \(reading 'y'\)|Cannot read property 'y' of undefined/g;
-    expect(error!.message).toMatch(regexp);
+    expect(error!.cause.message).toMatch(regexp);
     expect(mockConsoleError).toBeCalledTimes(0);
     expect(mockConsoleWarn).toBeCalledTimes(1);
   });
@@ -504,6 +509,96 @@ describe("can catch errors", () => {
     expect(e!.message).toBe(
       `The following error occurred in onWillStart: "No active component (a hook function should only be called in 'setup')"`
     );
+  });
+
+  test("Errors in owl lifecycle are wrapped in dev mode: sync hook", async () => {
+    const err = new Error("test error");
+    class Root extends Component {
+      static template = xml`<t t-esc="state.value"/>`;
+      state = useState({ value: 1 });
+
+      setup() {
+        onMounted(() => {
+          throw err;
+        });
+      }
+    }
+    let e: OwlError;
+    try {
+      await mount(Root, fixture, { test: true });
+    } catch (error) {
+      e = error as OwlError;
+    }
+    expect(e!.message).toBe(`The following error occurred in onMounted: "test error"`);
+    expect(e!.cause).toBe(err);
+  });
+
+  test("Errors in owl lifecycle are wrapped in dev mode: async hook", async () => {
+    const err = new Error("test error");
+    class Root extends Component {
+      static template = xml`<t t-esc="state.value"/>`;
+      state = useState({ value: 1 });
+
+      setup() {
+        onWillStart(async () => {
+          await nextMicroTick();
+          throw err;
+        });
+      }
+    }
+    let e: OwlError;
+    try {
+      await mount(Root, fixture, { test: true });
+    } catch (error) {
+      e = error as OwlError;
+    }
+    expect(e!.message).toBe(`The following error occurred in onWillStart: "test error"`);
+    expect(e!.cause).toBe(err);
+  });
+
+  test("Errors in owl lifecycle are wrapped outside dev mode: sync hook", async () => {
+    const err = new Error("test error");
+    class Root extends Component {
+      static template = xml`<t t-esc="state.value"/>`;
+      state = useState({ value: 1 });
+
+      setup() {
+        onMounted(() => {
+          throw err;
+        });
+      }
+    }
+    let e: OwlError;
+    try {
+      await mount(Root, fixture);
+    } catch (error) {
+      e = error as OwlError;
+    }
+    expect(e!.message).toBe("An error occured in the owl lifecycle");
+    expect(e!.cause).toBe(err);
+  });
+
+  test("Errors in owl lifecycle are wrapped out of dev mode: async hook", async () => {
+    const err = new Error("test error");
+    class Root extends Component {
+      static template = xml`<t t-esc="state.value"/>`;
+      state = useState({ value: 1 });
+
+      setup() {
+        onWillStart(async () => {
+          await nextMicroTick();
+          throw err;
+        });
+      }
+    }
+    let e: OwlError;
+    try {
+      await mount(Root, fixture);
+    } catch (error) {
+      e = error as OwlError;
+    }
+    expect(e!.message).toBe("An error occured in the owl lifecycle");
+    expect(e!.cause).toBe(err);
   });
 
   test("can catch an error in the initial call of a component render function (parent mounted)", async () => {
@@ -1204,8 +1299,8 @@ describe("can catch errors", () => {
     class Catch extends Component {
       static template = xml`<t t-slot="default" />`;
       setup() {
-        onError((error) => {
-          this.props.onError(error);
+        onError(({ cause }) => {
+          this.props.onError(cause);
         });
       }
     }

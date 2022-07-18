@@ -1,3 +1,4 @@
+import { OwlError } from "./error_handling";
 export type Callback = () => void;
 
 /**
@@ -28,10 +29,10 @@ export function batched(callback: Callback): Callback {
 
 export function validateTarget(target: HTMLElement) {
   if (!(target instanceof HTMLElement)) {
-    throw new Error("Cannot mount component: the target is not a valid DOM element");
+    throw new OwlError("Cannot mount component: the target is not a valid DOM element");
   }
   if (!document.body.contains(target)) {
-    throw new Error("Cannot mount a component on a detached dom node");
+    throw new OwlError("Cannot mount a component on a detached dom node");
   }
 }
 
@@ -54,7 +55,7 @@ export function whenReady(fn?: any): Promise<void> {
 export async function loadFile(url: string): Promise<string> {
   const result = await fetch(url);
   if (!result.ok) {
-    throw new Error("Error while fetching xml templates");
+    throw new OwlError("Error while fetching xml templates");
   }
   return await result.text();
 }

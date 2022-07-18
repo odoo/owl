@@ -4,6 +4,7 @@ import { html } from "./blockdom/index";
 import { isOptional, validateSchema } from "./validation";
 import type { ComponentConstructor } from "./component";
 import { markRaw } from "./reactivity";
+import { OwlError } from "./error_handling";
 
 const ObjectCreate = Object.create;
 /**
@@ -70,7 +71,7 @@ function prepareList(collection: any): [any[], any[], number, any[]] {
     values = Object.keys(collection);
     keys = Object.values(collection);
   } else {
-    throw new Error("Invalid loop expression");
+    throw new OwlError("Invalid loop expression");
   }
   const n = values.length;
   return [keys, values, n, new Array(n)];
@@ -191,7 +192,7 @@ function multiRefSetter(refs: RefMap, name: string): RefSetter {
     if (el) {
       count++;
       if (count > 1) {
-        throw new Error("Cannot have 2 elements with same ref name at the same time");
+        throw new OwlError("Cannot have 2 elements with same ref name at the same time");
       }
     }
     if (count === 0 || el) {
@@ -233,7 +234,7 @@ export function validateProps<P>(name: string | ComponentConstructor<P>, props: 
         : name in schema && !("*" in schema) && !isOptional(schema[name]);
     for (let p in defaultProps) {
       if (isMandatory(p)) {
-        throw new Error(
+        throw new OwlError(
           `A default value cannot be defined for a mandatory prop (name: '${p}', component: ${ComponentClass.name})`
         );
       }
@@ -242,7 +243,9 @@ export function validateProps<P>(name: string | ComponentConstructor<P>, props: 
 
   const errors = validateSchema(props, schema);
   if (errors.length) {
-    throw new Error(`Invalid props for component '${ComponentClass.name}': ` + errors.join(", "));
+    throw new OwlError(
+      `Invalid props for component '${ComponentClass.name}': ` + errors.join(", ")
+    );
   }
 }
 
@@ -264,4 +267,5 @@ export const helpers = {
   bind,
   createCatcher,
   markRaw,
+  OwlError,
 };

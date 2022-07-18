@@ -19,6 +19,7 @@ import { helpers } from "../src/runtime/template_helpers";
 import { TemplateSet, globalTemplates } from "../src/runtime/template_set";
 import { BDom } from "../src/runtime/blockdom";
 import { compile } from "../src/compiler";
+import { OwlError } from "../src/runtime/error_handling";
 
 const mount = blockDom.mount;
 
@@ -221,7 +222,7 @@ export async function editInput(input: HTMLInputElement | HTMLTextAreaElement, v
 afterEach(() => {
   if (steps.length) {
     steps.splice(0);
-    throw new Error("Remaining steps! Should be checked by a .toBeLogged() assertion!");
+    throw new OwlError("Remaining steps! Should be checked by a .toBeLogged() assertion!");
   }
 });
 

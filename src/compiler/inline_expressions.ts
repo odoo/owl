@@ -1,3 +1,5 @@
+import { OwlError } from "../runtime/error_handling";
+
 /**
  * Owl QWeb Expression Parser
  *
@@ -106,14 +108,14 @@ let tokenizeString: Tokenizer = function (expr) {
       i++;
       cur = expr[i];
       if (!cur) {
-        throw new Error("Invalid expression");
+        throw new OwlError("Invalid expression");
       }
       s += cur;
     }
     i++;
   }
   if (expr[i] !== start) {
-    throw new Error("Invalid expression");
+    throw new OwlError("Invalid expression");
   }
   s += start;
   if (start === "`") {
@@ -223,7 +225,7 @@ export function tokenize(expr: string): Token[] {
     error = e; // Silence all errors and throw a generic error below
   }
   if (current.length || error) {
-    throw new Error(`Tokenizer error: could not tokenize \`${expr}\``);
+    throw new OwlError(`Tokenizer error: could not tokenize \`${expr}\``);
   }
   return result;
 }

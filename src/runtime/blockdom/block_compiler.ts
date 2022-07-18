@@ -1,3 +1,4 @@
+import { OwlError } from "../error_handling";
 import {
   attrsSetter,
   attrsUpdater,
@@ -245,7 +246,7 @@ function buildTree(
       };
     }
   }
-  throw new Error("boom");
+  throw new OwlError("boom");
 }
 
 function addRef(tree: IntermediateTree) {

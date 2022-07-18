@@ -1,5 +1,6 @@
 import { filterOutModifiersFromData } from "./blockdom/config";
 import { STATUS } from "./status";
+import { OwlError } from "./error_handling";
 
 export const mainEventHandler = (data: any, ev: Event, currentTarget?: EventTarget | null) => {
   const { data: _data, modifiers } = filterOutModifiersFromData(data);
@@ -33,7 +34,7 @@ export const mainEventHandler = (data: any, ev: Event, currentTarget?: EventTarg
   if (Object.hasOwnProperty.call(data, 0)) {
     const handler = data[0];
     if (typeof handler !== "function") {
-      throw new Error(`Invalid handler (expected a function, received: '${handler}')`);
+      throw new OwlError(`Invalid handler (expected a function, received: '${handler}')`);
     }
     let node = data[1] ? data[1].__owl__ : null;
     if (node ? node.status === STATUS.MOUNTED : true) {

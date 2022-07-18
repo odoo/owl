@@ -1,6 +1,7 @@
 import { onWillUnmount } from "./lifecycle_hooks";
 import { BDom, text, VNode } from "./blockdom";
 import { Component } from "./component";
+import { OwlError } from "./error_handling";
 
 const VText: any = text("").constructor;
 
@@ -24,7 +25,7 @@ class VPortal extends VText implements Partial<VNode<VPortal>> {
       }
       this.target = el && el.querySelector(this.selector);
       if (!this.target) {
-        throw new Error("invalid portal target");
+        throw new OwlError("invalid portal target");
       }
     }
     this.realBDom!.mount(this.target!, null);

@@ -101,6 +101,50 @@ exports[`basics simple catchError 2`] = `
 }"
 `;
 
+exports[`can catch errors Errors in owl lifecycle are wrapped in dev mode: async hook 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['state'].value);
+  }
+}"
+`;
+
+exports[`can catch errors Errors in owl lifecycle are wrapped in dev mode: sync hook 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['state'].value);
+  }
+}"
+`;
+
+exports[`can catch errors Errors in owl lifecycle are wrapped out of dev mode: async hook 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['state'].value);
+  }
+}"
+`;
+
+exports[`can catch errors Errors in owl lifecycle are wrapped outside dev mode: sync hook 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['state'].value);
+  }
+}"
+`;
+
 exports[`can catch errors an error in onWillDestroy 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -1253,19 +1297,6 @@ exports[`errors and promises an error in willPatch call will reject the render p
   return function template(ctx, node, key = \\"\\") {
     let txt1 = ctx['val'];
     return block1([txt1]);
-  }
-}"
-`;
-
-exports[`errors and promises error type is kept when it is wrapped 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div>abc</div>\`);
-  
-  return function template(ctx, node, key = \\"\\") {
-    return block1();
   }
 }"
 `;

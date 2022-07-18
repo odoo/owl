@@ -3,6 +3,7 @@ import { comment, createBlock, html, list, multi, text, toggler } from "./blockd
 import { getCurrent } from "./component_node";
 import { Portal, portalTemplate } from "./portal";
 import { helpers } from "./template_helpers";
+import { OwlError } from "./error_handling";
 
 const bdom = { text, createBlock, list, multi, html, toggler, comment };
 
@@ -31,7 +32,7 @@ function parseXML(xml: string): Document {
         }
       }
     }
-    throw new Error(msg);
+    throw new OwlError(msg);
   }
   return doc;
 }
@@ -76,7 +77,7 @@ export class TemplateSet {
       if (currentAsString === newAsString) {
         return;
       }
-      throw new Error(`Template ${name} already defined with different content`);
+      throw new OwlError(`Template ${name} already defined with different content`);
     }
     this.rawTemplates[name] = template;
   }
@@ -102,7 +103,7 @@ export class TemplateSet {
           const componentName = getCurrent().component.constructor.name;
           extraInfo = ` (for component "${componentName}")`;
         } catch {}
-        throw new Error(`Missing template: "${name}"${extraInfo}`);
+        throw new OwlError(`Missing template: "${name}"${extraInfo}`);
       }
       const isFn = typeof rawTemplate === "function" && !(rawTemplate instanceof Element);
       const templateFn = isFn ? rawTemplate : this._compileTemplate(name, rawTemplate);
@@ -119,7 +120,7 @@ export class TemplateSet {
   }
 
   _compileTemplate(name: string, template: string | Element): ReturnType<typeof compile> {
-    throw new Error(`Unable to compile a template. Please use owl full build instead`);
+    throw new OwlError(`Unable to compile a template. Please use owl full build instead`);
   }
 
   callTemplate(owner: any, subTemplate: string, ctx: any, parent: any, key: any): any {

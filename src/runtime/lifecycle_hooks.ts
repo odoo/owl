@@ -1,14 +1,21 @@
 import { getCurrent } from "./component_node";
-import { nodeErrorHandlers } from "./error_handling";
+import { nodeErrorHandlers, OwlError } from "./error_handling";
 
 const TIMEOUT = Symbol("timeout");
 function wrapError(fn: (...args: any[]) => any, hookName: string) {
-  const error = new Error(`The following error occurred in ${hookName}: `) as Error & {
+  const error = new OwlError(`The following error occurred in ${hookName}: `) as Error & {
     cause: any;
   };
-  const timeoutError = new Error(`${hookName}'s promise hasn't resolved after 3 seconds`);
+  const timeoutError = new OwlError(`${hookName}'s promise hasn't resolved after 3 seconds`);
   const node = getCurrent();
   return (...args: any[]) => {
+    const onError = (cause: any) => {
+      if (cause instanceof Error) {
+        error.cause = cause;
+        error.message += `"${cause.message}"`;
+      }
+      throw error;
+    };
     try {
       const result = fn(...args);
       if (result instanceof Promise) {
@@ -23,20 +30,11 @@ function wrapError(fn: (...args: any[]) => any, hookName: string) {
             }
           });
         }
-        return result.catch((cause) => {
-          error.cause = cause;
-          if (cause instanceof Error) {
-            error.message += `"${cause.message}"`;
-          }
-          throw error;
-        });
+        return result.catch(onError);
       }
       return result;
     } catch (cause) {
-      if (cause instanceof Error) {
-        error.message += `"${cause.message}"`;
-      }
-      throw error;
+      onError(cause);
     }
   };
 }

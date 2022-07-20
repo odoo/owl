@@ -83,7 +83,6 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
 
   renderFn: Function;
   parent: ComponentNode | null;
-  level: number;
   childEnv: Env;
   children: { [key: string]: ComponentNode } = Object.create(null);
   refs: any = {};
@@ -108,7 +107,6 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     this.parent = parent;
     this.props = props;
     this.parentKey = parentKey;
-    this.level = parent ? parent.level + 1 : 0;
     const defaultProps = C.defaultProps;
     props = Object.assign({}, props);
     if (defaultProps) {

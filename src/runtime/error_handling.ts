@@ -45,7 +45,10 @@ export function handleError(params: ErrorParams) {
   let { error } = params;
   // Wrap error if it wasn't wrapped by wrapError (ie when not in dev mode)
   if (!(error instanceof OwlError)) {
-    error = Object.assign(new OwlError("An error occured in the owl lifecycle"), { cause: error });
+    error = Object.assign(
+      new OwlError(`An error occured in the owl lifecycle (see this Error's "cause" property)`),
+      { cause: error }
+    );
   }
   const node = "node" in params ? params.node : params.fiber.node;
   const fiber = "fiber" in params ? params.fiber : node.fiber!;

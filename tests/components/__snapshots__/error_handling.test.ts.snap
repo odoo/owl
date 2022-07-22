@@ -101,7 +101,7 @@ exports[`basics simple catchError 2`] = `
 }"
 `;
 
-exports[`can catch errors Errors in owl lifecycle are wrapped in dev mode: async hook 1`] = `
+exports[`can catch errors Errors have the right cause 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -112,7 +112,7 @@ exports[`can catch errors Errors in owl lifecycle are wrapped in dev mode: async
 }"
 `;
 
-exports[`can catch errors Errors in owl lifecycle are wrapped in dev mode: sync hook 1`] = `
+exports[`can catch errors Errors in owl lifecycle are wrapped in dev mode: async hook 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -135,6 +135,28 @@ exports[`can catch errors Errors in owl lifecycle are wrapped out of dev mode: a
 `;
 
 exports[`can catch errors Errors in owl lifecycle are wrapped outside dev mode: sync hook 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['state'].value);
+  }
+}"
+`;
+
+exports[`can catch errors Thrown values that are not errors are wrapped in dev mode 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['state'].value);
+  }
+}"
+`;
+
+exports[`can catch errors Thrown values that are not errors are wrapped outside dev mode 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

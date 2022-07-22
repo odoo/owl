@@ -10,9 +10,11 @@ function wrapError(fn: (...args: any[]) => any, hookName: string) {
   const node = getCurrent();
   return (...args: any[]) => {
     const onError = (cause: any) => {
+      error.cause = cause;
       if (cause instanceof Error) {
-        error.cause = cause;
         error.message += `"${cause.message}"`;
+      } else {
+        error.message = `Something that is not an Error was thrown in ${hookName} (see this Error's "cause" property)`;
       }
       throw error;
     };

@@ -511,7 +511,7 @@ describe("can catch errors", () => {
     );
   });
 
-  test("Errors in owl lifecycle are wrapped in dev mode: sync hook", async () => {
+  test("Errors have the right cause", async () => {
     const err = new Error("test error");
     class Root extends Component {
       static template = xml`<t t-esc="state.value"/>`;
@@ -574,7 +574,9 @@ describe("can catch errors", () => {
     } catch (error) {
       e = error as OwlError;
     }
-    expect(e!.message).toBe("An error occured in the owl lifecycle");
+    expect(e!.message).toBe(
+      `An error occured in the owl lifecycle (see this Error's "cause" property)`
+    );
     expect(e!.cause).toBe(err);
   });
 
@@ -597,8 +599,56 @@ describe("can catch errors", () => {
     } catch (error) {
       e = error as OwlError;
     }
-    expect(e!.message).toBe("An error occured in the owl lifecycle");
+    expect(e!.message).toBe(
+      `An error occured in the owl lifecycle (see this Error's "cause" property)`
+    );
     expect(e!.cause).toBe(err);
+  });
+
+  test("Thrown values that are not errors are wrapped in dev mode", async () => {
+    class Root extends Component {
+      static template = xml`<t t-esc="state.value"/>`;
+      state = useState({ value: 1 });
+
+      setup() {
+        onMounted(() => {
+          throw "This is not an error";
+        });
+      }
+    }
+    let e: OwlError;
+    try {
+      await mount(Root, fixture, { test: true });
+    } catch (error) {
+      e = error as OwlError;
+    }
+    expect(e!.message).toBe(
+      `Something that is not an Error was thrown in onMounted (see this Error's "cause" property)`
+    );
+    expect(e!.cause).toBe("This is not an error");
+  });
+
+  test("Thrown values that are not errors are wrapped outside dev mode", async () => {
+    class Root extends Component {
+      static template = xml`<t t-esc="state.value"/>`;
+      state = useState({ value: 1 });
+
+      setup() {
+        onMounted(() => {
+          throw "This is not an error";
+        });
+      }
+    }
+    let e: OwlError;
+    try {
+      await mount(Root, fixture);
+    } catch (error) {
+      e = error as OwlError;
+    }
+    expect(e!.message).toBe(
+      `An error occured in the owl lifecycle (see this Error's "cause" property)`
+    );
+    expect(e!.cause).toBe("This is not an error");
   });
 
   test("can catch an error in the initial call of a component render function (parent mounted)", async () => {

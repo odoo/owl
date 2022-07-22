@@ -118,7 +118,7 @@
         let { error } = params;
         // Wrap error if it wasn't wrapped by wrapError (ie when not in dev mode)
         if (!(error instanceof OwlError)) {
-            error = Object.assign(new OwlError("An error occured in the owl lifecycle"), { cause: error });
+            error = Object.assign(new OwlError(`An error occured in the owl lifecycle (see this Error's "cause" property)`), { cause: error });
         }
         const node = "node" in params ? params.node : params.fiber.node;
         const fiber = "fiber" in params ? params.fiber : node.fiber;
@@ -2476,9 +2476,12 @@
         const node = getCurrent();
         return (...args) => {
             const onError = (cause) => {
+                error.cause = cause;
                 if (cause instanceof Error) {
-                    error.cause = cause;
                     error.message += `"${cause.message}"`;
+                }
+                else {
+                    error.message = `Something that is not an Error was thrown in ${hookName} (see this Error's "cause" property)`;
                 }
                 throw error;
             };
@@ -5764,9 +5767,9 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
     Object.defineProperty(exports, '__esModule', { value: true });
 
 
-    __info__.version = '2.0.0-beta-15';
-    __info__.date = '2022-07-20T08:02:44.573Z';
-    __info__.hash = '588b655';
+    __info__.version = '2.0.0-beta-16';
+    __info__.date = '2022-07-22T07:44:03.166Z';
+    __info__.hash = 'b90aa0e';
     __info__.url = 'https://github.com/odoo/owl';
 
 

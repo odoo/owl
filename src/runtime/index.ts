@@ -36,6 +36,7 @@ export const blockDom = {
 export { App, mount } from "./app";
 export { xml } from "./template_set";
 export { Component } from "./component";
+export type { ComponentConstructor } from "./component";
 export { useComponent, useState } from "./component_node";
 export { status } from "./status";
 export { reactive, markRaw, toRaw } from "./reactivity";

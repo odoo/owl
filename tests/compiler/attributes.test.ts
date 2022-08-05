@@ -329,6 +329,35 @@ describe("attributes", () => {
     expect(fixture.innerHTML).toBe('<div value=""></div>');
   });
 
+  test("updating property with falsy value", async () => {
+    // render input with initial value
+    const template = `<input t-att-value="v"></input>`;
+    const bnode1 = renderToBdom(template, { v: false });
+    const fixture = makeTestFixture();
+    mount(bnode1, fixture);
+
+    const input = fixture.querySelector("input")!;
+    expect(input.value).toBe("");
+
+    patch(bnode1, renderToBdom(template, { v: "owl" }));
+    expect(input.value).toBe("owl");
+
+    patch(bnode1, renderToBdom(template, { v: false }));
+    expect(input.value).toBe("");
+
+    patch(bnode1, renderToBdom(template, { v: "owl" }));
+    expect(input.value).toBe("owl");
+
+    patch(bnode1, renderToBdom(template, { v: undefined }));
+    expect(input.value).toBe("");
+
+    patch(bnode1, renderToBdom(template, { v: "owl" }));
+    expect(input.value).toBe("owl");
+
+    patch(bnode1, renderToBdom(template, { v: null }));
+    expect(input.value).toBe("");
+  });
+
   test("changing a class with t-att-class", () => {
     // render input with initial value
     const template = `<div t-att-class="v"/>`;

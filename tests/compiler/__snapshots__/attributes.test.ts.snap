@@ -708,6 +708,20 @@ exports[`attributes updating classes (with obj notation) 1`] = `
 }"
 `;
 
+exports[`attributes updating property with falsy value 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<input block-attribute-0=\\"value\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let attr1 = new String((ctx['v']) || \\"\\");
+    return block1([attr1]);
+  }
+}"
+`;
+
 exports[`attributes various escapes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -773,7 +787,7 @@ exports[`special cases for some specific html attributes/properties input with t
   let block1 = createBlock(\`<input block-attribute-0=\\"value\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let attr1 = new String(ctx['v']);
+    let attr1 = new String((ctx['v']) || \\"\\");
     return block1([attr1]);
   }
 }"
@@ -787,7 +801,7 @@ exports[`special cases for some specific html attributes/properties input with t
   let block1 = createBlock(\`<input block-attribute-0=\\"value\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let attr1 = new String(ctx['v']);
+    let attr1 = new String((ctx['v']) || \\"\\");
     return block1([attr1]);
   }
 }"
@@ -815,7 +829,7 @@ exports[`special cases for some specific html attributes/properties select with 
   let block1 = createBlock(\`<select block-attribute-0=\\"value\\"><option value=\\"potato\\">Potato</option><option value=\\"tomato\\">Tomato</option><option value=\\"onion\\">Onion</option></select>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let attr1 = new String(ctx['value']);
+    let attr1 = new String((ctx['value']) || \\"\\");
     return block1([attr1]);
   }
 }"
@@ -829,7 +843,7 @@ exports[`special cases for some specific html attributes/properties textarea wit
   let block1 = createBlock(\`<textarea block-attribute-0=\\"value\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let attr1 = new String(ctx['v']);
+    let attr1 = new String((ctx['v']) || \\"\\");
     return block1([attr1]);
   }
 }"

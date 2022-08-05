@@ -277,7 +277,7 @@ exports[`misc other complex template 1`] = `
       const b15 = list(c_block15);
       b14 = block14([], [b15]);
     }
-    let attr8 = new String(ctx['search'].value);
+    let attr8 = new String((ctx['search'].value) || \\"\\");
     let hdlr4 = [ctx['updateFilter'], ctx];
     let hdlr5 = [ctx['updateFilter'], ctx];
     let hdlr6 = [ctx['clearSearch'], ctx];

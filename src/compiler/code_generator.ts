@@ -584,8 +584,12 @@ export class CodeGenerator {
         expr = compileExpr(ast.attrs[key]);
         if (attrName && isProp(ast.tag, attrName)) {
           // we force a new string or new boolean to bypass the equality check in blockdom when patching same value
-          const C = attrName === "value" ? "String" : "Boolean";
-          expr = `new ${C}(${expr})`;
+          if (attrName === "value") {
+            // When the expression is falsy, fall back to an empty string
+            expr = `new String((${expr}) || "")`;
+          } else {
+            expr = `new Boolean(${expr})`;
+          }
         }
         const idx = block!.insertData(expr, "attr");
         if (key === "t-att") {

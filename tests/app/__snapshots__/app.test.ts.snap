@@ -29,6 +29,19 @@ exports[`app can configure an app with props 1`] = `
 }"
 `;
 
+exports[`app can mount app in an iframe 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div class=\\"my-div\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`app destroy remove the widget from the DOM 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

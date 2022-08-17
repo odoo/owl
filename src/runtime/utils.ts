@@ -28,12 +28,18 @@ export function batched(callback: Callback): Callback {
 }
 
 export function validateTarget(target: HTMLElement) {
-  if (!(target instanceof HTMLElement)) {
-    throw new OwlError("Cannot mount component: the target is not a valid DOM element");
+  // Get the document and HTMLElement corresponding to the target to allow mounting in iframes
+  const document = target && target.ownerDocument;
+  if (document) {
+    const HTMLElement = document.defaultView!.HTMLElement;
+    if (target instanceof HTMLElement) {
+      if (!document.body.contains(target)) {
+        throw new OwlError("Cannot mount a component on a detached dom node");
+      }
+      return;
+    }
   }
-  if (!document.body.contains(target)) {
-    throw new OwlError("Cannot mount a component on a detached dom node");
-  }
+  throw new OwlError("Cannot mount component: the target is not a valid DOM element");
 }
 
 export class EventBus extends EventTarget {

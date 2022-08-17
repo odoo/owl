@@ -76,4 +76,22 @@ describe("app", () => {
       "Component 'Root' does not have a static props description"
     );
   });
+
+  test("can mount app in an iframe", async () => {
+    class SomeComponent extends Component {
+      static template = xml`<div class="my-div"/>`;
+    }
+
+    const iframe = document.createElement("iframe");
+    fixture.appendChild(iframe);
+    const app = new App(SomeComponent);
+    const iframeDoc = iframe.contentDocument!;
+    const comp = await app.mount(iframeDoc.body);
+    const div = iframeDoc.querySelector(".my-div");
+    expect(div).not.toBe(null);
+    expect(iframeDoc.contains(div)).toBe(true);
+    app.destroy();
+    expect(iframeDoc.contains(div)).toBe(false);
+    expect(status(comp)).toBe("destroyed");
+  });
 });

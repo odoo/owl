@@ -502,6 +502,10 @@ deleteTask(task) {
 Notice that the `onDelete` prop is defined with a `.bind` suffix: this is a special
 suffix that makes sure the function callback is bound to the component.
 
+Notice also that we have two functions named `deleteTask`. The one in the Task
+component just delegates the work to the Root component that owns the task list
+via the `onDelete` property.
+
 ## 10. Using a store
 
 Looking at the code, it is apparent that all the code handling tasks is scattered

@@ -2130,12 +2130,18 @@
         };
     }
     function validateTarget(target) {
-        if (!(target instanceof HTMLElement)) {
-            throw new OwlError("Cannot mount component: the target is not a valid DOM element");
+        // Get the document and HTMLElement corresponding to the target to allow mounting in iframes
+        const document = target && target.ownerDocument;
+        if (document) {
+            const HTMLElement = document.defaultView.HTMLElement;
+            if (target instanceof HTMLElement) {
+                if (!document.body.contains(target)) {
+                    throw new OwlError("Cannot mount a component on a detached dom node");
+                }
+                return;
+            }
         }
-        if (!document.body.contains(target)) {
-            throw new OwlError("Cannot mount a component on a detached dom node");
-        }
+        throw new OwlError("Cannot mount component: the target is not a valid DOM element");
     }
     class EventBus extends EventTarget {
         trigger(name, payload) {
@@ -3918,8 +3924,13 @@
                     expr = compileExpr(ast.attrs[key]);
                     if (attrName && isProp(ast.tag, attrName)) {
                         // we force a new string or new boolean to bypass the equality check in blockdom when patching same value
-                        const C = attrName === "value" ? "String" : "Boolean";
-                        expr = `new ${C}(${expr})`;
+                        if (attrName === "value") {
+                            // When the expression is falsy, fall back to an empty string
+                            expr = `new String((${expr}) || "")`;
+                        }
+                        else {
+                            expr = `new Boolean(${expr})`;
+                        }
                     }
                     const idx = block.insertData(expr, "attr");
                     if (key === "t-att") {
@@ -5767,9 +5778,9 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
     Object.defineProperty(exports, '__esModule', { value: true });
 
 
-    __info__.version = '2.0.0-beta-16';
-    __info__.date = '2022-07-22T07:44:03.166Z';
-    __info__.hash = 'b90aa0e';
+    __info__.version = '2.0.0-beta-17';
+    __info__.date = '2022-09-01T13:41:52.209Z';
+    __info__.hash = '9cb74d6';
     __info__.url = 'https://github.com/odoo/owl';
 
 

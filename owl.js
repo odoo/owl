@@ -3597,6 +3597,7 @@
             this.target = new CodeTarget("template");
             this.translatableAttributes = TRANSLATABLE_ATTRS;
             this.staticDefs = [];
+            this.slotNames = new Set();
             this.helpers = new Set();
             this.translateFn = options.translateFn || ((s) => s);
             if (options.translatableAttributes) {
@@ -4542,31 +4543,39 @@
             let blockString;
             let slotName;
             let dynamic = false;
+            let isMultiple = false;
             if (ast.name.match(INTERP_REGEXP)) {
                 dynamic = true;
+                isMultiple = true;
                 slotName = interpolate(ast.name);
             }
             else {
                 slotName = "'" + ast.name + "'";
+                isMultiple = isMultiple || this.slotNames.has(ast.name);
+                this.slotNames.add(ast.name);
             }
             const dynProps = ast.attrs ? ast.attrs["t-props"] : null;
             if (ast.attrs) {
                 delete ast.attrs["t-props"];
             }
+            let key = this.target.loopLevel ? `key${this.target.loopLevel}` : "key";
+            if (isMultiple) {
+                key = `${key} + \`${this.generateComponentKey()}\``;
+            }
             const props = ast.attrs ? this.formatPropObject(ast.attrs) : [];
             const scope = this.getPropString(props, dynProps);
             if (ast.defaultContent) {
                 const name = this.compileInNewTarget("defaultContent", ast.defaultContent, ctx);
-                blockString = `callSlot(ctx, node, key, ${slotName}, ${dynamic}, ${scope}, ${name})`;
+                blockString = `callSlot(ctx, node, ${key}, ${slotName}, ${dynamic}, ${scope}, ${name})`;
             }
             else {
                 if (dynamic) {
                     let name = generateId("slot");
                     this.define(name, slotName);
-                    blockString = `toggler(${name}, callSlot(ctx, node, key, ${name}, ${dynamic}, ${scope}))`;
+                    blockString = `toggler(${name}, callSlot(ctx, node, ${key}, ${name}, ${dynamic}, ${scope}))`;
                 }
                 else {
-                    blockString = `callSlot(ctx, node, key, ${slotName}, ${dynamic}, ${scope})`;
+                    blockString = `callSlot(ctx, node, ${key}, ${slotName}, ${dynamic}, ${scope})`;
                 }
             }
             // event handling
@@ -5778,9 +5787,9 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
     Object.defineProperty(exports, '__esModule', { value: true });
 
 
-    __info__.version = '2.0.0-beta-17';
-    __info__.date = '2022-09-01T13:41:52.209Z';
-    __info__.hash = '9cb74d6';
+    __info__.version = '2.0.0-beta-18';
+    __info__.date = '2022-09-02T12:57:38.022Z';
+    __info__.hash = 'c1afaeb';
     __info__.url = 'https://github.com/odoo/owl';
 
 

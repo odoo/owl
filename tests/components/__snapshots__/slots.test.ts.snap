@@ -604,6 +604,64 @@ exports[`slots default slot work with text nodes 2`] = `
 }"
 `;
 
+exports[`slots dynamic slot in multiple locations 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, false, false, true);
+  const comp2 = app.createComponent(\`Slotter\`, true, true, false, false);
+  
+  function slot1(ctx, node, key = \\"\\") {
+    const b2 = text(\`hello \`);
+    const b3 = comp1({}, key + \`__1\`, node, this, null);
+    return multi([b2, b3]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx1 = capture(ctx);
+    return comp2({location: ctx['state'].location,slots: markRaw({'coffee': {__render: slot1, __ctx: ctx1}})}, key + \`__2\`, node, this, null);
+  }
+}"
+`;
+
+exports[`slots dynamic slot in multiple locations 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { callSlot } = helpers;
+  
+  let block2 = createBlock(\`<p><block-child-0/></p>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2,b4;
+    if (ctx['props'].location===1) {
+      const slot1 = ('coffee');
+      const b3 = toggler(slot1, callSlot(ctx, node, key + \`__1\`, slot1, true, {}));
+      b2 = block2([], [b3]);
+    }
+    if (ctx['props'].location===2) {
+      const slot2 = ('coffee');
+      b4 = toggler(slot2, callSlot(ctx, node, key + \`__2\`, slot2, true, {}));
+    }
+    return multi([b2, b4]);
+  }
+}"
+`;
+
+exports[`slots dynamic slot in multiple locations 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div>child</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`slots dynamic t-slot call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -645,7 +703,7 @@ exports[`slots dynamic t-slot call 2`] = `
   return function template(ctx, node, key = \\"\\") {
     let hdlr1 = [ctx['toggle'], ctx];
     const slot1 = (ctx['current'].slot);
-    const b2 = toggler(slot1, callSlot(ctx, node, key, slot1, true, {}));
+    const b2 = toggler(slot1, callSlot(ctx, node, key + \`__1\`, slot1, true, {}));
     return block1([hdlr1], [b2]);
   }
 }"
@@ -695,7 +753,7 @@ exports[`slots dynamic t-slot call with default 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     let hdlr1 = [ctx['toggle'], ctx];
-    const b3 = callSlot(ctx, node, key, (ctx['current'].slot), true, {}, defaultContent1);
+    const b3 = callSlot(ctx, node, key + \`__1\`, (ctx['current'].slot), true, {}, defaultContent1);
     return block1([hdlr1], [b3]);
   }
 }"
@@ -726,7 +784,7 @@ exports[`slots fun: two calls to the same slot 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b2 = callSlot(ctx, node, key, 'default', false, {});
-    const b3 = callSlot(ctx, node, key, 'default', false, {});
+    const b3 = callSlot(ctx, node, key + \`__1\`, 'default', false, {});
     return multi([b2, b3]);
   }
 }"
@@ -1527,7 +1585,7 @@ exports[`slots simple dynamic slot with slot scope 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const slot1 = ('slotName');
-    const b2 = toggler(slot1, callSlot(ctx, node, key, slot1, true, {bool: ctx['state'].bool}));
+    const b2 = toggler(slot1, callSlot(ctx, node, key + \`__1\`, slot1, true, {bool: ctx['state'].bool}));
     return block1([], [b2]);
   }
 }"
@@ -1854,7 +1912,7 @@ exports[`slots slot content has different key from other content -- dynamic slot
   return function template(ctx, node, key = \\"\\") {
     const b2 = comp1({parent: 'SlotDisplay'}, key + \`__1\`, node, this, null);
     const slot1 = (ctx['slotName']);
-    const b3 = toggler(slot1, callSlot(ctx, node, key, slot1, true, {}));
+    const b3 = toggler(slot1, callSlot(ctx, node, key + \`__2\`, slot1, true, {}));
     return multi([b2, b3]);
   }
 }"
@@ -1991,6 +2049,118 @@ exports[`slots slot content is bound to caller 2`] = `
   return function template(ctx, node, key = \\"\\") {
     const b2 = callSlot(ctx, node, key, 'default', false, {});
     return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`slots slot in multiple locations 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, false, false, true);
+  const comp2 = app.createComponent(\`Slotter\`, true, true, false, false);
+  
+  function slot1(ctx, node, key = \\"\\") {
+    const b2 = text(\` hello \`);
+    const b3 = comp1({}, key + \`__1\`, node, this, null);
+    return multi([b2, b3]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    return comp2({location: ctx['state'].location,slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, this, null);
+  }
+}"
+`;
+
+exports[`slots slot in multiple locations 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { callSlot } = helpers;
+  
+  let block2 = createBlock(\`<p><block-child-0/></p>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2,b4;
+    if (ctx['props'].location===1) {
+      const b3 = callSlot(ctx, node, key, 'default', false, {});
+      b2 = block2([], [b3]);
+    }
+    if (ctx['props'].location===2) {
+      b4 = callSlot(ctx, node, key + \`__1\`, 'default', false, {});
+    }
+    return multi([b2, b4]);
+  }
+}"
+`;
+
+exports[`slots slot in multiple locations 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div>child</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`slots slot in t-foreach locations 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, false, false, true);
+  const comp2 = app.createComponent(\`Slotter\`, true, true, false, false);
+  
+  function slot1(ctx, node, key = \\"\\") {
+    const b2 = text(\` hello \`);
+    const b3 = comp1({}, key + \`__1\`, node, this, null);
+    return multi([b2, b3]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    return comp2({list: ctx['state'].list,slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, this, null);
+  }
+}"
+`;
+
+exports[`slots slot in t-foreach locations 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { prepareList, callSlot, withKey } = helpers;
+  
+  let block2 = createBlock(\`<p><block-text-0/><block-child-0/></p>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['props'].list);;
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      ctx[\`elem\`] = v_block1[i1];
+      ctx[\`elem_index\`] = i1;
+      const key1 = ctx['elem_index'];
+      let txt1 = ctx['elem'];
+      const b3 = callSlot(ctx, node, key1, 'default', false, {});
+      c_block1[i1] = withKey(block2([txt1], [b3]), key1);
+    }
+    return list(c_block1);
+  }
+}"
+`;
+
+exports[`slots slot in t-foreach locations 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div>child</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
   }
 }"
 `;

@@ -1819,4 +1819,102 @@ describe("slots", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<button>inc</button>[B][C][A][sub1] [sub2334]");
   });
+
+  test("slot in multiple locations", async () => {
+    class Child extends Component {
+      static template = xml`<div>child</div>`;
+    }
+
+    class Slotter extends Component {
+      static components = { Child };
+      static template = xml`
+          <t t-if="props.location === 1">
+            <p><t t-slot="default"/></p>
+          </t>
+          <t t-if="props.location === 2">
+            <t t-slot="default"/>
+          </t>
+      `;
+    }
+
+    class Parent extends Component {
+      static components = { Child, Slotter };
+      static template = xml`
+         <Slotter location="state.location">
+          hello <Child/>
+         </Slotter>`;
+      state = useState({ location: 1 });
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<p> hello <div>child</div></p>");
+    parent.state.location = 2;
+    await nextTick();
+    expect(fixture.innerHTML).toBe(" hello <div>child</div>");
+  });
+
+  test("dynamic slot in multiple locations", async () => {
+    class Child extends Component {
+      static template = xml`<div>child</div>`;
+    }
+
+    class Slotter extends Component {
+      static components = { Child };
+      static template = xml`
+          <t t-if="props.location === 1">
+            <p><t t-slot="{{'coffee'}}"/></p>
+          </t>
+          <t t-if="props.location === 2">
+            <t t-slot="{{'coffee'}}"/>
+          </t>
+      `;
+    }
+
+    class Parent extends Component {
+      static components = { Child, Slotter };
+      static template = xml`
+         <Slotter location="state.location">
+          <t t-set-slot="coffee">hello <Child/></t>
+         </Slotter>`;
+      state = useState({ location: 1 });
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<p>hello <div>child</div></p>");
+    parent.state.location = 2;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("hello <div>child</div>");
+  });
+
+  test("slot in t-foreach locations", async () => {
+    class Child extends Component {
+      static template = xml`<div>child</div>`;
+    }
+
+    class Slotter extends Component {
+      static components = { Child };
+      static template = xml`
+          <t t-foreach="props.list" t-as="elem" t-key="elem_index">
+            <p><t t-esc="elem"/><t t-slot="default"/></p>
+          </t>
+      `;
+    }
+
+    class Parent extends Component {
+      static components = { Child, Slotter };
+      static template = xml`
+         <Slotter list="state.list">
+          hello <Child/>
+         </Slotter>`;
+      state = useState({ list: [1] });
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<p>1 hello <div>child</div></p>");
+    parent.state.list.push(2);
+    await nextTick();
+    expect(fixture.innerHTML).toBe(
+      "<p>1 hello <div>child</div></p><p>2 hello <div>child</div></p>"
+    );
+  });
 });

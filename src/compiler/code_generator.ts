@@ -232,6 +232,7 @@ export class CodeGenerator {
   translatableAttributes: string[] = TRANSLATABLE_ATTRS;
   ast: AST;
   staticDefs: { id: string; expr: string }[] = [];
+  slotNames: Set<String> = new Set();
   helpers: Set<string> = new Set();
 
   constructor(ast: AST, options: CodeGenOptions) {
@@ -1245,28 +1246,37 @@ export class CodeGenerator {
     let blockString: string;
     let slotName;
     let dynamic = false;
+    let isMultiple = false;
     if (ast.name.match(INTERP_REGEXP)) {
       dynamic = true;
+      isMultiple = true;
       slotName = interpolate(ast.name);
     } else {
       slotName = "'" + ast.name + "'";
+      isMultiple = isMultiple || this.slotNames.has(ast.name);
+      this.slotNames.add(ast.name);
     }
     const dynProps = ast.attrs ? ast.attrs["t-props"] : null;
     if (ast.attrs) {
       delete ast.attrs["t-props"];
     }
+    let key = this.target.loopLevel ? `key${this.target.loopLevel}` : "key";
+    if (isMultiple) {
+      key = `${key} + \`${this.generateComponentKey()}\``;
+    }
+
     const props = ast.attrs ? this.formatPropObject(ast.attrs) : [];
     const scope = this.getPropString(props, dynProps);
     if (ast.defaultContent) {
       const name = this.compileInNewTarget("defaultContent", ast.defaultContent, ctx);
-      blockString = `callSlot(ctx, node, key, ${slotName}, ${dynamic}, ${scope}, ${name})`;
+      blockString = `callSlot(ctx, node, ${key}, ${slotName}, ${dynamic}, ${scope}, ${name})`;
     } else {
       if (dynamic) {
         let name = generateId("slot");
         this.define(name, slotName);
-        blockString = `toggler(${name}, callSlot(ctx, node, key, ${name}, ${dynamic}, ${scope}))`;
+        blockString = `toggler(${name}, callSlot(ctx, node, ${key}, ${name}, ${dynamic}, ${scope}))`;
       } else {
-        blockString = `callSlot(ctx, node, key, ${slotName}, ${dynamic}, ${scope})`;
+        blockString = `callSlot(ctx, node, ${key}, ${slotName}, ${dynamic}, ${scope})`;
       }
     }
     // event handling

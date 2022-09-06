@@ -171,4 +171,22 @@ describe("event handling", () => {
     // input is removed when component is destroyed => nothing should happen
     expect([]).toBeLogged();
   });
+
+  test("handler works when app is mounted in an iframe", async () => {
+    let clickCount = 0;
+
+    class Parent extends Component {
+      static template = xml`<span t-on-click="inc">click me</span>`;
+      inc() {
+        clickCount++;
+      }
+    }
+    const iframe = document.createElement("iframe");
+    fixture.appendChild(iframe);
+    const iframeDoc = iframe.contentDocument!;
+    await mount(Parent, iframeDoc.body);
+    expect(clickCount).toBe(0);
+    iframeDoc.querySelector("span")!.click();
+    expect(clickCount).toBe(1);
+  });
 });

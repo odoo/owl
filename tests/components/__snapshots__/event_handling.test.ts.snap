@@ -58,6 +58,20 @@ exports[`event handling handler receive the event as argument 2`] = `
 }"
 `;
 
+exports[`event handling handler works when app is mounted in an iframe 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<span block-handler-0=\\"click\\">click me</span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let hdlr1 = [ctx['inc'], ctx];
+    return block1([hdlr1]);
+  }
+}"
+`;
+
 exports[`event handling input blur event is not called if component is destroyed 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

@@ -27,8 +27,8 @@ function createElementHandler(evName: string, capture: boolean = false): EventHa
   }
 
   function listener(ev: Event) {
-    const currentTarget = ev.currentTarget;
-    if (!currentTarget || !document.contains(currentTarget as HTMLElement)) return;
+    const currentTarget = ev.currentTarget as HTMLElement;
+    if (!currentTarget || !currentTarget.ownerDocument.contains(currentTarget)) return;
     const data = (currentTarget as any)[eventKey];
     if (!data) return;
     config.mainEventHandler(data, ev, currentTarget);

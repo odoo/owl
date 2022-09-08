@@ -1,7 +1,7 @@
 import type { App, Env } from "./app";
 import { BDom, VNode } from "./blockdom";
 import { Component, ComponentConstructor, Props } from "./component";
-import { fibersInError, handleError, OwlError } from "./error_handling";
+import { fibersInError, OwlError } from "./error_handling";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";
 import {
   clearReactivesForCallback,
@@ -141,7 +141,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     try {
       await Promise.all(this.willStart.map((f) => f.call(component)));
     } catch (e) {
-      handleError({ node: this, error: e });
+      this.app.handleError({ node: this, error: e });
       return;
     }
     if (this.status === STATUS.NEW && this.fiber === fiber) {
@@ -219,7 +219,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
           cb.call(component);
         }
       } catch (e) {
-        handleError({ error: e, node: this });
+        this.app.handleError({ error: e, node: this });
       }
     }
     this.status = STATUS.DESTROYED;

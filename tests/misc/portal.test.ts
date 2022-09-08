@@ -12,7 +12,7 @@ import {
 } from "../../src";
 import { xml } from "../../src/";
 import { DEV_MSG } from "../../src/runtime/app";
-import { elem, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { elem, makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
 let originalconsoleWarn = console.warn;
@@ -269,11 +269,10 @@ describe("Portal", () => {
     }
 
     let error: Error;
-    try {
-      await mount(Parent, fixture);
-    } catch (e) {
-      error = e as Error;
-    }
+    const app = new App(Parent);
+    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    await expect(nextAppError(app)).resolves.toThrow("invalid portal target");
+    await mountProm;
 
     expect(error!).toBeDefined();
     expect(error!.message).toBe("invalid portal target");
@@ -960,11 +959,10 @@ describe("Portal: Props validation", () => {
         </div>`;
     }
     let error: OwlError;
-    try {
-      await mount(Parent, fixture, { dev: true });
-    } catch (e) {
-      error = e as OwlError;
-    }
+    const app = new App(Parent);
+    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
+    await mountProm;
     expect(error!).toBeDefined();
     expect(error!.cause).toBeDefined();
     expect(error!.cause.message).toBe(`' ' is not a valid selector`);
@@ -980,11 +978,10 @@ describe("Portal: Props validation", () => {
         </div>`;
     }
     let error: Error;
-    try {
-      await mount(Parent, fixture, { dev: true });
-    } catch (e) {
-      error = e as Error;
-    }
+    const app = new App(Parent);
+    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    await expect(nextAppError(app)).resolves.toThrow("invalid portal target");
+    await mountProm;
     expect(error!).toBeDefined();
     expect(error!.message).toBe(`invalid portal target`);
   });

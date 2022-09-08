@@ -1,6 +1,6 @@
 import { OwlError } from "../../src/runtime/error_handling";
-import { Component, mount, onMounted, useState, xml } from "../../src";
-import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { App, Component, mount, onMounted, useState, xml } from "../../src";
+import { makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
 let fixture: HTMLElement;
@@ -343,16 +343,15 @@ describe("style and class handling", () => {
     class Child extends Component {
       static template = xml`<div t-att-class="props.class" t-esc="this.will.crash"/>`;
     }
-    class ParentWidget extends Component {
+    class Parent extends Component {
       static template = xml`<Child class="'a'"/>`;
       static components = { Child };
     }
     let error: OwlError;
-    try {
-      await mount(ParentWidget, fixture);
-    } catch (e) {
-      error = e as OwlError;
-    }
+    const app = new App(Parent);
+    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
+    await mountProm;
     expect(error!).toBeDefined();
     expect(error!.cause).toBeDefined();
     const regexp =

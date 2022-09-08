@@ -1,5 +1,11 @@
-import { Component, mount, onMounted, useState, xml } from "../../src/index";
-import { makeTestFixture, nextTick, snapshotEverything, useLogLifecycle } from "../helpers";
+import { App, Component, mount, onMounted, useState, xml } from "../../src/index";
+import {
+  makeTestFixture,
+  nextAppError,
+  nextTick,
+  snapshotEverything,
+  useLogLifecycle,
+} from "../helpers";
 
 snapshotEverything();
 
@@ -315,9 +321,13 @@ describe("list of components", () => {
       `;
       static components = { Child };
     }
-    await expect(async () => {
-      await mount(Parent, fixture, { dev: true });
-    }).rejects.toThrowError("Got duplicate key in t-foreach: child");
+
+    const app = new App(Parent, { test: true });
+    const mountProm = expect(app.mount(fixture)).rejects.toThrow(
+      "Got duplicate key in t-foreach: child"
+    );
+    await expect(nextAppError(app)).resolves.toThrow("Got duplicate key in t-foreach: child");
+    await mountProm;
     console.info = consoleInfo;
     expect(mockConsoleWarn).toBeCalledTimes(1);
   });

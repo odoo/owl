@@ -1,6 +1,6 @@
 import { BDom, mount } from "./blockdom";
 import type { ComponentNode } from "./component_node";
-import { fibersInError, handleError, OwlError } from "./error_handling";
+import { fibersInError, OwlError } from "./error_handling";
 import { STATUS } from "./status";
 
 export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
@@ -130,7 +130,7 @@ export class Fiber {
         (this.bdom as any) = true;
         this.bdom = node.renderFn();
       } catch (e) {
-        handleError({ node, error: e });
+        node.app.handleError({ node, error: e });
       }
       root.setCounter(root.counter - 1);
     }
@@ -195,7 +195,7 @@ export class RootFiber extends Fiber {
       }
     } catch (e) {
       this.locked = false;
-      handleError({ fiber: current || this, error: e });
+      node.app.handleError({ fiber: current || this, error: e });
     }
   }
 
@@ -259,7 +259,7 @@ export class MountFiber extends RootFiber {
         }
       }
     } catch (e) {
-      handleError({ fiber: current as Fiber, error: e });
+      this.node.app.handleError({ fiber: current as Fiber, error: e });
     }
   }
 }

@@ -1,5 +1,5 @@
 import { App, Component, mount, onMounted, useState, xml } from "../../src/index";
-import { children, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { children, makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
 let originalconsoleWarn = console.warn;
@@ -204,13 +204,12 @@ describe("slots", () => {
       static components = { Child };
     }
 
-    let error = null;
-    try {
-      await mount(Parent, fixture);
-    } catch (e) {
-      error = e;
-    }
-    expect(error).not.toBeNull();
+    let error: Error;
+    const app = new App(Parent);
+    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
+    await mountProm;
+    expect(error!).not.toBeNull();
     expect(mockConsoleWarn).toBeCalledTimes(1);
   });
 

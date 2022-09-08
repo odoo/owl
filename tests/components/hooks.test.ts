@@ -17,8 +17,16 @@ import {
   useChildSubEnv,
   useSubEnv,
   xml,
+  OwlError,
 } from "../../src/index";
-import { elem, logStep, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import {
+  elem,
+  logStep,
+  makeTestFixture,
+  nextAppError,
+  nextTick,
+  snapshotEverything,
+} from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -650,11 +658,12 @@ describe("hooks", () => {
         }
       }
 
-      try {
-        await mount(MyComponent, fixture);
-      } catch (e: any) {
-        expect(e.cause.message).toBe("Intentional error");
-      }
+      let error: OwlError;
+      const app = new App(MyComponent);
+      const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+      await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
+      await mountProm;
+      expect(error!.cause.message).toBe("Intentional error");
       // no console.error because the error has been caught in this test
       expect(console.error).toHaveBeenCalledTimes(0);
       console.error = originalconsoleError;

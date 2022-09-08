@@ -1,5 +1,5 @@
-import { Component, mount, onMounted, useRef, useState } from "../../src/index";
-import { logStep, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { App, Component, mount, onMounted, useRef, useState } from "../../src/index";
+import { logStep, makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
 import { xml } from "../../src/index";
 
 snapshotEverything();
@@ -94,9 +94,14 @@ describe("refs", () => {
       ref = useRef("coucou");
     }
 
-    await expect(async () => {
-      await mount(Test, fixture);
-    }).rejects.toThrowError("Cannot have 2 elements with same ref name at the same time");
+    const app = new App(Test, { test: true });
+    const mountProm = expect(app.mount(fixture)).rejects.toThrowError(
+      "Cannot have 2 elements with same ref name at the same time"
+    );
+    await expect(nextAppError(app)).resolves.toThrow(
+      "Cannot have 2 elements with same ref name at the same time"
+    );
+    await mountProm;
     expect(console.warn).toBeCalledTimes(1);
     console.warn = consoleWarn;
   });

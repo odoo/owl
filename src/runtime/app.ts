@@ -6,6 +6,7 @@ import { Scheduler } from "./scheduler";
 import { validateProps } from "./template_helpers";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
 import { validateTarget } from "./utils";
+import { handleError } from "./error_handling";
 
 // reimplement dev mode stuff see last change in 0f7a8289a6fb8387c3c1af41c6664b2a8448758f
 
@@ -94,9 +95,7 @@ export class App<
         nodeErrorHandlers.set(node, handlers);
       }
       handlers.unshift((e) => {
-        if (isResolved) {
-          console.error(e);
-        } else {
+        if (!isResolved) {
           reject(e);
         }
         throw e;
@@ -168,6 +167,10 @@ export class App<
       parentFiber.childrenMap[key] = node;
       return node;
     };
+  }
+
+  handleError(...args: Parameters<typeof handleError>) {
+    return handleError(...args);
   }
 }
 

@@ -1,5 +1,12 @@
 import { App, Component, mount, status, toRaw, useState, xml } from "../../src";
-import { elem, makeTestFixture, nextTick, snapshotEverything, useLogLifecycle } from "../helpers";
+import {
+  elem,
+  makeTestFixture,
+  nextAppError,
+  nextTick,
+  snapshotEverything,
+  useLogLifecycle,
+} from "../helpers";
 import { markup } from "../../src/runtime/utils";
 
 let fixture: HTMLElement;
@@ -208,14 +215,14 @@ describe("basics", () => {
       static template = xml`<div/>`;
     }
     let error: Error;
-    const prom = mount(Test, fixture);
+    const app = new App(Test);
+    const prom = app.mount(fixture);
     await Promise.resolve();
     fixture.remove();
-    try {
-      await prom;
-    } catch (e) {
-      error = e as Error;
-    }
+    prom.catch((e: Error) => (error = e));
+    await expect(nextAppError(app)).resolves.toThrow(
+      "Cannot mount a component on a detached dom node"
+    );
     expect(error!).toBeDefined();
     expect(error!.message).toBe("Cannot mount a component on a detached dom node");
     expect(console.warn).toBeCalledTimes(1);

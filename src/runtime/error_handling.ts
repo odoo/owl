@@ -71,5 +71,6 @@ export function handleError(params: ErrorParams) {
     } catch (e) {
       console.error(e);
     }
+    throw error;
   }
 }

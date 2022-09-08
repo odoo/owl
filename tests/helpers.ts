@@ -261,6 +261,20 @@ expect.extend({
   },
 });
 
+export function nextAppError(app: any) {
+  const { handleError } = app;
+  return new Promise((resolve) => {
+    app.handleError = (...args: Parameters<typeof handleError>) => {
+      try {
+        handleError.call(app, ...args);
+      } catch (e: any) {
+        app.handleError = handleError;
+        resolve(e);
+      }
+    };
+  });
+}
+
 declare global {
   namespace jest {
     interface Matchers<R> {

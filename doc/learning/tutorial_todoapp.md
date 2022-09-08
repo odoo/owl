@@ -770,10 +770,11 @@ For reference, here is the final code:
     <meta charset="UTF-8" />
     <title>OWL Todo App</title>
     <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
     <script src="owl.js"></script>
     <script src="app.js"></script>
-  </head>
-  <body></body>
+  </body>
 </html>
 ```
 

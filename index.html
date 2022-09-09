@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="assets/milligram.css">
   <link rel="stylesheet" href="assets/highlight.tomorrow.css">
   <link rel="stylesheet" href="assets/main.css">
+  <script src="./owl.js"></script>
 </head>
 <body>
   <header class="container">
@@ -53,25 +54,47 @@
         <h2>Example</h2>
         <div class="row">
           <section class="column">
-<pre><code class="javascript">import { Component, QWeb, useState } from "owl";
+<pre><code class="javascript">import { mount, Component, useState } from "owl";
 
 class Counter extends Component {
-  state = useState({ value: 0 });
+  setup() {
+    this.state = useState({ value: 0 });
+  }
 
   increment() {
     this.state.value++;
   }
 }
 
-const counter = new Counter();
-counter.mount(document.body);</code></pre>
+mount(Counter, document.body);</code></pre>
           </section>
           <section class="column">
 <pre><code class="xml">&lt;templates&gt;
-  &lt;button t-name=&quot;Counter&quot; t-on-click=&quot;increment&quot;&gt;
-    Click Me! [&lt;t t-esc=&quot;state.value&quot;/&gt;]
-  &lt;/button&gt;
+  &lt;t t-name=&quot;Counter&quot;&gt;
+    &lt;button t-on-click=&quot;increment&quot;&gt;
+      Click Me! [&lt;t t-esc=&quot;state.value&quot;/&gt;]
+    &lt;/button&gt;
+  &lt;/t&gt;
 &lt;/templates&gt;</code></pre>
+            <div id="app-container"></div>
+            <script>
+const { mount, Component, useState, xml } = owl;
+
+class Counter extends Component {
+  setup() {
+    this.state = useState({ value: 0 });
+  }
+
+  increment() {
+    this.state.value++;
+  }
+}
+Counter.template = xml`<button t-on-click="increment">
+  Click Me! [<t t-esc="state.value"/>]
+</button>`;
+
+mount(Counter, document.getElementById("app-container"));
+            </script>
           </section>
         </div>
       </div>

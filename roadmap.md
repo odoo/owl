@@ -1,28 +1,9 @@
 # 🦉 OWL Roadmap 🦉
 
-- Current version: 1.4.10
+- Current version: 2.X
 - Status: stable
 
-This roadmap is only an attempt at predicting Owl's future.  Everything may
-change!
+Owl is currently stable. No (large) improvements is expected in the near future.
 
-
-### 1.x
-
-- add chrome and firefox devtools,
-- fix every bugs,
-- improve documentation,
-- small backward compatible improvements.
-
-### 2.x (2020? 2021? 2022?)
-
-- stop support for `t-set` directive to define the content of a slot
-
-Maybe:
-
-- reimplement vdom to use *block* system, like Vue 3, which should make Owl
-  much faster
-- refactor `QWeb` to use an intermediate representation (some kind of AST) to
-  allow additional optimisations.
-
-
+Note that we intend to keep maintaining owl, and as such, improvements and/or
+breaking changes may require a version bump in the future.

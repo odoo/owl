@@ -72,10 +72,8 @@ async function startRelease() {
   }
 
   // ---------------------------------------------------------------------------
-  log(`Step 3/${STEPS}: updating package.json, readme.md and roadmap.md...`);
+  log(`Step 3/${STEPS}: updating package.json...`);
   await replaceInFile("./package.json", current, next);
-  await replaceInFile("./README.md", current, next);
-  await replaceInFile("./roadmap.md", current, next);
 
   // ---------------------------------------------------------------------------
   log(`Step 4/${STEPS}: creating git commit...`);

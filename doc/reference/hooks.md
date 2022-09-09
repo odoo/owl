@@ -234,7 +234,8 @@ are defined by a function instead of just the dependencies.
 
 The `useEffect` hook takes two function: the effect function and the dependency
 function. The effect function perform some task and return (optionally) a cleanup
-function. The dependency function returns a list of dependencies. If any of these
+function. The dependency function returns a list of dependencies, these dependencies
+are passed as parameters in the effect function . If any of these
 dependencies changes, then the current effect will be cleaned up and reexecuted.
 
 Here is an example without any dependencies:

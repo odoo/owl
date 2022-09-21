@@ -157,6 +157,15 @@ function buildTree(
           : document.createElement(tagName);
       }
       if (el instanceof Element) {
+        if (!domParentTree) {
+          // some html elements may have side effects when setting their attributes.
+          // For example, setting the src attribute of an <img/> will trigger a
+          // request to get the corresponding image. This is something that we
+          // don't want at compile time. We avoid that by putting the content of
+          // the block in a <template/> element
+          const fragment = document.createElement("template").content;
+          fragment.appendChild(el);
+        }
         for (let i = 0; i < attrs.length; i++) {
           const attrName = attrs[i].name;
           const attrValue = attrs[i].value;

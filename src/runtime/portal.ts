@@ -1,4 +1,4 @@
-import { onWillUnmount } from "./lifecycle_hooks";
+import { onMounted, onWillUnmount } from "./lifecycle_hooks";
 import { BDom, text, VNode } from "./blockdom";
 import { Component } from "./component";
 import { OwlError } from "./error_handling";
@@ -6,60 +6,55 @@ import { OwlError } from "./error_handling";
 const VText: any = text("").constructor;
 
 class VPortal extends VText implements Partial<VNode<VPortal>> {
-  //   selector: string;
-  realBDom: BDom | null;
+  content: BDom | null;
+  selector: string;
   target: HTMLElement | null = null;
 
-  constructor(selector: string, realBDom: BDom) {
+  constructor(selector: string, content: BDom) {
     super("");
     this.selector = selector;
-    this.realBDom = realBDom;
+    this.content = content;
   }
+
   mount(parent: HTMLElement, anchor: ChildNode) {
     super.mount(parent, anchor);
     this.target = document.querySelector(this.selector) as any;
-    if (!this.target) {
-      let el: any = this.el;
-      while (el && el.parentElement instanceof HTMLElement) {
-        el = el.parentElement;
-      }
-      this.target = el && el.querySelector(this.selector);
-      if (!this.target) {
-        throw new OwlError("invalid portal target");
-      }
+    if (this.target) {
+      this.content!.mount(this.target!, null);
+    } else {
+      this.content!.mount(parent, anchor);
     }
-    this.realBDom!.mount(this.target!, null);
   }
 
   beforeRemove() {
-    this.realBDom!.beforeRemove();
+    this.content!.beforeRemove();
   }
   remove() {
-    if (this.realBDom) {
+    if (this.content) {
       super.remove();
-      this.realBDom!.remove();
-      this.realBDom = null;
+      this.content!.remove();
+      this.content = null;
     }
   }
 
   patch(other: VPortal) {
     super.patch(other);
-    if (this.realBDom) {
-      this.realBDom.patch(other.realBDom!, true);
+    if (this.content) {
+      this.content.patch(other.content!, true);
     } else {
-      this.realBDom = other.realBDom;
-      this.realBDom!.mount(this.target!, null);
+      this.content = other.content;
+      this.content!.mount(this.target!, null);
     }
   }
 }
 
 /**
- * <t t-slot="default"/>
+ * kind of similar to <t t-slot="default"/>, but it wraps it around a VPortal
  */
 export function portalTemplate(app: any, bdom: any, helpers: any) {
   let { callSlot } = helpers;
-  return function template(ctx: any, node: any, key = "") {
-    return callSlot(ctx, node, key, "default", false, null);
+  return function template(ctx: any, node: any, key = ""): any {
+    return new VPortal(ctx.props.target, callSlot(ctx, node, key, "default", false, null));
   };
 }
 
@@ -73,13 +68,23 @@ export class Portal extends Component {
   };
 
   setup() {
-    const node = this.__owl__;
-    const renderFn = node.renderFn;
-    node.renderFn = () => new VPortal(this.props.target, renderFn());
-    onWillUnmount(() => {
-      if (node.bdom) {
-        node.bdom.remove();
+    const node: any = this.__owl__;
+
+    onMounted(() => {
+      const portal: VPortal = node.bdom;
+      if (!portal.target) {
+        const target: HTMLElement = document.querySelector(this.props.target);
+        if (target) {
+          portal.content!.moveBefore(target, null);
+        } else {
+          throw new OwlError("invalid portal target");
+        }
       }
+    });
+
+    onWillUnmount(() => {
+      const portal: VPortal = node.bdom;
+      portal.remove();
     });
   }
 }

@@ -276,7 +276,7 @@ describe("Portal", () => {
 
     expect(error!).toBeDefined();
     expect(error!.message).toBe("invalid portal target");
-    expect(fixture.innerHTML).toBe(`<div></div>`);
+    expect(fixture.innerHTML).toBe(``);
     expect(mockConsoleWarn).toBeCalledTimes(1);
   });
 
@@ -873,6 +873,48 @@ describe("Portal", () => {
     parent.portalIds.pop();
     await nextTick();
     expect(fixture.innerHTML).toBe('<div id="outside"></div><div></div>');
+  });
+
+  test("Child and Portal", async () => {
+    class Child extends Component {
+      static template = xml`
+        <span>child</span>
+        <t t-portal="'.portal'"><span>portal</span></t>`;
+    }
+    class Parent extends Component {
+      static template = xml`
+        <t>
+          <Child/>
+          <div class="portal"></div>
+        </t>`;
+
+      static components = { Child };
+    }
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe(
+      '<span>child</span><div class="portal"></div><span>portal</span>'
+    );
+  });
+
+  test("portal and Child", async () => {
+    class Child extends Component {
+      static template = xml`
+        <span>child</span>
+        <t t-portal="'.portal'"><span>portal</span></t>`;
+    }
+    class Parent extends Component {
+      static template = xml`
+        <t>
+          <div class="portal"></div>
+          <Child/>
+        </t>`;
+
+      static components = { Child };
+    }
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe(
+      '<div class="portal"><span>portal</span></div><span>child</span>'
+    );
   });
 });
 

@@ -155,6 +155,44 @@ exports[`Portal Add and remove portals with t-foreach inside div 1`] = `
 }"
 `;
 
+exports[`Portal Child and Portal 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false, true);
+  
+  let block3 = createBlock(\`<div class=\\"portal\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = comp1({}, key + \`__1\`, node, this, null);
+    const b3 = block3();
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`Portal Child and Portal 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const Portal = app.Portal;
+  const comp1 = app.createComponent(null, false, true, false, false);
+  
+  let block2 = createBlock(\`<span>child</span>\`);
+  let block3 = createBlock(\`<span>portal</span>\`);
+  
+  function slot1(ctx, node, key = \\"\\") {
+    return block3();
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = block2();
+    const b4 = comp1({target: '.portal',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    return multi([b2, b4]);
+  }
+}"
+`;
+
 exports[`Portal Portal composed with t-slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -511,6 +549,44 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 2`] 
   return function template(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].val;
     return block1([txt1]);
+  }
+}"
+`;
+
+exports[`Portal portal and Child 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false, true);
+  
+  let block2 = createBlock(\`<div class=\\"portal\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = block2();
+    const b3 = comp1({}, key + \`__1\`, node, this, null);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`Portal portal and Child 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const Portal = app.Portal;
+  const comp1 = app.createComponent(null, false, true, false, false);
+  
+  let block2 = createBlock(\`<span>child</span>\`);
+  let block3 = createBlock(\`<span>portal</span>\`);
+  
+  function slot1(ctx, node, key = \\"\\") {
+    return block3();
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = block2();
+    const b4 = comp1({target: '.portal',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    return multi([b2, b4]);
   }
 }"
 `;

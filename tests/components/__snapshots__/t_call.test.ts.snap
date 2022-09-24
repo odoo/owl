@@ -444,6 +444,51 @@ exports[`t-call t-call with t-call-context and subcomponent 3`] = `
 }"
 `;
 
+exports[`t-call t-call with t-call-context and subcomponent, in dev mode 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const callTemplate_1 = app.getTemplate(\`someTemplate\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let ctx1 = ctx['subctx'];
+    return callTemplate_1.call(this, ctx1, node, key + \`__1\`);
+  }
+}"
+`;
+
+exports[`t-call t-call with t-call-context and subcomponent, in dev mode 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp2 = app.createComponent(\`Child\`, true, false, false, false);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const props1 = {name: ctx['aab']};
+    helpers.validateProps(\`Child\`, props1, node);
+    const b2 = comp1(props1, key + \`__1\`, node, this, null);
+    const props2 = {name: ctx['lpe']};
+    helpers.validateProps(\`Child\`, props2, node);
+    const b3 = comp2(props2, key + \`__2\`, node, this, null);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`t-call t-call with t-call-context and subcomponent, in dev mode 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`child\`);
+    const b3 = text(ctx['props'].name);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
 exports[`t-call t-call with t-call-context, simple use 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

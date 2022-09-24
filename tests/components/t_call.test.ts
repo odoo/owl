@@ -287,4 +287,32 @@ describe("t-call", () => {
     });
     expect(fixture.innerHTML).toBe("childaaronchildlucas");
   });
+
+  test("t-call with t-call-context and subcomponent, in dev mode", async () => {
+    class Child extends Component {
+      static template = xml`child<t t-esc="props.name"/>`;
+      static props = ["name"];
+    }
+
+    class Root extends Component {
+      static template = xml`
+          <t t-call="someTemplate" t-call-context="subctx"/>`;
+
+      static components = { Child };
+
+      subctx = { aab: "aaron", lpe: "lucas" };
+    }
+
+    await mount(Root, fixture, {
+      dev: true,
+      templates: `
+        <templates>
+          <t t-name="someTemplate">
+            <Child name="aab"/>
+            <Child name="lpe"/>
+          </t>
+        </templates>`,
+    });
+    expect(fixture.innerHTML).toBe("childaaronchildlucas");
+  });
 });

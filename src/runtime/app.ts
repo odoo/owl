@@ -66,7 +66,7 @@ export class App<
   mount(target: HTMLElement, options?: MountOptions): Promise<Component<P, E> & InstanceType<T>> {
     App.validateTarget(target);
     if (this.dev) {
-      validateProps(this.Root, this.props, { __owl__: { app: this } });
+      validateProps(this.Root, this.props, { app: this });
     }
     const node = this.makeNode(this.Root, this.props);
     const prom = this.mountNode(node, target, options);

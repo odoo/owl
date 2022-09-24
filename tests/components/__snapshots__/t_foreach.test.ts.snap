@@ -56,7 +56,7 @@ exports[`list of components crash on duplicate key in dev mode 1`] = `
       if (keys1.has(key1)) { throw new OwlError(\`Got duplicate key in t-foreach: \${key1}\`)}
       keys1.add(key1);
       const props1 = {};
-      helpers.validateProps(\`Child\`, props1, ctx);
+      helpers.validateProps(\`Child\`, props1, node);
       c_block1[i1] = withKey(comp1(props1, key + \`__1__\${key1}\`, node, this, null), key1);
     }
     return list(c_block1);

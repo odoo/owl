@@ -78,6 +78,12 @@ class VHtml {
     return this.content[0]!;
   }
 
+  *nodes() {
+    for (let elem of this.content) {
+      yield elem;
+    }
+  }
+
   toString() {
     return this.html;
   }

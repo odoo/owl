@@ -405,3 +405,69 @@ exports[`hooks useSubEnv supports arbitrary descriptor 2`] = `
   }
 }"
 `;
+
+exports[`useRoots hook return a list of nodes and elems 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<span>hey</span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`useRoots hook return a list of nodes and elems 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block3 = createBlock(\`<span>hey</span>\`);
+  let block5 = createBlock(\`<p>bla</p>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\` some text \`);
+    const b3 = block3();
+    const b4 = text(\` coucou \`);
+    const b5 = block5();
+    return multi([b2, b3, b4, b5]);
+  }
+}"
+`;
+
+exports[`useRoots hook useRoots and lifecycle 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<span>hey</span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`useRoots hook useRoots is up to date 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block2 = createBlock(\`<span>hey</span>\`);
+  let block5 = createBlock(\`<p>paragraph</p>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2,b3;
+    if (ctx['state'].flag) {
+      b2 = block2();
+    } else {
+      const b4 = text(\` coucou \`);
+      const b5 = block5();
+      b3 = multi([b4, b5]);
+    }
+    return multi([b2, b3]);
+  }
+}"
+`;

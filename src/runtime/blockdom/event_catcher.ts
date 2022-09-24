@@ -12,7 +12,6 @@ export function createCatcher(eventsSpec: EventsSpec): Catcher {
     child: VNode;
     handlerData: any[];
     handlerFns: any[] = [];
-
     parentEl?: HTMLElement | undefined;
     afterNode: Text | null = null;
 
@@ -44,13 +43,10 @@ export function createCatcher(eventsSpec: EventsSpec): Catcher {
         const self = this;
         handler[idx] = function (ev: any) {
           const target = ev.target;
-          let currentNode: any = self.child.firstNode();
-          const afterNode = self.afterNode;
-          while (currentNode !== afterNode) {
-            if (currentNode.contains(target)) {
+          for (let node of self.nodes()) {
+            if (node.contains(target)) {
               return origFn.call(this, ev);
             }
-            currentNode = currentNode.nextSibling;
           }
         };
       }
@@ -88,6 +84,10 @@ export function createCatcher(eventsSpec: EventsSpec): Catcher {
 
     firstNode(): Node | undefined {
       return this.child.firstNode();
+    }
+
+    nodes(): Generator<Node> {
+      return this.child.nodes();
     }
 
     toString(): string {

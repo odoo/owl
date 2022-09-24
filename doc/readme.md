@@ -38,6 +38,7 @@ Other hooks:
 - [`useRef`](reference/hooks.md#useref): get an object representing a reference (`t-ref`)
 - [`useChildSubEnv`](reference/hooks.md#usesubenv-and-usechildsubenv): extend the current env with additional information (for child components)
 - [`useSubEnv`](reference/hooks.md#usesubenv-and-usechildsubenv): extend the current env with additional information (for current component and child components)
+- [`useRoots`](reference/hooks.md#useroots): returns an object that provides access to all root nodes or htmlelements
 
 Utility/helpers:
 

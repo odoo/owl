@@ -13,6 +13,7 @@
   - [`useComponent`](#usecomponent)
   - [`useEnv`](#useenv)
   - [`useEffect`](#useeffect)
+  - [`useRoots`](#useroots)
 - [Example: Mouse Position](#example-mouse-position)
 
 ## Overview
@@ -284,6 +285,42 @@ class SomeComponent extends Component {
 
   setup() {
     useAutofocus("myinput");
+  }
+}
+```
+
+### `useRoots`
+
+`useRoots` is an alternative way to get a reference to the root notes or elements
+of a component. It may be useful in some cases where `useRef` cannot be applied,
+such as a higher order component, or a component with only text as content.
+
+The return value of `useRoots` is an object with the following key/values:
+
+- `node`: getter that evaluates to the first node of the component content (or null)
+- `elem`: getter that evaluates to the first HTMLElement of the component content (or null)
+- `nodes`: iterator that returns all content nodes
+- `elems`: iterator that returns all HTMLElement nodes
+
+```js
+class Child extends Component {
+  static template = xml`<p>some content</p>`;
+}
+
+class Parent extends Component {
+  static template = xml`<Child/>`;
+  static components = { Child };
+
+  setup() {
+    this.roots = useRoots();
+    console.log(this.roots.elem); // null
+    onMounted(() => {
+      console.log(this.roots.elem); // log the `p` element from the child
+
+      for (let elem of this.roots.elems) {
+        console.log(elem); // log the `p` element from the child
+      }
+    });
   }
 }
 ```

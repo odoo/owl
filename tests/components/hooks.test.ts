@@ -19,6 +19,7 @@ import {
   xml,
   OwlError,
 } from "../../src/index";
+import { useRoots } from "../../src/runtime/hooks";
 import {
   elem,
   logStep,
@@ -518,7 +519,7 @@ describe("hooks", () => {
     });
 
     test("dependencies prevent effects from rerunning when unchanged", async () => {
-      let steps = [];
+      let steps: string[] = [];
       class MyComponent extends Component {
         state = useState({
           a: 0,
@@ -671,5 +672,112 @@ describe("hooks", () => {
       expect(console.warn).toHaveBeenCalledTimes(1);
       console.warn = originalconsoleWarn;
     });
+  });
+});
+
+describe("useRoots hook", () => {
+  test("return a list of nodes and elems", async () => {
+    class MyComponent extends Component {
+      static template = xml`<span>hey</span>`;
+      roots: any;
+
+      setup() {
+        this.roots = useRoots();
+      }
+    }
+
+    const comp = await mount(MyComponent, fixture);
+
+    expect(comp.roots.node).toBeInstanceOf(HTMLSpanElement);
+    expect(comp.roots.elem).toBeInstanceOf(HTMLSpanElement);
+    expect([...comp.roots.nodes].map((n: any) => n.tagName)).toEqual(["SPAN"]);
+    expect([...comp.roots.elems].map((n: any) => n.tagName)).toEqual(["SPAN"]);
+  });
+
+  test("return a list of nodes and elems", async () => {
+    class MyComponent extends Component {
+      static template = xml`
+        some text
+        <span>hey</span>
+        coucou
+        <p>bla</p>`;
+      roots: any;
+
+      setup() {
+        this.roots = useRoots();
+      }
+    }
+
+    const comp = await mount(MyComponent, fixture);
+
+    expect(comp.roots.node).toBeInstanceOf(Text);
+    expect(comp.roots.elem).toBeInstanceOf(HTMLSpanElement);
+
+    expect([...comp.roots.elems].map((n: any) => n.tagName)).toEqual(["SPAN", "P"]);
+    expect([...comp.roots.nodes].map((n: any) => n.nodeType)).toEqual([3, 1, 3, 1]);
+  });
+
+  test("useRoots and lifecycle", async () => {
+    expect.assertions(13);
+    class MyComponent extends Component {
+      static template = xml`<span>hey</span>`;
+      roots: any;
+
+      setup() {
+        this.roots = useRoots();
+        expect(this.roots.elem).toBe(null);
+        expect(this.roots.node).toBe(null);
+        expect([...this.roots.nodes]).toEqual([]);
+        expect([...this.roots.elems]).toEqual([]);
+        onWillStart(() => {
+          expect(this.roots.elem).toBe(null);
+          expect(this.roots.node).toBe(null);
+          expect([...this.roots.nodes]).toEqual([]);
+          expect([...this.roots.elems]).toEqual([]);
+        });
+        onMounted(() => {
+          expect(this.roots.elem).toBeInstanceOf(HTMLSpanElement);
+          expect(this.roots.node).toBeInstanceOf(HTMLSpanElement);
+          expect([...this.roots.elems].map((n: any) => n.tagName)).toEqual(["SPAN"]);
+          expect([...this.roots.nodes].map((n: any) => n.nodeType)).toEqual([1]);
+        });
+      }
+    }
+
+    const comp = await mount(MyComponent, fixture);
+    comp.__owl__.app.destroy();
+  });
+
+  test("useRoots is up to date", async () => {
+    class MyComponent extends Component {
+      static template = xml`
+        <t t-if="state.flag">
+          <span>hey</span>
+        </t>
+        <t t-else="">
+          coucou
+          <p>paragraph</p>
+        </t>`;
+      roots: any;
+      state: any;
+
+      setup() {
+        this.roots = useRoots();
+        this.state = useState({ flag: true });
+        onMounted(() => {
+          expect(this.roots.elem).toBeInstanceOf(HTMLSpanElement);
+          expect(this.roots.node).toBeInstanceOf(HTMLSpanElement);
+          expect([...this.roots.elems].map((n: any) => n.tagName)).toEqual(["SPAN"]);
+          expect([...this.roots.nodes].map((n: any) => n.nodeType)).toEqual([1]);
+        });
+      }
+    }
+
+    const comp = await mount(MyComponent, fixture);
+    comp.state.flag = false;
+    await nextTick();
+    expect(comp.roots.node.nodeType).toBe(3); // text node
+    expect(comp.roots.node.textContent).toBe(" coucou "); // text node
+    expect(comp.roots.elem).toBeInstanceOf(HTMLParagraphElement);
   });
 });

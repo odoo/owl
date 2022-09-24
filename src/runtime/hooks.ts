@@ -127,3 +127,39 @@ export function useExternalListener(
   onMounted(() => target.addEventListener(eventName, boundHandler, eventParams));
   onWillUnmount(() => target.removeEventListener(eventName, boundHandler, eventParams));
 }
+
+// -----------------------------------------------------------------------------
+// useRoots
+// -----------------------------------------------------------------------------
+interface DomRangeObj {
+  node: Node | null;
+  elem: HTMLElement | null;
+  elems: Iterable<HTMLElement>;
+  nodes: Iterable<Node>;
+}
+
+export function useRoots(): DomRangeObj {
+  const cnode = getCurrent();
+
+  function* _elems(): Generator<HTMLElement> {
+    for (let node of cnode.nodes()) {
+      if (node.nodeType === 1) {
+        yield node as HTMLElement;
+      }
+    }
+  }
+  return {
+    get node() {
+      return cnode.nodes().next().value || null;
+    },
+    get elem() {
+      return _elems().next().value || null;
+    },
+    get nodes() {
+      return cnode.nodes();
+    },
+    get elems() {
+      return _elems();
+    },
+  };
+}

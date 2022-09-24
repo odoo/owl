@@ -296,6 +296,12 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     return bdom ? bdom.firstNode() : undefined;
   }
 
+  *nodes(): Generator<Node> {
+    if (this.bdom) {
+      yield* this.bdom.nodes();
+    }
+  }
+
   mount(parent: HTMLElement, anchor: ChildNode) {
     const bdom = this.fiber!.bdom!;
     this.bdom = bdom;

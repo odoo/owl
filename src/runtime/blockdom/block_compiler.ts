@@ -517,6 +517,12 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
       return this.el!;
     }
 
+    *nodes() {
+      if (this.el) {
+        yield this.el;
+      }
+    }
+
     moveBefore(other: Block | null, afterNode: Node | null) {
       const target = other ? other.el! : afterNode;
       nodeInsertBefore.call(this.parentEl, this.el!, target);

@@ -55,6 +55,10 @@ class VToggler {
     return this.child.firstNode();
   }
 
+  nodes() {
+    return this.child.nodes();
+  }
+
   toString(): string {
     return this.child.toString();
   }

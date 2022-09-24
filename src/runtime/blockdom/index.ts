@@ -16,6 +16,8 @@ export interface VNode<T = any> {
   remove(): void;
   firstNode(): Node | undefined;
 
+  nodes(): Generator<Node>;
+
   el?: undefined | HTMLElement | Text;
   parentEl?: undefined | HTMLElement;
   isOnlyChild?: boolean | undefined;

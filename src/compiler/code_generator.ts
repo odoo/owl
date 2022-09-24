@@ -1188,7 +1188,7 @@ export class CodeGenerator {
     }
 
     if (this.dev) {
-      this.addLine(`helpers.validateProps(${expr}, ${propVar!}, ctx);`);
+      this.addLine(`helpers.validateProps(${expr}, ${propVar!}, node);`);
     }
 
     if (block && (ctx.forceNewBlock === false || ctx.tKeyExpr)) {

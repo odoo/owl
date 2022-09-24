@@ -207,11 +207,11 @@ function multiRefSetter(refs: RefMap, name: string): RefSetter {
  * visit recursively the props and all the children to check if they are valid.
  * This is why it is only done in 'dev' mode.
  */
-export function validateProps<P>(name: string | ComponentConstructor<P>, props: P, parent?: any) {
+export function validateProps<P>(name: string | ComponentConstructor<P>, props: P, node?: any) {
   const ComponentClass =
     typeof name !== "string"
       ? name
-      : (parent.constructor.components[name] as ComponentConstructor<P> | undefined);
+      : (node.component.constructor.components[name] as ComponentConstructor<P> | undefined);
 
   if (!ComponentClass) {
     // this is an error, wrong component. We silently return here instead so the
@@ -221,7 +221,7 @@ export function validateProps<P>(name: string | ComponentConstructor<P>, props: 
 
   const schema = ComponentClass.props;
   if (!schema) {
-    if (parent.__owl__.app.warnIfNoStaticProps) {
+    if (node.app.warnIfNoStaticProps) {
       console.warn(`Component '${ComponentClass.name}' does not have a static props description`);
     }
     return;

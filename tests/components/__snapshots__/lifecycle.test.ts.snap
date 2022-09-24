@@ -704,7 +704,7 @@ exports[`lifecycle hooks timeout in onWillUpdateProps emits a warning 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const props1 = {prop: ctx['state'].prop};
-    helpers.validateProps(\`Child\`, props1, ctx);
+    helpers.validateProps(\`Child\`, props1, node);
     return comp1(props1, key + \`__1\`, node, this, null);
   }
 }"

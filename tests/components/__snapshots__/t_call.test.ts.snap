@@ -466,10 +466,10 @@ exports[`t-call t-call with t-call-context and subcomponent, in dev mode 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const props1 = {name: ctx['aab']};
-    helpers.validateProps(\`Child\`, props1, node);
+    helpers.validateProps(\`Child\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
     const props2 = {name: ctx['lpe']};
-    helpers.validateProps(\`Child\`, props2, node);
+    helpers.validateProps(\`Child\`, props2, this);
     const b3 = comp2(props2, key + \`__2\`, node, this, null);
     return multi([b2, b3]);
   }

@@ -20,7 +20,7 @@ exports[`basics display a nice error if it cannot find component (in dev mode) 1
   
   return function template(ctx, node, key = \\"\\") {
     const props1 = {};
-    helpers.validateProps(\`SomeMispelledComponent\`, props1, node);
+    helpers.validateProps(\`SomeMispelledComponent\`, props1, this);
     return comp1(props1, key + \`__1\`, node, this, null);
   }
 }"

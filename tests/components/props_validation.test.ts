@@ -780,6 +780,32 @@ describe("props validation", () => {
     // we just check that it doesn't throw
     await expect(mount(Parent, fixture, { dev: true })).resolves.toEqual(expect.anything());
   });
+
+  test("can validate through slots", async () => {
+    class Child extends Component {
+      static props = ["message"];
+      static template = xml`<div>hey</div>`;
+    }
+
+    class Wrapper extends Component {
+      static template = xml`<t t-slot="default"/>`;
+    }
+
+    class Parent extends Component {
+      static components = { Child, Wrapper };
+      static template = xml`<Wrapper><Child /></Wrapper>`;
+    }
+
+    const app = new App(Parent, { test: true });
+    let error: OwlError | undefined;
+    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    await expect(nextAppError(app)).resolves.toThrow(
+      "Invalid props for component 'Child': 'message' is missing"
+    );
+    await mountProm;
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe("Invalid props for component 'Child': 'message' is missing");
+  });
 });
 
 //------------------------------------------------------------------------------

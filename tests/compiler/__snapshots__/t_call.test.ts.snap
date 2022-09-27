@@ -334,6 +334,57 @@ exports[`t-call (template calling) inherit context 2`] = `
 }"
 `;
 
+exports[`t-call (template calling) nested t-calls with magic variable 0 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, zero } = helpers;
+  const callTemplate_1 = app.getTemplate(\`grandchild\`);
+  const callTemplate_2 = app.getTemplate(\`child\`);
+  
+  let block1 = createBlock(\`<p>Some content...</p>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1;
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1;
+    const b1 = block1();
+    ctx[zero] = b1;
+    const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    ctx = ctx.__proto__;
+    ctx[zero] = b2;
+    return callTemplate_2.call(this, ctx, node, key + \`__2\`);
+  }
+}"
+`;
+
+exports[`t-call (template calling) nested t-calls with magic variable 0 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { zero } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`grandchild\`);
+    const b3 = ctx[zero];
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`t-call (template calling) nested t-calls with magic variable 0 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { zero } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return ctx[zero];
+  }
+}"
+`;
+
 exports[`t-call (template calling) recursive template, part 1 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

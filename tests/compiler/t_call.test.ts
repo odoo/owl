@@ -479,4 +479,21 @@ describe("t-call (template calling)", () => {
       "<span>123lucas</span>"
     );
   });
+
+  test("nested t-calls with magic variable 0", () => {
+    const context = new TestContext();
+    context.addTemplate("grandchild", `grandchild<t t-out="0"/>`);
+    context.addTemplate("child", `<t t-out="0"/>`);
+    context.addTemplate(
+      "main",
+      `
+        <t t-call="child">
+            <t t-call="grandchild">
+                <p>Some content...</p>
+            </t>
+        </t>`
+    );
+
+    expect(context.renderToString("main")).toBe("grandchild<p>Some content...</p>");
+  });
 });

@@ -424,78 +424,66 @@ export class CodeGenerator {
       .join("");
   }
 
-  compileAST(ast: AST, ctx: Context) {
+  /**
+   * @returns the newly created block name, if any
+   */
+  compileAST(ast: AST, ctx: Context): string | null {
     switch (ast.type) {
       case ASTType.Comment:
-        this.compileComment(ast, ctx);
-        break;
+        return this.compileComment(ast, ctx);
       case ASTType.Text:
-        this.compileText(ast, ctx);
-        break;
+        return this.compileText(ast, ctx);
       case ASTType.DomNode:
-        this.compileTDomNode(ast, ctx);
-        break;
+        return this.compileTDomNode(ast, ctx);
       case ASTType.TEsc:
-        this.compileTEsc(ast, ctx);
-        break;
+        return this.compileTEsc(ast, ctx);
       case ASTType.TOut:
-        this.compileTOut(ast, ctx);
-        break;
+        return this.compileTOut(ast, ctx);
       case ASTType.TIf:
-        this.compileTIf(ast, ctx);
-        break;
+        return this.compileTIf(ast, ctx);
       case ASTType.TForEach:
-        this.compileTForeach(ast, ctx);
-        break;
+        return this.compileTForeach(ast, ctx);
       case ASTType.TKey:
-        this.compileTKey(ast, ctx);
-        break;
+        return this.compileTKey(ast, ctx);
       case ASTType.Multi:
-        this.compileMulti(ast, ctx);
-        break;
+        return this.compileMulti(ast, ctx);
       case ASTType.TCall:
-        this.compileTCall(ast, ctx);
-        break;
+        return this.compileTCall(ast, ctx);
       case ASTType.TCallBlock:
-        this.compileTCallBlock(ast, ctx);
-        break;
+        return this.compileTCallBlock(ast, ctx);
       case ASTType.TSet:
-        this.compileTSet(ast, ctx);
-        break;
+        return this.compileTSet(ast, ctx);
       case ASTType.TComponent:
-        this.compileComponent(ast, ctx);
-        break;
+        return this.compileComponent(ast, ctx);
       case ASTType.TDebug:
-        this.compileDebug(ast, ctx);
-        break;
+        return this.compileDebug(ast, ctx);
       case ASTType.TLog:
-        this.compileLog(ast, ctx);
-        break;
+        return this.compileLog(ast, ctx);
       case ASTType.TSlot:
-        this.compileTSlot(ast, ctx);
-        break;
+        return this.compileTSlot(ast, ctx);
       case ASTType.TTranslation:
-        this.compileTTranslation(ast, ctx);
-        break;
+        return this.compileTTranslation(ast, ctx);
       case ASTType.TPortal:
-        this.compileTPortal(ast, ctx);
+        return this.compileTPortal(ast, ctx);
     }
   }
 
-  compileDebug(ast: ASTDebug, ctx: Context) {
+  compileDebug(ast: ASTDebug, ctx: Context): string | null {
     this.addLine(`debugger;`);
     if (ast.content) {
-      this.compileAST(ast.content, ctx);
+      return this.compileAST(ast.content, ctx);
     }
+    return null;
   }
 
-  compileLog(ast: ASTLog, ctx: Context) {
+  compileLog(ast: ASTLog, ctx: Context): string | null {
     this.addLine(`console.log(${compileExpr(ast.expr)});`);
     if (ast.content) {
-      this.compileAST(ast.content, ctx);
+      return this.compileAST(ast.content, ctx);
     }
+    return null;
   }
-  compileComment(ast: ASTComment, ctx: Context) {
+  compileComment(ast: ASTComment, ctx: Context): string {
     let { block, forceNewBlock } = ctx;
     const isNewBlock = !block || forceNewBlock;
     if (isNewBlock) {
@@ -508,9 +496,10 @@ export class CodeGenerator {
       const text = xmlDoc.createComment(ast.value);
       block!.insert(text);
     }
+    return block!.varName;
   }
 
-  compileText(ast: ASTText, ctx: Context) {
+  compileText(ast: ASTText, ctx: Context): string {
     let { block, forceNewBlock } = ctx;
 
     let value = ast.value;
@@ -529,6 +518,7 @@ export class CodeGenerator {
       const createFn = ast.type === ASTType.Text ? xmlDoc.createTextNode : xmlDoc.createComment;
       block.insert(createFn.call(xmlDoc, value));
     }
+    return block.varName;
   }
 
   generateHandlerCode(rawEvent: string, handler: string): string {
@@ -548,7 +538,7 @@ export class CodeGenerator {
     return `[${modifiersCode}${this.captureExpression(handler)}, ctx]`;
   }
 
-  compileTDomNode(ast: ASTDomNode, ctx: Context) {
+  compileTDomNode(ast: ASTDomNode, ctx: Context): string {
     let { block, forceNewBlock } = ctx;
     const isNewBlock = !block || forceNewBlock || ast.dynamicTag !== null || ast.ns;
     let codeIdx = this.target.code.length;
@@ -735,9 +725,10 @@ export class CodeGenerator {
         this.addLine(`let ${block!.children.map((c) => c.varName)};`, codeIdx);
       }
     }
+    return block!.varName;
   }
 
-  compileTEsc(ast: ASTTEsc, ctx: Context) {
+  compileTEsc(ast: ASTTEsc, ctx: Context): string {
     let { block, forceNewBlock } = ctx;
     let expr: string;
     if (ast.expr === "0") {
@@ -758,9 +749,10 @@ export class CodeGenerator {
       const text = xmlDoc.createElement(`block-text-${idx}`);
       block.insert(text);
     }
+    return block.varName;
   }
 
-  compileTOut(ast: ASTTOut, ctx: Context) {
+  compileTOut(ast: ASTTOut, ctx: Context): string {
     let { block } = ctx;
     if (block) {
       this.insertAnchor(block);
@@ -782,6 +774,7 @@ export class CodeGenerator {
       blockStr = `safeOutput(${compileExpr(ast.expr)})`;
     }
     this.insertBlock(blockStr, block, ctx);
+    return block.varName;
   }
 
   compileTIfBranch(content: AST, block: BlockDescription, ctx: Context) {
@@ -795,7 +788,7 @@ export class CodeGenerator {
     this.target.indentLevel--;
   }
 
-  compileTIf(ast: ASTTif, ctx: Context, nextNode?: ASTDomNode) {
+  compileTIf(ast: ASTTif, ctx: Context, nextNode?: ASTDomNode): string {
     let { block, forceNewBlock } = ctx;
     const codeIdx = this.target.code.length;
     const isNewBlock = !block || (block.type !== "multi" && forceNewBlock);
@@ -838,9 +831,10 @@ export class CodeGenerator {
       const args = block!.children.map((c) => c.varName).join(", ");
       this.insertBlock(`multi([${args}])`, block!, ctx)!;
     }
+    return block.varName;
   }
 
-  compileTForeach(ast: ASTTForEach, ctx: Context) {
+  compileTForeach(ast: ASTTForEach, ctx: Context): string {
     let { block } = ctx;
     if (block) {
       this.insertAnchor(block);
@@ -918,9 +912,10 @@ export class CodeGenerator {
       this.addLine(`ctx = ctx.__proto__;`);
     }
     this.insertBlock("l", block, ctx);
+    return block.varName;
   }
 
-  compileTKey(ast: ASTTKey, ctx: Context) {
+  compileTKey(ast: ASTTKey, ctx: Context): string | null {
     const tKeyExpr = generateId("tKey_");
     this.define(tKeyExpr, compileExpr(ast.expr));
     ctx = createContext(ctx, {
@@ -928,20 +923,22 @@ export class CodeGenerator {
       block: ctx.block,
       index: ctx.index,
     });
-    this.compileAST(ast.content, ctx);
+    return this.compileAST(ast.content, ctx);
   }
 
-  compileMulti(ast: ASTMulti, ctx: Context) {
+  compileMulti(ast: ASTMulti, ctx: Context): string | null {
     let { block, forceNewBlock } = ctx;
     const isNewBlock = !block || forceNewBlock;
     let codeIdx = this.target.code.length;
     if (isNewBlock) {
       const n = ast.content.filter((c) => c.type !== ASTType.TSet).length;
+      let result: string | null = null;
       if (n <= 1) {
         for (let child of ast.content) {
-          this.compileAST(child, ctx);
+          const blockName = this.compileAST(child, ctx);
+          result = result || blockName;
         }
-        return;
+        return result;
       }
       block = this.createBlock(block, "multi", ctx);
     }
@@ -981,9 +978,10 @@ export class CodeGenerator {
       const args = block!.children.map((c) => c.varName).join(", ");
       this.insertBlock(`multi([${args}])`, block!, ctx)!;
     }
+    return block!.varName;
   }
 
-  compileTCall(ast: ASTTCall, ctx: Context) {
+  compileTCall(ast: ASTTCall, ctx: Context): string {
     let { block, forceNewBlock } = ctx;
     let ctxVar = ctx.ctxVar || "ctx";
     if (ast.context) {
@@ -994,12 +992,11 @@ export class CodeGenerator {
       this.addLine(`${ctxVar} = Object.create(${ctxVar});`);
       this.addLine(`${ctxVar}[isBoundary] = 1;`);
       this.helpers.add("isBoundary");
-      const nextId = BlockDescription.nextBlockId;
       const subCtx = createContext(ctx, { preventRoot: true, ctxVar });
-      this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
-      if (nextId !== BlockDescription.nextBlockId) {
+      const bl = this.compileMulti({ type: ASTType.Multi, content: ast.body }, subCtx);
+      if (bl) {
         this.helpers.add("zero");
-        this.addLine(`${ctxVar}[zero] = b${nextId};`);
+        this.addLine(`${ctxVar}[zero] = ${bl};`);
       }
     }
     const isDynamic = INTERP_REGEXP.test(ast.name);
@@ -1033,9 +1030,10 @@ export class CodeGenerator {
     if (ast.body && !ctx.isLast) {
       this.addLine(`${ctxVar} = ${ctxVar}.__proto__;`);
     }
+    return block.varName;
   }
 
-  compileTCallBlock(ast: ASTTCallBlock, ctx: Context) {
+  compileTCallBlock(ast: ASTTCallBlock, ctx: Context): string {
     let { block, forceNewBlock } = ctx;
     if (block) {
       if (!forceNewBlock) {
@@ -1044,9 +1042,10 @@ export class CodeGenerator {
     }
     block = this.createBlock(block, "multi", ctx);
     this.insertBlock(compileExpr(ast.name), block, { ...ctx, forceNewBlock: !block });
+    return block.varName;
   }
 
-  compileTSet(ast: ASTTSet, ctx: Context) {
+  compileTSet(ast: ASTTSet, ctx: Context): null {
     this.target.shouldProtectScope = true;
     this.helpers.add("isBoundary").add("withDefault");
     const expr = ast.value ? compileExpr(ast.value || "") : "null";
@@ -1071,6 +1070,7 @@ export class CodeGenerator {
       this.helpers.add("setContextValue");
       this.addLine(`setContextValue(${ctx.ctxVar || "ctx"}, "${ast.name}", ${value});`);
     }
+    return null;
   }
 
   generateComponentKey() {
@@ -1122,7 +1122,7 @@ export class CodeGenerator {
     return propString;
   }
 
-  compileComponent(ast: ASTComponent, ctx: Context) {
+  compileComponent(ast: ASTComponent, ctx: Context): string {
     let { block } = ctx;
     // props
     const hasSlotsProp = "slots" in (ast.props || {});
@@ -1222,6 +1222,7 @@ export class CodeGenerator {
 
     block = this.createBlock(block, "multi", ctx);
     this.insertBlock(blockExpr, block, ctx);
+    return block.varName;
   }
 
   wrapWithEventCatcher(expr: string, on: EventHandlers): string {
@@ -1240,7 +1241,7 @@ export class CodeGenerator {
     return `${name}(${expr}, [${handlers.join(",")}])`;
   }
 
-  compileTSlot(ast: ASTSlot, ctx: Context) {
+  compileTSlot(ast: ASTSlot, ctx: Context): string {
     this.helpers.add("callSlot");
     let { block } = ctx;
     let blockString: string;
@@ -1289,14 +1290,16 @@ export class CodeGenerator {
     }
     block = this.createBlock(block, "multi", ctx);
     this.insertBlock(blockString, block, { ...ctx, forceNewBlock: false });
+    return block.varName;
   }
 
-  compileTTranslation(ast: ASTTranslation, ctx: Context) {
+  compileTTranslation(ast: ASTTranslation, ctx: Context): string | null {
     if (ast.content) {
-      this.compileAST(ast.content, Object.assign({}, ctx, { translate: false }));
+      return this.compileAST(ast.content, Object.assign({}, ctx, { translate: false }));
     }
+    return null;
   }
-  compileTPortal(ast: ASTTPortal, ctx: Context) {
+  compileTPortal(ast: ASTTPortal, ctx: Context): string {
     if (!this.staticDefs.find((d) => d.id === "Portal")) {
       this.staticDefs.push({ id: "Portal", expr: `app.Portal` });
     }
@@ -1323,5 +1326,6 @@ export class CodeGenerator {
     }
     block = this.createBlock(block, "multi", ctx);
     this.insertBlock(blockString, block, { ...ctx, forceNewBlock: false });
+    return block.varName;
   }
 }

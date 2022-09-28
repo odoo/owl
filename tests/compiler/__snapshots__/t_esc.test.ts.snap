@@ -126,7 +126,7 @@ exports[`t-esc t-esc is escaped 1`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    ctx[\`var\`] = new LazyValue(value1, ctx, this, node);
+    ctx[\`var\`] = new LazyValue(value1, ctx, this, node, key);
     let txt1 = ctx['var'];
     return block1([txt1]);
   }

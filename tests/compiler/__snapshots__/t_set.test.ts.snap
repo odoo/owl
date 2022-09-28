@@ -106,7 +106,7 @@ exports[`t-set set from body literal (with t-if/t-else 1`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    ctx[\`value\`] = new LazyValue(value1, ctx, this, node);
+    ctx[\`value\`] = new LazyValue(value1, ctx, this, node, key);
     return text(ctx['value']);
   }
 }"
@@ -142,7 +142,7 @@ exports[`t-set set from body lookup 1`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    ctx[\`stuff\`] = new LazyValue(value1, ctx, this, node);
+    ctx[\`stuff\`] = new LazyValue(value1, ctx, this, node, key);
     let txt1 = ctx['stuff'];
     return block1([txt1]);
   }
@@ -206,7 +206,7 @@ exports[`t-set t-set body is evaluated immediately 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"v1\\", 'before');
-    ctx[\`v2\`] = new LazyValue(value1, ctx, this, node);
+    ctx[\`v2\`] = new LazyValue(value1, ctx, this, node, key);
     setContextValue(ctx, \\"v1\\", 'after');
     const b3 = safeOutput(ctx['v2']);
     return block1([], [b3]);
@@ -471,7 +471,7 @@ exports[`t-set t-set with content and sub t-esc 1`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    ctx[\`setvar\`] = new LazyValue(value1, ctx, this, node);
+    ctx[\`setvar\`] = new LazyValue(value1, ctx, this, node, key);
     let txt1 = ctx['setvar'];
     return block1([txt1]);
   }
@@ -497,7 +497,7 @@ exports[`t-set t-set with t-value (falsy) and body 1`] = `
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"v3\\", false);
     setContextValue(ctx, \\"v1\\", 'before');
-    ctx[\`v2\`] = withDefault(ctx['v3'], new LazyValue(value1, ctx, this, node));
+    ctx[\`v2\`] = withDefault(ctx['v3'], new LazyValue(value1, ctx, this, node, key));
     setContextValue(ctx, \\"v1\\", 'after');
     setContextValue(ctx, \\"v3\\", true);
     const b3 = safeOutput(ctx['v2']);
@@ -525,7 +525,7 @@ exports[`t-set t-set with t-value (truthy) and body 1`] = `
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"v3\\", 'Truthy');
     setContextValue(ctx, \\"v1\\", 'before');
-    ctx[\`v2\`] = withDefault(ctx['v3'], new LazyValue(value1, ctx, this, node));
+    ctx[\`v2\`] = withDefault(ctx['v3'], new LazyValue(value1, ctx, this, node, key));
     setContextValue(ctx, \\"v1\\", 'after');
     setContextValue(ctx, \\"v3\\", false);
     const b3 = safeOutput(ctx['v2']);
@@ -638,7 +638,7 @@ exports[`t-set value priority (with non text body 1`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    ctx[\`value\`] = withDefault(1, new LazyValue(value1, ctx, this, node));
+    ctx[\`value\`] = withDefault(1, new LazyValue(value1, ctx, this, node, key));
     let txt1 = ctx['value'];
     return block1([txt1]);
   }

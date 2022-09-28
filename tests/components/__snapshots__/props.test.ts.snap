@@ -163,7 +163,7 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    ctx[\`abc\`] = new LazyValue(value1, ctx, this, node);
+    ctx[\`abc\`] = new LazyValue(value1, ctx, this, node, key);
     const b3 = comp1({val: ctx['abc']}, key + \`__1\`, node, this, null);
     return block1([], [b3]);
   }

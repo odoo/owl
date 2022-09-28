@@ -59,7 +59,7 @@ exports[`t-set slots with a t-set with a component in body 1`] = `
   function slot1(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    ctx[\`v\`] = new LazyValue(value1, ctx, this, node);
+    ctx[\`v\`] = new LazyValue(value1, ctx, this, node, key);
     const b3 = text(\` in slot \`);
     const b4 = safeOutput(ctx['v']);
     return multi([b3, b4]);
@@ -114,7 +114,7 @@ exports[`t-set slots with an t-set with a component in body 1`] = `
   function slot1(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    ctx[\`v\`] = new LazyValue(value1, ctx, this, node);
+    ctx[\`v\`] = new LazyValue(value1, ctx, this, node, key);
     const b5 = text(\` tea \`);
     const b6 = safeOutput(ctx['v']);
     return multi([b5, b6]);
@@ -169,7 +169,7 @@ exports[`t-set slots with an unused t-set with a component in body 1`] = `
   function slot1(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    ctx[\`v\`] = new LazyValue(value1, ctx, this, node);
+    ctx[\`v\`] = new LazyValue(value1, ctx, this, node, key);
     return text(\` in slot \`);
   }
   
@@ -343,7 +343,7 @@ exports[`t-set t-set with a component in body 1`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    ctx[\`v\`] = new LazyValue(value1, ctx, this, node);
+    ctx[\`v\`] = new LazyValue(value1, ctx, this, node, key);
     const b3 = safeOutput(ctx['v']);
     return block1([], [b3]);
   }
@@ -377,7 +377,7 @@ exports[`t-set t-set with something in body 1`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    ctx[\`v\`] = new LazyValue(value1, ctx, this, node);
+    ctx[\`v\`] = new LazyValue(value1, ctx, this, node, key);
     const b3 = safeOutput(ctx['v']);
     return block1([], [b3]);
   }

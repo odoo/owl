@@ -214,6 +214,14 @@ class CodeTarget {
     result.push(`}`);
     return result.join("\n  ");
   }
+
+  currentKey(ctx: Context) {
+    let key = this.loopLevel ? `key${this.loopLevel}` : "key";
+    if (ctx.tKeyExpr) {
+      key = `${ctx.tKeyExpr} + ${key}`;
+    }
+    return key;
+  }
 }
 
 const TRANSLATABLE_ATTRS = ["label", "title", "placeholder", "alt"];
@@ -365,19 +373,15 @@ export class CodeGenerator {
 
   insertBlock(expression: string, block: BlockDescription, ctx: Context): void {
     let blockExpr = block.generateExpr(expression);
-    const tKeyExpr = ctx.tKeyExpr;
     if (block.parentVar) {
-      let keyArg = `key${this.target.loopLevel}`;
-      if (tKeyExpr) {
-        keyArg = `${tKeyExpr} + ${keyArg}`;
-      }
+      let key = this.target.currentKey(ctx);
       this.helpers.add("withKey");
-      this.addLine(`${block.parentVar}[${ctx.index}] = withKey(${blockExpr}, ${keyArg});`);
+      this.addLine(`${block.parentVar}[${ctx.index}] = withKey(${blockExpr}, ${key});`);
       return;
     }
 
-    if (tKeyExpr) {
-      blockExpr = `toggler(${tKeyExpr}, ${blockExpr})`;
+    if (ctx.tKeyExpr) {
+      blockExpr = `toggler(${ctx.tKeyExpr}, ${blockExpr})`;
     }
 
     if (block.isRoot && !ctx.preventRoot) {
@@ -1053,7 +1057,8 @@ export class CodeGenerator {
       this.helpers.add("LazyValue");
       const bodyAst: AST = { type: ASTType.Multi, content: ast.body };
       const name = this.compileInNewTarget("value", bodyAst, ctx);
-      let value = `new LazyValue(${name}, ctx, this, node)`;
+      let key = this.target.currentKey(ctx);
+      let value = `new LazyValue(${name}, ctx, this, node, ${key})`;
       value = ast.value ? (value ? `withDefault(${expr}, ${value})` : expr) : value;
       this.addLine(`ctx[\`${ast.name}\`] = ${value};`);
     } else {

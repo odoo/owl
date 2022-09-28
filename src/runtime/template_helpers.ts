@@ -111,15 +111,18 @@ class LazyValue {
   ctx: any;
   component: any;
   node: any;
-  constructor(fn: any, ctx: any, component: any, node: any) {
+  key: any;
+
+  constructor(fn: any, ctx: any, component: any, node: any, key: any) {
     this.fn = fn;
     this.ctx = capture(ctx);
     this.component = component;
     this.node = node;
+    this.key = key;
   }
 
   evaluate(): any {
-    return this.fn.call(this.component, this.ctx, this.node);
+    return this.fn.call(this.component, this.ctx, this.node, this.key);
   }
 
   toString() {

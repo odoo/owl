@@ -5810,9 +5810,9 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
     Object.defineProperty(exports, '__esModule', { value: true });
 
 
-    __info__.version = '2.0.0-beta-22';
-    __info__.date = '2022-09-29T07:17:25.462Z';
-    __info__.hash = '64bad25';
+    __info__.version = '2.0.0';
+    __info__.date = '2022-10-07T13:28:18.579Z';
+    __info__.hash = 'a1f2282';
     __info__.url = 'https://github.com/odoo/owl';
 
 

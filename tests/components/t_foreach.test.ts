@@ -331,4 +331,32 @@ describe("list of components", () => {
     console.info = consoleInfo;
     expect(mockConsoleWarn).toBeCalledTimes(1);
   });
+
+  test("crash when using object as keys that serialize to the same string", async () => {
+    const consoleInfo = console.info;
+    console.info = jest.fn();
+    class Child extends Component {
+      static template = xml``;
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <t t-foreach="[{}, {}]" t-as="item" t-key="item">
+          <Child/>
+        </t>
+      `;
+      static components = { Child };
+    }
+
+    const app = new App(Parent, { test: true });
+    const mountProm = expect(app.mount(fixture)).rejects.toThrow(
+      "Got duplicate key in t-foreach: [object Object]"
+    );
+    await expect(nextAppError(app)).resolves.toThrow(
+      "Got duplicate key in t-foreach: [object Object]"
+    );
+    await mountProm;
+    console.info = consoleInfo;
+    expect(mockConsoleWarn).toBeCalledTimes(1);
+  });
 });

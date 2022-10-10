@@ -877,9 +877,9 @@ export class CodeGenerator {
       // Throw error on duplicate keys in dev mode
       this.helpers.add("OwlError");
       this.addLine(
-        `if (keys${block.id}.has(key${this.target.loopLevel})) { throw new OwlError(\`Got duplicate key in t-foreach: \${key${this.target.loopLevel}}\`)}`
+        `if (keys${block.id}.has(String(key${this.target.loopLevel}))) { throw new OwlError(\`Got duplicate key in t-foreach: \${key${this.target.loopLevel}}\`)}`
       );
-      this.addLine(`keys${block.id}.add(key${this.target.loopLevel});`);
+      this.addLine(`keys${block.id}.add(String(key${this.target.loopLevel}));`);
     }
     let id: string;
     if (ast.memo) {

@@ -2835,6 +2835,36 @@ exports[`slots t-set t-value in a slot 2`] = `
 }"
 `;
 
+exports[`slots t-set-slot=default has priority over rest of the content 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false, true);
+  
+  function slot1(ctx, node, key = \\"\\") {
+    return text(\`some other text\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx1 = capture(ctx);
+    return comp1({slots: markRaw({'default': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`slots t-set-slot=default has priority over rest of the content 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { callSlot } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return callSlot(ctx, node, key, 'default', false, {});
+  }
+}"
+`;
+
 exports[`slots t-slot in recursive templates 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

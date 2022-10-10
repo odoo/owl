@@ -45,6 +45,23 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("some text");
   });
 
+  test("t-set-slot=default has priority over rest of the content", async () => {
+    class Child extends Component {
+      static template = xml`<t t-slot="default"/>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child>
+        some text
+        <t t-set-slot="default">some other text</t>
+      </Child>`;
+      static components = { Child };
+    }
+    await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe("some other text");
+  });
+
   test("simple slot with slot scope", async () => {
     let child: any;
     class Child extends Component {

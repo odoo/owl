@@ -781,8 +781,9 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
 
     // default slot
     const defaultContent = parseChildNodes(clone, ctx);
-    if (defaultContent) {
-      slots = slots || {};
+    slots = slots || {};
+    // t-set-slot="default" has priority over content
+    if (defaultContent && !slots.default) {
       slots.default = { content: defaultContent, on, attrs: null, scope: defaultSlotScope };
     }
   }

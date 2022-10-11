@@ -38,6 +38,12 @@ abstract class VSimpleNode {
     return this.el!;
   }
 
+  *nodes(): Generator<Node> {
+    if (this.el) {
+      yield this.el;
+    }
+  }
+
   toString() {
     return this.text;
   }

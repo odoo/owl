@@ -221,6 +221,12 @@ class VList {
     return child ? child.firstNode() : undefined;
   }
 
+  *nodes() {
+    for (let child of this.children) {
+      yield* child.nodes();
+    }
+  }
+
   toString(): string {
     return this.children.map((c) => c!.toString()).join("");
   }

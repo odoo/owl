@@ -124,6 +124,14 @@ export class VMulti {
     return child ? child.firstNode() : this.anchors![0];
   }
 
+  *nodes() {
+    for (let child of this.children) {
+      if (child) {
+        yield* child.nodes();
+      }
+    }
+  }
+
   toString(): string {
     return this.children.map((c) => (c ? c!.toString() : "")).join("");
   }

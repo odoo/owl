@@ -261,7 +261,12 @@ This comes from the fact that Owl 2 supports fragments (arbitrary content).
 Migration: if one need a reference to the root htmlelement of a template, it is
 suggested to simply add a `ref` on it, and access the reference as needed.
 
-Documentation: [Refs](doc/reference/refs.md)
+Another way to get access to a root node or html element is the hook `useRoots`
+
+Documentation: 
+- [Refs](doc/reference/refs.md)
+- [useRoots](doc/reference/hooks.md#useroots)
+
 
 ### 10. style/class on components are now regular props
 

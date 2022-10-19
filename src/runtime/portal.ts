@@ -75,7 +75,7 @@ export class Portal extends Component {
       if (!portal.target) {
         const target: HTMLElement = document.querySelector(this.props.target);
         if (target) {
-          portal.content!.moveBefore(target, null);
+          portal.content!.moveBeforeVNode(target, null);
         } else {
           throw new OwlError("invalid portal target");
         }

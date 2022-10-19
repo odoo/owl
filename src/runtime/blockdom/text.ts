@@ -23,9 +23,12 @@ abstract class VSimpleNode {
     this.el = node;
   }
 
-  moveBefore(other: VText | null, afterNode: Node | null) {
-    const target = other ? other.el! : afterNode;
-    nodeInsertBefore.call(this.parentEl, this.el!, target);
+  moveBeforeDOMNode(node: Node | null) {
+    nodeInsertBefore.call(this.parentEl, this.el!, node);
+  }
+
+  moveBeforeVNode(other: VText | null, afterNode: Node | null) {
+    nodeInsertBefore.call(this.parentEl, this.el!, other ? other.el! : afterNode);
   }
 
   beforeRemove() {}

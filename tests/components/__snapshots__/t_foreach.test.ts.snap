@@ -149,6 +149,58 @@ exports[`list of components list of sub components inside other nodes 2`] = `
 }"
 `;
 
+exports[`list of components order is correct when slots are not of same type 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false, true);
+  
+  let block2 = createBlock(\`<div>A</div>\`);
+  
+  function slot1(ctx, node, key = \\"\\") {
+    let b2;
+    if (!ctx['state'].active) {
+      b2 = block2();
+    }
+    return multi([b2]);
+  }
+  
+  function slot2(ctx, node, key = \\"\\") {
+    return text(\`B\`);
+  }
+  
+  function slot3(ctx, node, key = \\"\\") {
+    return text(\`C\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx1 = capture(ctx);
+    return comp1({slots: markRaw({'a': {__render: slot1, __ctx: ctx1, active: !ctx['state'].active}, 'b': {__render: slot2, __ctx: ctx1, active: true}, 'c': {__render: slot3, __ctx: ctx1, active: ctx['state'].active}})}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`list of components order is correct when slots are not of same type 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { prepareList, callSlot, withKey } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['slotNames']);;
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      ctx[\`slotName\`] = v_block1[i1];
+      const key1 = ctx['slotName'];
+      const slot1 = (ctx['slotName']);
+      c_block1[i1] = withKey(toggler(slot1, callSlot(ctx, node, key1 + \`__1__\${key1}\`, slot1, true, {})), key1);
+    }
+    return list(c_block1);
+  }
+}"
+`;
+
 exports[`list of components reconciliation alg works for t-foreach in t-foreach 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

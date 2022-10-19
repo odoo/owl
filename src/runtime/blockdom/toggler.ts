@@ -20,8 +20,12 @@ class VToggler {
     this.child.mount(parent, afterNode);
   }
 
-  moveBefore(other: VToggler | null, afterNode: Node | null) {
-    this.child.moveBefore(other ? other.child : null, afterNode);
+  moveBeforeDOMNode(node: Node | null) {
+    this.child.moveBeforeDOMNode(node);
+  }
+
+  moveBeforeVNode(other: VToggler | null, afterNode: Node | null) {
+    this.moveBeforeDOMNode((other && other.firstNode()) || afterNode);
   }
 
   patch(other: VToggler, withBeforeRemove: boolean) {

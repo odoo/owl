@@ -38,14 +38,22 @@ class VList {
     this.parentEl = parent;
   }
 
-  moveBefore(other: VList | null, afterNode: Node | null) {
+  moveBeforeDOMNode(node: Node | null) {
+    const children = this.children;
+    for (let i = 0, l = children.length; i < l; i++) {
+      children[i].moveBeforeDOMNode(node);
+    }
+    this.parentEl!.insertBefore(this.anchor!, node);
+  }
+
+  moveBeforeVNode(other: VList | null, afterNode: Node | null) {
     if (other) {
       const next = other!.children[0];
       afterNode = (next ? next.firstNode() : other!.anchor) || null;
     }
     const children = this.children;
     for (let i = 0, l = children.length; i < l; i++) {
-      children[i].moveBefore(null, afterNode);
+      children[i].moveBeforeVNode(null, afterNode);
     }
     this.parentEl!.insertBefore(this.anchor!, afterNode);
   }
@@ -66,7 +74,7 @@ class VList {
       patch: cPatch,
       remove: cRemove,
       beforeRemove,
-      moveBefore: cMoveBefore,
+      moveBeforeVNode: cMoveBefore,
       firstNode: cFirstNode,
     } = proto;
 

@@ -21,20 +21,16 @@ class VPortal extends VText implements Partial<VNode<VPortal>> {
     this.target = document.querySelector(this.selector) as any;
     if (this.target) {
       this.content!.mount(this.target!, null);
-    } else {
-      this.content!.mount(parent, anchor);
     }
   }
 
   beforeRemove() {
-    this.content!.beforeRemove();
-  }
-  remove() {
-    if (this.content) {
-      super.remove();
+    // this.target not being null means content is mounted
+    if (this.target) {
+      this.content!.beforeRemove();
       this.content!.remove();
-      this.content = null;
     }
+    this.content = null;
   }
 
   patch(other: VPortal) {
@@ -73,9 +69,9 @@ export class Portal extends Component {
     onMounted(() => {
       const portal: VPortal = node.bdom;
       if (!portal.target) {
-        const target: HTMLElement = document.querySelector(this.props.target);
-        if (target) {
-          portal.content!.moveBeforeVNode(target, null);
+        portal.target = document.querySelector(this.props.target);
+        if (portal.target) {
+          portal.content!.mount(portal.target, null);
         } else {
           throw new OwlError("invalid portal target");
         }
@@ -84,7 +80,7 @@ export class Portal extends Component {
 
     onWillUnmount(() => {
       const portal: VPortal = node.bdom;
-      portal.remove();
+      portal.beforeRemove();
     });
   }
 }

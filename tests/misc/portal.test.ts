@@ -892,7 +892,7 @@ describe("Portal", () => {
     }
     await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe(
-      '<span>child</span><div class="portal"></div><span>portal</span>'
+      '<span>child</span><div class="portal"><span>portal</span></div>'
     );
   });
 

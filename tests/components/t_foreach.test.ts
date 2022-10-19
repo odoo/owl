@@ -359,4 +359,35 @@ describe("list of components", () => {
     console.info = consoleInfo;
     expect(mockConsoleWarn).toBeCalledTimes(1);
   });
+
+  test("order is correct when slots are not of same type", async () => {
+    class Child extends Component {
+      static template = xml`
+          <t t-slot="{{ slotName }}" t-foreach="slotNames" t-as="slotName" t-key="slotName"/>
+      `;
+      get slotNames() {
+        return Object.entries(this.props.slots)
+          .filter((entry: any) => entry[1].active)
+          .map((entry) => entry[0]);
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <Child>
+          <t t-set-slot="a" active="!state.active"><div t-if="!state.active">A</div></t>
+          <t t-set-slot="b" active="true">B</t>
+          <t t-set-slot="c" active="state.active">C</t>
+        </Child>
+      `;
+      static components = { Child };
+      state = useState({ active: false });
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.textContent).toBe("AB");
+    parent.state.active = true;
+    await nextTick();
+    expect(fixture.textContent).toBe("BC");
+  });
 });

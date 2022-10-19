@@ -56,8 +56,17 @@ export function createCatcher(eventsSpec: EventsSpec): Catcher {
       }
     }
 
-    moveBefore(other: VCatcher | null, afterNode: Node | null) {
-      this.child.moveBefore(other ? other.child : null, afterNode);
+    moveBeforeDOMNode(node: Node | null) {
+      this.child.moveBeforeDOMNode(node);
+      this.parentEl!.insertBefore(this.afterNode!, node);
+    }
+
+    moveBeforeVNode(other: VCatcher | null, afterNode: Node | null) {
+      if (other) {
+        // check this with @ged-odoo for use in foreach
+        afterNode = other.firstNode() || afterNode;
+      }
+      this.child.moveBeforeVNode(other ? other.child : null, afterNode);
       this.parentEl!.insertBefore(this.afterNode!, afterNode);
     }
 

@@ -29,12 +29,16 @@ class VHtml {
     }
   }
 
-  moveBefore(other: VHtml | null, afterNode: Node | null) {
-    const target = other ? other.content[0] : afterNode;
+  moveBeforeDOMNode(node: Node | null) {
     const parent = this.parentEl;
     for (let elem of this.content) {
-      nodeInsertBefore.call(parent, elem, target);
+      nodeInsertBefore.call(parent, elem, node);
     }
+  }
+
+  moveBeforeVNode(other: VHtml | null, afterNode: Node | null) {
+    const target = other ? other.content[0] : afterNode;
+    this.moveBeforeDOMNode(target);
   }
 
   patch(other: VHtml) {

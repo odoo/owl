@@ -306,8 +306,8 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     this.fiber = null;
   }
 
-  moveBeforeDOMNode(node: Node | null): void {
-    this.bdom!.moveBeforeDOMNode(node);
+  moveBeforeDOMNode(node: Node | null, parent?: HTMLElement): void {
+    this.bdom!.moveBeforeDOMNode(node, parent);
   }
 
   moveBeforeVNode(other: ComponentNode<P, E> | null, afterNode: Node | null) {

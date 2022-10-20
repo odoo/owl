@@ -20,8 +20,8 @@ class VToggler {
     this.child.mount(parent, afterNode);
   }
 
-  moveBeforeDOMNode(node: Node | null) {
-    this.child.moveBeforeDOMNode(node);
+  moveBeforeDOMNode(node: Node | null, parent?: HTMLElement) {
+    this.child.moveBeforeDOMNode(node, parent);
   }
 
   moveBeforeVNode(other: VToggler | null, afterNode: Node | null) {

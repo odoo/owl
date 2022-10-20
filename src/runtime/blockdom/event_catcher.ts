@@ -56,9 +56,10 @@ export function createCatcher(eventsSpec: EventsSpec): Catcher {
       }
     }
 
-    moveBeforeDOMNode(node: Node | null) {
-      this.child.moveBeforeDOMNode(node);
-      this.parentEl!.insertBefore(this.afterNode!, node);
+    moveBeforeDOMNode(node: Node | null, parent = this.parentEl) {
+      this.parentEl = parent;
+      this.child.moveBeforeDOMNode(node, parent);
+      parent!.insertBefore(this.afterNode!, node);
     }
 
     moveBeforeVNode(other: VCatcher | null, afterNode: Node | null) {

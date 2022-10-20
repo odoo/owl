@@ -38,14 +38,14 @@ export class VMulti {
     this.parentEl = parent;
   }
 
-  moveBeforeDOMNode(node: Node | null) {
+  moveBeforeDOMNode(node: Node | null, parent = this.parentEl) {
+    this.parentEl = parent;
     const children = this.children;
-    const parent = this.parentEl;
     const anchors = this.anchors;
     for (let i = 0, l = children.length; i < l; i++) {
       let child = children[i];
       if (child) {
-        child.moveBeforeDOMNode(node);
+        child.moveBeforeDOMNode(node, parent);
       } else {
         const anchor = anchors![i];
         nodeInsertBefore.call(parent, anchor, node);

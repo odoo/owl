@@ -41,6 +41,30 @@ describe("t-on", () => {
     expect(steps).toEqual(["click"]);
   });
 
+  test("t-on when first component child is an empty component", async () => {
+    class Child extends Component {
+      static template = xml`
+        <span t-foreach="props.list" t-as="c" t-key="c_index" t-esc="c"/>
+      `;
+    }
+    class Parent extends Component {
+      static template = xml`
+        <div t-on-click="push"><Child list="list" t-on-click="() => {}"/></div>
+      `;
+      static components = { Child };
+      list = useState([] as string[]);
+      push() {
+        this.list.push("foo");
+      }
+    }
+    const parent = await mount(Parent, fixture);
+    const el = elem(parent);
+    expect(el.innerHTML).toBe("");
+    el.click();
+    await nextTick();
+    expect(el.innerHTML).toBe("<span>foo</span>");
+  });
+
   test("t-on expression in t-foreach", async () => {
     class Comp extends Component {
       static template = xml`

@@ -46,7 +46,7 @@ export function createCatcher(eventsSpec: EventsSpec): Catcher {
           const target = ev.target;
           let currentNode: any = self.child.firstNode();
           const afterNode = self.afterNode;
-          while (currentNode !== afterNode) {
+          while (currentNode && currentNode !== afterNode) {
             if (currentNode.contains(target)) {
               return origFn.call(this, ev);
             }

@@ -456,3 +456,45 @@ exports[`t-on t-on on t-slots 2`] = `
   }
 }"
 `;
+
+exports[`t-on t-on when first component child is an empty component 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createCatcher } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
+  const catcher1 = createCatcher({\\"click\\":0});
+  
+  let block1 = createBlock(\`<div block-handler-0=\\"click\\"><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let hdlr1 = [ctx['push'], ctx];
+    const hdlr2 = [()=>{}, ctx];
+    const b2 = catcher1(comp1({list: ctx['list']}, key + \`__1\`, node, this, null), [hdlr2]);
+    return block1([hdlr1], [b2]);
+  }
+}"
+`;
+
+exports[`t-on t-on when first component child is an empty component 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { prepareList, withKey } = helpers;
+  
+  let block2 = createBlock(\`<span><block-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['props'].list);;
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      ctx[\`c\`] = v_block1[i1];
+      ctx[\`c_index\`] = i1;
+      const key1 = ctx['c_index'];
+      let txt1 = ctx['c'];
+      c_block1[i1] = withKey(block2([txt1]), key1);
+    }
+    return list(c_block1);
+  }
+}"
+`;

@@ -38,6 +38,21 @@ exports[`basics display a nice error if it cannot find component 1`] = `
 }"
 `;
 
+exports[`basics display a nice error if the components key is missing with subcomponents 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`MissingChild\`, true, false, false, true);
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = comp1({}, key + \`__1\`, node, this, null);
+    return block1([], [b2]);
+  }
+}"
+`;
+
 exports[`basics no component catching error lead to full app destruction 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

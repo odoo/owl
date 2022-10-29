@@ -126,6 +126,23 @@ describe("basics", () => {
     );
   });
 
+  test("display a nice error if the components key is missing with subcomponents", async () => {
+    class Parent extends Component {
+      static template = xml`<div><MissingChild /></div>`;
+    }
+    const app = new App(Parent as typeof Component);
+    let error: Error;
+    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    await expect(nextAppError(app)).resolves.toThrow(
+      'Cannot find the definition of component "MissingChild", missing static components key in parent'
+    );
+    await mountProm;
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe(
+      'Cannot find the definition of component "MissingChild", missing static components key in parent'
+    );
+  });
+
   test("simple catchError", async () => {
     class Boom extends Component {
       static template = xml`<div t-esc="a.b.c"/>`;

@@ -151,7 +151,13 @@ export class App<
       } else {
         // new component
         if (isStatic) {
-          C = parent.constructor.components[name as any];
+          const components = parent.constructor.components;
+          if (!components) {
+            throw new OwlError(
+              `Cannot find the definition of component "${name}", missing static components key in parent`
+            );
+          }
+          C = components[name as any];
           if (!C) {
             throw new OwlError(`Cannot find the definition of component "${name}"`);
           } else if (!(C.prototype instanceof Component)) {

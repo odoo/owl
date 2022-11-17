@@ -262,7 +262,7 @@ original object:
 const obj = {};
 const reactiveObj = reactive(obj);
 console.log(obj === reactiveObj); // false
-console.log(toRaw(obj) === reactiveObj); // true
+console.log(obj === toRaw(reactiveObj)); // true
 ```
 
 It can also be useful during debugging, as unfolding proxies recursively in debuggers can be confusing.

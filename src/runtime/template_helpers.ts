@@ -32,22 +32,21 @@ function callSlot(
   if (__scope) {
     slotScope[__scope] = extra;
   }
-  const slotBDom = __render ? __render.call(__ctx.__owl__.component, slotScope, parent, key) : null;
+  const slotBDom = __render ? __render(slotScope, parent, key) : null;
   if (defaultContent) {
     let child1: BDom | undefined = undefined;
     let child2: BDom | undefined = undefined;
     if (slotBDom) {
       child1 = dynamic ? toggler(name, slotBDom) : slotBDom;
     } else {
-      child2 = defaultContent.call(ctx.__owl__.component, ctx, parent, key);
+      child2 = defaultContent(ctx, parent, key);
     }
     return multi([child1, child2]);
   }
   return slotBDom || text("");
 }
 
-function capture(ctx: any): any {
-  const component = ctx.__owl__.component;
+function capture(ctx: any, component: any): any {
   const result = ObjectCreate(component);
   for (let k in ctx) {
     result[k] = ctx[k];
@@ -115,7 +114,7 @@ class LazyValue {
 
   constructor(fn: any, ctx: any, component: any, node: any, key: any) {
     this.fn = fn;
-    this.ctx = capture(ctx);
+    this.ctx = capture(ctx, component);
     this.component = component;
     this.node = node;
     this.key = key;
@@ -171,8 +170,7 @@ let boundFunctions = new WeakMap();
 const WeakMapGet = WeakMap.prototype.get;
 const WeakMapSet = WeakMap.prototype.set;
 
-function bind(ctx: any, fn: Function): Function {
-  let component = ctx.__owl__.component;
+function bind(component: any, fn: Function): Function {
   let boundFnMap = WeakMapGet.call(boundFunctions, component);
   if (!boundFnMap) {
     boundFnMap = new WeakMap();

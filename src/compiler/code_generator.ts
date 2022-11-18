@@ -191,7 +191,7 @@ class CodeTarget {
     let result: string[] = [];
     result.push(`function ${this.name}(ctx, node, key = "") {`);
     if (this.hasRef) {
-      result.push(`  const refs = ctx.__owl__.refs;`);
+      result.push(`  const refs = this.__owl__.refs;`);
       for (let name in this.refInfo) {
         const [id, expr] = this.refInfo[name];
         result.push(`  const ${id} = ${expr};`);
@@ -1104,7 +1104,7 @@ export class CodeGenerator {
       if (suffix === "bind") {
         this.helpers.add("bind");
         name = _name;
-        value = `bind(ctx, ${value || undefined})`;
+        value = `bind(this, ${value || undefined})`;
       } else {
         throw new OwlError("Invalid prop suffix");
       }
@@ -1140,7 +1140,7 @@ export class CodeGenerator {
       if (this.target.loopLevel || !this.hasSafeContext) {
         ctxStr = generateId("ctx");
         this.helpers.add("capture");
-        this.define(ctxStr, `capture(ctx)`);
+        this.define(ctxStr, `capture(ctx, this)`);
       }
       let slotStr: string[] = [];
       for (let slotName in ast.slots) {
@@ -1148,7 +1148,7 @@ export class CodeGenerator {
         const params = [];
         if (slotAst.content) {
           const name = this.compileInNewTarget("slot", slotAst.content, ctx, slotAst.on);
-          params.push(`__render: ${name}, __ctx: ${ctxStr}`);
+          params.push(`__render: ${name}.bind(this), __ctx: ${ctxStr}`);
         }
         const scope = ast.slots[slotName].scope;
         if (scope) {
@@ -1275,7 +1275,7 @@ export class CodeGenerator {
     const scope = this.getPropString(props, dynProps);
     if (ast.defaultContent) {
       const name = this.compileInNewTarget("defaultContent", ast.defaultContent, ctx);
-      blockString = `callSlot(ctx, node, ${key}, ${slotName}, ${dynamic}, ${scope}, ${name})`;
+      blockString = `callSlot(ctx, node, ${key}, ${slotName}, ${dynamic}, ${scope}, ${name}.bind(this))`;
     } else {
       if (dynamic) {
         let name = generateId("slot");
@@ -1316,7 +1316,7 @@ export class CodeGenerator {
     if (this.target.loopLevel || !this.hasSafeContext) {
       ctxStr = generateId("ctx");
       this.helpers.add("capture");
-      this.define(ctxStr, `capture(ctx)`);
+      this.define(ctxStr, `capture(ctx, this)`);
     }
     let id = generateId("comp");
     this.staticDefs.push({
@@ -1325,7 +1325,7 @@ export class CodeGenerator {
     });
 
     const target = compileExpr(ast.target);
-    const blockString = `${id}({target: ${target},slots: {'default': {__render: ${name}, __ctx: ${ctxStr}}}}, key + \`${key}\`, node, ctx, Portal)`;
+    const blockString = `${id}({target: ${target},slots: {'default': {__render: ${name}.bind(this), __ctx: ${ctxStr}}}}, key + \`${key}\`, node, ctx, Portal)`;
     if (block) {
       this.insertAnchor(block);
     }

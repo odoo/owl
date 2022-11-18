@@ -217,7 +217,7 @@ exports[`misc other complex template 1`] = `
   let block25 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const refs = ctx.__owl__.refs;
+    const refs = this.__owl__.refs;
     const ref1 = (el) => refs[\`search_input\`] = el;
     const ref2 = (el) => refs[\`settings_menu\`] = el;
     let b2,b4,b14,b17,b22,b23,b24,b25;

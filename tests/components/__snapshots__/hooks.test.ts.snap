@@ -9,7 +9,7 @@ exports[`hooks autofocus hook input in a t-if 1`] = `
   let block2 = createBlock(\`<input block-ref=\\"0\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const refs = ctx.__owl__.refs;
+    const refs = this.__owl__.refs;
     const ref1 = (el) => refs[\`input1\`] = el;
     const ref2 = (el) => refs[\`input2\`] = el;
     let b2;
@@ -29,7 +29,7 @@ exports[`hooks autofocus hook simple input 1`] = `
   let block1 = createBlock(\`<div><input block-ref=\\"0\\"/><input block-ref=\\"1\\"/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const refs = ctx.__owl__.refs;
+    const refs = this.__owl__.refs;
     const ref1 = (el) => refs[\`input1\`] = el;
     const ref2 = (el) => refs[\`input2\`] = el;
     return block1([ref1, ref2]);
@@ -268,7 +268,7 @@ exports[`hooks useEffect hook effect can depend on stuff in dom 1`] = `
   let block2 = createBlock(\`<div block-ref=\\"0\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const refs = ctx.__owl__.refs;
+    const refs = this.__owl__.refs;
     const ref1 = (el) => refs[\`div\`] = el;
     let b2;
     if (ctx['state'].value) {
@@ -357,7 +357,7 @@ exports[`hooks useRef hook: basic use 1`] = `
   let block1 = createBlock(\`<div><button block-ref=\\"0\\"><block-text-1/></button></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const refs = ctx.__owl__.refs;
+    const refs = this.__owl__.refs;
     const ref1 = (el) => refs[\`button\`] = el;
     let txt1 = ctx['value'];
     return block1([ref1, txt1]);

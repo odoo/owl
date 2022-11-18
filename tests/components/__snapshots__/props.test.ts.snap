@@ -283,7 +283,7 @@ exports[`bound functions is referentially equal after update 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({val: ctx['state'].val,fn: bind(ctx, ctx['someFunction'])}, key + \`__1\`, node, this, null);
+    return comp1({val: ctx['state'].val,fn: bind(this, ctx['someFunction'])}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -307,7 +307,7 @@ exports[`can bind function prop with bind suffix 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({doSomething: bind(ctx, ctx['doSomething'])}, key + \`__1\`, node, this, null);
+    return comp1({doSomething: bind(this, ctx['doSomething'])}, key + \`__1\`, node, this, null);
   }
 }"
 `;

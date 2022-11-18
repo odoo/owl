@@ -114,7 +114,8 @@ describe("t-ref", () => {
     app.addTemplate("main", main);
     app.addTemplate("sub", sub);
 
-    const bdom = app.getTemplate("main")({ __owl__: { refs } }, {});
+    const comp = { __owl__: { refs } };
+    const bdom = app.getTemplate("main").call(comp, comp, {});
     mount(bdom, document.createElement("div"));
 
     expect(refs.name.tagName).toBe("SPAN");

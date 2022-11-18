@@ -695,7 +695,7 @@ exports[`props validation can validate through slots 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const props2 = {slots: markRaw({'default': {__render: slot1, __ctx: ctx}})};
+    const props2 = {slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})};
     helpers.validateProps(\`Wrapper\`, props2, this);
     return comp2(props2, key + \`__2\`, node, this, null);
   }

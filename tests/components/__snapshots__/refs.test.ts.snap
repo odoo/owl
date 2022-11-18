@@ -8,7 +8,7 @@ exports[`refs basic use 1`] = `
   let block1 = createBlock(\`<div block-ref=\\"0\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const refs = ctx.__owl__.refs;
+    const refs = this.__owl__.refs;
     const ref1 = (el) => refs[\`div\`] = el;
     return block1([ref1]);
   }
@@ -25,7 +25,7 @@ exports[`refs can use 2 refs with same name in a t-if/t-else situation 1`] = `
   let block3 = createBlock(\`<span block-ref=\\"0\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const refs = ctx.__owl__.refs;
+    const refs = this.__owl__.refs;
     const ref1 = multiRefSetter(refs, \`coucou\`);
     let b2,b3;
     if (ctx['state'].value) {
@@ -47,7 +47,7 @@ exports[`refs refs and recursive templates 1`] = `
   let block1 = createBlock(\`<p block-ref=\\"0\\"><block-text-1/><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const refs = ctx.__owl__.refs;
+    const refs = this.__owl__.refs;
     const ref1 = (el) => refs[\`root\`] = el;
     let b2;
     let txt1 = ctx['props'].tree.value;
@@ -70,7 +70,7 @@ exports[`refs refs are properly bound in slots 1`] = `
   let block2 = createBlock(\`<button block-handler-0=\\"click\\" block-ref=\\"1\\">do something</button>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    const refs = ctx.__owl__.refs;
+    const refs = this.__owl__.refs;
     const ref1 = (el) => refs[\`myButton\`] = el;
     let hdlr1 = [ctx['doSomething'], ctx];
     return block2([hdlr1, ref1]);
@@ -78,8 +78,8 @@ exports[`refs refs are properly bound in slots 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     let txt1 = ctx['state'].val;
-    const ctx1 = capture(ctx);
-    const b3 = comp1({slots: markRaw({'footer': {__render: slot1, __ctx: ctx1}})}, key + \`__1\`, node, this, null);
+    const ctx1 = capture(ctx, this);
+    const b3 = comp1({slots: markRaw({'footer': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__1\`, node, this, null);
     return block1([txt1], [b3]);
   }
 }"
@@ -110,7 +110,7 @@ exports[`refs throws if there are 2 same refs at the same time 1`] = `
   let block3 = createBlock(\`<span block-ref=\\"0\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const refs = ctx.__owl__.refs;
+    const refs = this.__owl__.refs;
     const ref1 = multiRefSetter(refs, \`coucou\`);
     const b2 = block2([ref1]);
     const b3 = block3([ref1]);

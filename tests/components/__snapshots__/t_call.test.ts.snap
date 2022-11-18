@@ -514,3 +514,65 @@ exports[`t-call t-call with t-call-context, simple use 2`] = `
   }
 }"
 `;
+
+exports[`t-call t-call-context: ComponentNode is not looked up in the context 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const callTemplate_1 = app.getTemplate(\`someTemplate\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let ctx1 = {method:function(){}};
+    return callTemplate_1.call(this, ctx1, node, key + \`__1\`);
+  }
+}"
+`;
+
+exports[`t-call t-call-context: ComponentNode is not looked up in the context 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { bind, capture, isBoundary, withDefault, setContextValue, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false, false);
+  
+  let block2 = createBlock(\`<div block-ref=\\"0\\">outside slot</div>\`);
+  let block4 = createBlock(\`<div block-ref=\\"0\\">I'm the default slot</div>\`);
+  let block5 = createBlock(\`<div><block-text-0/></div>\`);
+  let block6 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  function slot1(ctx, node, key = \\"\\") {
+    const refs = this.__owl__.refs;
+    const ref2 = (el) => refs[\`myRef2\`] = el;
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    const b4 = block4([ref2]);
+    setContextValue(ctx, \\"test\\", 3);
+    let txt1 = this.__owl__.name;
+    const b5 = block5([txt1]);
+    let txt2 = ctx['test'];
+    const b6 = block6([txt2]);
+    return multi([b4, b5, b6]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const refs = this.__owl__.refs;
+    const ref1 = (el) => refs[\`myRef\`] = el;
+    const b2 = block2([ref1]);
+    const ctx1 = capture(ctx, this);
+    const b7 = comp1({prop: bind(this, ctx['method']),slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__1\`, node, this, null);
+    return multi([b2, b7]);
+  }
+}"
+`;
+
+exports[`t-call t-call-context: ComponentNode is not looked up in the context 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { callSlot } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return callSlot(ctx, node, key, 'default', false, {});
+  }
+}"
+`;

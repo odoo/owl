@@ -96,7 +96,7 @@ export function renderToBdom(template: string, context: any = {}, node?: any): B
     createComponent() {},
     createDynamicComponent() {},
   };
-  return fn(app as any, blockDom, helpers)(context, node);
+  return fn(app as any, blockDom, helpers).call(context, context, node);
 }
 
 export function renderToString(template: string, context: any = {}, node?: any): string {

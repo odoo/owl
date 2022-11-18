@@ -20,8 +20,8 @@ exports[`Portal Add and remove portals 1`] = `
     for (let i1 = 0; i1 < l_block1; i1++) {
       ctx[\`portalId\`] = v_block1[i1];
       const key1 = ctx['portalId'];
-      const ctx1 = capture(ctx);
-      c_block1[i1] = withKey(comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal), key1);
+      const ctx1 = capture(ctx, this);
+      c_block1[i1] = withKey(comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal), key1);
     }
     return list(c_block1);
   }
@@ -49,8 +49,8 @@ exports[`Portal Add and remove portals on div 1`] = `
     for (let i1 = 0; i1 < l_block1; i1++) {
       ctx[\`portalId\`] = v_block1[i1];
       const key1 = ctx['portalId'];
-      const ctx1 = capture(ctx);
-      c_block1[i1] = withKey(comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal), key1);
+      const ctx1 = capture(ctx, this);
+      c_block1[i1] = withKey(comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal), key1);
     }
     return list(c_block1);
   }
@@ -80,8 +80,8 @@ exports[`Portal Add and remove portals with t-foreach 1`] = `
       ctx[\`portalId\`] = v_block1[i1];
       const key1 = ctx['portalId'];
       let txt1 = ctx['portalId'];
-      const ctx1 = capture(ctx);
-      const b6 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal);
+      const ctx1 = capture(ctx, this);
+      const b6 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal);
       c_block1[i1] = withKey(block2([txt1], [b6]), key1);
     }
     return list(c_block1);
@@ -112,8 +112,8 @@ exports[`Portal Add and remove portals with t-foreach and destroy 1`] = `
       ctx[\`portalId\`] = v_block1[i1];
       const key1 = ctx['portalId'];
       let txt1 = ctx['portalId'];
-      const ctx1 = capture(ctx);
-      const b6 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal);
+      const ctx1 = capture(ctx, this);
+      const b6 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal);
       c_block1[i1] = withKey(block2([txt1], [b6]), key1);
     }
     return list(c_block1);
@@ -145,8 +145,8 @@ exports[`Portal Add and remove portals with t-foreach inside div 1`] = `
       ctx[\`portalId\`] = v_block2[i1];
       const key1 = ctx['portalId'];
       let txt1 = ctx['portalId'];
-      const ctx1 = capture(ctx);
-      const b7 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal);
+      const ctx1 = capture(ctx, this);
+      const b7 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal);
       c_block2[i1] = withKey(block3([txt1], [b7]), key1);
     }
     const b2 = list(c_block2);
@@ -187,7 +187,7 @@ exports[`Portal Child and Portal 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b2 = block2();
-    const b4 = comp1({target: '.portal',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b4 = comp1({target: '.portal',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return multi([b2, b4]);
   }
 }"
@@ -208,7 +208,7 @@ exports[`Portal Portal composed with t-slot 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp2({slots: markRaw({'default': {__render: slot1, __ctx: ctx}})}, key + \`__2\`, node, this, null);
+    const b3 = comp2({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__2\`, node, this, null);
     return block1([], [b3]);
   }
 }"
@@ -227,7 +227,7 @@ exports[`Portal Portal composed with t-slot 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    return comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
   }
 }"
 `;
@@ -261,7 +261,7 @@ exports[`Portal basic use of portal 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b3]);
   }
 }"
@@ -282,7 +282,7 @@ exports[`Portal basic use of portal in dev mode 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b3]);
   }
 }"
@@ -303,7 +303,7 @@ exports[`Portal basic use of portal on div 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b3]);
   }
 }"
@@ -324,7 +324,7 @@ exports[`Portal basic use of portal, variation 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp1({target: ctx['target'],slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = comp1({target: ctx['target'],slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b3]);
   }
 }"
@@ -348,7 +348,7 @@ exports[`Portal conditional use of Portal (with sub Component) 1`] = `
     let b2,b4;
     b2 = block2();
     if (ctx['state'].hasPortal) {
-      b4 = comp2({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
+      b4 = comp2({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
     }
     return multi([b2, b4]);
   }
@@ -387,7 +387,7 @@ exports[`Portal conditional use of Portal 1`] = `
     let b2,b4;
     b2 = block2();
     if (ctx['state'].hasPortal) {
-      b4 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+      b4 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     }
     return multi([b2, b4]);
   }
@@ -431,8 +431,8 @@ exports[`Portal conditional use of Portal with child and div 2`] = `
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`elem\`] = v_block2[i1];
       const key1 = ctx['elem'];
-      const ctx1 = capture(ctx);
-      c_block2[i1] = withKey(comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal), key1);
+      const ctx1 = capture(ctx, this);
+      c_block2[i1] = withKey(comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal), key1);
     }
     const b2 = list(c_block2);
     return block1([], [b2]);
@@ -481,8 +481,8 @@ exports[`Portal conditional use of Portal with child and div, variation 2`] = `
     for (let i1 = 0; i1 < l_block3; i1++) {
       ctx[\`elem\`] = v_block3[i1];
       const key1 = ctx['elem'];
-      const ctx1 = capture(ctx);
-      c_block3[i1] = withKey(comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal), key1);
+      const ctx1 = capture(ctx, this);
+      c_block3[i1] = withKey(comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal), key1);
     }
     const b3 = list(c_block3);
     return multi([b2, b3]);
@@ -507,7 +507,7 @@ exports[`Portal conditional use of Portal with div 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].hasPortal) {
-      const b4 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+      const b4 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
       b2 = block2([], [b4]);
     }
     return multi([b2]);
@@ -532,7 +532,7 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 1`] 
   return function template(ctx, node, key = \\"\\") {
     let b3;
     if (ctx['state'].hasChild) {
-      b3 = comp2({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
+      b3 = comp2({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
     }
     return block1([], [b3]);
   }
@@ -585,7 +585,7 @@ exports[`Portal portal and Child 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b2 = block2();
-    const b4 = comp1({target: '.portal',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b4 = comp1({target: '.portal',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return multi([b2, b4]);
   }
 }"
@@ -611,7 +611,7 @@ exports[`Portal portal could have dynamically no content 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b4 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b4 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b4]);
   }
 }"
@@ -632,7 +632,7 @@ exports[`Portal portal destroys on crash 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp2({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
+    const b3 = comp2({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
     return block1([], [b3]);
   }
 }"
@@ -667,7 +667,7 @@ exports[`Portal portal with child and props 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp2({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
+    const b3 = comp2({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
     return block1([], [b3]);
   }
 }"
@@ -710,7 +710,7 @@ exports[`Portal portal with dynamic body 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b5 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b5 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b5]);
   }
 }"
@@ -734,7 +734,7 @@ exports[`Portal portal with many children 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b5 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b5 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b5]);
   }
 }"
@@ -758,7 +758,7 @@ exports[`Portal portal with no content 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b4 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b4 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b4]);
   }
 }"
@@ -778,7 +778,7 @@ exports[`Portal portal with only text as content 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b3]);
   }
 }"
@@ -799,7 +799,7 @@ exports[`Portal portal with target not in dom 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp1({target: '#does-not-exist',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = comp1({target: '#does-not-exist',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b3]);
   }
 }"
@@ -820,7 +820,7 @@ exports[`Portal portal's parent's env is not polluted 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp2({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
+    const b3 = comp2({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
     return block1([], [b3]);
   }
 }"
@@ -875,7 +875,7 @@ exports[`Portal simple catchError with portal 2`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp1({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b3]);
   }
 }"
@@ -896,7 +896,7 @@ exports[`Portal with target in template (after portal) 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp1({target: '#local-target',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = comp1({target: '#local-target',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b3]);
   }
 }"
@@ -917,7 +917,7 @@ exports[`Portal with target in template (before portal) 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp1({target: '#local-target',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = comp1({target: '#local-target',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b3]);
   }
 }"
@@ -938,7 +938,7 @@ exports[`Portal: Props validation target must be a valid selector 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp1({target: ' ',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = comp1({target: ' ',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b3]);
   }
 }"
@@ -959,7 +959,7 @@ exports[`Portal: Props validation target must be a valid selector 2 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp1({target: 'aa',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = comp1({target: 'aa',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b3]);
   }
 }"
@@ -980,7 +980,7 @@ exports[`Portal: UI/UX focus is kept across re-renders 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const b3 = comp2({target: '#outside',slots: {'default': {__render: slot1, __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
+    const b3 = comp2({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
     return block1([], [b3]);
   }
 }"

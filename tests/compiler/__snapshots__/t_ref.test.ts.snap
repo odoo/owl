@@ -8,7 +8,7 @@ exports[`t-ref can get a dynamic ref on a node 1`] = `
   let block1 = createBlock(\`<div><span block-ref=\\"0\\"/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const refs = ctx.__owl__.refs;
+    const refs = this.__owl__.refs;
     const v1 = ctx['id'];
     let ref1 = (el) => refs[\`myspan\${v1}\`] = el;
     return block1([ref1]);
@@ -24,7 +24,7 @@ exports[`t-ref can get a dynamic ref on a node, alternate syntax 1`] = `
   let block1 = createBlock(\`<div><span block-ref=\\"0\\"/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const refs = ctx.__owl__.refs;
+    const refs = this.__owl__.refs;
     const v1 = ctx['id'];
     let ref1 = (el) => refs[\`myspan\${v1}\`] = el;
     return block1([ref1]);
@@ -40,7 +40,7 @@ exports[`t-ref can get a ref on a node 1`] = `
   let block1 = createBlock(\`<div><span block-ref=\\"0\\"/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const refs = ctx.__owl__.refs;
+    const refs = this.__owl__.refs;
     const ref1 = (el) => refs[\`myspan\`] = el;
     return block1([ref1]);
   }
@@ -70,7 +70,7 @@ exports[`t-ref ref in a t-call 2`] = `
   let block1 = createBlock(\`<div>1<span block-ref=\\"0\\"/>2</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const refs = ctx.__owl__.refs;
+    const refs = this.__owl__.refs;
     const ref1 = (el) => refs[\`name\`] = el;
     return block1([ref1]);
   }
@@ -86,7 +86,7 @@ exports[`t-ref ref in a t-if 1`] = `
   let block2 = createBlock(\`<span block-ref=\\"0\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const refs = ctx.__owl__.refs;
+    const refs = this.__owl__.refs;
     const ref1 = (el) => refs[\`name\`] = el;
     let b2;
     if (ctx['condition']) {
@@ -107,7 +107,7 @@ exports[`t-ref refs in a loop 1`] = `
   let block3 = createBlock(\`<div block-ref=\\"0\\"><block-text-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const refs = ctx.__owl__.refs;
+    const refs = this.__owl__.refs;
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['items']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -134,7 +134,7 @@ exports[`t-ref two refs, one in a t-if 1`] = `
   let block2 = createBlock(\`<span block-ref=\\"0\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const refs = ctx.__owl__.refs;
+    const refs = this.__owl__.refs;
     const ref1 = (el) => refs[\`name\`] = el;
     const ref2 = (el) => refs[\`p\`] = el;
     let b2;

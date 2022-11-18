@@ -304,7 +304,7 @@ describe("t-call", () => {
     }
 
     await mount(Root, fixture, {
-      dev: true,
+      test: true,
       templates: `
         <templates>
           <t t-name="someTemplate">
@@ -314,5 +314,47 @@ describe("t-call", () => {
         </templates>`,
     });
     expect(fixture.innerHTML).toBe("childaaronchildlucas");
+  });
+
+  test.only("t-call-context: ComponentNode is not looked up in the context", async () => {
+    let child: any;
+    class Child extends Component {
+      static template = xml`<t t-slot="default"/>`;
+      static props = ["name"];
+      setup() {
+        child = this;
+      }
+    }
+
+    class Root extends Component {
+      static template = xml`
+          <t t-call="someTemplate" t-call-context="{method: function(){}}"/>`;
+      static components = { Child };
+    }
+
+    // The following things need a reference to the ComponentNode, historically
+    // we used to do this with ctx.__owl__, but this cannot work inside t-call-context
+    // - t-ref: node.refs[refName] = something
+    // - t-set: caused a call to capture, which used to use node.component
+    // - .bind: used to bind to node.component
+    const root = await mount(Root, fixture, {
+      templates: `
+        <templates>
+          <t t-name="someTemplate">
+            <div t-ref="myRef">outside slot</div>
+            <Child prop.bind="method">
+              <div t-ref="myRef2">I'm the default slot</div>
+              <t t-set="test" t-value="3"/>
+              <div t-esc="this.__owl__.name"/>
+              <div t-esc="test"/>
+            </Child>
+          </t>
+        </templates>`,
+    });
+    expect(fixture.innerHTML).toBe(
+      "<div>outside slot</div><div>I'm the default slot</div><div>Root</div><div>3</div>"
+    );
+    expect(Object.keys(child.__owl__.refs)).toEqual([]);
+    expect(Object.keys(root.__owl__.refs)).toEqual(["myRef", "myRef2"]);
   });
 });

@@ -625,4 +625,23 @@ describe("t-model directive", () => {
     await mount(Test, fixture);
     expect(fixture.querySelector("select")!.value).toEqual("b");
   });
+
+  test("t-model is applied before t-on-input", async () => {
+    expect.assertions(3);
+    class SomeComponent extends Component {
+      static template = xml`
+        <div>
+          <input t-model="state['text']" t-on-input="onInput"/>
+        </div>
+      `;
+      state = useState({ text: "", other: "" });
+      onInput(ev: InputEvent) {
+        expect(this.state.text).toBe("Beam me up, Scotty");
+        expect((ev.target as HTMLInputElement).value).toBe("Beam me up, Scotty");
+      }
+    }
+    await mount(SomeComponent, fixture);
+    const input = fixture.querySelector("input")!;
+    await editInput(input, "Beam me up, Scotty");
+  });
 });

@@ -120,15 +120,15 @@ exports[`t-model directive can also define t-on directive on same event, part 1 
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
-  let block1 = createBlock(\`<div><input block-handler-0=\\"input\\" block-attribute-1=\\"value\\" block-handler-2=\\"input\\"/></div>\`);
+  let block1 = createBlock(\`<div><input block-attribute-0=\\"value\\" block-handler-1=\\"input\\" block-handler-2=\\"input\\"/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [ctx['onInput'], ctx];
     const bExpr1 = ctx['state'];
     const expr1 = 'text';
     let attr1 = bExpr1[expr1];
-    let hdlr2 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
-    return block1([hdlr1, attr1, hdlr2]);
+    let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
+    let hdlr2 = [ctx['onInput'], ctx];
+    return block1([attr1, hdlr1, hdlr2]);
   }
 }"
 `;
@@ -139,25 +139,25 @@ exports[`t-model directive can also define t-on directive on same event, part 2 
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
-  let block1 = createBlock(\`<div><input type=\\"radio\\" id=\\"one\\" value=\\"One\\" block-handler-0=\\"click\\" block-attribute-1=\\"checked\\" block-handler-2=\\"click\\"/><input type=\\"radio\\" id=\\"two\\" value=\\"Two\\" block-handler-3=\\"click\\" block-attribute-4=\\"checked\\" block-handler-5=\\"click\\"/><input type=\\"radio\\" id=\\"three\\" value=\\"Three\\" block-handler-6=\\"click\\" block-attribute-7=\\"checked\\" block-handler-8=\\"click\\"/></div>\`);
+  let block1 = createBlock(\`<div><input type=\\"radio\\" id=\\"one\\" value=\\"One\\" block-attribute-0=\\"checked\\" block-handler-1=\\"click\\" block-handler-2=\\"click\\"/><input type=\\"radio\\" id=\\"two\\" value=\\"Two\\" block-attribute-3=\\"checked\\" block-handler-4=\\"click\\" block-handler-5=\\"click\\"/><input type=\\"radio\\" id=\\"three\\" value=\\"Three\\" block-attribute-6=\\"checked\\" block-handler-7=\\"click\\" block-handler-8=\\"click\\"/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [ctx['onClick'], ctx];
     const bExpr1 = ctx['state'];
     const expr1 = 'choice';
     let attr1 = bExpr1[expr1] === 'One';
-    let hdlr2 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
-    let hdlr3 = [ctx['onClick'], ctx];
+    let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
+    let hdlr2 = [ctx['onClick'], ctx];
     const bExpr2 = ctx['state'];
     const expr2 = 'choice';
     let attr2 = bExpr2[expr2] === 'Two';
-    let hdlr4 = [(ev) => { bExpr2[expr2] = ev.target.value; }];
-    let hdlr5 = [ctx['onClick'], ctx];
+    let hdlr3 = [(ev) => { bExpr2[expr2] = ev.target.value; }];
+    let hdlr4 = [ctx['onClick'], ctx];
     const bExpr3 = ctx['state'];
     const expr3 = 'choice';
     let attr3 = bExpr3[expr3] === 'Three';
-    let hdlr6 = [(ev) => { bExpr3[expr3] = ev.target.value; }];
-    return block1([hdlr1, attr1, hdlr2, hdlr3, attr2, hdlr4, hdlr5, attr3, hdlr6]);
+    let hdlr5 = [(ev) => { bExpr3[expr3] = ev.target.value; }];
+    let hdlr6 = [ctx['onClick'], ctx];
+    return block1([attr1, hdlr1, hdlr2, attr2, hdlr3, hdlr4, attr3, hdlr5, hdlr6]);
   }
 }"
 `;
@@ -406,6 +406,25 @@ exports[`t-model directive on an textarea 1`] = `
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
     let txt1 = ctx['state'].text;
     return block1([attr1, hdlr1, txt1]);
+  }
+}"
+`;
+
+exports[`t-model directive t-model is applied before t-on-input 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><input block-attribute-0=\\"value\\" block-handler-1=\\"input\\" block-handler-2=\\"input\\"/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const bExpr1 = ctx['state'];
+    const expr1 = 'text';
+    let attr1 = bExpr1[expr1];
+    let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
+    let hdlr2 = [ctx['onInput'], ctx];
+    return block1([attr1, hdlr1, hdlr2]);
   }
 }"
 `;

@@ -606,39 +606,6 @@ export class CodeGenerator {
       }
     }
 
-    // event handlers
-    for (let ev in ast.on) {
-      const name = this.generateHandlerCode(ev, ast.on[ev]);
-      const idx = block!.insertData(name, "hdlr");
-      attrs[`block-handler-${idx}`] = ev;
-    }
-
-    // t-ref
-    if (ast.ref) {
-      this.target.hasRef = true;
-      const isDynamic = INTERP_REGEXP.test(ast.ref);
-      if (isDynamic) {
-        const str = replaceDynamicParts(ast.ref, (expr) => this.captureExpression(expr, true));
-        const idx = block!.insertData(`(el) => refs[${str}] = el`, "ref");
-        attrs["block-ref"] = String(idx);
-      } else {
-        let name = ast.ref;
-        if (name in this.target.refInfo) {
-          // ref has already been defined
-          this.helpers.add("multiRefSetter");
-          const info = this.target.refInfo[name];
-          const index = block!.data.push(info[0]) - 1;
-          attrs["block-ref"] = String(index);
-          info[1] = `multiRefSetter(refs, \`${name}\`)`;
-        } else {
-          let id = generateId("ref");
-          this.target.refInfo[name] = [id, `(el) => refs[\`${name}\`] = el`];
-          const index = block!.data.push(id) - 1;
-          attrs["block-ref"] = String(index);
-        }
-      }
-    }
-
     // t-model
     let tModelSelectedExpr;
     if (ast.model) {
@@ -683,6 +650,39 @@ export class CodeGenerator {
       const handler = `[(ev) => { ${fullExpression} = ${valueCode}; }]`;
       idx = block!.insertData(handler, "hdlr");
       attrs[`block-handler-${idx}`] = eventType;
+    }
+
+    // event handlers
+    for (let ev in ast.on) {
+      const name = this.generateHandlerCode(ev, ast.on[ev]);
+      const idx = block!.insertData(name, "hdlr");
+      attrs[`block-handler-${idx}`] = ev;
+    }
+
+    // t-ref
+    if (ast.ref) {
+      this.target.hasRef = true;
+      const isDynamic = INTERP_REGEXP.test(ast.ref);
+      if (isDynamic) {
+        const str = replaceDynamicParts(ast.ref, (expr) => this.captureExpression(expr, true));
+        const idx = block!.insertData(`(el) => refs[${str}] = el`, "ref");
+        attrs["block-ref"] = String(idx);
+      } else {
+        let name = ast.ref;
+        if (name in this.target.refInfo) {
+          // ref has already been defined
+          this.helpers.add("multiRefSetter");
+          const info = this.target.refInfo[name];
+          const index = block!.data.push(info[0]) - 1;
+          attrs["block-ref"] = String(index);
+          info[1] = `multiRefSetter(refs, \`${name}\`)`;
+        } else {
+          let id = generateId("ref");
+          this.target.refInfo[name] = [id, `(el) => refs[\`${name}\`] = el`];
+          const index = block!.data.push(id) - 1;
+          attrs["block-ref"] = String(index);
+        }
+      }
     }
 
     const dom = xmlDoc.createElement(ast.tag);

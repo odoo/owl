@@ -9,7 +9,7 @@ import {
   markRaw,
   toRaw,
 } from "../src";
-import { reactive, Reactive } from "../src/runtime/reactivity";
+import { reactive } from "../src/runtime/reactivity";
 import { batched } from "../src/runtime/utils";
 import {
   makeDeferred,
@@ -1142,6 +1142,46 @@ describe("Reactivity", () => {
     expect(() => state.a).not.toThrow();
     expect(state.a).toBe(obj.a);
   });
+
+  test("writing on object with reactive in prototype chain doesn't notify", async () => {
+    let n = 0;
+    const state = createReactive({ val: 0 }, () => n++);
+    const nonReactive = Object.create(state);
+    nonReactive.val++;
+    expect(n).toBe(0);
+    expect(toRaw(state)).toEqual({ val: 0 });
+    expect(toRaw(nonReactive)).toEqual({ val: 1 });
+    state.val++;
+    expect(n).toBe(1);
+    expect(toRaw(state)).toEqual({ val: 1 });
+    expect(toRaw(nonReactive)).toEqual({ val: 1 });
+  });
+
+  test("creating key on object with reactive in prototype chain doesn't notify", async () => {
+    let n = 0;
+    const parent = createReactive({}, () => n++);
+    const child = Object.create(parent);
+    Object.keys(parent); // Subscribe to key changes
+    child.val = 0;
+    expect(n).toBe(0);
+  });
+
+  test("reactive of object with reactive in prototype chain is not the object from the prototype chain", async () => {
+    const cb = () => {};
+    const parent = createReactive({ val: 0 }, cb);
+    const child = createReactive(Object.create(parent), cb);
+    expect(child).not.toBe(parent);
+  });
+
+  test("can create reactive of object with non-reactive in prototype chain", async () => {
+    let n = 0;
+    const parent = markRaw({ val: 0 });
+    const child = createReactive(Object.create(parent), () => n++);
+    child.val++;
+    expect(n).toBe(1);
+    expect(parent).toEqual({ val: 0 });
+    expect(child).toEqual({ val: 1 });
+  });
 });
 
 describe("Collections", () => {
@@ -1699,12 +1739,12 @@ describe("toRaw", () => {
     const obj = { value: 1 };
     const reactiveObj = reactive(obj);
     expect(reactiveObj).not.toBe(obj);
-    expect(toRaw(reactiveObj as Reactive<typeof obj>)).toBe(obj);
+    expect(toRaw(reactiveObj)).toBe(obj);
   });
 
   test("giving a non reactive to toRaw return the object itself", () => {
     const obj = { value: 1 };
-    expect(toRaw(obj as Reactive<typeof obj>)).toBe(obj);
+    expect(toRaw(obj)).toBe(obj);
   });
 });
 

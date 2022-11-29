@@ -12,7 +12,6 @@ import {
   comment,
 } from "./blockdom";
 import { mainEventHandler } from "./event_handling";
-export type { Reactive } from "./reactivity";
 
 config.shouldNormalizeDom = false;
 config.mainEventHandler = mainEventHandler;

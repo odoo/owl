@@ -3,14 +3,7 @@ import { BDom, VNode } from "./blockdom";
 import { Component, ComponentConstructor, Props } from "./component";
 import { fibersInError, OwlError } from "./error_handling";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";
-import {
-  clearReactivesForCallback,
-  getSubscriptions,
-  NonReactive,
-  Reactive,
-  reactive,
-  TARGET,
-} from "./reactivity";
+import { clearReactivesForCallback, getSubscriptions, reactive, targets } from "./reactivity";
 import { STATUS } from "./status";
 import { batched, Callback } from "./utils";
 
@@ -52,7 +45,7 @@ const batchedRenderFunctions = new WeakMap<ComponentNode, Callback>();
  *  relevant changes
  * @see reactive
  */
-export function useState<T extends object>(state: T): Reactive<T> | NonReactive<T> {
+export function useState<T extends object>(state: T): T {
   const node = getCurrent();
   let render = batchedRenderFunctions.get(node)!;
   if (!render) {
@@ -116,7 +109,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     this.childEnv = env;
     for (const key in props) {
       const prop = props[key];
-      if (prop && typeof prop === "object" && prop[TARGET]) {
+      if (prop && typeof prop === "object" && targets.has(prop)) {
         props[key] = useState(prop);
       }
     }
@@ -240,7 +233,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     currentNode = this;
     for (const key in props) {
       const prop = props[key];
-      if (prop && typeof prop === "object" && prop[TARGET]) {
+      if (prop && typeof prop === "object" && targets.has(prop)) {
         props[key] = useState(prop);
       }
     }

@@ -1,24 +1,16 @@
 import { Callback } from "./utils";
 import { OwlError } from "./error_handling";
 
-// Allows to get the target of a Reactive (used for making a new Reactive from the underlying object)
-export const TARGET = Symbol("Target");
-// Escape hatch to prevent reactivity system to turn something into a reactive
-const SKIP = Symbol("Skip");
 // Special key to subscribe to, to be notified of key creation/deletion
 const KEYCHANGES = Symbol("Key changes");
 
+// The following types only exist to signify places where objects are expected
+// to be reactive or not, they provide no type checking benefit over "object"
 type Target = object;
+type Reactive<T extends Target> = T;
+
 type Collection = Set<any> | Map<any, any> | WeakMap<any, any>;
 type CollectionRawType = "Set" | "Map" | "WeakMap";
-
-export type Reactive<T extends Target = Target> = T & {
-  [TARGET]: any;
-};
-
-export type NonReactive<T extends Target = Target> = T & {
-  [SKIP]: any;
-};
 
 const objectToString = Object.prototype.toString;
 const objectHasOwnProperty = Object.prototype.hasOwnProperty;
@@ -61,15 +53,16 @@ function possiblyReactive(val: any, cb: Callback) {
   return canBeMadeReactive(val) ? reactive(val, cb) : val;
 }
 
+const skipped = new WeakSet<Target>();
 /**
  * Mark an object or array so that it is ignored by the reactivity system
  *
  * @param value the value to mark
  * @returns the object itself
  */
-export function markRaw<T extends Target>(value: T): NonReactive<T> {
-  (value as any)[SKIP] = true;
-  return value as NonReactive<T>;
+export function markRaw<T extends Target>(value: T): T {
+  skipped.add(value);
+  return value;
 }
 
 /**
@@ -78,8 +71,8 @@ export function markRaw<T extends Target>(value: T): NonReactive<T> {
  * @param value a reactive value
  * @returns the underlying value
  */
-export function toRaw<T extends object>(value: Reactive<T>): T {
-  return value[TARGET] || value;
+export function toRaw<T extends Target, U extends Reactive<T>>(value: U | T): T {
+  return targets.has(value) ? (targets.get(value) as T) : value;
 }
 
 const targetToKeysToCallbacks = new WeakMap<Target, Map<PropertyKey, Set<Callback>>>();
@@ -164,8 +157,9 @@ export function getSubscriptions(callback: Callback) {
     };
   });
 }
-
-const reactiveCache = new WeakMap<Target, WeakMap<Callback, Reactive>>();
+// Maps reactive objects to the underlying target
+export const targets = new WeakMap<Reactive<Target>, Target>();
+const reactiveCache = new WeakMap<Target, WeakMap<Callback, Reactive<Target>>>();
 /**
  * Creates a reactive proxy for an object. Reading data on the reactive object
  * subscribes to changes to the data. Writing data on the object will cause the
@@ -180,7 +174,7 @@ const reactiveCache = new WeakMap<Target, WeakMap<Callback, Reactive>>();
  * Subscriptions:
  * + Reading a property on an object will subscribe you to changes in the value
  *    of that property.
- * + Accessing an object keys (eg with Object.keys or with `for..in`) will
+ * + Accessing an object's keys (eg with Object.keys or with `for..in`) will
  *    subscribe you to the creation/deletion of keys. Checking the presence of a
  *    key on the object with 'in' has the same effect.
  * - getOwnPropertyDescriptor does not currently subscribe you to the property.
@@ -193,19 +187,16 @@ const reactiveCache = new WeakMap<Target, WeakMap<Callback, Reactive>>();
  *  reactive has changed
  * @returns a proxy that tracks changes to it
  */
-export function reactive<T extends Target>(
-  target: T,
-  callback: Callback = () => {}
-): Reactive<T> | NonReactive<T> {
+export function reactive<T extends Target>(target: T, callback: Callback = () => {}): T {
   if (!canBeMadeReactive(target)) {
     throw new OwlError(`Cannot make the given value reactive`);
   }
-  if (SKIP in target) {
-    return target as NonReactive<T>;
+  if (skipped.has(target)) {
+    return target;
   }
-  const originalTarget = (target as Reactive)[TARGET];
-  if (originalTarget) {
-    return reactive(originalTarget, callback);
+  if (targets.has(target)) {
+    // target is reactive, create a reactive on the underlying object instead
+    return reactive(targets.get(target) as T, callback);
   }
   if (!reactiveCache.has(target)) {
     reactiveCache.set(target, new WeakMap());
@@ -218,6 +209,7 @@ export function reactive<T extends Target>(
       : basicProxyHandler<T>(callback);
     const proxy = new Proxy(target, handler as ProxyHandler<T>) as Reactive<T>;
     reactivesForTarget.set(callback, proxy);
+    targets.set(proxy, target);
   }
   return reactivesForTarget.get(callback) as Reactive<T>;
 }
@@ -229,29 +221,29 @@ export function reactive<T extends Target>(
  */
 function basicProxyHandler<T extends Target>(callback: Callback): ProxyHandler<T> {
   return {
-    get(target: any, key: PropertyKey, proxy: Reactive<T>) {
-      if (key === TARGET) {
-        return target;
-      }
+    get(target, key, receiver) {
       // non-writable non-configurable properties cannot be made reactive
       const desc = Object.getOwnPropertyDescriptor(target, key);
       if (desc && !desc.writable && !desc.configurable) {
-        return Reflect.get(target, key, proxy);
+        return Reflect.get(target, key, receiver);
       }
       observeTargetKey(target, key, callback);
-      return possiblyReactive(Reflect.get(target, key, proxy), callback);
+      return possiblyReactive(Reflect.get(target, key, receiver), callback);
     },
-    set(target, key, value, proxy) {
-      const isNewKey = !objectHasOwnProperty.call(target, key);
-      const originalValue = Reflect.get(target, key, proxy);
-      const ret = Reflect.set(target, key, value, proxy);
-      if (isNewKey) {
+    set(target, key, value, receiver) {
+      const hadKey = objectHasOwnProperty.call(target, key);
+      const originalValue = Reflect.get(target, key, receiver);
+      const ret = Reflect.set(target, key, value, receiver);
+      if (!hadKey && objectHasOwnProperty.call(target, key)) {
         notifyReactives(target, KEYCHANGES);
       }
       // While Array length may trigger the set trap, it's not actually set by this
       // method but is updated behind the scenes, and the trap is not called with the
       // new value. We disable the "same-value-optimization" for it because of that.
-      if (originalValue !== value || (Array.isArray(target) && key === "length")) {
+      if (
+        originalValue !== Reflect.get(target, key, receiver) ||
+        (key === "length" && Array.isArray(target))
+      ) {
         notifyReactives(target, key);
       }
       return ret;
@@ -444,10 +436,8 @@ function collectionsProxyHandler<T extends Collection>(
   // property is read.
   const specialHandlers = rawTypeToFuncHandlers[targetRawType](target, callback);
   return Object.assign(basicProxyHandler(callback), {
+    // FIXME: probably broken when part of prototype chain since we ignore the receiver
     get(target: any, key: PropertyKey) {
-      if (key === TARGET) {
-        return target;
-      }
       if (objectHasOwnProperty.call(specialHandlers, key)) {
         return (specialHandlers as any)[key];
       }

@@ -9,6 +9,7 @@ import {
   onRendered,
   onWillUnmount,
   useState,
+  reactive,
   xml,
 } from "../../src/index";
 import {
@@ -783,6 +784,131 @@ describe("can catch errors", () => {
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
     expect(mockConsoleError).toBeCalledTimes(0);
     expect(mockConsoleWarn).toBeCalledTimes(0);
+  });
+
+  test("re-render parent when self is in error", async () => {
+    class Boom extends Component {
+      static template = xml`<div />`;
+      setup() {
+        onWillStart(() => {
+          throw new Error("Boom Error");
+        });
+      }
+    }
+
+    const steps: string[] = [];
+    class BoomWrapper extends Component {
+      static template = xml`<Boom />`;
+      static components = { Boom };
+      setup() {
+        onError(() => {
+          steps.push("onError in child");
+          this.props.onError();
+        });
+      }
+    }
+
+    class Classic extends Component {
+      static template = xml`<BoomWrapper t-if="!inError" onError.bind="onErrorAsProps"/><div t-else="" />`;
+      static components = { BoomWrapper };
+      inError: Boolean = false;
+      setup() {
+        onMounted(() => {
+          steps.push("mounted");
+        });
+      }
+      onErrorAsProps() {
+        this.inError = true;
+        this.render(true);
+      }
+    }
+
+    class App extends Component {
+      static template = xml`<Classic />`;
+      static components = { Classic };
+    }
+
+    await mount(App, fixture);
+    expect(steps).toEqual(["onError in child", "mounted"]);
+  });
+
+  test("re-render parent when self is in error - 2", async () => {
+    class Boom extends Component {
+      static template = xml`<div />`;
+      setup() {
+        onWillStart(() => {
+          throw new Error("Boom Error");
+        });
+      }
+    }
+
+    const steps: string[] = [];
+    class BoomWrapper extends Component {
+      static template = xml`<Boom t-if="state.errorTree === 'error'" /><t t-else="" t-esc="state.errorTree" />`;
+      static components = { Boom };
+      state: any;
+      setup() {
+        this.state = useState(this.props.state);
+        onError(() => {
+          steps.push("onError");
+          this.state.onError();
+        });
+
+        onWillRender(() => {
+          steps.push(`BoomWrapper willRender`);
+        });
+      }
+    }
+
+    let classicId = 0;
+    class Classic extends Component {
+      static template = xml`
+        <BoomWrapper t-if="props.hasBoom" state="props.state"/>
+        <div t-else="" t-esc="props.state.safeTree" />
+      `;
+      static components = { BoomWrapper };
+      id: Number = 0;
+      state: any;
+      inError: Boolean = false;
+      setup() {
+        this.id = classicId++;
+        onMounted(() => {
+          steps.push(`mounted ${this.id}`);
+        });
+        onWillRender(() => {
+          steps.push(`Classic willRender ${this.id}`);
+        });
+      }
+    }
+
+    class App extends Component {
+      reactive: any;
+      setup() {
+        this.reactive = reactive({
+          errorTree: "error",
+          safeTree: "safe",
+          onError() {
+            this.safeTree = "safe2";
+            this.errorTree = "errorHandled";
+          },
+        });
+      }
+      static template = xml`<Classic hasBoom="true" state="reactive" /><Classic hasBoom="false" state="reactive"/>`;
+      static components = { Classic };
+    }
+
+    await mount(App, fixture);
+    expect(steps).toEqual([
+      "Classic willRender 0",
+      "Classic willRender 1",
+      "BoomWrapper willRender",
+      "onError",
+      "Classic willRender 1",
+      "BoomWrapper willRender",
+      "mounted 1",
+      "mounted 0",
+    ]);
+    expect(fixture.innerHTML).toBe("errorHandled<div>safe2</div>");
   });
 
   test("can catch an error in the willStart call", async () => {

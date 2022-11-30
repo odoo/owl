@@ -316,7 +316,7 @@ describe("t-call", () => {
     expect(fixture.innerHTML).toBe("childaaronchildlucas");
   });
 
-  test.only("t-call-context: ComponentNode is not looked up in the context", async () => {
+  test("t-call-context: ComponentNode is not looked up in the context", async () => {
     let child: any;
     class Child extends Component {
       static template = xml`<t t-slot="default"/>`;

@@ -25,7 +25,7 @@ export function makeRootFiber(node: ComponentNode): Fiber {
     current.children = [];
     current.childrenMap = {};
     current.bdom = null;
-    if (fibersInError.has(current)) {
+    if (fibersInError.has(root)) {
       fibersInError.delete(current);
       fibersInError.delete(root);
       current.appliedToDom = false;

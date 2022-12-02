@@ -12,6 +12,11 @@ describe("attributes", () => {
     expect(renderToString(template)).toBe(`<div foo="a" bar="b" baz="c"></div>`);
   });
 
+  test("static attributes with backslash or backtick", () => {
+    const template = `<div foo="\\a" bar="\\n" baz="\`"/>`;
+    expect(renderToString(template)).toBe(`<div foo="\\a" bar="\\n" baz="\`"></div>`);
+  });
+
   test("two classes", () => {
     const template = `<div class="a b"/>`;
     expect(renderToString(template)).toBe(`<div class="a b"></div>`);

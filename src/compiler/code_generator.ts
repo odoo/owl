@@ -294,7 +294,7 @@ export class CodeGenerator {
       for (let block of this.blocks) {
         if (block.dom) {
           let xmlString = block.asXmlString();
-          xmlString = xmlString.replace(/`/g, "\\`");
+          xmlString = xmlString.replace(/\\/g, "\\\\").replace(/`/g, "\\`");
           if (block.dynamicTagName) {
             xmlString = xmlString.replace(/^<\w+/, `<\${tag || '${block.dom.nodeName}'}`);
             xmlString = xmlString.replace(/\w+>$/, `\${tag || '${block.dom.nodeName}'}>`);

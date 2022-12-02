@@ -115,7 +115,7 @@ It is useful to explain the various rules that apply on these expressions:
    <div><p t-if="console.log(1)">NOT valid</p></div>
    ```
 
-2. it can use anything in the rendering context (typically, the component):
+2. it can use anything in the rendering context (which typically contains the properties of the component):
 
    ```xml
    <p t-if="user.birthday === today()">Happy bithday!</p>
@@ -541,9 +541,8 @@ This can be used to define variables scoped to a sub template:
 ```
 
 Note: by default, the rendering context for a sub template is simply the current
-rendering context (so, the current component). However, it may be useful to be
-able to specify a specific object as context. This can be done by using the
-`t-call-context` directive:
+rendering context. However, it may be useful to be able to specify a specific
+object as context. This can be done by using the `t-call-context` directive:
 
 ```xml
 <t t-call="other-template" t-call-context="obj"/>

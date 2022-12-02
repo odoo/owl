@@ -345,14 +345,13 @@ describe("t-call", () => {
             <Child prop.bind="method">
               <div t-ref="myRef2">I'm the default slot</div>
               <t t-set="test" t-value="3"/>
-              <div t-esc="this.__owl__.name"/>
               <div t-esc="test"/>
             </Child>
           </t>
         </templates>`,
     });
     expect(fixture.innerHTML).toBe(
-      "<div>outside slot</div><div>I'm the default slot</div><div>Root</div><div>3</div>"
+      "<div>outside slot</div><div>I'm the default slot</div><div>3</div>"
     );
     expect(Object.keys(child.__owl__.refs)).toEqual([]);
     expect(Object.keys(root.__owl__.refs)).toEqual(["myRef", "myRef2"]);
@@ -378,6 +377,22 @@ describe("t-call", () => {
             <Child>
               <t t-esc="someValue"/>
             </Child>
+          </t>
+        </templates>`,
+    });
+    expect(fixture.innerHTML).toBe("");
+  });
+
+  test("t-call-context: this is not available inside t-call-context", async () => {
+    class Root extends Component {
+      static template = xml`<t t-call="someTemplate" t-call-context="{}"/>`;
+    }
+
+    await mount(Root, fixture, {
+      templates: `
+        <templates>
+          <t t-name="someTemplate">
+            <t t-esc="this"/>
           </t>
         </templates>`,
     });

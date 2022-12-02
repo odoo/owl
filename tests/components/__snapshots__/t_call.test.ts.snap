@@ -109,7 +109,8 @@ exports[`t-call handlers are properly bound through a dynamic t-call 2`] = `
   let block1 = createBlock(\`<p block-handler-0=\\"click\\">lucas</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [()=>this.update(), ctx];
+    const v1 = ctx['this'];
+    let hdlr1 = [()=>v1.update(), ctx];
     return block1([hdlr1]);
   }
 }"
@@ -168,8 +169,9 @@ exports[`t-call handlers with arguments are properly bound through a t-call 2`] 
   let block1 = createBlock(\`<p block-handler-0=\\"click\\">lucas</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const v1 = ctx['a'];
-    let hdlr1 = [()=>this.update(v1), ctx];
+    const v1 = ctx['this'];
+    const v2 = ctx['a'];
+    let hdlr1 = [()=>v1.update(v2), ctx];
     return block1([hdlr1]);
   }
 }"
@@ -287,7 +289,7 @@ exports[`t-call recursive t-call binding this -- static t-call 2`] = `
     ctx[isBoundary] = 1
     let b2;
     if (ctx['level']<2) {
-      let hdlr1 = [\\"stop\\", ctx['onClicked'].bind(this), ctx];
+      let hdlr1 = [\\"stop\\", ctx['onClicked'].bind(ctx['this']), ctx];
       let txt1 = ctx['level'];
       const b3 = block3([hdlr1, txt1]);
       ctx = Object.create(ctx);
@@ -538,7 +540,6 @@ exports[`t-call t-call-context: ComponentNode is not looked up in the context 2`
   let block2 = createBlock(\`<div block-ref=\\"0\\">outside slot</div>\`);
   let block4 = createBlock(\`<div block-ref=\\"0\\">I'm the default slot</div>\`);
   let block5 = createBlock(\`<div><block-text-0/></div>\`);
-  let block6 = createBlock(\`<div><block-text-0/></div>\`);
   
   function slot1(ctx, node, key = \\"\\") {
     const refs = this.__owl__.refs;
@@ -547,11 +548,9 @@ exports[`t-call t-call-context: ComponentNode is not looked up in the context 2`
     ctx[isBoundary] = 1
     const b4 = block4([ref2]);
     setContextValue(ctx, \\"test\\", 3);
-    let txt1 = this.__owl__.name;
+    let txt1 = ctx['test'];
     const b5 = block5([txt1]);
-    let txt2 = ctx['test'];
-    const b6 = block6([txt2]);
-    return multi([b4, b5, b6]);
+    return multi([b4, b5]);
   }
   
   return function template(ctx, node, key = \\"\\") {
@@ -559,8 +558,8 @@ exports[`t-call t-call-context: ComponentNode is not looked up in the context 2`
     const ref1 = (el) => refs[\`myRef\`] = el;
     const b2 = block2([ref1]);
     const ctx1 = capture(ctx);
-    const b7 = comp1({prop: bind(this, ctx['method']),slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__1\`, node, this, null);
-    return multi([b2, b7]);
+    const b6 = comp1({prop: bind(this, ctx['method']),slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__1\`, node, this, null);
+    return multi([b2, b6]);
   }
 }"
 `;
@@ -621,6 +620,30 @@ exports[`t-call t-call-context: slots don't make component available again when 
   
   return function template(ctx, node, key = \\"\\") {
     return callSlot(ctx, node, key, 'default', false, {});
+  }
+}"
+`;
+
+exports[`t-call t-call-context: this is not available inside t-call-context 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const callTemplate_1 = app.getTemplate(\`someTemplate\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let ctx1 = {};
+    return callTemplate_1.call(this, ctx1, node, key + \`__1\`);
+  }
+}"
+`;
+
+exports[`t-call t-call-context: this is not available inside t-call-context 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['this']);
   }
 }"
 `;

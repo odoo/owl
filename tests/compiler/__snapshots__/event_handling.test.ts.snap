@@ -519,8 +519,9 @@ exports[`t-on t-on, with arguments and t-call 2`] = `
   let block1 = createBlock(\`<p block-handler-0=\\"click\\">lucas</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const v1 = ctx['value'];
-    let hdlr1 = [()=>this.update(v1), ctx];
+    const v1 = ctx['this'];
+    const v2 = ctx['value'];
+    let hdlr1 = [()=>v1.update(v2), ctx];
     return block1([hdlr1]);
   }
 }"

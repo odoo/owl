@@ -284,6 +284,9 @@ describe("t-on", () => {
         expect(this).toBe(owner);
         expect(val).toBe(444);
       },
+      get this() {
+        return owner;
+      },
       value: 444,
     };
 

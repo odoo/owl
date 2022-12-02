@@ -646,7 +646,7 @@ exports[`Portal portal destroys on crash 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let txt1 = ctx['props'].error&&this.will.crash;
+    let txt1 = ctx['props'].error&&ctx['this'].will.crash;
     return block1([txt1]);
   }
 }"

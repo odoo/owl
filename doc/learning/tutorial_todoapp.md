@@ -174,9 +174,9 @@ class Root extends Component {
 ```
 
 The template contains a [`t-foreach`](../reference/templates.md#loops) loop to iterate
-through the tasks. It can find the `tasks` list from the component, since the
-component is the rendering context. Note that we use the `id` of each task as a
-`t-key`, which is very common. There are two css classes: `task-list` and `task`,
+through the tasks. It can find the `tasks` list from the component, since the rendering
+context contains the properties of the component. Note that we use the `id` of each task
+as a `t-key`, which is very common. There are two css classes: `task-list` and `task`,
 that we will use in the next section.
 
 Finally, notice the use of the `t-att-checked` attribute:

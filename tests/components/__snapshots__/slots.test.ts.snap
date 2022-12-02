@@ -1992,7 +1992,8 @@ exports[`slots slot content is bound to caller (variation) 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"var\\", 1);
-    let hdlr1 = [()=>this.inc(), ctx];
+    const v1 = ctx['this'];
+    let hdlr1 = [()=>v1.inc(), ctx];
     return block1([hdlr1]);
   }
   
@@ -2359,7 +2360,8 @@ exports[`slots slots are properly bound to correct component 2`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"var\\", 1);
-    let hdlr1 = [()=>this.increment(), ctx];
+    const v1 = ctx['this'];
+    let hdlr1 = [()=>v1.increment(), ctx];
     let txt1 = ctx['state'].value;
     return block1([hdlr1, txt1]);
   }

@@ -111,8 +111,9 @@ exports[`t-on t-on method call in t-foreach 1`] = `
       const key1 = ctx['val'];
       let txt1 = ctx['val_index'];
       let txt2 = ctx['val']+'';
-      const v1 = ctx['val'];
-      let hdlr1 = [()=>this.addVal(v1), ctx];
+      const v1 = ctx['this'];
+      const v2 = ctx['val'];
+      let hdlr1 = [()=>v1.addVal(v2), ctx];
       c_block2[i1] = withKey(block3([txt1, txt2, hdlr1]), key1);
     }
     const b2 = list(c_block2);
@@ -197,8 +198,9 @@ exports[`t-on t-on on components and t-foreach 1`] = `
     for (let i1 = 0; i1 < l_block1; i1++) {
       ctx[\`name\`] = v_block1[i1];
       const key1 = ctx['name'];
-      const v1 = ctx['name'];
-      const hdlr1 = [()=>this.log(v1), ctx];
+      const v1 = ctx['this'];
+      const v2 = ctx['name'];
+      const hdlr1 = [()=>v1.log(v2), ctx];
       c_block1[i1] = withKey(catcher1(comp1({value: ctx['name']}, key + \`__1__\${key1}\`, node, this, null), [hdlr1]), key1);
     }
     return list(c_block1);
@@ -293,8 +295,9 @@ exports[`t-on t-on on components, with a handler update 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"name\\", ctx['state'].name);
-    const v1 = ctx['name'];
-    const hdlr1 = [()=>this.log(v1), ctx];
+    const v1 = ctx['this'];
+    const v2 = ctx['name'];
+    const hdlr1 = [()=>v1.log(v2), ctx];
     return catcher1(comp1({value: ctx['name']}, key + \`__1\`, node, this, null), [hdlr1]);
   }
 }"
@@ -393,7 +396,8 @@ exports[`t-on t-on on t-set-slots 1`] = `
   function slot1(ctx, node, key = \\"\\") {
     const b6 = block6();
     const b7 = block7();
-    const hdlr1 = [()=>this.state.count++, ctx];
+    const v1 = ctx['this'];
+    const hdlr1 = [()=>v1.state.count++, ctx];
     return catcher1(multi([b6, b7]), [hdlr1]);
   }
   
@@ -450,7 +454,8 @@ exports[`t-on t-on on t-slots 2`] = `
     const b2 = text(\` [\`);
     const b3 = text(ctx['state'].count);
     const b4 = text(\`] \`);
-    const hdlr1 = [()=>this.state.count++, ctx];
+    const v1 = ctx['this'];
+    const hdlr1 = [()=>v1.state.count++, ctx];
     const b5 = catcher1(callSlot(ctx, node, key, 'default', false, {}), [hdlr1]);
     return multi([b2, b3, b4, b5]);
   }

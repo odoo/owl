@@ -3,6 +3,7 @@
 exports[`reactivity in lifecycle Child component doesn't render when state they depend on changes but their parent is about to unmount them 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -19,6 +20,7 @@ exports[`reactivity in lifecycle Child component doesn't render when state they 
 exports[`reactivity in lifecycle Child component doesn't render when state they depend on changes but their parent is about to unmount them 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -30,6 +32,7 @@ exports[`reactivity in lifecycle Child component doesn't render when state they 
 exports[`reactivity in lifecycle Component is automatically subscribed to reactive object received as prop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -42,6 +45,7 @@ exports[`reactivity in lifecycle Component is automatically subscribed to reacti
 exports[`reactivity in lifecycle Component is automatically subscribed to reactive object received as prop 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -55,6 +59,7 @@ exports[`reactivity in lifecycle Component is automatically subscribed to reacti
 exports[`reactivity in lifecycle can use a state hook 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -69,6 +74,7 @@ exports[`reactivity in lifecycle can use a state hook 1`] = `
 exports[`reactivity in lifecycle can use a state hook 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -83,6 +89,7 @@ exports[`reactivity in lifecycle can use a state hook 2 1`] = `
 exports[`reactivity in lifecycle can use a state hook on Map 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -97,6 +104,7 @@ exports[`reactivity in lifecycle can use a state hook on Map 1`] = `
 exports[`reactivity in lifecycle change state while mounting component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -111,6 +119,7 @@ exports[`reactivity in lifecycle change state while mounting component 1`] = `
 exports[`reactivity in lifecycle state changes in willUnmount do not trigger rerender 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -129,6 +138,7 @@ exports[`reactivity in lifecycle state changes in willUnmount do not trigger rer
 exports[`reactivity in lifecycle state changes in willUnmount do not trigger rerender 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);

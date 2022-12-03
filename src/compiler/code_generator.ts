@@ -276,7 +276,10 @@ export class CodeGenerator {
       tKeyExpr: null,
     });
     // define blocks and utility functions
-    let mainCode = [`  let { text, createBlock, list, multi, html, toggler, comment } = bdom;`];
+    let mainCode = [
+      `  "use strict";`,
+      `let { text, createBlock, list, multi, html, toggler, comment } = bdom;`,
+    ];
     if (this.helpers.size) {
       mainCode.push(`let { ${[...this.helpers].join(", ")} } = helpers;`);
     }

@@ -3,6 +3,7 @@
 exports[`basics accept ES6-like syntax for props (with getters) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -18,6 +19,7 @@ exports[`basics accept ES6-like syntax for props (with getters) 1`] = `
 exports[`basics accept ES6-like syntax for props (with getters) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -32,6 +34,7 @@ exports[`basics accept ES6-like syntax for props (with getters) 2`] = `
 exports[`basics arrow functions as prop correctly capture their scope 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -54,6 +57,7 @@ exports[`basics arrow functions as prop correctly capture their scope 1`] = `
 exports[`basics arrow functions as prop correctly capture their scope 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"/>\`);
@@ -68,6 +72,7 @@ exports[`basics arrow functions as prop correctly capture their scope 2`] = `
 exports[`basics explicit object prop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -83,6 +88,7 @@ exports[`basics explicit object prop 1`] = `
 exports[`basics explicit object prop 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -97,6 +103,7 @@ exports[`basics explicit object prop 2`] = `
 exports[`basics prop names can contain - 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -109,6 +116,7 @@ exports[`basics prop names can contain - 1`] = `
 exports[`basics prop names can contain - 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -123,6 +131,7 @@ exports[`basics prop names can contain - 2`] = `
 exports[`basics support prop names that aren't valid bare object property names 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -135,6 +144,7 @@ exports[`basics support prop names that aren't valid bare object property names 
 exports[`basics support prop names that aren't valid bare object property names 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"/>\`);
@@ -149,6 +159,7 @@ exports[`basics support prop names that aren't valid bare object property names 
 exports[`basics t-set with a body expression can be passed in props, and then t-out 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, LazyValue } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -173,6 +184,7 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
 exports[`basics t-set with a body expression can be passed in props, and then t-out 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
   
@@ -189,6 +201,7 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
 exports[`basics t-set with a body expression can be used as textual prop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -208,6 +221,7 @@ exports[`basics t-set with a body expression can be used as textual prop 1`] = `
 exports[`basics t-set with a body expression can be used as textual prop 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -222,6 +236,7 @@ exports[`basics t-set with a body expression can be used as textual prop 2`] = `
 exports[`basics t-set works  1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -241,6 +256,7 @@ exports[`basics t-set works  1`] = `
 exports[`basics t-set works  2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -255,6 +271,7 @@ exports[`basics t-set works  2`] = `
 exports[`basics template string in prop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -267,6 +284,7 @@ exports[`basics template string in prop 1`] = `
 exports[`basics template string in prop 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -278,6 +296,7 @@ exports[`basics template string in prop 2`] = `
 exports[`bound functions is referentially equal after update 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { bind } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -291,6 +310,7 @@ exports[`bound functions is referentially equal after update 1`] = `
 exports[`bound functions is referentially equal after update 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -302,6 +322,7 @@ exports[`bound functions is referentially equal after update 2`] = `
 exports[`can bind function prop with bind suffix 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { bind } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -315,6 +336,7 @@ exports[`can bind function prop with bind suffix 1`] = `
 exports[`can bind function prop with bind suffix 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {

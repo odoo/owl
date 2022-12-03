@@ -3,6 +3,7 @@
 exports[`refs basic use 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div block-ref=\\"0\\"/>\`);
@@ -18,6 +19,7 @@ exports[`refs basic use 1`] = `
 exports[`refs can use 2 refs with same name in a t-if/t-else situation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { multiRefSetter } = helpers;
   
@@ -41,6 +43,7 @@ exports[`refs can use 2 refs with same name in a t-if/t-else situation 1`] = `
 exports[`refs refs and recursive templates 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Test\`, true, false, false, false);
   
@@ -62,6 +65,7 @@ exports[`refs refs and recursive templates 1`] = `
 exports[`refs refs are properly bound in slots 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
   const comp1 = app.createComponent(\`Dialog\`, true, true, false, true);
@@ -88,6 +92,7 @@ exports[`refs refs are properly bound in slots 1`] = `
 exports[`refs refs are properly bound in slots 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -103,6 +108,7 @@ exports[`refs refs are properly bound in slots 2`] = `
 exports[`refs throws if there are 2 same refs at the same time 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { multiRefSetter } = helpers;
   

@@ -3,6 +3,7 @@
 exports[`list of components components in a node in a t-foreach  1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -28,6 +29,7 @@ exports[`list of components components in a node in a t-foreach  1`] = `
 exports[`list of components components in a node in a t-foreach  2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -42,6 +44,7 @@ exports[`list of components components in a node in a t-foreach  2`] = `
 exports[`list of components crash on duplicate key in dev mode 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, OwlError, withKey } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
@@ -67,6 +70,7 @@ exports[`list of components crash on duplicate key in dev mode 1`] = `
 exports[`list of components crash on duplicate key in dev mode 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -114,6 +118,7 @@ exports[`list of components crash when using object as keys that serialize to th
 exports[`list of components list of sub components inside other nodes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   const comp1 = app.createComponent(\`SubComponent\`, true, false, false, true);
@@ -139,6 +144,7 @@ exports[`list of components list of sub components inside other nodes 1`] = `
 exports[`list of components list of sub components inside other nodes 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span>asdf</span>\`);
@@ -204,6 +210,7 @@ exports[`list of components order is correct when slots are not of same type 2`]
 exports[`list of components reconciliation alg works for t-foreach in t-foreach 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -237,6 +244,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
 exports[`list of components reconciliation alg works for t-foreach in t-foreach 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -251,6 +259,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
 exports[`list of components reconciliation alg works for t-foreach in t-foreach, 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -286,6 +295,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
 exports[`list of components reconciliation alg works for t-foreach in t-foreach, 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -300,6 +310,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
 exports[`list of components simple list 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -320,6 +331,7 @@ exports[`list of components simple list 1`] = `
 exports[`list of components simple list 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -334,6 +346,7 @@ exports[`list of components simple list 2`] = `
 exports[`list of components sub components rendered in a loop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -357,6 +370,7 @@ exports[`list of components sub components rendered in a loop 1`] = `
 exports[`list of components sub components rendered in a loop 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<p><block-text-0/></p>\`);
@@ -371,6 +385,7 @@ exports[`list of components sub components rendered in a loop 2`] = `
 exports[`list of components sub components with some state rendered in a loop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
@@ -394,6 +409,7 @@ exports[`list of components sub components with some state rendered in a loop 1`
 exports[`list of components sub components with some state rendered in a loop 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<p><block-text-0/></p>\`);
@@ -408,6 +424,7 @@ exports[`list of components sub components with some state rendered in a loop 2`
 exports[`list of components switch component position 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -431,6 +448,7 @@ exports[`list of components switch component position 1`] = `
 exports[`list of components switch component position 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -445,6 +463,7 @@ exports[`list of components switch component position 2`] = `
 exports[`list of components t-foreach with t-component, and update 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
@@ -469,6 +488,7 @@ exports[`list of components t-foreach with t-component, and update 1`] = `
 exports[`list of components t-foreach with t-component, and update 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);

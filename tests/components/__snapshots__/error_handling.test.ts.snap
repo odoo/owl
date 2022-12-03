@@ -3,6 +3,7 @@
 exports[`basics display a nice error if a component is not a component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`SomeComponent\`, true, false, false, true);
   
@@ -15,6 +16,7 @@ exports[`basics display a nice error if a component is not a component 1`] = `
 exports[`basics display a nice error if it cannot find component (in dev mode) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`SomeMispelledComponent\`, true, false, false, true);
   
@@ -29,6 +31,7 @@ exports[`basics display a nice error if it cannot find component (in dev mode) 1
 exports[`basics display a nice error if it cannot find component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`SomeMispelledComponent\`, true, false, false, true);
   
@@ -56,6 +59,7 @@ exports[`basics display a nice error if the components key is missing with subco
 exports[`basics no component catching error lead to full app destruction 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ErrorComponent\`, true, false, false, false);
   
@@ -71,6 +75,7 @@ exports[`basics no component catching error lead to full app destruction 1`] = `
 exports[`basics no component catching error lead to full app destruction 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
@@ -85,6 +90,7 @@ exports[`basics no component catching error lead to full app destruction 2`] = `
 exports[`basics simple catchError 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Boom\`, true, false, false, true);
   
@@ -105,6 +111,7 @@ exports[`basics simple catchError 1`] = `
 exports[`basics simple catchError 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -185,6 +192,7 @@ exports[`can catch errors Thrown values that are not errors are wrapped outside 
 exports[`can catch errors an error in onWillDestroy 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -202,6 +210,7 @@ exports[`can catch errors an error in onWillDestroy 1`] = `
 exports[`can catch errors an error in onWillDestroy 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>abc</div>\`);
@@ -215,6 +224,7 @@ exports[`can catch errors an error in onWillDestroy 2`] = `
 exports[`can catch errors an error in onWillDestroy, variation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -232,6 +242,7 @@ exports[`can catch errors an error in onWillDestroy, variation 1`] = `
 exports[`can catch errors an error in onWillDestroy, variation 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>abc</div>\`);
@@ -245,6 +256,7 @@ exports[`can catch errors an error in onWillDestroy, variation 2`] = `
 exports[`can catch errors calling a hook outside setup should crash 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -256,6 +268,7 @@ exports[`can catch errors calling a hook outside setup should crash 1`] = `
 exports[`can catch errors can catch an error in a component render function 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`ErrorComponent\`, true, false, false, false);
@@ -277,6 +290,7 @@ exports[`can catch errors can catch an error in a component render function 1`] 
 exports[`can catch errors can catch an error in a component render function 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -297,6 +311,7 @@ exports[`can catch errors can catch an error in a component render function 2`] 
 exports[`can catch errors can catch an error in a component render function 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
@@ -311,6 +326,7 @@ exports[`can catch errors can catch an error in a component render function 3`] 
 exports[`can catch errors can catch an error in the constructor call of a component render function 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`ErrorComponent\`, true, false, false, true);
@@ -332,6 +348,7 @@ exports[`can catch errors can catch an error in the constructor call of a compon
 exports[`can catch errors can catch an error in the constructor call of a component render function 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -352,6 +369,7 @@ exports[`can catch errors can catch an error in the constructor call of a compon
 exports[`can catch errors can catch an error in the constructor call of a component render function 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`ClassicCompoent\`, true, false, false, true);
@@ -376,6 +394,7 @@ exports[`can catch errors can catch an error in the constructor call of a compon
 exports[`can catch errors can catch an error in the constructor call of a component render function 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -396,6 +415,7 @@ exports[`can catch errors can catch an error in the constructor call of a compon
 exports[`can catch errors can catch an error in the constructor call of a component render function 2 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>classic</div>\`);
@@ -409,6 +429,7 @@ exports[`can catch errors can catch an error in the constructor call of a compon
 exports[`can catch errors can catch an error in the constructor call of a component render function 2 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>Some text</div>\`);
@@ -422,6 +443,7 @@ exports[`can catch errors can catch an error in the constructor call of a compon
 exports[`can catch errors can catch an error in the constructor call of a component render function 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>Some text</div>\`);
@@ -435,6 +457,7 @@ exports[`can catch errors can catch an error in the constructor call of a compon
 exports[`can catch errors can catch an error in the initial call of a component render function (parent mounted) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`ErrorComponent\`, true, false, false, true);
@@ -456,6 +479,7 @@ exports[`can catch errors can catch an error in the initial call of a component 
 exports[`can catch errors can catch an error in the initial call of a component render function (parent mounted) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -476,6 +500,7 @@ exports[`can catch errors can catch an error in the initial call of a component 
 exports[`can catch errors can catch an error in the initial call of a component render function (parent mounted) 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
@@ -490,6 +515,7 @@ exports[`can catch errors can catch an error in the initial call of a component 
 exports[`can catch errors can catch an error in the initial call of a component render function (parent updated) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`ErrorComponent\`, true, false, false, true);
@@ -514,6 +540,7 @@ exports[`can catch errors can catch an error in the initial call of a component 
 exports[`can catch errors can catch an error in the initial call of a component render function (parent updated) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -534,6 +561,7 @@ exports[`can catch errors can catch an error in the initial call of a component 
 exports[`can catch errors can catch an error in the initial call of a component render function (parent updated) 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
@@ -548,6 +576,7 @@ exports[`can catch errors can catch an error in the initial call of a component 
 exports[`can catch errors can catch an error in the mounted call (in child of child) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`B\`, true, false, false, true);
   
@@ -560,6 +589,7 @@ exports[`can catch errors can catch an error in the mounted call (in child of ch
 exports[`can catch errors can catch an error in the mounted call (in child of child) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`C\`, true, false, false, true);
   
@@ -575,6 +605,7 @@ exports[`can catch errors can catch an error in the mounted call (in child of ch
 exports[`can catch errors can catch an error in the mounted call (in child of child) 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Boom\`, true, false, false, true);
   
@@ -595,6 +626,7 @@ exports[`can catch errors can catch an error in the mounted call (in child of ch
 exports[`can catch errors can catch an error in the mounted call (in child of child) 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>Some text</div>\`);
@@ -608,6 +640,7 @@ exports[`can catch errors can catch an error in the mounted call (in child of ch
 exports[`can catch errors can catch an error in the mounted call (in root component) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ErrorComponent\`, true, false, false, true);
   
@@ -628,6 +661,7 @@ exports[`can catch errors can catch an error in the mounted call (in root compon
 exports[`can catch errors can catch an error in the mounted call (in root component) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>Some text</div>\`);
@@ -641,6 +675,7 @@ exports[`can catch errors can catch an error in the mounted call (in root compon
 exports[`can catch errors can catch an error in the mounted call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`ErrorComponent\`, true, false, false, true);
@@ -662,6 +697,7 @@ exports[`can catch errors can catch an error in the mounted call 1`] = `
 exports[`can catch errors can catch an error in the mounted call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -682,6 +718,7 @@ exports[`can catch errors can catch an error in the mounted call 2`] = `
 exports[`can catch errors can catch an error in the mounted call 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>Some text</div>\`);
@@ -695,6 +732,7 @@ exports[`can catch errors can catch an error in the mounted call 3`] = `
 exports[`can catch errors can catch an error in the willPatch call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`ErrorComponent\`, true, false, false, false);
@@ -717,6 +755,7 @@ exports[`can catch errors can catch an error in the willPatch call 1`] = `
 exports[`can catch errors can catch an error in the willPatch call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -737,6 +776,7 @@ exports[`can catch errors can catch an error in the willPatch call 2`] = `
 exports[`can catch errors can catch an error in the willPatch call 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -751,6 +791,7 @@ exports[`can catch errors can catch an error in the willPatch call 3`] = `
 exports[`can catch errors can catch an error in the willStart call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`ErrorComponent\`, true, false, false, true);
@@ -772,6 +813,7 @@ exports[`can catch errors can catch an error in the willStart call 1`] = `
 exports[`can catch errors can catch an error in the willStart call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -792,6 +834,7 @@ exports[`can catch errors can catch an error in the willStart call 2`] = `
 exports[`can catch errors can catch an error in the willStart call 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>Some text</div>\`);
@@ -805,6 +848,7 @@ exports[`can catch errors can catch an error in the willStart call 3`] = `
 exports[`can catch errors can catch an error origination from a child's willStart function 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`ClassicCompoent\`, true, false, false, true);
@@ -829,6 +873,7 @@ exports[`can catch errors can catch an error origination from a child's willStar
 exports[`can catch errors can catch an error origination from a child's willStart function 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -849,6 +894,7 @@ exports[`can catch errors can catch an error origination from a child's willStar
 exports[`can catch errors can catch an error origination from a child's willStart function 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>classic</div>\`);
@@ -862,6 +908,7 @@ exports[`can catch errors can catch an error origination from a child's willStar
 exports[`can catch errors can catch an error origination from a child's willStart function 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>Some text</div>\`);
@@ -875,6 +922,7 @@ exports[`can catch errors can catch an error origination from a child's willStar
 exports[`can catch errors catchError in catchError 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -895,6 +943,7 @@ exports[`can catch errors catchError in catchError 1`] = `
 exports[`can catch errors catchError in catchError 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Boom\`, true, false, false, true);
   
@@ -910,6 +959,7 @@ exports[`can catch errors catchError in catchError 2`] = `
 exports[`can catch errors catchError in catchError 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -924,6 +974,7 @@ exports[`can catch errors catchError in catchError 3`] = `
 exports[`can catch errors catching error, rethrow, render parent  -- a main component loop implementation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, capture, markRaw, withKey } = helpers;
   const comp1 = app.createComponent(null, false, false, false, true);
@@ -952,6 +1003,7 @@ exports[`can catch errors catching error, rethrow, render parent  -- a main comp
 exports[`can catch errors catching error, rethrow, render parent  -- a main component loop implementation 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -964,6 +1016,7 @@ exports[`can catch errors catching error, rethrow, render parent  -- a main comp
 exports[`can catch errors catching error, rethrow, render parent  -- a main component loop implementation 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ErrorComponent\`, true, false, false, true);
   
@@ -976,6 +1029,7 @@ exports[`can catch errors catching error, rethrow, render parent  -- a main comp
 exports[`can catch errors catching error, rethrow, render parent  -- a main component loop implementation 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
@@ -989,6 +1043,7 @@ exports[`can catch errors catching error, rethrow, render parent  -- a main comp
 exports[`can catch errors catching error, rethrow, render parent  -- a main component loop implementation 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>Sibling</div>\`);
@@ -1002,6 +1057,7 @@ exports[`can catch errors catching error, rethrow, render parent  -- a main comp
 exports[`can catch errors catching in child makes parent render 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, capture, markRaw, withKey } = helpers;
   const comp1 = app.createComponent(null, false, false, false, false);
@@ -1030,6 +1086,7 @@ exports[`can catch errors catching in child makes parent render 1`] = `
 exports[`can catch errors catching in child makes parent render 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -1042,6 +1099,7 @@ exports[`can catch errors catching in child makes parent render 2`] = `
 exports[`can catch errors catching in child makes parent render 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
@@ -1055,6 +1113,7 @@ exports[`can catch errors catching in child makes parent render 3`] = `
 exports[`can catch errors catching in child makes parent render 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -1069,6 +1128,7 @@ exports[`can catch errors catching in child makes parent render 4`] = `
 exports[`can catch errors error in mounted on a component with a sibling (properly mounted) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
   const comp1 = app.createComponent(\`OK\`, true, false, false, true);
@@ -1092,6 +1152,7 @@ exports[`can catch errors error in mounted on a component with a sibling (proper
 exports[`can catch errors error in mounted on a component with a sibling (properly mounted) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -1103,6 +1164,7 @@ exports[`can catch errors error in mounted on a component with a sibling (proper
 exports[`can catch errors error in mounted on a component with a sibling (properly mounted) 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
   
@@ -1123,6 +1185,7 @@ exports[`can catch errors error in mounted on a component with a sibling (proper
 exports[`can catch errors error in mounted on a component with a sibling (properly mounted) 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>Some text</div>\`);
@@ -1136,6 +1199,7 @@ exports[`can catch errors error in mounted on a component with a sibling (proper
 exports[`can catch errors onError in class inheritance is called if rethrown 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Concrete\`, true, false, false, true);
   
@@ -1148,6 +1212,7 @@ exports[`can catch errors onError in class inheritance is called if rethrown 1`]
 exports[`can catch errors onError in class inheritance is called if rethrown 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
@@ -1167,6 +1232,7 @@ exports[`can catch errors onError in class inheritance is called if rethrown 2`]
 exports[`can catch errors onError in class inheritance is not called if no rethrown 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Concrete\`, true, false, false, true);
   
@@ -1179,6 +1245,7 @@ exports[`can catch errors onError in class inheritance is not called if no rethr
 exports[`can catch errors onError in class inheritance is not called if no rethrown 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
@@ -1198,6 +1265,7 @@ exports[`can catch errors onError in class inheritance is not called if no rethr
 exports[`errors and promises a rendering error in a sub component will reject the mount promise 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -1213,6 +1281,7 @@ exports[`errors and promises a rendering error in a sub component will reject th
 exports[`errors and promises a rendering error in a sub component will reject the mount promise 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -1227,6 +1296,7 @@ exports[`errors and promises a rendering error in a sub component will reject th
 exports[`errors and promises a rendering error will reject the mount promise 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -1241,6 +1311,7 @@ exports[`errors and promises a rendering error will reject the mount promise 1`]
 exports[`errors and promises a rendering error will reject the render promise (with sub components) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -1257,6 +1328,7 @@ exports[`errors and promises a rendering error will reject the render promise (w
 exports[`errors and promises a rendering error will reject the render promise (with sub components) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span/>\`);
@@ -1270,6 +1342,7 @@ exports[`errors and promises a rendering error will reject the render promise (w
 exports[`errors and promises a rendering error will reject the render promise 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -1287,6 +1360,7 @@ exports[`errors and promises a rendering error will reject the render promise 1`
 exports[`errors and promises an error in mounted call will reject the mount promise 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>abc</div>\`);
@@ -1300,6 +1374,7 @@ exports[`errors and promises an error in mounted call will reject the mount prom
 exports[`errors and promises an error in onMounted callback will have the component's setup in its stack trace 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>abc</div>\`);
@@ -1313,6 +1388,7 @@ exports[`errors and promises an error in onMounted callback will have the compon
 exports[`errors and promises an error in patched call will reject the render promise 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -1327,6 +1403,7 @@ exports[`errors and promises an error in patched call will reject the render pro
 exports[`errors and promises an error in willPatch call will reject the render promise 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -1341,6 +1418,7 @@ exports[`errors and promises an error in willPatch call will reject the render p
 exports[`errors and promises errors in mounted and in willUnmount 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
@@ -1354,6 +1432,7 @@ exports[`errors and promises errors in mounted and in willUnmount 1`] = `
 exports[`errors and promises errors in onWillRender/onRender aren't wrapped more than once 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>abc</div>\`);
@@ -1367,6 +1446,7 @@ exports[`errors and promises errors in onWillRender/onRender aren't wrapped more
 exports[`errors and promises errors in rerender 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);

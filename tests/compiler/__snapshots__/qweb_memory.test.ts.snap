@@ -3,6 +3,7 @@
 exports[`memory t-foreach does not leak stuff in global scope 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   

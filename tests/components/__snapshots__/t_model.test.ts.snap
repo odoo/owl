@@ -3,6 +3,7 @@
 exports[`t-model directive .lazy modifier 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
@@ -22,6 +23,7 @@ exports[`t-model directive .lazy modifier 1`] = `
 exports[`t-model directive .number modifier 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
@@ -41,6 +43,7 @@ exports[`t-model directive .number modifier 1`] = `
 exports[`t-model directive .trim modifier 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
@@ -60,6 +63,7 @@ exports[`t-model directive .trim modifier 1`] = `
 exports[`t-model directive basic use, on an input 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
@@ -79,6 +83,7 @@ exports[`t-model directive basic use, on an input 1`] = `
 exports[`t-model directive basic use, on an input with bracket expression 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
@@ -98,6 +103,7 @@ exports[`t-model directive basic use, on an input with bracket expression 1`] = 
 exports[`t-model directive basic use, on another key in component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
@@ -117,6 +123,7 @@ exports[`t-model directive basic use, on another key in component 1`] = `
 exports[`t-model directive can also define t-on directive on same event, part 1 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
@@ -136,6 +143,7 @@ exports[`t-model directive can also define t-on directive on same event, part 1 
 exports[`t-model directive can also define t-on directive on same event, part 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
@@ -165,6 +173,7 @@ exports[`t-model directive can also define t-on directive on same event, part 2 
 exports[`t-model directive following a scope protecting directive (e.g. t-set) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue, toNumber } = helpers;
   
@@ -186,6 +195,7 @@ exports[`t-model directive following a scope protecting directive (e.g. t-set) 1
 exports[`t-model directive in a t-foreach 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, toNumber, withKey } = helpers;
   
@@ -213,6 +223,7 @@ exports[`t-model directive in a t-foreach 1`] = `
 exports[`t-model directive in a t-foreach, part 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, toNumber, withKey } = helpers;
   
@@ -241,6 +252,7 @@ exports[`t-model directive in a t-foreach, part 2 1`] = `
 exports[`t-model directive in a t-foreach, part 3 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, toNumber, withKey } = helpers;
   
@@ -269,6 +281,7 @@ exports[`t-model directive in a t-foreach, part 3 1`] = `
 exports[`t-model directive on a select 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
@@ -288,6 +301,7 @@ exports[`t-model directive on a select 1`] = `
 exports[`t-model directive on a select, initial state 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
@@ -306,6 +320,7 @@ exports[`t-model directive on a select, initial state 1`] = `
 exports[`t-model directive on a sub state key 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
@@ -325,6 +340,7 @@ exports[`t-model directive on a sub state key 1`] = `
 exports[`t-model directive on an input type=radio 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
@@ -348,6 +364,7 @@ exports[`t-model directive on an input type=radio 1`] = `
 exports[`t-model directive on an input type=radio, with initial value 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
@@ -370,6 +387,7 @@ exports[`t-model directive on an input type=radio, with initial value 1`] = `
 exports[`t-model directive on an input, type=checkbox 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
@@ -394,6 +412,7 @@ exports[`t-model directive on an input, type=checkbox 1`] = `
 exports[`t-model directive on an textarea 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
@@ -432,6 +451,7 @@ exports[`t-model directive t-model is applied before t-on-input 1`] = `
 exports[`t-model directive t-model on an input with an undefined value 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
@@ -450,6 +470,7 @@ exports[`t-model directive t-model on an input with an undefined value 1`] = `
 exports[`t-model directive t-model on select with static options 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
@@ -471,6 +492,7 @@ exports[`t-model directive t-model on select with static options 1`] = `
 exports[`t-model directive t-model with dynamic values on select options -- 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
@@ -495,6 +517,7 @@ exports[`t-model directive t-model with dynamic values on select options -- 2 1`
 exports[`t-model directive t-model with dynamic values on select options -- 3 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
@@ -518,6 +541,7 @@ exports[`t-model directive t-model with dynamic values on select options -- 3 1`
 exports[`t-model directive t-model with dynamic values on select options 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
@@ -542,6 +566,7 @@ exports[`t-model directive t-model with dynamic values on select options 1`] = `
 exports[`t-model directive t-model with dynamic values on select options in foreach 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber, prepareList, withKey } = helpers;
   
@@ -572,6 +597,7 @@ exports[`t-model directive t-model with dynamic values on select options in fore
 exports[`t-model directive two inputs in a div alternating with a t-if 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
@@ -603,6 +629,7 @@ exports[`t-model directive two inputs in a div alternating with a t-if 1`] = `
 exports[`t-model directive with expression having a changing key 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   

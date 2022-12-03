@@ -3,6 +3,7 @@
 exports[`lifecycle hooks basic checks for a component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span>test</span>\`);
@@ -16,6 +17,7 @@ exports[`lifecycle hooks basic checks for a component 1`] = `
 exports[`lifecycle hooks component semantics 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`B\`, true, false, false, true);
   const comp2 = app.createComponent(\`C\`, true, false, false, true);
@@ -33,6 +35,7 @@ exports[`lifecycle hooks component semantics 1`] = `
 exports[`lifecycle hooks component semantics 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>B</div>\`);
@@ -46,6 +49,7 @@ exports[`lifecycle hooks component semantics 2`] = `
 exports[`lifecycle hooks component semantics 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`D\`, true, false, false, true);
   const comp2 = app.createComponent(\`E\`, true, false, false, true);
@@ -69,6 +73,7 @@ exports[`lifecycle hooks component semantics 3`] = `
 exports[`lifecycle hooks component semantics 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>D</div>\`);
@@ -82,6 +87,7 @@ exports[`lifecycle hooks component semantics 4`] = `
 exports[`lifecycle hooks component semantics 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>E</div>\`);
@@ -95,6 +101,7 @@ exports[`lifecycle hooks component semantics 5`] = `
 exports[`lifecycle hooks component semantics 6`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>F</div>\`);
@@ -108,6 +115,7 @@ exports[`lifecycle hooks component semantics 6`] = `
 exports[`lifecycle hooks components are unmounted and destroyed if no longer in DOM, even after updateprops 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -127,6 +135,7 @@ exports[`lifecycle hooks components are unmounted and destroyed if no longer in 
 exports[`lifecycle hooks components are unmounted and destroyed if no longer in DOM, even after updateprops 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -141,6 +150,7 @@ exports[`lifecycle hooks components are unmounted and destroyed if no longer in 
 exports[`lifecycle hooks components are unmounted destroyed if no longer in DOM 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -157,6 +167,7 @@ exports[`lifecycle hooks components are unmounted destroyed if no longer in DOM 
 exports[`lifecycle hooks components are unmounted destroyed if no longer in DOM 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
@@ -170,6 +181,7 @@ exports[`lifecycle hooks components are unmounted destroyed if no longer in DOM 
 exports[`lifecycle hooks destroy new children before being mountged 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -188,6 +200,7 @@ exports[`lifecycle hooks destroy new children before being mountged 1`] = `
 exports[`lifecycle hooks destroy new children before being mountged 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -199,6 +212,7 @@ exports[`lifecycle hooks destroy new children before being mountged 2`] = `
 exports[`lifecycle hooks hooks are called in proper order in widget creation/destruction 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -214,6 +228,7 @@ exports[`lifecycle hooks hooks are called in proper order in widget creation/des
 exports[`lifecycle hooks hooks are called in proper order in widget creation/destruction 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
@@ -227,6 +242,7 @@ exports[`lifecycle hooks hooks are called in proper order in widget creation/des
 exports[`lifecycle hooks lifecycle callbacks are bound to component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Test\`, true, false, false, false);
   
@@ -239,6 +255,7 @@ exports[`lifecycle hooks lifecycle callbacks are bound to component 1`] = `
 exports[`lifecycle hooks lifecycle callbacks are bound to component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -250,6 +267,7 @@ exports[`lifecycle hooks lifecycle callbacks are bound to component 2`] = `
 exports[`lifecycle hooks lifecycle semantics 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -265,6 +283,7 @@ exports[`lifecycle hooks lifecycle semantics 1`] = `
 exports[`lifecycle hooks lifecycle semantics 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
@@ -278,6 +297,7 @@ exports[`lifecycle hooks lifecycle semantics 2`] = `
 exports[`lifecycle hooks lifecycle semantics, part 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -294,6 +314,7 @@ exports[`lifecycle hooks lifecycle semantics, part 2 1`] = `
 exports[`lifecycle hooks lifecycle semantics, part 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`GrandChild\`, true, false, false, true);
   
@@ -306,6 +327,7 @@ exports[`lifecycle hooks lifecycle semantics, part 2 2`] = `
 exports[`lifecycle hooks lifecycle semantics, part 2 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
@@ -319,6 +341,7 @@ exports[`lifecycle hooks lifecycle semantics, part 2 3`] = `
 exports[`lifecycle hooks lifecycle semantics, part 3 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -335,6 +358,7 @@ exports[`lifecycle hooks lifecycle semantics, part 3 1`] = `
 exports[`lifecycle hooks lifecycle semantics, part 4 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -351,6 +375,7 @@ exports[`lifecycle hooks lifecycle semantics, part 4 1`] = `
 exports[`lifecycle hooks lifecycle semantics, part 4 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`GrandChild\`, true, false, false, true);
   
@@ -363,6 +388,7 @@ exports[`lifecycle hooks lifecycle semantics, part 4 2`] = `
 exports[`lifecycle hooks lifecycle semantics, part 4 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
@@ -376,6 +402,7 @@ exports[`lifecycle hooks lifecycle semantics, part 4 3`] = `
 exports[`lifecycle hooks lifecycle semantics, part 5 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -392,6 +419,7 @@ exports[`lifecycle hooks lifecycle semantics, part 5 1`] = `
 exports[`lifecycle hooks lifecycle semantics, part 5 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
@@ -405,6 +433,7 @@ exports[`lifecycle hooks lifecycle semantics, part 5 2`] = `
 exports[`lifecycle hooks lifecycle semantics, part 6 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -417,6 +446,7 @@ exports[`lifecycle hooks lifecycle semantics, part 6 1`] = `
 exports[`lifecycle hooks lifecycle semantics, part 6 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
@@ -430,6 +460,7 @@ exports[`lifecycle hooks lifecycle semantics, part 6 2`] = `
 exports[`lifecycle hooks mounted hook is called if mounted in DOM 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
@@ -443,6 +474,7 @@ exports[`lifecycle hooks mounted hook is called if mounted in DOM 1`] = `
 exports[`lifecycle hooks mounted hook is called on every mount, not just the first one 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -459,6 +491,7 @@ exports[`lifecycle hooks mounted hook is called on every mount, not just the fir
 exports[`lifecycle hooks mounted hook is called on every mount, not just the first one 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>child</div>\`);
@@ -472,6 +505,7 @@ exports[`lifecycle hooks mounted hook is called on every mount, not just the fir
 exports[`lifecycle hooks mounted hook is called on subcomponents, in proper order 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -487,6 +521,7 @@ exports[`lifecycle hooks mounted hook is called on subcomponents, in proper orde
 exports[`lifecycle hooks mounted hook is called on subcomponents, in proper order 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
@@ -500,6 +535,7 @@ exports[`lifecycle hooks mounted hook is called on subcomponents, in proper orde
 exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper order 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -518,6 +554,7 @@ exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper o
 exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper order 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ChildChild\`, true, false, false, true);
   
@@ -533,6 +570,7 @@ exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper o
 exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper order 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
@@ -546,6 +584,7 @@ exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper o
 exports[`lifecycle hooks onWillRender 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -558,6 +597,7 @@ exports[`lifecycle hooks onWillRender 1`] = `
 exports[`lifecycle hooks onWillRender 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
@@ -573,6 +613,7 @@ exports[`lifecycle hooks onWillRender 2`] = `
 exports[`lifecycle hooks patched hook is called after updateProps 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -588,6 +629,7 @@ exports[`lifecycle hooks patched hook is called after updateProps 1`] = `
 exports[`lifecycle hooks patched hook is called after updateProps 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
@@ -601,6 +643,7 @@ exports[`lifecycle hooks patched hook is called after updateProps 2`] = `
 exports[`lifecycle hooks patched hook is called after updating State 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -615,6 +658,7 @@ exports[`lifecycle hooks patched hook is called after updating State 1`] = `
 exports[`lifecycle hooks render in mounted 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -629,6 +673,7 @@ exports[`lifecycle hooks render in mounted 1`] = `
 exports[`lifecycle hooks render in patched 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -643,6 +688,7 @@ exports[`lifecycle hooks render in patched 1`] = `
 exports[`lifecycle hooks render in willPatch 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -657,6 +703,7 @@ exports[`lifecycle hooks render in willPatch 1`] = `
 exports[`lifecycle hooks sub widget (inside sub node): hooks are correctly called 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -673,6 +720,7 @@ exports[`lifecycle hooks sub widget (inside sub node): hooks are correctly calle
 exports[`lifecycle hooks sub widget (inside sub node): hooks are correctly called 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
@@ -686,6 +734,7 @@ exports[`lifecycle hooks sub widget (inside sub node): hooks are correctly calle
 exports[`lifecycle hooks timeout in onWillStart emits a warning 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span/>\`);
@@ -699,6 +748,7 @@ exports[`lifecycle hooks timeout in onWillStart emits a warning 1`] = `
 exports[`lifecycle hooks timeout in onWillUpdateProps emits a warning 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -713,6 +763,7 @@ exports[`lifecycle hooks timeout in onWillUpdateProps emits a warning 1`] = `
 exports[`lifecycle hooks timeout in onWillUpdateProps emits a warning 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -724,6 +775,7 @@ exports[`lifecycle hooks timeout in onWillUpdateProps emits a warning 2`] = `
 exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents, in proper order 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -739,6 +791,7 @@ exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents,
 exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents, in proper order 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ChildChild\`, true, false, false, false);
   
@@ -754,6 +807,7 @@ exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents,
 exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents, in proper order 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -768,6 +822,7 @@ exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents,
 exports[`lifecycle hooks willStart hook is called on sub component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -780,6 +835,7 @@ exports[`lifecycle hooks willStart hook is called on sub component 1`] = `
 exports[`lifecycle hooks willStart hook is called on sub component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
@@ -793,6 +849,7 @@ exports[`lifecycle hooks willStart hook is called on sub component 2`] = `
 exports[`lifecycle hooks willStart is called 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span>simple vnode</span>\`);
@@ -806,6 +863,7 @@ exports[`lifecycle hooks willStart is called 1`] = `
 exports[`lifecycle hooks willStart is called with component as this 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span>simple vnode</span>\`);
@@ -819,6 +877,7 @@ exports[`lifecycle hooks willStart is called with component as this 1`] = `
 exports[`lifecycle hooks willStart, mounted on subwidget rendered after main is mounted in some other position 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -840,6 +899,7 @@ exports[`lifecycle hooks willStart, mounted on subwidget rendered after main is 
 exports[`lifecycle hooks willStart, mounted on subwidget rendered after main is mounted in some other position 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
@@ -853,6 +913,7 @@ exports[`lifecycle hooks willStart, mounted on subwidget rendered after main is 
 exports[`lifecycle hooks willUpdateProps hook is called 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -865,6 +926,7 @@ exports[`lifecycle hooks willUpdateProps hook is called 1`] = `
 exports[`lifecycle hooks willUpdateProps hook is called 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);

@@ -3,6 +3,7 @@
 exports[`t-call dynamic t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, zero } = helpers;
   const call = app.callTemplate.bind(app);
@@ -21,6 +22,7 @@ exports[`t-call dynamic t-call 1`] = `
 exports[`t-call dynamic t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>foo</div>\`);
@@ -34,6 +36,7 @@ exports[`t-call dynamic t-call 2`] = `
 exports[`t-call dynamic t-call 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -45,6 +48,7 @@ exports[`t-call dynamic t-call 3`] = `
 exports[`t-call dynamic t-call: key is propagated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   const call = app.callTemplate.bind(app);
@@ -61,6 +65,7 @@ exports[`t-call dynamic t-call: key is propagated 1`] = `
 exports[`t-call dynamic t-call: key is propagated 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div block-attribute-0=\\"id\\"/>\`);
@@ -75,6 +80,7 @@ exports[`t-call dynamic t-call: key is propagated 2`] = `
 exports[`t-call dynamic t-call: key is propagated 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -87,6 +93,7 @@ exports[`t-call dynamic t-call: key is propagated 3`] = `
 exports[`t-call handlers are properly bound through a dynamic t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const call = app.callTemplate.bind(app);
   
@@ -104,6 +111,7 @@ exports[`t-call handlers are properly bound through a dynamic t-call 1`] = `
 exports[`t-call handlers are properly bound through a dynamic t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<p block-handler-0=\\"click\\">lucas</p>\`);
@@ -118,6 +126,7 @@ exports[`t-call handlers are properly bound through a dynamic t-call 2`] = `
 exports[`t-call handlers are properly bound through a t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const callTemplate_1 = app.getTemplate(\`__template__999\`);
   
@@ -134,6 +143,7 @@ exports[`t-call handlers are properly bound through a t-call 1`] = `
 exports[`t-call handlers are properly bound through a t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<p block-handler-0=\\"click\\">lucas</p>\`);
@@ -148,6 +158,7 @@ exports[`t-call handlers are properly bound through a t-call 2`] = `
 exports[`t-call handlers with arguments are properly bound through a t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const callTemplate_1 = app.getTemplate(\`__template__999\`);
   
@@ -163,6 +174,7 @@ exports[`t-call handlers with arguments are properly bound through a t-call 1`] 
 exports[`t-call handlers with arguments are properly bound through a t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<p block-handler-0=\\"click\\">lucas</p>\`);
@@ -178,6 +190,7 @@ exports[`t-call handlers with arguments are properly bound through a t-call 2`] 
 exports[`t-call parent is set within t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const callTemplate_1 = app.getTemplate(\`__template__999\`);
   
@@ -193,6 +206,7 @@ exports[`t-call parent is set within t-call 1`] = `
 exports[`t-call parent is set within t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -205,6 +219,7 @@ exports[`t-call parent is set within t-call 2`] = `
 exports[`t-call parent is set within t-call 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span>lucas</span>\`);
@@ -218,6 +233,7 @@ exports[`t-call parent is set within t-call 3`] = `
 exports[`t-call parent is set within t-call with no parentNode 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const callTemplate_1 = app.getTemplate(\`__template__999\`);
   
@@ -230,6 +246,7 @@ exports[`t-call parent is set within t-call with no parentNode 1`] = `
 exports[`t-call parent is set within t-call with no parentNode 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -242,6 +259,7 @@ exports[`t-call parent is set within t-call with no parentNode 2`] = `
 exports[`t-call parent is set within t-call with no parentNode 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span>lucas</span>\`);
@@ -255,6 +273,7 @@ exports[`t-call parent is set within t-call with no parentNode 3`] = `
 exports[`t-call recursive t-call binding this -- static t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   const callTemplate_1 = app.getTemplate(\`recursive\`);
@@ -276,6 +295,7 @@ exports[`t-call recursive t-call binding this -- static t-call 1`] = `
 exports[`t-call recursive t-call binding this -- static t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
   const callTemplate_1 = app.getTemplate(\`recursive\`);
@@ -305,6 +325,7 @@ exports[`t-call recursive t-call binding this -- static t-call 2`] = `
 exports[`t-call sub components in two t-calls 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   const callTemplate_2 = app.getTemplate(\`sub\`);
@@ -327,6 +348,7 @@ exports[`t-call sub components in two t-calls 1`] = `
 exports[`t-call sub components in two t-calls 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -339,6 +361,7 @@ exports[`t-call sub components in two t-calls 2`] = `
 exports[`t-call sub components in two t-calls 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -353,6 +376,7 @@ exports[`t-call sub components in two t-calls 3`] = `
 exports[`t-call t-call in t-foreach and children component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   const callTemplate_1 = app.getTemplate(\`__template__999\`);
@@ -380,6 +404,7 @@ exports[`t-call t-call in t-foreach and children component 1`] = `
 exports[`t-call t-call in t-foreach and children component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -392,6 +417,7 @@ exports[`t-call t-call in t-foreach and children component 2`] = `
 exports[`t-call t-call in t-foreach and children component 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -406,6 +432,7 @@ exports[`t-call t-call in t-foreach and children component 3`] = `
 exports[`t-call t-call with t-call-context and subcomponent 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const callTemplate_1 = app.getTemplate(\`someTemplate\`);
   
@@ -419,6 +446,7 @@ exports[`t-call t-call with t-call-context and subcomponent 1`] = `
 exports[`t-call t-call with t-call-context and subcomponent 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   const comp2 = app.createComponent(\`Child\`, true, false, false, false);
@@ -434,6 +462,7 @@ exports[`t-call t-call with t-call-context and subcomponent 2`] = `
 exports[`t-call t-call with t-call-context and subcomponent 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -492,6 +521,7 @@ exports[`t-call t-call with t-call-context and subcomponent, in dev mode 3`] = `
 exports[`t-call t-call with t-call-context, simple use 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const callTemplate_1 = app.getTemplate(\`someTemplate\`);
   
@@ -505,6 +535,7 @@ exports[`t-call t-call with t-call-context, simple use 1`] = `
 exports[`t-call t-call with t-call-context, simple use 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {

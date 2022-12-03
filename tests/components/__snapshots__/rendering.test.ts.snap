@@ -3,6 +3,7 @@
 exports[`children, default props and renderings 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -17,6 +18,7 @@ exports[`children, default props and renderings 1`] = `
 exports[`children, default props and renderings 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -28,6 +30,7 @@ exports[`children, default props and renderings 2`] = `
 exports[`force render in case of existing render 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`B\`, true, false, false, false);
   
@@ -40,6 +43,7 @@ exports[`force render in case of existing render 1`] = `
 exports[`force render in case of existing render 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`C\`, true, false, false, true);
   
@@ -54,6 +58,7 @@ exports[`force render in case of existing render 2`] = `
 exports[`force render in case of existing render 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -65,6 +70,7 @@ exports[`force render in case of existing render 3`] = `
 exports[`rendering semantics can force a render to update sub tree 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -79,6 +85,7 @@ exports[`rendering semantics can force a render to update sub tree 1`] = `
 exports[`rendering semantics can force a render to update sub tree 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -90,6 +97,7 @@ exports[`rendering semantics can force a render to update sub tree 2`] = `
 exports[`rendering semantics can render a parent without rendering child 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -104,6 +112,7 @@ exports[`rendering semantics can render a parent without rendering child 1`] = `
 exports[`rendering semantics can render a parent without rendering child 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -115,6 +124,7 @@ exports[`rendering semantics can render a parent without rendering child 2`] = `
 exports[`rendering semantics props are reactive (nested prop) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -127,6 +137,7 @@ exports[`rendering semantics props are reactive (nested prop) 1`] = `
 exports[`rendering semantics props are reactive (nested prop) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -138,6 +149,7 @@ exports[`rendering semantics props are reactive (nested prop) 2`] = `
 exports[`rendering semantics props are reactive 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -150,6 +162,7 @@ exports[`rendering semantics props are reactive 1`] = `
 exports[`rendering semantics props are reactive 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -161,6 +174,7 @@ exports[`rendering semantics props are reactive 2`] = `
 exports[`rendering semantics render need a boolean = true to be 'deep' 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -175,6 +189,7 @@ exports[`rendering semantics render need a boolean = true to be 'deep' 1`] = `
 exports[`rendering semantics render need a boolean = true to be 'deep' 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -186,6 +201,7 @@ exports[`rendering semantics render need a boolean = true to be 'deep' 2`] = `
 exports[`rendering semantics render with deep=true followed by render with deep=false work as expected 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -201,6 +217,7 @@ exports[`rendering semantics render with deep=true followed by render with deep=
 exports[`rendering semantics render with deep=true followed by render with deep=false work as expected 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -214,6 +231,7 @@ exports[`rendering semantics render with deep=true followed by render with deep=
 exports[`rendering semantics rendering is atomic (for one subtree) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`B\`, true, false, false, false);
   
@@ -228,6 +246,7 @@ exports[`rendering semantics rendering is atomic (for one subtree) 1`] = `
 exports[`rendering semantics rendering is atomic (for one subtree) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`C\`, true, false, false, false);
   
@@ -240,6 +259,7 @@ exports[`rendering semantics rendering is atomic (for one subtree) 2`] = `
 exports[`rendering semantics rendering is atomic (for one subtree) 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -251,6 +271,7 @@ exports[`rendering semantics rendering is atomic (for one subtree) 3`] = `
 exports[`rendering semantics works as expected for dynamic number of props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, true, false);
   
@@ -263,6 +284,7 @@ exports[`rendering semantics works as expected for dynamic number of props 1`] =
 exports[`rendering semantics works as expected for dynamic number of props 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {

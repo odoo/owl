@@ -3,6 +3,7 @@
 exports[`Cascading renders after microtaskTick 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
@@ -26,6 +27,7 @@ exports[`Cascading renders after microtaskTick 1`] = `
 exports[`Cascading renders after microtaskTick 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   const comp1 = app.createComponent(\`Element\`, true, false, false, false);
@@ -46,6 +48,7 @@ exports[`Cascading renders after microtaskTick 2`] = `
 exports[`Cascading renders after microtaskTick 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -57,6 +60,7 @@ exports[`Cascading renders after microtaskTick 3`] = `
 exports[`another scenario with delayed rendering 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`B\`, true, false, false, false);
   
@@ -74,6 +78,7 @@ exports[`another scenario with delayed rendering 1`] = `
 exports[`another scenario with delayed rendering 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`C\`, true, false, false, true);
   
@@ -88,6 +93,7 @@ exports[`another scenario with delayed rendering 2`] = `
 exports[`another scenario with delayed rendering 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
@@ -103,6 +109,7 @@ exports[`another scenario with delayed rendering 3`] = `
 exports[`async rendering destroying a widget before start is over 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
@@ -116,6 +123,7 @@ exports[`async rendering destroying a widget before start is over 1`] = `
 exports[`calling render in destroy 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`B\`, true, false, false, false);
   
@@ -129,6 +137,7 @@ exports[`calling render in destroy 1`] = `
 exports[`calling render in destroy 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`C\`, true, false, false, false);
   
@@ -141,6 +150,7 @@ exports[`calling render in destroy 2`] = `
 exports[`calling render in destroy 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -155,6 +165,7 @@ exports[`calling render in destroy 3`] = `
 exports[`change state and call manually render: no unnecessary rendering 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -169,6 +180,7 @@ exports[`change state and call manually render: no unnecessary rendering 1`] = `
 exports[`changing state before first render does not trigger a render (with parent) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`TestW\`, true, false, false, true);
   
@@ -187,6 +199,7 @@ exports[`changing state before first render does not trigger a render (with pare
 exports[`changing state before first render does not trigger a render (with parent) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -201,6 +214,7 @@ exports[`changing state before first render does not trigger a render (with pare
 exports[`changing state before first render does not trigger a render 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -215,6 +229,7 @@ exports[`changing state before first render does not trigger a render 1`] = `
 exports[`concurrent renderings scenario 1 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ComponentB\`, true, false, false, false);
   
@@ -230,6 +245,7 @@ exports[`concurrent renderings scenario 1 1`] = `
 exports[`concurrent renderings scenario 1 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ComponentC\`, true, false, false, false);
   
@@ -245,6 +261,7 @@ exports[`concurrent renderings scenario 1 2`] = `
 exports[`concurrent renderings scenario 1 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
@@ -260,6 +277,7 @@ exports[`concurrent renderings scenario 1 3`] = `
 exports[`concurrent renderings scenario 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ComponentB\`, true, false, false, false);
   
@@ -276,6 +294,7 @@ exports[`concurrent renderings scenario 2 1`] = `
 exports[`concurrent renderings scenario 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ComponentC\`, true, false, false, false);
   
@@ -291,6 +310,7 @@ exports[`concurrent renderings scenario 2 2`] = `
 exports[`concurrent renderings scenario 2 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
@@ -306,6 +326,7 @@ exports[`concurrent renderings scenario 2 3`] = `
 exports[`concurrent renderings scenario 2bis 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ComponentB\`, true, false, false, false);
   
@@ -321,6 +342,7 @@ exports[`concurrent renderings scenario 2bis 1`] = `
 exports[`concurrent renderings scenario 2bis 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ComponentC\`, true, false, false, false);
   
@@ -336,6 +358,7 @@ exports[`concurrent renderings scenario 2bis 2`] = `
 exports[`concurrent renderings scenario 2bis 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
@@ -351,6 +374,7 @@ exports[`concurrent renderings scenario 2bis 3`] = `
 exports[`concurrent renderings scenario 3 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ComponentB\`, true, false, false, false);
   
@@ -366,6 +390,7 @@ exports[`concurrent renderings scenario 3 1`] = `
 exports[`concurrent renderings scenario 3 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ComponentC\`, true, false, false, false);
   
@@ -381,6 +406,7 @@ exports[`concurrent renderings scenario 3 2`] = `
 exports[`concurrent renderings scenario 3 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ComponentD\`, true, false, false, false);
   
@@ -396,6 +422,7 @@ exports[`concurrent renderings scenario 3 3`] = `
 exports[`concurrent renderings scenario 3 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<i><block-text-0/><block-text-1/></i>\`);
@@ -411,6 +438,7 @@ exports[`concurrent renderings scenario 3 4`] = `
 exports[`concurrent renderings scenario 4 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ComponentB\`, true, false, false, false);
   
@@ -426,6 +454,7 @@ exports[`concurrent renderings scenario 4 1`] = `
 exports[`concurrent renderings scenario 4 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ComponentC\`, true, false, false, false);
   
@@ -441,6 +470,7 @@ exports[`concurrent renderings scenario 4 2`] = `
 exports[`concurrent renderings scenario 4 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ComponentD\`, true, false, false, false);
   
@@ -456,6 +486,7 @@ exports[`concurrent renderings scenario 4 3`] = `
 exports[`concurrent renderings scenario 4 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<i><block-text-0/><block-text-1/></i>\`);
@@ -471,6 +502,7 @@ exports[`concurrent renderings scenario 4 4`] = `
 exports[`concurrent renderings scenario 5 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ComponentB\`, true, false, false, false);
   
@@ -486,6 +518,7 @@ exports[`concurrent renderings scenario 5 1`] = `
 exports[`concurrent renderings scenario 5 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<p><block-text-0/></p>\`);
@@ -500,6 +533,7 @@ exports[`concurrent renderings scenario 5 2`] = `
 exports[`concurrent renderings scenario 6 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ComponentB\`, true, false, false, false);
   
@@ -515,6 +549,7 @@ exports[`concurrent renderings scenario 6 1`] = `
 exports[`concurrent renderings scenario 6 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<p><block-text-0/></p>\`);
@@ -529,6 +564,7 @@ exports[`concurrent renderings scenario 6 2`] = `
 exports[`concurrent renderings scenario 7 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ComponentB\`, true, false, false, false);
   
@@ -544,6 +580,7 @@ exports[`concurrent renderings scenario 7 1`] = `
 exports[`concurrent renderings scenario 7 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<p><block-text-0/><block-text-1/></p>\`);
@@ -559,6 +596,7 @@ exports[`concurrent renderings scenario 7 2`] = `
 exports[`concurrent renderings scenario 8 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ComponentB\`, true, false, false, false);
   
@@ -574,6 +612,7 @@ exports[`concurrent renderings scenario 8 1`] = `
 exports[`concurrent renderings scenario 8 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<p><block-text-0/><block-text-1/></p>\`);
@@ -589,6 +628,7 @@ exports[`concurrent renderings scenario 8 2`] = `
 exports[`concurrent renderings scenario 9 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ComponentB\`, true, false, false, false);
   const comp2 = app.createComponent(\`ComponentC\`, true, false, false, false);
@@ -607,6 +647,7 @@ exports[`concurrent renderings scenario 9 1`] = `
 exports[`concurrent renderings scenario 9 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<b><block-text-0/></b>\`);
@@ -621,6 +662,7 @@ exports[`concurrent renderings scenario 9 2`] = `
 exports[`concurrent renderings scenario 9 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ComponentD\`, true, false, false, false);
   
@@ -636,6 +678,7 @@ exports[`concurrent renderings scenario 9 3`] = `
 exports[`concurrent renderings scenario 9 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
@@ -651,6 +694,7 @@ exports[`concurrent renderings scenario 9 4`] = `
 exports[`concurrent renderings scenario 10 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ComponentB\`, true, false, false, false);
   
@@ -666,6 +710,7 @@ exports[`concurrent renderings scenario 10 1`] = `
 exports[`concurrent renderings scenario 10 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ComponentC\`, true, false, false, false);
   
@@ -684,6 +729,7 @@ exports[`concurrent renderings scenario 10 2`] = `
 exports[`concurrent renderings scenario 10 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -698,6 +744,7 @@ exports[`concurrent renderings scenario 10 3`] = `
 exports[`concurrent renderings scenario 11 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -713,6 +760,7 @@ exports[`concurrent renderings scenario 11 1`] = `
 exports[`concurrent renderings scenario 11 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/>|<block-text-1/></span>\`);
@@ -728,6 +776,7 @@ exports[`concurrent renderings scenario 11 2`] = `
 exports[`concurrent renderings scenario 12 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -743,6 +792,7 @@ exports[`concurrent renderings scenario 12 1`] = `
 exports[`concurrent renderings scenario 12 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -757,6 +807,7 @@ exports[`concurrent renderings scenario 12 2`] = `
 exports[`concurrent renderings scenario 13 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   const comp2 = app.createComponent(\`Child\`, true, false, false, true);
@@ -777,6 +828,7 @@ exports[`concurrent renderings scenario 13 1`] = `
 exports[`concurrent renderings scenario 13 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -791,6 +843,7 @@ exports[`concurrent renderings scenario 13 2`] = `
 exports[`concurrent renderings scenario 14 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`B\`, true, false, false, false);
   
@@ -806,6 +859,7 @@ exports[`concurrent renderings scenario 14 1`] = `
 exports[`concurrent renderings scenario 14 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`C\`, true, false, false, false);
   
@@ -821,6 +875,7 @@ exports[`concurrent renderings scenario 14 2`] = `
 exports[`concurrent renderings scenario 14 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<p><span><block-text-0/></span><span><block-text-1/></span><span><block-text-2/></span></p>\`);
@@ -837,6 +892,7 @@ exports[`concurrent renderings scenario 14 3`] = `
 exports[`concurrent renderings scenario 15 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`B\`, true, false, false, false);
   
@@ -852,6 +908,7 @@ exports[`concurrent renderings scenario 15 1`] = `
 exports[`concurrent renderings scenario 15 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`C\`, true, false, false, false);
   
@@ -867,6 +924,7 @@ exports[`concurrent renderings scenario 15 2`] = `
 exports[`concurrent renderings scenario 15 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<p><span><block-text-0/></span><span><block-text-1/></span><span><block-text-2/></span></p>\`);
@@ -883,6 +941,7 @@ exports[`concurrent renderings scenario 15 3`] = `
 exports[`concurrent renderings scenario 16 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`B\`, true, false, false, false);
   
@@ -895,6 +954,7 @@ exports[`concurrent renderings scenario 16 1`] = `
 exports[`concurrent renderings scenario 16 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`C\`, true, false, false, false);
   
@@ -907,6 +967,7 @@ exports[`concurrent renderings scenario 16 2`] = `
 exports[`concurrent renderings scenario 16 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`D\`, true, false, false, true);
   
@@ -929,6 +990,7 @@ exports[`concurrent renderings scenario 16 3`] = `
 exports[`concurrent renderings scenario 16 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -940,6 +1002,7 @@ exports[`concurrent renderings scenario 16 4`] = `
 exports[`creating two async components, scenario 1 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ChildA\`, true, false, false, true);
   const comp2 = app.createComponent(\`ChildB\`, true, false, false, true);
@@ -960,6 +1023,7 @@ exports[`creating two async components, scenario 1 1`] = `
 exports[`creating two async components, scenario 1 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -974,6 +1038,7 @@ exports[`creating two async components, scenario 1 2`] = `
 exports[`creating two async components, scenario 1 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span>b</span>\`);
@@ -987,6 +1052,7 @@ exports[`creating two async components, scenario 1 3`] = `
 exports[`creating two async components, scenario 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ChildA\`, true, false, false, false);
   const comp2 = app.createComponent(\`ChildB\`, true, false, false, false);
@@ -1007,6 +1073,7 @@ exports[`creating two async components, scenario 2 1`] = `
 exports[`creating two async components, scenario 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span>a<block-text-0/></span>\`);
@@ -1021,6 +1088,7 @@ exports[`creating two async components, scenario 2 2`] = `
 exports[`creating two async components, scenario 2 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span>b<block-text-0/></span>\`);
@@ -1035,6 +1103,7 @@ exports[`creating two async components, scenario 2 3`] = `
 exports[`creating two async components, scenario 3 (patching in the same frame) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ChildA\`, true, false, false, false);
   const comp2 = app.createComponent(\`ChildB\`, true, false, false, false);
@@ -1055,6 +1124,7 @@ exports[`creating two async components, scenario 3 (patching in the same frame) 
 exports[`creating two async components, scenario 3 (patching in the same frame) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span>a<block-text-0/></span>\`);
@@ -1069,6 +1139,7 @@ exports[`creating two async components, scenario 3 (patching in the same frame) 
 exports[`creating two async components, scenario 3 (patching in the same frame) 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span>b<block-text-0/></span>\`);
@@ -1083,6 +1154,7 @@ exports[`creating two async components, scenario 3 (patching in the same frame) 
 exports[`delay willUpdateProps 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -1095,6 +1167,7 @@ exports[`delay willUpdateProps 1`] = `
 exports[`delay willUpdateProps 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -1109,6 +1182,7 @@ exports[`delay willUpdateProps 2`] = `
 exports[`delay willUpdateProps with rendering grandchild 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Parent\`, true, false, false, false);
   
@@ -1121,6 +1195,7 @@ exports[`delay willUpdateProps with rendering grandchild 1`] = `
 exports[`delay willUpdateProps with rendering grandchild 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`DelayedChild\`, true, false, false, false);
   const comp2 = app.createComponent(\`ReactiveChild\`, true, false, false, true);
@@ -1136,6 +1211,7 @@ exports[`delay willUpdateProps with rendering grandchild 2`] = `
 exports[`delay willUpdateProps with rendering grandchild 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -1150,6 +1226,7 @@ exports[`delay willUpdateProps with rendering grandchild 3`] = `
 exports[`delay willUpdateProps with rendering grandchild 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
@@ -1163,6 +1240,7 @@ exports[`delay willUpdateProps with rendering grandchild 4`] = `
 exports[`delayed fiber does not get rendered if it was cancelled 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`B\`, true, false, false, true);
   
@@ -1177,6 +1255,7 @@ exports[`delayed fiber does not get rendered if it was cancelled 1`] = `
 exports[`delayed fiber does not get rendered if it was cancelled 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`C\`, true, false, false, true);
   
@@ -1191,6 +1270,7 @@ exports[`delayed fiber does not get rendered if it was cancelled 2`] = `
 exports[`delayed fiber does not get rendered if it was cancelled 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`D\`, true, false, false, true);
   
@@ -1205,6 +1285,7 @@ exports[`delayed fiber does not get rendered if it was cancelled 3`] = `
 exports[`delayed fiber does not get rendered if it was cancelled 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -1216,6 +1297,7 @@ exports[`delayed fiber does not get rendered if it was cancelled 4`] = `
 exports[`delayed rendering, but then initial rendering is cancelled by yet another render 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`B\`, true, false, false, false);
   
@@ -1228,6 +1310,7 @@ exports[`delayed rendering, but then initial rendering is cancelled by yet anoth
 exports[`delayed rendering, but then initial rendering is cancelled by yet another render 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`C\`, true, false, false, false);
   
@@ -1240,6 +1323,7 @@ exports[`delayed rendering, but then initial rendering is cancelled by yet anoth
 exports[`delayed rendering, but then initial rendering is cancelled by yet another render 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`D\`, true, false, false, true);
   
@@ -1257,6 +1341,7 @@ exports[`delayed rendering, but then initial rendering is cancelled by yet anoth
 exports[`delayed rendering, but then initial rendering is cancelled by yet another render 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
@@ -1272,6 +1357,7 @@ exports[`delayed rendering, but then initial rendering is cancelled by yet anoth
 exports[`delayed rendering, destruction, stuff happens 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`B\`, true, false, false, false);
   
@@ -1286,6 +1372,7 @@ exports[`delayed rendering, destruction, stuff happens 1`] = `
 exports[`delayed rendering, destruction, stuff happens 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`C\`, true, false, false, false);
   
@@ -1303,6 +1390,7 @@ exports[`delayed rendering, destruction, stuff happens 2`] = `
 exports[`delayed rendering, destruction, stuff happens 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`D\`, true, false, false, true);
   
@@ -1321,6 +1409,7 @@ exports[`delayed rendering, destruction, stuff happens 3`] = `
 exports[`delayed rendering, destruction, stuff happens 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block3 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
@@ -1338,6 +1427,7 @@ exports[`delayed rendering, destruction, stuff happens 4`] = `
 exports[`delayed rendering, reusing fiber and stuff 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`B\`, true, false, false, false);
   
@@ -1350,6 +1440,7 @@ exports[`delayed rendering, reusing fiber and stuff 1`] = `
 exports[`delayed rendering, reusing fiber and stuff 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`C\`, true, false, false, true);
   
@@ -1364,6 +1455,7 @@ exports[`delayed rendering, reusing fiber and stuff 2`] = `
 exports[`delayed rendering, reusing fiber and stuff 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
@@ -1379,6 +1471,7 @@ exports[`delayed rendering, reusing fiber and stuff 3`] = `
 exports[`delayed rendering, reusing fiber then component is destroyed and  stuff 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`B\`, true, false, false, false);
   
@@ -1396,6 +1489,7 @@ exports[`delayed rendering, reusing fiber then component is destroyed and  stuff
 exports[`delayed rendering, reusing fiber then component is destroyed and  stuff 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`C\`, true, false, false, true);
   
@@ -1410,6 +1504,7 @@ exports[`delayed rendering, reusing fiber then component is destroyed and  stuff
 exports[`delayed rendering, reusing fiber then component is destroyed and  stuff 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
@@ -1425,6 +1520,7 @@ exports[`delayed rendering, reusing fiber then component is destroyed and  stuff
 exports[`delayed rendering, then component is destroyed and  stuff 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`B\`, true, false, false, false);
   
@@ -1437,6 +1533,7 @@ exports[`delayed rendering, then component is destroyed and  stuff 1`] = `
 exports[`delayed rendering, then component is destroyed and  stuff 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`C\`, true, false, false, true);
   
@@ -1454,6 +1551,7 @@ exports[`delayed rendering, then component is destroyed and  stuff 2`] = `
 exports[`delayed rendering, then component is destroyed and  stuff 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
@@ -1469,6 +1567,7 @@ exports[`delayed rendering, then component is destroyed and  stuff 3`] = `
 exports[`destroyed component causes other soon to be destroyed component to rerender, weird stuff happens 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`B\`, true, false, false, false);
   const comp2 = app.createComponent(\`C\`, true, false, false, false);
@@ -1489,6 +1588,7 @@ exports[`destroyed component causes other soon to be destroyed component to rere
 exports[`destroyed component causes other soon to be destroyed component to rerender, weird stuff happens 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -1500,6 +1600,7 @@ exports[`destroyed component causes other soon to be destroyed component to rere
 exports[`destroyed component causes other soon to be destroyed component to rerender, weird stuff happens 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -1511,6 +1612,7 @@ exports[`destroyed component causes other soon to be destroyed component to rere
 exports[`destroying/recreating a subcomponent, other scenario 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -1528,6 +1630,7 @@ exports[`destroying/recreating a subcomponent, other scenario 1`] = `
 exports[`destroying/recreating a subcomponent, other scenario 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -1539,6 +1642,7 @@ exports[`destroying/recreating a subcomponent, other scenario 2`] = `
 exports[`destroying/recreating a subwidget with different props (if start is not over) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -1557,6 +1661,7 @@ exports[`destroying/recreating a subwidget with different props (if start is not
 exports[`destroying/recreating a subwidget with different props (if start is not over) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span>child:<block-text-0/></span>\`);
@@ -1571,6 +1676,7 @@ exports[`destroying/recreating a subwidget with different props (if start is not
 exports[`parent and child rendered at exact same time 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -1583,6 +1689,7 @@ exports[`parent and child rendered at exact same time 1`] = `
 exports[`parent and child rendered at exact same time 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -1594,6 +1701,7 @@ exports[`parent and child rendered at exact same time 2`] = `
 exports[`properly behave when destroyed/unmounted while rendering  1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -1612,6 +1720,7 @@ exports[`properly behave when destroyed/unmounted while rendering  1`] = `
 exports[`properly behave when destroyed/unmounted while rendering  2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`SubChild\`, true, false, false, false);
   
@@ -1627,6 +1736,7 @@ exports[`properly behave when destroyed/unmounted while rendering  2`] = `
 exports[`properly behave when destroyed/unmounted while rendering  3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div/>\`);
@@ -1640,6 +1750,7 @@ exports[`properly behave when destroyed/unmounted while rendering  3`] = `
 exports[`rendering component again in next microtick 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -1659,6 +1770,7 @@ exports[`rendering component again in next microtick 1`] = `
 exports[`rendering component again in next microtick 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>Child</div>\`);
@@ -1672,6 +1784,7 @@ exports[`rendering component again in next microtick 2`] = `
 exports[`rendering parent twice, with different props on child and stuff 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -1684,6 +1797,7 @@ exports[`rendering parent twice, with different props on child and stuff 1`] = `
 exports[`rendering parent twice, with different props on child and stuff 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -1695,6 +1809,7 @@ exports[`rendering parent twice, with different props on child and stuff 2`] = `
 exports[`renderings, destruction, patch, stuff, ... yet another variation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`B\`, true, false, false, false);
   const comp2 = app.createComponent(\`D\`, true, false, false, true);
@@ -1711,6 +1826,7 @@ exports[`renderings, destruction, patch, stuff, ... yet another variation 1`] = 
 exports[`renderings, destruction, patch, stuff, ... yet another variation 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`C\`, true, false, false, true);
   
@@ -1728,6 +1844,7 @@ exports[`renderings, destruction, patch, stuff, ... yet another variation 2`] = 
 exports[`renderings, destruction, patch, stuff, ... yet another variation 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block3 = createBlock(\`<p block-handler-0=\\"click\\"><block-text-1/></p>\`);
@@ -1745,6 +1862,7 @@ exports[`renderings, destruction, patch, stuff, ... yet another variation 3`] = 
 exports[`renderings, destruction, patch, stuff, ... yet another variation 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block3 = createBlock(\`<span block-handler-0=\\"click\\"><block-text-1/></span>\`);
@@ -1762,6 +1880,7 @@ exports[`renderings, destruction, patch, stuff, ... yet another variation 4`] = 
 exports[`t-foreach with dynamic async component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   const comp1 = app.createComponent(null, false, false, false, false);
@@ -1788,6 +1907,7 @@ exports[`t-foreach with dynamic async component 1`] = `
 exports[`t-foreach with dynamic async component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -1802,6 +1922,7 @@ exports[`t-foreach with dynamic async component 2`] = `
 exports[`t-key on dom node having a component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(null, false, false, false, false);
   
@@ -1819,6 +1940,7 @@ exports[`t-key on dom node having a component 1`] = `
 exports[`t-key on dom node having a component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -1830,6 +1952,7 @@ exports[`t-key on dom node having a component 2`] = `
 exports[`t-key on dynamic async component (toggler is never patched) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(null, false, false, false, false);
   
@@ -1844,6 +1967,7 @@ exports[`t-key on dynamic async component (toggler is never patched) 1`] = `
 exports[`t-key on dynamic async component (toggler is never patched) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -1858,6 +1982,7 @@ exports[`t-key on dynamic async component (toggler is never patched) 2`] = `
 exports[`two renderings initiated between willPatch and patched 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Panel\`, true, false, false, false);
   
@@ -1877,6 +2002,7 @@ exports[`two renderings initiated between willPatch and patched 1`] = `
 exports[`two renderings initiated between willPatch and patched 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<abc><block-text-0/><block-text-1/></abc>\`);
@@ -1892,6 +2018,7 @@ exports[`two renderings initiated between willPatch and patched 2`] = `
 exports[`two sequential renderings before an animation frame 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, false);
   
@@ -1904,6 +2031,7 @@ exports[`two sequential renderings before an animation frame 1`] = `
 exports[`two sequential renderings before an animation frame 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
@@ -1915,6 +2043,7 @@ exports[`two sequential renderings before an animation frame 2`] = `
 exports[`update a sub-component twice in the same frame 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ChildA\`, true, false, false, false);
   
@@ -1930,6 +2059,7 @@ exports[`update a sub-component twice in the same frame 1`] = `
 exports[`update a sub-component twice in the same frame 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -1944,6 +2074,7 @@ exports[`update a sub-component twice in the same frame 2`] = `
 exports[`update a sub-component twice in the same frame, 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`ChildA\`, true, false, false, false);
   
@@ -1959,6 +2090,7 @@ exports[`update a sub-component twice in the same frame, 2 1`] = `
 exports[`update a sub-component twice in the same frame, 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);

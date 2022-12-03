@@ -49,6 +49,7 @@ exports[`Reactivity: useState concurrent renderings 3`] = `
 exports[`Reactivity: useState destroyed component before being mounted is inactive 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -67,6 +68,7 @@ exports[`Reactivity: useState destroyed component before being mounted is inacti
 exports[`Reactivity: useState destroyed component before being mounted is inactive 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -81,6 +83,7 @@ exports[`Reactivity: useState destroyed component before being mounted is inacti
 exports[`Reactivity: useState destroyed component is inactive 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -99,6 +102,7 @@ exports[`Reactivity: useState destroyed component is inactive 1`] = `
 exports[`Reactivity: useState destroyed component is inactive 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -113,6 +117,7 @@ exports[`Reactivity: useState destroyed component is inactive 2`] = `
 exports[`Reactivity: useState one components can subscribe twice to same context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/><block-text-1/></div>\`);
@@ -128,6 +133,7 @@ exports[`Reactivity: useState one components can subscribe twice to same context
 exports[`Reactivity: useState parent and children subscribed to same context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -144,6 +150,7 @@ exports[`Reactivity: useState parent and children subscribed to same context 1`]
 exports[`Reactivity: useState parent and children subscribed to same context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -221,6 +228,7 @@ exports[`Reactivity: useState several nodes on different level use same context 
 exports[`Reactivity: useState two components are updated in parallel 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   const comp2 = app.createComponent(\`Child\`, true, false, false, true);
@@ -238,6 +246,7 @@ exports[`Reactivity: useState two components are updated in parallel 1`] = `
 exports[`Reactivity: useState two components are updated in parallel 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -252,6 +261,7 @@ exports[`Reactivity: useState two components are updated in parallel 2`] = `
 exports[`Reactivity: useState two components can subscribe to same context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   const comp2 = app.createComponent(\`Child\`, true, false, false, true);
@@ -269,6 +279,7 @@ exports[`Reactivity: useState two components can subscribe to same context 1`] =
 exports[`Reactivity: useState two components can subscribe to same context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -283,6 +294,7 @@ exports[`Reactivity: useState two components can subscribe to same context 2`] =
 exports[`Reactivity: useState two independent components on different levels are updated in parallel 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   const comp2 = app.createComponent(\`Parent\`, true, false, false, true);
@@ -300,6 +312,7 @@ exports[`Reactivity: useState two independent components on different levels are
 exports[`Reactivity: useState two independent components on different levels are updated in parallel 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
@@ -314,6 +327,7 @@ exports[`Reactivity: useState two independent components on different levels are
 exports[`Reactivity: useState two independent components on different levels are updated in parallel 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   
@@ -329,6 +343,7 @@ exports[`Reactivity: useState two independent components on different levels are
 exports[`Reactivity: useState useContext=useState hook is reactive, for one component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -343,6 +358,7 @@ exports[`Reactivity: useState useContext=useState hook is reactive, for one comp
 exports[`Reactivity: useState useless atoms should be deleted 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   const comp1 = app.createComponent(\`Quantity\`, true, false, false, false);
@@ -369,6 +385,7 @@ exports[`Reactivity: useState useless atoms should be deleted 1`] = `
 exports[`Reactivity: useState useless atoms should be deleted 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
@@ -383,6 +400,7 @@ exports[`Reactivity: useState useless atoms should be deleted 2`] = `
 exports[`Reactivity: useState very simple use, with initial value 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
+  \\"use strict\\";
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);

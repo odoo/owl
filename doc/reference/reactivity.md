@@ -16,8 +16,8 @@ according to state changes, and to do so in a performant manner.
 
 To this end, Owl provides a proxy-based reactivity system, based on the `reactive` primitive.
 The `reactive` function takes an object as a first argument, and an optional callback as its second
-argument, it will return a proxy of the object. This proxy will track what properties are read
-through the proxy, and call the provided callback whenever one of these properties is changed
+argument, it returns a proxy of the object. This proxy tracks what properties are read
+through the proxy, and calls the provided callback whenever one of these properties is changed
 through any reactive version of the same object. It does so in depth, by returning reactive versions
 of the subobjects when they are read.
 
@@ -103,7 +103,7 @@ only in debug mode in the future.
 
 The `reactive` function is the basic reactivity primitive. It takes an object
 or an array as first argument, and optionally, a function as the second argument.
-The function will be called whenever any tracked value is updated.
+The function is called whenever any tracked value is updated.
 
 ```js
 const obj = reactive({ a: 1 }, () => console.log("changed"));
@@ -180,7 +180,7 @@ rendered output, and so we can ignore it.
 
 The reactivity system has special support built-in for the standard container types `Map` and `Set`.
 They behave like one would expect: reading a key subscribes the observer to that key, adding or
-removing an item to them will notify observers that have used any of the iterators on that reactive
+removing an item to them notifies observers that have used any of the iterators on that reactive
 object, such as `.entries()` or `.keys()`, likewise with clearing them.
 
 ## Escape hatches
@@ -223,9 +223,9 @@ in the template:
 <t t-foreach="items" t-as="item" t-key="item.label" t-esc="item.label + item.value"/>
 ```
 
-Here, on every render, we will go and read one thousand keys from a reactive object, which will
-cause one thousand reactive objects to be created. If we know that the content of these objects
-cannot change, this is wasted work. If instead all of these objects are marked as raw, we will avoid
+Here, on every render, we go and read one thousand keys from a reactive object, which causes
+one thousand reactive objects to be created. If we know that the content of these objects
+cannot change, this is wasted work. If instead all of these objects are marked as raw, we avoid
 all of this work while keeping the ability to lean on the reactivity to track the presence and
 identity of these objects:
 
@@ -303,14 +303,14 @@ export function addNotification(label) {
 Here, the `notifications` variable is a reactive object. Notice how we didn't give `reactive` a
 callback: this is because in this case, all we care about is that adding or removing notifications
 in the `addNotification` function goes through the reactivity system. The `NotificationContainer`
-component reobserves this object with `useState`, and will be updated whenever notifications are
+component reobserves this object with `useState`, and is updated whenever notifications are
 added or removed.
 
 ### Store
 
 Centralizing application state is a pretty common want/need in web applications. Because of the way
 the reactivity system works, you can treat any reactive object as a store, and if you call `useState`
-on it, components will automatically observe only the part of the store that they're interested in:
+on it, components automatically observe only the part of the store that they're interested in:
 
 ```js
 export const store = reactive({

@@ -59,28 +59,35 @@ export function useChildSubEnv(envExtension: Env) {
 // useEffect
 // -----------------------------------------------------------------------------
 
+type EffectDeps<T extends any[]> = T | (T extends [...infer H, never] ? EffectDeps<H> : never);
+
 /**
- * @param {...any} dependencies the dependencies computed by computeDependencies
+ * @template T
+ * @param {...T} dependencies the dependencies computed by computeDependencies
  * @returns {void|(()=>void)} a cleanup function that reverses the side
  *      effects of the effect callback.
  */
-type Effect = (...dependencies: any[]) => void | (() => void);
+type Effect<T extends [...T]> = (...dependencies: EffectDeps<T>) => void | (() => void);
 
 /**
  * This hook will run a callback when a component is mounted and patched, and
  * will run a cleanup function before patching and before unmounting the
  * the component.
  *
- * @param {Effect} effect the effect to run on component mount and/or patch
- * @param {()=>any[]} [computeDependencies=()=>[NaN]] a callback to compute
+ * @template T
+ * @param {Effect<T>} effect the effect to run on component mount and/or patch
+ * @param {()=>T} [computeDependencies=()=>[NaN]] a callback to compute
  *      dependencies that will decide if the effect needs to be cleaned up and
  *      run again. If the dependencies did not change, the effect will not run
  *      again. The default value returns an array containing only NaN because
  *      NaN !== NaN, which will cause the effect to rerun on every patch.
  */
-export function useEffect(effect: Effect, computeDependencies: () => any[] = () => [NaN]) {
+export function useEffect<T extends [...T]>(
+  effect: Effect<T>,
+  computeDependencies: () => T = () => [NaN] as never
+) {
   let cleanup: (() => void) | void;
-  let dependencies: any[];
+  let dependencies: T;
   onMounted(() => {
     dependencies = computeDependencies();
     cleanup = effect(...dependencies);

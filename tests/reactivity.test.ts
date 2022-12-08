@@ -9,7 +9,7 @@ import {
   markRaw,
   toRaw,
 } from "../src";
-import { reactive } from "../src/runtime/reactivity";
+import { reactive, getSubscriptions } from "../src/runtime/reactivity";
 import { batched } from "../src/runtime/utils";
 import {
   makeDeferred,
@@ -1018,6 +1018,32 @@ describe("Reactivity", () => {
     expect(n1).toBe(2);
     expect(n2).toBe(3);
     expect(n3).toBe(2);
+  });
+
+  test("reactive inside other: reading the inner reactive from outer doesn't affect the inner's subscriptions", async () => {
+    const getObservedKeys = (obj: any) => getSubscriptions(obj).flatMap(({ keys }) => keys);
+    let n1 = 0;
+    let n2 = 0;
+    const innerCb = () => n1++;
+    const outerCb = () => n2++;
+    const inner = createReactive({ a: 1 }, innerCb);
+    const outer = createReactive({ b: inner }, outerCb);
+    expect(n1).toBe(0);
+    expect(n2).toBe(0);
+    expect(getObservedKeys(innerCb)).toEqual([]);
+    expect(getObservedKeys(outerCb)).toEqual([]);
+
+    outer.b.a;
+    expect(getObservedKeys(innerCb)).toEqual([]);
+    expect(getObservedKeys(outerCb)).toEqual(["b", "a"]);
+    expect(n1).toBe(0);
+    expect(n2).toBe(0);
+
+    outer.b.a = 2;
+    expect(getObservedKeys(innerCb)).toEqual([]);
+    expect(getObservedKeys(outerCb)).toEqual([]);
+    expect(n1).toBe(0);
+    expect(n2).toBe(1);
   });
 
   // test("notification is not done after unregistration", async () => {

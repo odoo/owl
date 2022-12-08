@@ -28,7 +28,7 @@ const COLLECTION_RAWTYPES = new Set(["Set", "Map", "WeakMap"]);
  * @returns the raw type of the object
  */
 function rawType(obj: any) {
-  return objectToString.call(obj).slice(8, -1);
+  return objectToString.call(toRaw(obj)).slice(8, -1);
 }
 /**
  * Checks whether a given value can be made into a reactive object.

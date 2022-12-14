@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+
+<t t-name="devtools.dashboard">
+    <div class="row justify-content-center mt-4">
+        <div class="col-8">
+            <Counter/>
+            <div class="form-group row mb-4">
+                <div class="col-lg-2 col-8 col-md-4">
+                    <input class="form-control" type="text" placeholder="Add a Todo" value="" t-on-keyup="addTodo"/>
+                </div>
+            </div>
+            <t t-foreach="todos" t-as="todo" t-key="todo.id">
+                <p><Todo todo="todo" toggleState.bind="toggleTodo" removeState.bind="removeTodo"/></p>
+            </t>
+            <Card>
+            <t t-set-slot="title">Bonjour</t>
+                Bienvenue à tous
+            </Card>
+        </div>
+    </div>
+</t>
+
+</templates>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+    <t t-name="devtools.tree_element">
+        <div 
+        class="cursor-pointer hover:bg-indigo-100 mx-2 rounded-sm px-2 py-1 text-sm"
+        >
+            <t t-esc="props.tag" /> 
+    
+        </div>
+    </t>
+</templates>

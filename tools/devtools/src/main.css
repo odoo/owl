@@ -1,5 +1,5 @@
-@import "tailwindcss/base";
+@import 'bootstrap';
 
-@import "tailwindcss/components";
+/* @import 'font-awesome'; */
 
-@import "tailwindcss/utilities";
+@import url('https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');

@@ -1,4 +1,4 @@
-# Owl Chrom extension
+# Owl Chrome extension
 
 This app contains the code for a chrome extensions. 
 It is separated into the popup app and the devtools app. 
@@ -6,7 +6,7 @@ It is separated into the popup app and the devtools app.
 ## Install
 
 ```bash
-git clone https://github.com/SimonGenin/OWL-Devtools-Extension
+git clone https://github.com/juliusc2066/OWL-Devtools-Extension
 ```
 
 ```bash

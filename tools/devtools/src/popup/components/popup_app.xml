@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
-    <t t-name="popup.popup_app">
-        <div class="flex justify-center">
-            <h1>Insane popup</h1>
-        </div>
-    </t>
+  <t t-name="popup.popup_app">
+    <div class="container m-0 p-4 text-white bg-dark" style="width: 370px">
+      <p t-if="state.status == 'not_found'">
+        Owl is not detected on this page.
+      </p>
+      <p t-if="state.status == 'enabled'">
+        Owl is detected on this page.
+        Open DevTools and look for the Owl panel.
+      </p>
+    </div>
+  </t>
 </templates>

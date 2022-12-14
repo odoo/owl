@@ -1,25 +1,32 @@
 {
-    "name": "Chrome Extension Starter Kit",
+    "name": "Chrome extension for OWL",
     "version": "1.0",
-    "manifest_version": 2,
+    "manifest_version": 3,
     "description": "Chrome Extension starter Kit with es6 standards",
-    "browser_action": {
-        "default_icon": "assets/images/icon.png",
+    "action": {
+        "default_icon": {
+            "16": "assets/icon16.png",
+            "48": "assets/icon48.png",
+            "128": "assets/icon128.png"
+        },
+        "default_title": "Chrome extension for OWL",
         "default_popup": "popup/popup.html"
     },
     "permissions": [
-        "<all_urls>"
+        "tabs"
     ],
-    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+    "content_security_policy": {
+        "script-src": "self",
+        "object-src": "self"
+    },
     "background": {
-        "page": "background.html",
-        "persistent": false
+        "service_worker": "background.js"
     },
     "devtools_page": "devtools/devtools.html",
     "content_scripts": [
         {
-          "matches": ["<all_urls>"],
-          "js": ["content.js"]
+            "matches": ["<all_urls>"],
+            "js": ["content.js"]
         }
     ]
 }

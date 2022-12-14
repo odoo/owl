@@ -1,4 +1,4 @@
-import typescript from "rollup-plugin-typescript2";
+// import typescript from "rollup-plugin-typescript2";
 import nodeResolve from "@rollup/plugin-node-resolve";
 import terser from "rollup-plugin-terser";
 import postcss from "rollup-plugin-postcss";
@@ -8,7 +8,7 @@ const isProduction = process.env.NODE_ENV === "production";
 
 export default [
     {
-        input: "src/devtools/main.ts",
+        input: "src/devtools/main.js",
         output: [
             {
                 file: "build/devtools/devtools.js",
@@ -16,7 +16,6 @@ export default [
             },
         ],
         plugins: [
-            typescript(),
             nodeResolve(),
             postcss({
                 config: {
@@ -34,7 +33,7 @@ export default [
     },
 
     {
-        input: "src/popup/main.ts",
+        input: "src/popup/main.js",
         output: [
             {
                 file: "build/popup/popup.js",
@@ -42,7 +41,6 @@ export default [
             },
         ],
         plugins: [
-            typescript(),
             nodeResolve(),
             postcss({
                 config: {
@@ -60,7 +58,29 @@ export default [
     },
 
     {
-        input: "src/background.ts",
+        input: "assets/templates.js",
+        output: [
+            {
+                file: "build/assets/templates.js",
+                format: "esm",
+            },
+        ],
+        plugins: [
+            nodeResolve(),
+            postcss({
+                config: {
+                    path: "./postcss.config.js",
+                },
+                extensions: [".css"],
+                extract: true,
+                minimize: isProduction,
+            }),
+            isProduction && terser.terser(),
+        ],
+    },
+
+    {
+        input: "src/background.js",
         output: [
             {
                 file: "build/background.js",
@@ -68,7 +88,6 @@ export default [
             },
         ],
         plugins: [
-            typescript(),
             nodeResolve(),
             postcss({
                 config: {
@@ -82,7 +101,7 @@ export default [
             copy({
                 targets: [
                     { src: "src/background.html", dest: "build" },
-                    { src: "assets/images/**/*", dest: "build/assets/images" },
+                    { src: "assets/**/*", dest: "build/assets/" },
                     { src: "manifest.json", dest: "build" },
                 ],
             }),
@@ -90,7 +109,7 @@ export default [
     },
 
     {
-        input: "src/content.ts",
+        input: "src/content.js",
         output: [
             {
                 file: "build/content.js",
@@ -98,7 +117,6 @@ export default [
             },
         ],
         plugins: [
-            typescript(),
             nodeResolve(),
             postcss({
                 config: {

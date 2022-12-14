@@ -1,11 +1,57 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
-    <t t-name="devtools.tree_element">
-        <div 
-        class="cursor-pointer hover:bg-indigo-100 mx-2 rounded-sm px-2 py-1 text-sm"
-        >
-            <t t-esc="props.tag" /> 
-    
+  <t t-name="devtools.tree_element" owl="1">
+    <!-- <div class="accordion" t-attf-id="accordion_{{props.path}}">
+      <div class="accordion-item">
+        <h2 class="accordion-header" t-attf-id="heading_{{props.path}}">
+          <button class="accordion-button" type="button" t-attf-data-bs-toggle="collapse" t-attf-data-bs-target="#collapse_{{props.path}}" aria-expanded="true" t-attf-aria-controls="collapse_{{props.path}}">
+            <t t-esc="props.name"/>
+          </button>
+        </h2>
+        <div t-attf-id="collapse_{{props.path}}" class="accordion-collapse collapse show" t-attf-aria-labelledby="heading_{{props.path}}">
+          <div class="accordion-body p-1">
+            <table class="table table-striped m-0">
+              <colgroup>
+                <col className="col-6"/>
+                <col className="col-6"/>
+              </colgroup>
+              <tbody>
+                <tr>
+                  <td>Element type:</td>
+                  <td><t t-esc="props.name"/></td>
+                </tr>
+                <t t-foreach="props.attributes" t-as="attribute" t-key="props.path + ' ' + attribute">
+                  <tr>
+                    <td>Element <t t-esc="attribute"/>:</td>
+                    <td><t t-esc="props.attributes[attribute]"/></td>
+                  </tr>
+                </t>
+                <t t-foreach="props.children" t-as="child" t-key="child.name">
+                  <tr>
+                    <td colSpan="2" class="p-0">
+                      <TreeElement name="child.name" path="child.path" attributes="child.attributes" children="child.children"/>
+                    </td>
+                  </tr>
+                </t>
+              </tbody>
+            </table>
+          </div>
         </div>
-    </t>
+      </div>
+    </div> -->
+    <li>
+      <t t-if="props.children.length > 0">
+        <span class="caret" t-on-click="toggleEvent">
+          <t t-esc="props.name"/>
+        </span>
+        <ul class="nested">
+          <t t-foreach="props.children" t-as="child" t-key="child.name">
+            <TreeElement name="child.name" path="child.path" attributes="child.attributes" children="child.children"/>
+          </t>
+        </ul>
+      </t>
+      <t t-else="" t-esc="props.name"/>
+    </li>
+
+  </t>
 </templates>

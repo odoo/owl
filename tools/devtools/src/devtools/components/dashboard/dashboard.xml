@@ -6,7 +6,7 @@
         <div class="col-8">
             <Counter/>
             <div class="form-group row mb-4">
-                <div class="col-lg-2 col-8 col-md-4">
+                <div class="col-lg-4 col-8 col-md-6">
                     <input class="form-control" type="text" placeholder="Add a Todo" value="" t-on-keyup="addTodo"/>
                 </div>
             </div>

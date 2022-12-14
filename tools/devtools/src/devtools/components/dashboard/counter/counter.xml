@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
-    <t t-name="devtools.counter">
+    <t t-name="devtools.counter" owl="1">
         <p>Counter: <t t-esc="state.count"/></p>
         <p><button class="btn btn-primary mt-2" t-on-click="increment">Increment</button></p>
     </t>

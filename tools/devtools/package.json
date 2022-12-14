@@ -16,9 +16,11 @@
     },
     "dependencies": {
         "@odoo/owl": "^2.0.0",
+        "@popperjs/core": "^2.11.6",
         "@types/chrome": "0.0.203",
         "bootstrap": "^5.2.3",
-        "font-awesome": "^4.7.0"
+        "font-awesome": "^4.7.0",
+        "jquery": "^3.6.2"
     },
     "devDependencies": {
         "@babel/preset-env": "^7.0.0",

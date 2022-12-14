@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+    <t t-name="popup.popup_app">
+        <div class="flex justify-center">
+            <h1>Insane popup</h1>
+        </div>
+    </t>
+</templates>

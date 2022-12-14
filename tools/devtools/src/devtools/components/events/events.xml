@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
-    <t t-name="devtools.events">
+    <t t-name="devtools.events" owl="1">
         Events page
     </t>
 </templates>

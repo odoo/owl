@@ -1,5 +1,8 @@
+/** @odoo-module **/
+
 import { DevtoolsApp } from "./components/devtools_app";
 import { mount, whenReady } from "@odoo/owl";
+import { Accordion, Navbar } from "bootstrap/dist/js/bootstrap.min.js";
 
 import "../main.css";
 import "../../assets/templates.js";

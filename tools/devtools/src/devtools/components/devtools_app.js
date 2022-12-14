@@ -1,8 +1,11 @@
+/** @odoo-module **/
+
 import { Component, useState } from "@odoo/owl";
 import Tab from './tab'
 import Tree from './components_tree/tree'
 import Events from './events/events'
 import Dashboard from './dashboard/dashboard'
+
 
 
 export class DevtoolsApp extends Component {

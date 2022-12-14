@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
-    <t t-name="devtools.card">
+    <t t-name="devtools.card" owl="1">
         <div class="card" style="width: 18rem;">
             <div class="card-body">
                 <t t-if="props.slots.title"> 

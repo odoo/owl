@@ -12,7 +12,7 @@
         <t t-esc="props.name"/> <t t-out="this.getMinimizedKey()"/>
       </div>
     </div>
-    <t t-foreach="props.children" t-as="child" t-key="child.name">
+    <t t-foreach="props.children" t-as="child" t-key="child.key">
       <TreeElement 
         t-props="child"
         updateComponent="props.updateComponent"

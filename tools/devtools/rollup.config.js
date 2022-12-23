@@ -8,10 +8,71 @@ const isProduction = process.env.NODE_ENV === "production";
 
 export default [
     {
-        input: "src/devtools/main.js",
+        input: "src/utils.js",
+        output: [
+            {
+                file: "build/utils.js",
+                format: "esm",
+            },
+        ],
+        plugins: [
+            nodeResolve(),
+            postcss({
+                config: {
+                    path: "./postcss.config.js",
+                },
+                extensions: [".css"],
+                extract: true,
+                minimize: isProduction,
+            }),
+            isProduction && terser.terser(),
+        ],
+    },
+    {
+        input: "src/content.js",
+        output: [
+            {
+                file: "build/content.js",
+                format: "esm",
+            },
+        ],
+        plugins: [
+            nodeResolve(),
+            postcss({
+                config: {
+                    path: "./postcss.config.js",
+                },
+                extensions: [".css"],
+                extract: true,
+                minimize: isProduction,
+            }),
+            isProduction && terser.terser(),
+        ],
+    },
+    {
+        input: "src/devtools/devtools.js",
         output: [
             {
                 file: "build/devtools/devtools.js",
+                format: "esm",
+            },
+        ],
+        plugins: [
+            nodeResolve(),
+            isProduction && terser.terser(),
+            copy({
+                targets: [
+                    { src: "src/devtools/devtools.html", dest: "build/devtools" },
+                    { src: "src/devtools/page_scripts", dest: "build/devtools"}
+                ],
+            }),
+        ],
+    },
+    {
+        input: "src/devtools/components_panel.js",
+        output: [
+            {
+                file: "build/devtools/components_panel.js",
                 format: "esm",
             },
         ],
@@ -27,7 +88,38 @@ export default [
             }),
             isProduction && terser.terser(),
             copy({
-                targets: [{ src: "src/devtools/devtools.html", dest: "build/devtools" }],
+                targets: [
+                    { src: "src/devtools/components_panel.html", dest: "build/devtools" },
+                    { src: "src/fonts/*", dest: "build/fonts/" }, 
+                ],
+            }),
+        ],
+    },
+
+    {
+        input: "src/devtools/events_panel.js",
+        output: [
+            {
+                file: "build/devtools/events_panel.js",
+                format: "esm",
+            },
+        ],
+        plugins: [
+            nodeResolve(),
+            postcss({
+                config: {
+                    path: "./postcss.config.js",
+                },
+                extensions: [".css"],
+                extract: true,
+                minimize: isProduction,
+            }),
+            isProduction && terser.terser(),
+            copy({
+                targets: [
+                    { src: "src/devtools/events_panel.html", dest: "build/devtools" },
+                    { src: "src/fonts/*", dest: "build/fonts/" }, 
+                ],
             }),
         ],
     },
@@ -108,27 +200,6 @@ export default [
         ],
     },
 
-    {
-        input: "src/content.js",
-        output: [
-            {
-                file: "build/content.js",
-                format: "esm",
-            },
-        ],
-        plugins: [
-            nodeResolve(),
-            postcss({
-                config: {
-                    path: "./postcss.config.js",
-                },
-                extensions: [".css"],
-                extract: true,
-                minimize: isProduction,
-            }),
-            isProduction && terser.terser(),
-        ],
-    },
 ];
 
 //

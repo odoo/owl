@@ -1,201 +1,103 @@
 import { App } from "@odoo/owl";
 
-App.registerTemplate("devtools.tree", function devtools_tree(app, bdom, helpers
+App.registerTemplate("devtools.components_tree", function devtools_components_tree(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(`TreeElement`, true, false, false, false);
+  let { bind } = helpers;
+  const comp1 = app.createComponent(`TreeElement`, true, false, true, false);
   
-  let block1 = createBlock(`<ul><block-child-0/></ul>`);
+  let block1 = createBlock(`<div id="container"><div class="split-screen-container"><div class="split-screen-left" block-attribute-0="style"><block-child-0/></div><div class="split-screen-border" block-attribute-1="style" block-handler-2="mousedown" block-handler-3="mouseup"/><div class="split-screen-right" block-attribute-4="style"><div class="container"> It works </div></div></div></div>`);
   
   return function template(ctx, node, key = "") {
-    const b2 = comp1({name: ctx['root'].name,attributes: ctx['root'].attributes,path: ctx['root'].path,children: ctx['root'].children}, key + `__1`, node, this, null);
-    return block1([], [b2]);
+    let attr1 = `width:calc(${ctx['state'].splitPosition}% - 1px);`;
+    const b2 = comp1(Object.assign({}, ctx['root'], {updateComponent: bind(this, ctx['updateTree']),selectComponent: bind(this, ctx['selectComponent'])}), key + `__1`, node, this, null);
+    let attr2 = `left:calc(${ctx['state'].splitPosition}% - 1px);`;
+    let hdlr1 = [ctx['handleMouseDown'], ctx];
+    let hdlr2 = [ctx['handleMouseUp'], ctx];
+    let attr3 = `width:calc(${100-ctx['state'].splitPosition}%);`;
+    return block1([attr1, attr2, hdlr1, hdlr2, attr3], [b2]);
+  }
+});
+
+App.registerTemplate("devtools.details_window", function devtools_details_window(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput, prepareList, withKey } = helpers;
+  const comp1 = app.createComponent(`TreeElement`, true, false, true, false);
+  
+  let block2 = createBlock(`<div class="tree_component my-0 p-0" block-attribute-0="class" block-attribute-1="style" block-handler-2="click"><div class="component_wrapper" block-attribute-3="style"><block-child-0/><!-- <t t-esc="props.name"/> <t t-if="props.key"><div class="text-warning" style="display:inline;">key</div>="<t t-esc="props.key" style="display:inline;"/>"</t> --><block-text-4/> <block-child-1/></div></div>`);
+  let block3 = createBlock(`<i class="fa fa-caret-right mx-1" block-attribute-0="style" block-handler-1="click"/>`);
+  
+  return function template(ctx, node, key = "") {
+    let b3,b4;
+    let attr1 = {'component_selected':ctx['props'].selected,'component_highlighted':ctx['props'].highlighted};
+    let attr2 = `display: ${ctx['props'].display?'flex':'none'}`;
+    let hdlr1 = [ctx['toggleComponent'], ctx];
+    let attr3 = `transform: translateX(calc(${ctx['props'].depth} * 0.8rem))`;
+    if (ctx['props'].children.length>0) {
+      let attr4 = `cursor: pointer;${ctx['props'].toggled?'transform: rotate(90deg);':''}`;
+      let hdlr2 = [ctx['toggleDisplay'], ctx];
+      b3 = block3([attr4, hdlr2]);
+    }
+    let txt1 = ctx['props'].name;
+    b4 = safeOutput(this.getMinimizedKey());
+    const b2 = block2([attr1, attr2, hdlr1, attr3, txt1], [b3, b4]);
+    ctx = Object.create(ctx);
+    const [k_block5, v_block5, l_block5, c_block5] = prepareList(ctx['props'].children);;
+    for (let i1 = 0; i1 < l_block5; i1++) {
+      ctx[`child`] = v_block5[i1];
+      const key1 = ctx['child'].key;
+      c_block5[i1] = withKey(comp1(Object.assign({}, ctx['child'], {updateComponent: ctx['props'].updateComponent,selectComponent: ctx['props'].selectComponent}), key + `__1__${key1}`, node, this, null), key1);
+    }
+    const b5 = list(c_block5);
+    return multi([b2, b5]);
+  }
+});
+
+App.registerTemplate("devtools.property", function devtools_property(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = "") {
+    return text(``);
   }
 });
 
 App.registerTemplate("devtools.tree_element", function devtools_tree_element(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, withKey } = helpers;
-  const comp1 = app.createComponent(`TreeElement`, true, false, false, false);
+  let { safeOutput, prepareList, withKey } = helpers;
+  const comp1 = app.createComponent(`TreeElement`, true, false, true, false);
   
-  let block3 = createBlock(`<li><block-child-0/><block-child-1/></li>`);
-  let block5 = createBlock(`<span class="caret" block-handler-0="click"><block-text-1/></span>`);
-  let block6 = createBlock(`<ul class="nested"><block-child-0/></ul>`);
+  let block2 = createBlock(`<div class="tree_component my-0 p-0" block-attribute-0="class" block-attribute-1="style" block-handler-2="click"><div class="component_wrapper" block-attribute-3="style"><block-child-0/><block-child-1/><block-text-4/> <block-child-2/></div></div>`);
+  let block3 = createBlock(`<i class="fa fa-caret-right mx-1" block-attribute-0="style" block-handler-1="click"/>`);
+  let block4 = createBlock(`<i class="fa fa-caret-right mx-1" block-attribute-0="style"/>`);
   
   return function template(ctx, node, key = "") {
-    const b2 = comment(` <div class="accordion" t-attf-id="accordion_{{props.path}}">
-      <div class="accordion-item">
-        <h2 class="accordion-header" t-attf-id="heading_{{props.path}}">
-          <button class="accordion-button" type="button" t-attf-data-bs-toggle="collapse" t-attf-data-bs-target="#collapse_{{props.path}}" aria-expanded="true" t-attf-aria-controls="collapse_{{props.path}}">
-            <t t-esc="props.name"/>
-          </button>
-        </h2>
-        <div t-attf-id="collapse_{{props.path}}" class="accordion-collapse collapse show" t-attf-aria-labelledby="heading_{{props.path}}">
-          <div class="accordion-body p-1">
-            <table class="table table-striped m-0">
-              <colgroup>
-                <col className="col-6"/>
-                <col className="col-6"/>
-              </colgroup>
-              <tbody>
-                <tr>
-                  <td>Element type:</td>
-                  <td><t t-esc="props.name"/></td>
-                </tr>
-                <t t-foreach="props.attributes" t-as="attribute" t-key="props.path + ' ' + attribute">
-                  <tr>
-                    <td>Element <t t-esc="attribute"/>:</td>
-                    <td><t t-esc="props.attributes[attribute]"/></td>
-                  </tr>
-                </t>
-                <t t-foreach="props.children" t-as="child" t-key="child.name">
-                  <tr>
-                    <td colSpan="2" class="p-0">
-                      <TreeElement name="child.name" path="child.path" attributes="child.attributes" children="child.children"/>
-                    </td>
-                  </tr>
-                </t>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div> `);
-    let b4,b9;
+    let b3,b4,b5;
+    let attr1 = {'component_selected':ctx['props'].selected,'component_highlighted':ctx['props'].highlighted};
+    let attr2 = `display: ${ctx['props'].display?'flex':'none'}`;
+    let hdlr1 = [ctx['toggleComponent'], ctx];
+    let attr3 = `transform: translateX(calc(${ctx['props'].depth} * 0.8rem))`;
     if (ctx['props'].children.length>0) {
-      let hdlr1 = [ctx['toggleEvent'], ctx];
-      let txt1 = ctx['props'].name;
-      const b5 = block5([hdlr1, txt1]);
-      ctx = Object.create(ctx);
-      const [k_block7, v_block7, l_block7, c_block7] = prepareList(ctx['props'].children);;
-      for (let i1 = 0; i1 < l_block7; i1++) {
-        ctx[`child`] = v_block7[i1];
-        const key1 = ctx['child'].name;
-        c_block7[i1] = withKey(comp1({name: ctx['child'].name,path: ctx['child'].path,attributes: ctx['child'].attributes,children: ctx['child'].children}, key + `__1__${key1}`, node, this, null), key1);
-      }
-      ctx = ctx.__proto__;
-      const b7 = list(c_block7);
-      const b6 = block6([], [b7]);
-      b4 = multi([b5, b6]);
+      let attr4 = `cursor: pointer;${ctx['props'].toggled?'transform: rotate(90deg);':''}`;
+      let hdlr2 = [ctx['toggleDisplay'], ctx];
+      b3 = block3([attr4, hdlr2]);
     } else {
-      b9 = text(ctx['props'].name);
+      let attr5 = `cursor: pointer; visibility: hidden;`;
+      b4 = block4([attr5]);
     }
-    const b3 = block3([], [b4, b9]);
-    return multi([b2, b3]);
-  }
-});
-
-App.registerTemplate("devtools.card", function devtools_card(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { callSlot } = helpers;
-  
-  let block1 = createBlock(`<div class="card" style="width: 18rem;"><div class="card-body"><block-child-0/><p class="card-text"><block-child-1/></p><a href="#" class="btn btn-primary">Go somewhere</a></div></div>`);
-  let block2 = createBlock(`<h5 class="card-title"><block-child-0/></h5>`);
-  
-  return function template(ctx, node, key = "") {
-    let b2,b4;
-    if (ctx['props'].slots.title) {
-      const b3 = callSlot(ctx, node, key, 'title', false, {});
-      b2 = block2([], [b3]);
-    }
-    b4 = callSlot(ctx, node, key, 'default', false, {});
-    return block1([], [b2, b4]);
-  }
-});
-
-App.registerTemplate("devtools.counter", function devtools_counter(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block2 = createBlock(`<p>Counter: <block-text-0/></p>`);
-  let block3 = createBlock(`<p><button class="btn btn-primary mt-2" block-handler-0="click">Increment</button></p>`);
-  
-  return function template(ctx, node, key = "") {
-    let txt1 = ctx['state'].count;
-    const b2 = block2([txt1]);
-    let hdlr1 = [ctx['increment'], ctx];
-    const b3 = block3([hdlr1]);
-    return multi([b2, b3]);
-  }
-});
-
-App.registerTemplate("devtools.dashboard", function devtools_dashboard(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, bind, withKey, markRaw } = helpers;
-  const comp1 = app.createComponent(`Counter`, true, false, false, true);
-  const comp2 = app.createComponent(`Todo`, true, false, false, false);
-  const comp3 = app.createComponent(`Card`, true, true, false, true);
-  
-  let block1 = createBlock(`<div class="row justify-content-center mt-4"><div class="col-8"><block-child-0/><div class="form-group row mb-4"><div class="col-lg-4 col-8 col-md-6"><input class="form-control" type="text" placeholder="Add a Todo" value="" block-handler-0="keyup"/></div></div><block-child-1/><block-child-2/></div></div>`);
-  let block4 = createBlock(`<p><block-child-0/></p>`);
-  
-  function slot1(ctx, node, key = "") {
-    return text(`Bonjour`);
-  }
-  
-  function slot2(ctx, node, key = "") {
-    return text(` Bienvenue à tous `);
-  }
-  
-  return function template(ctx, node, key = "") {
-    const b2 = comp1({}, key + `__1`, node, this, null);
-    let hdlr1 = [ctx['addTodo'], ctx];
+    let txt1 = ctx['props'].name;
+    b5 = safeOutput(this.getMinimizedKey());
+    const b2 = block2([attr1, attr2, hdlr1, attr3, txt1], [b3, b4, b5]);
     ctx = Object.create(ctx);
-    const [k_block3, v_block3, l_block3, c_block3] = prepareList(ctx['todos']);;
-    for (let i1 = 0; i1 < l_block3; i1++) {
-      ctx[`todo`] = v_block3[i1];
-      const key1 = ctx['todo'].id;
-      const b5 = comp2({todo: ctx['todo'],toggleState: bind(this, ctx['toggleTodo']),removeState: bind(this, ctx['removeTodo'])}, key + `__2__${key1}`, node, this, null);
-      c_block3[i1] = withKey(block4([], [b5]), key1);
+    const [k_block6, v_block6, l_block6, c_block6] = prepareList(ctx['props'].children);;
+    for (let i1 = 0; i1 < l_block6; i1++) {
+      ctx[`child`] = v_block6[i1];
+      const key1 = ctx['child'].name;
+      c_block6[i1] = withKey(comp1(Object.assign({}, ctx['child'], {updateComponent: ctx['props'].updateComponent,selectComponent: ctx['props'].selectComponent}), key + `__1__${key1}`, node, this, null), key1);
     }
-    ctx = ctx.__proto__;
-    const b3 = list(c_block3);
-    const b8 = comp3({slots: markRaw({'title': {__render: slot1.bind(this), __ctx: ctx}, 'default': {__render: slot2.bind(this), __ctx: ctx}})}, key + `__3`, node, this, null);
-    return block1([hdlr1], [b2, b3, b8]);
-  }
-});
-
-App.registerTemplate("devtools.todo", function devtools_todo(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(`<div class="form-check"><input class="form-check-input" type="checkbox" block-attribute-0="id" block-attribute-1="checked" block-handler-2="click"/><label class="form-check-label" block-attribute-3="class"><block-text-4/>. <block-text-5/></label><span class="fa fa-remove mx-2" block-handler-6="click"/></div>`);
-  
-  return function template(ctx, node, key = "") {
-    let attr1 = ctx['props'].todo.id;
-    let attr2 = new Boolean(ctx['props'].todo.done);
-    let hdlr1 = [ctx['checkEvent'], ctx];
-    let attr3 = ctx['props'].todo.done?'text-decoration-line-through text-muted':'';
-    let txt1 = ctx['props'].todo.id;
-    let txt2 = ctx['props'].todo.description;
-    let hdlr2 = [ctx['removeEvent'], ctx];
-    return block1([attr1, attr2, hdlr1, attr3, txt1, txt2, hdlr2]);
-  }
-});
-
-App.registerTemplate("devtools.devtools_app", function devtools_devtools_app(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { bind } = helpers;
-  const comp1 = app.createComponent(`Tab`, true, false, false, false);
-  const comp2 = app.createComponent(`Tab`, true, false, false, false);
-  const comp3 = app.createComponent(`Tab`, true, false, false, false);
-  const comp4 = app.createComponent(null, false, false, false, true);
-  
-  let block2 = createBlock(`<nav class="navbar navbar-light bg-light sticky-top"><div class="container-fluid"><block-child-0/><block-child-1/><block-child-2/></div></nav>`);
-  let block6 = createBlock(`<div class="mt-2"><block-child-0/></div>`);
-  
-  return function template(ctx, node, key = "") {
-    const b3 = comp1({componentName: 'Tree',active: ctx['state'].page==='Tree',name: 'Component Tree',switchTab: bind(this, ctx['switchTab'])}, key + `__1`, node, this, null);
-    const b4 = comp2({componentName: 'Events',active: ctx['state'].page==='Events',name: 'Events',switchTab: bind(this, ctx['switchTab'])}, key + `__2`, node, this, null);
-    const b5 = comp3({componentName: 'Dashboard',active: ctx['state'].page==='Dashboard',name: 'Dashboard',switchTab: bind(this, ctx['switchTab'])}, key + `__3`, node, this, null);
-    const b2 = block2([], [b3, b4, b5]);
-    const Comp1 = ctx['selectPage'];
-    const b7 = toggler(Comp1, comp4({}, key + `__4`, node, this, Comp1));
-    const b6 = block6([], [b7]);
+    const b6 = list(c_block6);
     return multi([b2, b6]);
   }
 });
@@ -204,22 +106,10 @@ App.registerTemplate("devtools.events", function devtools_events(app, bdom, help
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = "") {
-    return text(` Events page `);
-  }
-});
-
-App.registerTemplate("devtools.tab", function devtools_tab(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(`<a class="btn btn-outline-primary" block-attribute-0="class" block-handler-1="click"><block-text-2/></a>`);
+  let block1 = createBlock(`<div id="container"> Events page </div>`);
   
   return function template(ctx, node, key = "") {
-    let attr1 = ctx['props'].active?'text-white bg-primary':'text-dark';
-    let hdlr1 = [ctx['selectTab'], ctx];
-    let txt1 = ctx['props'].name;
-    return block1([attr1, hdlr1, txt1]);
+    return block1();
   }
 });
 
@@ -233,10 +123,10 @@ App.registerTemplate("popup.popup_app", function popup_popup_app(app, bdom, help
   
   return function template(ctx, node, key = "") {
     let b2,b3;
-    if (ctx['state'].status=='not_found') {
+    if (ctx['status'].value=='not_found') {
       b2 = block2();
     }
-    if (ctx['state'].status=='enabled') {
+    if (ctx['status'].value=='enabled') {
       b3 = block3();
     }
     return block1([], [b2, b3]);

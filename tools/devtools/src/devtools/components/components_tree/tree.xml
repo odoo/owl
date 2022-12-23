@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<templates xml:space="preserve">
-  <t t-name="devtools.tree" owl="1">
-    <ul>
-      <TreeElement name="root.name" attributes="root.attributes" path="root.path" children="root.children"/> 
-    </ul>
-  </t>
-</templates>

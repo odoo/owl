@@ -1,19 +1,25 @@
 {
-    "name": "Chrome extension for OWL",
+    "name": "Owl devtools",
     "version": "1.0",
     "manifest_version": 3,
-    "description": "Chrome Extension starter Kit with es6 standards",
+    "description": "Chrome devtools extension for Odoo Owl framework",
     "action": {
         "default_icon": {
-            "16": "assets/icon16.png",
-            "48": "assets/icon48.png",
-            "128": "assets/icon128.png"
+            "128": "assets/icon_disabled128.png"
         },
-        "default_title": "Chrome extension for OWL",
+        "default_title": "Owl devtools",
         "default_popup": "popup/popup.html"
     },
     "permissions": [
-        "activeTab"
+        "tabs",
+        "storage",
+        "activeTab",
+        "scripting"
+    ],
+    "host_permissions": [
+        "http://*/*", 
+        "https://*/*",
+        "devtools"
     ],
     "content_security_policy": {
         "script-src": "self",
@@ -25,7 +31,7 @@
     "devtools_page": "devtools/devtools.html",
     "content_scripts": [
         {
-            "matches": ["http://*/*", "https://*/*"],
+            "matches": ["<all_urls>"],
             "js": ["content.js"]
         }
     ]

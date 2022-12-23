@@ -6,11 +6,10 @@ import "../../assets/templates.js";
 // window.console = chrome.extension.getBackgroundPage().console;
 
 const init = () => {
-    (async () => {
-        await whenReady();
-        await mount(PopUpApp, document.body, {});
-    })();
-
+  (async () => {
+    await whenReady();
+    await mount(PopUpApp, document.body, {});
+  })();
 };
 
 window.onload = init;

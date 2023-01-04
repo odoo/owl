@@ -4,10 +4,15 @@
     <div id="container" t-on-mouseover.stop="removeHighlight" t-on-mouseout.stop="removeHighlight">
       <div class="split-screen-container">
         <div class="split-screen-left"  t-attf-style="width:calc({{state.splitPosition}}% - 1px);">
-            <TreeElement 
-              t-props="root"
-              updateComponent.bind="updateTree"
-              selectComponent.bind="selectComponent"/> 
+          <div class="details-panel my-1">
+            Search bar
+          </div>
+          <div class="horizontal-border">
+          </div>
+          <TreeElement 
+            t-props="root"
+            updateComponent.bind="updateTree"
+            selectComponent.bind="selectComponent"/> 
         </div>
         <div
           class="split-screen-border"

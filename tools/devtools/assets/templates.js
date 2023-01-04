@@ -7,7 +7,7 @@ App.registerTemplate("devtools.components_tree", function devtools_components_tr
   const comp1 = app.createComponent(`TreeElement`, true, false, true, false);
   const comp2 = app.createComponent(`DetailsWindow`, true, false, false, false);
   
-  let block1 = createBlock(`<div id="container" block-handler-0="mouseover.stop" block-handler-1="mouseout.stop"><div class="split-screen-container"><div class="split-screen-left" block-attribute-2="style"><block-child-0/></div><div class="split-screen-border" block-attribute-3="style" block-handler-4="mousedown" block-handler-5="mouseup"/><div class="split-screen-right" block-attribute-6="style"><block-child-1/></div></div></div>`);
+  let block1 = createBlock(`<div id="container" block-handler-0="mouseover.stop" block-handler-1="mouseout.stop"><div class="split-screen-container"><div class="split-screen-left" block-attribute-2="style"><div class="details-panel my-1"> Search bar </div><div class="horizontal-border"/><block-child-0/></div><div class="split-screen-border" block-attribute-3="style" block-handler-4="mousedown" block-handler-5="mouseup"/><div class="split-screen-right" block-attribute-6="style"><block-child-1/></div></div></div>`);
   
   return function template(ctx, node, key = "") {
     let hdlr1 = ["stop", ctx['removeHighlight'], ctx];

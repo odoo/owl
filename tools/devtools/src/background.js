@@ -35,8 +35,11 @@ function checkOwlStatus(tabId){
   );
 }
 
+chrome.runtime.onConnect.addListener(function(port) {
+  console.assert(port.name == "DevtoolsTreePort");
+});
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log("Message")
   if(message.type === "getOwlStatus"){
     getActiveTabURL().then((tab) => {
       if (tab){
@@ -47,6 +50,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse({result: owlStatus});
     })
     return true;
+  }
+  if(message.type === "Flush"){
+    chrome.runtime.connect({name: "DevtoolsTreePort"}).postMessage({type: "Flush"});
   }
 });
 

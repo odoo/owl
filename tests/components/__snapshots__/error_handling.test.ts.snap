@@ -941,7 +941,7 @@ exports[`can catch errors catching error, rethrow, render parent  -- a main comp
       ctx[\`cp\`] = v_block1[i1];
       const key1 = ctx['cp'].id;
       const v1 = ctx['cp'];
-      const ctx1 = capture(ctx, this);
+      const ctx1 = capture(ctx);
       c_block1[i1] = withKey(comp2({onError: ()=>this.cleanUp(v1.id),slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__2__\${key1}\`, node, this, null), key1);
     }
     return list(c_block1);
@@ -1019,7 +1019,7 @@ exports[`can catch errors catching in child makes parent render 1`] = `
       ctx[\`elem\`] = v_block1[i1];
       const key1 = ctx['elem'][0];
       const v1 = ctx['elem'];
-      const ctx1 = capture(ctx, this);
+      const ctx1 = capture(ctx);
       c_block1[i1] = withKey(comp2({onError: (_error)=>this.onError(v1[0],_error),slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__2__\${key1}\`, node, this, null), key1);
     }
     return list(c_block1);

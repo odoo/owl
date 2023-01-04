@@ -175,7 +175,7 @@ exports[`list of components order is correct when slots are not of same type 1`]
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const ctx1 = capture(ctx, this);
+    const ctx1 = capture(ctx);
     return comp1({slots: markRaw({'a': {__render: slot1.bind(this), __ctx: ctx1, active: !ctx['state'].active}, 'b': {__render: slot2.bind(this), __ctx: ctx1, active: true}, 'c': {__render: slot3.bind(this), __ctx: ctx1, active: ctx['state'].active}})}, key + \`__1\`, node, this, null);
   }
 }"

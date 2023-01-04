@@ -21,7 +21,7 @@ exports[`t-set slot setted value (with t-set) not accessible with t-esc 1`] = `
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"iter\\", 'source');
     let txt1 = ctx['iter'];
-    const ctx1 = capture(ctx, this);
+    const ctx1 = capture(ctx);
     const b2 = comp1({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__1\`, node, this, null);
     let txt2 = ctx['iter'];
     return block1([txt1, txt2], [b2]);
@@ -70,7 +70,7 @@ exports[`t-set slots with a t-set with a component in body 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const ctx1 = capture(ctx, this);
+    const ctx1 = capture(ctx);
     return comp2({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__2\`, node, this, null);
   }
 }"
@@ -127,7 +127,7 @@ exports[`t-set slots with an t-set with a component in body 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const ctx1 = capture(ctx, this);
+    const ctx1 = capture(ctx);
     return comp2({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__2\`, node, this, null);
   }
 }"
@@ -178,7 +178,7 @@ exports[`t-set slots with an unused t-set with a component in body 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    const ctx1 = capture(ctx, this);
+    const ctx1 = capture(ctx);
     return comp2({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__2\`, node, this, null);
   }
 }"

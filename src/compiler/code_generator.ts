@@ -1140,7 +1140,7 @@ export class CodeGenerator {
       if (this.target.loopLevel || !this.hasSafeContext) {
         ctxStr = generateId("ctx");
         this.helpers.add("capture");
-        this.define(ctxStr, `capture(ctx, this)`);
+        this.define(ctxStr, `capture(ctx)`);
       }
       let slotStr: string[] = [];
       for (let slotName in ast.slots) {
@@ -1316,7 +1316,7 @@ export class CodeGenerator {
     if (this.target.loopLevel || !this.hasSafeContext) {
       ctxStr = generateId("ctx");
       this.helpers.add("capture");
-      this.define(ctxStr, `capture(ctx, this)`);
+      this.define(ctxStr, `capture(ctx)`);
     }
     let id = generateId("comp");
     this.staticDefs.push({

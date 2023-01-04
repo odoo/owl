@@ -46,8 +46,8 @@ function callSlot(
   return slotBDom || text("");
 }
 
-function capture(ctx: any, component: any): any {
-  const result = ObjectCreate(component);
+function capture(ctx: any): any {
+  const result = ObjectCreate(ctx);
   for (let k in ctx) {
     result[k] = ctx[k];
   }
@@ -114,7 +114,7 @@ class LazyValue {
 
   constructor(fn: any, ctx: any, component: any, node: any, key: any) {
     this.fn = fn;
-    this.ctx = capture(ctx, component);
+    this.ctx = capture(ctx);
     this.component = component;
     this.node = node;
     this.key = key;

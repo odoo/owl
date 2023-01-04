@@ -316,7 +316,7 @@ describe("t-call", () => {
     expect(fixture.innerHTML).toBe("childaaronchildlucas");
   });
 
-  test.only("t-call-context: ComponentNode is not looked up in the context", async () => {
+  test("t-call-context: ComponentNode is not looked up in the context", async () => {
     let child: any;
     class Child extends Component {
       static template = xml`<t t-slot="default"/>`;
@@ -356,5 +356,31 @@ describe("t-call", () => {
     );
     expect(Object.keys(child.__owl__.refs)).toEqual([]);
     expect(Object.keys(root.__owl__.refs)).toEqual(["myRef", "myRef2"]);
+  });
+
+  test("t-call-context: slots don't make component available again when context is captured", async () => {
+    class Child extends Component {
+      static template = xml`<t t-slot="default"/>`;
+    }
+
+    class Root extends Component {
+      static template = xml`<t t-call="template" t-call-context="{}"/>`;
+      static components = { Child };
+      someValue = "Hello";
+    }
+
+    await mount(Root, fixture, {
+      test: true,
+      templates: `
+        <templates>
+          <t t-name="template">
+            <t t-set="dummy" t-value="0"/>
+            <Child>
+              <t t-esc="someValue"/>
+            </Child>
+          </t>
+        </templates>`,
+    });
+    expect(fixture.innerHTML).toBe("");
   });
 });

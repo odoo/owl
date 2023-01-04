@@ -558,7 +558,7 @@ exports[`t-call t-call-context: ComponentNode is not looked up in the context 2`
     const refs = this.__owl__.refs;
     const ref1 = (el) => refs[\`myRef\`] = el;
     const b2 = block2([ref1]);
-    const ctx1 = capture(ctx, this);
+    const ctx1 = capture(ctx);
     const b7 = comp1({prop: bind(this, ctx['method']),slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__1\`, node, this, null);
     return multi([b2, b7]);
   }
@@ -566,6 +566,54 @@ exports[`t-call t-call-context: ComponentNode is not looked up in the context 2`
 `;
 
 exports[`t-call t-call-context: ComponentNode is not looked up in the context 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { callSlot } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return callSlot(ctx, node, key, 'default', false, {});
+  }
+}"
+`;
+
+exports[`t-call t-call-context: slots don't make component available again when context is captured 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const callTemplate_1 = app.getTemplate(\`template\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let ctx1 = {};
+    return callTemplate_1.call(this, ctx1, node, key + \`__1\`);
+  }
+}"
+`;
+
+exports[`t-call t-call-context: slots don't make component available again when context is captured 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue, capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false, true);
+  
+  function slot1(ctx, node, key = \\"\\") {
+    return text(ctx['someValue']);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    setContextValue(ctx, \\"dummy\\", 0);
+    const ctx1 = capture(ctx);
+    const props1 = {slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})};
+    helpers.validateProps(\`Child\`, props1, this);
+    return comp1(props1, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`t-call t-call-context: slots don't make component available again when context is captured 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

@@ -28,6 +28,35 @@ export class ComponentsTree extends Component {
     });
 
     onMounted(async () => {
+      chrome.runtime.onConnect.addListener((port) => {
+        console.assert(port.name === "DevtoolsTreePort");
+        port.onMessage.addListener((msg) => {
+          if (msg.type === "Flush"){
+            let script = 'owlDevtools__SendTree("'+ this.activeComponent.path +'");';
+            chrome.devtools.inspectedWindow.eval(
+              script,
+              (result, isException) => {
+                if (!isException) {
+                  Object.keys(this.root).forEach(key => {
+                    this.root[key] = result.root[key]
+                  });
+                }
+              }
+            );
+            script = 'owlDevtools__SendComponentDetails("'+ this.activeComponent.path +'");';
+            chrome.devtools.inspectedWindow.eval(
+              script,
+              (result, isException) => {
+                if (!isException) {
+                  Object.keys(this.activeComponent).forEach(key => {
+                    this.activeComponent[key] = result[key];
+                  });
+                }
+              }
+            );
+          }
+        });
+      });
       let script = 'owlDevtools__SendTree(null);';
       chrome.devtools.inspectedWindow.eval(
         script,

@@ -20,7 +20,7 @@ exports[`Portal Add and remove portals 1`] = `
     for (let i1 = 0; i1 < l_block1; i1++) {
       ctx[\`portalId\`] = v_block1[i1];
       const key1 = ctx['portalId'];
-      const ctx1 = capture(ctx, this);
+      const ctx1 = capture(ctx);
       c_block1[i1] = withKey(comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal), key1);
     }
     return list(c_block1);
@@ -49,7 +49,7 @@ exports[`Portal Add and remove portals on div 1`] = `
     for (let i1 = 0; i1 < l_block1; i1++) {
       ctx[\`portalId\`] = v_block1[i1];
       const key1 = ctx['portalId'];
-      const ctx1 = capture(ctx, this);
+      const ctx1 = capture(ctx);
       c_block1[i1] = withKey(comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal), key1);
     }
     return list(c_block1);
@@ -80,7 +80,7 @@ exports[`Portal Add and remove portals with t-foreach 1`] = `
       ctx[\`portalId\`] = v_block1[i1];
       const key1 = ctx['portalId'];
       let txt1 = ctx['portalId'];
-      const ctx1 = capture(ctx, this);
+      const ctx1 = capture(ctx);
       const b6 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal);
       c_block1[i1] = withKey(block2([txt1], [b6]), key1);
     }
@@ -112,7 +112,7 @@ exports[`Portal Add and remove portals with t-foreach and destroy 1`] = `
       ctx[\`portalId\`] = v_block1[i1];
       const key1 = ctx['portalId'];
       let txt1 = ctx['portalId'];
-      const ctx1 = capture(ctx, this);
+      const ctx1 = capture(ctx);
       const b6 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal);
       c_block1[i1] = withKey(block2([txt1], [b6]), key1);
     }
@@ -145,7 +145,7 @@ exports[`Portal Add and remove portals with t-foreach inside div 1`] = `
       ctx[\`portalId\`] = v_block2[i1];
       const key1 = ctx['portalId'];
       let txt1 = ctx['portalId'];
-      const ctx1 = capture(ctx, this);
+      const ctx1 = capture(ctx);
       const b7 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal);
       c_block2[i1] = withKey(block3([txt1], [b7]), key1);
     }
@@ -431,7 +431,7 @@ exports[`Portal conditional use of Portal with child and div 2`] = `
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`elem\`] = v_block2[i1];
       const key1 = ctx['elem'];
-      const ctx1 = capture(ctx, this);
+      const ctx1 = capture(ctx);
       c_block2[i1] = withKey(comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal), key1);
     }
     const b2 = list(c_block2);
@@ -481,7 +481,7 @@ exports[`Portal conditional use of Portal with child and div, variation 2`] = `
     for (let i1 = 0; i1 < l_block3; i1++) {
       ctx[\`elem\`] = v_block3[i1];
       const key1 = ctx['elem'];
-      const ctx1 = capture(ctx, this);
+      const ctx1 = capture(ctx);
       c_block3[i1] = withKey(comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx1}}}, key + \`__1__\${key1}\`, node, ctx, Portal), key1);
     }
     const b3 = list(c_block3);

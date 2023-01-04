@@ -6,12 +6,8 @@ export class PopUpApp extends Component {
   setup(){
     this.status = useState({value: "not_found"});
     onWillStart(async () => {
-      chrome.devtools.inspectedWindow.eval(
-        'typeof owl !== "undefined";',
-        (hasOwl) => {
-          this.status = { value: hasOwl ? "enabled" : "not_found" }; 
-        }
-      )
+      let hasOwl = await getOwlStatus();
+      this.status = { value: hasOwl ? "enabled" : "not_found" }; 
     });
   }
   

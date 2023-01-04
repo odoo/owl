@@ -8,5 +8,5 @@ import "../../assets/templates.js";
 
 
 whenReady();
-mount(ComponentsTree, document.body, {});
+mount(ComponentsTree, document.body, {dev: true});
 

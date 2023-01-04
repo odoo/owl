@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.details_window" owl="1">
-    <div class="tree_component my-0 p-0" t-att-class="{'component_selected': props.selected,'component_highlighted': props.highlighted}" t-on-click="toggleComponent" t-attf-style="display: {{props.display ? 'flex' : 'none'}}">
-      <div class="component_wrapper" t-attf-style="transform: translateX(calc({{props.depth}} * 0.8rem))">
-        <t t-if="props.children.length > 0">
-          <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer;{{props.toggled ? 'transform: rotate(90deg);' : ''}}" t-on-click="toggleDisplay"></i>
-        </t>
-        <!-- <t t-esc="props.name"/> <t t-if="props.key"><div class="text-warning" style="display:inline;">key</div>="<t t-esc="props.key" style="display:inline;"/>"</t> -->
-        <t t-esc="props.name"/> <t t-out="this.getMinimizedKey()"/>
+    <div class="details_window my-1">
+      <div id="details_window_head" class="details-panel my-1">
+        <div class="name_wrapper">
+          <b><t t-esc="componentName"/></b>
+        </div>
       </div>
+      <div class="horizontal-border">
+      </div>
+      <div id="props" class="details-panel my-1">
+        <b>props</b>
+        <t t-foreach="activeProperties" t-as="key" t-key="key">
+          <Property 
+            t-props="activeProperties[key]"
+            updateProperty="props.updateProperty"/>
+        </t>
+      </div>
+      <div class="horizontal-border">
+      </div>
+      <div id="hooks" class="details-panel my-1">
+        <b>hooks</b>
+      </div>
+      <!-- <div class="horizontal-border">
+      </div>
+      <div id="rendered_by" class="details-panel my-1">
+        <b>rendered by</b>
+      </div> -->
     </div>
-    <t t-foreach="props.children" t-as="child" t-key="child.key">
-      <TreeElement 
-        t-props="child"
-        updateComponent="props.updateComponent"
-        selectComponent="props.selectComponent"/>
-    </t>
   </t>
 </templates>

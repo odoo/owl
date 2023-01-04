@@ -8,7 +8,7 @@ import "../../assets/templates.js";
 const init = () => {
   (async () => {
     await whenReady();
-    await mount(PopUpApp, document.body, {});
+    await mount(PopUpApp, document.body, {dev: true});
   })();
 };
 

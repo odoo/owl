@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.components_tree" owl="1">
-    <div id="container">
+    <div id="container" t-on-mouseover.stop="removeHighlight" t-on-mouseout.stop="removeHighlight">
       <div class="split-screen-container">
         <div class="split-screen-left"  t-attf-style="width:calc({{state.splitPosition}}% - 1px);">
             <TreeElement 
@@ -16,9 +16,9 @@
           t-on-mouseup="handleMouseUp"
         />
         <div class="split-screen-right" t-attf-style="width:calc({{100 - state.splitPosition}}%);">
-          <div class="container">
-          It works
-          </div>
+          <DetailsWindow 
+            activeComponent="activeComponent"
+            updateProperty.bind="updateProperties"/>
         </div>
       </div>
     </div>

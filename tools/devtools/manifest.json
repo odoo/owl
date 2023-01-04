@@ -18,8 +18,7 @@
     ],
     "host_permissions": [
         "http://*/*", 
-        "https://*/*",
-        "devtools"
+        "https://*/*"
     ],
     "content_security_policy": {
         "script-src": "self",

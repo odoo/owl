@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.tree_element" owl="1">
-    <div class="tree_component my-0 p-0" t-att-class="{'component_selected': props.selected,'component_highlighted': props.highlighted}" t-on-click="toggleComponent" t-attf-style="display: {{props.display ? 'flex' : 'none'}}">
+    <div t-attf-id="tree_element/{{props.path}}" class="tree_component my-0 p-0" t-att-class="{'component_selected': props.selected,'component_highlighted': props.highlighted}" t-on-mouseover.stop="hoverComponent" t-on-click.stop="toggleComponent" t-attf-style="display: {{props.display ? 'flex' : 'none'}}">
       <div class="component_wrapper" t-attf-style="transform: translateX(calc({{props.depth}} * 0.8rem))">
         <t t-if="props.children.length > 0">
-          <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer;{{props.toggled ? 'transform: rotate(90deg);' : ''}}" t-on-click="toggleDisplay"></i>
+          <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer;{{props.toggled ? 'transform: rotate(90deg);' : ''}}" t-on-click.stop="toggleDisplay"></i>
         </t>
         <t t-else="">
           <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer; visibility: hidden;"></i>
         </t>
-        <t t-esc="props.name"/> <t t-out="this.getMinimizedKey()"/>
+        <div class="name_wrapper">
+          <t t-esc="props.name"/> <t t-out="this.getMinimizedKey()"/>
+        </div>
       </div>
     </div>
     <t t-foreach="props.children" t-as="child" t-key="child.key">

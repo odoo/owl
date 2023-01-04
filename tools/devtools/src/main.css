@@ -30,6 +30,36 @@
     user-select: none;
     width: 100%;
     margin: 0px;
+    white-space: nowrap;
+}
+
+.name_wrapper {
+    color:rgb(18, 54, 255);
+    white-space: nowrap;
+    display: inline;
+}
+
+.key_wrapper {
+    color:rgb(255, 181, 44);
+    white-space: nowrap;
+    display: inline;
+}
+
+.key_name {
+    color:rgb(119, 34, 255);
+    white-space: nowrap;
+    display: inline;
+}
+
+.details_window {
+    font-family: 'Fira Mono', monospace;
+    font-size: 0.7em;
+    width: 100%;
+}
+
+.details-panel {
+    width: 100%;
+    padding-left: 0.5rem !important;
 }
 
 .tree_component:hover {
@@ -63,7 +93,26 @@
     height: 100%;
     cursor: col-resize;
     background-color: lightgray;
+    user-select: none;
   }
+
+  .horizontal-border {
+    position: relative;
+    width: 100%;
+    height: 2px;
+    background-color: lightgray;
+    user-select: none;
+  }
+  
+.property-line {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.property-content {
+    color: rgb(119, 34, 255);
+    display: inline;
+}
   
 
 .split-screen-left {

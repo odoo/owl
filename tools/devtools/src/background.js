@@ -11,7 +11,7 @@ chrome.tabs.onUpdated.addListener((tab) => {
     if (tabData.status === "complete"){
       setTimeout(() => {
         checkOwlStatus(tabData.id);
-      }, 1000)
+      }, 200)
     }
   })
 });
@@ -35,24 +35,6 @@ function checkOwlStatus(tabId){
   );
 }
 
-function getOwlTree(tabId){
-  if(owlStatus){
-    chrome.scripting.executeScript(
-      {
-        target: {tabId: tabId},
-        files: ["pageScript.js"],
-        world: "MAIN",
-      }
-    );
-  }
-}
-
-function getOwlApp(){
-  chrome.devtools.inspectedWindow.eval("owl", (results) => {
-    console.log(results);
-  })
-}
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   console.log("Message")
   if(message.type === "getOwlStatus"){
@@ -65,27 +47,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       sendResponse({result: owlStatus});
     })
     return true;
-  }
-  if(message.type === "loadOwlComponents"){
-    getActiveTabURL().then((tab) => {
-      if (tab){
-        tabId = tab.id;
-      }
-      getOwlTree(tabId);
-      console.log("owlComponents message request received from: ");
-      console.log(sender);
-      devtoolsId = sender.id;
-    })
-  }
-  if(message.type === "FROM_PAGE"){
-    console.log("FROM_PAGE message received from: ");
-    console.log(sender);
-    tree = JSON.parse(message.data);
-    console.log("tree received: ")
-    console.log(tree)
-    devtoolsTreePort = chrome.runtime.connect({name: "devtoolsTree"});
-    devtoolsTreePort.postMessage({data: tree});
-    devtoolsTreePort.disconnect();
   }
 });
 

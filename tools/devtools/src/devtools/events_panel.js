@@ -8,5 +8,4 @@ import "../../assets/templates.js";
 
 
 whenReady();
-mount(Events, document.body, {});
-
+mount(Events, document.body, {dev: true});

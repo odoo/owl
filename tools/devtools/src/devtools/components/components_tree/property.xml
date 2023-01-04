@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.property" owl="1">
-    
+    <div class="my-0 p-0 property-line" t-attf-style="display: {{props.display ? 'flex' : 'none'}}" t-on-click="toggleDisplay">
+      <div t-attf-style="transform: translateX(calc({{props.depth}} * 0.8rem + 0.3rem))">
+        <t t-if="props.hasChildren">
+          <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer;{{props.toggled ? 'transform: rotate(90deg);' : ''}}"></i>
+        </t>
+        <t t-else="">
+          <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer; visibility: hidden;"></i>
+        </t>
+        <t t-out="props.name"/>: <div class="property-content"><t t-out="content"/></div> 
+      </div>
+    </div>
+    <t t-foreach="props.children" t-as="child" t-key="child.name">
+      <Property 
+        t-props="child"
+        updateProperty="props.updateProperty"/>
+    </t>
   </t>
 </templates>
 

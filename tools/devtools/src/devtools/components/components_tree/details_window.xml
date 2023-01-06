@@ -12,9 +12,10 @@
       <div id="props" class="details-panel my-1">
         <b>props</b>
         <t t-foreach="activeProperties" t-as="key" t-key="key">
-          <Property 
+          <ObjectTreeElement 
             t-props="activeProperties[key]"
-            updateProperty="props.updateProperty"/>
+            updateObjectTreeElement="props.updateObjectTreeElement"
+            editReactiveState="props.editReactiveState"/>
         </t>
       </div>
       <div class="horizontal-border">
@@ -22,11 +23,15 @@
       <div id="hooks" class="details-panel my-1">
         <b>hooks</b>
       </div>
-      <!-- <div class="horizontal-border">
+      <div class="horizontal-border">
       </div>
-      <div id="rendered_by" class="details-panel my-1">
-        <b>rendered by</b>
-      </div> -->
+      <div id="subscriptions" class="details-panel my-1">
+        <Subscriptions 
+          subscriptions="activeSubscriptions" 
+          updateObjectTreeElement="props.updateObjectTreeElement"
+          expandSubscriptionsKeys="props.expandSubscriptionsKeys"
+          editReactiveState="props.editReactiveState"/>
+      </div>
     </div>
   </t>
 </templates>

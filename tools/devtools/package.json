@@ -4,7 +4,7 @@
     "description": "Chrome Extension starter Kit with es6 standards",
     "author": "Simon Genin, ges @ odoo",
     "scripts": {
-        "templates": "cd ../owl && npm run compile_templates -- ../OWL-Devtools-Extension/src/ && mv templates.js ../OWL-Devtools-Extension/assets/templates.js && cd ../OWL-Devtools-Extension && sed -i 's/owl.//g' assets/templates.js && sed -i '1s!^!import { App } from \"@odoo/owl\";\\n\\n!' assets/templates.js",
+        "templates": "cd ../owl && npm run compile_templates -- ../OWL-Devtools-Extension/src/ && mv templates.js ../OWL-Devtools-Extension/assets/templates.js && cd ../OWL-Devtools-Extension && sed -i 's/owl.//g' assets/templates.js && sed -i '1s!^!const { App } = owl;\\n\\n!' assets/templates.js",
         "build": "npm run templates && NODE_ENV=production rollup -c",
         "dev": "npm run templates && rollup -c",
         "watch": "rollup -c -w",
@@ -15,7 +15,6 @@
         "endOfLine": "auto"
     },
     "dependencies": {
-        "@odoo/owl": "^2.0.0",
         "@popperjs/core": "^2.11.6",
         "@types/chrome": "0.0.203",
         "bootstrap": "^5.2.3",

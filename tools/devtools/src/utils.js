@@ -4,10 +4,6 @@ export async function getOwlStatus(){
   return response.result;
 }
 
-export function loadOwlComponents(){
-  chrome.runtime.sendMessage({type: "loadOwlComponents"});
-}
-
 export async function getActiveTabURL() {
   let queryOptions = { active: true, lastFocusedWindow: true };
   let res = await chrome.tabs.query(queryOptions);

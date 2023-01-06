@@ -1,4 +1,6 @@
+// Ensure the scripts are loaded only once per page
 if(!window.owlDevtoolsScriptsLoaded){
+  // Draws a highlighting rectangle on the specified html element and displays the specified name and its dimension in a box
   function owlDevtools__HighlightElement(element, name) {
     owlDevtools__RemoveHighlights();
   
@@ -70,6 +72,7 @@ if(!window.owlDevtoolsScriptsLoaded){
     detailsBox.style.top = `${detailsBoxTop}px`;
     detailsBox.style.left = `${detailsBoxLeft + 5}px`;
   };
+  // Remove all elements drawn by the HighlightElement function
   function owlDevtools__RemoveHighlights(){
     const highlights = document.querySelectorAll('.owl-devtools-highlight');
     highlights.forEach(highlight => highlight.remove());
@@ -89,12 +92,13 @@ if(!window.owlDevtoolsScriptsLoaded){
   //   }));
   //   return copy;
   // };
-  function owlDevtools__ParseProperty(prop, type){
+  // Returns a shortened version of the property as a string
+  function owlDevtools__ParseContent(obj, type){
     let result = "";
     if (type === 'array'){
       result += "[";
       let first = true;
-      for (const value of prop){
+      for (const value of obj){
         if (!first)
           result += ", ";
         else{
@@ -122,7 +126,7 @@ if(!window.owlDevtoolsScriptsLoaded){
     else if (type === 'object'){
       result += "{";
       let first = true;
-      for (const [key, value] of Object.entries(prop)) {
+      for (const [key, value] of Object.entries(obj)) {
         if (!first)
           result += ", " + key + ": ";
         else{
@@ -151,79 +155,96 @@ if(!window.owlDevtoolsScriptsLoaded){
       result += "}";
     }
     else if (type === 'string')
-      result += '"' + prop + '"';
+      result += '"' + obj + '"';
     else 
-      result += prop.toString();
+      result += obj.toString();
     return result;
   }
-  function owlDevtools__GetProperty(props, path){
-    let property = props;
+  // Returns the object specified by the path given the top parent object
+  function owlDevtools__GetObject(top_parent, path){
+    let obj = top_parent;
+    if(path.length === 0)
+      return obj;
     let path_array = path.split('/');
     for (let i = 0; i < path_array.length; i++) {
-      if (path_array[i].startsWith('[') && path_array[i].endsWith(']')){
-        let index = Number(path_array[i].substring(1, path_array[i].length-1));
-        property = property[index];
-      }
-      else if (property.hasOwnProperty(path_array[i]))
-        property = property[path_array[i]];
-      else
+      try {
+        obj = obj[path_array[i]];
+      } catch (error) {
         return null;
+      }
     }
-    return property;
+    return obj;
   };
-  function owlDevtools__LoadPropsChildren(component_path, props_path, depth, type){
+  // Returns a parsed version of the children properties of the specified component's property given its path. 
+  function owlDevtools__LoadObjectChildren(component_path, obj_path, depth, type, obj_type){
     let [application] = owl.App.apps; 
     let root = application.root;
     let children = [];
     depth = depth + 1;
     let component = owlDevtools__GetComponent(component_path, root);
-    let property = owlDevtools__GetProperty(component.props, props_path);
-    console.log(property);
+    let obj;
+    if (obj_type === 'props')
+      obj = owlDevtools__GetObject(component.props, obj_path);
+    else if (obj_type === 'subscription') {
+      let index, new_path;
+      if(obj_path.includes('/')){
+        index = obj_path.substring(0, obj_path.indexOf('/'));
+        new_path = obj_path.substring(obj_path.indexOf("/") + 1);
+      }
+      else {
+        index = obj_path;
+        new_path = "";
+      }
+      let top_parent = component.subscriptions[index].target;
+      obj = owlDevtools__GetObject(top_parent, new_path);
+    }
     if (type === 'array'){
-      property.forEach((element, index) => {
+      obj.forEach((element, index) => {
         let child = {
           name: index, 
-          propertyType: typeof element === 'object' ? (Array.isArray(element) ? 'array' : 'object') : typeof element,
+          contentType: typeof element === 'object' ? (Array.isArray(element) ? 'array' : 'object') : typeof element,
           depth: depth,
           toggled: false,
           display: true,
-          path: props_path + "\/[" + index + "]"
+          path: obj_path + "\/" + index,
+          objectType: obj_type
         };
         if (element == null){
-          if (child.propertyType === 'undefined')
-            child.property = "undefined";
+          if (child.contentType === 'undefined')
+            child.content = "undefined";
           else
-            child.property = "null";
+            child.content = "null";
             child.hasChildren = false;
         }
         else{
-          child.property = owlDevtools__ParseProperty(element, child.propertyType);
-          child.hasChildren = child.propertyType === 'object' ? Object.keys(element).length > 0 : (child.propertyType === 'array' ? element.length > 0 : false);
+          child.content = owlDevtools__ParseContent(element, child.contentType);
+          child.hasChildren = child.contentType === 'object' ? Object.keys(element).length > 0 : (child.contentType === 'array' ? element.length > 0 : false);
         }
         child.children = [];
         children.push(child);
       });
     }
     else if (type === 'object'){
-      Object.keys(property).forEach(key => {
+      Object.keys(obj).forEach(key => {
         let child = {
           name: key, 
-          propertyType: typeof property[key] === 'object' ? (Array.isArray(property[key]) ? 'array' : 'object') : typeof property[key],
+          contentType: typeof obj[key] === 'object' ? (Array.isArray(obj[key]) ? 'array' : 'object') : typeof obj[key],
           depth: depth,
           toggled: false,
           display: true,
-          path: props_path + "\/" + key
+          path: obj_path + "\/" + key,
+          objectType: obj_type
         };
-        if (property[key] == null){
-          if (child.propertyType === 'undefined')
-            child.property = "undefined";
+        if (obj[key] == null){
+          if (child.contentType === 'undefined')
+            child.content = "undefined";
           else
-            child.property = "null";
+            child.content = "null";
             child.hasChildren = false;
         }
         else{
-          child.property = owlDevtools__ParseProperty(property[key], child.propertyType);
-          child.hasChildren = child.propertyType === 'object' ? Object.keys(property[key]).length > 0 : (child.propertyType === 'array' ? property[key].length > 0 : false);
+          child.content = owlDevtools__ParseContent(obj[key], child.contentType);
+          child.hasChildren = child.contentType === 'object' ? Object.keys(obj[key]).length > 0 : (child.contentType === 'array' ? obj[key].length > 0 : false);
         }
         child.children = [];
         children.push(child);
@@ -231,6 +252,7 @@ if(!window.owlDevtoolsScriptsLoaded){
     }
     return children;
   };
+  // Returns the Component given its path and the root component
   function owlDevtools__GetComponent(path, root){
     let component = root;
     let path_array = path.split('/');
@@ -242,6 +264,7 @@ if(!window.owlDevtoolsScriptsLoaded){
     }
     return component;
   };
+  // Returns the component's details given its path
   function owlDevtools__SendComponentDetails(path){ 
     let [application] = owl.App.apps; 
     let root = application.root;
@@ -259,28 +282,66 @@ if(!window.owlDevtoolsScriptsLoaded){
     Object.keys(filteredProperties).forEach(key => {
       let property = {
         name: key, 
-        propertyType: typeof filteredProperties[key] === 'object' ? (Array.isArray(filteredProperties[key]) ? 'array' : 'object') : typeof filteredProperties[key],
+        contentType: typeof filteredProperties[key] === 'object' ? (Array.isArray(filteredProperties[key]) ? 'array' : 'object') : typeof filteredProperties[key],
         depth: 0,
         path: key,
         toggled: false,
-        display: true
+        display: true,
+        objectType: "props"
       };
       if (filteredProperties[key] == null){
-        if (property.propertyType === 'undefined')
-          property.property = "undefined";
+        if (property.contentType === 'undefined')
+          property.content = "undefined";
         else
-          property.property = "null";
+          property.content = "null";
         property.hasChildren = false;
       }
       else{
-        property.property = owlDevtools__ParseProperty(filteredProperties[key], property.propertyType);
-        property.hasChildren = property.propertyType === 'object' ? Object.keys(filteredProperties[key]).length > 0 : (property.propertyType === 'array' ? filteredProperties[key].length > 0 : false);
+        property.content = owlDevtools__ParseContent(filteredProperties[key], property.contentType);
+        property.hasChildren = property.contentType === 'object' ? Object.keys(filteredProperties[key]).length > 0 : (property.contentType === 'array' ? filteredProperties[key].length > 0 : false);
       }
       property.children = [];
       component.properties[key] = property;
     });
+    let raw_subscriptions = node.subscriptions;
+    component.subscriptions = [];
+    raw_subscriptions.forEach((raw_subscription, index) => {
+      let subscription = {
+        keys: [],
+        target: {
+          name: "target", 
+          contentType: typeof raw_subscription.target === 'object' ? (Array.isArray(raw_subscription.target) ? 'array' : 'object') : raw_subscription.target,
+          depth: 0,
+          path: index.toString(),
+          toggled: false,
+          display: true,
+          objectType: "subscription"
+        },
+        keysExpanded: false
+      }
+      raw_subscription.keys.forEach(key => {
+        if (typeof key === "symbol")
+          subscription.keys.push(key.toString());
+        else
+          subscription.keys.push(key);
+      });
+      if (raw_subscription.target == null){
+        if (subscription.target.contentType === 'undefined')
+          subscription.target.content = "undefined";
+        else
+          subscription.target.content = "null";
+        subscription.target.hasChildren = false;
+      }
+      else{
+        subscription.target.content = owlDevtools__ParseContent(raw_subscription.target, subscription.target.contentType);
+        subscription.target.hasChildren = subscription.target.contentType === 'object' ? Object.keys(raw_subscription.target).length > 0 : (subscription.target.contentType === 'array' ? raw_subscription.target.length > 0 : false);
+      }
+      subscription.target.children = [];
+      component.subscriptions.push(subscription);
+    });
     return component;
   };
+  // Triggers the highlight effect around the specified component.
   function owlDevtools__HighlightComponent(path){
     let [application] = owl.App.apps; 
     let root = application.root;
@@ -290,13 +351,12 @@ if(!window.owlDevtoolsScriptsLoaded){
       path = "App";
       component = root;
     }
-    if(path === "App"){
-      owlDevtools__HighlightElement(root.bdom.parentEl, "App");
-    }
-    else {
+    if(component.bdom.hasOwnProperty("el"))
       owlDevtools__HighlightElement(component.bdom.el, component.component.constructor.name);
-    }
+    else if(component.bdom.hasOwnProperty("parentEl"))
+      owlDevtools__HighlightElement(component.bdom.parentEl, component.component.constructor.name);
   };
+  // Recursively fills the components tree as a parsed version
   function owlDevtools__FillTree(app_node, tree_node, inspectedPath){
     let children = [];
     for (const [key, app_child] of Object.entries(app_node.children)){
@@ -321,8 +381,35 @@ if(!window.owlDevtoolsScriptsLoaded){
     }
     return children;
   };
+  // Edit a reactive state property with the provided value of the given component (path) and the subscription path
+  function owlDevtools__EditReactiveState(component_path, subscription_path, value){
+    let index, new_path;
+    if(subscription_path.includes('/')){
+      index = Number(subscription_path.substring(0, subscription_path.indexOf('/')));
+      new_path = subscription_path.substring(subscription_path.indexOf("/") + 1);
+    }
+    else {
+      return;
+    }
+    let path_array = new_path.split('/');
+    let [application] = owl.App.apps; 
+    let root = application.root;
+    let component = owlDevtools__GetComponent(component_path, root);
+    let target = owl.reactive(component.subscriptions[index].target);
+    path_array.reduce((acc, curr, idx, arr) => {
+      if (idx === arr.length - 1) {
+        acc[curr] = value;
+      }
+      return acc[curr];
+    }, target);
+  };
+  // Recursively checks if the given html element corresponds to a component in the components tree.
+  // Immediatly returns the path of the first component which matches the element
   function owlDevtools__SearchElement(node, path, element){
     if (node.bdom.el && node.bdom.el.isEqualNode(element)){
+      return path;
+    }
+    else if (node.bdom.parentEl && node.bdom.parentEl.isEqualNode(element)){
       return path;
     }
     for (const [key, child] of Object.entries(node.children)){
@@ -333,6 +420,7 @@ if(!window.owlDevtoolsScriptsLoaded){
     }
     return null;
   }
+  // Returns the path to the component which is currently being inspected
   function owlDevtools__GetInspectedPath(root){
     let inspectedElement = $0;
     if(inspectedElement){
@@ -351,6 +439,7 @@ if(!window.owlDevtoolsScriptsLoaded){
     }
     return "App";
   }
+  // Returns the tree of components of the inspected page in a parsed format
   function owlDevtools__SendTree(inspectedPath){ 
     let [application] = owl.App.apps; 
     let root = application.root;
@@ -373,6 +462,8 @@ if(!window.owlDevtoolsScriptsLoaded){
     tree.root.children = owlDevtools__FillTree(root, tree.root, inspectedPath);
     return tree;
   };
+  // Add a functionnality to the flush function which sends a message to the window every time it is triggered.
+  // This message is intercepted by the content script which informs the background script to ask the devtools app tree to be refreshed.
   const originalFlush = [...owl.App.apps][0].scheduler.flush;
   [...owl.App.apps][0].scheduler.flush = function() {
     originalFlush.call(this, ...arguments);

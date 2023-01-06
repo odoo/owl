@@ -23,7 +23,9 @@
         <div class="split-screen-right" t-attf-style="width:calc({{100 - state.splitPosition}}%);">
           <DetailsWindow 
             activeComponent="activeComponent"
-            updateProperty.bind="updateProperties"/>
+            updateObjectTreeElement.bind="updateObjectTreeElements"
+            expandSubscriptionsKeys.bind="expandSubscriptionsKeys"
+            editReactiveState.bind="editReactiveState"/>
         </div>
       </div>
     </div>

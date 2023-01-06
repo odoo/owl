@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { Component, useState, onWillStart, onWillPatch, onMounted} from "@odoo/owl";
+const { Component, useState, onWillStart, onWillPatch, onMounted} = owl
 import TreeElement from './tree_element';
 import { DetailsWindow } from "./details_window";
 
@@ -24,6 +24,7 @@ export class ComponentsTree extends Component {
     this.activeComponent = useState({
       path: "App",
       name: "App",
+      subscriptions: [],
       properties: {}
     });
 
@@ -93,33 +94,43 @@ export class ComponentsTree extends Component {
     element.display = component.display;
   }
 
-  updateProperties(inputProp) {
-    let path_array = inputProp.path.split('/');
-    let property = this.activeComponent.properties[path_array[0]];
+  editReactiveState(subscription_path, value){
+    let script = 'owlDevtools__EditReactiveState("'+ this.activeComponent.path +'", "'+ subscription_path +'", '+ value +');';
+    console.log(script);
+    chrome.devtools.inspectedWindow.eval(
+      script,
+      (result, isException) => {}
+    );
+  }
+
+  updateObjectTreeElements(inputObj) {
+    let path_array = inputObj.path.split('/');
+    let obj;
+    if (inputObj.objectType === 'props')
+      obj = this.activeComponent.properties[path_array[0]];
+    else if (inputObj.objectType === 'subscription')
+      obj = this.activeComponent.subscriptions[Number(path_array[0])].target;
     for (let i = 1; i < path_array.length; i++) {
       let match = path_array[i];
-      if (path_array[i].startsWith('[') && path_array[i].endsWith(']')){
-        match = Number(path_array[i].substring(1, path_array[i].length-1));
-        property = property.children[match];
-      }
-      else
-        property = property.children.filter(child => (child.name) === match)[0];
+      obj = obj.children.filter(child => (child.name) === match)[0];
     }
-    if (property.hasChildren && property.children.length === 0) {
-      let script = 'owlDevtools__LoadPropsChildren("'+ this.activeComponent.path +'","'+ property.path +'", '+ property.depth +', "'+ property.propertyType +'");'
-      console.log(script);
+    if (obj.hasChildren && obj.children.length === 0) {
+      let script = 'owlDevtools__LoadObjectChildren("'+ this.activeComponent.path +'","'+ obj.path +'", '+ obj.depth +', "'+ obj.contentType +'", "'+ obj.objectType +'");';
       chrome.devtools.inspectedWindow.eval(
         script,
         (result, isException) => {
           if (!isException) {
-            console.log(result);
-            property.children = result;
+            obj.children = result;
           }
         }
       );
     }
-    property.toggled = inputProp.toggled;
-    property.display = inputProp.display;
+    obj.toggled = inputObj.toggled;
+    obj.display = inputObj.display;
+  }
+
+  expandSubscriptionsKeys(index){
+    this.activeComponent.subscriptions[index].keysExpanded = !this.activeComponent.subscriptions[index].keysExpanded;
   }
 
   removeHighlight(ev){
@@ -144,6 +155,7 @@ export class ComponentsTree extends Component {
     element.selected = true;
     this.highlightChildren(element);
     let script = 'owlDevtools__SendComponentDetails("' + element.path + '");';
+    console.log(script);
     chrome.devtools.inspectedWindow.eval(
       script,
       (result, isException) => {

@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { Component, onWillRender, onRendered, onMounted, markup} from "@odoo/owl";
+const { Component, onWillRender, onRendered, onMounted, markup} = owl
 
 export default class TreeElement extends Component {
   setup(){

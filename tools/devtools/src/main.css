@@ -63,61 +63,66 @@
 }
 
 .component_highlighted {
-    background-color: #ddf7ff;
+  background-color: #ddf7ff;
 }
 
 .component_selected {
-    background-color: #33CEFF !important;
+  background-color: #33CEFF !important;
 }
 
 .split-screen-container {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box;
-    font-family: 'Fira Mono', monospace;
-    font-size: 0.7em;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  font-family: 'Fira Mono', monospace;
+  font-size: 0.7em;
 }
 
 .split-screen-border {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    width: 2px;
-    height: 100%;
-    cursor: col-resize;
-    background-color: lightgray;
-    user-select: none;
-  }
-
-  .horizontal-border {
-    position: relative;
-    width: 100%;
-    height: 2px;
-    background-color: lightgray;
-    user-select: none;
-  }
-  
-.property-line {
-    overflow: hidden;
-    white-space: nowrap;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 2px;
+  height: 100%;
+  cursor: col-resize;
+  background-color: lightgray;
+  user-select: none;
 }
 
-.property-content {
-    color: rgb(119, 34, 255);
-    display: inline;
+.horizontal-border {
+  position: relative;
+  width: 100%;
+  height: 2px;
+  background-color: lightgray;
+  user-select: none;
+}
+  
+.object-line {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.object-content {
+  color: rgb(119, 34, 255);
+  display: inline;
+}
+
+.key-content {
+  color: rgb(34, 49, 255);
+  display: inline;
 }
   
 
 .split-screen-left {
-    overflow: auto;
+  overflow: auto;
 }
 
 .split-screen-right {
-    overflow-y: auto;
-    overflow-x: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 }

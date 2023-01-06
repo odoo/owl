@@ -1,8 +1,5 @@
-import { Component } from "@odoo/owl";
+const { Component } = owl
 
-export class Events extends Component {
-    
-    static template = "devtools.events";
-
-
+export class Events extends Component { 
+  static template = "devtools.events";
 }

@@ -1,6 +1,7 @@
 
-import { Component, useState, onWillStart } from "@odoo/owl";
-import { Property } from './property'
+const {Component, useState, onWillStart} = owl
+import { ObjectTreeElement } from './object_tree_element'
+import { Subscriptions } from './subscriptions';
 
 export class DetailsWindow extends Component {
   setup(){
@@ -8,12 +9,13 @@ export class DetailsWindow extends Component {
 
   get componentName() { return this.props.activeComponent.name; }
   get activeProperties(){ return this.props.activeComponent.properties; }
+  get activeSubscriptions(){ return this.props.activeComponent.subscriptions; }
 
-  static props = ['activeComponent', 'updateProperty'];
+  static props = ['activeComponent', 'updateObjectTreeElement', 'expandSubscriptionsKeys', 'editReactiveState'];
   
   static template = "devtools.details_window";
 
-  static components = { Property };
+  static components = { ObjectTreeElement, Subscriptions };
 }
 
 

@@ -1,5 +1,5 @@
 
-import { Component, useState, onWillStart } from "@odoo/owl";
+const { Component, useState, onWillStart } = owl;
 import { getOwlStatus } from "../../utils.js";
 
 export class PopUpApp extends Component {

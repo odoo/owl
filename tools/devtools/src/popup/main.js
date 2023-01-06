@@ -1,5 +1,5 @@
 import { PopUpApp } from "./components/popup_app";
-import { whenReady, mount } from "@odoo/owl";
+const { whenReady, mount } = owl;
 import "../main.css";
 import "../../assets/templates.js";
 // @ts-ignore

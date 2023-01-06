@@ -1,7 +1,7 @@
 /** @odoo-module **/
 
 import { Events } from "./components/events/events";
-import { mount, whenReady } from "@odoo/owl";
+const { mount, whenReady } = owl
 
 import "../main.css";
 import "../../assets/templates.js";

@@ -6,15 +6,15 @@ export class ObjectTreeElement extends Component {
     this.state = useState({
       editMode: false
     });
-    onRendered(() => {
-      if(this.state.editMode){
-        console.log("subscriptionInput/"+this.props.path);
-        let input = document.getElementById("subscriptionInput/"+this.props.path);
-        console.log(input);
-        // input.focus();
-        // input.select();
-      }
-    })
+    // onRendered(() => {
+    //   if(this.state.editMode){
+    //     console.log("subscriptionInput/"+this.props.path);
+    //     let input = document.getElementById("subscriptionInput/"+this.props.path);
+    //     console.log(input);
+    //     // input.focus();
+    //     // input.select();
+    //   }
+    // })
   }
   get content(){
     return this.props.content;
@@ -22,7 +22,7 @@ export class ObjectTreeElement extends Component {
 
   setupEditMode(ev){
     if(!this.state.editMode){
-      if(this.props.objectType === "subscription" && ["number", "string", "boolean"].includes(this.props.contentType)){
+      if(this.props.objectType === "subscription" && ["number", "string", "boolean", "undefined"].includes(this.props.contentType)){
         this.state.editMode = true;
       }
     }
@@ -31,6 +31,7 @@ export class ObjectTreeElement extends Component {
   editState(ev){
     if (ev.keyCode === 13 && ev.target.value != ""){
       this.props.editReactiveState(this.props.path, ev.target.value);
+      this.state.editMode = false;
     }
   }
 
@@ -40,6 +41,7 @@ export class ObjectTreeElement extends Component {
     this.props.children.forEach(child => {
         this.swapDisplay(child, this.props.toggled, this.props.toggled)
     });
+    this.props.updateBag(this.props.path, this.props.toggled, this.props.display);
     this.props.updateObjectTreeElement(this.props);
   }
 
@@ -50,12 +52,13 @@ export class ObjectTreeElement extends Component {
     else if(toggled){
         element.display = true;
     }
+    this.props.updateBag(element.path, element.toggled, element.display);
     element.children.forEach(child => {
         this.swapDisplay(child, element.toggled, element.display)
     });
   }
 
-  static props = ['name', 'content', 'children', 'display', 'toggled', 'depth', 'contentType', 'hasChildren', 'elementType', 'editReactiveState'];
+  static props = ['name', 'content', 'children', 'display', 'toggled', 'depth', 'contentType', 'hasChildren', 'elementType', 'editReactiveState', 'updateBag'];
 
   static template = "devtools.object_tree_element";
 

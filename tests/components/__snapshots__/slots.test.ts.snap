@@ -349,6 +349,42 @@ exports[`slots content is the default slot 2`] = `
 }"
 `;
 
+exports[`slots default content is available as 0 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { zero, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Dialog\`, true, true, false, true);
+  
+  function slot1(ctx, node, key = \\"\\") {
+    const b2 = text(\`Before - \`);
+    const b3 = ctx[zero];
+    const b4 = text(\` - After\`);
+    return multi([b2, b3, b4]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    return comp1({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`slots default content is available as 0 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { callSlot } = helpers;
+  
+  function defaultContent1(ctx, node, key = \\"\\") {
+    return text(\`default content\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    return callSlot(ctx, node, key, 'default', false, {}, defaultContent1.bind(this));
+  }
+}"
+`;
+
 exports[`slots default content is not rendered if named slot is provided 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

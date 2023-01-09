@@ -29,6 +29,13 @@ function callSlot(
   const slots = ctx.props.slots || {};
   const { __render, __ctx, __scope } = slots[name] || {};
   const slotScope = ObjectCreate(__ctx || {});
+  if (defaultContent) {
+    Object.defineProperty(slotScope, helpers.zero, {
+      get() {
+        return defaultContent(ctx, parent, key);
+      },
+    });
+  }
   if (__scope) {
     slotScope[__scope] = extra;
   }

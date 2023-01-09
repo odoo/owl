@@ -1933,4 +1933,17 @@ describe("slots", () => {
       "<p>1 hello <div>child</div></p><p>2 hello <div>child</div></p>"
     );
   });
+
+  test("default content is available as 0", async () => {
+    class Dialog extends Component {
+      static template = xml`<t t-slot="default">default content</t>`;
+    }
+    class Parent extends Component {
+      static template = xml`<Dialog>Before - <t t-out="0"/> - After</Dialog>`;
+      static components = { Dialog };
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("Before - default content - After");
+  });
 });

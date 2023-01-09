@@ -18,7 +18,7 @@ App.registerTemplate("devtools.components_tree", function devtools_components_tr
     let hdlr3 = [ctx['handleMouseDown'], ctx];
     let hdlr4 = [ctx['handleMouseUp'], ctx];
     let attr3 = `width:calc(${100-ctx['state'].splitPosition}%);`;
-    const b3 = comp2({activeComponent: ctx['activeComponent'],updateObjectTreeElement: bind(this, ctx['updateObjectTreeElements']),expandSubscriptionsKeys: bind(this, ctx['expandSubscriptionsKeys']),editReactiveState: bind(this, ctx['editReactiveState'])}, key + `__2`, node, this, null);
+    const b3 = comp2({activeComponent: ctx['activeComponent'],updateObjectTreeElement: bind(this, ctx['updateObjectTreeElements']),updateBag: bind(this, ctx['updateExpandBag']),expandSubscriptionsKeys: bind(this, ctx['expandSubscriptionsKeys']),editReactiveState: bind(this, ctx['editReactiveState'])}, key + `__2`, node, this, null);
     return block1([hdlr1, hdlr2, attr1, attr2, hdlr3, hdlr4, attr3], [b2, b3]);
   }
 });
@@ -39,11 +39,11 @@ App.registerTemplate("devtools.details_window", function devtools_details_window
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[`key`] = v_block2[i1];
       const key1 = ctx['key'];
-      c_block2[i1] = withKey(comp1(Object.assign({}, ctx['activeProperties'][ctx['key']], {updateObjectTreeElement: ctx['props'].updateObjectTreeElement,editReactiveState: ctx['props'].editReactiveState}), key + `__1__${key1}`, node, this, null), key1);
+      c_block2[i1] = withKey(comp1(Object.assign({}, ctx['activeProperties'][ctx['key']], {updateObjectTreeElement: ctx['props'].updateObjectTreeElement,updateBag: ctx['props'].updateBag,editReactiveState: ctx['props'].editReactiveState}), key + `__1__${key1}`, node, this, null), key1);
     }
     ctx = ctx.__proto__;
     const b2 = list(c_block2);
-    const b4 = comp2({subscriptions: ctx['activeSubscriptions'],updateObjectTreeElement: ctx['props'].updateObjectTreeElement,expandSubscriptionsKeys: ctx['props'].expandSubscriptionsKeys,editReactiveState: ctx['props'].editReactiveState}, key + `__2`, node, this, null);
+    const b4 = comp2({subscriptions: ctx['activeSubscriptions'],updateObjectTreeElement: ctx['props'].updateObjectTreeElement,updateBag: ctx['props'].updateBag,expandSubscriptionsKeys: ctx['props'].expandSubscriptionsKeys,editReactiveState: ctx['props'].editReactiveState}, key + `__2`, node, this, null);
     return block1([txt1], [b2, b4]);
   }
 });
@@ -87,7 +87,7 @@ App.registerTemplate("devtools.object_tree_element", function devtools_object_tr
     for (let i1 = 0; i1 < l_block8; i1++) {
       ctx[`child`] = v_block8[i1];
       const key1 = ctx['child'].name;
-      c_block8[i1] = withKey(comp1(Object.assign({}, ctx['child'], {updateObjectTreeElement: ctx['props'].updateObjectTreeElement,editReactiveState: ctx['props'].editReactiveState}), key + `__1__${key1}`, node, this, null), key1);
+      c_block8[i1] = withKey(comp1(Object.assign({}, ctx['child'], {updateObjectTreeElement: ctx['props'].updateObjectTreeElement,updateBag: ctx['props'].updateBag,editReactiveState: ctx['props'].editReactiveState}), key + `__1__${key1}`, node, this, null), key1);
     }
     const b8 = list(c_block8);
     return multi([b2, b8]);
@@ -100,21 +100,21 @@ App.registerTemplate("devtools.subscriptions", function devtools_subscriptions(a
   let { prepareList, safeOutput, withKey } = helpers;
   const comp1 = app.createComponent(`ObjectTreeElement`, true, false, true, false);
   
-  let block2 = createBlock(`<b>subscriptions</b>`);
-  let block4 = createBlock(`<div class="mb-3"><div class="my-0 p-0 object-line" block-handler-0="click.stop"><div style="transform: translateX(calc(0.3rem))"><i class="fa fa-caret-right ms-1" block-attribute-1="style"/> keys </div></div><block-child-0/><block-child-1/></div>`);
+  let block1 = createBlock(`<div id="subscriptions_panel"><b>subscriptions</b><block-child-0/></div>`);
+  let block3 = createBlock(`<div class="mb-3"><div class="my-0 p-0 object-line" block-handler-0="click.stop"><div style="transform: translateX(calc(0.3rem))"><i class="fa fa-caret-right ms-1" block-attribute-1="style"/> keys: <block-child-0/></div></div><block-child-1/><block-child-2/></div>`);
   let block6 = createBlock(`<div class="my-0 p-0 object-line" block-attribute-0="style"><div style="transform: translateX(calc(1.1rem))" class="key-content"><i class="fa fa-caret-right mx-1" block-attribute-1="style"/><block-child-0/></div></div>`);
   
   return function template(ctx, node, key = "") {
-    const b2 = block2();
     ctx = Object.create(ctx);
-    const [k_block3, v_block3, l_block3, c_block3] = prepareList(ctx['subscriptions']);;
-    for (let i1 = 0; i1 < l_block3; i1++) {
-      ctx[`subscription`] = v_block3[i1];
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['subscriptions']);;
+    for (let i1 = 0; i1 < l_block2; i1++) {
+      ctx[`subscription`] = v_block2[i1];
       ctx[`subscription_index`] = i1;
       const key1 = ctx['subscription_index'];
       const v1 = ctx['subscription_index'];
       let hdlr1 = ["stop", (_ev)=>this.expandKeys(_ev,v1), ctx];
       let attr1 = `cursor: pointer;${ctx['subscription'].keysExpanded?'transform: rotate(90deg);':''}`;
+      const b4 = safeOutput(this.keysContent(ctx['subscription_index']));
       ctx = Object.create(ctx);
       const [k_block5, v_block5, l_block5, c_block5] = prepareList(ctx['subscription'].keys);;
       for (let i2 = 0; i2 < l_block5; i2++) {
@@ -128,11 +128,11 @@ App.registerTemplate("devtools.subscriptions", function devtools_subscriptions(a
       }
       ctx = ctx.__proto__;
       const b5 = list(c_block5);
-      const b8 = comp1(Object.assign({}, ctx['subscription'].target, {updateObjectTreeElement: ctx['props'].updateObjectTreeElement,editReactiveState: ctx['props'].editReactiveState}), key + `__1__${key1}`, node, this, null);
-      c_block3[i1] = withKey(block4([hdlr1, attr1], [b5, b8]), key1);
+      const b8 = comp1(Object.assign({}, ctx['subscription'].target, {updateObjectTreeElement: ctx['props'].updateObjectTreeElement,updateBag: ctx['props'].updateBag,editReactiveState: ctx['props'].editReactiveState}), key + `__1__${key1}`, node, this, null);
+      c_block2[i1] = withKey(block3([hdlr1, attr1], [b4, b5, b8]), key1);
     }
-    const b3 = list(c_block3);
-    return multi([b2, b3]);
+    const b2 = list(c_block2);
+    return block1([], [b2]);
   }
 });
 

@@ -1,26 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.subscriptions" owl="1">
-    <b>subscriptions</b>
-    <t t-foreach="subscriptions" t-as="subscription" t-key="subscription_index">
-      <div class="mb-3">
-        <div class="my-0 p-0 object-line" t-on-click.stop="(ev) => this.expandKeys(ev, subscription_index)">
-          <div style="transform: translateX(calc(0.3rem))">
-            <i class="fa fa-caret-right ms-1" t-attf-style="cursor: pointer;{{subscription.keysExpanded ? 'transform: rotate(90deg);' : ''}}"></i>
-            keys
+    <div id="subscriptions_panel">
+      <b>subscriptions</b>
+      <t t-foreach="subscriptions" t-as="subscription" t-key="subscription_index">
+        <div class="mb-3">
+          <div class="my-0 p-0 object-line" t-on-click.stop="(ev) => this.expandKeys(ev, subscription_index)">
+            <div style="transform: translateX(calc(0.3rem))">
+              <i class="fa fa-caret-right ms-1" t-attf-style="cursor: pointer;{{subscription.keysExpanded ? 'transform: rotate(90deg);' : ''}}"></i>
+              keys: <t t-out="this.keysContent(subscription_index)"/>
+            </div>
           </div>
-        </div>
-        <div t-foreach="subscription.keys" t-as="key" t-key="key_index" class="my-0 p-0 object-line" t-attf-style="display: {{subscription.keysExpanded ? 'flex' : 'none'}}">
-          <div style="transform: translateX(calc(1.1rem))" class="key-content">
-            <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer; visibility: hidden;"></i>
-            <t t-out="key"/>
+          <div t-foreach="subscription.keys" t-as="key" t-key="key_index" class="my-0 p-0 object-line" t-attf-style="display: {{subscription.keysExpanded ? 'flex' : 'none'}}">
+            <div style="transform: translateX(calc(1.1rem))" class="key-content">
+              <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer; visibility: hidden;"></i>
+              <t t-out="key"/>
+            </div>
           </div>
+          <ObjectTreeElement
+              t-props="subscription.target"
+              updateObjectTreeElement="props.updateObjectTreeElement"
+              updateBag="props.updateBag"
+              editReactiveState="props.editReactiveState"/>
         </div>
-        <ObjectTreeElement
-            t-props="subscription.target"
-            updateObjectTreeElement="props.updateObjectTreeElement"
-            editReactiveState="props.editReactiveState"/>
-      </div>
-    </t>
+      </t>
+    </div>
   </t>
 </templates>

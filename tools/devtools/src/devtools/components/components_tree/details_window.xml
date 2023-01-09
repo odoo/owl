@@ -15,6 +15,7 @@
           <ObjectTreeElement 
             t-props="activeProperties[key]"
             updateObjectTreeElement="props.updateObjectTreeElement"
+            updateBag="props.updateBag"
             editReactiveState="props.editReactiveState"/>
         </t>
       </div>
@@ -29,6 +30,7 @@
         <Subscriptions 
           subscriptions="activeSubscriptions" 
           updateObjectTreeElement="props.updateObjectTreeElement"
+          updateBag="props.updateBag"
           expandSubscriptionsKeys="props.expandSubscriptionsKeys"
           editReactiveState="props.editReactiveState"/>
       </div>

@@ -11,7 +11,7 @@ export class DetailsWindow extends Component {
   get activeProperties(){ return this.props.activeComponent.properties; }
   get activeSubscriptions(){ return this.props.activeComponent.subscriptions; }
 
-  static props = ['activeComponent', 'updateObjectTreeElement', 'expandSubscriptionsKeys', 'editReactiveState'];
+  static props = ['activeComponent', 'updateObjectTreeElement', 'expandSubscriptionsKeys', 'editReactiveState', 'updateBag'];
   
   static template = "devtools.details_window";
 

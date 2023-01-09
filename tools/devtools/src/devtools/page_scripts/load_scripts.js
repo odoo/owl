@@ -176,7 +176,10 @@ if(!window.owlDevtoolsScriptsLoaded){
     return obj;
   };
   // Returns a parsed version of the children properties of the specified component's property given its path. 
-  function owlDevtools__LoadObjectChildren(component_path, obj_path, depth, type, obj_type){
+  function owlDevtools__LoadObjectChildren(component_path, obj_path, depth, type, obj_type, expandBag){
+    if (typeof expandBag === 'string'){
+      expandBag = JSON.parse(expandBag);
+    }
     let [application] = owl.App.apps; 
     let root = application.root;
     let children = [];
@@ -209,18 +212,25 @@ if(!window.owlDevtoolsScriptsLoaded){
           path: obj_path + "\/" + index,
           objectType: obj_type
         };
+        if (expandBag.hasOwnProperty(child.path)){
+          child.toggled = expandBag[child.path].toggled;
+          child.display = expandBag[child.path].display;
+        }
         if (element == null){
           if (child.contentType === 'undefined')
-            child.content = "undefined";
+          child.content = "undefined";
           else
-            child.content = "null";
-            child.hasChildren = false;
+          child.content = "null";
+          child.hasChildren = false;
         }
         else{
           child.content = owlDevtools__ParseContent(element, child.contentType);
           child.hasChildren = child.contentType === 'object' ? Object.keys(element).length > 0 : (child.contentType === 'array' ? element.length > 0 : false);
         }
         child.children = [];
+        if(child.toggled && child.display){
+          child.children = owlDevtools__LoadObjectChildren(component_path, child.path, child.depth, child.contentType, obj_type, expandBag);
+        }
         children.push(child);
       });
     }
@@ -235,6 +245,10 @@ if(!window.owlDevtoolsScriptsLoaded){
           path: obj_path + "\/" + key,
           objectType: obj_type
         };
+        if (expandBag.hasOwnProperty(child.path)){
+          child.toggled = expandBag[child.path].toggled;
+          child.display = expandBag[child.path].display;
+        }
         if (obj[key] == null){
           if (child.contentType === 'undefined')
             child.content = "undefined";
@@ -247,6 +261,9 @@ if(!window.owlDevtoolsScriptsLoaded){
           child.hasChildren = child.contentType === 'object' ? Object.keys(obj[key]).length > 0 : (child.contentType === 'array' ? obj[key].length > 0 : false);
         }
         child.children = [];
+        if(child.toggled && child.display){
+          child.children = owlDevtools__LoadObjectChildren(component_path, child.path, child.depth, child.contentType, obj_type, expandBag);
+        }
         children.push(child);
       });
     }
@@ -265,10 +282,11 @@ if(!window.owlDevtoolsScriptsLoaded){
     return component;
   };
   // Returns the component's details given its path
-  function owlDevtools__SendComponentDetails(path){ 
+  function owlDevtools__SendComponentDetails(path = null, expandBag = "{}"){ 
     let [application] = owl.App.apps; 
     let root = application.root;
     let component = {};
+    expandBag = JSON.parse(expandBag);
     if(!path){
       path = owlDevtools__GetInspectedPath(root);
     }
@@ -289,6 +307,9 @@ if(!window.owlDevtoolsScriptsLoaded){
         display: true,
         objectType: "props"
       };
+      if (expandBag.hasOwnProperty(property.path)){
+        property.toggled = expandBag[property.path].toggled;
+      }
       if (filteredProperties[key] == null){
         if (property.contentType === 'undefined')
           property.content = "undefined";
@@ -301,6 +322,9 @@ if(!window.owlDevtoolsScriptsLoaded){
         property.hasChildren = property.contentType === 'object' ? Object.keys(filteredProperties[key]).length > 0 : (property.contentType === 'array' ? filteredProperties[key].length > 0 : false);
       }
       property.children = [];
+      if(property.toggled){
+        property.children = owlDevtools__LoadObjectChildren(component.path, property.path, property.depth, property.contentType, property.objectType, expandBag);
+      }
       component.properties[key] = property;
     });
     let raw_subscriptions = node.subscriptions;
@@ -318,6 +342,9 @@ if(!window.owlDevtoolsScriptsLoaded){
           objectType: "subscription"
         },
         keysExpanded: false
+      }
+      if (expandBag.hasOwnProperty(subscription.target.path)){
+        subscription.target.toggled = expandBag[subscription.target.path].toggled;
       }
       raw_subscription.keys.forEach(key => {
         if (typeof key === "symbol")
@@ -337,8 +364,12 @@ if(!window.owlDevtoolsScriptsLoaded){
         subscription.target.hasChildren = subscription.target.contentType === 'object' ? Object.keys(raw_subscription.target).length > 0 : (subscription.target.contentType === 'array' ? raw_subscription.target.length > 0 : false);
       }
       subscription.target.children = [];
+      if(subscription.target.toggled){
+        subscription.target.children = owlDevtools__LoadObjectChildren(component.path, subscription.target.path, subscription.target.depth, subscription.target.contentType, subscription.target.objectType, expandBag);
+      }
       component.subscriptions.push(subscription);
     });
+    component.expandBag = expandBag;
     return component;
   };
   // Triggers the highlight effect around the specified component.
@@ -440,7 +471,7 @@ if(!window.owlDevtoolsScriptsLoaded){
     return "App";
   }
   // Returns the tree of components of the inspected page in a parsed format
-  function owlDevtools__SendTree(inspectedPath){ 
+  function owlDevtools__SendTree(inspectedPath = null){ 
     let [application] = owl.App.apps; 
     let root = application.root;
     let tree = {};

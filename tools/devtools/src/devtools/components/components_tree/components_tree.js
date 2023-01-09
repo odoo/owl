@@ -25,7 +25,8 @@ export class ComponentsTree extends Component {
       path: "App",
       name: "App",
       subscriptions: [],
-      properties: {}
+      properties: {},
+      expandBag: {}
     });
 
     onMounted(async () => {
@@ -44,7 +45,8 @@ export class ComponentsTree extends Component {
                 }
               }
             );
-            script = 'owlDevtools__SendComponentDetails("'+ this.activeComponent.path +'");';
+            let expandBag = JSON.stringify(this.activeComponent.expandBag);
+            script = 'owlDevtools__SendComponentDetails("'+ this.activeComponent.path +'", \''+ expandBag +'\');';
             chrome.devtools.inspectedWindow.eval(
               script,
               (result, isException) => {
@@ -58,7 +60,7 @@ export class ComponentsTree extends Component {
           }
         });
       });
-      let script = 'owlDevtools__SendTree(null);';
+      let script = 'owlDevtools__SendTree();';
       chrome.devtools.inspectedWindow.eval(
         script,
         (result, isException) => {
@@ -69,7 +71,7 @@ export class ComponentsTree extends Component {
           }
         }
       );
-      script = 'owlDevtools__SendComponentDetails(null);';
+      script = 'owlDevtools__SendComponentDetails();';
       chrome.devtools.inspectedWindow.eval(
         script,
         (result, isException) => {
@@ -96,11 +98,17 @@ export class ComponentsTree extends Component {
 
   editReactiveState(subscription_path, value){
     let script = 'owlDevtools__EditReactiveState("'+ this.activeComponent.path +'", "'+ subscription_path +'", '+ value +');';
-    console.log(script);
     chrome.devtools.inspectedWindow.eval(
       script,
       (result, isException) => {}
     );
+  }
+
+  updateExpandBag(path, toggled, display){
+    this.activeComponent.expandBag[path] = {
+      toggled: toggled,
+      display: display
+    }
   }
 
   updateObjectTreeElements(inputObj) {
@@ -112,10 +120,14 @@ export class ComponentsTree extends Component {
       obj = this.activeComponent.subscriptions[Number(path_array[0])].target;
     for (let i = 1; i < path_array.length; i++) {
       let match = path_array[i];
-      obj = obj.children.filter(child => (child.name) === match)[0];
+      if (obj.contentType === "array") 
+        obj = obj.children[match];
+      else
+        obj = obj.children.filter(child => (child.name) === match)[0];
     }
     if (obj.hasChildren && obj.children.length === 0) {
-      let script = 'owlDevtools__LoadObjectChildren("'+ this.activeComponent.path +'","'+ obj.path +'", '+ obj.depth +', "'+ obj.contentType +'", "'+ obj.objectType +'");';
+      let expandBag = JSON.stringify(this.activeComponent.expandBag);
+      let script = 'owlDevtools__LoadObjectChildren("'+ this.activeComponent.path +'","'+ obj.path +'", '+ obj.depth +', "'+ obj.contentType +'", "'+ obj.objectType +'", '+ expandBag +');';
       chrome.devtools.inspectedWindow.eval(
         script,
         (result, isException) => {
@@ -155,7 +167,6 @@ export class ComponentsTree extends Component {
     element.selected = true;
     this.highlightChildren(element);
     let script = 'owlDevtools__SendComponentDetails("' + element.path + '");';
-    console.log(script);
     chrome.devtools.inspectedWindow.eval(
       script,
       (result, isException) => {

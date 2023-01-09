@@ -24,6 +24,7 @@
           <DetailsWindow 
             activeComponent="activeComponent"
             updateObjectTreeElement.bind="updateObjectTreeElements"
+            updateBag.bind="updateExpandBag"
             expandSubscriptionsKeys.bind="expandSubscriptionsKeys"
             editReactiveState.bind="editReactiveState"/>
         </div>

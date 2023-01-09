@@ -24,6 +24,7 @@
       <ObjectTreeElement 
         t-props="child"
         updateObjectTreeElement="props.updateObjectTreeElement"
+        updateBag="props.updateBag"
         editReactiveState="props.editReactiveState"/>
     </t>
   </t>

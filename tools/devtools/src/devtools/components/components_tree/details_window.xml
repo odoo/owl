@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.details_window" owl="1">
-    <div class="details_window my-1">
-      <div id="details_window_head" class="details-panel my-1">
+    <div class="details_window">
+      <div id="details_window_head" class="panel-top">
         <div class="name_wrapper">
           <b><t t-esc="componentName"/></b>
         </div>

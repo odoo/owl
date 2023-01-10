@@ -3,6 +3,8 @@
 const { Component, useState, onWillStart, onWillPatch, onMounted} = owl
 import TreeElement from './tree_element';
 import { DetailsWindow } from "./details_window";
+import { SearchBar } from './search_bar';
+import { fuzzySearch } from '../../../utils';
 
 export class ComponentsTree extends Component {
   setup(){
@@ -20,6 +22,12 @@ export class ComponentsTree extends Component {
       children: [],
       highlighted: false
     });
+
+    this.search = useState({
+      search: '',
+      searchResults: [],
+      searchIndex: 0
+    })
 
     this.activeComponent = useState({
       path: "App",
@@ -83,6 +91,34 @@ export class ComponentsTree extends Component {
         }
       );
     });
+  }
+
+  updateSearch(search){
+    this.search.search = search;
+    this.search.searchResults = [];
+    this.getSearchResults(search, this.root);
+    if(this.search.searchResults.length > 0){
+      this.search.searchIndex = 0;
+      this.selectComponent(this.search.searchResults[0]);
+    }
+    else
+      this.search.searchIndex = -1;
+  }
+
+  getSearchResults(search, node){
+    if(search.length < 1)
+      return;
+    if (fuzzySearch(node.name, search)) {
+      this.search.searchResults.push(node.path)
+    }
+    if(node.children) {
+      node.children.forEach(child => this.getSearchResults(search, child));
+    }
+  }
+
+  setSearchIndex(index){
+    this.search.searchIndex = index;
+    this.selectComponent(this.search.searchResults[index]);
   }
   
   updateTree(component) {
@@ -153,13 +189,13 @@ export class ComponentsTree extends Component {
     );
   }
 
-  selectComponent(component) {
+  selectComponent(path) {
     this.root.selected = false;
     this.root.highlighted = false;
     this.root.children.forEach(child => {
       this.deselectComponent(child)
     });
-    let path_array = component.path.split('/');
+    let path_array = path.split('/');
     let element = this.root;
     for (let i = 1; i < path_array.length; i++) {
       element = element.children.filter(child => (child.key) === path_array[i])[0];
@@ -213,7 +249,7 @@ export class ComponentsTree extends Component {
 
   static template = "devtools.components_tree";
   
-  static components = { TreeElement, DetailsWindow };
+  static components = { TreeElement, DetailsWindow, SearchBar };
     
 }
 

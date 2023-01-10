@@ -398,7 +398,7 @@ if(!window.owlDevtoolsScriptsLoaded){
         display: true,
         toggled: true,
         selected: false,
-        highlighted: false,
+        highlighted: false
       };
       child.path = tree_node.path + "\/" + child.key;
       if (child.path === inspectedPath){

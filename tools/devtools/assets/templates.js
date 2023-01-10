@@ -4,22 +4,24 @@ App.registerTemplate("devtools.components_tree", function devtools_components_tr
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { bind } = helpers;
-  const comp1 = app.createComponent(`TreeElement`, true, false, true, false);
-  const comp2 = app.createComponent(`DetailsWindow`, true, false, false, false);
+  const comp1 = app.createComponent(`SearchBar`, true, false, true, false);
+  const comp2 = app.createComponent(`TreeElement`, true, false, true, false);
+  const comp3 = app.createComponent(`DetailsWindow`, true, false, false, false);
   
-  let block1 = createBlock(`<div id="container" block-handler-0="mouseover.stop" block-handler-1="mouseout.stop"><div class="split-screen-container"><div class="split-screen-left" block-attribute-2="style"><div class="details-panel my-1"> Search bar </div><div class="horizontal-border"/><block-child-0/></div><div class="split-screen-border" block-attribute-3="style" block-handler-4="mousedown" block-handler-5="mouseup"/><div class="split-screen-right" block-attribute-6="style"><block-child-1/></div></div></div>`);
+  let block1 = createBlock(`<div id="container" block-handler-0="mouseover.stop" block-handler-1="mouseout.stop"><div class="split-screen-container"><div class="split-screen-left" block-attribute-2="style"><div class="panel-top"><block-child-0/></div><div class="horizontal-border"/><div id="tree-container"><block-child-1/></div></div><div class="split-screen-border" block-attribute-3="style" block-handler-4="mousedown" block-handler-5="mouseup"/><div class="split-screen-right" block-attribute-6="style"><block-child-2/></div></div></div>`);
   
   return function template(ctx, node, key = "") {
     let hdlr1 = ["stop", ctx['removeHighlight'], ctx];
     let hdlr2 = ["stop", ctx['removeHighlight'], ctx];
     let attr1 = `width:calc(${ctx['state'].splitPosition}% - 1px);`;
-    const b2 = comp1(Object.assign({}, ctx['root'], {updateComponent: bind(this, ctx['updateTree']),selectComponent: bind(this, ctx['selectComponent'])}), key + `__1`, node, this, null);
+    const b2 = comp1(Object.assign({}, ctx['search'], {updateSearch: bind(this, ctx['updateSearch']),setSearchIndex: bind(this, ctx['setSearchIndex'])}), key + `__1`, node, this, null);
+    const b3 = comp2(Object.assign({}, ctx['root'], {search: ctx['search'].search,searchResults: ctx['search'].searchResults,updateComponent: bind(this, ctx['updateTree']),selectComponent: bind(this, ctx['selectComponent'])}), key + `__2`, node, this, null);
     let attr2 = `left:calc(${ctx['state'].splitPosition}% - 1px);`;
     let hdlr3 = [ctx['handleMouseDown'], ctx];
     let hdlr4 = [ctx['handleMouseUp'], ctx];
     let attr3 = `width:calc(${100-ctx['state'].splitPosition}%);`;
-    const b3 = comp2({activeComponent: ctx['activeComponent'],updateObjectTreeElement: bind(this, ctx['updateObjectTreeElements']),updateBag: bind(this, ctx['updateExpandBag']),expandSubscriptionsKeys: bind(this, ctx['expandSubscriptionsKeys']),editReactiveState: bind(this, ctx['editReactiveState'])}, key + `__2`, node, this, null);
-    return block1([hdlr1, hdlr2, attr1, attr2, hdlr3, hdlr4, attr3], [b2, b3]);
+    const b4 = comp3({activeComponent: ctx['activeComponent'],updateObjectTreeElement: bind(this, ctx['updateObjectTreeElements']),updateBag: bind(this, ctx['updateExpandBag']),expandSubscriptionsKeys: bind(this, ctx['expandSubscriptionsKeys']),editReactiveState: bind(this, ctx['editReactiveState'])}, key + `__3`, node, this, null);
+    return block1([hdlr1, hdlr2, attr1, attr2, hdlr3, hdlr4, attr3], [b2, b3, b4]);
   }
 });
 
@@ -30,7 +32,7 @@ App.registerTemplate("devtools.details_window", function devtools_details_window
   const comp1 = app.createComponent(`ObjectTreeElement`, true, false, true, false);
   const comp2 = app.createComponent(`Subscriptions`, true, false, false, false);
   
-  let block1 = createBlock(`<div class="details_window my-1"><div id="details_window_head" class="details-panel my-1"><div class="name_wrapper"><b><block-text-0/></b></div></div><div class="horizontal-border"/><div id="props" class="details-panel my-1"><b>props</b><block-child-0/></div><div class="horizontal-border"/><div id="hooks" class="details-panel my-1"><b>hooks</b></div><div class="horizontal-border"/><div id="subscriptions" class="details-panel my-1"><block-child-1/></div></div>`);
+  let block1 = createBlock(`<div class="details_window"><div id="details_window_head" class="panel-top"><div class="name_wrapper"><b><block-text-0/></b></div></div><div class="horizontal-border"/><div id="props" class="details-panel my-1"><b>props</b><block-child-0/></div><div class="horizontal-border"/><div id="hooks" class="details-panel my-1"><b>hooks</b></div><div class="horizontal-border"/><div id="subscriptions" class="details-panel my-1"><block-child-1/></div></div>`);
   
   return function template(ctx, node, key = "") {
     let txt1 = ctx['componentName'];
@@ -94,6 +96,44 @@ App.registerTemplate("devtools.object_tree_element", function devtools_object_tr
   }
 });
 
+App.registerTemplate("devtools.searchbar", function devtools_searchbar(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block2 = createBlock(`<div class="search-selector"><i class="fa fa-mouse-pointer" aria-hidden="true"/></div>`);
+  let block3 = createBlock(`<div class="search-border mx-2"/>`);
+  let block4 = createBlock(`<div class="search-bar-wrapper"><i class="fa fa-search search-icon" aria-hidden="true"/><input type="text" class="search-input" placeholder="Search" block-attribute-0="value" block-handler-1="keyup"/><block-child-0/></div>`);
+  let block6 = createBlock(`<div class="search-indicator"><block-child-0/>|<block-child-1/></div>`);
+  let block9 = createBlock(`<div class="search-border mx-2"/>`);
+  let block10 = createBlock(`<i class="fa fa-angle-up search-utility me-2" aria-hidden="true" block-handler-0="click.stop"/>`);
+  let block11 = createBlock(`<i class="fa fa-angle-down search-utility me-2" aria-hidden="true" block-handler-0="click.stop"/>`);
+  let block12 = createBlock(`<i class="fa fa-times search-utility" aria-hidden="true" block-handler-0="click.stop"/>`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = block2();
+    const b3 = block3();
+    let b5;
+    let attr1 = new String((ctx['props'].search) || "");
+    let hdlr1 = [ctx['updateSearch'], ctx];
+    if (ctx['props'].search.length>0) {
+      const b7 = safeOutput(ctx['props'].searchResults.length?ctx['props'].searchIndex+1:0);
+      const b8 = safeOutput(ctx['props'].searchResults.length);
+      const b6 = block6([], [b7, b8]);
+      const b9 = block9();
+      let hdlr2 = ["stop", ctx['getPrevSearch'], ctx];
+      const b10 = block10([hdlr2]);
+      let hdlr3 = ["stop", ctx['getNextSearch'], ctx];
+      const b11 = block11([hdlr3]);
+      let hdlr4 = ["stop", ctx['clearSearch'], ctx];
+      const b12 = block12([hdlr4]);
+      b5 = multi([b6, b9, b10, b11, b12]);
+    }
+    const b4 = block4([attr1, hdlr1], [b5]);
+    return multi([b2, b3, b4]);
+  }
+});
+
 App.registerTemplate("devtools.subscriptions", function devtools_subscriptions(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -142,12 +182,12 @@ App.registerTemplate("devtools.tree_element", function devtools_tree_element(app
   let { safeOutput, prepareList, withKey } = helpers;
   const comp1 = app.createComponent(`TreeElement`, true, false, true, false);
   
-  let block2 = createBlock(`<div block-attribute-0="id" class="tree_component my-0 p-0" block-attribute-1="class" block-attribute-2="style" block-handler-3="mouseover.stop" block-handler-4="click.stop"><div class="component_wrapper" block-attribute-5="style"><block-child-0/><block-child-1/><div class="name_wrapper"><block-text-6/> <block-child-2/></div></div></div>`);
+  let block2 = createBlock(`<div block-attribute-0="id" class="tree_component my-0 p-0" block-attribute-1="class" block-attribute-2="style" block-handler-3="mouseover.stop" block-handler-4="click.stop"><div class="component_wrapper" block-attribute-5="style"><block-child-0/><block-child-1/><div class="name_wrapper"><block-child-2/> <block-child-3/></div></div></div>`);
   let block3 = createBlock(`<i class="fa fa-caret-right mx-1" block-attribute-0="style" block-handler-1="click.stop"/>`);
   let block4 = createBlock(`<i class="fa fa-caret-right mx-1" block-attribute-0="style"/>`);
   
   return function template(ctx, node, key = "") {
-    let b3,b4,b5;
+    let b3,b4,b5,b6;
     let attr1 = `tree_element/${ctx['props'].path}`;
     let attr2 = {'component_selected':ctx['props'].selected,'component_highlighted':ctx['props'].highlighted};
     let attr3 = `display: ${ctx['props'].display?'flex':'none'}`;
@@ -162,18 +202,18 @@ App.registerTemplate("devtools.tree_element", function devtools_tree_element(app
       let attr6 = `cursor: pointer; visibility: hidden;`;
       b4 = block4([attr6]);
     }
-    let txt1 = ctx['props'].name;
-    b5 = safeOutput(this.getMinimizedKey());
-    const b2 = block2([attr1, attr2, attr3, hdlr1, hdlr2, attr4, txt1], [b3, b4, b5]);
+    b5 = safeOutput(ctx['content']);
+    b6 = safeOutput(this.getMinimizedKey());
+    const b2 = block2([attr1, attr2, attr3, hdlr1, hdlr2, attr4], [b3, b4, b5, b6]);
     ctx = Object.create(ctx);
-    const [k_block6, v_block6, l_block6, c_block6] = prepareList(ctx['props'].children);;
-    for (let i1 = 0; i1 < l_block6; i1++) {
-      ctx[`child`] = v_block6[i1];
+    const [k_block7, v_block7, l_block7, c_block7] = prepareList(ctx['props'].children);;
+    for (let i1 = 0; i1 < l_block7; i1++) {
+      ctx[`child`] = v_block7[i1];
       const key1 = ctx['child'].key;
-      c_block6[i1] = withKey(comp1(Object.assign({}, ctx['child'], {updateComponent: ctx['props'].updateComponent,selectComponent: ctx['props'].selectComponent}), key + `__1__${key1}`, node, this, null), key1);
+      c_block7[i1] = withKey(comp1(Object.assign({}, ctx['child'], {search: ctx['props'].search,searchResults: ctx['props'].searchResults,updateComponent: ctx['props'].updateComponent,selectComponent: ctx['props'].selectComponent}), key + `__1__${key1}`, node, this, null), key1);
     }
-    const b6 = list(c_block6);
-    return multi([b2, b6]);
+    const b7 = list(c_block7);
+    return multi([b2, b7]);
   }
 });
 

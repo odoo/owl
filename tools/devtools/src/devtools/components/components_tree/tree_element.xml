@@ -10,13 +10,15 @@
           <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer; visibility: hidden;"></i>
         </t>
         <div class="name_wrapper">
-          <t t-esc="props.name"/> <t t-out="this.getMinimizedKey()"/>
+          <t t-out="content"/> <t t-out="this.getMinimizedKey()"/>
         </div>
       </div>
     </div>
     <t t-foreach="props.children" t-as="child" t-key="child.key">
       <TreeElement 
         t-props="child"
+        search="props.search"
+        searchResults="props.searchResults"
         updateComponent="props.updateComponent"
         selectComponent="props.selectComponent"/>
     </t>

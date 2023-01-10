@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+  <t t-name="devtools.searchbar" owl="1">
+    <div class="search-selector">
+      <i class="fa fa-mouse-pointer" aria-hidden="true"></i>
+    </div>
+    <div class="search-border mx-2"/>
+    <div class="search-bar-wrapper">
+      <i class="fa fa-search search-icon" aria-hidden="true"></i>
+      <input type="text" class="search-input" placeholder="Search" t-on-keyup="updateSearch" t-att-value="props.search"/>
+      <t t-if="props.search.length > 0">
+        <div class="search-indicator"><t t-out="props.searchResults.length ? props.searchIndex + 1 : 0"/>|<t t-out="props.searchResults.length"/></div>
+        <div class="search-border mx-2"/>
+        <i class="fa fa-angle-up search-utility me-2" aria-hidden="true" t-on-click.stop="getPrevSearch"></i>
+        <i class="fa fa-angle-down search-utility me-2" aria-hidden="true" t-on-click.stop="getNextSearch"></i>
+        <i class="fa fa-times search-utility" aria-hidden="true" t-on-click.stop="clearSearch"></i>
+      </t>
+    </div>
+  </t>
+</templates>

@@ -1,22 +1,56 @@
 /** @odoo-module **/
 
-const { Component, onWillRender, onRendered, onMounted, markup} = owl
+const { Component, onWillRender, onRendered, onMounted, markup, onWillUpdateProps} = owl
 
 export default class TreeElement extends Component {
   setup(){
+    this.searched = false;
     onMounted(() => {
       if (this.props.selected){
         const tree_element = document.getElementById("tree_element/"+this.props.path);
         tree_element.scrollIntoView({block: "center"});
       }
-    })
+    });
+    onWillUpdateProps(nextProps => {
+      if(nextProps.selected){
+        const tree_element = document.getElementById("tree_element/"+this.props.path);
+        tree_element.scrollIntoView({block: "center"});
+      }
+      if(nextProps.searchResults.includes(this.props.path))
+        this.searched = true;
+      else
+        this.searched = false;
+    });
   }
+
+  get content() {
+    if(this.searched){
+      let content = this.props.name;
+      let start_index = 0;
+      for (let i = 0; i < this.props.search.length; i++){
+        let foundUpper = content.indexOf(this.props.search[i].toUpperCase(), start_index);
+        if (foundUpper < 0)
+          foundUpper = Infinity;
+        let foundLower = content.indexOf(this.props.search[i], start_index);
+        if (foundLower < 0)
+          foundLower = Infinity;
+        let found = Math.min(foundLower, foundUpper);
+        let replacement = '<div class="highlight-search">'+ content[found] +'</div>';
+        start_index = found + replacement.length;
+        content = content.replaceAt(found, replacement);
+      }
+      return markup(content);
+    }
+    else
+      return this.props.name;
+  }
+
   static template = "devtools.tree_element";
-
-  static props = ['name', 'children', 'path', 'key', 'display', 'toggled', 'depth', 'selected', 'highlighted'];
-
+  
+  static props = ['name', 'children', 'path', 'key', 'display', 'toggled', 'depth', 'selected', 'highlighted', 'search', 'searchResults'];
+  
   static components = { TreeElement };
-
+  
   toggleDisplay(ev){
     this.props.toggled = !this.props.toggled;
     this.props.children.forEach(child => {
@@ -60,7 +94,11 @@ export default class TreeElement extends Component {
 
   toggleComponent(ev){
     if(!this.props.selected){
-      this.props.selectComponent(this.props);
+      this.props.selectComponent(this.props.path);
     }
   }
+}
+
+String.prototype.replaceAt = function(index, replacement) {
+  return this.substring(0, index) + replacement + this.substring(index + 1);
 }

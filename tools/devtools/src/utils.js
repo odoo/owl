@@ -23,3 +23,15 @@ export function fuzzySearch(base, query) {
   };
   return true;
 };
+
+export function isElementInCenterViewport(el) {
+  const rect = el.getBoundingClientRect();
+  return (
+    rect.top >= 0 &&
+    rect.left >= 0 &&
+    rect.bottom >= 0.25*(window.innerHeight || document.documentElement.clientHeight) &&
+    rect.bottom <= 0.75*(window.innerHeight || document.documentElement.clientHeight) &&
+    rect.right >= 0.25*(window.innerWidth || document.documentElement.clientWidth) &&
+    rect.right <= 0.75*(window.innerWidth || document.documentElement.clientWidth)
+  );
+}

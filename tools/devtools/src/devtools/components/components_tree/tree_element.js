@@ -1,5 +1,7 @@
 /** @odoo-module **/
 
+import { isElementInCenterViewport } from "../../../utils";
+
 const { Component, onWillRender, onRendered, onMounted, markup, onWillUpdateProps} = owl
 
 export default class TreeElement extends Component {
@@ -8,13 +10,14 @@ export default class TreeElement extends Component {
     onMounted(() => {
       if (this.props.selected){
         const tree_element = document.getElementById("tree_element/"+this.props.path);
-        tree_element.scrollIntoView({block: "center"});
+        tree_element.scrollIntoView({block: "center", behavior: "smooth"});
       }
     });
     onWillUpdateProps(nextProps => {
       if(nextProps.selected){
         const tree_element = document.getElementById("tree_element/"+this.props.path);
-        tree_element.scrollIntoView({block: "center"});
+        if(!isElementInCenterViewport(tree_element))
+          tree_element.scrollIntoView({block: "center", behavior: "smooth"});
       }
       if(nextProps.searchResults.includes(this.props.path))
         this.searched = true;

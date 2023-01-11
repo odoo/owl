@@ -4,7 +4,10 @@ const { Component, markup, useState, onMounted, onWillUpdateProps } = owl
 
 export class SearchBar extends Component {
   setup(){
+  }
 
+  toggleSelector(){
+    this.props.toggleSelector();
   }
 
   updateSearch(event){
@@ -39,7 +42,7 @@ export class SearchBar extends Component {
     }
   }
   
-  static props = ['updateSearch', 'setSearchIndex', 'search', 'searchResults', 'searchIndex'];
+  static props = ['updateSearch', 'setSearchIndex', 'toggleSelector', 'search', 'searchResults', 'searchIndex'];
 
   static template = "devtools.searchbar";
 }

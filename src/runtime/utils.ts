@@ -10,20 +10,19 @@ export type Callback = () => void;
  */
 export function batched(callback: Callback): Callback {
   let called = false;
-  return async () => {
-    // This await blocks all calls to the callback here, then releases them sequentially
-    // in the next microtick. This line decides the granularity of the batch.
-    await Promise.resolve();
-    if (!called) {
-      called = true;
-      // wait for all calls in this microtick to fall through before resetting "called"
-      // so that only the first call to the batched function calls the original callback.
-      // Schedule this before calling the callback so that calls to the batched function
-      // within the callback will proceed only after resetting called to false, and have
-      // a chance to execute the callback again
-      Promise.resolve().then(() => (called = false));
-      callback();
-    }
+  return () => {
+    queueMicrotask(() => {
+      if (!called) {
+        called = true;
+        // wait for all calls in this microtick to fall through before resetting "called"
+        // so that only the first call to the batched function calls the original callback.
+        // Schedule this before calling the callback so that calls to the batched function
+        // within the callback will proceed only after resetting called to false, and have
+        // a chance to execute the callback again
+        queueMicrotask(() => (called = false));
+        callback();
+      }
+    });
   };
 }
 

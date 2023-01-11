@@ -2,7 +2,7 @@
 <templates xml:space="preserve">
   <t t-name="devtools.searchbar" owl="1">
     <div class="search-selector">
-      <i class="fa fa-mouse-pointer" aria-hidden="true"></i>
+      <i class="fa fa-mouse-pointer" t-attf-style="color: {{props.activeSelector ? 'rgb(41, 134, 255)' : 'rgb(0, 0, 0)'}};" t-on-click.stop="toggleSelector" aria-hidden="true"></i>
     </div>
     <div class="search-border mx-2"/>
     <div class="search-bar-wrapper">
@@ -11,9 +11,9 @@
       <t t-if="props.search.length > 0">
         <div class="search-indicator"><t t-out="props.searchResults.length ? props.searchIndex + 1 : 0"/>|<t t-out="props.searchResults.length"/></div>
         <div class="search-border mx-2"/>
-        <i class="fa fa-angle-up search-utility me-2" aria-hidden="true" t-on-click.stop="getPrevSearch"></i>
-        <i class="fa fa-angle-down search-utility me-2" aria-hidden="true" t-on-click.stop="getNextSearch"></i>
-        <i class="fa fa-times search-utility" aria-hidden="true" t-on-click.stop="clearSearch"></i>
+        <i class="fa fa-angle-up fa-lg search-utility me-2" aria-hidden="true" t-on-click.stop="getPrevSearch"></i>
+        <i class="fa fa-angle-down fa-lg search-utility me-2" aria-hidden="true" t-on-click.stop="getNextSearch"></i>
+        <i class="fa fa-times fa-lg search-utility" aria-hidden="true" t-on-click.stop="clearSearch"></i>
       </t>
     </div>
   </t>

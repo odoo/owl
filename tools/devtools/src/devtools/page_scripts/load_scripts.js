@@ -79,6 +79,33 @@ if(!window.owlDevtoolsScriptsLoaded){
     const details = document.querySelectorAll('.owl-devtools-detailsBox');
     details.forEach(highlight => highlight.remove());
   };
+
+  var owlDevtools__CurrentSelectedElement = null;
+
+  var owlDevtools__HTMLSelector = function(ev){
+    let target = ev.target;
+    if (!owlDevtools__CurrentSelectedElement || !(target.isEqualNode(owlDevtools__CurrentSelectedElement))){
+      let [application] = owl.App.apps;
+      let root = application.root;
+      let path = owlDevtools__GetElementPath(target, root);
+      let component = owlDevtools__GetComponent(path, root);
+      owlDevtools__HighlightElement(target, component.component.constructor.name)
+      owlDevtools__CurrentSelectedElement = target;
+      window.postMessage({type: "owlDevtools__SelectElement", path: path});
+    }
+  }
+  function owlDevtools__EnableHTMLSelector(){
+    document.addEventListener("mousemove", owlDevtools__HTMLSelector);
+    document.addEventListener("click", owlDevtools__DisableHTMLSelector);
+    document.addEventListener("mouseout", owlDevtools__RemoveHighlights);
+  }
+  function owlDevtools__DisableHTMLSelector(){
+    owlDevtools__RemoveHighlights();
+    document.removeEventListener("mousemove", owlDevtools__HTMLSelector);
+    document.removeEventListener("click", owlDevtools__DisableHTMLSelector);
+    document.removeEventListener("mouseout", owlDevtools__RemoveHighlights);
+    window.postMessage({type: "owlDevtools__StopSelector"});
+  }
   // function owlDevtools__DeepCopyAndRemoveCircular(obj) {
   //   const seenObjects = new WeakSet();
   //   const copy = JSON.parse(JSON.stringify(obj, function(key, value) {
@@ -288,7 +315,7 @@ if(!window.owlDevtoolsScriptsLoaded){
     let component = {};
     expandBag = JSON.parse(expandBag);
     if(!path){
-      path = owlDevtools__GetInspectedPath(root);
+      path = owlDevtools__GetElementPath($0, root);
     }
     component.path = path;
     let node = owlDevtools__GetComponent(path, root);
@@ -452,14 +479,13 @@ if(!window.owlDevtoolsScriptsLoaded){
     return null;
   }
   // Returns the path to the component which is currently being inspected
-  function owlDevtools__GetInspectedPath(root){
-    let inspectedElement = $0;
-    if(inspectedElement){
-      let parentsList = [inspectedElement];
-      if(inspectedElement.tagName !== 'BODY'){
-        while (inspectedElement.parentElement.tagName !== 'BODY'){
-          inspectedElement = inspectedElement.parentElement;
-          parentsList.push(inspectedElement);
+  function owlDevtools__GetElementPath(element, root){
+    if(element){
+      let parentsList = [element];
+      if(element.tagName !== 'BODY'){
+        while (element.parentElement.tagName !== 'BODY'){
+          element = element.parentElement;
+          parentsList.push(element);
         }
       }
       for (let i = 0; i < parentsList.length; i++) {
@@ -486,7 +512,7 @@ if(!window.owlDevtoolsScriptsLoaded){
       highlighted: false,
     };
     if(!inspectedPath){
-      inspectedPath = owlDevtools__GetInspectedPath(root);
+      inspectedPath = owlDevtools__GetElementPath($0, root);
       if(inspectedPath === "App")
         tree.root.selected = true;
     }
@@ -498,7 +524,7 @@ if(!window.owlDevtoolsScriptsLoaded){
   const originalFlush = [...owl.App.apps][0].scheduler.flush;
   [...owl.App.apps][0].scheduler.flush = function() {
     originalFlush.call(this, ...arguments);
-    window.postMessage({type: "Flush"});
+    window.postMessage({type: "owlDevtools__Flush"});
   };
   window.owlDevtoolsScriptsLoaded = true;
 }

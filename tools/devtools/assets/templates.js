@@ -14,7 +14,7 @@ App.registerTemplate("devtools.components_tree", function devtools_components_tr
     let hdlr1 = ["stop", ctx['removeHighlight'], ctx];
     let hdlr2 = ["stop", ctx['removeHighlight'], ctx];
     let attr1 = `width:calc(${ctx['state'].splitPosition}% - 1px);`;
-    const b2 = comp1(Object.assign({}, ctx['search'], {updateSearch: bind(this, ctx['updateSearch']),setSearchIndex: bind(this, ctx['setSearchIndex'])}), key + `__1`, node, this, null);
+    const b2 = comp1(Object.assign({}, ctx['search'], {toggleSelector: bind(this, ctx['toggleSelector']),updateSearch: bind(this, ctx['updateSearch']),setSearchIndex: bind(this, ctx['setSearchIndex'])}), key + `__1`, node, this, null);
     const b3 = comp2(Object.assign({}, ctx['root'], {search: ctx['search'].search,searchResults: ctx['search'].searchResults,updateComponent: bind(this, ctx['updateTree']),selectComponent: bind(this, ctx['selectComponent'])}), key + `__2`, node, this, null);
     let attr2 = `left:calc(${ctx['state'].splitPosition}% - 1px);`;
     let hdlr3 = [ctx['handleMouseDown'], ctx];
@@ -101,35 +101,37 @@ App.registerTemplate("devtools.searchbar", function devtools_searchbar(app, bdom
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
   
-  let block2 = createBlock(`<div class="search-selector"><i class="fa fa-mouse-pointer" aria-hidden="true"/></div>`);
+  let block2 = createBlock(`<div class="search-selector"><i class="fa fa-mouse-pointer" block-attribute-0="style" aria-hidden="true" block-handler-1="click.stop"/></div>`);
   let block3 = createBlock(`<div class="search-border mx-2"/>`);
   let block4 = createBlock(`<div class="search-bar-wrapper"><i class="fa fa-search search-icon" aria-hidden="true"/><input type="text" class="search-input" placeholder="Search" block-attribute-0="value" block-handler-1="keyup"/><block-child-0/></div>`);
   let block6 = createBlock(`<div class="search-indicator"><block-child-0/>|<block-child-1/></div>`);
   let block9 = createBlock(`<div class="search-border mx-2"/>`);
-  let block10 = createBlock(`<i class="fa fa-angle-up search-utility me-2" aria-hidden="true" block-handler-0="click.stop"/>`);
-  let block11 = createBlock(`<i class="fa fa-angle-down search-utility me-2" aria-hidden="true" block-handler-0="click.stop"/>`);
-  let block12 = createBlock(`<i class="fa fa-times search-utility" aria-hidden="true" block-handler-0="click.stop"/>`);
+  let block10 = createBlock(`<i class="fa fa-angle-up fa-lg search-utility me-2" aria-hidden="true" block-handler-0="click.stop"/>`);
+  let block11 = createBlock(`<i class="fa fa-angle-down fa-lg search-utility me-2" aria-hidden="true" block-handler-0="click.stop"/>`);
+  let block12 = createBlock(`<i class="fa fa-times fa-lg search-utility" aria-hidden="true" block-handler-0="click.stop"/>`);
   
   return function template(ctx, node, key = "") {
-    const b2 = block2();
+    let attr1 = `color: ${ctx['props'].activeSelector?'rgb(41, 134, 255)':'rgb(0, 0, 0)'};`;
+    let hdlr1 = ["stop", ctx['toggleSelector'], ctx];
+    const b2 = block2([attr1, hdlr1]);
     const b3 = block3();
     let b5;
-    let attr1 = new String((ctx['props'].search) || "");
-    let hdlr1 = [ctx['updateSearch'], ctx];
+    let attr2 = new String((ctx['props'].search) || "");
+    let hdlr2 = [ctx['updateSearch'], ctx];
     if (ctx['props'].search.length>0) {
       const b7 = safeOutput(ctx['props'].searchResults.length?ctx['props'].searchIndex+1:0);
       const b8 = safeOutput(ctx['props'].searchResults.length);
       const b6 = block6([], [b7, b8]);
       const b9 = block9();
-      let hdlr2 = ["stop", ctx['getPrevSearch'], ctx];
-      const b10 = block10([hdlr2]);
-      let hdlr3 = ["stop", ctx['getNextSearch'], ctx];
-      const b11 = block11([hdlr3]);
-      let hdlr4 = ["stop", ctx['clearSearch'], ctx];
-      const b12 = block12([hdlr4]);
+      let hdlr3 = ["stop", ctx['getPrevSearch'], ctx];
+      const b10 = block10([hdlr3]);
+      let hdlr4 = ["stop", ctx['getNextSearch'], ctx];
+      const b11 = block11([hdlr4]);
+      let hdlr5 = ["stop", ctx['clearSearch'], ctx];
+      const b12 = block12([hdlr5]);
       b5 = multi([b6, b9, b10, b11, b12]);
     }
-    const b4 = block4([attr1, hdlr1], [b5]);
+    const b4 = block4([attr2, hdlr2], [b5]);
     return multi([b2, b3, b4]);
   }
 });

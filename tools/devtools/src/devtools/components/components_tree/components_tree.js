@@ -26,7 +26,8 @@ export class ComponentsTree extends Component {
     this.search = useState({
       search: '',
       searchResults: [],
-      searchIndex: 0
+      searchIndex: 0,
+      activeSelector: false
     })
 
     this.activeComponent = useState({
@@ -66,6 +67,12 @@ export class ComponentsTree extends Component {
               }
             );
           }
+          if (msg.type === "SelectElement"){
+            this.selectComponent(msg.path);
+          }
+          if (msg.type === "StopSelector"){
+            this.search.activeSelector = false;
+          }
         });
       });
       let script = 'owlDevtools__SendTree();';
@@ -91,6 +98,19 @@ export class ComponentsTree extends Component {
         }
       );
     });
+  }
+
+  toggleSelector(){
+    this.search.activeSelector = !this.search.activeSelector;
+    let script;
+    if(this.search.activeSelector)
+      script = 'owlDevtools__EnableHTMLSelector();';
+    else
+      script = 'owlDevtools__DisableHTMLSelector();';
+    chrome.devtools.inspectedWindow.eval(
+      script,
+      (result, isException) => {}
+    );
   }
 
   updateSearch(search){

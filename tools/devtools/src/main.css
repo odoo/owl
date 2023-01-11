@@ -173,9 +173,8 @@
 }
 
 .search-indicator {
-  font-size: smaller;
   position: relative;
-  top: 0.4px;
+  top: 0.6px;
   float: right;
   white-space: nowrap;
 }

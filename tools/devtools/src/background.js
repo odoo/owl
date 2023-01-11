@@ -54,6 +54,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if(message.type === "Flush"){
     chrome.runtime.connect({name: "DevtoolsTreePort"}).postMessage({type: "Flush"});
   }
+  if(message.type === "SelectElement"){
+    chrome.runtime.connect({name: "DevtoolsTreePort"}).postMessage({type: "SelectElement", path: message.path});
+  }
+  if(message.type === "StopSelector"){
+    chrome.runtime.connect({name: "DevtoolsTreePort"}).postMessage({type: "StopSelector"});
+  }
 });
 
 

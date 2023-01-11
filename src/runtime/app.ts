@@ -1,12 +1,11 @@
 import { Component, ComponentConstructor, Props } from "./component";
 import { ComponentNode } from "./component_node";
-import { nodeErrorHandlers, OwlError } from "./error_handling";
+import { nodeErrorHandlers, OwlError, handleError } from "./error_handling";
 import { Fiber, MountOptions } from "./fibers";
 import { Scheduler } from "./scheduler";
 import { validateProps } from "./template_helpers";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
 import { validateTarget } from "./utils";
-import { handleError } from "./error_handling";
 
 // reimplement dev mode stuff see last change in 0f7a8289a6fb8387c3c1af41c6664b2a8448758f
 

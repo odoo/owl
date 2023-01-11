@@ -1,6 +1,5 @@
-import { App, Component, mount, onMounted, useRef, useState } from "../../src/index";
+import { App, Component, mount, onMounted, useRef, useState, xml } from "../../src/index";
 import { logStep, makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
-import { xml } from "../../src/index";
 
 snapshotEverything();
 let fixture: HTMLElement;

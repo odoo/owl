@@ -14,9 +14,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-package-lock.json
-yarn.lock
-
 #ide's
 .vscode
 .idea

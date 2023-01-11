@@ -25,6 +25,7 @@
     "playground:watch": "npm-run-all  --parallel playground:serve \"build:* -- --watch\"",
     "prettier": "prettier {src/*.ts,src/**/*.ts,tests/*.ts,tests/**/*.ts,doc/*.md,doc/**/*.md} --write",
     "check-formatting": "prettier {src/*.ts,src/**/*.ts,tests/*.ts,tests/**/*.ts,doc/*.md,doc/**/*.md} --check",
+    "lint": "eslint src/**/*.ts tests/**/*.ts",
     "publish": "npm run build && npm publish",
     "release": "node tools/release.js",
     "compile_templates": "node tools/compile_xml.js"
@@ -42,26 +43,25 @@
   "devDependencies": {
     "@types/jest": "^27.0.1",
     "@types/node": "^14.11.8",
+    "@typescript-eslint/eslint-plugin": "5.48.1",
+    "@typescript-eslint/parser": "5.48.1",
     "chalk": "^3.0.0",
-    "cpx": "^1.5.0",
     "current-git-branch": "^1.1.0",
+    "eslint": "8.31.0",
     "git-rev-sync": "^1.12.0",
     "github-api": "^3.3.0",
     "jest": "^27.1.0",
     "jest-diff": "^27.3.1",
     "jest-environment-jsdom": "^27.1.0",
-    "live-server": "^1.2.1",
     "npm-run-all": "^4.1.5",
     "prettier": "2.4.1",
     "rollup": "^2.56.3",
     "rollup-plugin-dts": "^4.2.2",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.31.1",
-    "sass": "^1.16.1",
     "source-map-support": "^0.5.10",
     "ts-jest": "^27.0.5",
-    "typescript": "4.5.2",
-    "uglify-es": "^3.3.9"
+    "typescript": "4.5.2"
   },
   "jest": {
     "testEnvironment": "jsdom",

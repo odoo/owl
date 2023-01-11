@@ -317,6 +317,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
   }
   _patch() {
     let hasChildren = false;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     for (let _k in this.children) {
       hasChildren = true;
       break;

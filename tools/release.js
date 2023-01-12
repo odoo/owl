@@ -47,6 +47,18 @@ async function startRelease() {
   let file = await ask(`Release notes (${REL_NOTES_FILE}): `);
   file = file || REL_NOTES_FILE;
   let content;
+  if (!fs.existsSync(`./${file}`)) {
+    let lastRelease = await getOutput("git log --grep='\\[REL\\]' -n 1 --pretty=%H");
+    const commitsSinceLastRelease = await getOutput(`git log ${lastRelease.trim()}..HEAD --pretty=%s`);
+    const commitsAsMdList = commitsSinceLastRelease.trim().split("\n").map(l => " - " + l).join("\n");
+    log(`${file} did not exist, created a template containing all commits since last release.`)
+    fs.writeFileSync(file, `# v${next}\n\n${commitsAsMdList}`);
+    const shouldContinue = await ask(`Check that the contents of ${file} is correct, then press y to continue: `);
+    if (shouldContinue.toLowerCase() !== "y") {
+      log("aborted");
+      return;
+    }
+  }
   try {
     content = await readFile("./" + file);
   } catch (e) {
@@ -104,7 +116,7 @@ async function startRelease() {
   // ---------------------------------------------------------------------------
 
   log(`Step 7/${STEPS}: Creating the release...`);
-  const relaseResult = await execCommand(`gh release create v${next} dist/*.js ${draft} -F ${REL_NOTES_FILE}`);
+  const relaseResult = await execCommand(`gh release create v${next} dist/*.js ${draft} -F ${file}`);
   if (relaseResult !== 0) {
     logError("github release failed. Aborting.");
     return;
@@ -227,6 +239,22 @@ async function replaceInFile(file, from, to) {
         reject(err);
       } else {
         resolve();
+      }
+    });
+  });
+}
+
+async function getOutput(command) {
+  return new Promise((resolve, reject) => {
+    const childProcess = exec(command, (err, stdout, stderr) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(stdout);
+    });
+    childProcess.on("exit", code => {
+      if (code !== 0) {
+        reject(code);
       }
     });
   });

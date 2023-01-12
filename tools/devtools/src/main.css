@@ -35,6 +35,7 @@
     color:rgb(18, 54, 255);
     white-space: nowrap;
     display: inline;
+    width: 100%;
 }
 
 .highlight-search {

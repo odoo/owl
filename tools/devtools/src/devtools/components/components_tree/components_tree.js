@@ -1,13 +1,15 @@
 /** @odoo-module **/
 
 const { Component, useState, onWillStart, onWillPatch, onMounted} = owl
-import TreeElement from './tree_element';
+import { TreeElement } from './tree_element';
 import { DetailsWindow } from "./details_window";
 import { SearchBar } from './search_bar';
 import { fuzzySearch } from '../../../utils';
 
 export class ComponentsTree extends Component {
   setup(){
+
+    // TODO: tous les states dans this.state
     this.state = useState({
       splitPosition: 60
     });
@@ -35,9 +37,15 @@ export class ComponentsTree extends Component {
       name: "App",
       subscriptions: [],
       properties: {},
-      expandBag: {}
+      env: {},
+      expandBag: {
+        props: {},
+        env: {},
+        subscription: {}
+      }
     });
-
+    // TODO: const partout sauf si changé à la place de let
+    // TODO: Remplacer les for par for of si possible
     onMounted(async () => {
       chrome.runtime.onConnect.addListener((port) => {
         console.assert(port.name === "DevtoolsTreePort");
@@ -152,16 +160,16 @@ export class ComponentsTree extends Component {
     element.display = component.display;
   }
 
-  editReactiveState(subscription_path, value){
-    let script = 'owlDevtools__EditReactiveState("'+ this.activeComponent.path +'", "'+ subscription_path +'", '+ value +');';
+  editObjectTreeElement(object_path, value, object_type){
+    let script = 'owlDevtools__EditObject("'+ this.activeComponent.path +'", "'+ object_path +'", '+ value +', "' + object_type + '");';
     chrome.devtools.inspectedWindow.eval(
       script,
       (result, isException) => {}
     );
   }
 
-  updateExpandBag(path, toggled, display){
-    this.activeComponent.expandBag[path] = {
+  updateExpandBag(path, type, toggled, display){
+    this.activeComponent.expandBag[type][path] = {
       toggled: toggled,
       display: display
     }
@@ -172,6 +180,8 @@ export class ComponentsTree extends Component {
     let obj;
     if (inputObj.objectType === 'props')
       obj = this.activeComponent.properties[path_array[0]];
+    else if (inputObj.objectType === 'env')
+      obj = this.activeComponent.env[path_array[0]];
     else if (inputObj.objectType === 'subscription')
       obj = this.activeComponent.subscriptions[Number(path_array[0])].target;
     for (let i = 1; i < path_array.length; i++) {
@@ -195,6 +205,14 @@ export class ComponentsTree extends Component {
     }
     obj.toggled = inputObj.toggled;
     obj.display = inputObj.display;
+  }
+
+  refreshComponent() {
+    const script = 'owlDevtools__RefreshComponent("'+ this.activeComponent.path +'")';
+    chrome.devtools.inspectedWindow.eval(
+      script,
+      (result, isException) => {}
+    );
   }
 
   expandSubscriptionsKeys(index){
@@ -266,7 +284,7 @@ export class ComponentsTree extends Component {
     window.removeEventListener("mousemove", this.handleMouseMove);
     window.removeEventListener("mouseup", this.handleMouseUp);
   }
-
+  // TODO: templates sans _
   static template = "devtools.components_tree";
   
   static components = { TreeElement, DetailsWindow, SearchBar };

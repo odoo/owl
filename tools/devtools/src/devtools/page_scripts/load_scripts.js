@@ -1,46 +1,66 @@
 // Ensure the scripts are loaded only once per page
 if(!window.owlDevtoolsScriptsLoaded){
   // Draws a highlighting rectangle on the specified html element and displays the specified name and its dimension in a box
-  function owlDevtools__HighlightElement(element, name) {
+  function owlDevtools__HighlightElements(elements, name) {
     owlDevtools__RemoveHighlights();
   
-    const rect = element.getBoundingClientRect();
-    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
     
-    const top = rect.top + scrollTop;
-    const left = rect.left + scrollLeft;
-    const width = rect.width;
-    const height = rect.height;
+    let minTop = Number.MAX_SAFE_INTEGER;
+    let minLeft = Number.MAX_SAFE_INTEGER;
+    let maxBottom = Number.MIN_SAFE_INTEGER;
+    let maxRight = Number.MIN_SAFE_INTEGER;
     
-    const marginTop = parseInt(getComputedStyle(element).marginTop);
-    const marginRight = parseInt(getComputedStyle(element).marginRight);
-    const marginBottom = parseInt(getComputedStyle(element).marginBottom);
-    const marginLeft = parseInt(getComputedStyle(element).marginLeft);
+    for (const element of elements) {
+      const rect = element.getBoundingClientRect();
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+      const top = rect.top + scrollTop;
+      const left = rect.left + scrollLeft;
+      const bottom = top + rect.height;
+      const right = left + rect.width;
+
+      const marginTop = parseInt(getComputedStyle(element).marginTop);
+      const marginRight = parseInt(getComputedStyle(element).marginRight);
+      const marginBottom = parseInt(getComputedStyle(element).marginBottom);
+      const marginLeft = parseInt(getComputedStyle(element).marginLeft);
+      
+      minTop = Math.min(minTop, top);
+      minLeft = Math.min(minLeft, left);
+      maxBottom = Math.max(maxBottom, bottom);
+      maxRight = Math.max(maxRight, right);
+
+      const width = right - left;
+      const height = bottom - top;
+
+      const highlightMargins = document.createElement('div');
+      highlightMargins.className = 'owl-devtools-highlight';
+      highlightMargins.style.top = `${top - marginTop}px`;
+      highlightMargins.style.left = `${left - marginLeft}px`;
+      highlightMargins.style.width = `${width + marginLeft + marginRight}px`;
+      highlightMargins.style.height = `${height + marginBottom + marginTop}px`;
+      highlightMargins.style.position = 'absolute';
+      highlightMargins.style.backgroundColor = 'rgba(241, 179, 121, 0.4)'
+      highlightMargins.style.zIndex = '1000';
+      highlightMargins.style.pointerEvents = 'none';
+      
+      document.body.appendChild(highlightMargins);
+      const highlight = document.createElement('div');
+      highlight.className = 'owl-devtools-highlight';
+      highlight.style.top = `${top}px`;
+      highlight.style.left = `${left}px`;
+      highlight.style.width = `${width}px`;
+      highlight.style.height = `${height}px`;
+      highlight.style.position = 'absolute';
+      highlight.style.backgroundColor = 'rgba(40, 123, 231, 0.4)'
+      highlight.style.zIndex = '1000';
+      highlight.style.pointerEvents = 'none';
+      document.body.appendChild(highlight);
+      
+    }
     
-    const highlight = document.createElement('div');
-    highlight.className = 'owl-devtools-highlight';
-    highlight.style.top = `${top}px`;
-    highlight.style.left = `${left}px`;
-    highlight.style.width = `${width}px`;
-    highlight.style.height = `${height}px`;
-    highlight.style.position = 'absolute';
-    highlight.style.backgroundColor = 'rgba(63, 134, 228, 0.4)'
-    highlight.style.zIndex = '1000';
-    highlight.style.pointerEvents = 'none';
-    const highlightMargins = document.createElement('div');
-    highlightMargins.className = 'owl-devtools-highlight';
-    highlightMargins.style.top = `${top - marginTop}px`;
-    highlightMargins.style.left = `${left - marginLeft}px`;
-    highlightMargins.style.width = `${width + marginLeft + marginRight}px`;
-    highlightMargins.style.height = `${height + marginBottom + marginTop}px`;
-    highlightMargins.style.position = 'absolute';
-    highlightMargins.style.backgroundColor = 'rgba(241, 219, 147, 0.4)'
-    highlightMargins.style.zIndex = '1000';
-    highlightMargins.style.pointerEvents = 'none';
-    
-    document.body.appendChild(highlightMargins);
-    document.body.appendChild(highlight);
+    const width = maxRight - minLeft;
+    const height = maxBottom - minTop;
     
     const detailsBox = document.createElement('div');
     detailsBox.className = 'owl-devtools-detailsBox';
@@ -58,16 +78,16 @@ if(!window.owlDevtoolsScriptsLoaded){
     const viewportWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
     const viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
     const detailsBoxRect = detailsBox.getBoundingClientRect();
-    let detailsBoxTop = top + height + 5;
-    let detailsBoxLeft = left;
+    let detailsBoxTop = minTop + height + 5;
+    let detailsBoxLeft = minLeft;
     if (detailsBoxTop + detailsBoxRect.height > viewportHeight) {
-      detailsBoxTop = top - detailsBoxRect.height - 5;
+      detailsBoxTop = minTop - detailsBoxRect.height - 5;
       if (detailsBoxTop < 0) {
-        detailsBoxTop = top;
+        detailsBoxTop = minTop;
       }
     }
     if (detailsBoxLeft + detailsBoxRect.width > viewportWidth) {
-      detailsBoxLeft = left - detailsBoxRect.width - 5;
+      detailsBoxLeft = minLeft - detailsBoxRect.width - 5;
     }
     detailsBox.style.top = `${detailsBoxTop}px`;
     detailsBox.style.left = `${detailsBoxLeft + 5}px`;
@@ -88,37 +108,25 @@ if(!window.owlDevtoolsScriptsLoaded){
       let [application] = owl.App.apps;
       let root = application.root;
       let path = owlDevtools__GetElementPath(target, root);
-      let component = owlDevtools__GetComponent(path, root);
-      owlDevtools__HighlightElement(target, component.component.constructor.name)
+      owlDevtools__HighlightComponent(path);
       owlDevtools__CurrentSelectedElement = target;
       window.postMessage({type: "owlDevtools__SelectElement", path: path});
     }
   }
   function owlDevtools__EnableHTMLSelector(){
     document.addEventListener("mousemove", owlDevtools__HTMLSelector);
-    document.addEventListener("click", owlDevtools__DisableHTMLSelector);
+    document.addEventListener("click", owlDevtools__DisableHTMLSelector, true);
     document.addEventListener("mouseout", owlDevtools__RemoveHighlights);
   }
-  function owlDevtools__DisableHTMLSelector(){
+  function owlDevtools__DisableHTMLSelector(event = undefined){
+    if(event)
+      event.stopPropagation();
     owlDevtools__RemoveHighlights();
     document.removeEventListener("mousemove", owlDevtools__HTMLSelector);
     document.removeEventListener("click", owlDevtools__DisableHTMLSelector);
     document.removeEventListener("mouseout", owlDevtools__RemoveHighlights);
     window.postMessage({type: "owlDevtools__StopSelector"});
   }
-  // function owlDevtools__DeepCopyAndRemoveCircular(obj) {
-  //   const seenObjects = new WeakSet();
-  //   const copy = JSON.parse(JSON.stringify(obj, function(key, value) {
-  //     if (typeof value === 'object' && value !== null) {
-  //       if (seenObjects.has(value)) {
-  //         return;
-  //       }
-  //       seenObjects.add(value);
-  //     }
-  //     return value;
-  //   }));
-  //   return copy;
-  // };
   // Returns a shortened version of the property as a string
   function owlDevtools__ParseContent(obj, type){
     let result = "";
@@ -194,10 +202,19 @@ if(!window.owlDevtoolsScriptsLoaded){
       return obj;
     let path_array = path.split('/');
     for (let i = 0; i < path_array.length; i++) {
-      try {
+      if(obj.hasOwnProperty(path_array[i]))
         obj = obj[path_array[i]];
-      } catch (error) {
-        return null;
+      else if(path_array[i].includes('Symbol(')){
+        let symbol;
+        Object.getOwnPropertySymbols(obj).forEach((sym) => {
+          if (sym.toString() === path_array[i]){
+            symbol = sym;
+          }
+        })
+        if(symbol)
+          obj = obj[symbol];
+        else
+          return null
       }
     }
     return obj;
@@ -215,6 +232,8 @@ if(!window.owlDevtoolsScriptsLoaded){
     let obj;
     if (obj_type === 'props')
       obj = owlDevtools__GetObject(component.props, obj_path);
+    if (obj_type === 'env')
+      obj = owlDevtools__GetObject(component.component.env, obj_path);
     else if (obj_type === 'subscription') {
       let index, new_path;
       if(obj_path.includes('/')){
@@ -228,6 +247,8 @@ if(!window.owlDevtoolsScriptsLoaded){
       let top_parent = component.subscriptions[index].target;
       obj = owlDevtools__GetObject(top_parent, new_path);
     }
+    if(!obj)
+      return [];
     if (type === 'array'){
       obj.forEach((element, index) => {
         let child = {
@@ -239,9 +260,9 @@ if(!window.owlDevtoolsScriptsLoaded){
           path: obj_path + "\/" + index,
           objectType: obj_type
         };
-        if (expandBag.hasOwnProperty(child.path)){
-          child.toggled = expandBag[child.path].toggled;
-          child.display = expandBag[child.path].display;
+        if (expandBag[obj_type].hasOwnProperty(child.path)){
+          child.toggled = expandBag[obj_type][child.path].toggled;
+          child.display = expandBag[obj_type][child.path].display;
         }
         if (element == null){
           if (child.contentType === 'undefined')
@@ -308,8 +329,15 @@ if(!window.owlDevtoolsScriptsLoaded){
     }
     return component;
   };
+
+  function owlDevtools__RefreshComponent(path){
+    const [application] = owl.App.apps;
+    const root = application.root;
+    let component = owlDevtools__GetComponent(path, root);
+    component.render(true);
+  }
   // Returns the component's details given its path
-  function owlDevtools__SendComponentDetails(path = null, expandBag = "{}"){ 
+  function owlDevtools__SendComponentDetails(path = null, expandBag = '{"props":{},"env":{},"subscription":{}}'){ 
     let [application] = owl.App.apps; 
     let root = application.root;
     let component = {};
@@ -321,23 +349,24 @@ if(!window.owlDevtoolsScriptsLoaded){
     let node = owlDevtools__GetComponent(path, root);
     if(!node)
       node = root;
-    let filteredProperties = node.props;
+    // Load props of the component
+    let props = node.props;
     component.properties = {};
     component.name = node.component.constructor.name;
-    Object.keys(filteredProperties).forEach(key => {
+    Object.keys(props).forEach(key => {
       let property = {
         name: key, 
-        contentType: typeof filteredProperties[key] === 'object' ? (Array.isArray(filteredProperties[key]) ? 'array' : 'object') : typeof filteredProperties[key],
+        contentType: typeof props[key] === 'object' ? (Array.isArray(props[key]) ? 'array' : 'object') : typeof props[key],
         depth: 0,
         path: key,
         toggled: false,
         display: true,
         objectType: "props"
       };
-      if (expandBag.hasOwnProperty(property.path)){
-        property.toggled = expandBag[property.path].toggled;
+      if (expandBag.props.hasOwnProperty(property.path)){
+        property.toggled = expandBag.props[property.path].toggled;
       }
-      if (filteredProperties[key] == null){
+      if (props[key] == null){
         if (property.contentType === 'undefined')
           property.content = "undefined";
         else
@@ -345,8 +374,8 @@ if(!window.owlDevtoolsScriptsLoaded){
         property.hasChildren = false;
       }
       else{
-        property.content = owlDevtools__ParseContent(filteredProperties[key], property.contentType);
-        property.hasChildren = property.contentType === 'object' ? Object.keys(filteredProperties[key]).length > 0 : (property.contentType === 'array' ? filteredProperties[key].length > 0 : false);
+        property.content = owlDevtools__ParseContent(props[key], property.contentType);
+        property.hasChildren = property.contentType === 'object' ? Object.keys(props[key]).length > 0 : (property.contentType === 'array' ? props[key].length > 0 : false);
       }
       property.children = [];
       if(property.toggled){
@@ -354,6 +383,47 @@ if(!window.owlDevtoolsScriptsLoaded){
       }
       component.properties[key] = property;
     });
+    // Load env of the component
+    let env = node.component.env;
+    component.env = {};
+    Reflect.ownKeys(env).forEach(key => {
+      let envElement = {
+        name: key, 
+        contentType: typeof env[key] === 'object' ? (Array.isArray(env[key]) ? 'array' : 'object') : typeof env[key],
+        depth: 0,
+        path: key,
+        toggled: false,
+        display: true,
+        objectType: "env"
+      };
+      if (expandBag.env.hasOwnProperty(envElement.path)){
+        envElement.toggled = expandBag.env[envElement.path].toggled;
+      }
+      if (env[key] == null){
+        if (envElement.contentType === 'undefined')
+        envElement.content = "undefined";
+        else
+        envElement.content = "null";
+        envElement.hasChildren = false;
+      }
+      else{
+        envElement.content = owlDevtools__ParseContent(env[key], envElement.contentType);
+        envElement.hasChildren = envElement.contentType === 'object' ? Object.keys(env[key]).length > 0 : (envElement.contentType === 'array' ? env[key].length > 0 : false);
+      }
+      envElement.children = [];
+      if(envElement.toggled){
+        envElement.children = owlDevtools__LoadObjectChildren(component.path, envElement.path, envElement.depth, envElement.contentType, envElement.objectType, expandBag);
+      }
+      if(typeof key === 'symbol'){
+        envElement.name = key.toString();
+        envElement.path = key.toString();
+        component.env[key.toString()] = envElement;
+      }
+      else {
+        component.env[key] = envElement;
+      }
+    });
+    // Load subscriptions of the component
     let raw_subscriptions = node.subscriptions;
     component.subscriptions = [];
     raw_subscriptions.forEach((raw_subscription, index) => {
@@ -370,8 +440,8 @@ if(!window.owlDevtoolsScriptsLoaded){
         },
         keysExpanded: false
       }
-      if (expandBag.hasOwnProperty(subscription.target.path)){
-        subscription.target.toggled = expandBag[subscription.target.path].toggled;
+      if (expandBag.subscription.hasOwnProperty(subscription.target.path)){
+        subscription.target.toggled = expandBag.subscription[subscription.target.path].toggled;
       }
       raw_subscription.keys.forEach(key => {
         if (typeof key === "symbol")
@@ -409,10 +479,27 @@ if(!window.owlDevtoolsScriptsLoaded){
       path = "App";
       component = root;
     }
-    if(component.bdom.hasOwnProperty("el"))
-      owlDevtools__HighlightElement(component.bdom.el, component.component.constructor.name);
-    else if(component.bdom.hasOwnProperty("parentEl"))
-      owlDevtools__HighlightElement(component.bdom.parentEl, component.component.constructor.name);
+    if(component.bdom.hasOwnProperty("el")){
+      owlDevtools__HighlightElements([component.bdom.el], component.component.constructor.name);
+      return;
+    }
+    if(component.bdom.hasOwnProperty("child") && component.bdom.child.hasOwnProperty("el")){
+      owlDevtools__HighlightElements([component.bdom.child.el], component.component.constructor.name);
+      return;
+    }
+    if(component.bdom.hasOwnProperty("children") && component.bdom.children.length > 0){
+      let elements = [];
+      for(const child of component.bdom.children){
+        if(child && child.hasOwnProperty("el"))
+          elements.push(child.el);
+      }
+      if (elements.length > 0){
+        owlDevtools__HighlightElements(elements, component.component.constructor.name);
+        return;
+      }
+    }
+    if(component.bdom.hasOwnProperty("parentEl"))
+      owlDevtools__HighlightElements([component.bdom.parentEl], component.component.constructor.name);
   };
   // Recursively fills the components tree as a parsed version
   function owlDevtools__FillTree(app_node, tree_node, inspectedPath){
@@ -440,34 +527,67 @@ if(!window.owlDevtoolsScriptsLoaded){
     return children;
   };
   // Edit a reactive state property with the provided value of the given component (path) and the subscription path
-  function owlDevtools__EditReactiveState(component_path, subscription_path, value){
-    let index, new_path;
-    if(subscription_path.includes('/')){
-      index = Number(subscription_path.substring(0, subscription_path.indexOf('/')));
-      new_path = subscription_path.substring(subscription_path.indexOf("/") + 1);
-    }
-    else {
-      return;
-    }
-    let path_array = new_path.split('/');
+  function owlDevtools__EditObject(component_path, object_path, value, object_type){
     let [application] = owl.App.apps; 
     let root = application.root;
     let component = owlDevtools__GetComponent(component_path, root);
-    let target = owl.reactive(component.subscriptions[index].target);
-    path_array.reduce((acc, curr, idx, arr) => {
-      if (idx === arr.length - 1) {
-        acc[curr] = value;
+    let path_array;
+    if(object_type === "subscription"){
+      let index, new_path;
+      if(object_path.includes('/')){
+        index = Number(object_path.substring(0, object_path.indexOf('/')));
+        new_path = object_path.substring(object_path.indexOf("/") + 1);
       }
-      return acc[curr];
-    }, target);
+      else {
+        return;
+      }
+      path_array = new_path.split('/');
+      let target = owl.reactive(component.subscriptions[index].target);
+      path_array.reduce((acc, curr, idx, arr) => {
+        if (idx === arr.length - 1) {
+          acc[curr] = value;
+        }
+        return acc[curr];
+      }, target);
+    }
+    else{
+      let obj;
+      let key, path;
+      if (object_path.includes('/')){
+        const index = object_path.lastIndexOf('/');
+        key = object_path.substring(index + 1);
+        path = object_path.substring(0, index);
+      }
+      else {
+        key = object_path;
+        path = "";
+      }
+      if (object_type === 'props')
+        obj = owlDevtools__GetObject(component.props, path);
+      else if (object_type === 'env')
+        obj = owlDevtools__GetObject(component.component.env, path);
+      if(!obj) 
+        return;
+      obj[key] = value;
+    }
+
   };
   // Recursively checks if the given html element corresponds to a component in the components tree.
   // Immediatly returns the path of the first component which matches the element
   function owlDevtools__SearchElement(node, path, element){
-    if (node.bdom.el && node.bdom.el.isEqualNode(element)){
+    if (node.bdom.hasOwnProperty("el") && node.bdom.el.isEqualNode(element)){
       return path;
     }
-    else if (node.bdom.parentEl && node.bdom.parentEl.isEqualNode(element)){
+    if (node.bdom.hasOwnProperty("child") && node.bdom.child.hasOwnProperty("el") && node.bdom.child.el.isEqualNode(element)){
+      return path;
+    }
+    if(node.bdom.hasOwnProperty("children") && node.bdom.children.length > 0){
+      for(const child of node.bdom.children){
+        if(child && child.hasOwnProperty("el") && child.el.isEqualNode(element))
+          return path;
+      }
+    }
+    if (node.bdom.parentEl && node.bdom.parentEl.isEqualNode(element)){
       return path;
     }
     for (const [key, child] of Object.entries(node.children)){

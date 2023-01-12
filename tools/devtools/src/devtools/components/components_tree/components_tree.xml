@@ -34,7 +34,8 @@
             updateObjectTreeElement.bind="updateObjectTreeElements"
             updateBag.bind="updateExpandBag"
             expandSubscriptionsKeys.bind="expandSubscriptionsKeys"
-            editReactiveState.bind="editReactiveState"/>
+            editObjectTreeElement.bind="editObjectTreeElement"
+            refreshComponent.bind="refreshComponent"/>
         </div>
       </div>
     </div>

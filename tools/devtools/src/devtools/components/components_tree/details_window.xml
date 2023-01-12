@@ -6,6 +6,7 @@
         <div class="name_wrapper">
           <b><t t-esc="componentName"/></b>
         </div>
+        <i class="fa fa-refresh search-utility me-3" aria-hidden="true" t-on-click.stop="refreshComponent"></i>
       </div>
       <div class="horizontal-border">
       </div>
@@ -16,14 +17,14 @@
             t-props="activeProperties[key]"
             updateObjectTreeElement="props.updateObjectTreeElement"
             updateBag="props.updateBag"
-            editReactiveState="props.editReactiveState"/>
+            editObjectTreeElement="props.editObjectTreeElement"/>
         </t>
       </div>
       <div class="horizontal-border">
       </div>
-      <div id="hooks" class="details-panel my-1">
+      <!-- <div id="hooks" class="details-panel my-1">
         <b>hooks</b>
-      </div>
+      </div> -->
       <div class="horizontal-border">
       </div>
       <div id="subscriptions" class="details-panel my-1">
@@ -32,7 +33,19 @@
           updateObjectTreeElement="props.updateObjectTreeElement"
           updateBag="props.updateBag"
           expandSubscriptionsKeys="props.expandSubscriptionsKeys"
-          editReactiveState="props.editReactiveState"/>
+          editObjectTreeElement="props.editObjectTreeElement"/>
+      </div>
+      <div class="horizontal-border">
+      </div>
+      <div id="env" class="details-panel my-1">
+        <b>env</b>
+        <t t-foreach="activeEnvElements" t-as="key" t-key="key">
+          <ObjectTreeElement 
+            t-props="activeEnvElements[key]"
+            updateObjectTreeElement="props.updateObjectTreeElement"
+            updateBag="props.updateBag"
+            editObjectTreeElement="props.editObjectTreeElement"/>
+        </t>
       </div>
     </div>
   </t>

@@ -4,7 +4,7 @@ import { isElementInCenterViewport } from "../../../utils";
 
 const { Component, onWillRender, onRendered, onMounted, markup, onWillUpdateProps} = owl
 
-export default class TreeElement extends Component {
+export class TreeElement extends Component {
   setup(){
     this.searched = false;
     onMounted(() => {

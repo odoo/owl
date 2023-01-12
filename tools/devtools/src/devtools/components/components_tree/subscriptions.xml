@@ -21,7 +21,7 @@
               t-props="subscription.target"
               updateObjectTreeElement="props.updateObjectTreeElement"
               updateBag="props.updateBag"
-              editReactiveState="props.editReactiveState"/>
+              editObjectTreeElement="props.editObjectTreeElement"/>
         </div>
       </t>
     </div>

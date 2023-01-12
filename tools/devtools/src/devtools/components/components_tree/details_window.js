@@ -10,8 +10,13 @@ export class DetailsWindow extends Component {
   get componentName() { return this.props.activeComponent.name; }
   get activeProperties(){ return this.props.activeComponent.properties; }
   get activeSubscriptions(){ return this.props.activeComponent.subscriptions; }
+  get activeEnvElements(){ return this.props.activeComponent.env; }
 
-  static props = ['activeComponent', 'updateObjectTreeElement', 'expandSubscriptionsKeys', 'editReactiveState', 'updateBag'];
+  refreshComponent(){
+    this.props.refreshComponent();
+  }
+
+  static props = ['activeComponent', 'updateObjectTreeElement', 'expandSubscriptionsKeys', 'editObjectTreeElement', 'updateBag'];
   
   static template = "devtools.details_window";
 

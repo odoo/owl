@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
-  <t t-name="devtools.object_tree_element" owl="1">
-    <div class="my-0 p-0 object-line" t-attf-style="display: {{props.display ? 'flex' : 'none'}}" t-on-click="toggleDisplay">
+  <t t-name="devtools.ObjectTreeElement" owl="1">
+    <div class="my-0 p-0 object-line" t-attf-style="display: {{props.display ? 'flex' : 'none'}}" t-on-click.stop="toggleDisplay">
       <div t-attf-style="transform: translateX(calc({{props.depth}} * 0.8rem + 0.3rem))">
         <t t-if="props.hasChildren">
           <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer;{{props.toggled ? 'transform: rotate(90deg);' : ''}}"></i>
@@ -12,10 +12,10 @@
         <t t-out="props.name"/>: 
         <div class="object-content" t-on-dblclick.stop="setupEditMode">
           <t t-if="state.editMode">   
-            <input t-attf-id="subscriptionInput/{{props.path}}" type="text" style="width: 100%;" placeholder="" t-att-value="content" t-on-keyup="editState"/>
+            <input t-attf-id="objectEditionInput/{{props.path}}" type="text" style="width: 100%;" placeholder="" t-att-value="props.content" t-on-keyup="editObject"/>
           </t>
           <t t-else="">
-            <t t-out="content"/>
+            <t t-out="props.content"/>
           </t>
         </div> 
       </div>
@@ -25,7 +25,7 @@
         t-props="child"
         updateObjectTreeElement="props.updateObjectTreeElement"
         updateBag="props.updateBag"
-        editReactiveState="props.editReactiveState"/>
+        editObjectTreeElement="props.editObjectTreeElement"/>
     </t>
   </t>
 </templates>

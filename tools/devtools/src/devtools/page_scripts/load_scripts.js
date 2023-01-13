@@ -1,5 +1,5 @@
 // Ensure the scripts are loaded only once per page
-if(!window.owlDevtoolsScriptsLoaded){
+if(!window.owlDevtools__ScriptsLoaded){
   // Draws a highlighting rectangle on the specified html element and displays the specified name and its dimension in a box
   function owlDevtools__HighlightElements(elements, name) {
     owlDevtools__RemoveHighlights();
@@ -127,40 +127,45 @@ if(!window.owlDevtoolsScriptsLoaded){
     document.removeEventListener("mouseout", owlDevtools__RemoveHighlights);
     window.postMessage({type: "owlDevtools__StopSelector"});
   }
+
+  function owlDevtools__ParseItem(value){
+    if (typeof value === 'array'){
+      return "Array("+value.length+")";
+    }
+    else if (typeof value === 'object'){
+      if (value == null)
+        return "null";
+      else
+        return "{...}";
+    }
+    else if (typeof value === 'undefined'){
+      return "undefined";
+    }
+    else
+      return value.toString();
+  }
   // Returns a shortened version of the property as a string
   function owlDevtools__ParseContent(obj, type){
     let result = "";
+    let first = true;
     if (type === 'array'){
       result += "[";
-      let first = true;
       for (const value of obj){
         if (!first)
           result += ", ";
         else{
           first = false;
         }
-        if (result.length > 30)
+        if (result.length > 30){
+          result+= "...";
           break;
-        if (typeof value === 'array'){
-          result += "Array("+value.length+")";
         }
-        else if (typeof value === 'object'){
-          if (value == null)
-            result += "null";
-          else
-            result += "{...}";
-        }
-        else if (typeof value === 'undefined'){
-          result += "undefined";
-        }
-        else
-          result += value.toString();
+        result += owlDevtools__ParseItem(value);
       }
       result += "]";
     }
     else if (type === 'object'){
       result += "{";
-      let first = true;
       for (const [key, value] of Object.entries(obj)) {
         if (!first)
           result += ", " + key + ": ";
@@ -172,20 +177,7 @@ if(!window.owlDevtoolsScriptsLoaded){
           result+= "...";
           break;
         }
-        if (typeof value === 'array'){
-          result += "Array("+value.length+")";
-        }
-        else if (typeof value === 'object'){
-          if (value == null)
-            result += "null";
-          else
-            result += "{...}";
-        }
-        else if (typeof value === 'undefined'){
-          result += "undefined";
-        }
-        else
-          result += value.toString();
+        result += owlDevtools__ParseItem(value);
       }
       result += "}";
     }
@@ -201,13 +193,15 @@ if(!window.owlDevtoolsScriptsLoaded){
     if(path.length === 0)
       return obj;
     let path_array = path.split('/');
-    for (let i = 0; i < path_array.length; i++) {
-      if(obj.hasOwnProperty(path_array[i]))
-        obj = obj[path_array[i]];
-      else if(path_array[i].includes('Symbol(')){
+    for (const key of path_array) {
+      if(obj.hasOwnProperty(key))
+        obj = obj[key];
+      else if(key === "[[Prototype]]")
+        obj = Object.getPrototypeOf(obj);
+      else if(key.includes('Symbol(')){
         let symbol;
         Object.getOwnPropertySymbols(obj).forEach((sym) => {
-          if (sym.toString() === path_array[i]){
+          if (sym.toString() === key){
             symbol = sym;
           }
         })
@@ -219,8 +213,53 @@ if(!window.owlDevtoolsScriptsLoaded){
     }
     return obj;
   };
+
+  function owlDevtools__GetParsedObjectChild(componentPath, parentObj, key, depth, type, path, expandBag){
+    let obj;
+    if(key === "[[Prototype]]")
+      obj = Object.getPrototypeOf(parentObj);
+    else
+      obj = parentObj[key];
+    let child = {
+      name: key, 
+      contentType: typeof obj === 'object' ? (Array.isArray(obj) ? 'array' : 'object') : typeof obj,
+      depth: depth,
+      toggled: false,
+      display: true,
+      objectType: type
+    };
+    if(typeof key === 'symbol'){
+      child.name = key.toString();
+      child.path = key.toString();
+    }
+    else
+      child.path = path.length > 0 ? path + "\/" + key : key;
+    if (expandBag.hasOwnProperty(child.path)){
+      child.toggled = expandBag[child.path].toggled;
+      child.display = expandBag[child.path].display;
+    }
+    if (obj == null){
+      if (child.contentType === 'undefined')
+        child.content = "undefined";
+      else
+        child.content = "null";
+        child.hasChildren = false;
+    }
+    else{
+      if(key === "[[Prototype]]")
+        child.content = typeof parentObj === 'object' ? (Array.isArray(parentObj) ? 'Array(0)' : 'Object') : typeof parentObj;
+      else
+        child.content = owlDevtools__ParseContent(obj, child.contentType);
+      child.hasChildren = child.contentType === 'object' ? Reflect.ownKeys(obj).length > 0 : (child.contentType === 'array' ? obj.length > 0 : false);
+    }
+    child.children = [];
+    if(child.toggled && child.display){
+      child.children = owlDevtools__LoadObjectChildren(componentPath, child.path, child.depth, child.contentType, child.objectType, expandBag);
+    }
+    return child;
+  }
   // Returns a parsed version of the children properties of the specified component's property given its path. 
-  function owlDevtools__LoadObjectChildren(component_path, obj_path, depth, type, obj_type, expandBag){
+  function owlDevtools__LoadObjectChildren(componentPath, objPath, depth, type, objType, expandBag){
     if (typeof expandBag === 'string'){
       expandBag = JSON.parse(expandBag);
     }
@@ -228,20 +267,20 @@ if(!window.owlDevtoolsScriptsLoaded){
     let root = application.root;
     let children = [];
     depth = depth + 1;
-    let component = owlDevtools__GetComponent(component_path, root);
+    let component = owlDevtools__GetComponent(componentPath, root);
     let obj;
-    if (obj_type === 'props')
-      obj = owlDevtools__GetObject(component.props, obj_path);
-    if (obj_type === 'env')
-      obj = owlDevtools__GetObject(component.component.env, obj_path);
-    else if (obj_type === 'subscription') {
+    if (objType === 'props')
+      obj = owlDevtools__GetObject(component.props, objPath);
+    if (objType === 'env')
+      obj = owlDevtools__GetObject(component.component.env, objPath);
+    else if (objType === 'subscription') {
       let index, new_path;
-      if(obj_path.includes('/')){
-        index = obj_path.substring(0, obj_path.indexOf('/'));
-        new_path = obj_path.substring(obj_path.indexOf("/") + 1);
+      if(objPath.includes('/')){
+        index = objPath.substring(0, objPath.indexOf('/'));
+        new_path = objPath.substring(objPath.indexOf("/") + 1);
       }
       else {
-        index = obj_path;
+        index = objPath;
         new_path = "";
       }
       let top_parent = component.subscriptions[index].target;
@@ -250,71 +289,19 @@ if(!window.owlDevtoolsScriptsLoaded){
     if(!obj)
       return [];
     if (type === 'array'){
-      obj.forEach((element, index) => {
-        let child = {
-          name: index, 
-          contentType: typeof element === 'object' ? (Array.isArray(element) ? 'array' : 'object') : typeof element,
-          depth: depth,
-          toggled: false,
-          display: true,
-          path: obj_path + "\/" + index,
-          objectType: obj_type
-        };
-        if (expandBag[obj_type].hasOwnProperty(child.path)){
-          child.toggled = expandBag[obj_type][child.path].toggled;
-          child.display = expandBag[obj_type][child.path].display;
-        }
-        if (element == null){
-          if (child.contentType === 'undefined')
-          child.content = "undefined";
-          else
-          child.content = "null";
-          child.hasChildren = false;
-        }
-        else{
-          child.content = owlDevtools__ParseContent(element, child.contentType);
-          child.hasChildren = child.contentType === 'object' ? Object.keys(element).length > 0 : (child.contentType === 'array' ? element.length > 0 : false);
-        }
-        child.children = [];
-        if(child.toggled && child.display){
-          child.children = owlDevtools__LoadObjectChildren(component_path, child.path, child.depth, child.contentType, obj_type, expandBag);
-        }
+      for(let index = 0; index < obj.length; index++){
+        const child = owlDevtools__GetParsedObjectChild(componentPath, obj, index, depth, objType, objPath, expandBag)
         children.push(child);
-      });
+      };
     }
     else if (type === 'object'){
-      Object.keys(obj).forEach(key => {
-        let child = {
-          name: key, 
-          contentType: typeof obj[key] === 'object' ? (Array.isArray(obj[key]) ? 'array' : 'object') : typeof obj[key],
-          depth: depth,
-          toggled: false,
-          display: true,
-          path: obj_path + "\/" + key,
-          objectType: obj_type
-        };
-        if (expandBag.hasOwnProperty(child.path)){
-          child.toggled = expandBag[child.path].toggled;
-          child.display = expandBag[child.path].display;
-        }
-        if (obj[key] == null){
-          if (child.contentType === 'undefined')
-            child.content = "undefined";
-          else
-            child.content = "null";
-            child.hasChildren = false;
-        }
-        else{
-          child.content = owlDevtools__ParseContent(obj[key], child.contentType);
-          child.hasChildren = child.contentType === 'object' ? Object.keys(obj[key]).length > 0 : (child.contentType === 'array' ? obj[key].length > 0 : false);
-        }
-        child.children = [];
-        if(child.toggled && child.display){
-          child.children = owlDevtools__LoadObjectChildren(component_path, child.path, child.depth, child.contentType, obj_type, expandBag);
-        }
+      Reflect.ownKeys(obj).forEach(key => {
+        const child = owlDevtools__GetParsedObjectChild(componentPath, obj, key, depth, objType, objPath, expandBag)
         children.push(child);
       });
     }
+    const prototype = owlDevtools__GetParsedObjectChild(componentPath, obj, "[[Prototype]]", depth, objType, objPath, expandBag)
+    children.push(prototype);
     return children;
   };
   // Returns the Component given its path and the root component
@@ -353,76 +340,27 @@ if(!window.owlDevtoolsScriptsLoaded){
     let props = node.props;
     component.properties = {};
     component.name = node.component.constructor.name;
-    Object.keys(props).forEach(key => {
-      let property = {
-        name: key, 
-        contentType: typeof props[key] === 'object' ? (Array.isArray(props[key]) ? 'array' : 'object') : typeof props[key],
-        depth: 0,
-        path: key,
-        toggled: false,
-        display: true,
-        objectType: "props"
-      };
-      if (expandBag.props.hasOwnProperty(property.path)){
-        property.toggled = expandBag.props[property.path].toggled;
-      }
-      if (props[key] == null){
-        if (property.contentType === 'undefined')
-          property.content = "undefined";
-        else
-          property.content = "null";
-        property.hasChildren = false;
-      }
-      else{
-        property.content = owlDevtools__ParseContent(props[key], property.contentType);
-        property.hasChildren = property.contentType === 'object' ? Object.keys(props[key]).length > 0 : (property.contentType === 'array' ? props[key].length > 0 : false);
-      }
-      property.children = [];
-      if(property.toggled){
-        property.children = owlDevtools__LoadObjectChildren(component.path, property.path, property.depth, property.contentType, property.objectType, expandBag);
-      }
-      component.properties[key] = property;
+    Reflect.ownKeys(props).forEach(key => {
+      let property = owlDevtools__GetParsedObjectChild(path, props, key, 0, 'props', '', expandBag);
+      if(typeof key === 'symbol')
+        component.properties[key.toString()] = property;
+      else
+        component.properties[key] = property;
     });
+    const propsPrototype = owlDevtools__GetParsedObjectChild(path, props, "[[Prototype]]", 0, 'props', '', expandBag);
+    component.properties["[[Prototype]]"] = propsPrototype;
     // Load env of the component
     let env = node.component.env;
     component.env = {};
     Reflect.ownKeys(env).forEach(key => {
-      let envElement = {
-        name: key, 
-        contentType: typeof env[key] === 'object' ? (Array.isArray(env[key]) ? 'array' : 'object') : typeof env[key],
-        depth: 0,
-        path: key,
-        toggled: false,
-        display: true,
-        objectType: "env"
-      };
-      if (expandBag.env.hasOwnProperty(envElement.path)){
-        envElement.toggled = expandBag.env[envElement.path].toggled;
-      }
-      if (env[key] == null){
-        if (envElement.contentType === 'undefined')
-        envElement.content = "undefined";
-        else
-        envElement.content = "null";
-        envElement.hasChildren = false;
-      }
-      else{
-        envElement.content = owlDevtools__ParseContent(env[key], envElement.contentType);
-        envElement.hasChildren = envElement.contentType === 'object' ? Object.keys(env[key]).length > 0 : (envElement.contentType === 'array' ? env[key].length > 0 : false);
-      }
-      envElement.children = [];
-      if(envElement.toggled){
-        envElement.children = owlDevtools__LoadObjectChildren(component.path, envElement.path, envElement.depth, envElement.contentType, envElement.objectType, expandBag);
-      }
-      if(typeof key === 'symbol'){
-        envElement.name = key.toString();
-        envElement.path = key.toString();
+      let envElement = owlDevtools__GetParsedObjectChild(path, env, key, 0, 'env', '', expandBag);
+      if(typeof key === 'symbol')
         component.env[key.toString()] = envElement;
-      }
-      else {
+      else
         component.env[key] = envElement;
-      }
     });
+    const envPrototype = owlDevtools__GetParsedObjectChild(path, env, "[[Prototype]]", 0, 'env', '', expandBag);
+    component.env["[[Prototype]]"] = envPrototype;
     // Load subscriptions of the component
     let raw_subscriptions = node.subscriptions;
     component.subscriptions = [];
@@ -527,10 +465,10 @@ if(!window.owlDevtoolsScriptsLoaded){
     return children;
   };
   // Edit a reactive state property with the provided value of the given component (path) and the subscription path
-  function owlDevtools__EditObject(component_path, object_path, value, object_type){
+  function owlDevtools__EditObject(componentPath, object_path, value, object_type){
     let [application] = owl.App.apps; 
     let root = application.root;
-    let component = owlDevtools__GetComponent(component_path, root);
+    let component = owlDevtools__GetComponent(componentPath, root);
     let path_array;
     if(object_type === "subscription"){
       let index, new_path;
@@ -569,24 +507,32 @@ if(!window.owlDevtoolsScriptsLoaded){
       if(!obj) 
         return;
       obj[key] = value;
+      if(object_type === 'props')
+        component.render(true);
+      else if (object_type === 'env')
+        root.render(true);
     }
 
   };
   // Recursively checks if the given html element corresponds to a component in the components tree.
   // Immediatly returns the path of the first component which matches the element
   function owlDevtools__SearchElement(node, path, element){
+    // If the component is directly linked to the html element
     if (node.bdom.hasOwnProperty("el") && node.bdom.el.isEqualNode(element)){
       return path;
     }
+    // If the component has only one child html element and it corresponds to the target element
     if (node.bdom.hasOwnProperty("child") && node.bdom.child.hasOwnProperty("el") && node.bdom.child.el.isEqualNode(element)){
       return path;
     }
+    // If the component has several children and one of them is the target
     if(node.bdom.hasOwnProperty("children") && node.bdom.children.length > 0){
       for(const child of node.bdom.children){
         if(child && child.hasOwnProperty("el") && child.el.isEqualNode(element))
           return path;
       }
     }
+    // Finally check if the target is parent of the component
     if (node.bdom.parentEl && node.bdom.parentEl.isEqualNode(element)){
       return path;
     }
@@ -601,6 +547,7 @@ if(!window.owlDevtoolsScriptsLoaded){
   // Returns the path to the component which is currently being inspected
   function owlDevtools__GetElementPath(element, root){
     if(element){
+      // Create an array with the html element and all its successive parents 
       let parentsList = [element];
       if(element.tagName !== 'BODY'){
         while (element.parentElement.tagName !== 'BODY'){
@@ -608,15 +555,18 @@ if(!window.owlDevtoolsScriptsLoaded){
           parentsList.push(element);
         }
       }
+      // Try to find a correspondance between the elements in the array and the owl component, stops at first result found
       for (let i = 0; i < parentsList.length; i++) {
         inspectedPath = owlDevtools__SearchElement(root, 'App',parentsList[i]);
         if(inspectedPath)
           return inspectedPath;
       }
     }
+    // If nothing was found, return the root component path
     return "App";
   }
   // Returns the tree of components of the inspected page in a parsed format
+  // Use inspectedPath to specify the path of the selected component
   function owlDevtools__SendTree(inspectedPath = null){ 
     let [application] = owl.App.apps; 
     let root = application.root;
@@ -631,22 +581,43 @@ if(!window.owlDevtoolsScriptsLoaded){
       selected: false,
       highlighted: false,
     };
+    // If no path is provided, it defaults to the target of the inspect element action
     if(!inspectedPath){
       inspectedPath = owlDevtools__GetElementPath($0, root);
-      if(inspectedPath === "App")
-        tree.root.selected = true;
     }
+    if(inspectedPath === "App")
+      tree.root.selected = true;
     tree.root.children = owlDevtools__FillTree(root, tree.root, inspectedPath);
     return tree;
   };
-  // Add a functionnality to the flush function which sends a message to the window every time it is triggered.
-  // This message is intercepted by the content script which informs the background script to ask the devtools app tree to be refreshed.
-  const originalFlush = [...owl.App.apps][0].scheduler.flush;
+
+  function owlDevtools__GetComponentPath(component){
+    if(component.parentKey){
+      let path = "/" + component.parentKey;
+      while(component.parent && component.parent.parentKey){
+        component = component.parent;
+        path = "/" + component.parentKey + path;
+      }
+      path = "App" + path;
+      return path;
+    }
+    return "App";
+  }
+  let owlDevtools__FibersMap = new WeakMap();
+  const owlDevtools__originalFlush = [...owl.App.apps][0].scheduler.flush;
   [...owl.App.apps][0].scheduler.flush = function() {
-    originalFlush.call(this, ...arguments);
-    window.postMessage({type: "owlDevtools__Flush"});
+    let pathArray = [];
+    [...this.tasks].map((fiber) => {
+      if (fiber.counter === 0 && !owlDevtools__FibersMap.has(fiber)){
+        owlDevtools__FibersMap.set(fiber, "");
+        const path = owlDevtools__GetComponentPath(fiber.node);
+        pathArray.push(path);
+      }
+    });
+    owlDevtools__originalFlush.call(this, ...arguments);
+    // Add a functionnality to the flush function which sends a message to the window every time it is triggered.
+    // This message is intercepted by the content script which informs the background script to ask the devtools app tree to be refreshed.
+    window.postMessage({type: "owlDevtools__Flush", paths: pathArray});
   };
-  window.owlDevtoolsScriptsLoaded = true;
+  window.owlDevtools__ScriptsLoaded = true;
 }
-
-

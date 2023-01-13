@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-const { Component, useState, onWillStart, onWillPatch, onMounted} = owl
+const { Component, useState, useEffect, onWillPatch, onMounted} = owl
 import { TreeElement } from './tree_element';
 import { DetailsWindow } from "./details_window";
 import { SearchBar } from './search_bar';
@@ -8,69 +8,65 @@ import { fuzzySearch } from '../../../utils';
 
 export class ComponentsTree extends Component {
   setup(){
-
-    // TODO: tous les states dans this.state
     this.state = useState({
-      splitPosition: 60
-    });
-    this.root = useState({
-      name: "Test",
-      path: "App",
-      key: "",
-      depth: 0,
-      display: true,
-      toggled: false,
-      selected: false,
-      children: [],
-      highlighted: false
-    });
-
-    this.search = useState({
-      search: '',
-      searchResults: [],
-      searchIndex: 0,
-      activeSelector: false
-    })
-
-    this.activeComponent = useState({
-      path: "App",
-      name: "App",
-      subscriptions: [],
-      properties: {},
-      env: {},
-      expandBag: {
-        props: {},
+      splitPosition: 60,
+      root: {
+        name: "Test",
+        path: "App",
+        key: "",
+        depth: 0,
+        display: true,
+        toggled: false,
+        selected: false,
+        children: [],
+        highlighted: false
+      },
+      activeComponent:{
+        path: "App",
+        name: "App",
+        subscriptions: [],
+        properties: {},
         env: {},
-        subscription: {}
-      }
+        expandBag: {
+          props: {},
+          env: {},
+          subscription: {}
+        }
+      },
+      search: {
+        search: '',
+        searchResults: [],
+        searchIndex: 0,
+        activeSelector: false
+      },
+      renderPaths: []
     });
-    // TODO: const partout sauf si changé à la place de let
-    // TODO: Remplacer les for par for of si possible
+    this.flushRendersTimeout = false;
     onMounted(async () => {
       chrome.runtime.onConnect.addListener((port) => {
         console.assert(port.name === "DevtoolsTreePort");
         port.onMessage.addListener((msg) => {
           if (msg.type === "Flush"){
-            let script = 'owlDevtools__SendTree("'+ this.activeComponent.path +'");';
+            // this.state.renderPaths = msg.paths;
+            this.state.renderPaths =  this.state.renderPaths.concat(msg.paths);
+            clearTimeout(this.flushRendersTimeout);
+            this.flushRendersTimeout = setTimeout(() => {this.state.renderPaths = []},200);
+            let script = 'owlDevtools__SendTree("'+ this.state.activeComponent.path +'");';
             chrome.devtools.inspectedWindow.eval(
               script,
               (result, isException) => {
                 if (!isException) {
-                  Object.keys(this.root).forEach(key => {
-                    this.root[key] = result.root[key]
-                  });
+                  this.state.root = result.root
                 }
               }
             );
-            let expandBag = JSON.stringify(this.activeComponent.expandBag);
-            script = 'owlDevtools__SendComponentDetails("'+ this.activeComponent.path +'", \''+ expandBag +'\');';
+            const expandBag = JSON.stringify(this.state.activeComponent.expandBag);
+            script = 'owlDevtools__SendComponentDetails("'+ this.state.activeComponent.path +'", \''+ expandBag +'\');';
             chrome.devtools.inspectedWindow.eval(
               script,
               (result, isException) => {
                 if (!isException) {
-                  Object.keys(this.activeComponent).forEach(key => {
-                    this.activeComponent[key] = result[key];
-                  });
+                  this.state.activeComponent= result;
                 }
               }
             );
@@ -79,7 +75,7 @@ export class ComponentsTree extends Component {
             this.selectComponent(msg.path);
           }
           if (msg.type === "StopSelector"){
-            this.search.activeSelector = false;
+            this.state.search.activeSelector = false;
           }
         });
       });
@@ -88,9 +84,7 @@ export class ComponentsTree extends Component {
         script,
         (result, isException) => {
           if (!isException) {
-            Object.keys(this.root).forEach(key => {
-              this.root[key] = result.root[key]
-            });
+            this.state.root = result.root
           }
         }
       );
@@ -99,9 +93,7 @@ export class ComponentsTree extends Component {
         script,
         (result, isException) => {
           if (!isException) {
-            Object.keys(this.activeComponent).forEach(key => {
-              this.activeComponent[key] = result[key];
-            });
+            this.state.activeComponent = result;
           }
         }
       );
@@ -109,9 +101,9 @@ export class ComponentsTree extends Component {
   }
 
   toggleSelector(){
-    this.search.activeSelector = !this.search.activeSelector;
+    this.state.search.activeSelector = !this.state.search.activeSelector;
     let script;
-    if(this.search.activeSelector)
+    if(this.state.search.activeSelector)
       script = 'owlDevtools__EnableHTMLSelector();';
     else
       script = 'owlDevtools__DisableHTMLSelector();';
@@ -122,22 +114,22 @@ export class ComponentsTree extends Component {
   }
 
   updateSearch(search){
-    this.search.search = search;
-    this.search.searchResults = [];
-    this.getSearchResults(search, this.root);
-    if(this.search.searchResults.length > 0){
-      this.search.searchIndex = 0;
-      this.selectComponent(this.search.searchResults[0]);
+    this.state.search.search = search;
+    this.state.search.searchResults = [];
+    this.getSearchResults(search, this.state.root);
+    if(this.state.search.searchResults.length > 0){
+      this.state.search.searchIndex = 0;
+      this.selectComponent(this.state.search.searchResults[0]);
     }
     else
-      this.search.searchIndex = -1;
+      this.state.search.searchIndex = -1;
   }
 
   getSearchResults(search, node){
     if(search.length < 1)
       return;
     if (fuzzySearch(node.name, search)) {
-      this.search.searchResults.push(node.path)
+      this.state.search.searchResults.push(node.path)
     }
     if(node.children) {
       node.children.forEach(child => this.getSearchResults(search, child));
@@ -145,23 +137,23 @@ export class ComponentsTree extends Component {
   }
 
   setSearchIndex(index){
-    this.search.searchIndex = index;
-    this.selectComponent(this.search.searchResults[index]);
+    this.state.search.searchIndex = index;
+    this.selectComponent(this.state.search.searchResults[index]);
   }
   
   updateTree(component) {
-    let path_array = component.path.split('/');
-    let element = this.root;
-    for (let i = 1; i < path_array.length; i++) {
-      element = element.children.filter(child => (child.key) === path_array[i])[0];
+    const pathArray = component.path.split('/');
+    let element = this.state.root;
+    for (const key of pathArray) {
+      element = element.children.filter(child => (child.key) === key)[0];
     }
     element.children = component.children;
     element.toggled = component.toggled;
     element.display = component.display;
   }
 
-  editObjectTreeElement(object_path, value, object_type){
-    let script = 'owlDevtools__EditObject("'+ this.activeComponent.path +'", "'+ object_path +'", '+ value +', "' + object_type + '");';
+  editObjectTreeElement(objectPath, value, objectType){
+    const script = 'owlDevtools__EditObject("'+ this.state.activeComponent.path +'", "'+ objectPath +'", '+ value +', "' + objectType + '");';
     chrome.devtools.inspectedWindow.eval(
       script,
       (result, isException) => {}
@@ -169,31 +161,32 @@ export class ComponentsTree extends Component {
   }
 
   updateExpandBag(path, type, toggled, display){
-    this.activeComponent.expandBag[type][path] = {
+    this.state.activeComponent.expandBag[type][path] = {
       toggled: toggled,
       display: display
     }
   }
 
   updateObjectTreeElements(inputObj) {
-    let path_array = inputObj.path.split('/');
+    const pathArray = inputObj.path.split('/');
     let obj;
     if (inputObj.objectType === 'props')
-      obj = this.activeComponent.properties[path_array[0]];
+      obj = this.state.activeComponent.properties[pathArray[0]];
     else if (inputObj.objectType === 'env')
-      obj = this.activeComponent.env[path_array[0]];
+      obj = this.state.activeComponent.env[pathArray[0]];
     else if (inputObj.objectType === 'subscription')
-      obj = this.activeComponent.subscriptions[Number(path_array[0])].target;
-    for (let i = 1; i < path_array.length; i++) {
-      let match = path_array[i];
+      obj = this.state.activeComponent.subscriptions[Number(pathArray[0])].target;
+    for (let i = 1; i < pathArray.length; i++) {
+      const match = pathArray[i];
       if (obj.contentType === "array") 
         obj = obj.children[match];
       else
         obj = obj.children.filter(child => (child.name) === match)[0];
     }
     if (obj.hasChildren && obj.children.length === 0) {
-      let expandBag = JSON.stringify(this.activeComponent.expandBag);
-      let script = 'owlDevtools__LoadObjectChildren("'+ this.activeComponent.path +'","'+ obj.path +'", '+ obj.depth +', "'+ obj.contentType +'", "'+ obj.objectType +'", '+ expandBag +');';
+      const expandBag = JSON.stringify(this.state.activeComponent.expandBag);
+      const script = 'owlDevtools__LoadObjectChildren("'+ this.state.activeComponent.path +'","'+ obj.path +'", '+ obj.depth +', "'+ obj.contentType +'", "'+ obj.objectType +'", '+ expandBag +');';
+      console.log(script);
       chrome.devtools.inspectedWindow.eval(
         script,
         (result, isException) => {
@@ -208,7 +201,7 @@ export class ComponentsTree extends Component {
   }
 
   refreshComponent() {
-    const script = 'owlDevtools__RefreshComponent("'+ this.activeComponent.path +'")';
+    const script = 'owlDevtools__RefreshComponent("'+ this.state.activeComponent.path +'")';
     chrome.devtools.inspectedWindow.eval(
       script,
       (result, isException) => {}
@@ -216,11 +209,11 @@ export class ComponentsTree extends Component {
   }
 
   expandSubscriptionsKeys(index){
-    this.activeComponent.subscriptions[index].keysExpanded = !this.activeComponent.subscriptions[index].keysExpanded;
+    this.state.activeComponent.subscriptions[index].keysExpanded = !this.state.activeComponent.subscriptions[index].keysExpanded;
   }
 
   removeHighlight(ev){
-    let script = "owlDevtools__RemoveHighlights()"
+    const script = "owlDevtools__RemoveHighlights()"
     chrome.devtools.inspectedWindow.eval(
       script,
       (result, isException) => {}
@@ -228,26 +221,24 @@ export class ComponentsTree extends Component {
   }
 
   selectComponent(path) {
-    this.root.selected = false;
-    this.root.highlighted = false;
-    this.root.children.forEach(child => {
+    this.state.root.selected = false;
+    this.state.root.highlighted = false;
+    this.state.root.children.forEach(child => {
       this.deselectComponent(child)
     });
-    let path_array = path.split('/');
-    let element = this.root;
-    for (let i = 1; i < path_array.length; i++) {
-      element = element.children.filter(child => (child.key) === path_array[i])[0];
+    const pathArray = path.split('/');
+    let element = this.state.root;
+    for (let i = 1; i < pathArray.length; i++) {
+      element = element.children.filter(child => (child.key) === pathArray[i])[0];
     }
     element.selected = true;
     this.highlightChildren(element);
-    let script = 'owlDevtools__SendComponentDetails("' + element.path + '");';
+    const script = 'owlDevtools__SendComponentDetails("' + element.path + '");';
     chrome.devtools.inspectedWindow.eval(
       script,
       (result, isException) => {
         if (!isException) {
-          Object.keys(this.activeComponent).forEach(key => {
-            this.activeComponent[key] = result[key];
-          });
+          this.state.activeComponent = result;
         }
       }
     );
@@ -284,8 +275,7 @@ export class ComponentsTree extends Component {
     window.removeEventListener("mousemove", this.handleMouseMove);
     window.removeEventListener("mouseup", this.handleMouseUp);
   }
-  // TODO: templates sans _
-  static template = "devtools.components_tree";
+  static template = "devtools.ComponentsTree";
   
   static components = { TreeElement, DetailsWindow, SearchBar };
     

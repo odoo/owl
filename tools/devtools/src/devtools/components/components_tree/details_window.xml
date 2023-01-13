@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
-  <t t-name="devtools.details_window" owl="1">
+  <t t-name="devtools.DetailsWindow" owl="1">
     <div class="details_window">
       <div id="details_window_head" class="panel-top">
         <div class="name_wrapper">
@@ -20,9 +20,9 @@
             editObjectTreeElement="props.editObjectTreeElement"/>
         </t>
       </div>
-      <div class="horizontal-border">
+      <!-- <div class="horizontal-border">
       </div>
-      <!-- <div id="hooks" class="details-panel my-1">
+      <div id="hooks" class="details-panel my-1">
         <b>hooks</b>
       </div> -->
       <div class="horizontal-border">

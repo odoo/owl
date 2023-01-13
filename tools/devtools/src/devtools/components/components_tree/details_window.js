@@ -18,7 +18,7 @@ export class DetailsWindow extends Component {
 
   static props = ['activeComponent', 'updateObjectTreeElement', 'expandSubscriptionsKeys', 'editObjectTreeElement', 'updateBag'];
   
-  static template = "devtools.details_window";
+  static template = "devtools.DetailsWindow";
 
   static components = { ObjectTreeElement, Subscriptions };
 }

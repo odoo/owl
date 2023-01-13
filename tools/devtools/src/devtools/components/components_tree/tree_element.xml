@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
-  <t t-name="devtools.tree_element" owl="1">
+  <t t-name="devtools.TreeElement" owl="1">
     <div t-attf-id="tree_element/{{props.path}}" class="tree_component my-0 p-0" t-att-class="{'component_selected': props.selected,'component_highlighted': props.highlighted}" t-on-mouseover.stop="hoverComponent" t-on-click.stop="toggleComponent" t-attf-style="display: {{props.display ? 'flex' : 'none'}}">
       <div class="component_wrapper" t-attf-style="transform: translateX(calc({{props.depth}} * 0.8rem))">
         <t t-if="props.children.length > 0">
@@ -19,6 +19,7 @@
         t-props="child"
         search="props.search"
         searchResults="props.searchResults"
+        renderPaths="props.renderPaths"
         updateComponent="props.updateComponent"
         selectComponent="props.selectComponent"/>
     </t>

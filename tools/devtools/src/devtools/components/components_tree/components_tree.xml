@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
-  <t t-name="devtools.components_tree" owl="1">
+  <t t-name="devtools.ComponentsTree" owl="1">
     <div id="container" t-on-mouseover.stop="removeHighlight" t-on-mouseout.stop="removeHighlight">
       <div class="split-screen-container">
         <div class="split-screen-left"  t-attf-style="width:calc({{state.splitPosition}}% - 1px);">
           <div class="panel-top">
             <SearchBar
-              t-props="search"
+              t-props="state.search"
               toggleSelector.bind="toggleSelector"
               updateSearch.bind="updateSearch"
               setSearchIndex.bind="setSearchIndex"/>
@@ -15,9 +15,10 @@
           </div>
           <div id="tree-container">
             <TreeElement 
-              t-props="root"
-              search="search.search"
-              searchResults="search.searchResults"
+              t-props="state.root"
+              search="state.search.search"
+              searchResults="state.search.searchResults"
+              renderPaths="state.renderPaths"
               updateComponent.bind="updateTree"
               selectComponent.bind="selectComponent"/> 
           </div>
@@ -30,7 +31,7 @@
         />
         <div class="split-screen-right" t-attf-style="width:calc({{100 - state.splitPosition}}%);">
           <DetailsWindow 
-            activeComponent="activeComponent"
+            activeComponent="state.activeComponent"
             updateObjectTreeElement.bind="updateObjectTreeElements"
             updateBag.bind="updateExpandBag"
             expandSubscriptionsKeys.bind="expandSubscriptionsKeys"

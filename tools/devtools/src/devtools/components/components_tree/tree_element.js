@@ -2,11 +2,12 @@
 
 import { isElementInCenterViewport } from "../../../utils";
 
-const { Component, onWillRender, onRendered, onMounted, markup, onWillUpdateProps} = owl
+const { Component, onWillRender, useEffect, onMounted, markup, onWillUpdateProps} = owl
 
 export class TreeElement extends Component {
   setup(){
     this.searched = false;
+    this.highlightTimeout = false;
     onMounted(() => {
       if (this.props.selected){
         const tree_element = document.getElementById("tree_element/"+this.props.path);
@@ -24,17 +25,35 @@ export class TreeElement extends Component {
       else
         this.searched = false;
     });
+    useEffect(
+      (renderPaths) => {
+        if (renderPaths.includes(this.props.path)){
+          console.log(this.props.path, renderPaths)
+          clearTimeout(this.highlightTimeout);
+          const treeElement = document.getElementById("tree_element/" + this.props.path);
+          if(treeElement){
+            treeElement.classList.remove("highlight-fade");
+            treeElement.classList.add("render-highlight");
+            this.highlightTimeout = setTimeout(() => {
+              treeElement.classList.add("highlight-fade");
+              treeElement.classList.remove("render-highlight");
+            }, 50);
+          } 
+        }
+      },
+      () => [this.props.renderPaths]
+    );
   }
 
   get content() {
     if(this.searched){
       let content = this.props.name;
       let start_index = 0;
-      for (let i = 0; i < this.props.search.length; i++){
-        let foundUpper = content.indexOf(this.props.search[i].toUpperCase(), start_index);
+      for (const searchLetter of this.props.search){
+        let foundUpper = content.indexOf(searchLetter.toUpperCase(), start_index);
         if (foundUpper < 0)
           foundUpper = Infinity;
-        let foundLower = content.indexOf(this.props.search[i], start_index);
+        let foundLower = content.indexOf(searchLetter, start_index);
         if (foundLower < 0)
           foundLower = Infinity;
         let found = Math.min(foundLower, foundUpper);
@@ -48,7 +67,7 @@ export class TreeElement extends Component {
       return this.props.name;
   }
 
-  static template = "devtools.tree_element";
+  static template = "devtools.TreeElement";
   
   static props = ['name', 'children', 'path', 'key', 'display', 'toggled', 'depth', 'selected', 'highlighted', 'search', 'searchResults'];
   
@@ -63,6 +82,9 @@ export class TreeElement extends Component {
   }
 
   hoverComponent(ev){
+    var elements = document.getElementsByClassName("highlight-fade");
+    for (const element of elements) 
+      element.classList.remove("highlight-fade");
     let script = 'owlDevtools__HighlightComponent("' + this.props.path + '")';
     chrome.devtools.inspectedWindow.eval(
       script,

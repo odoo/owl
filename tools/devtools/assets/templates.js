@@ -1,6 +1,6 @@
 const { App } = owl;
 
-App.registerTemplate("devtools.components_tree", function devtools_components_tree(app, bdom, helpers
+App.registerTemplate("devtools.ComponentsTree", function devtools_ComponentsTree(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { bind } = helpers;
@@ -14,18 +14,18 @@ App.registerTemplate("devtools.components_tree", function devtools_components_tr
     let hdlr1 = ["stop", ctx['removeHighlight'], ctx];
     let hdlr2 = ["stop", ctx['removeHighlight'], ctx];
     let attr1 = `width:calc(${ctx['state'].splitPosition}% - 1px);`;
-    const b2 = comp1(Object.assign({}, ctx['search'], {toggleSelector: bind(this, ctx['toggleSelector']),updateSearch: bind(this, ctx['updateSearch']),setSearchIndex: bind(this, ctx['setSearchIndex'])}), key + `__1`, node, this, null);
-    const b3 = comp2(Object.assign({}, ctx['root'], {search: ctx['search'].search,searchResults: ctx['search'].searchResults,updateComponent: bind(this, ctx['updateTree']),selectComponent: bind(this, ctx['selectComponent'])}), key + `__2`, node, this, null);
+    const b2 = comp1(Object.assign({}, ctx['state'].search, {toggleSelector: bind(this, ctx['toggleSelector']),updateSearch: bind(this, ctx['updateSearch']),setSearchIndex: bind(this, ctx['setSearchIndex'])}), key + `__1`, node, this, null);
+    const b3 = comp2(Object.assign({}, ctx['state'].root, {search: ctx['state'].search.search,searchResults: ctx['state'].search.searchResults,renderPaths: ctx['state'].renderPaths,updateComponent: bind(this, ctx['updateTree']),selectComponent: bind(this, ctx['selectComponent'])}), key + `__2`, node, this, null);
     let attr2 = `left:calc(${ctx['state'].splitPosition}% - 1px);`;
     let hdlr3 = [ctx['handleMouseDown'], ctx];
     let hdlr4 = [ctx['handleMouseUp'], ctx];
     let attr3 = `width:calc(${100-ctx['state'].splitPosition}%);`;
-    const b4 = comp3({activeComponent: ctx['activeComponent'],updateObjectTreeElement: bind(this, ctx['updateObjectTreeElements']),updateBag: bind(this, ctx['updateExpandBag']),expandSubscriptionsKeys: bind(this, ctx['expandSubscriptionsKeys']),editObjectTreeElement: bind(this, ctx['editObjectTreeElement']),refreshComponent: bind(this, ctx['refreshComponent'])}, key + `__3`, node, this, null);
+    const b4 = comp3({activeComponent: ctx['state'].activeComponent,updateObjectTreeElement: bind(this, ctx['updateObjectTreeElements']),updateBag: bind(this, ctx['updateExpandBag']),expandSubscriptionsKeys: bind(this, ctx['expandSubscriptionsKeys']),editObjectTreeElement: bind(this, ctx['editObjectTreeElement']),refreshComponent: bind(this, ctx['refreshComponent'])}, key + `__3`, node, this, null);
     return block1([hdlr1, hdlr2, attr1, attr2, hdlr3, hdlr4, attr3], [b2, b3, b4]);
   }
 });
 
-App.registerTemplate("devtools.details_window", function devtools_details_window(app, bdom, helpers
+App.registerTemplate("devtools.DetailsWindow", function devtools_DetailsWindow(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
@@ -33,7 +33,9 @@ App.registerTemplate("devtools.details_window", function devtools_details_window
   const comp2 = app.createComponent(`Subscriptions`, true, false, false, false);
   const comp3 = app.createComponent(`ObjectTreeElement`, true, false, true, false);
   
-  let block1 = createBlock(`<div class="details_window"><div id="details_window_head" class="panel-top"><div class="name_wrapper"><b><block-text-0/></b></div><i class="fa fa-refresh search-utility me-3" aria-hidden="true" block-handler-1="click.stop"/></div><div class="horizontal-border"/><div id="props" class="details-panel my-1"><b>props</b><block-child-0/></div><div class="horizontal-border"/><!-- <div id="hooks" class="details-panel my-1">
+  let block1 = createBlock(`<div class="details_window"><div id="details_window_head" class="panel-top"><div class="name_wrapper"><b><block-text-0/></b></div><i class="fa fa-refresh search-utility me-3" aria-hidden="true" block-handler-1="click.stop"/></div><div class="horizontal-border"/><div id="props" class="details-panel my-1"><b>props</b><block-child-0/></div><!-- <div class="horizontal-border">
+      </div>
+      <div id="hooks" class="details-panel my-1">
         <b>hooks</b>
       </div> --><div class="horizontal-border"/><div id="subscriptions" class="details-panel my-1"><block-child-1/></div><div class="horizontal-border"/><div id="env" class="details-panel my-1"><b>env</b><block-child-2/></div></div>`);
   
@@ -108,14 +110,14 @@ App.registerTemplate("devtools.ObjectTreeElement", function devtools_ObjectTreeE
   }
 });
 
-App.registerTemplate("devtools.searchbar", function devtools_searchbar(app, bdom, helpers
+App.registerTemplate("devtools.SearchBar", function devtools_SearchBar(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
   
   let block2 = createBlock(`<div class="search-selector"><i class="fa fa-mouse-pointer" block-attribute-0="style" aria-hidden="true" block-handler-1="click.stop"/></div>`);
   let block3 = createBlock(`<div class="search-border mx-2"/>`);
-  let block4 = createBlock(`<div class="search-bar-wrapper"><i class="fa fa-search search-icon" aria-hidden="true"/><input type="text" class="search-input" placeholder="Search" block-attribute-0="value" block-handler-1="keyup"/><block-child-0/></div>`);
+  let block4 = createBlock(`<div class="search-bar-wrapper"><i class="fa fa-search search-icon" aria-hidden="true"/><input type="text" class="search-input" placeholder="Search" block-attribute-0="value" block-handler-1="keyup" block-handler-2="keydown"/><block-child-0/></div>`);
   let block6 = createBlock(`<div class="search-indicator"><block-child-0/>|<block-child-1/></div>`);
   let block9 = createBlock(`<div class="search-border mx-2"/>`);
   let block10 = createBlock(`<i class="fa fa-angle-up fa-lg search-utility me-2" aria-hidden="true" block-handler-0="click.stop"/>`);
@@ -130,25 +132,26 @@ App.registerTemplate("devtools.searchbar", function devtools_searchbar(app, bdom
     let b5;
     let attr2 = new String((ctx['props'].search) || "");
     let hdlr2 = [ctx['updateSearch'], ctx];
+    let hdlr3 = [ctx['fastNextSearch'], ctx];
     if (ctx['props'].search.length>0) {
       const b7 = safeOutput(ctx['props'].searchResults.length?ctx['props'].searchIndex+1:0);
       const b8 = safeOutput(ctx['props'].searchResults.length);
       const b6 = block6([], [b7, b8]);
       const b9 = block9();
-      let hdlr3 = ["stop", ctx['getPrevSearch'], ctx];
-      const b10 = block10([hdlr3]);
-      let hdlr4 = ["stop", ctx['getNextSearch'], ctx];
-      const b11 = block11([hdlr4]);
-      let hdlr5 = ["stop", ctx['clearSearch'], ctx];
-      const b12 = block12([hdlr5]);
+      let hdlr4 = ["stop", ctx['getPrevSearch'], ctx];
+      const b10 = block10([hdlr4]);
+      let hdlr5 = ["stop", ctx['getNextSearch'], ctx];
+      const b11 = block11([hdlr5]);
+      let hdlr6 = ["stop", ctx['clearSearch'], ctx];
+      const b12 = block12([hdlr6]);
       b5 = multi([b6, b9, b10, b11, b12]);
     }
-    const b4 = block4([attr2, hdlr2], [b5]);
+    const b4 = block4([attr2, hdlr2, hdlr3], [b5]);
     return multi([b2, b3, b4]);
   }
 });
 
-App.registerTemplate("devtools.subscriptions", function devtools_subscriptions(app, bdom, helpers
+App.registerTemplate("devtools.Subscriptions", function devtools_Subscriptions(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, safeOutput, withKey } = helpers;
@@ -190,7 +193,7 @@ App.registerTemplate("devtools.subscriptions", function devtools_subscriptions(a
   }
 });
 
-App.registerTemplate("devtools.tree_element", function devtools_tree_element(app, bdom, helpers
+App.registerTemplate("devtools.TreeElement", function devtools_TreeElement(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput, prepareList, withKey } = helpers;
@@ -224,7 +227,7 @@ App.registerTemplate("devtools.tree_element", function devtools_tree_element(app
     for (let i1 = 0; i1 < l_block7; i1++) {
       ctx[`child`] = v_block7[i1];
       const key1 = ctx['child'].key;
-      c_block7[i1] = withKey(comp1(Object.assign({}, ctx['child'], {search: ctx['props'].search,searchResults: ctx['props'].searchResults,updateComponent: ctx['props'].updateComponent,selectComponent: ctx['props'].selectComponent}), key + `__1__${key1}`, node, this, null), key1);
+      c_block7[i1] = withKey(comp1(Object.assign({}, ctx['child'], {search: ctx['props'].search,searchResults: ctx['props'].searchResults,renderPaths: ctx['props'].renderPaths,updateComponent: ctx['props'].updateComponent,selectComponent: ctx['props'].selectComponent}), key + `__1__${key1}`, node, this, null), key1);
     }
     const b7 = list(c_block7);
     return multi([b2, b7]);

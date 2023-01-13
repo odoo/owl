@@ -28,7 +28,7 @@ export class Subscriptions extends Component {
 
   static props = ['subscriptions', 'updateObjectTreeElement', 'expandSubscriptionsKeys', 'editObjectTreeElement', 'updateBag'];
 
-  static template = "devtools.subscriptions";
+  static template = "devtools.Subscriptions";
 
   static components = { ObjectTreeElement };
 }

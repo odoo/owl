@@ -4,19 +4,39 @@ const { Component, markup, useState, onMounted, onWillUpdateProps } = owl
 
 export class SearchBar extends Component {
   setup(){
+    this.enterTimeout = false;
+    this.enterInterval = false;
   }
 
   toggleSelector(){
     this.props.toggleSelector();
   }
 
+  // On keyup
   updateSearch(event){
     if(event.keyCode === 13){
-      this.getNextSearch();
+      clearTimeout(this.enterTimeout);
+      this.enterTimeout = false;
+      clearInterval(this.enterInterval);
+      this.enterInterval = false;
     }
     else {
       let search = event.target.value;
       this.props.updateSearch(search);
+    }
+  }
+
+  // On keydown
+  fastNextSearch(event){
+    if(event.keyCode === 13){
+      if(!this.enterInterval && !this.enterTimeout){
+        this.getNextSearch();
+        this.enterTimeout = setTimeout(() => {
+          this.enterInterval = setInterval(() => {
+            this.getNextSearch();
+          }, 100);
+        }, 500);
+      }
     }
   }
 
@@ -44,7 +64,7 @@ export class SearchBar extends Component {
   
   static props = ['updateSearch', 'setSearchIndex', 'toggleSelector', 'search', 'searchResults', 'searchIndex'];
 
-  static template = "devtools.searchbar";
+  static template = "devtools.SearchBar";
 }
 
 

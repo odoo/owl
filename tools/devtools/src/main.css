@@ -7,35 +7,44 @@
 /* Show the nested list when the user clicks on the caret/arrow (with JavaScript) */
 
 .active {
-    display: block;
+  display: block;
 }
 
 #container {
-    display: flex;
-    flex: 1;
-    flex-grow: 1;
-    flex-shrink: 1;
-    flex-basis: 0%;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+  display: flex;
+  flex: 1;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 0%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .tree_component {
-    user-select: none;
-    width: 100%;
-    margin: 0px;
-    white-space: nowrap;
+  user-select: none;
+  width: 100%;
+  margin: 0px;
+  white-space: nowrap;
+  background-color: white;
+}
+
+.render-highlight {
+  background-color: yellow !important;
+}
+  
+.highlight-fade {
+  transition: background-color 0.5s ease-out;
 }
 
 .name_wrapper {
-    color:rgb(18, 54, 255);
-    white-space: nowrap;
-    display: inline;
-    width: 100%;
+  color:rgb(18, 54, 255);
+  white-space: nowrap;
+  display: inline;
+  width: 100%;
 }
 
 .highlight-search {
@@ -45,28 +54,28 @@
 }
 
 .key_wrapper {
-    color:rgb(255, 181, 44);
-    white-space: nowrap;
-    display: inline;
+  color:rgb(255, 181, 44);
+  white-space: nowrap;
+  display: inline;
 }
 
 .key_name {
-    color:rgb(119, 34, 255);
-    white-space: nowrap;
-    display: inline;
+  color:rgb(119, 34, 255);
+  white-space: nowrap;
+  display: inline;
 }
 
 .details_window {
-    width: 100%;
+  width: 100%;
 }
 
 .details-panel {
-    width: 100%;
-    padding-left: 0.5rem !important;
+  width: 100%;
+  padding-left: 0.5rem !important;
 }
 
 .tree_component:hover {
-    background-color: #baefff;
+  background-color: #baefff;
 }
 
 .component_highlighted {
@@ -74,7 +83,7 @@
 }
 
 .component_selected {
-  background-color: #33CEFF !important;
+  background-color: #33CEFF;
 }
 
 .split-screen-container {

@@ -59,7 +59,7 @@ exports[`basics arrow functions as prop correctly capture their scope 2`] = `
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [ctx['props'].onClick, ctx];
+    let hdlr1 = [ctx['props'].onClick, this];
     return block1([hdlr1]);
   }
 }"
@@ -140,7 +140,7 @@ exports[`basics support prop names that aren't valid bare object property names 
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [ctx['props'].onClick, ctx];
+    let hdlr1 = [ctx['props'].onClick, this];
     return block1([hdlr1]);
   }
 }"

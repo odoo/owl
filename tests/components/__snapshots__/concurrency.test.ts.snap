@@ -93,7 +93,7 @@ exports[`another scenario with delayed rendering 3`] = `
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [ctx['increment'], ctx];
+    let hdlr1 = [ctx['increment'], this];
     let txt1 = ctx['state'].val;
     return block1([hdlr1, txt1]);
   }
@@ -1262,7 +1262,7 @@ exports[`delayed rendering, but then initial rendering is cancelled by yet anoth
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [ctx['increment'], ctx];
+    let hdlr1 = [ctx['increment'], this];
     let txt1 = ctx['state'].val;
     return block1([hdlr1, txt1]);
   }
@@ -1327,7 +1327,7 @@ exports[`delayed rendering, destruction, stuff happens 4`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b2 = text(\`D\`);
-    let hdlr1 = [ctx['increment'], ctx];
+    let hdlr1 = [ctx['increment'], this];
     let txt1 = ctx['state'].val;
     const b3 = block3([hdlr1, txt1]);
     return multi([b2, b3]);
@@ -1369,7 +1369,7 @@ exports[`delayed rendering, reusing fiber and stuff 3`] = `
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [ctx['increment'], ctx];
+    let hdlr1 = [ctx['increment'], this];
     let txt1 = ctx['state'].val;
     return block1([hdlr1, txt1]);
   }
@@ -1415,7 +1415,7 @@ exports[`delayed rendering, reusing fiber then component is destroyed and  stuff
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [ctx['increment'], ctx];
+    let hdlr1 = [ctx['increment'], this];
     let txt1 = ctx['state'].val;
     return block1([hdlr1, txt1]);
   }
@@ -1459,7 +1459,7 @@ exports[`delayed rendering, then component is destroyed and  stuff 3`] = `
   let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/></button>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [ctx['increment'], ctx];
+    let hdlr1 = [ctx['increment'], this];
     let txt1 = ctx['state'].val;
     return block1([hdlr1, txt1]);
   }
@@ -1647,7 +1647,7 @@ exports[`rendering component again in next microtick 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     let b2;
-    let hdlr1 = [ctx['onClick'], ctx];
+    let hdlr1 = [ctx['onClick'], this];
     if (ctx['env'].config.flag) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     }
@@ -1734,7 +1734,7 @@ exports[`renderings, destruction, patch, stuff, ... yet another variation 3`] = 
   
   return function template(ctx, node, key = \\"\\") {
     const b2 = text(\`D\`);
-    let hdlr1 = [ctx['increment'], ctx];
+    let hdlr1 = [ctx['increment'], this];
     let txt1 = ctx['state'].val;
     const b3 = block3([hdlr1, txt1]);
     return multi([b2, b3]);
@@ -1751,7 +1751,7 @@ exports[`renderings, destruction, patch, stuff, ... yet another variation 4`] = 
   
   return function template(ctx, node, key = \\"\\") {
     const b2 = text(\`C\`);
-    let hdlr1 = [ctx['increment'], ctx];
+    let hdlr1 = [ctx['increment'], this];
     let txt1 = ctx['state'].val;
     const b3 = block3([hdlr1, txt1]);
     return multi([b2, b3]);

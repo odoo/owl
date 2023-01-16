@@ -135,7 +135,7 @@ exports[`basics can be clicked on and updated 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let txt1 = ctx['state'].counter;
     const v1 = ctx['state'];
-    let hdlr1 = [()=>v1.counter++, ctx];
+    let hdlr1 = [()=>v1.counter++, this];
     return block1([txt1, hdlr1]);
   }
 }"
@@ -646,7 +646,7 @@ exports[`basics rerendering a widget with a sub widget 2`] = `
   return function template(ctx, node, key = \\"\\") {
     let txt1 = ctx['state'].counter;
     const v1 = ctx['state'];
-    let hdlr1 = [()=>v1.counter++, ctx];
+    let hdlr1 = [()=>v1.counter++, this];
     return block1([txt1, hdlr1]);
   }
 }"

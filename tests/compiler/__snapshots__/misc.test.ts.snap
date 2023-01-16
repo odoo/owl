@@ -228,7 +228,7 @@ exports[`misc other complex template 1`] = `
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`project\`] = v_block2[i1];
       const key1 = ctx['project'].id;
-      let hdlr1 = [ctx['selectProject'](ctx['project']), ctx];
+      let hdlr1 = [ctx['selectProject'](ctx['project']), this];
       let txt2 = ctx['project'].name;
       c_block2[i1] = withKey(block3([hdlr1, txt2]), key1);
     }
@@ -260,8 +260,8 @@ exports[`misc other complex template 1`] = `
       }
       b4 = multi([b5, b6]);
     }
-    let hdlr2 = [ctx['toggleSettingsMenu'], ctx];
-    let hdlr3 = [ctx['toggleMore'], ctx];
+    let hdlr2 = [ctx['toggleSettingsMenu'], this];
+    let hdlr3 = [ctx['toggleMore'], this];
     if (ctx['categories']&&ctx['categories'].length>1) {
       ctx = Object.create(ctx);
       const [k_block15, v_block15, l_block15, c_block15] = prepareList(ctx['categories']);;
@@ -278,9 +278,9 @@ exports[`misc other complex template 1`] = `
       b14 = block14([], [b15]);
     }
     let attr8 = new String((ctx['search'].value) || \\"\\");
-    let hdlr4 = [ctx['updateFilter'], ctx];
-    let hdlr5 = [ctx['updateFilter'], ctx];
-    let hdlr6 = [ctx['clearSearch'], ctx];
+    let hdlr4 = [ctx['updateFilter'], this];
+    let hdlr5 = [ctx['updateFilter'], this];
+    let hdlr6 = [ctx['clearSearch'], this];
     if (ctx['triggers']) {
       ctx = Object.create(ctx);
       const [k_block18, v_block18, l_block18, c_block18] = prepareList(ctx['triggers']);;
@@ -293,7 +293,7 @@ exports[`misc other complex template 1`] = `
           let attr10 = \`trigger_\${ctx['trigger'].id}\`;
           let attr11 = new Boolean(ctx['options'].trigger_display[ctx['trigger'].id]);
           let attr12 = ctx['trigger'].id;
-          let hdlr7 = [ctx['updateTriggerDisplay'], ctx];
+          let hdlr7 = [ctx['updateTriggerDisplay'], this];
           let attr13 = \`trigger_\${ctx['trigger'].id}\`;
           let txt6 = ctx['trigger'].name;
           b20 = block20([attr9, attr10, attr11, attr12, hdlr7, attr13, txt6]);
@@ -302,10 +302,10 @@ exports[`misc other complex template 1`] = `
       }
       ctx = ctx.__proto__;
       const b18 = list(c_block18);
-      let hdlr8 = [ctx['triggerAll'], ctx];
-      let hdlr9 = [ctx['triggerNone'], ctx];
-      let hdlr10 = [ctx['triggerDefault'], ctx];
-      let hdlr11 = [ctx['toggleSettingsMenu'], ctx];
+      let hdlr8 = [ctx['triggerAll'], this];
+      let hdlr9 = [ctx['triggerNone'], this];
+      let hdlr10 = [ctx['triggerDefault'], this];
+      let hdlr11 = [ctx['toggleSettingsMenu'], this];
       const b21 = block21([hdlr8, hdlr9, hdlr10, hdlr11]);
       b17 = multi([b18, b21]);
     }

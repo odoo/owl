@@ -138,7 +138,7 @@ exports[`basics sub widget is interactive 2`] = `
   let block1 = createBlock(\`<span><button block-handler-0=\\"click\\">click</button>child<block-text-1/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [ctx['inc'], ctx];
+    let hdlr1 = [ctx['inc'], this];
     let txt1 = ctx['state'].val;
     return block1([hdlr1, txt1]);
   }

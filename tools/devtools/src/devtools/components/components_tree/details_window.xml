@@ -6,6 +6,7 @@
         <div class="name_wrapper">
           <b><t t-esc="componentName"/></b>
         </div>
+        <i class="fa fa-eye search-utility me-2" aria-hidden="true" t-on-click.stop="inspectComponentInDOM"></i>
         <i class="fa fa-bug search-utility me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("component")'></i>
         <i class="fa fa-refresh search-utility me-3" aria-hidden="true" t-on-click.stop="refreshComponent"></i>
       </div>

@@ -47,7 +47,6 @@ export class ComponentsTree extends Component {
         console.assert(port.name === "DevtoolsTreePort");
         port.onMessage.addListener((msg) => {
           if (msg.type === "Flush"){
-            // this.state.renderPaths = msg.paths;
             this.state.renderPaths =  this.state.renderPaths.concat(msg.paths);
             clearTimeout(this.flushRendersTimeout);
             this.flushRendersTimeout = setTimeout(() => {this.state.renderPaths = []},200);
@@ -107,10 +106,7 @@ export class ComponentsTree extends Component {
       script = 'owlDevtools__EnableHTMLSelector();';
     else
       script = 'owlDevtools__DisableHTMLSelector();';
-    chrome.devtools.inspectedWindow.eval(
-      script,
-      (result, isException) => {}
-    );
+    chrome.devtools.inspectedWindow.eval(script);
   }
 
   updateSearch(search){
@@ -154,10 +150,7 @@ export class ComponentsTree extends Component {
 
   editObjectTreeElement(objectPath, value, objectType){
     const script = 'owlDevtools__EditObject("'+ this.state.activeComponent.path +'", "'+ objectPath +'", '+ value +', "' + objectType + '");';
-    chrome.devtools.inspectedWindow.eval(
-      script,
-      (result, isException) => {}
-    );
+    chrome.devtools.inspectedWindow.eval(script);
   }
 
   updateExpandBag(path, type, toggled, display){
@@ -186,7 +179,6 @@ export class ComponentsTree extends Component {
     if (obj.hasChildren && obj.children.length === 0) {
       const expandBag = JSON.stringify(this.state.activeComponent.expandBag);
       const script = 'owlDevtools__LoadObjectChildren("'+ this.state.activeComponent.path +'","'+ obj.path +'", '+ obj.depth +', "'+ obj.contentType +'", "'+ obj.objectType +'", '+ expandBag +');';
-      console.log(script);
       chrome.devtools.inspectedWindow.eval(
         script,
         (result, isException) => {
@@ -202,10 +194,7 @@ export class ComponentsTree extends Component {
 
   refreshComponent() {
     const script = 'owlDevtools__RefreshComponent("'+ this.state.activeComponent.path +'")';
-    chrome.devtools.inspectedWindow.eval(
-      script,
-      (result, isException) => {}
-    );
+    chrome.devtools.inspectedWindow.eval(script);
   }
 
   expandSubscriptionsKeys(index){
@@ -214,10 +203,7 @@ export class ComponentsTree extends Component {
 
   removeHighlight(ev){
     const script = "owlDevtools__RemoveHighlights()"
-    chrome.devtools.inspectedWindow.eval(
-      script,
-      (result, isException) => {}
-    );
+    chrome.devtools.inspectedWindow.eval(script);
   }
 
   selectComponent(path) {

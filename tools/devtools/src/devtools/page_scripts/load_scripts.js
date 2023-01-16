@@ -103,11 +103,11 @@ if(!window.owlDevtools__ScriptsLoaded){
   var owlDevtools__CurrentSelectedElement = null;
 
   var owlDevtools__HTMLSelector = function(ev){
-    let target = ev.target;
+    const target = ev.target;
     if (!owlDevtools__CurrentSelectedElement || !(target.isEqualNode(owlDevtools__CurrentSelectedElement))){
-      let [application] = owl.App.apps;
-      let root = application.root;
-      let path = owlDevtools__GetElementPath(target, root);
+      const [application] = owl.App.apps;
+      const root = application.root;
+      const path = owlDevtools__GetElementPath(target, root);
       owlDevtools__HighlightComponent(path);
       owlDevtools__CurrentSelectedElement = target;
       window.postMessage({type: "owlDevtools__SelectElement", path: path});
@@ -192,7 +192,7 @@ if(!window.owlDevtools__ScriptsLoaded){
     let obj = top_parent;
     if(path.length === 0)
       return obj;
-    let path_array = path.split('/');
+    const path_array = path.split('/');
     for (const key of path_array) {
       if(obj.hasOwnProperty(key))
         obj = obj[key];
@@ -263,11 +263,11 @@ if(!window.owlDevtools__ScriptsLoaded){
     if (typeof expandBag === 'string'){
       expandBag = JSON.parse(expandBag);
     }
-    let [application] = owl.App.apps; 
-    let root = application.root;
+    const [application] = owl.App.apps; 
+    const root = application.root;
     let children = [];
     depth = depth + 1;
-    let component = owlDevtools__GetComponent(componentPath, root);
+    const component = owlDevtools__GetComponent(componentPath, root);
     let obj;
     if (objType === 'props')
       obj = owlDevtools__GetObject(component.props, objPath);
@@ -283,7 +283,7 @@ if(!window.owlDevtools__ScriptsLoaded){
         index = objPath;
         new_path = "";
       }
-      let top_parent = component.subscriptions[index].target;
+      const top_parent = component.subscriptions[index].target;
       obj = owlDevtools__GetObject(top_parent, new_path);
     }
     if(!obj)
@@ -307,7 +307,7 @@ if(!window.owlDevtools__ScriptsLoaded){
   // Returns the Component given its path and the root component
   function owlDevtools__GetComponent(path, root){
     let component = root;
-    let path_array = path.split('/');
+    const path_array = path.split('/');
     for (let i = 1; i < path_array.length; i++) {
       if (component.children.hasOwnProperty(path_array[i]))
         component = component.children[path_array[i]];
@@ -320,13 +320,13 @@ if(!window.owlDevtools__ScriptsLoaded){
   function owlDevtools__RefreshComponent(path){
     const [application] = owl.App.apps;
     const root = application.root;
-    let component = owlDevtools__GetComponent(path, root);
+    const component = owlDevtools__GetComponent(path, root);
     component.render(true);
   }
   // Returns the component's details given its path
   function owlDevtools__SendComponentDetails(path = null, expandBag = '{"props":{},"env":{},"subscription":{}}'){ 
-    let [application] = owl.App.apps; 
-    let root = application.root;
+    const [application] = owl.App.apps; 
+    const root = application.root;
     let component = {};
     expandBag = JSON.parse(expandBag);
     if(!path){
@@ -337,11 +337,11 @@ if(!window.owlDevtools__ScriptsLoaded){
     if(!node)
       node = root;
     // Load props of the component
-    let props = node.props;
+    const props = node.props;
     component.properties = {};
     component.name = node.component.constructor.name;
     Reflect.ownKeys(props).forEach(key => {
-      let property = owlDevtools__GetParsedObjectChild(path, props, key, 0, 'props', '', expandBag);
+      const property = owlDevtools__GetParsedObjectChild(path, props, key, 0, 'props', '', expandBag);
       if(typeof key === 'symbol')
         component.properties[key.toString()] = property;
       else
@@ -350,10 +350,10 @@ if(!window.owlDevtools__ScriptsLoaded){
     const propsPrototype = owlDevtools__GetParsedObjectChild(path, props, "[[Prototype]]", 0, 'props', '', expandBag);
     component.properties["[[Prototype]]"] = propsPrototype;
     // Load env of the component
-    let env = node.component.env;
+    const env = node.component.env;
     component.env = {};
     Reflect.ownKeys(env).forEach(key => {
-      let envElement = owlDevtools__GetParsedObjectChild(path, env, key, 0, 'env', '', expandBag);
+      const envElement = owlDevtools__GetParsedObjectChild(path, env, key, 0, 'env', '', expandBag);
       if(typeof key === 'symbol')
         component.env[key.toString()] = envElement;
       else
@@ -362,7 +362,7 @@ if(!window.owlDevtools__ScriptsLoaded){
     const envPrototype = owlDevtools__GetParsedObjectChild(path, env, "[[Prototype]]", 0, 'env', '', expandBag);
     component.env["[[Prototype]]"] = envPrototype;
     // Load subscriptions of the component
-    let raw_subscriptions = node.subscriptions;
+    const raw_subscriptions = node.subscriptions;
     component.subscriptions = [];
     raw_subscriptions.forEach((raw_subscription, index) => {
       let subscription = {
@@ -409,8 +409,8 @@ if(!window.owlDevtools__ScriptsLoaded){
   };
   // Triggers the highlight effect around the specified component.
   function owlDevtools__HighlightComponent(path){
-    let [application] = owl.App.apps; 
-    let root = application.root;
+    const [application] = owl.App.apps; 
+    const root = application.root;
     // root node (App) is special since it only has a parentEl as attached element
     let component = owlDevtools__GetComponent(path, root);
     if(!component){
@@ -466,9 +466,9 @@ if(!window.owlDevtools__ScriptsLoaded){
   };
   // Edit a reactive state property with the provided value of the given component (path) and the subscription path
   function owlDevtools__EditObject(componentPath, object_path, value, object_type){
-    let [application] = owl.App.apps; 
-    let root = application.root;
-    let component = owlDevtools__GetComponent(componentPath, root);
+    const [application] = owl.App.apps; 
+    const root = application.root;
+    const component = owlDevtools__GetComponent(componentPath, root);
     let path_array;
     if(object_type === "subscription"){
       let index, new_path;
@@ -480,7 +480,7 @@ if(!window.owlDevtools__ScriptsLoaded){
         return;
       }
       path_array = new_path.split('/');
-      let target = owl.reactive(component.subscriptions[index].target);
+      const target = owl.reactive(component.subscriptions[index].target);
       path_array.reduce((acc, curr, idx, arr) => {
         if (idx === arr.length - 1) {
           acc[curr] = value;
@@ -556,8 +556,8 @@ if(!window.owlDevtools__ScriptsLoaded){
         }
       }
       // Try to find a correspondance between the elements in the array and the owl component, stops at first result found
-      for (let i = 0; i < parentsList.length; i++) {
-        inspectedPath = owlDevtools__SearchElement(root, 'App',parentsList[i]);
+      for (const elem of parentsList) {
+        inspectedPath = owlDevtools__SearchElement(root, 'App', elem);
         if(inspectedPath)
           return inspectedPath;
       }
@@ -568,8 +568,8 @@ if(!window.owlDevtools__ScriptsLoaded){
   // Returns the tree of components of the inspected page in a parsed format
   // Use inspectedPath to specify the path of the selected component
   function owlDevtools__SendTree(inspectedPath = null){ 
-    let [application] = owl.App.apps; 
-    let root = application.root;
+    const [application] = owl.App.apps; 
+    const root = application.root;
     let tree = {};
     tree.root = {
       name: root.component.constructor.name,
@@ -602,6 +602,30 @@ if(!window.owlDevtools__ScriptsLoaded){
       return path;
     }
     return "App";
+  }
+  // Store the object into a temp window variable and log it to the console
+  function owlDevtools__SendObjectToConsole(componentPath, objectType){
+    const [application] = owl.App.apps;
+    const root = application.root;
+    const component = owlDevtools__GetComponent(componentPath, root);
+    let index = 1;
+    while(window["temp" + index] !== undefined)
+      index++;
+    switch(objectType){
+      case "component":
+        window["temp" + index] = component;
+        break;
+      case "props":
+        window["temp" + index] = component.props;
+        break;
+      case "env":
+        window["temp" + index] = component.component.env;
+        break;
+      case "subscription":
+        window["temp" + index] = component.subscriptions;
+        break;
+    }
+    console.log("temp" + index + " = ", window["temp" + index]);
   }
   let owlDevtools__FibersMap = new WeakMap();
   const owlDevtools__originalFlush = [...owl.App.apps][0].scheduler.flush;

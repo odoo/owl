@@ -16,6 +16,11 @@ export class DetailsWindow extends Component {
     this.props.refreshComponent();
   }
 
+  logComponentInConsole(type){
+    const script = 'owlDevtools__SendObjectToConsole("'+ this.props.activeComponent.path +'", "'+ type +'")';
+    chrome.devtools.inspectedWindow.eval(script);
+  }
+
   static props = ['activeComponent', 'updateObjectTreeElement', 'expandSubscriptionsKeys', 'editObjectTreeElement', 'updateBag'];
   
   static template = "devtools.DetailsWindow";

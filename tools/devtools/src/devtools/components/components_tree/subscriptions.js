@@ -11,9 +11,9 @@ export class Subscriptions extends Component {
   get subscriptions() { return this.props.subscriptions }
 
   keysContent(index) {
-    let keys = this.props.subscriptions[index].keys;
+    const keys = this.props.subscriptions[index].keys;
     let content = JSON.stringify(keys);
-    let maxLength = 50;
+    const maxLength = 50;
     content = content.replace(/,/g, ', ');
     if(content.length > maxLength){
       content = content.slice(0, content.lastIndexOf(',', maxLength-5)) + ", ...]";

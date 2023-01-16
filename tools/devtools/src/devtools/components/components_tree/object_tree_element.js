@@ -10,7 +10,7 @@ export class ObjectTreeElement extends Component {
       (editMode) => {
         // Focus on the input when it is created
         if(editMode){
-          let input = document.getElementById("objectEditionInput/"+this.props.path);
+          const input = document.getElementById("objectEditionInput/"+this.props.path);
           input.focus();
           input.select();
         }

@@ -50,7 +50,7 @@ export class ComponentsTree extends Component {
             this.state.renderPaths =  this.state.renderPaths.concat(msg.paths);
             clearTimeout(this.flushRendersTimeout);
             this.flushRendersTimeout = setTimeout(() => {this.state.renderPaths = []},200);
-            let script = 'owlDevtools__SendTree("'+ this.state.activeComponent.path +'");';
+            let script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentsTree("'+ this.state.activeComponent.path +'");';
             chrome.devtools.inspectedWindow.eval(
               script,
               (result, isException) => {
@@ -60,7 +60,7 @@ export class ComponentsTree extends Component {
               }
             );
             const expandBag = JSON.stringify(this.state.activeComponent.expandBag);
-            script = 'owlDevtools__SendComponentDetails("'+ this.state.activeComponent.path +'", \''+ expandBag +'\');';
+            script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.sendComponentDetails("'+ this.state.activeComponent.path +'", \''+ expandBag +'\');';
             chrome.devtools.inspectedWindow.eval(
               script,
               (result, isException) => {
@@ -78,7 +78,7 @@ export class ComponentsTree extends Component {
           }
         });
       });
-      let script = 'owlDevtools__SendTree();';
+      let script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentsTree();';
       chrome.devtools.inspectedWindow.eval(
         script,
         (result, isException) => {
@@ -87,7 +87,7 @@ export class ComponentsTree extends Component {
           }
         }
       );
-      script = 'owlDevtools__SendComponentDetails();';
+      script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.sendComponentDetails();';
       chrome.devtools.inspectedWindow.eval(
         script,
         (result, isException) => {
@@ -103,9 +103,9 @@ export class ComponentsTree extends Component {
     this.state.search.activeSelector = !this.state.search.activeSelector;
     let script;
     if(this.state.search.activeSelector)
-      script = 'owlDevtools__EnableHTMLSelector();';
+      script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.enableHTMLSelector();';
     else
-      script = 'owlDevtools__DisableHTMLSelector();';
+      script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.disableHTMLSelector();';
     chrome.devtools.inspectedWindow.eval(script);
   }
 
@@ -149,7 +149,7 @@ export class ComponentsTree extends Component {
   }
 
   editObjectTreeElement(objectPath, value, objectType){
-    const script = 'owlDevtools__EditObject("'+ this.state.activeComponent.path +'", "'+ objectPath +'", '+ value +', "' + objectType + '");';
+    const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.editObject("'+ this.state.activeComponent.path +'", "'+ objectPath +'", '+ value +', "' + objectType + '");';
     chrome.devtools.inspectedWindow.eval(script);
   }
 
@@ -178,7 +178,8 @@ export class ComponentsTree extends Component {
     }
     if (obj.hasChildren && obj.children.length === 0) {
       const expandBag = JSON.stringify(this.state.activeComponent.expandBag);
-      const script = 'owlDevtools__LoadObjectChildren("'+ this.state.activeComponent.path +'","'+ obj.path +'", '+ obj.depth +', "'+ obj.contentType +'", "'+ obj.objectType +'", '+ expandBag +');';
+      const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.loadObjectChildren("'+ this.state.activeComponent.path +'","'+ obj.path +'", '+ obj.depth +', "'+ obj.contentType +'", "'+ obj.objectType +'", '+ expandBag +');';
+      console.log(script);
       chrome.devtools.inspectedWindow.eval(
         script,
         (result, isException) => {
@@ -193,7 +194,7 @@ export class ComponentsTree extends Component {
   }
 
   refreshComponent() {
-    const script = 'owlDevtools__RefreshComponent("'+ this.state.activeComponent.path +'")';
+    const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.refreshComponent("'+ this.state.activeComponent.path +'")';
     chrome.devtools.inspectedWindow.eval(script);
   }
 
@@ -202,7 +203,7 @@ export class ComponentsTree extends Component {
   }
 
   removeHighlight(ev){
-    const script = "owlDevtools__RemoveHighlights()"
+    const script = "__OWL__DEVTOOLS_GLOBAL_HOOK__.removeHighlights()"
     chrome.devtools.inspectedWindow.eval(script);
   }
 
@@ -219,7 +220,7 @@ export class ComponentsTree extends Component {
     }
     element.selected = true;
     this.highlightChildren(element);
-    const script = 'owlDevtools__SendComponentDetails("' + element.path + '");';
+    const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.sendComponentDetails("' + element.path + '");';
     chrome.devtools.inspectedWindow.eval(
       script,
       (result, isException) => {

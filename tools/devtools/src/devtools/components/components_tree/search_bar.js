@@ -21,7 +21,7 @@ export class SearchBar extends Component {
       this.enterInterval = false;
     }
     else {
-      let search = event.target.value;
+      const search = event.target.value;
       this.props.updateSearch(search);
     }
   }

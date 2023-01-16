@@ -6,12 +6,14 @@
         <div class="name_wrapper">
           <b><t t-esc="componentName"/></b>
         </div>
+        <i class="fa fa-bug search-utility me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("component")'></i>
         <i class="fa fa-refresh search-utility me-3" aria-hidden="true" t-on-click.stop="refreshComponent"></i>
       </div>
       <div class="horizontal-border">
       </div>
       <div id="props" class="details-panel my-1">
         <b>props</b>
+        <i class="fa fa-bug search-utility my-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("props")'></i>
         <t t-foreach="activeProperties" t-as="key" t-key="key">
           <ObjectTreeElement 
             t-props="activeProperties[key]"
@@ -28,6 +30,7 @@
       <div class="horizontal-border">
       </div>
       <div id="subscriptions" class="details-panel my-1">
+        <i class="fa fa-bug search-utility my-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("subscription")'></i>
         <Subscriptions 
           subscriptions="activeSubscriptions" 
           updateObjectTreeElement="props.updateObjectTreeElement"
@@ -39,6 +42,7 @@
       </div>
       <div id="env" class="details-panel my-1">
         <b>env</b>
+        <i class="fa fa-bug search-utility my-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("env")'></i>
         <t t-foreach="activeEnvElements" t-as="key" t-key="key">
           <ObjectTreeElement 
             t-props="activeEnvElements[key]"

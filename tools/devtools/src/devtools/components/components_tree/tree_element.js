@@ -28,7 +28,6 @@ export class TreeElement extends Component {
     useEffect(
       (renderPaths) => {
         if (renderPaths.includes(this.props.path)){
-          console.log(this.props.path, renderPaths)
           clearTimeout(this.highlightTimeout);
           const treeElement = document.getElementById("tree_element/" + this.props.path);
           if(treeElement){
@@ -56,8 +55,8 @@ export class TreeElement extends Component {
         let foundLower = content.indexOf(searchLetter, start_index);
         if (foundLower < 0)
           foundLower = Infinity;
-        let found = Math.min(foundLower, foundUpper);
-        let replacement = '<div class="highlight-search">'+ content[found] +'</div>';
+        const found = Math.min(foundLower, foundUpper);
+        const replacement = '<div class="highlight-search">'+ content[found] +'</div>';
         start_index = found + replacement.length;
         content = content.replaceAt(found, replacement);
       }
@@ -82,18 +81,15 @@ export class TreeElement extends Component {
   }
 
   hoverComponent(ev){
-    var elements = document.getElementsByClassName("highlight-fade");
+    const elements = document.getElementsByClassName("highlight-fade");
     for (const element of elements) 
       element.classList.remove("highlight-fade");
-    let script = 'owlDevtools__HighlightComponent("' + this.props.path + '")';
-    chrome.devtools.inspectedWindow.eval(
-      script,
-      (result, isException) => {}
-    );
+    const script = 'owlDevtools__HighlightComponent("' + this.props.path + '")';
+    chrome.devtools.inspectedWindow.eval(script);
   }
 
   getMinimizedKey(){
-    let split = this.props.key.split("__");
+    const split = this.props.key.split("__");
     let key;
     if (split.length > 2){
       key = this.props.key.substring(4 + split[1].length, this.props.key.length);

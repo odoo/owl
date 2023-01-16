@@ -102,7 +102,7 @@ if(!window.owlDevtools__ScriptsLoaded){
 
   var owlDevtools__CurrentSelectedElement = null;
 
-  var owlDevtools__HTMLSelector = function(ev){
+  const owlDevtools__HTMLSelector = function(ev){
     const target = ev.target;
     if (!owlDevtools__CurrentSelectedElement || !(target.isEqualNode(owlDevtools__CurrentSelectedElement))){
       const [application] = owl.App.apps;
@@ -407,6 +407,25 @@ if(!window.owlDevtools__ScriptsLoaded){
     component.expandBag = expandBag;
     return component;
   };
+
+  function owlDevtools__GetDOMElementsOfComponent(component){
+    if(component.bdom.hasOwnProperty("el"))
+      return [component.bdom.el];
+    if(component.bdom.hasOwnProperty("child") && component.bdom.child.hasOwnProperty("el"))
+      return [component.bdom.child.el];
+    if(component.bdom.hasOwnProperty("children") && component.bdom.children.length > 0){
+      let elements = [];
+      for(const child of component.bdom.children){
+        if(child && child.hasOwnProperty("el"))
+          elements.push(child.el);
+      }
+      if (elements.length > 0){
+        return elements;
+      }
+    }
+    if(component.bdom.hasOwnProperty("parentEl"))
+      return [component.bdom.parentEl];
+  }
   // Triggers the highlight effect around the specified component.
   function owlDevtools__HighlightComponent(path){
     const [application] = owl.App.apps; 
@@ -417,27 +436,8 @@ if(!window.owlDevtools__ScriptsLoaded){
       path = "App";
       component = root;
     }
-    if(component.bdom.hasOwnProperty("el")){
-      owlDevtools__HighlightElements([component.bdom.el], component.component.constructor.name);
-      return;
-    }
-    if(component.bdom.hasOwnProperty("child") && component.bdom.child.hasOwnProperty("el")){
-      owlDevtools__HighlightElements([component.bdom.child.el], component.component.constructor.name);
-      return;
-    }
-    if(component.bdom.hasOwnProperty("children") && component.bdom.children.length > 0){
-      let elements = [];
-      for(const child of component.bdom.children){
-        if(child && child.hasOwnProperty("el"))
-          elements.push(child.el);
-      }
-      if (elements.length > 0){
-        owlDevtools__HighlightElements(elements, component.component.constructor.name);
-        return;
-      }
-    }
-    if(component.bdom.hasOwnProperty("parentEl"))
-      owlDevtools__HighlightElements([component.bdom.parentEl], component.component.constructor.name);
+    const elements = owlDevtools__GetDOMElementsOfComponent(component);
+    owlDevtools__HighlightElements(elements, component.component.constructor.name);
   };
   // Recursively fills the components tree as a parsed version
   function owlDevtools__FillTree(app_node, tree_node, inspectedPath){
@@ -627,6 +627,14 @@ if(!window.owlDevtools__ScriptsLoaded){
     }
     console.log("temp" + index + " = ", window["temp" + index]);
   }
+
+  function owlDevtools__InspectComponent(componentPath){
+    const [application] = owl.App.apps;
+    const root = application.root;
+    const component = owlDevtools__GetComponent(componentPath, root);
+    const elements = owlDevtools__GetDOMElementsOfComponent(component);
+    inspect(elements[0]);
+  }
   let owlDevtools__FibersMap = new WeakMap();
   const owlDevtools__originalFlush = [...owl.App.apps][0].scheduler.flush;
   [...owl.App.apps][0].scheduler.flush = function() {
@@ -639,8 +647,12 @@ if(!window.owlDevtools__ScriptsLoaded){
       }
     });
     owlDevtools__originalFlush.call(this, ...arguments);
-    // Add a functionnality to the flush function which sends a message to the window every time it is triggered.
-    // This message is intercepted by the content script which informs the background script to ask the devtools app tree to be refreshed.
+    /*
+     * Add a functionnality to the flush function which sends a message to the window every time it is triggered.                          
+     * This message is intercepted by the content script which informs the background script to ask the devtools app tree to be refreshed. 
+     * This process may be long but is necessary. More information in the docs:                                                            
+     * https://developer.chrome.com/docs/extensions/mv3/devtools/#evaluated-scripts-to-devtools                                            
+     */
     window.postMessage({type: "owlDevtools__Flush", paths: pathArray});
   };
   window.owlDevtools__ScriptsLoaded = true;

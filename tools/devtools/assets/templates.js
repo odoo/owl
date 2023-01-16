@@ -33,17 +33,18 @@ App.registerTemplate("devtools.DetailsWindow", function devtools_DetailsWindow(a
   const comp2 = app.createComponent(`Subscriptions`, true, false, false, false);
   const comp3 = app.createComponent(`ObjectTreeElement`, true, false, true, false);
   
-  let block1 = createBlock(`<div class="details_window"><div id="details_window_head" class="panel-top"><div class="name_wrapper"><b><block-text-0/></b></div><i class="fa fa-bug search-utility me-2" aria-hidden="true" block-handler-1="click.stop"/><i class="fa fa-refresh search-utility me-3" aria-hidden="true" block-handler-2="click.stop"/></div><div class="horizontal-border"/><div id="props" class="details-panel my-1"><b>props</b><i class="fa fa-bug search-utility my-1 me-2" aria-hidden="true" block-handler-3="click.stop"/><block-child-0/></div><!-- <div class="horizontal-border">
+  let block1 = createBlock(`<div class="details_window"><div id="details_window_head" class="panel-top"><div class="name_wrapper"><b><block-text-0/></b></div><i class="fa fa-eye search-utility me-2" aria-hidden="true" block-handler-1="click.stop"/><i class="fa fa-bug search-utility me-2" aria-hidden="true" block-handler-2="click.stop"/><i class="fa fa-refresh search-utility me-3" aria-hidden="true" block-handler-3="click.stop"/></div><div class="horizontal-border"/><div id="props" class="details-panel my-1"><b>props</b><i class="fa fa-bug search-utility my-1 me-2" aria-hidden="true" block-handler-4="click.stop"/><block-child-0/></div><!-- <div class="horizontal-border">
       </div>
       <div id="hooks" class="details-panel my-1">
         <b>hooks</b>
-      </div> --><div class="horizontal-border"/><div id="subscriptions" class="details-panel my-1"><i class="fa fa-bug search-utility my-1 me-2" aria-hidden="true" block-handler-4="click.stop"/><block-child-1/></div><div class="horizontal-border"/><div id="env" class="details-panel my-1"><b>env</b><i class="fa fa-bug search-utility my-1 me-2" aria-hidden="true" block-handler-5="click.stop"/><block-child-2/></div></div>`);
+      </div> --><div class="horizontal-border"/><div id="subscriptions" class="details-panel my-1"><i class="fa fa-bug search-utility my-1 me-2" aria-hidden="true" block-handler-5="click.stop"/><block-child-1/></div><div class="horizontal-border"/><div id="env" class="details-panel my-1"><b>env</b><i class="fa fa-bug search-utility my-1 me-2" aria-hidden="true" block-handler-6="click.stop"/><block-child-2/></div></div>`);
   
   return function template(ctx, node, key = "") {
     let txt1 = ctx['componentName'];
-    let hdlr1 = ["stop", ()=>this.logComponentInConsole("component"), ctx];
-    let hdlr2 = ["stop", ctx['refreshComponent'], ctx];
-    let hdlr3 = ["stop", ()=>this.logComponentInConsole("props"), ctx];
+    let hdlr1 = ["stop", ctx['inspectComponentInDOM'], ctx];
+    let hdlr2 = ["stop", ()=>this.logComponentInConsole("component"), ctx];
+    let hdlr3 = ["stop", ctx['refreshComponent'], ctx];
+    let hdlr4 = ["stop", ()=>this.logComponentInConsole("props"), ctx];
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['activeProperties']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -53,9 +54,9 @@ App.registerTemplate("devtools.DetailsWindow", function devtools_DetailsWindow(a
     }
     ctx = ctx.__proto__;
     const b2 = list(c_block2);
-    let hdlr4 = ["stop", ()=>this.logComponentInConsole("subscription"), ctx];
+    let hdlr5 = ["stop", ()=>this.logComponentInConsole("subscription"), ctx];
     const b4 = comp2({subscriptions: ctx['activeSubscriptions'],updateObjectTreeElement: ctx['props'].updateObjectTreeElement,updateBag: ctx['props'].updateBag,expandSubscriptionsKeys: ctx['props'].expandSubscriptionsKeys,editObjectTreeElement: ctx['props'].editObjectTreeElement}, key + `__2`, node, this, null);
-    let hdlr5 = ["stop", ()=>this.logComponentInConsole("env"), ctx];
+    let hdlr6 = ["stop", ()=>this.logComponentInConsole("env"), ctx];
     ctx = Object.create(ctx);
     const [k_block5, v_block5, l_block5, c_block5] = prepareList(ctx['activeEnvElements']);;
     for (let i1 = 0; i1 < l_block5; i1++) {
@@ -64,7 +65,7 @@ App.registerTemplate("devtools.DetailsWindow", function devtools_DetailsWindow(a
       c_block5[i1] = withKey(comp3(Object.assign({}, ctx['activeEnvElements'][ctx['key']], {updateObjectTreeElement: ctx['props'].updateObjectTreeElement,updateBag: ctx['props'].updateBag,editObjectTreeElement: ctx['props'].editObjectTreeElement}), key + `__3__${key1}`, node, this, null), key1);
     }
     const b5 = list(c_block5);
-    return block1([txt1, hdlr1, hdlr2, hdlr3, hdlr4, hdlr5], [b2, b4, b5]);
+    return block1([txt1, hdlr1, hdlr2, hdlr3, hdlr4, hdlr5, hdlr6], [b2, b4, b5]);
   }
 });
 

@@ -17,13 +17,13 @@ export class DetailsWindow extends Component {
   }
 
   logComponentInConsole(type){
-    const script = 'owlDevtools__SendObjectToConsole("'+ this.props.activeComponent.path +'", "'+ type +'")';
+    const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.sendObjectToConsole("'+ this.props.activeComponent.path +'", "'+ type +'")';
     chrome.devtools.inspectedWindow.eval(script);
   }
 
   inspectComponentInDOM(){
     console.log(this.props.activeComponent)
-    const script = 'owlDevtools__InspectComponent("'+ this.props.activeComponent.path +'")';
+    const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.inspectComponent("'+ this.props.activeComponent.path +'")';
     chrome.devtools.inspectedWindow.eval(script);
   }
 

@@ -62,10 +62,22 @@ export default [
             isProduction && terser.terser(),
             copy({
                 targets: [
-                    { src: "src/devtools/devtools.html", dest: "build/devtools" },
-                    { src: "src/devtools/page_scripts", dest: "build/devtools"}
+                    { src: "src/devtools/devtools.html", dest: "build/devtools" }
                 ],
             }),
+        ],
+    },
+    {
+        input: "src/devtools/page_scripts/load_scripts.js",
+        output: [
+            {
+                file: "build/devtools/page_scripts/load_scripts.js",
+                format: "esm",
+            },
+        ],
+        plugins: [
+            nodeResolve(),
+            isProduction && terser.terser(),
         ],
     },
     {

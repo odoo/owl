@@ -21,7 +21,7 @@ export class ObjectTreeElement extends Component {
 
   setupEditMode(ev){
     if(!this.state.editMode){
-      if(["number", "string", "boolean", "undefined"].includes(this.props.contentType)){
+      if(["number", "string", "boolean", "undefined"].includes(this.props.contentType) && !this.props.path.startsWith("constructor")){
         this.state.editMode = true;
       }
     }

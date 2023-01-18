@@ -569,6 +569,36 @@ exports[`t-model directive t-model with dynamic values on select options in fore
 }"
 `;
 
+exports[`t-model directive t-model with radio button group in t-foreach 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { prepareList, toNumber, withKey } = helpers;
+  
+  let block1 = createBlock(\`<div id=\\"get_data\\" block-handler-0=\\"click\\"><block-child-0/></div>\`);
+  let block3 = createBlock(\`<input type=\\"radio\\" name=\\"radio_group\\" block-attribute-0=\\"value\\" block-attribute-1=\\"id\\" block-attribute-2=\\"checked\\" block-handler-3=\\"click\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let hdlr1 = [ctx['getData'], ctx];
+    ctx = Object.create(ctx);
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['options']);;
+    for (let i1 = 0; i1 < l_block2; i1++) {
+      ctx[\`opt\`] = v_block2[i1];
+      const key1 = ctx['opt'];
+      let attr1 = new String((ctx['opt']) || \\"\\");
+      let attr2 = ctx['opt'];
+      const bExpr1 = ctx['state'];
+      const expr1 = 'group';
+      let attr3 = bExpr1[expr1] === ctx['opt'];
+      let hdlr2 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
+      c_block2[i1] = withKey(block3([attr1, attr2, attr3, hdlr2]), key1);
+    }
+    const b2 = list(c_block2);
+    return block1([hdlr1], [b2]);
+  }
+}"
+`;
+
 exports[`t-model directive two inputs in a div alternating with a t-if 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

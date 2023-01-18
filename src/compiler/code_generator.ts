@@ -632,7 +632,15 @@ export class CodeGenerator {
 
       let idx: number;
       if (specialInitTargetAttr) {
-        idx = block!.insertData(`${fullExpression} === '${attrs[targetAttr]}'`, "attr");
+        let targetExpr = targetAttr in attrs && `'${attrs[targetAttr]}'`;
+        if (!targetExpr && ast.attrs) {
+          // look at the dynamic attribute counterpart
+          const dynamicTgExpr = ast.attrs[`t-att-${targetAttr}`];
+          if (dynamicTgExpr) {
+            targetExpr = compileExpr(dynamicTgExpr);
+          }
+        }
+        idx = block!.insertData(`${fullExpression} === ${targetExpr}`, "attr");
         attrs[`block-attribute-${idx}`] = specialInitTargetAttr;
       } else if (hasDynamicChildren) {
         const bValueId = generateId("bValue");

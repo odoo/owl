@@ -11,9 +11,9 @@
       <t t-if="props.search.length > 0">
         <div class="search-indicator"><t t-out="props.searchResults.length ? props.searchIndex + 1 : 0"/>|<t t-out="props.searchResults.length"/></div>
         <div class="search-border mx-2"/>
-        <i class="fa fa-angle-up fa-lg search-utility me-2" aria-hidden="true" t-on-click.stop="getPrevSearch"></i>
-        <i class="fa fa-angle-down fa-lg search-utility me-2" aria-hidden="true" t-on-click.stop="getNextSearch"></i>
-        <i class="fa fa-times fa-lg search-utility" aria-hidden="true" t-on-click.stop="clearSearch"></i>
+        <i class="fa fa-angle-up fa-lg utility-icon me-2" aria-hidden="true" t-on-click.stop="getPrevSearch"></i>
+        <i class="fa fa-angle-down fa-lg utility-icon me-2" aria-hidden="true" t-on-click.stop="getNextSearch"></i>
+        <i class="fa fa-times fa-lg utility-icon" aria-hidden="true" t-on-click.stop="clearSearch"></i>
       </t>
     </div>
   </t>

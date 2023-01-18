@@ -113,22 +113,22 @@ export class OwlDevtoolsGlobalHook {
       const path = this.getElementPath(target);
       this.highlightComponent(path);
       this.currentSelectedElement = target;
-      window.postMessage({type: "SelectElement", path: path});
+      window.postMessage({type: "owlDevtools__SelectElement", path: path});
     }
   }
   enableHTMLSelector(){
-    document.addEventListener("mousemove", this.HTMLSelector);
-    document.addEventListener("click", this.disableHTMLSelector, true);
+    document.addEventListener("mousemove", (ev) => this.HTMLSelector(ev));
+    document.addEventListener("click", (ev) => this.disableHTMLSelector(ev), true);
     document.addEventListener("mouseout", this.removeHighlights);
   }
   disableHTMLSelector(event = undefined){
     if(event)
       event.stopPropagation();
     this.removeHighlights();
-    document.removeEventListener("mousemove", this.HTMLSelector);
-    document.removeEventListener("click", this.disableHTMLSelector);
+    document.removeEventListener("mousemove", (ev) => this.HTMLSelector(ev));
+    document.removeEventListener("click", (ev) => this.disableHTMLSelector(ev));
     document.removeEventListener("mouseout", this.removeHighlights);
-    window.postMessage({type: "StopSelector"});
+    window.postMessage({type: "owlDevtools__StopSelector"});
   }
 
   parseItem(value){
@@ -184,6 +184,39 @@ export class OwlDevtoolsGlobalHook {
       }
       result += "}";
     }
+    else if (type === 'map'){
+      result += "Map("+obj.size+"){";
+      for (const [key, value] of obj.entries()) {
+        if (!first)
+          result += ", " + key + ": ";
+        else{
+          first = false;
+          result += key + ": "
+        }
+        if (result.length > 30){
+          result+= "...";
+          break;
+        }
+        result += this.parseItem(value);
+      }
+      result += "}";
+    }
+    else if (type === 'set'){
+      result += "Set("+obj.size+"){";
+      for (const value of obj){
+        if (!first)
+          result += ", ";
+        else{
+          first = false;
+        }
+        if (result.length > 30){
+          result+= "...";
+          break;
+        }
+        result += this.parseItem(value);
+      }
+      result += "}";
+    }
     else if (type === 'string')
       result += '"' + obj + '"';
     else 
@@ -191,13 +224,17 @@ export class OwlDevtoolsGlobalHook {
     return result;
   }
   // Returns the object specified by the path given the top parent object
-  getObject(top_parent, path){
-    let obj = top_parent;
+  getObject(topParent, path){
+    let obj = topParent;
     if(path.length === 0)
       return obj;
-    const path_array = path.split('/');
-    for (const key of path_array) {
-      if(obj.hasOwnProperty(key))
+    const pathArray = path.split('/');
+    for (const key of pathArray) {
+      if(obj instanceof Map) 
+        obj = obj.get(key);
+      else if (obj instanceof Set)
+        obj = Array.from(obj)[key];
+      else if(obj.hasOwnProperty(key))
         obj = obj[key];
       else if(key === "[[Prototype]]")
         obj = Object.getPrototypeOf(obj);
@@ -213,19 +250,16 @@ export class OwlDevtoolsGlobalHook {
         else
           return null
       }
+      obj = owl.toRaw(obj);
     }
     return obj;
   };
 
   getParsedObjectChild(componentPath, parentObj, key, depth, type, path, expandBag){
+    console.log(parentObj, key)
     let obj;
-    if(key === "[[Prototype]]")
-      obj = Object.getPrototypeOf(parentObj);
-    else
-      obj = parentObj[key];
     let child = {
-      name: key, 
-      contentType: typeof obj === 'object' ? (Array.isArray(obj) ? 'array' : 'object') : typeof obj,
+      name: key,
       depth: depth,
       toggled: false,
       display: true,
@@ -233,7 +267,7 @@ export class OwlDevtoolsGlobalHook {
     };
     if(typeof key === 'symbol'){
       child.name = key.toString();
-      child.path = key.toString();
+      child.path = path.length > 0 ? path + "\/" + key.toString() : key.toString();
     }
     else
       child.path = path.length > 0 ? path + "\/" + key : key;
@@ -241,19 +275,79 @@ export class OwlDevtoolsGlobalHook {
       child.toggled = expandBag[child.path].toggled;
       child.display = expandBag[child.path].display;
     }
+    if(key === "[[Prototype]]")
+      obj = Object.getPrototypeOf(parentObj);
+    else{
+      try{
+        if(parentObj instanceof Map)
+          obj = parentObj.get(key);
+        else if (parentObj instanceof Set)
+          obj = Array.from(parentObj)[key];
+        else
+          obj = parentObj[key]
+      } catch(e){
+        return null;
+      }
+    }
+    console.log(obj);
     if (obj == null){
-      if (child.contentType === 'undefined')
+      if (typeof obj === 'undefined'){
         child.content = "undefined";
-      else
+        child.contentType = "undefined";
+      }
+      else{
         child.content = "null";
+        child.contentType = "object";
+      }
       child.hasChildren = false;
     }
     else{
-      if(key === "[[Prototype]]")
-        child.content = typeof parentObj === 'object' ? (Array.isArray(parentObj) ? 'Array(0)' : 'Object') : typeof parentObj;
+      obj = owl.toRaw(obj);
+      switch(true) {
+        case obj instanceof Map:
+          child.contentType = "map";
+          child.hasChildren = obj.size > 0;
+          break;
+        case obj instanceof Set:
+          child.contentType = "set";
+          child.hasChildren = obj.size > 0;
+          break;
+        case obj instanceof Array:
+          child.contentType = "array";
+          child.hasChildren = obj.length > 0;
+          break;
+        case typeof obj === 'function':
+          child.contentType = "function";
+          child.hasChildren = Reflect.ownKeys(obj).length > 0
+          break;
+        case obj instanceof Object:
+          child.contentType = "object";
+          child.hasChildren = Reflect.ownKeys(obj).length > 0
+          break;
+        default:
+          child.contentType = typeof obj;
+          child.hasChildren = false;
+      }
+      if(key === "[[Prototype]]"){
+        switch(true){
+          case parentObj instanceof Map:
+            child.content = "Map";
+            break;
+          case parentObj instanceof Set:
+            child.content = "Set";
+            break;
+          case parentObj instanceof Array:
+            child.content = "Array(0)";
+            break;
+          case typeof parentObj === 'function':
+            child.content = "Function";
+            break;
+          default:
+            child.content = "Object"
+        }
+      }
       else
         child.content = this.parseContent(obj, child.contentType);
-      child.hasChildren = child.contentType === 'object' ? Reflect.ownKeys(obj).length > 0 : (child.contentType === 'array' ? obj.length > 0 : false);
     }
     child.children = [];
     if(child.toggled && child.display){
@@ -268,37 +362,53 @@ export class OwlDevtoolsGlobalHook {
     }
     let children = [];
     depth = depth + 1;
-    const component = this.getComponent(componentPath);
+    const componentNode = this.getComponentNode(componentPath);
     let obj;
-    if (objType === 'props')
-      obj = this.getObject(component.props, objPath);
-    if (objType === 'env')
-      obj = this.getObject(component.component.env, objPath);
-    else if (objType === 'subscription') {
-      let index, new_path;
-      if(objPath.includes('/')){
-        index = objPath.substring(0, objPath.indexOf('/'));
-        new_path = objPath.substring(objPath.indexOf("/") + 1);
+    if (objType === 'subscription') {
+      let index, newPath;
+      newPath = objPath.replace("subscription/", "");
+      if(newPath.includes('/')){
+        index = newPath.substring(0, newPath.indexOf('/'));
+        newPath = newPath.substring(newPath.indexOf("/") + 1);
       }
       else {
-        index = objPath;
-        new_path = "";
+        index = newPath;
+        newPath = "";
       }
-      const top_parent = component.subscriptions[index].target;
-      obj = this.getObject(top_parent, new_path);
+      const topParent = componentNode.subscriptions[index].target;
+      obj = this.getObject(topParent, newPath);
+    }
+    else{
+      obj = this.getObject(componentNode.component, objPath);
     }
     if(!obj)
       return [];
     if (type === 'array'){
       for(let index = 0; index < obj.length; index++){
         const child = this.getParsedObjectChild(componentPath, obj, index, depth, objType, objPath, expandBag)
-        children.push(child);
+        if(child)
+          children.push(child);
       };
     }
-    else if (type === 'object'){
+    else if (type === 'map'){
+      for (let key of obj.keys()) {
+        const child = this.getParsedObjectChild(componentPath, obj, key, depth, objType, objPath, expandBag)
+        if(child)
+          children.push(child);
+      };
+    }
+    else if (type === 'set'){
+      for(let index = 0; index < obj.size; index++){
+        const child = this.getParsedObjectChild(componentPath, obj, index, depth, objType, objPath, expandBag)
+        if(child)
+          children.push(child);
+      };
+    }
+    else if (type === 'object' || type === 'function'){
       Reflect.ownKeys(obj).forEach(key => {
         const child = this.getParsedObjectChild(componentPath, obj, key, depth, objType, objPath, expandBag)
-        children.push(child);
+        if(child)
+          children.push(child);
       });
     }
     const prototype = this.getParsedObjectChild(componentPath, obj, "[[Prototype]]", depth, objType, objPath, expandBag)
@@ -306,12 +416,12 @@ export class OwlDevtoolsGlobalHook {
     return children;
   };
   // Returns the Component given its path and the root component
-  getComponent(path){
+  getComponentNode(path){
     let component = this.root;
-    const path_array = path.split('/');
-    for (let i = 1; i < path_array.length; i++) {
-      if (component.children.hasOwnProperty(path_array[i]))
-        component = component.children[path_array[i]];
+    const pathArray = path.split('/');
+    for (let i = 1; i < pathArray.length; i++) {
+      if (component.children.hasOwnProperty(pathArray[i]))
+        component = component.children[pathArray[i]];
       else
         return null;
     }
@@ -319,72 +429,93 @@ export class OwlDevtoolsGlobalHook {
   };
 
   refreshComponent(path){
-    const component = this.getComponent(path);
-    component.render(true);
+    const componentNode = this.getComponentNode(path);
+    componentNode.render(true);
   }
   // Returns the component's details given its path
-  sendComponentDetails(path = null, expandBag = '{"props":{},"env":{},"subscription":{}}'){ 
+  getComponentDetails(path = null, expandBag = '{}'){ 
     let component = {};
     expandBag = JSON.parse(expandBag);
     if(!path){
       path = this.getElementPath($0);
     }
     component.path = path;
-    let node = this.getComponent(path);
+    let node = this.getComponentNode(path);
     if(!node)
       node = this.root;
     // Load props of the component
-    const props = node.props;
-    component.properties = {};
+    const props = node.component.props;
+    component.props = {};
     component.name = node.component.constructor.name;
     Reflect.ownKeys(props).forEach(key => {
-      const property = this.getParsedObjectChild(path, props, key, 0, 'props', '', expandBag);
-      if(typeof key === 'symbol')
-        component.properties[key.toString()] = property;
-      else
-        component.properties[key] = property;
+      const property = this.getParsedObjectChild(path, props, key, 0, 'props', 'props', expandBag);
+      if(property){
+        if(typeof key === 'symbol')
+          component.props[key.toString()] = property;
+        else
+          component.props[key] = property;
+      }
     });
-    const propsPrototype = this.getParsedObjectChild(path, props, "[[Prototype]]", 0, 'props', '', expandBag);
-    component.properties["[[Prototype]]"] = propsPrototype;
+    // const propsPrototype = this.getParsedObjectChild(path, props, "[[Prototype]]", 0, 'props', 'props', expandBag);
+    // component.props["[[Prototype]]"] = propsPrototype;
     // Load env of the component
     const env = node.component.env;
     component.env = {};
     Reflect.ownKeys(env).forEach(key => {
-      const envElement = this.getParsedObjectChild(path, env, key, 0, 'env', '', expandBag);
-      if(typeof key === 'symbol')
-        component.env[key.toString()] = envElement;
-      else
-        component.env[key] = envElement;
+      const envElement = this.getParsedObjectChild(path, env, key, 0, 'env', 'env', expandBag);
+      if(envElement){
+        if(typeof key === 'symbol')
+          component.env[key.toString()] = envElement;
+        else
+          component.env[key] = envElement;
+      }
     });
-    const envPrototype = this.getParsedObjectChild(path, env, "[[Prototype]]", 0, 'env', '', expandBag);
+    const envPrototype = this.getParsedObjectChild(path, env, "[[Prototype]]", 0, 'env', 'env', expandBag);
     component.env["[[Prototype]]"] = envPrototype;
+    // Load instance of the component
+    const instance = node.component;
+    component.instance = {};
+    Reflect.ownKeys(instance).forEach(key => {
+      if(!["env", "props"].includes(key)){
+        const instanceElement = this.getParsedObjectChild(path, instance, key, 0, 'instance', '', expandBag);
+        if (instanceElement){
+          if(typeof key === 'symbol')
+            component.instance[key.toString()] = instanceElement;
+          else
+            component.instance[key] = instanceElement;
+        }
+      }
+    });
+    const instancePrototype = this.getParsedObjectChild(path, instance, "[[Prototype]]", 0, 'instance', '', expandBag);
+    component.instance["[[Prototype]]"] = instancePrototype;
+
     // Load subscriptions of the component
-    const raw_subscriptions = node.subscriptions;
+    const rawSubscriptions = node.subscriptions;
     component.subscriptions = [];
-    raw_subscriptions.forEach((raw_subscription, index) => {
+    rawSubscriptions.forEach((rawSubscription, index) => {
       let subscription = {
         keys: [],
         target: {
           name: "target", 
-          contentType: typeof raw_subscription.target === 'object' ? (Array.isArray(raw_subscription.target) ? 'array' : 'object') : raw_subscription.target,
+          contentType: typeof rawSubscription.target === 'object' ? (Array.isArray(rawSubscription.target) ? 'array' : 'object') : rawSubscription.target,
           depth: 0,
-          path: index.toString(),
+          path: "subscription/" + index.toString(),
           toggled: false,
           display: true,
           objectType: "subscription"
         },
         keysExpanded: false
       }
-      if (expandBag.subscription.hasOwnProperty(subscription.target.path)){
-        subscription.target.toggled = expandBag.subscription[subscription.target.path].toggled;
+      if (expandBag.hasOwnProperty(subscription.target.path)){
+        subscription.target.toggled = expandBag[subscription.target.path].toggled;
       }
-      raw_subscription.keys.forEach(key => {
+      rawSubscription.keys.forEach(key => {
         if (typeof key === "symbol")
           subscription.keys.push(key.toString());
         else
           subscription.keys.push(key);
       });
-      if (raw_subscription.target == null){
+      if (rawSubscription.target == null){
         if (subscription.target.contentType === 'undefined')
           subscription.target.content = "undefined";
         else
@@ -392,8 +523,8 @@ export class OwlDevtoolsGlobalHook {
         subscription.target.hasChildren = false;
       }
       else{
-        subscription.target.content = this.parseContent(raw_subscription.target, subscription.target.contentType);
-        subscription.target.hasChildren = subscription.target.contentType === 'object' ? Object.keys(raw_subscription.target).length > 0 : (subscription.target.contentType === 'array' ? raw_subscription.target.length > 0 : false);
+        subscription.target.content = this.parseContent(rawSubscription.target, subscription.target.contentType);
+        subscription.target.hasChildren = subscription.target.contentType === 'object' ? Object.keys(rawSubscription.target).length > 0 : (subscription.target.contentType === 'array' ? rawSubscription.target.length > 0 : false);
       }
       subscription.target.children = [];
       if(subscription.target.toggled){
@@ -426,7 +557,7 @@ export class OwlDevtoolsGlobalHook {
   // Triggers the highlight effect around the specified component.
   highlightComponent(path){
     // root node (App) is special since it only has a parentEl as attached element
-    let component = this.getComponent(path);
+    let component = this.getComponentNode(path);
     if(!component){
       path = "App";
       component = this.root;
@@ -435,46 +566,47 @@ export class OwlDevtoolsGlobalHook {
     this.highlightElements(elements, component.component.constructor.name);
   };
   // Recursively fills the components tree as a parsed version
-  fillTree(app_node, tree_node, inspectedPath){
+  fillTree(appNode, treeNode, inspectedPath){
     let children = [];
-    for (const [key, app_child] of Object.entries(app_node.children)){
+    for (const [key, appChild] of Object.entries(appNode.children)){
       let child = {
-        name: app_child.component.constructor.name,
+        name: appChild.component.constructor.name,
         key: key,
-        depth: tree_node.depth + 1,
+        depth: treeNode.depth + 1,
         display: true,
         toggled: true,
         selected: false,
         highlighted: false
       };
-      child.path = tree_node.path + "\/" + child.key;
+      child.path = treeNode.path + "\/" + child.key;
       if (child.path === inspectedPath){
         child.selected = true;
       }
       else if (child.path.includes(inspectedPath)){
         child.highlighted = true;
       }
-      child.children = this.fillTree(app_child, child, inspectedPath);
+      child.children = this.fillTree(appChild, child, inspectedPath);
       children.push(child);
     }
     return children;
   };
   // Edit a reactive state property with the provided value of the given component (path) and the subscription path
-  editObject(componentPath, object_path, value, object_type){
-    const component = this.getComponent(componentPath);
-    let path_array;
-    if(object_type === "subscription"){
-      let index, new_path;
-      if(object_path.includes('/')){
-        index = Number(object_path.substring(0, object_path.indexOf('/')));
-        new_path = object_path.substring(object_path.indexOf("/") + 1);
+  editObject(componentPath, objectPath, value, objectType){
+    const componentNode = this.getComponentNode(componentPath);
+    let pathArray;
+    if(objectType === "subscription"){
+      let index, newPath;
+      objectPath = objectPath.replace("subscription/", "");
+      if(objectPath.includes('/')){
+        index = Number(objectPath.substring(0, objectPath.indexOf('/')));
+        newPath = objectPath.substring(objectPath.indexOf("/") + 1);
       }
       else {
         return;
       }
-      path_array = new_path.split('/');
-      const target = owl.reactive(component.subscriptions[index].target);
-      path_array.reduce((acc, curr, idx, arr) => {
+      pathArray = newPath.split('/');
+      const target = owl.reactive(componentNode.subscriptions[index].target);
+      pathArray.reduce((acc, curr, idx, arr) => {
         if (idx === arr.length - 1) {
           acc[curr] = value;
         }
@@ -482,27 +614,16 @@ export class OwlDevtoolsGlobalHook {
       }, target);
     }
     else{
-      let obj;
-      let key, path;
-      if (object_path.includes('/')){
-        const index = object_path.lastIndexOf('/');
-        key = object_path.substring(index + 1);
-        path = object_path.substring(0, index);
-      }
-      else {
-        key = object_path;
-        path = "";
-      }
-      if (object_type === 'props')
-        obj = this.getObject(component.props, path);
-      else if (object_type === 'env')
-        obj = this.getObject(component.component.env, path);
+      const index = objectPath.lastIndexOf('/');
+      const key = objectPath.substring(index + 1);
+      const path = objectPath.substring(0, index);
+      const obj = this.getObject(componentNode.component, path);
       if(!obj) 
         return;
       obj[key] = value;
-      if(object_type === 'props')
-        component.render(true);
-      else if (object_type === 'env')
+      if(objectType === 'props' || objectType === 'instance')
+        componentNode.render(true);
+      else if (objectType === 'env')
         this.root.render(true);
     }
 
@@ -596,30 +717,38 @@ export class OwlDevtoolsGlobalHook {
   }
   // Store the object into a temp window variable and log it to the console
   sendObjectToConsole(componentPath, objectType){
-    const component = this.getComponent(componentPath);
+    const componentNode = this.getComponentNode(componentPath);
     let index = 1;
     while(window["temp" + index] !== undefined)
       index++;
     switch(objectType){
       case "component":
-        window["temp" + index] = component;
+        window["temp" + index] = componentNode;
         break;
       case "props":
-        window["temp" + index] = component.props;
+        window["temp" + index] = componentNode.component.props;
         break;
       case "env":
-        window["temp" + index] = component.component.env;
+        window["temp" + index] = componentNode.component.env;
+        break;
+      case "instance":
+        window["temp" + index] = componentNode.component;
         break;
       case "subscription":
-        window["temp" + index] = component.subscriptions;
+        window["temp" + index] = componentNode.subscriptions;
         break;
     }
     console.log("temp" + index + " = ", window["temp" + index]);
   }
 
-  inspectComponent(componentPath){
-    const component = this.getComponent(componentPath);
-    const elements = this.getDOMElementsOfComponent(component);
+  inspectComponentDOM(componentPath){
+    const componentNode = this.getComponentNode(componentPath);
+    const elements = this.getDOMElementsOfComponent(componentNode);
     inspect(elements[0]);
+  }
+
+  inspectComponentSource(componentPath){
+    const componentNode = this.getComponentNode(componentPath);
+    inspect(componentNode.component.constructor);
   }
 }

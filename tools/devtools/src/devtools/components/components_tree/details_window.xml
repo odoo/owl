@@ -4,53 +4,72 @@
     <div class="details_window">
       <div id="details_window_head" class="panel-top">
         <div class="name_wrapper">
-          <b><t t-esc="componentName"/></b>
+          <b><t t-esc="props.activeComponent.name"/></b>
         </div>
-        <i class="fa fa-eye search-utility me-2" aria-hidden="true" t-on-click.stop="inspectComponentInDOM"></i>
-        <i class="fa fa-bug search-utility me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("component")'></i>
-        <i class="fa fa-refresh search-utility me-3" aria-hidden="true" t-on-click.stop="refreshComponent"></i>
+        <i class="fa fa-eye utility-icon me-2" aria-hidden="true" t-on-click.stop="inspectComponentInDOM"></i>
+        <i class="fa fa-bug utility-icon me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("component")'></i>
+        <i class="fa fa-file-code-o utility-icon me-2" aria-hidden="true" t-on-click.stop="inspectComponentSource"></i>
+        <i class="fa fa-refresh utility-icon me-2" aria-hidden="true" t-on-click.stop="refreshComponent"></i>
       </div>
       <div class="horizontal-border">
       </div>
-      <div id="props" class="details-panel my-1">
-        <b>props</b>
-        <i class="fa fa-bug search-utility my-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("props")'></i>
-        <t t-foreach="activeProperties" t-as="key" t-key="key">
-          <ObjectTreeElement 
-            t-props="activeProperties[key]"
+      <div class="details-container">
+        <div id="props" style="border: none;" class="details-panel py-1">
+          <div class="details-panel-head">
+            <b>props</b>
+            <i class="fa fa-bug utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("props")'></i>
+          </div>
+          <t t-foreach="props.activeComponent.props" t-as="key" t-key="key">
+            <ObjectTreeElement 
+              t-props="props.activeComponent.props[key]"
+              updateObjectTreeElement="props.updateObjectTreeElement"
+              updateBag="props.updateBag"
+              editObjectTreeElement="props.editObjectTreeElement"/>
+          </t>
+        </div>
+        <!-- <div class="horizontal-border">
+        </div>
+        <div id="hooks" class="details-panel py-1">
+          <b>hooks</b>
+        </div> -->
+        <div id="subscriptions" class="details-panel pt-1">
+          <div class="details-panel-head">
+            <b>subscriptions</b>
+            <i class="fa fa-bug utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("subscription")'></i>
+          </div>
+          <Subscriptions 
+            subscriptions="props.activeComponent.subscriptions" 
             updateObjectTreeElement="props.updateObjectTreeElement"
             updateBag="props.updateBag"
+            expandSubscriptionsKeys="props.expandSubscriptionsKeys"
             editObjectTreeElement="props.editObjectTreeElement"/>
-        </t>
-      </div>
-      <!-- <div class="horizontal-border">
-      </div>
-      <div id="hooks" class="details-panel my-1">
-        <b>hooks</b>
-      </div> -->
-      <div class="horizontal-border">
-      </div>
-      <div id="subscriptions" class="details-panel my-1">
-        <i class="fa fa-bug search-utility my-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("subscription")'></i>
-        <Subscriptions 
-          subscriptions="activeSubscriptions" 
-          updateObjectTreeElement="props.updateObjectTreeElement"
-          updateBag="props.updateBag"
-          expandSubscriptionsKeys="props.expandSubscriptionsKeys"
-          editObjectTreeElement="props.editObjectTreeElement"/>
-      </div>
-      <div class="horizontal-border">
-      </div>
-      <div id="env" class="details-panel my-1">
-        <b>env</b>
-        <i class="fa fa-bug search-utility my-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("env")'></i>
-        <t t-foreach="activeEnvElements" t-as="key" t-key="key">
-          <ObjectTreeElement 
-            t-props="activeEnvElements[key]"
-            updateObjectTreeElement="props.updateObjectTreeElement"
-            updateBag="props.updateBag"
-            editObjectTreeElement="props.editObjectTreeElement"/>
-        </t>
+        </div>
+        <div id="env" class="details-panel py-1">
+          <div class="details-panel-head">
+            <b>env</b>
+            <i class="fa fa-bug utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("env")'></i>
+          </div>
+          <t t-foreach="props.activeComponent.env" t-as="key" t-key="key">
+            <ObjectTreeElement 
+              t-props="props.activeComponent.env[key]"
+              updateObjectTreeElement="props.updateObjectTreeElement"
+              updateBag="props.updateBag"
+              editObjectTreeElement="props.editObjectTreeElement"/>
+          </t>
+        </div>
+        <div id="instance" class="details-panel py-1">
+          <div class="details-panel-head">
+            <b>instance</b>
+            <i class="fa fa-bug utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("instance")'></i>
+          </div>
+          <t t-foreach="props.activeComponent.instance" t-as="key" t-key="key">
+            <ObjectTreeElement 
+              t-props="props.activeComponent.instance[key]"
+              updateObjectTreeElement="props.updateObjectTreeElement"
+              updateBag="props.updateBag"
+              editObjectTreeElement="props.editObjectTreeElement"/>
+          </t>
+        </div>
       </div>
     </div>
   </t>

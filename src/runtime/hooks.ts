@@ -117,7 +117,7 @@ export function useEffect(effect: Effect, computeDependencies: () => any[] = () 
  *  `useExternalListener(window, 'click', this._doSomething);`
  * */
 export function useExternalListener(
-  target: HTMLElement | typeof window,
+  target: EventTarget,
   eventName: string,
   handler: EventListener,
   eventParams?: AddEventListenerOptions

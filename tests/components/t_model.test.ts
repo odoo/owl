@@ -644,4 +644,35 @@ describe("t-model directive", () => {
     const input = fixture.querySelector("input")!;
     await editInput(input, "Beam me up, Scotty");
   });
+
+  test("t-model with radio button group in t-foreach", async () => {
+    expect.assertions(6);
+    const steps: string[] = [];
+    class SomeComponent extends Component {
+      static template = xml`
+        <div t-on-click="getData" id="get_data">
+          <t t-foreach="options" t-as="opt" t-key="opt">
+            <input type="radio" name="radio_group" t-model="state.group" t-att-value="opt" t-att-id="opt"/>
+          </t>
+        </div>
+      `;
+      state = useState({ group: "scotty" });
+      options = ["beam", "scotty"];
+
+      getData() {
+        steps.push(`group: ${this.state.group}`);
+      }
+    }
+    await mount(SomeComponent, fixture);
+    const divEl = fixture.querySelector("#get_data") as HTMLElement;
+    expect(fixture.querySelector("input:checked")!.getAttribute("id")).toBe("scotty");
+    divEl.click();
+    expect(steps).toEqual(["group: scotty"]);
+    fixture.querySelector("input")!.click();
+    expect(steps).toEqual(["group: scotty", "group: beam"]);
+    await nextTick();
+    expect(fixture.querySelector("input:checked")!.getAttribute("id")).toBe("beam");
+    divEl.click();
+    expect(steps).toEqual(["group: scotty", "group: beam", "group: beam"]);
+  });
 });

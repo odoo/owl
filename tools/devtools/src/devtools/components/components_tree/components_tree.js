@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-const { Component, useState, useEffect, onWillPatch, onMounted} = owl
+const { Component, useState, useEffect, onWillUnmount, onMounted} = owl
 import { TreeElement } from './tree_element';
 import { DetailsWindow } from "./details_window";
 import { SearchBar } from './search_bar';
@@ -10,6 +10,8 @@ export class ComponentsTree extends Component {
   setup(){
     this.state = useState({
       splitPosition: 60,
+      leftWidth: 0,
+      rightWidth: 0,
       root: {
         name: "Test",
         path: "App",
@@ -25,13 +27,10 @@ export class ComponentsTree extends Component {
         path: "App",
         name: "App",
         subscriptions: [],
-        properties: {},
+        props: {},
         env: {},
-        expandBag: {
-          props: {},
-          env: {},
-          subscription: {}
-        }
+        instance: {},
+        expandBag: {}
       },
       search: {
         search: '',
@@ -60,7 +59,7 @@ export class ComponentsTree extends Component {
               }
             );
             const expandBag = JSON.stringify(this.state.activeComponent.expandBag);
-            script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.sendComponentDetails("'+ this.state.activeComponent.path +'", \''+ expandBag +'\');';
+            script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentDetails("'+ this.state.activeComponent.path +'", \''+ expandBag +'\');';
             chrome.devtools.inspectedWindow.eval(
               script,
               (result, isException) => {
@@ -87,15 +86,23 @@ export class ComponentsTree extends Component {
           }
         }
       );
-      script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.sendComponentDetails();';
+      script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentDetails();';
       chrome.devtools.inspectedWindow.eval(
         script,
         (result, isException) => {
           if (!isException) {
             this.state.activeComponent = result;
           }
+          console.log(this.state.activeComponent);
         }
       );
+      this.computeWindowWidth();
+      window.addEventListener("resize", this.computeWindowWidth);
+    });
+    onWillUnmount(() => {
+      window.removeEventListener("resize", this.computeWindowWidth);
+      window.removeEventListener("mousemove", this.handleMouseMove);
+      window.removeEventListener("mouseup", this.handleMouseUp);
     });
   }
 
@@ -150,28 +157,33 @@ export class ComponentsTree extends Component {
 
   editObjectTreeElement(objectPath, value, objectType){
     const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.editObject("'+ this.state.activeComponent.path +'", "'+ objectPath +'", '+ value +', "' + objectType + '");';
+    console.log(script);
     chrome.devtools.inspectedWindow.eval(script);
   }
 
   updateExpandBag(path, type, toggled, display){
-    this.state.activeComponent.expandBag[type][path] = {
+    this.state.activeComponent.expandBag[path] = {
       toggled: toggled,
       display: display
     }
   }
 
   updateObjectTreeElements(inputObj) {
-    const pathArray = inputObj.path.split('/');
+    let pathArray = inputObj.path.split('/');
     let obj;
+    if(inputObj.objectType !== 'instance')
+      pathArray.shift();
     if (inputObj.objectType === 'props')
-      obj = this.state.activeComponent.properties[pathArray[0]];
+      obj = this.state.activeComponent.props[pathArray[0]];
     else if (inputObj.objectType === 'env')
       obj = this.state.activeComponent.env[pathArray[0]];
+    else if (inputObj.objectType === 'instance')
+      obj = this.state.activeComponent.instance[pathArray[0]];
     else if (inputObj.objectType === 'subscription')
-      obj = this.state.activeComponent.subscriptions[Number(pathArray[0])].target;
+      obj = this.state.activeComponent.subscriptions[pathArray[0]].target;
     for (let i = 1; i < pathArray.length; i++) {
       const match = pathArray[i];
-      if (obj.contentType === "array") 
+      if ((obj.contentType === "array" || obj.contentType === "set") && match !== "[[Prototype]]") 
         obj = obj.children[match];
       else
         obj = obj.children.filter(child => (child.name) === match)[0];
@@ -220,7 +232,8 @@ export class ComponentsTree extends Component {
     }
     element.selected = true;
     this.highlightChildren(element);
-    const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.sendComponentDetails("' + element.path + '");';
+    const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentDetails("' + element.path + '");';
+    console.log(script);
     chrome.devtools.inspectedWindow.eval(
       script,
       (result, isException) => {
@@ -246,6 +259,12 @@ export class ComponentsTree extends Component {
     });
   }
 
+  computeWindowWidth = (event) => {
+    const width = window.innerWidth || document.body.clientWidth;
+    this.state.leftWidth = (this.state.splitPosition/100) * width - 2;
+    this.state.rightWidth = (1 - this.state.splitPosition/100) * width;
+  }
+
   handleMouseDown = (event) => {
     // Add event listeners for mouse move and mouse up events
     // to allow the user to drag the split screen border
@@ -255,6 +274,7 @@ export class ComponentsTree extends Component {
   
   handleMouseMove = (event) => {
     this.state.splitPosition = Math.max(Math.min(event.clientX / window.innerWidth * 100, 85), 15);
+    this.computeWindowWidth();
   }
   
   handleMouseUp = (event) => {

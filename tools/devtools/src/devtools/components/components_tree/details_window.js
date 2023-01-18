@@ -7,11 +7,6 @@ export class DetailsWindow extends Component {
   setup(){
   }
 
-  get componentName() { return this.props.activeComponent.name; }
-  get activeProperties(){ return this.props.activeComponent.properties; }
-  get activeSubscriptions(){ return this.props.activeComponent.subscriptions; }
-  get activeEnvElements(){ return this.props.activeComponent.env; }
-
   refreshComponent(){
     this.props.refreshComponent();
   }
@@ -22,12 +17,16 @@ export class DetailsWindow extends Component {
   }
 
   inspectComponentInDOM(){
-    console.log(this.props.activeComponent)
-    const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.inspectComponent("'+ this.props.activeComponent.path +'")';
+    const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.inspectComponentDOM("'+ this.props.activeComponent.path +'")';
     chrome.devtools.inspectedWindow.eval(script);
   }
 
-  static props = ['activeComponent', 'updateObjectTreeElement', 'expandSubscriptionsKeys', 'editObjectTreeElement', 'updateBag'];
+  inspectComponentSource(){
+    const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.inspectComponentSource("'+ this.props.activeComponent.path +'")';
+    chrome.devtools.inspectedWindow.eval(script);
+  }
+
+  static props = ['activeComponent', 'updateObjectTreeElement', 'expandSubscriptionsKeys', 'editObjectTreeElement', 'updateBag', 'width'];
   
   static template = "devtools.DetailsWindow";
 

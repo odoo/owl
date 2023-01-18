@@ -3,7 +3,7 @@
   <t t-name="devtools.ComponentsTree" owl="1">
     <div id="container" t-on-mouseover.stop="removeHighlight" t-on-mouseout.stop="removeHighlight">
       <div class="split-screen-container">
-        <div class="split-screen-left"  t-attf-style="width:calc({{state.splitPosition}}% - 1px);">
+        <div class="split-screen-left"  t-attf-style="width:{{state.leftWidth}}px;">
           <div class="panel-top">
             <SearchBar
               t-props="state.search"
@@ -25,13 +25,14 @@
         </div>
         <div
           class="split-screen-border"
-          t-attf-style="left:calc({{state.splitPosition}}% - 1px);"
+          t-attf-style="left:{{state.leftWidth}}px;"
           t-on-mousedown="handleMouseDown"
           t-on-mouseup="handleMouseUp"
         />
-        <div class="split-screen-right" t-attf-style="width:calc({{100 - state.splitPosition}}%);">
+        <div class="split-screen-right" t-attf-style="width:{{state.rightWidth}}px;">
           <DetailsWindow 
             activeComponent="state.activeComponent"
+            width="state.rightWidth"
             updateObjectTreeElement.bind="updateObjectTreeElements"
             updateBag.bind="updateExpandBag"
             expandSubscriptionsKeys.bind="expandSubscriptionsKeys"

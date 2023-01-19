@@ -19,7 +19,7 @@
               search="state.search.search"
               searchResults="state.search.searchResults"
               renderPaths="state.renderPaths"
-              updateComponent.bind="updateTree"
+              toggleComponentTreeElementDisplay.bind="toggleComponentTreeElementDisplay"
               selectComponent.bind="selectComponent"/> 
           </div>
         </div>
@@ -33,7 +33,7 @@
           <DetailsWindow 
             activeComponent="state.activeComponent"
             width="state.rightWidth"
-            updateObjectTreeElement.bind="updateObjectTreeElements"
+            toggleObjectTreeElementsDisplay.bind="toggleObjectTreeElementsDisplay"
             updateBag.bind="updateExpandBag"
             expandSubscriptionsKeys.bind="expandSubscriptionsKeys"
             editObjectTreeElement.bind="editObjectTreeElement"

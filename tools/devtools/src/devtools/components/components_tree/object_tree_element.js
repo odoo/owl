@@ -35,27 +35,7 @@ export class ObjectTreeElement extends Component {
   }
 
   toggleDisplay(ev){
-    this.props.toggled = !this.props.toggled;
-    this.props.children.forEach(child => {
-        this.swapDisplay(child, this.props.toggled, this.props.toggled)
-    });
-    this.props.updateBag(this.props.path, this.props.toggled, this.props.display);
-    this.props.updateObjectTreeElement(this.props);
-  }
-
-  swapDisplay(element, parentToggled, parentDisplayed){
-    if(!parentDisplayed){
-      // An element is always hidden if its parent is also hidden
-      element.display = false;
-    }
-    else if(parentToggled){
-      // If the parent is displayed and toggled then we display the child
-      element.display = true;
-    }
-    this.props.updateBag(element.path, element.toggled, element.display);
-    element.children.forEach(child => {
-        this.swapDisplay(child, element.toggled, element.display)
-    });
+    this.props.toggleObjectTreeElementsDisplay(this.props);
   }
 
   openMenu(event){

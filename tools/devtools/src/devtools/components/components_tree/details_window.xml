@@ -23,7 +23,7 @@
             <ObjectTreeElement 
               t-props="props.activeComponent.props[key]"
               componentPath="props.activeComponent.path"
-              updateObjectTreeElement="props.updateObjectTreeElement"
+              toggleObjectTreeElementsDisplay="props.toggleObjectTreeElementsDisplay"
               updateBag="props.updateBag"
               editObjectTreeElement="props.editObjectTreeElement"/>
           </t>
@@ -36,7 +36,7 @@
           <Subscriptions 
             subscriptions="props.activeComponent.subscriptions" 
             componentPath="props.activeComponent.path"
-            updateObjectTreeElement="props.updateObjectTreeElement"
+            toggleObjectTreeElementsDisplay="props.toggleObjectTreeElementsDisplay"
             updateBag="props.updateBag"
             expandSubscriptionsKeys="props.expandSubscriptionsKeys"
             editObjectTreeElement="props.editObjectTreeElement"/>
@@ -50,7 +50,7 @@
             <ObjectTreeElement 
               t-props="props.activeComponent.env[key]"
               componentPath="props.activeComponent.path"
-              updateObjectTreeElement="props.updateObjectTreeElement"
+              toggleObjectTreeElementsDisplay="props.toggleObjectTreeElementsDisplay"
               updateBag="props.updateBag"
               editObjectTreeElement="props.editObjectTreeElement"/>
           </t>
@@ -64,7 +64,7 @@
             <ObjectTreeElement 
               t-props="props.activeComponent.instance[key]"
               componentPath="props.activeComponent.path"
-              updateObjectTreeElement="props.updateObjectTreeElement"
+              toggleObjectTreeElementsDisplay="props.toggleObjectTreeElementsDisplay"
               updateBag="props.updateBag"
               editObjectTreeElement="props.editObjectTreeElement"/>
           </t>

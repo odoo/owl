@@ -99,7 +99,6 @@ export class ComponentsTree extends Component {
           if (!isException) {
             this.state.activeComponent = result;
           }
-          console.log(this.state.activeComponent);
         }
       );
       this.computeWindowWidth();
@@ -163,35 +162,39 @@ export class ComponentsTree extends Component {
     this.selectComponent(this.state.search.searchResults[index]);
   }
   
-  // Replace the given component's values with the new ones
-  updateTree(component) {
-    const pathArray = component.path.split('/');
-    let element = this.state.root;
+  // Toggle expansion of the component tree element given by the path
+  toggleComponentTreeElementDisplay(path) {
+    let pathArray = path.split('/');
+    pathArray.shift();
+    let component = this.state.root;
     for (const key of pathArray) {
-      element = element.children.filter(child => (child.key) === key)[0];
+      component = component.children.filter(child => (child.key) === key)[0];
     }
-    element.children = component.children;
-    element.toggled = component.toggled;
-    element.display = component.display;
+    component.toggled = !component.toggled;
+    component.children.forEach(child => {
+      this.swapDisplay(child, component.toggled, component.display)
+    });
   }
 
-  // Update the value of the given object with the new provided one
-  editObjectTreeElement(objectPath, value, objectType){
-    const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.editObject("'+ this.state.activeComponent.path +'", "'+ objectPath +'", '+ value +', "' + objectType + '");';
-    chrome.devtools.inspectedWindow.eval(script);
-  }
-
-  // Update the toggled/display status of the object given its path
-  // to remember it when all content is overwritten.
-  updateExpandBag(path, toggled, display){
-    this.state.activeComponent.expandBag[path] = {
-      toggled: toggled,
-      display: display
+  swapDisplay(element, parentToggled, parentDisplayed){
+    if(!parentDisplayed){
+      // An element is always hidden if its parent is also hidden
+      element.display = false;
     }
+    else if(parentToggled){
+      // If the parent is displayed and toggled then we display the child
+      element.display = true;
+    }
+    else
+      element.display = false;
+    this.updateExpandBag(element);
+    element.children.forEach(child => {
+      this.swapDisplay(child, element.toggled, element.display)
+    });
   }
-
+  
   // Expand the children of the input object property and load it from page if necessary
-  updateObjectTreeElements(inputObj) {
+  toggleObjectTreeElementsDisplay(inputObj) {
     let pathArray = inputObj.path.split('/');
     let obj;
     if(inputObj.objectType !== 'instance')
@@ -214,7 +217,6 @@ export class ComponentsTree extends Component {
     if (obj.hasChildren && obj.children.length === 0) {
       const expandBag = JSON.stringify(this.state.activeComponent.expandBag);
       const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.loadObjectChildren("'+ this.state.activeComponent.path +'","'+ obj.path +'", '+ obj.depth +', "'+ obj.contentType +'", "'+ obj.objectType +'", '+ expandBag +');';
-      console.log(script);
       chrome.devtools.inspectedWindow.eval(
         script,
         (result, isException) => {
@@ -224,9 +226,29 @@ export class ComponentsTree extends Component {
         }
       );
     }
-    obj.toggled = inputObj.toggled;
-    obj.display = inputObj.display;
+    obj.toggled = !obj.toggled;
+    obj.children.forEach(child => {
+      this.swapDisplay(child, obj.toggled, obj.display)
+    });
   }
+
+  // Update the value of the given object with the new provided one
+  editObjectTreeElement(objectPath, value, objectType){
+    const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.editObject("'+ this.state.activeComponent.path +'", "'+ objectPath +'", '+ value +', "' + objectType + '");';
+    chrome.devtools.inspectedWindow.eval(script);
+  }
+
+  // Update the toggled/display status of the element
+  // to remember it when all content is overwritten.
+  updateExpandBag(element){
+    if(!element.hasOwnProperty("key")){
+      this.state.activeComponent.expandBag[element.path] = {
+        toggled: element.toggled,
+        display: element.display
+      }
+    }
+  }
+
 
   // Triggers manually the rendering of the selected component
   refreshComponent() {

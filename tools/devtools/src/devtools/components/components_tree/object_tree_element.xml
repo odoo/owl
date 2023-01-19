@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.ObjectTreeElement" owl="1">
-    <div class="my-0 p-0 object-line" t-attf-style="display: {{props.display ? 'flex' : 'none'}}" t-on-click.stop="toggleDisplay">
+    <div class="my-0 p-0 object-line" t-attf-style="display: {{props.display ? 'flex' : 'none'}}" t-on-click.stop="toggleDisplay" t-on-contextmenu.prevent="openMenu">
       <div t-attf-style="transform: translateX(calc({{props.depth}} * 0.8rem + 0.3rem))">
         <t t-if="props.hasChildren">
           <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer;{{props.toggled ? 'transform: rotate(90deg);' : ''}}"></i>
@@ -20,9 +20,18 @@
         </div> 
       </div>
     </div>
+    <div class="custom-menu hidden" t-attf-id="customMenu/{{props.path}}">
+      <ul class="my-1">
+        <li t-on-click="storeObjectAsGlobal" class="custom-menu-item">Store as global variable</li>
+        <t t-if='props.contentType == "function"'>
+          <li t-on-click="inspectFunctionSource" class="custom-menu-item">Inspect function source code</li>
+        </t>
+      </ul>
+    </div>
     <t t-foreach="props.children" t-as="child" t-key="child.name">
       <ObjectTreeElement 
         t-props="child"
+        componentPath="props.componentPath"
         updateObjectTreeElement="props.updateObjectTreeElement"
         updateBag="props.updateBag"
         editObjectTreeElement="props.editObjectTreeElement"/>

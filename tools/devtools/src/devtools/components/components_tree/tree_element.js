@@ -10,15 +10,15 @@ export class TreeElement extends Component {
     this.highlightTimeout = false;
     onMounted(() => {
       if (this.props.selected){
-        const tree_element = document.getElementById("tree_element/"+this.props.path);
-        tree_element.scrollIntoView({block: "center", behavior: "smooth"});
+        const treeElement = document.getElementById("treeElement/"+this.props.path);
+        treeElement.scrollIntoView({block: "center", behavior: "smooth"});
       }
     });
     onWillUpdateProps(nextProps => {
       if(nextProps.selected){
-        const tree_element = document.getElementById("tree_element/"+this.props.path);
-        if(!isElementInCenterViewport(tree_element))
-          tree_element.scrollIntoView({block: "center", behavior: "smooth"});
+        const treeElement = document.getElementById("treeElement/"+this.props.path);
+        if(!isElementInCenterViewport(treeElement))
+        treeElement.scrollIntoView({block: "center", behavior: "smooth"});
       }
       if(nextProps.searchResults.includes(this.props.path))
         this.searched = true;
@@ -29,7 +29,7 @@ export class TreeElement extends Component {
       (renderPaths) => {
         if (renderPaths.includes(this.props.path)){
           clearTimeout(this.highlightTimeout);
-          const treeElement = document.getElementById("tree_element/" + this.props.path);
+          const treeElement = document.getElementById("treeElement/" + this.props.path);
           if(treeElement){
             treeElement.classList.remove("highlight-fade");
             treeElement.classList.add("render-highlight");
@@ -47,17 +47,17 @@ export class TreeElement extends Component {
   get content() {
     if(this.searched){
       let content = this.props.name;
-      let start_index = 0;
+      let startIndex = 0;
       for (const searchLetter of this.props.search){
-        let foundUpper = content.indexOf(searchLetter.toUpperCase(), start_index);
+        let foundUpper = content.indexOf(searchLetter.toUpperCase(), startIndex);
         if (foundUpper < 0)
           foundUpper = Infinity;
-        let foundLower = content.indexOf(searchLetter, start_index);
+        let foundLower = content.indexOf(searchLetter, startIndex);
         if (foundLower < 0)
           foundLower = Infinity;
         const found = Math.min(foundLower, foundUpper);
         const replacement = '<div class="highlight-search">'+ content[found] +'</div>';
-        start_index = found + replacement.length;
+        startIndex = found + replacement.length;
         content = content.replaceAt(found, replacement);
       }
       return markup(content);
@@ -66,12 +66,6 @@ export class TreeElement extends Component {
       return this.props.name;
   }
 
-  static template = "devtools.TreeElement";
-  
-  static props = ['name', 'children', 'path', 'key', 'display', 'toggled', 'depth', 'selected', 'highlighted', 'search', 'searchResults'];
-  
-  static components = { TreeElement };
-  
   toggleDisplay(ev){
     this.props.toggled = !this.props.toggled;
     this.props.children.forEach(child => {
@@ -83,17 +77,17 @@ export class TreeElement extends Component {
   hoverComponent(ev){
     const elements = document.getElementsByClassName("highlight-fade");
     for (const element of elements) 
-      element.classList.remove("highlight-fade");
+    element.classList.remove("highlight-fade");
     const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.highlightComponent("' + this.props.path + '")';
     chrome.devtools.inspectedWindow.eval(script);
   }
-
+  
   getMinimizedKey(){
     const split = this.props.key.split("__");
     let key;
     if (split.length > 2){
       key = this.props.key.substring(4 + split[1].length, this.props.key.length);
-      key = markup('<div class="key_wrapper">key</div>=<div class="key_name">"' + key + '"</div>');
+      key = markup('<div class="key-wrapper">key</div>=<div class="key-name">"' + key + '"</div>');
     }
     else{
       key = "";
@@ -118,6 +112,12 @@ export class TreeElement extends Component {
       this.props.selectComponent(this.props.path);
     }
   }
+
+  static template = "devtools.TreeElement";
+  
+  static props = ['name', 'children', 'path', 'key', 'display', 'toggled', 'depth', 'selected', 'highlighted', 'search', 'searchResults'];
+  
+  static components = { TreeElement };
 }
 
 String.prototype.replaceAt = function(index, replacement) {

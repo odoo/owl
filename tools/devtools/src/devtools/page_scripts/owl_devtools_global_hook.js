@@ -9,7 +9,7 @@ export class OwlDevtoolsGlobalHook {
     this.fibersMap = new WeakMap();
   }
 
-  // Draws a highlighting rectangle on the specified html element and displays the specified name and its dimension in a box
+  // Draws a highlighting rectangle on the specified html element and displays its dimensions and the specified name in a box
   highlightElements(elements, name) {
     this.removeHighlights();
   
@@ -106,7 +106,8 @@ export class OwlDevtoolsGlobalHook {
     const details = document.querySelectorAll('.owl-devtools-detailsBox');
     details.forEach(detail => detail.remove());
   };
-
+  // Identify the hovered component based on the corresponding DOM element and send the Select message
+  // when the target changes
   HTMLSelector(ev){
     const target = ev.target;
     if (!this.currentSelectedElement || !(target.isEqualNode(this.currentSelectedElement))){
@@ -116,21 +117,25 @@ export class OwlDevtoolsGlobalHook {
       window.postMessage({type: "owlDevtools__SelectElement", path: path});
     }
   }
+  // Activate the HTML selector tool
   enableHTMLSelector(){
-    document.addEventListener("mousemove", (ev) => this.HTMLSelector(ev));
-    document.addEventListener("click", (ev) => this.disableHTMLSelector(ev), true);
+    this.HTMLSelectorBind = this.HTMLSelector.bind(this);
+    this.disableHTMLSelectorBind = this.disableHTMLSelector.bind(this);
+    document.addEventListener("mousemove", this.HTMLSelectorBind);
+    document.addEventListener("click", this.disableHTMLSelectorBind, true);
     document.addEventListener("mouseout", this.removeHighlights);
   }
+  // Diasble the HTML selector tool
   disableHTMLSelector(event = undefined){
     if(event)
       event.stopPropagation();
     this.removeHighlights();
-    document.removeEventListener("mousemove", (ev) => this.HTMLSelector(ev));
-    document.removeEventListener("click", (ev) => this.disableHTMLSelector(ev));
+    document.removeEventListener("mousemove", this.HTMLSelectorBind);
+    document.removeEventListener("click", this.disableHTMLSelectorBind);
     document.removeEventListener("mouseout", this.removeHighlights);
     window.postMessage({type: "owlDevtools__StopSelector"});
   }
-
+  // Defines how leaf object nodes should be displayed in the extension based on their type
   parseItem(value){
     if (typeof value === 'array'){
       return "Array("+value.length+")";
@@ -141,8 +146,35 @@ export class OwlDevtoolsGlobalHook {
       else
         return "{...}";
     }
-    else if (typeof value === 'undefined'){
+    else if (typeof value === 'undefined')
       return "undefined";
+    else if (typeof value === 'string')
+      return '"' + value + '"';
+    else if (typeof value === 'function'){
+      let functionString = value.toString();
+      let index, offset;
+      if (functionString.startsWith("class")){
+        index = functionString.indexOf("{");
+        offset = 1;
+      }
+      else{
+        let index1 = functionString.indexOf('){');
+        let index2 = functionString.indexOf(') {');
+        if(index1 === -1){
+          index = index2;
+          offset = 3;
+        }
+        else if(index2 === -1){
+          index = index1;
+          offset = 2;
+        }
+        else {
+          index = min(index1, index2);
+          offset = index1 < index2 ? 2 : 3;
+        }
+      }
+      functionString = functionString.substring(0, index+offset);
+      return functionString + "...}";
     }
     else
       return value.toString();
@@ -217,10 +249,8 @@ export class OwlDevtoolsGlobalHook {
       }
       result += "}";
     }
-    else if (type === 'string')
-      result += '"' + obj + '"';
-    else 
-      result += obj.toString();
+    else
+      result += this.parseItem(obj);
     return result;
   }
   // Returns the object specified by the path given the top parent object
@@ -254,9 +284,8 @@ export class OwlDevtoolsGlobalHook {
     }
     return obj;
   };
-
+  // Returns a parsed version of an object node that has compatible format with the devtools ObjectTreeElement component
   getParsedObjectChild(componentPath, parentObj, key, depth, type, path, expandBag){
-    console.log(parentObj, key)
     let obj;
     let child = {
       name: key,
@@ -289,7 +318,6 @@ export class OwlDevtoolsGlobalHook {
         return null;
       }
     }
-    console.log(obj);
     if (obj == null){
       if (typeof obj === 'undefined'){
         child.content = "undefined";
@@ -415,19 +443,19 @@ export class OwlDevtoolsGlobalHook {
     children.push(prototype);
     return children;
   };
-  // Returns the Component given its path and the root component
+  // Returns the Component node given its path and the root component node
   getComponentNode(path){
-    let component = this.root;
+    let componentNode = this.root;
     const pathArray = path.split('/');
     for (let i = 1; i < pathArray.length; i++) {
-      if (component.children.hasOwnProperty(pathArray[i]))
-        component = component.children[pathArray[i]];
+      if (componentNode.children.hasOwnProperty(pathArray[i]))
+        componentNode = componentNode.children[pathArray[i]];
       else
         return null;
     }
-    return component;
+    return componentNode;
   };
-
+  // Apply manual render to the specified component
   refreshComponent(path){
     const componentNode = this.getComponentNode(path);
     componentNode.render(true);
@@ -535,15 +563,15 @@ export class OwlDevtoolsGlobalHook {
     component.expandBag = expandBag;
     return component;
   };
-
-  getDOMElementsOfComponent(component){
-    if(component.bdom.hasOwnProperty("el"))
-      return [component.bdom.el];
-    if(component.bdom.hasOwnProperty("child") && component.bdom.child.hasOwnProperty("el"))
-      return [component.bdom.child.el];
-    if(component.bdom.hasOwnProperty("children") && component.bdom.children.length > 0){
+  // Gives the DOM elements which correspond to the given component node
+  getDOMElementsOfComponent(componentNode){
+    if(componentNode.bdom.hasOwnProperty("el"))
+      return [componentNode.bdom.el];
+    if(componentNode.bdom.hasOwnProperty("child") && componentNode.bdom.child.hasOwnProperty("el"))
+      return [componentNode.bdom.child.el];
+    if(componentNode.bdom.hasOwnProperty("children") && componentNode.bdom.children.length > 0){
       let elements = [];
-      for(const child of component.bdom.children){
+      for(const child of componentNode.bdom.children){
         if(child && child.hasOwnProperty("el"))
           elements.push(child.el);
       }
@@ -551,12 +579,12 @@ export class OwlDevtoolsGlobalHook {
         return elements;
       }
     }
-    if(component.bdom.hasOwnProperty("parentEl"))
-      return [component.bdom.parentEl];
+    if(componentNode.bdom.hasOwnProperty("parentEl"))
+      return [componentNode.bdom.parentEl];
   }
   // Triggers the highlight effect around the specified component.
   highlightComponent(path){
-    // root node (App) is special since it only has a parentEl as attached element
+    // root node (App) is special since it only has a parentEl as attached DOM element
     let component = this.getComponentNode(path);
     if(!component){
       path = "App";
@@ -702,13 +730,13 @@ export class OwlDevtoolsGlobalHook {
     tree.root.children = this.fillTree(this.root, tree.root, inspectedPath);
     return tree;
   };
-
-  getComponentPath(component){
-    if(component.parentKey){
-      let path = "/" + component.parentKey;
-      while(component.parent && component.parent.parentKey){
-        component = component.parent;
-        path = "/" + component.parentKey + path;
+  // Returns the path of the given component node
+  getComponentPath(componentNode){
+    if(componentNode.parentKey){
+      let path = "/" + componentNode.parentKey;
+      while(componentNode.parent && componentNode.parent.parentKey){
+        componentNode = componentNode.parent;
+        path = "/" + componentNode.parentKey + path;
       }
       path = "App" + path;
       return path;
@@ -740,15 +768,47 @@ export class OwlDevtoolsGlobalHook {
     }
     console.log("temp" + index + " = ", window["temp" + index]);
   }
-
+  // Inspect the DOM of the component in the elements tab of the devtools
   inspectComponentDOM(componentPath){
     const componentNode = this.getComponentNode(componentPath);
     const elements = this.getDOMElementsOfComponent(componentNode);
     inspect(elements[0]);
   }
-
+  // Inspect source code of the component (corresponds to inspecting its constructor)
   inspectComponentSource(componentPath){
     const componentNode = this.getComponentNode(componentPath);
     inspect(componentNode.component.constructor);
+  }
+  // Inspect source code of the function given by its path and the component path
+  inspectFunctionSource(componentPath, objectPath){
+    const componentNode = this.getComponentNode(componentPath);
+    const topParent = objectPath.startsWith("subscription") ? componentNode.subscriptions : componentNode.component;
+    inspect(this.getObject(topParent, objectPath));
+  }
+  // Store the object given by its path and the component path as a global temp variable
+  storeObjectAsGlobal(componentPath, objectPath){
+    const componentNode = this.getComponentNode(componentPath);
+    let obj;
+    if(objectPath.startsWith("subscription")){
+      let index, newPath;
+      newPath = objectPath.replace("subscription/", "");
+      if(newPath.includes('/')){
+        index = newPath.substring(0, newPath.indexOf('/'));
+        newPath = newPath.substring(newPath.indexOf("/") + 1);
+      }
+      else {
+        index = newPath;
+        newPath = "";
+      }
+      const topParent = componentNode.subscriptions[index].target;
+      obj = this.getObject(topParent, newPath);
+    }
+    else
+      obj = this.getObject(componentNode.component, objectPath);
+    let index = 1;
+    while(window["temp" + index] !== undefined)
+      index++;
+    window["temp" + index] = obj;
+    console.log("temp" + index + " = ", window["temp" + index]);
   }
 }

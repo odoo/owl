@@ -42,9 +42,12 @@ export class ComponentsTree extends Component {
     });
     this.flushRendersTimeout = false;
     onMounted(async () => {
+      // Connect to the port to communicate to the background script
       chrome.runtime.onConnect.addListener((port) => {
         console.assert(port.name === "DevtoolsTreePort");
         port.onMessage.addListener((msg) => {
+          // When message of type Flush is received, overwrite the component tree with the new one from page
+          // A flush message is sent everytime a component is rendered on the page
           if (msg.type === "Flush"){
             this.state.renderPaths =  this.state.renderPaths.concat(msg.paths);
             clearTimeout(this.flushRendersTimeout);
@@ -69,14 +72,17 @@ export class ComponentsTree extends Component {
               }
             );
           }
+          // Select the component based on the path received with the SelectElement message
           if (msg.type === "SelectElement"){
             this.selectComponent(msg.path);
           }
+          // Stop the DOM element selector tool upon receiving the StopSelector message
           if (msg.type === "StopSelector"){
             this.state.search.activeSelector = false;
           }
         });
       });
+      // On mount, retreive the component tree from the page and the details of the inspected component
       let script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentsTree();';
       chrome.devtools.inspectedWindow.eval(
         script,
@@ -98,14 +104,24 @@ export class ComponentsTree extends Component {
       );
       this.computeWindowWidth();
       window.addEventListener("resize", this.computeWindowWidth);
+      document.addEventListener('click', this.hideContextMenus, true);
+      document.addEventListener('contextmenu', this.hideContextMenus, true);
     });
     onWillUnmount(() => {
       window.removeEventListener("resize", this.computeWindowWidth);
       window.removeEventListener("mousemove", this.handleMouseMove);
       window.removeEventListener("mouseup", this.handleMouseUp);
+      document.removeEventListener('click', this.hideContextMenus);
+      document.removeEventListener('contextmenu', this.hideContextMenus);
     });
   }
 
+  hideContextMenus = (event) => {
+    const customMenus = document.querySelectorAll(".custom-menu");
+    customMenus.forEach(menu => menu.classList.add("hidden"));
+  }
+
+  // Toggle the selector tool which is used to select a component based on the hovered Dom element
   toggleSelector(){
     this.state.search.activeSelector = !this.state.search.activeSelector;
     let script;
@@ -116,6 +132,7 @@ export class ComponentsTree extends Component {
     chrome.devtools.inspectedWindow.eval(script);
   }
 
+  // Update the search state value with the current search string and trigger the search
   updateSearch(search){
     this.state.search.search = search;
     this.state.search.searchResults = [];
@@ -128,6 +145,7 @@ export class ComponentsTree extends Component {
       this.state.search.searchIndex = -1;
   }
 
+  // Search for results in the components tree given the current search string (in a fuzzy way)
   getSearchResults(search, node){
     if(search.length < 1)
       return;
@@ -139,11 +157,13 @@ export class ComponentsTree extends Component {
     }
   }
 
+  // Set the search index to the provided one in order to select the current searched component
   setSearchIndex(index){
     this.state.search.searchIndex = index;
     this.selectComponent(this.state.search.searchResults[index]);
   }
   
+  // Replace the given component's values with the new ones
   updateTree(component) {
     const pathArray = component.path.split('/');
     let element = this.state.root;
@@ -155,19 +175,22 @@ export class ComponentsTree extends Component {
     element.display = component.display;
   }
 
+  // Update the value of the given object with the new provided one
   editObjectTreeElement(objectPath, value, objectType){
     const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.editObject("'+ this.state.activeComponent.path +'", "'+ objectPath +'", '+ value +', "' + objectType + '");';
-    console.log(script);
     chrome.devtools.inspectedWindow.eval(script);
   }
 
-  updateExpandBag(path, type, toggled, display){
+  // Update the toggled/display status of the object given its path
+  // to remember it when all content is overwritten.
+  updateExpandBag(path, toggled, display){
     this.state.activeComponent.expandBag[path] = {
       toggled: toggled,
       display: display
     }
   }
 
+  // Expand the children of the input object property and load it from page if necessary
   updateObjectTreeElements(inputObj) {
     let pathArray = inputObj.path.split('/');
     let obj;
@@ -205,21 +228,26 @@ export class ComponentsTree extends Component {
     obj.display = inputObj.display;
   }
 
+  // Triggers manually the rendering of the selected component
   refreshComponent() {
     const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.refreshComponent("'+ this.state.activeComponent.path +'")';
     chrome.devtools.inspectedWindow.eval(script);
   }
 
+  // Toggle opening or closing the subscription keys at provided index
   expandSubscriptionsKeys(index){
     this.state.activeComponent.subscriptions[index].keysExpanded = !this.state.activeComponent.subscriptions[index].keysExpanded;
   }
 
+  // Remove the highlight on the DOM element correponding to the component
   removeHighlight(ev){
     const script = "__OWL__DEVTOOLS_GLOBAL_HOOK__.removeHighlights()"
     chrome.devtools.inspectedWindow.eval(script);
   }
 
+  // Select a component by retrieving its details from the page based on its path
   selectComponent(path) {
+    // Deselect all components starting from root
     this.state.root.selected = false;
     this.state.root.highlighted = false;
     this.state.root.children.forEach(child => {
@@ -233,7 +261,6 @@ export class ComponentsTree extends Component {
     element.selected = true;
     this.highlightChildren(element);
     const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentDetails("' + element.path + '");';
-    console.log(script);
     chrome.devtools.inspectedWindow.eval(
       script,
       (result, isException) => {
@@ -244,6 +271,7 @@ export class ComponentsTree extends Component {
     );
   }
 
+  // Apply highlight recursively to all children of a selected component
   highlightChildren(component){
     component.children.forEach((child) => {
       child.highlighted = true;
@@ -251,6 +279,7 @@ export class ComponentsTree extends Component {
     })
   }
 
+  // Deselect component and remove highlight on all children
   deselectComponent(component){
     component.selected = false;
     component.highlighted = false;
@@ -259,6 +288,7 @@ export class ComponentsTree extends Component {
     });
   }
 
+  // Compute the width of the left and right windows based on the split position
   computeWindowWidth = (event) => {
     const width = window.innerWidth || document.body.clientWidth;
     this.state.leftWidth = (this.state.splitPosition/100) * width - 2;
@@ -282,10 +312,10 @@ export class ComponentsTree extends Component {
     window.removeEventListener("mousemove", this.handleMouseMove);
     window.removeEventListener("mouseup", this.handleMouseUp);
   }
+
   static template = "devtools.ComponentsTree";
   
   static components = { TreeElement, DetailsWindow, SearchBar };
-    
 }
 
 

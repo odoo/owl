@@ -24,7 +24,7 @@
   bottom: 0;
 }
 
-.tree_component {
+.tree-component {
   user-select: none;
   width: 100%;
   margin: 0px;
@@ -32,7 +32,7 @@
   background-color: white;
 }
 
-.tree_component:hover {
+.tree-component:hover {
   background-color: #baefff;
 }
 
@@ -55,7 +55,7 @@
   transition: background-color 0.5s ease-out;
 }
 
-.name_wrapper {
+.name-wrapper {
   color:rgb(18, 54, 255);
   white-space: nowrap;
   display: inline;
@@ -68,19 +68,19 @@
   display: inline;
 }
 
-.key_wrapper {
+.key-wrapper {
   color:rgb(255, 181, 44);
   white-space: nowrap;
   display: inline;
 }
 
-.key_name {
+.key-name {
   color:rgb(119, 34, 255);
   white-space: nowrap;
   display: inline;
 }
 
-.details_window {
+.details-window {
   width: 100%;
   height: 100%;
 }
@@ -94,11 +94,11 @@
   position: relative;
 }
 
-.component_highlighted {
+.component-highlighted {
   background-color: #ddf7ff;
 }
 
-.component_selected {
+.component-selected {
   background-color: #33CEFF;
 }
 
@@ -163,7 +163,6 @@
 
 .details-container {
   height: calc(100% - 32px);
-  overflow-x: auto;
   display: flex;
   flex-direction: column;
 }
@@ -213,4 +212,31 @@
 
 .search-selector {
   cursor: pointer;
+}
+
+.custom-menu {
+  position: absolute;
+  background-color: white;
+  border: 1px solid gray;
+  z-index: 1;
+  width: 240px;
+}
+
+.custom-menu ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.hidden {
+  display: none;
+}
+
+.custom-menu-item {
+  white-space: nowrap;
+  padding: 2px 1.5rem;
+  cursor: pointer;
+}
+
+.custom-menu-item:hover {
+  background-color: rgb(201, 201, 201);
 }

@@ -67,11 +67,7 @@ export class TreeElement extends Component {
   }
 
   toggleDisplay(ev){
-    this.props.toggled = !this.props.toggled;
-    this.props.children.forEach(child => {
-      this.swapDisplay(child, this.props.toggled, this.props.toggled)
-    });
-    this.props.updateComponent(this.props);
+    this.props.toggleComponentTreeElementDisplay(this.props.path);
   }
 
   hoverComponent(ev){
@@ -93,18 +89,6 @@ export class TreeElement extends Component {
       key = "";
     }
     return key;
-  }
-
-  swapDisplay(element, toggled, display){
-    if(!display){
-      element.display = false;
-    }
-    else if(toggled){
-      element.display = true;
-    }
-    element.children.forEach(child => {
-      this.swapDisplay(child, element.toggled, element.display)
-    });
   }
 
   toggleComponent(ev){

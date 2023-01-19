@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.TreeElement" owl="1">
-    <div t-attf-id="treeElement/{{props.path}}" t-att-class="{'component-selected': props.selected,'component-highlighted': props.highlighted}" class="tree-component my-0 p-0" t-on-mouseover.stop="hoverComponent" t-on-click.stop="toggleComponent" t-attf-style="display: {{props.display ? 'flex' : 'none'}}">
+    <div t-attf-id="treeElement/{{props.path}}" t-att-class="{'component-selected': props.selected,'component-highlighted': props.highlighted}" class="tree-component my-0 p-0" t-on-mouseover.stop="hoverComponent" t-on-click.stop="toggleComponent">
       <div class="component-wrapper" t-attf-style="transform: translateX(calc({{props.depth}} * 0.8rem))">
         <t t-if="props.children.length > 0">
           <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer;{{props.toggled ? 'transform: rotate(90deg);' : ''}}" t-on-click.stop="toggleDisplay"></i>
@@ -15,13 +15,15 @@
       </div>
     </div>
     <t t-foreach="props.children" t-as="child" t-key="child.key">
-      <TreeElement 
-        t-props="child"
-        search="props.search"
-        searchResults="props.searchResults"
-        renderPaths="props.renderPaths"
-        updateComponent="props.updateComponent"
-        selectComponent="props.selectComponent"/>
+      <t t-if="child.display">
+        <TreeElement 
+          t-props="child"
+          search="props.search"
+          searchResults="props.searchResults"
+          renderPaths="props.renderPaths"
+          toggleComponentTreeElementDisplay="props.toggleComponentTreeElementDisplay"
+          selectComponent="props.selectComponent"/>
+      </t>
     </t>
   </t>
 </templates>

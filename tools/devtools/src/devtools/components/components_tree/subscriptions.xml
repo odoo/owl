@@ -19,7 +19,7 @@
           <ObjectTreeElement
               t-props="subscription.target"
               componentPath="props.componentPath"
-              updateObjectTreeElement="props.updateObjectTreeElement"
+              toggleObjectTreeElementsDisplay="props.toggleObjectTreeElementsDisplay"
               updateBag="props.updateBag"
               editObjectTreeElement="props.editObjectTreeElement"/>
         </div>

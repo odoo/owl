@@ -15,12 +15,12 @@ App.registerTemplate("devtools.ComponentsTree", function devtools_ComponentsTree
     let hdlr2 = ["stop", ctx['removeHighlight'], ctx];
     let attr1 = `width:${ctx['state'].leftWidth}px;`;
     const b2 = comp1(Object.assign({}, ctx['state'].search, {toggleSelector: bind(this, ctx['toggleSelector']),updateSearch: bind(this, ctx['updateSearch']),setSearchIndex: bind(this, ctx['setSearchIndex'])}), key + `__1`, node, this, null);
-    const b3 = comp2(Object.assign({}, ctx['state'].root, {search: ctx['state'].search.search,searchResults: ctx['state'].search.searchResults,renderPaths: ctx['state'].renderPaths,updateComponent: bind(this, ctx['updateTree']),selectComponent: bind(this, ctx['selectComponent'])}), key + `__2`, node, this, null);
+    const b3 = comp2(Object.assign({}, ctx['state'].root, {search: ctx['state'].search.search,searchResults: ctx['state'].search.searchResults,renderPaths: ctx['state'].renderPaths,toggleComponentTreeElementDisplay: bind(this, ctx['toggleComponentTreeElementDisplay']),selectComponent: bind(this, ctx['selectComponent'])}), key + `__2`, node, this, null);
     let attr2 = `left:${ctx['state'].leftWidth}px;`;
     let hdlr3 = [ctx['handleMouseDown'], ctx];
     let hdlr4 = [ctx['handleMouseUp'], ctx];
     let attr3 = `width:${ctx['state'].rightWidth}px;`;
-    const b4 = comp3({activeComponent: ctx['state'].activeComponent,width: ctx['state'].rightWidth,updateObjectTreeElement: bind(this, ctx['updateObjectTreeElements']),updateBag: bind(this, ctx['updateExpandBag']),expandSubscriptionsKeys: bind(this, ctx['expandSubscriptionsKeys']),editObjectTreeElement: bind(this, ctx['editObjectTreeElement']),refreshComponent: bind(this, ctx['refreshComponent'])}, key + `__3`, node, this, null);
+    const b4 = comp3({activeComponent: ctx['state'].activeComponent,width: ctx['state'].rightWidth,toggleObjectTreeElementsDisplay: bind(this, ctx['toggleObjectTreeElementsDisplay']),updateBag: bind(this, ctx['updateExpandBag']),expandSubscriptionsKeys: bind(this, ctx['expandSubscriptionsKeys']),editObjectTreeElement: bind(this, ctx['editObjectTreeElement']),refreshComponent: bind(this, ctx['refreshComponent'])}, key + `__3`, node, this, null);
     return block1([hdlr1, hdlr2, attr1, attr2, hdlr3, hdlr4, attr3], [b2, b3, b4]);
   }
 });
@@ -48,19 +48,19 @@ App.registerTemplate("devtools.DetailsWindow", function devtools_DetailsWindow(a
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[`key`] = v_block2[i1];
       const key1 = ctx['key'];
-      c_block2[i1] = withKey(comp1(Object.assign({}, ctx['props'].activeComponent.props[ctx['key']], {componentPath: ctx['props'].activeComponent.path,updateObjectTreeElement: ctx['props'].updateObjectTreeElement,updateBag: ctx['props'].updateBag,editObjectTreeElement: ctx['props'].editObjectTreeElement}), key + `__1__${key1}`, node, this, null), key1);
+      c_block2[i1] = withKey(comp1(Object.assign({}, ctx['props'].activeComponent.props[ctx['key']], {componentPath: ctx['props'].activeComponent.path,toggleObjectTreeElementsDisplay: ctx['props'].toggleObjectTreeElementsDisplay,updateBag: ctx['props'].updateBag,editObjectTreeElement: ctx['props'].editObjectTreeElement}), key + `__1__${key1}`, node, this, null), key1);
     }
     ctx = ctx.__proto__;
     const b2 = list(c_block2);
     let hdlr6 = ["stop", ()=>this.logComponentInConsole("subscription"), ctx];
-    const b4 = comp2({subscriptions: ctx['props'].activeComponent.subscriptions,componentPath: ctx['props'].activeComponent.path,updateObjectTreeElement: ctx['props'].updateObjectTreeElement,updateBag: ctx['props'].updateBag,expandSubscriptionsKeys: ctx['props'].expandSubscriptionsKeys,editObjectTreeElement: ctx['props'].editObjectTreeElement}, key + `__2`, node, this, null);
+    const b4 = comp2({subscriptions: ctx['props'].activeComponent.subscriptions,componentPath: ctx['props'].activeComponent.path,toggleObjectTreeElementsDisplay: ctx['props'].toggleObjectTreeElementsDisplay,updateBag: ctx['props'].updateBag,expandSubscriptionsKeys: ctx['props'].expandSubscriptionsKeys,editObjectTreeElement: ctx['props'].editObjectTreeElement}, key + `__2`, node, this, null);
     let hdlr7 = ["stop", ()=>this.logComponentInConsole("env"), ctx];
     ctx = Object.create(ctx);
     const [k_block5, v_block5, l_block5, c_block5] = prepareList(ctx['props'].activeComponent.env);;
     for (let i1 = 0; i1 < l_block5; i1++) {
       ctx[`key`] = v_block5[i1];
       const key1 = ctx['key'];
-      c_block5[i1] = withKey(comp3(Object.assign({}, ctx['props'].activeComponent.env[ctx['key']], {componentPath: ctx['props'].activeComponent.path,updateObjectTreeElement: ctx['props'].updateObjectTreeElement,updateBag: ctx['props'].updateBag,editObjectTreeElement: ctx['props'].editObjectTreeElement}), key + `__3__${key1}`, node, this, null), key1);
+      c_block5[i1] = withKey(comp3(Object.assign({}, ctx['props'].activeComponent.env[ctx['key']], {componentPath: ctx['props'].activeComponent.path,toggleObjectTreeElementsDisplay: ctx['props'].toggleObjectTreeElementsDisplay,updateBag: ctx['props'].updateBag,editObjectTreeElement: ctx['props'].editObjectTreeElement}), key + `__3__${key1}`, node, this, null), key1);
     }
     ctx = ctx.__proto__;
     const b5 = list(c_block5);
@@ -70,7 +70,7 @@ App.registerTemplate("devtools.DetailsWindow", function devtools_DetailsWindow(a
     for (let i1 = 0; i1 < l_block7; i1++) {
       ctx[`key`] = v_block7[i1];
       const key1 = ctx['key'];
-      c_block7[i1] = withKey(comp4(Object.assign({}, ctx['props'].activeComponent.instance[ctx['key']], {componentPath: ctx['props'].activeComponent.path,updateObjectTreeElement: ctx['props'].updateObjectTreeElement,updateBag: ctx['props'].updateBag,editObjectTreeElement: ctx['props'].editObjectTreeElement}), key + `__4__${key1}`, node, this, null), key1);
+      c_block7[i1] = withKey(comp4(Object.assign({}, ctx['props'].activeComponent.instance[ctx['key']], {componentPath: ctx['props'].activeComponent.path,toggleObjectTreeElementsDisplay: ctx['props'].toggleObjectTreeElementsDisplay,updateBag: ctx['props'].updateBag,editObjectTreeElement: ctx['props'].editObjectTreeElement}), key + `__4__${key1}`, node, this, null), key1);
     }
     const b7 = list(c_block7);
     return block1([txt1, hdlr1, hdlr2, hdlr3, hdlr4, hdlr5, hdlr6, hdlr7, hdlr8], [b2, b4, b5, b7]);
@@ -127,7 +127,7 @@ App.registerTemplate("devtools.ObjectTreeElement", function devtools_ObjectTreeE
     for (let i1 = 0; i1 < l_block10; i1++) {
       ctx[`child`] = v_block10[i1];
       const key1 = ctx['child'].name;
-      c_block10[i1] = withKey(comp1(Object.assign({}, ctx['child'], {componentPath: ctx['props'].componentPath,updateObjectTreeElement: ctx['props'].updateObjectTreeElement,updateBag: ctx['props'].updateBag,editObjectTreeElement: ctx['props'].editObjectTreeElement}), key + `__1__${key1}`, node, this, null), key1);
+      c_block10[i1] = withKey(comp1(Object.assign({}, ctx['child'], {componentPath: ctx['props'].componentPath,toggleObjectTreeElementsDisplay: ctx['props'].toggleObjectTreeElementsDisplay,updateBag: ctx['props'].updateBag,editObjectTreeElement: ctx['props'].editObjectTreeElement}), key + `__1__${key1}`, node, this, null), key1);
     }
     const b10 = list(c_block10);
     return multi([b2, b8, b10]);
@@ -208,7 +208,7 @@ App.registerTemplate("devtools.Subscriptions", function devtools_Subscriptions(a
       }
       ctx = ctx.__proto__;
       const b5 = list(c_block5);
-      const b8 = comp1(Object.assign({}, ctx['subscription'].target, {componentPath: ctx['props'].componentPath,updateObjectTreeElement: ctx['props'].updateObjectTreeElement,updateBag: ctx['props'].updateBag,editObjectTreeElement: ctx['props'].editObjectTreeElement}), key + `__1__${key1}`, node, this, null);
+      const b8 = comp1(Object.assign({}, ctx['subscription'].target, {componentPath: ctx['props'].componentPath,toggleObjectTreeElementsDisplay: ctx['props'].toggleObjectTreeElementsDisplay,updateBag: ctx['props'].updateBag,editObjectTreeElement: ctx['props'].editObjectTreeElement}), key + `__1__${key1}`, node, this, null);
       c_block2[i1] = withKey(block3([hdlr1, attr1], [b4, b5, b8]), key1);
     }
     const b2 = list(c_block2);
@@ -222,7 +222,7 @@ App.registerTemplate("devtools.TreeElement", function devtools_TreeElement(app, 
   let { safeOutput, prepareList, withKey } = helpers;
   const comp1 = app.createComponent(`TreeElement`, true, false, true, false);
   
-  let block2 = createBlock(`<div block-attribute-0="id" block-attribute-1="class" class="tree-component my-0 p-0" block-attribute-2="style" block-handler-3="mouseover.stop" block-handler-4="click.stop"><div class="component-wrapper" block-attribute-5="style"><block-child-0/><block-child-1/><div class="name-wrapper"><block-child-2/> <block-child-3/></div></div></div>`);
+  let block2 = createBlock(`<div block-attribute-0="id" block-attribute-1="class" class="tree-component my-0 p-0" block-handler-2="mouseover.stop" block-handler-3="click.stop"><div class="component-wrapper" block-attribute-4="style"><block-child-0/><block-child-1/><div class="name-wrapper"><block-child-2/> <block-child-3/></div></div></div>`);
   let block3 = createBlock(`<i class="fa fa-caret-right mx-1" block-attribute-0="style" block-handler-1="click.stop"/>`);
   let block4 = createBlock(`<i class="fa fa-caret-right mx-1" block-attribute-0="style"/>`);
   
@@ -230,27 +230,30 @@ App.registerTemplate("devtools.TreeElement", function devtools_TreeElement(app, 
     let b3,b4,b5,b6;
     let attr1 = `treeElement/${ctx['props'].path}`;
     let attr2 = {'component-selected':ctx['props'].selected,'component-highlighted':ctx['props'].highlighted};
-    let attr3 = `display: ${ctx['props'].display?'flex':'none'}`;
     let hdlr1 = ["stop", ctx['hoverComponent'], ctx];
     let hdlr2 = ["stop", ctx['toggleComponent'], ctx];
-    let attr4 = `transform: translateX(calc(${ctx['props'].depth} * 0.8rem))`;
+    let attr3 = `transform: translateX(calc(${ctx['props'].depth} * 0.8rem))`;
     if (ctx['props'].children.length>0) {
-      let attr5 = `cursor: pointer;${ctx['props'].toggled?'transform: rotate(90deg);':''}`;
+      let attr4 = `cursor: pointer;${ctx['props'].toggled?'transform: rotate(90deg);':''}`;
       let hdlr3 = ["stop", ctx['toggleDisplay'], ctx];
-      b3 = block3([attr5, hdlr3]);
+      b3 = block3([attr4, hdlr3]);
     } else {
-      let attr6 = `cursor: pointer; visibility: hidden;`;
-      b4 = block4([attr6]);
+      let attr5 = `cursor: pointer; visibility: hidden;`;
+      b4 = block4([attr5]);
     }
     b5 = safeOutput(ctx['content']);
     b6 = safeOutput(this.getMinimizedKey());
-    const b2 = block2([attr1, attr2, attr3, hdlr1, hdlr2, attr4], [b3, b4, b5, b6]);
+    const b2 = block2([attr1, attr2, hdlr1, hdlr2, attr3], [b3, b4, b5, b6]);
     ctx = Object.create(ctx);
     const [k_block7, v_block7, l_block7, c_block7] = prepareList(ctx['props'].children);;
     for (let i1 = 0; i1 < l_block7; i1++) {
       ctx[`child`] = v_block7[i1];
       const key1 = ctx['child'].key;
-      c_block7[i1] = withKey(comp1(Object.assign({}, ctx['child'], {search: ctx['props'].search,searchResults: ctx['props'].searchResults,renderPaths: ctx['props'].renderPaths,updateComponent: ctx['props'].updateComponent,selectComponent: ctx['props'].selectComponent}), key + `__1__${key1}`, node, this, null), key1);
+      let b9;
+      if (ctx['child'].display) {
+        b9 = comp1(Object.assign({}, ctx['child'], {search: ctx['props'].search,searchResults: ctx['props'].searchResults,renderPaths: ctx['props'].renderPaths,toggleComponentTreeElementDisplay: ctx['props'].toggleComponentTreeElementDisplay,selectComponent: ctx['props'].selectComponent}), key + `__1__${key1}`, node, this, null);
+      }
+      c_block7[i1] = withKey(multi([b9]), key1);
     }
     const b7 = list(c_block7);
     return multi([b2, b7]);

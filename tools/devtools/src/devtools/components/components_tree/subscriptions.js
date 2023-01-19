@@ -18,7 +18,7 @@ export class Subscriptions extends Component {
     if(content.length > maxLength){
       content = content.slice(0, content.lastIndexOf(',', maxLength-5)) + ", ...]";
     }
-    content = markup('<div class="key_name">' + content + '</div>');
+    content = markup('<div class="key-name">' + content + '</div>');
     return content;
   }
 

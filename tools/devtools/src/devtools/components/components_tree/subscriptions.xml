@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.Subscriptions" owl="1">
-    <div id="subscriptions_panel">
+    <div id="subscriptionsPanel">
       <t t-foreach="subscriptions" t-as="subscription" t-key="subscription_index">
         <div class="my-2">
           <div class="my-0 p-0 object-line" t-on-click.stop="(ev) => this.expandKeys(ev, subscription_index)">
@@ -10,7 +10,7 @@
               keys: <t t-out="this.keysContent(subscription_index)"/>
             </div>
           </div>
-          <div t-foreach="subscription.keys" t-as="key" t-key="key_index" class="my-0 p-0 object-line" t-attf-style="display: {{subscription.keysExpanded ? 'flex' : 'none'}}">
+          <div t-foreach="subscription.keys" t-as="key" t-key="keyIndex" class="my-0 p-0 object-line" t-attf-style="display: {{subscription.keysExpanded ? 'flex' : 'none'}}">
             <div style="transform: translateX(calc(1.1rem))" class="key-content">
               <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer; visibility: hidden;"></i>
               <t t-out="key"/>
@@ -18,6 +18,7 @@
           </div>
           <ObjectTreeElement
               t-props="subscription.target"
+              componentPath="props.componentPath"
               updateObjectTreeElement="props.updateObjectTreeElement"
               updateBag="props.updateBag"
               editObjectTreeElement="props.editObjectTreeElement"/>

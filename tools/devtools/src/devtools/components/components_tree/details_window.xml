@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.DetailsWindow" owl="1">
-    <div class="details_window">
-      <div id="details_window_head" class="panel-top">
-        <div class="name_wrapper">
+    <div class="details-window">
+      <div id="detailsWindowHead" class="panel-top">
+        <div class="name-wrapper">
           <b><t t-esc="props.activeComponent.name"/></b>
         </div>
         <i class="fa fa-eye utility-icon me-2" aria-hidden="true" t-on-click.stop="inspectComponentInDOM"></i>
@@ -22,23 +22,20 @@
           <t t-foreach="props.activeComponent.props" t-as="key" t-key="key">
             <ObjectTreeElement 
               t-props="props.activeComponent.props[key]"
+              componentPath="props.activeComponent.path"
               updateObjectTreeElement="props.updateObjectTreeElement"
               updateBag="props.updateBag"
               editObjectTreeElement="props.editObjectTreeElement"/>
           </t>
         </div>
-        <!-- <div class="horizontal-border">
-        </div>
-        <div id="hooks" class="details-panel py-1">
-          <b>hooks</b>
-        </div> -->
-        <div id="subscriptions" class="details-panel pt-1">
+        <div id="subscriptions" class="details-panel py-1">
           <div class="details-panel-head">
             <b>subscriptions</b>
             <i class="fa fa-bug utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("subscription")'></i>
           </div>
           <Subscriptions 
             subscriptions="props.activeComponent.subscriptions" 
+            componentPath="props.activeComponent.path"
             updateObjectTreeElement="props.updateObjectTreeElement"
             updateBag="props.updateBag"
             expandSubscriptionsKeys="props.expandSubscriptionsKeys"
@@ -52,6 +49,7 @@
           <t t-foreach="props.activeComponent.env" t-as="key" t-key="key">
             <ObjectTreeElement 
               t-props="props.activeComponent.env[key]"
+              componentPath="props.activeComponent.path"
               updateObjectTreeElement="props.updateObjectTreeElement"
               updateBag="props.updateBag"
               editObjectTreeElement="props.editObjectTreeElement"/>
@@ -65,6 +63,7 @@
           <t t-foreach="props.activeComponent.instance" t-as="key" t-key="key">
             <ObjectTreeElement 
               t-props="props.activeComponent.instance[key]"
+              componentPath="props.activeComponent.path"
               updateObjectTreeElement="props.updateObjectTreeElement"
               updateBag="props.updateBag"
               editObjectTreeElement="props.editObjectTreeElement"/>

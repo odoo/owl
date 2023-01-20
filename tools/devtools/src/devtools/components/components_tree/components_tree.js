@@ -145,6 +145,17 @@ export class ComponentsTree extends Component {
     toggle ? this.expandComponents(component) : this.foldComponents(component);
   }
 
+  toggleComponentParents(path){
+    let pathArray = path.split('/');
+    pathArray.shift();
+    let component = this.state.root;
+    for (const key of pathArray) {
+      component.toggled = true;
+      this.state.componentsExpandBag.add(component.path);
+      component = component.children.filter(child => (child.key) === key)[0];
+    }
+  }
+
   hideContextMenus = (event) => {
     const customMenus = document.querySelectorAll(".custom-menu");
     customMenus.forEach(menu => menu.classList.add("hidden"));
@@ -169,6 +180,10 @@ export class ComponentsTree extends Component {
     if(this.state.search.searchResults.length > 0){
       this.state.search.searchIndex = 0;
       this.selectComponent(this.state.search.searchResults[0]);
+      this.foldComponents(this.state.root);
+      for(const result of this.state.search.searchResults){
+        this.toggleComponentParents(result);
+      }
     }
     else
       this.state.search.searchIndex = -1;
@@ -179,7 +194,7 @@ export class ComponentsTree extends Component {
     if(search.length < 1)
       return;
     if (fuzzySearch(node.name, search)) {
-      this.state.search.searchResults.push(node.path)
+      this.state.search.searchResults.push(node.path);
     }
     if(node.children) {
       node.children.forEach(child => this.getSearchResults(search, child));
@@ -226,7 +241,6 @@ export class ComponentsTree extends Component {
     }
     const getter = JSON.stringify(obj);
     const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.loadGetterContent("' + this.state.activeComponent.path + '", \''+ getter +'\')';
-    console.log(script);
     chrome.devtools.inspectedWindow.eval(
       script,
       (result, isException) => {
@@ -266,7 +280,6 @@ export class ComponentsTree extends Component {
     if (obj.hasChildren && obj.children.length === 0) {
       const objectsExpandBag = JSON.stringify([...this.state.activeComponent.objectsExpandBag]);
       const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.loadObjectChildren("'+ this.state.activeComponent.path +'","'+ obj.path +'", '+ obj.depth +', "'+ obj.contentType +'", "'+ obj.objectType +'", \''+ objectsExpandBag +'\');';
-      console.log(script);
       chrome.devtools.inspectedWindow.eval(
         script,
         (result, isException) => {
@@ -314,6 +327,8 @@ export class ComponentsTree extends Component {
     const pathArray = path.split('/');
     let element = this.state.root;
     for (let i = 1; i < pathArray.length; i++) {
+      element.toggled = true;
+      this.state.componentsExpandBag.add(element.path);
       element = element.children.filter(child => (child.key) === pathArray[i])[0];
     }
     element.selected = true;

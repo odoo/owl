@@ -1,9 +1,6 @@
 import { getActiveTabURL } from "./utils";
 
 let owlStatus = true;
-let devtoolsId;
-let tree;
-let devtoolsTreePort;
 let tabId;
 
 chrome.tabs.onUpdated.addListener((tab) => {
@@ -46,7 +43,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         tabId = tab.id;
       }
       checkOwlStatus(tabId);
-      console.log("owlStatus message request received: " + owlStatus);
       sendResponse({result: owlStatus});
     })
     return true;

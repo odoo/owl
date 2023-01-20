@@ -108,7 +108,7 @@ export class OwlDevtoolsGlobalHook {
   };
   // Identify the hovered component based on the corresponding DOM element and send the Select message
   // when the target changes
-  HTMLSelector(ev){
+  HTMLSelector = (ev) => {
     const target = ev.target;
     if (!this.currentSelectedElement || !(target.isEqualNode(this.currentSelectedElement))){
       const path = this.getElementPath(target);
@@ -119,19 +119,17 @@ export class OwlDevtoolsGlobalHook {
   }
   // Activate the HTML selector tool
   enableHTMLSelector(){
-    this.HTMLSelectorBind = this.HTMLSelector.bind(this);
-    this.disableHTMLSelectorBind = this.disableHTMLSelector.bind(this);
-    document.addEventListener("mousemove", this.HTMLSelectorBind);
-    document.addEventListener("click", this.disableHTMLSelectorBind, true);
+    document.addEventListener("mousemove", this.HTMLSelector);
+    document.addEventListener("click", this.disableHTMLSelector, true);
     document.addEventListener("mouseout", this.removeHighlights);
   }
   // Diasble the HTML selector tool
-  disableHTMLSelector(event = undefined){
-    if(event)
-      event.stopPropagation();
+  disableHTMLSelector = (ev = undefined) => {
+    if(ev)
+      ev.stopPropagation();
     this.removeHighlights();
-    document.removeEventListener("mousemove", this.HTMLSelectorBind);
-    document.removeEventListener("click", this.disableHTMLSelectorBind);
+    document.removeEventListener("mousemove", this.HTMLSelector);
+    document.removeEventListener("click", this.disableHTMLSelector);
     document.removeEventListener("mouseout", this.removeHighlights);
     window.postMessage({type: "owlDevtools__StopSelector"});
   }
@@ -445,22 +443,24 @@ export class OwlDevtoolsGlobalHook {
         if(child)
           children.push(child);
       });
-      const proto = Object.getPrototypeOf(obj);
-      Reflect.ownKeys(proto).forEach(key => {
-        if(Object.getOwnPropertyDescriptor(proto, key).hasOwnProperty("get")){
-          let child = {
-            name: key,
-            depth: depth,
-            toggled: false,
-            objectType: objType,
-            path: objPath.length > 0 ? objPath + "\/" + key : key,
-            contentType: "getter",
-            content: "(...)",
-            hasChildren: false,
-          };
-          children.push(child);
-        }
-      });
+      // if (type === 'object'){
+      //   const proto = Object.getPrototypeOf(obj);
+      //   Reflect.ownKeys(proto).forEach(key => {
+      //     if(Object.getOwnPropertyDescriptor(proto, key).hasOwnProperty("get")){
+      //       let child = {
+      //         name: key,
+      //         depth: depth,
+      //         toggled: false,
+      //         objectType: objType,
+      //         path: objPath.length > 0 ? objPath + "\/" + key : key,
+      //         contentType: "getter",
+      //         content: "(...)",
+      //         hasChildren: false,
+      //       };
+      //       children.push(child);
+      //     }
+      //   });
+      // }
     }
     const prototype = this.getParsedObjectChild(componentPath, obj, "[[Prototype]]", depth, objType, objPath, expandBag)
     children.push(prototype);
@@ -538,22 +538,22 @@ export class OwlDevtoolsGlobalHook {
       }
     });
     // Load instance getters
-    const proto = Object.getPrototypeOf(instance);
-    Reflect.ownKeys(proto).forEach(key => {
-      if(Object.getOwnPropertyDescriptor(proto, key).hasOwnProperty("get")){
-        let child = {
-          name: key,
-          depth: 0,
-          toggled: false,
-          objectType: 'instance',
-          path: key,
-          contentType: "getter",
-          content: "(...)",
-          hasChildren: false,
-        };
-        component.instance[key] = child;
-      }
-    });
+    // const proto = Object.getPrototypeOf(instance);
+    // Reflect.ownKeys(proto).forEach(key => {
+    //   if(Object.getOwnPropertyDescriptor(proto, key).hasOwnProperty("get")){
+    //     let child = {
+    //       name: key,
+    //       depth: 0,
+    //       toggled: false,
+    //       objectType: 'instance',
+    //       path: key,
+    //       contentType: "getter",
+    //       content: "(...)",
+    //       hasChildren: false,
+    //     };
+    //     component.instance[key] = child;
+    //   }
+    // });
     const instancePrototype = this.getParsedObjectChild(path, instance, "[[Prototype]]", 0, 'instance', '', expandBag);
     component.instance["[[Prototype]]"] = instancePrototype;
 
@@ -874,7 +874,7 @@ export class OwlDevtoolsGlobalHook {
   }
   // Store the object given by its path and the component path as a global temp variable
   storeObjectAsGlobal(componentPath, objectPath){
-    obj = this.getPropertyObject(componentPath, objectPath);
+    let obj = this.getPropertyObject(componentPath, objectPath);
     let index = 1;
     while(window["temp" + index] !== undefined)
       index++;

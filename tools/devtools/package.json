@@ -1,8 +1,8 @@
 {
     "name": "owl-extension",
     "version": "1.0.0",
-    "description": "Chrome Extension starter Kit with es6 standards",
-    "author": "Simon Genin, ges @ odoo",
+    "description": "Devtools for owl framework Chrome Extension",
+    "author": "Julien Carion, juca @ odoo",
     "scripts": {
         "templates": "cd ../owl && npm run compile_templates -- ../OWL-Devtools-Extension/src/ && mv templates.js ../OWL-Devtools-Extension/assets/templates.js && cd ../OWL-Devtools-Extension && sed -i 's/owl.//g' assets/templates.js && sed -i '1s!^!const { App } = owl;\\n\\n!' assets/templates.js",
         "build": "npm run templates && NODE_ENV=production rollup -c",
@@ -36,9 +36,6 @@
         "rollup-plugin-node-resolve": "^5.2.0",
         "rollup-plugin-postcss": "^4.0.0",
         "rollup-plugin-serve": "^1.0.0",
-        "rollup-plugin-terser": "^7.0.2",
-        "rollup-plugin-typescript2": "^0.27.3",
-        "tailwindcss": "^3.0.0",
-        "typescript": "^4.0.3"
+        "rollup-plugin-terser": "^7.0.2"
     }
 }

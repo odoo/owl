@@ -1,6 +1,5 @@
 export async function getOwlStatus(){
   let response = await chrome.runtime.sendMessage({type: "getOwlStatus"});
-  console.log("response: " + response);
   return response.result;
 }
 
@@ -11,7 +10,7 @@ export async function getActiveTabURL() {
   return tab;
 }
 
-// found from https://www.tutorialspoint.com/fuzzy-search-algorithm-in-javascript
+// inspired from https://www.tutorialspoint.com/fuzzy-search-algorithm-in-javascript
 export function fuzzySearch(base, query) {
   const str = base.toLowerCase();
   let i = 0, n = -1, l;

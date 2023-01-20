@@ -24,8 +24,8 @@ function createPanelsIfOwl() {
         .then((contents) => {
           chrome.devtools.inspectedWindow.eval(contents);
         });
-      chrome.devtools.panels.create("Owl Components", "../../assets/icon128.png", "devtools/components_panel.html", function (panel) {});
-      chrome.devtools.panels.create("Owl Events", "../../assets/icon128.png", "devtools/events_panel.html", function (panel) {});
+      chrome.devtools.panels.create("Owl", "../../assets/icon128.png", "devtools/components_panel.html", function (panel) {});
+      // chrome.devtools.panels.create("Owl Events", "../../assets/icon128.png", "devtools/events_panel.html", function (panel) {});
     }
   )
 }

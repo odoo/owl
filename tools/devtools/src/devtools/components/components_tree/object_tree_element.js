@@ -19,6 +19,12 @@ export class ObjectTreeElement extends Component {
     );
   }
 
+  get objectName(){
+    if(this.props.contentType === "function" && this.props.content.startsWith("get "))
+      return "get " + this.props.name;
+    return this.props.name;
+  }
+
   setupEditMode(ev){
     if(!this.state.editMode){
       if(["number", "string", "boolean", "undefined"].includes(this.props.contentType) && !this.props.path.startsWith("constructor")){
@@ -32,6 +38,12 @@ export class ObjectTreeElement extends Component {
       this.props.editObjectTreeElement(this.props.path, ev.target.value, this.props.objectType);
       this.state.editMode = false;
     }
+  }
+
+  underlineIfGetter
+
+  loadGetterContent(ev){
+    this.props.loadGetterContent(this.props);
   }
 
   toggleDisplay(ev){
@@ -65,7 +77,7 @@ export class ObjectTreeElement extends Component {
     chrome.devtools.inspectedWindow.eval(script);
   }
 
-  static props = ['name', 'content', 'children', 'display', 'toggled', 'depth', 'contentType', 'hasChildren', 'objectType', 'editReactiveState', 'updateBag', 'componentPath'];
+  static props = ['name', 'content', 'children', 'display', 'toggled', 'depth', 'contentType', 'hasChildren', 'objectType', 'editReactiveState', 'updateBag', 'componentPath', 'loadGetterContent'];
 
   static template = "devtools.ObjectTreeElement";
 

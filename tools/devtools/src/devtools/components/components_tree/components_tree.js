@@ -12,12 +12,12 @@ export class ComponentsTree extends Component {
       splitPosition: 60,
       leftWidth: 0,
       rightWidth: 0,
+      componentsExpandBag: new Set(),
       root: {
         name: "Test",
         path: "App",
         key: "",
         depth: 0,
-        display: true,
         toggled: false,
         selected: false,
         children: [],
@@ -30,7 +30,7 @@ export class ComponentsTree extends Component {
         props: {},
         env: {},
         instance: {},
-        expandBag: {}
+        objectsExpandBag: new Set(),
       },
       search: {
         search: '',
@@ -52,7 +52,8 @@ export class ComponentsTree extends Component {
             this.state.renderPaths =  this.state.renderPaths.concat(msg.paths);
             clearTimeout(this.flushRendersTimeout);
             this.flushRendersTimeout = setTimeout(() => {this.state.renderPaths = []},200);
-            let script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentsTree("'+ this.state.activeComponent.path +'");';
+            const componentsExpandBag = JSON.stringify([...this.state.componentsExpandBag]);
+            let script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentsTree("'+ this.state.activeComponent.path +'", \''+ componentsExpandBag +'\');';
             chrome.devtools.inspectedWindow.eval(
               script,
               (result, isException) => {
@@ -61,13 +62,14 @@ export class ComponentsTree extends Component {
                 }
               }
             );
-            const expandBag = JSON.stringify(this.state.activeComponent.expandBag);
-            script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentDetails("'+ this.state.activeComponent.path +'", \''+ expandBag +'\');';
+            const objectsExpandBag = JSON.stringify([...this.state.activeComponent.objectsExpandBag]);
+            script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentDetails("'+ this.state.activeComponent.path +'", \''+ objectsExpandBag +'\');';
             chrome.devtools.inspectedWindow.eval(
               script,
               (result, isException) => {
                 if (!isException) {
-                  this.state.activeComponent= result;
+                  this.state.activeComponent = result;
+                  this.state.activeComponent.objectsExpandBag = new Set(JSON.parse(result.objectsExpandBag))
                 }
               }
             );
@@ -88,7 +90,8 @@ export class ComponentsTree extends Component {
         script,
         (result, isException) => {
           if (!isException) {
-            this.state.root = result.root
+            this.state.root = result.root;
+            this.expandComponents(this.state.root);
           }
         }
       );
@@ -98,6 +101,7 @@ export class ComponentsTree extends Component {
         (result, isException) => {
           if (!isException) {
             this.state.activeComponent = result;
+            this.state.activeComponent.objectsExpandBag = new Set(JSON.parse(result.objectsExpandBag))
           }
         }
       );
@@ -113,6 +117,32 @@ export class ComponentsTree extends Component {
       document.removeEventListener('click', this.hideContextMenus);
       document.removeEventListener('contextmenu', this.hideContextMenus);
     });
+  }
+  // Expand the component given in entry and all of its children
+  expandComponents(component) {
+    component.toggled = true;
+    this.state.componentsExpandBag.add(component.path);
+    component.children.forEach(child => {
+      this.expandComponents(child)
+    });
+  }
+  // Fold the component given in entry and all of its children
+  foldComponents(component) {
+    component.toggled = false;
+    this.state.componentsExpandBag.delete(component.path);
+    component.children.forEach(child => {
+      this.foldComponents(child)
+    });
+  }
+  // Search the component given its path and expand/fold itself and its children based on toggle 
+  toggleComponentAndChildren(path, toggle){
+    let pathArray = path.split('/');
+    pathArray.shift();
+    let component = this.state.root;
+    for (const key of pathArray) {
+      component = component.children.filter(child => (child.key) === key)[0];
+    }
+    toggle ? this.expandComponents(component) : this.foldComponents(component);
   }
 
   hideContextMenus = (event) => {
@@ -171,30 +201,49 @@ export class ComponentsTree extends Component {
       component = component.children.filter(child => (child.key) === key)[0];
     }
     component.toggled = !component.toggled;
-    component.children.forEach(child => {
-      this.swapDisplay(child, component.toggled, component.display)
-    });
+    component.toggled ? this.state.componentsExpandBag.add(component.path) : this.state.componentsExpandBag.delete(component.path);
   }
 
-  swapDisplay(element, parentToggled, parentDisplayed){
-    if(!parentDisplayed){
-      // An element is always hidden if its parent is also hidden
-      element.display = false;
+  loadGetterContent(inputObj){
+    let pathArray = inputObj.path.split('/');
+    let obj;
+    if(inputObj.objectType !== 'instance')
+      pathArray.shift();
+    if (inputObj.objectType === 'props')
+      obj = this.state.activeComponent.props[pathArray[0]];
+    else if (inputObj.objectType === 'env')
+      obj = this.state.activeComponent.env[pathArray[0]];
+    else if (inputObj.objectType === 'instance')
+      obj = this.state.activeComponent.instance[pathArray[0]];
+    else if (inputObj.objectType === 'subscription')
+      obj = this.state.activeComponent.subscriptions[pathArray[0]].target;
+    for (let i = 1; i < pathArray.length; i++) {
+      const match = pathArray[i];
+      if ((obj.contentType === "array" || obj.contentType === "set") && match !== "[[Prototype]]") 
+        obj = obj.children[match];
+      else
+        obj = obj.children.filter(child => (child.name) === match)[0];
     }
-    else if(parentToggled){
-      // If the parent is displayed and toggled then we display the child
-      element.display = true;
-    }
-    else
-      element.display = false;
-    this.updateExpandBag(element);
-    element.children.forEach(child => {
-      this.swapDisplay(child, element.toggled, element.display)
-    });
+    const getter = JSON.stringify(obj);
+    const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.loadGetterContent("' + this.state.activeComponent.path + '", \''+ getter +'\')';
+    console.log(script);
+    chrome.devtools.inspectedWindow.eval(
+      script,
+      (result, isException) => {
+        if (!isException) {
+          Object.keys(obj).forEach(key => {
+            obj[key] = result[key];
+          });
+          obj.children = [];
+        }
+      }
+    );
   }
   
   // Expand the children of the input object property and load it from page if necessary
   toggleObjectTreeElementsDisplay(inputObj) {
+    if(!inputObj.hasChildren)
+      return;
     let pathArray = inputObj.path.split('/');
     let obj;
     if(inputObj.objectType !== 'instance')
@@ -215,8 +264,9 @@ export class ComponentsTree extends Component {
         obj = obj.children.filter(child => (child.name) === match)[0];
     }
     if (obj.hasChildren && obj.children.length === 0) {
-      const expandBag = JSON.stringify(this.state.activeComponent.expandBag);
-      const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.loadObjectChildren("'+ this.state.activeComponent.path +'","'+ obj.path +'", '+ obj.depth +', "'+ obj.contentType +'", "'+ obj.objectType +'", '+ expandBag +');';
+      const objectsExpandBag = JSON.stringify([...this.state.activeComponent.objectsExpandBag]);
+      const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.loadObjectChildren("'+ this.state.activeComponent.path +'","'+ obj.path +'", '+ obj.depth +', "'+ obj.contentType +'", "'+ obj.objectType +'", \''+ objectsExpandBag +'\');';
+      console.log(script);
       chrome.devtools.inspectedWindow.eval(
         script,
         (result, isException) => {
@@ -227,9 +277,7 @@ export class ComponentsTree extends Component {
       );
     }
     obj.toggled = !obj.toggled;
-    obj.children.forEach(child => {
-      this.swapDisplay(child, obj.toggled, obj.display)
-    });
+    obj.toggled ? this.state.activeComponent.objectsExpandBag.add(obj.path) : this.state.activeComponent.objectsExpandBag.delete(obj.path);
   }
 
   // Update the value of the given object with the new provided one
@@ -237,18 +285,6 @@ export class ComponentsTree extends Component {
     const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.editObject("'+ this.state.activeComponent.path +'", "'+ objectPath +'", '+ value +', "' + objectType + '");';
     chrome.devtools.inspectedWindow.eval(script);
   }
-
-  // Update the toggled/display status of the element
-  // to remember it when all content is overwritten.
-  updateExpandBag(element){
-    if(!element.hasOwnProperty("key")){
-      this.state.activeComponent.expandBag[element.path] = {
-        toggled: element.toggled,
-        display: element.display
-      }
-    }
-  }
-
 
   // Triggers manually the rendering of the selected component
   refreshComponent() {
@@ -288,6 +324,7 @@ export class ComponentsTree extends Component {
       (result, isException) => {
         if (!isException) {
           this.state.activeComponent = result;
+          this.state.activeComponent.objectsExpandBag = new Set(JSON.parse(result.objectsExpandBag))
         }
       }
     );

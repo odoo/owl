@@ -20,6 +20,7 @@
               searchResults="state.search.searchResults"
               renderPaths="state.renderPaths"
               toggleComponentTreeElementDisplay.bind="toggleComponentTreeElementDisplay"
+              toggleComponentAndChildren.bind="toggleComponentAndChildren"
               selectComponent.bind="selectComponent"/> 
           </div>
         </div>
@@ -34,7 +35,7 @@
             activeComponent="state.activeComponent"
             width="state.rightWidth"
             toggleObjectTreeElementsDisplay.bind="toggleObjectTreeElementsDisplay"
-            updateBag.bind="updateExpandBag"
+            loadGetterContent.bind="loadGetterContent"
             expandSubscriptionsKeys.bind="expandSubscriptionsKeys"
             editObjectTreeElement.bind="editObjectTreeElement"
             refreshComponent.bind="refreshComponent"/>

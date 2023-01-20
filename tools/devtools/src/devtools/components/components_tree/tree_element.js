@@ -66,6 +66,8 @@ export class TreeElement extends Component {
       return this.props.name;
   }
 
+  get pathAsString(){return JSON.stringify(this.props.path)}
+
   toggleDisplay(ev){
     this.props.toggleComponentTreeElementDisplay(this.props.path);
   }

@@ -47,6 +47,15 @@
   display: inline;
 }
 
+.getter-content {
+  color: rgb(119, 34, 255);
+  display: inline;
+}
+
+.getter-content:hover {
+  text-decoration: underline;
+}
+
 .render-highlight {
   background-color: yellow !important;
 }
@@ -219,7 +228,6 @@
   background-color: white;
   border: 1px solid gray;
   z-index: 1;
-  width: 240px;
 }
 
 .custom-menu ul {

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.ObjectTreeElement" owl="1">
-    <div class="my-0 p-0 object-line" t-attf-style="display: {{props.display ? 'flex' : 'none'}}" t-on-click.stop="toggleDisplay" t-on-contextmenu.prevent="openMenu">
+    <div class="my-0 p-0 object-line" t-on-click.stop="toggleDisplay" t-on-contextmenu.prevent="openMenu">
       <div t-attf-style="transform: translateX(calc({{props.depth}} * 0.8rem + 0.3rem))">
         <t t-if="props.hasChildren">
           <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer;{{props.toggled ? 'transform: rotate(90deg);' : ''}}"></i>
@@ -9,15 +9,22 @@
         <t t-else="">
           <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer; visibility: hidden;"></i>
         </t>
-        <t t-out="props.name"/>: 
-        <div class="object-content" t-on-dblclick.stop="setupEditMode">
-          <t t-if="state.editMode">   
-            <input t-attf-id="objectEditionInput/{{props.path}}" type="text" style="width: 100%;" placeholder="" t-att-value="props.content" t-on-keyup="editObject"/>
-          </t>
-          <t t-else="">
+        <t t-out="objectName"/>: 
+        <t t-if="props.contentType == 'getter'">
+          <div class="getter-content" t-on-click.stop="loadGetterContent">
             <t t-out="props.content"/>
-          </t>
-        </div> 
+          </div>
+        </t>
+        <t t-else="">
+          <div class="object-content" t-on-dblclick.stop="setupEditMode">
+            <t t-if="state.editMode">   
+              <input t-attf-id="objectEditionInput/{{props.path}}" type="text" placeholder="" t-att-value="props.content" t-on-keyup="editObject"/>
+            </t>
+            <t t-else="">
+              <t t-out="props.content"/>
+            </t>
+          </div> 
+        </t>
       </div>
     </div>
     <div class="custom-menu hidden" t-attf-id="customMenu/{{props.path}}">
@@ -28,13 +35,15 @@
         </t>
       </ul>
     </div>
-    <t t-foreach="props.children" t-as="child" t-key="child.name">
-      <ObjectTreeElement 
-        t-props="child"
-        componentPath="props.componentPath"
-        toggleObjectTreeElementsDisplay="props.toggleObjectTreeElementsDisplay"
-        updateBag="props.updateBag"
-        editObjectTreeElement="props.editObjectTreeElement"/>
+    <t t-if="props.toggled">
+      <t t-foreach="props.children" t-as="child" t-key="child.name">
+        <ObjectTreeElement 
+          t-props="child"
+          componentPath="props.componentPath"
+          toggleObjectTreeElementsDisplay="props.toggleObjectTreeElementsDisplay"
+          loadGetterContent="props.loadGetterContent"
+          editObjectTreeElement="props.editObjectTreeElement"/>
+      </t>
     </t>
   </t>
 </templates>

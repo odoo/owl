@@ -20,7 +20,7 @@
               t-props="subscription.target"
               componentPath="props.componentPath"
               toggleObjectTreeElementsDisplay="props.toggleObjectTreeElementsDisplay"
-              updateBag="props.updateBag"
+              loadGetterContent="props.loadGetterContent"
               editObjectTreeElement="props.editObjectTreeElement"/>
         </div>
       </t>

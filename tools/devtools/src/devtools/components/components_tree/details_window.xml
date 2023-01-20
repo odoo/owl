@@ -24,7 +24,7 @@
               t-props="props.activeComponent.props[key]"
               componentPath="props.activeComponent.path"
               toggleObjectTreeElementsDisplay="props.toggleObjectTreeElementsDisplay"
-              updateBag="props.updateBag"
+              loadGetterContent="props.loadGetterContent"
               editObjectTreeElement="props.editObjectTreeElement"/>
           </t>
         </div>
@@ -37,7 +37,7 @@
             subscriptions="props.activeComponent.subscriptions" 
             componentPath="props.activeComponent.path"
             toggleObjectTreeElementsDisplay="props.toggleObjectTreeElementsDisplay"
-            updateBag="props.updateBag"
+            loadGetterContent="props.loadGetterContent"
             expandSubscriptionsKeys="props.expandSubscriptionsKeys"
             editObjectTreeElement="props.editObjectTreeElement"/>
         </div>
@@ -51,7 +51,7 @@
               t-props="props.activeComponent.env[key]"
               componentPath="props.activeComponent.path"
               toggleObjectTreeElementsDisplay="props.toggleObjectTreeElementsDisplay"
-              updateBag="props.updateBag"
+              loadGetterContent="props.loadGetterContent"
               editObjectTreeElement="props.editObjectTreeElement"/>
           </t>
         </div>
@@ -65,7 +65,7 @@
               t-props="props.activeComponent.instance[key]"
               componentPath="props.activeComponent.path"
               toggleObjectTreeElementsDisplay="props.toggleObjectTreeElementsDisplay"
-              updateBag="props.updateBag"
+              loadGetterContent="props.loadGetterContent"
               editObjectTreeElement="props.editObjectTreeElement"/>
           </t>
         </div>

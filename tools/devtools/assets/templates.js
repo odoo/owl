@@ -15,12 +15,12 @@ App.registerTemplate("devtools.ComponentsTree", function devtools_ComponentsTree
     let hdlr2 = ["stop", ctx['removeHighlight'], ctx];
     let attr1 = `width:${ctx['state'].leftWidth}px;`;
     const b2 = comp1(Object.assign({}, ctx['state'].search, {toggleSelector: bind(this, ctx['toggleSelector']),updateSearch: bind(this, ctx['updateSearch']),setSearchIndex: bind(this, ctx['setSearchIndex'])}), key + `__1`, node, this, null);
-    const b3 = comp2(Object.assign({}, ctx['state'].root, {search: ctx['state'].search.search,searchResults: ctx['state'].search.searchResults,renderPaths: ctx['state'].renderPaths,toggleComponentTreeElementDisplay: bind(this, ctx['toggleComponentTreeElementDisplay']),selectComponent: bind(this, ctx['selectComponent'])}), key + `__2`, node, this, null);
+    const b3 = comp2(Object.assign({}, ctx['state'].root, {search: ctx['state'].search.search,searchResults: ctx['state'].search.searchResults,renderPaths: ctx['state'].renderPaths,toggleComponentTreeElementDisplay: bind(this, ctx['toggleComponentTreeElementDisplay']),toggleComponentAndChildren: bind(this, ctx['toggleComponentAndChildren']),selectComponent: bind(this, ctx['selectComponent'])}), key + `__2`, node, this, null);
     let attr2 = `left:${ctx['state'].leftWidth}px;`;
     let hdlr3 = [ctx['handleMouseDown'], ctx];
     let hdlr4 = [ctx['handleMouseUp'], ctx];
     let attr3 = `width:${ctx['state'].rightWidth}px;`;
-    const b4 = comp3({activeComponent: ctx['state'].activeComponent,width: ctx['state'].rightWidth,toggleObjectTreeElementsDisplay: bind(this, ctx['toggleObjectTreeElementsDisplay']),updateBag: bind(this, ctx['updateExpandBag']),expandSubscriptionsKeys: bind(this, ctx['expandSubscriptionsKeys']),editObjectTreeElement: bind(this, ctx['editObjectTreeElement']),refreshComponent: bind(this, ctx['refreshComponent'])}, key + `__3`, node, this, null);
+    const b4 = comp3({activeComponent: ctx['state'].activeComponent,width: ctx['state'].rightWidth,toggleObjectTreeElementsDisplay: bind(this, ctx['toggleObjectTreeElementsDisplay']),loadGetterContent: bind(this, ctx['loadGetterContent']),expandSubscriptionsKeys: bind(this, ctx['expandSubscriptionsKeys']),editObjectTreeElement: bind(this, ctx['editObjectTreeElement']),refreshComponent: bind(this, ctx['refreshComponent'])}, key + `__3`, node, this, null);
     return block1([hdlr1, hdlr2, attr1, attr2, hdlr3, hdlr4, attr3], [b2, b3, b4]);
   }
 });
@@ -48,19 +48,19 @@ App.registerTemplate("devtools.DetailsWindow", function devtools_DetailsWindow(a
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[`key`] = v_block2[i1];
       const key1 = ctx['key'];
-      c_block2[i1] = withKey(comp1(Object.assign({}, ctx['props'].activeComponent.props[ctx['key']], {componentPath: ctx['props'].activeComponent.path,toggleObjectTreeElementsDisplay: ctx['props'].toggleObjectTreeElementsDisplay,updateBag: ctx['props'].updateBag,editObjectTreeElement: ctx['props'].editObjectTreeElement}), key + `__1__${key1}`, node, this, null), key1);
+      c_block2[i1] = withKey(comp1(Object.assign({}, ctx['props'].activeComponent.props[ctx['key']], {componentPath: ctx['props'].activeComponent.path,toggleObjectTreeElementsDisplay: ctx['props'].toggleObjectTreeElementsDisplay,loadGetterContent: ctx['props'].loadGetterContent,editObjectTreeElement: ctx['props'].editObjectTreeElement}), key + `__1__${key1}`, node, this, null), key1);
     }
     ctx = ctx.__proto__;
     const b2 = list(c_block2);
     let hdlr6 = ["stop", ()=>this.logComponentInConsole("subscription"), ctx];
-    const b4 = comp2({subscriptions: ctx['props'].activeComponent.subscriptions,componentPath: ctx['props'].activeComponent.path,toggleObjectTreeElementsDisplay: ctx['props'].toggleObjectTreeElementsDisplay,updateBag: ctx['props'].updateBag,expandSubscriptionsKeys: ctx['props'].expandSubscriptionsKeys,editObjectTreeElement: ctx['props'].editObjectTreeElement}, key + `__2`, node, this, null);
+    const b4 = comp2({subscriptions: ctx['props'].activeComponent.subscriptions,componentPath: ctx['props'].activeComponent.path,toggleObjectTreeElementsDisplay: ctx['props'].toggleObjectTreeElementsDisplay,loadGetterContent: ctx['props'].loadGetterContent,expandSubscriptionsKeys: ctx['props'].expandSubscriptionsKeys,editObjectTreeElement: ctx['props'].editObjectTreeElement}, key + `__2`, node, this, null);
     let hdlr7 = ["stop", ()=>this.logComponentInConsole("env"), ctx];
     ctx = Object.create(ctx);
     const [k_block5, v_block5, l_block5, c_block5] = prepareList(ctx['props'].activeComponent.env);;
     for (let i1 = 0; i1 < l_block5; i1++) {
       ctx[`key`] = v_block5[i1];
       const key1 = ctx['key'];
-      c_block5[i1] = withKey(comp3(Object.assign({}, ctx['props'].activeComponent.env[ctx['key']], {componentPath: ctx['props'].activeComponent.path,toggleObjectTreeElementsDisplay: ctx['props'].toggleObjectTreeElementsDisplay,updateBag: ctx['props'].updateBag,editObjectTreeElement: ctx['props'].editObjectTreeElement}), key + `__3__${key1}`, node, this, null), key1);
+      c_block5[i1] = withKey(comp3(Object.assign({}, ctx['props'].activeComponent.env[ctx['key']], {componentPath: ctx['props'].activeComponent.path,toggleObjectTreeElementsDisplay: ctx['props'].toggleObjectTreeElementsDisplay,loadGetterContent: ctx['props'].loadGetterContent,editObjectTreeElement: ctx['props'].editObjectTreeElement}), key + `__3__${key1}`, node, this, null), key1);
     }
     ctx = ctx.__proto__;
     const b5 = list(c_block5);
@@ -70,7 +70,7 @@ App.registerTemplate("devtools.DetailsWindow", function devtools_DetailsWindow(a
     for (let i1 = 0; i1 < l_block7; i1++) {
       ctx[`key`] = v_block7[i1];
       const key1 = ctx['key'];
-      c_block7[i1] = withKey(comp4(Object.assign({}, ctx['props'].activeComponent.instance[ctx['key']], {componentPath: ctx['props'].activeComponent.path,toggleObjectTreeElementsDisplay: ctx['props'].toggleObjectTreeElementsDisplay,updateBag: ctx['props'].updateBag,editObjectTreeElement: ctx['props'].editObjectTreeElement}), key + `__4__${key1}`, node, this, null), key1);
+      c_block7[i1] = withKey(comp4(Object.assign({}, ctx['props'].activeComponent.instance[ctx['key']], {componentPath: ctx['props'].activeComponent.path,toggleObjectTreeElementsDisplay: ctx['props'].toggleObjectTreeElementsDisplay,loadGetterContent: ctx['props'].loadGetterContent,editObjectTreeElement: ctx['props'].editObjectTreeElement}), key + `__4__${key1}`, node, this, null), key1);
     }
     const b7 = list(c_block7);
     return block1([txt1, hdlr1, hdlr2, hdlr3, hdlr4, hdlr5, hdlr6, hdlr7, hdlr8], [b2, b4, b5, b7]);
@@ -83,54 +83,67 @@ App.registerTemplate("devtools.ObjectTreeElement", function devtools_ObjectTreeE
   let { safeOutput, prepareList, withKey } = helpers;
   const comp1 = app.createComponent(`ObjectTreeElement`, true, false, true, false);
   
-  let block2 = createBlock(`<div class="my-0 p-0 object-line" block-attribute-0="style" block-handler-1="click.stop" block-handler-2="contextmenu.prevent"><div block-attribute-3="style"><block-child-0/><block-child-1/><block-child-2/>: <div class="object-content" block-handler-4="dblclick.stop"><block-child-3/><block-child-4/><block-child-4/></div></div></div>`);
+  let block2 = createBlock(`<div class="my-0 p-0 object-line" block-handler-0="click.stop" block-handler-1="contextmenu.prevent"><div block-attribute-2="style"><block-child-0/><block-child-1/><block-child-2/>: <block-child-3/><block-child-4/></div></div>`);
   let block3 = createBlock(`<i class="fa fa-caret-right mx-1" block-attribute-0="style"/>`);
   let block4 = createBlock(`<i class="fa fa-caret-right mx-1" block-attribute-0="style"/>`);
-  let block6 = createBlock(`<input block-attribute-0="id" type="text" style="width: 100%;" placeholder="" block-attribute-1="value" block-handler-2="keyup"/>`);
-  let block8 = createBlock(`<div class="custom-menu hidden" block-attribute-0="id"><ul class="my-1"><li class="custom-menu-item" block-handler-1="click">Store as global variable</li><block-child-0/></ul></div>`);
-  let block9 = createBlock(`<li class="custom-menu-item" block-handler-0="click">Inspect function source code</li>`);
+  let block6 = createBlock(`<div class="getter-content" block-handler-0="click.stop"><block-child-0/></div>`);
+  let block8 = createBlock(`<div class="object-content" block-handler-0="dblclick.stop"><block-child-0/><block-child-1/><block-child-1/></div>`);
+  let block9 = createBlock(`<input block-attribute-0="id" type="text" placeholder="" block-attribute-1="value" block-handler-2="keyup"/>`);
+  let block11 = createBlock(`<div class="custom-menu hidden" block-attribute-0="id"><ul class="my-1"><li class="custom-menu-item" block-handler-1="click">Store as global variable</li><block-child-0/></ul></div>`);
+  let block12 = createBlock(`<li class="custom-menu-item" block-handler-0="click">Inspect function source code</li>`);
   
   return function template(ctx, node, key = "") {
-    let b3,b4,b5,b6,b7;
-    let attr1 = `display: ${ctx['props'].display?'flex':'none'}`;
+    let b2,b11,b13;
+    let b3,b4,b5,b6,b8;
     let hdlr1 = ["stop", ctx['toggleDisplay'], ctx];
     let hdlr2 = ["prevent", ctx['openMenu'], ctx];
-    let attr2 = `transform: translateX(calc(${ctx['props'].depth} * 0.8rem + 0.3rem))`;
+    let attr1 = `transform: translateX(calc(${ctx['props'].depth} * 0.8rem + 0.3rem))`;
     if (ctx['props'].hasChildren) {
-      let attr3 = `cursor: pointer;${ctx['props'].toggled?'transform: rotate(90deg);':''}`;
-      b3 = block3([attr3]);
+      let attr2 = `cursor: pointer;${ctx['props'].toggled?'transform: rotate(90deg);':''}`;
+      b3 = block3([attr2]);
     } else {
-      let attr4 = `cursor: pointer; visibility: hidden;`;
-      b4 = block4([attr4]);
+      let attr3 = `cursor: pointer; visibility: hidden;`;
+      b4 = block4([attr3]);
     }
-    b5 = safeOutput(ctx['props'].name);
-    let hdlr3 = ["stop", ctx['setupEditMode'], ctx];
-    if (ctx['state'].editMode) {
-      let attr5 = `objectEditionInput/${ctx['props'].path}`;
-      let attr6 = new String((ctx['props'].content) || "");
-      let hdlr4 = [ctx['editObject'], ctx];
-      b6 = block6([attr5, attr6, hdlr4]);
+    b5 = safeOutput(ctx['objectName']);
+    if (ctx['props'].contentType=='getter') {
+      let hdlr3 = ["stop", ctx['loadGetterContent'], ctx];
+      const b7 = safeOutput(ctx['props'].content);
+      b6 = block6([hdlr3], [b7]);
     } else {
-      b7 = safeOutput(ctx['props'].content);
+      let b9,b10;
+      let hdlr4 = ["stop", ctx['setupEditMode'], ctx];
+      if (ctx['state'].editMode) {
+        let attr4 = `objectEditionInput/${ctx['props'].path}`;
+        let attr5 = new String((ctx['props'].content) || "");
+        let hdlr5 = [ctx['editObject'], ctx];
+        b9 = block9([attr4, attr5, hdlr5]);
+      } else {
+        b10 = safeOutput(ctx['props'].content);
+      }
+      b8 = block8([hdlr4], [b9, b10]);
     }
-    const b2 = block2([attr1, hdlr1, hdlr2, attr2, hdlr3], [b3, b4, b5, b6, b7]);
-    let b9;
-    let attr7 = `customMenu/${ctx['props'].path}`;
-    let hdlr5 = [ctx['storeObjectAsGlobal'], ctx];
+    b2 = block2([hdlr1, hdlr2, attr1], [b3, b4, b5, b6, b8]);
+    let b12;
+    let attr6 = `customMenu/${ctx['props'].path}`;
+    let hdlr6 = [ctx['storeObjectAsGlobal'], ctx];
     if (ctx['props'].contentType=="function") {
-      let hdlr6 = [ctx['inspectFunctionSource'], ctx];
-      b9 = block9([hdlr6]);
+      let hdlr7 = [ctx['inspectFunctionSource'], ctx];
+      b12 = block12([hdlr7]);
     }
-    const b8 = block8([attr7, hdlr5], [b9]);
-    ctx = Object.create(ctx);
-    const [k_block10, v_block10, l_block10, c_block10] = prepareList(ctx['props'].children);;
-    for (let i1 = 0; i1 < l_block10; i1++) {
-      ctx[`child`] = v_block10[i1];
-      const key1 = ctx['child'].name;
-      c_block10[i1] = withKey(comp1(Object.assign({}, ctx['child'], {componentPath: ctx['props'].componentPath,toggleObjectTreeElementsDisplay: ctx['props'].toggleObjectTreeElementsDisplay,updateBag: ctx['props'].updateBag,editObjectTreeElement: ctx['props'].editObjectTreeElement}), key + `__1__${key1}`, node, this, null), key1);
+    b11 = block11([attr6, hdlr6], [b12]);
+    if (ctx['props'].toggled) {
+      ctx = Object.create(ctx);
+      const [k_block13, v_block13, l_block13, c_block13] = prepareList(ctx['props'].children);;
+      for (let i1 = 0; i1 < l_block13; i1++) {
+        ctx[`child`] = v_block13[i1];
+        const key1 = ctx['child'].name;
+        c_block13[i1] = withKey(comp1(Object.assign({}, ctx['child'], {componentPath: ctx['props'].componentPath,toggleObjectTreeElementsDisplay: ctx['props'].toggleObjectTreeElementsDisplay,loadGetterContent: ctx['props'].loadGetterContent,editObjectTreeElement: ctx['props'].editObjectTreeElement}), key + `__1__${key1}`, node, this, null), key1);
+      }
+      ctx = ctx.__proto__;
+      b13 = list(c_block13);
     }
-    const b10 = list(c_block10);
-    return multi([b2, b8, b10]);
+    return multi([b2, b11, b13]);
   }
 });
 
@@ -208,7 +221,7 @@ App.registerTemplate("devtools.Subscriptions", function devtools_Subscriptions(a
       }
       ctx = ctx.__proto__;
       const b5 = list(c_block5);
-      const b8 = comp1(Object.assign({}, ctx['subscription'].target, {componentPath: ctx['props'].componentPath,toggleObjectTreeElementsDisplay: ctx['props'].toggleObjectTreeElementsDisplay,updateBag: ctx['props'].updateBag,editObjectTreeElement: ctx['props'].editObjectTreeElement}), key + `__1__${key1}`, node, this, null);
+      const b8 = comp1(Object.assign({}, ctx['subscription'].target, {componentPath: ctx['props'].componentPath,toggleObjectTreeElementsDisplay: ctx['props'].toggleObjectTreeElementsDisplay,loadGetterContent: ctx['props'].loadGetterContent,editObjectTreeElement: ctx['props'].editObjectTreeElement}), key + `__1__${key1}`, node, this, null);
       c_block2[i1] = withKey(block3([hdlr1, attr1], [b4, b5, b8]), key1);
     }
     const b2 = list(c_block2);
@@ -222,41 +235,47 @@ App.registerTemplate("devtools.TreeElement", function devtools_TreeElement(app, 
   let { safeOutput, prepareList, withKey } = helpers;
   const comp1 = app.createComponent(`TreeElement`, true, false, true, false);
   
-  let block2 = createBlock(`<div block-attribute-0="id" block-attribute-1="class" class="tree-component my-0 p-0" block-handler-2="mouseover.stop" block-handler-3="click.stop"><div class="component-wrapper" block-attribute-4="style"><block-child-0/><block-child-1/><div class="name-wrapper"><block-child-2/> <block-child-3/></div></div></div>`);
+  let block2 = createBlock(`<div block-attribute-0="id" block-attribute-1="class" class="tree-component my-0 p-0" block-handler-2="contextmenu.prevent" block-handler-3="mouseover.stop" block-handler-4="click.stop"><div class="component-wrapper" block-attribute-5="style"><block-child-0/><block-child-1/><div class="name-wrapper"><block-child-2/> <block-child-3/></div></div></div>`);
   let block3 = createBlock(`<i class="fa fa-caret-right mx-1" block-attribute-0="style" block-handler-1="click.stop"/>`);
   let block4 = createBlock(`<i class="fa fa-caret-right mx-1" block-attribute-0="style"/>`);
+  let block7 = createBlock(`<div class="custom-menu hidden" block-attribute-0="id"><ul class="my-1"><li class="custom-menu-item" block-handler-1="click">Expand component and its children</li><li class="custom-menu-item" block-handler-2="click">Fold component and its children</li></ul></div>`);
   
   return function template(ctx, node, key = "") {
+    let b2,b7,b8;
     let b3,b4,b5,b6;
     let attr1 = `treeElement/${ctx['props'].path}`;
     let attr2 = {'component-selected':ctx['props'].selected,'component-highlighted':ctx['props'].highlighted};
-    let hdlr1 = ["stop", ctx['hoverComponent'], ctx];
-    let hdlr2 = ["stop", ctx['toggleComponent'], ctx];
+    let hdlr1 = ["prevent", ctx['openMenu'], ctx];
+    let hdlr2 = ["stop", ctx['hoverComponent'], ctx];
+    let hdlr3 = ["stop", ctx['toggleComponent'], ctx];
     let attr3 = `transform: translateX(calc(${ctx['props'].depth} * 0.8rem))`;
     if (ctx['props'].children.length>0) {
       let attr4 = `cursor: pointer;${ctx['props'].toggled?'transform: rotate(90deg);':''}`;
-      let hdlr3 = ["stop", ctx['toggleDisplay'], ctx];
-      b3 = block3([attr4, hdlr3]);
+      let hdlr4 = ["stop", ctx['toggleDisplay'], ctx];
+      b3 = block3([attr4, hdlr4]);
     } else {
       let attr5 = `cursor: pointer; visibility: hidden;`;
       b4 = block4([attr5]);
     }
     b5 = safeOutput(ctx['content']);
     b6 = safeOutput(this.getMinimizedKey());
-    const b2 = block2([attr1, attr2, hdlr1, hdlr2, attr3], [b3, b4, b5, b6]);
-    ctx = Object.create(ctx);
-    const [k_block7, v_block7, l_block7, c_block7] = prepareList(ctx['props'].children);;
-    for (let i1 = 0; i1 < l_block7; i1++) {
-      ctx[`child`] = v_block7[i1];
-      const key1 = ctx['child'].key;
-      let b9;
-      if (ctx['child'].display) {
-        b9 = comp1(Object.assign({}, ctx['child'], {search: ctx['props'].search,searchResults: ctx['props'].searchResults,renderPaths: ctx['props'].renderPaths,toggleComponentTreeElementDisplay: ctx['props'].toggleComponentTreeElementDisplay,selectComponent: ctx['props'].selectComponent}), key + `__1__${key1}`, node, this, null);
+    b2 = block2([attr1, attr2, hdlr1, hdlr2, hdlr3, attr3], [b3, b4, b5, b6]);
+    let attr6 = `customMenu/${ctx['props'].path}`;
+    let hdlr5 = [ctx['expandAllChildren'], ctx];
+    let hdlr6 = [ctx['foldAllChildren'], ctx];
+    b7 = block7([attr6, hdlr5, hdlr6]);
+    if (ctx['props'].toggled) {
+      ctx = Object.create(ctx);
+      const [k_block8, v_block8, l_block8, c_block8] = prepareList(ctx['props'].children);;
+      for (let i1 = 0; i1 < l_block8; i1++) {
+        ctx[`child`] = v_block8[i1];
+        const key1 = ctx['child'].key;
+        c_block8[i1] = withKey(comp1(Object.assign({}, ctx['child'], {search: ctx['props'].search,searchResults: ctx['props'].searchResults,renderPaths: ctx['props'].renderPaths,toggleComponentAndChildren: ctx['props'].toggleComponentAndChildren,toggleComponentTreeElementDisplay: ctx['props'].toggleComponentTreeElementDisplay,selectComponent: ctx['props'].selectComponent}), key + `__1__${key1}`, node, this, null), key1);
       }
-      c_block7[i1] = withKey(multi([b9]), key1);
+      ctx = ctx.__proto__;
+      b8 = list(c_block8);
     }
-    const b7 = list(c_block7);
-    return multi([b2, b7]);
+    return multi([b2, b7, b8]);
   }
 });
 

@@ -26,7 +26,7 @@ export class DetailsWindow extends Component {
     chrome.devtools.inspectedWindow.eval(script);
   }
 
-  static props = ['activeComponent', 'toggleObjectTreeElementsDisplay', 'expandSubscriptionsKeys', 'editObjectTreeElement', 'updateBag', 'width'];
+  static props = ['activeComponent', 'toggleObjectTreeElementsDisplay', 'expandSubscriptionsKeys', 'editObjectTreeElement', 'width', 'loadGetterContent'];
   
   static template = "devtools.DetailsWindow";
 

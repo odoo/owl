@@ -97,9 +97,34 @@ export class TreeElement extends Component {
     }
   }
 
+  openMenu(event){
+    const menu = document.getElementById("customMenu/" + this.props.path);
+    menu.classList.remove("hidden");
+    const menuWidth = menu.offsetWidth;
+    const menuHeight = menu.offsetHeight;
+    let x = event.clientX;
+    let y = event.clientY;
+    if (x + menuWidth > window.innerWidth) {
+      x = window.innerWidth - menuWidth;
+    }
+    if (y + menuHeight > window.innerHeight) {
+      y = window.innerHeight - menuHeight;
+    }
+    menu.style.left = x + 'px';
+    menu.style.top = y + 'px';
+  }
+
+  expandAllChildren(ev){
+    this.props.toggleComponentAndChildren(this.props.path, true);
+  }
+
+  foldAllChildren(ev){
+    this.props.toggleComponentAndChildren(this.props.path, false);
+  }
+
   static template = "devtools.TreeElement";
   
-  static props = ['name', 'children', 'path', 'key', 'display', 'toggled', 'depth', 'selected', 'highlighted', 'search', 'searchResults'];
+  static props = ['name', 'children', 'path', 'key', 'display', 'toggled', 'depth', 'selected', 'highlighted', 'search', 'searchResults', 'toggleComponentAndChildren'];
   
   static components = { TreeElement };
 }

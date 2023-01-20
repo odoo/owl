@@ -10,7 +10,7 @@ export class ObjectTreeElement extends Component {
       (editMode) => {
         // Focus on the input when it is created
         if(editMode){
-          const input = document.getElementById("objectEditionInput/"+this.props.path);
+          const input = document.getElementById("objectEditionInput/"+this.pathAsString);
           input.focus();
           input.select();
         }
@@ -18,6 +18,8 @@ export class ObjectTreeElement extends Component {
       () => [this.state.editMode]
     );
   }
+
+  get pathAsString(){return JSON.stringify(this.props.path)}
 
   get objectName(){
     if(this.props.contentType === "function" && this.props.content.startsWith("get "))
@@ -27,7 +29,7 @@ export class ObjectTreeElement extends Component {
 
   setupEditMode(ev){
     if(!this.state.editMode){
-      if(["number", "string", "boolean", "undefined"].includes(this.props.contentType) && !this.props.path.startsWith("constructor")){
+      if(["number", "string", "boolean", "undefined"].includes(this.props.contentType)){
         this.state.editMode = true;
       }
     }
@@ -51,7 +53,7 @@ export class ObjectTreeElement extends Component {
   }
 
   openMenu(event){
-    const menu = document.getElementById("customMenu/" + this.props.path);
+    const menu = document.getElementById("customMenu/" + this.pathAsString);
     menu.classList.remove("hidden");
     const menuWidth = menu.offsetWidth;
     const menuHeight = menu.offsetHeight;
@@ -68,12 +70,12 @@ export class ObjectTreeElement extends Component {
   }
 
   inspectFunctionSource(){
-    const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.inspectFunctionSource("' + this.props.componentPath +'", "' + this.props.path +'");';
+    const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.inspectFunctionSource(\'' + JSON.stringify(this.props.componentPath) + '\', \'' + JSON.stringify(this.props.path) + '\');';
     chrome.devtools.inspectedWindow.eval(script);
   }
 
   storeObjectAsGlobal(){
-    const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.storeObjectAsGlobal("' + this.props.componentPath +'", "' + this.props.path +'");';
+    const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.storeObjectAsGlobal(\'' + JSON.stringify(this.props.componentPath) + '\', \'' + JSON.stringify(this.props.path) + '\');';
     chrome.devtools.inspectedWindow.eval(script);
   }
 

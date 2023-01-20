@@ -31,6 +31,18 @@ This is not suitable for production use.
 See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration for more information.`;
 };
 
+declare global {
+  interface Window {
+    __OWL_DEVTOOLS__: {
+      apps: Set<App>;
+    };
+  }
+}
+
+window.__OWL_DEVTOOLS__ ||= {
+  apps: new Set<App>(),
+};
+
 export class App<
   T extends abstract new (...args: any) => any = any,
   P extends object = any,
@@ -48,6 +60,7 @@ export class App<
   constructor(Root: ComponentConstructor<P, E>, config: AppConfig<P, E> = {}) {
     super(config);
     this.Root = Root;
+    window.__OWL_DEVTOOLS__.apps.add(this);
     if (config.test) {
       this.dev = true;
     }
@@ -109,6 +122,7 @@ export class App<
       this.scheduler.flush();
       this.root.destroy();
     }
+    window.__OWL_DEVTOOLS__.apps.delete(this);
   }
 
   createComponent<P extends Props>(

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+  <t t-name="popup.PopUpApp">
+    <div class="container m-0 p-4 text-white bg-dark" style="width: 370px">
+      <p t-if="state.status === 1">
+        Owl is detected on this page but the version seems to be outdated.
+        Please upgrade to a newer version in order to use the devtools.
+      </p>
+      <p t-elif="state.status === 2">
+        Owl is detected on this page.
+        Open DevTools and look for the Owl panel.
+      </p>
+      <p t-else="">
+        Owl is not detected on this page.
+      </p>
+    </div>
+  </t>
+</templates>

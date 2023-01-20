@@ -113,6 +113,7 @@ Are you new to Owl? This is the place to start!
 - [Why did Odoo build Owl?](doc/miscellaneous/why_owl.md)
 - [Changelog (from owl 1.x to 2.x)](CHANGELOG.md)
 - [Notes on compiled templates](doc/miscellaneous/compiled_template.md)
+- [Owl devtools extension](doc/tools/devtools.md)
 
 ## Installing Owl
 

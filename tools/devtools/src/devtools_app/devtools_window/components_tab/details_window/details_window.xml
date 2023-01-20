@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+  <t t-name="devtools.DetailsWindow" owl="1">
+    <div class="panel-top d-flex align-items-center">
+      <div class="ms-1 p-1 text-truncate" style="width: 100%;">
+        <span t-if="store.activeComponent.path.length > 1">&lt;</span>
+        <b style="color: var(--component-color); cursor: pointer;" t-on-mouseover.stop="() => this.store.highlightComponent(this.store.activeComponent.path)" t-on-click.stop="() => this.store.focusSelectedComponent()" t-on-contextmenu.prevent="openMenu" t-esc="store.activeComponent.name"/>
+        <span t-if="store.activeComponent.path.length > 1">&gt;</span>
+        <span class="version" t-else="">owl=<t t-esc="store.activeComponent.version"/></span>
+      </div>
+      <t t-if="store.activeComponent.path.length > 1">
+        <i title="Inspect component in the Elements tab" class="fa fa-eye utility-icon p-1" t-on-click.stop="() => this.store.inspectComponent('DOM')"></i>
+        <i title="Store component as global variable in the console" class="fa fa-bug utility-icon p-1" t-on-click.stop="() => this.store.logObjectInConsole()"></i>
+        <i title="Inspect source code of component" class="fa fa-file-code-o utility-icon p-1" t-on-click.stop="() => this.store.inspectComponent('source')"></i>
+        <i title="Trigger rerender of the component" class="fa fa-refresh utility-icon p-1" t-on-click.stop="() => this.store.refreshComponent()"></i>
+      </t>
+      <t t-else="">
+        <i title="Store app as global variable in the console" class="fa fa-bug utility-icon p-1" t-on-click.stop="() => this.store.logObjectInConsole()"></i>
+        <i title="Inspect source code of the app" class="fa fa-file-code-o utility-icon p-1" t-on-click.stop="() => this.store.inspectComponent('source')"></i>
+      </t>
+    </div>
+    <div class="details-container">
+      <div t-if="store.activeComponent.env.children.length > 0" id="env" class="details-panel ps-2 py-1">
+        <div class="d-flex mb-2">
+          <div class="w-100" t-on-click.stop="(ev) => this.toggleCategory(ev, 'env')">
+            <i class="fa mx-1 pointer-icon"
+              t-att-class="{'fa-caret-right': !store.activeComponent.env.toggled, 'fa-caret-down': store.activeComponent.env.toggled}"
+            /><b>env</b>
+          </div>
+        </div>
+        <t t-if="store.activeComponent.env.toggled" t-foreach="store.activeComponent.env.children" t-as="env" t-key="env_index">
+          <ObjectTreeElement object="env"/>
+        </t>
+      </div>
+      <div t-if="store.activeComponent.props.children.length > 0" class="details-panel ps-2 py-1">
+        <div class="d-flex mb-2">
+          <div class="w-100" t-on-click.stop="(ev) => this.toggleCategory(ev, 'props')">
+            <i class="fa mx-1 pointer-icon"
+              t-att-class="{'fa-caret-right': !store.activeComponent.props.toggled, 'fa-caret-down': store.activeComponent.props.toggled}"
+            /><b>props</b>
+          </div>
+        </div>
+        <t t-if="store.activeComponent.props.toggled" t-foreach="store.activeComponent.props.children" t-as="prop" t-key="prop_index">
+          <ObjectTreeElement object="prop"/>
+        </t>
+      </div>
+      <div t-if="store.activeComponent.subscriptions.children.length > 0" id="subscriptions" class="details-panel ps-2 py-1">
+        <div class="d-flex">
+          <div title="Shows all the targets that will trigger a re-render of the component when one of its associated keys is modified" class="w-100 text-truncate" t-on-click.stop="(ev) => this.toggleCategory(ev, 'subscriptions')">
+            <i class="fa mx-1 pointer-icon"
+              t-att-class="{'fa-caret-right': !store.activeComponent.subscriptions.toggled, 'fa-caret-down': store.activeComponent.subscriptions.toggled}"
+            /><b>observed state</b>
+          </div>
+          <i title="Store observed states as global variable in the console" class="fa fa-bug utility-icon p-1" t-on-click.stop="() => this.store.logObjectInConsole([...this.store.activeComponent.path, {type: 'item', value: 'subscriptions'}])"></i>
+        </div>
+        <Subscriptions t-if="store.activeComponent.subscriptions.toggled"/>
+      </div>
+      <div t-if="store.activeComponent.instance.children.length > 0"  id="instance" class="details-panel ps-2 py-1">
+        <div class="d-flex mb-2">
+          <div class="w-100 text-truncate" t-on-click.stop="(ev) => this.toggleCategory(ev, 'instance')">
+            <i class="fa mx-1 pointer-icon"
+              t-att-class="{'fa-caret-right': !store.activeComponent.instance.toggled, 'fa-caret-down': store.activeComponent.instance.toggled}"
+            /><b>instance</b>
+          </div>
+          <t t-if="store.activeComponent.path.length > 1">
+            <i title="Inspect compiled template" class="fa fa-hashtag utility-icon p-1" t-on-click.stop="() => this.store.inspectComponent('compiled template')"></i>
+            <i title="Send raw template to console" class="fa fa-file-word-o utility-icon p-1" t-on-click.stop="() => this.store.inspectComponent('raw template')"></i>
+          </t>
+        </div>
+        <t t-if="store.activeComponent.instance.toggled" t-foreach="store.activeComponent.instance.children" t-as="instance" t-key="instance_index">
+          <ObjectTreeElement object="instance"/>
+        </t>
+      </div>
+    </div>
+    <div t-if="store.contextMenu.activeMenu === contextMenuId" class="custom-menu" t-attf-style="top: {{store.contextMenu.top}}; left: {{store.contextMenu.left}}" t-ref="contextmenu">
+      <ul class="my-1">
+        <li t-on-click.stop="() => this.store.inspectComponent('source', store.activeComponent.path)" class="custom-menu-item py-1 px-4">Inspect source code</li>
+        <t t-if="store.activeComponent.path.length !== 1">
+          <li t-on-click.stop="() => this.store.logObjectInConsole([...store.activeComponent.path, { type: 'item', value: 'component'}])" class="custom-menu-item py-1 px-4">Store as global variable</li>
+          <li t-on-click.stop="() => this.store.inspectComponent('DOM', store.activeComponent.path)" class="custom-menu-item py-1 px-4">Inspect in Elements tab</li>
+          <li t-on-click.stop="() => this.store.refreshComponent(store.activeComponent.path)" class="custom-menu-item py-1 px-4">Force rerender</li>
+          <li t-on-click.stop="() => this.store.logObjectInConsole([...store.activeComponent.path, { type: 'item', value: 'subscriptions'}])" class="custom-menu-item py-1 px-4">Store observed states as global variable</li>
+          <li t-on-click.stop="() => this.store.inspectComponent('compiled template', store.activeComponent.path)" class="custom-menu-item py-1 px-4">Inspect compiled template</li>
+          <li t-on-click.stop="() => this.store.inspectComponent('raw template', store.activeComponent.path)" class="custom-menu-item py-1 px-4">Log raw template</li>
+        </t>
+        <t t-else="">
+          <li t-on-click.stop="() => this.store.logObjectInConsole([...store.activeComponent.path])" class="custom-menu-item py-1 px-4">Store as global variable</li>
+        </t>
+      </ul>
+    </div>
+  </t>
+</templates>

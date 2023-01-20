@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+  <t t-name="devtools.Subscriptions" owl="1">
+    <div id="subscriptionsPanel">
+      <t t-foreach="store.activeComponent.subscriptions.children" t-as="subscription" t-key="subscription_index">
+        <div class="my-2">
+          <div class="my-0 p-0 object-line" t-on-click.stop="(ev) => this.expandKeys(ev, subscription_index)">
+            <span class="ps-1 text-nowrap">
+              <i class="fa fa-caret-right ms-1" t-attf-style="cursor: pointer;{{subscription.keysExpanded ? 'transform: rotate(90deg);' : ''}}"></i>
+              keys: <span class="key-name"><t t-esc="this.keysContent(subscription_index)"/></span>
+            </span>
+          </div>
+          <div t-foreach="subscription.keys" t-as="key" t-key="key_index" class="my-0 p-0 object-line" t-attf-style="display: {{subscription.keysExpanded ? 'flex' : 'none'}}">
+            <div style="transform: translateX(calc(1.1rem))" class="key-content">
+              <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer; visibility: hidden;"></i>
+              <t t-esc="key"/>
+            </div>
+          </div>
+          <ObjectTreeElement object="subscription.target" keys="subscription.keys"/>
+        </div>
+      </t>
+    </div>
+  </t>
+</templates>

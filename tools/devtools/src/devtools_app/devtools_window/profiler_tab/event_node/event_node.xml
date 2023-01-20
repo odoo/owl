@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+  <t t-name="devtools.EventNode" owl="1">
+    <div class="my-0 p-0 object-line"
+      t-on-click.stop="toggleDisplay" 
+      t-on-contextmenu="openNodeMenu" 
+    >
+      <div class="text-nowrap" t-attf-style="padding-left: {{eventPadding}}rem">
+        <i class="fa px-1 pointer-icon caret"
+          t-att-class="{'fa-caret-right': !props.event.toggled, 'fa-caret-down': props.event.toggled}"
+          t-attf-style="visibility: {{props.event.children.length > 0 ? '' : 'hidden'}};"
+        />
+        <span>
+          <t t-esc="props.event.type"/>: 
+          &lt;<span style="cursor:pointer; color: var(--component-color);" 
+                t-on-click.stop="() => this.store.selectComponent(props.event.path)" 
+                t-on-mouseover.stop="() => this.store.highlightComponent(props.event.path)" 
+                t-on-contextmenu.stop="openComponentMenu" 
+                t-esc="props.event.component"/>
+          <t t-if="minimizedKey.length > 0">
+            <span t-if="minimizedKey.length > 0" style="color: var(--key-name);"> key</span>=<span style="color: var(--key-content);">
+              <t t-esc="minimizedKey"/>
+            </span>
+          </t>&gt;
+          <span>
+            (<t t-esc="renderTime"/>ms)
+          </span>
+        </span>
+      </div>
+    </div>
+    <div t-if="store.contextMenu.activeMenu === nodeContextMenuId" class="custom-menu" t-attf-style="top: {{store.contextMenu.top}}; left: {{store.contextMenu.left}}" t-ref="nodeContextMenu">
+      <ul class="my-1">
+        <li t-on-click.stop="() => this.store.toggleEventAndChildren(props.event, true)" class="custom-menu-item py-1 px-4">Expand children</li>
+        <li t-on-click.stop="() => this.store.toggleEventAndChildren(props.event, false)" class="custom-menu-item py-1 px-4">Fold all children</li>
+        <li t-on-click.stop="() => this.store.foldDirectChildren(props.event)" class="custom-menu-item py-1 px-4">Fold direct children</li>
+      </ul>
+    </div>
+    <div t-if="store.contextMenu.activeMenu === componentContextMenuId" class="custom-menu" t-attf-style="top: {{store.contextMenu.top}}; left: {{store.contextMenu.left}}" t-ref="componentContextmenu">
+      <ul class="my-1">
+        <li t-on-click.stop="() => this.store.inspectComponent('source', props.event.path)" class="custom-menu-item py-1 px-4">Inspect source code</li>
+        <t t-if="props.event.path.length !== 1">
+          <li t-on-click.stop="() => this.store.logObjectInConsole([...props.event.path, { type: 'item', value: 'component'}])" class="custom-menu-item py-1 px-4">Store as global variable</li>
+          <li t-on-click.stop="() => this.store.inspectComponent('DOM', props.event.path)" class="custom-menu-item py-1 px-4">Inspect in Elements tab</li>
+          <li t-on-click.stop="() => this.store.refreshComponent(props.event.path)" class="custom-menu-item py-1 px-4">Force rerender</li>
+          <li t-on-click.stop="() => this.store.logObjectInConsole([...props.event.path, { type: 'item', value: 'subscriptions'}])" class="custom-menu-item py-1 px-4">Store observed states as global variable</li>
+          <li t-on-click.stop="() => this.store.inspectComponent('compiled template', props.event.path)" class="custom-menu-item py-1 px-4">Inspect compiled template</li>
+          <li t-on-click.stop="() => this.store.inspectComponent('raw template', props.event.path)" class="custom-menu-item py-1 px-4">Log raw template</li>
+        </t>
+        <t t-else="">
+          <li t-on-click.stop="() => this.store.logObjectInConsole([...props.event.path])" class="custom-menu-item py-1 px-4">Store as global variable</li>
+        </t>
+      </ul>
+    </div>
+    <t t-if="props.event.toggled">
+      <t t-foreach="props.event.children" t-as="child" t-key="child.id">
+        <EventNode event="child"/>
+      </t>
+    </t>
+  </t>
+</templates>

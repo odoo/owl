@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+  <t t-name="devtools.Tab" owl="1">
+    <div t-on-click="selectTab" class="navbar-btn d-block" t-att-class="active
+                ? 'btn-selected'
+                : ''">
+      <t t-esc="name" />
+    </div>
+  </t>
+</templates>

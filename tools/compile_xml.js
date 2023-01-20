@@ -85,7 +85,7 @@ async function compileTemplates(files) {
       const fnName = slugify(name);
       try {
         const fn = compile(template).toString().replace('anonymous', fnName);
-        templates.push(`owl.App.registerTemplate("${name}", ${fn});\n`);
+        templates.push(`"${name}": ${fn},\n`);
       } catch (e) {
         errors.push({ name, fileName, e });
       }
@@ -99,7 +99,7 @@ async function compileTemplates(files) {
   }
   console.log(`${templates.length} templates compiled`);
 
-  return templates.join("\n");
+  return `export const templates = {\n ${templates.join("\n")} \n}`;
 }
 
 const templatesPath = process.argv[2];

@@ -1,6 +1,5 @@
-const { App } = owl;
-
-App.registerTemplate("devtools.ComponentsTree", function devtools_ComponentsTree(app, bdom, helpers
+export const templates = {
+ "devtools.ComponentsTree": function devtools_ComponentsTree(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { bind } = helpers;
@@ -23,9 +22,9 @@ App.registerTemplate("devtools.ComponentsTree", function devtools_ComponentsTree
     const b4 = comp3({activeComponent: ctx['state'].activeComponent,width: ctx['state'].rightWidth,toggleObjectTreeElementsDisplay: bind(this, ctx['toggleObjectTreeElementsDisplay']),loadGetterContent: bind(this, ctx['loadGetterContent']),expandSubscriptionsKeys: bind(this, ctx['expandSubscriptionsKeys']),editObjectTreeElement: bind(this, ctx['editObjectTreeElement']),refreshComponent: bind(this, ctx['refreshComponent'])}, key + `__3`, node, this, null);
     return block1([hdlr1, hdlr2, attr1, attr2, hdlr3, hdlr4, attr3], [b2, b3, b4]);
   }
-});
+},
 
-App.registerTemplate("devtools.DetailsWindow", function devtools_DetailsWindow(app, bdom, helpers
+"devtools.DetailsWindow": function devtools_DetailsWindow(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
@@ -75,9 +74,9 @@ App.registerTemplate("devtools.DetailsWindow", function devtools_DetailsWindow(a
     const b7 = list(c_block7);
     return block1([txt1, hdlr1, hdlr2, hdlr3, hdlr4, hdlr5, hdlr6, hdlr7, hdlr8], [b2, b4, b5, b7]);
   }
-});
+},
 
-App.registerTemplate("devtools.ObjectTreeElement", function devtools_ObjectTreeElement(app, bdom, helpers
+"devtools.ObjectTreeElement": function devtools_ObjectTreeElement(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput, prepareList, withKey } = helpers;
@@ -145,9 +144,9 @@ App.registerTemplate("devtools.ObjectTreeElement", function devtools_ObjectTreeE
     }
     return multi([b2, b11, b13]);
   }
-});
+},
 
-App.registerTemplate("devtools.SearchBar", function devtools_SearchBar(app, bdom, helpers
+"devtools.SearchBar": function devtools_SearchBar(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
@@ -186,9 +185,9 @@ App.registerTemplate("devtools.SearchBar", function devtools_SearchBar(app, bdom
     const b4 = block4([attr2, hdlr2, hdlr3], [b5]);
     return multi([b2, b3, b4]);
   }
-});
+},
 
-App.registerTemplate("devtools.Subscriptions", function devtools_Subscriptions(app, bdom, helpers
+"devtools.Subscriptions": function devtools_Subscriptions(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, safeOutput, withKey } = helpers;
@@ -227,9 +226,9 @@ App.registerTemplate("devtools.Subscriptions", function devtools_Subscriptions(a
     const b2 = list(c_block2);
     return block1([], [b2]);
   }
-});
+},
 
-App.registerTemplate("devtools.TreeElement", function devtools_TreeElement(app, bdom, helpers
+"devtools.TreeElement": function devtools_TreeElement(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput, prepareList, withKey } = helpers;
@@ -277,9 +276,9 @@ App.registerTemplate("devtools.TreeElement", function devtools_TreeElement(app, 
     }
     return multi([b2, b7, b8]);
   }
-});
+},
 
-App.registerTemplate("devtools.events", function devtools_events(app, bdom, helpers
+"devtools.events": function devtools_events(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
@@ -288,9 +287,9 @@ App.registerTemplate("devtools.events", function devtools_events(app, bdom, help
   return function template(ctx, node, key = "") {
     return block1();
   }
-});
+},
 
-App.registerTemplate("popup.popup_app", function popup_popup_app(app, bdom, helpers
+"popup.popup_app": function popup_popup_app(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
@@ -308,4 +307,6 @@ App.registerTemplate("popup.popup_app", function popup_popup_app(app, bdom, help
     }
     return block1([], [b2, b3]);
   }
-});
+},
+ 
+}

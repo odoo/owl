@@ -18,7 +18,7 @@
         <t t-else="">
           <div class="object-content" t-on-dblclick.stop="setupEditMode">
             <t t-if="state.editMode">   
-              <input t-attf-id="objectEditionInput/{{props.path}}" type="text" placeholder="" t-att-value="props.content" t-on-keyup="editObject"/>
+              <input t-attf-id="objectEditionInput/{{pathAsString}}" type="text" placeholder="" t-att-value="props.content" t-on-keyup="editObject"/>
             </t>
             <t t-else="">
               <t t-out="props.content"/>
@@ -27,7 +27,7 @@
         </t>
       </div>
     </div>
-    <div class="custom-menu hidden" t-attf-id="customMenu/{{props.path}}">
+    <div class="custom-menu hidden" t-attf-id="customMenu/{{pathAsString}}">
       <ul class="my-1">
         <li t-on-click="storeObjectAsGlobal" class="custom-menu-item">Store as global variable</li>
         <t t-if='props.contentType == "function"'>

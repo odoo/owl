@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+  <t t-name="devtools.ComponentsTab" owl="1">
+    <t t-if="store.apps.length === 0">
+      <div class="status-message d-flex justify-content-center align-items-center">
+        There are no apps currently running.
+      </div>
+    </t>
+    <t t-else="">
+      <div class="position-relative overflow-hidden d-flex flex-row h-100">
+        <div class="split-screen-left d-flex flex-column" t-attf-style="width:{{store.splitPosition}}%;">
+          <div class="panel-top d-flex align-items-center">
+            <ComponentSearchBar/>
+          </div>
+          <div class="overflow-auto h-100 font-monospace">
+            <div id="tree-wrapper">
+              <t t-foreach="store.apps" t-as="app" t-key="app_index">
+                <TreeElement component="app"/> 
+              </t>
+            </div>
+          </div>
+        </div>
+        <div
+          class="split-screen-border user-select-none"
+          t-on-mousedown="onMouseDown"
+        />
+        <div class="split-screen-right d-flex flex-column font-monospace" t-attf-style="width:{{100 - store.splitPosition}}%;">
+          <DetailsWindow t-if="store.activeComponent"/>
+          <t t-else="">
+            <div class="status-message d-flex justify-content-center align-items-center">
+              There was an error while processing this component.
+            </div>
+          </t>
+        </div>
+      </div>
+    </t>
+  </t>
+</templates>

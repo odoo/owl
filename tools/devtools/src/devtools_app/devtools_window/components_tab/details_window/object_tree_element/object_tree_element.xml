@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+  <t t-name="devtools.ObjectTreeElement" owl="1">
+    <div class="m-0 p-0 text-nowrap w-100 object-line"
+      t-att-class="objectLineClass" 
+      t-on-click.stop="() => this.store.toggleObjectTreeElementsDisplay(this.props.object)" 
+      t-on-contextmenu.prevent="openMenu" 
+    >
+      <div t-attf-style="padding-left: {{objectPadding}}rem">
+        <i class="fa px-1 pointer-icon caret"
+          t-att-class="{'fa-caret-right': !props.object.toggled, 'fa-caret-down': props.object.toggled}"
+          t-attf-style="visibility: {{props.object.hasChildren ? '' : 'hidden'}};"
+        />
+        <t t-esc="objectName"/>
+        <t t-if="props.object.content.length > 0">: </t> 
+        <t t-if="props.object.contentType == 'getter'">
+          <span class="getter-content object-content" t-att-class="objectLineClass" t-on-click.stop="() => this.store.loadGetterContent(this.props.object)">
+            <t t-esc="props.object.content"/>
+          </span>
+        </t>
+        <t t-else="">
+          <span class="object-content" t-att-class="objectLineClass" t-on-dblclick.stop="setupEditMode">
+            <t t-if="state.editMode">   
+              <input t-attf-id="objectEditionInput/{{pathAsString}}" t-ref="input" type="text" placeholder="" t-att-value="props.object.content" t-on-keydown.stop="editObject"/>
+            </t>
+            <t t-else="">
+              <t t-esc="props.object.content"/>
+            </t>
+          </span> 
+        </t>
+      </div>
+    </div>
+    <div t-if="store.contextMenu.activeMenu === contextMenuId" class="custom-menu" t-attf-style="top: {{store.contextMenu.top}}; left: {{store.contextMenu.left}}" t-ref="contextmenu">
+      <ul class="my-1">
+        <li t-on-click="() => this.store.logObjectInConsole(this.props.object.path)" class="custom-menu-item py-1 px-4 text-nowrap">Store as global variable</li>
+        <t t-if='props.object.contentType == "function"'>
+          <li t-on-click="() => this.store.inspectFunctionSource(this.props.object.path)" class="custom-menu-item py-1 px-4 text-nowrap">Inspect function source code</li>
+        </t>
+      </ul>
+    </div>
+    <t t-if="props.object.toggled">
+      <t t-foreach="props.object.children" t-as="child" t-key="child.name">
+        <ObjectTreeElement t-if="props.object.objectType === 'subscription'" object="child" keys="props.keys"/>
+        <ObjectTreeElement t-else="" object="child"/>
+      </t>
+    </t>
+  </t>
+</templates>

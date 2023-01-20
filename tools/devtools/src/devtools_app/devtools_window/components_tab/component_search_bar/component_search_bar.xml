@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+  <t t-name="devtools.ComponentSearchBar" owl="1">
+    <div class="pointer-icon ms-1 px-2 py-1" t-on-click.stop='() => this.store.toggleSelector()'>
+      <i title="Select an element in the page to inspect the corresponding component" class="fa fa-mouse-pointer" t-attf-style="color: {{store.componentSearch.activeSelector ? 'var(--active-icon)' : 'var(--text-color)'}};"></i>
+    </div>
+    <div class="icons-separator"/>
+    <div class="d-flex align-items-center ms-2 flex-grow-1">
+      <i class="fa fa-search search-icon" aria-hidden="true"></i>
+      <input type="text" class="search-input ms-1 w-100 border-0 h-100" placeholder="Search" t-on-keyup.stop="updateSearch" t-on-keydown.stop="onSearchKeyDown" t-att-value="store.componentSearch.search"/>
+      <t t-if="store.componentSearch.search.length > 0">
+        <t t-esc="store.componentSearch.searchResults.length ? store.componentSearch.searchIndex + 1 : 0"/>|<t t-esc="store.componentSearch.searchResults.length"/>
+        <i class="fa fa-angle-up lg-icon utility-icon ms-1 p-1" t-on-click.stop="() => this.store.componentSearch.getPrevSearch()"></i>
+        <i class="fa fa-angle-down lg-icon utility-icon p-1" t-on-click.stop="() => this.store.componentSearch.getNextSearch()"></i>
+        <i class="fa fa-times lg-icon utility-icon p-1 me-2" t-on-click.stop='() => this.store.updateSearch("")'></i>
+      </t>
+    </div>
+  </t>
+</templates>

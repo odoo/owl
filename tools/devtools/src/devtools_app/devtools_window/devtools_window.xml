@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+  <t t-name="devtools.DevtoolsWindow" owl="1">
+    <div id="container" class="d-flex w-100 h-100 flex-column position-absolute overflow-hidden" t-on-mouseover.stop="() => this.store.removeHighlights()" t-on-mouseout.stop="() => this.store.removeHighlights()">
+      <t t-if="!store.extensionContextStatus">
+        <div class="status-message d-flex justify-content-center align-items-center">
+          Extension context is invalid. Please close the devtools and reload the page.
+        </div>
+      </t>
+      <t t-elif="store.owlStatus">
+        <div class="panel-top d-flex align-items-center custom-navbar">
+          <Tab tabName="'ComponentsTab'"/>
+          <Tab tabName="'ProfilerTab'"/>
+          <select t-if="store.frameUrls.length > 1" class="form-select form-select-sm custom-select navbar-select border-0" t-on-change="selectFrame">
+            <t t-foreach="store.frameUrls" t-as="frame" t-key="frame_index">
+              <option t-att-value="frame"><t t-esc="frame"/></option>
+            </t>
+          </select>
+          <i class="ms-auto p-1 me-1 lg-icon fa pointer-icon" title="Toggle dark mode" t-att-class="{ 'fa-sun-o': store.settings.darkMode, 'fa-moon-o' : !store.settings.darkMode}" t-on-click.stop="() => this.store.toggleDarkMode()"></i>
+          <i class="p-1 me-1 lg-icon fa fa-repeat pointer-icon" title="Refresh extension" t-on-click.stop="() => this.store.refreshExtension()"></i>
+        </div>
+        <ComponentsTab t-if="store.page === 'ComponentsTab'"/>
+        <ProfilerTab t-if="store.page === 'ProfilerTab'"/>
+      </t>
+      <t t-else="">
+        <div class="status-message d-flex justify-content-center align-items-center">
+          Owl is not loaded on this page.
+        </div>
+      </t>
+    </div>
+  </t>
+</templates>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+  <t t-name="devtools.TreeElement" owl="1">
+    <div t-ref="element"
+      t-att-class="{'component-selected': props.component.selected,'component-highlighted': props.component.highlighted}" 
+      class="tree-component m-0 p-0 w-100 text-nowrap user-select-none" 
+      t-on-contextmenu.prevent="openMenu" 
+      t-on-mouseover.stop="() => this.store.highlightComponent(props.component.path)" 
+      t-on-click.stop="toggleComponent"
+    >
+      <div class="component-wrapper" t-attf-style="padding-left: {{componentPadding}}rem">
+        <i class="fa px-1 pointer-icon caret"
+          t-att-class="{'fa-caret-right': !props.component.toggled, 'fa-caret-down': props.component.toggled}" 
+          t-on-click.stop="toggleDisplay"
+          t-attf-style="{{props.component.children.length > 0 ? '' : 'visibility: hidden;'}}"
+        />
+        <span t-if="props.component.depth">&lt;</span>
+        <span style="color: var(--component-color);">
+          <HighlightText originalText="props.component.name" searchValue="state.searched ? store.componentSearch.search : ''"/>
+          <t t-if="minimizedKey.length > 0">
+            <span t-if="minimizedKey.length > 0" style="color: var(--key-name);"> key</span>=<span style="color: var(--key-content);">
+              <t t-esc="minimizedKey"/>
+            </span>
+          </t>
+        </span>
+        <span t-if="props.component.depth">&gt;</span>
+        <span class="version" t-else="">owl=<t t-esc="props.component.version"/></span>
+      </div>
+      <div t-if="store.contextMenu.activeMenu === contextMenuId" class="custom-menu" t-attf-style="top: {{store.contextMenu.top}}; left: {{store.contextMenu.left}}" t-ref="contextmenu">
+        <ul class="my-1">
+          <li t-on-click.stop="() => this.store.toggleComponentAndChildren(props.component, true)" class="custom-menu-item py-1 px-4">Expand children</li>
+          <li t-on-click.stop="() => this.store.toggleComponentAndChildren(props.component, false)" class="custom-menu-item py-1 px-4">Fold all children</li>
+          <li t-on-click.stop="() => this.store.foldDirectChildren(props.component)" class="custom-menu-item py-1 px-4">Fold direct children</li>
+          <li t-on-click.stop="() => this.store.inspectComponent('source', props.component.path)" class="custom-menu-item py-1 px-4">Inspect source code</li>
+          <t t-if="props.component.path.length !== 1">
+            <li t-on-click.stop="() => this.store.logObjectInConsole([...props.component.path, { type: 'item', value: 'component'}])" class="custom-menu-item py-1 px-4">Store as global variable</li>
+            <li t-on-click.stop="() => this.store.inspectComponent('DOM', props.component.path)" class="custom-menu-item py-1 px-4">Inspect in Elements tab</li>
+            <li t-on-click.stop="() => this.store.refreshComponent(props.component.path)" class="custom-menu-item py-1 px-4">Force rerender</li>
+            <li t-on-click.stop="() => this.store.logObjectInConsole([...props.component.path, { type: 'item', value: 'subscriptions'}])" class="custom-menu-item py-1 px-4">Store observed states as global variable</li>
+            <li t-on-click.stop="() => this.store.inspectComponent('compiled template', props.component.path)" class="custom-menu-item py-1 px-4">Inspect compiled template</li>
+            <li t-on-click.stop="() => this.store.inspectComponent('raw template', props.component.path)" class="custom-menu-item py-1 px-4">Log raw template</li>
+          </t>
+          <t t-else="">
+            <li t-on-click.stop="() => this.store.logObjectInConsole([...props.component.path])" class="custom-menu-item py-1 px-4">Store as global variable</li>
+          </t>
+        </ul>
+      </div>
+    </div>
+    <t t-if="props.component.toggled">
+      <t t-foreach="props.component.children" t-as="child" t-key="child.key">
+        <TreeElement component="child_value"/>
+      </t>
+    </t>
+  </t>
+</templates>

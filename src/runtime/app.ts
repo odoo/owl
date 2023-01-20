@@ -53,6 +53,7 @@ export class App<
   E = any
 > extends TemplateSet {
   static validateTarget = validateTarget;
+  static apps = new Set();
 
   Root: ComponentConstructor<P, E>;
   props: P;

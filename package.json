@@ -84,7 +84,9 @@
       "jsx",
       "json",
       "node"
-    ]
+    ],
+    "collectCoverage": true,
+    "coverageReporters": ["html"]
   },
   "prettier": {
     "printWidth": 100,

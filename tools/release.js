@@ -62,6 +62,9 @@ async function startRelease() {
   }
   let shouldUploadPlayground = await ask(`Should this release be uploaded on the playground [y/n] ? (y)`);
   shouldUploadPlayground = shouldUploadPlayground.toLowerCase() !== 'n';
+  
+  let shouldUploadPCoverageReport = await ask(`Should this release coverage report be published [y/n] ? (y)`);
+  shouldUploadPCoverageReport = shouldUploadPCoverageReport.toLowerCase() !== 'n';
 
   // ---------------------------------------------------------------------------
   log(`Step 2/${STEPS}: running tests...`);
@@ -120,7 +123,7 @@ async function startRelease() {
   if (shouldUploadPlayground) {
     log(`Bonus step: publishing new release on playground...`);
     let owl_code = null;
-    status = 0
+    let status = 0
 
     try {
       owl_code = await readFile("dist/owl.iife.js");
@@ -151,6 +154,42 @@ async function startRelease() {
       logError("Something went wrong for the playground update.")
     }
   }
+
+  if (shouldUploadPCoverageReport) {
+    let status = 0
+    log(`Bonus step: publishing new coverage report...`);
+
+    if (!fs.existsSync("./coverage")) {
+      logError("Couldn't update coverage report, there is no coverage folder on master.")
+      return;
+    }
+
+    status += await execCommand("git stash push -a -- coverage");
+    if (status !== 0) {
+      logError("Couldn't stash coverage")
+      return;
+    }
+
+    status += await execCommand("git checkout gh-pages");
+    if (status !== 0) {
+      logError("Couldn't switch to gh-pages branch")
+      return;
+    }
+
+    
+    status += await execCommand("rm -rf coverage");
+    status += await execCommand("git stash pop");
+    status += await execCommand("git add coverage");
+    status += await execCommand(`git commit -m "[IMP] update coverage report for owl v${next}"`);
+    status += await execCommand(`git push origin gh-pages`);
+    status += await execCommand("git checkout -");
+
+    if (status !== 0) {
+      logError("Something went wrong for the coverage report update.")
+    }
+
+  }
+
 }
 
 // -----------------------------------------------------------------------------

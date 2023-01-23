@@ -4,8 +4,10 @@ if(!window.__OWL__DEVTOOLS_GLOBAL_HOOK__){
   // Load the global hook for the devtools
   window.__OWL__DEVTOOLS_GLOBAL_HOOK__ = new OwlDevtoolsGlobalHook();
   // Edit the flush method inside owl to provide information on which component is being re-rendered
-  const owlDevtools__originalFlush = [...owl.App.apps][0].scheduler.flush;
-  [...owl.App.apps][0].scheduler.flush = function() {
+  // TODO: support multiple apps
+  const [firstApp] = window.__OWL_DEVTOOLS__.apps;
+  const owlDevtools__originalFlush = firstApp.scheduler.flush;
+  firstApp.scheduler.flush = function() {
     let pathArray = [];
     [...this.tasks].map((fiber) => {
       if (fiber.counter === 0 && !__OWL__DEVTOOLS_GLOBAL_HOOK__.fibersMap.has(fiber)){

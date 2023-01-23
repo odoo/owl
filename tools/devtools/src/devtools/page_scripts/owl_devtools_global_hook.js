@@ -4,7 +4,8 @@ export class OwlDevtoolsGlobalHook {
   fibersMap;
 
   constructor(){
-    const [application] = owl.App.apps;
+    // TODO: support multiple apps
+    const [application] = window.__OWL_DEVTOOLS__.apps;
     this.root = application.root;
     this.fibersMap = new WeakMap();
   }

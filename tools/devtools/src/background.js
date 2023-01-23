@@ -19,11 +19,10 @@ function checkOwlStatus(tabId){
     {
       target: {tabId: tabId},
       func: () => {
-        if (typeof owl !== "undefined"){
-          if (owl.App.apps !== undefined)
-            return 2;
+        if (window.__OWL_DEVTOOLS__?.apps !== undefined)
+          return 2;
+        if (typeof owl !== "undefined")
           return 1;
-        }
         return 0;
       },
       world: "MAIN",

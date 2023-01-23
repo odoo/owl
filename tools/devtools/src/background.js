@@ -19,14 +19,19 @@ function checkOwlStatus(tabId){
     {
       target: {tabId: tabId},
       func: () => {
-        return typeof owl !== "undefined";
+        if (typeof owl !== "undefined"){
+          if (owl.App.apps !== undefined)
+            return 2;
+          return 1;
+        }
+        return 0;
       },
       world: "MAIN",
     },
     (results) => {
       if (typeof results !== "undefined"){
         owlStatus = results[0].result;
-        chrome.action.setIcon({path: owlStatus ? "assets/icon128.png" : "assets/icon_disabled128.png"});
+        chrome.action.setIcon({path: owlStatus === 2 ? "assets/icon128.png" : "assets/icon_disabled128.png"});
       }
     }
   );

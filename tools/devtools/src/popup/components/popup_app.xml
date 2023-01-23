@@ -2,10 +2,14 @@
 <templates xml:space="preserve">
   <t t-name="popup.popup_app">
     <div class="container m-0 p-4 text-white bg-dark" style="width: 370px">
-      <p t-if="status.value == 'not_found'">
+      <p t-if="state.status == 0">
         Owl is not detected on this page.
       </p>
-      <p t-if="status.value == 'enabled'">
+      <p t-if="state.status == 1">
+        Owl is detected on this page but the version seems to be outdated.
+        Please upgrade to a newer version in order to use the devtools.
+      </p>
+      <p t-if="state.status == 2">
         Owl is detected on this page.
         Open DevTools and look for the Owl panel.
       </p>

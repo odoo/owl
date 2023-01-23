@@ -12,7 +12,7 @@ function createPanelsIfOwl() {
     return;
   }
   chrome.devtools.inspectedWindow.eval(
-    'typeof owl !== "undefined" && owl.App.apps !== undefined;',
+    'window.__OWL_DEVTOOLS__?.apps !== undefined;',
     (hasOwl) => {
       if(!hasOwl || created){
         return;

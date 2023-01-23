@@ -4,10 +4,9 @@ import { getOwlStatus } from "../../utils.js";
 
 export class PopUpApp extends Component {
   setup(){
-    this.status = useState({value: "not_found"});
+    this.state = useState({status: 0});
     onWillStart(async () => {
-      let hasOwl = await getOwlStatus();
-      this.status = { value: hasOwl ? "enabled" : "not_found" }; 
+      this.state.status = await getOwlStatus();
     });
   }
   

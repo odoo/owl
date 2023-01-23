@@ -132,7 +132,7 @@ async function startRelease() {
   if (shouldUploadPlayground) {
     log(`Bonus step: publishing new release on playground...`);
     let owl_code = null;
-    status = 0
+    let status = 0
 
     try {
       owl_code = await readFile("dist/owl.iife.js");
@@ -142,7 +142,8 @@ async function startRelease() {
       return;
     }
 
-    status += await execCommand("git checkout gh-pages");
+    status |= await execCommand("git checkout gh-pages");
+    status |= await execCommand("git pull --rebase");
     
     if (status !== 0) {
       logError("Couldn't switch to gh-pages branch")
@@ -156,9 +157,9 @@ async function startRelease() {
       return;
     }
     
-    status += await execCommand(`git commit -am "[IMP] update owl to v${next}"`);
-    status += await execCommand(`git push origin gh-pages`);
-    status += await execCommand("git checkout -");
+    status |= await execCommand(`git commit -am "[IMP] update owl to v${next}"`);
+    status |= await execCommand(`git push origin gh-pages`);
+    status |= await execCommand("git checkout -");
     if (status !== 0) {
       logError("Something went wrong for the playground update.")
     }

@@ -5,7 +5,7 @@
     "author": "Julien Carion, juca @ odoo",
     "scripts": {
         "templates": "cd ../.. && npm run compile_templates -- tools/devtools/src && mv templates.js tools/devtools/assets/templates.js && cd tools/devtools",
-        "build": "npm run templates && NODE_ENV=production rollup -c",
+        "build": "npm run templates && rollup -c",
         "dev": "npm run templates && rollup -c",
         "prettier": "prettier --write src './*.js' './*.json'"
     },

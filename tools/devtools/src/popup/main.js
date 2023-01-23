@@ -1,11 +1,14 @@
 import { PopUpApp } from "./components/popup_app";
-const { whenReady, mount } = owl;
+import { templates } from "../../assets/templates.js";
+const { whenReady, mount, App } = owl;
 import "../main.css";
-import "../../assets/templates.js";
 
 const init = () => {
   (async () => {
     await whenReady();
+    for(var template in templates) {
+      App.registerTemplate(template, templates[template]);
+    }
     await mount(PopUpApp, document.body, {dev: true});
   })();
 };

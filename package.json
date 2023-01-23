@@ -15,7 +15,7 @@
     "build:bundle": "rollup -c --failAfterWarnings",
     "build:runtime": "rollup -c --failAfterWarnings runtime",
     "build:compiler": "rollup -c --failAfterWarnings compiler",
-    "build:devtools": "cd tools/devtools && npm run dev && cd ../..",
+    "build:devtools": "npm run build:runtime && cp dist/owl.iife.runtime.js tools/devtools/assets/owl.js && npm run build:compiler && cd tools/devtools && npm run dev && cd ../..",
     "build": "npm run build:bundle",
     "test": "jest",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --watch --testTimeout=5000000",

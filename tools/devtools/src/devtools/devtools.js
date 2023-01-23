@@ -12,9 +12,9 @@ function createPanelsIfOwl() {
     return;
   }
   chrome.devtools.inspectedWindow.eval(
-    'typeof owl !== "undefined";',
+    'typeof owl !== "undefined" && owl.App.apps !== undefined;',
     (hasOwl) => {
-      if(!hasOwl ||created){
+      if(!hasOwl || created){
         return;
       }
       clearInterval(checkInterval);

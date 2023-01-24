@@ -8,7 +8,7 @@ export class Subscriptions extends Component {
 
   }
 
-  get subscriptions() { return this.props.subscriptions }
+  get subscriptions() { console.log(this.props.subscriptions);return this.props.subscriptions; }
 
   keysContent(index) {
     const keys = this.props.subscriptions[index].keys;

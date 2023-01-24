@@ -1,5 +1,5 @@
 
-const { Component, useState, onRendered, useEffect } = owl;
+const { Component, useState, onWillUpdateProps, useEffect } = owl;
 
 export class ObjectTreeElement extends Component {
   setup(){
@@ -17,6 +17,10 @@ export class ObjectTreeElement extends Component {
       },
       () => [this.state.editMode]
     );
+    onWillUpdateProps(nextProps => {
+      debugger;
+      console.log(nextProps);
+    });
   }
 
   get pathAsString(){return JSON.stringify(this.props.path)}
@@ -70,12 +74,12 @@ export class ObjectTreeElement extends Component {
   }
 
   inspectFunctionSource(){
-    const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.inspectFunctionSource(\'' + JSON.stringify(this.props.componentPath) + '\', \'' + JSON.stringify(this.props.path) + '\');';
+    const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.inspectFunctionSource(${JSON.stringify(this.props.componentPath)}, ${JSON.stringify(this.props.path)});`;
     chrome.devtools.inspectedWindow.eval(script);
   }
 
   storeObjectAsGlobal(){
-    const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.storeObjectAsGlobal(\'' + JSON.stringify(this.props.componentPath) + '\', \'' + JSON.stringify(this.props.path) + '\');';
+    const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.storeObjectAsGlobal(${JSON.stringify(this.props.componentPath)}, ${JSON.stringify(this.props.path)});`;
     chrome.devtools.inspectedWindow.eval(script);
   }
 

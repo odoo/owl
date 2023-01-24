@@ -12,17 +12,17 @@ export class DetailsWindow extends Component {
   }
 
   logComponentInConsole(type){
-    const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.sendObjectToConsole(\'' + JSON.stringify(this.props.activeComponent.path) + '\', "'+ type +'")';
+    const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.sendObjectToConsole(${JSON.stringify(this.props.activeComponent.path)}, '${type}');`;
     chrome.devtools.inspectedWindow.eval(script);
   }
 
   inspectComponentInDOM(){
-    const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.inspectComponentDOM(\'' + JSON.stringify(this.props.activeComponent.path) + '\')';
+    const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.inspectComponentDOM(${JSON.stringify(this.props.activeComponent.path)});`;
     chrome.devtools.inspectedWindow.eval(script);
   }
 
   inspectComponentSource(){
-    const script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.inspectComponentSource(\'' + JSON.stringify(this.props.activeComponent.path) + '\')';
+    const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.inspectComponentSource(${JSON.stringify(this.props.activeComponent.path)});`;
     chrome.devtools.inspectedWindow.eval(script);
   }
 

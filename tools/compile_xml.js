@@ -48,7 +48,7 @@ function writeToFile(filepath, data) {
 }
 
 // adapted from https://medium.com/@mhagemann/the-ultimate-way-to-slugify-a-url-string-in-javascript-b8e4a0d849e1
-const a = "·_,:;";
+const a = "·-_,:;";
 const p = new RegExp(a.split("").join("|"), "g");
 
 function slugify(str) {

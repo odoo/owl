@@ -34,3 +34,14 @@ export function isElementInCenterViewport(el) {
     rect.right <= 0.75*(window.innerWidth || document.documentElement.clientWidth)
   );
 }
+
+/**
+ * Escapes a string to use as a RegExp.
+ * @url https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Escaping
+ *
+ * @param {string} str
+ * @returns {string} escaped string to use as a RegExp
+ */
+export function escapeRegExp(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}

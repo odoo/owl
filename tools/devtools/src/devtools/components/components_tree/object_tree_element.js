@@ -17,10 +17,6 @@ export class ObjectTreeElement extends Component {
       },
       () => [this.state.editMode]
     );
-    onWillUpdateProps(nextProps => {
-      debugger;
-      console.log(nextProps);
-    });
   }
 
   get pathAsString(){return JSON.stringify(this.props.path)}

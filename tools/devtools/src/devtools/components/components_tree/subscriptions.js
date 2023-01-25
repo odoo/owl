@@ -8,7 +8,7 @@ export class Subscriptions extends Component {
 
   }
 
-  get subscriptions() { console.log(this.props.subscriptions);return this.props.subscriptions; }
+  get subscriptions() { return this.props.subscriptions; }
 
   keysContent(index) {
     const keys = this.props.subscriptions[index].keys;
@@ -18,7 +18,6 @@ export class Subscriptions extends Component {
     if(content.length > maxLength){
       content = content.slice(0, content.lastIndexOf(',', maxLength-5)) + ", ...]";
     }
-    content = markup('<div class="key-name">' + content + '</div>');
     return content;
   }
 

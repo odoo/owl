@@ -115,7 +115,7 @@ export class OwlDevtoolsGlobalHook {
       const path = this.getElementPath(target);
       this.highlightComponent(path);
       this.currentSelectedElement = target;
-      window.postMessage({type: "owlDevtools__SelectElement", path: JSON.stringify(path)});
+      window.postMessage({type: "owlDevtools__SelectElement", path: path});
     }
   }
   // Activate the HTML selector tool
@@ -135,21 +135,24 @@ export class OwlDevtoolsGlobalHook {
     window.postMessage({type: "owlDevtools__StopSelector"});
   }
   // Defines how leaf object nodes should be displayed in the extension based on their type
-  parseItem(value){
+  parseItem(value, asConstructorName = false){
     if (typeof value === 'array'){
       return "Array("+value.length+")";
     }
     else if (typeof value === 'object'){
+      if (asConstructorName)
+        return value.constructor.name;
       if (value == null)
         return "null";
-      else
-        return "{...}";
+      return "{...}";
     }
     else if (typeof value === 'undefined')
       return "undefined";
     else if (typeof value === 'string')
       return '"' + value + '"';
     else if (typeof value === 'function'){
+      if(asConstructorName && value.constructor.name !== 'Function')
+        return value.constructor.name;
       let functionString = value.toString();
       let index, offset;
       if (functionString.startsWith("class")){
@@ -171,12 +174,18 @@ export class OwlDevtoolsGlobalHook {
           index = min(index1, index2);
           offset = index1 < index2 ? 2 : 3;
         }
+        if (index === -1)
+          return functionString.length > 20 ? functionString.substring(0,18) + "..." : functionString;
       }
       functionString = functionString.substring(0, index+offset);
       return functionString + "...}";
     }
-    else
-      return value.toString();
+    else{
+      let valueAsString = value.toString();
+      if(asConstructorName && valueAsString.length > 10)
+        valueAsString = valueAsString.substring(0,8) + "...";
+      return valueAsString;
+    }
   }
   // Returns a shortened version of the property as a string
   parseContent(obj, type){
@@ -219,18 +228,21 @@ export class OwlDevtoolsGlobalHook {
       result += "Map("+obj.size+"){";
       for (const [key, value] of obj.entries()) {
         if (!first)
-          result += ", " + key + ": ";
+          result += ", " + this.parseItem(key, true) + " => ";
         else{
           first = false;
-          result += key + ": "
+          result += this.parseItem(key, true) + " => "
         }
         if (result.length > 30){
           result+= "...";
           break;
         }
-        result += this.parseItem(value);
+        result += this.parseItem(value, true);
       }
       result += "}";
+    }
+    else if (type === 'map entry'){
+      result += "{" + this.parseItem(obj[0], true) + " => " + this.parseItem(obj[1], true) + "}";
     }
     else if (type === 'set'){
       result += "Set("+obj.size+"){";
@@ -258,28 +270,45 @@ export class OwlDevtoolsGlobalHook {
     if(path.length === 0)
       return obj;
     for (const key of path) {
-      if(obj instanceof Map) 
-        obj = obj.get(key);
-      else if (obj instanceof Set)
-        obj = Array.from(obj)[key];
-      else if(key === "[[Prototype]]")
-        obj = Object.getPrototypeOf(obj);
-      else if (Object.getOwnPropertyDescriptor(obj, key) && Object.getOwnPropertyDescriptor(obj, key).hasOwnProperty("get"))
-        obj = Object.getOwnPropertyDescriptor(obj, key).get;
-      else if(key.includes('Symbol(')){
-        let symbol;
-        Object.getOwnPropertySymbols(obj).forEach((sym) => {
-          if (sym.toString() === key){
-            symbol = sym;
-          }
-        })
-        if(symbol)
-          obj = obj[symbol];
-        else
-          return null
+      if(typeof key === 'object'){
+        switch(key.type){
+          case 'prototype':
+            obj = Object.getPrototypeOf(obj);
+            break;
+          case 'set entries':
+          case 'map entries':
+            obj = Array.from(obj);
+            break;
+          case 'set entry':
+          case 'map entry':
+            obj = obj[key.index];
+            break;
+          case 'set value':
+            obj = obj[0]
+            break;
+          case 'map key':
+            obj = obj[0];
+            break;
+          case 'map value':
+            obj = obj[1];
+            break;
+          case 'symbol':
+            let symbol;
+            Object.getOwnPropertySymbols(obj).forEach((sym) => {
+              if (sym.toString() === key.key){
+                symbol = sym;
+              }
+            })
+            if(symbol)
+              obj = obj[symbol];
+        }
       }
-      else 
-        obj = obj[key];
+      else{
+        if (Object.getOwnPropertyDescriptor(obj, key) && Object.getOwnPropertyDescriptor(obj, key).hasOwnProperty("get"))
+          obj = Object.getOwnPropertyDescriptor(obj, key).get;
+        else 
+          obj = obj[key];
+      }
       if(obj)
         obj = owl.toRaw(obj);
     }
@@ -301,37 +330,73 @@ export class OwlDevtoolsGlobalHook {
   getParsedObjectChild(componentPath, parentObj, key, depth, type, path, oldBranch, oldTree){
     let obj;
     let child = {
-      name: key,
       depth: depth,
       toggled: false,
-      objectType: type
+      objectType: type,
+      hasChildren: false,
     };
-    if(typeof key === 'symbol'){
-      child.name = key.toString();
-      child.path = path.concat([key.toString()]);
-    }
-    else
-      child.path = path.concat([key]);
     if (oldBranch?.toggled)
       child.toggled = true;
-    if(key === "[[Prototype]]")
-      obj = Object.getPrototypeOf(parentObj);
-    else if(Object.getOwnPropertyDescriptor(parentObj, key) && Object.getOwnPropertyDescriptor(parentObj, key).hasOwnProperty("get")){
-      obj = Object.getOwnPropertyDescriptor(parentObj, key).get
-    }
-    else{
-      try{
-        if(parentObj instanceof Map)
-          obj = parentObj.get(key);
-        else if (parentObj instanceof Set)
-          obj = Array.from(parentObj)[key];
-        else
-          obj = parentObj[key]
-      } catch(e){
-        return null;
-      }
-    }
-    if (obj == null){
+    child.path = path.concat([key]);
+    if (typeof key === 'object'){
+      switch(key.type){
+        case 'prototype':
+          child.name = '[[Prototype]]';
+          child.contentType = "object";
+          child.content = this.parseItem(parentObj, true);
+          child.hasChildren = true;
+          break;
+          case 'set entries':
+            case 'map entries':
+              child.name = '[[Entries]]';
+              child.content = "";
+              child.contentType = "array";
+              child.hasChildren = true;
+          break;
+          case 'set entry':
+        case 'map entry':
+          child.name = key.index;
+          child.contentType = "object";
+          child.content = this.parseContent(parentObj[key.index], key.type)
+          child.hasChildren = true;
+          break;
+        case 'set value':
+          child.name = "value";
+          obj = parentObj[0];
+          break;
+        case 'map key':
+          child.name = "key";
+          obj = parentObj[0];
+          break;
+          case 'map value':
+            child.name = "value";
+            obj = parentObj[1];
+            break;
+          }
+          if(child.contentType){
+            child.children = [];
+            if(child.toggled)
+            child.children = this.loadObjectChildren(componentPath, child.path, child.depth, child.contentType, child.objectType, oldTree);
+            return child;
+          }
+        }
+        else if(Object.getOwnPropertyDescriptor(parentObj, key) && Object.getOwnPropertyDescriptor(parentObj, key).hasOwnProperty("get")){
+          child.name = key;
+          obj = Object.getOwnPropertyDescriptor(parentObj, key).get
+        }
+        else{
+          child.name = key;
+          if(typeof key === 'symbol'){
+            child.name = key.toString();
+            child.path = path.concat([{type: "symbol", key: key.toString()}]);
+          }
+          try{
+            obj = parentObj[key]
+          } catch(e){
+            return null;
+          }
+        }
+        if (obj == null){
       if (typeof obj === 'undefined'){
         child.content = "undefined";
         child.contentType = "undefined";
@@ -347,48 +412,29 @@ export class OwlDevtoolsGlobalHook {
       switch(true) {
         case obj instanceof Map:
           child.contentType = "map";
-          child.hasChildren = obj.size > 0;
+          child.hasChildren = true;
           break;
         case obj instanceof Set:
           child.contentType = "set";
-          child.hasChildren = obj.size > 0;
+          child.hasChildren = true;
           break;
         case obj instanceof Array:
           child.contentType = "array";
-          child.hasChildren = obj.length > 0;
+          child.hasChildren = true;
           break;
         case typeof obj === 'function':
           child.contentType = "function";
-          child.hasChildren = Reflect.ownKeys(obj).length > 0
+          child.hasChildren = true;
           break;
         case obj instanceof Object:
           child.contentType = "object";
-          child.hasChildren = Reflect.ownKeys(obj).length > 0
+          child.hasChildren = true;
           break;
         default:
           child.contentType = typeof obj;
           child.hasChildren = false;
       }
-      if(key === "[[Prototype]]"){
-        switch(true){
-          case parentObj instanceof Map:
-            child.content = "Map";
-            break;
-          case parentObj instanceof Set:
-            child.content = "Set";
-            break;
-          case parentObj instanceof Array:
-            child.content = "Array(0)";
-            break;
-          case typeof parentObj === 'function':
-            child.content = "Function";
-            break;
-          default:
-            child.content = "Object"
-        }
-      }
-      else
-        child.content = this.parseContent(obj, child.contentType);
+      child.content = this.parseContent(obj, child.contentType);
     }
     child.children = [];
     if(child.toggled){
@@ -401,6 +447,13 @@ export class OwlDevtoolsGlobalHook {
     let obj;
     if(objType !== 'instance')
       path.shift();
+    if (typeof path[0] === 'object'){
+      if(path[0].type === 'prototype'){
+        path[0] = "[[Prototype]]";
+      }
+      else
+        path[0] = path[0].key;
+    }
     if (objType === 'props')
       obj = oldTree.props[path[0]];
     else if (objType === 'env')
@@ -411,7 +464,31 @@ export class OwlDevtoolsGlobalHook {
       obj = oldTree.subscriptions[path[0]].target;
     for (let i = 1; i < path.length; i++) {
       const match = path[i];
-      if ((obj.contentType === "array" || obj.contentType === "set") && match !== "[[Prototype]]") 
+      if(typeof match === 'object'){
+        switch(match.type){
+          case 'map entries':
+          case 'set entries': 
+            obj = obj.children.filter(child => (child.name) === '[[Entries]]')[0];
+            break;
+          case 'map entry':
+          case 'set entry':
+            obj = obj.children[match.index];
+            break;
+          case 'map key':
+          case 'set value': 
+            obj = obj.children[0];
+            break;
+          case 'map value':
+            obj = obj.children[1];
+            break;
+          case 'prototype':
+            obj = obj.children.filter(child => (child.name) === "[[Prototype]]")[0];
+            break;
+          case 'symbol':
+            obj = obj.children.filter(child => (child.name) === match.key)[0];
+        }
+      }
+      else if (obj.contentType === "array") 
         obj = obj.children[match];
       else
         obj = obj.children.filter(child => (child.name) === match)[0];
@@ -426,62 +503,95 @@ export class OwlDevtoolsGlobalHook {
     let oldBranch = this.getObjectInOldTree(oldTree, objPath, objType);
     if(!obj)
       return [];
-    if (type === 'array'){
-      for(let index = 0; index < obj.length; index++){
-        const child = this.getParsedObjectChild(componentPath, obj, index.toString(), depth, objType, objPath, oldBranch.children[index], oldTree);
-        if(child)
-          children.push(child);
-      };
-    }
-    else if (type === 'map'){
-      let index = 0;
-      for (let key of obj.keys()) {
-        const child = this.getParsedObjectChild(componentPath, obj, key, depth, objType, objPath, oldBranch.children[index], oldTree)
-        if(child)
-          children.push(child);
-        index++;
-      };
-    }
-    else if (type === 'set'){
-      for(let index = 0; index < obj.size; index++){
-        const child = this.getParsedObjectChild(componentPath, obj, index, depth, objType, objPath, oldBranch.children[index], oldTree)
-        if(child)
-          children.push(child);
-      };
-    }
-    else if (type === 'object' || type === 'function'){
-      let index = 0;
-      Reflect.ownKeys(obj).forEach(key => {
-        const child = this.getParsedObjectChild(componentPath, obj, key, depth, objType, objPath, oldBranch.children[index], oldTree)
-        if(child)
-          children.push(child);
-        index++;
-      });
-      if (type === 'object'){
-        let proto = Object.getPrototypeOf(obj);
-        while(proto){
-          Reflect.ownKeys(proto).forEach(key => {
-            if(Object.getOwnPropertyDescriptor(proto, key).hasOwnProperty("get")){
-              let child = {
-                name: key,
-                depth: depth,
-                toggled: false,
-                objectType: objType,
-                path: objPath.concat([key]),
-                contentType: "getter",
-                content: "(...)",
-                hasChildren: false,
-                children: []
-              };
+    let index = 0;
+    const lastKey = objPath.at(-1);
+    let prototype;
+    switch(type) {
+      case 'array':
+        if(typeof lastKey === 'object' && lastKey.type.includes('entries')){
+          for(; index < obj.length; index++){
+            const child = this.getParsedObjectChild(componentPath, obj, {type: lastKey.type.replace('entries', 'entry'), index: index}, depth, objType, objPath, oldBranch.children[index], oldTree);
+            if(child)
               children.push(child);
-            }
-          });
-          proto = Object.getPrototypeOf(proto);
+          };
         }
-      }
+        else{
+          for(; index < obj.length; index++){
+            const child = this.getParsedObjectChild(componentPath, obj, index.toString(), depth, objType, objPath, oldBranch.children[index], oldTree);
+            if(child)
+              children.push(child);
+          };
+        }
+        break;
+      case 'set':
+      case 'map':
+        const entries = this.getParsedObjectChild(componentPath, obj, { type: type + ' entries' }, depth, objType, objPath, oldBranch.children[index], oldTree)
+        if(entries){
+          children.push(entries);
+          index++;
+        }
+        const size = this.getParsedObjectChild(componentPath, obj, 'size', depth, objType, objPath, oldBranch.children[index], oldTree)
+        if(size){
+          children.push(size);
+          index++;
+        }
+        Reflect.ownKeys(obj).forEach(key => {
+          const child = this.getParsedObjectChild(componentPath, obj, key, depth, objType, objPath, oldBranch.children[index], oldTree)
+          if(child)
+            children.push(child);
+          index++;
+        });
+        prototype = this.getParsedObjectChild(componentPath, obj, { type: 'prototype' }, depth, objType, objPath, oldBranch.children.at(-1), oldTree)
+        children.push(prototype);
+        break;
+      case 'object':
+      case 'function':
+        if(typeof lastKey === 'object' && lastKey.type.includes('entry')){
+          if(lastKey.type === 'map entry'){
+            const mapKey = this.getParsedObjectChild(componentPath, obj, {type: 'map key'}, depth, objType, objPath, oldBranch.children[index], oldTree);
+            children.push(mapKey);
+            const mapValue = this.getParsedObjectChild(componentPath, obj, {type: 'map value'}, depth, objType, objPath, oldBranch.children[index], oldTree);
+            children.push(mapValue);
+          }
+          else if(lastKey.type === 'set entry'){
+            const setValue = this.getParsedObjectChild(componentPath, obj, {type: 'set value'}, depth, objType, objPath, oldBranch.children[index], oldTree);
+            children.push(setValue);
+          }
+        }
+        else{
+          Reflect.ownKeys(obj).forEach(key => {
+            const child = this.getParsedObjectChild(componentPath, obj, key, depth, objType, objPath, oldBranch.children[index], oldTree)
+            if(child)
+              children.push(child);
+            index++;
+          });
+          prototype = this.getParsedObjectChild(componentPath, obj, { type: 'prototype' }, depth, objType, objPath, oldBranch.children.at(-1), oldTree)
+          children.push(prototype);
+          break;
+          // if (type === 'object'){
+          //   let proto = Object.getPrototypeOf(obj);
+          //   while(proto){
+          //     Reflect.ownKeys(proto).forEach(key => {
+          //       if(Object.getOwnPropertyDescriptor(proto, key).hasOwnProperty("get")){
+          //         let child = {
+          //           name: key,
+          //           depth: depth,
+          //           toggled: false,
+          //           objectType: objType,
+          //           path: objPath.concat([key]),
+          //           contentType: "getter",
+          //           content: "(...)",
+          //           hasChildren: false,
+          //           children: []
+          //         };
+          //         children.push(child);
+          //       }
+          //     });
+          //     proto = Object.getPrototypeOf(proto);
+          //   }
+          // }
+        }
     }
-    const prototype = this.getParsedObjectChild(componentPath, obj, "[[Prototype]]", depth, objType, objPath, oldBranch.children.at(-1), oldTree)
-    children.push(prototype);
     return children;
   };
   // Returns the Component node given its path and the root component node
@@ -535,7 +645,7 @@ export class OwlDevtoolsGlobalHook {
           component.env[key] = envElement;
       }
     });
-    const envPrototype = this.getParsedObjectChild(path, env, "[[Prototype]]", 0, 'env', ['env'], oldTree?.env["[[Prototype]]"], oldTree);
+    const envPrototype = this.getParsedObjectChild(path, env, {type: 'prototype'}, 0, 'env', ['env'], oldTree?.env["[[Prototype]]"], oldTree);
     component.env["[[Prototype]]"] = envPrototype;
     // Load instance of the component
     const instance = node.component;
@@ -572,7 +682,7 @@ export class OwlDevtoolsGlobalHook {
       });
       obj = Object.getPrototypeOf(obj);
     }
-    const instancePrototype = this.getParsedObjectChild(path, instance, "[[Prototype]]", 0, 'instance', [], oldTree?.instance["[[Prototype]]"], oldTree);
+    const instancePrototype = this.getParsedObjectChild(path, instance, {type: 'prototype'}, 0, 'instance', [], oldTree?.instance["[[Prototype]]"], oldTree);
     component.instance["[[Prototype]]"] = instancePrototype;
 
     // Load subscriptions of the component
@@ -702,7 +812,7 @@ export class OwlDevtoolsGlobalHook {
         name: appChild.component.constructor.name,
         key: key,
         depth: treeNode.depth + 1,
-        toggled: false,
+        toggled: true,
         selected: false,
         highlighted: false
       };
@@ -712,8 +822,7 @@ export class OwlDevtoolsGlobalHook {
         const searchResult = oldBranch.children.filter(o => (o.key) === key);
         if(searchResult.length > 0){
           oldChild = searchResult[0];
-          if(searchResult[0].toggled)
-            child.toggled = true;
+          child.toggled = oldChild.toggled;
         }
       }
       const childPathString = child.path.join("/");

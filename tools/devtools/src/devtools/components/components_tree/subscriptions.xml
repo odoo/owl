@@ -7,7 +7,7 @@
           <div class="my-0 p-0 object-line" t-on-click.stop="(ev) => this.expandKeys(ev, subscription_index)">
             <div style="transform: translateX(calc(0.3rem))">
               <i class="fa fa-caret-right ms-1" t-attf-style="cursor: pointer;{{subscription.keysExpanded ? 'transform: rotate(90deg);' : ''}}"></i>
-              keys: <t t-out="this.keysContent(subscription_index)"/>
+              keys: <div class="key-name"><t t-out="this.keysContent(subscription_index)"/></div>
             </div>
           </div>
           <div t-foreach="subscription.keys" t-as="key" t-key="keyIndex" class="my-0 p-0 object-line" t-attf-style="display: {{subscription.keysExpanded ? 'flex' : 'none'}}">

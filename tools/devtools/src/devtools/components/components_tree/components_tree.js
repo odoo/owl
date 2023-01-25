@@ -52,24 +52,20 @@ export class ComponentsTree extends Component {
             this.flushRendersTimeout = setTimeout(() => {this.state.renderPaths = []},200);
             const oldComponentsTree = JSON.stringify(this.state.root);
             let script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentsTree(${JSON.stringify(this.state.activeComponent.path)}, ${oldComponentsTree});`;
-            console.log(script);
             chrome.devtools.inspectedWindow.eval(
               script,
               (result, isException) => {
                 if (!isException) {
-                  console.log(result);
                   this.state.root = result.root
                 }
               }
             );
             const oldObjectsTree = JSON.stringify(this.state.activeComponent);
             script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentDetails(${JSON.stringify(this.state.activeComponent.path)}, ${oldObjectsTree});`;
-            console.log(script);
             chrome.devtools.inspectedWindow.eval(
               script,
               (result, isException) => {
                 if (!isException) {
-                  console.log(result);
                   this.state.activeComponent = result;
                 }
               }
@@ -87,24 +83,21 @@ export class ComponentsTree extends Component {
       });
       // On mount, retreive the component tree from the page and the details of the inspected component
       let script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentsTree();';
-      console.log(script);
       chrome.devtools.inspectedWindow.eval(
         script,
         (result, isException) => {
           if (!isException) {
-            console.log(result);
             this.state.root = result.root;
             this.expandComponents(this.state.root);
           }
         }
       );
       script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentDetails();';
-      console.log(script);
       chrome.devtools.inspectedWindow.eval(
         script,
         (result, isException) => {
+          debugger;
           if (!isException) {
-            console.log(result);
             this.state.activeComponent = result;
           }
         }
@@ -219,12 +212,18 @@ export class ComponentsTree extends Component {
     component.toggled = !component.toggled;
   }
 
-
-  loadGetterContent(inputObj){
+  findObjectInTree(inputObj){
     let path = [...inputObj.path];
     let obj;
     if(inputObj.objectType !== 'instance')
       path.shift();
+    if (typeof path[0] === 'object'){
+      if(path[0].type === 'prototype'){
+        path[0] = "[[Prototype]]";
+      }
+      else
+        path[0] = path[0].key;
+    }
     if (inputObj.objectType === 'props')
       obj = this.state.activeComponent.props[path[0]];
     else if (inputObj.objectType === 'env')
@@ -233,20 +232,48 @@ export class ComponentsTree extends Component {
       obj = this.state.activeComponent.instance[path[0]];
     else if (inputObj.objectType === 'subscription')
       obj = this.state.activeComponent.subscriptions[path[0]].target;
+    console.log(this.state.activeComponent.env);
     for (let i = 1; i < path.length; i++) {
       const match = path[i];
-      if ((obj.contentType === "array" || obj.contentType === "set") && match !== "[[Prototype]]") 
+      if(typeof match === 'object'){
+        switch(match.type){
+          case 'map entries':
+          case 'set entries': 
+            obj = obj.children.filter(child => (child.name) === '[[Entries]]')[0];
+            break;
+          case 'map entry':
+          case 'set entry':
+            obj = obj.children[match.index];
+            break;
+          case 'map key':
+          case 'set value': 
+            obj = obj.children[0];
+            break;
+          case 'map value':
+            obj = obj.children[1];
+            break;
+          case 'prototype':
+            obj = obj.children.filter(child => (child.name) === "[[Prototype]]")[0];
+            break;
+          case 'symbol':
+            obj = obj.children.filter(child => (child.name) === match.key)[0];
+        }
+      }
+      else if (obj.contentType === "array") 
         obj = obj.children[match];
       else
         obj = obj.children.filter(child => (child.name) === match)[0];
     }
+    return obj;
+  }
+
+  loadGetterContent(inputObj){
+    let obj = this.findObjectInTree(inputObj);
     const getter = JSON.stringify(obj);
     const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.loadGetterContent(${JSON.stringify(this.state.activeComponent.path)}, ${getter});`;
-    console.log(script);
     chrome.devtools.inspectedWindow.eval(
       script,
       (result, isException) => {
-        console.log(result);
         if (!isException) {
           Object.keys(obj).forEach(key => {
             obj[key] = result[key];
@@ -261,57 +288,31 @@ export class ComponentsTree extends Component {
   toggleObjectTreeElementsDisplay(inputObj) {
     if(!inputObj.hasChildren)
       return;
-    let path = [...inputObj.path];
-    console.log(this.state.activeComponent, path);
-    let obj;
-    if(inputObj.objectType !== 'instance')
-      path.shift();
-    if (inputObj.objectType === 'props')
-      obj = this.state.activeComponent.props[path[0]];
-    else if (inputObj.objectType === 'env')
-      obj = this.state.activeComponent.env[path[0]];
-    else if (inputObj.objectType === 'instance')
-      obj = this.state.activeComponent.instance[path[0]];
-    else if (inputObj.objectType === 'subscription')
-      obj = this.state.activeComponent.subscriptions[path[0]].target;
-    for (let i = 1; i < path.length; i++) {
-      const match = path[i];
-      if ((obj.contentType === "array" || obj.contentType === "set") && match !== "[[Prototype]]") 
-        obj = obj.children[match];
-      else
-        obj = obj.children.filter(child => (child.name) === match)[0];
-    }
+    let obj = this.findObjectInTree(inputObj);
     if (obj.hasChildren && obj.children.length === 0) {
       const oldObjectsTree = JSON.stringify(this.state.activeComponent);
-      console.log(oldObjectsTree);
       const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.loadObjectChildren(${JSON.stringify(this.state.activeComponent.path)}, ${JSON.stringify(obj.path)}, ${obj.depth}, '${obj.contentType}', '${obj.objectType}', ${oldObjectsTree});`;
-      console.log(script);
       chrome.devtools.inspectedWindow.eval(
         script,
         (result, isException) => {
           if (!isException) {
-            console.log(result);
             obj.children = result;
           }
         }
       );
     }
     obj.toggled = !obj.toggled;
-    console.log(obj);
-    console.log(this.state.activeComponent);
   }
 
   // Update the value of the given object with the new provided one
   editObjectTreeElement(objectPath, value, objectType){
     const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.editObject(${JSON.stringify(this.state.activeComponent.path)}, ${JSON.stringify(objectPath)}, ${value}, '${objectType}');`;
-    console.log(script);
     chrome.devtools.inspectedWindow.eval(script);
   }
 
   // Triggers manually the rendering of the selected component
   refreshComponent() {
     const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.refreshComponent(${JSON.stringify(this.state.activeComponent.path)});`;
-    console.log(script);
     chrome.devtools.inspectedWindow.eval(script);
   }
 
@@ -323,7 +324,6 @@ export class ComponentsTree extends Component {
   // Remove the highlight on the DOM element correponding to the component
   removeHighlight(ev){
     const script = "__OWL__DEVTOOLS_GLOBAL_HOOK__.removeHighlights()"
-    console.log(script);
     chrome.devtools.inspectedWindow.eval(script);
   }
 
@@ -343,12 +343,10 @@ export class ComponentsTree extends Component {
     element.selected = true;
     this.highlightChildren(element);
     const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentDetails(${JSON.stringify(element.path)});`;
-    console.log(script);
     chrome.devtools.inspectedWindow.eval(
       script,
       (result, isException) => {
         if (!isException) {
-          console.log(result);
           this.state.activeComponent = result;
         }
       }

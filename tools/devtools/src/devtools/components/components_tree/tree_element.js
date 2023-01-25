@@ -1,8 +1,9 @@
 /** @odoo-module **/
 
 import { isElementInCenterViewport } from "../../../utils";
+import { HighlightText } from "../utils/highlight_text";
 
-const { Component, onWillRender, useEffect, onMounted, markup, onWillUpdateProps} = owl
+const { Component, onWillRender, useEffect, onMounted, onWillUpdateProps} = owl
 
 export class TreeElement extends Component {
   setup(){
@@ -10,13 +11,13 @@ export class TreeElement extends Component {
     this.highlightTimeout = false;
     onMounted(() => {
       if (this.props.selected){
-        const treeElement = document.getElementById("treeElement/"+this.props.path);
+        const treeElement = document.getElementById("treeElement/"+this.props.path.join("/"));
         treeElement.scrollIntoView({block: "center", behavior: "smooth"});
       }
     });
     onWillUpdateProps(nextProps => {
       if(nextProps.selected){
-        const treeElement = document.getElementById("treeElement/"+this.props.path);
+        const treeElement = document.getElementById("treeElement/"+this.props.path.join("/"));
         if(!isElementInCenterViewport(treeElement))
         treeElement.scrollIntoView({block: "center", behavior: "smooth"});
       }
@@ -27,9 +28,10 @@ export class TreeElement extends Component {
     });
     useEffect(
       (renderPaths) => {
-        if (renderPaths.includes(this.props.path)){
+        let pathsAsStrings = renderPaths.map(p => p.join("/"));
+        if (pathsAsStrings.includes(this.props.path.join("/"))){
           clearTimeout(this.highlightTimeout);
-          const treeElement = document.getElementById("treeElement/" + this.props.path);
+          const treeElement = document.getElementById("treeElement/" + this.props.path.join("/"));
           if(treeElement){
             treeElement.classList.remove("highlight-fade");
             treeElement.classList.add("render-highlight");
@@ -44,29 +46,7 @@ export class TreeElement extends Component {
     );
   }
 
-  get content() {
-    if(this.searched){
-      let content = this.props.name;
-      let startIndex = 0;
-      for (const searchLetter of this.props.search){
-        let foundUpper = content.indexOf(searchLetter.toUpperCase(), startIndex);
-        if (foundUpper < 0)
-          foundUpper = Infinity;
-        let foundLower = content.indexOf(searchLetter, startIndex);
-        if (foundLower < 0)
-          foundLower = Infinity;
-        const found = Math.min(foundLower, foundUpper);
-        const replacement = '<div class="highlight-search">'+ content[found] +'</div>';
-        startIndex = found + replacement.length;
-        content = content.replaceAt(found, replacement);
-      }
-      return markup(content);
-    }
-    else
-      return this.props.name;
-  }
-
-  get pathAsString(){return JSON.stringify(this.props.path)}
+  get pathAsString(){return this.props.path.join("/");}
 
   toggleDisplay(ev){
     this.props.toggleComponentTreeElementDisplay(this.props.path);
@@ -76,16 +56,16 @@ export class TreeElement extends Component {
     const elements = document.getElementsByClassName("highlight-fade");
     for (const element of elements) 
     element.classList.remove("highlight-fade");
-    const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.highlightComponent(${this.props.path});`;
+    const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.highlightComponent(${JSON.stringify(this.props.path)});`;
+    console.log(script);
     chrome.devtools.inspectedWindow.eval(script);
   }
   
-  getMinimizedKey(){
+  get minimizedKey(){
     const split = this.props.key.split("__");
     let key;
     if (split.length > 2){
       key = this.props.key.substring(4 + split[1].length, this.props.key.length);
-      key = markup('<div class="key-wrapper">key</div>=<div class="key-name">"' + key + '"</div>');
     }
     else{
       key = "";
@@ -100,7 +80,7 @@ export class TreeElement extends Component {
   }
 
   openMenu(event){
-    const menu = document.getElementById("customMenu/" + this.props.path);
+    const menu = document.getElementById("customMenu/" + this.pathAsString);
     menu.classList.remove("hidden");
     const menuWidth = menu.offsetWidth;
     const menuHeight = menu.offsetHeight;
@@ -128,7 +108,7 @@ export class TreeElement extends Component {
   
   static props = ['name', 'children', 'path', 'key', 'display', 'toggled', 'depth', 'selected', 'highlighted', 'search', 'searchResults', 'toggleComponentAndChildren'];
   
-  static components = { TreeElement };
+  static components = { TreeElement, HighlightText };
 }
 
 String.prototype.replaceAt = function(index, replacement) {

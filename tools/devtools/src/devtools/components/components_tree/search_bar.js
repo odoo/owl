@@ -34,8 +34,8 @@ export class SearchBar extends Component {
         this.enterTimeout = setTimeout(() => {
           this.enterInterval = setInterval(() => {
             this.getNextSearch();
-          }, 100);
-        }, 500);
+          }, 70);
+        }, 300);
       }
     }
   }

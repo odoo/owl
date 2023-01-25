@@ -9,7 +9,8 @@
         <t t-else="">
           <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer; visibility: hidden;"></i>
         </t>
-        <t t-out="objectName"/>: 
+        <t t-out="objectName"/>
+        <t t-if="props.content.length > 0">: </t> 
         <t t-if="props.contentType == 'getter'">
           <div class="getter-content" t-on-click.stop="loadGetterContent">
             <t t-out="props.content"/>

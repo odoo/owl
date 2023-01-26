@@ -1,3 +1,4 @@
+import { isFirefox } from "../utils";
 
 let created = false;
 let checks = 0;
@@ -24,8 +25,8 @@ function createPanelsIfOwl() {
         .then((contents) => {
           chrome.devtools.inspectedWindow.eval(contents);
         });
-      chrome.devtools.panels.create("Owl", "../../assets/icon128.png", "devtools/components_panel.html", function (panel) {});
-      // chrome.devtools.panels.create("Owl Events", "../../assets/icon128.png", "devtools/events_panel.html", function (panel) {});
+      chrome.devtools.panels.create("Owl", "../../assets/icon128.png", isFirefox() ? "components_panel.html" : "devtools/components_panel.html", function (panel) {});
+      // chrome.devtools.panels.create("Owl Events", "../../assets/icon128.png", isFirefox() ? "events_panel.html" : "devtools/events_panel.html", function (panel) {});
     }
   )
 }

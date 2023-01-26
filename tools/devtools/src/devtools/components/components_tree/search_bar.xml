@@ -2,7 +2,7 @@
 <templates xml:space="preserve">
   <t t-name="devtools.SearchBar" owl="1">
     <div class="search-selector">
-      <i class="fa fa-mouse-pointer" t-attf-style="color: {{props.activeSelector ? 'rgb(41, 134, 255)' : 'rgb(0, 0, 0)'}};" t-on-click.stop="toggleSelector" aria-hidden="true"></i>
+      <i title="Toggle component HTML selector" class="fa fa-mouse-pointer" t-attf-style="color: {{props.activeSelector ? 'rgb(41, 134, 255)' : 'rgb(0, 0, 0)'}};" t-on-click.stop="toggleSelector" aria-hidden="true"></i>
     </div>
     <div class="search-border mx-2"/>
     <div class="search-bar-wrapper">
@@ -11,9 +11,9 @@
       <t t-if="props.search.length > 0">
         <div class="search-indicator"><t t-out="props.searchResults.length ? props.searchIndex + 1 : 0"/>|<t t-out="props.searchResults.length"/></div>
         <div class="search-border mx-2"/>
-        <i class="fa fa-angle-up fa-lg utility-icon me-2" aria-hidden="true" t-on-click.stop="getPrevSearch"></i>
-        <i class="fa fa-angle-down fa-lg utility-icon me-2" aria-hidden="true" t-on-click.stop="getNextSearch"></i>
-        <i class="fa fa-times fa-lg utility-icon" aria-hidden="true" t-on-click.stop="clearSearch"></i>
+        <i class="fa fa-angle-up lg-icon utility-icon me-2" aria-hidden="true" t-on-click.stop="getPrevSearch"></i>
+        <i class="fa fa-angle-down lg-icon utility-icon me-2" aria-hidden="true" t-on-click.stop="getNextSearch"></i>
+        <i class="fa fa-times lg-icon utility-icon" aria-hidden="true" t-on-click.stop="clearSearch"></i>
       </t>
     </div>
   </t>

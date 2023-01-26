@@ -6,10 +6,10 @@
         <div class="name-wrapper">
           <b><t t-esc="props.activeComponent.name"/></b>
         </div>
-        <i class="fa fa-eye utility-icon me-2" aria-hidden="true" t-on-click.stop="inspectComponentInDOM"></i>
-        <i class="fa fa-bug utility-icon me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("component")'></i>
-        <i class="fa fa-file-code-o utility-icon me-2" aria-hidden="true" t-on-click.stop="inspectComponentSource"></i>
-        <i class="fa fa-refresh utility-icon me-2" aria-hidden="true" t-on-click.stop="refreshComponent"></i>
+        <i title="Inspect component in the Elements tab" class="fa fa-eye utility-icon me-2" aria-hidden="true" t-on-click.stop="inspectComponentInDOM"></i>
+        <i title="Store component node as global variable in the console" class="fa fa-bug utility-icon me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("component")'></i>
+        <i title="Inspect source code of component" class="fa fa-file-code-o utility-icon me-2" aria-hidden="true" t-on-click.stop="inspectComponentSource"></i>
+        <i title="Trigger rerender of the component" class="fa fa-refresh utility-icon me-2" aria-hidden="true" t-on-click.stop="refreshComponent"></i>
       </div>
       <div class="horizontal-border">
       </div>
@@ -17,7 +17,7 @@
         <div id="props" style="border: none;" class="details-panel py-1">
           <div class="details-panel-head">
             <b>props</b>
-            <i class="fa fa-bug utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("props")'></i>
+            <i title="Store props as global variable in the console" class="fa fa-bug utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("props")'></i>
           </div>
           <t t-foreach="props.activeComponent.props" t-as="key" t-key="key">
             <ObjectTreeElement 
@@ -31,7 +31,7 @@
         <div id="subscriptions" class="details-panel py-1">
           <div class="details-panel-head">
             <b>subscriptions</b>
-            <i class="fa fa-bug utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("subscription")'></i>
+            <i title="Store subscriptions as global variable in the console" class="fa fa-bug utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("subscription")'></i>
           </div>
           <Subscriptions 
             subscriptions="props.activeComponent.subscriptions" 
@@ -44,7 +44,7 @@
         <div id="env" class="details-panel py-1">
           <div class="details-panel-head">
             <b>env</b>
-            <i class="fa fa-bug utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("env")'></i>
+            <i title="Store env as global variable in the console" class="fa fa-bug utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("env")'></i>
           </div>
           <t t-foreach="props.activeComponent.env" t-as="key" t-key="key">
             <ObjectTreeElement 
@@ -58,7 +58,7 @@
         <div id="instance" class="details-panel py-1">
           <div class="details-panel-head">
             <b>instance</b>
-            <i class="fa fa-bug utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("instance")'></i>
+            <i title="Store instance as global variable in the console" class="fa fa-bug utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("instance")'></i>
           </div>
           <t t-foreach="props.activeComponent.instance" t-as="key" t-key="key">
             <ObjectTreeElement 

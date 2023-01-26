@@ -12,6 +12,7 @@ export class ComponentsTree extends Component {
       splitPosition: 60,
       leftWidth: 0,
       rightWidth: 0,
+      hasOwl: true,
       root: {
         name: "Test",
         path: ["App"],
@@ -79,28 +80,22 @@ export class ComponentsTree extends Component {
           if (msg.type === "StopSelector"){
             this.state.search.activeSelector = false;
           }
+
+          if (msg.type === "Reload"){
+            chrome.devtools.inspectedWindow.eval(
+              'window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined',
+              (result) => {
+                this.state.hasOwl = result;
+                if (result){
+                  this.loadBaseComponentsTree();
+                }
+              }
+            )
+          }
         });
       });
       // On mount, retreive the component tree from the page and the details of the inspected component
-      let script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentsTree();';
-      chrome.devtools.inspectedWindow.eval(
-        script,
-        (result, isException) => {
-          if (!isException) {
-            this.state.root = result.root;
-            this.expandComponents(this.state.root);
-          }
-        }
-      );
-      script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentDetails();';
-      chrome.devtools.inspectedWindow.eval(
-        script,
-        (result, isException) => {
-          if (!isException) {
-            this.state.activeComponent = result;
-          }
-        }
-      );
+      this.loadBaseComponentsTree();
       this.computeWindowWidth();
       window.addEventListener("resize", this.computeWindowWidth);
       document.addEventListener('click', this.hideContextMenus, true);
@@ -113,6 +108,28 @@ export class ComponentsTree extends Component {
       document.removeEventListener('click', this.hideContextMenus);
       document.removeEventListener('contextmenu', this.hideContextMenus);
     });
+  }
+
+  loadBaseComponentsTree(){
+    let script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentsTree();';
+    chrome.devtools.inspectedWindow.eval(
+      script,
+      (result, isException) => {
+        if (!isException) {
+          this.state.root = result.root;
+          this.expandComponents(this.state.root);
+        }
+      }
+    );
+    script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentDetails();';
+    chrome.devtools.inspectedWindow.eval(
+      script,
+      (result, isException) => {
+        if (!isException) {
+          this.state.activeComponent = result;
+        }
+      }
+    );
   }
   // Expand the component given in entry and all of its children
   expandComponents(component) {

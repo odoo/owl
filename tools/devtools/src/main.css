@@ -119,7 +119,7 @@
   height: 100%;
   box-sizing: border-box;
   font-family: 'Fira Mono', monospace;
-  font-size: 0.7em;
+  font-size: 0.75em;
 }
 
 .split-screen-border {
@@ -203,6 +203,15 @@
 .utility-icon {
   float: right;
   cursor: pointer;
+  font-size: 1.2em;
+}
+
+.lg-icon{
+  font-size: 1.4em;
+}
+
+.fa-caret-right{
+  font-size: 1.15em;
 }
 
 .search-indicator {

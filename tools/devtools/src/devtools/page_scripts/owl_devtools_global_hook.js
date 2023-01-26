@@ -865,6 +865,9 @@ export class OwlDevtoolsGlobalHook {
   // Recursively checks if the given html element corresponds to a component in the components tree.
   // Immediatly returns the path of the first component which matches the element
   searchElement(node, path, element){
+    if(!node?.bdom){
+      return ["App"];
+    }
     // If the component is directly linked to the html element
     if (node.bdom.hasOwnProperty("el") && node.bdom.el.isEqualNode(element)){
       return path;
@@ -911,7 +914,7 @@ export class OwlDevtoolsGlobalHook {
       }
     }
     // If nothing was found, return the root component path
-    return "App";
+    return ["App"];
   }
   // Returns the tree of components of the inspected page in a parsed format
   // Use inspectedPath to specify the path of the selected component

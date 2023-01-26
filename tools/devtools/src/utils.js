@@ -1,11 +1,17 @@
 export async function getOwlStatus(){
-  let response = await chrome.runtime.sendMessage({type: "getOwlStatus"});
+  let response = isFirefox() ? await browser.runtime.sendMessage({type: "getOwlStatus"}) : await chrome.runtime.sendMessage({type: "getOwlStatus"});
   return response.result;
 }
 
-export async function getActiveTabURL() {
+export function isFirefox(){
+  if (navigator.userAgent.indexOf("Firefox") !== -1) {
+    return true;
+  }
+}
+
+export async function getActiveTabURL(isFirefox) {
   let queryOptions = { active: true, lastFocusedWindow: true };
-  let res = await chrome.tabs.query(queryOptions);
+  let res = isFirefox ? await browser.tabs.query(queryOptions) : await chrome.tabs.query(queryOptions);
   let [tab] = res;
   return tab;
 }

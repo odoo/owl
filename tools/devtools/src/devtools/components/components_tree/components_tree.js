@@ -96,7 +96,6 @@ export class ComponentsTree extends Component {
       chrome.devtools.inspectedWindow.eval(
         script,
         (result, isException) => {
-          debugger;
           if (!isException) {
             this.state.activeComponent = result;
           }
@@ -232,7 +231,6 @@ export class ComponentsTree extends Component {
       obj = this.state.activeComponent.instance[path[0]];
     else if (inputObj.objectType === 'subscription')
       obj = this.state.activeComponent.subscriptions[path[0]].target;
-    console.log(this.state.activeComponent.env);
     for (let i = 1; i < path.length; i++) {
       const match = path[i];
       if(typeof match === 'object'){

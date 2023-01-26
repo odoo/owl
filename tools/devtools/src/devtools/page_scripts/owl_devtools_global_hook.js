@@ -935,7 +935,7 @@ export class OwlDevtoolsGlobalHook {
     if(!inspectedPath){
       inspectedPath = this.getElementPath($0);
     }
-    if(inspectedPath === ["App"])
+    if(inspectedPath.join("/") === "App")
       tree.root.selected = true;
     tree.root.children = this.fillTree(this.root, tree.root, inspectedPath.join("/"), oldTree);
     return tree;

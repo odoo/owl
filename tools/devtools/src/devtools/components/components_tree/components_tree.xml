@@ -1,46 +1,51 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.ComponentsTree" owl="1">
-    <div id="container" t-on-mouseover.stop="removeHighlight" t-on-mouseout.stop="removeHighlight">
-      <div class="split-screen-container">
-        <div class="split-screen-left"  t-attf-style="width:{{state.leftWidth}}px;">
-          <div class="panel-top">
-            <SearchBar
-              t-props="state.search"
-              toggleSelector.bind="toggleSelector"
-              updateSearch.bind="updateSearch"
-              setSearchIndex.bind="setSearchIndex"/>
+    <t t-if="state.hasOwl">
+      <div id="container" t-on-mouseover.stop="removeHighlight" t-on-mouseout.stop="removeHighlight">
+        <div class="split-screen-container">
+          <div class="split-screen-left"  t-attf-style="width:{{state.leftWidth}}px;">
+            <div class="panel-top">
+              <SearchBar
+                t-props="state.search"
+                toggleSelector.bind="toggleSelector"
+                updateSearch.bind="updateSearch"
+                setSearchIndex.bind="setSearchIndex"/>
+            </div>
+            <div class="horizontal-border">
+            </div>
+            <div id="tree-container">
+              <TreeElement 
+                t-props="state.root"
+                search="state.search.search"
+                searchResults="state.search.searchResults"
+                renderPaths="state.renderPaths"
+                toggleComponentTreeElementDisplay.bind="toggleComponentTreeElementDisplay"
+                toggleComponentAndChildren.bind="toggleComponentAndChildren"
+                selectComponent.bind="selectComponent"/> 
+            </div>
           </div>
-          <div class="horizontal-border">
+          <div
+            class="split-screen-border"
+            t-attf-style="left:{{state.leftWidth}}px;"
+            t-on-mousedown="handleMouseDown"
+            t-on-mouseup="handleMouseUp"
+          />
+          <div class="split-screen-right" t-attf-style="width:{{state.rightWidth}}px;">
+            <DetailsWindow 
+              activeComponent="state.activeComponent"
+              width="state.rightWidth"
+              toggleObjectTreeElementsDisplay.bind="toggleObjectTreeElementsDisplay"
+              loadGetterContent.bind="loadGetterContent"
+              expandSubscriptionsKeys.bind="expandSubscriptionsKeys"
+              editObjectTreeElement.bind="editObjectTreeElement"
+              refreshComponent.bind="refreshComponent"/>
           </div>
-          <div id="tree-container">
-            <TreeElement 
-              t-props="state.root"
-              search="state.search.search"
-              searchResults="state.search.searchResults"
-              renderPaths="state.renderPaths"
-              toggleComponentTreeElementDisplay.bind="toggleComponentTreeElementDisplay"
-              toggleComponentAndChildren.bind="toggleComponentAndChildren"
-              selectComponent.bind="selectComponent"/> 
-          </div>
-        </div>
-        <div
-          class="split-screen-border"
-          t-attf-style="left:{{state.leftWidth}}px;"
-          t-on-mousedown="handleMouseDown"
-          t-on-mouseup="handleMouseUp"
-        />
-        <div class="split-screen-right" t-attf-style="width:{{state.rightWidth}}px;">
-          <DetailsWindow 
-            activeComponent="state.activeComponent"
-            width="state.rightWidth"
-            toggleObjectTreeElementsDisplay.bind="toggleObjectTreeElementsDisplay"
-            loadGetterContent.bind="loadGetterContent"
-            expandSubscriptionsKeys.bind="expandSubscriptionsKeys"
-            editObjectTreeElement.bind="editObjectTreeElement"
-            refreshComponent.bind="refreshComponent"/>
         </div>
       </div>
-    </div>
+    </t>
+    <t t-else="">
+      Owl is not loaded on this page anymore.
+    </t>
   </t>
 </templates>

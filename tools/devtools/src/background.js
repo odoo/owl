@@ -86,6 +86,9 @@ browserInstance.runtime.onMessage.addListener((message, sender, sendResponse) =>
   if(message.type === "StopSelector"){
     browserInstance.runtime.connect({name: "DevtoolsTreePort"}).postMessage({type: "StopSelector"});
   }
+  if(message.type === "Reload"){
+    browserInstance.runtime.connect({name: "DevtoolsTreePort"}).postMessage({type: "Reload"});
+  }
 });
 
 

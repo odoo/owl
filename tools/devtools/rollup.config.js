@@ -4,6 +4,8 @@ import postcss from "rollup-plugin-postcss";
 import copy from "rollup-plugin-copy";
 
 const isProduction = process.env.NODE_ENV === "production";
+const isFirefox = process.env.NODE_BROWSER === "firefox";
+const isChrome = process.env.NODE_BROWSER === "chrome";
 
 export default [
     {
@@ -205,7 +207,7 @@ export default [
                 targets: [
                     { src: "src/background.html", dest: "build" },
                     { src: "assets/**/*", dest: "build/assets/" },
-                    { src: "manifest.json", dest: "build" },
+                    { src: isChrome ? "manifest-chrome.json" : "manifest-firefox.json", dest: "build", rename: "manifest.json" },
                 ],
             }),
         ],

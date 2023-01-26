@@ -1,64 +1,90 @@
 import { getActiveTabURL } from "./utils";
 
-let owlStatus = true;
+let owlStatus = 2;
 let tabId;
+let isChrome = false;
+let isFirefox = false;
 
-chrome.tabs.onUpdated.addListener((tab) => {
-  chrome.tabs.get(tab, (tabData) => {
+let browserInstance = isFirefox ? browser : chrome;
+
+if (navigator.userAgent.indexOf("Chrome") !== -1) {
+  isChrome = true;
+} else if (navigator.userAgent.indexOf("Firefox") !== -1) {
+  isFirefox = true;
+}
+
+browserInstance.tabs.onUpdated.addListener((tab) => {
+  browserInstance.tabs.get(tab, (tabData) => {
     if (tabData.status === "complete"){
       setTimeout(() => {
         checkOwlStatus(tabData.id);
-      }, 200)
+      }, 200);
     }
-  })
+  });
 });
 
 
 function checkOwlStatus(tabId){
-  chrome.scripting.executeScript(
-    {
-      target: {tabId: tabId},
-      func: () => {
+  if(isChrome){
+    chrome.scripting.executeScript(
+      {
+        target: {tabId: tabId},
+        func: () => {
+          if (window.__OWL_DEVTOOLS__?.apps !== undefined)
+            return 2;
+          if (typeof owl !== "undefined")
+            return 1;
+          return 0;
+        },
+        world: "MAIN",
+      },
+      (results) => {
+        if (typeof results !== "undefined"){
+          owlStatus = results[0].result;
+          chrome.action.setIcon({path: owlStatus === 2 ? "assets/icon128.png" : "assets/icon_disabled128.png"});
+        }
+      }
+    );
+  }
+  else if(isFirefox){
+    browser.tabs.executeScript(tabId, {
+      code: `
         if (window.__OWL_DEVTOOLS__?.apps !== undefined)
           return 2;
         if (typeof owl !== "undefined")
           return 1;
         return 0;
-      },
-      world: "MAIN",
-    },
-    (results) => {
-      if (typeof results !== "undefined"){
-        owlStatus = results[0].result;
-        chrome.action.setIcon({path: owlStatus === 2 ? "assets/icon128.png" : "assets/icon_disabled128.png"});
-      }
-    }
-  );
+      `
+    }, (result) => {
+      owlStatus = result[0];
+      browser.browserAction.setIcon({path: owlStatus === 2 ? "assets/icon128.png" : "assets/icon_disabled128.png"});
+    });
+  }
 }
 
-chrome.runtime.onConnect.addListener(function(port) {
+browserInstance.runtime.onConnect.addListener(function(port) {
   console.assert(port.name == "DevtoolsTreePort");
 });
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+browserInstance.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if(message.type === "getOwlStatus"){
-    getActiveTabURL().then((tab) => {
+    getActiveTabURL(isFirefox).then((tab) => {
       if (tab){
         tabId = tab.id;
       }
-      checkOwlStatus(tabId);
+      checkOwlStatus(tabId)
       sendResponse({result: owlStatus});
-    })
+    });
     return true;
   }
   if(message.type === "Flush"){
-    chrome.runtime.connect({name: "DevtoolsTreePort"}).postMessage({type: "Flush", paths: message.paths});
+    browserInstance.runtime.connect({name: "DevtoolsTreePort"}).postMessage({type: "Flush", paths: message.paths});
   }
   if(message.type === "SelectElement"){
-    chrome.runtime.connect({name: "DevtoolsTreePort"}).postMessage({type: "SelectElement", path: message.path});
+    browserInstance.runtime.connect({name: "DevtoolsTreePort"}).postMessage({type: "SelectElement", path: message.path});
   }
   if(message.type === "StopSelector"){
-    chrome.runtime.connect({name: "DevtoolsTreePort"}).postMessage({type: "StopSelector"});
+    browserInstance.runtime.connect({name: "DevtoolsTreePort"}).postMessage({type: "StopSelector"});
   }
 });
 

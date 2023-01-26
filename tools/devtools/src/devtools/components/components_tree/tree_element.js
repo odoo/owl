@@ -57,7 +57,6 @@ export class TreeElement extends Component {
     for (const element of elements) 
     element.classList.remove("highlight-fade");
     const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.highlightComponent(${JSON.stringify(this.props.path)});`;
-    console.log(script);
     chrome.devtools.inspectedWindow.eval(script);
   }
   

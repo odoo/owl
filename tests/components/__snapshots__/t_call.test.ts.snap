@@ -110,7 +110,7 @@ exports[`t-call handlers are properly bound through a dynamic t-call 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const v1 = ctx['this'];
-    let hdlr1 = [()=>v1.update(), ctx];
+    let hdlr1 = [()=>v1.update(), this];
     return block1([hdlr1]);
   }
 }"
@@ -140,7 +140,7 @@ exports[`t-call handlers are properly bound through a t-call 2`] = `
   let block1 = createBlock(\`<p block-handler-0=\\"click\\">lucas</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [ctx['update'], ctx];
+    let hdlr1 = [ctx['update'], this];
     return block1([hdlr1]);
   }
 }"
@@ -171,7 +171,7 @@ exports[`t-call handlers with arguments are properly bound through a t-call 2`] 
   return function template(ctx, node, key = \\"\\") {
     const v1 = ctx['this'];
     const v2 = ctx['a'];
-    let hdlr1 = [()=>v1.update(v2), ctx];
+    let hdlr1 = [()=>v1.update(v2), this];
     return block1([hdlr1]);
   }
 }"
@@ -289,7 +289,7 @@ exports[`t-call recursive t-call binding this -- static t-call 2`] = `
     ctx[isBoundary] = 1
     let b2;
     if (ctx['level']<2) {
-      let hdlr1 = [\\"stop\\", ctx['onClicked'].bind(ctx['this']), ctx];
+      let hdlr1 = [\\"stop\\", ctx['onClicked'].bind(ctx['this']), this];
       let txt1 = ctx['level'];
       const b3 = block3([hdlr1, txt1]);
       ctx = Object.create(ctx);
@@ -572,6 +572,33 @@ exports[`t-call t-call-context: ComponentNode is not looked up in the context 3`
   
   return function template(ctx, node, key = \\"\\") {
     return callSlot(ctx, node, key, 'default', false, {});
+  }
+}"
+`;
+
+exports[`t-call t-call-context: handlers have the correct this 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const callTemplate_1 = app.getTemplate(\`someTemplate\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let ctx1 = {handler:ctx['handler']};
+    return callTemplate_1.call(this, ctx1, node, key + \`__1\`);
+  }
+}"
+`;
+
+exports[`t-call t-call-context: handlers have the correct this 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div class=\\"click_me\\" block-handler-0=\\"click\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let hdlr1 = [ctx['handler'], this];
+    return block1([hdlr1]);
   }
 }"
 `;

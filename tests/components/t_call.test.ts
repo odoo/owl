@@ -398,4 +398,30 @@ describe("t-call", () => {
     });
     expect(fixture.innerHTML).toBe("");
   });
+
+  test("t-call-context: handlers have the correct this", async () => {
+    class Root extends Component {
+      static template = xml`<t t-call="someTemplate" t-call-context="{ handler: handler }"/>`;
+      setup() {
+        root = this;
+      }
+      handler() {
+        handlerThis = this;
+      }
+    }
+    let root: Root | null = null;
+    let handlerThis: Root | null = null;
+
+    await mount(Root, fixture, {
+      templates: `
+        <templates>
+          <t t-name="someTemplate">
+            <div class="click_me" t-on-click="handler"/>
+          </t>
+        </templates>`,
+    });
+    const toClick: HTMLDivElement = fixture.querySelector(".click_me")!;
+    toClick.click();
+    expect(handlerThis).toBe(root);
+  });
 });

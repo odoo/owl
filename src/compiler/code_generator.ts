@@ -539,7 +539,7 @@ export class CodeGenerator {
     if (modifiers.length) {
       modifiersCode = `${modifiers.join(",")}, `;
     }
-    return `[${modifiersCode}${this.captureExpression(handler)}, ctx]`;
+    return `[${modifiersCode}${this.captureExpression(handler)}, this]`;
   }
 
   compileTDomNode(ast: ASTDomNode, ctx: Context): string {

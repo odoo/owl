@@ -127,7 +127,7 @@ exports[`t-model directive can also define t-on directive on same event, part 1 
     const expr1 = 'text';
     let attr1 = bExpr1[expr1];
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
-    let hdlr2 = [ctx['onInput'], ctx];
+    let hdlr2 = [ctx['onInput'], this];
     return block1([attr1, hdlr1, hdlr2]);
   }
 }"
@@ -146,17 +146,17 @@ exports[`t-model directive can also define t-on directive on same event, part 2 
     const expr1 = 'choice';
     let attr1 = bExpr1[expr1] === 'One';
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
-    let hdlr2 = [ctx['onClick'], ctx];
+    let hdlr2 = [ctx['onClick'], this];
     const bExpr2 = ctx['state'];
     const expr2 = 'choice';
     let attr2 = bExpr2[expr2] === 'Two';
     let hdlr3 = [(ev) => { bExpr2[expr2] = ev.target.value; }];
-    let hdlr4 = [ctx['onClick'], ctx];
+    let hdlr4 = [ctx['onClick'], this];
     const bExpr3 = ctx['state'];
     const expr3 = 'choice';
     let attr3 = bExpr3[expr3] === 'Three';
     let hdlr5 = [(ev) => { bExpr3[expr3] = ev.target.value; }];
-    let hdlr6 = [ctx['onClick'], ctx];
+    let hdlr6 = [ctx['onClick'], this];
     return block1([attr1, hdlr1, hdlr2, attr2, hdlr3, hdlr4, attr3, hdlr5, hdlr6]);
   }
 }"
@@ -423,7 +423,7 @@ exports[`t-model directive t-model is applied before t-on-input 1`] = `
     const expr1 = 'text';
     let attr1 = bExpr1[expr1];
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
-    let hdlr2 = [ctx['onInput'], ctx];
+    let hdlr2 = [ctx['onInput'], this];
     return block1([attr1, hdlr1, hdlr2]);
   }
 }"

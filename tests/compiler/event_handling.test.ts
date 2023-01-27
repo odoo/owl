@@ -161,7 +161,9 @@ describe("t-on", () => {
     owner.__owl__ = node;
     const fixture = makeTestFixture();
     const render = context.getTemplate("main");
-    const bdom = render(owner, node);
+    const ctx = Object.create(owner);
+    ctx.this = owner;
+    const bdom = render.call(owner, ctx, node);
     mount(bdom, fixture);
     fixture.querySelector("button")!.click();
   });
@@ -186,7 +188,9 @@ describe("t-on", () => {
     owner.__owl__ = node;
     const fixture = makeTestFixture();
     const render = context.getTemplate("main");
-    const bdom = render(owner, node);
+    const ctx = Object.create(owner);
+    ctx.this = owner;
+    const bdom = render.call(owner, ctx, node);
     mount(bdom, fixture);
     fixture.querySelector("button")!.click();
   });
@@ -266,7 +270,9 @@ describe("t-on", () => {
 
     const fixture = makeTestFixture();
     const render = app.getTemplate("main");
-    const bdom = render(owner, node);
+    const ctx = Object.create(owner);
+    ctx.this = owner;
+    const bdom = render.call(owner, ctx, node);
     mount(bdom, fixture);
     fixture.querySelector("p")!.click();
   });

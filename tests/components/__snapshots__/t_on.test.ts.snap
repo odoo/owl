@@ -20,7 +20,7 @@ exports[`t-on t-on expression captured in t-foreach 1`] = `
       const key1 = ctx['val'];
       const v1 = ctx['otherState'];
       const v2 = ctx['iter'];
-      let hdlr1 = [()=>v1.vals.push(v2+'_'+v2), ctx];
+      let hdlr1 = [()=>v1.vals.push(v2+'_'+v2), this];
       setContextValue(ctx, \\"iter\\", ctx['iter']+1);
       c_block2[i1] = withKey(block3([hdlr1]), key1);
     }
@@ -50,7 +50,7 @@ exports[`t-on t-on expression in t-foreach 1`] = `
       let txt2 = ctx['val']+'';
       const v1 = ctx['otherState'];
       const v2 = ctx['val'];
-      let hdlr1 = [()=>v1.vals.push(v2), ctx];
+      let hdlr1 = [()=>v1.vals.push(v2), this];
       c_block2[i1] = withKey(block3([txt1, txt2, hdlr1]), key1);
     }
     const b2 = list(c_block2);
@@ -84,7 +84,7 @@ exports[`t-on t-on expression in t-foreach with t-set 1`] = `
       const v1 = ctx['otherState'];
       const v2 = ctx['val'];
       const v3 = ctx['bossa'];
-      let hdlr1 = [()=>v1.vals.push(v2+'_'+v3), ctx];
+      let hdlr1 = [()=>v1.vals.push(v2+'_'+v3), this];
       c_block2[i1] = withKey(block3([txt1, txt2, hdlr1]), key1);
     }
     const b2 = list(c_block2);
@@ -113,7 +113,7 @@ exports[`t-on t-on method call in t-foreach 1`] = `
       let txt2 = ctx['val']+'';
       const v1 = ctx['this'];
       const v2 = ctx['val'];
-      let hdlr1 = [()=>v1.addVal(v2), ctx];
+      let hdlr1 = [()=>v1.addVal(v2), this];
       c_block2[i1] = withKey(block3([txt1, txt2, hdlr1]), key1);
     }
     const b2 = list(c_block2);
@@ -133,9 +133,9 @@ exports[`t-on t-on on component next to t-on on div 1`] = `
   let block1 = createBlock(\`<div><block-child-0/><p block-handler-0=\\"click\\">dec</p></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const hdlr1 = [ctx['increment'], ctx];
+    const hdlr1 = [ctx['increment'], this];
     const b2 = catcher1(comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null), [hdlr1]);
-    let hdlr2 = [ctx['decrement'], ctx];
+    let hdlr2 = [ctx['decrement'], this];
     return block1([hdlr2], [b2]);
   }
 }"
@@ -164,7 +164,7 @@ exports[`t-on t-on on components 1`] = `
   const catcher1 = createCatcher({\\"click\\":0});
   
   return function template(ctx, node, key = \\"\\") {
-    const hdlr1 = [ctx['increment'], ctx];
+    const hdlr1 = [ctx['increment'], this];
     return catcher1(comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null), [hdlr1]);
   }
 }"
@@ -200,7 +200,7 @@ exports[`t-on t-on on components and t-foreach 1`] = `
       const key1 = ctx['name'];
       const v1 = ctx['this'];
       const v2 = ctx['name'];
-      const hdlr1 = [()=>v1.log(v2), ctx];
+      const hdlr1 = [()=>v1.log(v2), this];
       c_block1[i1] = withKey(catcher1(comp1({value: ctx['name']}, key + \`__1__\${key1}\`, node, this, null), [hdlr1]), key1);
     }
     return list(c_block1);
@@ -233,7 +233,7 @@ exports[`t-on t-on on components, variation 1`] = `
   let block1 = createBlock(\`<div><span/><block-child-0/><p/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const hdlr1 = [ctx['increment'], ctx];
+    const hdlr1 = [ctx['increment'], this];
     const b2 = catcher1(comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null), [hdlr1]);
     return block1([], [b2]);
   }
@@ -263,7 +263,7 @@ exports[`t-on t-on on components, with 'prevent' modifier 1`] = `
   const catcher1 = createCatcher({\\"click.prevent\\":0});
   
   return function template(ctx, node, key = \\"\\") {
-    const hdlr1 = [\\"prevent\\", ctx['increment'], ctx];
+    const hdlr1 = [\\"prevent\\", ctx['increment'], this];
     return catcher1(comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null), [hdlr1]);
   }
 }"
@@ -297,7 +297,7 @@ exports[`t-on t-on on components, with a handler update 1`] = `
     setContextValue(ctx, \\"name\\", ctx['state'].name);
     const v1 = ctx['this'];
     const v2 = ctx['name'];
-    const hdlr1 = [()=>v1.log(v2), ctx];
+    const hdlr1 = [()=>v1.log(v2), this];
     return catcher1(comp1({value: ctx['name']}, key + \`__1\`, node, this, null), [hdlr1]);
   }
 }"
@@ -343,7 +343,7 @@ exports[`t-on t-on on destroyed components 2`] = `
   let block1 = createBlock(\`<div block-handler-0=\\"click\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [ctx['onClick'], ctx];
+    let hdlr1 = [ctx['onClick'], this];
     return block1([hdlr1]);
   }
 }"
@@ -376,7 +376,7 @@ exports[`t-on t-on on slot, with 'prevent' modifier 2`] = `
   const catcher1 = createCatcher({\\"click.prevent\\":0});
   
   return function template(ctx, node, key = \\"\\") {
-    const hdlr1 = [\\"prevent\\", ctx['doSomething'], ctx];
+    const hdlr1 = [\\"prevent\\", ctx['doSomething'], this];
     return catcher1(callSlot(ctx, node, key, 'default', false, {}), [hdlr1]);
   }
 }"
@@ -397,7 +397,7 @@ exports[`t-on t-on on t-set-slots 1`] = `
     const b6 = block6();
     const b7 = block7();
     const v1 = ctx['this'];
-    const hdlr1 = [()=>v1.state.count++, ctx];
+    const hdlr1 = [()=>v1.state.count++, this];
     return catcher1(multi([b6, b7]), [hdlr1]);
   }
   
@@ -455,7 +455,7 @@ exports[`t-on t-on on t-slots 2`] = `
     const b3 = text(ctx['state'].count);
     const b4 = text(\`] \`);
     const v1 = ctx['this'];
-    const hdlr1 = [()=>v1.state.count++, ctx];
+    const hdlr1 = [()=>v1.state.count++, this];
     const b5 = catcher1(callSlot(ctx, node, key, 'default', false, {}), [hdlr1]);
     return multi([b2, b3, b4, b5]);
   }
@@ -473,8 +473,8 @@ exports[`t-on t-on when first component child is an empty component 1`] = `
   let block1 = createBlock(\`<div block-handler-0=\\"click\\"><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [ctx['push'], ctx];
-    const hdlr2 = [()=>{}, ctx];
+    let hdlr1 = [ctx['push'], this];
+    const hdlr2 = [()=>{}, this];
     const b2 = catcher1(comp1({list: ctx['list']}, key + \`__1\`, node, this, null), [hdlr2]);
     return block1([hdlr1], [b2]);
   }

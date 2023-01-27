@@ -8,7 +8,7 @@
       t-on-mouseover.stop="hoverComponent" 
       t-on-click.stop="toggleComponent" 
     >
-      <div class="component-wrapper" t-attf-style="transform: translateX(calc({{props.depth}} * 0.8rem))">
+      <div class="component-wrapper" t-attf-style="padding-left: calc({{props.depth}} * 0.8rem)">
         <t t-if="props.children.length > 0">
           <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer;{{props.toggled ? 'transform: rotate(90deg);' : ''}}" t-on-click.stop="toggleDisplay"></i>
         </t>

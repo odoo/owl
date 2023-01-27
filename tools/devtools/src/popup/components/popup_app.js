@@ -1,12 +1,13 @@
 
-const { Component, useState, onWillStart } = owl;
+const { Component, useState, onWillStart, onMounted, useEffect } = owl;
 import { getOwlStatus } from "../../utils.js";
 
 export class PopUpApp extends Component {
   setup(){
     this.state = useState({status: 0});
-    onWillStart(async () => {
-      this.state.status = await getOwlStatus();
+    onMounted(async () => {
+      let status = await getOwlStatus();
+      this.state.status = status;
     });
   }
   

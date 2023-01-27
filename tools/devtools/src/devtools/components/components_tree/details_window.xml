@@ -30,8 +30,8 @@
         </div>
         <div id="subscriptions" class="details-panel py-1">
           <div class="details-panel-head">
-            <b>subscriptions</b>
-            <i title="Store subscriptions as global variable in the console" class="fa fa-bug utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("subscription")'></i>
+            <b>observed states</b>
+            <i title="Store observed states as global variable in the console" class="fa fa-bug utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("subscription")'></i>
           </div>
           <Subscriptions 
             subscriptions="props.activeComponent.subscriptions" 

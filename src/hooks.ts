@@ -104,10 +104,18 @@ export function useRef<C extends Component = Component>(name: string): Ref<C> {
   return {
     get el(): HTMLElement | null {
       const val = __owl__.refs && __owl__.refs[name];
+      if (val instanceof Component) {
+        return val.el;
+      }
       if (val instanceof HTMLElement) {
         return val;
-      } else if (val instanceof Component) {
-        return val.el;
+      }
+      // Extra check in case the app was created outside an iframe but mounted into one
+      // on Firefox 109+, the prototype of the element changes to use the iframe window's HTMLElement
+      // see https://bugzilla.mozilla.org/show_bug.cgi?id=1813499
+      const ownerWindow = (val as any)?.ownerDocument?.defaultView;
+      if (ownerWindow && (val as any) instanceof ownerWindow.HTMLElement) {
+        return val;
       }
       return null;
     },

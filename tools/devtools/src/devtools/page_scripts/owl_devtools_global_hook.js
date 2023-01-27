@@ -121,7 +121,7 @@ export class OwlDevtoolsGlobalHook {
   // Activate the HTML selector tool
   enableHTMLSelector(){
     document.addEventListener("mousemove", this.HTMLSelector);
-    document.addEventListener("click", this.disableHTMLSelector, true);
+    document.addEventListener("click", this.disableHTMLSelector, {capture: true});
     document.addEventListener("mouseout", this.removeHighlights);
   }
   // Diasble the HTML selector tool
@@ -130,7 +130,7 @@ export class OwlDevtoolsGlobalHook {
       ev.stopPropagation();
     this.removeHighlights();
     document.removeEventListener("mousemove", this.HTMLSelector);
-    document.removeEventListener("click", this.disableHTMLSelector);
+    document.removeEventListener("click", this.disableHTMLSelector, {capture: true});
     document.removeEventListener("mouseout", this.removeHighlights);
     window.postMessage({type: "owlDevtools__StopSelector"});
   }
@@ -151,7 +151,7 @@ export class OwlDevtoolsGlobalHook {
     else if (typeof value === 'string')
       return '"' + value + '"';
     else if (typeof value === 'function'){
-      if(asConstructorName && value.constructor.name !== 'Function')
+      if(asConstructorName)
         return value.constructor.name;
       let functionString = value.toString();
       let index, offset;

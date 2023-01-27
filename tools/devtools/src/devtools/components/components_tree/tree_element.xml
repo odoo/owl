@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.TreeElement" owl="1">
-    <div t-attf-id="treeElement/{{pathAsString}}" t-att-class="{'component-selected': props.selected,'component-highlighted': props.highlighted}" class="tree-component my-0 p-0" t-on-contextmenu.prevent="openMenu" t-on-mouseover.stop="hoverComponent" t-on-click.stop="toggleComponent">
+    <div t-attf-id="treeElement/{{pathAsString}}" 
+      t-att-class="{'component-selected': props.selected,'component-highlighted': props.highlighted}" 
+      class="tree-component my-0 p-0" 
+      t-on-contextmenu.prevent="openMenu" 
+      t-on-mouseover.stop="hoverComponent" 
+      t-on-click.stop="toggleComponent" 
+    >
       <div class="component-wrapper" t-attf-style="transform: translateX(calc({{props.depth}} * 0.8rem))">
         <t t-if="props.children.length > 0">
           <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer;{{props.toggled ? 'transform: rotate(90deg);' : ''}}" t-on-click.stop="toggleDisplay"></i>

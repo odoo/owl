@@ -73,6 +73,7 @@ export class TreeElement extends Component {
   }
 
   toggleComponent(ev){
+    this.toggleDisplay();
     if(!this.props.selected){
       this.props.selectComponent(this.props.path);
     }

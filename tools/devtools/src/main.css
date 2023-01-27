@@ -30,6 +30,11 @@
   margin: 0px;
   white-space: nowrap;
   background-color: white;
+  /* width: var(--max-component-width, max-content); */
+}
+
+.tree-wrapper {
+  width: max-content;
 }
 
 .tree-component:hover {
@@ -87,6 +92,7 @@
   color:rgb(119, 34, 255);
   white-space: nowrap;
   display: inline;
+  padding-right: 1.5rem;
 }
 
 .details-window {

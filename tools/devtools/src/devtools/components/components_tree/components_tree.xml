@@ -15,14 +15,16 @@
             <div class="horizontal-border">
             </div>
             <div id="tree-container">
-              <TreeElement 
-                t-props="state.root"
-                search="state.search.search"
-                searchResults="state.search.searchResults"
-                renderPaths="state.renderPaths"
-                toggleComponentTreeElementDisplay.bind="toggleComponentTreeElementDisplay"
-                toggleComponentAndChildren.bind="toggleComponentAndChildren"
-                selectComponent.bind="selectComponent"/> 
+              <div class="tree-wrapper">
+                <TreeElement 
+                  t-props="state.root"
+                  search="state.search.search"
+                  searchResults="state.search.searchResults"
+                  renderPaths="state.renderPaths"
+                  toggleComponentTreeElementDisplay.bind="toggleComponentTreeElementDisplay"
+                  toggleComponentAndChildren.bind="toggleComponentAndChildren"
+                  selectComponent.bind="selectComponent"/> 
+              </div>
             </div>
           </div>
           <div

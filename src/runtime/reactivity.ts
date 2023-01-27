@@ -1,8 +1,13 @@
-import { Callback } from "./utils";
+import type { Callback } from "./utils";
 import { OwlError } from "./error_handling";
 
 // Special key to subscribe to, to be notified of key creation/deletion
 const KEYCHANGES = Symbol("Key changes");
+// Used to specify the absence of a callback, can be used as WeakMap key but
+// should only be used as a sentinel value and never called.
+const NO_CALLBACK = () => {
+  throw new Error("Called NO_CALLBACK. Owl is broken, please report this to the maintainers.");
+};
 
 // The following types only exist to signify places where objects are expected
 // to be reactive or not, they provide no type checking benefit over "object"
@@ -86,6 +91,9 @@ const targetToKeysToCallbacks = new WeakMap<Target, Map<PropertyKey, Set<Callbac
  * @param callback the function to call when the key changes
  */
 function observeTargetKey(target: Target, key: PropertyKey, callback: Callback): void {
+  if (callback === NO_CALLBACK) {
+    return;
+  }
   if (!targetToKeysToCallbacks.get(target)) {
     targetToKeysToCallbacks.set(target, new Map());
   }
@@ -140,8 +148,11 @@ export function clearReactivesForCallback(callback: Callback): void {
     if (!observedKeys) {
       continue;
     }
-    for (const callbacks of observedKeys.values()) {
+    for (const [key, callbacks] of observedKeys.entries()) {
       callbacks.delete(callback);
+      if (!callbacks.size) {
+        observedKeys.delete(key);
+      }
     }
   }
   targetsToClear.clear();
@@ -187,7 +198,7 @@ const reactiveCache = new WeakMap<Target, WeakMap<Callback, Reactive<Target>>>()
  *  reactive has changed
  * @returns a proxy that tracks changes to it
  */
-export function reactive<T extends Target>(target: T, callback: Callback = () => {}): T {
+export function reactive<T extends Target>(target: T, callback: Callback = NO_CALLBACK): T {
   if (!canBeMadeReactive(target)) {
     throw new OwlError(`Cannot make the given value reactive`);
   }

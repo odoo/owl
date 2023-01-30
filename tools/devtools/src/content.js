@@ -9,5 +9,8 @@ window.addEventListener("message", function (event) {
     else if(event.data.type === "owlDevtools__StopSelector"){
       chrome.runtime.sendMessage({ type: "StopSelector" })
     }
+    else if(event.data.type === "owlDevtools__RefreshApps"){
+      chrome.runtime.sendMessage({ type: "RefreshApps" })
+    }
   }
 }, false);

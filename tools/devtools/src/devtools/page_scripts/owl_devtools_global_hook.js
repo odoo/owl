@@ -5,9 +5,49 @@ export class OwlDevtoolsGlobalHook {
 
   constructor(){
     // TODO: support multiple apps
-    const [application] = window.__OWL_DEVTOOLS__.apps;
-    this.root = application.root;
+    this.apps = window.__OWL_DEVTOOLS__.apps;
     this.fibersMap = new WeakMap();
+    const appsArray = Array.from(this.apps);
+    appsArray.forEach(app => this.patchAppMethods(app));
+    this.patchSetMethods();
+  }
+
+  patchSetMethods(){
+    const originalAdd = this.apps.add;
+    const originalDelete = this.apps.delete;
+    const self = this;
+    this.apps.add = function(app) {
+      self.patchAppMethods(app);
+      originalAdd.call(this, ...arguments);
+      window.postMessage({type: "owlDevtools__RefreshApps"});
+    }
+    this.apps.delete = function() {
+      originalDelete.call(this, ...arguments);
+      window.postMessage({type: "owlDevtools__RefreshApps"});
+    }
+  }
+
+  patchAppMethods(app){
+    const originalFlush = app.scheduler.flush;
+    const self = this;
+    app.scheduler.flush = function() {
+      let pathArray = [];
+      [...this.tasks].map((fiber) => {
+        if (fiber.counter === 0 && !self.fibersMap.has(fiber)){
+          self.fibersMap.set(fiber, "");
+          const path = self.getComponentPath(fiber.node);
+          pathArray.push(path);
+        }
+      });
+      originalFlush.call(this, ...arguments);
+      /*
+       * Add a functionnality to the flush function which sends a message to the window every time it is triggered.                          
+       * This message is intercepted by the content script which informs the background script to ask the devtools app tree to be refreshed. 
+       * This process may be long but is necessary. More information in the docs:                                                            
+       * https://developer.chrome.com/docs/extensions/mv3/devtools/#evaluated-scripts-to-devtools                                            
+       */
+      window.postMessage({type: "owlDevtools__Flush", paths: pathArray});
+    };
   }
 
   // Draws a highlighting rectangle on the specified html element and displays its dimensions and the specified name in a box
@@ -596,8 +636,8 @@ export class OwlDevtoolsGlobalHook {
   };
   // Returns the Component node given its path and the root component node
   getComponentNode(path){
-    let componentNode = this.root;
-    for (let i = 1; i < path.length; i++) {
+    let componentNode = Array.from(this.apps)[path[0]].root;
+    for (let i = 2; i < path.length; i++) {
       if (componentNode.children.hasOwnProperty(path[i]))
         componentNode = componentNode.children[path[i]];
       else
@@ -619,7 +659,7 @@ export class OwlDevtoolsGlobalHook {
     component.path = path;
     let node = this.getComponentNode(path);
     if(!node)
-      node = this.root;
+      node = Array.from(this.apps)[0].root;
     // Load props of the component
     const props = node.component.props;
     component.props = {};
@@ -795,11 +835,9 @@ export class OwlDevtoolsGlobalHook {
   }
   // Triggers the highlight effect around the specified component.
   highlightComponent(path){
-    // root node (App) is special since it only has a parentEl as attached DOM element
     let component = this.getComponentNode(path);
     if(!component){
-      path = ["App"];
-      component = this.root;
+      component = Array.from(this.apps)[0].root;
     }
     const elements = this.getDOMElementsOfComponent(component);
     this.highlightElements(elements, component.component.constructor.name);
@@ -812,7 +850,7 @@ export class OwlDevtoolsGlobalHook {
         name: appChild.component.constructor.name,
         key: key,
         depth: treeNode.depth + 1,
-        toggled: true,
+        toggled: false,
         selected: false,
         highlighted: false
       };
@@ -858,7 +896,7 @@ export class OwlDevtoolsGlobalHook {
       if(objectType === 'props' || objectType === 'instance')
         componentNode.render(true);
       else if (objectType === 'env')
-        this.root.render(true);
+        Array.from(this.apps)[componentPath[0]].render(true);
     }
 
   };
@@ -866,7 +904,7 @@ export class OwlDevtoolsGlobalHook {
   // Immediatly returns the path of the first component which matches the element
   searchElement(node, path, element){
     if(!node?.bdom){
-      return ["App"];
+      return null;
     }
     // If the component is directly linked to the html element
     if (node.bdom.hasOwnProperty("el") && node.bdom.el.isEqualNode(element)){
@@ -906,52 +944,89 @@ export class OwlDevtoolsGlobalHook {
           parentsList.push(element);
         }
       }
-      // Try to find a correspondance between the elements in the array and the owl component, stops at first result found
-      for (const elem of parentsList) {
-        const inspectedPath = this.searchElement(this.root, ['App'], elem);
-        if(inspectedPath)
-          return inspectedPath;
+      const appsArray = Array.from(this.apps);
+      for (const [index, app] of appsArray.entries()){
+        // Try to find a correspondance between the elements in the array and the owl component, stops at first result found
+        for (const elem of parentsList) {
+          const inspectedPath = this.searchElement(app.root, ['root'], elem);
+          if(inspectedPath){
+            inspectedPath.unshift(index.toString());
+            return inspectedPath;
+          }
+        }
       }
     }
-    // If nothing was found, return the root component path
-    return ["App"];
+    // If nothing was found, return the first app's root component path
+    return ["0", "root"];
   }
   // Returns the tree of components of the inspected page in a parsed format
   // Use inspectedPath to specify the path of the selected component
-  getComponentsTree(inspectedPath = null, oldTree = null){
-    let tree = {};
-    tree.root = {
-      name: this.root.component.constructor.name,
-      path: ["App"],
-      key: "",
-      depth: 0,
-      toggled: false,
-      selected: false,
-      highlighted: false,
-    };
-    if(oldTree && oldTree.toggled)
-      tree.root.toggled = true;
-    // If no path is provided, it defaults to the target of the inspect element action
-    if(!inspectedPath){
-      inspectedPath = this.getElementPath($0);
-    }
-    if(inspectedPath.join("/") === "App")
-      tree.root.selected = true;
-    tree.root.children = this.fillTree(this.root, tree.root, inspectedPath.join("/"), oldTree);
-    return tree;
+  getComponentsTree(inspectedPath = null, oldTrees = null){
+    const appsArray = Array.from(this.apps);
+    let trees = [];
+    appsArray.forEach((app, index) => {
+      let oldTree;
+      if(oldTrees)
+        oldTree = oldTrees[index];
+      let root = {};
+      root = {
+        name: "App " + (index + 1),
+        path: [index.toString()],
+        key: "",
+        depth: 0,
+        toggled: false,
+        selected: false,
+        highlighted: false,
+      };
+      const appRoot = {
+        name: app.root.component.constructor.name,
+        path: [index.toString(), "root"],
+        key: "",
+        depth: 1,
+        toggled: false,
+        selected: false,
+        highlighted: false,
+      };
+      if(oldTree){
+        if(oldTree.toggled)
+          root.toggled = true;
+        oldTree = oldTree.children[0];
+      }
+      if(oldTree && oldTree.toggled)
+        appRoot.toggled = true;
+      // If no path is provided, it defaults to the target of the inspect element action
+      if(!inspectedPath){
+        inspectedPath = this.getElementPath($0);
+      }
+      if(inspectedPath.join("/") === index.toString())
+        root.selected = true;
+      else if(inspectedPath.join("/") === index.toString() + "/root")
+        appRoot.selected = true;
+      appRoot.children = this.fillTree(app.root, appRoot, inspectedPath.join("/"), oldTree);
+      root.children = [appRoot];
+      trees.push(root);
+    });
+    return trees;
   };
   // Returns the path of the given component node
   getComponentPath(componentNode){
+    let path = [];
     if(componentNode.parentKey){
-      let path = [componentNode.parentKey];
+      path = [componentNode.parentKey];
       while(componentNode.parent && componentNode.parent.parentKey){
         componentNode = componentNode.parent;
         path.unshift(componentNode.parentKey);
       }
-      path.unshift("App");
-      return path;
     }
-    return ["App"];
+    path.unshift("root");
+    const appsArray = Array.from(this.apps);
+    let index = 0;
+    for(; index < appsArray.length; index++) {
+      if(appsArray[index].Root.name === componentNode.app.Root.name)
+        break;
+    }
+    path.unshift(index.toString());
+    return path;
   }
   // Store the object into a temp window variable and log it to the console
   sendObjectToConsole(componentPath, objectType){
@@ -992,7 +1067,7 @@ export class OwlDevtoolsGlobalHook {
   // Inspect source code of the function given by its path and the component path
   inspectFunctionSource(componentPath, objectPath){
     const componentNode = this.getComponentNode(componentPath);
-    const topParent = objectPath.startsWith("subscription") ? componentNode.subscriptions : componentNode.component;
+    const topParent = objectPath[0] === "subscription" ? componentNode.subscriptions : componentNode.component;
     inspect(this.getObject(topParent, objectPath));
   }
   // Store the object given by its path and the component path as a global temp variable

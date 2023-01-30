@@ -15,15 +15,17 @@
             <div class="horizontal-border">
             </div>
             <div id="tree-container">
-              <div class="tree-wrapper">
-                <TreeElement 
-                  t-props="state.root"
-                  search="state.search.search"
-                  searchResults="state.search.searchResults"
-                  renderPaths="state.renderPaths"
-                  toggleComponentTreeElementDisplay.bind="toggleComponentTreeElementDisplay"
-                  toggleComponentAndChildren.bind="toggleComponentAndChildren"
-                  selectComponent.bind="selectComponent"/> 
+              <div id="tree-wrapper" t-attf-style="width: {{getTreeWrapperWidth}}px;">
+                <t t-foreach="state.apps" t-as="app" t-key="app_index">
+                  <TreeElement 
+                    t-props="app"
+                    search="state.search.search"
+                    searchResults="state.search.searchResults"
+                    renderPaths="state.renderPaths"
+                    toggleComponentTreeElementDisplay.bind="toggleComponentTreeElementDisplay"
+                    toggleComponentAndChildren.bind="toggleComponentAndChildren"
+                    selectComponent.bind="selectComponent"/> 
+                </t>
               </div>
             </div>
           </div>

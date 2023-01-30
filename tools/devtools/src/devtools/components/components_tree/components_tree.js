@@ -13,18 +13,9 @@ export class ComponentsTree extends Component {
       leftWidth: 0,
       rightWidth: 0,
       hasOwl: true,
-      root: {
-        name: "Test",
-        path: ["App"],
-        key: "",
-        depth: 0,
-        toggled: false,
-        selected: false,
-        children: [],
-        highlighted: false
-      },
+      apps: [],
       activeComponent:{
-        path: ["App"],
+        path: ["0", "root"],
         name: "App",
         subscriptions: [],
         props: {},
@@ -51,26 +42,7 @@ export class ComponentsTree extends Component {
             this.state.renderPaths =  this.state.renderPaths.concat(msg.paths);
             clearTimeout(this.flushRendersTimeout);
             this.flushRendersTimeout = setTimeout(() => {this.state.renderPaths = []},200);
-            const oldComponentsTree = JSON.stringify(this.state.root);
-            let script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentsTree(${JSON.stringify(this.state.activeComponent.path)}, ${oldComponentsTree});`;
-            chrome.devtools.inspectedWindow.eval(
-              script,
-              (result, isException) => {
-                if (!isException) {
-                  this.state.root = result.root
-                }
-              }
-            );
-            const oldObjectsTree = JSON.stringify(this.state.activeComponent);
-            script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentDetails(${JSON.stringify(this.state.activeComponent.path)}, ${oldObjectsTree});`;
-            chrome.devtools.inspectedWindow.eval(
-              script,
-              (result, isException) => {
-                if (!isException) {
-                  this.state.activeComponent = result;
-                }
-              }
-            );
+            this.loadComponentsTree(true);
           }
           // Select the component based on the path received with the SelectElement message
           if (msg.type === "SelectElement"){
@@ -81,13 +53,17 @@ export class ComponentsTree extends Component {
             this.state.search.activeSelector = false;
           }
 
+          if (msg.type === "RefreshApps"){
+            this.loadComponentsTree(true);
+          }
+
           if (msg.type === "Reload"){
             chrome.devtools.inspectedWindow.eval(
               'window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined',
               (result) => {
                 this.state.hasOwl = result;
                 if (result){
-                  this.loadBaseComponentsTree();
+                  this.loadComponentsTree(false);
                 }
               }
             )
@@ -95,7 +71,7 @@ export class ComponentsTree extends Component {
         });
       });
       // On mount, retreive the component tree from the page and the details of the inspected component
-      this.loadBaseComponentsTree();
+      this.loadComponentsTree(false);
       this.computeWindowWidth();
       window.addEventListener("resize", this.computeWindowWidth);
       document.addEventListener('click', this.hideContextMenus, true);
@@ -110,18 +86,30 @@ export class ComponentsTree extends Component {
     });
   }
 
-  loadBaseComponentsTree(){
-    let script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentsTree();';
+  loadComponentsTree(fromOld){
+    let script;
+    if(fromOld){
+      const oldComponentsTrees = JSON.stringify(this.state.apps);
+      script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentsTree(${JSON.stringify(this.state.activeComponent.path)}, ${oldComponentsTrees});`;
+    }
+    else
+      script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentsTree();';
     chrome.devtools.inspectedWindow.eval(
       script,
       (result, isException) => {
         if (!isException) {
-          this.state.root = result.root;
-          this.expandComponents(this.state.root);
+          this.state.apps = result;
+          if(!fromOld)
+            this.state.apps.forEach(tree => this.expandComponents(tree))
         }
       }
     );
-    script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentDetails();';
+    if(fromOld){
+      const oldObjectsTree = JSON.stringify(this.state.activeComponent);
+      script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentDetails(${JSON.stringify(this.state.activeComponent.path)}, ${oldObjectsTree});`;
+    }
+    else
+      script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.getComponentDetails();';
     chrome.devtools.inspectedWindow.eval(
       script,
       (result, isException) => {
@@ -147,9 +135,12 @@ export class ComponentsTree extends Component {
   }
   // Search the component given its path and expand/fold itself and its children based on toggle 
   toggleComponentAndChildren(path, toggle){
-    let cp = [...path];
-    cp.shift();
-    let component = this.state.root;
+    let cp = path.slice(2);
+    let component;
+    if(path.length < 2)
+      component = this.state.apps[path[0]]
+    else
+      component = this.state.apps[path[0]].children[0];
     for (const key of cp) {
       component = component.children.filter(child => (child.key) === key)[0];
     }
@@ -157,9 +148,9 @@ export class ComponentsTree extends Component {
   }
 
   toggleComponentParents(path){
-    let cp = [...path];
-    cp.shift();
-    let component = this.state.root;
+    let cp = path.slice(2);
+    this.state.apps[path[0]].toggled = true;
+    let component = this.state.apps[path[0]].children[0];
     for (const key of cp) {
       component.toggled = true;
       component = component.children.filter(child => (child.key) === key)[0];
@@ -186,11 +177,11 @@ export class ComponentsTree extends Component {
   updateSearch(search){
     this.state.search.search = search;
     this.state.search.searchResults = [];
-    this.getSearchResults(search, this.state.root);
+    this.state.apps.forEach(app => this.getSearchResults(search, app));
     if(this.state.search.searchResults.length > 0){
       this.state.search.searchIndex = 0;
       this.selectComponent(this.state.search.searchResults[0]);
-      this.foldComponents(this.state.root);
+      this.state.apps.forEach(app => this.foldComponents(app));
       for(const result of this.state.search.searchResults){
         this.toggleComponentParents(result);
       }
@@ -219,9 +210,12 @@ export class ComponentsTree extends Component {
   
   // Toggle expansion of the component tree element given by the path
   toggleComponentTreeElementDisplay(path) {
-    let cp = [...path];
-    cp.shift();
-    let component = this.state.root;
+    let cp = path.slice(2);
+    let component;
+    if(path.length < 2)
+      component = this.state.apps[path[0]]
+    else
+      component = this.state.apps[path[0]].children[0];
     for (const key of cp) {
       component = component.children.filter(child => (child.key) === key)[0];
     }
@@ -344,14 +338,20 @@ export class ComponentsTree extends Component {
 
   // Select a component by retrieving its details from the page based on its path
   selectComponent(path) {
-    // Deselect all components starting from root
-    this.state.root.selected = false;
-    this.state.root.highlighted = false;
-    this.state.root.children.forEach(child => {
-      this.deselectComponent(child)
+    // Deselect all components
+    this.state.apps.forEach(app => {
+      app.selected = false;
+      app.highlighted = false;
+      app.children.forEach(child => {
+        this.deselectComponent(child)
+      });
     });
-    let element = this.state.root;
-    for (let i = 1; i < path.length; i++) {
+    let element;
+    if(path.length < 2)
+      element = this.state.apps[path[0]];
+    else
+      element = this.state.apps[path[0]].children[0];
+    for (let i = 2; i < path.length; i++) {
       element.toggled = true;
       element = element.children.filter(child => (child.key) === path[i])[0];
     }
@@ -390,6 +390,11 @@ export class ComponentsTree extends Component {
     const width = window.innerWidth || document.body.clientWidth;
     this.state.leftWidth = (this.state.splitPosition/100) * width - 2;
     this.state.rightWidth = (1 - this.state.splitPosition/100) * width;
+  }
+
+  getTreeWrapperWidth(){
+    let treeWrapper = document.getElementById('tree-wrapper');
+    return Math.max(treeWrapper.style.minWidth, this.state.leftWidth);
   }
 
   handleMouseDown = (event) => {

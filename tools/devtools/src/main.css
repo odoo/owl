@@ -33,8 +33,8 @@
   /* width: var(--max-component-width, max-content); */
 }
 
-.tree-wrapper {
-  width: max-content;
+#tree-wrapper {
+  min-width: max-content;
 }
 
 .tree-component:hover {

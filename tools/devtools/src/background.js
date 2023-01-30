@@ -70,7 +70,7 @@ async function checkOwlStatus(tabId) {
           func: () => {
             if (window.__OWL_DEVTOOLS__?.apps !== undefined)
               return 2;
-            if (typeof owl === "object" && owl.hasOwnProperty(App))
+            if (typeof owl === "object" && owl.hasOwnProperty('App'))
               return 1;
             return 0;
           },
@@ -132,6 +132,9 @@ browserInstance.runtime.onMessage.addListener((message, sender, sendResponse) =>
   }
   if(message.type === "Reload"){
     browserInstance.runtime.connect({name: "DevtoolsTreePort"}).postMessage({type: "Reload"});
+  }
+  if(message.type === "RefreshApps"){
+    browserInstance.runtime.connect({name: "DevtoolsTreePort"}).postMessage({type: "RefreshApps"});
   }
 });
 

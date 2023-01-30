@@ -76,6 +76,7 @@ export class ComponentsTree extends Component {
       window.addEventListener("resize", this.computeWindowWidth);
       document.addEventListener('click', this.hideContextMenus, true);
       document.addEventListener('contextmenu', this.hideContextMenus, true);
+      document.addEventListener('keyup', this.handleCommands);
     });
     onWillUnmount(() => {
       window.removeEventListener("resize", this.computeWindowWidth);
@@ -83,6 +84,7 @@ export class ComponentsTree extends Component {
       window.removeEventListener("mouseup", this.handleMouseUp);
       document.removeEventListener('click', this.hideContextMenus);
       document.removeEventListener('contextmenu', this.hideContextMenus);
+      document.removeEventListener('keyup', this.handleCommands);
     });
   }
 
@@ -135,15 +137,7 @@ export class ComponentsTree extends Component {
   }
   // Search the component given its path and expand/fold itself and its children based on toggle 
   toggleComponentAndChildren(path, toggle){
-    let cp = path.slice(2);
-    let component;
-    if(path.length < 2)
-      component = this.state.apps[path[0]]
-    else
-      component = this.state.apps[path[0]].children[0];
-    for (const key of cp) {
-      component = component.children.filter(child => (child.key) === key)[0];
-    }
+    let component = this.getComponentByPath(path);
     toggle ? this.expandComponents(component) : this.foldComponents(component);
   }
 
@@ -171,6 +165,75 @@ export class ComponentsTree extends Component {
     else
       script = '__OWL__DEVTOOLS_GLOBAL_HOOK__.disableHTMLSelector();';
     chrome.devtools.inspectedWindow.eval(script);
+  }
+
+  getComponentByPath(path){
+    let cp = path.slice(2);
+    let component;
+    if(path.length < 2)
+      component = this.state.apps[path[0]]
+    else
+      component = this.state.apps[path[0]].children[0];
+    for (const key of cp) {
+      component = component.children.filter(child => (child.key) === key)[0];
+    }
+    return component;
+  }
+
+  handleCommands = (event) => {
+    switch(event.keyCode) {
+      case 37:
+        this.toggleOrSelectPrevElement(true);
+        break;
+      case 38:
+        this.toggleOrSelectPrevElement(false);
+        event.preventDefault();
+        break;
+      case 39:
+        this.toggleOrSelectNextElement(true);
+        break;
+      case 40:
+        this.toggleOrSelectNextElement(false);
+        event.preventDefault();
+        break;
+    }
+  }
+
+  toggleOrSelectPrevElement(toggle){
+    if(toggle){
+      let component = this.getComponentByPath(this.state.activeComponent.path);
+      if(component.children.length > 0 && component.toggled)
+        component.toggled = false;
+      else{
+        if(this.state.activeComponent.path.length > 1)
+          this.selectComponent(this.state.activeComponent.path.slice(0,-1))
+      }
+      return;
+    }
+    const currentElement = document.getElementById("treeElement/" + this.state.activeComponent.path.join("/"));
+    const prevElement = currentElement.previousElementSibling;
+    if(prevElement){
+      const prevPath = prevElement.id.substring(12).split("/");
+      this.selectComponent(prevPath);
+    }
+  }
+
+  toggleOrSelectNextElement(toggle){
+    if(toggle){
+      let component = this.getComponentByPath(this.state.activeComponent.path);
+      if(component.children.length > 0){
+        if(!component.toggled)
+          component.toggled = true;
+      }
+      else
+        return;
+    }
+    const currentElement = document.getElementById("treeElement/" + this.state.activeComponent.path.join("/"));
+    const nextElement = currentElement.nextElementSibling;
+    if(nextElement){
+      const nextPath = nextElement.id.substring(12).split("/");
+      this.selectComponent(nextPath);
+    }
   }
 
   // Update the search state value with the current search string and trigger the search
@@ -210,15 +273,7 @@ export class ComponentsTree extends Component {
   
   // Toggle expansion of the component tree element given by the path
   toggleComponentTreeElementDisplay(path) {
-    let cp = path.slice(2);
-    let component;
-    if(path.length < 2)
-      component = this.state.apps[path[0]]
-    else
-      component = this.state.apps[path[0]].children[0];
-    for (const key of cp) {
-      component = component.children.filter(child => (child.key) === key)[0];
-    }
+    let component = this.getComponentByPath(path);
     component.toggled = !component.toggled;
   }
 

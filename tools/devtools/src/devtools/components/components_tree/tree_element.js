@@ -19,7 +19,7 @@ export class TreeElement extends Component {
       if(nextProps.selected){
         const treeElement = document.getElementById("treeElement/"+this.props.path.join("/"));
         if(!isElementInCenterViewport(treeElement))
-        treeElement.scrollIntoView({block: "center", behavior: "smooth"});
+          treeElement.scrollIntoView({block: "center", behavior: "smooth"});
       }
       if(nextProps.searchResults.includes(this.props.path))
         this.searched = true;

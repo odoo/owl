@@ -22,12 +22,12 @@
           </t>
         </div>
       </div>
-    </div>
-    <div class="custom-menu hidden" t-attf-id="customMenu/{{pathAsString}}">
-      <ul class="my-1">
-        <li t-on-click="expandAllChildren" class="custom-menu-item">Expand component and its children</li>
-        <li t-on-click="foldAllChildren" class="custom-menu-item">Fold component and its children</li>
-      </ul>
+      <div class="custom-menu hidden" t-attf-id="customMenu/{{pathAsString}}">
+        <ul class="my-1">
+          <li t-on-click="expandAllChildren" class="custom-menu-item">Expand component and its children</li>
+          <li t-on-click="foldAllChildren" class="custom-menu-item">Fold component and its children</li>
+        </ul>
+      </div>
     </div>
     <t t-if="props.toggled">
       <t t-foreach="props.children" t-as="child" t-key="child.key">

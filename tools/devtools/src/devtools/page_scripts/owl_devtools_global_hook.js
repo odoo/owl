@@ -31,22 +31,21 @@ export class OwlDevtoolsGlobalHook {
     const originalFlush = app.scheduler.flush;
     const self = this;
     app.scheduler.flush = function() {
-      let pathArray = [];
       [...this.tasks].map((fiber) => {
         if (fiber.counter === 0 && !self.fibersMap.has(fiber)){
           self.fibersMap.set(fiber, "");
           const path = self.getComponentPath(fiber.node);
-          pathArray.push(path);
+          /*
+           * Add a functionnality to the flush function which sends a message to the window every time it is triggered.                          
+           * This message is intercepted by the content script which informs the background script to ask the devtools app tree to be refreshed. 
+           * This process may be long but is necessary. More information in the docs:                                                            
+           * https://developer.chrome.com/docs/extensions/mv3/devtools/#evaluated-scripts-to-devtools                                            
+           */
+          window.postMessage({type: "owlDevtools__Flush", path: path});
+          window.postMessage({type: "owlDevtools__Event", data: {type: "render", component: fiber.node.name, key: fiber.node.parentKey}});
         }
       });
       originalFlush.call(this, ...arguments);
-      /*
-       * Add a functionnality to the flush function which sends a message to the window every time it is triggered.                          
-       * This message is intercepted by the content script which informs the background script to ask the devtools app tree to be refreshed. 
-       * This process may be long but is necessary. More information in the docs:                                                            
-       * https://developer.chrome.com/docs/extensions/mv3/devtools/#evaluated-scripts-to-devtools                                            
-       */
-      window.postMessage({type: "owlDevtools__Flush", paths: pathArray});
     };
   }
 

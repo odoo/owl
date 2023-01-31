@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { ComponentsTree } from "./components/components_tree/components_tree";
+import { DevtoolsWindow } from "./components/devtools_window";
 const { mount, whenReady } = owl
 
 import "../main.css";
@@ -10,5 +10,5 @@ for(var template in templates) {
     owl.App.registerTemplate(template, templates[template]);
 }
 whenReady();
-mount(ComponentsTree, document.body, {dev: true});
+mount(DevtoolsWindow, document.body, {dev: true});
 

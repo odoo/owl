@@ -34,12 +34,11 @@ export class ComponentsTree extends Component {
     onMounted(async () => {
       // Connect to the port to communicate to the background script
       chrome.runtime.onConnect.addListener((port) => {
-        console.assert(port.name === "DevtoolsTreePort");
         port.onMessage.addListener((msg) => {
           // When message of type Flush is received, overwrite the component tree with the new one from page
           // A flush message is sent everytime a component is rendered on the page
           if (msg.type === "Flush"){
-            this.state.renderPaths =  this.state.renderPaths.concat(msg.paths);
+            this.state.renderPaths = [...this.state.renderPaths, msg.path];
             clearTimeout(this.flushRendersTimeout);
             this.flushRendersTimeout = setTimeout(() => {this.state.renderPaths = []},200);
             this.loadComponentsTree(true);
@@ -76,7 +75,7 @@ export class ComponentsTree extends Component {
       window.addEventListener("resize", this.computeWindowWidth);
       document.addEventListener('click', this.hideContextMenus, true);
       document.addEventListener('contextmenu', this.hideContextMenus, true);
-      document.addEventListener('keyup', this.handleCommands);
+      document.addEventListener('keydown', this.handleCommands);
     });
     onWillUnmount(() => {
       window.removeEventListener("resize", this.computeWindowWidth);
@@ -84,7 +83,7 @@ export class ComponentsTree extends Component {
       window.removeEventListener("mouseup", this.handleMouseUp);
       document.removeEventListener('click', this.hideContextMenus);
       document.removeEventListener('contextmenu', this.hideContextMenus);
-      document.removeEventListener('keyup', this.handleCommands);
+      document.removeEventListener('keydown', this.handleCommands);
     });
   }
 
@@ -275,6 +274,7 @@ export class ComponentsTree extends Component {
   
   // Toggle expansion of the component tree element given by the path
   toggleComponentTreeElementDisplay(path) {
+    console.log("called");
     let component = this.getComponentByPath(path);
     component.toggled = !component.toggled;
   }
@@ -385,12 +385,6 @@ export class ComponentsTree extends Component {
   // Toggle opening or closing the subscription keys at provided index
   expandSubscriptionsKeys(index){
     this.state.activeComponent.subscriptions[index].keysExpanded = !this.state.activeComponent.subscriptions[index].keysExpanded;
-  }
-
-  // Remove the highlight on the DOM element correponding to the component
-  removeHighlight(ev){
-    const script = "__OWL__DEVTOOLS_GLOBAL_HOOK__.removeHighlights()"
-    chrome.devtools.inspectedWindow.eval(script);
   }
 
   // Select a component by retrieving its details from the page based on its path

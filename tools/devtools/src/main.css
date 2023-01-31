@@ -12,16 +12,10 @@
 
 #container {
   display: flex;
-  flex: 1;
-  flex-grow: 1;
-  flex-shrink: 1;
-  flex-basis: 0%;
   width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  flex-direction: column;
+  font-family: 'Fira Mono', monospace;
+  font-size: 0.75em;
 }
 
 .tree-component {
@@ -124,8 +118,6 @@
   width: 100%;
   height: 100%;
   box-sizing: border-box;
-  font-family: 'Fira Mono', monospace;
-  font-size: 0.75em;
 }
 
 .split-screen-border {
@@ -227,8 +219,8 @@
   white-space: nowrap;
 }
 
-.search-border {
-  width: 2px;
+.icons-separator {
+  width: 1px;
   height: 17px;
   background-color: lightgray;
   user-select: none;

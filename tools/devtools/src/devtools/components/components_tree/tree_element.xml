@@ -24,8 +24,8 @@
       </div>
       <div class="custom-menu hidden" t-attf-id="customMenu/{{pathAsString}}">
         <ul class="my-1">
-          <li t-on-click="expandAllChildren" class="custom-menu-item">Expand component and its children</li>
-          <li t-on-click="foldAllChildren" class="custom-menu-item">Fold component and its children</li>
+          <li t-on-click.stop="expandAllChildren" class="custom-menu-item">Expand component and its children</li>
+          <li t-on-click.stop="foldAllChildren" class="custom-menu-item">Fold component and its children</li>
         </ul>
       </div>
     </div>

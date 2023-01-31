@@ -82,10 +82,10 @@ export default [
         ],
     },
     {
-        input: "src/devtools/components_panel.js",
+        input: "src/devtools/devtools_panel.js",
         output: [
             {
-                file: "build/devtools/components_panel.js",
+                file: "build/devtools/devtools_panel.js",
                 format: "esm",
             },
         ],
@@ -102,7 +102,7 @@ export default [
             isProduction && terser.terser(),
             copy({
                 targets: [
-                    { src: "src/devtools/components_panel.html", dest: "build/devtools" },
+                    { src: "src/devtools/devtools_panel.html", dest: "build/devtools" },
                     { src: "src/fonts/*", dest: "build/fonts/" }, 
                 ],
             }),

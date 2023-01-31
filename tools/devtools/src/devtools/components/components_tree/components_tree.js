@@ -222,8 +222,10 @@ export class ComponentsTree extends Component {
     if(toggle){
       let component = this.getComponentByPath(this.state.activeComponent.path);
       if(component.children.length > 0){
-        if(!component.toggled)
+        if(!component.toggled){
           component.toggled = true;
+          return;
+        }
       }
       else
         return;

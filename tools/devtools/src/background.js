@@ -105,10 +105,6 @@ async function checkOwlStatus(tabId) {
   });
 }
 
-browserInstance.runtime.onConnect.addListener(function(port) {
-  console.assert(port.name == "DevtoolsTreePort");
-});
-
 browserInstance.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if(message.type === "getOwlStatus"){
     getActiveTabURL(isFirefox).then((tab) => {
@@ -122,7 +118,7 @@ browserInstance.runtime.onMessage.addListener((message, sender, sendResponse) =>
     return true;
   }
   if(message.type === "Flush"){
-    browserInstance.runtime.connect({name: "DevtoolsTreePort"}).postMessage({type: "Flush", paths: message.paths});
+    browserInstance.runtime.connect({name: "DevtoolsTreePort"}).postMessage({type: "Flush", path: message.path});
   }
   if(message.type === "SelectElement"){
     browserInstance.runtime.connect({name: "DevtoolsTreePort"}).postMessage({type: "SelectElement", path: message.path});
@@ -135,6 +131,9 @@ browserInstance.runtime.onMessage.addListener((message, sender, sendResponse) =>
   }
   if(message.type === "RefreshApps"){
     browserInstance.runtime.connect({name: "DevtoolsTreePort"}).postMessage({type: "RefreshApps"});
+  }
+  if(message.type === "Event"){
+    browserInstance.runtime.connect({name: "DevtoolsEventsPort"}).postMessage({type: "Event", data: message.data});
   }
 });
 

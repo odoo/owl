@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+  <t t-name="devtools.DevtoolsWindow" owl="1">
+    <div id="container" t-on-mouseover.stop="removeHighlight" t-on-mouseout.stop="removeHighlight">
+      <!-- <div class="custom-navbar">
+        Navbar
+      </div>
+      <div class="horizontal-border"/> -->
+      <ComponentsTree/>
+    </div>
+  </t>
+</templates>

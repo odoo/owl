@@ -9,7 +9,7 @@ browserInstance.devtools.network.onNavigated.addListener(createPanelsIfOwl);
 if(!isFirefox()){
   chrome.tabs.onUpdated.addListener((tab) => {
     chrome.tabs.get(tab, (tabData) => {
-      if (tabData.status === "complete"){
+      if (tabData?.status === "complete"){
         scriptsLoaded = false;
         setTimeout(() => {
           chrome.devtools.inspectedWindow.eval(
@@ -53,8 +53,8 @@ function createPanelsIfOwl() {
       clearInterval(checkInterval);
       created = true;
       loadScripts();
-      browserInstance.devtools.panels.create("Owl", "../../assets/icon128.png", isFirefox() ? "components_panel.html" : "devtools/components_panel.html", function (panel) {});
-      // chrome.devtools.panels.create("Owl Events", "../../assets/icon128.png", isFirefox() ? "events_panel.html" : "devtools/events_panel.html", function (panel) {});
+      browserInstance.devtools.panels.create("Owl", "../../assets/icon128.png", isFirefox() ? "devtools_panel.html" : "devtools/devtools_panel.html", function (panel) {});
+      browserInstance.devtools.panels.create("Owl Events", "../../assets/icon128.png", isFirefox() ? "events_panel.html" : "devtools/events_panel.html", function (panel) {});
     }
   )
 }

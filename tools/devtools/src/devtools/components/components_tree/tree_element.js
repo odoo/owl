@@ -28,6 +28,7 @@ export class TreeElement extends Component {
     });
     useEffect(
       (renderPaths) => {
+        console.log(renderPaths);
         let pathsAsStrings = renderPaths.map(p => p.join("/"));
         if (pathsAsStrings.includes(this.props.path.join("/"))){
           clearTimeout(this.highlightTimeout);

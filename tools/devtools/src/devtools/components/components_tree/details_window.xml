@@ -15,7 +15,7 @@
       </div>
       <div class="details-container">
         <div id="props" style="border: none;" class="details-panel py-1">
-          <div class="details-panel-head">
+          <div class="details-panel-head mb-2">
             <b>props</b>
             <i title="Store props as global variable in the console" class="fa fa-bug utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("props")'></i>
           </div>
@@ -42,7 +42,7 @@
             editObjectTreeElement="props.editObjectTreeElement"/>
         </div>
         <div id="env" class="details-panel py-1">
-          <div class="details-panel-head">
+          <div class="details-panel-head mb-2">
             <b>env</b>
             <i title="Store env as global variable in the console" class="fa fa-bug utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("env")'></i>
           </div>
@@ -56,9 +56,11 @@
           </t>
         </div>
         <div id="instance" class="details-panel py-1">
-          <div class="details-panel-head">
+          <div class="details-panel-head mb-2">
             <b>instance</b>
             <i title="Store instance as global variable in the console" class="fa fa-bug utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("instance")'></i>
+            <i title="Inspect compiled template" class="fa fa-hashtag utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='inspectCompiledTemplate'></i>
+            <i title="Send raw template to console" class="fa fa-file-word-o utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='inspectRAwTemplate'></i>
           </div>
           <t t-foreach="props.activeComponent.instance" t-as="key" t-key="key">
             <ObjectTreeElement 

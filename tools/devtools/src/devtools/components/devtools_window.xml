@@ -2,11 +2,12 @@
 <templates xml:space="preserve">
   <t t-name="devtools.DevtoolsWindow" owl="1">
     <div id="container" t-on-mouseover.stop="removeHighlight" t-on-mouseout.stop="removeHighlight">
-      <!-- <div class="custom-navbar">
-        Navbar
+      <div class="custom-navbar panel-top">
+        <Tab componentName="'ComponentsTree'" active="state.page === 'ComponentsTree'" name="'Components Tree'" switchTab.bind="switchTab"/>
+        <Tab componentName="'Events'" active="state.page === 'Events'" name="'Events'" switchTab.bind="switchTab"/>
       </div>
-      <div class="horizontal-border"/> -->
-      <ComponentsTree/>
+      <div class="horizontal-border"/>
+      <t t-component="selectPage"/>
     </div>
   </t>
 </templates>

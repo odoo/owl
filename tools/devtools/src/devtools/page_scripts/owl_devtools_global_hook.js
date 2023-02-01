@@ -895,7 +895,7 @@ export class OwlDevtoolsGlobalHook {
       if(objectType === 'props' || objectType === 'instance')
         componentNode.render(true);
       else if (objectType === 'env')
-        Array.from(this.apps)[componentPath[0]].render(true);
+        Array.from(this.apps)[componentPath[0]].root.render(true);
     }
 
   };
@@ -1062,6 +1062,19 @@ export class OwlDevtoolsGlobalHook {
   inspectComponentSource(componentPath){
     const componentNode = this.getComponentNode(componentPath);
     inspect(componentNode.component.constructor);
+  }
+  // Inspect the DOM of the component in the elements tab of the devtools
+  inspectComponentCompiledTemplate(componentPath){
+    const componentNode = this.getComponentNode(componentPath);
+    const template = componentNode.component.constructor.template;
+    inspect(componentNode.app.templates[template]);
+  }
+  // Inspect source code of the component (corresponds to inspecting its constructor)
+  inspectComponentRawTemplate(componentPath){
+    const componentNode = this.getComponentNode(componentPath);
+    const template = componentNode.component.constructor.template;
+    const templateNode = componentNode.app.rawTemplates[template];
+    console.log(templateNode);
   }
   // Inspect source code of the function given by its path and the component path
   inspectFunctionSource(componentPath, objectPath){

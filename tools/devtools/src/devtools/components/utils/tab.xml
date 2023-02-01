@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+  <t t-name="devtools.Tab" owl="1">
+    <a t-on-click="selectTab" class="btn btn-sm btn-outline-primary mx-auto no-border" t-att-class="props.active 
+                ? 'text-white bg-primary'
+                : 'text-dark'">
+      <b><t t-esc="props.name" /></b>
+    </a>
+  </t>
+</templates>

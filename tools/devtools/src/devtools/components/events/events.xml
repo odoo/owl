@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.Events" owl="1">
-    <div id="container">
-      <div class="panel-top">
-        <i title="Start/Stop Recording" class="fa fa-circle" t-attf-style="color: {{state.activeRecorder ? 'rgb(255, 31, 31)' : 'rgb(0, 0, 0)'}};" t-on-click.stop="toggleRecording" aria-hidden="true"></i>
-        <div class="icons-separator mx-2"/>
-        <i title="Clear events" class="fa fa-ban lg-icon" t-on-click.stop="clearConsole" aria-hidden="true"></i>
-        <div class="icons-separator mx-2"/>
-      </div>
-      <div class="horizontal-border mb-2"/>
-      <ul>
-        <t t-foreach="state.events" t-as="event" t-key="event_index">
-          <li class="event-display">
-            <t t-out="event.type"/> event on <t t-out="event.component"/>
-          </li>
-        </t>
-      </ul>
+    <div class="panel-top">
+      <i title="Start/Stop Recording" class="fa fa-circle" t-attf-style="color: {{state.activeRecorder ? 'rgb(255, 31, 31)' : 'rgb(0, 0, 0)'}};" t-on-click.stop="toggleRecording" aria-hidden="true"></i>
+      <div class="icons-separator mx-2"/>
+      <i title="Clear events" class="fa fa-ban lg-icon" t-on-click.stop="clearConsole" aria-hidden="true"></i>
+      <div class="icons-separator mx-2"/>
     </div>
+    <div class="horizontal-border mb-2"/>
+    <ul>
+      <t t-foreach="state.events" t-as="event" t-key="event_index">
+        <li class="event-display">
+          <t t-out="event.type"/> event on <t t-out="event.component"/>
+        </li>
+      </t>
+    </ul>
   </t>
 </templates>

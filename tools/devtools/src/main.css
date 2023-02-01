@@ -16,6 +16,21 @@
   flex-direction: column;
   font-family: 'Fira Mono', monospace;
   font-size: 0.75em;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.custom-navbar{
+  justify-content: center;
+  font-size: 0.6em;
+}
+
+.no-border{
+  border: none;
 }
 
 .tree-component {
@@ -158,20 +173,18 @@
 }
 
 #tree-container {
-  height: calc(100vh - (27px + 0.5rem));
+  height: calc(100vh - (48px + 1rem));
   overflow: auto;
 }
 
-.split-screen-right {
-  margin: 0;
+.details-container{
+  height: calc(100vh - (48px + 1rem));
   overflow-y: auto;
   overflow-x: hidden;
 }
 
-.details-container {
-  height: calc(100% - 32px);
-  display: flex;
-  flex-direction: column;
+.split-screen-right {
+  margin: 0;
 }
 
 .search-input{

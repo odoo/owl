@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
-  <t t-name="popup.popup_app">
+  <t t-name="popup.PopUpApp">
     <div class="container m-0 p-4 text-white bg-dark" style="width: 370px">
       <p t-if="state.status == 0">
         Owl is not detected on this page.

@@ -6,6 +6,12 @@ import { HighlightText } from "../utils/highlight_text";
 const { Component, onWillRender, useEffect, onMounted, onWillUpdateProps} = owl
 
 export class TreeElement extends Component {
+  static template = "devtools.TreeElement";
+  
+  static props = ['name', 'children', 'path', 'key', 'display', 'toggled', 'depth', 'selected', 'highlighted', 'search', 'searchResults', 'toggleComponentAndChildren'];
+  
+  static components = { TreeElement, HighlightText };
+
   setup(){
     this.searched = false;
     this.highlightTimeout = false;
@@ -73,7 +79,8 @@ export class TreeElement extends Component {
   }
 
   toggleComponent(ev){
-    this.toggleDisplay();
+    // Todo: should be in toggle on select settings
+    // this.toggleDisplay();
     if(!this.props.selected){
       this.props.selectComponent(this.props.path);
     }
@@ -103,12 +110,6 @@ export class TreeElement extends Component {
   foldAllChildren(ev){
     this.props.toggleComponentAndChildren(this.props.path, false);
   }
-
-  static template = "devtools.TreeElement";
-  
-  static props = ['name', 'children', 'path', 'key', 'display', 'toggled', 'depth', 'selected', 'highlighted', 'search', 'searchResults', 'toggleComponentAndChildren'];
-  
-  static components = { TreeElement, HighlightText };
 }
 
 String.prototype.replaceAt = function(index, replacement) {

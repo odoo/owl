@@ -2,6 +2,12 @@
 const { Component, useState, onWillUpdateProps, useEffect } = owl;
 
 export class ObjectTreeElement extends Component {
+  static props = ['name', 'content', 'children', 'display', 'toggled', 'depth', 'contentType', 'hasChildren', 'objectType', 'editReactiveState', 'updateBag', 'componentPath', 'loadGetterContent'];
+  
+  static template = "devtools.ObjectTreeElement";
+  
+  static components = { ObjectTreeElement };
+
   setup(){
     this.state = useState({
       editMode: false
@@ -42,8 +48,6 @@ export class ObjectTreeElement extends Component {
     }
   }
 
-  underlineIfGetter
-
   loadGetterContent(ev){
     this.props.loadGetterContent(this.props);
   }
@@ -78,12 +82,6 @@ export class ObjectTreeElement extends Component {
     const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.storeObjectAsGlobal(${JSON.stringify(this.props.componentPath)}, ${JSON.stringify(this.props.path)});`;
     chrome.devtools.inspectedWindow.eval(script);
   }
-
-  static props = ['name', 'content', 'children', 'display', 'toggled', 'depth', 'contentType', 'hasChildren', 'objectType', 'editReactiveState', 'updateBag', 'componentPath', 'loadGetterContent'];
-
-  static template = "devtools.ObjectTreeElement";
-
-  static components = { ObjectTreeElement };
 }
 
 

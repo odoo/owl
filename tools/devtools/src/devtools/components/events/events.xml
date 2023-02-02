@@ -2,20 +2,28 @@
 <templates xml:space="preserve">
   <t t-name="devtools.Events" owl="1">
     <div class="panel-top">
-      <i title="Start/Stop Recording" class="fa fa-circle" t-attf-style="color: {{props.activeRecorder ? 'rgb(255, 31, 31)' : 'rgb(0, 0, 0)'}};" t-on-click.stop="toggleRecording" aria-hidden="true"></i>
+      <i title="Start/Stop Recording" class="fa fa-circle pointer-icon pe-2" t-attf-style="color: {{props.activeRecorder ? 'rgb(255, 31, 31)' : 'rgb(0, 0, 0)'}};" t-on-click.stop="toggleRecording" aria-hidden="true"></i>
+      <div class="icons-separator"/>
+      <i title="Clear events" class="fa fa-ban lg-icon pointer-icon px-2" t-on-click.stop="clearConsole" aria-hidden="true"></i>
+      <div class="icons-separator"/>
+      <!-- <i title="Blacklist all seen components' events" class="fa fa-eye-slash lg-icon pointer-icon" t-on-click.stop="blacklistAll" aria-hidden="true"></i>
       <div class="icons-separator mx-2"/>
-      <i title="Clear events" class="fa fa-ban lg-icon" t-on-click.stop="clearConsole" aria-hidden="true"></i>
-      <div class="icons-separator mx-2"/>
+      <i title="Remove all components from events blacklist" class="fa fa-eye lg-icon pointer-icon" t-on-click.stop="clearBlacklist" aria-hidden="true"></i>
+      <div class="icons-separator mx-2"/> -->
     </div>
     <div class="horizontal-border"/>
     <div class="events-container">
       <ul>
         <t t-foreach="props.events" t-as="event" t-key="event_index">
-          <Event 
-            t-props="event"
-            switchTab="props.switchTab"
-            selectComponent="props.selectComponent"
-          />
+          <t t-if="notInBlacklist(event.path)">
+            <Event 
+              t-props="event"
+              bus="props.bus"
+              switchTab="props.switchTab"
+              selectComponent="props.selectComponent"
+              addToBlacklist="props.addToBlacklist"
+            />
+          </t>
         </t>
       </ul>
     </div>

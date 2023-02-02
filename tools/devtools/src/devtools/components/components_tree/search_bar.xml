@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.SearchBar" owl="1">
-    <div class="search-selector">
-      <i title="Toggle component HTML selector" class="fa fa-mouse-pointer" t-attf-style="color: {{props.activeSelector ? 'rgb(41, 134, 255)' : 'rgb(0, 0, 0)'}};" t-on-click.stop="toggleSelector" aria-hidden="true"></i>
+    <div class="pointer-icon pe-2" t-on-click.stop="toggleSelector">
+      <i title="Toggle component HTML selector" class="fa fa-mouse-pointer" t-attf-style="color: {{props.activeSelector ? 'rgb(41, 134, 255)' : 'rgb(0, 0, 0)'}};" aria-hidden="true"></i>
     </div>
-    <div class="icons-separator mx-2"/>
+    <div class="icons-separator me-2"/>
     <div class="search-bar-wrapper">
       <i class="fa fa-search search-icon" aria-hidden="true"></i>
       <input type="text" class="search-input" placeholder="Search" t-on-keyup.stop="updateSearch" t-on-keydown="fastNextSearch" t-att-value="props.search"/>

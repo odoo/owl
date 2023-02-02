@@ -108,35 +108,6 @@ export default [
             }),
         ],
     },
-
-    {
-        input: "src/devtools/events_panel.js",
-        output: [
-            {
-                file: "build/devtools/events_panel.js",
-                format: "esm",
-            },
-        ],
-        plugins: [
-            nodeResolve(),
-            postcss({
-                config: {
-                    path: "./postcss.config.js",
-                },
-                extensions: [".css"],
-                extract: true,
-                minimize: isProduction,
-            }),
-            isProduction && terser.terser(),
-            copy({
-                targets: [
-                    { src: "src/devtools/events_panel.html", dest: "build/devtools" },
-                    { src: "src/fonts/*", dest: "build/fonts/" }, 
-                ],
-            }),
-        ],
-    },
-
     {
         input: "src/popup/main.js",
         output: [

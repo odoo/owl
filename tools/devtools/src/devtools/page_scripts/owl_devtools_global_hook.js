@@ -34,6 +34,7 @@ export class OwlDevtoolsGlobalHook {
       [...this.tasks].map((fiber) => {
         if (fiber.counter === 0 && !self.fibersMap.has(fiber)){
           self.fibersMap.set(fiber, "");
+          console.log(fiber.node);
           const path = self.getComponentPath(fiber.node);
           /*
            * Add a functionnality to the flush function which sends a message to the window every time it is triggered.                          
@@ -42,28 +43,35 @@ export class OwlDevtoolsGlobalHook {
            * https://developer.chrome.com/docs/extensions/mv3/devtools/#evaluated-scripts-to-devtools                                            
            */
           window.postMessage({type: "owlDevtools__Flush", path: path});
-          window.postMessage({type: "owlDevtools__Event", data: {type: "render", component: fiber.node.name, key: fiber.node.parentKey, path: path}});
         }
       });
       originalFlush.call(this, ...arguments);
     };
-    const originalDestroy = app.root.constructor.prototype._destroy;
-    app.root.constructor.prototype._destroy = function() {
-      const path = self.getComponentPath(this);
-      window.postMessage({type: "owlDevtools__Event", data: {type: "destroy", component: this.name, key: this.parentKey, path: path}});
-      originalDestroy.call(this, ...arguments);
-    }
-    const originalInitiate = app.root.constructor.prototype.initiateRender;
-    app.root.constructor.prototype.initiateRender = function() {
-      const path = self.getComponentPath(this);
-      window.postMessage({type: "owlDevtools__Event", data: {type: "initiate render", component: this.name, key: this.parentKey, path: path}});
-      originalInitiate.call(this, ...arguments);
-    }
-    const originalUpdate = app.root.constructor.prototype.updateAndRender;
-    app.root.constructor.prototype.updateAndRender = function() {
-      const path = self.getComponentPath(this);
-      window.postMessage({type: "owlDevtools__Event", data: {type: "update and render", component: this.name, key: this.parentKey, path: path}});
-      originalUpdate.call(this, ...arguments);
+    if(app.root){
+      const originalDestroy = app.root.constructor.prototype._destroy;
+      app.root.constructor.prototype._destroy = function() {
+        const path = self.getComponentPath(this);
+        window.postMessage({type: "owlDevtools__Event", data: {type: "destroy", component: this.name, key: this.parentKey, path: path}});
+        originalDestroy.call(this, ...arguments);
+      }
+      const originalRender = app.root.constructor.prototype.render;
+      app.root.constructor.prototype.render = function() {
+        const path = self.getComponentPath(this);
+        window.postMessage({type: "owlDevtools__Event", data: {type: "render", component: this.name, key: this.parentKey, path: path}});
+        originalRender.call(this, ...arguments);
+      }
+      const originalInitiate = app.root.constructor.prototype.initiateRender;
+      app.root.constructor.prototype.initiateRender = function() {
+        const path = self.getComponentPath(this);
+        window.postMessage({type: "owlDevtools__Event", data: {type: "initiate render", component: this.name, key: this.parentKey, path: path}});
+        originalInitiate.call(this, ...arguments);
+      }
+      const originalUpdate = app.root.constructor.prototype.updateAndRender;
+      app.root.constructor.prototype.updateAndRender = function() {
+        const path = self.getComponentPath(this);
+        window.postMessage({type: "owlDevtools__Event", data: {type: "update and render", component: this.name, key: this.parentKey, path: path}});
+        originalUpdate.call(this, ...arguments);
+      }
     }
   }
 
@@ -994,33 +1002,36 @@ export class OwlDevtoolsGlobalHook {
         toggled: false,
         selected: false,
         highlighted: false,
+        children: []
       };
-      const appRoot = {
-        name: app.root.component.constructor.name,
-        path: [index.toString(), "root"],
-        key: "",
-        depth: 1,
-        toggled: false,
-        selected: false,
-        highlighted: false,
-      };
-      if(oldTree){
-        if(oldTree.toggled)
-          root.toggled = true;
-        oldTree = oldTree.children[0];
+      if(app.root){
+        const appRoot = {
+          name: app.root.component.constructor.name,
+          path: [index.toString(), "root"],
+          key: "",
+          depth: 1,
+          toggled: false,
+          selected: false,
+          highlighted: false,
+        };
+        if(oldTree){
+          if(oldTree.toggled)
+            root.toggled = true;
+          oldTree = oldTree.children[0];
+        }
+        if(oldTree && oldTree.toggled)
+          appRoot.toggled = true;
+        // If no path is provided, it defaults to the target of the inspect element action
+        if(!inspectedPath){
+          inspectedPath = this.getElementPath($0);
+        }
+        if(inspectedPath.join("/") === index.toString())
+          root.selected = true;
+        else if(inspectedPath.join("/") === index.toString() + "/root")
+          appRoot.selected = true;
+        appRoot.children = this.fillTree(app.root, appRoot, inspectedPath.join("/"), oldTree);
+        root.children = [appRoot];
       }
-      if(oldTree && oldTree.toggled)
-        appRoot.toggled = true;
-      // If no path is provided, it defaults to the target of the inspect element action
-      if(!inspectedPath){
-        inspectedPath = this.getElementPath($0);
-      }
-      if(inspectedPath.join("/") === index.toString())
-        root.selected = true;
-      else if(inspectedPath.join("/") === index.toString() + "/root")
-        appRoot.selected = true;
-      appRoot.children = this.fillTree(app.root, appRoot, inspectedPath.join("/"), oldTree);
-      root.children = [appRoot];
       trees.push(root);
     });
     return trees;
@@ -1039,7 +1050,7 @@ export class OwlDevtoolsGlobalHook {
     const appsArray = Array.from(this.apps);
     let index = 0;
     for(; index < appsArray.length; index++) {
-      if(appsArray[index].Root.name === componentNode.app.Root.name)
+      if(appsArray[index]?.Root?.name === componentNode.app.Root.name)
         break;
     }
     path.unshift(index.toString());

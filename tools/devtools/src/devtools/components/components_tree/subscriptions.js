@@ -4,6 +4,12 @@ import { ObjectTreeElement } from './object_tree_element'
 
 
 export class Subscriptions extends Component {
+  static props = ['subscriptions', 'toggleObjectTreeElementsDisplay', 'expandSubscriptionsKeys', 'editObjectTreeElement', 'loadGetterContent'];
+  
+  static template = "devtools.Subscriptions";
+  
+  static components = { ObjectTreeElement };
+  
   setup(){
 
   }
@@ -24,12 +30,6 @@ export class Subscriptions extends Component {
   expandKeys(event, index){
     this.props.expandSubscriptionsKeys(index);
   }
-
-  static props = ['subscriptions', 'toggleObjectTreeElementsDisplay', 'expandSubscriptionsKeys', 'editObjectTreeElement', 'loadGetterContent'];
-
-  static template = "devtools.Subscriptions";
-
-  static components = { ObjectTreeElement };
 }
 
 

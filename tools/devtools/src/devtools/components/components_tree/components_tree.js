@@ -12,7 +12,6 @@ export class ComponentsTree extends Component {
       splitPosition: 60,
       leftWidth: 0,
       rightWidth: 0,
-      hasOwl: true,
       apps: [],
       activeComponent:{
         path: ["0", "root"],
@@ -60,7 +59,7 @@ export class ComponentsTree extends Component {
             chrome.devtools.inspectedWindow.eval(
               'window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined',
               (result) => {
-                this.state.hasOwl = result;
+                this.props.updateOwlStatus(result);
                 if (result){
                   this.loadComponentsTree(false);
                 }
@@ -77,6 +76,13 @@ export class ComponentsTree extends Component {
       document.addEventListener('contextmenu', this.hideContextMenus, true);
       document.addEventListener('keydown', this.handleCommands);
     });
+    useEffect(
+      (selectedPath) => {
+        if(selectedPath.length > 0)
+          this.selectComponent(selectedPath);
+      },
+      () => [this.props.selectedPath]
+    );
     onWillUnmount(() => {
       window.removeEventListener("resize", this.computeWindowWidth);
       window.removeEventListener("mousemove", this.handleMouseMove);

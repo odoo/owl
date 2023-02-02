@@ -7,6 +7,11 @@ import { SearchBar } from './search_bar';
 import { fuzzySearch } from '../../../utils';
 
 export class ComponentsTree extends Component {
+
+  static template = "devtools.ComponentsTree";
+  
+  static components = { TreeElement, DetailsWindow, SearchBar };
+
   setup(){
     this.state = useState({
       splitPosition: 60,
@@ -14,7 +19,7 @@ export class ComponentsTree extends Component {
       rightWidth: 0,
       apps: [],
       activeComponent:{
-        path: ["0", "root"],
+        path: ["0"],
         name: "App",
         subscriptions: [],
         props: {},
@@ -32,6 +37,7 @@ export class ComponentsTree extends Component {
     this.flushRendersTimeout = false;
     onMounted(async () => {
       // Connect to the port to communicate to the background script
+      // TODO: Care to remove
       chrome.runtime.onConnect.addListener((port) => {
         port.onMessage.addListener((msg) => {
           // When message of type Flush is received, overwrite the component tree with the new one from page
@@ -71,11 +77,14 @@ export class ComponentsTree extends Component {
       // On mount, retreive the component tree from the page and the details of the inspected component
       this.loadComponentsTree(false);
       this.computeWindowWidth();
+      //use useExternalListener into setup
       window.addEventListener("resize", this.computeWindowWidth);
       document.addEventListener('click', this.hideContextMenus, true);
       document.addEventListener('contextmenu', this.hideContextMenus, true);
       document.addEventListener('keydown', this.handleCommands);
     });
+
+    // onwillupdateProps
     useEffect(
       (selectedPath) => {
         if(selectedPath.length > 0)
@@ -125,6 +134,22 @@ export class ComponentsTree extends Component {
         }
       }
     );
+  }
+  blacklistAll = (event) => {
+    if(event){
+      this.props.addToBlacklist(event.path.join("/"));
+      this.state.apps.forEach(app => this.blacklistRecursive(app.children[0], event.component))
+    }
+    else
+      this.state.apps.forEach(app => this.blacklistRecursive(app.children[0]))
+  }
+  blacklistRecursive(component, name){
+    if (!name || component.name === name){
+      this.props.addToBlacklist(component.path.join("/"));
+    }
+    component.children.forEach(child => {
+      this.blacklistRecursive(child, name)
+    });
   }
   // Expand the component given in entry and all of its children
   expandComponents(component) {
@@ -343,6 +368,7 @@ export class ComponentsTree extends Component {
     let obj = this.findObjectInTree(inputObj);
     const getter = JSON.stringify(obj);
     const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.loadGetterContent(${JSON.stringify(this.state.activeComponent.path)}, ${getter});`;
+    //const result = await evalInWindow("loadGetterContent", [JSON.stringify(this.state.activeComponent.path), getter]); 
     chrome.devtools.inspectedWindow.eval(
       script,
       (result, isException) => {
@@ -410,7 +436,9 @@ export class ComponentsTree extends Component {
       element = this.state.apps[path[0]].children[0];
     for (let i = 2; i < path.length; i++) {
       element.toggled = true;
-      element = element.children.filter(child => (child.key) === path[i])[0];
+      let result = element.children.filter(child => (child.key) === path[i])[0];
+      if(result)
+        element = result;
     }
     element.selected = true;
     this.highlightChildren(element);
@@ -471,10 +499,6 @@ export class ComponentsTree extends Component {
     window.removeEventListener("mousemove", this.handleMouseMove);
     window.removeEventListener("mouseup", this.handleMouseUp);
   }
-
-  static template = "devtools.ComponentsTree";
-  
-  static components = { TreeElement, DetailsWindow, SearchBar };
 }
 
 

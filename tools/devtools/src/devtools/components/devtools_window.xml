@@ -11,17 +11,22 @@
         <div class="tab-container" t-attf-style="flex-direction: row;{{state.page === 'ComponentsTree' ? 'display: flex;' : 'display: none;'}}">
           <ComponentsTree 
             selectedPath="state.selectedPath" 
+            bus="bus"
             updateOwlStatus.bind="updateOwlStatus"
+            addToBlacklist.bind="addToBlacklist"
           />
         </div>
         <div class="tab-container" t-attf-style="flex-direction: column;{{state.page === 'Events' ? 'display: flex;' : 'display: none;'}}">
           <Events 
             activeRecorder="state.activeRecorder" 
+            bus="bus"
             events="state.events" 
+            blacklist="state.componentsBlackList"
             clearEvents.bind="clearEvents"
             toggleRecorder.bind="toggleRecorder"
             selectComponent.bind="selectComponent" 
             switchTab.bind="switchTab"
+            addToBlacklist.bind="addToBlacklist"
           />
         </div>
       </t>

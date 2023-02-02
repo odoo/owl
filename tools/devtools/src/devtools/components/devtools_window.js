@@ -1,9 +1,15 @@
-const { Component, markup, useState, onMounted, onWillUpdateProps } = owl
+const { Component, EventBus, useState, onMounted, onWillUpdateProps } = owl
 import { ComponentsTree } from './components_tree/components_tree';
 import { Tab } from "./utils/tab";
 import { Events } from './events/events';
 
 export class DevtoolsWindow extends Component {
+  static props = [];
+  
+  static template = "devtools.DevtoolsWindow";
+  
+  static components = { ComponentsTree, Tab, Events };
+
   setup(){
     this.state = useState({
       page: "ComponentsTree",
@@ -11,7 +17,9 @@ export class DevtoolsWindow extends Component {
       activeRecorder: false,
       events: [],
       owlStatus: true,
+      componentsBlackList: new Set(),
     })
+    this.bus = new EventBus();
     onMounted(() => {
       // Connect to the port to communicate to the background script
       chrome.runtime.onConnect.addListener((port) => {
@@ -24,6 +32,17 @@ export class DevtoolsWindow extends Component {
         });
       });
     });
+  }
+
+  addToBlacklist(item){
+    this.state.componentsBlackList.add(item);
+  }
+
+  clearBlacklist(item){
+    if(item)
+      this.state.componentsBlackList.delete(item);
+    else
+      this.state.componentsBlackList.clear();
   }
 
   updateOwlStatus(status){
@@ -52,11 +71,6 @@ export class DevtoolsWindow extends Component {
     this.state.selectedPath = path;
   }
   
-  static props = [];
-
-  static template = "devtools.DevtoolsWindow";
-
-  static components = { ComponentsTree, Tab, Events };
 }
 
 

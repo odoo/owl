@@ -2,6 +2,8 @@
 const { Component, useState, onMounted } = owl
 
 export class Event extends Component { 
+  static template = "devtools.Event";
+
   setup() {
   }
 
@@ -10,5 +12,11 @@ export class Event extends Component {
     this.props.switchTab("ComponentsTree");
   }
 
-  static template = "devtools.Event";
+  addInstanceToBlacklist(){
+    // this.props.addToBlacklist(this.props.component);
+  }
+
+  addComponentToBlacklist(){
+    // this.props.bus.trigger("blacklistComponent", this.props.component)
+  }
 }

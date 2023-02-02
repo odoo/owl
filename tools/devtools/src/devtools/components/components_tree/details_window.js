@@ -4,6 +4,13 @@ import { ObjectTreeElement } from './object_tree_element'
 import { Subscriptions } from './subscriptions';
 
 export class DetailsWindow extends Component {
+
+  static props = ['activeComponent', 'toggleObjectTreeElementsDisplay', 'expandSubscriptionsKeys', 'editObjectTreeElement', 'width', 'loadGetterContent'];
+  
+  static template = "devtools.DetailsWindow";
+
+  static components = { ObjectTreeElement, Subscriptions };
+
   setup(){
   }
 
@@ -35,12 +42,6 @@ export class DetailsWindow extends Component {
     const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.inspectComponentRawTemplate(${JSON.stringify(this.props.activeComponent.path)});`;
     chrome.devtools.inspectedWindow.eval(script);
   }
-
-  static props = ['activeComponent', 'toggleObjectTreeElementsDisplay', 'expandSubscriptionsKeys', 'editObjectTreeElement', 'width', 'loadGetterContent'];
-  
-  static template = "devtools.DetailsWindow";
-
-  static components = { ObjectTreeElement, Subscriptions };
 }
 
 

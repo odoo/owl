@@ -9,6 +9,5 @@ import {templates} from "../../assets/templates.js";
 for(var template in templates) {
     owl.App.registerTemplate(template, templates[template]);
 }
-whenReady();
 mount(DevtoolsWindow, document.body, {dev: true});
 

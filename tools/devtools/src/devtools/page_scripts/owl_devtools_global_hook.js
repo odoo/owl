@@ -34,7 +34,6 @@ export class OwlDevtoolsGlobalHook {
       [...this.tasks].map((fiber) => {
         if (fiber.counter === 0 && !self.fibersMap.has(fiber)){
           self.fibersMap.set(fiber, "");
-          console.log(fiber.node);
           const path = self.getComponentPath(fiber.node);
           /*
            * Add a functionnality to the flush function which sends a message to the window every time it is triggered.                          
@@ -191,8 +190,10 @@ export class OwlDevtoolsGlobalHook {
   }
   // Diasble the HTML selector tool
   disableHTMLSelector = (ev = undefined) => {
-    if(ev)
+    if(ev){
       ev.stopPropagation();
+      ev.preventDefault();
+    }
     this.removeHighlights();
     document.removeEventListener("mousemove", this.HTMLSelector);
     document.removeEventListener("click", this.disableHTMLSelector, {capture: true});

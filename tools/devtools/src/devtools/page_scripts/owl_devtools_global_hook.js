@@ -28,8 +28,8 @@ export class OwlDevtoolsGlobalHook {
   }
 
   patchAppMethods(app){
-    const originalFlush = app.scheduler.flush;
     const self = this;
+    const originalFlush = app.scheduler.flush;
     app.scheduler.flush = function() {
       [...this.tasks].map((fiber) => {
         if (fiber.counter === 0 && !self.fibersMap.has(fiber)){
@@ -42,11 +42,29 @@ export class OwlDevtoolsGlobalHook {
            * https://developer.chrome.com/docs/extensions/mv3/devtools/#evaluated-scripts-to-devtools                                            
            */
           window.postMessage({type: "owlDevtools__Flush", path: path});
-          window.postMessage({type: "owlDevtools__Event", data: {type: "render", component: fiber.node.name, key: fiber.node.parentKey}});
+          window.postMessage({type: "owlDevtools__Event", data: {type: "render", component: fiber.node.name, key: fiber.node.parentKey, path: path}});
         }
       });
       originalFlush.call(this, ...arguments);
     };
+    const originalDestroy = app.root.constructor.prototype._destroy;
+    app.root.constructor.prototype._destroy = function() {
+      const path = self.getComponentPath(this);
+      window.postMessage({type: "owlDevtools__Event", data: {type: "destroy", component: this.name, key: this.parentKey, path: path}});
+      originalDestroy.call(this, ...arguments);
+    }
+    const originalInitiate = app.root.constructor.prototype.initiateRender;
+    app.root.constructor.prototype.initiateRender = function() {
+      const path = self.getComponentPath(this);
+      window.postMessage({type: "owlDevtools__Event", data: {type: "initiate render", component: this.name, key: this.parentKey, path: path}});
+      originalInitiate.call(this, ...arguments);
+    }
+    const originalUpdate = app.root.constructor.prototype.updateAndRender;
+    app.root.constructor.prototype.updateAndRender = function() {
+      const path = self.getComponentPath(this);
+      window.postMessage({type: "owlDevtools__Event", data: {type: "update and render", component: this.name, key: this.parentKey, path: path}});
+      originalUpdate.call(this, ...arguments);
+    }
   }
 
   // Draws a highlighting rectangle on the specified html element and displays its dimensions and the specified name in a box

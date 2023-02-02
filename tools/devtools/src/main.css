@@ -29,8 +29,12 @@
   font-size: 0.6em;
 }
 
-.no-border{
+.navbar-btn{
   border: none;
+}
+
+.navbar-btn:hover{
+  color: white !important;
 }
 
 .tree-component {
@@ -126,10 +130,8 @@
   background-color: #33CEFF;
 }
 
-.split-screen-container {
+.tab-container {
   position: relative;
-  display: flex;
-  flex-direction: row;
   width: 100%;
   height: 100%;
   box-sizing: border-box;
@@ -181,6 +183,13 @@
   height: calc(100vh - (48px + 1rem));
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+.events-container{
+  height: calc(100vh - (48px + 1rem));
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-top: 0.5rem;
 }
 
 .split-screen-right {

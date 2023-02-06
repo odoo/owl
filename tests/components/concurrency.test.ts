@@ -1,6 +1,7 @@
 import {
   App,
   Component,
+  ComponentConstructor,
   mount,
   onMounted,
   onRendered,
@@ -4065,6 +4066,64 @@ test("renderings, destruction, patch, stuff, ... yet another variation", async (
   await nextTick();
   expect(["D:willRender", "D:rendered", "D:willPatch", "D:patched"]).toBeLogged();
   expect(fixture.innerHTML).toBe("ABD<p>2</p>");
+});
+
+test("delayed render does not go through when t-component value changed", async () => {
+  class C extends Component {
+    static template = xml`C`;
+    setup() {
+      useLogLifecycle("", true);
+    }
+  }
+
+  class B extends Component {
+    static template = xml`B<t t-esc="state.val"/>`;
+    state = useState({ val: 1 });
+    setup() {
+      useLogLifecycle("", true);
+      b = this;
+    }
+  }
+  let b: B;
+
+  class A extends Component {
+    static template = xml`A<t t-component="state.component"/>`;
+    state: { component: ComponentConstructor } = useState({ component: B });
+    setup() {
+      useLogLifecycle("", true);
+    }
+  }
+
+  const a = await mount(A, fixture);
+  expect(fixture.innerHTML).toBe("AB1");
+  expect([
+    "A:setup",
+    "A:willRender",
+    "B:setup",
+    "A:rendered",
+    "B:willRender",
+    "B:rendered",
+    "B:mounted",
+    "A:mounted",
+  ]).toBeLogged();
+  // start a render in B
+  b!.state.val = 2;
+  // start a render in A, invalidating the scheduled render of B, which could crash if executed.
+  a.state.component = C;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("AC");
+  expect([
+    "A:willRender",
+    "C:setup",
+    "A:rendered",
+    "C:willRender",
+    "C:rendered",
+    "A:willPatch",
+    "B:willUnmount",
+    "B:willDestroy",
+    "C:mounted",
+    "A:patched",
+  ]).toBeLogged();
 });
 
 //   test.skip("components with shouldUpdate=false", async () => {

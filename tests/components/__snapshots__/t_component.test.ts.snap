@@ -10,7 +10,7 @@ exports[`t-component can switch between dynamic components without the need for 
   
   return function template(ctx, node, key = \\"\\") {
     const Comp1 = ctx['constructor'].components[ctx['state'].child];
-    const b2 = toggler(Comp1, comp1({}, key + \`__1\`, node, this, Comp1));
+    const b2 = toggler(Comp1, comp1({}, (Comp1).name + key + \`__1\`, node, this, Comp1));
     return block1([], [b2]);
   }
 }"
@@ -51,7 +51,7 @@ exports[`t-component can use dynamic components (the class) if given (with diffe
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['state'].child;
     const Comp1 = ctx['myComponent'];
-    return toggler(tKey_1, toggler(Comp1, comp1({}, tKey_1 + key + \`__1\`, node, this, Comp1)));
+    return toggler(tKey_1, toggler(Comp1, comp1({}, (Comp1).name + tKey_1 + key + \`__1\`, node, this, Comp1)));
   }
 }"
 `;
@@ -91,7 +91,7 @@ exports[`t-component can use dynamic components (the class) if given 1`] = `
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['state'].child;
     const Comp1 = ctx['myComponent'];
-    return toggler(tKey_1, toggler(Comp1, comp1({}, tKey_1 + key + \`__1\`, node, this, Comp1)));
+    return toggler(tKey_1, toggler(Comp1, comp1({}, (Comp1).name + tKey_1 + key + \`__1\`, node, this, Comp1)));
   }
 }"
 `;
@@ -132,7 +132,7 @@ exports[`t-component modifying a sub widget 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const Comp1 = ctx['Counter'];
-    const b2 = toggler(Comp1, comp1({}, key + \`__1\`, node, this, Comp1));
+    const b2 = toggler(Comp1, comp1({}, (Comp1).name + key + \`__1\`, node, this, Comp1));
     return block1([], [b2]);
   }
 }"
@@ -162,7 +162,7 @@ exports[`t-component switching dynamic component 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const Comp1 = ctx['Child'];
-    return toggler(Comp1, comp1({}, key + \`__1\`, node, this, Comp1));
+    return toggler(Comp1, comp1({}, (Comp1).name + key + \`__1\`, node, this, Comp1));
   }
 }"
 `;
@@ -199,7 +199,7 @@ exports[`t-component t-component works in simple case 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const Comp1 = ctx['Child'];
-    return toggler(Comp1, comp1({}, key + \`__1\`, node, this, Comp1));
+    return toggler(Comp1, comp1({}, (Comp1).name + key + \`__1\`, node, this, Comp1));
   }
 }"
 `;

@@ -931,7 +931,7 @@ exports[`can catch errors catching error, rethrow, render parent  -- a main comp
   
   function slot1(ctx, node, key = \\"\\") {
     const Comp1 = ctx['cp'].Comp;
-    return toggler(Comp1, comp1({}, key + \`__1\`, node, this, Comp1));
+    return toggler(Comp1, comp1({}, (Comp1).name + key + \`__1\`, node, this, Comp1));
   }
   
   return function template(ctx, node, key = \\"\\") {
@@ -1010,7 +1010,7 @@ exports[`can catch errors catching in child makes parent render 1`] = `
   
   function slot1(ctx, node, key = \\"\\") {
     const Comp1 = ctx['elem'][1];
-    return toggler(Comp1, comp1({id: ctx['elem'][0]}, key + \`__1\`, node, this, Comp1));
+    return toggler(Comp1, comp1({id: ctx['elem'][0]}, (Comp1).name + key + \`__1\`, node, this, Comp1));
   }
   
   return function template(ctx, node, key = \\"\\") {

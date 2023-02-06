@@ -8,7 +8,7 @@ exports[`basics GrandChild display is controlled by its GrandParent 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const Comp1 = ctx['myComp'];
-    return toggler(Comp1, comp1({displayGrandChild: ctx['displayGrandChild']}, key + \`__1\`, node, this, Comp1));
+    return toggler(Comp1, comp1({displayGrandChild: ctx['displayGrandChild']}, (Comp1).name + key + \`__1\`, node, this, Comp1));
   }
 }"
 `;

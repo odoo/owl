@@ -1223,6 +1223,13 @@ export class CodeGenerator {
       })`,
     });
 
+    if (ast.isDynamic) {
+      // If the component class changes, this can cause delayed renders to go
+      // through if the key doesn't change. Use the component name for now.
+      // This means that two component classes with the same name isn't supported
+      // in t-component. We can generate a unique id per class later if needed.
+      keyArg = `(${expr}).name + ${keyArg}`;
+    }
     let blockExpr = `${id}(${propString}, ${keyArg}, node, this, ${ast.isDynamic ? expr : null})`;
     if (ast.isDynamic) {
       blockExpr = `toggler(${expr}, ${blockExpr})`;

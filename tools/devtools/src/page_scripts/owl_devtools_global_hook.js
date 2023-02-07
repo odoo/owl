@@ -206,10 +206,10 @@ export class OwlDevtoolsGlobalHook {
       return "Array("+value.length+")";
     }
     else if (typeof value === 'object'){
-      if (asConstructorName)
-        return value.constructor.name;
       if (value == null)
         return "null";
+      if (asConstructorName)
+        return value.constructor.name;
       return "{...}";
     }
     else if (typeof value === 'undefined')

@@ -2,14 +2,14 @@
 <templates xml:space="preserve">
   <t t-name="devtools.SearchBar" owl="1">
     <div class="pointer-icon pe-2" t-on-click.stop="toggleSelector">
-      <i title="Toggle component HTML selector" class="fa fa-mouse-pointer" t-attf-style="color: {{props.activeSelector ? 'rgb(41, 134, 255)' : 'rgb(0, 0, 0)'}};" aria-hidden="true"></i>
+      <i title="Toggle component HTML selector" class="fa fa-mouse-pointer" t-attf-style="color: {{store.search.activeSelector ? 'rgb(41, 134, 255)' : 'rgb(0, 0, 0)'}};" aria-hidden="true"></i>
     </div>
     <div class="icons-separator me-2"/>
     <div class="search-bar-wrapper">
       <i class="fa fa-search search-icon" aria-hidden="true"></i>
-      <input type="text" class="search-input" placeholder="Search" t-on-keyup.stop="updateSearch" t-on-keydown="fastNextSearch" t-att-value="props.search"/>
-      <t t-if="props.search.length > 0">
-        <div class="search-indicator"><t t-out="props.searchResults.length ? props.searchIndex + 1 : 0"/>|<t t-out="props.searchResults.length"/></div>
+      <input type="text" class="search-input" placeholder="Search" t-on-keyup.stop="updateSearch" t-on-keydown="fastNextSearch" t-att-value="store.search.search"/>
+      <t t-if="store.search.search.length > 0">
+        <div class="search-indicator"><t t-out="store.search.searchResults.length ? store.search.searchIndex + 1 : 0"/>|<t t-out="store.search.searchResults.length"/></div>
         <div class="search-border mx-2"/>
         <i class="fa fa-angle-up lg-icon utility-icon me-2" aria-hidden="true" t-on-click.stop="getPrevSearch"></i>
         <i class="fa fa-angle-down lg-icon utility-icon me-2" aria-hidden="true" t-on-click.stop="getNextSearch"></i>

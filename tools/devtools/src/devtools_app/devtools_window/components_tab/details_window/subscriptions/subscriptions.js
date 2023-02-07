@@ -1,23 +1,21 @@
 
 const { Component, markup, useState, onMounted, onWillUpdateProps } = owl
+import { useStore } from '../../../../store/store';
 import { ObjectTreeElement } from '../object_tree_element/object_tree_element'
 
 
 export class Subscriptions extends Component {
-  static props = ['subscriptions', 'toggleObjectTreeElementsDisplay', 'expandSubscriptionsKeys', 'editObjectTreeElement', 'loadGetterContent'];
-  
+
   static template = "devtools.Subscriptions";
   
   static components = { ObjectTreeElement };
   
   setup(){
-
+    this.store = useStore();
   }
 
-  get subscriptions() { return this.props.subscriptions; }
-
   keysContent(index) {
-    const keys = this.props.subscriptions[index].keys;
+    const keys = this.store.activeComponent.subscriptions[index].keys;
     let content = JSON.stringify(keys);
     const maxLength = 50;
     content = content.replace(/,/g, ', ');
@@ -28,7 +26,7 @@ export class Subscriptions extends Component {
   }
 
   expandKeys(event, index){
-    this.props.expandSubscriptionsKeys(index);
+    this.store.activeComponent.subscriptions[index].keysExpanded = !this.store.activeComponent.subscriptions[index].keysExpanded;
   }
 }
 

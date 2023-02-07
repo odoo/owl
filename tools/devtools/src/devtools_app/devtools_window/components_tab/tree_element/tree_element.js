@@ -1,20 +1,24 @@
 /** @odoo-module **/
 
-import { isElementInCenterViewport } from "../../../../utils";
-import { HighlightText } from "../details_window/search_bar/highlight_text/highlight_text";
+import { evalInWindow, isElementInCenterViewport } from "../../../../utils";
+import { useStore } from "../../../store/store";
+import { HighlightText } from "./highlight_text/highlight_text";
 
-const { Component, onWillRender, useEffect, onMounted, onWillUpdateProps} = owl
+const { Component, useState, useEffect, onMounted, onWillUpdateProps} = owl
 
 export class TreeElement extends Component {
   static template = "devtools.TreeElement";
   
-  static props = ['name', 'children', 'path', 'key', 'display', 'toggled', 'depth', 'selected', 'highlighted', 'search', 'searchResults', 'toggleComponentAndChildren'];
+  static props = ['name', 'children', 'path', 'key', 'display', 'toggled', 'depth', 'selected', 'highlighted'];
   
   static components = { TreeElement, HighlightText };
 
   setup(){
-    this.searched = false;
+    this.state = useState({
+      searched: false,
+    });
     this.highlightTimeout = false;
+    this.store = useStore();
     onMounted(() => {
       if (this.props.selected){
         const treeElement = document.getElementById("treeElement/"+this.props.path.join("/"));
@@ -27,10 +31,6 @@ export class TreeElement extends Component {
         if(!isElementInCenterViewport(treeElement))
           treeElement.scrollIntoView({block: "center", behavior: "smooth"});
       }
-      if(nextProps.searchResults.includes(this.props.path))
-        this.searched = true;
-      else
-        this.searched = false;
     });
     useEffect(
       (renderPaths) => {
@@ -48,22 +48,30 @@ export class TreeElement extends Component {
           } 
         }
       },
-      () => [this.props.renderPaths]
+      () => [this.store.renderPaths]
+    );
+    useEffect(
+      (searchResults) => {
+        if(searchResults.includes(this.props.path))
+          this.state.searched = true;
+        else
+          this.state.searched = false;
+      },
+      () => [this.store.search.searchResults]
     );
   }
 
   get pathAsString(){return this.props.path.join("/");}
 
   toggleDisplay(ev){
-    this.props.toggleComponentTreeElementDisplay(this.props.path);
+    this.store.toggleComponentTreeElementDisplay(this.props.path);
   }
 
   hoverComponent(ev){
     const elements = document.getElementsByClassName("highlight-fade");
     for (const element of elements) 
     element.classList.remove("highlight-fade");
-    const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.highlightComponent(${JSON.stringify(this.props.path)});`;
-    chrome.devtools.inspectedWindow.eval(script);
+    evalInWindow("highlightComponent", [JSON.stringify(this.props.path)]);
   }
   
   get minimizedKey(){
@@ -79,10 +87,10 @@ export class TreeElement extends Component {
   }
 
   toggleComponent(ev){
-    // Todo: should be in toggle on select settings
-    // this.toggleDisplay();
+    if(this.store.settings.toggleOnSelected)
+      this.toggleDisplay();
     if(!this.props.selected){
-      this.props.selectComponent(this.props.path);
+      this.store.selectComponent(this.props.path);
     }
   }
 
@@ -104,11 +112,11 @@ export class TreeElement extends Component {
   }
 
   expandAllChildren(ev){
-    this.props.toggleComponentAndChildren(this.props.path, true);
+    this.store.toggleComponentAndChildren(this.props.path, true);
   }
 
   foldAllChildren(ev){
-    this.props.toggleComponentAndChildren(this.props.path, false);
+    this.store.toggleComponentAndChildren(this.props.path, false);
   }
 }
 

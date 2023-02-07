@@ -1,7 +1,7 @@
 /** @odoo-module **/
 
 import { isElementInCenterViewport } from "../../../utils";
-import { HighlightText } from "../utils/highlight_text";
+import { HighlightText } from "../components_tab/details_window/search_bar/highlight_text/highlight_text";
 
 const { Component, onWillRender, useEffect, onMounted, onWillUpdateProps} = owl
 

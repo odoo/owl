@@ -11,12 +11,12 @@
             "128": "assets/icon_disabled128.png"
         },
         "default_title": "Owl devtools",
-        "default_popup": "popup/popup.html"
+        "default_popup": "popup_app/popup.html"
     },
     "web_accessible_resources": [
-        "popup/popup.html",
-        "devtools/devtools.html",
-        "devtools/components_panel.html"
+        "popup_app/popup.html",
+        "devtools_app/devtools.html",
+        "devtools_app/components_panel.html"
     ],
     "permissions": [
         "storage",
@@ -26,7 +26,7 @@
     "background": {
         "scripts": ["background.js"]
     },
-    "devtools_page": "devtools/devtools.html",
+    "devtools_page": "devtools_app/devtools.html",
     "content_scripts": [
         {
             "matches": ["<all_urls>"],

@@ -51,10 +51,10 @@ export default [
         ],
     },
     {
-        input: "src/devtools/devtools.js",
+        input: "src/devtools_app/devtools.js",
         output: [
             {
-                file: "build/devtools/devtools.js",
+                file: "build/devtools_app/devtools.js",
                 format: "esm",
             },
         ],
@@ -63,16 +63,16 @@ export default [
             isProduction && terser.terser(),
             copy({
                 targets: [
-                    { src: "src/devtools/devtools.html", dest: "build/devtools" }
+                    { src: "src/devtools_app/devtools.html", dest: "build/devtools_app" }
                 ],
             }),
         ],
     },
     {
-        input: "src/devtools/page_scripts/load_scripts.js",
+        input: "src/page_scripts/load_scripts.js",
         output: [
             {
-                file: "build/devtools/page_scripts/load_scripts.js",
+                file: "build/page_scripts/load_scripts.js",
                 format: "esm",
             },
         ],
@@ -82,10 +82,10 @@ export default [
         ],
     },
     {
-        input: "src/devtools/devtools_panel.js",
+        input: "src/devtools_app/devtools_panel.js",
         output: [
             {
-                file: "build/devtools/devtools_panel.js",
+                file: "build/devtools_app/devtools_panel.js",
                 format: "esm",
             },
         ],
@@ -102,17 +102,17 @@ export default [
             isProduction && terser.terser(),
             copy({
                 targets: [
-                    { src: "src/devtools/devtools_panel.html", dest: "build/devtools" },
+                    { src: "src/devtools_app/devtools_panel.html", dest: "build/devtools_app" },
                     { src: "src/fonts/*", dest: "build/fonts/" }, 
                 ],
             }),
         ],
     },
     {
-        input: "src/popup/main.js",
+        input: "src/popup_app/popup.js",
         output: [
             {
-                file: "build/popup/popup.js",
+                file: "build/popup_app/popup.js",
                 format: "esm",
             },
         ],
@@ -128,7 +128,7 @@ export default [
             }),
             isProduction && terser.terser(),
             copy({
-                targets: [{ src: "src/popup/popup.html", dest: "build/popup" }],
+                targets: [{ src: "src/popup_app/popup.html", dest: "build/popup_app" }],
             }),
         ],
     },

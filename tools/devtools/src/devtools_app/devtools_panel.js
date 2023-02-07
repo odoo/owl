@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { DevtoolsWindow } from "./components/devtools_window";
+import { DevtoolsWindow } from "./devtools_window/devtools_window";
 const { mount, whenReady } = owl
 
 import "../main.css";

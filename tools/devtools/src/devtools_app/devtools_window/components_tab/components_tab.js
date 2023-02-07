@@ -1,14 +1,14 @@
 /** @odoo-module **/
 
 const { Component, useState, useEffect, onWillUnmount, onMounted} = owl
-import { TreeElement } from './tree_element';
-import { DetailsWindow } from "./details_window";
-import { SearchBar } from './search_bar';
+import { TreeElement } from './tree_element/tree_element';
+import { DetailsWindow } from "./details_window/details_window";
+import { SearchBar } from './details_window/search_bar/search_bar';
 import { fuzzySearch } from '../../../utils';
 
-export class ComponentsTree extends Component {
+export class ComponentsTab extends Component {
 
-  static template = "devtools.ComponentsTree";
+  static template = "devtools.ComponentsTab";
   
   static components = { TreeElement, DetailsWindow, SearchBar };
 
@@ -214,6 +214,7 @@ export class ComponentsTree extends Component {
     switch(event.keyCode) {
       case 37:
         this.toggleOrSelectPrevElement(true);
+        event.preventDefault();
         break;
       case 38:
         this.toggleOrSelectPrevElement(false);
@@ -221,6 +222,7 @@ export class ComponentsTree extends Component {
         break;
       case 39:
         this.toggleOrSelectNextElement(true);
+        event.preventDefault();
         break;
       case 40:
         this.toggleOrSelectNextElement(false);

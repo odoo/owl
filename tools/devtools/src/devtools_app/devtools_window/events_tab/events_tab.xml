@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
-  <t t-name="devtools.Events" owl="1">
+  <t t-name="devtools.EventsTab" owl="1">
     <div class="panel-top">
       <i title="Start/Stop Recording" class="fa fa-circle pointer-icon pe-2" t-attf-style="color: {{props.activeRecorder ? 'rgb(255, 31, 31)' : 'rgb(0, 0, 0)'}};" t-on-click.stop="toggleRecording" aria-hidden="true"></i>
       <div class="icons-separator"/>

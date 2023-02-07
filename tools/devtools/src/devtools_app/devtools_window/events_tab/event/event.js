@@ -1,3 +1,4 @@
+import { useStore } from "../../../store/store";
 
 const { Component, useState, onMounted } = owl
 
@@ -5,18 +6,17 @@ export class Event extends Component {
   static template = "devtools.Event";
 
   setup() {
+    this.store = useStore();
   }
 
   goToComponent(){
-    this.props.selectComponent(this.props.path);
-    this.props.switchTab("ComponentsTree");
+    this.store.selectComponent(this.props.path);
+    this.store.switchTab("ComponentsTab");
   }
 
   addInstanceToBlacklist(){
-    // this.props.addToBlacklist(this.props.component);
   }
 
   addComponentToBlacklist(){
-    // this.props.bus.trigger("blacklistComponent", this.props.component)
   }
 }

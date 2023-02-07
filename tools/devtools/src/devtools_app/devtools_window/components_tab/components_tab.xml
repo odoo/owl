@@ -1,46 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.ComponentsTab" owl="1">
-    <div class="split-screen-left"  t-attf-style="width:{{state.leftWidth}}px;">
+    <div class="split-screen-left"  t-attf-style="width:{{store.leftWidth}}px;">
       <div class="panel-top">
-        <SearchBar
-          t-props="state.search"
-          toggleSelector.bind="toggleSelector"
-          updateSearch.bind="updateSearch"
-          setSearchIndex.bind="setSearchIndex"/>
+        <SearchBar/>
       </div>
       <div class="horizontal-border">
       </div>
       <div id="tree-container">
         <div id="tree-wrapper" t-attf-style="width: {{getTreeWrapperWidth}}px;">
-          <t t-foreach="state.apps" t-as="app" t-key="app_index">
-            <TreeElement 
-              t-props="app"
-              search="state.search.search"
-              searchResults="state.search.searchResults"
-              renderPaths="state.renderPaths"
-              toggleComponentTreeElementDisplay.bind="toggleComponentTreeElementDisplay"
-              toggleComponentAndChildren.bind="toggleComponentAndChildren"
-              selectComponent.bind="selectComponent"/> 
+          <t t-foreach="store.apps" t-as="app" t-key="app_index">
+            <TreeElement t-props="app"/> 
           </t>
         </div>
       </div>
     </div>
     <div
       class="split-screen-border"
-      t-attf-style="left:{{state.leftWidth}}px;"
+      t-attf-style="left:{{store.leftWidth}}px;"
       t-on-mousedown="handleMouseDown"
       t-on-mouseup="handleMouseUp"
     />
-    <div class="split-screen-right" t-attf-style="width:{{state.rightWidth}}px;">
-      <DetailsWindow 
-        activeComponent="state.activeComponent"
-        width="state.rightWidth"
-        toggleObjectTreeElementsDisplay.bind="toggleObjectTreeElementsDisplay"
-        loadGetterContent.bind="loadGetterContent"
-        expandSubscriptionsKeys.bind="expandSubscriptionsKeys"
-        editObjectTreeElement.bind="editObjectTreeElement"
-        refreshComponent.bind="refreshComponent"/>
+    <div class="split-screen-right" t-attf-style="width:{{store.rightWidth}}px;">
+      <DetailsWindow/>
     </div>
   </t>
 </templates>

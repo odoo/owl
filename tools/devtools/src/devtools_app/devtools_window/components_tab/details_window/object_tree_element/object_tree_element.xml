@@ -38,12 +38,7 @@
     </div>
     <t t-if="props.toggled">
       <t t-foreach="props.children" t-as="child" t-key="child.name">
-        <ObjectTreeElement 
-          t-props="child"
-          componentPath="props.componentPath"
-          toggleObjectTreeElementsDisplay="props.toggleObjectTreeElementsDisplay"
-          loadGetterContent="props.loadGetterContent"
-          editObjectTreeElement="props.editObjectTreeElement"/>
+        <ObjectTreeElement t-props="child"/>
       </t>
     </t>
   </t>

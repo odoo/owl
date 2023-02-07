@@ -30,7 +30,7 @@ createPanelsIfOwl();
 
 function loadScripts() {
   if(!scriptsLoaded){
-    fetch('./page_scripts/load_scripts.js')
+    fetch('../page_scripts/load_scripts.js')
       .then((response) => response.text())
       .then((contents) => {
         browserInstance.devtools.inspectedWindow.eval(contents);
@@ -53,7 +53,7 @@ function createPanelsIfOwl() {
       clearInterval(checkInterval);
       created = true;
       loadScripts();
-      browserInstance.devtools.panels.create("Owl", "../../assets/icon128.png", isFirefox() ? "devtools_panel.html" : "devtools/devtools_panel.html", function (panel) {});
+      browserInstance.devtools.panels.create("Owl", "../../assets/icon128.png", isFirefox() ? "devtools_panel.html" : "devtools_app/devtools_panel.html", function (panel) {});
       // browserInstance.devtools.panels.create("Owl Events", "../../assets/icon128.png", isFirefox() ? "events_panel.html" : "devtools/events_panel.html", function (panel) {});
     }
   )

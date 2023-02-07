@@ -1,4 +1,5 @@
 const { Component, onWillDestroy, onMounted } = owl
+import { useStore } from "../../store/store";
 import { Event } from "./event/event";
 
 export class EventsTab extends Component { 
@@ -7,26 +8,15 @@ export class EventsTab extends Component {
   static components = { Event };
   
   setup() {
+    this.store = useStore();
   }
 
   toggleRecording(){
-    this.props.toggleRecorder();
+    this.store.activeRecorder = !this.store.activeRecorder;
   }
 
   clearConsole(){
-    this.props.clearEvents();
-  }
-
-  blacklistAll(){
-    this.props.bus.trigger("blacklistAll");
-  }
-
-  clearBlacklist(){
-    this.props.clearBlacklist();
-  }
-
-  notInBlacklist(component){
-    return !this.props.blacklist.has(component);
+    this.store.events = [];
   }
 
 }

@@ -2,32 +2,17 @@
 <templates xml:space="preserve">
   <t t-name="devtools.DevtoolsWindow" owl="1">
     <div id="container" t-on-mouseover.stop="removeHighlight" t-on-mouseout.stop="removeHighlight">
-      <t t-if="state.owlStatus">
+      <t t-if="store.owlStatus">
         <div class="custom-navbar panel-top">
-          <Tab componentName="'ComponentsTab'" active="state.page === 'ComponentsTab'" name="'Components'" switchTab.bind="switchTab"/>
-          <Tab componentName="'EventsTab'" active="state.page === 'EventsTab'" name="'Events'" switchTab.bind="switchTab"/>
+          <Tab componentName="'ComponentsTab'" active="store.page === 'ComponentsTab'" name="'Components'"/>
+          <Tab componentName="'EventsTab'" active="store.page === 'EventsTab'" name="'Events'"/>
         </div>
         <div class="horizontal-border"/>
-        <div class="tab-container" t-attf-style="flex-direction: row;{{state.page === 'ComponentsTab' ? 'display: flex;' : 'display: none;'}}">
-          <ComponentsTab 
-            selectedPath="state.selectedPath" 
-            bus="bus"
-            updateOwlStatus.bind="updateOwlStatus"
-            addToBlacklist.bind="addToBlacklist"
-          />
+        <div t-if="store.page === 'ComponentsTab'" class="tab-container" style="flex-direction: row;">
+          <ComponentsTab/>
         </div>
-        <div class="tab-container" t-attf-style="flex-direction: column;{{state.page === 'EventsTab' ? 'display: flex;' : 'display: none;'}}">
-          <EventsTab 
-            activeRecorder="state.activeRecorder" 
-            bus="bus"
-            events="state.events" 
-            blacklist="state.componentsBlackList"
-            clearEvents.bind="clearEvents"
-            toggleRecorder.bind="toggleRecorder"
-            selectComponent.bind="selectComponent" 
-            switchTab.bind="switchTab"
-            addToBlacklist.bind="addToBlacklist"
-          />
+        <div t-if="store.page === 'EventsTab'" class="tab-container" style="flex-direction: column;">
+          <EventsTab/>
         </div>
       </t>
       <t t-else="">

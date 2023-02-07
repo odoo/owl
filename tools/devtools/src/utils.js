@@ -38,6 +38,24 @@ export function isElementInCenterViewport(el) {
   );
 }
 
+export async function evalInWindow(fn, args) {
+  const argsString = "(" + args.join(', ') + ");";
+  const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.${fn}${argsString}`;
+  console.log(script);
+  return new Promise(resolve => {
+    chrome.devtools.inspectedWindow.eval(
+      script,
+      (result, isException) => {
+        console.log(result);
+        if (!isException) 
+          resolve(result);
+        else
+          resolve(undefined);
+      }
+    );
+  });
+}
+
 /**
  * Escapes a string to use as a RegExp.
  * @url https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Escaping

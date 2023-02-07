@@ -4,7 +4,7 @@
     <div class="details-window">
       <div id="detailsWindowHead" class="panel-top">
         <div class="name-wrapper">
-          <b><t t-esc="props.activeComponent.name"/></b>
+          <b><t t-esc="store.activeComponent.name"/></b>
         </div>
         <i title="Inspect component in the Elements tab" class="fa fa-eye utility-icon me-2" aria-hidden="true" t-on-click.stop="inspectComponentInDOM"></i>
         <i title="Store component node as global variable in the console" class="fa fa-bug utility-icon me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("component")'></i>
@@ -19,13 +19,8 @@
             <b>props</b>
             <i title="Store props as global variable in the console" class="fa fa-bug utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("props")'></i>
           </div>
-          <t t-foreach="props.activeComponent.props" t-as="key" t-key="key">
-            <ObjectTreeElement 
-              t-props="props.activeComponent.props[key]"
-              componentPath="props.activeComponent.path"
-              toggleObjectTreeElementsDisplay="props.toggleObjectTreeElementsDisplay"
-              loadGetterContent="props.loadGetterContent"
-              editObjectTreeElement="props.editObjectTreeElement"/>
+          <t t-foreach="store.activeComponent.props" t-as="key" t-key="key">
+            <ObjectTreeElement t-props="store.activeComponent.props[key]"/>
           </t>
         </div>
         <div id="subscriptions" class="details-panel py-1">
@@ -33,26 +28,15 @@
             <b>observed states</b>
             <i title="Store observed states as global variable in the console" class="fa fa-bug utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("subscription")'></i>
           </div>
-          <Subscriptions 
-            subscriptions="props.activeComponent.subscriptions" 
-            componentPath="props.activeComponent.path"
-            toggleObjectTreeElementsDisplay="props.toggleObjectTreeElementsDisplay"
-            loadGetterContent="props.loadGetterContent"
-            expandSubscriptionsKeys="props.expandSubscriptionsKeys"
-            editObjectTreeElement="props.editObjectTreeElement"/>
+          <Subscriptions/>
         </div>
         <div id="env" class="details-panel py-1">
           <div class="details-panel-head mb-2">
             <b>env</b>
             <i title="Store env as global variable in the console" class="fa fa-bug utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='() => this.logComponentInConsole("env")'></i>
           </div>
-          <t t-foreach="props.activeComponent.env" t-as="key" t-key="key">
-            <ObjectTreeElement 
-              t-props="props.activeComponent.env[key]"
-              componentPath="props.activeComponent.path"
-              toggleObjectTreeElementsDisplay="props.toggleObjectTreeElementsDisplay"
-              loadGetterContent="props.loadGetterContent"
-              editObjectTreeElement="props.editObjectTreeElement"/>
+          <t t-foreach="store.activeComponent.env" t-as="key" t-key="key">
+            <ObjectTreeElement t-props="store.activeComponent.env[key]"/>
           </t>
         </div>
         <div id="instance" class="details-panel py-1">
@@ -62,13 +46,8 @@
             <i title="Inspect compiled template" class="fa fa-hashtag utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='inspectCompiledTemplate'></i>
             <i title="Send raw template to console" class="fa fa-file-word-o utility-icon pt-1 me-2" aria-hidden="true" t-on-click.stop='inspectRAwTemplate'></i>
           </div>
-          <t t-foreach="props.activeComponent.instance" t-as="key" t-key="key">
-            <ObjectTreeElement 
-              t-props="props.activeComponent.instance[key]"
-              componentPath="props.activeComponent.path"
-              toggleObjectTreeElementsDisplay="props.toggleObjectTreeElementsDisplay"
-              loadGetterContent="props.loadGetterContent"
-              editObjectTreeElement="props.editObjectTreeElement"/>
+          <t t-foreach="store.activeComponent.instance" t-as="key" t-key="key">
+            <ObjectTreeElement t-props="store.activeComponent.instance[key]"/>
           </t>
         </div>
       </div>

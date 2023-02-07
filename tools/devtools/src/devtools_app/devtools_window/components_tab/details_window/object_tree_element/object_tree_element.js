@@ -1,3 +1,5 @@
+import { evalInWindow } from "../../../../../utils";
+import { useStore } from "../../../../store/store";
 
 const { Component, useState, onWillUpdateProps, useEffect } = owl;
 
@@ -12,6 +14,7 @@ export class ObjectTreeElement extends Component {
     this.state = useState({
       editMode: false
     });
+    this.store = useStore();
     useEffect(
       (editMode) => {
         // Focus on the input when it is created
@@ -43,17 +46,17 @@ export class ObjectTreeElement extends Component {
 
   editObject(ev){
     if (ev.keyCode === 13 && ev.target.value !== ""){
-      this.props.editObjectTreeElement(this.props.path, ev.target.value, this.props.objectType);
+      this.store.editObjectTreeElement(this.props.path, ev.target.value, this.props.objectType);
       this.state.editMode = false;
     }
   }
 
   loadGetterContent(ev){
-    this.props.loadGetterContent(this.props);
+    this.store.loadGetterContent(this.props);
   }
 
   toggleDisplay(ev){
-    this.props.toggleObjectTreeElementsDisplay(this.props);
+    this.store.toggleObjectTreeElementsDisplay(this.props);
   }
 
   openMenu(event){
@@ -74,13 +77,11 @@ export class ObjectTreeElement extends Component {
   }
 
   inspectFunctionSource(){
-    const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.inspectFunctionSource(${JSON.stringify(this.props.componentPath)}, ${JSON.stringify(this.props.path)});`;
-    chrome.devtools.inspectedWindow.eval(script);
+    evalInWindow("inspectFunctionSource", [JSON.stringify(this.store.activeComponent.path),JSON.stringify(this.props.path)]);
   }
 
   storeObjectAsGlobal(){
-    const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.storeObjectAsGlobal(${JSON.stringify(this.props.componentPath)}, ${JSON.stringify(this.props.path)});`;
-    chrome.devtools.inspectedWindow.eval(script);
+    evalInWindow("storeObjectAsGlobal", [JSON.stringify(this.store.activeComponent.path),JSON.stringify(this.props.path)]);
   }
 }
 

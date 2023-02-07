@@ -1,46 +1,42 @@
 
 const {Component, onRendered, onWillStart} = owl
+import { evalInWindow } from '../../../../utils';
+import { useStore } from '../../../store/store';
 import { ObjectTreeElement } from './object_tree_element/object_tree_element'
 import { Subscriptions } from './subscriptions/subscriptions';
 
 export class DetailsWindow extends Component {
-
-  static props = ['activeComponent', 'toggleObjectTreeElementsDisplay', 'expandSubscriptionsKeys', 'editObjectTreeElement', 'width', 'loadGetterContent'];
   
   static template = "devtools.DetailsWindow";
 
   static components = { ObjectTreeElement, Subscriptions };
 
   setup(){
+    this.store = useStore();
   }
 
   refreshComponent(){
-    this.props.refreshComponent();
+    this.store.refreshComponent();
   }
 
   logComponentInConsole(type){
-    const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.sendObjectToConsole(${JSON.stringify(this.props.activeComponent.path)}, '${type}');`;
-    chrome.devtools.inspectedWindow.eval(script);
+    evalInWindow("sendObjectToConsole", [JSON.stringify(this.store.activeComponent.path), '"' + type + '"']);
   }
 
   inspectComponentInDOM(){
-    const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.inspectComponentDOM(${JSON.stringify(this.props.activeComponent.path)});`;
-    chrome.devtools.inspectedWindow.eval(script);
+    evalInWindow("inspectComponentDOM", [JSON.stringify(this.store.activeComponent.path)]);
   }
 
   inspectComponentSource(){
-    const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.inspectComponentSource(${JSON.stringify(this.props.activeComponent.path)});`;
-    chrome.devtools.inspectedWindow.eval(script);
+    evalInWindow("inspectComponentSource", [JSON.stringify(this.store.activeComponent.path)]);
   }
 
   inspectCompiledTemplate(){
-    const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.inspectComponentCompiledTemplate(${JSON.stringify(this.props.activeComponent.path)});`;
-    chrome.devtools.inspectedWindow.eval(script);
+    evalInWindow("inspectComponentCompiledTemplate", [JSON.stringify(this.store.activeComponent.path)]);
   }
 
   inspectRAwTemplate(){
-    const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.inspectComponentRawTemplate(${JSON.stringify(this.props.activeComponent.path)});`;
-    chrome.devtools.inspectedWindow.eval(script);
+    evalInWindow("inspectComponentRawTemplate", [JSON.stringify(this.store.activeComponent.path)]);
   }
 }
 

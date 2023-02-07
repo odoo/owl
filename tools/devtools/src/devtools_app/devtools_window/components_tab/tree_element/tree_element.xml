@@ -16,7 +16,7 @@
           <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer; visibility: hidden;"></i>
         </t>
         <div class="name-wrapper">
-          <HighlightText originalText="props.name" searchValue="searched ? props.search : ''"/>
+          <HighlightText originalText="props.name" searchValue="state.searched ? store.search.search : ''"/>
           <t t-if="minimizedKey.length > 0">
             <div class="key-wrapper"> key</div>=<div class="key-name"><t t-out="minimizedKey"/></div>
           </t>
@@ -31,14 +31,7 @@
     </div>
     <t t-if="props.toggled">
       <t t-foreach="props.children" t-as="child" t-key="child.key">
-        <TreeElement 
-          t-props="child"
-          search="props.search"
-          searchResults="props.searchResults"
-          renderPaths="props.renderPaths"
-          toggleComponentAndChildren="props.toggleComponentAndChildren"
-          toggleComponentTreeElementDisplay="props.toggleComponentTreeElementDisplay"
-          selectComponent="props.selectComponent"/>
+        <TreeElement t-props="child"/>
       </t>
     </t>
   </t>

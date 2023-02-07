@@ -1,18 +1,18 @@
 const { Component, EventBus, useState, onMounted, onWillUpdateProps } = owl
-import { ComponentsTree } from './components_tree/components_tree';
-import { Tab } from "./utils/tab";
-import { Events } from './events/events';
+import { ComponentsTab } from './components_tab/components_tab';
+import { Tab } from "./tab/tab";
+import { EventsTab } from './events_tab/events_tab';
 
 export class DevtoolsWindow extends Component {
   static props = [];
   
   static template = "devtools.DevtoolsWindow";
   
-  static components = { ComponentsTree, Tab, Events };
+  static components = { ComponentsTab, Tab, EventsTab };
 
   setup(){
     this.state = useState({
-      page: "ComponentsTree",
+      page: "ComponentsTab",
       selectedPath: [],
       activeRecorder: false,
       events: [],

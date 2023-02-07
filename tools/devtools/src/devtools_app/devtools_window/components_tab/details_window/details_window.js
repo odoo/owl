@@ -1,7 +1,7 @@
 
 const {Component, onRendered, onWillStart} = owl
-import { ObjectTreeElement } from './object_tree_element'
-import { Subscriptions } from './subscriptions';
+import { ObjectTreeElement } from './object_tree_element/object_tree_element'
+import { Subscriptions } from './subscriptions/subscriptions';
 
 export class DetailsWindow extends Component {
 

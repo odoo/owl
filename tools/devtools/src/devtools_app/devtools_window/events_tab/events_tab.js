@@ -1,8 +1,8 @@
 const { Component, onWillDestroy, onMounted } = owl
-import { Event } from "./event";
+import { Event } from "./event/event";
 
-export class Events extends Component { 
-  static template = "devtools.Events";
+export class EventsTab extends Component { 
+  static template = "devtools.EventsTab";
 
   static components = { Event };
   

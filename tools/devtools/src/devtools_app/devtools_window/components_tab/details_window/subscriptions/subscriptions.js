@@ -1,6 +1,6 @@
 
 const { Component, markup, useState, onMounted, onWillUpdateProps } = owl
-import { ObjectTreeElement } from './object_tree_element'
+import { ObjectTreeElement } from '../object_tree_element/object_tree_element'
 
 
 export class Subscriptions extends Component {

@@ -37,13 +37,13 @@ export const store = reactive({
 
   loadComponentsTree(fromOld){
     evalInWindow("getComponentsTree", fromOld ? [JSON.stringify(this.activeComponent.path), JSON.stringify(this.apps)] : [])
-      .then(result => {
-        this.apps = result;
-        if(!fromOld && this.settings.expandByDefault)
-          this.apps.forEach(tree => expandComponents(tree));
-      });
+    .then(result => {
+      this.apps = result;
+      if(!fromOld && this.settings.expandByDefault)
+        this.apps.forEach(tree => expandComponents(tree));
+    });
     evalInWindow("getComponentDetails", fromOld ? [JSON.stringify(this.activeComponent.path), JSON.stringify(this.activeComponent)] : [])
-      .then(result => this.activeComponent = result);
+    .then(result => this.activeComponent = result);
   },
 
   // Select a component by retrieving its details from the page based on its path
@@ -53,7 +53,7 @@ export const store = reactive({
       app.selected = false;
       app.highlighted = false;
       app.children.forEach(child => {
-        deselectComponent(child)
+        deselectComponent(child);
       });
     });
     let element;
@@ -70,7 +70,7 @@ export const store = reactive({
     element.selected = true;
     highlightChildren(element);
     evalInWindow("getComponentDetails", [JSON.stringify(element.path)])
-      .then(result => this.activeComponent = result);
+    .then(result => this.activeComponent = result);
   },
 
   // Update the search state value with the current search string and trigger the search
@@ -116,7 +116,7 @@ export const store = reactive({
     let cp = path.slice(2);
     let component;
     if(path.length < 2)
-      component = this.apps[path[0]]
+      component = this.apps[path[0]];
     else
       component = this.apps[path[0]].children[0];
     for (const key of cp) {
@@ -138,7 +138,7 @@ export const store = reactive({
         component.toggled = false;
       else{
         if(this.activeComponent.path.length > 1)
-          this.selectComponent(this.activeComponent.path.slice(0,-1))
+          this.selectComponent(this.activeComponent.path.slice(0,-1));
       }
       return;
     }
@@ -269,7 +269,7 @@ export const store = reactive({
   // Toggle the selector tool which is used to select a component based on the hovered Dom element
   toggleSelector(){
     this.search.activeSelector = !this.search.activeSelector;
-    evalInWindow(this.search.activeSelector ? "enableHTMLSelector" : "disableHTMLSelector", [])
+    evalInWindow(this.search.activeSelector ? "enableHTMLSelector" : "disableHTMLSelector", []);
   },
 
   // Triggers manually the rendering of the selected component
@@ -302,14 +302,14 @@ chrome.runtime.onConnect.addListener((port) => {
     // When message of type Flush is received, overwrite the component tree with the new one from page
     // A flush message is sent everytime a component is rendered on the page
     if (msg.type === "Flush"){
-      store.renderPaths = [...store.renderPaths, msg.path];
+      store.renderPaths = [...store.renderPaths, msg.data];
       clearTimeout(flushRendersTimeout);
       flushRendersTimeout = setTimeout(() => {store.renderPaths = []},200);
       store.loadComponentsTree(true);
     }
     // Select the component based on the path received with the SelectElement message
     if (msg.type === "SelectElement"){
-      store.selectComponent(msg.path);
+      store.selectComponent(msg.data);
     }
     // Stop the DOM element selector tool upon receiving the StopSelector message
     if (msg.type === "StopSelector"){
@@ -321,8 +321,7 @@ chrome.runtime.onConnect.addListener((port) => {
     }
 
     if (msg.type === "Event"){
-      if(store.activeRecorder)
-        store.events = [...store.events, msg.data];
+      store.events = [...store.events, msg.data];
     }
 
     if (msg.type === "Reload"){
@@ -360,7 +359,7 @@ function highlightChildren(component){
 function expandComponents(component) {
   component.toggled = true;
   component.children.forEach(child => {
-    expandComponents(child)
+    expandComponents(child);
   });
 }
 
@@ -368,6 +367,6 @@ function expandComponents(component) {
 function foldComponents(component) {
   component.toggled = false;
   component.children.forEach(child => {
-    foldComponents(child)
+    foldComponents(child);
   });
 }

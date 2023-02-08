@@ -6,7 +6,7 @@ const { Component } = owl
 
 export class Tab extends Component {
 
-  static props = ['name', 'active', 'componentName']
+  static props = ['name', 'active', 'componentName'];
   
   static template = "devtools.Tab";
 

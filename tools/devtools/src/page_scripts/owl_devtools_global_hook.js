@@ -1,15 +1,16 @@
 export class OwlDevtoolsGlobalHook {
   currentSelectedElement;
   root;
-  fibersMap;
+  fibersSet;
+  recordEvents;
 
   constructor(){
-    // TODO: support multiple apps
     this.apps = window.__OWL_DEVTOOLS__.apps;
-    this.fibersMap = new WeakMap();
+    this.fibersSet = new WeakSet();
     const appsArray = Array.from(this.apps);
     appsArray.forEach(app => this.patchAppMethods(app));
     this.patchSetMethods();
+    this.recordEvents = false;
   }
 
   patchSetMethods(){
@@ -32,8 +33,8 @@ export class OwlDevtoolsGlobalHook {
     const originalFlush = app.scheduler.flush;
     app.scheduler.flush = function() {
       [...this.tasks].map((fiber) => {
-        if (fiber.counter === 0 && !self.fibersMap.has(fiber)){
-          self.fibersMap.set(fiber, "");
+        if (fiber.counter === 0 && !self.fibersSet.has(fiber)){
+          self.fibersSet.add(fiber);
           const path = self.getComponentPath(fiber.node);
           /*
            * Add a functionnality to the flush function which sends a message to the window every time it is triggered.                          
@@ -41,7 +42,7 @@ export class OwlDevtoolsGlobalHook {
            * This process may be long but is necessary. More information in the docs:                                                            
            * https://developer.chrome.com/docs/extensions/mv3/devtools/#evaluated-scripts-to-devtools                                            
            */
-          window.postMessage({type: "owlDevtools__Flush", path: path});
+          window.postMessage({type: "owlDevtools__Flush", data: path});
         }
       });
       originalFlush.call(this, ...arguments);
@@ -49,29 +50,42 @@ export class OwlDevtoolsGlobalHook {
     if(app.root){
       const originalDestroy = app.root.constructor.prototype._destroy;
       app.root.constructor.prototype._destroy = function() {
-        const path = self.getComponentPath(this);
-        window.postMessage({type: "owlDevtools__Event", data: {type: "destroy", component: this.name, key: this.parentKey, path: path}});
+        if(self.recordEvents){
+          const path = self.getComponentPath(this);
+          window.postMessage({type: "owlDevtools__Event", data: {type: "destroy", component: this.name, key: this.parentKey, path: path}});
+        }
         originalDestroy.call(this, ...arguments);
       }
       const originalRender = app.root.constructor.prototype.render;
       app.root.constructor.prototype.render = function() {
-        const path = self.getComponentPath(this);
-        window.postMessage({type: "owlDevtools__Event", data: {type: "render", component: this.name, key: this.parentKey, path: path}});
+        if(self.recordEvents){
+          const path = self.getComponentPath(this);
+          window.postMessage({type: "owlDevtools__Event", data: {type: "render", component: this.name, key: this.parentKey, path: path}});
+        }
         originalRender.call(this, ...arguments);
       }
       const originalInitiate = app.root.constructor.prototype.initiateRender;
       app.root.constructor.prototype.initiateRender = function() {
-        const path = self.getComponentPath(this);
-        window.postMessage({type: "owlDevtools__Event", data: {type: "initiate render", component: this.name, key: this.parentKey, path: path}});
+        if(self.recordEvents){
+          const path = self.getComponentPath(this);
+          window.postMessage({type: "owlDevtools__Event", data: {type: "initiate render", component: this.name, key: this.parentKey, path: path}});
+        }
         originalInitiate.call(this, ...arguments);
       }
       const originalUpdate = app.root.constructor.prototype.updateAndRender;
       app.root.constructor.prototype.updateAndRender = function() {
-        const path = self.getComponentPath(this);
-        window.postMessage({type: "owlDevtools__Event", data: {type: "update and render", component: this.name, key: this.parentKey, path: path}});
+        if(self.recordEvents){
+          const path = self.getComponentPath(this);
+          window.postMessage({type: "owlDevtools__Event", data: {type: "update and render", component: this.name, key: this.parentKey, path: path}});
+        }
         originalUpdate.call(this, ...arguments);
       }
     }
+  }
+
+  toggleEventsRecording(){
+    this.recordEvents = !this.recordEvents;
+    return this.recordEvents;
   }
 
   // Draws a highlighting rectangle on the specified html element and displays its dimensions and the specified name in a box
@@ -179,7 +193,7 @@ export class OwlDevtoolsGlobalHook {
       const path = this.getElementPath(target);
       this.highlightComponent(path);
       this.currentSelectedElement = target;
-      window.postMessage({type: "owlDevtools__SelectElement", path: path});
+      window.postMessage({type: "owlDevtools__SelectElement", data: path});
     }
   }
   // Activate the HTML selector tool

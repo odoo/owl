@@ -1,22 +1,20 @@
 import { useStore } from "../../../store/store";
 
-const { Component, useState, onMounted } = owl
+const { Component, useState, onMounted } = owl;
 
-export class Event extends Component { 
+export class Event extends Component {
   static template = "devtools.Event";
 
   setup() {
     this.store = useStore();
   }
 
-  goToComponent(){
+  goToComponent() {
     this.store.selectComponent(this.props.path);
     this.store.switchTab("ComponentsTab");
   }
 
-  addInstanceToBlacklist(){
-  }
+  addInstanceToBlacklist() {}
 
-  addComponentToBlacklist(){
-  }
+  addComponentToBlacklist() {}
 }

@@ -37,8 +37,6 @@ declare global {
   interface Window {
     __OWL_DEVTOOLS__: {
       apps: Set<App>;
-      Fiber: typeof Fiber;
-      RootFiber: typeof RootFiber;
     };
   }
 }

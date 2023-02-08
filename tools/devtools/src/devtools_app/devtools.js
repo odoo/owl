@@ -6,20 +6,21 @@ let browserInstance = isFirefox() ? browser : chrome;
 let scriptsLoaded = false;
 
 browserInstance.devtools.network.onNavigated.addListener(createPanelsIfOwl);
-if(!isFirefox()){
+if (!isFirefox()) {
   chrome.tabs.onUpdated.addListener((tab) => {
     chrome.tabs.get(tab, (tabData) => {
-      if (tabData?.status === "complete"){
+      if (tabData?.status === "complete") {
         scriptsLoaded = false;
         setTimeout(() => {
           chrome.devtools.inspectedWindow.eval(
-          'window.__OWL_DEVTOOLS__?.apps !== undefined;',
-          (hasOwl) => {
-            if (hasOwl){
-              loadScripts();
+            "window.__OWL_DEVTOOLS__?.apps !== undefined;",
+            (hasOwl) => {
+              if (hasOwl) {
+                loadScripts();
+              }
+              chrome.runtime.sendMessage({ type: "Reload" });
             }
-            chrome.runtime.sendMessage({ type: "Reload" })
-        });
+          );
         }, 200);
       }
     });
@@ -29,8 +30,8 @@ const checkInterval = setInterval(createPanelsIfOwl, 1000);
 createPanelsIfOwl();
 
 function loadScripts() {
-  if(!scriptsLoaded){
-    fetch('../page_scripts/load_scripts.js')
+  if (!scriptsLoaded) {
+    fetch("../page_scripts/load_scripts.js")
       .then((response) => response.text())
       .then((contents) => {
         browserInstance.devtools.inspectedWindow.eval(contents);
@@ -40,20 +41,25 @@ function loadScripts() {
 }
 
 function createPanelsIfOwl() {
-  if(created || checks++ > 10){
+  if (created || checks++ > 10) {
     clearInterval(checkInterval);
     return;
   }
   browserInstance.devtools.inspectedWindow.eval(
-    'window.__OWL_DEVTOOLS__?.apps !== undefined;',
+    "window.__OWL_DEVTOOLS__?.apps !== undefined;",
     (hasOwl) => {
-      if(!hasOwl || created){
+      if (!hasOwl || created) {
         return;
       }
       clearInterval(checkInterval);
       created = true;
       loadScripts();
-      browserInstance.devtools.panels.create("Owl", "../../assets/icon128.png", isFirefox() ? "devtools_panel.html" : "devtools_app/devtools_panel.html", function (panel) {});
+      browserInstance.devtools.panels.create(
+        "Owl",
+        "../../assets/icon128.png",
+        isFirefox() ? "devtools_panel.html" : "devtools_app/devtools_panel.html",
+        function (panel) {}
+      );
     }
-  )
+  );
 }

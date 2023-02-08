@@ -21,17 +21,16 @@ if (navigator.userAgent.indexOf("Chrome") !== -1) {
 //   //     browser.tabs.executeScript(tabId, { code: contents });
 //   //   });
 //   console.log("loaded scripts");
-//   browser.tabs.executeScript({ 
+//   browser.tabs.executeScript({
 //     file: './devtools/page_scripts/load_scripts.js',
-//     allFrames: true, 
+//     allFrames: true,
 //   });
 
 // }
 
-
 browserInstance.tabs.onUpdated.addListener((tab) => {
   browserInstance.tabs.get(tab, (tabData) => {
-    if (tabData.status === "complete"){
+    if (tabData.status === "complete") {
       setTimeout(() => {
         checkOwlStatus(tabData.id);
         // console.log(tabData.id)
@@ -60,18 +59,15 @@ browserInstance.tabs.onActivated.addListener((activeInfo) => {
   }, 200);
 });
 
-
 async function checkOwlStatus(tabId) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     if (isChrome) {
       chrome.scripting.executeScript(
         {
           target: { tabId: tabId },
           func: () => {
-            if (window.__OWL_DEVTOOLS__?.apps !== undefined)
-              return 2;
-            if (typeof owl === "object" && owl.hasOwnProperty('App'))
-              return 1;
+            if (window.__OWL_DEVTOOLS__?.apps !== undefined) return 2;
+            if (typeof owl === "object" && owl.hasOwnProperty("App")) return 1;
             return 0;
           },
           world: "MAIN",
@@ -79,7 +75,9 @@ async function checkOwlStatus(tabId) {
         (results) => {
           if (typeof results !== "undefined") {
             owlStatus = results[0].result;
-            chrome.action.setIcon({ path: owlStatus === 2 ? "assets/icon128.png" : "assets/icon_disabled128.png" });
+            chrome.action.setIcon({
+              path: owlStatus === 2 ? "assets/icon128.png" : "assets/icon_disabled128.png",
+            });
             resolve(results[0].result);
           }
         }
@@ -94,7 +92,7 @@ async function checkOwlStatus(tabId) {
       //         return 1;
       //       return 0;
       //     `,
-      //   allFrames: true, 
+      //   allFrames: true,
       // }, (result) => {
       //   console.log(result);
       //   owlStatus = result[0];
@@ -106,22 +104,20 @@ async function checkOwlStatus(tabId) {
 }
 
 browserInstance.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if(message.type === "getOwlStatus"){
+  if (message.type === "getOwlStatus") {
     getActiveTabURL(isFirefox).then((tab) => {
-      if (tab){
+      if (tab) {
         tabId = tab.id;
       }
       checkOwlStatus(tabId).then((res) => {
-        sendResponse({result: res})
+        sendResponse({ result: res });
       });
     });
     return true;
-  }
-  else
-    browserInstance.runtime.connect({name: "DevtoolsTreePort"})
-      .postMessage(message.data ? {type: message.type, data: message.data} : {type: message.type});
+  } else
+    browserInstance.runtime
+      .connect({ name: "DevtoolsTreePort" })
+      .postMessage(
+        message.data ? { type: message.type, data: message.data } : { type: message.type }
+      );
 });
-
-
-  
-    

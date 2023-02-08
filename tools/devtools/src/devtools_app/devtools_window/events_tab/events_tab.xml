@@ -6,10 +6,6 @@
       <div class="icons-separator"/>
       <i title="Clear events" class="fa fa-ban lg-icon pointer-icon px-2" t-on-click.stop="clearConsole" aria-hidden="true"></i>
       <div class="icons-separator"/>
-      <!-- <i title="Blacklist all seen components' events" class="fa fa-eye-slash lg-icon pointer-icon" t-on-click.stop="blacklistAll" aria-hidden="true"></i>
-      <div class="icons-separator mx-2"/>
-      <i title="Remove all components from events blacklist" class="fa fa-eye lg-icon pointer-icon" t-on-click.stop="clearBlacklist" aria-hidden="true"></i>
-      <div class="icons-separator mx-2"/> -->
     </div>
     <div class="horizontal-border"/>
     <div class="events-container">

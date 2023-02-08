@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-const { Component, onWillRender } = owl
+const { Component, onWillRender } = owl;
 
 export class HighlightText extends Component {
   setup() {
@@ -13,26 +13,25 @@ export class HighlightText extends Component {
     });
   }
 
-  splitFuzzySearch(text, search){
-    if(!search || search.length === 0)
-      return [text];
-    let splits = [''];
+  splitFuzzySearch(text, search) {
+    if (!search || search.length === 0) return [text];
+    let splits = [""];
     let searchIndex = 0;
-    for (const letter of text){
-      if(!(searchIndex >= search.length) && (letter === search[searchIndex] || letter === search[searchIndex].toUpperCase() )){
-        if (splits.length % 2){
+    for (const letter of text) {
+      if (
+        !(searchIndex >= search.length) &&
+        (letter === search[searchIndex] || letter === search[searchIndex].toUpperCase())
+      ) {
+        if (splits.length % 2) {
           splits.push(letter);
-        }
-        else {
-          splits[splits.length-1] += letter;
+        } else {
+          splits[splits.length - 1] += letter;
         }
         searchIndex++;
-      }
-      else {
-        if (splits.length % 2){
-          splits[splits.length-1] += letter;
-        }
-        else {
+      } else {
+        if (splits.length % 2) {
+          splits[splits.length - 1] += letter;
+        } else {
           splits.push(letter);
         }
       }
@@ -42,7 +41,7 @@ export class HighlightText extends Component {
 }
 HighlightText.template = "utils.HighlightText";
 HighlightText.props = {
-    originalText: String,
-    searchValue: String,
+  originalText: String,
+  searchValue: String,
 };
 HighlightText.highlightClass = "highlight-search";

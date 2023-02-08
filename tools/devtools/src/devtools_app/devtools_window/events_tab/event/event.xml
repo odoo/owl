@@ -2,9 +2,8 @@
 <templates xml:space="preserve">
   <t t-name="devtools.Event" owl="1">
     <li class="event-display">
-      <t t-out="props.type"/> event on <t t-out="props.component"/>
+      <t t-out="props.type"/>: <t t-out="props.component"/>
       <i title="Go to component" class="fa fa-arrow-right utility-icon me-2" aria-hidden="true" t-on-click.stop="goToComponent"></i>
-      <!-- <i title="Hide component's events" class="fa fa-eye-slash utility-icon me-2" aria-hidden="true" t-on-click.stop="addInstanceToBlacklist"></i> -->
     </li>
   </t>
 </templates>

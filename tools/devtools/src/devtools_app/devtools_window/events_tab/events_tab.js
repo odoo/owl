@@ -1,4 +1,5 @@
 const { Component, onWillDestroy, onMounted } = owl
+import { evalInWindow } from "../../../utils";
 import { useStore } from "../../store/store";
 import { Event } from "./event/event";
 
@@ -12,7 +13,7 @@ export class EventsTab extends Component {
   }
 
   toggleRecording(){
-    this.store.activeRecorder = !this.store.activeRecorder;
+    evalInWindow("toggleEventsRecording", []).then(result => this.store.activeRecorder = result);
   }
 
   clearConsole(){

@@ -117,24 +117,9 @@ browserInstance.runtime.onMessage.addListener((message, sender, sendResponse) =>
     });
     return true;
   }
-  if(message.type === "Flush"){
-    browserInstance.runtime.connect({name: "DevtoolsTreePort"}).postMessage({type: "Flush", path: message.path});
-  }
-  if(message.type === "SelectElement"){
-    browserInstance.runtime.connect({name: "DevtoolsTreePort"}).postMessage({type: "SelectElement", path: message.path});
-  }
-  if(message.type === "StopSelector"){
-    browserInstance.runtime.connect({name: "DevtoolsTreePort"}).postMessage({type: "StopSelector"});
-  }
-  if(message.type === "Reload"){
-    browserInstance.runtime.connect({name: "DevtoolsTreePort"}).postMessage({type: "Reload"});
-  }
-  if(message.type === "RefreshApps"){
-    browserInstance.runtime.connect({name: "DevtoolsTreePort"}).postMessage({type: "RefreshApps"});
-  }
-  if(message.type === "Event"){
-    browserInstance.runtime.connect({name: "DevtoolsEventsPort"}).postMessage({type: "Event", data: message.data});
-  }
+  else
+    browserInstance.runtime.connect({name: "DevtoolsTreePort"})
+      .postMessage(message.data ? {type: message.type, data: message.data} : {type: message.type});
 });
 
 

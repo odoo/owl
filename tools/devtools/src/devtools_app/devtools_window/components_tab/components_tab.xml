@@ -3,7 +3,7 @@
   <t t-name="devtools.ComponentsTab" owl="1">
     <div class="split-screen-left"  t-attf-style="width:{{store.leftWidth}}px;">
       <div class="panel-top">
-        <SearchBar/>
+        <ComponentSearchBar/>
       </div>
       <div class="horizontal-border">
       </div>

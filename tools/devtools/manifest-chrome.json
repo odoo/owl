@@ -1,35 +1,29 @@
 {
-    "name": "Owl devtools",
-    "version": "1.0",
-    "manifest_version": 3,
-    "description": "Chrome devtools extension for Odoo Owl framework",
-    "action": {
-        "default_icon": {
-            "128": "assets/icon_disabled128.png"
-        },
-        "default_title": "Owl devtools",
-        "default_popup": "popup_app/popup.html"
+  "name": "Owl devtools",
+  "version": "1.0",
+  "manifest_version": 3,
+  "description": "Chrome devtools extension for Odoo Owl framework",
+  "action": {
+    "default_icon": {
+      "128": "assets/icon_disabled128.png"
     },
-    "permissions": [
-        "storage",
-        "scripting"
-    ],
-    "host_permissions": [
-        "http://*/*", 
-        "https://*/*"
-    ],
-    "content_security_policy": {
-        "script-src": "self",
-        "object-src": "self"
-    },
-    "background": {
-        "service_worker": "background.js"
-    },
-    "devtools_page": "devtools_app/devtools.html",
-    "content_scripts": [
-        {
-            "matches": ["<all_urls>"],
-            "js": ["content.js"]
-        }
-    ]
+    "default_title": "Owl devtools",
+    "default_popup": "popup_app/popup.html"
+  },
+  "permissions": ["storage", "scripting"],
+  "host_permissions": ["http://*/*", "https://*/*"],
+  "content_security_policy": {
+    "script-src": "self",
+    "object-src": "self"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "devtools_page": "devtools_app/devtools.html",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
 }

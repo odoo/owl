@@ -4,22 +4,36 @@ import { useStore } from "../../../../store/store";
 const { Component, useState, onWillUpdateProps, useEffect } = owl;
 
 export class ObjectTreeElement extends Component {
-  static props = ['name', 'content', 'children', 'display', 'toggled', 'depth', 'contentType', 'hasChildren', 'objectType', 'editReactiveState', 'updateBag', 'componentPath', 'loadGetterContent'];
-  
+  static props = [
+    "name",
+    "content",
+    "children",
+    "display",
+    "toggled",
+    "depth",
+    "contentType",
+    "hasChildren",
+    "objectType",
+    "editReactiveState",
+    "updateBag",
+    "componentPath",
+    "loadGetterContent",
+  ];
+
   static template = "devtools.ObjectTreeElement";
-  
+
   static components = { ObjectTreeElement };
 
-  setup(){
+  setup() {
     this.state = useState({
-      editMode: false
+      editMode: false,
     });
     this.store = useStore();
     useEffect(
       (editMode) => {
         // Focus on the input when it is created
-        if(editMode){
-          const input = document.getElementById("objectEditionInput/"+this.pathAsString);
+        if (editMode) {
+          const input = document.getElementById("objectEditionInput/" + this.pathAsString);
           input.focus();
           input.select();
         }
@@ -28,38 +42,40 @@ export class ObjectTreeElement extends Component {
     );
   }
 
-  get pathAsString(){return JSON.stringify(this.props.path)}
+  get pathAsString() {
+    return JSON.stringify(this.props.path);
+  }
 
-  get objectName(){
-    if(this.props.contentType === "function" && this.props.content.startsWith("get "))
+  get objectName() {
+    if (this.props.contentType === "function" && this.props.content.startsWith("get "))
       return "get " + this.props.name;
     return this.props.name;
   }
 
-  setupEditMode(ev){
-    if(!this.state.editMode){
-      if(["number", "string", "boolean", "undefined"].includes(this.props.contentType)){
+  setupEditMode(ev) {
+    if (!this.state.editMode) {
+      if (["number", "string", "boolean", "undefined"].includes(this.props.contentType)) {
         this.state.editMode = true;
       }
     }
   }
 
-  editObject(ev){
-    if (ev.keyCode === 13 && ev.target.value !== ""){
+  editObject(ev) {
+    if (ev.keyCode === 13 && ev.target.value !== "") {
       this.store.editObjectTreeElement(this.props.path, ev.target.value, this.props.objectType);
       this.state.editMode = false;
     }
   }
 
-  loadGetterContent(ev){
+  loadGetterContent(ev) {
     this.store.loadGetterContent(this.props);
   }
 
-  toggleDisplay(ev){
+  toggleDisplay(ev) {
     this.store.toggleObjectTreeElementsDisplay(this.props);
   }
 
-  openMenu(event){
+  openMenu(event) {
     const menu = document.getElementById("customMenu/" + this.pathAsString);
     menu.classList.remove("hidden");
     const menuWidth = menu.offsetWidth;
@@ -72,18 +88,21 @@ export class ObjectTreeElement extends Component {
     if (y + menuHeight > window.innerHeight) {
       y = window.innerHeight - menuHeight;
     }
-    menu.style.left = x + 'px';
-    menu.style.top = y + 'px';
+    menu.style.left = x + "px";
+    menu.style.top = y + "px";
   }
 
-  inspectFunctionSource(){
-    evalInWindow("inspectFunctionSource", [JSON.stringify(this.store.activeComponent.path),JSON.stringify(this.props.path)]);
+  inspectFunctionSource() {
+    evalInWindow("inspectFunctionSource", [
+      JSON.stringify(this.store.activeComponent.path),
+      JSON.stringify(this.props.path),
+    ]);
   }
 
-  storeObjectAsGlobal(){
-    evalInWindow("storeObjectAsGlobal", [JSON.stringify(this.store.activeComponent.path),JSON.stringify(this.props.path)]);
+  storeObjectAsGlobal() {
+    evalInWindow("storeObjectAsGlobal", [
+      JSON.stringify(this.store.activeComponent.path),
+      JSON.stringify(this.props.path),
+    ]);
   }
 }
-
-
-

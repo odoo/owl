@@ -1,4 +1,5 @@
 import { OwlError } from "./error_handling";
+import { toRaw } from "./reactivity";
 
 type BaseType =
   | typeof String
@@ -84,6 +85,7 @@ export function validateSchema(obj: { [key: string]: any }, schema: Schema): str
   if (Array.isArray(schema)) {
     schema = toSchema(schema);
   }
+  obj = toRaw(obj);
   let errors = [];
   // check if each value in obj has correct shape
   for (let key in obj) {

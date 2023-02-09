@@ -1,5 +1,5 @@
 import { makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
-import { Component, onError, xml, mount, OwlError } from "../../src";
+import { Component, onError, xml, mount, OwlError, useState } from "../../src";
 import { App, DEV_MSG } from "../../src/runtime/app";
 import { validateProps } from "../../src/runtime/template_helpers";
 import { Schema } from "../../src/runtime/validation";
@@ -680,6 +680,29 @@ describe("props validation", () => {
     await mountProm;
     expect(error!).toBeDefined();
     expect(error!.message).toBe("Invalid props for component 'SubComp': 'p' is missing");
+  });
+
+  test("props validation does not cause additional subscription", async () => {
+    let obj = {
+      value: 1,
+      otherValue: 2,
+    };
+    class Child extends Component {
+      static props = {
+        obj: { type: Object, shape: { value: Number, otherValue: Number } },
+      };
+      static template = xml`<t t-esc="props.obj.value"/>`;
+    }
+    class Parent extends Component {
+      static template = xml`<Child obj="obj"/><t t-esc="obj.otherValue"/>`;
+      static components = { Child };
+
+      obj = useState(obj);
+    }
+    const app = new App(Parent, { test: true });
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("12");
+    expect(app.root!.subscriptions).toEqual([{ keys: ["otherValue"], target: obj }]);
   });
 
   test("props are validated whenever component is updated", async () => {

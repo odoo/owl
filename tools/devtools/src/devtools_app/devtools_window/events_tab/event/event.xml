@@ -3,7 +3,7 @@
   <t t-name="devtools.Event" owl="1">
     <li class="event-display">
       <t t-out="props.type"/>: <t t-out="props.component"/>
-      <i title="Go to component" class="fa fa-arrow-right utility-icon me-2" aria-hidden="true" t-on-click.stop="goToComponent"></i>
+      <i title="Jump to component" class="fa fa-arrow-right utility-icon me-2" aria-hidden="true" t-on-click.stop="goToComponent"></i>
     </li>
   </t>
 </templates>

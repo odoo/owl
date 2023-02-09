@@ -66,7 +66,7 @@ async function checkOwlStatus(tabId) {
         {
           target: { tabId: tabId },
           func: () => {
-            if (window.__OWL_DEVTOOLS__?.apps !== undefined) return 2;
+            if (window.__OWL_DEVTOOLS__?.Fiber !== undefined) return 2;
             if (typeof owl === "object" && owl.hasOwnProperty("App")) return 1;
             return 0;
           },

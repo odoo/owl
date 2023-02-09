@@ -5,7 +5,8 @@
       <i title="Start/Stop Recording" class="fa fa-circle pointer-icon pe-2" t-attf-style="color: {{store.activeRecorder ? 'rgb(255, 31, 31)' : 'rgb(0, 0, 0)'}};" t-on-click.stop="toggleRecording" aria-hidden="true"></i>
       <div class="icons-separator"/>
       <i title="Clear events" class="fa fa-ban lg-icon pointer-icon px-2" t-on-click.stop="clearConsole" aria-hidden="true"></i>
-      <div class="icons-separator"/>
+      <div class="icons-separator me-2"/>
+      <!-- <EventSearchBar/> -->
     </div>
     <div class="horizontal-border"/>
     <div class="events-container">

@@ -16,7 +16,7 @@
           <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer; visibility: hidden;"></i>
         </t>
         <div class="name-wrapper">
-          <HighlightText originalText="props.name" searchValue="state.searched ? store.search.search : ''"/>
+          <HighlightText originalText="props.name" searchValue="state.searched ? store.componentSearch.search : ''"/>
           <t t-if="minimizedKey.length > 0">
             <div class="key-wrapper"> key</div>=<div class="key-name"><t t-out="minimizedKey"/></div>
           </t>

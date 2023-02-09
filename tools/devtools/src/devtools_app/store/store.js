@@ -22,7 +22,7 @@ export const store = reactive({
     env: {},
     instance: {},
   },
-  search: {
+  componentSearch: {
     search: "",
     searchResults: [],
     searchIndex: 0,
@@ -79,24 +79,24 @@ export const store = reactive({
 
   // Update the search state value with the current search string and trigger the search
   updateSearch(search) {
-    this.search.search = search;
-    this.search.searchResults = [];
+    this.componentSearch.search = search;
+    this.componentSearch.searchResults = [];
     this.apps.forEach((app) => this.getSearchResults(search, app));
-    if (this.search.searchResults.length > 0) {
-      this.search.searchIndex = 0;
-      this.selectComponent(this.search.searchResults[0]);
+    if (this.componentSearch.searchResults.length > 0) {
+      this.componentSearch.searchIndex = 0;
+      this.selectComponent(this.componentSearch.searchResults[0]);
       this.apps.forEach((app) => foldComponents(app));
-      for (const result of this.search.searchResults) {
+      for (const result of this.componentSearch.searchResults) {
         this.toggleComponentParents(result);
       }
-    } else this.search.searchIndex = -1;
+    } else this.componentSearch.searchIndex = -1;
   },
 
   // Search for results in the components tree given the current search string (in a fuzzy way)
   getSearchResults(search, node) {
     if (search.length < 1) return;
     if (fuzzySearch(node.name, search)) {
-      this.search.searchResults.push(node.path);
+      this.componentSearch.searchResults.push(node.path);
     }
     if (node.children) {
       node.children.forEach((child) => this.getSearchResults(search, child));
@@ -172,8 +172,8 @@ export const store = reactive({
 
   // Set the search index to the provided one in order to select the current searched component
   setSearchIndex(index) {
-    this.search.searchIndex = index;
-    this.selectComponent(this.search.searchResults[index]);
+    this.componentSearch.searchIndex = index;
+    this.selectComponent(this.componentSearch.searchResults[index]);
   },
 
   // Toggle expansion of the component tree element given by the path
@@ -259,8 +259,8 @@ export const store = reactive({
 
   // Toggle the selector tool which is used to select a component based on the hovered Dom element
   toggleSelector() {
-    this.search.activeSelector = !this.search.activeSelector;
-    evalInWindow(this.search.activeSelector ? "enableHTMLSelector" : "disableHTMLSelector", []);
+    this.componentSearch.activeSelector = !this.componentSearch.activeSelector;
+    evalInWindow(this.componentSearch.activeSelector ? "enableHTMLSelector" : "disableHTMLSelector", []);
   },
 
   // Triggers manually the rendering of the selected component
@@ -306,7 +306,7 @@ chrome.runtime.onConnect.addListener((port) => {
     }
     // Stop the DOM element selector tool upon receiving the StopSelector message
     if (msg.type === "StopSelector") {
-      store.search.activeSelector = false;
+      store.componentSearch.activeSelector = false;
     }
 
     if (msg.type === "RefreshApps") {

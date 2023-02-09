@@ -65,7 +65,7 @@ export class TreeElement extends Component {
         if (searchResults.includes(this.props.path)) this.state.searched = true;
         else this.state.searched = false;
       },
-      () => [this.store.search.searchResults]
+      () => [this.store.componentSearch.searchResults]
     );
   }
 

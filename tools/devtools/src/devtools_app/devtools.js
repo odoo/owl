@@ -13,7 +13,7 @@ if (!isFirefox()) {
         scriptsLoaded = false;
         setTimeout(() => {
           chrome.devtools.inspectedWindow.eval(
-            "window.__OWL_DEVTOOLS__?.apps !== undefined;",
+            "window.__OWL_DEVTOOLS__?.Fiber !== undefined;",
             (hasOwl) => {
               if (hasOwl) {
                 loadScripts();
@@ -46,7 +46,7 @@ function createPanelsIfOwl() {
     return;
   }
   browserInstance.devtools.inspectedWindow.eval(
-    "window.__OWL_DEVTOOLS__?.apps !== undefined;",
+    "window.__OWL_DEVTOOLS__?.Fiber !== undefined;",
     (hasOwl) => {
       if (!hasOwl || created) {
         return;

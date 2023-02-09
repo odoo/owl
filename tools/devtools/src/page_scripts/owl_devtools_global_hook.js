@@ -10,6 +10,7 @@ export class OwlDevtoolsGlobalHook {
     this.Fiber = window.__OWL_DEVTOOLS__.Fiber;
     this.RootFiber = window.__OWL_DEVTOOLS__.RootFiber;
     this.fibersSet = new WeakSet();
+    this.eventId = 0;
     const appsArray = Array.from(this.apps);
     appsArray.forEach((app) => this.patchAppMethods(app));
     this.patchSetMethods();
@@ -56,25 +57,27 @@ export class OwlDevtoolsGlobalHook {
     };
     const originalRender = self.Fiber.prototype.render;
     self.Fiber.prototype.render = function () {
+      const id = self.eventId++;
       _render = false;
-      let skip = false;
+      let flushed = false;
       if (this instanceof self.RootFiber && inFlush) {
-        const path = self.getComponentPath(this.node);
-        window.postMessage({
-          type: "owlDevtools__Event",
-          data: {
-            type: "root render (flushed)",
-            component: this.node.name,
-            key: this.node.parentKey,
-            path: path,
-          },
-        });
-        skip = true;
+        flushed = true;
       }
       originalRender.call(this, ...arguments);
-      if (self.recordEvents && !skip) {
+      if (self.recordEvents) {
         const path = self.getComponentPath(this.node);
-        if (_render) {
+        if (flushed) {
+          window.postMessage({
+            type: "owlDevtools__Event",
+            data: {
+              type: "root render (flushed)",
+              component: this.node.name,
+              key: this.node.parentKey,
+              path: path,
+              id: id,
+            },
+          });
+        } else if (_render) {
           if (this instanceof self.RootFiber) {
             window.postMessage({
               type: "owlDevtools__Event",
@@ -83,44 +86,49 @@ export class OwlDevtoolsGlobalHook {
                 component: this.node.name,
                 key: this.node.parentKey,
                 path: path,
+                id: id,
               },
             });
           } else if (this.node.status === 0) {
+            // window.postMessage({
+            //   type: "owlDevtools__Event",
+            //   data: {
+            //     type: "create",
+            //     component: this.node.name,
+            //     key: this.node.parentKey,
+            //     path: path,
+            //     id: id,
+            //   },
+            // });
             window.postMessage({
               type: "owlDevtools__Event",
               data: {
-                type: "create",
+                type: "create and render",
                 component: this.node.name,
                 key: this.node.parentKey,
                 path: path,
-              },
-            });
-            window.postMessage({
-              type: "owlDevtools__Event",
-              data: {
-                type: "render",
-                component: this.node.name,
-                key: this.node.parentKey,
-                path: path,
+                id: id,
               },
             });
           } else {
+            // window.postMessage({
+            //   type: "owlDevtools__Event",
+            //   data: {
+            //     type: "update",
+            //     component: this.node.name,
+            //     key: this.node.parentKey,
+            //     path: path,
+            //     id: id,
+            //   },
+            // });
             window.postMessage({
               type: "owlDevtools__Event",
               data: {
-                type: "update",
+                type: "update and render",
                 component: this.node.name,
                 key: this.node.parentKey,
                 path: path,
-              },
-            });
-            window.postMessage({
-              type: "owlDevtools__Event",
-              data: {
-                type: "render",
-                component: this.node.name,
-                key: this.node.parentKey,
-                path: path,
+                id: id,
               },
             });
           }
@@ -132,6 +140,7 @@ export class OwlDevtoolsGlobalHook {
               component: this.node.name,
               key: this.node.parentKey,
               path: path,
+              id: id,
             },
           });
         }
@@ -149,58 +158,27 @@ export class OwlDevtoolsGlobalHook {
           const path = self.getComponentPath(this);
           window.postMessage({
             type: "owlDevtools__Event",
-            data: { type: "destroy", component: this.name, key: this.parentKey, path: path },
+            data: {
+              type: "destroy",
+              component: this.name,
+              key: this.parentKey,
+              path: path,
+              id: self.eventId++,
+            },
           });
         }
         originalDestroy.call(this, ...arguments);
       };
-      // const originalRender = app.root.constructor.prototype.render;
-      // app.root.constructor.prototype.render = function() {
-      //   if(self.recordEvents){
-      //     const path = self.getComponentPath(this);
-      //     window.postMessage({type: "owlDevtools__Event", data: {type: "component render", component: this.name, key: this.parentKey, path: path}});
-      //   }
-      //   originalRender.call(this, ...arguments);
-      // }
-      // const originalInitiate = app.root.constructor.prototype.initiateRender;
-      // app.root.constructor.prototype.initiateRender = function () {
-      //   if (self.recordEvents) {
-      //     const path = self.getComponentPath(this);
-      //     window.postMessage({
-      //       type: "owlDevtools__Event",
-      //       data: {
-      //         type: "create",
-      //         component: this.name,
-      //         key: this.parentKey,
-      //         path: path,
-      //       },
-      //     });
-      //   }
-      //   originalInitiate.call(this, ...arguments);
-      // };
-      // const originalUpdate = app.root.constructor.prototype.updateAndRender;
-      // app.root.constructor.prototype.updateAndRender = function () {
-      //   if (self.recordEvents) {
-      //     const path = self.getComponentPath(this);
-      //     window.postMessage({
-      //       type: "owlDevtools__Event",
-      //       data: {
-      //         type: "update and render",
-      //         component: this.name,
-      //         key: this.parentKey,
-      //         path: path,
-      //       },
-      //     });
-      //   }
-      //   originalUpdate.call(this, ...arguments);
-      // };
-      // app.root.render();
     }
   }
 
   toggleEventsRecording() {
     this.recordEvents = !this.recordEvents;
     return this.recordEvents;
+  }
+
+  resetEvents() {
+    this.eventId = 0;
   }
 
   // Draws a highlighting rectangle on the specified html element and displays its dimensions and the specified name in a box
@@ -1099,20 +1077,21 @@ export class OwlDevtoolsGlobalHook {
     return getter;
   }
   // Gives the DOM elements which correspond to the given component node
-  getDOMElementsOfComponent(componentNode) {
-    if (componentNode.bdom.hasOwnProperty("el")) return [componentNode.bdom.el];
-    if (componentNode.bdom.hasOwnProperty("child") && componentNode.bdom.child.hasOwnProperty("el"))
-      return [componentNode.bdom.child.el];
-    if (componentNode.bdom.hasOwnProperty("children") && componentNode.bdom.children.length > 0) {
+  getDOMElementsRecursive(node) {
+    if (node.hasOwnProperty("bdom")) return this.getDOMElementsRecursive(node.bdom);
+    if (node.hasOwnProperty("content")) return this.getDOMElementsRecursive(node.content);
+    if (node.hasOwnProperty("el")) return [node.el];
+    if (node.hasOwnProperty("child")) return this.getDOMElementsRecursive(node.child);
+    if (node.hasOwnProperty("children") && node.children.length > 0) {
       let elements = [];
-      for (const child of componentNode.bdom.children) {
-        if (child && child.hasOwnProperty("el")) elements.push(child.el);
+      for (const child of node.children) {
+        if (child) elements = elements.concat(this.getDOMElementsRecursive(child));
       }
       if (elements.length > 0) {
         return elements;
       }
     }
-    if (componentNode.bdom.hasOwnProperty("parentEl")) return [componentNode.bdom.parentEl];
+    if (node.hasOwnProperty("parentEl")) return [node.parentEl];
   }
   // Triggers the highlight effect around the specified component.
   highlightComponent(path) {
@@ -1120,7 +1099,7 @@ export class OwlDevtoolsGlobalHook {
     if (!component) {
       component = Array.from(this.apps)[0].root;
     }
-    const elements = this.getDOMElementsOfComponent(component);
+    const elements = this.getDOMElementsRecursive(component);
     this.highlightElements(elements, component.component.constructor.name);
   }
   // Recursively fills the components tree as a parsed version
@@ -1181,32 +1160,18 @@ export class OwlDevtoolsGlobalHook {
     if (!node?.bdom) {
       return null;
     }
-    // If the component is directly linked to the html element
-    if (node.bdom.hasOwnProperty("el") && node.bdom.el.isEqualNode(element)) {
-      return path;
+    const results = this.getDOMElementsRecursive(node);
+    let hasElementInChilds = false;
+    for (const result of results) {
+      if (result.isEqualNode(element)) return path;
+      if (result.contains(element)) hasElementInChilds = true;
     }
-    // If the component has only one child html element and it corresponds to the target element
-    if (
-      node.bdom.hasOwnProperty("child") &&
-      node.bdom.child.hasOwnProperty("el") &&
-      node.bdom.child.el.isEqualNode(element)
-    ) {
-      return path;
-    }
-    // If the component has several children and one of them is the target
-    if (node.bdom.hasOwnProperty("children") && node.bdom.children.length > 0) {
-      for (const child of node.bdom.children) {
-        if (child && child.hasOwnProperty("el") && child.el.isEqualNode(element)) return path;
-      }
-    }
-    // Finally check if the target is parent of the component
-    if (node.bdom.parentEl && node.bdom.parentEl.isEqualNode(element)) {
-      return path;
-    }
-    for (const [key, child] of Object.entries(node.children)) {
-      const result = this.searchElement(child, path.concat([key]), element);
-      if (result) {
-        return result;
+    if (hasElementInChilds) {
+      for (const [key, child] of Object.entries(node.children)) {
+        const result = this.searchElement(child, path.concat([key]), element);
+        if (result) {
+          return result;
+        }
       }
     }
     return null;
@@ -1330,7 +1295,7 @@ export class OwlDevtoolsGlobalHook {
   // Inspect the DOM of the component in the elements tab of the devtools
   inspectComponentDOM(componentPath) {
     const componentNode = this.getComponentNode(componentPath);
-    const elements = this.getDOMElementsOfComponent(componentNode);
+    const elements = this.getDOMElementsRecursive(componentNode);
     inspect(elements[0]);
   }
   // Inspect source code of the component (corresponds to inspecting its constructor)

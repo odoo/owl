@@ -315,6 +315,7 @@ chrome.runtime.onConnect.addListener((port) => {
 
     if (msg.type === "Event") {
       store.events = [...store.events, msg.data];
+      store.events.sort((a, b) => a.id - b.id);
     }
 
     if (msg.type === "Reload") {

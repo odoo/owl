@@ -20,5 +20,6 @@ export class EventsTab extends Component {
 
   clearConsole() {
     this.store.events = [];
+    evalInWindow("resetEvents", []);
   }
 }

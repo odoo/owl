@@ -7,6 +7,7 @@ import {
   onWillUnmount,
   useState,
   xml,
+  toRaw,
 } from "../../src";
 import { makeTestFixture, nextTick, snapshotEverything, useLogLifecycle } from "../helpers";
 
@@ -230,5 +231,36 @@ describe("reactivity in lifecycle", () => {
     // Only child should be rendered: the parent never read the b key in reactiveObj
     expect([parentRenderCount, childRenderCount]).toEqual([1, 2]);
     expect(fixture.innerHTML).toBe("34");
+  });
+});
+
+describe("subscriptions", () => {
+  test("subscriptions returns the keys and targets observed by the component", async () => {
+    class Comp extends Component {
+      static template = xml`<t t-esc="state.a"/>`;
+      state = useState({ a: 1, b: 2 });
+    }
+    const comp = await mount(Comp, fixture);
+    expect(fixture.innerHTML).toBe("1");
+    expect(comp.__owl__.subscriptions).toEqual([{ keys: ["a"], target: toRaw(comp.state) }]);
+  });
+
+  test("subscriptions returns the keys observed by the component", async () => {
+    class Child extends Component {
+      static template = xml`<t t-esc="props.state.b"/>`;
+      setup() {
+        child = this;
+      }
+    }
+    let child: Child;
+    class Parent extends Component {
+      static template = xml`<t t-esc="state.a"/><Child state="state"/>`;
+      static components = { Child };
+      state = useState({ a: 1, b: 2 });
+    }
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("12");
+    expect(parent.__owl__.subscriptions).toEqual([{ keys: ["a"], target: toRaw(parent.state) }]);
+    expect(child!.__owl__.subscriptions).toEqual([{ keys: ["b"], target: toRaw(parent.state) }]);
   });
 });

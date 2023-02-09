@@ -1,6 +1,6 @@
 import { useStore } from "../../../store/store";
 
-const { Component, markup, useState, onMounted, onWillUpdateProps } = owl;
+const { Component } = owl;
 
 export class ComponentSearchBar extends Component {
   static template = "devtools.ComponentSearchBar";
@@ -32,20 +32,20 @@ export class ComponentSearchBar extends Component {
 
   getNextSearch() {
     if (
-      this.store.search.searchIndex > -1 &&
-      this.store.search.searchIndex < this.store.search.searchResults.length - 1
+      this.store.componentSearch.searchIndex > -1 &&
+      this.store.componentSearch.searchIndex < this.store.componentSearch.searchResults.length - 1
     ) {
-      this.store.setSearchIndex(this.store.search.searchIndex + 1);
-    } else if (this.store.search.searchIndex === this.store.search.searchResults.length - 1) {
+      this.store.setSearchIndex(this.store.componentSearch.searchIndex + 1);
+    } else if (this.componentSearch.searchIndex === this.store.componentSearch.searchResults.length - 1) {
       this.store.setSearchIndex(0);
     }
   }
 
   getPrevSearch() {
-    if (this.store.search.searchIndex > 0) {
-      this.store.setSearchIndex(this.store.search.searchIndex - 1);
-    } else if (this.store.search.searchIndex === 0) {
-      this.store.setSearchIndex(this.store.search.searchResults.length - 1);
+    if (this.store.componentSearch.searchIndex > 0) {
+      this.store.setSearchIndex(this.store.componentSearch.searchIndex - 1);
+    } else if (this.store.componentSearch.searchIndex === 0) {
+      this.store.setSearchIndex(this.store.componentSearch.searchResults.length - 1);
     }
   }
 }

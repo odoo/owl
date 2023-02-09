@@ -162,10 +162,15 @@ export function getSubscriptions(callback: Callback) {
   const targets = callbacksToTargets.get(callback) || [];
   return [...targets].map((target) => {
     const keysToCallbacks = targetToKeysToCallbacks.get(target);
-    return {
-      target,
-      keys: keysToCallbacks ? [...keysToCallbacks.keys()] : [],
-    };
+    let keys = [];
+    if (keysToCallbacks) {
+      for (const [key, cbs] of keysToCallbacks) {
+        if (cbs.has(callback)) {
+          keys.push(key);
+        }
+      }
+    }
+    return { target, keys };
   });
 }
 // Maps reactive objects to the underlying target

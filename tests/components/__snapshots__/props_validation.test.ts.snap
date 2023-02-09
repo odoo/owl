@@ -841,6 +841,33 @@ exports[`props validation props are validated whenever component is updated 2`] 
 }"
 `;
 
+exports[`props validation props validation does not cause additional subscription 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const props1 = {obj: ctx['obj']};
+    helpers.validateProps(\`Child\`, props1, this);
+    const b2 = comp1(props1, key + \`__1\`, node, this, null);
+    const b3 = text(ctx['obj'].otherValue);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`props validation props validation does not cause additional subscription 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['props'].obj.value);
+  }
+}"
+`;
+
 exports[`props validation props: list of strings 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

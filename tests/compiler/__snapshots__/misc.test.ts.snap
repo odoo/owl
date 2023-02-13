@@ -182,7 +182,7 @@ exports[`misc other complex template 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, withKey } = helpers;
+  let { prepareList, withKey, singleRefSetter } = helpers;
   const callTemplate_1 = app.getTemplate(\`LOAD_INFOS_TEMPLATE\`);
   const comp1 = app.createComponent(\`BundlesList\`, true, false, false, false);
   const comp2 = app.createComponent(\`BundlesList\`, true, false, false, false);
@@ -218,8 +218,8 @@ exports[`misc other complex template 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const refs = this.__owl__.refs;
-    const ref1 = (el) => refs[\`search_input\`] = el;
-    const ref2 = (el) => refs[\`settings_menu\`] = el;
+    const ref1 = singleRefSetter(refs, \`search_input\`);
+    const ref2 = singleRefSetter(refs, \`settings_menu\`);
     let b2,b4,b14,b17,b22,b23,b24,b25;
     let attr1 = \`/runbot/\${ctx['project'].slug}\`;
     let txt1 = ctx['project'].name;

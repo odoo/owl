@@ -158,7 +158,7 @@ exports[`slots can render node with t-ref and Component in same slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { markRaw } = helpers;
+  let { singleRefSetter, markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, true);
   const comp2 = app.createComponent(\`Child\`, true, true, false, true);
   
@@ -166,7 +166,7 @@ exports[`slots can render node with t-ref and Component in same slot 1`] = `
   
   function slot1(ctx, node, key = \\"\\") {
     const refs = this.__owl__.refs;
-    const ref1 = (el) => refs[\`div\`] = el;
+    const ref1 = singleRefSetter(refs, \`div\`);
     const b2 = block2([ref1]);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);

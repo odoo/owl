@@ -672,8 +672,9 @@ export class CodeGenerator {
       this.target.hasRef = true;
       const isDynamic = INTERP_REGEXP.test(ast.ref);
       if (isDynamic) {
+        this.helpers.add("singleRefSetter");
         const str = replaceDynamicParts(ast.ref, (expr) => this.captureExpression(expr, true));
-        const idx = block!.insertData(`(el) => refs[${str}] = el`, "ref");
+        const idx = block!.insertData(`singleRefSetter(refs, ${str})`, "ref");
         attrs["block-ref"] = String(idx);
       } else {
         let name = ast.ref;
@@ -686,7 +687,8 @@ export class CodeGenerator {
           info[1] = `multiRefSetter(refs, \`${name}\`)`;
         } else {
           let id = generateId("ref");
-          this.target.refInfo[name] = [id, `(el) => refs[\`${name}\`] = el`];
+          this.helpers.add("singleRefSetter");
+          this.target.refInfo[name] = [id, `singleRefSetter(refs, \`${name}\`)`];
           const index = block!.data.push(id) - 1;
           attrs["block-ref"] = String(index);
         }

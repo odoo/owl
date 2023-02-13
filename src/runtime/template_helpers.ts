@@ -202,6 +202,16 @@ function multiRefSetter(refs: RefMap, name: string): RefSetter {
   };
 }
 
+function singleRefSetter(refs: RefMap, name: string): RefSetter {
+  let _el: HTMLElement | null = null;
+  return (el) => {
+    if (el || refs[name] === _el) {
+      refs[name] = el;
+      _el = el;
+    }
+  };
+}
+
 /**
  * Validate the component props (or next props) against the (static) props
  * description.  This is potentially an expensive operation: it may needs to
@@ -260,6 +270,7 @@ export const helpers = {
   prepareList,
   setContextValue,
   multiRefSetter,
+  singleRefSetter,
   shallowEqual,
   toNumber,
   validateProps,

@@ -1,4 +1,13 @@
-import { App, Component, mount, onMounted, useRef, useState, xml } from "../../src/index";
+import {
+  App,
+  Component,
+  mount,
+  onMounted,
+  onPatched,
+  useRef,
+  useState,
+  xml,
+} from "../../src/index";
 import { logStep, makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -126,5 +135,34 @@ describe("refs", () => {
     await mount(Test, fixture, { props: { tree } });
     expect(fixture.innerHTML).toBe("<p>a<p>b</p></p>");
     expect(["<p>b</p>", "<p>a<p>b</p></p>"]).toBeLogged();
+  });
+
+  test("refs and t-key", async () => {
+    let el;
+    class Test extends Component {
+      static components = {};
+      static template = xml`
+        <button t-on-click="() => state.renderId++" />
+        <p t-ref="root" t-key="state.renderId"/>`;
+      root = useRef("root");
+      state = useState({ renderId: 1 });
+
+      setup() {
+        onMounted(() => {
+          el = this.root.el;
+        });
+        onPatched(() => {
+          el = this.root.el;
+        });
+      }
+    }
+    await mount(Test, fixture);
+
+    expect(el).toBe(fixture.querySelector("p"));
+    const _el = el;
+    fixture.querySelector("button")!.click();
+    await nextTick();
+    expect(el).not.toBe(_el);
+    expect(el).toBe(fixture.querySelector("p"));
   });
 });

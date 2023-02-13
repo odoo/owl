@@ -534,7 +534,7 @@ exports[`t-call t-call-context: ComponentNode is not looked up in the context 2`
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { bind, capture, isBoundary, withDefault, setContextValue, markRaw } = helpers;
+  let { singleRefSetter, bind, capture, isBoundary, withDefault, setContextValue, markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, false);
   
   let block2 = createBlock(\`<div block-ref=\\"0\\">outside slot</div>\`);
@@ -543,7 +543,7 @@ exports[`t-call t-call-context: ComponentNode is not looked up in the context 2`
   
   function slot1(ctx, node, key = \\"\\") {
     const refs = this.__owl__.refs;
-    const ref2 = (el) => refs[\`myRef2\`] = el;
+    const ref2 = singleRefSetter(refs, \`myRef2\`);
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     const b4 = block4([ref2]);
@@ -555,7 +555,7 @@ exports[`t-call t-call-context: ComponentNode is not looked up in the context 2`
   
   return function template(ctx, node, key = \\"\\") {
     const refs = this.__owl__.refs;
-    const ref1 = (el) => refs[\`myRef\`] = el;
+    const ref1 = singleRefSetter(refs, \`myRef\`);
     const b2 = block2([ref1]);
     const ctx1 = capture(ctx);
     const b6 = comp1({prop: bind(this, ctx['method']),slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__1\`, node, this, null);

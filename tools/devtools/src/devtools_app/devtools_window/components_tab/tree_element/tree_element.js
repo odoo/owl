@@ -78,9 +78,7 @@ export class TreeElement extends Component {
   }
 
   hoverComponent(ev) {
-    const elements = document.getElementsByClassName("highlight-fade");
-    for (const element of elements) element.classList.remove("highlight-fade");
-    evalInWindow("highlightComponent", [JSON.stringify(this.props.path)]);
+    evalInWindow("highlightComponent", [JSON.stringify(this.props.path)], this.store.activeFrame);
   }
 
   get minimizedKey() {

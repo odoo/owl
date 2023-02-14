@@ -6,6 +6,8 @@ export const store = reactive({
     expandByDefault: true,
     toggleOnSelected: false,
   },
+  frameUrls: ["top"],
+  activeFrame: "top",
   page: "ComponentsTab",
   events: [],
   activeRecorder: false,
@@ -37,7 +39,8 @@ export const store = reactive({
   loadComponentsTree(fromOld) {
     evalInWindow(
       "getComponentsTree",
-      fromOld ? [JSON.stringify(this.activeComponent.path), JSON.stringify(this.apps)] : []
+      fromOld ? [JSON.stringify(this.activeComponent.path), JSON.stringify(this.apps)] : [],
+      this.activeFrame
     ).then((result) => {
       this.apps = result;
       if (!fromOld && this.settings.expandByDefault)
@@ -47,7 +50,8 @@ export const store = reactive({
       "getComponentDetails",
       fromOld
         ? [JSON.stringify(this.activeComponent.path), JSON.stringify(this.activeComponent)]
-        : []
+        : [],
+      this.activeFrame
     ).then((result) => (this.activeComponent = result));
   },
 
@@ -72,7 +76,7 @@ export const store = reactive({
     }
     element.selected = true;
     highlightChildren(element);
-    evalInWindow("getComponentDetails", [JSON.stringify(element.path)]).then(
+    evalInWindow("getComponentDetails", [JSON.stringify(element.path)], this.activeFrame).then(
       (result) => (this.activeComponent = result)
     );
   },
@@ -229,10 +233,11 @@ export const store = reactive({
 
   loadGetterContent(inputObj) {
     let obj = this.findObjectInTree(inputObj);
-    evalInWindow("loadGetterContent", [
-      JSON.stringify(this.activeComponent.path),
-      JSON.stringify(obj),
-    ]).then((result) => {
+    evalInWindow(
+      "loadGetterContent",
+      [JSON.stringify(this.activeComponent.path), JSON.stringify(obj)],
+      this.activeFrame
+    ).then((result) => {
       Object.keys(obj).forEach((key) => {
         obj[key] = result[key];
       });
@@ -245,14 +250,18 @@ export const store = reactive({
     if (!inputObj.hasChildren) return;
     let obj = this.findObjectInTree(inputObj);
     if (obj.hasChildren && obj.children.length === 0) {
-      evalInWindow("loadObjectChildren", [
-        JSON.stringify(this.activeComponent.path),
-        JSON.stringify(obj.path),
-        obj.depth,
-        '"' + obj.contentType + '"',
-        '"' + obj.objectType + '"',
-        JSON.stringify(this.activeComponent),
-      ]).then((result) => (obj.children = result));
+      evalInWindow(
+        "loadObjectChildren",
+        [
+          JSON.stringify(this.activeComponent.path),
+          JSON.stringify(obj.path),
+          obj.depth,
+          '"' + obj.contentType + '"',
+          '"' + obj.objectType + '"',
+          JSON.stringify(this.activeComponent),
+        ],
+        this.activeFrame
+      ).then((result) => (obj.children = result));
     }
     obj.toggled = !obj.toggled;
   },
@@ -260,23 +269,66 @@ export const store = reactive({
   // Toggle the selector tool which is used to select a component based on the hovered Dom element
   toggleSelector() {
     this.componentSearch.activeSelector = !this.componentSearch.activeSelector;
-    evalInWindow(this.componentSearch.activeSelector ? "enableHTMLSelector" : "disableHTMLSelector", []);
+    evalInWindow(
+      this.componentSearch.activeSelector ? "enableHTMLSelector" : "disableHTMLSelector",
+      [],
+      this.activeFrame
+    );
   },
 
   // Triggers manually the rendering of the selected component
   refreshComponent() {
-    evalInWindow("refreshComponent", [JSON.stringify(this.activeComponent.path)]);
+    evalInWindow("refreshComponent", [JSON.stringify(this.activeComponent.path)], this.activeFrame);
   },
 
   // Update the value of the given object with the new provided one
   editObjectTreeElement(objectPath, value, objectType) {
-    evalInWindow("editObject", [
-      JSON.stringify(this.activeComponent.path),
-      JSON.stringify(objectPath),
-      value,
-      '"' + objectType + '"',
-    ]);
+    evalInWindow(
+      "editObject",
+      [
+        JSON.stringify(this.activeComponent.path),
+        JSON.stringify(objectPath),
+        value,
+        JSON.stringify(objectType),
+      ],
+      this.activeFrame
+    );
   },
+
+  updateIFrameList() {
+    console.log("called");
+    evalInWindow("getIFrameUrls", []).then((frames) => {
+      console.log(frames);
+      for (const frame of frames) {
+        chrome.devtools.inspectedWindow.eval(
+          "window.__OWL_DEVTOOLS__?.Fiber !== undefined;",
+          { frameURL: frame },
+          (hasOwl) => {
+            if (hasOwl) {
+              chrome.devtools.inspectedWindow.eval(
+                "window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;",
+                { frameURL: frame },
+                (scriptsLoaded) => {
+                  if (!scriptsLoaded) {
+                    loadScripts(frame);
+                  }
+                }
+              );
+              this.frameUrls = [...this.frameUrls, frame];
+            }
+          }
+        );
+      }
+    });
+  },
+
+  selectFrame(frame){
+    evalInWindow("removeHighlights", [], this.activeFrame);
+    evalInWindow("toggleEventsRecording", [false], this.activeFrame);
+    this.activeFrame = frame;
+    store.loadComponentsTree(false);
+    evalInWindow("toggleEventsRecording", [this.activeRecorder], this.activeFrame);
+  }
 });
 
 export function useStore() {
@@ -284,6 +336,8 @@ export function useStore() {
 }
 
 store.loadComponentsTree(false);
+
+store.updateIFrameList();
 
 let flushRendersTimeout = false;
 
@@ -318,9 +372,15 @@ chrome.runtime.onConnect.addListener((port) => {
       store.events.sort((a, b) => a.id - b.id);
     }
 
+    if (msg.type === "NewIFrame") {
+      setTimeout(() => {
+        store.updateIFrameList();
+      }, 100);
+    }
+
     if (msg.type === "Reload") {
       chrome.devtools.inspectedWindow.eval(
-        "window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined",
+        "window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;",
         (result) => {
           store.owlStatus = result;
           if (result) {
@@ -363,4 +423,12 @@ function foldComponents(component) {
   component.children.forEach((child) => {
     foldComponents(child);
   });
+}
+
+function loadScripts(frameUrl) {
+  fetch("../page_scripts/load_scripts.js")
+    .then((response) => response.text())
+    .then((contents) => {
+      chrome.devtools.inspectedWindow.eval(contents, { frameURL: frameUrl });
+    });
 }

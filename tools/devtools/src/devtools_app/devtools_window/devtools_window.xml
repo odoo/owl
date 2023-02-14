@@ -4,6 +4,7 @@
     <div id="container" t-on-mouseover.stop="removeHighlight" t-on-mouseout.stop="removeHighlight">
       <t t-if="store.owlStatus">
         <div class="custom-navbar panel-top">
+          <FrameSelector/>
           <Tab componentName="'ComponentsTab'" active="store.page === 'ComponentsTab'" name="'Components'"/>
           <Tab componentName="'EventsTab'" active="store.page === 'EventsTab'" name="'Events'"/>
         </div>

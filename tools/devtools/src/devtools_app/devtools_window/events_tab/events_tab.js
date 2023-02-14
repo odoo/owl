@@ -14,13 +14,13 @@ export class EventsTab extends Component {
   }
 
   toggleRecording() {
-    evalInWindow("toggleEventsRecording", []).then(
+    evalInWindow("toggleEventsRecording", [!this.store.activeRecorder], this.store.activeFrame).then(
       (result) => (this.store.activeRecorder = result)
     );
   }
 
   clearConsole() {
     this.store.events = [];
-    evalInWindow("resetEvents", []);
+    evalInWindow("resetEvents", [], this.store.activeFrame);
   }
 }

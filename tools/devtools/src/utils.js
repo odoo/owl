@@ -44,14 +44,26 @@ export function isElementInCenterViewport(el) {
   );
 }
 
-export async function evalInWindow(fn, args) {
+export async function evalInWindow(fn, args, frameUrl = "top") {
   const argsString = "(" + args.join(", ") + ");";
   const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.${fn}${argsString}`;
+  // console.log(script, frameUrl);
   return new Promise((resolve) => {
-    chrome.devtools.inspectedWindow.eval(script, (result, isException) => {
-      if (!isException) resolve(result);
-      else resolve(undefined);
-    });
+    if (frameUrl !== "top") {
+      chrome.devtools.inspectedWindow.eval(
+        script,
+        { frameURL: frameUrl },
+        (result, isException) => {
+          if (!isException) resolve(result);
+          else resolve(undefined);
+        }
+      );
+    } else {
+      chrome.devtools.inspectedWindow.eval(script, (result, isException) => {
+        if (!isException) resolve(result);
+        else resolve(undefined);
+      });
+    }
   });
 }
 

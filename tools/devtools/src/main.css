@@ -113,6 +113,18 @@
   height: 100%;
 }
 
+.custom-select {
+  max-width: max-content;
+  outline: none !important;
+  box-shadow: none !important;
+  border: none;
+}
+
+:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 .details-panel {
   padding-left: 0.5rem !important;
   border-top: 2px solid lightgrey;

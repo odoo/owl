@@ -18,27 +18,42 @@ export class DetailsWindow extends Component {
   }
 
   logComponentInConsole(type) {
-    evalInWindow("sendObjectToConsole", [
-      JSON.stringify(this.store.activeComponent.path),
-      '"' + type + '"',
-    ]);
+    evalInWindow(
+      "sendObjectToConsole",
+      [JSON.stringify(this.store.activeComponent.path), '"' + type + '"'],
+      this.store.activeFrame
+    );
   }
 
   inspectComponentInDOM() {
-    evalInWindow("inspectComponentDOM", [JSON.stringify(this.store.activeComponent.path)]);
+    evalInWindow(
+      "inspectComponentDOM",
+      [JSON.stringify(this.store.activeComponent.path)],
+      this.store.activeFrame
+    );
   }
 
   inspectComponentSource() {
-    evalInWindow("inspectComponentSource", [JSON.stringify(this.store.activeComponent.path)]);
+    evalInWindow(
+      "inspectComponentSource",
+      [JSON.stringify(this.store.activeComponent.path)],
+      this.store.activeFrame
+    );
   }
 
   inspectCompiledTemplate() {
-    evalInWindow("inspectComponentCompiledTemplate", [
-      JSON.stringify(this.store.activeComponent.path),
-    ]);
+    evalInWindow(
+      "inspectComponentCompiledTemplate",
+      [JSON.stringify(this.store.activeComponent.path)],
+      this.store.activeFrame
+    );
   }
 
   inspectRAwTemplate() {
-    evalInWindow("inspectComponentRawTemplate", [JSON.stringify(this.store.activeComponent.path)]);
+    evalInWindow(
+      "inspectComponentRawTemplate",
+      [JSON.stringify(this.store.activeComponent.path)],
+      this.store.activeFrame
+    );
   }
 }

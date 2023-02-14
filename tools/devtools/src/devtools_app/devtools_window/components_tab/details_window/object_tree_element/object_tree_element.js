@@ -61,8 +61,13 @@ export class ObjectTreeElement extends Component {
   }
 
   editObject(ev) {
-    if (ev.keyCode === 13 && ev.target.value !== "") {
-      this.store.editObjectTreeElement(this.props.path, ev.target.value, this.props.objectType);
+    let value = ev.target.value;
+    if (ev.keyCode === 13 && value !== "") {
+      console.log(value);
+      if (this.props.contentType === "string") {
+        value = JSON.stringify(value.substring(1, value.length - 1));
+      }
+      this.store.editObjectTreeElement(this.props.path, value, this.props.objectType);
       this.state.editMode = false;
     }
   }
@@ -93,16 +98,18 @@ export class ObjectTreeElement extends Component {
   }
 
   inspectFunctionSource() {
-    evalInWindow("inspectFunctionSource", [
-      JSON.stringify(this.store.activeComponent.path),
-      JSON.stringify(this.props.path),
-    ]);
+    evalInWindow(
+      "inspectFunctionSource",
+      [JSON.stringify(this.store.activeComponent.path), JSON.stringify(this.props.path)],
+      this.store.activeFrame
+    );
   }
 
   storeObjectAsGlobal() {
-    evalInWindow("storeObjectAsGlobal", [
-      JSON.stringify(this.store.activeComponent.path),
-      JSON.stringify(this.props.path),
-    ]);
+    evalInWindow(
+      "storeObjectAsGlobal",
+      [JSON.stringify(this.store.activeComponent.path), JSON.stringify(this.props.path)],
+      this.store.activeFrame
+    );
   }
 }

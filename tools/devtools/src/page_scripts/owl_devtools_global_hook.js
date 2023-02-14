@@ -4,6 +4,7 @@ export class OwlDevtoolsGlobalHook {
   fibersSet;
   recordEvents;
   patchFiber;
+  iFrameObserver;
 
   constructor() {
     this.apps = window.__OWL_DEVTOOLS__.apps;
@@ -11,6 +12,16 @@ export class OwlDevtoolsGlobalHook {
     this.RootFiber = window.__OWL_DEVTOOLS__.RootFiber;
     this.fibersSet = new WeakSet();
     this.eventId = 0;
+    this.iFrameObserver = new MutationObserver(function (mutations_list) {
+      mutations_list.forEach(function (mutation) {
+        mutation.addedNodes.forEach(function (added_node) {
+          if (added_node.tagName == "IFRAME") {
+            window.postMessage({ type: "owlDevtools__NewIFrame" });
+          }
+        });
+      });
+    });
+    this.iFrameObserver.observe(document.body, { subtree: true, childList: true });
     const appsArray = Array.from(this.apps);
     appsArray.forEach((app) => this.patchAppMethods(app));
     this.patchSetMethods();
@@ -172,13 +183,21 @@ export class OwlDevtoolsGlobalHook {
     }
   }
 
-  toggleEventsRecording() {
-    this.recordEvents = !this.recordEvents;
+  toggleEventsRecording(value) {
+    this.recordEvents = value;
     return this.recordEvents;
   }
 
   resetEvents() {
     this.eventId = 0;
+  }
+
+  getIFrameUrls() {
+    let frames = [];
+    for (const frame of document.getElementsByTagName("iframe")) {
+      frames.push(frame.contentDocument.location.href);
+    }
+    return frames;
   }
 
   // Draws a highlighting rectangle on the specified html element and displays its dimensions and the specified name in a box

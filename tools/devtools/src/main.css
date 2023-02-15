@@ -175,6 +175,10 @@
   user-select: none;
 }
 
+.blank-space {
+  height: 100px;
+}
+
 .horizontal-border {
   position: relative;
   width: 100%;

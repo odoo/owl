@@ -10,11 +10,9 @@
     </div>
     <div class="horizontal-border"/>
     <div class="events-container">
-      <ul>
-        <t t-foreach="store.events" t-as="event" t-key="event_index">
-          <Event t-props="event"/>
-        </t>
-      </ul>
+      <t t-foreach="store.events" t-as="event" t-key="event_index">
+        <Event t-props="event"/>
+      </t>
     </div>
   </t>
 </templates>

@@ -17,7 +17,9 @@
         </div>
       </t>
       <t t-else="">
-        Owl is not loaded on this page.
+        <div class="status-message">
+          Owl is not loaded on this page.
+        </div>
       </t>
     </div>
   </t>

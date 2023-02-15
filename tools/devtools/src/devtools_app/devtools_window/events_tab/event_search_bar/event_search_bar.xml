@@ -3,8 +3,8 @@
   <t t-name="devtools.EventSearchBar" owl="1">
     <div class="search-bar-wrapper">
       <i class="fa fa-search search-icon" aria-hidden="true"></i>
-      <input type="text" class="search-input" placeholder="Search" t-on-keyup.stop="updateSearch" t-att-value="store.search.search"/>
-      <t t-if="store.search.search.length > 0">
+      <input type="text" class="search-input" placeholder="Search" t-on-keyup.stop="updateSearch" t-att-value="store.eventSearch.search"/>
+      <t t-if="store.eventSearch.search.length > 0">
         <i class="fa fa-times lg-icon utility-icon pe-2" aria-hidden="true" t-on-click.stop="clearSearch"></i>
       </t>
     </div>

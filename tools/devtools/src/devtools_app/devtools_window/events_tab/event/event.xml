@@ -1,9 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.Event" owl="1">
-    <li class="event-display">
-      <t t-out="props.type"/>: <t t-out="props.component"/>
-      <i title="Jump to component" class="fa fa-arrow-right utility-icon me-2" aria-hidden="true" t-on-click.stop="goToComponent"></i>
-    </li>
+    <div class="event-container py-1">
+      <div class="my-0 p-0 object-line" t-on-click.stop="toggleDisplay">
+        <div class="ps-2">
+          <i t-if="props.origin" class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer;{{props.toggled ? 'transform: rotate(90deg);' : ''}}"></i>
+          <i t-else="" class="fa fa-caret-right mx-1" style="visibility: hidden;"></i>
+          <t t-out="props.type"/>: <div style="cursor:pointer;" class="name-wrapper" t-on-click.stop="goToComponent" t-on-mouseover.stop="hoverComponent" t-out="props.component"/>
+          <t t-if="minimizedKey.length > 0">
+            <div class="key-wrapper"> key</div>=<div class="key-name"><t t-out="minimizedKey"/></div>
+          </t>
+          <!-- <i title="Jump to component" style="transform: translateY(3px);" class="fa fa-arrow-right utility-icon me-2" aria-hidden="true" t-on-click.stop="goToComponent"></i> -->
+        </div>
+      </div>
+      <t t-if="props.toggled">
+        <div class="my-0 pt-1 object-line">
+          <i class="fa fa-caret-right mx-1" style="visibility: hidden;"></i>
+          origin: <t t-out="props.origin.type"/>: <div style="cursor:pointer;" class="name-wrapper" t-on-click.stop="goToOriginComponent" t-on-mouseover.stop="hoverComponent" t-out="props.origin.component"/>
+          <t t-if="originMinimizedKey.length > 0">
+            <div class="key-wrapper"> key</div>=<div class="key-name"><t t-out="originMinimizedKey"/></div>
+          </t>
+        </div>
+      </t>
+    </div>
   </t>
 </templates>

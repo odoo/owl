@@ -1,4 +1,4 @@
-const { reactive, useState } = owl;
+const { reactive, useState, toRaw } = owl;
 import { evalInWindow, fuzzySearch } from "../../utils";
 
 export const store = reactive({
@@ -10,6 +10,8 @@ export const store = reactive({
   activeFrame: "top",
   page: "ComponentsTab",
   events: [],
+  eventsTreeView: false,
+  eventsTree: [],
   activeRecorder: false,
   owlStatus: true,
   splitPosition: 60,
@@ -30,6 +32,11 @@ export const store = reactive({
     searchIndex: 0,
     activeSelector: false,
   },
+  // eventSearch: {
+  //   search: "",
+  //   searchResults: [],
+  //   filters: [],
+  // },
   renderPaths: [],
 
   switchTab(componentName) {
@@ -62,8 +69,8 @@ export const store = reactive({
         });
       },
       
-      // Select a component by retrieving its details from the page based on its path
-      selectComponent(path) {
+  // Select a component by retrieving its details from the page based on its path
+  selectComponent(path) {
     if (path.length < 2) return;
     // Deselect all components
     this.apps.forEach((app) => {
@@ -92,7 +99,7 @@ export const store = reactive({
   updateSearch(search) {
     this.componentSearch.search = search;
     this.componentSearch.searchResults = [];
-    this.apps.forEach((app) => this.getSearchResults(search, app));
+    this.apps.forEach((app) => this.getComponentSearchResults(search, app));
     if (this.componentSearch.searchResults.length > 0) {
       this.componentSearch.searchIndex = 0;
       this.selectComponent(this.componentSearch.searchResults[0]);
@@ -104,15 +111,34 @@ export const store = reactive({
   },
 
   // Search for results in the components tree given the current search string (in a fuzzy way)
-  getSearchResults(search, node) {
+  getComponentSearchResults(search, node) {
     if (search.length < 1) return;
     if (fuzzySearch(node.name, search)) {
       this.componentSearch.searchResults.push(node.path);
     }
     if (node.children) {
-      node.children.forEach((child) => this.getSearchResults(search, child));
+      node.children.forEach((child) => this.getComponentSearchResults(search, child));
     }
   },
+
+  // Same but only record the component names for events
+  // getComponentNameSearchResults(search, node) {
+  //   if (search.length < 1) return;
+  //   if (fuzzySearch(node.name, search)) {
+  //     if(!this.eventSearch.searchResults.includes(node.name))
+  //       this.eventSearch.searchResults.push(node.name);
+  //   }
+  //   if (node.children) {
+  //     node.children.forEach((child) => this.getComponentNameSearchResults(search, child));
+  //   }
+  // },
+
+  // updateEventSearch(search){
+  //   this.eventSearch.search = search;
+  //   this.eventSearch.searchResults = [];
+  //   this.apps.forEach((app) => this.getComponentNameSearchResults(search, app));
+  //   [""]
+  // },
 
   toggleComponentParents(path) {
     let cp = path.slice(2);
@@ -334,7 +360,18 @@ export const store = reactive({
     this.activeFrame = frame;
     store.loadComponentsTree(false);
     evalInWindow("toggleEventsRecording", [this.activeRecorder], this.activeFrame);
-  }
+  },
+
+  // buildEventsTree(){
+  //   let tree = [];
+  //   for (const event in this.events){
+  //     let eventNode = [...event];
+  //     eventNode.children = [];
+  //     if(eventNode.type.includes("root") || eventNode.type.includes("destroy")){
+
+  //     }
+  //   }
+  // }
 });
 
 export function useStore() {
@@ -390,6 +427,22 @@ chrome.runtime.onConnect.addListener((port) => {
     }
 
     if (msg.type === "Event") {
+      let event = msg.data;
+      event.origin = null;
+      event.toggled = false;
+      if(!event.type.includes("root")){
+        for(let i = store.events.length - 1; i >= 0; i--){
+          if(!store.events[i].origin && event.path.join("/").includes(store.events[i].path.join("/"))){
+            event.origin = toRaw(store.events[i]);
+            break;
+          }
+          if(store.events[i].origin && event.path.join("/").includes(store.events[i].origin.path.join("/"))){
+            event.origin = toRaw(store.events[i].origin);
+            break;
+          }
+        }
+        console.log(event);
+      }
       store.events = [...store.events, msg.data];
       store.events.sort((a, b) => a.id - b.id);
     }

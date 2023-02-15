@@ -357,6 +357,8 @@ export const store = reactive({
   selectFrame(frame){
     evalInWindow("removeHighlights", [], this.activeFrame);
     evalInWindow("toggleEventsRecording", [false], this.activeFrame);
+    this.events = [];
+    evalInWindow("resetEvents", [], this.activeFrame);
     this.activeFrame = frame;
     store.loadComponentsTree(false);
     evalInWindow("toggleEventsRecording", [this.activeRecorder], this.activeFrame);
@@ -441,7 +443,6 @@ chrome.runtime.onConnect.addListener((port) => {
             break;
           }
         }
-        console.log(event);
       }
       store.events = [...store.events, msg.data];
       store.events.sort((a, b) => a.id - b.id);

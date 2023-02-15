@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+  <t t-name="devtools.EventNode" owl="1">
+    <div class="my-0 p-0 object-line" t-on-click.stop="toggleDisplay">
+      <div t-attf-style="padding-left: calc({{props.depth}} * 0.8rem + 0.3rem)">
+        <i t-if="props.children.length > 0" class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer;{{props.toggled ? 'transform: rotate(90deg);' : ''}}"></i>
+        <i t-else="" class="fa fa-caret-right mx-1" style="visibility: hidden;"></i>
+        <t t-out="props.type"/>: <div style="cursor:pointer;" class="name-wrapper" t-on-click.stop="goToComponent" t-on-mouseover.stop="hoverComponent" t-out="props.component"/>
+        <t t-if="minimizedKey.length > 0">
+          <div class="key-wrapper"> key</div>=<div class="key-name"><t t-out="minimizedKey"/></div>
+        </t>
+        <!-- <i title="Jump to component" style="transform: translateY(3px);" class="fa fa-arrow-right utility-icon me-2" aria-hidden="true" t-on-click.stop="goToComponent"></i> -->
+      </div>
+    </div>
+    <t t-if="props.toggled">
+      <t t-foreach="props.children" t-as="child" t-key="child.id">
+        <EventNode t-props="child"/>
+      </t>
+    </t>
+  </t>
+</templates>

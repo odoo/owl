@@ -42,33 +42,32 @@ export const store = reactive({
   switchTab(componentName) {
     this.page = componentName;
   },
-  
+
   loadComponentsTree(fromOld) {
     evalInWindow(
       "getComponentsTree",
       fromOld ? [JSON.stringify(this.activeComponent.path), JSON.stringify(this.apps)] : [],
       this.activeFrame
-      ).then((result) => {
-        if(result.length === 0) {
-          this.owlStatus = false;
-          return;
-        }
-        this.apps = result;
-        if (!fromOld && this.settings.expandByDefault)
+    ).then((result) => {
+      if (result.length === 0) {
+        this.owlStatus = false;
+        return;
+      }
+      this.apps = result;
+      if (!fromOld && this.settings.expandByDefault)
         this.apps.forEach((tree) => expandComponents(tree));
-      });
-      evalInWindow(
-        "getComponentDetails",
-        fromOld
+    });
+    evalInWindow(
+      "getComponentDetails",
+      fromOld
         ? [JSON.stringify(this.activeComponent.path), JSON.stringify(this.activeComponent)]
         : [],
-        this.activeFrame
-        ).then((result) => {
-          if(result)
-            this.activeComponent = result;
-        });
-      },
-      
+      this.activeFrame
+    ).then((result) => {
+      if (result) this.activeComponent = result;
+    });
+  },
+
   // Select a component by retrieving its details from the page based on its path
   selectComponent(path) {
     if (path.length < 2) return;
@@ -345,8 +344,7 @@ export const store = reactive({
                   }
                 }
               );
-              if (!this.frameUrls.includes(frame))
-                this.frameUrls = [...this.frameUrls, frame];
+              if (!this.frameUrls.includes(frame)) this.frameUrls = [...this.frameUrls, frame];
             }
           }
         );
@@ -354,26 +352,61 @@ export const store = reactive({
     });
   },
 
-  selectFrame(frame){
+  selectFrame(frame) {
     evalInWindow("removeHighlights", [], this.activeFrame);
     evalInWindow("toggleEventsRecording", [false], this.activeFrame);
     this.events = [];
+    this.eventsTree = [];
     evalInWindow("resetEvents", [], this.activeFrame);
     this.activeFrame = frame;
     store.loadComponentsTree(false);
     evalInWindow("toggleEventsRecording", [this.activeRecorder], this.activeFrame);
   },
 
-  // buildEventsTree(){
-  //   let tree = [];
-  //   for (const event in this.events){
-  //     let eventNode = [...event];
-  //     eventNode.children = [];
-  //     if(eventNode.type.includes("root") || eventNode.type.includes("destroy")){
+  buildEventsTree() {
+    let tree = [];
+    for (const event of this.events) {
+      let eventNode = Object.assign({}, event);
+      eventNode.children = [];
+      eventNode.toggled = true;
+      if (!eventNode.origin) {
+        eventNode.depth = 0;
+        tree.push(eventNode);
+      } else {
+        for (let i = tree.length - 1; i >= 0; i--) {
+          if (eventNode.origin.path.join("/") === tree[i].path.join("/")) {
+            const relativePath = eventNode.path.slice(
+              tree[i].path.length,
+              eventNode.path.length - 1
+            );
+            let parent = tree[i];
+            for (const key of relativePath) {
+              parent = parent.children.filter((child) => child.key === key)[0];
+            }
+            eventNode.depth = parent.depth + 1;
+            parent.children.push(eventNode);
+            break;
+          }
+        }
+      }
+    }
+    this.eventsTree = tree;
+  },
 
-  //     }
-  //   }
-  // }
+  findEventInTree(event) {
+    let result;
+    if (event.origin)
+      [result] = this.eventsTree.filter((eventNode) => eventNode.id === event.origin.id);
+    else {
+      [result] = this.eventsTree.filter((eventNode) => eventNode.id === event.id);
+      return result;
+    }
+    const relativePath = event.path.slice(result.path.length);
+    for (const key of relativePath) {
+      result = result.children.filter((child) => child.key === key)[0];
+    }
+    return result;
+  },
 });
 
 export function useStore() {
@@ -388,8 +421,8 @@ let flushRendersTimeout = false;
 
 const keepAliveInterval = setInterval(keepAlive, 500);
 
-function keepAlive(){
-  if(!store.owlStatus){
+function keepAlive() {
+  if (!store.owlStatus) {
     chrome.devtools.inspectedWindow.eval(
       "window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;",
       (hasOwl) => {
@@ -432,15 +465,46 @@ chrome.runtime.onConnect.addListener((port) => {
       let event = msg.data;
       event.origin = null;
       event.toggled = false;
-      if(!event.type.includes("root")){
-        for(let i = store.events.length - 1; i >= 0; i--){
-          if(!store.events[i].origin && event.path.join("/").includes(store.events[i].path.join("/"))){
+      if (!event.type.includes("root")) {
+        for (let i = store.events.length - 1; i >= 0; i--) {
+          if (
+            !store.events[i].origin &&
+            event.path.join("/").includes(store.events[i].path.join("/"))
+          ) {
             event.origin = toRaw(store.events[i]);
             break;
           }
-          if(store.events[i].origin && event.path.join("/").includes(store.events[i].origin.path.join("/"))){
+          if (
+            store.events[i].origin &&
+            event.path.join("/").includes(store.events[i].origin.path.join("/"))
+          ) {
             event.origin = toRaw(store.events[i].origin);
             break;
+          }
+        }
+      }
+      if (store.eventsTreeView) {
+        let eventNode = Object.assign({}, event);
+        eventNode.children = [];
+        eventNode.toggled = true;
+        if (!eventNode.origin) {
+          eventNode.depth = 0;
+          store.eventsTree.push(eventNode);
+        } else {
+          for (let i = store.eventsTree.length - 1; i >= 0; i--) {
+            if (eventNode.origin.path.join("/") === store.eventsTree[i].path.join("/")) {
+              const relativePath = eventNode.path.slice(
+                store.eventsTree[i].path.length,
+                eventNode.path.length - 1
+              );
+              let parent = store.eventsTree[i];
+              for (const key of relativePath) {
+                parent = parent.children.filter((child) => child.key === key)[0];
+              }
+              eventNode.depth = parent.depth + 1;
+              parent.children.push(eventNode);
+              break;
+            }
           }
         }
       }

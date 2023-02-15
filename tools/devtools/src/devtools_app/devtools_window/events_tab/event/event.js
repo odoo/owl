@@ -29,12 +29,15 @@ export class Event extends Component {
   }
 
   hoverOriginComponent() {
-    evalInWindow("highlightComponent", [JSON.stringify(this.props.origin.path)], this.store.activeFrame);
+    evalInWindow(
+      "highlightComponent",
+      [JSON.stringify(this.props.origin.path)],
+      this.store.activeFrame
+    );
   }
 
   get minimizedKey() {
-    if(!this.props.key)
-      return "";
+    if (!this.props.key) return "";
     const split = this.props.key.split("__");
     let key;
     if (split.length > 2) {
@@ -46,8 +49,7 @@ export class Event extends Component {
   }
 
   get originMinimizedKey() {
-    if(!this.props.origin.key)
-      return "";
+    if (!this.props.origin.key) return "";
     const split = this.props.origin.key.split("__");
     let key;
     if (split.length > 2) {

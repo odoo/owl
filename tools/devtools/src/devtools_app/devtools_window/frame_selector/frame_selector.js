@@ -11,7 +11,7 @@ export class FrameSelector extends Component {
     this.store = useStore();
   }
 
-  selectFrame(ev){
+  selectFrame(ev) {
     const val = ev.target.value;
     this.store.selectFrame(val);
   }

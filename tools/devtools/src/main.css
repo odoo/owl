@@ -24,6 +24,14 @@
   overflow: hidden;
 }
 
+.status-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 100vh;
+}
+
 .custom-navbar {
   justify-content: center;
   font-size: 0.6em;
@@ -63,6 +71,10 @@
 .object-content {
   color: rgb(119, 34, 255);
   display: inline;
+}
+
+.event-container {
+  border-bottom: 2px solid rgb(240, 238, 238);
 }
 
 .getter-content {
@@ -202,7 +214,6 @@
   height: calc(100vh - (48px + 1rem));
   overflow-y: auto;
   overflow-x: hidden;
-  padding-top: 0.5rem;
 }
 
 .split-screen-right {

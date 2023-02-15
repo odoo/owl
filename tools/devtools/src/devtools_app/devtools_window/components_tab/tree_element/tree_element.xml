@@ -13,7 +13,7 @@
           <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer;{{props.toggled ? 'transform: rotate(90deg);' : ''}}" t-on-click.stop="toggleDisplay"></i>
         </t>
         <t t-else="">
-          <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer; visibility: hidden;"></i>
+          <i class="fa fa-caret-right mx-1" t-attf-style="visibility: hidden;"></i>
         </t>
         <div class="name-wrapper">
           <HighlightText originalText="props.name" searchValue="state.searched ? store.componentSearch.search : ''"/>

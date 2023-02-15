@@ -2,12 +2,12 @@
 <templates xml:space="preserve">
   <t t-name="devtools.ObjectTreeElement" owl="1">
     <div class="my-0 p-0 object-line" t-on-click.stop="toggleDisplay" t-on-contextmenu.prevent="openMenu">
-      <div t-attf-style="transform: translateX(calc({{props.depth}} * 0.8rem + 0.3rem))">
+      <div t-attf-style="padding-left: calc({{props.depth}} * 0.8rem + 0.3rem)">
         <t t-if="props.hasChildren">
           <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer;{{props.toggled ? 'transform: rotate(90deg);' : ''}}"></i>
         </t>
         <t t-else="">
-          <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer; visibility: hidden;"></i>
+          <i class="fa fa-caret-right mx-1" t-attf-style="visibility: hidden;"></i>
         </t>
         <t t-out="objectName"/>
         <t t-if="props.content.length > 0">: </t> 

@@ -296,9 +296,7 @@ export const store = reactive({
   },
 
   updateIFrameList() {
-    console.log("called");
     evalInWindow("getIFrameUrls", []).then((frames) => {
-      console.log(frames);
       for (const frame of frames) {
         chrome.devtools.inspectedWindow.eval(
           "window.__OWL_DEVTOOLS__?.Fiber !== undefined;",
@@ -314,7 +312,8 @@ export const store = reactive({
                   }
                 }
               );
-              this.frameUrls = [...this.frameUrls, frame];
+              if (!this.frameUrls.includes(frame))
+                this.frameUrls = [...this.frameUrls, frame];
             }
           }
         );

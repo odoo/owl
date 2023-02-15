@@ -35,28 +35,35 @@ export const store = reactive({
   switchTab(componentName) {
     this.page = componentName;
   },
-
+  
   loadComponentsTree(fromOld) {
     evalInWindow(
       "getComponentsTree",
       fromOld ? [JSON.stringify(this.activeComponent.path), JSON.stringify(this.apps)] : [],
       this.activeFrame
-    ).then((result) => {
-      this.apps = result;
-      if (!fromOld && this.settings.expandByDefault)
+      ).then((result) => {
+        if(result.length === 0) {
+          this.owlStatus = false;
+          return;
+        }
+        this.apps = result;
+        if (!fromOld && this.settings.expandByDefault)
         this.apps.forEach((tree) => expandComponents(tree));
-    });
-    evalInWindow(
-      "getComponentDetails",
-      fromOld
+      });
+      evalInWindow(
+        "getComponentDetails",
+        fromOld
         ? [JSON.stringify(this.activeComponent.path), JSON.stringify(this.activeComponent)]
         : [],
-      this.activeFrame
-    ).then((result) => (this.activeComponent = result));
-  },
-
-  // Select a component by retrieving its details from the page based on its path
-  selectComponent(path) {
+        this.activeFrame
+        ).then((result) => {
+          if(result)
+            this.activeComponent = result;
+        });
+      },
+      
+      // Select a component by retrieving its details from the page based on its path
+      selectComponent(path) {
     if (path.length < 2) return;
     // Deselect all components
     this.apps.forEach((app) => {
@@ -339,6 +346,22 @@ store.loadComponentsTree(false);
 store.updateIFrameList();
 
 let flushRendersTimeout = false;
+
+const keepAliveInterval = setInterval(keepAlive, 500);
+
+function keepAlive(){
+  if(!store.owlStatus){
+    chrome.devtools.inspectedWindow.eval(
+      "window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;",
+      (hasOwl) => {
+        if (hasOwl) {
+          store.owlStatus = true;
+          store.loadComponentsTree(false);
+        }
+      }
+    );
+  }
+}
 
 // Connect to the port to communicate to the background script
 chrome.runtime.onConnect.addListener((port) => {

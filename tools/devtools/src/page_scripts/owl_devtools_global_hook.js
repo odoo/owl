@@ -16,7 +16,7 @@ export class OwlDevtoolsGlobalHook {
       mutations_list.forEach(function (mutation) {
         mutation.addedNodes.forEach(function (added_node) {
           if (added_node.tagName == "IFRAME") {
-            window.postMessage({ type: "owlDevtools__NewIFrame" });
+            window.parent.postMessage({ type: "owlDevtools__NewIFrame" });
           }
         });
       });
@@ -35,11 +35,11 @@ export class OwlDevtoolsGlobalHook {
     this.apps.add = function (app) {
       self.patchAppMethods(app);
       originalAdd.call(this, ...arguments);
-      window.postMessage({ type: "owlDevtools__RefreshApps" });
+      window.parent.postMessage({ type: "owlDevtools__RefreshApps" });
     };
     this.apps.delete = function () {
       originalDelete.call(this, ...arguments);
-      window.postMessage({ type: "owlDevtools__RefreshApps" });
+      window.parent.postMessage({ type: "owlDevtools__RefreshApps" });
     };
   }
 
@@ -60,7 +60,7 @@ export class OwlDevtoolsGlobalHook {
            * This process may be long but is necessary. More information in the docs:
            * https://developer.chrome.com/docs/extensions/mv3/devtools/#evaluated-scripts-to-devtools
            */
-          window.postMessage({ type: "owlDevtools__Flush", data: path });
+          window.parent.postMessage({ type: "owlDevtools__Flush", data: path });
         }
       });
       originalFlush.call(this, ...arguments);
@@ -78,7 +78,7 @@ export class OwlDevtoolsGlobalHook {
       if (self.recordEvents) {
         const path = self.getComponentPath(this.node);
         if (flushed) {
-          window.postMessage({
+          window.parent.postMessage({
             type: "owlDevtools__Event",
             data: {
               type: "root render (flushed)",
@@ -90,7 +90,7 @@ export class OwlDevtoolsGlobalHook {
           });
         } else if (_render) {
           if (this instanceof self.RootFiber) {
-            window.postMessage({
+            window.parent.postMessage({
               type: "owlDevtools__Event",
               data: {
                 type: "root render",
@@ -101,7 +101,7 @@ export class OwlDevtoolsGlobalHook {
               },
             });
           } else if (this.node.status === 0) {
-            // window.postMessage({
+            // window.parent.postMessage({
             //   type: "owlDevtools__Event",
             //   data: {
             //     type: "create",
@@ -111,7 +111,7 @@ export class OwlDevtoolsGlobalHook {
             //     id: id,
             //   },
             // });
-            window.postMessage({
+            window.parent.postMessage({
               type: "owlDevtools__Event",
               data: {
                 type: "create and render",
@@ -122,7 +122,7 @@ export class OwlDevtoolsGlobalHook {
               },
             });
           } else {
-            // window.postMessage({
+            // window.parent.postMessage({
             //   type: "owlDevtools__Event",
             //   data: {
             //     type: "update",
@@ -132,7 +132,7 @@ export class OwlDevtoolsGlobalHook {
             //     id: id,
             //   },
             // });
-            window.postMessage({
+            window.parent.postMessage({
               type: "owlDevtools__Event",
               data: {
                 type: "update and render",
@@ -144,7 +144,7 @@ export class OwlDevtoolsGlobalHook {
             });
           }
         } else {
-          window.postMessage({
+          window.parent.postMessage({
             type: "owlDevtools__Event",
             data: {
               type: "root render (delayed)",
@@ -167,7 +167,7 @@ export class OwlDevtoolsGlobalHook {
       app.root.constructor.prototype._destroy = function () {
         if (self.recordEvents) {
           const path = self.getComponentPath(this);
-          window.postMessage({
+          window.parent.postMessage({
             type: "owlDevtools__Event",
             data: {
               type: "destroy",
@@ -307,7 +307,7 @@ export class OwlDevtoolsGlobalHook {
       const path = this.getElementPath(target);
       this.highlightComponent(path);
       this.currentSelectedElement = target;
-      window.postMessage({ type: "owlDevtools__SelectElement", data: path });
+      window.parent.postMessage({ type: "owlDevtools__SelectElement", data: path });
     }
   };
   // Activate the HTML selector tool
@@ -326,7 +326,7 @@ export class OwlDevtoolsGlobalHook {
     document.removeEventListener("mousemove", this.HTMLSelector);
     document.removeEventListener("click", this.disableHTMLSelector, { capture: true });
     document.removeEventListener("mouseout", this.removeHighlights);
-    window.postMessage({ type: "owlDevtools__StopSelector" });
+    window.parent.postMessage({ type: "owlDevtools__StopSelector" });
   };
   // Defines how leaf object nodes should be displayed in the extension based on their type
   parseItem(value, asConstructorName = false) {

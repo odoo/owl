@@ -40,10 +40,6 @@ async function loadScripts() {
   });
 }
 
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 function createPanelsIfOwl() {
   if (created || checks++ > 10) {
     clearInterval(checkInterval);

@@ -3,7 +3,6 @@
 import { DevtoolsWindow } from "./devtools_window/devtools_window";
 const { mount } = owl;
 
-import "../main.css";
 import { templates } from "../../assets/templates.js";
 
 // Register the templates in the app

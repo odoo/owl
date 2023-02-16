@@ -224,6 +224,12 @@ export class OwlDevtoolsGlobalHook {
       const marginBottom = parseInt(getComputedStyle(element).marginBottom);
       const marginLeft = parseInt(getComputedStyle(element).marginLeft);
 
+      const paddingTop = parseInt(getComputedStyle(element).paddingTop);
+      const paddingRight = parseInt(getComputedStyle(element).paddingRight);
+      const paddingBottom = parseInt(getComputedStyle(element).paddingBottom);
+      const paddingLeft = parseInt(getComputedStyle(element).paddingLeft);
+      console.log(`paddingTop: ${paddingTop}, paddingRight: ${paddingRight}`)
+
       minTop = Math.min(minTop, top);
       minLeft = Math.min(minLeft, left);
       maxBottom = Math.max(maxBottom, bottom);
@@ -232,18 +238,6 @@ export class OwlDevtoolsGlobalHook {
       const width = right - left;
       const height = bottom - top;
 
-      const highlightMargins = document.createElement("div");
-      highlightMargins.className = "owl-devtools-highlight";
-      highlightMargins.style.top = `${top - marginTop}px`;
-      highlightMargins.style.left = `${left - marginLeft}px`;
-      highlightMargins.style.width = `${width + marginLeft + marginRight}px`;
-      highlightMargins.style.height = `${height + marginBottom + marginTop}px`;
-      highlightMargins.style.position = "absolute";
-      highlightMargins.style.backgroundColor = "rgba(241, 179, 121, 0.4)";
-      highlightMargins.style.zIndex = "1000";
-      highlightMargins.style.pointerEvents = "none";
-
-      document.body.appendChild(highlightMargins);
       const highlight = document.createElement("div");
       highlight.className = "owl-devtools-highlight";
       highlight.style.top = `${top}px`;
@@ -251,10 +245,27 @@ export class OwlDevtoolsGlobalHook {
       highlight.style.width = `${width}px`;
       highlight.style.height = `${height}px`;
       highlight.style.position = "absolute";
-      highlight.style.backgroundColor = "rgba(40, 123, 231, 0.4)";
+      highlight.style.backgroundColor = "rgba(15, 139, 245, 0.4)";
+      highlight.style.borderStyle = "solid";
+      highlight.style.borderWidth = `${paddingTop}px ${paddingRight}px ${paddingBottom}px ${paddingLeft}px`;
+      highlight.style.borderColor = "rgba(65, 196, 68, 0.4)";
       highlight.style.zIndex = "1000";
       highlight.style.pointerEvents = "none";
       document.body.appendChild(highlight);
+
+      const highlightMargins = document.createElement("div");
+      highlightMargins.className = "owl-devtools-highlight";
+      highlightMargins.style.top = `${top - marginTop}px`;
+      highlightMargins.style.left = `${left - marginLeft}px`;
+      highlightMargins.style.width = `${width + marginLeft + marginRight}px`;
+      highlightMargins.style.height = `${height + marginBottom + marginTop}px`;
+      highlightMargins.style.position = "absolute";
+      highlightMargins.style.borderStyle = "solid";
+      highlightMargins.style.borderWidth = `${marginTop}px ${marginRight}px ${marginBottom}px ${marginLeft}px`;
+      highlightMargins.style.borderColor = "rgba(241, 179, 121, 0.4)";
+      highlightMargins.style.zIndex = "1000";
+      highlightMargins.style.pointerEvents = "none";
+      document.body.appendChild(highlightMargins);
     }
 
     const width = maxRight - minLeft;

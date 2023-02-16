@@ -24,7 +24,9 @@ export class Event extends Component {
 
   // Expand/fold the event
   toggleDisplay() {
-    this.store.events[this.props.id].toggled = !this.store.events[this.props.id].toggled;
+    console.log(this.store.events);
+    if(this.props.origin)
+      this.store.events[this.props.id].toggled = !this.store.events[this.props.id].toggled;
   }
 
   // Trigger the highlight on the component in the page when its name is hovered

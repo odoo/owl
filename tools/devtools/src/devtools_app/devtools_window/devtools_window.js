@@ -18,9 +18,11 @@ export class DevtoolsWindow extends Component {
     // Make sure that all custom context menus will be closed as soon as the user clicks on anything in the panel
     onMounted(async () => {
       document.addEventListener("click", this.hideContextMenus, true);
+      document.addEventListener("contextmenu", this.hideContextMenus, true);
     });
     onWillUnmount(() => {
       document.removeEventListener("click", this.hideContextMenus, true);
+      document.removeEventListener("contextmenu", this.hideContextMenus, true);
     });
   }
 

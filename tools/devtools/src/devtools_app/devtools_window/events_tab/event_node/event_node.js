@@ -12,10 +12,10 @@ export class EventNode extends Component {
     this.store = useStore();
   }
 
-  goToComponent() {
-    this.store.selectComponent(this.props.path);
-    this.store.switchTab("ComponentsTab");
-  }
+  // goToComponent() {
+  //   this.store.selectComponent(this.props.path);
+  //   this.store.switchTab("ComponentsTab");
+  // }
 
   toggleDisplay() {
     let event = this.store.findEventInTree(this.props);

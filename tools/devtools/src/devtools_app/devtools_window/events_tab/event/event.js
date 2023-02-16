@@ -10,15 +10,15 @@ export class Event extends Component {
     this.store = useStore();
   }
 
-  // goToComponent() {
-  //   this.store.selectComponent(this.props.path);
-  //   this.store.switchTab("ComponentsTab");
-  // }
+  goToComponent() {
+    this.store.selectComponent(this.props.path);
+    this.store.switchTab("ComponentsTab");
+  }
 
-  // goToOriginComponent() {
-  //   this.store.selectComponent(this.props.origin.path);
-  //   this.store.switchTab("ComponentsTab");
-  // }
+  goToOriginComponent() {
+    this.store.selectComponent(this.props.origin.path);
+    this.store.switchTab("ComponentsTab");
+  }
 
   toggleDisplay() {
     this.store.events[this.props.id].toggled = !this.store.events[this.props.id].toggled;

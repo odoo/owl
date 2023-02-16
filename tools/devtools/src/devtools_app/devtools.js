@@ -5,7 +5,11 @@ let checks = 0;
 let browserInstance = isFirefox() ? browser : chrome;
 let scriptsLoaded = false;
 
+// Trigger createPanelsIfOwl when the active tab changes to an other tab
 browserInstance.devtools.network.onNavigated.addListener(createPanelsIfOwl);
+
+// When the tab gets reloaded or url changes while devtools are oppened, try to reload the scripts
+// and send a reload message to the devtools owl app (relayed by the background thread)
 if (!isFirefox()) {
   chrome.tabs.onUpdated.addListener((tab) => {
     chrome.tabs.get(tab, (tabData) => {
@@ -20,9 +24,11 @@ if (!isFirefox()) {
     });
   });
 }
+// Try to load the owl panel each second up to 10 times to make sure we load it if owl is available but delayed
 const checkInterval = setInterval(createPanelsIfOwl, 1000);
 createPanelsIfOwl();
 
+// Load the scripts on the page in order to define the __OWL__DEVTOOLS_GLOBAL_HOOK__
 async function loadScripts() {
   return new Promise((resolve) => {
     if (!scriptsLoaded) {
@@ -40,6 +46,7 @@ async function loadScripts() {
   });
 }
 
+// Load the scripts and create the owl devtools panel if owl on the page is available at a sufficient version
 function createPanelsIfOwl() {
   if (created || checks++ > 10) {
     clearInterval(checkInterval);

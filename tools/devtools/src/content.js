@@ -1,3 +1,4 @@
+// Relays the owlDevtools__... type top window messages to the background script so that it can relay it to the devtools app
 window.addEventListener(
   "message",
   function (event) {

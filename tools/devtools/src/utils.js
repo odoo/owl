@@ -44,10 +44,11 @@ export function isElementInCenterViewport(el) {
   );
 }
 
+// General method for executing functions from the loaded scripts in the right frame of the page
+// using the __OWL__DEVTOOLS_GLOBAL_HOOK__. Take the function's args as an array.
 export async function evalInWindow(fn, args, frameUrl = "top") {
   const argsString = "(" + args.join(", ") + ");";
   const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.${fn}${argsString}`;
-  // console.log(script, frameUrl);
   return new Promise((resolve) => {
     if (frameUrl !== "top") {
       chrome.devtools.inspectedWindow.eval(

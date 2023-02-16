@@ -13,6 +13,7 @@ export class DetailsWindow extends Component {
     this.store = useStore();
   }
 
+  // Triggers rendering of the active component
   refreshComponent() {
     this.store.refreshComponent();
   }

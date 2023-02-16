@@ -8,6 +8,8 @@
     "build": "npm run build:chrome",
     "build:chrome": "npm run templates && NODE_BROWSER=chrome rollup -c",
     "build:firefox": "npm run templates && NODE_BROWSER=firefox rollup -c",
+    "prod:chrome": "npm run templates && NODE_BROWSER=chrome NODE_ENV=production rollup -c",
+    "prod:firefox": "npm run templates && NODE_BROWSER=firefox NODE_ENV=production rollup -c",
     "dev": "npm run templates && NODE_BROWSER=chrome rollup -c",
     "prettier": "prettier --write src './*.js' './*.json'"
   },
@@ -15,12 +17,8 @@
     "printWidth": 100,
     "endOfLine": "auto"
   },
-  "dependencies": {
-    "@types/chrome": "0.0.203",
-    "bootstrap": "^5.2.3",
-    "font-awesome": "^4.7.0"
-  },
   "devDependencies": {
+    "@types/chrome": "0.0.203",
     "@babel/preset-env": "^7.0.0",
     "@fullhuman/postcss-purgecss": "^5.0.0",
     "@rollup/plugin-node-resolve": "^9.0.0",

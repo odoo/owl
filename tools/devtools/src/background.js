@@ -13,52 +13,7 @@ if (navigator.userAgent.indexOf("Chrome") !== -1) {
   isFirefox = true;
 }
 
-// function loadScripts(tabId) {
-//   // fetch('./devtools/page_scripts/load_scripts.js')
-//   //   .then((response) => response.text())
-//   //   .then((contents) => {
-//   //     console.log(contents);
-//   //     browser.tabs.executeScript(tabId, { code: contents });
-//   //   });
-//   console.log("loaded scripts");
-//   browser.tabs.executeScript({
-//     file: './devtools/page_scripts/load_scripts.js',
-//     allFrames: true,
-//   });
-
-// }
-
-browserInstance.tabs.onUpdated.addListener((tab) => {
-  browserInstance.tabs.get(tab, (tabData) => {
-    if (tabData.status === "complete") {
-      setTimeout(() => {
-        checkOwlStatus(tabData.id);
-        // console.log(tabData.id)
-        // if(isFirefox){
-        //   browser.tabs.executeScript({
-        //     code: 'window.__OWL_DEVTOOLS__?.apps !== undefined; console.log(window.__OWL_DEVTOOLS__);',
-        //     allFrames: true,
-        //   }, (result) => {
-        //     console.log(result[0]);
-        //     if (result[0]){
-        //       loadScripts(tabData.id);
-        //     }
-        //     setTimeout(() => {
-        //       browserInstance.runtime.connect({name: "DevtoolsTreePort"}).postMessage({type: "Reload"});
-        //     }, 200);
-        //   });
-        // }
-      }, 200);
-    }
-  });
-});
-
-browserInstance.tabs.onActivated.addListener((activeInfo) => {
-  setTimeout(() => {
-    checkOwlStatus(activeInfo.tabId);
-  }, 200);
-});
-
+// Check if owl is available and up to date on the given tab and adapt the extension icon accordingly
 async function checkOwlStatus(tabId) {
   return new Promise((resolve) => {
     if (isChrome) {
@@ -84,26 +39,31 @@ async function checkOwlStatus(tabId) {
       );
     } else if (isFirefox) {
       // TODO: Manifest v3 firefox
-      // browser.tabs.executeScript({
-      //   code: `
-      //       if (window.__OWL_DEVTOOLS__?.apps !== undefined)
-      //         return 2;
-      //       if (typeof owl === "object" && owl.hasOwnProperty(App))
-      //         return 1;
-      //       return 0;
-      //     `,
-      //   allFrames: true,
-      // }, (result) => {
-      //   console.log(result);
-      //   owlStatus = result[0];
-      //   browser.browserAction.setIcon({ path: owlStatus === 2 ? "assets/icon128.png" : "assets/icon_disabled128.png" });
-      //   resolve(result[0]);
-      // });
     }
   });
 }
 
+// Check owl status on tab update...
+browserInstance.tabs.onUpdated.addListener((tab) => {
+  browserInstance.tabs.get(tab, (tabData) => {
+    if (tabData.status === "complete") {
+      setTimeout(() => {
+        checkOwlStatus(tabData.id);
+      }, 200);
+    }
+  });
+});
+
+// ...and activation
+browserInstance.tabs.onActivated.addListener((activeInfo) => {
+  setTimeout(() => {
+    checkOwlStatus(activeInfo.tabId);
+  }, 200);
+});
+
+// Messages handler for the background script
 browserInstance.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  // Send back the owl status to the sender
   if (message.type === "getOwlStatus") {
     getActiveTabURL(isFirefox).then((tab) => {
       if (tab) {
@@ -114,6 +74,7 @@ browserInstance.runtime.onMessage.addListener((message, sender, sendResponse) =>
       });
     });
     return true;
+  // Relay the received message to the devtools app
   } else
     browserInstance.runtime
       .connect({ name: "DevtoolsTreePort" })

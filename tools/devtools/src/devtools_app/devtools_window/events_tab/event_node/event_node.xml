@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.EventNode" owl="1">
-    <div class="my-0 p-0 object-line" t-on-click.stop="toggleDisplay">
+    <div class="my-0 p-0 object-line" t-on-click.stop="toggleDisplay" t-on-contextmenu.prevent="openMenu">
       <div t-attf-style="padding-left: calc({{props.depth}} * 0.8rem + 0.3rem)">
         <i t-if="props.children.length > 0" class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer;{{props.toggled ? 'transform: rotate(90deg);' : ''}}"></i>
         <i t-else="" class="fa fa-caret-right mx-1" style="visibility: hidden;"></i>
@@ -11,6 +11,12 @@
         </t>
         <!-- <i title="Jump to component" style="transform: translateY(3px);" class="fa fa-arrow-right utility-icon me-2" aria-hidden="true" t-on-click.stop="goToComponent"></i> -->
       </div>
+    </div>
+    <div class="custom-menu hidden" t-attf-id="customMenu/{{props.id}}">
+      <ul class="my-1">
+        <li t-on-click.stop="expandAllChildren" class="custom-menu-item">Expand event and its children</li>
+        <li t-on-click.stop="foldAllChildren" class="custom-menu-item">Fold event and its children</li>
+      </ul>
     </div>
     <t t-if="props.toggled">
       <t t-foreach="props.children" t-as="child" t-key="child.id">

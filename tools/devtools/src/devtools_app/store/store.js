@@ -1,6 +1,7 @@
 const { reactive, useState, toRaw } = owl;
 import { evalInWindow, fuzzySearch } from "../../utils";
 
+// Main store which contains all states that needs to be maintained throughout all components in the devtools app
 export const store = reactive({
   settings: {
     expandByDefault: true,
@@ -39,10 +40,14 @@ export const store = reactive({
   // },
   renderPaths: [],
 
+  // Used to navigate between the Components tab and the Events tab
   switchTab(componentName) {
     this.page = componentName;
   },
 
+  // Load all data related to the components tree using the global hook loaded on the page
+  // Use fromOld to specify if we want to keep most of the toggled/selected data of the old tree 
+  // when generating the new one
   loadComponentsTree(fromOld) {
     evalInWindow(
       "getComponentsTree",
@@ -55,7 +60,7 @@ export const store = reactive({
       }
       this.apps = result;
       if (!fromOld && this.settings.expandByDefault)
-        this.apps.forEach((tree) => expandComponents(tree));
+        this.apps.forEach((tree) => expandNodes(tree));
     });
     evalInWindow(
       "getComponentDetails",
@@ -102,7 +107,7 @@ export const store = reactive({
     if (this.componentSearch.searchResults.length > 0) {
       this.componentSearch.searchIndex = 0;
       this.selectComponent(this.componentSearch.searchResults[0]);
-      this.apps.forEach((app) => foldComponents(app));
+      this.apps.forEach((app) => foldNodes(app));
       for (const result of this.componentSearch.searchResults) {
         this.toggleComponentParents(result);
       }
@@ -139,6 +144,7 @@ export const store = reactive({
   //   [""]
   // },
 
+  // Toggle all parent components of the specified one to make sure it is visible in the tree
   toggleComponentParents(path) {
     let cp = path.slice(2);
     this.apps[path[0]].toggled = true;
@@ -149,6 +155,7 @@ export const store = reactive({
     }
   },
 
+  // Returns access to the specified component in the tree
   getComponentByPath(path) {
     let cp = path.slice(2);
     let component;
@@ -163,9 +170,10 @@ export const store = reactive({
   // Search the component given its path and expand/fold itself and its children based on toggle
   toggleComponentAndChildren(path, toggle) {
     let component = this.getComponentByPath(path);
-    toggle ? expandComponents(component) : foldComponents(component);
+    toggle ? expandNodes(component) : foldNodes(component);
   },
 
+  // Action related to the left(toggle)/up(not toggle) arrow keys for navigation purpose
   toggleOrSelectPrevElement(toggle) {
     if (toggle) {
       let component = this.getComponentByPath(this.activeComponent.path);
@@ -186,6 +194,7 @@ export const store = reactive({
     }
   },
 
+  // Action related to the right(toggle)/down(not toggle) arrow keys for navigation purpose
   toggleOrSelectNextElement(toggle) {
     if (toggle) {
       let component = this.getComponentByPath(this.activeComponent.path);
@@ -218,6 +227,7 @@ export const store = reactive({
     component.toggled = !component.toggled;
   },
 
+  // Returns the specified object in the right objects tree
   findObjectInTree(inputObj) {
     let path = [...inputObj.path];
     let obj;
@@ -263,6 +273,7 @@ export const store = reactive({
     return obj;
   },
 
+  // Replace the (...) content of a getter with the value returned by the corresponding get method
   loadGetterContent(inputObj) {
     let obj = this.findObjectInTree(inputObj);
     evalInWindow(
@@ -327,6 +338,7 @@ export const store = reactive({
     );
   },
 
+  // Checks for all iframes in the page, register it and load the scripts inside if not already done
   updateIFrameList() {
     evalInWindow("getIFrameUrls", []).then((frames) => {
       for (const frame of frames) {
@@ -352,6 +364,7 @@ export const store = reactive({
     });
   },
 
+  // Resets the context of all values in the devtools tab and load the one from the given frame
   selectFrame(frame) {
     evalInWindow("removeHighlights", [], this.activeFrame);
     evalInWindow("toggleEventsRecording", [false], this.activeFrame);
@@ -363,6 +376,7 @@ export const store = reactive({
     evalInWindow("toggleEventsRecording", [this.activeRecorder], this.activeFrame);
   },
 
+  // Constructs the tree that represents the currently recorded events to see them as a tree instead of a temporaly accurate list 
   buildEventsTree() {
     let tree = [];
     for (const event of this.events) {
@@ -393,6 +407,7 @@ export const store = reactive({
     this.eventsTree = tree;
   },
 
+  // Gives access to the specied event in the events tree
   findEventInTree(event) {
     let result;
     if (event.origin)
@@ -407,20 +422,31 @@ export const store = reactive({
     }
     return result;
   },
+
+  toggleEventAndChildren(event, toggle) {
+    let eventNode = this.findEventInTree(event);
+    toggle ? expandNodes(eventNode) : foldNodes(eventNode);
+  },
 });
 
+// Instantiate the store
 export function useStore() {
   return useState(store);
 }
 
+// We want to load the base components tree when the devtools tab is first opened
 store.loadComponentsTree(false);
 
+// We also want to detect the different iframes at first loading of the devtools tab
 store.updateIFrameList();
 
 let flushRendersTimeout = false;
 
+// This is useful for checking regularly if owl is not present on the page while the owl devtools
+// tab is still opened
 const keepAliveInterval = setInterval(keepAlive, 500);
 
+// As explained above
 function keepAlive() {
   if (!store.owlStatus) {
     chrome.devtools.inspectedWindow.eval(
@@ -457,14 +483,17 @@ chrome.runtime.onConnect.addListener((port) => {
       store.componentSearch.activeSelector = false;
     }
 
+    // We need to reload the components tree when the set of apps in the page is modified
     if (msg.type === "RefreshApps") {
       store.loadComponentsTree(true);
     }
 
+    // Logic for recording an event when the event message is received
     if (msg.type === "Event") {
       let event = msg.data;
       event.origin = null;
       event.toggled = false;
+      // Logic to retrace the origin of the event if it is not a root render event
       if (!event.type.includes("root")) {
         for (let i = store.events.length - 1; i >= 0; i--) {
           if (
@@ -483,6 +512,7 @@ chrome.runtime.onConnect.addListener((port) => {
           }
         }
       }
+      // Add the event to the events tree immediatly when the events view is in tree mode
       if (store.eventsTreeView) {
         let eventNode = Object.assign({}, event);
         eventNode.children = [];
@@ -509,15 +539,18 @@ chrome.runtime.onConnect.addListener((port) => {
         }
       }
       store.events = [...store.events, msg.data];
+      // We want to sort the events based on their id since the order between messages reception may not be an accurate representation
       store.events.sort((a, b) => a.id - b.id);
     }
 
+    // If we know a new iframe has been added to the page, update the iframe list
     if (msg.type === "NewIFrame") {
       setTimeout(() => {
         store.updateIFrameList();
       }, 100);
     }
 
+    // Reload the tree after checking if the scripts are loaded when this message is received
     if (msg.type === "Reload") {
       chrome.devtools.inspectedWindow.eval(
         "window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;",
@@ -549,22 +582,23 @@ function highlightChildren(component) {
   });
 }
 
-// Expand the component given in entry and all of its children
-function expandComponents(component) {
-  component.toggled = true;
-  component.children.forEach((child) => {
-    expandComponents(child);
+// Expand the node given in entry and all of its children
+function expandNodes(node) {
+  node.toggled = true;
+  node.children.forEach((child) => {
+    expandNodes(child);
   });
 }
 
-// Fold the component given in entry and all of its children
-function foldComponents(component) {
-  component.toggled = false;
-  component.children.forEach((child) => {
-    foldComponents(child);
+// Fold the node given in entry and all of its children
+function foldNodes(node) {
+  node.toggled = false;
+  node.children.forEach((child) => {
+    foldNodes(child);
   });
 }
 
+// Load the scripts in the specified frame
 function loadScripts(frameUrl) {
   fetch("../page_scripts/load_scripts.js")
     .then((response) => response.text())

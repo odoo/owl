@@ -440,6 +440,11 @@ store.loadComponentsTree(false);
 // We also want to detect the different iframes at first loading of the devtools tab
 store.updateIFrameList();
 
+for(const frame of store.frameUrls){
+  evalInWindow("toggleEventsRecording",[false], frame);
+  evalInWindow("resetEvents", [], frame);
+}
+
 let flushRendersTimeout = false;
 
 // This is useful for checking regularly if owl is not present on the page while the owl devtools

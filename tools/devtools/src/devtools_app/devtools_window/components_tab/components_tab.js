@@ -17,8 +17,6 @@ export class ComponentsTab extends Component {
     onMounted(async () => {
       this.computeWindowWidth();
       window.addEventListener("resize", this.computeWindowWidth);
-      document.addEventListener("click", this.hideContextMenus, true);
-      document.addEventListener("contextmenu", this.hideContextMenus, true);
       document.addEventListener("keydown", this.handleCommands);
     });
 
@@ -26,8 +24,6 @@ export class ComponentsTab extends Component {
       window.removeEventListener("resize", this.computeWindowWidth);
       window.removeEventListener("mousemove", this.handleMouseMove);
       window.removeEventListener("mouseup", this.handleMouseUp);
-      document.removeEventListener("click", this.hideContextMenus, true);
-      document.removeEventListener("contextmenu", this.hideContextMenus, true);
       document.removeEventListener("keydown", this.handleCommands);
     });
   }

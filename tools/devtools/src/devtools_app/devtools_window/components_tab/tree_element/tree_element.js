@@ -29,6 +29,7 @@ export class TreeElement extends Component {
     });
     this.highlightTimeout = false;
     this.store = useStore();
+    // Scroll to the selected element when it changes
     onMounted(() => {
       if (this.props.selected) {
         const treeElement = document.getElementById("treeElement/" + this.props.path.join("/"));
@@ -42,6 +43,7 @@ export class TreeElement extends Component {
           treeElement.scrollIntoView({ block: "center", behavior: "smooth" });
       }
     });
+    // Effect to apply a short highlight effect to the component when it is rendered
     useEffect(
       (renderPaths) => {
         let pathsAsStrings = renderPaths.map((p) => p.join("/"));
@@ -60,6 +62,7 @@ export class TreeElement extends Component {
       },
       () => [this.store.renderPaths]
     );
+    // Used to know when the component is in the search bar results
     useEffect(
       (searchResults) => {
         if (searchResults.includes(this.props.path)) this.state.searched = true;
@@ -73,14 +76,17 @@ export class TreeElement extends Component {
     return this.props.path.join("/");
   }
 
+  // Expand/fold the component node
   toggleDisplay(ev) {
     this.store.toggleComponentTreeElementDisplay(this.props.path);
   }
 
+  // Trigger the highlight on the component in the page when the node is hovered
   hoverComponent(ev) {
     evalInWindow("highlightComponent", [JSON.stringify(this.props.path)], this.store.activeFrame);
   }
 
+   // Formatting for displaying the key of the component
   get minimizedKey() {
     const split = this.props.key.split("__");
     let key;
@@ -92,6 +98,7 @@ export class TreeElement extends Component {
     return key;
   }
 
+  // Used to select the component node
   toggleComponent(ev) {
     if (this.store.settings.toggleOnSelected) this.toggleDisplay();
     if (!this.props.selected) {
@@ -99,6 +106,7 @@ export class TreeElement extends Component {
     }
   }
 
+  // Display the custom context menu to access the expandAll and foldAll methods
   openMenu(event) {
     const menu = document.getElementById("customMenu/" + this.pathAsString);
     menu.classList.remove("hidden");
@@ -124,7 +132,3 @@ export class TreeElement extends Component {
     this.store.toggleComponentAndChildren(this.props.path, false);
   }
 }
-
-String.prototype.replaceAt = function (index, replacement) {
-  return this.substring(0, index) + replacement + this.substring(index + 1);
-};

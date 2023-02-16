@@ -58,6 +58,7 @@ export class OwlDevtoolsGlobalHook {
     let inFlush = false;
     let _render = false;
     app.scheduler.flush = function () {
+      // Used to know when a render is triggered inside the flush method or not
       inFlush = true;
       [...this.tasks].map((fiber) => {
         if (fiber.counter === 0 && !self.fibersSet.has(fiber)) {
@@ -80,12 +81,14 @@ export class OwlDevtoolsGlobalHook {
       const id = self.eventId++;
       _render = false;
       let flushed = false;
+      // We know if a render comes from flush before calling the render method
       if (this instanceof self.RootFiber && inFlush) {
         flushed = true;
       }
       originalRender.call(this, ...arguments);
       if (self.recordEvents) {
         const path = self.getComponentPath(this.node);
+        // if the render comes from flush
         if (flushed) {
           window.top.postMessage({
             type: "owlDevtools__Event",
@@ -97,7 +100,9 @@ export class OwlDevtoolsGlobalHook {
               id: id,
             },
           });
+          // if _render is called, it is a proper render (and not a delayed one)
         } else if (_render) {
+          // A render on a RootFiber is a root render and can propagate other renders to its children
           if (this instanceof self.RootFiber) {
             window.top.postMessage({
               type: "owlDevtools__Event",
@@ -109,17 +114,8 @@ export class OwlDevtoolsGlobalHook {
                 id: id,
               },
             });
+          // if the node status is NEW, the node has been created just before rendering
           } else if (this.node.status === 0) {
-            // window.top.postMessage({
-            //   type: "owlDevtools__Event",
-            //   data: {
-            //     type: "create",
-            //     component: this.node.name,
-            //     key: this.node.parentKey,
-            //     path: path,
-            //     id: id,
-            //   },
-            // });
             window.top.postMessage({
               type: "owlDevtools__Event",
               data: {
@@ -130,17 +126,8 @@ export class OwlDevtoolsGlobalHook {
                 id: id,
               },
             });
+          // else it is an update
           } else {
-            // window.top.postMessage({
-            //   type: "owlDevtools__Event",
-            //   data: {
-            //     type: "update",
-            //     component: this.node.name,
-            //     key: this.node.parentKey,
-            //     path: path,
-            //     id: id,
-            //   },
-            // });
             window.top.postMessage({
               type: "owlDevtools__Event",
               data: {
@@ -152,6 +139,7 @@ export class OwlDevtoolsGlobalHook {
               },
             });
           }
+        // _render has not been called so it is a delayed render that could be flushed later on
         } else {
           window.top.postMessage({
             type: "owlDevtools__Event",
@@ -171,6 +159,7 @@ export class OwlDevtoolsGlobalHook {
       _render = true;
       original_Render.call(this, ...arguments);
     };
+    // Signals when a component is destroyed
     if (app.root) {
       const originalDestroy = app.root.constructor.prototype._destroy;
       app.root.constructor.prototype._destroy = function () {
@@ -192,15 +181,18 @@ export class OwlDevtoolsGlobalHook {
     }
   }
 
+  // Enables/disables the recording of the render/destroy events based on value
   toggleEventsRecording(value) {
     this.recordEvents = value;
     return this.recordEvents;
   }
 
+  // Reset the event ids (the events on devtools side will be cleared at the same time)
   resetEvents() {
     this.eventId = 0;
   }
 
+  // Get the urls of all iframes present on the page
   getIFrameUrls() {
     let frames = [];
     for (const frame of document.getElementsByTagName("iframe")) {
@@ -312,6 +304,7 @@ export class OwlDevtoolsGlobalHook {
     detailsBox.style.top = `${detailsBoxTop}px`;
     detailsBox.style.left = `${detailsBoxLeft + 5}px`;
   }
+
   // Remove all elements drawn by the HighlightElement function
   removeHighlights() {
     const highlights = document.querySelectorAll(".owl-devtools-highlight");
@@ -319,6 +312,7 @@ export class OwlDevtoolsGlobalHook {
     const details = document.querySelectorAll(".owl-devtools-detailsBox");
     details.forEach((detail) => detail.remove());
   }
+
   // Identify the hovered component based on the corresponding DOM element and send the Select message
   // when the target changes
   HTMLSelector = (ev) => {
@@ -330,12 +324,14 @@ export class OwlDevtoolsGlobalHook {
       window.top.postMessage({ type: "owlDevtools__SelectElement", data: path });
     }
   };
+
   // Activate the HTML selector tool
   enableHTMLSelector() {
     document.addEventListener("mousemove", this.HTMLSelector);
     document.addEventListener("click", this.disableHTMLSelector, { capture: true });
     document.addEventListener("mouseout", this.removeHighlights);
   }
+
   // Diasble the HTML selector tool
   disableHTMLSelector = (ev = undefined) => {
     if (ev) {
@@ -348,6 +344,7 @@ export class OwlDevtoolsGlobalHook {
     document.removeEventListener("mouseout", this.removeHighlights);
     window.top.postMessage({ type: "owlDevtools__StopSelector" });
   };
+
   // Defines how leaf object nodes should be displayed in the extension based on their type
   parseItem(value, asConstructorName = false) {
     if (typeof value === "array") {
@@ -392,6 +389,7 @@ export class OwlDevtoolsGlobalHook {
       return valueAsString;
     }
   }
+
   // Returns a shortened version of the property as a string
   parseContent(obj, type) {
     let result = "";
@@ -459,6 +457,7 @@ export class OwlDevtoolsGlobalHook {
     } else result += this.parseItem(obj);
     return result;
   }
+
   // Returns the object specified by the path given the top parent object
   getObject(topParent, path) {
     let obj = topParent;
@@ -507,6 +506,7 @@ export class OwlDevtoolsGlobalHook {
     }
     return obj;
   }
+
   // Returns the asked property given the component path and the property's path
   getPropertyObject(componentPath, objectPath) {
     const componentNode = this.getComponentNode(componentPath);
@@ -517,6 +517,7 @@ export class OwlDevtoolsGlobalHook {
     } else obj = this.getObject(componentNode.component, objectPath);
     return obj;
   }
+
   // Returns a parsed version of an object node that has compatible format with the devtools ObjectTreeElement component
   getParsedObjectChild(componentPath, parentObj, key, depth, type, path, oldBranch, oldTree) {
     let obj;
@@ -645,6 +646,8 @@ export class OwlDevtoolsGlobalHook {
     }
     return child;
   }
+
+  // returns the parsed object in the parsed tree
   getObjectInOldTree(oldTree, objPath, objType) {
     let path = [...objPath];
     let obj;
@@ -851,28 +854,6 @@ export class OwlDevtoolsGlobalHook {
             oldTree
           );
           children.push(prototype);
-          // if (type === 'object'){
-          //   let proto = Object.getPrototypeOf(obj);
-          //   while(proto){
-          //     Reflect.ownKeys(proto).forEach(key => {
-          //       if(Object.getOwnPropertyDescriptor(proto, key).hasOwnProperty("get")){
-          //         let child = {
-          //           name: key,
-          //           depth: depth,
-          //           toggled: false,
-          //           objectType: objType,
-          //           path: objPath.concat([key]),
-          //           contentType: "getter",
-          //           content: "(...)",
-          //           hasChildren: false,
-          //           children: []
-          //         };
-          //         children.push(child);
-          //       }
-          //     });
-          //     proto = Object.getPrototypeOf(proto);
-          //   }
-          // }
         }
     }
     return children;
@@ -1072,7 +1053,7 @@ export class OwlDevtoolsGlobalHook {
     });
     return component;
   }
-
+  // Replace the content of a parsed getter object with the result of the corresponding get method
   loadGetterContent(componentPath, getter) {
     let obj = this.getPropertyObject(componentPath, getter.path);
     if (obj == null) {

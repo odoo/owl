@@ -15,9 +15,7 @@ export class ComponentsTab extends Component {
     this.store = useStore();
     this.flushRendersTimeout = false;
     onMounted(async () => {
-      // On mount, retreive the component tree from the page and the details of the inspected component
       this.computeWindowWidth();
-      //use useExternalListener into setup
       window.addEventListener("resize", this.computeWindowWidth);
       document.addEventListener("click", this.hideContextMenus, true);
       document.addEventListener("contextmenu", this.hideContextMenus, true);
@@ -34,11 +32,7 @@ export class ComponentsTab extends Component {
     });
   }
 
-  hideContextMenus = (event) => {
-    const customMenus = document.querySelectorAll(".custom-menu");
-    customMenus.forEach((menu) => menu.classList.add("hidden"));
-  };
-
+  // Apply the right action depending on which arrow key is pressed
   handleCommands = (event) => {
     switch (event.keyCode) {
       case 37:
@@ -67,6 +61,7 @@ export class ComponentsTab extends Component {
     this.store.rightWidth = (1 - this.store.splitPosition / 100) * width;
   };
 
+  // Get the width of the component node display so that it remains correct while scrolling horizontally.
   getTreeWrapperWidth() {
     let treeWrapper = document.getElementById("tree-wrapper");
     return Math.max(treeWrapper.style.minWidth, this.store.leftWidth);
@@ -79,6 +74,7 @@ export class ComponentsTab extends Component {
     window.addEventListener("mouseup", this.handleMouseUp);
   };
 
+  // Adjust the position of the split between the left and right right window of the components tab
   handleMouseMove = (event) => {
     this.store.splitPosition = Math.max(
       Math.min((event.clientX / window.innerWidth) * 100, 85),

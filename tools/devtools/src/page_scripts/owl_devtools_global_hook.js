@@ -229,7 +229,6 @@ export class OwlDevtoolsGlobalHook {
       const paddingRight = parseInt(getComputedStyle(element).paddingRight);
       const paddingBottom = parseInt(getComputedStyle(element).paddingBottom);
       const paddingLeft = parseInt(getComputedStyle(element).paddingLeft);
-      console.log(`paddingTop: ${paddingTop}, paddingRight: ${paddingRight}`)
 
       minTop = Math.min(minTop, top);
       minLeft = Math.min(minLeft, left);

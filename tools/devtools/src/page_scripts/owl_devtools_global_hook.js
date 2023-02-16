@@ -7,11 +7,17 @@ export class OwlDevtoolsGlobalHook {
   iFrameObserver;
 
   constructor() {
+    // The set of apps exposed by owl
     this.apps = window.__OWL_DEVTOOLS__.apps;
+    // Class definition of an owl Fiber
     this.Fiber = window.__OWL_DEVTOOLS__.Fiber;
+    // Same but for RootFiber
     this.RootFiber = window.__OWL_DEVTOOLS__.RootFiber;
+    // Set to keep track of the bibers that are in the flush queue
     this.fibersSet = new WeakSet();
+    // To keep track of the succession order of the render events
     this.eventId = 0;
+    // Allows to launch a message each time an iframe html element is added to the page
     this.iFrameObserver = new MutationObserver(function (mutations_list) {
       mutations_list.forEach(function (mutation) {
         mutation.addedNodes.forEach(function (added_node) {
@@ -21,6 +27,7 @@ export class OwlDevtoolsGlobalHook {
         });
       });
     });
+    // Activates the observer defined above
     this.iFrameObserver.observe(document.body, { subtree: true, childList: true });
     const appsArray = Array.from(this.apps);
     appsArray.forEach((app) => this.patchAppMethods(app));
@@ -28,6 +35,7 @@ export class OwlDevtoolsGlobalHook {
     this.recordEvents = false;
   }
 
+  // Modify the methods of the apps set in order to send a message each time it is modified.
   patchSetMethods() {
     const originalAdd = this.apps.add;
     const originalDelete = this.apps.delete;
@@ -43,6 +51,7 @@ export class OwlDevtoolsGlobalHook {
     };
   }
 
+  // Modify methods of each app so that it triggers messages on each flush and component render
   patchAppMethods(app) {
     const self = this;
     const originalFlush = app.scheduler.flush;

@@ -426,6 +426,13 @@ export const store = reactive({
     let eventNode = this.findEventInTree(event);
     toggle ? expandNodes(eventNode) : foldNodes(eventNode);
   },
+
+  resetData(){
+    this.loadComponentsTree(false);
+    this.events = [];
+    this.eventsTree = [];
+    evalInWindow("toggleEventsRecording",[false, 0]);
+  }
 });
 
 // Instantiate the store
@@ -457,7 +464,7 @@ function keepAlive() {
       (hasOwl) => {
         if (hasOwl) {
           store.owlStatus = true;
-          store.loadComponentsTree(false);
+          store.resetData();
         }
       }
     );

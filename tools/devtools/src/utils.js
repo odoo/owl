@@ -13,11 +13,15 @@ export function isFirefox() {
 
 export async function getActiveTabURL(isFirefox) {
   let queryOptions = { active: true, lastFocusedWindow: true };
-  let res = isFirefox
-    ? await browser.tabs.query(queryOptions)
-    : await chrome.tabs.query(queryOptions);
-  let [tab] = res;
-  return tab;
+  try{
+    let res = isFirefox
+      ? await browser.tabs.query(queryOptions)
+      : await chrome.tabs.query(queryOptions);
+    let [tab] = res;
+    return tab;
+  } catch (e) {
+    return null;
+  }
 }
 
 // inspired from https://www.tutorialspoint.com/fuzzy-search-algorithm-in-javascript
@@ -35,6 +39,7 @@ export function fuzzySearch(base, query) {
   return true;
 }
 
+// Check if the 
 export function isElementInCenterViewport(el) {
   const rect = el.getBoundingClientRect();
   return (

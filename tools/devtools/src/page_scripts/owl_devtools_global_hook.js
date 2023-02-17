@@ -182,8 +182,9 @@ export class OwlDevtoolsGlobalHook {
   }
 
   // Enables/disables the recording of the render/destroy events based on value
-  toggleEventsRecording(value) {
+  toggleEventsRecording(value, index) {
     this.recordEvents = value;
+    this.eventId = index;
     return this.recordEvents;
   }
 
@@ -1115,9 +1116,8 @@ export class OwlDevtoolsGlobalHook {
   // Triggers the highlight effect around the specified component.
   highlightComponent(path) {
     let component = this.getComponentNode(path);
-    if (!component) {
-      component = Array.from(this.apps)[0].root;
-    }
+    if(!component)
+      return;
     const elements = this.getDOMElementsRecursive(component);
     this.highlightElements(elements, component.component.constructor.name);
   }

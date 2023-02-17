@@ -1,7 +1,7 @@
 import { Component, ComponentConstructor, Props } from "./component";
 import { ComponentNode } from "./component_node";
 import { nodeErrorHandlers, OwlError, handleError } from "./error_handling";
-import { Fiber, MountOptions } from "./fibers";
+import { Fiber, RootFiber, MountOptions } from "./fibers";
 import { Scheduler } from "./scheduler";
 import { validateProps } from "./template_helpers";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
@@ -35,12 +35,16 @@ declare global {
   interface Window {
     __OWL_DEVTOOLS__: {
       apps: Set<App>;
+      Fiber: typeof Fiber;
+      RootFiber: typeof RootFiber;
     };
   }
 }
 
 window.__OWL_DEVTOOLS__ ||= {
   apps: new Set<App>(),
+  Fiber: Fiber,
+  RootFiber: RootFiber,
 };
 
 export class App<

@@ -32,14 +32,18 @@ createPanelsIfOwl();
 async function loadScripts() {
   return new Promise((resolve) => {
     if (!scriptsLoaded) {
-      fetch("../page_scripts/load_scripts.js")
-        .then((response) => response.text())
-        .then((contents) => {
-          browserInstance.devtools.inspectedWindow.eval(contents, (...args) => {
-            scriptsLoaded = args;
-            Promise.resolve().then(() => resolve(args));
+      try{
+        fetch("../page_scripts/load_scripts.js")
+          .then((response) => response.text())
+          .then((contents) => {
+            browserInstance.devtools.inspectedWindow.eval(contents, (...args) => {
+              scriptsLoaded = args;
+              Promise.resolve().then(() => resolve(args));
+            });
           });
-        });
+      } catch (e) {
+        resolve(false);
+      }
     } else {
       resolve(true);
     }

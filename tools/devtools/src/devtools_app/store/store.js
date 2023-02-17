@@ -367,13 +367,12 @@ export const store = reactive({
   // Resets the context of all values in the devtools tab and load the one from the given frame
   selectFrame(frame) {
     evalInWindow("removeHighlights", [], this.activeFrame);
-    evalInWindow("toggleEventsRecording", [false], this.activeFrame);
+    evalInWindow("toggleEventsRecording", [false, 0], this.activeFrame);
     this.events = [];
     this.eventsTree = [];
-    evalInWindow("resetEvents", [], this.activeFrame);
     this.activeFrame = frame;
     store.loadComponentsTree(false);
-    evalInWindow("toggleEventsRecording", [this.activeRecorder], this.activeFrame);
+    evalInWindow("toggleEventsRecording", [this.activeRecorder, this.events.length], this.activeFrame);
   },
 
   // Constructs the tree that represents the currently recorded events to see them as a tree instead of a temporaly accurate list 
@@ -441,8 +440,7 @@ store.loadComponentsTree(false);
 store.updateIFrameList();
 
 for(const frame of store.frameUrls){
-  evalInWindow("toggleEventsRecording",[false], frame);
-  evalInWindow("resetEvents", [], frame);
+  evalInWindow("toggleEventsRecording",[false, 0], frame);
 }
 
 let flushRendersTimeout = false;

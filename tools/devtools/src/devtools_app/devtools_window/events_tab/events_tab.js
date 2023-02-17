@@ -17,7 +17,7 @@ export class EventsTab extends Component {
   toggleRecording() {
     evalInWindow(
       "toggleEventsRecording",
-      [!this.store.activeRecorder],
+      [!this.store.activeRecorder, this.store.events.length],
       this.store.activeFrame
     ).then((result) => (this.store.activeRecorder = result));
   }

@@ -882,7 +882,8 @@ export class OwlDevtoolsGlobalHook {
     component.path = path;
     let node = this.getComponentNode(path);
     let i = 0;
-    while (!node) node = Array.from(this.apps)[i++].root;
+    while (!node && i < Array.from(this.apps).length) node = Array.from(this.apps)[i++].root;
+    if(!node) return null;
     // Load props of the component
     const props = node.component.props;
     component.props = {};

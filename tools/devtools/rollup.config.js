@@ -1,4 +1,3 @@
-import nodeResolve from "@rollup/plugin-node-resolve";
 import terser from "rollup-plugin-terser";
 import copy from "rollup-plugin-copy";
 
@@ -32,7 +31,6 @@ function generateRule(input){
       }
     ],
     plugins: [
-      nodeResolve(),
       isProduction && terser.terser(),
     ],
   }

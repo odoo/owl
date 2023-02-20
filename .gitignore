@@ -1,5 +1,6 @@
 /node_modules
 /dist
+/tools/devtools/build
 
 npm-debug.log
 
@@ -22,7 +23,7 @@ node_modules
 
 # Extras temp file
 /tools/owl.js
-/tools/devtools/assets/*
+/tools/devtools/assets/*.js
 
 release-notes.md
 

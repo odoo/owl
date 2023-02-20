@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'Fira Mono';
+  src: url('../assets/FiraMono-Medium.ttf') format('truetype');
+}
+
 
 .active {
   display: block;

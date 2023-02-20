@@ -12,17 +12,24 @@
     </div>
     <div class="horizontal-border"/>
     <div class="events-container">
-      <t t-if="store.eventsTreeView">
-        <t t-foreach="store.eventsTree" t-as="event" t-key="event.id">
-          <EventNode t-props="event"/>
-        </t>
+      <t t-if="showHelp()">
+        <div class="status-message">
+          Click on the <i class="fa fa-circle px-2" style="font-size: 0.8em;"></i> button to start recording events.
+        </div>
       </t>
       <t t-else="">
-        <t t-foreach="store.events" t-as="event" t-key="event_index">
-          <Event t-props="event"/>
+        <t t-if="store.eventsTreeView">
+          <t t-foreach="store.eventsTree" t-as="event" t-key="event.id">
+            <EventNode t-props="event"/>
+          </t>
         </t>
+        <t t-else="">
+          <t t-foreach="store.events" t-as="event" t-key="event_index">
+            <Event t-props="event"/>
+          </t>
+        </t>
+        <div class="blank-space"/>
       </t>
-      <div class="blank-space"/>
     </div>
   </t>
 </templates>

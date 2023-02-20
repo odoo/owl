@@ -5,6 +5,8 @@ It is separated into the popup app and the devtools app.
 
 ## Install
 
+In the owl root folder:
+
 ```bash
 npm install
 ```
@@ -12,24 +14,24 @@ npm install
 For chrome:
 
 ```bash
-npm run build:chrome
+npm run build:devtools-chrome
 ```
 
 For firefox: 
 
 ```bash
-npm run build:firefox
+npm run build:devtools-firefox
 ```
 
 You can also run:
 ```bash
-npm run build:devtools-chrome
+npm run dev:devtools-chrome
 ```
 or
 ```bash
-npm run build:devtools-firefox
+npm run dev:devtools-firefox
 ```
-from the root of the owl repository to build the extension.
+to avoid recompiling owl and gain time if it has already been done.
 
 To run the extension:
 

@@ -14,6 +14,10 @@ export class EventsTab extends Component {
     this.store = useStore();
   }
 
+  showHelp(){
+    return (this.store.events.length < 1 && !this.store.activeRecorder);
+  }
+
   toggleRecording() {
     evalInWindow(
       "toggleEventsRecording",

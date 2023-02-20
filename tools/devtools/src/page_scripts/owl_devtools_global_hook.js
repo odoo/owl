@@ -1208,9 +1208,9 @@ export class OwlDevtoolsGlobalHook {
         }
       }
       const appsArray = Array.from(this.apps);
-      for (const [index, app] of appsArray.entries()) {
-        // Try to find a correspondance between the elements in the array and the owl component, stops at first result found
-        for (const elem of parentsList) {
+      // Try to find a correspondance between the elements in the array and the owl component, stops at first result found
+      for (const elem of parentsList) {
+        for (const [index, app] of appsArray.entries()) {
           const inspectedPath = this.searchElement(app.root, ["root"], elem);
           if (inspectedPath) {
             inspectedPath.unshift(index.toString());
@@ -1283,7 +1283,7 @@ export class OwlDevtoolsGlobalHook {
     const appsArray = Array.from(this.apps);
     let index = 0;
     for (; index < appsArray.length; index++) {
-      if (appsArray[index]?.Root?.name === componentNode.app.Root.name) break;
+      if (appsArray[index]?.root?.name === componentNode.app.root.name) break;
     }
     path.unshift(index.toString());
     return path;

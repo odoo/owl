@@ -282,6 +282,47 @@ exports[`slots can use t-call in default-content of t-slot 3`] = `
 }"
 `;
 
+exports[`slots conditional slot 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false, true);
+  
+  function slotFn1(ctx, node, key = \\"\\") {
+    return text(\`blue\`);
+  }
+  
+  function slotFn2(ctx, node, key = \\"\\") {
+    return text(\`red\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let slot1 = {};
+    if (ctx['state'].flag) {
+      const ctx1 = capture(ctx);
+      slot1['abc'] = {__render: slotFn1.bind(this), __ctx: ctx1};
+    } else {
+      const ctx2 = capture(ctx);
+      slot1['abc'] = {__render: slotFn2.bind(this), __ctx: ctx2};
+    }
+    const b4 = comp1({slots: markRaw(slot1)}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`slots conditional slot 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { callSlot } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return callSlot(ctx, node, key, 'abc', false, {});
+  }
+}"
+`;
+
 exports[`slots content is the default slot (variation) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

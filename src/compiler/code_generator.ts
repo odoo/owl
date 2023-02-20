@@ -15,6 +15,7 @@ import {
   ASTLog,
   ASTMulti,
   ASTSlot,
+  ASTSlotDefinition,
   ASTTCall,
   ASTTCallBlock,
   ASTTEsc,
@@ -137,12 +138,14 @@ interface Context {
   index: number | string;
   forceNewBlock: boolean;
   preventRoot?: boolean;
+  ignoreRoot?: boolean;
   isLast?: boolean;
   translate: boolean;
   tKeyExpr: string | null;
   nameSpace?: string;
   tModelSelectedExpr?: string;
   ctxVar?: string;
+  slotVar?: string;
 }
 
 function createContext(parentCtx: Context, params?: Partial<Context>): Context {
@@ -155,6 +158,7 @@ function createContext(parentCtx: Context, params?: Partial<Context>): Context {
       tKeyExpr: null,
       nameSpace: parentCtx.nameSpace,
       tModelSelectedExpr: parentCtx.tModelSelectedExpr,
+      slotVar: parentCtx.slotVar
     },
     params
   );
@@ -384,6 +388,9 @@ export class CodeGenerator {
       blockExpr = `toggler(${ctx.tKeyExpr}, ${blockExpr})`;
     }
 
+    if (ctx.ignoreRoot) {
+      return;
+    }
     if (block.isRoot && !ctx.preventRoot) {
       if (this.target.on) {
         blockExpr = this.wrapWithEventCatcher(blockExpr, this.target.on);
@@ -465,6 +472,8 @@ export class CodeGenerator {
         return this.compileLog(ast, ctx);
       case ASTType.TSlot:
         return this.compileTSlot(ast, ctx);
+      case ASTType.TSetSlot:
+        return this.compileTSetSlot(ast, ctx);
       case ASTType.TTranslation:
         return this.compileTTranslation(ast, ctx);
       case ASTType.TPortal:
@@ -1144,52 +1153,31 @@ export class CodeGenerator {
     const props: string[] = ast.props ? this.formatPropObject(ast.props) : [];
 
     // slots
-    let slotDef: string = "";
-    if (ast.slots) {
-      let ctxStr = "ctx";
-      if (this.target.loopLevel || !this.hasSafeContext) {
-        ctxStr = generateId("ctx");
-        this.helpers.add("capture");
-        this.define(ctxStr, `capture(ctx)`);
-      }
-      let slotStr: string[] = [];
-      for (let slotName in ast.slots) {
-        const slotAst = ast.slots[slotName];
-        const params = [];
-        if (slotAst.content) {
-          const name = this.compileInNewTarget("slot", slotAst.content, ctx, slotAst.on);
-          params.push(`__render: ${name}.bind(this), __ctx: ${ctxStr}`);
-        }
-        const scope = ast.slots[slotName].scope;
-        if (scope) {
-          params.push(`__scope: "${scope}"`);
-        }
-        if (ast.slots[slotName].attrs) {
-          params.push(...this.formatPropObject(ast.slots[slotName].attrs!));
-        }
-        const slotInfo = `{${params.join(", ")}}`;
-        slotStr.push(`'${slotName}': ${slotInfo}`);
-      }
-      slotDef = `{${slotStr.join(", ")}}`;
+    let slotVar: string = "";
+    if (ast.body) {
+      slotVar = generateId("slot");
+      const subCtx = createContext(ctx, { slotVar, ignoreRoot: true });
+      this.target.addLine(`let ${slotVar} = {};`);
+      this.compileAST(ast.body, subCtx);
     }
 
-    if (slotDef && !(ast.dynamicProps || hasSlotsProp)) {
+    if (slotVar && !(ast.dynamicProps || hasSlotsProp)) {
       this.helpers.add("markRaw");
-      props.push(`slots: markRaw(${slotDef})`);
+      props.push(`slots: markRaw(${slotVar})`);
     }
 
     let propString = this.getPropString(props, ast.dynamicProps);
 
     let propVar: string;
-    if ((slotDef && (ast.dynamicProps || hasSlotsProp)) || this.dev) {
+    if ((slotVar && (ast.dynamicProps || hasSlotsProp)) || this.dev) {
       propVar = generateId("props");
       this.define(propVar!, propString);
       propString = propVar!;
     }
 
-    if (slotDef && (ast.dynamicProps || hasSlotsProp)) {
+    if (slotVar && (ast.dynamicProps || hasSlotsProp)) {
       this.helpers.add("markRaw");
-      this.addLine(`${propVar!}.slots = markRaw(Object.assign(${slotDef}, ${propVar!}.slots))`);
+      this.addLine(`${propVar!}.slots = markRaw(Object.assign(${slotVar}, ${propVar!}.slots))`);
     }
 
     // cmap key
@@ -1220,7 +1208,7 @@ export class CodeGenerator {
       id,
       expr: `app.createComponent(${
         ast.isDynamic ? null : expr
-      }, ${!ast.isDynamic}, ${!!ast.slots}, ${!!ast.dynamicProps}, ${
+      }, ${!ast.isDynamic}, ${!!ast.body}, ${!!ast.dynamicProps}, ${
         !ast.props && !ast.dynamicProps
       })`,
     });
@@ -1261,6 +1249,37 @@ export class CodeGenerator {
     }
     this.staticDefs.push({ id: name, expr: `createCatcher(${JSON.stringify(spec)})` });
     return `${name}(${expr}, [${handlers.join(",")}])`;
+  }
+
+  compileTSetSlot(ast: ASTSlotDefinition, ctx: Context): string {
+        let ctxStr = "ctx";
+      if (this.target.loopLevel || !this.hasSafeContext) {
+        ctxStr = generateId("ctx");
+        this.helpers.add("capture");
+        this.define(ctxStr, `capture(ctx)`);
+      }
+      // let slotStr: string[] = [];
+      // for (let slotName in ast.slots) {
+        // const slotAst = ast.slots[slotName];
+        const params = [];
+        if (ast.content) {
+          const name = this.compileInNewTarget("slotFn", ast.content, ctx, ast.on);
+          params.push(`__render: ${name}.bind(this), __ctx: ${ctxStr}`);
+        }
+        // ast.scope
+        // const scope = ast.slots[slotName].scope;
+        if (ast.scope) {
+          params.push(`__scope: "${ast.scope}"`);
+        }
+        if (ast.attrs) {
+          params.push(...this.formatPropObject(ast.attrs!));
+        }
+        const slotInfo = `{${params.join(", ")}}`;
+        this.target.addLine(`${ctx.slotVar}['${ast.name}'] = ${slotInfo};`)
+        // slotStr.push(`'${slotName}': ${slotInfo}`);
+      // }
+      // slotDef = `{${slotStr.join(", ")}}`;
+    return "what should go here? anyone knows?";
   }
 
   compileTSlot(ast: ASTSlot, ctx: Context): string {

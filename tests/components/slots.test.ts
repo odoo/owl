@@ -1933,4 +1933,33 @@ describe("slots", () => {
       "<p>1 hello <div>child</div></p><p>2 hello <div>child</div></p>"
     );
   });
+
+  test.only("conditional slot", async () => {
+    class Child extends Component {
+      static template = xml`<t t-slot="abc"/>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <Child>
+          <t t-if="state.flag">
+            <t t-set-slot="abc">blue</t>
+          </t>
+          <t t-else="">
+            <t t-set-slot="abc">red</t>
+          </t>
+        </Child>`;
+      static components = { Child };
+      state = useState({ flag: true});
+    }
+    const parent = await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe("blue");
+    
+    parent.state.flag = false;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("red");
+
+  });
+
 });

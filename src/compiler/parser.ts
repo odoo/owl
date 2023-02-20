@@ -23,6 +23,7 @@ export const enum ASTType {
   TDebug,
   TLog,
   TSlot,
+  TSetSlot,
   TCallBlock,
   TTranslation,
   TPortal,
@@ -120,7 +121,9 @@ export interface ASTTCall {
   context: string | null;
 }
 
-interface SlotDefinition {
+export interface ASTSlotDefinition {
+  type: ASTType.TSetSlot;
+  name: string;
   content: AST | null;
   scope: string | null;
   on: EventHandlers | null;
@@ -134,7 +137,8 @@ export interface ASTComponent {
   dynamicProps: string | null;
   on: EventHandlers | null;
   props: { [name: string]: string } | null;
-  slots: { [name: string]: SlotDefinition } | null;
+  body: AST | null;
+  // slots: { [name: string]: ASTSlotDefinition } | null;
 }
 
 export interface ASTSlot {
@@ -186,6 +190,7 @@ export type AST =
   | ASTTKey
   | ASTComponent
   | ASTSlot
+  | ASTSlotDefinition
   | ASTTCallBlock
   | ASTLog
   | ASTDebug
@@ -238,6 +243,7 @@ function parseNode(node: Node, ctx: ParsingContext): AST | null {
     parseTKey(node, ctx) ||
     parseTTranslation(node, ctx) ||
     parseTSlot(node, ctx) ||
+    parseTSetSlot(node, ctx) ||
     parseTOutNode(node, ctx) ||
     parseComponent(node, ctx) ||
     parseDOMNode(node, ctx) ||
@@ -573,12 +579,12 @@ function parseTCall(node: Element, ctx: ParsingContext): AST | null {
       ast.content = [tcall];
       return ast;
     }
-    if (ast && ast.type === ASTType.TComponent) {
-      return {
-        ...ast,
-        slots: { default: { content: tcall, scope: null, on: null, attrs: null } },
-      };
-    }
+    // if (ast && ast.type === ASTType.TComponent) {
+    //   return {
+    //     ...ast,
+    //     slots: { default: { content: tcall, scope: null, on: null, attrs: null } },
+    //   };
+    // }
   }
   const body = parseChildren(node, ctx);
 
@@ -706,8 +712,8 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
   const dynamicProps = node.getAttribute("t-props");
   node.removeAttribute("t-props");
 
-  const defaultSlotScope = node.getAttribute("t-slot-scope");
-  node.removeAttribute("t-slot-scope");
+  // const defaultSlotScope = node.getAttribute("t-slot-scope");
+  // node.removeAttribute("t-slot-scope");
   let on: ASTComponent["on"] = null;
 
   let props: ASTComponent["props"] = null;
@@ -727,67 +733,14 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
     }
   }
 
-  let slots: ASTComponent["slots"] | null = null;
+  let body: ASTComponent["body"] = null;
+
+  // let slots: ASTComponent["slots"] | null = null;
   if (node.hasChildNodes()) {
-    const clone = <Element>node.cloneNode(true);
+    body = parseChildNodes(node, ctx);
 
-    // named slots
-    const slotNodes = Array.from(clone.querySelectorAll("[t-set-slot]"));
-    for (let slotNode of slotNodes) {
-      if (slotNode.tagName !== "t") {
-        throw new OwlError(
-          `Directive 't-set-slot' can only be used on <t> nodes (used on a <${slotNode.tagName}>)`
-        );
-      }
-      const name = slotNode.getAttribute("t-set-slot")!;
-
-      // check if this is defined in a sub component (in which case it should
-      // be ignored)
-      let el = slotNode.parentElement!;
-      let isInSubComponent = false;
-      while (el !== clone) {
-        if (el!.hasAttribute("t-component") || el!.tagName[0] === el!.tagName[0].toUpperCase()) {
-          isInSubComponent = true;
-          break;
-        }
-        el = el.parentElement!;
-      }
-      if (isInSubComponent) {
-        continue;
-      }
-
-      slotNode.removeAttribute("t-set-slot");
-      slotNode.remove();
-      const slotAst = parseNode(slotNode, ctx);
-      let on: SlotDefinition["on"] = null;
-      let attrs: Attrs | null = null;
-      let scope: string | null = null;
-      for (let attributeName of slotNode.getAttributeNames()) {
-        const value = slotNode.getAttribute(attributeName)!;
-        if (attributeName === "t-slot-scope") {
-          scope = value;
-          continue;
-        } else if (attributeName.startsWith("t-on-")) {
-          on = on || {};
-          on[attributeName.slice(5)] = value;
-        } else {
-          attrs = attrs || {};
-          attrs[attributeName] = value;
-        }
-      }
-      slots = slots || {};
-      slots[name] = { content: slotAst, on, attrs, scope };
-    }
-
-    // default slot
-    const defaultContent = parseChildNodes(clone, ctx);
-    slots = slots || {};
-    // t-set-slot="default" has priority over content
-    if (defaultContent && !slots.default) {
-      slots.default = { content: defaultContent, on, attrs: null, scope: defaultSlotScope };
-    }
   }
-  return { type: ASTType.TComponent, name, isDynamic, dynamicProps, props, slots, on };
+  return { type: ASTType.TComponent, name, isDynamic, dynamicProps, props, body, on };
 }
 
 // -----------------------------------------------------------------------------
@@ -819,6 +772,71 @@ function parseTSlot(node: Element, ctx: ParsingContext): AST | null {
     on,
     defaultContent: parseChildNodes(node, ctx),
   };
+}
+
+function parseTSetSlot(node: Element, ctx: ParsingContext): AST | null {
+  if (!node.hasAttribute("t-set-slot")) {
+    return null;
+  }
+  // const t = el.ownerDocument.createElement("t");
+
+    // const clone = <Element>node.cloneNode(true);
+
+    // // named slots
+    // const slotNodes = Array.from(clone.querySelectorAll("[t-set-slot]"));
+    // for (let slotNode of slotNodes) {
+      if (node.tagName !== "t") {
+        throw new OwlError(
+          `Directive 't-set-slot' can only be used on <t> nodes (used on a <${node.tagName}>)`
+        );
+      }
+      const name = node.getAttribute("t-set-slot")!;
+
+    //   // check if this is defined in a sub component (in which case it should
+    //   // be ignored)
+    //   let el = slotNode.parentElement!;
+    //   let isInSubComponent = false;
+    //   while (el !== clone) {
+    //     if (el!.hasAttribute("t-component") || el!.tagName[0] === el!.tagName[0].toUpperCase()) {
+    //       isInSubComponent = true;
+    //       break;
+    //     }
+    //     el = el.parentElement!;
+    //   }
+    //   if (isInSubComponent) {
+    //     continue;
+    //   }
+
+      node.removeAttribute("t-set-slot");
+      node.remove();
+      const slotAst = parseNode(node, ctx);
+      let on: ASTSlotDefinition["on"] = null;
+      let attrs: Attrs | null = null;
+      let scope: string | null = null;
+      for (let attributeName of node.getAttributeNames()) {
+        const value = node.getAttribute(attributeName)!;
+        if (attributeName === "t-slot-scope") {
+          scope = value;
+          continue;
+        } else if (attributeName.startsWith("t-on-")) {
+          on = on || {};
+          on[attributeName.slice(5)] = value;
+        } else {
+          attrs = attrs || {};
+          attrs[attributeName] = value;
+        }
+      }
+    //   slots = slots || {};
+      return { type: ASTType.TSetSlot, name, content: slotAst, on, attrs, scope };
+    // }
+
+    // // default slot
+    // const defaultContent = parseChildNodes(clone, ctx);
+    // slots = slots || {};
+    // // t-set-slot="default" has priority over content
+    // if (defaultContent && !slots.default) {
+    //   slots.default = { content: defaultContent, on, attrs: null, scope: defaultSlotScope };
+    // }
 }
 
 function parseTTranslation(node: Element, ctx: ParsingContext): AST | null {

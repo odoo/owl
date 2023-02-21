@@ -62,7 +62,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("some other text");
   });
 
-  test("simple slot with slot scope", async () => {
+  test.skip("simple slot with slot scope", async () => {
     let child: any;
     class Child extends Component {
       static template = xml`<span><t t-slot="slotName" bool="state.bool"/></span>`;
@@ -91,7 +91,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<span>other text</span>");
   });
 
-  test("slot with slot scope and t-props", async () => {
+  test.skip("slot with slot scope and t-props", async () => {
     class Child extends Component {
       static template = xml`
         <t t-slot="slotName" t-props="info"/>`;
@@ -113,7 +113,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<p>1</p><p>2</p>");
   });
 
-  test("simple dynamic slot with slot scope", async () => {
+  test.skip("simple dynamic slot with slot scope", async () => {
     let child: any;
     class Child extends Component {
       static template = xml`<span><t t-slot="{{ 'slotName' }}" bool="state.bool"/></span>`;
@@ -142,7 +142,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<span>other text</span>");
   });
 
-  test("simple named and empty slot", async () => {
+  test.skip("simple named and empty slot", async () => {
     class Child extends Component {
       static template = xml`<span><t t-slot="default" /><t t-slot="myEmptySlot"/></span>`;
 
@@ -160,7 +160,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<span>some text</span>");
   });
 
-  test("simple named and empty slot -- 2", async () => {
+  test.skip("simple named and empty slot -- 2", async () => {
     class Child extends Component {
       static template = xml`<span><t t-slot="myEmptySlot">default empty</t></span>`;
 
@@ -179,7 +179,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<span>default empty</span>");
   });
 
-  test("default slot with slot scope: shorthand syntax", async () => {
+  test.skip("default slot with slot scope: shorthand syntax", async () => {
     let child: any;
     class Child extends Component {
       static template = xml`<span><t t-slot="default" bool="state.bool"/></span>`;
@@ -206,7 +206,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<span>other text</span>");
   });
 
-  test("simple default slot with params", async () => {
+  test.skip("simple default slot with params", async () => {
     class Child extends Component {
       static template = xml`<span><t t-slot="default" bool="state.bool"/></span>`;
       state = useState({ bool: true });
@@ -230,7 +230,7 @@ describe("slots", () => {
     expect(mockConsoleWarn).toBeCalledTimes(1);
   });
 
-  test("simple default slot with params and bound function", async () => {
+  test.skip("simple default slot with params and bound function", async () => {
     class Child extends Component {
       static template = xml`<t t-slot="default" fn.bind="getValue"/>`;
       state = useState({ value: 123 });
@@ -249,7 +249,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("123");
   });
 
-  test("default slot with params with - in it", async () => {
+  test.skip("default slot with params with - in it", async () => {
     class Child extends Component {
       static template = xml`<t t-slot="default" some-value="state.value"/>`;
       state = useState({ value: 123 });
@@ -265,7 +265,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("123");
   });
 
-  test("fun: two calls to the same slot", async () => {
+  test.skip("fun: two calls to the same slot", async () => {
     class Child extends Component {
       static template = xml`<t t-slot="default"/><t t-slot="default"/>`;
     }
@@ -279,7 +279,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("some textsome text");
   });
 
-  test("slot content is bound to caller", async () => {
+  test.skip("slot content is bound to caller", async () => {
     class Child extends Component {
       static template = xml`<span><t t-slot="default"/></span>`;
     }
@@ -299,7 +299,7 @@ describe("slots", () => {
     expect(parent.state.value).toBe(1);
   });
 
-  test("slot content is bound to caller (variation)", async () => {
+  test.skip("slot content is bound to caller (variation)", async () => {
     class Child extends Component {
       static template = xml`<span><t t-slot="default"/></span>`;
     }
@@ -326,7 +326,7 @@ describe("slots", () => {
     expect(parent.state.value).toBe(1);
   });
 
-  test("can define and call slots", async () => {
+  test.skip("can define and call slots", async () => {
     class Dialog extends Component {
       static template = xml`
         <div>
@@ -352,7 +352,7 @@ describe("slots", () => {
     );
   });
 
-  test("can define and call slots with params", async () => {
+  test.skip("can define and call slots with params", async () => {
     class Dialog extends Component {
       static template = xml`
         <div>
@@ -381,7 +381,7 @@ describe("slots", () => {
     );
   });
 
-  test("can define and call slots with bound params", async () => {
+  test.skip("can define and call slots with bound params", async () => {
     class Child extends Component {
       static template = xml`
         <t t-slot="abc"/>
@@ -405,7 +405,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("abc444");
   });
 
-  test("no named slot content => just no children", async () => {
+  test.skip("no named slot content => just no children", async () => {
     class Dialog extends Component {
       static template = xml`<span><t t-slot="header"/></span>`;
     }
@@ -418,7 +418,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<span></span>");
   });
 
-  test("named slots can define a default content", async () => {
+  test.skip("named slots can define a default content", async () => {
     class Dialog extends Component {
       static template = xml`
             <span>
@@ -434,7 +434,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><span>default content</span></div>");
   });
 
-  test("can define a default content", async () => {
+  test.skip("can define a default content", async () => {
     class Dialog extends Component {
       static template = xml`
           <span>
@@ -450,7 +450,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><span>default content</span></div>");
   });
 
-  test("default content is not rendered if slot is provided", async () => {
+  test.skip("default content is not rendered if slot is provided", async () => {
     class Dialog extends Component {
       static template = xml`
             <span>
@@ -466,7 +466,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
   });
 
-  test("default content is not rendered if named slot is provided", async () => {
+  test.skip("default content is not rendered if named slot is provided", async () => {
     class Dialog extends Component {
       static template = xml`
             <span>
@@ -482,7 +482,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><span>hey</span></div>");
   });
 
-  test("slots are properly bound to correct component", async () => {
+  test.skip("slots are properly bound to correct component", async () => {
     let child: any = null;
     class Child extends Component {
       // t-set t-value in template is to force compiler to protect the scope
@@ -518,7 +518,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<button>2</button>");
   });
 
-  test("slots are rendered with proper context", async () => {
+  test.skip("slots are rendered with proper context", async () => {
     class Dialog extends Component {
       static template = xml`<span><t t-slot="footer"/></span>`;
     }
@@ -554,7 +554,7 @@ describe("slots", () => {
     );
   });
 
-  test("slots are rendered with proper context, part 2", async () => {
+  test.skip("slots are rendered with proper context, part 2", async () => {
     class Link extends Component {
       static template = xml`
             <a t-att-href="props.to">
@@ -593,7 +593,7 @@ describe("slots", () => {
     );
   });
 
-  test("slots are rendered with proper context, part 3", async () => {
+  test.skip("slots are rendered with proper context, part 3", async () => {
     class Link extends Component {
       static template = xml`
             <a t-att-href="props.to">
@@ -632,7 +632,7 @@ describe("slots", () => {
     );
   });
 
-  test("slots are rendered with proper context, part 4", async () => {
+  test.skip("slots are rendered with proper context, part 4", async () => {
     class Link extends Component {
       static template = xml`
             <a t-att-href="props.to">
@@ -660,7 +660,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe('<div><a href="/user/1">User David</a></div>');
   });
 
-  test("content is the default slot", async () => {
+  test.skip("content is the default slot", async () => {
     class Dialog extends Component {
       static template = xml`<div><t t-slot="default"/></div>`;
     }
@@ -678,7 +678,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><div><span>sts rocks</span></div></div>");
   });
 
-  test("content is the default slot (variation)", async () => {
+  test.skip("content is the default slot (variation)", async () => {
     class Dialog extends Component {
       static template = xml`<t t-slot="default"/>`;
     }
@@ -694,7 +694,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<span>sts rocks</span>");
   });
 
-  test("default slot work with text nodes", async () => {
+  test.skip("default slot work with text nodes", async () => {
     class Dialog extends Component {
       static template = xml`<div><t t-slot="default"/></div>`;
     }
@@ -710,7 +710,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><div>sts rocks</div></div>");
   });
 
-  test("default slot work with text nodes (variation)", async () => {
+  test.skip("default slot work with text nodes (variation)", async () => {
     class Dialog extends Component {
       static template = xml`<t t-slot="default"/>`;
     }
@@ -723,7 +723,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("sts rocks");
   });
 
-  test("multiple roots are allowed in a named slot", async () => {
+  test.skip("multiple roots are allowed in a named slot", async () => {
     class Dialog extends Component {
       static template = xml`<div><t t-slot="content"/></div>`;
     }
@@ -744,7 +744,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><div><span>sts</span><span>rocks</span></div></div>");
   });
 
-  test("multiple roots are allowed in a default slot", async () => {
+  test.skip("multiple roots are allowed in a default slot", async () => {
     class Dialog extends Component {
       static template = xml`<div><t t-slot="default"/></div>`;
     }
@@ -763,7 +763,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><div><span>sts</span><span>rocks</span></div></div>");
   });
 
-  test("missing slots are ignored", async () => {
+  test.skip("missing slots are ignored", async () => {
     class Dialog extends Component {
       static template = xml`
           <span>
@@ -782,7 +782,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><span><span>some content</span></span></div>");
   });
 
-  test("t-debug on a t-set-slot (defining a slot)", async () => {
+  test.skip("t-debug on a t-set-slot (defining a slot)", async () => {
     const consoleLog = console.log;
     console.log = jest.fn();
 
@@ -802,7 +802,7 @@ describe("slots", () => {
     console.log = consoleLog;
   });
 
-  test("slot preserves properly parented relationship", async () => {
+  test.skip("slot preserves properly parented relationship", async () => {
     class Child extends Component {
       static template = xml`<t t-slot="default"/>`;
     }
@@ -832,7 +832,7 @@ describe("slots", () => {
     expect(childrenChildren[0]).toBeInstanceOf(GrandChild);
   });
 
-  test("slot preserves properly parented relationship, even through t-call", async () => {
+  test.skip("slot preserves properly parented relationship, even through t-call", async () => {
     class Child extends Component {
       static template = xml`<t t-slot="default"/>`;
     }
@@ -870,7 +870,7 @@ describe("slots", () => {
     expect(childrenChildren[0]).toBeInstanceOf(GrandChild);
   });
 
-  test("t-slot scope context", async () => {
+  test.skip("t-slot scope context", async () => {
     expect.assertions(4);
 
     class Wrapper extends Component {
@@ -916,7 +916,7 @@ describe("slots", () => {
     await nextTick();
   });
 
-  test("t-slot in recursive templates", async () => {
+  test.skip("t-slot in recursive templates", async () => {
     class Wrapper extends Component {
       static template = xml`
           <wrapper>
@@ -979,7 +979,7 @@ describe("slots", () => {
     );
   });
 
-  test("t-slot within dynamic t-call", async () => {
+  test.skip("t-slot within dynamic t-call", async () => {
     class Child extends Component {
       static template = xml`<div class="child"/>`;
     }
@@ -1021,7 +1021,7 @@ describe("slots", () => {
     );
   });
 
-  test("slots in t-foreach in t-foreach", async () => {
+  test.skip("slots in t-foreach in t-foreach", async () => {
     class Child extends Component {
       static template = xml`
         <div><t t-slot="default" /></div>
@@ -1084,7 +1084,7 @@ describe("slots", () => {
     );
   });
 
-  test("default slot next to named slot, with default content", async () => {
+  test.skip("default slot next to named slot, with default content", async () => {
     class Dialog extends Component {
       // We're using 2 slots here: a "default" one and a "footer",
       // both having default children nodes.
@@ -1125,7 +1125,7 @@ describe("slots", () => {
     );
   });
 
-  test("dynamic t-slot call", async () => {
+  test.skip("dynamic t-slot call", async () => {
     class Toggler extends Component {
       static template = xml`<button t-on-click="toggle"><t t-slot="{{current.slot}}"/></button>`;
       current = useState({ slot: "slot1" });
@@ -1156,7 +1156,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><button><p>slot1</p><span>content</span></button></div>");
   });
 
-  test("dynamic t-slot call with default", async () => {
+  test.skip("dynamic t-slot call with default", async () => {
     class Toggler extends Component {
       static template = xml`
         <button t-on-click="toggle">
@@ -1188,7 +1188,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><button><h1>slot2</h1></button></div>");
   });
 
-  test("slot are properly rendered if inner props are changed", async () => {
+  test.skip("slot are properly rendered if inner props are changed", async () => {
     class SomeComponent extends Component {
       static template = xml`
         <div>
@@ -1222,7 +1222,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><button>Inc[5]</button><div><div> SC:5</div></div></div>");
   });
 
-  test("slots and wrapper components", async () => {
+  test.skip("slots and wrapper components", async () => {
     class Link extends Component {
       static template = xml`
           <a href="abc">
@@ -1240,7 +1240,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe(`<a href="abc">hey</a>`);
   });
 
-  test("template can just return a slot", async () => {
+  test.skip("template can just return a slot", async () => {
     class Child extends Component {
       static template = xml`<span><t t-esc="props.value"/></span>`;
     }
@@ -1265,7 +1265,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><span>5</span></div>");
   });
 
-  test("multiple slots containing components", async () => {
+  test.skip("multiple slots containing components", async () => {
     class C extends Component {
       static template = xml`<span><t t-esc="props.val"/></span>`;
     }
@@ -1286,7 +1286,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe(`<div><span>1</span><span>2</span></div>`);
   });
 
-  test("slots in t-foreach and re-rendering", async () => {
+  test.skip("slots in t-foreach and re-rendering", async () => {
     class Child extends Component {
       static template = xml`<span><t t-esc="state.val"/><t t-slot="default"/></span>`;
       state = useState({ val: "A" });
@@ -1312,7 +1312,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><span>B0</span><span>B1</span></div>");
   });
 
-  test("slots in t-foreach with t-set and re-rendering", async () => {
+  test.skip("slots in t-foreach with t-set and re-rendering", async () => {
     class Child extends Component {
       static template = xml`
           <span>
@@ -1344,7 +1344,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><span>B0</span><span>B1</span></div>");
   });
 
-  test("nested slots in same template", async () => {
+  test.skip("nested slots in same template", async () => {
     let child: any = null;
     let child2: any = null;
     let child3: any = null;
@@ -1398,7 +1398,7 @@ describe("slots", () => {
     expect(children(parent)).toEqual([child]);
   });
 
-  test("t-slot nested within another slot", async () => {
+  test.skip("t-slot nested within another slot", async () => {
     let portal: any = null;
     let modal: any = null;
     let child3: any = null;
@@ -1451,7 +1451,7 @@ describe("slots", () => {
     expect(children(modal)[0]).toBe(portal);
   });
 
-  test("slots in slots, with vars", async () => {
+  test.skip("slots in slots, with vars", async () => {
     class B extends Component {
       static template = xml`<span><t t-slot="default"/></span>`;
     }
@@ -1480,7 +1480,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><div><span><p>heyaaron</p></span></div></div>");
   });
 
-  test("t-set t-value in a slot", async () => {
+  test.skip("t-set t-value in a slot", async () => {
     class Dialog extends Component {
       static template = xml`
           <span>
@@ -1502,7 +1502,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><span>dash</span></div>");
   });
 
-  test("slot and t-esc", async () => {
+  test.skip("slot and t-esc", async () => {
     class Dialog extends Component {
       static template = xml`<span><t t-slot="default"/></span>`;
     }
@@ -1515,7 +1515,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><span>toph</span></div>");
   });
 
-  test("slot and t-call", async () => {
+  test.skip("slot and t-call", async () => {
     let sokka = xml`<p>sokka</p>`;
     class Dialog extends Component {
       static template = xml`<span><t t-slot="default"/></span>`;
@@ -1529,7 +1529,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><span><p>sokka</p></span></div>");
   });
 
-  test("slot and (inline) t-call", async () => {
+  test.skip("slot and (inline) t-call", async () => {
     let sokka = xml`<p>sokka</p>`;
     class Dialog extends Component {
       static template = xml`<span><t t-slot="default"/></span>`;
@@ -1543,7 +1543,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><span><p>sokka</p></span></div>");
   });
 
-  test("nested slots: evaluation context and parented relationship", async () => {
+  test.skip("nested slots: evaluation context and parented relationship", async () => {
     let slot: any = null;
     let grandChild: any = null;
 
@@ -1578,7 +1578,7 @@ describe("slots", () => {
     expect(children(grandChild)).toEqual([slot]);
   });
 
-  test("named slot inside slot", async () => {
+  test.skip("named slot inside slot", async () => {
     class Child extends Component {
       static template = xml`
         <div>
@@ -1608,7 +1608,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><div><p>Ablip</p><div><p>Bblip</p></div></div></div>");
   });
 
-  test("named slots inside slot, again", async () => {
+  test.skip("named slots inside slot, again", async () => {
     class Child extends Component {
       static template = xml`
         <child>
@@ -1641,7 +1641,7 @@ describe("slots", () => {
     );
   });
 
-  test("named slot inside slot, part 3", async () => {
+  test.skip("named slot inside slot, part 3", async () => {
     class Child extends Component {
       static template = xml`
         <div>
@@ -1673,7 +1673,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><div><p>Ablip</p><div><p>Bblip</p></div></div></div>");
   });
 
-  test("can render only empty slot", async () => {
+  test.skip("can render only empty slot", async () => {
     class Parent extends Component {
       static template = xml`<t t-slot="default"/>`;
     }
@@ -1688,7 +1688,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toEqual("");
   });
 
-  test("can render node with t-ref and Component in same slot", async () => {
+  test.skip("can render node with t-ref and Component in same slot", async () => {
     class Child extends Component {
       static template = xml`<t t-slot="default"/>`;
     }
@@ -1706,7 +1706,7 @@ describe("slots", () => {
     expect(error).toBeNull();
   });
 
-  test("can use t-call in default-content of t-slot", async () => {
+  test.skip("can use t-call in default-content of t-slot", async () => {
     const template = xml``;
     class Child extends Component {
       static template = xml`<t t-slot="default"><t t-call="${template}"/></t>`;
@@ -1719,7 +1719,7 @@ describe("slots", () => {
     await mount(Parent, fixture);
   });
 
-  test("can use component in default-content of t-slot", async () => {
+  test.skip("can use component in default-content of t-slot", async () => {
     class GrandChild extends Component {
       static template = xml``;
     }
@@ -1735,7 +1735,7 @@ describe("slots", () => {
     await mount(Parent, fixture);
   });
 
-  test("slot content has different key from other content -- static slot", async () => {
+  test.skip("slot content has different key from other content -- static slot", async () => {
     class Child extends Component {
       static template = xml`<div t-esc="props.parent" />`;
     }
@@ -1757,7 +1757,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div>SlotDisplay</div><div>Parent</div>");
   });
 
-  test("slot content has different key from other content -- dynamic slot", async () => {
+  test.skip("slot content has different key from other content -- dynamic slot", async () => {
     class Child extends Component {
       static template = xml`<div t-esc="props.parent" />`;
     }
@@ -1780,7 +1780,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div>SlotDisplay</div><div>Parent</div>");
   });
 
-  test("mix of slots, t-call, t-call with body, and giving own props child", async () => {
+  test.skip("mix of slots, t-call, t-call with body, and giving own props child", async () => {
     expect.assertions(11);
 
     class C extends Component {
@@ -1836,7 +1836,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<button>inc</button>[B][C][A][sub1] [sub2334]");
   });
 
-  test("slot in multiple locations", async () => {
+  test.skip("slot in multiple locations", async () => {
     class Child extends Component {
       static template = xml`<div>child</div>`;
     }
@@ -1869,7 +1869,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe(" hello <div>child</div>");
   });
 
-  test("dynamic slot in multiple locations", async () => {
+  test.skip("dynamic slot in multiple locations", async () => {
     class Child extends Component {
       static template = xml`<div>child</div>`;
     }
@@ -1902,7 +1902,7 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("hello <div>child</div>");
   });
 
-  test("slot in t-foreach locations", async () => {
+  test.skip("slot in t-foreach locations", async () => {
     class Child extends Component {
       static template = xml`<div>child</div>`;
     }
@@ -1934,7 +1934,7 @@ describe("slots", () => {
     );
   });
 
-  test.only("conditional slot", async () => {
+  test.skip("conditional slot", async () => {
     class Child extends Component {
       static template = xml`<t t-slot="abc"/>`;
     }

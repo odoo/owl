@@ -362,7 +362,7 @@ export class CodeGenerator {
   ): BlockDescription {
     const hasRoot = this.target.hasRoot;
     const block = new BlockDescription(this.target, type);
-    if (!hasRoot && !ctx.preventRoot) {
+    if (!hasRoot && !ctx.preventRoot && !ctx.ignoreRoot) {
       this.target.hasRoot = true;
       block.isRoot = true;
     }
@@ -1155,15 +1155,22 @@ export class CodeGenerator {
     // slots
     let slotVar: string = "";
     if (ast.body) {
-      slotVar = generateId("slot");
-      const subCtx = createContext(ctx, { slotVar, ignoreRoot: true });
-      this.target.addLine(`let ${slotVar} = {};`);
-      this.compileAST(ast.body, subCtx);
+      slotVar = generateId("slots");
+      this.helpers.add("markRaw");
+      if (ast.body.type === ASTType.TSetSlot) {
+        const subCtx = createContext(ctx, { slotVar: undefined, ignoreRoot: true });
+        const slotInfo = this.compileAST(ast.body, subCtx);
+        this.target.addLine(`let ${slotVar} = markRaw({'${ast.body.name}': ${slotInfo}});`);
+
+      } else {
+        this.target.addLine(`let ${slotVar} = markRaw({});`);
+        const subCtx = createContext(ctx, { slotVar, ignoreRoot: true });
+        this.compileAST(ast.body, subCtx);
+      }
     }
 
     if (slotVar && !(ast.dynamicProps || hasSlotsProp)) {
-      this.helpers.add("markRaw");
-      props.push(`slots: markRaw(${slotVar})`);
+      props.push(`slots: ${slotVar}`);
     }
 
     let propString = this.getPropString(props, ast.dynamicProps);
@@ -1263,7 +1270,7 @@ export class CodeGenerator {
         // const slotAst = ast.slots[slotName];
         const params = [];
         if (ast.content) {
-          const name = this.compileInNewTarget("slotFn", ast.content, ctx, ast.on);
+          const name = this.compileInNewTarget("slot", ast.content, ctx, ast.on);
           params.push(`__render: ${name}.bind(this), __ctx: ${ctxStr}`);
         }
         // ast.scope
@@ -1275,11 +1282,13 @@ export class CodeGenerator {
           params.push(...this.formatPropObject(ast.attrs!));
         }
         const slotInfo = `{${params.join(", ")}}`;
-        this.target.addLine(`${ctx.slotVar}['${ast.name}'] = ${slotInfo};`)
+        if (ctx.slotVar) {
+          this.target.addLine(`${ctx.slotVar}['${ast.name}'] = ${slotInfo};`)
+        }
         // slotStr.push(`'${slotName}': ${slotInfo}`);
       // }
       // slotDef = `{${slotStr.join(", ")}}`;
-    return "what should go here? anyone knows?";
+    return slotInfo;
   }
 
   compileTSlot(ast: ASTSlot, ctx: Context): string {

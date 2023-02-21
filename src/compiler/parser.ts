@@ -738,6 +738,9 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
   // let slots: ASTComponent["slots"] | null = null;
   if (node.hasChildNodes()) {
     body = parseChildNodes(node, ctx);
+    if (!node.querySelector('[t-set-slot]')) {
+      body = {type: ASTType.TSetSlot, name: "default", content: body, on: null, attrs: null, scope: null}
+    }
 
   }
   return { type: ASTType.TComponent, name, isDynamic, dynamicProps, props, body, on };

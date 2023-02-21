@@ -3,6 +3,21 @@
   src: url('../assets/FiraMono-Medium.ttf') format('truetype');
 }
 
+:root {
+  --border-color: lightgray;
+  --navbar-selected: #33a3ff;
+  --component-hover: #baefff;
+  --object-color: rgb(119, 34, 255);
+  --highlight-color: yellow;
+  --component-color: rgb(18, 54, 255);
+  --key-name: rgb(255, 181, 44);
+  --key-content: rgb(119, 34, 255);
+  --subscription-key: rgb(34, 49, 255);
+  --component-highlighted: #ddf7ff;
+  --component-selected: #33ceff;
+  --active-icon: rgb(41, 134, 255);
+  --active-recorder: rgb(255, 31, 31);
+}
 
 .active {
   display: block;
@@ -32,16 +47,34 @@
 }
 
 .custom-navbar {
-  justify-content: center;
-  font-size: 0.6em;
+  font-size: 0.9em;
+  padding: 0 !important;
+  height: 23px !important;
 }
 
 .navbar-btn {
   border: none;
+  height: 23px;
+  padding: 0.5rem;
+  padding-top: 0.4em;
+  color: black;
+  border-right: solid 2px lightgrey;
+  user-select: none;
+  cursor: pointer;
 }
 
 .navbar-btn:hover {
-  color: white !important;
+  color: var(--navbar-selected);
+}
+
+.btn-selected {
+  background-color: var(--navbar-selected);
+  color: white;
+  font-weight: bold;
+}
+
+.btn-selected:hover{
+  color: white;
 }
 
 .tree-component {
@@ -58,7 +91,7 @@
 }
 
 .tree-component:hover {
-  background-color: #baefff;
+  background-color: var(--component-hover);
 }
 
 .object-line {
@@ -68,7 +101,7 @@
 }
 
 .object-content {
-  color: rgb(119, 34, 255);
+  color: var(--object-color);
   display: inline;
 }
 
@@ -77,7 +110,7 @@
 }
 
 .getter-content {
-  color: rgb(119, 34, 255);
+  color: var(--object-color);
   display: inline;
 }
 
@@ -86,7 +119,7 @@
 }
 
 .render-highlight {
-  background-color: yellow !important;
+  background-color: var(--highlight-color) !important;
 }
 
 .highlight-fade {
@@ -94,29 +127,28 @@
 }
 
 .name-wrapper {
-  color: rgb(18, 54, 255);
+  color: var(--component-color);
   white-space: nowrap;
   display: inline;
   width: 100%;
 }
 
 .highlight-search {
-  background-color: rgb(255, 238, 0);
+  background-color: var(--highlight-color);
   white-space: nowrap;
   display: inline;
 }
 
 .key-wrapper {
-  color: rgb(255, 181, 44);
+  color: var(--key-name);
   white-space: nowrap;
   display: inline;
 }
 
 .key-name {
-  color: rgb(119, 34, 255);
+  color: var(--key-content);
   white-space: nowrap;
   display: inline;
-  padding-right: 1.5rem;
 }
 
 .details-window {
@@ -129,6 +161,12 @@
   outline: none !important;
   box-shadow: none !important;
   border: none;
+}
+
+.navbar-select {
+  font-size: .7rem !important;
+  padding-top: 0.35rem !important;
+  border-right: solid 2px lightgrey !important;
 }
 
 :focus {
@@ -146,11 +184,11 @@
 }
 
 .component-highlighted {
-  background-color: #ddf7ff;
+  background-color: var(--component-highlighted);
 }
 
 .component-selected {
-  background-color: #33ceff;
+  background-color: var(--component-selected);
 }
 
 .tab-container {
@@ -170,7 +208,7 @@
   width: 2px;
   height: 100%;
   cursor: col-resize;
-  background-color: lightgray;
+  background-color: var(--border-color);
   user-select: none;
 }
 
@@ -182,12 +220,12 @@
   position: relative;
   width: 100%;
   height: 2px;
-  background-color: lightgray;
+  background-color: var(--border-color);
   user-select: none;
 }
 
 .key-content {
-  color: rgb(34, 49, 255);
+  color: var(--subscription-key);
   display: inline;
 }
 
@@ -203,18 +241,18 @@
 }
 
 #tree-container {
-  height: calc(100vh - (48px + 1rem));
+  height: calc(100vh - (41px + 1rem));
   overflow: auto;
 }
 
 .details-container {
-  height: calc(100vh - (48px + 1rem));
+  height: calc(100vh - (41px + 1rem));
   overflow-y: auto;
   overflow-x: hidden;
 }
 
 .events-container {
-  height: calc(100vh - (48px + 1rem));
+  height: calc(100vh - (41px + 1rem));
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -271,7 +309,7 @@
 .icons-separator {
   width: 1px;
   height: 17px;
-  background-color: lightgray;
+  background-color: var(--border-color);
   user-select: none;
 }
 

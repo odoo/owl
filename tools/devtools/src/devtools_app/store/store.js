@@ -43,6 +43,8 @@ export const store = reactive({
   // Used to navigate between the Components tab and the Events tab
   switchTab(componentName) {
     this.page = componentName;
+    this.componentSearch.activeSelector = false;
+    evalInWindow("disableHTMLSelector", [], this.activeFrame);
   },
 
   // Load all data related to the components tree using the global hook loaded on the page
@@ -319,11 +321,6 @@ export const store = reactive({
     );
   },
 
-  // Triggers manually the rendering of the selected component
-  refreshComponent() {
-    evalInWindow("refreshComponent", [JSON.stringify(this.activeComponent.path)], this.activeFrame);
-  },
-
   // Update the value of the given object with the new provided one
   editObjectTreeElement(objectPath, value, objectType) {
     evalInWindow(
@@ -432,7 +429,52 @@ export const store = reactive({
     this.events = [];
     this.eventsTree = [];
     evalInWindow("toggleEventsRecording",[false, 0]);
-  }
+  },
+  
+  // Triggers manually the rendering of the selected component
+  refreshComponent(path = this.activeComponent.path) {
+    evalInWindow("refreshComponent", [JSON.stringify(path)], this.activeFrame);
+  },
+
+  logComponentInConsole(type, path = this.activeComponent.path) {
+    evalInWindow(
+      "sendObjectToConsole",
+      [JSON.stringify(path), '"' + type + '"'],
+      this.activeFrame
+    );
+  },
+
+  inspectComponentInDOM(path = this.activeComponent.path) {
+    evalInWindow(
+      "inspectComponentDOM",
+      [JSON.stringify(path)],
+      this.activeFrame
+    );
+  },
+
+  inspectComponentSource(path = this.activeComponent.path) {
+    evalInWindow(
+      "inspectComponentSource",
+      [JSON.stringify(path)],
+      this.activeFrame
+    );
+  },
+
+  inspectCompiledTemplate(path = this.activeComponent.path) {
+    evalInWindow(
+      "inspectComponentCompiledTemplate",
+      [JSON.stringify(path)],
+      this.activeFrame
+    );
+  },
+
+  inspectRAwTemplate(path = this.activeComponent.path) {
+    evalInWindow(
+      "inspectComponentRawTemplate",
+      [JSON.stringify(path)],
+      this.activeFrame
+    );
+  },
 });
 
 // Instantiate the store

@@ -322,6 +322,8 @@
   background-color: white;
   border: 1px solid gray;
   z-index: 1;
+  box-shadow: 1px 2px 5px #888;
+  font-family: var(--bs-font-sans-serif);
 }
 
 .custom-menu ul {

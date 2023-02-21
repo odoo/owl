@@ -36,4 +36,12 @@ export class EventsTab extends Component {
     if (!this.store.eventsTreeView) this.store.buildEventsTree();
     this.store.eventsTreeView = !this.store.eventsTreeView;
   }
+
+  selectDisplayMode(ev) {
+    const val = ev.target.value;
+    if(val === "Tree"){
+      this.store.buildEventsTree();
+      this.store.eventsTreeView = true;
+    } else this.store.eventsTreeView = false;
+  }
 }

@@ -3,10 +3,10 @@
   <t t-name="devtools.DevtoolsWindow" owl="1">
     <div id="container" t-on-mouseover.stop="removeHighlight" t-on-mouseout.stop="removeHighlight">
       <t t-if="store.owlStatus">
-        <div class="custom-navbar panel-top">
-          <FrameSelector/>
+        <div class="panel-top custom-navbar">
           <Tab componentName="'ComponentsTab'" active="store.page === 'ComponentsTab'" name="'Components'"/>
-          <Tab componentName="'EventsTab'" active="store.page === 'EventsTab'" name="'Events'"/>
+          <Tab componentName="'EventsTab'" active="store.page === 'EventsTab'" name="'Profiler'"/>
+          <FrameSelector/>
         </div>
         <div class="horizontal-border"/>
         <div t-if="store.page === 'ComponentsTab'" class="tab-container" style="flex-direction: row;">

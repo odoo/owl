@@ -14,7 +14,7 @@
       </div>
       <t t-if="props.toggled">
         <div class="my-0 pt-1 object-line">
-          <i class="fa fa-caret-right mx-1" style="visibility: hidden;"></i>
+          <i class="fa fa-caret-right mx-1 pe-2" style="visibility: hidden;"></i>
           origin: <div style="cursor:pointer;" class="name-wrapper" t-on-click.stop="goToOriginComponent" t-on-mouseover.stop="hoverOriginComponent" t-out="props.origin.component"/>
           <t t-if="originMinimizedKey.length > 0">
             <div class="key-wrapper"> key</div>=<div class="key-name"><t t-out="originMinimizedKey"/></div>

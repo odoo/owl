@@ -93,7 +93,7 @@ export class OwlDevtoolsGlobalHook {
           window.top.postMessage({
             type: "owlDevtools__Event",
             data: {
-              type: "root render (flushed)",
+              type: "render (flushed)",
               component: this.node.name,
               key: this.node.parentKey,
               path: path,
@@ -107,7 +107,7 @@ export class OwlDevtoolsGlobalHook {
             window.top.postMessage({
               type: "owlDevtools__Event",
               data: {
-                type: "root render",
+                type: "render",
                 component: this.node.name,
                 key: this.node.parentKey,
                 path: path,
@@ -119,7 +119,7 @@ export class OwlDevtoolsGlobalHook {
             window.top.postMessage({
               type: "owlDevtools__Event",
               data: {
-                type: "create and render",
+                type: "create",
                 component: this.node.name,
                 key: this.node.parentKey,
                 path: path,
@@ -131,7 +131,7 @@ export class OwlDevtoolsGlobalHook {
             window.top.postMessage({
               type: "owlDevtools__Event",
               data: {
-                type: "update and render",
+                type: "update",
                 component: this.node.name,
                 key: this.node.parentKey,
                 path: path,
@@ -144,7 +144,7 @@ export class OwlDevtoolsGlobalHook {
           window.top.postMessage({
             type: "owlDevtools__Event",
             data: {
-              type: "root render (delayed)",
+              type: "render (delayed)",
               component: this.node.name,
               key: this.node.parentKey,
               path: path,
@@ -1283,7 +1283,7 @@ export class OwlDevtoolsGlobalHook {
     const appsArray = Array.from(this.apps);
     let index = 0;
     for (; index < appsArray.length; index++) {
-      if (appsArray[index]?.root?.name === componentNode.app.root.name) break;
+      if (appsArray[index]?.root?.name === componentNode.app.root?.name) break;
     }
     path.unshift(index.toString());
     return path;

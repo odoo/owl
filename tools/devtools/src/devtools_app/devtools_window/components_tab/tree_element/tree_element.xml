@@ -14,18 +14,24 @@
         </t>
         <t t-else="">
           <i class="fa fa-caret-right mx-1" t-attf-style="visibility: hidden;"></i>
-        </t>
-        <div class="name-wrapper">
+        </t><t t-if="props.depth">&lt;</t><div class="name-wrapper">
           <HighlightText originalText="props.name" searchValue="state.searched ? store.componentSearch.search : ''"/>
           <t t-if="minimizedKey.length > 0">
             <div class="key-wrapper"> key</div>=<div class="key-name"><t t-out="minimizedKey"/></div>
           </t>
-        </div>
+        </div><t t-if="props.depth">&gt;</t>
       </div>
       <div class="custom-menu hidden" t-attf-id="customMenu/{{pathAsString}}">
         <ul class="my-1">
           <li t-on-click.stop="expandAllChildren" class="custom-menu-item">Expand component and its children</li>
           <li t-on-click.stop="foldAllChildren" class="custom-menu-item">Fold component and its children</li>
+          <li t-on-click.stop='() => this.store.inspectComponentInDOM(props.path)' class="custom-menu-item">Inspect component in the Elements tab</li>
+          <li t-on-click.stop='() => this.store.logComponentInConsole("instance", props.path)' class="custom-menu-item">Store component as global variable in the console</li>
+          <li t-on-click.stop='() => this.store.inspectComponentSource(props.path)' class="custom-menu-item">Inspect source code of component</li>
+          <li t-on-click.stop='() => this.store.refreshComponent(props.path)' class="custom-menu-item">Trigger rerender of the component</li>
+          <li t-on-click.stop='() => this.store.logComponentInConsole("subscription", props.path)' class="custom-menu-item">Store observed states as global variable in the console</li>
+          <li t-on-click.stop='() => this.store.inspectCompiledTemplate(props.path)' class="custom-menu-item">Inspect compiled template</li>
+          <li t-on-click.stop='() => this.store.inspectRAwTemplate(props.path)' class="custom-menu-item">Send raw template to console</li>
         </ul>
       </div>
     </div>

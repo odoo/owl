@@ -282,6 +282,47 @@ exports[`slots can use t-call in default-content of t-slot 3`] = `
 }"
 `;
 
+exports[`slots conditional slot 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false, true);
+  
+  function slot1(ctx, node, key = \\"\\") {
+    return text(\`blue\`);
+  }
+  
+  function slot2(ctx, node, key = \\"\\") {
+    return text(\`red\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    let slots1 = {};
+    if (ctx['state'].flag) {
+      const ctx1 = capture(ctx);
+      slots1['abc'] = {__render: slot1.bind(this), __ctx: ctx1};
+    } else {
+      const ctx2 = capture(ctx);
+      slots1['abc'] = {__render: slot2.bind(this), __ctx: ctx2};
+    }
+    return comp1({slots: markRaw(slots1)}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`slots conditional slot 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { callSlot } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return callSlot(ctx, node, key, 'abc', false, {});
+  }
+}"
+`;
+
 exports[`slots content is the default slot (variation) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -1435,7 +1476,8 @@ exports[`slots simple default slot 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__1\`, node, this, null);
+    let slots1 = markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}});
+    return comp1({slots: slots1}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -1534,7 +1576,8 @@ exports[`slots simple default slot, variation 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__1\`, node, this, null);
+    let slots1 = markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}});
+    return comp1({slots: slots1}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -2841,16 +2884,23 @@ exports[`slots t-set-slot=default has priority over rest of the content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { capture, markRaw } = helpers;
+  let { markRaw, capture } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, true);
   
   function slot1(ctx, node, key = \\"\\") {
+    const b2 = text(\` some text \`);
+    const ctx2 = capture(ctx);
+    return multi([b2]);
+  }
+  
+  function slot2(ctx, node, key = \\"\\") {
     return text(\`some other text\`);
   }
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    return comp1({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__1\`, node, this, null);
+    let slots1 = markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}});
+    return comp1({slots: slots1}, key + \`__1\`, node, this, null);
   }
 }"
 `;

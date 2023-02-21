@@ -17,6 +17,8 @@
   --component-selected: #33ceff;
   --active-icon: rgb(41, 134, 255);
   --active-recorder: rgb(255, 31, 31);
+  --text-color: #444444;
+  --navbar-bg: #f1f3f4;
 }
 
 .active {
@@ -35,6 +37,7 @@
   right: 0;
   bottom: 0;
   overflow: hidden;
+  color: var(--text-color);
 }
 
 .status-message {
@@ -50,6 +53,11 @@
   font-size: 0.9em;
   padding: 0 !important;
   height: 23px !important;
+  background: var(--navbar-bg);
+}
+
+.form-select {
+  color: var(--text-color) !important;
 }
 
 .navbar-btn {
@@ -57,8 +65,8 @@
   height: 23px;
   padding: 0.5rem;
   padding-top: 0.4em;
-  color: black;
-  border-right: solid 2px lightgrey;
+  color: var(--text-color);
+  border-right: solid 1px lightgrey;
   user-select: none;
   cursor: pointer;
 }
@@ -106,7 +114,10 @@
 }
 
 .event-container {
-  border-bottom: 2px solid rgb(240, 238, 238);
+  border-bottom: 1px solid rgb(240, 238, 238);
+  padding-top: 2px!important;
+  padding-bottom: 2px!important;
+  font-size: 11px;
 }
 
 .getter-content {
@@ -166,7 +177,7 @@
 .navbar-select {
   font-size: .7rem !important;
   padding-top: 0.35rem !important;
-  border-right: solid 2px lightgrey !important;
+  border-right: solid 1px lightgrey !important;
 }
 
 :focus {
@@ -176,7 +187,7 @@
 
 .details-panel {
   padding-left: 0.5rem !important;
-  border-top: 2px solid lightgrey;
+  border-top: 1px solid lightgrey;
 }
 
 .details-panel-head {
@@ -219,7 +230,7 @@
 .horizontal-border {
   position: relative;
   width: 100%;
-  height: 2px;
+  height: 1px;
   background-color: var(--border-color);
   user-select: none;
 }
@@ -241,18 +252,18 @@
 }
 
 #tree-container {
-  height: calc(100vh - (41px + 1rem));
+  height: calc(100vh - (39px + 1rem));
   overflow: auto;
 }
 
 .details-container {
-  height: calc(100vh - (41px + 1rem));
+  height: calc(100vh - (39px + 1rem));
   overflow-y: auto;
   overflow-x: hidden;
 }
 
 .events-container {
-  height: calc(100vh - (41px + 1rem));
+  height: calc(100vh - (39px + 1rem));
   overflow-y: auto;
   overflow-x: hidden;
 }

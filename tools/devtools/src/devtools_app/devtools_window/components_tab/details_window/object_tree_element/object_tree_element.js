@@ -94,7 +94,8 @@ export class ObjectTreeElement extends Component {
       y = window.innerHeight - menuHeight;
     }
     menu.style.left = x + "px";
-    menu.style.top = y + "px";
+    // Need 25px offset because of the main navbar from the browser devtools
+    menu.style.top = (y - 25) + "px";
   }
 
   inspectFunctionSource() {

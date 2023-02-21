@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.Event" owl="1">
-    <div t-attf-id="event-{{props.id}}" class="event-container py-1">
+    <div t-attf-id="event-{{props.id}}" class="event-container">
       <div class="my-0 p-0 object-line" t-on-click.stop="toggleDisplay">
         <div class="ps-2">
           <i t-if="props.origin" class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer;{{props.toggled ? 'transform: rotate(90deg);' : ''}}"></i>
           <i t-else="" class="fa fa-caret-right mx-1" style="visibility: hidden;"></i>
-          <t t-out="props.type"/>: <div style="cursor:pointer;" class="name-wrapper" t-on-click.stop="goToComponent" t-on-mouseover.stop="hoverComponent" t-out="props.component"/>
+          <t t-out="props.type"/>: &lt;<div style="cursor:pointer;" class="name-wrapper" t-on-click.stop="goToComponent" t-on-mouseover.stop="hoverComponent" t-out="props.component"/>
           <t t-if="minimizedKey.length > 0">
             <div class="key-wrapper"> key</div>=<div class="key-name"><t t-out="minimizedKey"/></div>
-          </t>
+          </t>&gt;
         </div>
       </div>
       <t t-if="props.toggled">

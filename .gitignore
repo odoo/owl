@@ -23,7 +23,6 @@ node_modules
 
 # Extras temp file
 /tools/owl.js
-/tools/devtools/assets/*.js
 
 release-notes.md
 

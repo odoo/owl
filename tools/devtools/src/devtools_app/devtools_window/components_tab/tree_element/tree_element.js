@@ -86,7 +86,7 @@ export class TreeElement extends Component {
     evalInWindow("highlightComponent", [JSON.stringify(this.props.path)], this.store.activeFrame);
   }
 
-   // Formatting for displaying the key of the component
+  // Formatting for displaying the key of the component
   get minimizedKey() {
     const split = this.props.key.split("__");
     let key;
@@ -122,7 +122,7 @@ export class TreeElement extends Component {
     }
     menu.style.left = x + "px";
     // Need 25px offset because of the main navbar from the browser devtools
-    menu.style.top = (y - 25) + "px";
+    menu.style.top = y - 25 + "px";
   }
 
   expandAllChildren(ev) {

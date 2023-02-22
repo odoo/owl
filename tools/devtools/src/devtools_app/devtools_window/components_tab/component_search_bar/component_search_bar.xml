@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.ComponentSearchBar" owl="1">
-    <div class="pointer-icon pe-2" t-on-click.stop="toggleSelector">
+    <div class="pointer-icon pe-2" t-on-click.stop='() => this.store.toggleSelector()'>
       <i title="Toggle component HTML selector" class="fa fa-mouse-pointer" t-attf-style="color: {{store.componentSearch.activeSelector ? 'var(--active-icon)' : 'var(--text-color)'}};" aria-hidden="true"></i>
     </div>
     <div class="icons-separator me-2"/>
@@ -13,7 +13,7 @@
         <div class="search-border mx-2"/>
         <i class="fa fa-angle-up lg-icon utility-icon me-2" aria-hidden="true" t-on-click.stop="getPrevSearch"></i>
         <i class="fa fa-angle-down lg-icon utility-icon me-2" aria-hidden="true" t-on-click.stop="getNextSearch"></i>
-        <i class="fa fa-times lg-icon utility-icon" aria-hidden="true" t-on-click.stop="clearSearch"></i>
+        <i class="fa fa-times lg-icon utility-icon" aria-hidden="true" t-on-click.stop='() => this.store.updateSearch("")'></i>
       </t>
     </div>
   </t>

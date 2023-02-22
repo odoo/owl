@@ -25,7 +25,7 @@ export class Event extends Component {
   // Expand/fold the event
   toggleDisplay() {
     console.log(this.store.events);
-    if(this.props.origin)
+    if (this.props.origin)
       this.store.events[this.props.id].toggled = !this.store.events[this.props.id].toggled;
   }
 

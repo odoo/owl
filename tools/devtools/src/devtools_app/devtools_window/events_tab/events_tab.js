@@ -14,8 +14,8 @@ export class EventsTab extends Component {
     this.store = useStore();
   }
 
-  showHelp(){
-    return (this.store.events.length < 1 && !this.store.activeRecorder);
+  showHelp() {
+    return this.store.events.length < 1 && !this.store.activeRecorder;
   }
 
   toggleRecording() {
@@ -39,7 +39,7 @@ export class EventsTab extends Component {
 
   selectDisplayMode(ev) {
     const val = ev.target.value;
-    if(val === "Tree"){
+    if (val === "Tree") {
       this.store.buildEventsTree();
       this.store.eventsTreeView = true;
     } else this.store.eventsTreeView = false;

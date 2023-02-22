@@ -61,7 +61,9 @@ export const store = reactive({
         return;
       }
       this.apps = result;
-      if (!fromOld && this.settings.expandByDefault) this.apps.forEach((tree) => expandNodes(tree));
+      if (!fromOld && this.settings.expandByDefault) {
+        this.apps.forEach((tree) => expandNodes(tree));
+      }
     });
     evalInWindow(
       "getComponentDetails",
@@ -70,13 +72,17 @@ export const store = reactive({
         : [],
       this.activeFrame
     ).then((result) => {
-      if (result) this.activeComponent = result;
+      if (result) {
+        this.activeComponent = result;
+      }
     });
   },
 
   // Select a component by retrieving its details from the page based on its path
   selectComponent(path) {
-    if (path.length < 2) return;
+    if (path.length < 2) {
+      return;
+    }
     // Deselect all components
     this.apps.forEach((app) => {
       app.selected = false;
@@ -86,12 +92,17 @@ export const store = reactive({
       });
     });
     let element;
-    if (path.length < 2) element = this.apps[path[0]];
-    else element = this.apps[path[0]].children[0];
+    if (path.length < 2) {
+      element = this.apps[path[0]];
+    } else {
+      element = this.apps[path[0]].children[0];
+    }
     for (let i = 2; i < path.length; i++) {
       element.toggled = true;
       let result = element.children.filter((child) => child.key === path[i])[0];
-      if (result) element = result;
+      if (result) {
+        element = result;
+      }
     }
     element.selected = true;
     highlightChildren(element);
@@ -112,12 +123,16 @@ export const store = reactive({
       for (const result of this.componentSearch.searchResults) {
         this.toggleComponentParents(result);
       }
-    } else this.componentSearch.searchIndex = -1;
+    } else {
+      this.componentSearch.searchIndex = -1;
+    }
   },
 
   // Search for results in the components tree given the current search string (in a fuzzy way)
   getComponentSearchResults(search, node) {
-    if (search.length < 1) return;
+    if (search.length < 1) {
+      return;
+    }
     if (fuzzySearch(node.name, search)) {
       this.componentSearch.searchResults.push(node.path);
     }
@@ -160,8 +175,11 @@ export const store = reactive({
   getComponentByPath(path) {
     let cp = path.slice(2);
     let component;
-    if (path.length < 2) component = this.apps[path[0]];
-    else component = this.apps[path[0]].children[0];
+    if (path.length < 2) {
+      component = this.apps[path[0]];
+    } else {
+      component = this.apps[path[0]].children[0];
+    }
     for (const key of cp) {
       component = component.children.filter((child) => child.key === key)[0];
     }
@@ -178,8 +196,9 @@ export const store = reactive({
   toggleOrSelectPrevElement(toggle) {
     if (toggle) {
       let component = this.getComponentByPath(this.activeComponent.path);
-      if (component.children.length > 0 && component.toggled) component.toggled = false;
-      else {
+      if (component.children.length > 0 && component.toggled) {
+        component.toggled = false;
+      } else {
         if (this.activeComponent.path.length > 1)
           this.selectComponent(this.activeComponent.path.slice(0, -1));
       }
@@ -204,7 +223,9 @@ export const store = reactive({
           component.toggled = true;
           return;
         }
-      } else return;
+      } else {
+        return;
+      }
     }
     const currentElement = document.getElementById(
       "treeElement/" + this.activeComponent.path.join("/")
@@ -232,17 +253,25 @@ export const store = reactive({
   findObjectInTree(inputObj) {
     let path = [...inputObj.path];
     let obj;
-    if (inputObj.objectType !== "instance") path.shift();
+    if (inputObj.objectType !== "instance") {
+      path.shift();
+    }
     if (typeof path[0] === "object") {
       if (path[0].type === "prototype") {
         path[0] = "[[Prototype]]";
-      } else path[0] = path[0].key;
+      } else {
+        path[0] = path[0].key;
+      }
     }
-    if (inputObj.objectType === "props") obj = this.activeComponent.props[path[0]];
-    else if (inputObj.objectType === "env") obj = this.activeComponent.env[path[0]];
-    else if (inputObj.objectType === "instance") obj = this.activeComponent.instance[path[0]];
-    else if (inputObj.objectType === "subscription")
+    if (inputObj.objectType === "props") {
+      obj = this.activeComponent.props[path[0]];
+    } else if (inputObj.objectType === "env") {
+      obj = this.activeComponent.env[path[0]];
+    } else if (inputObj.objectType === "instance") {
+      obj = this.activeComponent.instance[path[0]];
+    } else if (inputObj.objectType === "subscription") {
       obj = this.activeComponent.subscriptions[path[0]].target;
+    }
     for (let i = 1; i < path.length; i++) {
       const match = path[i];
       if (typeof match === "object") {
@@ -268,8 +297,11 @@ export const store = reactive({
           case "symbol":
             obj = obj.children.filter((child) => child.name === match.key)[0];
         }
-      } else if (obj.contentType === "array") obj = obj.children[match];
-      else obj = obj.children.filter((child) => child.name === match)[0];
+      } else if (obj.contentType === "array") {
+        obj = obj.children[match];
+      } else {
+        obj = obj.children.filter((child) => child.name === match)[0];
+      }
     }
     return obj;
   },
@@ -291,7 +323,9 @@ export const store = reactive({
 
   // Expand the children of the input object property and load it from page if necessary
   toggleObjectTreeElementsDisplay(inputObj) {
-    if (!inputObj.hasChildren) return;
+    if (!inputObj.hasChildren) {
+      return;
+    }
     let obj = this.findObjectInTree(inputObj);
     if (obj.hasChildren && obj.children.length === 0) {
       evalInWindow(
@@ -352,7 +386,9 @@ export const store = reactive({
                   }
                 }
               );
-              if (!this.frameUrls.includes(frame)) this.frameUrls = [...this.frameUrls, frame];
+              if (!this.frameUrls.includes(frame)) {
+                this.frameUrls = [...this.frameUrls, frame];
+              }
             }
           }
         );
@@ -409,9 +445,9 @@ export const store = reactive({
   // Gives access to the specied event in the events tree
   findEventInTree(event) {
     let result;
-    if (event.origin)
+    if (event.origin) {
       [result] = this.eventsTree.filter((eventNode) => eventNode.id === event.origin.id);
-    else {
+    } else {
       [result] = this.eventsTree.filter((eventNode) => eventNode.id === event.id);
       return result;
     }

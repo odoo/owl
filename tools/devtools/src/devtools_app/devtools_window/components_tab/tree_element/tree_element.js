@@ -39,8 +39,9 @@ export class TreeElement extends Component {
     onWillUpdateProps((nextProps) => {
       if (nextProps.selected) {
         const treeElement = document.getElementById("treeElement/" + this.props.path.join("/"));
-        if (!isElementInCenterViewport(treeElement))
+        if (!isElementInCenterViewport(treeElement)) {
           treeElement.scrollIntoView({ block: "center", behavior: "smooth" });
+        }
       }
     });
     // Effect to apply a short highlight effect to the component when it is rendered
@@ -65,8 +66,11 @@ export class TreeElement extends Component {
     // Used to know when the component is in the search bar results
     useEffect(
       (searchResults) => {
-        if (searchResults.includes(this.props.path)) this.state.searched = true;
-        else this.state.searched = false;
+        if (searchResults.includes(this.props.path)) {
+          this.state.searched = true;
+        } else {
+          this.state.searched = false;
+        }
       },
       () => [this.store.componentSearch.searchResults]
     );
@@ -100,7 +104,9 @@ export class TreeElement extends Component {
 
   // Used to select the component node
   toggleComponent(ev) {
-    if (this.store.settings.toggleOnSelected) this.toggleDisplay();
+    if (this.store.settings.toggleOnSelected) {
+      this.toggleDisplay();
+    }
     if (!this.props.selected) {
       this.store.selectComponent(this.props.path);
     }

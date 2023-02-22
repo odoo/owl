@@ -31,7 +31,9 @@ export class EventNode extends Component {
 
   // Formatting for displaying the key of the component
   get minimizedKey() {
-    if (!this.props.key) return "";
+    if (!this.props.key) {
+      return "";
+    }
     const split = this.props.key.split("__");
     let key;
     if (split.length > 2) {

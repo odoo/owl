@@ -53,14 +53,20 @@ export async function evalInWindow(fn, args, frameUrl = "top") {
         script,
         { frameURL: frameUrl },
         (result, isException) => {
-          if (!isException) resolve(result);
-          else resolve(undefined);
+          if (!isException) {
+            resolve(result);
+          } else {
+            resolve(undefined);
+          }
         }
       );
     } else {
       chrome.devtools.inspectedWindow.eval(script, (result, isException) => {
-        if (!isException) resolve(result);
-        else resolve(undefined);
+        if (!isException) {
+          resolve(result);
+        } else {
+          resolve(undefined);
+        }
       });
     }
   });

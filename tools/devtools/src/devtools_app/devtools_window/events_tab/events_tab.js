@@ -33,7 +33,9 @@ export class EventsTab extends Component {
   }
 
   toggleEventsAsTree() {
-    if (!this.store.eventsTreeView) this.store.buildEventsTree();
+    if (!this.store.eventsTreeView) {
+      this.store.buildEventsTree();
+    }
     this.store.eventsTreeView = !this.store.eventsTreeView;
   }
 

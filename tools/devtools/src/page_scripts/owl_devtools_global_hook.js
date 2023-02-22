@@ -532,10 +532,15 @@ export class OwlDevtoolsGlobalHook {
   getPropertyObject(componentPath, objectPath) {
     const componentNode = this.getComponentNode(componentPath);
     let obj;
+    // In case it is on an App 
+    if(componentPath.length === 1){
+      obj = this.getObject(componentNode, objectPath);
+      return obj;
+    }
     if (objectPath[0] === "subscription") {
       const topParent = componentNode.subscriptions[objectPath[1]].target;
       obj = this.getObject(topParent, objectPath.slice(2));
-    } else obj = this.getObject(componentNode.component, objectPath);
+    } else {obj = this.getObject(componentNode.component, objectPath);}
     return obj;
   }
 
@@ -904,6 +909,9 @@ export class OwlDevtoolsGlobalHook {
   }
   // Returns the Component node given its path and the root component node
   getComponentNode(path) {
+    if(path.length < 2){
+      return Array.from(this.apps)[path[0]];
+    }
     let componentNode = Array.from(this.apps)[path[0]].root;
     for (let i = 2; i < path.length; i++) {
       if (componentNode.children.hasOwnProperty(path[i])) {
@@ -932,10 +940,12 @@ export class OwlDevtoolsGlobalHook {
     if (!node) {
       return null;
     }
+    // A path with only the app index indicates that the component is an App instead
+    const isApp = path.length === 1;
     // Load props of the component
-    const props = node.component.props;
+    const props = isApp ? node.props : node.component.props;
     component.props = {};
-    component.name = node.component.constructor.name;
+    component.name = isApp ? "App " + (Number(path[0])+1) : node.component.constructor.name;
     Reflect.ownKeys(props).forEach((key) => {
       let oldBranch = oldTree?.props[key];
       if (typeof key === "symbol") {
@@ -960,7 +970,7 @@ export class OwlDevtoolsGlobalHook {
       }
     });
     // Load env of the component
-    const env = node.component.env;
+    const env = isApp ? node.env : node.component.env;
     component.env = {};
     Reflect.ownKeys(env).forEach((key) => {
       let oldBranch = oldTree?.env[key];
@@ -997,7 +1007,7 @@ export class OwlDevtoolsGlobalHook {
     );
     component.env["[[Prototype]]"] = envPrototype;
     // Load instance of the component
-    const instance = node.component;
+    const instance = isApp ? node : node.component;
     component.instance = {};
     Reflect.ownKeys(instance).forEach((key) => {
       if (!["env", "props"].includes(key)) {
@@ -1058,68 +1068,72 @@ export class OwlDevtoolsGlobalHook {
     component.instance["[[Prototype]]"] = instancePrototype;
 
     // Load subscriptions of the component
-    const rawSubscriptions = node.subscriptions;
-    component.subscriptions = [];
-    rawSubscriptions.forEach((rawSubscription, index) => {
-      let subscription = {
-        keys: [],
-        target: {
-          name: "target",
-          contentType:
-            typeof rawSubscription.target === "object"
-              ? Array.isArray(rawSubscription.target)
-                ? "array"
-                : "object"
-              : rawSubscription.target,
-          depth: 0,
-          path: ["subscription", index.toString()],
-          toggled: false,
-          objectType: "subscription",
-        },
-        keysExpanded: false,
-      };
-      if (oldTree && oldTree.subscriptions[index] && oldTree.subscriptions[index].target.toggled) {
-        subscription.target.toggled = true;
-      }
-      rawSubscription.keys.forEach((key) => {
-        if (typeof key === "symbol") {
-          subscription.keys.push(key.toString());
-        } else {
-          subscription.keys.push(key);
+    if(isApp){
+      component.subscriptions = [];
+    } else {
+      const rawSubscriptions = node.subscriptions;
+      component.subscriptions = [];
+      rawSubscriptions.forEach((rawSubscription, index) => {
+        let subscription = {
+          keys: [],
+          target: {
+            name: "target",
+            contentType:
+              typeof rawSubscription.target === "object"
+                ? Array.isArray(rawSubscription.target)
+                  ? "array"
+                  : "object"
+                : rawSubscription.target,
+            depth: 0,
+            path: ["subscription", index.toString()],
+            toggled: false,
+            objectType: "subscription",
+          },
+          keysExpanded: false,
+        };
+        if (oldTree && oldTree.subscriptions[index] && oldTree.subscriptions[index].target.toggled) {
+          subscription.target.toggled = true;
         }
+        rawSubscription.keys.forEach((key) => {
+          if (typeof key === "symbol") {
+            subscription.keys.push(key.toString());
+          } else {
+            subscription.keys.push(key);
+          }
+        });
+        if (rawSubscription.target == null) {
+          if (subscription.target.contentType === "undefined") {
+            subscription.target.content = "undefined";
+          } else {
+            subscription.target.content = "null";
+          }
+          subscription.target.hasChildren = false;
+        } else {
+          subscription.target.content = this.parseContent(
+            rawSubscription.target,
+            subscription.target.contentType
+          );
+          subscription.target.hasChildren =
+            subscription.target.contentType === "object"
+              ? Object.keys(rawSubscription.target).length > 0
+              : subscription.target.contentType === "array"
+              ? rawSubscription.target.length > 0
+              : false;
+        }
+        subscription.target.children = [];
+        if (subscription.target.toggled) {
+          subscription.target.children = this.loadObjectChildren(
+            component.path,
+            subscription.target.path,
+            subscription.target.depth,
+            subscription.target.contentType,
+            subscription.target.objectType,
+            oldTree
+          );
+        }
+        component.subscriptions.push(subscription);
       });
-      if (rawSubscription.target == null) {
-        if (subscription.target.contentType === "undefined") {
-          subscription.target.content = "undefined";
-        } else {
-          subscription.target.content = "null";
-        }
-        subscription.target.hasChildren = false;
-      } else {
-        subscription.target.content = this.parseContent(
-          rawSubscription.target,
-          subscription.target.contentType
-        );
-        subscription.target.hasChildren =
-          subscription.target.contentType === "object"
-            ? Object.keys(rawSubscription.target).length > 0
-            : subscription.target.contentType === "array"
-            ? rawSubscription.target.length > 0
-            : false;
-      }
-      subscription.target.children = [];
-      if (subscription.target.toggled) {
-        subscription.target.children = this.loadObjectChildren(
-          component.path,
-          subscription.target.path,
-          subscription.target.depth,
-          subscription.target.contentType,
-          subscription.target.objectType,
-          oldTree
-        );
-      }
-      component.subscriptions.push(subscription);
-    });
+    }
     return component;
   }
   // Replace the content of a parsed getter object with the result of the corresponding get method
@@ -1395,6 +1409,8 @@ export class OwlDevtoolsGlobalHook {
   // Store the object into a temp window variable and log it to the console
   sendObjectToConsole(componentPath, objectType) {
     const componentNode = this.getComponentNode(componentPath);
+    const isApp = componentPath.length === 1;
+    const component = isApp ? componentNode : componentNode.component;
     let index = 1;
     while (window["temp" + index] !== undefined) index++;
     switch (objectType) {
@@ -1402,13 +1418,13 @@ export class OwlDevtoolsGlobalHook {
         window["temp" + index] = componentNode;
         break;
       case "props":
-        window["temp" + index] = componentNode.component.props;
+        window["temp" + index] = component.props;
         break;
       case "env":
-        window["temp" + index] = componentNode.component.env;
+        window["temp" + index] = component.env;
         break;
       case "instance":
-        window["temp" + index] = componentNode.component;
+        window["temp" + index] = component;
         break;
       case "subscription":
         window["temp" + index] = componentNode.subscriptions;
@@ -1425,7 +1441,11 @@ export class OwlDevtoolsGlobalHook {
   // Inspect source code of the component (corresponds to inspecting its constructor)
   inspectComponentSource(componentPath) {
     const componentNode = this.getComponentNode(componentPath);
-    inspect(componentNode.component.constructor);
+    if(componentPath.length > 1){
+      inspect(componentNode.component.constructor);
+    } else {
+      inspect(componentNode.constructor);
+    }
   }
   // Inspect the DOM of the component in the elements tab of the devtools
   inspectComponentCompiledTemplate(componentPath) {

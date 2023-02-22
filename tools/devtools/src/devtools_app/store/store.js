@@ -80,9 +80,6 @@ export const store = reactive({
 
   // Select a component by retrieving its details from the page based on its path
   selectComponent(path) {
-    if (path.length < 2) {
-      return;
-    }
     // Deselect all components
     this.apps.forEach((app) => {
       app.selected = false;

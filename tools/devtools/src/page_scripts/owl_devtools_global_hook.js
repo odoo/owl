@@ -372,7 +372,7 @@ export class OwlDevtoolsGlobalHook {
           index = index1;
           offset = 2;
         } else {
-          index = min(index1, index2);
+          index = Math.min(index1, index2);
           offset = index1 < index2 ? 2 : 3;
         }
         if (index === -1)

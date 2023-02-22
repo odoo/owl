@@ -42,8 +42,8 @@ export class EventNode extends Component {
     return key;
   }
 
-   // Display the custom context menu to access the expandAll and foldAll methods
-   openMenu(event) {
+  // Display the custom context menu to access the expandAll and foldAll methods
+  openMenu(event) {
     const menu = document.getElementById("customMenu/" + this.props.id);
     menu.classList.remove("hidden");
     const menuWidth = menu.offsetWidth;
@@ -58,7 +58,7 @@ export class EventNode extends Component {
     }
     menu.style.left = x + "px";
     // Need 25px offset because of the main navbar from the browser devtools
-    menu.style.top = (y - 25) + "px";
+    menu.style.top = y - 25 + "px";
   }
 
   expandAllChildren(ev) {

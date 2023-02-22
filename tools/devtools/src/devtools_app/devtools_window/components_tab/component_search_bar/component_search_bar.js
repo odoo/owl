@@ -9,13 +9,9 @@ export class ComponentSearchBar extends Component {
     this.store = useStore();
   }
 
-  toggleSelector() {
-    this.store.toggleSelector();
-  }
-
   // On keyup
   updateSearch(event) {
-    if (!(event.keyCode === 13)) {
+    if (!(event.key === "Enter")) {
       const search = event.target.value;
       this.store.updateSearch(search);
     }
@@ -23,11 +19,7 @@ export class ComponentSearchBar extends Component {
 
   // On keydown
   fastNextSearch(event) {
-    if (event.keyCode === 13) this.getNextSearch();
-  }
-
-  clearSearch() {
-    this.store.updateSearch("");
+    if (event.key === "Enter") this.getNextSearch();
   }
 
   getNextSearch() {
@@ -37,7 +29,7 @@ export class ComponentSearchBar extends Component {
     ) {
       this.store.setSearchIndex(this.store.componentSearch.searchIndex + 1);
     } else if (
-      this.componentSearch.searchIndex ===
+      this.store.componentSearch.searchIndex ===
       this.store.componentSearch.searchResults.length - 1
     ) {
       this.store.setSearchIndex(0);

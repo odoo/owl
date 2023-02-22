@@ -28,22 +28,22 @@ export class ComponentsTab extends Component {
     });
   }
 
-  // Apply the right action depending on which arrow key is pressed
+  // Apply the right action depending on which arrow key is pressed (on keydown)
   handleCommands = (event) => {
-    switch (event.keyCode) {
-      case 37:
+    switch (event.key) {
+      case "ArrowLeft":
         this.store.toggleOrSelectPrevElement(true);
         event.preventDefault();
         break;
-      case 38:
+      case "ArrowUp":
         this.store.toggleOrSelectPrevElement(false);
         event.preventDefault();
         break;
-      case 39:
+      case "ArrowRight":
         this.store.toggleOrSelectNextElement(true);
         event.preventDefault();
         break;
-      case 40:
+      case "ArrowDown":
         this.store.toggleOrSelectNextElement(false);
         event.preventDefault();
         break;

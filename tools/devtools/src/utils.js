@@ -11,35 +11,28 @@ export function isFirefox() {
   }
 }
 
-export async function getActiveTabURL(isFirefox) {
-  let queryOptions = { active: true, lastFocusedWindow: true };
-  try{
-    let res = isFirefox
-      ? await browser.tabs.query(queryOptions)
-      : await chrome.tabs.query(queryOptions);
-    let [tab] = res;
-    return tab;
-  } catch (e) {
-    return null;
-  }
-}
-
 // inspired from https://www.tutorialspoint.com/fuzzy-search-algorithm-in-javascript
-export function fuzzySearch(base, query) {
-  const str = base.toLowerCase();
-  let i = 0,
-    n = -1,
-    l;
-  query = query.toLowerCase();
-  for (; (l = query[i++]); ) {
-    if (!~(n = str.indexOf(l, n + 1))) {
+// Check if the query matches with the base in a fuzzy search way
+export function fuzzySearch(baseString, queryString) {
+  const base = baseString.toLowerCase();
+  const query = queryString.toLowerCase();
+  let queryIndex = 0;
+  let baseIndex = -1;
+  let character;
+  // Loop through each character in the query string
+  while ((character = query[queryIndex++])) {
+    // Find the index of the character in the base string, starting from the previous index plus 1
+    baseIndex = base.indexOf(character, baseIndex + 1);
+    // If the character is not found, return false
+    if (baseIndex === -1) {
       return false;
     }
   }
+  // All characters in the query string were found in the base string, so return true
   return true;
 }
 
-// Check if the 
+// Check if the given element is vertically centered in the user view (between 25 and 75% of the height)
 export function isElementInCenterViewport(el) {
   const rect = el.getBoundingClientRect();
   return (
@@ -71,15 +64,4 @@ export async function evalInWindow(fn, args, frameUrl = "top") {
       });
     }
   });
-}
-
-/**
- * Escapes a string to use as a RegExp.
- * @url https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#Escaping
- *
- * @param {string} str
- * @returns {string} escaped string to use as a RegExp
- */
-export function escapeRegExp(str) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

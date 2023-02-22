@@ -114,7 +114,7 @@ export class OwlDevtoolsGlobalHook {
                 id: id,
               },
             });
-          // if the node status is NEW, the node has been created just before rendering
+            // if the node status is NEW, the node has been created just before rendering
           } else if (this.node.status === 0) {
             window.top.postMessage({
               type: "owlDevtools__Event",
@@ -126,7 +126,7 @@ export class OwlDevtoolsGlobalHook {
                 id: id,
               },
             });
-          // else it is an update
+            // else it is an update
           } else {
             window.top.postMessage({
               type: "owlDevtools__Event",
@@ -139,7 +139,7 @@ export class OwlDevtoolsGlobalHook {
               },
             });
           }
-        // _render has not been called so it is a delayed render that could be flushed later on
+          // _render has not been called so it is a delayed render that could be flushed later on
         } else {
           window.top.postMessage({
             type: "owlDevtools__Event",
@@ -883,7 +883,7 @@ export class OwlDevtoolsGlobalHook {
     let node = this.getComponentNode(path);
     let i = 0;
     while (!node && i < Array.from(this.apps).length) node = Array.from(this.apps)[i++].root;
-    if(!node) return null;
+    if (!node) return null;
     // Load props of the component
     const props = node.component.props;
     component.props = {};
@@ -1117,8 +1117,7 @@ export class OwlDevtoolsGlobalHook {
   // Triggers the highlight effect around the specified component.
   highlightComponent(path) {
     let component = this.getComponentNode(path);
-    if(!component)
-      return;
+    if (!component) return;
     const elements = this.getDOMElementsRecursive(component);
     this.highlightElements(elements, component.component.constructor.name);
   }

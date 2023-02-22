@@ -48,7 +48,7 @@ export const store = reactive({
   },
 
   // Load all data related to the components tree using the global hook loaded on the page
-  // Use fromOld to specify if we want to keep most of the toggled/selected data of the old tree 
+  // Use fromOld to specify if we want to keep most of the toggled/selected data of the old tree
   // when generating the new one
   loadComponentsTree(fromOld) {
     evalInWindow(
@@ -61,8 +61,7 @@ export const store = reactive({
         return;
       }
       this.apps = result;
-      if (!fromOld && this.settings.expandByDefault)
-        this.apps.forEach((tree) => expandNodes(tree));
+      if (!fromOld && this.settings.expandByDefault) this.apps.forEach((tree) => expandNodes(tree));
     });
     evalInWindow(
       "getComponentDetails",
@@ -369,10 +368,14 @@ export const store = reactive({
     this.eventsTree = [];
     this.activeFrame = frame;
     store.loadComponentsTree(false);
-    evalInWindow("toggleEventsRecording", [this.activeRecorder, this.events.length], this.activeFrame);
+    evalInWindow(
+      "toggleEventsRecording",
+      [this.activeRecorder, this.events.length],
+      this.activeFrame
+    );
   },
 
-  // Constructs the tree that represents the currently recorded events to see them as a tree instead of a temporaly accurate list 
+  // Constructs the tree that represents the currently recorded events to see them as a tree instead of a temporaly accurate list
   buildEventsTree() {
     let tree = [];
     for (const event of this.events) {
@@ -424,56 +427,36 @@ export const store = reactive({
     toggle ? expandNodes(eventNode) : foldNodes(eventNode);
   },
 
-  resetData(){
+  resetData() {
     this.loadComponentsTree(false);
     this.events = [];
     this.eventsTree = [];
-    evalInWindow("toggleEventsRecording",[false, 0]);
+    evalInWindow("toggleEventsRecording", [false, 0]);
   },
-  
+
   // Triggers manually the rendering of the selected component
   refreshComponent(path = this.activeComponent.path) {
     evalInWindow("refreshComponent", [JSON.stringify(path)], this.activeFrame);
   },
 
   logComponentInConsole(type, path = this.activeComponent.path) {
-    evalInWindow(
-      "sendObjectToConsole",
-      [JSON.stringify(path), '"' + type + '"'],
-      this.activeFrame
-    );
+    evalInWindow("sendObjectToConsole", [JSON.stringify(path), '"' + type + '"'], this.activeFrame);
   },
 
   inspectComponentInDOM(path = this.activeComponent.path) {
-    evalInWindow(
-      "inspectComponentDOM",
-      [JSON.stringify(path)],
-      this.activeFrame
-    );
+    evalInWindow("inspectComponentDOM", [JSON.stringify(path)], this.activeFrame);
   },
 
   inspectComponentSource(path = this.activeComponent.path) {
-    evalInWindow(
-      "inspectComponentSource",
-      [JSON.stringify(path)],
-      this.activeFrame
-    );
+    evalInWindow("inspectComponentSource", [JSON.stringify(path)], this.activeFrame);
   },
 
   inspectCompiledTemplate(path = this.activeComponent.path) {
-    evalInWindow(
-      "inspectComponentCompiledTemplate",
-      [JSON.stringify(path)],
-      this.activeFrame
-    );
+    evalInWindow("inspectComponentCompiledTemplate", [JSON.stringify(path)], this.activeFrame);
   },
 
   inspectRAwTemplate(path = this.activeComponent.path) {
-    evalInWindow(
-      "inspectComponentRawTemplate",
-      [JSON.stringify(path)],
-      this.activeFrame
-    );
+    evalInWindow("inspectComponentRawTemplate", [JSON.stringify(path)], this.activeFrame);
   },
 });
 
@@ -488,8 +471,8 @@ store.loadComponentsTree(false);
 // We also want to detect the different iframes at first loading of the devtools tab
 store.updateIFrameList();
 
-for(const frame of store.frameUrls){
-  evalInWindow("toggleEventsRecording",[false, 0], frame);
+for (const frame of store.frameUrls) {
+  evalInWindow("toggleEventsRecording", [false, 0], frame);
 }
 
 let flushRendersTimeout = false;

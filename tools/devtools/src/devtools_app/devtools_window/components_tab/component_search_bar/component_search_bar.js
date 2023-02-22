@@ -19,7 +19,9 @@ export class ComponentSearchBar extends Component {
 
   // On keydown
   fastNextSearch(event) {
-    if (event.key === "Enter") this.getNextSearch();
+    if (event.key === "Enter") {
+      this.getNextSearch();
+    }
   }
 
   getNextSearch() {

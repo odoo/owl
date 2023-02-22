@@ -25,8 +25,9 @@ export class Event extends Component {
   // Expand/fold the event
   toggleDisplay() {
     console.log(this.store.events);
-    if (this.props.origin)
+    if (this.props.origin) {
       this.store.events[this.props.id].toggled = !this.store.events[this.props.id].toggled;
+    }
   }
 
   // Trigger the highlight on the component in the page when its name is hovered
@@ -45,7 +46,9 @@ export class Event extends Component {
 
   // Formatting for displaying the key of the component
   get minimizedKey() {
-    if (!this.props.key) return "";
+    if (!this.props.key) {
+      return "";
+    }
     const split = this.props.key.split("__");
     let key;
     if (split.length > 2) {
@@ -58,7 +61,9 @@ export class Event extends Component {
 
   // Same for the origin component
   get originMinimizedKey() {
-    if (!this.props.origin.key) return "";
+    if (!this.props.origin.key) {
+      return "";
+    }
     const split = this.props.origin.key.split("__");
     let key;
     if (split.length > 2) {

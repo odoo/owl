@@ -15,7 +15,9 @@ if (!isFirefox()) {
         // Again we need to wait until owl has got the time to load on the page before loading the scripts
         setTimeout(() => {
           loadScripts().then(() => {
-            if (created) chrome.runtime.sendMessage({ type: "Reload" });
+            if (created) {
+              chrome.runtime.sendMessage({ type: "Reload" });
+            }
           });
         }, 200);
       }
@@ -36,7 +38,9 @@ async function loadScripts() {
           if (!isException) {
             scriptsLoaded = result;
             resolve(result);
-          } else resolve(false);
+          } else {
+            resolve(false);
+          }
         });
       });
   });

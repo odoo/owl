@@ -529,7 +529,7 @@ chrome.runtime.onConnect.addListener((port) => {
       event.origin = null;
       event.toggled = false;
       // Logic to retrace the origin of the event if it is not a root render event
-      if (!event.type.includes("root")) {
+      if (!event.type.includes("render")) {
         for (let i = store.events.length - 1; i >= 0; i--) {
           if (
             !store.events[i].origin &&

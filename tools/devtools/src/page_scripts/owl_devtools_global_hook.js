@@ -335,6 +335,9 @@ export class OwlDevtoolsGlobalHook {
   // Diasble the HTML selector tool
   disableHTMLSelector = (ev = undefined) => {
     if (ev) {
+      if (!ev.isTrusted) {
+        return;
+      }
       ev.stopPropagation();
       ev.preventDefault();
     }
@@ -350,13 +353,21 @@ export class OwlDevtoolsGlobalHook {
     if (typeof value === "array") {
       return "Array(" + value.length + ")";
     } else if (typeof value === "object") {
-      if (value == null) return "null";
-      if (asConstructorName) return value.constructor.name;
+      if (value == null) {
+        return "null";
+      }
+      if (asConstructorName) {
+        return value.constructor.name;
+      }
       return "{...}";
-    } else if (typeof value === "undefined") return "undefined";
-    else if (typeof value === "string") return '"' + value + '"';
-    else if (typeof value === "function") {
-      if (asConstructorName) return value.constructor.name;
+    } else if (typeof value === "undefined") {
+      return "undefined";
+    } else if (typeof value === "string") {
+      return '"' + value + '"';
+    } else if (typeof value === "function") {
+      if (asConstructorName) {
+        return value.constructor.name;
+      }
       let functionString = value.toString();
       let index, offset;
       if (functionString.startsWith("class")) {
@@ -375,17 +386,19 @@ export class OwlDevtoolsGlobalHook {
           index = Math.min(index1, index2);
           offset = index1 < index2 ? 2 : 3;
         }
-        if (index === -1)
+        if (index === -1) {
           return functionString.length > 20
             ? functionString.substring(0, 18) + "..."
             : functionString;
+        }
       }
       functionString = functionString.substring(0, index + offset);
       return functionString + "...}";
     } else {
       let valueAsString = value.toString();
-      if (asConstructorName && valueAsString.length > 10)
+      if (asConstructorName && valueAsString.length > 10) {
         valueAsString = valueAsString.substring(0, 8) + "...";
+      }
       return valueAsString;
     }
   }
@@ -461,7 +474,9 @@ export class OwlDevtoolsGlobalHook {
   // Returns the object specified by the path given the top parent object
   getObject(topParent, path) {
     let obj = topParent;
-    if (path.length === 0) return obj;
+    if (path.length === 0) {
+      return obj;
+    }
     for (const key of path) {
       if (typeof key === "object") {
         switch (key.type) {
@@ -492,17 +507,23 @@ export class OwlDevtoolsGlobalHook {
                 symbol = sym;
               }
             });
-            if (symbol) obj = obj[symbol];
+            if (symbol) {
+              obj = obj[symbol];
+            }
         }
       } else {
         if (
           Object.getOwnPropertyDescriptor(obj, key) &&
           Object.getOwnPropertyDescriptor(obj, key).hasOwnProperty("get")
-        )
+        ) {
           obj = Object.getOwnPropertyDescriptor(obj, key).get;
-        else obj = obj[key];
+        } else {
+          obj = obj[key];
+        }
       }
-      if (obj) obj = owl.toRaw(obj);
+      if (obj) {
+        obj = owl.toRaw(obj);
+      }
     }
     return obj;
   }
@@ -527,7 +548,9 @@ export class OwlDevtoolsGlobalHook {
       objectType: type,
       hasChildren: false,
     };
-    if (oldBranch?.toggled) child.toggled = true;
+    if (oldBranch?.toggled) {
+      child.toggled = true;
+    }
     child.path = path.concat([key]);
     if (typeof key === "object") {
       switch (key.type) {
@@ -566,7 +589,7 @@ export class OwlDevtoolsGlobalHook {
       }
       if (child.contentType) {
         child.children = [];
-        if (child.toggled)
+        if (child.toggled) {
           child.children = this.loadObjectChildren(
             componentPath,
             child.path,
@@ -575,6 +598,7 @@ export class OwlDevtoolsGlobalHook {
             child.objectType,
             oldTree
           );
+        }
         return child;
       }
     } else if (
@@ -651,16 +675,25 @@ export class OwlDevtoolsGlobalHook {
   getObjectInOldTree(oldTree, objPath, objType) {
     let path = [...objPath];
     let obj;
-    if (objType !== "instance") path.shift();
+    if (objType !== "instance") {
+      path.shift();
+    }
     if (typeof path[0] === "object") {
       if (path[0].type === "prototype") {
         path[0] = "[[Prototype]]";
-      } else path[0] = path[0].key;
+      } else {
+        path[0] = path[0].key;
+      }
     }
-    if (objType === "props") obj = oldTree.props[path[0]];
-    else if (objType === "env") obj = oldTree.env[path[0]];
-    else if (objType === "instance") obj = oldTree.instance[path[0]];
-    else if (objType === "subscription") obj = oldTree.subscriptions[path[0]].target;
+    if (objType === "props") {
+      obj = oldTree.props[path[0]];
+    } else if (objType === "env") {
+      obj = oldTree.env[path[0]];
+    } else if (objType === "instance") {
+      obj = oldTree.instance[path[0]];
+    } else if (objType === "subscription") {
+      obj = oldTree.subscriptions[path[0]].target;
+    }
     for (let i = 1; i < path.length; i++) {
       const match = path[i];
       if (typeof match === "object") {
@@ -686,8 +719,11 @@ export class OwlDevtoolsGlobalHook {
           case "symbol":
             obj = obj.children.filter((child) => child.name === match.key)[0];
         }
-      } else if (obj.contentType === "array") obj = obj.children[match];
-      else obj = obj.children.filter((child) => child.name === match)[0];
+      } else if (obj.contentType === "array") {
+        obj = obj.children[match];
+      } else {
+        obj = obj.children.filter((child) => child.name === match)[0];
+      }
     }
     return obj;
   }
@@ -697,7 +733,9 @@ export class OwlDevtoolsGlobalHook {
     depth = depth + 1;
     let obj = this.getPropertyObject(componentPath, objPath);
     let oldBranch = this.getObjectInOldTree(oldTree, objPath, objType);
-    if (!obj) return [];
+    if (!obj) {
+      return [];
+    }
     let index = 0;
     const lastKey = objPath.at(-1);
     let prototype;
@@ -715,7 +753,9 @@ export class OwlDevtoolsGlobalHook {
               oldBranch.children[index],
               oldTree
             );
-            if (child) children.push(child);
+            if (child) {
+              children.push(child);
+            }
           }
         } else {
           for (; index < obj.length; index++) {
@@ -729,7 +769,9 @@ export class OwlDevtoolsGlobalHook {
               oldBranch.children[index],
               oldTree
             );
-            if (child) children.push(child);
+            if (child) {
+              children.push(child);
+            }
           }
         }
         break;
@@ -774,7 +816,9 @@ export class OwlDevtoolsGlobalHook {
             oldBranch.children[index],
             oldTree
           );
-          if (child) children.push(child);
+          if (child) {
+            children.push(child);
+          }
           index++;
         });
         prototype = this.getParsedObjectChild(
@@ -862,9 +906,11 @@ export class OwlDevtoolsGlobalHook {
   getComponentNode(path) {
     let componentNode = Array.from(this.apps)[path[0]].root;
     for (let i = 2; i < path.length; i++) {
-      if (componentNode.children.hasOwnProperty(path[i]))
+      if (componentNode.children.hasOwnProperty(path[i])) {
         componentNode = componentNode.children[path[i]];
-      else return null;
+      } else {
+        return null;
+      }
     }
     return componentNode;
   }
@@ -883,14 +929,18 @@ export class OwlDevtoolsGlobalHook {
     let node = this.getComponentNode(path);
     let i = 0;
     while (!node && i < Array.from(this.apps).length) node = Array.from(this.apps)[i++].root;
-    if (!node) return null;
+    if (!node) {
+      return null;
+    }
     // Load props of the component
     const props = node.component.props;
     component.props = {};
     component.name = node.component.constructor.name;
     Reflect.ownKeys(props).forEach((key) => {
       let oldBranch = oldTree?.props[key];
-      if (typeof key === "symbol") oldBranch = oldTree?.props[key.toString()];
+      if (typeof key === "symbol") {
+        oldBranch = oldTree?.props[key.toString()];
+      }
       const property = this.getParsedObjectChild(
         path,
         props,
@@ -902,8 +952,11 @@ export class OwlDevtoolsGlobalHook {
         oldTree
       );
       if (property) {
-        if (typeof key === "symbol") component.props[key.toString()] = property;
-        else component.props[key] = property;
+        if (typeof key === "symbol") {
+          component.props[key.toString()] = property;
+        } else {
+          component.props[key] = property;
+        }
       }
     });
     // Load env of the component
@@ -911,7 +964,9 @@ export class OwlDevtoolsGlobalHook {
     component.env = {};
     Reflect.ownKeys(env).forEach((key) => {
       let oldBranch = oldTree?.env[key];
-      if (typeof key === "symbol") oldBranch = oldTree?.env[key.toString()];
+      if (typeof key === "symbol") {
+        oldBranch = oldTree?.env[key.toString()];
+      }
       const envElement = this.getParsedObjectChild(
         path,
         env,
@@ -923,8 +978,11 @@ export class OwlDevtoolsGlobalHook {
         oldTree
       );
       if (envElement) {
-        if (typeof key === "symbol") component.env[key.toString()] = envElement;
-        else component.env[key] = envElement;
+        if (typeof key === "symbol") {
+          component.env[key.toString()] = envElement;
+        } else {
+          component.env[key] = envElement;
+        }
       }
     });
     const envPrototype = this.getParsedObjectChild(
@@ -944,7 +1002,9 @@ export class OwlDevtoolsGlobalHook {
     Reflect.ownKeys(instance).forEach((key) => {
       if (!["env", "props"].includes(key)) {
         let oldBranch = oldTree?.instance[key];
-        if (typeof key === "symbol") oldBranch = oldTree?.instance[key.toString()];
+        if (typeof key === "symbol") {
+          oldBranch = oldTree?.instance[key.toString()];
+        }
         const instanceElement = this.getParsedObjectChild(
           path,
           instance,
@@ -956,8 +1016,11 @@ export class OwlDevtoolsGlobalHook {
           oldTree
         );
         if (instanceElement) {
-          if (typeof key === "symbol") component.instance[key.toString()] = instanceElement;
-          else component.instance[key] = instanceElement;
+          if (typeof key === "symbol") {
+            component.instance[key.toString()] = instanceElement;
+          } else {
+            component.instance[key] = instanceElement;
+          }
         }
       }
     });
@@ -1019,13 +1082,18 @@ export class OwlDevtoolsGlobalHook {
         subscription.target.toggled = true;
       }
       rawSubscription.keys.forEach((key) => {
-        if (typeof key === "symbol") subscription.keys.push(key.toString());
-        else subscription.keys.push(key);
+        if (typeof key === "symbol") {
+          subscription.keys.push(key.toString());
+        } else {
+          subscription.keys.push(key);
+        }
       });
       if (rawSubscription.target == null) {
-        if (subscription.target.contentType === "undefined")
+        if (subscription.target.contentType === "undefined") {
           subscription.target.content = "undefined";
-        else subscription.target.content = "null";
+        } else {
+          subscription.target.content = "null";
+        }
         subscription.target.hasChildren = false;
       } else {
         subscription.target.content = this.parseContent(
@@ -1099,32 +1167,44 @@ export class OwlDevtoolsGlobalHook {
   }
   // Gives the DOM elements which correspond to the given component node
   getDOMElementsRecursive(node) {
-    if (node.hasOwnProperty("bdom")) return this.getDOMElementsRecursive(node.bdom);
-    if (node.hasOwnProperty("content")) return this.getDOMElementsRecursive(node.content);
-    if (node.hasOwnProperty("el")){
-      if(node.el instanceof HTMLElement) 
-        return [node.el];
+    if (node.hasOwnProperty("bdom")) {
+      return this.getDOMElementsRecursive(node.bdom);
     }
-    if (node.hasOwnProperty("child")) return this.getDOMElementsRecursive(node.child);
+    if (node.hasOwnProperty("content")) {
+      return this.getDOMElementsRecursive(node.content);
+    }
+    if (node.hasOwnProperty("el")) {
+      if (node.el instanceof HTMLElement) {
+        return [node.el];
+      }
+    }
+    if (node.hasOwnProperty("child")) {
+      return this.getDOMElementsRecursive(node.child);
+    }
     if (node.hasOwnProperty("children") && node.children.length > 0) {
       let elements = [];
       for (const child of node.children) {
-        if (child) elements = elements.concat(this.getDOMElementsRecursive(child));
+        if (child) {
+          elements = elements.concat(this.getDOMElementsRecursive(child));
+        }
       }
       if (elements.length > 0) {
         return elements;
       }
     }
     if (node.hasOwnProperty("parentEl")) {
-      if(node.parentEl instanceof HTMLElement) 
+      if (node.parentEl instanceof HTMLElement) {
         return [node.parentEl];
+      }
     }
     return [];
   }
   // Triggers the highlight effect around the specified component.
   highlightComponent(path) {
     let component = this.getComponentNode(path);
-    if (!component) return;
+    if (!component) {
+      return;
+    }
     const elements = this.getDOMElementsRecursive(component);
     this.highlightElements(elements, component.component.constructor.name);
   }
@@ -1176,8 +1256,11 @@ export class OwlDevtoolsGlobalHook {
       const obj = this.getObject(componentNode.component, objectPath);
       if (!obj) return;
       obj[key] = value;
-      if (objectType === "props" || objectType === "instance") componentNode.render(true);
-      else if (objectType === "env") Array.from(this.apps)[componentPath[0]].root.render(true);
+      if (objectType === "props" || objectType === "instance") {
+        componentNode.render(true);
+      } else if (objectType === "env") {
+        Array.from(this.apps)[componentPath[0]].root.render(true);
+      }
     }
   }
   // Recursively checks if the given html element corresponds to a component in the components tree.
@@ -1189,8 +1272,12 @@ export class OwlDevtoolsGlobalHook {
     const results = this.getDOMElementsRecursive(node);
     let hasElementInChilds = false;
     for (const result of results) {
-      if (result.isEqualNode(element)) return path;
-      if (result.contains(element)) hasElementInChilds = true;
+      if (result.isEqualNode(element)) {
+        return path;
+      }
+      if (result.contains(element)) {
+        hasElementInChilds = true;
+      }
     }
     if (hasElementInChilds) {
       for (const [key, child] of Object.entries(node.children)) {
@@ -1235,7 +1322,9 @@ export class OwlDevtoolsGlobalHook {
     let trees = [];
     appsArray.forEach((app, index) => {
       let oldTree;
-      if (oldTrees) oldTree = oldTrees[index];
+      if (oldTrees) {
+        oldTree = oldTrees[index];
+      }
       let root = {};
       root = {
         name: "App " + (index + 1),
@@ -1258,16 +1347,23 @@ export class OwlDevtoolsGlobalHook {
           highlighted: false,
         };
         if (oldTree) {
-          if (oldTree.toggled) root.toggled = true;
+          if (oldTree.toggled) {
+            root.toggled = true;
+          }
           oldTree = oldTree.children[0];
         }
-        if (oldTree && oldTree.toggled) appRoot.toggled = true;
+        if (oldTree && oldTree.toggled) {
+          appRoot.toggled = true;
+        }
         // If no path is provided, it defaults to the target of the inspect element action
         if (!inspectedPath) {
           inspectedPath = this.getElementPath($0);
         }
-        if (inspectedPath.join("/") === index.toString()) root.selected = true;
-        else if (inspectedPath.join("/") === index.toString() + "/root") appRoot.selected = true;
+        if (inspectedPath.join("/") === index.toString()) {
+          root.selected = true;
+        } else if (inspectedPath.join("/") === index.toString() + "/root") {
+          appRoot.selected = true;
+        }
         appRoot.children = this.fillTree(app.root, appRoot, inspectedPath.join("/"), oldTree);
         root.children = [appRoot];
       }
@@ -1289,7 +1385,9 @@ export class OwlDevtoolsGlobalHook {
     const appsArray = Array.from(this.apps);
     let index = 0;
     for (; index < appsArray.length; index++) {
-      if (appsArray[index]?.root?.name === componentNode.app.root?.name) break;
+      if (appsArray[index]?.root?.name === componentNode.app.root?.name) {
+        break;
+      }
     }
     path.unshift(index.toString());
     return path;

@@ -47,8 +47,9 @@ export class ObjectTreeElement extends Component {
   }
 
   get objectName() {
-    if (this.props.contentType === "function" && this.props.content.startsWith("get "))
+    if (this.props.contentType === "function" && this.props.content.startsWith("get ")) {
       return "get " + this.props.name;
+    }
     return this.props.name;
   }
 
@@ -63,7 +64,6 @@ export class ObjectTreeElement extends Component {
   editObject(ev) {
     let value = ev.target.value;
     if (ev.keyCode === 13 && value !== "") {
-      console.log(value);
       if (this.props.contentType === "string") {
         value = JSON.stringify(value.substring(1, value.length - 1));
       }

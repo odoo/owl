@@ -33,7 +33,7 @@ export class TreeElement extends Component {
     onMounted(() => {
       if (this.props.selected) {
         const treeElement = document.getElementById("treeElement/" + this.props.path.join("/"));
-        treeElement.scrollIntoView({ block: "center", behavior: "smooth" });
+        treeElement.scrollIntoView({ block: "center", behavior: "auto" });
       }
     });
     onWillUpdateProps((nextProps) => {

@@ -250,7 +250,7 @@ export class OwlDevtoolsGlobalHook {
       highlight.style.borderStyle = "solid";
       highlight.style.borderWidth = `${paddingTop}px ${paddingRight}px ${paddingBottom}px ${paddingLeft}px`;
       highlight.style.borderColor = "rgba(65, 196, 68, 0.4)";
-      highlight.style.zIndex = "1000";
+      highlight.style.zIndex = "10000";
       highlight.style.pointerEvents = "none";
       document.body.appendChild(highlight);
 
@@ -264,7 +264,7 @@ export class OwlDevtoolsGlobalHook {
       highlightMargins.style.borderStyle = "solid";
       highlightMargins.style.borderWidth = `${marginTop}px ${marginRight}px ${marginBottom}px ${marginLeft}px`;
       highlightMargins.style.borderColor = "rgba(241, 179, 121, 0.4)";
-      highlightMargins.style.zIndex = "1000";
+      highlightMargins.style.zIndex = "10000";
       highlightMargins.style.pointerEvents = "none";
       document.body.appendChild(highlightMargins);
     }
@@ -282,7 +282,7 @@ export class OwlDevtoolsGlobalHook {
     detailsBox.style.position = "absolute";
     detailsBox.style.backgroundColor = "black";
     detailsBox.style.padding = "5px";
-    detailsBox.style.zIndex = "1000";
+    detailsBox.style.zIndex = "10000";
     detailsBox.style.pointerEvents = "none";
     detailsBox.style.display = "inline";
     document.body.appendChild(detailsBox);
@@ -1101,7 +1101,10 @@ export class OwlDevtoolsGlobalHook {
   getDOMElementsRecursive(node) {
     if (node.hasOwnProperty("bdom")) return this.getDOMElementsRecursive(node.bdom);
     if (node.hasOwnProperty("content")) return this.getDOMElementsRecursive(node.content);
-    if (node.hasOwnProperty("el")) return [node.el];
+    if (node.hasOwnProperty("el")){
+      if(node.el instanceof HTMLElement) 
+        return [node.el];
+    }
     if (node.hasOwnProperty("child")) return this.getDOMElementsRecursive(node.child);
     if (node.hasOwnProperty("children") && node.children.length > 0) {
       let elements = [];
@@ -1112,7 +1115,11 @@ export class OwlDevtoolsGlobalHook {
         return elements;
       }
     }
-    if (node.hasOwnProperty("parentEl")) return [node.parentEl];
+    if (node.hasOwnProperty("parentEl")) {
+      if(node.parentEl instanceof HTMLElement) 
+        return [node.parentEl];
+    }
+    return [];
   }
   // Triggers the highlight effect around the specified component.
   highlightComponent(path) {

@@ -365,8 +365,7 @@ export class OwlDevtoolsGlobalHook {
       let functionString = value.toString();
       let index, offset;
       if (functionString.startsWith("class")) {
-        index = functionString.indexOf("{");
-        offset = 1;
+        return "class " + value.name;
       } else {
         let index1 = functionString.indexOf("){");
         let index2 = functionString.indexOf(") {");

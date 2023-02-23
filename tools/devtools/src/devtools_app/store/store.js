@@ -558,57 +558,57 @@ chrome.runtime.onConnect.addListener((port) => {
 
     // Logic for recording an event when the event message is received
     if (msg.type === "Event") {
-      let event = msg.data;
-      event.origin = null;
-      event.toggled = false;
-      // Logic to retrace the origin of the event if it is not a root render event
-      if (!event.type.includes("render")) {
-        for (let i = store.events.length - 1; i >= 0; i--) {
-          if (
-            !store.events[i].origin &&
-            event.path.join("/").includes(store.events[i].path.join("/"))
-          ) {
-            event.origin = toRaw(store.events[i]);
-            break;
-          }
-          if (
-            store.events[i].origin &&
-            event.path.join("/").includes(store.events[i].origin.path.join("/"))
-          ) {
-            event.origin = toRaw(store.events[i].origin);
-            break;
-          }
-        }
-      }
-      // Add the event to the events tree immediatly when the events view is in tree mode
-      if (store.eventsTreeView) {
-        let eventNode = Object.assign({}, event);
-        eventNode.children = [];
-        eventNode.toggled = true;
-        if (!eventNode.origin) {
-          eventNode.depth = 0;
-          store.eventsTree.push(eventNode);
-        } else {
-          for (let i = store.eventsTree.length - 1; i >= 0; i--) {
-            if (eventNode.origin.path.join("/") === store.eventsTree[i].path.join("/")) {
-              const relativePath = eventNode.path.slice(
-                store.eventsTree[i].path.length,
-                eventNode.path.length - 1
-              );
-              let parent = store.eventsTree[i];
-              for (const key of relativePath) {
-                parent = parent.children.filter((child) => child.key === key)[0];
-              }
-              eventNode.depth = parent.depth + 1;
-              parent.children.push(eventNode);
+      let events = msg.data;
+      for (const event of events){
+        event.origin = null;
+        event.toggled = false;
+        // Logic to retrace the origin of the event if it is not a root render event
+        if (!event.type.includes("render")) {
+          for (let i = store.events.length - 1; i >= 0; i--) {
+            if (
+              !store.events[i].origin &&
+              event.path.join("/").includes(store.events[i].path.join("/"))
+            ) {
+              event.origin = toRaw(store.events[i]);
+              break;
+            }
+            if (
+              store.events[i].origin &&
+              event.path.join("/").includes(store.events[i].origin.path.join("/"))
+            ) {
+              event.origin = toRaw(store.events[i].origin);
               break;
             }
           }
         }
+        // Add the event to the events tree immediatly when the events view is in tree mode
+        if (store.eventsTreeView) {
+          let eventNode = Object.assign({}, event);
+          eventNode.children = [];
+          eventNode.toggled = true;
+          if (!eventNode.origin) {
+            eventNode.depth = 0;
+            store.eventsTree.push(eventNode);
+          } else {
+            for (let i = store.eventsTree.length - 1; i >= 0; i--) {
+              if (eventNode.origin.path.join("/") === store.eventsTree[i].path.join("/")) {
+                const relativePath = eventNode.path.slice(
+                  store.eventsTree[i].path.length,
+                  eventNode.path.length - 1
+                );
+                let parent = store.eventsTree[i];
+                for (const key of relativePath) {
+                  parent = parent.children.filter((child) => child.key === key)[0];
+                }
+                eventNode.depth = parent.depth + 1;
+                parent.children.push(eventNode);
+                break;
+              }
+            }
+          }
+        }
+        addEventSorted(event);
       }
-      store.events = [...store.events, msg.data];
-      // We want to sort the events based on their id since the order between messages reception may not be an accurate representation
-      store.events.sort((a, b) => a.id - b.id);
     }
 
     // If we know a new iframe has been added to the page, update the iframe list
@@ -640,6 +640,21 @@ function deselectComponent(component) {
   component.children.forEach((child) => {
     deselectComponent(child);
   });
+}
+
+// A binary search algorith to efficiently add an event in the events array while keeping it sorted
+function addEventSorted(item){
+  let low = 0;
+  let high = store.events.length;
+  while (low < high) {
+    let mid = Math.floor((low + high) / 2);
+    if (store.events[mid].id < item.id) {
+      low = mid + 1;
+    } else {
+      high = mid;
+    }
+  }
+  store.events.splice(low, 0, item);
 }
 
 // Apply highlight recursively to all children of a selected component

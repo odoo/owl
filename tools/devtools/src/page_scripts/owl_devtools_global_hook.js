@@ -525,15 +525,17 @@ export class OwlDevtoolsGlobalHook {
   getPropertyObject(componentPath, objectPath) {
     const componentNode = this.getComponentNode(componentPath);
     let obj;
-    // In case it is on an App 
-    if(componentPath.length === 1){
+    // In case it is on an App
+    if (componentPath.length === 1) {
       obj = this.getObject(componentNode, objectPath);
       return obj;
     }
     if (objectPath[0] === "subscription") {
       const topParent = componentNode.subscriptions[objectPath[1]].target;
       obj = this.getObject(topParent, objectPath.slice(2));
-    } else {obj = this.getObject(componentNode.component, objectPath);}
+    } else {
+      obj = this.getObject(componentNode.component, objectPath);
+    }
     return obj;
   }
 
@@ -902,7 +904,7 @@ export class OwlDevtoolsGlobalHook {
   }
   // Returns the Component node given its path and the root component node
   getComponentNode(path) {
-    if(path.length < 2){
+    if (path.length < 2) {
       return Array.from(this.apps)[path[0]];
     }
     let componentNode = Array.from(this.apps)[path[0]].root;
@@ -938,7 +940,7 @@ export class OwlDevtoolsGlobalHook {
     // Load props of the component
     const props = isApp ? node.props : node.component.props;
     component.props = {};
-    component.name = isApp ? "App " + (Number(path[0])+1) : node.component.constructor.name;
+    component.name = isApp ? "App " + (Number(path[0]) + 1) : node.component.constructor.name;
     Reflect.ownKeys(props).forEach((key) => {
       let oldBranch = oldTree?.props[key];
       if (typeof key === "symbol") {
@@ -1061,7 +1063,7 @@ export class OwlDevtoolsGlobalHook {
     component.instance["[[Prototype]]"] = instancePrototype;
 
     // Load subscriptions of the component
-    if(isApp){
+    if (isApp) {
       component.subscriptions = [];
     } else {
       const rawSubscriptions = node.subscriptions;
@@ -1084,7 +1086,11 @@ export class OwlDevtoolsGlobalHook {
           },
           keysExpanded: false,
         };
-        if (oldTree && oldTree.subscriptions[index] && oldTree.subscriptions[index].target.toggled) {
+        if (
+          oldTree &&
+          oldTree.subscriptions[index] &&
+          oldTree.subscriptions[index].target.toggled
+        ) {
           subscription.target.toggled = true;
         }
         rawSubscription.keys.forEach((key) => {
@@ -1434,7 +1440,7 @@ export class OwlDevtoolsGlobalHook {
   // Inspect source code of the component (corresponds to inspecting its constructor)
   inspectComponentSource(componentPath) {
     const componentNode = this.getComponentNode(componentPath);
-    if(componentPath.length > 1){
+    if (componentPath.length > 1) {
       inspect(componentNode.component.constructor);
     } else {
       inspect(componentNode.constructor);

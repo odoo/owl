@@ -510,6 +510,12 @@ for (const frame of store.frameUrls) {
 
 let flushRendersTimeout = false;
 
+if(chrome.devtools.panels.themeName === 'dark'){
+  document.querySelector('html').classList.add('dark-mode');
+}else{
+  document.querySelector('html').classList.remove('dark-mode');
+}
+
 // This is useful for checking regularly if owl is not present on the page while the owl devtools
 // tab is still opened
 const keepAliveInterval = setInterval(keepAlive, 500);

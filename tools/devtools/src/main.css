@@ -7,7 +7,10 @@
   --border-color: lightgray;
   --navbar-selected: #33a3ff;
   --component-hover: #baefff;
+  --text-color: #444444;
   --object-color: rgb(119, 34, 255);
+  --prototype-color: rgb(123, 97, 165);
+  --text-proto-color: #818181;
   --highlight-color: yellow;
   --component-color: rgb(18, 54, 255);
   --key-name: rgb(255, 181, 44);
@@ -17,7 +20,6 @@
   --component-selected: #33ceff;
   --active-icon: rgb(41, 134, 255);
   --active-recorder: rgb(255, 31, 31);
-  --text-color: #444444;
   --navbar-bg: #f1f3f4;
   --background-color: white;
   --text-selected: white;
@@ -29,7 +31,10 @@
   --border-color: #838383;
   --navbar-selected: #33a3ff;
   --component-hover: #597179;
+  --text-color: #c9c9c9;
   --object-color: rgb(188 147 255);
+  --prototype-color: rgb(110, 86, 148);
+  --text-proto-color: #818181;
   --highlight-color: yellow;
   --component-color: rgb(135 153 255);
   --key-name: rgb(255, 181, 44);
@@ -39,7 +44,6 @@
   --component-selected: #287e99;
   --active-icon: rgb(93 163 255);
   --active-recorder: rgb(255, 31, 31);
-  --text-color: #c9c9c9;
   --navbar-bg: #484a4b;
   --background-color: rgb(45 45 45);
   --text-selected: #c9c9c9;
@@ -135,9 +139,17 @@
   margin: 0px;
 }
 
+.object-line.attenuate {
+  color: var(--text-proto-color);
+}
+
 .object-content {
   color: var(--object-color);
   display: inline;
+}
+
+.object-content.attenuate {
+  color: var(--prototype-color);
 }
 
 .event-container {

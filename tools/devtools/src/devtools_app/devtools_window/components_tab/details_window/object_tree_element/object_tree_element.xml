@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.ObjectTreeElement" owl="1">
-    <div class="my-0 p-0 object-line" t-on-click.stop="toggleDisplay" t-on-contextmenu.prevent="openMenu">
+    <div class="my-0 p-0 object-line" t-att-class="attenuateIfPrototype" t-on-click.stop="toggleDisplay" t-on-contextmenu.prevent="openMenu">
       <div t-attf-style="padding-left: calc({{props.depth}} * 0.8rem + 0.3rem)">
         <t t-if="props.hasChildren">
           <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer;{{props.toggled ? 'transform: rotate(90deg);' : ''}}"></i>
@@ -17,7 +17,7 @@
           </div>
         </t>
         <t t-else="">
-          <div class="object-content" t-on-dblclick.stop="setupEditMode">
+          <div class="object-content" t-att-class="attenuateIfPrototype" t-on-dblclick.stop="setupEditMode">
             <t t-if="state.editMode">   
               <input t-attf-id="objectEditionInput/{{pathAsString}}" type="text" placeholder="" t-att-value="props.content" t-on-keyup="editObject"/>
             </t>

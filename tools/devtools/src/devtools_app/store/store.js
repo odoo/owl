@@ -510,10 +510,10 @@ for (const frame of store.frameUrls) {
 
 let flushRendersTimeout = false;
 
-if(chrome.devtools.panels.themeName === 'dark'){
-  document.querySelector('html').classList.add('dark-mode');
-}else{
-  document.querySelector('html').classList.remove('dark-mode');
+if (chrome.devtools.panels.themeName === "dark") {
+  document.querySelector("html").classList.add("dark-mode");
+} else {
+  document.querySelector("html").classList.remove("dark-mode");
 }
 
 // This is useful for checking regularly if owl is not present on the page while the owl devtools
@@ -541,6 +541,9 @@ chrome.runtime.onConnect.addListener((port) => {
     // When message of type Flush is received, overwrite the component tree with the new one from page
     // A flush message is sent everytime a component is rendered on the page
     if (msg.type === "Flush") {
+      if (!(Array.isArray(msg.data) && msg.data.every((val) => typeof val === "string"))) {
+        return;
+      }
       store.renderPaths = [...store.renderPaths, msg.data];
       clearTimeout(flushRendersTimeout);
       flushRendersTimeout = setTimeout(() => {
@@ -550,6 +553,9 @@ chrome.runtime.onConnect.addListener((port) => {
     }
     // Select the component based on the path received with the SelectElement message
     if (msg.type === "SelectElement") {
+      if (!(Array.isArray(msg.data) && msg.data.every((val) => typeof val === "string"))) {
+        return;
+      }
       store.selectComponent(msg.data);
     }
     // Stop the DOM element selector tool upon receiving the StopSelector message
@@ -565,7 +571,22 @@ chrome.runtime.onConnect.addListener((port) => {
     // Logic for recording an event when the event message is received
     if (msg.type === "Event") {
       let events = msg.data;
-      for (const event of events){
+      if (!Array.isArray(events)) {
+        return;
+      }
+      for (const event of events) {
+        if (
+          !isObjectWithShape(event, {
+            type: "string",
+            component: "string",
+            key: "string",
+            path: "object",
+            id: "number",
+          }) ||
+          !(Array.isArray(event.path) && event.path.every((val) => typeof val === "string"))
+        ) {
+          return;
+        }
         event.origin = null;
         event.toggled = false;
         // Logic to retrace the origin of the event if it is not a root render event
@@ -648,8 +669,19 @@ function deselectComponent(component) {
   });
 }
 
+// Used to check if the given object has the right shape
+function isObjectWithShape(obj, shape) {
+  if (typeof obj !== "object" || Array.isArray(obj)) {
+    return false;
+  }
+
+  return Object.keys(shape).every(
+    (key) => obj.hasOwnProperty(key) && typeof obj[key] === shape[key]
+  );
+}
+
 // A binary search algorith to efficiently add an event in the events array while keeping it sorted
-function addEventSorted(item){
+function addEventSorted(item) {
   let low = 0;
   let high = store.events.length;
   while (low < high) {

@@ -19,6 +19,28 @@
   --active-recorder: rgb(255, 31, 31);
   --text-color: #444444;
   --navbar-bg: #f1f3f4;
+  --background-color: white;
+  --text-selected: white;
+}
+
+.dark-mode {
+  --border-color: lightgray;
+  --navbar-selected: #33a3ff;
+  --component-hover: #597179;
+  --object-color: rgb(119, 34, 255);
+  --highlight-color: yellow;
+  --component-color: rgb(18, 54, 255);
+  --key-name: rgb(255, 181, 44);
+  --key-content: rgb(119, 34, 255);
+  --subscription-key: rgb(34, 49, 255);
+  --component-highlighted: #525d61;
+  --component-selected: #33ceff;
+  --active-icon: rgb(41, 134, 255);
+  --active-recorder: rgb(255, 31, 31);
+  --text-color: #c9c9c9;
+  --navbar-bg: #484a4b;
+  --background-color: rgb(31, 31, 31);
+  --text-selected: #c9c9c9;
 }
 
 .active {
@@ -38,6 +60,7 @@
   bottom: 0;
   overflow: hidden;
   color: var(--text-color);
+  background-color: var(--background-color);
 }
 
 .status-message {
@@ -77,12 +100,12 @@
 
 .btn-selected {
   background-color: var(--navbar-selected);
-  color: white;
+  color: var(--text-selected);
   font-weight: bold;
 }
 
 .btn-selected:hover{
-  color: white;
+  color: var(--text-selected);
 }
 
 .tree-component {
@@ -90,7 +113,6 @@
   width: 100%;
   margin: 0px;
   white-space: nowrap;
-  background-color: white;
   /* width: var(--max-component-width, max-content); */
 }
 
@@ -216,10 +238,11 @@
   right: 0;
   bottom: 0;
   left: 0;
-  width: 2px;
+  width: 3px;
   height: 100%;
   cursor: col-resize;
-  background-color: var(--border-color);
+  border-left: 1px solid var(--border-color);
+  margin-left: -1px;
   user-select: none;
 }
 
@@ -243,9 +266,6 @@
 .panel-top {
   box-sizing: border-box;
   height: 30px;
-  padding-left: 0.75rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
   width: 100%;
   display: flex;
   align-items: center;
@@ -277,6 +297,8 @@
   outline: 0;
   margin-left: 5px;
   width: 100%;
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
 .search-input:focus {
@@ -330,7 +352,8 @@
 
 .custom-menu {
   position: absolute;
-  background-color: white;
+  color: var(--text-color);
+  background-color: var(--background-color);
   border: 1px solid gray;
   z-index: 1;
   box-shadow: 1px 2px 5px #888;

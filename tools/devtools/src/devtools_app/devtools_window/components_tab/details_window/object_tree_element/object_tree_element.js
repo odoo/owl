@@ -53,6 +53,13 @@ export class ObjectTreeElement extends Component {
     return this.props.name;
   }
 
+  get attenuateIfPrototype() {
+    if(this.pathAsString.includes('{"type":"prototype"}')){
+      return {'attenuate': true};
+    }
+    return {};
+  }
+
   setupEditMode(ev) {
     if(this.store.activeComponent.path.length === 1)
       return;

@@ -2,10 +2,10 @@
 <templates xml:space="preserve">
   <t t-name="devtools.EventsTab" owl="1">
     <div class="panel-top">
-      <i title="Start/Stop Recording" class="fa fa-circle pointer-icon pe-2" t-attf-style="color: {{store.activeRecorder ? 'var(--active-recorder)' : 'var(--text-color)'}};" t-on-click.stop="toggleRecording" aria-hidden="true"></i>
-      <div class="icons-separator"/>
-      <i title="Clear events" class="fa fa-ban lg-icon pointer-icon px-2" t-on-click.stop="clearConsole" aria-hidden="true"></i>
-      <div class="icons-separator"/>
+      <i title="Start/Stop Recording" class="fa fa-circle pointer-icon ms-1 p-1" t-attf-style="color: {{store.activeRecorder ? 'var(--active-recorder)' : 'var(--text-color)'}};" t-on-click.stop="toggleRecording" aria-hidden="true"></i>
+      <div class="icons-separator mx-1"/>
+      <i title="Clear events" class="fa fa-ban lg-icon pointer-icon p-1" t-on-click.stop="clearConsole" aria-hidden="true"></i>
+      <div class="icons-separator mx-1"/>
       <select class="form-select form-select-sm custom-select" t-on-change="selectDisplayMode">
         <option value="List">Events log</option>
         <option value="Tree">Tree view</option>

@@ -53,7 +53,7 @@ export class ComponentsTab extends Component {
   // Compute the width of the left and right windows based on the split position
   computeWindowWidth = (event) => {
     const width = window.innerWidth || document.body.clientWidth;
-    this.store.leftWidth = (this.store.splitPosition / 100) * width - 2;
+    this.store.leftWidth = (this.store.splitPosition / 100) * width - 3;
     this.store.rightWidth = (1 - this.store.splitPosition / 100) * width;
   };
 

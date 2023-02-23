@@ -33,6 +33,8 @@ export class OwlDevtoolsGlobalHook {
     appsArray.forEach((app) => this.patchAppMethods(app));
     this.patchSetMethods();
     this.recordEvents = false;
+    this.requestedFrame = false;
+    this.eventsBatch = [];
   }
 
   // Modify the methods of the apps set in order to send a message each time it is modified.
@@ -90,66 +92,51 @@ export class OwlDevtoolsGlobalHook {
         const path = self.getComponentPath(this.node);
         // if the render comes from flush
         if (flushed) {
-          window.top.postMessage({
-            type: "owlDevtools__Event",
-            data: {
-              type: "render (flushed)",
-              component: this.node.name,
-              key: this.node.parentKey,
-              path: path,
-              id: id,
-            },
+          self.eventsBatch.push({
+            type: "render (flushed)",
+            component: this.node.name,
+            key: this.node.parentKey,
+            path: path,
+            id: id,
           });
           // if _render is called, it is a proper render (and not a delayed one)
         } else if (_render) {
           // A render on a RootFiber is a root render and can propagate other renders to its children
           if (this instanceof self.RootFiber) {
-            window.top.postMessage({
-              type: "owlDevtools__Event",
-              data: {
-                type: "render",
-                component: this.node.name,
-                key: this.node.parentKey,
-                path: path,
-                id: id,
-              },
-            });
-            // if the node status is NEW, the node has been created just before rendering
-          } else if (this.node.status === 0) {
-            window.top.postMessage({
-              type: "owlDevtools__Event",
-              data: {
-                type: "create",
-                component: this.node.name,
-                key: this.node.parentKey,
-                path: path,
-                id: id,
-              },
-            });
-            // else it is an update
-          } else {
-            window.top.postMessage({
-              type: "owlDevtools__Event",
-              data: {
-                type: "update",
-                component: this.node.name,
-                key: this.node.parentKey,
-                path: path,
-                id: id,
-              },
-            });
-          }
-          // _render has not been called so it is a delayed render that could be flushed later on
-        } else {
-          window.top.postMessage({
-            type: "owlDevtools__Event",
-            data: {
-              type: "render (delayed)",
+            self.eventsBatch.push({
+              type: "render",
               component: this.node.name,
               key: this.node.parentKey,
               path: path,
               id: id,
-            },
+            });
+            // if the node status is NEW, the node has been created just before rendering
+          } else if (this.node.status === 0) {
+            self.eventsBatch.push({
+              type: "create",
+              component: this.node.name,
+              key: this.node.parentKey,
+              path: path,
+              id: id,
+            });
+            // else it is an update
+          } else {
+            self.eventsBatch.push({
+              type: "update",
+              component: this.node.name,
+              key: this.node.parentKey,
+              path: path,
+              id: id,
+            });
+          }
+          // _render has not been called so it is a delayed render that could be flushed later on
+        } else {
+          self.eventsBatch.push({
+            type: "render (delayed)",
+            component: this.node.name,
+            key: this.node.parentKey,
+            path: path,
+            id: id,
           });
         }
       }
@@ -159,21 +146,28 @@ export class OwlDevtoolsGlobalHook {
       _render = true;
       original_Render.call(this, ...arguments);
     };
+    // Flush the events batcher when a root render is completed
+    const original_Complete = self.RootFiber.prototype.complete;
+    self.RootFiber.prototype.complete = function () {
+      original_Complete.call(this, ...arguments);
+      window.top.postMessage({
+        type: "owlDevtools__Event",
+        data: self.eventsBatch,
+      });
+      self.eventsBatch = [];
+    };
     // Signals when a component is destroyed
     if (app.root) {
       const originalDestroy = app.root.constructor.prototype._destroy;
       app.root.constructor.prototype._destroy = function () {
         if (self.recordEvents) {
           const path = self.getComponentPath(this);
-          window.top.postMessage({
-            type: "owlDevtools__Event",
-            data: {
-              type: "destroy",
-              component: this.name,
-              key: this.parentKey,
-              path: path,
-              id: self.eventId++,
-            },
+          self.eventsBatch.push({
+            type: "destroy",
+            component: this.name,
+            key: this.parentKey,
+            path: path,
+            id: self.eventId++,
           });
         }
         originalDestroy.call(this, ...arguments);

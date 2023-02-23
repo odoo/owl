@@ -60,14 +60,12 @@ function createPanelsIfOwl() {
       }
       clearInterval(checkInterval);
       created = true;
-      loadScripts().then((result) => {
-        if (result) {
-          browserInstance.devtools.panels.create(
-            "Owl",
-            "../../assets/icon128.png",
-            isFirefox() ? "devtools_panel.html" : "devtools_app/devtools_panel.html"
-          );
-        }
+      loadScripts().then(() => {
+        browserInstance.devtools.panels.create(
+          "Owl",
+          "../../assets/icon128.png",
+          isFirefox() ? "devtools_panel.html" : "devtools_app/devtools_panel.html"
+        );
       });
     }
   );

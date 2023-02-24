@@ -334,6 +334,14 @@ describe("attributes", () => {
     expect(fixture.innerHTML).toBe('<div value=""></div>');
   });
 
+  test("dynamic input value: falsy values", () => {
+    // 0 doesn't fall back to empty string
+    expect(renderToBdom(`<input t-att-value="0"/>`)).toEqual({ data: [new String("0")] });
+    expect(renderToBdom(`<input t-att-value="false"/>`)).toEqual({ data: [new String("")] });
+    expect(renderToBdom(`<input t-att-value="undefined"/>`)).toEqual({ data: [new String("")] });
+    expect(renderToBdom(`<input t-att-value="''"/>`)).toEqual({ data: [new String("")] });
+  });
+
   test("updating property with falsy value", async () => {
     // render input with initial value
     const template = `<input t-att-value="v"></input>`;

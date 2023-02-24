@@ -238,6 +238,62 @@ exports[`attributes dynamic formatted attributes with a dash 1`] = `
 }"
 `;
 
+exports[`attributes dynamic input value: falsy values 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<input block-attribute-0=\\"value\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let attr1 = new String((0) === 0 ? 0 : ((0) || \\"\\"));
+    return block1([attr1]);
+  }
+}"
+`;
+
+exports[`attributes dynamic input value: falsy values 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<input block-attribute-0=\\"value\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let attr1 = new String((false) === 0 ? 0 : ((false) || \\"\\"));
+    return block1([attr1]);
+  }
+}"
+`;
+
+exports[`attributes dynamic input value: falsy values 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<input block-attribute-0=\\"value\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let attr1 = new String((undefined) === 0 ? 0 : ((undefined) || \\"\\"));
+    return block1([attr1]);
+  }
+}"
+`;
+
+exports[`attributes dynamic input value: falsy values 4`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<input block-attribute-0=\\"value\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let attr1 = new String(('') === 0 ? 0 : (('') || \\"\\"));
+    return block1([attr1]);
+  }
+}"
+`;
+
 exports[`attributes dynamic undefined class attribute 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -729,7 +785,7 @@ exports[`attributes updating property with falsy value 1`] = `
   let block1 = createBlock(\`<input block-attribute-0=\\"value\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let attr1 = new String((ctx['v']) || \\"\\");
+    let attr1 = new String((ctx['v']) === 0 ? 0 : ((ctx['v']) || \\"\\"));
     return block1([attr1]);
   }
 }"
@@ -800,7 +856,7 @@ exports[`special cases for some specific html attributes/properties input with t
   let block1 = createBlock(\`<input block-attribute-0=\\"value\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let attr1 = new String((ctx['v']) || \\"\\");
+    let attr1 = new String((ctx['v']) === 0 ? 0 : ((ctx['v']) || \\"\\"));
     return block1([attr1]);
   }
 }"
@@ -814,7 +870,7 @@ exports[`special cases for some specific html attributes/properties input with t
   let block1 = createBlock(\`<input block-attribute-0=\\"value\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let attr1 = new String((ctx['v']) || \\"\\");
+    let attr1 = new String((ctx['v']) === 0 ? 0 : ((ctx['v']) || \\"\\"));
     return block1([attr1]);
   }
 }"
@@ -842,7 +898,7 @@ exports[`special cases for some specific html attributes/properties select with 
   let block1 = createBlock(\`<select block-attribute-0=\\"value\\"><option value=\\"potato\\">Potato</option><option value=\\"tomato\\">Tomato</option><option value=\\"onion\\">Onion</option></select>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let attr1 = new String((ctx['value']) || \\"\\");
+    let attr1 = new String((ctx['value']) === 0 ? 0 : ((ctx['value']) || \\"\\"));
     return block1([attr1]);
   }
 }"
@@ -856,7 +912,7 @@ exports[`special cases for some specific html attributes/properties textarea wit
   let block1 = createBlock(\`<textarea block-attribute-0=\\"value\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let attr1 = new String((ctx['v']) || \\"\\");
+    let attr1 = new String((ctx['v']) === 0 ? 0 : ((ctx['v']) || \\"\\"));
     return block1([attr1]);
   }
 }"

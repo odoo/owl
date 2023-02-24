@@ -580,8 +580,8 @@ export class CodeGenerator {
         if (attrName && isProp(ast.tag, attrName)) {
           // we force a new string or new boolean to bypass the equality check in blockdom when patching same value
           if (attrName === "value") {
-            // When the expression is falsy, fall back to an empty string
-            expr = `new String((${expr}) || "")`;
+            // When the expression is falsy (except 0), fall back to an empty string
+            expr = `new String((${expr}) === 0 ? 0 : ((${expr}) || ""))`;
           } else {
             expr = `new Boolean(${expr})`;
           }

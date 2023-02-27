@@ -63,26 +63,26 @@ browserInstance.tabs.onUpdated.addListener((tab) => {
         {
           target: { tabId: tabData.id },
           func: () => {
-            if(!Object.hasOwnProperty.call(window, "__OWL_DEVTOOLS__")) {
+            if (!Object.hasOwnProperty.call(window, "__OWL_DEVTOOLS__")) {
               let val;
-              Object.defineProperty(window, '__OWL_DEVTOOLS__', {
-                get(){
+              Object.defineProperty(window, "__OWL_DEVTOOLS__", {
+                get() {
                   return val;
                 },
                 set(value) {
                   val = value;
                   let result = 1;
-                  if(value?.Fiber !== undefined){
-                      result = 2;
+                  if (value?.Fiber !== undefined) {
+                    result = 2;
                   }
-                  window.top.postMessage({type: "owlDevtools__owlStatus", data: result});
-                }
+                  window.top.postMessage({ type: "owlDevtools__owlStatus", data: result });
+                },
               });
               return 0;
-            } else if (window.__OWL_DEVTOOLS__){
+            } else if (window.__OWL_DEVTOOLS__) {
               let result = 1;
-              if(window.__OWL_DEVTOOLS__.Fiber !== undefined){
-                  result = 2;
+              if (window.__OWL_DEVTOOLS__.Fiber !== undefined) {
+                result = 2;
               }
               return result;
             }
@@ -122,8 +122,7 @@ browserInstance.runtime.onMessage.addListener((message, sender, sendResponse) =>
     });
     return true;
     // Relay the received message to the devtools app
-  }
-  else if(message.type === "owlStatus"){
+  } else if (message.type === "owlStatus") {
     owlStatus = message.data;
     chrome.action.setIcon({
       path: owlStatus === 2 ? "assets/icon128.png" : "assets/icon_disabled128.png",

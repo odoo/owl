@@ -18,7 +18,7 @@ export class ComponentSearchBar extends Component {
   // Go to the next search result repeatedly while enter is pressed
   onSearchKeyDown(event) {
     if (event.key === "Enter") {
-      this.store.componentSearch.getNextSearch()
+      this.store.componentSearch.getNextSearch();
     }
   }
 }

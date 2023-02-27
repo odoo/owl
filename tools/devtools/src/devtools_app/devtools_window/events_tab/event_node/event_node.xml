@@ -10,7 +10,7 @@
           t-att-class="{'fa-caret-right': !props.toggled, 'fa-caret-down': props.toggled}"
           t-attf-style="visibility: {{props.children.length > 0 ? '' : 'hidden'}};"
         />
-        <span>
+        <span class="text-nowrap">
           <t t-esc="props.type"/>: 
           &lt;<span style="cursor:pointer; color: var(--component-color);" 
                 t-on-click.stop="() => this.store.selectComponent(props.path)" 
@@ -21,6 +21,9 @@
               <t t-esc="minimizedKey"/>
             </span>
           </t>&gt;
+          <span t-if="props.type !== 'destroy'">
+            (<t t-esc="props.time"/> ms)
+          </span>
         </span>
       </div>
     </div>

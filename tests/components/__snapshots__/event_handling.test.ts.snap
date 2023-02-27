@@ -32,7 +32,7 @@ exports[`event handling handler receive the event as argument 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, true);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<span block-handler-0=\\"click\\"><block-child-0/><block-text-1/></span>\`);
   
@@ -76,7 +76,7 @@ exports[`event handling input blur event is not called if component is destroyed
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, true);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><textarea/></div>\`);
   

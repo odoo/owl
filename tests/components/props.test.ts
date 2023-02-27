@@ -1,5 +1,5 @@
 import { Component, mount, onWillUpdateProps, useState, xml } from "../../src";
-import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { makeTestFixture, nextTick, snapshotEverything, useLogLifecycle } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -200,7 +200,7 @@ test("can bind function prop with bind suffix", async () => {
   expect(fixture.innerHTML).toBe("child");
 });
 
-test("bound functions is referentially equal after update", async () => {
+test("bound functions is not referentially equal after update", async () => {
   let isEqual = false;
   class Child extends Component {
     static template = xml`<t t-esc="props.val"/>`;
@@ -222,7 +222,52 @@ test("bound functions is referentially equal after update", async () => {
   parent.state.val = 3;
   await nextTick();
   expect(fixture.innerHTML).toBe("3");
-  expect(isEqual).toBe(true);
+  expect(isEqual).toBe(false);
+});
+
+test("bound functions are considered 'alike'", async () => {
+  class Child extends Component {
+    static template = xml`child`;
+    setup() {
+      useLogLifecycle();
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`
+      <t t-esc="state.val"/>
+      <Child fn.bind="someFunction"/>`;
+    static components = { Child };
+    state = useState({ val: 1 });
+    setup() {
+      useLogLifecycle();
+    }
+    someFunction() {}
+  }
+
+  const parent = await mount(Parent, fixture);
+  expect(fixture.innerHTML).toBe("1child");
+  expect([
+    "Parent:setup",
+    "Parent:willStart",
+    "Parent:willRender",
+    "Child:setup",
+    "Child:willStart",
+    "Parent:rendered",
+    "Child:willRender",
+    "Child:rendered",
+    "Child:mounted",
+    "Parent:mounted",
+  ]).toBeLogged();
+  parent.state.val = 3;
+  await nextTick();
+  expect([
+    "Parent:willRender",
+    "Parent:rendered",
+    "Parent:willPatch",
+    "Parent:patched",
+  ]).toBeLogged();
+  expect(fixture.innerHTML).toBe("3child");
 });
 
 test("throw if prop uses an unknown suffix", async () => {
@@ -238,4 +283,116 @@ test("throw if prop uses an unknown suffix", async () => {
   await expect(async () => {
     await mount(Parent, fixture);
   }).rejects.toThrowError("Invalid prop suffix");
+});
+
+test(".alike suffix in a simple case", async () => {
+  class Child extends Component {
+    static template = xml`<t t-esc="props.fn()"/>`;
+    setup() {
+      useLogLifecycle();
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`
+      <t t-esc="state.counter"/>
+      <Child fn.alike="() => 1"/>`;
+    static components = { Child };
+    state = useState({ counter: 0 });
+    setup() {
+      useLogLifecycle();
+    }
+  }
+
+  const parent = await mount(Parent, fixture);
+  expect([
+    "Parent:setup",
+    "Parent:willStart",
+    "Parent:willRender",
+    "Child:setup",
+    "Child:willStart",
+    "Parent:rendered",
+    "Child:willRender",
+    "Child:rendered",
+    "Child:mounted",
+    "Parent:mounted",
+  ]).toBeLogged();
+
+  expect(fixture.innerHTML).toBe("01");
+  parent.state.counter++;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("11");
+  expect([
+    "Parent:willRender",
+    "Parent:rendered",
+    "Parent:willPatch",
+    "Parent:patched",
+  ]).toBeLogged();
+});
+
+test(".alike suffix in a list", async () => {
+  class Todo extends Component {
+    static template = xml`
+      <button t-on-click="props.toggle">
+        <t t-esc="props.todo.id"/><t t-if="props.todo.isChecked">V</t>
+      </button>`;
+    setup() {
+      useLogLifecycle();
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`
+      <t t-foreach="state.elems" t-as="elem" t-key="elem.id">
+        <Todo todo="elem" toggle.alike="() => this.toggle(elem.id)"/>
+      </t>`;
+    static components = { Todo };
+    state = useState({
+      elems: [
+        { id: 1, isChecked: false },
+        { id: 2, isChecked: true },
+      ],
+    });
+    setup() {
+      useLogLifecycle();
+    }
+    toggle(id: number) {
+      const todo = this.state.elems.find((el) => el.id === id)!;
+      todo.isChecked = !todo.isChecked;
+    }
+  }
+
+  await mount(Parent, fixture);
+  expect([
+    "Parent:setup",
+    "Parent:willStart",
+    "Parent:willRender",
+    "Todo:setup",
+    "Todo:willStart",
+    "Todo:setup",
+    "Todo:willStart",
+    "Parent:rendered",
+    "Todo:willRender",
+    "Todo:rendered",
+    "Todo:willRender",
+    "Todo:rendered",
+    "Todo:mounted",
+    "Todo:mounted",
+    "Parent:mounted",
+  ]).toBeLogged();
+
+  expect(fixture.innerHTML).toBe("<button>1</button><button>2V</button>");
+  fixture.querySelector("button")?.click();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<button>1V</button><button>2V</button>");
+  expect([
+    "Parent:willRender",
+    "Parent:rendered",
+    "Todo:willRender",
+    "Todo:rendered",
+    "Todo:willPatch",
+    "Todo:patched",
+    "Parent:willPatch",
+    "Parent:patched",
+  ]).toBeLogged();
 });

@@ -5,7 +5,7 @@ exports[`components in t-out simple list 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, isBoundary, withDefault, LazyValue, safeOutput, withKey } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, true);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   function value1(ctx, node, key = \\"\\") {
     return comp1({}, key + \`__1\`, node, this, null);

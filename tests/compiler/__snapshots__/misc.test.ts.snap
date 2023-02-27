@@ -5,7 +5,7 @@ exports[`misc complex template 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
-  const comp1 = app.createComponent(\`SlotButton\`, true, false, false, false);
+  const comp1 = app.createComponent(\`SlotButton\`, true, false, false, [\\"class\\",\\"slot\\"]);
   
   let block1 = createBlock(\`<div block-attribute-0=\\"class\\"><div block-attribute-1=\\"class\\"><div class=\\"batch_header\\"><a block-attribute-2=\\"href\\" block-attribute-3=\\"class\\" title=\\"View Batch\\"><block-text-4/><block-child-0/><i class=\\"arrow fa fa-window-maximize\\"/></a></div><block-child-1/><div class=\\"batch_slots\\"><block-child-2/><block-child-3/></div><div class=\\"batch_commits\\"><block-child-4/></div></div></div>\`);
   let block2 = createBlock(\`<i class=\\"fa fa-exclamation-triangle\\"/>\`);
@@ -184,8 +184,8 @@ exports[`misc other complex template 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   const callTemplate_1 = app.getTemplate(\`LOAD_INFOS_TEMPLATE\`);
-  const comp1 = app.createComponent(\`BundlesList\`, true, false, false, false);
-  const comp2 = app.createComponent(\`BundlesList\`, true, false, false, false);
+  const comp1 = app.createComponent(\`BundlesList\`, true, false, false, [\\"bundles\\",\\"category_custom_views\\",\\"search\\"]);
+  const comp2 = app.createComponent(\`BundlesList\`, true, false, false, [\\"bundles\\",\\"search\\"]);
   
   let block1 = createBlock(\`<div><header><nav class=\\"navbar navbar-expand-md navbar-light bg-light\\"><a block-attribute-0=\\"href\\"><b style=\\"color:#777;\\"><block-text-1/></b></a><button type=\\"button\\" class=\\"navbar-toggler\\" data-toggle=\\"collapse\\" data-target=\\"#top_menu_collapse\\"><span class=\\"navbar-toggler-icon\\"/></button><div class=\\"collapse navbar-collapse\\" id=\\"top_menu_collapse\\" aria-expanded=\\"false\\"><ul class=\\"nav navbar-nav ml-auto text-right\\" id=\\"top_menu\\"><block-child-0/><li class=\\"nav-item divider\\"/><block-child-1/></ul><div><div class=\\"input-group input-group-sm\\"><div class=\\"input-group-prepend input-group-sm\\"><button class=\\"btn btn-default fa fa-cog\\" title=\\"Settings\\" block-handler-2=\\"click\\"/><button class=\\"btn btn-default\\" block-handler-3=\\"click\\"> More </button><block-child-2/></div><input class=\\"form-control\\" type=\\"text\\" placeholder=\\"Search\\" aria-label=\\"Search\\" name=\\"search\\" block-property-4=\\"value\\" block-handler-5=\\"keyup\\" block-handler-6=\\"change\\" block-ref=\\"7\\"/><div class=\\"input-group-append\\"><button class=\\"btn btn-default fa fa-eraser\\" block-handler-8=\\"click\\"/></div></div></div></div></nav></header><div class=\\"container-fluid\\" block-ref=\\"9\\"><div class=\\"row\\"><!--div class=\\"form-group col-md-6\\">
                       <h5>Search options</h5>

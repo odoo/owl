@@ -5,7 +5,7 @@ exports[`t-key t-foreach with t-key switch component position 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"key\\"]);
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -42,7 +42,7 @@ exports[`t-key t-key on Component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"key\\"]);
   
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['key'];
@@ -69,7 +69,7 @@ exports[`t-key t-key on Component as a function 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"key\\"]);
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
@@ -99,8 +99,8 @@ exports[`t-key t-key on multiple Components 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
-  const comp2 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"key\\"]);
+  const comp2 = app.createComponent(\`Child\`, true, false, false, [\\"key\\"]);
   
   let block1 = createBlock(\`<span><block-child-0/><block-child-1/></span>\`);
   
@@ -159,7 +159,7 @@ exports[`t-key t-key on multiple Components with t-call 1 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"key\\"]);
   
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['key'];
@@ -201,8 +201,8 @@ exports[`t-key t-key on multiple Components with t-call 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
-  const comp2 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"key\\"]);
+  const comp2 = app.createComponent(\`Child\`, true, false, false, [\\"key\\"]);
   
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['key1'];

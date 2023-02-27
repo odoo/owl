@@ -59,7 +59,7 @@ exports[`refs refs and recursive templates 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Test\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Test\`, true, false, false, [\\"tree\\"]);
   
   let block1 = createBlock(\`<p block-ref=\\"0\\"><block-text-1/><block-child-0/></p>\`);
   
@@ -100,7 +100,7 @@ exports[`refs refs are properly bound in slots 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
-  const comp1 = app.createComponent(\`Dialog\`, true, true, false, true);
+  const comp1 = app.createComponent(\`Dialog\`, true, true, false, []);
   
   let block1 = createBlock(\`<div><span class=\\"counter\\"><block-text-0/></span><block-child-0/></div>\`);
   let block2 = createBlock(\`<button block-handler-0=\\"click\\" block-ref=\\"1\\">do something</button>\`);

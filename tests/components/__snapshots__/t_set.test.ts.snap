@@ -5,7 +5,7 @@ exports[`t-set slot setted value (with t-set) not accessible with t-esc 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue, capture, markRaw } = helpers;
-  const comp1 = app.createComponent(\`Childcomp\`, true, true, false, true);
+  const comp1 = app.createComponent(\`Childcomp\`, true, true, false, []);
   
   let block1 = createBlock(\`<div><p><block-text-0/></p><block-child-0/><p><block-text-1/></p></div>\`);
   
@@ -53,8 +53,8 @@ exports[`t-set slots with a t-set with a component in body 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, isBoundary, withDefault, LazyValue, safeOutput, markRaw } = helpers;
-  const comp1 = app.createComponent(\`C\`, true, false, false, true);
-  const comp2 = app.createComponent(\`Child\`, true, true, false, true);
+  const comp1 = app.createComponent(\`C\`, true, false, false, []);
+  const comp2 = app.createComponent(\`Child\`, true, true, false, []);
   
   function slot1(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -106,8 +106,8 @@ exports[`t-set slots with an t-set with a component in body 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, isBoundary, withDefault, LazyValue, safeOutput, markRaw } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, true);
-  const comp2 = app.createComponent(\`Blorg\`, true, true, false, true);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  const comp2 = app.createComponent(\`Blorg\`, true, true, false, []);
   
   let block4 = createBlock(\`<div>coffee</div>\`);
   
@@ -163,8 +163,8 @@ exports[`t-set slots with an unused t-set with a component in body 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, isBoundary, withDefault, LazyValue, markRaw } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, true);
-  const comp2 = app.createComponent(\`Child\`, true, true, false, true);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  const comp2 = app.createComponent(\`Child\`, true, true, false, []);
   
   function slot1(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -266,7 +266,7 @@ exports[`t-set t-set not altered by child comp 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
-  const comp1 = app.createComponent(\`Childcomp\`, true, false, false, true);
+  const comp1 = app.createComponent(\`Childcomp\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><p><block-text-0/></p><block-child-0/><p><block-text-1/></p></div>\`);
   
@@ -332,7 +332,7 @@ exports[`t-set t-set with a component in body 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, LazyValue, safeOutput } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, true);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><div><block-child-0/></div></div>\`);
   

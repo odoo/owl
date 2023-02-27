@@ -139,22 +139,35 @@ export class App<
     isStatic: boolean,
     hasSlotsProp: boolean,
     hasDynamicPropList: boolean,
-    hasNoProp: boolean
+    propList: string[]
   ) {
     const isDynamic = !isStatic;
-    function _arePropsDifferent(props1: Props, props2: Props): boolean {
-      for (let k in props1) {
-        if (props1[k] !== props2[k]) {
-          return true;
+    let arePropsDifferent: (p1: Object, p2: Object) => boolean;
+    const hasNoProp = propList.length === 0;
+    if (hasSlotsProp) {
+      arePropsDifferent = (_1, _2) => true;
+    } else if (hasDynamicPropList) {
+      arePropsDifferent = function (props1: Props, props2: Props) {
+        for (let k in props1) {
+          if (props1[k] !== props2[k]) {
+            return true;
+          }
         }
-      }
-      return hasDynamicPropList && Object.keys(props1).length !== Object.keys(props2).length;
+        return Object.keys(props1).length !== Object.keys(props2).length;
+      };
+    } else if (hasNoProp) {
+      arePropsDifferent = (_1: any, _2: any) => false;
+    } else {
+      arePropsDifferent = function (props1: Props, props2: Props) {
+        for (let p of propList) {
+          if (props1[p] !== props2[p]) {
+            return true;
+          }
+        }
+        return false;
+      };
     }
-    const arePropsDifferent = hasSlotsProp
-      ? (_1: any, _2: any) => true
-      : hasNoProp
-      ? (_1: any, _2: any) => false
-      : _arePropsDifferent;
+
     const updateAndRender = ComponentNode.prototype.updateAndRender;
     const initiateRender = ComponentNode.prototype.initiateRender;
 

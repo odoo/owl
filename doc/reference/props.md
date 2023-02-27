@@ -4,6 +4,7 @@
 
 - [Overview](#overview)
 - [Definition](#definition)
+- [Props comparison](#props-comparison)
 - [Binding function props](#binding-function-props)
 - [Dynamic Props](#dynamic-props)
 - [Default Props](#default-props)
@@ -56,6 +57,47 @@ the `props` object contains the following keys:
 - for `ComponentA`: `a` and `b`,
 - for `ComponentB`: `model`,
 
+## Props comparison
+
+Whenever Owl encounters a subcomponent in a template, it performs a shallow
+comparison of all props. If they are all referentially equal, then the subcomponent
+will not even be updated. Otherwise, if at least one props has changed, then
+Owl will update it.
+
+However, in some cases, we know that two values are different, but they have the
+same effect, and should not be considered different by Owl. For example, anonymous
+functions in a template are always different, but most of them should not be
+considered different:
+
+```xml
+<t t-foreach="todos" t-as="todo" t-key="todo.id">
+  <Todo todo="todo" onDelete="() => deleteTodo(todo.id)" />
+</t>
+```
+
+In that case, one can use the `.alike` suffix:
+
+```xml
+<t t-foreach="todos" t-as="todo" t-key="todo.id">
+  <Todo todo="todo" onDelete.alike="() => deleteTodo(todo.id)" />
+</t>
+```
+
+This tells Owl that this specific prop should always be considered equivalent
+(or, in other words, should be removed from the list of comparable props).
+
+Note that even if most anonymous functions should probably be considered `alike`,
+it is not necessarily true in all cases. It depends on what values are captured
+by the anonymous function. The following example shows a case where it is probably
+wrong to use `.alike`.
+
+```xml
+<t t-foreach="todos" t-as="todo" t-key="todo.id">
+  <!-- Probably wrong! todo.isCompleted may change -->
+  <Todo todo="todo" toggle.alike="() => toggleTodo(todo.isCompleted)" />
+</t>
+```
+
 ## Binding function props
 
 It is common to have the need to pass a callback as a prop. Since Owl components
@@ -94,6 +136,9 @@ class SomeComponent extends Component {
   }
 }
 ```
+
+The `.bind` suffix also implies `.alike`, so these props will not cause additional
+renderings.
 
 ## Dynamic Props
 

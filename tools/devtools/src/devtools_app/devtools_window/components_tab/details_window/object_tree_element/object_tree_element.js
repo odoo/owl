@@ -1,7 +1,7 @@
 import { evalInWindow } from "../../../../../utils";
 import { useStore } from "../../../../store/store";
 
-const { Component, useState, onWillUpdateProps, useEffect } = owl;
+const { Component, useState, useEffect, useRef } = owl;
 
 export class ObjectTreeElement extends Component {
   static props = [
@@ -27,15 +27,18 @@ export class ObjectTreeElement extends Component {
   setup() {
     this.state = useState({
       editMode: false,
+      menuTop: 0,
+      menuLeft: 0,
     });
+    this.contextMenu = useRef("contextmenu");
+    const inputRef = useRef("input");
     this.store = useStore();
     useEffect(
       (editMode) => {
         // Focus on the input when it is created
         if (editMode) {
-          const input = document.getElementById("objectEditionInput/" + this.pathAsString);
-          input.focus();
-          input.select();
+          inputRef.el.focus();
+          inputRef.el.select();
         }
       },
       () => [this.state.editMode]
@@ -60,10 +63,14 @@ export class ObjectTreeElement extends Component {
     return {};
   }
 
-  setupEditMode(ev) {
-    if (this.store.activeComponent.path.length === 1) return;
+  get objectPadding() {
+    return this.props.depth * 0.8 + 0.3;
+  }
+
+  setupEditMode() {
+    if (this.store.activeComponent.path.length === 1) {return;}
     if (!this.state.editMode) {
-      if (["number", "string", "boolean", "undefined"].includes(this.props.contentType)) {
+      if (["number", "string", "boolean", "undefined"].includes(this.props.contentType) || this.props.content === "null") {
         this.state.editMode = true;
       }
     }
@@ -72,38 +79,9 @@ export class ObjectTreeElement extends Component {
   editObject(ev) {
     let value = ev.target.value;
     if (ev.keyCode === 13 && value !== "") {
-      if (this.props.contentType === "string") {
-        value = JSON.stringify(value.substring(1, value.length - 1));
-      }
       this.store.editObjectTreeElement(this.props.path, value, this.props.objectType);
       this.state.editMode = false;
     }
-  }
-
-  loadGetterContent(ev) {
-    this.store.loadGetterContent(this.props);
-  }
-
-  toggleDisplay(ev) {
-    this.store.toggleObjectTreeElementsDisplay(this.props);
-  }
-
-  openMenu(event) {
-    const menu = document.getElementById("customMenu/" + this.pathAsString);
-    menu.classList.remove("hidden");
-    const menuWidth = menu.offsetWidth;
-    const menuHeight = menu.offsetHeight;
-    let x = event.clientX;
-    let y = event.clientY;
-    if (x + menuWidth > window.innerWidth) {
-      x = window.innerWidth - menuWidth;
-    }
-    if (y + menuHeight > window.innerHeight) {
-      y = window.innerHeight - menuHeight;
-    }
-    menu.style.left = x + "px";
-    // Need 25px offset because of the main navbar from the browser devtools
-    menu.style.top = y - 25 + "px";
   }
 
   inspectFunctionSource() {

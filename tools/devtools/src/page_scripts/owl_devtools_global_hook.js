@@ -150,11 +150,13 @@ export class OwlDevtoolsGlobalHook {
     const original_Complete = self.RootFiber.prototype.complete;
     self.RootFiber.prototype.complete = function () {
       original_Complete.call(this, ...arguments);
-      window.top.postMessage({
-        type: "owlDevtools__Event",
-        data: self.eventsBatch,
-      });
-      self.eventsBatch = [];
+      if(self.recordEvents){
+        window.top.postMessage({
+          type: "owlDevtools__Event",
+          data: self.eventsBatch,
+        });
+        self.eventsBatch = [];
+      }
     };
     // Signals when a component is destroyed
     if (app.root) {
@@ -357,7 +359,7 @@ export class OwlDevtoolsGlobalHook {
     } else if (typeof value === "undefined") {
       return "undefined";
     } else if (typeof value === "string") {
-      return '"' + value + '"';
+      return JSON.stringify(value);
     } else if (typeof value === "function") {
       if (asConstructorName) {
         return value.constructor.name;
@@ -460,7 +462,7 @@ export class OwlDevtoolsGlobalHook {
         result += this.parseItem(value);
       }
       result += "}";
-    } else result += this.parseItem(obj);
+    } else {result += this.parseItem(obj)};
     return result;
   }
 
@@ -1255,6 +1257,7 @@ export class OwlDevtoolsGlobalHook {
   }
   // Edit a reactive state property with the provided value of the given component (path) and the subscription path
   editObject(componentPath, objectPath, value, objectType) {
+    console.log(value);
     const componentNode = this.getComponentNode(componentPath);
     if (objectType === "subscription") {
       const target = owl.reactive(componentNode.subscriptions[objectPath[1]].target);
@@ -1413,7 +1416,7 @@ export class OwlDevtoolsGlobalHook {
     let index = 1;
     while (window["temp" + index] !== undefined) index++;
     switch (objectType) {
-      case "component":
+      case "node":
         window["temp" + index] = componentNode;
         break;
       case "props":

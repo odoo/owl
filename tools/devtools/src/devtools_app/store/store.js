@@ -7,6 +7,27 @@ export const store = reactive({
     expandByDefault: true,
     toggleOnSelected: false,
   },
+  contextMenu: {
+    top: 0,
+    left: 0,
+    // Opens the context menu corresponding with the given menu html element
+    open(event, menu){
+      menu.classList.remove("d-none");
+      const menuWidth = menu.offsetWidth;
+      const menuHeight = menu.offsetHeight;
+      let x = event.clientX;
+      let y = event.clientY;
+      if (x + menuWidth > window.innerWidth) {
+        x = window.innerWidth - menuWidth;
+      }
+      if (y + menuHeight > window.innerHeight) {
+        y = window.innerHeight - menuHeight;
+      }
+      this.left = x + "px";
+      // Need 25px offset because of the main navbar from the browser devtools
+      this.top = y - 25 + "px";
+    },
+  },
   frameUrls: ["top"],
   activeFrame: "top",
   page: "ComponentsTab",
@@ -32,6 +53,26 @@ export const store = reactive({
     searchResults: [],
     searchIndex: 0,
     activeSelector: false,
+    getNextSearch() {
+      if (
+        this.searchIndex > -1 &&
+        this.searchIndex < this.searchResults.length - 1
+      ) {
+        store.setSearchIndex(this.searchIndex + 1);
+      } else if (
+        this.searchIndex ===
+        this.searchResults.length - 1
+      ) {
+        store.setSearchIndex(0);
+      }
+    },
+    getPrevSearch() {
+      if (this.searchIndex > 0) {
+        store.setSearchIndex(this.searchIndex - 1);
+      } else if (this.searchIndex === 0) {
+        store.setSearchIndex(this.searchResults.length - 1);
+      }
+    },
   },
   // eventSearch: {
   //   search: "",
@@ -50,36 +91,34 @@ export const store = reactive({
   // Load all data related to the components tree using the global hook loaded on the page
   // Use fromOld to specify if we want to keep most of the toggled/selected data of the old tree
   // when generating the new one
-  loadComponentsTree(fromOld) {
-    evalInWindow(
+  async loadComponentsTree(fromOld) {
+    const apps = await evalInWindow(
       "getComponentsTree",
       fromOld ? [JSON.stringify(this.activeComponent.path), JSON.stringify(this.apps)] : [],
       this.activeFrame
-    ).then((result) => {
-      if (result.length === 0) {
-        this.owlStatus = false;
-        return;
-      }
-      this.apps = result;
-      if (!fromOld && this.settings.expandByDefault) {
-        this.apps.forEach((tree) => expandNodes(tree));
-      }
-    });
-    evalInWindow(
+    );
+    if (apps.length === 0) {
+      this.owlStatus = false;
+      return;
+    }
+    this.apps = apps;
+    if (!fromOld && this.settings.expandByDefault) {
+      this.apps.forEach((tree) => expandNodes(tree));
+    }
+    const component = await evalInWindow(
       "getComponentDetails",
       fromOld
         ? [JSON.stringify(this.activeComponent.path), JSON.stringify(this.activeComponent)]
         : [],
       this.activeFrame
-    ).then((result) => {
-      if (result) {
-        this.activeComponent = result;
-      }
-    });
+    );
+    if (component) {
+      this.activeComponent = component;
+    }
   },
 
   // Select a component by retrieving its details from the page based on its path
-  selectComponent(path) {
+  async selectComponent(path) {
     // Deselect all components
     this.apps.forEach((app) => {
       app.selected = false;
@@ -96,16 +135,20 @@ export const store = reactive({
     }
     for (let i = 2; i < path.length; i++) {
       element.toggled = true;
-      let result = element.children.filter((child) => child.key === path[i])[0];
+      const result = element.children.find((child) => child.key === path[i]);
       if (result) {
         element = result;
+      } else {
+        break;
       }
     }
     element.selected = true;
     highlightChildren(element);
-    evalInWindow("getComponentDetails", [JSON.stringify(element.path)], this.activeFrame).then(
-      (result) => (this.activeComponent = result)
-    );
+    const component = await evalInWindow("getComponentDetails", [JSON.stringify(element.path)], this.activeFrame);
+    this.activeComponent = component;
+    if (this.page !== "ComponentsTab"){
+      this.switchTab("ComponentsTab");
+    }
   },
 
   // Update the search state value with the current search string and trigger the search
@@ -164,7 +207,7 @@ export const store = reactive({
     let component = this.apps[path[0]].children[0];
     for (const key of cp) {
       component.toggled = true;
-      component = component.children.filter((child) => child.key === key)[0];
+      component = component.children.find((child) => child.key === key);
     }
   },
 
@@ -178,7 +221,7 @@ export const store = reactive({
       component = this.apps[path[0]].children[0];
     }
     for (const key of cp) {
-      component = component.children.filter((child) => child.key === key)[0];
+      component = component.children.find((child) => child.key === key);
     }
     return component;
   },
@@ -195,9 +238,8 @@ export const store = reactive({
       let component = this.getComponentByPath(this.activeComponent.path);
       if (component.children.length > 0 && component.toggled) {
         component.toggled = false;
-      } else {
-        if (this.activeComponent.path.length > 1)
-          this.selectComponent(this.activeComponent.path.slice(0, -1));
+      } else if (this.activeComponent.path.length > 1){
+        this.selectComponent(this.activeComponent.path.slice(0, -1));
       }
       return;
     }
@@ -215,12 +257,10 @@ export const store = reactive({
   toggleOrSelectNextElement(toggle) {
     if (toggle) {
       let component = this.getComponentByPath(this.activeComponent.path);
-      if (component.children.length > 0) {
-        if (!component.toggled) {
-          component.toggled = true;
-          return;
-        }
-      } else {
+      if(!component.children.length){
+        return;
+      } else if (!component.toggled){
+        component.toggled = true;
         return;
       }
     }
@@ -275,7 +315,7 @@ export const store = reactive({
         switch (match.type) {
           case "map entries":
           case "set entries":
-            obj = obj.children.filter((child) => child.name === "[[Entries]]")[0];
+            obj = obj.children.find((child) => child.name === "[[Entries]]");
             break;
           case "map entry":
           case "set entry":
@@ -289,54 +329,54 @@ export const store = reactive({
             obj = obj.children[1];
             break;
           case "prototype":
-            obj = obj.children.filter((child) => child.name === "[[Prototype]]")[0];
+            obj = obj.children.find((child) => child.name === "[[Prototype]]");
             break;
           case "symbol":
-            obj = obj.children.filter((child) => child.name === match.key)[0];
+            obj = obj.children.find((child) => child.name === match.key);
         }
       } else if (obj.contentType === "array") {
         obj = obj.children[match];
       } else {
-        obj = obj.children.filter((child) => child.name === match)[0];
+        obj = obj.children.find((child) => child.name === match);
       }
     }
     return obj;
   },
 
   // Replace the (...) content of a getter with the value returned by the corresponding get method
-  loadGetterContent(inputObj) {
+  async loadGetterContent(inputObj) {
     let obj = this.findObjectInTree(inputObj);
-    evalInWindow(
+    const result = await evalInWindow(
       "loadGetterContent",
       [JSON.stringify(this.activeComponent.path), JSON.stringify(obj)],
       this.activeFrame
-    ).then((result) => {
-      Object.keys(obj).forEach((key) => {
-        obj[key] = result[key];
-      });
-      obj.children = [];
+    );
+    Object.keys(obj).forEach((key) => {
+      obj[key] = result[key];
     });
+    obj.children = [];
   },
 
   // Expand the children of the input object property and load it from page if necessary
-  toggleObjectTreeElementsDisplay(inputObj) {
+  async toggleObjectTreeElementsDisplay(inputObj) {
     if (!inputObj.hasChildren) {
       return;
     }
     let obj = this.findObjectInTree(inputObj);
     if (obj.hasChildren && obj.children.length === 0) {
-      evalInWindow(
+      const children = await evalInWindow(
         "loadObjectChildren",
         [
           JSON.stringify(this.activeComponent.path),
           JSON.stringify(obj.path),
           obj.depth,
-          '"' + obj.contentType + '"',
-          '"' + obj.objectType + '"',
+          JSON.stringify(obj.contentType),
+          JSON.stringify(obj.objectType),
           JSON.stringify(this.activeComponent),
         ],
         this.activeFrame
-      ).then((result) => (obj.children = result));
+      );
+      obj.children = children;
     }
     obj.toggled = !obj.toggled;
   },
@@ -366,31 +406,30 @@ export const store = reactive({
   },
 
   // Checks for all iframes in the page, register it and load the scripts inside if not already done
-  updateIFrameList() {
-    evalInWindow("getIFrameUrls", []).then((frames) => {
-      for (const frame of frames) {
-        chrome.devtools.inspectedWindow.eval(
-          "window.__OWL_DEVTOOLS__?.Fiber !== undefined;",
-          { frameURL: frame },
-          (hasOwl) => {
-            if (hasOwl) {
-              chrome.devtools.inspectedWindow.eval(
-                "window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;",
-                { frameURL: frame },
-                (scriptsLoaded) => {
-                  if (!scriptsLoaded) {
-                    loadScripts(frame);
-                  }
+  async updateIFrameList() {
+    const frames = await evalInWindow("getIFrameUrls", []);
+    for (const frame of frames) {
+      chrome.devtools.inspectedWindow.eval(
+        "window.__OWL_DEVTOOLS__?.Fiber !== undefined;",
+        { frameURL: frame },
+        (hasOwl) => {
+          if (hasOwl) {
+            chrome.devtools.inspectedWindow.eval(
+              "window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;",
+              { frameURL: frame },
+              async (scriptsLoaded) => {
+                if (!scriptsLoaded) {
+                  await loadScripts(frame);
                 }
-              );
-              if (!this.frameUrls.includes(frame)) {
-                this.frameUrls = [...this.frameUrls, frame];
               }
+            );
+            if (!this.frameUrls.includes(frame)) {
+              this.frameUrls = [...this.frameUrls, frame];
             }
           }
-        );
-      }
-    });
+        }
+      );
+    }
   },
 
   // Resets the context of all values in the devtools tab and load the one from the given frame
@@ -408,7 +447,7 @@ export const store = reactive({
     );
   },
 
-  // Constructs the tree that represents the currently recorded events to see them as a tree instead of a temporaly accurate list
+  // Constructs the tree that represents the currently recorded events to see them as a tree instead of a temporally accurate list
   buildEventsTree() {
     let tree = [];
     for (const event of this.events) {
@@ -420,14 +459,14 @@ export const store = reactive({
         tree.push(eventNode);
       } else {
         for (let i = tree.length - 1; i >= 0; i--) {
-          if (eventNode.origin.path.join("/") === tree[i].path.join("/")) {
+          if (arraysEqual(eventNode.origin.path, tree[i].path)) {
             const relativePath = eventNode.path.slice(
               tree[i].path.length,
               eventNode.path.length - 1
             );
             let parent = tree[i];
             for (const key of relativePath) {
-              parent = parent.children.filter((child) => child.key === key)[0];
+              parent = parent.children.find((child) => child.key === key);
             }
             eventNode.depth = parent.depth + 1;
             parent.children.push(eventNode);
@@ -443,21 +482,25 @@ export const store = reactive({
   findEventInTree(event) {
     let result;
     if (event.origin) {
-      [result] = this.eventsTree.filter((eventNode) => eventNode.id === event.origin.id);
+      result = this.eventsTree.find((eventNode) => eventNode.id === event.origin.id);
     } else {
-      [result] = this.eventsTree.filter((eventNode) => eventNode.id === event.id);
+      result = this.eventsTree.find((eventNode) => eventNode.id === event.id);
       return result;
     }
     const relativePath = event.path.slice(result.path.length);
     for (const key of relativePath) {
-      result = result.children.filter((child) => child.key === key)[0];
+      result = result.children.find((child) => child.key === key);
     }
     return result;
   },
 
   toggleEventAndChildren(event, toggle) {
     let eventNode = this.findEventInTree(event);
-    toggle ? expandNodes(eventNode) : foldNodes(eventNode);
+    if(toggle){
+      expandNodes(eventNode);
+    } else {
+      foldNodes(eventNode);
+    }
   },
 
   resetData() {
@@ -472,25 +515,35 @@ export const store = reactive({
     evalInWindow("refreshComponent", [JSON.stringify(path)], this.activeFrame);
   },
 
-  logComponentInConsole(type, path = this.activeComponent.path) {
+  // Allows to log data on the component in the console: 
+  // type can be "node", "props", "env", "subscription" or "instance"
+  logComponentDataInConsole(type, path = this.activeComponent.path) {
     evalInWindow("sendObjectToConsole", [JSON.stringify(path), '"' + type + '"'], this.activeFrame);
   },
 
-  inspectComponentInDOM(path = this.activeComponent.path) {
-    evalInWindow("inspectComponentDOM", [JSON.stringify(path)], this.activeFrame);
+  // Inspect the given component's data based on the given type
+  inspectComponent(type, path = this.activeComponent.path) {
+    switch (type) {
+      case "DOM": 
+        evalInWindow("inspectComponentDOM", [JSON.stringify(path)], this.activeFrame);
+        break;
+      case "source":
+        evalInWindow("inspectComponentSource", [JSON.stringify(path)], this.activeFrame);
+        break;
+      case "compiled template":
+        evalInWindow("inspectComponentCompiledTemplate", [JSON.stringify(path)], this.activeFrame);
+        break;
+      case "raw template":
+        evalInWindow("inspectComponentRawTemplate", [JSON.stringify(path)], this.activeFrame);
+        break;
+    }
   },
 
-  inspectComponentSource(path = this.activeComponent.path) {
-    evalInWindow("inspectComponentSource", [JSON.stringify(path)], this.activeFrame);
-  },
+   // Trigger the highlight on the component in the page
+  highlightComponent(path) {
+    evalInWindow("highlightComponent", [JSON.stringify(path)], this.activeFrame);
+  }
 
-  inspectCompiledTemplate(path = this.activeComponent.path) {
-    evalInWindow("inspectComponentCompiledTemplate", [JSON.stringify(path)], this.activeFrame);
-  },
-
-  inspectRAwTemplate(path = this.activeComponent.path) {
-    evalInWindow("inspectComponentRawTemplate", [JSON.stringify(path)], this.activeFrame);
-  },
 });
 
 // Instantiate the store
@@ -537,6 +590,9 @@ function keepAlive() {
 
 // Connect to the port to communicate to the background script
 chrome.runtime.onConnect.addListener((port) => {
+  if(!port.name === "OwlDevtoolsPort"){
+    return;
+  }
   port.onMessage.addListener((msg) => {
     // When message of type Flush is received, overwrite the component tree with the new one from page
     // A flush message is sent everytime a component is rendered on the page
@@ -571,71 +627,7 @@ chrome.runtime.onConnect.addListener((port) => {
     // Logic for recording an event when the event message is received
     if (msg.type === "Event") {
       let events = msg.data;
-      if (!Array.isArray(events)) {
-        return;
-      }
-      for (const event of events) {
-        if (
-          !isObjectWithShape(event, {
-            type: "string",
-            component: "string",
-            key: "string",
-            path: "object",
-            id: "number",
-          }) ||
-          !(Array.isArray(event.path) && event.path.every((val) => typeof val === "string"))
-        ) {
-          return;
-        }
-        event.origin = null;
-        event.toggled = false;
-        // Logic to retrace the origin of the event if it is not a root render event
-        if (!event.type.includes("render")) {
-          for (let i = store.events.length - 1; i >= 0; i--) {
-            if (
-              !store.events[i].origin &&
-              event.path.join("/").includes(store.events[i].path.join("/"))
-            ) {
-              event.origin = toRaw(store.events[i]);
-              break;
-            }
-            if (
-              store.events[i].origin &&
-              event.path.join("/").includes(store.events[i].origin.path.join("/"))
-            ) {
-              event.origin = toRaw(store.events[i].origin);
-              break;
-            }
-          }
-        }
-        // Add the event to the events tree immediatly when the events view is in tree mode
-        if (store.eventsTreeView) {
-          let eventNode = Object.assign({}, event);
-          eventNode.children = [];
-          eventNode.toggled = true;
-          if (!eventNode.origin) {
-            eventNode.depth = 0;
-            store.eventsTree.push(eventNode);
-          } else {
-            for (let i = store.eventsTree.length - 1; i >= 0; i--) {
-              if (eventNode.origin.path.join("/") === store.eventsTree[i].path.join("/")) {
-                const relativePath = eventNode.path.slice(
-                  store.eventsTree[i].path.length,
-                  eventNode.path.length - 1
-                );
-                let parent = store.eventsTree[i];
-                for (const key of relativePath) {
-                  parent = parent.children.filter((child) => child.key === key)[0];
-                }
-                eventNode.depth = parent.depth + 1;
-                parent.children.push(eventNode);
-                break;
-              }
-            }
-          }
-        }
-        addEventSorted(event);
-      }
+      loadEvents(events);
     }
 
     // If we know a new iframe has been added to the page, update the iframe list
@@ -660,13 +652,81 @@ chrome.runtime.onConnect.addListener((port) => {
   });
 });
 
+function loadEvents(events){
+  if (!Array.isArray(events)) {
+    return;
+  }
+  for (const event of events) {
+    if (
+      !isObjectWithShape(event, {
+        type: "string",
+        component: "string",
+        key: "string",
+        path: "object",
+        id: "number",
+      }) ||
+      !(Array.isArray(event.path) && event.path.every((val) => typeof val === "string"))
+    ) {
+      return;
+    }
+    event.origin = null;
+    event.toggled = false;
+    // Logic to retrace the origin of the event if it is not a root render event
+    if (!event.type.includes("render")) {
+      for (let i = store.events.length - 1; i >= 0; i--) {
+        if (
+          !store.events[i].origin &&
+          event.path.join("/").includes(store.events[i].path.join("/"))
+        ) {
+          event.origin = toRaw(store.events[i]);
+          break;
+        }
+        if (
+          store.events[i].origin &&
+          event.path.join("/").includes(store.events[i].origin.path.join("/"))
+        ) {
+          event.origin = toRaw(store.events[i].origin);
+          break;
+        }
+      }
+    }
+    // Add the event to the events tree immediatly when the events view is in tree mode
+    if (store.eventsTreeView) {
+      let eventNode = Object.assign({}, event);
+      eventNode.children = [];
+      eventNode.toggled = true;
+      if (!eventNode.origin) {
+        eventNode.depth = 0;
+        store.eventsTree.push(eventNode);
+      } else {
+        for (let i = store.eventsTree.length - 1; i >= 0; i--) {
+          if (eventNode.origin.path.join("/") === store.eventsTree[i].path.join("/")) {
+            const relativePath = eventNode.path.slice(
+              store.eventsTree[i].path.length,
+              eventNode.path.length - 1
+            );
+            let parent = store.eventsTree[i];
+            for (const key of relativePath) {
+              parent = parent.children.find((child) => child.key === key);
+            }
+            eventNode.depth = parent.depth + 1;
+            parent.children.push(eventNode);
+            break;
+          }
+        }
+      }
+    }
+    addEventSorted(event);
+  }
+}
+
 // Deselect component and remove highlight on all children
 function deselectComponent(component) {
   component.selected = false;
   component.highlighted = false;
-  component.children.forEach((child) => {
+  for (const child of component.children){
     deselectComponent(child);
-  });
+  }
 }
 
 // Used to check if the given object has the right shape
@@ -720,10 +780,16 @@ function foldNodes(node) {
 }
 
 // Load the scripts in the specified frame
-function loadScripts(frameUrl) {
-  fetch("../page_scripts/load_scripts.js")
-    .then((response) => response.text())
-    .then((contents) => {
-      chrome.devtools.inspectedWindow.eval(contents, { frameURL: frameUrl });
-    });
+async function loadScripts(frameUrl) {
+  const response = await fetch("../page_scripts/load_scripts.js");
+  const contents = await response.text();
+  chrome.devtools.inspectedWindow.eval(contents, { frameURL: frameUrl });
+}
+
+// Shallow array equality
+function arraysEqual(arr1, arr2) {
+  if (arr1.length !== arr2.length) {  // Check if the arrays are of the same length
+    return false;
+  }
+  return arr1.every((val, i) => val === arr2[i]);  // Compare each element of the arrays
 }

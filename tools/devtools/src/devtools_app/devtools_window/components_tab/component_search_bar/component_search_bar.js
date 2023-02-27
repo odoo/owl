@@ -9,40 +9,16 @@ export class ComponentSearchBar extends Component {
     this.store = useStore();
   }
 
-  // On keyup
   updateSearch(event) {
-    if (!(event.key === "Enter")) {
-      const search = event.target.value;
-      this.store.updateSearch(search);
+    if (event.key !== "Enter") {
+      this.store.updateSearch(event.target.value);
     }
   }
 
-  // On keydown
-  fastNextSearch(event) {
+  // Go to the next search result repeatedly while enter is pressed
+  onSearchKeyDown(event) {
     if (event.key === "Enter") {
-      this.getNextSearch();
-    }
-  }
-
-  getNextSearch() {
-    if (
-      this.store.componentSearch.searchIndex > -1 &&
-      this.store.componentSearch.searchIndex < this.store.componentSearch.searchResults.length - 1
-    ) {
-      this.store.setSearchIndex(this.store.componentSearch.searchIndex + 1);
-    } else if (
-      this.store.componentSearch.searchIndex ===
-      this.store.componentSearch.searchResults.length - 1
-    ) {
-      this.store.setSearchIndex(0);
-    }
-  }
-
-  getPrevSearch() {
-    if (this.store.componentSearch.searchIndex > 0) {
-      this.store.setSearchIndex(this.store.componentSearch.searchIndex - 1);
-    } else if (this.store.componentSearch.searchIndex === 0) {
-      this.store.setSearchIndex(this.store.componentSearch.searchResults.length - 1);
+      this.store.componentSearch.getNextSearch()
     }
   }
 }

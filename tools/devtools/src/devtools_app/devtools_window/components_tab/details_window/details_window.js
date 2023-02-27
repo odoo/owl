@@ -5,9 +5,7 @@ import { Subscriptions } from "./subscriptions/subscriptions";
 
 export class DetailsWindow extends Component {
   static template = "devtools.DetailsWindow";
-
   static components = { ObjectTreeElement, Subscriptions };
-
   setup() {
     this.store = useStore();
   }

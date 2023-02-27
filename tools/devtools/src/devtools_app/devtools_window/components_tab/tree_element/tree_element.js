@@ -1,10 +1,10 @@
 /** @odoo-module **/
 
-import { evalInWindow, isElementInCenterViewport } from "../../../../utils";
+import { isElementInCenterViewport, minimizeKey } from "../../../../utils";
 import { useStore } from "../../../store/store";
 import { HighlightText } from "./highlight_text/highlight_text";
 
-const { Component, useState, useEffect, onMounted, onWillUpdateProps } = owl;
+const { Component, useRef, useState, useEffect, onMounted, onWillUpdateProps } = owl;
 
 export class TreeElement extends Component {
   static template = "devtools.TreeElement";
@@ -29,6 +29,7 @@ export class TreeElement extends Component {
     });
     this.highlightTimeout = false;
     this.store = useStore();
+    this.contextMenu = useRef("contextmenu");
     // Scroll to the selected element when it changes
     onMounted(() => {
       if (this.props.selected) {
@@ -80,26 +81,17 @@ export class TreeElement extends Component {
     return this.props.path.join("/");
   }
 
+  get componentPadding() {
+    return this.props.depth * 0.8;
+  }
+
   // Expand/fold the component node
   toggleDisplay(ev) {
     this.store.toggleComponentTreeElementDisplay(this.props.path);
   }
 
-  // Trigger the highlight on the component in the page when the node is hovered
-  hoverComponent(ev) {
-    evalInWindow("highlightComponent", [JSON.stringify(this.props.path)], this.store.activeFrame);
-  }
-
-  // Formatting for displaying the key of the component
   get minimizedKey() {
-    const split = this.props.key.split("__");
-    let key;
-    if (split.length > 2) {
-      key = this.props.key.substring(4 + split[1].length, this.props.key.length);
-    } else {
-      key = "";
-    }
-    return key;
+    return minimizeKey(this.props.key);
   }
 
   // Used to select the component node
@@ -110,32 +102,5 @@ export class TreeElement extends Component {
     if (!this.props.selected) {
       this.store.selectComponent(this.props.path);
     }
-  }
-
-  // Display the custom context menu to access the expandAll and foldAll methods
-  openMenu(event) {
-    const menu = document.getElementById("customMenu/" + this.pathAsString);
-    menu.classList.remove("hidden");
-    const menuWidth = menu.offsetWidth;
-    const menuHeight = menu.offsetHeight;
-    let x = event.clientX;
-    let y = event.clientY;
-    if (x + menuWidth > window.innerWidth) {
-      x = window.innerWidth - menuWidth;
-    }
-    if (y + menuHeight > window.innerHeight) {
-      y = window.innerHeight - menuHeight;
-    }
-    menu.style.left = x + "px";
-    // Need 25px offset because of the main navbar from the browser devtools
-    menu.style.top = y - 25 + "px";
-  }
-
-  expandAllChildren(ev) {
-    this.store.toggleComponentAndChildren(this.props.path, true);
-  }
-
-  foldAllChildren(ev) {
-    this.store.toggleComponentAndChildren(this.props.path, false);
   }
 }

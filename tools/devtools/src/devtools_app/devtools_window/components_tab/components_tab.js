@@ -23,7 +23,7 @@ export class ComponentsTab extends Component {
   }
 
   // Apply the right action depending on which arrow key is pressed (on keydown)
-  onKeyboardEvent(event){
+  onKeyboardEvent(event) {
     switch (event.key) {
       case "ArrowLeft":
         this.store.toggleOrSelectPrevElement(true);
@@ -42,7 +42,7 @@ export class ComponentsTab extends Component {
         event.preventDefault();
         break;
     }
-  };
+  }
 
   onMouseDown = () => {
     // Add event listeners for mouse move and mouse up events

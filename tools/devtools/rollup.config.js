@@ -3,7 +3,7 @@ import copy from "rollup-plugin-copy";
 import execute from "rollup-plugin-execute";
 import del from "rollup-plugin-delete";
 
-export default ({"config-browser": browser}) =>{
+export default ({ "config-browser": browser }) => {
   const isProduction = process.env.NODE_ENV === "production";
   const isChrome = browser === "chrome";
   const filesToMove = [
@@ -22,7 +22,9 @@ export default ({"config-browser": browser}) =>{
     { src: "tools/devtools/src/main.css", dest: "tools/devtools/build/popup_app" },
     { src: "tools/devtools/src/main.css", dest: "tools/devtools/build/devtools_app" },
     {
-      src: isChrome ? "tools/devtools/manifest-chrome.json" : "tools/devtools/manifest-firefox.json",
+      src: isChrome
+        ? "tools/devtools/manifest-chrome.json"
+        : "tools/devtools/manifest-firefox.json",
       dest: "tools/devtools/build",
       rename: "manifest.json",
     },
@@ -43,11 +45,11 @@ export default ({"config-browser": browser}) =>{
 
   const commands = new Array(2);
   commands[1] =
-  "npm run compile_templates -- tools/devtools/src && mv templates.js tools/devtools/assets/templates.js";
+    "npm run compile_templates -- tools/devtools/src && mv templates.js tools/devtools/assets/templates.js";
   const firstRule = generateRule("tools/devtools/src/utils.js");
   if (isProduction)
-  commands[0] =
-  "npm run build && cp dist/owl.iife.js tools/devtools/assets/owl.js && npm run build:compiler";
+    commands[0] =
+      "npm run build && cp dist/owl.iife.js tools/devtools/assets/owl.js && npm run build:compiler";
   else commands[0] = "cp dist/owl.iife.js tools/devtools/assets/owl.js";
   firstRule.plugins.push(execute(commands, true));
   const secondRule = generateRule("tools/devtools/src/content.js");
@@ -56,12 +58,12 @@ export default ({"config-browser": browser}) =>{
   lastRule.plugins.push(del({ targets: "tools/devtools/assets/*.js" }));
 
   return [
-   firstRule,
-   secondRule,
-   generateRule("tools/devtools/src/devtools_app/devtools.js"),
-   generateRule("tools/devtools/src/page_scripts/load_scripts.js"),
-   generateRule("tools/devtools/src/devtools_app/devtools_panel.js"),
-   generateRule("tools/devtools/src/popup_app/popup.js"),
-   lastRule,
- ];
-}
+    firstRule,
+    secondRule,
+    generateRule("tools/devtools/src/devtools_app/devtools.js"),
+    generateRule("tools/devtools/src/page_scripts/load_scripts.js"),
+    generateRule("tools/devtools/src/devtools_app/devtools_panel.js"),
+    generateRule("tools/devtools/src/popup_app/popup.js"),
+    lastRule,
+  ];
+};

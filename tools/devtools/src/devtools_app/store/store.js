@@ -11,7 +11,7 @@ export const store = reactive({
     top: 0,
     left: 0,
     // Opens the context menu corresponding with the given menu html element
-    open(event, menu){
+    open(event, menu) {
       menu.classList.remove("d-none");
       const menuWidth = menu.offsetWidth;
       const menuHeight = menu.offsetHeight;
@@ -54,15 +54,9 @@ export const store = reactive({
     searchIndex: 0,
     activeSelector: false,
     getNextSearch() {
-      if (
-        this.searchIndex > -1 &&
-        this.searchIndex < this.searchResults.length - 1
-      ) {
+      if (this.searchIndex > -1 && this.searchIndex < this.searchResults.length - 1) {
         store.setSearchIndex(this.searchIndex + 1);
-      } else if (
-        this.searchIndex ===
-        this.searchResults.length - 1
-      ) {
+      } else if (this.searchIndex === this.searchResults.length - 1) {
         store.setSearchIndex(0);
       }
     },
@@ -144,9 +138,13 @@ export const store = reactive({
     }
     element.selected = true;
     highlightChildren(element);
-    const component = await evalInWindow("getComponentDetails", [JSON.stringify(element.path)], this.activeFrame);
+    const component = await evalInWindow(
+      "getComponentDetails",
+      [JSON.stringify(element.path)],
+      this.activeFrame
+    );
     this.activeComponent = component;
-    if (this.page !== "ComponentsTab"){
+    if (this.page !== "ComponentsTab") {
       this.switchTab("ComponentsTab");
     }
   },
@@ -238,7 +236,7 @@ export const store = reactive({
       let component = this.getComponentByPath(this.activeComponent.path);
       if (component.children.length > 0 && component.toggled) {
         component.toggled = false;
-      } else if (this.activeComponent.path.length > 1){
+      } else if (this.activeComponent.path.length > 1) {
         this.selectComponent(this.activeComponent.path.slice(0, -1));
       }
       return;
@@ -257,9 +255,9 @@ export const store = reactive({
   toggleOrSelectNextElement(toggle) {
     if (toggle) {
       let component = this.getComponentByPath(this.activeComponent.path);
-      if(!component.children.length){
+      if (!component.children.length) {
         return;
-      } else if (!component.toggled){
+      } else if (!component.toggled) {
         component.toggled = true;
         return;
       }
@@ -496,7 +494,7 @@ export const store = reactive({
 
   toggleEventAndChildren(event, toggle) {
     let eventNode = this.findEventInTree(event);
-    if(toggle){
+    if (toggle) {
       expandNodes(eventNode);
     } else {
       foldNodes(eventNode);
@@ -515,7 +513,7 @@ export const store = reactive({
     evalInWindow("refreshComponent", [JSON.stringify(path)], this.activeFrame);
   },
 
-  // Allows to log data on the component in the console: 
+  // Allows to log data on the component in the console:
   // type can be "node", "props", "env", "subscription" or "instance"
   logComponentDataInConsole(type, path = this.activeComponent.path) {
     evalInWindow("sendObjectToConsole", [JSON.stringify(path), '"' + type + '"'], this.activeFrame);
@@ -524,7 +522,7 @@ export const store = reactive({
   // Inspect the given component's data based on the given type
   inspectComponent(type, path = this.activeComponent.path) {
     switch (type) {
-      case "DOM": 
+      case "DOM":
         evalInWindow("inspectComponentDOM", [JSON.stringify(path)], this.activeFrame);
         break;
       case "source":
@@ -539,11 +537,10 @@ export const store = reactive({
     }
   },
 
-   // Trigger the highlight on the component in the page
+  // Trigger the highlight on the component in the page
   highlightComponent(path) {
     evalInWindow("highlightComponent", [JSON.stringify(path)], this.activeFrame);
-  }
-
+  },
 });
 
 // Instantiate the store
@@ -590,7 +587,7 @@ function keepAlive() {
 
 // Connect to the port to communicate to the background script
 chrome.runtime.onConnect.addListener((port) => {
-  if(!port.name === "OwlDevtoolsPort"){
+  if (!port.name === "OwlDevtoolsPort") {
     return;
   }
   port.onMessage.addListener((msg) => {
@@ -652,7 +649,7 @@ chrome.runtime.onConnect.addListener((port) => {
   });
 });
 
-function loadEvents(events){
+function loadEvents(events) {
   if (!Array.isArray(events)) {
     return;
   }
@@ -724,7 +721,7 @@ function loadEvents(events){
 function deselectComponent(component) {
   component.selected = false;
   component.highlighted = false;
-  for (const child of component.children){
+  for (const child of component.children) {
     deselectComponent(child);
   }
 }
@@ -788,8 +785,9 @@ async function loadScripts(frameUrl) {
 
 // Shallow array equality
 function arraysEqual(arr1, arr2) {
-  if (arr1.length !== arr2.length) {  // Check if the arrays are of the same length
+  if (arr1.length !== arr2.length) {
+    // Check if the arrays are of the same length
     return false;
   }
-  return arr1.every((val, i) => val === arr2[i]);  // Compare each element of the arrays
+  return arr1.every((val, i) => val === arr2[i]); // Compare each element of the arrays
 }

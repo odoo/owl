@@ -68,9 +68,14 @@ export class ObjectTreeElement extends Component {
   }
 
   setupEditMode() {
-    if (this.store.activeComponent.path.length === 1) {return;}
+    if (this.store.activeComponent.path.length === 1) {
+      return;
+    }
     if (!this.state.editMode) {
-      if (["number", "string", "boolean", "undefined"].includes(this.props.contentType) || this.props.content === "null") {
+      if (
+        ["number", "string", "boolean", "undefined"].includes(this.props.contentType) ||
+        this.props.content === "null"
+      ) {
         this.state.editMode = true;
       }
     }

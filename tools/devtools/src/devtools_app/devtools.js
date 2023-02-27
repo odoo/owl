@@ -28,7 +28,7 @@ const checkInterval = setInterval(createPanelsIfOwl, 300);
 
 // Load the scripts on the page in order to define the __OWL__DEVTOOLS_GLOBAL_HOOK__
 async function loadScripts() {
-  if (scriptsLoaded){
+  if (scriptsLoaded) {
     return true;
   }
   return new Promise(async (resolve) => {

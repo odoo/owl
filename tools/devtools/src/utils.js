@@ -44,7 +44,7 @@ export function isElementInCenterViewport(el) {
 
 // Formatting for displaying the key of the component
 export function minimizeKey(key) {
-  if(key.startsWith("__")){
+  if (key.startsWith("__")) {
     const split = key.split("__");
     if (split.length > 2) {
       key = key.substring(4 + split[1].length, key.length);

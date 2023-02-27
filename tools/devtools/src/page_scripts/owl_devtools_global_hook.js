@@ -1,11 +1,4 @@
 export class OwlDevtoolsGlobalHook {
-  currentSelectedElement;
-  root;
-  fibersSet;
-  recordEvents;
-  patchFiber;
-  iFrameObserver;
-
   constructor() {
     // The set of apps exposed by owl
     this.apps = window.__OWL_DEVTOOLS__.apps;
@@ -13,37 +6,40 @@ export class OwlDevtoolsGlobalHook {
     this.Fiber = window.__OWL_DEVTOOLS__.Fiber;
     // Same but for RootFiber
     this.RootFiber = window.__OWL_DEVTOOLS__.RootFiber;
-    // Set to keep track of the bibers that are in the flush queue
-    this.fibersSet = new WeakSet();
+    // Set to keep track of the fibers that are in the flush queue
+    this.queuedFibers = new WeakSet();
+    // Set to keep track of the HTML elements we added to the page
+    this.addedElements = [];
     // To keep track of the succession order of the render events
     this.eventId = 0;
     // Allows to launch a message each time an iframe html element is added to the page
-    this.iFrameObserver = new MutationObserver(function (mutations_list) {
-      mutations_list.forEach(function (mutation) {
-        mutation.addedNodes.forEach(function (added_node) {
-          if (added_node.tagName == "IFRAME") {
+    const iFrameObserver = new MutationObserver(function (mutationsList) {
+      mutationsList.forEach(function (mutation) {
+        mutation.addedNodes.forEach(function (addedNode) {
+          if (addedNode.tagName == "IFRAME") {
+            /*
+             * This message is intercepted by the content script which relays it to the background script which relays it to the devtools app.
+             * This process may seem long and indirect but is necessary. This applies to all window.top.postMessage methods in this file.
+             * More information in the docs: https://developer.chrome.com/docs/extensions/mv3/devtools/#evaluated-scripts-to-devtools
+             */
             window.top.postMessage({ type: "owlDevtools__NewIFrame" });
           }
         });
       });
     });
-    // Activates the observer defined above
-    this.iFrameObserver.observe(document.body, { subtree: true, childList: true });
-    const appsArray = Array.from(this.apps);
-    appsArray.forEach((app) => this.patchAppMethods(app));
-    this.patchSetMethods();
+    iFrameObserver.observe(document.body, { subtree: true, childList: true });
+    this.patchAppMethods();
+    this.patchAppsSetMethods();
     this.recordEvents = false;
     this.requestedFrame = false;
     this.eventsBatch = [];
   }
 
   // Modify the methods of the apps set in order to send a message each time it is modified.
-  patchSetMethods() {
+  patchAppsSetMethods() {
     const originalAdd = this.apps.add;
     const originalDelete = this.apps.delete;
-    const self = this;
-    this.apps.add = function (app) {
-      self.patchAppMethods(app);
+    this.apps.add = function () {
       originalAdd.call(this, ...arguments);
       window.top.postMessage({ type: "owlDevtools__RefreshApps" });
     };
@@ -54,24 +50,29 @@ export class OwlDevtoolsGlobalHook {
   }
 
   // Modify methods of each app so that it triggers messages on each flush and component render
-  patchAppMethods(app) {
+  patchAppMethods() {
     const self = this;
-    const originalFlush = app.scheduler.flush;
+    let app;
+    for (const appItem of self.apps) {
+      if (appItem.root) {
+        app = appItem;
+      }
+    }
+    // We don't want to bother patching the apps methods if none have components inside
+    if (!app) {
+      return;
+    }
+    const originalFlush = app.scheduler.constructor.prototype.flush;
     let inFlush = false;
     let _render = false;
-    app.scheduler.flush = function () {
+    app.scheduler.constructor.prototype.flush = function () {
       // Used to know when a render is triggered inside the flush method or not
       inFlush = true;
       [...this.tasks].map((fiber) => {
-        if (fiber.counter === 0 && !self.fibersSet.has(fiber)) {
-          self.fibersSet.add(fiber);
+        if (fiber.counter === 0 && !self.queuedFibers.has(fiber)) {
+          self.queuedFibers.add(fiber);
           const path = self.getComponentPath(fiber.node);
-          /*
-           * Add a functionnality to the flush function which sends a message to the window every time it is triggered.
-           * This message is intercepted by the content script which informs the background script to ask the devtools app tree to be refreshed.
-           * This process may be long but is necessary. More information in the docs:
-           * https://developer.chrome.com/docs/extensions/mv3/devtools/#evaluated-scripts-to-devtools
-           */
+          //Add a functionnality to the flush function which sends a message to the window every time it is triggered.
           window.top.postMessage({ type: "owlDevtools__Flush", data: path });
         }
       });
@@ -87,7 +88,9 @@ export class OwlDevtoolsGlobalHook {
       if (this instanceof self.RootFiber && inFlush) {
         flushed = true;
       }
+      const before = performance.now();
       originalRender.call(this, ...arguments);
+      const time = performance.now() - before;
       if (self.recordEvents) {
         const path = self.getComponentPath(this.node);
         // if the render comes from flush
@@ -97,6 +100,7 @@ export class OwlDevtoolsGlobalHook {
             component: this.node.name,
             key: this.node.parentKey,
             path: path,
+            time: time,
             id: id,
           });
           // if _render is called, it is a proper render (and not a delayed one)
@@ -108,6 +112,7 @@ export class OwlDevtoolsGlobalHook {
               component: this.node.name,
               key: this.node.parentKey,
               path: path,
+              time: time,
               id: id,
             });
             // if the node status is NEW, the node has been created just before rendering
@@ -117,6 +122,7 @@ export class OwlDevtoolsGlobalHook {
               component: this.node.name,
               key: this.node.parentKey,
               path: path,
+              time: time,
               id: id,
             });
             // else it is an update
@@ -126,6 +132,7 @@ export class OwlDevtoolsGlobalHook {
               component: this.node.name,
               key: this.node.parentKey,
               path: path,
+              time: time,
               id: id,
             });
           }
@@ -136,6 +143,7 @@ export class OwlDevtoolsGlobalHook {
             component: this.node.name,
             key: this.node.parentKey,
             path: path,
+            time: time,
             id: id,
           });
         }
@@ -150,7 +158,7 @@ export class OwlDevtoolsGlobalHook {
     const original_Complete = self.RootFiber.prototype.complete;
     self.RootFiber.prototype.complete = function () {
       original_Complete.call(this, ...arguments);
-      if(self.recordEvents){
+      if (self.recordEvents) {
         window.top.postMessage({
           type: "owlDevtools__Event",
           data: self.eventsBatch,
@@ -159,22 +167,21 @@ export class OwlDevtoolsGlobalHook {
       }
     };
     // Signals when a component is destroyed
-    if (app.root) {
-      const originalDestroy = app.root.constructor.prototype._destroy;
-      app.root.constructor.prototype._destroy = function () {
-        if (self.recordEvents) {
-          const path = self.getComponentPath(this);
-          self.eventsBatch.push({
-            type: "destroy",
-            component: this.name,
-            key: this.parentKey,
-            path: path,
-            id: self.eventId++,
-          });
-        }
-        originalDestroy.call(this, ...arguments);
-      };
-    }
+    const originalDestroy = app.root.constructor.prototype._destroy;
+    app.root.constructor.prototype._destroy = function () {
+      if (self.recordEvents) {
+        const path = self.getComponentPath(this);
+        self.eventsBatch.push({
+          type: "destroy",
+          component: this.name,
+          key: this.parentKey,
+          path: path,
+          time: 0,
+          id: self.eventId++,
+        });
+      }
+      originalDestroy.call(this, ...arguments);
+    };
   }
 
   // Enables/disables the recording of the render/destroy events based on value
@@ -192,7 +199,7 @@ export class OwlDevtoolsGlobalHook {
   // Get the urls of all iframes present on the page
   getIFrameUrls() {
     let frames = [];
-    for (const frame of document.getElementsByTagName("iframe")) {
+    for (const frame of document.querySelectorAll("iframe")) {
       frames.push(frame.contentDocument.location.href);
     }
     return frames;
@@ -201,6 +208,10 @@ export class OwlDevtoolsGlobalHook {
   // Draws a highlighting rectangle on the specified html element and displays its dimensions and the specified name in a box
   highlightElements(elements, name) {
     this.removeHighlights();
+
+    if (elements.length === 0) {
+      return;
+    }
 
     let minTop = Number.MAX_SAFE_INTEGER;
     let minLeft = Number.MAX_SAFE_INTEGER;
@@ -217,16 +228,6 @@ export class OwlDevtoolsGlobalHook {
       const bottom = top + rect.height;
       const right = left + rect.width;
 
-      const marginTop = parseInt(getComputedStyle(element).marginTop);
-      const marginRight = parseInt(getComputedStyle(element).marginRight);
-      const marginBottom = parseInt(getComputedStyle(element).marginBottom);
-      const marginLeft = parseInt(getComputedStyle(element).marginLeft);
-
-      const paddingTop = parseInt(getComputedStyle(element).paddingTop);
-      const paddingRight = parseInt(getComputedStyle(element).paddingRight);
-      const paddingBottom = parseInt(getComputedStyle(element).paddingBottom);
-      const paddingLeft = parseInt(getComputedStyle(element).paddingLeft);
-
       minTop = Math.min(minTop, top);
       minLeft = Math.min(minLeft, left);
       maxBottom = Math.max(maxBottom, bottom);
@@ -235,34 +236,59 @@ export class OwlDevtoolsGlobalHook {
       const width = right - left;
       const height = bottom - top;
 
-      const highlight = document.createElement("div");
-      highlight.className = "owl-devtools-highlight";
-      highlight.style.top = `${top}px`;
-      highlight.style.left = `${left}px`;
-      highlight.style.width = `${width}px`;
-      highlight.style.height = `${height}px`;
-      highlight.style.position = "absolute";
-      highlight.style.backgroundColor = "rgba(15, 139, 245, 0.4)";
-      highlight.style.borderStyle = "solid";
-      highlight.style.borderWidth = `${paddingTop}px ${paddingRight}px ${paddingBottom}px ${paddingLeft}px`;
-      highlight.style.borderColor = "rgba(65, 196, 68, 0.4)";
-      highlight.style.zIndex = "10000";
-      highlight.style.pointerEvents = "none";
-      document.body.appendChild(highlight);
+      if (element instanceof HTMLElement) {
+        const marginTop = parseInt(getComputedStyle(element).marginTop);
+        const marginRight = parseInt(getComputedStyle(element).marginRight);
+        const marginBottom = parseInt(getComputedStyle(element).marginBottom);
+        const marginLeft = parseInt(getComputedStyle(element).marginLeft);
 
-      const highlightMargins = document.createElement("div");
-      highlightMargins.className = "owl-devtools-highlight";
-      highlightMargins.style.top = `${top - marginTop}px`;
-      highlightMargins.style.left = `${left - marginLeft}px`;
-      highlightMargins.style.width = `${width + marginLeft + marginRight}px`;
-      highlightMargins.style.height = `${height + marginBottom + marginTop}px`;
-      highlightMargins.style.position = "absolute";
-      highlightMargins.style.borderStyle = "solid";
-      highlightMargins.style.borderWidth = `${marginTop}px ${marginRight}px ${marginBottom}px ${marginLeft}px`;
-      highlightMargins.style.borderColor = "rgba(241, 179, 121, 0.4)";
-      highlightMargins.style.zIndex = "10000";
-      highlightMargins.style.pointerEvents = "none";
-      document.body.appendChild(highlightMargins);
+        const paddingTop = parseInt(getComputedStyle(element).paddingTop);
+        const paddingRight = parseInt(getComputedStyle(element).paddingRight);
+        const paddingBottom = parseInt(getComputedStyle(element).paddingBottom);
+        const paddingLeft = parseInt(getComputedStyle(element).paddingLeft);
+
+        const highlight = document.createElement("div");
+        highlight.style.top = `${top}px`;
+        highlight.style.left = `${left}px`;
+        highlight.style.width = `${width}px`;
+        highlight.style.height = `${height}px`;
+        highlight.style.position = "absolute";
+        highlight.style.backgroundColor = "rgba(15, 139, 245, 0.4)";
+        highlight.style.borderStyle = "solid";
+        highlight.style.borderWidth = `${paddingTop}px ${paddingRight}px ${paddingBottom}px ${paddingLeft}px`;
+        highlight.style.borderColor = "rgba(65, 196, 68, 0.4)";
+        highlight.style.zIndex = "10000";
+        highlight.style.pointerEvents = "none";
+        document.body.appendChild(highlight);
+        this.addedElements.push(highlight);
+
+        const highlightMargins = document.createElement("div");
+        highlightMargins.style.top = `${top - marginTop}px`;
+        highlightMargins.style.left = `${left - marginLeft}px`;
+        highlightMargins.style.width = `${width + marginLeft + marginRight}px`;
+        highlightMargins.style.height = `${height + marginBottom + marginTop}px`;
+        highlightMargins.style.position = "absolute";
+        highlightMargins.style.borderStyle = "solid";
+        highlightMargins.style.borderWidth = `${marginTop}px ${marginRight}px ${marginBottom}px ${marginLeft}px`;
+        highlightMargins.style.borderColor = "rgba(241, 179, 121, 0.4)";
+        highlightMargins.style.zIndex = "10000";
+        highlightMargins.style.pointerEvents = "none";
+        document.body.appendChild(highlightMargins);
+        this.addedElements.push(highlightMargins);
+        // In case the element is a range because a text node was passed
+      } else {
+        const highlight = document.createElement("div");
+        highlight.style.top = `${top}px`;
+        highlight.style.left = `${left}px`;
+        highlight.style.width = `${width}px`;
+        highlight.style.height = `${height}px`;
+        highlight.style.position = "absolute";
+        highlight.style.backgroundColor = "rgba(15, 139, 245, 0.4)";
+        highlight.style.zIndex = "10000";
+        highlight.style.pointerEvents = "none";
+        document.body.appendChild(highlight);
+        this.addedElements.push(highlight);
+      }
     }
 
     const width = maxRight - minLeft;
@@ -282,6 +308,7 @@ export class OwlDevtoolsGlobalHook {
     detailsBox.style.pointerEvents = "none";
     detailsBox.style.display = "inline";
     document.body.appendChild(detailsBox);
+    this.addedElements.push(detailsBox);
 
     const viewportWidth = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
     const viewportHeight = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
@@ -302,12 +329,12 @@ export class OwlDevtoolsGlobalHook {
   }
 
   // Remove all elements drawn by the HighlightElement function
-  removeHighlights() {
-    const highlights = document.querySelectorAll(".owl-devtools-highlight");
-    highlights.forEach((highlight) => highlight.remove());
-    const details = document.querySelectorAll(".owl-devtools-detailsBox");
-    details.forEach((detail) => detail.remove());
-  }
+  removeHighlights = () => {
+    for (const el of this.addedElements) {
+      el.remove();
+    }
+    this.addedElements = [];
+  };
 
   // Identify the hovered component based on the corresponding DOM element and send the Select message
   // when the target changes
@@ -323,9 +350,9 @@ export class OwlDevtoolsGlobalHook {
 
   // Activate the HTML selector tool
   enableHTMLSelector() {
-    document.addEventListener("mousemove", this.HTMLSelector);
+    document.addEventListener("mouseover", this.HTMLSelector, { capture: true });
     document.addEventListener("click", this.disableHTMLSelector, { capture: true });
-    document.addEventListener("mouseout", this.removeHighlights);
+    document.addEventListener("mouseout", this.removeHighlights, { capture: true });
   }
 
   // Diasble the HTML selector tool
@@ -338,14 +365,14 @@ export class OwlDevtoolsGlobalHook {
       ev.preventDefault();
     }
     this.removeHighlights();
-    document.removeEventListener("mousemove", this.HTMLSelector);
+    document.removeEventListener("mouseover", this.HTMLSelector, { capture: true });
     document.removeEventListener("click", this.disableHTMLSelector, { capture: true });
-    document.removeEventListener("mouseout", this.removeHighlights);
+    document.removeEventListener("mouseout", this.removeHighlights, { capture: true });
     window.top.postMessage({ type: "owlDevtools__StopSelector" });
   };
 
   // Defines how leaf object nodes should be displayed in the extension based on their type
-  parseItem(value, asConstructorName = false) {
+  serializeItem(value, asConstructorName = false) {
     if (typeof value === "array") {
       return "Array(" + value.length + ")";
     } else if (typeof value === "object") {
@@ -399,28 +426,30 @@ export class OwlDevtoolsGlobalHook {
   }
 
   // Returns a shortened version of the property as a string
-  parseContent(obj, type) {
+  serializeContent(obj, type) {
     let result = "";
     let first = true;
     if (type === "array") {
       result += "[";
       for (const value of obj) {
-        if (!first) result += ", ";
-        else {
+        if (!first) {
+          result += ", ";
+        } else {
           first = false;
         }
         if (result.length > 30) {
           result += "...";
           break;
         }
-        result += this.parseItem(value);
+        result += this.serializeItem(value);
       }
       result += "]";
     } else if (type === "object") {
       result += "{";
       for (const [key, value] of Object.entries(obj)) {
-        if (!first) result += ", " + key + ": ";
-        else {
+        if (!first) {
+          result += ", " + key + ": ";
+        } else {
           first = false;
           result += key + ": ";
         }
@@ -428,41 +457,46 @@ export class OwlDevtoolsGlobalHook {
           result += "...";
           break;
         }
-        result += this.parseItem(value);
+        result += this.serializeItem(value);
       }
       result += "}";
     } else if (type === "map") {
       result += "Map(" + obj.size + "){";
       for (const [key, value] of obj.entries()) {
-        if (!first) result += ", " + this.parseItem(key, true) + " => ";
-        else {
+        if (!first) {
+          result += ", " + this.serializeItem(key, true) + " => ";
+        } else {
           first = false;
-          result += this.parseItem(key, true) + " => ";
+          result += this.serializeItem(key, true) + " => ";
         }
         if (result.length > 30) {
           result += "...";
           break;
         }
-        result += this.parseItem(value, true);
+        result += this.serializeItem(value, true);
       }
       result += "}";
     } else if (type === "map entry") {
-      result += "{" + this.parseItem(obj[0], true) + " => " + this.parseItem(obj[1], true) + "}";
+      result +=
+        "{" + this.serializeItem(obj[0], true) + " => " + this.serializeItem(obj[1], true) + "}";
     } else if (type === "set") {
       result += "Set(" + obj.size + "){";
       for (const value of obj) {
-        if (!first) result += ", ";
-        else {
+        if (!first) {
+          result += ", ";
+        } else {
           first = false;
         }
         if (result.length > 30) {
           result += "...";
           break;
         }
-        result += this.parseItem(value);
+        result += this.serializeItem(value);
       }
       result += "}";
-    } else {result += this.parseItem(obj)};
+    } else {
+      result += this.serializeItem(obj);
+    }
     return result;
   }
 
@@ -507,10 +541,7 @@ export class OwlDevtoolsGlobalHook {
             }
         }
       } else {
-        if (
-          Object.getOwnPropertyDescriptor(obj, key) &&
-          Object.getOwnPropertyDescriptor(obj, key).hasOwnProperty("get")
-        ) {
+        if (Object.getOwnPropertyDescriptor(obj, key)?.hasOwnProperty("get")) {
           obj = Object.getOwnPropertyDescriptor(obj, key).get;
         } else {
           obj = obj[key];
@@ -524,7 +555,7 @@ export class OwlDevtoolsGlobalHook {
   }
 
   // Returns the asked property given the component path and the property's path
-  getPropertyObject(componentPath, objectPath) {
+  getObjectProperty(componentPath, objectPath) {
     const componentNode = this.getComponentNode(componentPath);
     let obj;
     // In case it is on an App
@@ -541,8 +572,8 @@ export class OwlDevtoolsGlobalHook {
     return obj;
   }
 
-  // Returns a parsed version of an object node that has compatible format with the devtools ObjectTreeElement component
-  getParsedObjectChild(componentPath, parentObj, key, depth, type, path, oldBranch, oldTree) {
+  // Returns a modified version of an object node that has compatible format with the devtools ObjectTreeElement component
+  serializeObjectChild(componentPath, parentObj, key, depth, type, path, oldBranch, oldTree) {
     let obj;
     let child = {
       depth: depth,
@@ -559,7 +590,7 @@ export class OwlDevtoolsGlobalHook {
         case "prototype":
           child.name = "[[Prototype]]";
           child.contentType = "object";
-          child.content = this.parseItem(parentObj, true);
+          child.content = this.serializeItem(parentObj, true);
           child.hasChildren = true;
           break;
         case "set entries":
@@ -573,7 +604,7 @@ export class OwlDevtoolsGlobalHook {
         case "map entry":
           child.name = key.index;
           child.contentType = "object";
-          child.content = this.parseContent(parentObj[key.index], key.type);
+          child.content = this.serializeContent(parentObj[key.index], key.type);
           child.hasChildren = true;
           break;
         case "set value":
@@ -603,10 +634,7 @@ export class OwlDevtoolsGlobalHook {
         }
         return child;
       }
-    } else if (
-      Object.getOwnPropertyDescriptor(parentObj, key) &&
-      Object.getOwnPropertyDescriptor(parentObj, key).hasOwnProperty("get")
-    ) {
+    } else if (Object.getOwnPropertyDescriptor(parentObj, key)?.hasOwnProperty("get")) {
       child.name = key;
       obj = Object.getOwnPropertyDescriptor(parentObj, key).get;
     } else {
@@ -621,14 +649,13 @@ export class OwlDevtoolsGlobalHook {
         return null;
       }
     }
-    if (obj == null) {
-      if (typeof obj === "undefined") {
-        child.content = "undefined";
-        child.contentType = "undefined";
-      } else {
-        child.content = "null";
-        child.contentType = "object";
-      }
+    if (obj === null) {
+      child.content = "null";
+      child.contentType = "object";
+      child.hasChildren = false;
+    } else if (obj === undefined) {
+      child.content = "undefined";
+      child.contentType = "undefined";
       child.hasChildren = false;
     } else {
       obj = owl.toRaw(obj);
@@ -657,7 +684,7 @@ export class OwlDevtoolsGlobalHook {
           child.contentType = typeof obj;
           child.hasChildren = false;
       }
-      child.content = this.parseContent(obj, child.contentType);
+      child.content = this.serializeContent(obj, child.contentType);
     }
     child.children = [];
     if (child.toggled) {
@@ -702,7 +729,7 @@ export class OwlDevtoolsGlobalHook {
         switch (match.type) {
           case "map entries":
           case "set entries":
-            obj = obj.children.filter((child) => child.name === "[[Entries]]")[0];
+            obj = obj.children.find((child) => child.name === "[[Entries]]");
             break;
           case "map entry":
           case "set entry":
@@ -716,15 +743,15 @@ export class OwlDevtoolsGlobalHook {
             obj = obj.children[1];
             break;
           case "prototype":
-            obj = obj.children.filter((child) => child.name === "[[Prototype]]")[0];
+            obj = obj.children.find((child) => child.name === "[[Prototype]]");
             break;
           case "symbol":
-            obj = obj.children.filter((child) => child.name === match.key)[0];
+            obj = obj.children.find((child) => child.name === match.key);
         }
       } else if (obj.contentType === "array") {
         obj = obj.children[match];
       } else {
-        obj = obj.children.filter((child) => child.name === match)[0];
+        obj = obj.children.find((child) => child.name === match);
       }
     }
     return obj;
@@ -733,7 +760,7 @@ export class OwlDevtoolsGlobalHook {
   loadObjectChildren(componentPath, objPath, depth, type, objType, oldTree) {
     let children = [];
     depth = depth + 1;
-    let obj = this.getPropertyObject(componentPath, objPath);
+    let obj = this.getObjectProperty(componentPath, objPath);
     let oldBranch = this.getObjectInOldTree(oldTree, objPath, objType);
     if (!obj) {
       return [];
@@ -745,7 +772,7 @@ export class OwlDevtoolsGlobalHook {
       case "array":
         if (typeof lastKey === "object" && lastKey.type.includes("entries")) {
           for (; index < obj.length; index++) {
-            const child = this.getParsedObjectChild(
+            const child = this.serializeObjectChild(
               componentPath,
               obj,
               { type: lastKey.type.replace("entries", "entry"), index: index },
@@ -761,7 +788,7 @@ export class OwlDevtoolsGlobalHook {
           }
         } else {
           for (; index < obj.length; index++) {
-            const child = this.getParsedObjectChild(
+            const child = this.serializeObjectChild(
               componentPath,
               obj,
               index.toString(),
@@ -779,7 +806,7 @@ export class OwlDevtoolsGlobalHook {
         break;
       case "set":
       case "map":
-        const entries = this.getParsedObjectChild(
+        const entries = this.serializeObjectChild(
           componentPath,
           obj,
           { type: type + " entries" },
@@ -793,7 +820,7 @@ export class OwlDevtoolsGlobalHook {
           children.push(entries);
           index++;
         }
-        const size = this.getParsedObjectChild(
+        const size = this.serializeObjectChild(
           componentPath,
           obj,
           "size",
@@ -808,7 +835,7 @@ export class OwlDevtoolsGlobalHook {
           index++;
         }
         Reflect.ownKeys(obj).forEach((key) => {
-          const child = this.getParsedObjectChild(
+          const child = this.serializeObjectChild(
             componentPath,
             obj,
             key,
@@ -823,7 +850,7 @@ export class OwlDevtoolsGlobalHook {
           }
           index++;
         });
-        prototype = this.getParsedObjectChild(
+        prototype = this.serializeObjectChild(
           componentPath,
           obj,
           { type: "prototype" },
@@ -839,7 +866,7 @@ export class OwlDevtoolsGlobalHook {
       case "function":
         if (typeof lastKey === "object" && lastKey.type.includes("entry")) {
           if (lastKey.type === "map entry") {
-            const mapKey = this.getParsedObjectChild(
+            const mapKey = this.serializeObjectChild(
               componentPath,
               obj,
               { type: "map key" },
@@ -850,7 +877,7 @@ export class OwlDevtoolsGlobalHook {
               oldTree
             );
             children.push(mapKey);
-            const mapValue = this.getParsedObjectChild(
+            const mapValue = this.serializeObjectChild(
               componentPath,
               obj,
               { type: "map value" },
@@ -862,7 +889,7 @@ export class OwlDevtoolsGlobalHook {
             );
             children.push(mapValue);
           } else if (lastKey.type === "set entry") {
-            const setValue = this.getParsedObjectChild(
+            const setValue = this.serializeObjectChild(
               componentPath,
               obj,
               { type: "set value" },
@@ -876,7 +903,7 @@ export class OwlDevtoolsGlobalHook {
           }
         } else {
           Reflect.ownKeys(obj).forEach((key) => {
-            const child = this.getParsedObjectChild(
+            const child = this.serializeObjectChild(
               componentPath,
               obj,
               key,
@@ -889,7 +916,7 @@ export class OwlDevtoolsGlobalHook {
             if (child) children.push(child);
             index++;
           });
-          prototype = this.getParsedObjectChild(
+          prototype = this.serializeObjectChild(
             componentPath,
             obj,
             { type: "prototype" },
@@ -907,9 +934,9 @@ export class OwlDevtoolsGlobalHook {
   // Returns the Component node given its path and the root component node
   getComponentNode(path) {
     if (path.length < 2) {
-      return Array.from(this.apps)[path[0]];
+      return [...this.apps][path[0]];
     }
-    let componentNode = Array.from(this.apps)[path[0]].root;
+    let componentNode = [...this.apps][path[0]].root;
     for (let i = 2; i < path.length; i++) {
       if (componentNode.children.hasOwnProperty(path[i])) {
         componentNode = componentNode.children[path[i]];
@@ -931,9 +958,7 @@ export class OwlDevtoolsGlobalHook {
       path = this.getElementPath($0);
     }
     component.path = path;
-    let node = this.getComponentNode(path);
-    let i = 0;
-    while (!node && i < Array.from(this.apps).length) node = Array.from(this.apps)[i++].root;
+    let node = this.getComponentNode(path) || [...this.apps].find((app) => app.root)?.root;
     if (!node) {
       return null;
     }
@@ -948,7 +973,7 @@ export class OwlDevtoolsGlobalHook {
       if (typeof key === "symbol") {
         oldBranch = oldTree?.props[key.toString()];
       }
-      const property = this.getParsedObjectChild(
+      const property = this.serializeObjectChild(
         path,
         props,
         key,
@@ -974,7 +999,7 @@ export class OwlDevtoolsGlobalHook {
       if (typeof key === "symbol") {
         oldBranch = oldTree?.env[key.toString()];
       }
-      const envElement = this.getParsedObjectChild(
+      const envElement = this.serializeObjectChild(
         path,
         env,
         key,
@@ -992,7 +1017,7 @@ export class OwlDevtoolsGlobalHook {
         }
       }
     });
-    const envPrototype = this.getParsedObjectChild(
+    const envPrototype = this.serializeObjectChild(
       path,
       env,
       { type: "prototype" },
@@ -1012,7 +1037,7 @@ export class OwlDevtoolsGlobalHook {
         if (typeof key === "symbol") {
           oldBranch = oldTree?.instance[key.toString()];
         }
-        const instanceElement = this.getParsedObjectChild(
+        const instanceElement = this.serializeObjectChild(
           path,
           instance,
           key,
@@ -1052,7 +1077,7 @@ export class OwlDevtoolsGlobalHook {
       });
       obj = Object.getPrototypeOf(obj);
     }
-    const instancePrototype = this.getParsedObjectChild(
+    const instancePrototype = this.serializeObjectChild(
       path,
       instance,
       { type: "prototype" },
@@ -1110,7 +1135,7 @@ export class OwlDevtoolsGlobalHook {
           }
           subscription.target.hasChildren = false;
         } else {
-          subscription.target.content = this.parseContent(
+          subscription.target.content = this.serializeContent(
             rawSubscription.target,
             subscription.target.contentType
           );
@@ -1139,7 +1164,7 @@ export class OwlDevtoolsGlobalHook {
   }
   // Replace the content of a parsed getter object with the result of the corresponding get method
   loadGetterContent(componentPath, getter) {
-    let obj = this.getPropertyObject(componentPath, getter.path);
+    let obj = this.getObjectProperty(componentPath, getter.path);
     if (obj == null) {
       if (typeof obj === "undefined") {
         getter.content = "undefined";
@@ -1176,7 +1201,7 @@ export class OwlDevtoolsGlobalHook {
           getter.contentType = typeof obj;
           getter.hasChildren = false;
       }
-      getter.content = this.parseContent(obj, getter.contentType);
+      getter.content = this.serializeContent(obj, getter.contentType);
     }
     return getter;
   }
@@ -1191,6 +1216,11 @@ export class OwlDevtoolsGlobalHook {
     if (node.hasOwnProperty("el")) {
       if (node.el instanceof HTMLElement) {
         return [node.el];
+      }
+      if (node.el instanceof Text) {
+        const range = document.createRange();
+        range.selectNode(node.el);
+        return [range];
       }
     }
     if (node.hasOwnProperty("child")) {
@@ -1207,11 +1237,11 @@ export class OwlDevtoolsGlobalHook {
         return elements;
       }
     }
-    if (node.hasOwnProperty("parentEl")) {
-      if (node.parentEl instanceof HTMLElement) {
-        return [node.parentEl];
-      }
-    }
+    // if (node.hasOwnProperty("parentEl")) {
+    //   if (node.parentEl instanceof HTMLElement) {
+    //     return [node.parentEl];
+    //   }
+    // }
     return [];
   }
   // Triggers the highlight effect around the specified component.
@@ -1220,7 +1250,9 @@ export class OwlDevtoolsGlobalHook {
     if (!component) {
       return;
     }
+    console.log(component);
     const elements = this.getDOMElementsRecursive(component);
+    console.log(elements, component.component.constructor.name);
     this.highlightElements(elements, component.component.constructor.name);
   }
   // Recursively fills the components tree as a parsed version
@@ -1238,9 +1270,9 @@ export class OwlDevtoolsGlobalHook {
       child.path = treeNode.path.concat([child.key]);
       let oldChild = null;
       if (oldBranch) {
-        const searchResult = oldBranch.children.filter((o) => o.key === key);
-        if (searchResult.length > 0) {
-          oldChild = searchResult[0];
+        const searchResult = oldBranch.children.find((o) => o.key === key);
+        if (searchResult) {
+          oldChild = searchResult;
           child.toggled = oldChild.toggled;
         }
       }
@@ -1257,7 +1289,6 @@ export class OwlDevtoolsGlobalHook {
   }
   // Edit a reactive state property with the provided value of the given component (path) and the subscription path
   editObject(componentPath, objectPath, value, objectType) {
-    console.log(value);
     const componentNode = this.getComponentNode(componentPath);
     if (objectType === "subscription") {
       const target = owl.reactive(componentNode.subscriptions[objectPath[1]].target);
@@ -1270,12 +1301,14 @@ export class OwlDevtoolsGlobalHook {
     } else {
       const key = objectPath.pop();
       const obj = this.getObject(componentNode.component, objectPath);
-      if (!obj) return;
+      if (!obj) {
+        return;
+      }
       obj[key] = value;
       if (objectType === "props" || objectType === "instance") {
-        componentNode.render(true);
+        componentNode.render();
       } else if (objectType === "env") {
-        Array.from(this.apps)[componentPath[0]].root.render(true);
+        [...this.apps][componentPath[0]].root.render(true);
       }
     }
   }
@@ -1286,16 +1319,16 @@ export class OwlDevtoolsGlobalHook {
       return null;
     }
     const results = this.getDOMElementsRecursive(node);
-    let hasElementInChilds = false;
+    let hasElementInChildren = false;
     for (const result of results) {
       if (result.isEqualNode(element)) {
         return path;
       }
       if (result.contains(element)) {
-        hasElementInChilds = true;
+        hasElementInChildren = true;
       }
     }
-    if (hasElementInChilds) {
+    if (hasElementInChildren) {
       for (const [key, child] of Object.entries(node.children)) {
         const result = this.searchElement(child, path.concat([key]), element);
         if (result) {
@@ -1316,7 +1349,7 @@ export class OwlDevtoolsGlobalHook {
           parentsList.push(element);
         }
       }
-      const appsArray = Array.from(this.apps);
+      const appsArray = [...this.apps];
       // Try to find a correspondance between the elements in the array and the owl component, stops at first result found
       for (const elem of parentsList) {
         for (const [index, app] of appsArray.entries()) {
@@ -1334,9 +1367,9 @@ export class OwlDevtoolsGlobalHook {
   // Returns the tree of components of the inspected page in a parsed format
   // Use inspectedPath to specify the path of the selected component
   getComponentsTree(inspectedPath = null, oldTrees = null) {
-    const appsArray = Array.from(this.apps);
+    const appsArray = [...this.apps];
     let trees = [];
-    appsArray.forEach((app, index) => {
+    for (const [index, app] of appsArray.entries()) {
       let oldTree;
       if (oldTrees) {
         oldTree = oldTrees[index];
@@ -1384,7 +1417,7 @@ export class OwlDevtoolsGlobalHook {
         root.children = [appRoot];
       }
       trees.push(root);
-    });
+    }
     return trees;
   }
   // Returns the path of the given component node
@@ -1398,13 +1431,8 @@ export class OwlDevtoolsGlobalHook {
       }
     }
     path.unshift("root");
-    const appsArray = Array.from(this.apps);
-    let index = 0;
-    for (; index < appsArray.length; index++) {
-      if (appsArray[index]?.root?.name === componentNode.app.root?.name) {
-        break;
-      }
-    }
+    const appsArray = [...this.apps];
+    let index = appsArray.findIndex((app) => app === componentNode.app);
     path.unshift(index.toString());
     return path;
   }
@@ -1414,7 +1442,9 @@ export class OwlDevtoolsGlobalHook {
     const isApp = componentPath.length === 1;
     const component = isApp ? componentNode : componentNode.component;
     let index = 1;
-    while (window["temp" + index] !== undefined) index++;
+    while (window["temp" + index] !== undefined) {
+      index++;
+    }
     switch (objectType) {
       case "node":
         window["temp" + index] = componentNode;
@@ -1471,7 +1501,7 @@ export class OwlDevtoolsGlobalHook {
   }
   // Store the object given by its path and the component path as a global temp variable
   storeObjectAsGlobal(componentPath, objectPath) {
-    let obj = this.getPropertyObject(componentPath, objectPath);
+    let obj = this.getObjectProperty(componentPath, objectPath);
     let index = 1;
     while (window["temp" + index] !== undefined) index++;
     window["temp" + index] = obj;

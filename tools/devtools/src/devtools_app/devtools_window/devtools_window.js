@@ -12,8 +12,8 @@ export class DevtoolsWindow extends Component {
   setup() {
     this.store = useStore();
     // Make sure that all custom context menus will be closed as soon as the user clicks on anything in the panel
-    useExternalListener(document, "click", this.hideContextMenus, {capture: true});
-    useExternalListener(document, "contextmenu", this.hideContextMenus, {capture: true});
+    useExternalListener(document, "click", this.hideContextMenus, { capture: true });
+    useExternalListener(document, "contextmenu", this.hideContextMenus, { capture: true });
   }
 
   // Remove the highlight on the DOM element correponding to the component
@@ -25,7 +25,7 @@ export class DevtoolsWindow extends Component {
   hideContextMenus = () => {
     const customMenus = document.querySelectorAll(".custom-menu");
     customMenus.forEach((menu) => menu.classList.add("d-none"));
-  }
+  };
 
   selectFrame(ev) {
     const val = ev.target.value;

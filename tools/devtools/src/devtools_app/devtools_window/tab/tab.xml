@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.Tab" owl="1">
-    <div t-on-click="selectTab" class="navbar-btn" t-att-class="props.active 
+    <div t-on-click="selectTab" class="navbar-btn" t-att-class="d-block 
                 ? 'btn-selected'
                 : ''">
-      <t t-esc="props.name" />
+      <t t-esc="name" />
     </div>
   </t>
 </templates>

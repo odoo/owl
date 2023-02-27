@@ -1,5 +1,5 @@
 export async function getOwlStatus() {
-  let response = isFirefox()
+  const response = isFirefox()
     ? await browser.runtime.sendMessage({ type: "getOwlStatus" })
     : await chrome.runtime.sendMessage({ type: "getOwlStatus" });
   return response.result;
@@ -40,6 +40,20 @@ export function isElementInCenterViewport(el) {
     rect.bottom >= 0.25 * (window.innerHeight || document.documentElement.clientHeight) &&
     rect.bottom <= 0.75 * (window.innerHeight || document.documentElement.clientHeight)
   );
+}
+
+// Formatting for displaying the key of the component
+export function minimizeKey(key) {
+  if(key.startsWith("__")){
+    const split = key.split("__");
+    if (split.length > 2) {
+      key = key.substring(4 + split[1].length, key.length);
+    } else {
+      key = "";
+    }
+    return key;
+  }
+  return key;
 }
 
 // General method for executing functions from the loaded scripts in the right frame of the page

@@ -8,6 +8,7 @@ export class PopUpApp extends Component {
     this.state = useState({ status: 0 });
     onWillStart(async () => {
       let status = await getOwlStatus();
+      console.log(status);
       this.state.status = status;
     });
   }

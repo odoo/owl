@@ -1,38 +1,40 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.ObjectTreeElement" owl="1">
-    <div class="my-0 p-0 object-line" t-att-class="attenuateIfPrototype" t-on-click.stop="toggleDisplay" t-on-contextmenu.prevent="openMenu">
-      <div t-attf-style="padding-left: calc({{props.depth}} * 0.8rem + 0.3rem)">
-        <t t-if="props.hasChildren">
-          <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer;{{props.toggled ? 'transform: rotate(90deg);' : ''}}"></i>
-        </t>
-        <t t-else="">
-          <i class="fa fa-caret-right mx-1" t-attf-style="visibility: hidden;"></i>
-        </t>
-        <t t-out="objectName"/>
+    <div class="m-0 p-0 text-nowrap w-100 object-line"
+      t-att-class="attenuateIfPrototype" 
+      t-on-click.stop="() => this.store.toggleObjectTreeElementsDisplay(this.props)" 
+      t-on-contextmenu.prevent="(ev) => this.store.contextMenu.open(ev, this.contextMenu.el)" 
+    >
+      <div t-attf-style="padding-left: {{objectPadding}}rem">
+        <i class="fa mx-1 pointer-icon"
+          t-att-class="{'fa-caret-right': !props.toggled, 'fa-caret-down': props.toggled}"
+          t-attf-style="visibility: {{props.hasChildren ? '' : 'hidden'}};"
+        />
+        <t t-esc="objectName"/>
         <t t-if="props.content.length > 0">: </t> 
         <t t-if="props.contentType == 'getter'">
-          <div class="getter-content" t-on-click.stop="loadGetterContent">
-            <t t-out="props.content"/>
-          </div>
+          <span class="getter-content" t-on-click.stop="() => this.store.loadGetterContent(this.props)">
+            <t t-esc="props.content"/>
+          </span>
         </t>
         <t t-else="">
-          <div class="object-content" t-att-class="attenuateIfPrototype" t-on-dblclick.stop="setupEditMode">
+          <span class="object-content" t-att-class="attenuateIfPrototype" t-on-dblclick.stop="setupEditMode">
             <t t-if="state.editMode">   
-              <input t-attf-id="objectEditionInput/{{pathAsString}}" type="text" placeholder="" t-att-value="props.content" t-on-keyup="editObject"/>
+              <input t-attf-id="objectEditionInput/{{pathAsString}}" t-ref="input" type="text" placeholder="" t-att-value="props.content" t-on-keyup="editObject"/>
             </t>
             <t t-else="">
-              <t t-out="props.content"/>
+              <t t-esc="props.content"/>
             </t>
-          </div> 
+          </span> 
         </t>
       </div>
     </div>
-    <div class="custom-menu hidden" t-attf-id="customMenu/{{pathAsString}}">
+    <div class="custom-menu d-none" t-attf-style="top: {{store.contextMenu.top}}; left: {{store.contextMenu.left}}" t-ref="contextmenu">
       <ul class="my-1">
-        <li t-on-click="storeObjectAsGlobal" class="custom-menu-item">Store as global variable</li>
+        <li t-on-click="storeObjectAsGlobal" class="custom-menu-item py-1 px-4">Store as global variable</li>
         <t t-if='props.contentType == "function"'>
-          <li t-on-click="inspectFunctionSource" class="custom-menu-item">Inspect function source code</li>
+          <li t-on-click="inspectFunctionSource" class="custom-menu-item py-1 px-4">Inspect function source code</li>
         </t>
       </ul>
     </div>

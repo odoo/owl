@@ -5,7 +5,7 @@ import { useStore } from "../../store/store";
 const { Component } = owl;
 
 export class Tab extends Component {
-  static props = ["name", "active", "componentName"];
+  static props = ["tabName"];
 
   static template = "devtools.Tab";
 
@@ -13,7 +13,20 @@ export class Tab extends Component {
     this.store = useStore();
   }
 
+  get active() {
+    return this.props.tabName === this.store.page;
+  }
+
+  get name() {
+    switch (this.props.tabName){
+      case "ComponentsTab":
+        return "Components";
+      case "EventsTab":
+        return "Profiler";
+    }
+  }
+
   selectTab(ev) {
-    this.store.switchTab(this.props.componentName);
+    this.store.switchTab(this.props.tabName);
   }
 }

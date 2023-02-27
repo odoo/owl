@@ -1,20 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.EventNode" owl="1">
-    <div class="my-0 p-0 object-line" t-on-click.stop="toggleDisplay" t-on-contextmenu.prevent="openMenu">
-      <div t-attf-style="padding-left: calc({{props.depth}} * 0.8rem + 0.3rem)">
-        <i t-if="props.children.length > 0" class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer;{{props.toggled ? 'transform: rotate(90deg);' : ''}}"></i>
-        <i t-else="" class="fa fa-caret-right mx-1" style="visibility: hidden;"></i>
-        <t t-out="props.type"/>: &lt;<div style="cursor:pointer;" class="name-wrapper" t-on-click.stop="goToComponent" t-on-mouseover.stop="hoverComponent" t-out="props.component"/>
-        <t t-if="minimizedKey.length > 0">
-          <div class="key-wrapper"> key</div>=<div class="key-name"><t t-out="minimizedKey"/></div>
-        </t>&gt;
+    <div class="my-0 p-0 object-line"
+      t-on-click.stop="toggleDisplay" 
+      t-on-contextmenu.prevent="(ev) => this.store.contextMenu.open(ev, this.contextMenu.el)" 
+    >
+      <div t-attf-style="padding-left: {{eventPadding}}rem">
+        <i class="fa mx-1 pointer-icon"
+          t-att-class="{'fa-caret-right': !props.toggled, 'fa-caret-down': props.toggled}"
+          t-attf-style="visibility: {{props.children.length > 0 ? '' : 'hidden'}};"
+        />
+        <span>
+          <t t-esc="props.type"/>: 
+          &lt;<span style="cursor:pointer; color: var(--component-color);" 
+                t-on-click.stop="() => this.store.selectComponent(props.path)" 
+                t-on-mouseover.stop="() => this.store.highlightComponent(props.path)" 
+                t-esc="props.component"/>
+          <t t-if="minimizedKey.length > 0">
+            <span t-if="minimizedKey.length > 0" style="color: var(--key-name);"> key</span>=<span style="color: var(--key-content);">
+              <t t-esc="minimizedKey"/>
+            </span>
+          </t>&gt;
+        </span>
       </div>
     </div>
-    <div class="custom-menu hidden" t-attf-id="customMenu/{{props.id}}">
+    <div class="custom-menu d-none" t-attf-style="top: {{store.contextMenu.top}}; left: {{store.contextMenu.left}}" t-ref="contextmenu">
       <ul class="my-1">
-        <li t-on-click.stop="expandAllChildren" class="custom-menu-item">Expand event and its children</li>
-        <li t-on-click.stop="foldAllChildren" class="custom-menu-item">Fold event and its children</li>
+        <li t-on-click.stop="() => this.store.toggleEventAndChildren(props, true)" class="custom-menu-item py-1 px-4">Expand children</li>
+        <li t-on-click.stop="() => this.store.toggleEventAndChildren(props, false)" class="custom-menu-item py-1 px-4">Fold children</li>
       </ul>
     </div>
     <t t-if="props.toggled">

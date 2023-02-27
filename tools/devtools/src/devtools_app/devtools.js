@@ -13,13 +13,12 @@ if (!isFirefox()) {
       if (tabData?.status === "complete") {
         scriptsLoaded = false;
         // Again we need to wait until owl has got the time to load on the page before loading the scripts
-        setTimeout(() => {
-          loadScripts().then(() => {
-            if (created) {
-              chrome.runtime.sendMessage({ type: "Reload" });
-            }
-          });
-        }, 200);
+        if (created) {
+          setTimeout(async () => {
+            await loadScripts();
+            chrome.runtime.sendMessage({ type: "Reload" });
+          }, 200);
+        }
       }
     });
   });
@@ -29,20 +28,16 @@ const checkInterval = setInterval(createPanelsIfOwl, 300);
 
 // Load the scripts on the page in order to define the __OWL__DEVTOOLS_GLOBAL_HOOK__
 async function loadScripts() {
-  if (scriptsLoaded) return true;
-  return new Promise((resolve) => {
-    fetch("../page_scripts/load_scripts.js")
-      .then((response) => response.text())
-      .then((contents) => {
-        browserInstance.devtools.inspectedWindow.eval(contents, (result, isException) => {
-          if (!isException) {
-            scriptsLoaded = result;
-            resolve(result);
-          } else {
-            resolve(false);
-          }
-        });
-      });
+  if (scriptsLoaded){
+    return true;
+  }
+  return new Promise(async (resolve) => {
+    const response = await fetch("../page_scripts/load_scripts.js");
+    const contents = await response.text();
+    browserInstance.devtools.inspectedWindow.eval(contents, (result) => {
+      scriptsLoaded = result;
+      resolve(result);
+    });
   });
 }
 
@@ -54,19 +49,18 @@ function createPanelsIfOwl() {
   }
   browserInstance.devtools.inspectedWindow.eval(
     "window.__OWL_DEVTOOLS__?.Fiber !== undefined;",
-    (hasOwl) => {
+    async (hasOwl) => {
       if (!hasOwl || created) {
         return;
       }
       clearInterval(checkInterval);
       created = true;
-      loadScripts().then(() => {
-        browserInstance.devtools.panels.create(
-          "Owl",
-          "../../assets/icon128.png",
-          isFirefox() ? "devtools_panel.html" : "devtools_app/devtools_panel.html"
-        );
-      });
+      await loadScripts();
+      browserInstance.devtools.panels.create(
+        "Owl",
+        "../../assets/icon128.png",
+        isFirefox() ? "devtools_panel.html" : "devtools_app/devtools_panel.html"
+      );
     }
   );
 }

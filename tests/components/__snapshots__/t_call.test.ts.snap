@@ -46,7 +46,7 @@ exports[`t-call dynamic t-call: key is propagated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, true);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   const call = app.callTemplate.bind(app);
   
   return function template(ctx, node, key = \\"\\") {
@@ -76,7 +76,7 @@ exports[`t-call dynamic t-call: key is propagated 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, true);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = \\"\\") {
     return comp1({}, key + \`__1\`, node, this, null);
@@ -196,7 +196,7 @@ exports[`t-call parent is set within t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, true);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = \\"\\") {
     return comp1({}, key + \`__1\`, node, this, null);
@@ -233,7 +233,7 @@ exports[`t-call parent is set within t-call with no parentNode 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, true);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = \\"\\") {
     return comp1({}, key + \`__1\`, node, this, null);
@@ -330,7 +330,7 @@ exports[`t-call sub components in two t-calls 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"val\\"]);
   
   return function template(ctx, node, key = \\"\\") {
     return comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
@@ -383,7 +383,7 @@ exports[`t-call t-call in t-foreach and children component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"val\\"]);
   
   return function template(ctx, node, key = \\"\\") {
     return comp1({val: ctx['val']}, key + \`__1\`, node, this, null);
@@ -422,8 +422,8 @@ exports[`t-call t-call with t-call-context and subcomponent 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
-  const comp2 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"name\\"]);
+  const comp2 = app.createComponent(\`Child\`, true, false, false, [\\"name\\"]);
   
   return function template(ctx, node, key = \\"\\") {
     const b2 = comp1({name: ctx['aab']}, key + \`__1\`, node, this, null);
@@ -463,8 +463,8 @@ exports[`t-call t-call with t-call-context and subcomponent, in dev mode 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
-  const comp2 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"name\\"]);
+  const comp2 = app.createComponent(\`Child\`, true, false, false, [\\"name\\"]);
   
   return function template(ctx, node, key = \\"\\") {
     const props1 = {name: ctx['aab']};
@@ -534,8 +534,8 @@ exports[`t-call t-call-context: ComponentNode is not looked up in the context 2`
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { bind, capture, isBoundary, withDefault, setContextValue, markRaw } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, true, false, false);
+  let { capture, isBoundary, withDefault, setContextValue, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false, []);
   
   let block2 = createBlock(\`<div block-ref=\\"0\\">outside slot</div>\`);
   let block4 = createBlock(\`<div block-ref=\\"0\\">I'm the default slot</div>\`);
@@ -556,7 +556,7 @@ exports[`t-call t-call-context: ComponentNode is not looked up in the context 2`
     let ref1 = (el) => this.__owl__.setRef((\`myRef\`), el);
     const b2 = block2([ref1]);
     const ctx1 = capture(ctx);
-    const b6 = comp1({prop: bind(this, ctx['method']),slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__1\`, node, this, null);
+    const b6 = comp1({prop: ctx['method'].bind(this),slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__1\`, node, this, null);
     return multi([b2, b6]);
   }
 }"
@@ -592,7 +592,7 @@ exports[`t-call t-call-context: slots don't make component available again when 
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue, capture, markRaw } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, true, false, true);
+  const comp1 = app.createComponent(\`Child\`, true, true, false, []);
   
   function slot1(ctx, node, key = \\"\\") {
     return text(ctx['someValue']);

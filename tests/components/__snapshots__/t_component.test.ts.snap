@@ -4,7 +4,7 @@ exports[`t-component can switch between dynamic components without the need for 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(null, false, false, false, true);
+  const comp1 = app.createComponent(null, false, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -46,7 +46,7 @@ exports[`t-component can use dynamic components (the class) if given (with diffe
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(null, false, false, false, true);
+  const comp1 = app.createComponent(null, false, false, false, []);
   
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['state'].child;
@@ -86,7 +86,7 @@ exports[`t-component can use dynamic components (the class) if given 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(null, false, false, false, true);
+  const comp1 = app.createComponent(null, false, false, false, []);
   
   return function template(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['state'].child;
@@ -126,7 +126,7 @@ exports[`t-component modifying a sub widget 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(null, false, false, false, true);
+  const comp1 = app.createComponent(null, false, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -158,7 +158,7 @@ exports[`t-component switching dynamic component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(null, false, false, false, true);
+  const comp1 = app.createComponent(null, false, false, false, []);
   
   return function template(ctx, node, key = \\"\\") {
     const Comp1 = ctx['Child'];
@@ -195,7 +195,7 @@ exports[`t-component t-component works in simple case 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(null, false, false, false, true);
+  const comp1 = app.createComponent(null, false, false, false, []);
   
   return function template(ctx, node, key = \\"\\") {
     const Comp1 = ctx['Child'];

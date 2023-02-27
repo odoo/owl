@@ -167,24 +167,6 @@ export function safeOutput(value: any, defaultValue?: any): ReturnType<typeof to
   return toggler(safeKey, block);
 }
 
-let boundFunctions = new WeakMap();
-const WeakMapGet = WeakMap.prototype.get;
-const WeakMapSet = WeakMap.prototype.set;
-
-function bind(component: any, fn: Function): Function {
-  let boundFnMap = WeakMapGet.call(boundFunctions, component);
-  if (!boundFnMap) {
-    boundFnMap = new WeakMap();
-    WeakMapSet.call(boundFunctions, component, boundFnMap);
-  }
-  let boundFn = WeakMapGet.call(boundFnMap, fn);
-  if (!boundFn) {
-    boundFn = fn.bind(component);
-    WeakMapSet.call(boundFnMap, fn, boundFn);
-  }
-  return boundFn;
-}
-
 /**
  * Validate the component props (or next props) against the (static) props
  * description.  This is potentially an expensive operation: it may needs to
@@ -260,7 +242,6 @@ export const helpers = {
   validateProps,
   LazyValue,
   safeOutput,
-  bind,
   createCatcher,
   markRaw,
   OwlError,

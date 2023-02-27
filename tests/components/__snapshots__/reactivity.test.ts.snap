@@ -4,7 +4,7 @@ exports[`reactivity in lifecycle Child component doesn't render when state they 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"state\\"]);
   
   return function template(ctx, node, key = \\"\\") {
     let b2;
@@ -31,7 +31,7 @@ exports[`reactivity in lifecycle Component is automatically subscribed to reacti
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"obj\\",\\"reactiveObj\\"]);
   
   return function template(ctx, node, key = \\"\\") {
     return comp1({obj: ctx['obj'],reactiveObj: ctx['reactiveObj']}, key + \`__1\`, node, this, null);
@@ -112,7 +112,7 @@ exports[`reactivity in lifecycle state changes in willUnmount do not trigger rer
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"val\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -156,7 +156,7 @@ exports[`subscriptions subscriptions returns the keys observed by the component 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"state\\"]);
   
   return function template(ctx, node, key = \\"\\") {
     const b2 = text(ctx['state'].a);

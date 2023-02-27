@@ -1,10 +1,76 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`.alike suffix in a list 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { prepareList, withKey } = helpers;
+  const comp1 = app.createComponent(\`Todo\`, true, false, false, [\\"todo\\"]);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['state'].elems);;
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      ctx[\`elem\`] = v_block1[i1];
+      const key1 = ctx['elem'].id;
+      const v1 = ctx['this'];
+      const v2 = ctx['elem'];
+      c_block1[i1] = withKey(comp1({todo: ctx['elem'],toggle: ()=>v1.toggle(v2.id)}, key + \`__1__\${key1}\`, node, this, null), key1);
+    }
+    return list(c_block1);
+  }
+}"
+`;
+
+exports[`.alike suffix in a list 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\"><block-text-1/><block-child-0/></button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2;
+    let hdlr1 = [ctx['props'].toggle, ctx];
+    let txt1 = ctx['props'].todo.id;
+    if (ctx['props'].todo.isChecked) {
+      b2 = text(\`V\`);
+    }
+    return block1([hdlr1, txt1], [b2]);
+  }
+}"
+`;
+
+exports[`.alike suffix in a simple case 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(ctx['state'].counter);
+    const b3 = comp1({fn: ()=>1}, key + \`__1\`, node, this, null);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`.alike suffix in a simple case 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['props'].fn());
+  }
+}"
+`;
+
 exports[`basics accept ES6-like syntax for props (with getters) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"greetings\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -34,7 +100,7 @@ exports[`basics arrow functions as prop correctly capture their scope 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"onClick\\"]);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -69,7 +135,7 @@ exports[`basics explicit object prop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"value\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -98,7 +164,7 @@ exports[`basics prop names can contain - 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"prop-name\\"]);
   
   return function template(ctx, node, key = \\"\\") {
     return comp1({'prop-name': 7}, key + \`__1\`, node, this, null);
@@ -124,7 +190,7 @@ exports[`basics support prop names that aren't valid bare object property names 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"some-dashed-prop\\"]);
   
   return function template(ctx, node, key = \\"\\") {
     return comp1({'some-dashed-prop': 5}, key + \`__1\`, node, this, null);
@@ -151,7 +217,7 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, LazyValue } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"val\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<p>43</p>\`);
@@ -191,7 +257,7 @@ exports[`basics t-set with a body expression can be used as textual prop 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"val\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -224,7 +290,7 @@ exports[`basics t-set works  1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"val\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -256,7 +322,7 @@ exports[`basics template string in prop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"propName\\"]);
   
   return function template(ctx, node, key = \\"\\") {
     return comp1({propName: \`1\${ctx['someVal']}3\`}, key + \`__1\`, node, this, null);
@@ -275,20 +341,44 @@ exports[`basics template string in prop 2`] = `
 }"
 `;
 
-exports[`bound functions is referentially equal after update 1`] = `
+exports[`bound functions are considered 'alike' 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { bind } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({val: ctx['state'].val,fn: bind(this, ctx['someFunction'])}, key + \`__1\`, node, this, null);
+    const b2 = text(ctx['state'].val);
+    const b3 = comp1({fn: ctx['someFunction'].bind(this)}, key + \`__1\`, node, this, null);
+    return multi([b2, b3]);
   }
 }"
 `;
 
-exports[`bound functions is referentially equal after update 2`] = `
+exports[`bound functions are considered 'alike' 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`child\`);
+  }
+}"
+`;
+
+exports[`bound functions is not referentially equal after update 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"val\\"]);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return comp1({val: ctx['state'].val,fn: ctx['someFunction'].bind(this)}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`bound functions is not referentially equal after update 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -303,11 +393,10 @@ exports[`can bind function prop with bind suffix 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { bind } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, false);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({doSomething: bind(this, ctx['doSomething'])}, key + \`__1\`, node, this, null);
+    return comp1({doSomething: ctx['doSomething'].bind(this)}, key + \`__1\`, node, this, null);
   }
 }"
 `;

@@ -1132,12 +1132,15 @@ export class CodeGenerator {
     value = this.captureExpression(value);
     if (name.includes(".")) {
       let [_name, suffix] = name.split(".");
-      if (suffix === "bind") {
-        this.helpers.add("bind");
-        name = _name;
-        value = `bind(this, ${value || undefined})`;
-      } else {
-        throw new OwlError("Invalid prop suffix");
+      name = _name;
+      switch (suffix) {
+        case "bind":
+          value = `${value}.bind(this)`;
+          break;
+        case "alike":
+          break;
+        default:
+          throw new OwlError("Invalid prop suffix");
       }
     }
     name = /^[a-z_]+$/i.test(name) ? name : `'${name}'`;
@@ -1237,13 +1240,18 @@ export class CodeGenerator {
       keyArg = `${ctx.tKeyExpr} + ${keyArg}`;
     }
     let id = generateId("comp");
+    const propList: string[] = [];
+    for (let p in ast.props || {}) {
+      let [name, suffix] = p.split(".");
+      if (!suffix) {
+        propList.push(`"${name}"`);
+      }
+    }
     this.staticDefs.push({
       id,
       expr: `app.createComponent(${
         ast.isDynamic ? null : expr
-      }, ${!ast.isDynamic}, ${!!ast.slots}, ${!!ast.dynamicProps}, ${
-        !ast.props && !ast.dynamicProps
-      })`,
+      }, ${!ast.isDynamic}, ${!!ast.slots}, ${!!ast.dynamicProps}, [${propList}])`,
     });
 
     if (ast.isDynamic) {

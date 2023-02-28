@@ -29,6 +29,8 @@ export class EventsTab extends Component {
     if (val === "Tree") {
       this.store.buildEventsTree();
       this.store.eventsTreeView = true;
-    } else {this.store.eventsTreeView = false;}
+    } else {
+      this.store.eventsTreeView = false;
+    }
   }
 }

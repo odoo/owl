@@ -54,7 +54,7 @@ export class OwlDevtoolsGlobalHook {
 
   // Modify methods of each app so that it triggers messages on each flush and component render
   patchAppMethods() {
-    if(this.appsPatched){
+    if (this.appsPatched) {
       return;
     }
     let app;
@@ -226,7 +226,14 @@ export class OwlDevtoolsGlobalHook {
     let maxRight = Number.MIN_SAFE_INTEGER;
 
     for (const element of elements) {
-      const rect = element.getBoundingClientRect();
+      let rect;
+      if(element instanceof Text){
+        const range = document.createRange();
+        range.selectNode(element);
+        rect = range.getBoundingClientRect();
+      }else {
+        rect = element.getBoundingClientRect();
+      }
 
       const top = rect.top;
       const left = rect.left;
@@ -400,7 +407,7 @@ export class OwlDevtoolsGlobalHook {
       let index, offset;
       if (functionString.startsWith("class")) {
         return "class " + value.name;
-      // TODO: rewrite with regex for clarity
+        // TODO: rewrite with regex for clarity
       } else {
         let index1 = functionString.indexOf("){");
         let index2 = functionString.indexOf(") {");
@@ -1221,13 +1228,8 @@ export class OwlDevtoolsGlobalHook {
       return this.getDOMElementsRecursive(node.content);
     }
     if (node.hasOwnProperty("el")) {
-      if (node.el instanceof HTMLElement) {
+      if (node.el instanceof HTMLElement || node.el instanceof Text) {
         return [node.el];
-      }
-      if (node.el instanceof Text) {
-        const range = document.createRange();
-        range.selectNode(node.el);
-        return [range];
       }
     }
     if (node.hasOwnProperty("child")) {
@@ -1294,20 +1296,23 @@ export class OwlDevtoolsGlobalHook {
   }
   // Edit a reactive state property with the provided value of the given component (path) and the subscription path
   editObject(componentPath, objectPath, value, objectType) {
-    if(value === "undefined"){
+    if (value === "undefined") {
       value = undefined;
     } else {
-      try{
+      try {
         value = JSON.parse(value);
-      } catch(e){
-        console.warn("Could not evaluate user property\n",e);
+      } catch (e) {
+        console.warn("Could not evaluate user property\n", e);
         return;
       }
     }
     const componentNode = this.getComponentNode(componentPath);
     if (objectType === "subscription") {
       const key = objectPath.pop();
-      const obj = this.getObject(componentNode.subscriptions[objectPath[1]].target, objectPath.slice(2));
+      const obj = this.getObject(
+        componentNode.subscriptions[objectPath[1]].target,
+        objectPath.slice(2)
+      );
       if (!obj) {
         return;
       }

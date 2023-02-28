@@ -59,7 +59,11 @@ export function minimizeKey(key) {
 // General method for executing functions from the loaded scripts in the right frame of the page
 // using the __OWL__DEVTOOLS_GLOBAL_HOOK__. Take the function's args as an array.
 export async function evalInWindow(fn, args, frameUrl = "top") {
-  const argsString = "(" + args.join(", ") + ");";
+  const stringifiedArgs = [...args].map((arg) => {
+    arg = JSON.stringify(arg);
+    return arg;
+  });
+  const argsString = "(" + stringifiedArgs.join(", ") + ");";
   const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.${fn}${argsString}`;
   return new Promise((resolve) => {
     if (frameUrl !== "top") {

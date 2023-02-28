@@ -32,9 +32,9 @@
     </div>
     <div class="custom-menu d-none" t-attf-style="top: {{store.contextMenu.top}}; left: {{store.contextMenu.left}}" t-ref="contextmenu">
       <ul class="my-1">
-        <li t-on-click="storeObjectAsGlobal" class="custom-menu-item py-1 px-4">Store as global variable</li>
+        <li t-on-click="storeObjectAsGlobal" class="custom-menu-item py-1 px-4 text-nowrap">Store as global variable</li>
         <t t-if='props.contentType == "function"'>
-          <li t-on-click="inspectFunctionSource" class="custom-menu-item py-1 px-4">Inspect function source code</li>
+          <li t-on-click="inspectFunctionSource" class="custom-menu-item py-1 px-4 text-nowrap">Inspect function source code</li>
         </t>
       </ul>
     </div>

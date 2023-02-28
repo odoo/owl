@@ -10,8 +10,11 @@ export const store = reactive({
   contextMenu: {
     top: 0,
     left: 0,
+    activeMenu: null,
     // Opens the context menu corresponding with the given menu html element
     open(event, menu) {
+      console.log(menu);
+      this.activeMenu = menu;
       menu.classList.remove("d-none");
       const menuWidth = menu.offsetWidth;
       const menuHeight = menu.offsetHeight;
@@ -88,7 +91,7 @@ export const store = reactive({
   async loadComponentsTree(fromOld) {
     const apps = await evalInWindow(
       "getComponentsTree",
-      fromOld ? [JSON.stringify(this.activeComponent.path), JSON.stringify(this.apps)] : [],
+      fromOld ? [this.activeComponent.path, this.apps] : [],
       this.activeFrame
     );
     if (apps.length === 0) {
@@ -102,7 +105,7 @@ export const store = reactive({
     const component = await evalInWindow(
       "getComponentDetails",
       fromOld
-        ? [JSON.stringify(this.activeComponent.path), JSON.stringify(this.activeComponent)]
+        ? [this.activeComponent.path, this.activeComponent]
         : [],
       this.activeFrame
     );
@@ -140,7 +143,7 @@ export const store = reactive({
     highlightChildren(element);
     const component = await evalInWindow(
       "getComponentDetails",
-      [JSON.stringify(element.path)],
+      [element.path],
       this.activeFrame
     );
     this.activeComponent = component;
@@ -233,7 +236,7 @@ export const store = reactive({
   // Action related to the left(toggle)/up(not toggle) arrow keys for navigation purpose
   toggleOrSelectPrevElement(toggle) {
     if (toggle) {
-      let component = this.getComponentByPath(this.activeComponent.path);
+      const component = this.getComponentByPath(this.activeComponent.path);
       if (component.children.length > 0 && component.toggled) {
         component.toggled = false;
       } else if (this.activeComponent.path.length > 1) {
@@ -241,20 +244,39 @@ export const store = reactive({
       }
       return;
     }
-    const currentElement = document.getElementById(
-      "treeElement/" + this.activeComponent.path.join("/")
-    );
-    const prevElement = currentElement.previousElementSibling;
-    if (prevElement) {
-      const prevPath = prevElement.id.substring(12).split("/");
-      this.selectComponent(prevPath);
+    const parentPath = [...this.activeComponent.path];
+    const key = parentPath.pop();
+    // If component is an app, find descendant with the highest successive children indexes of the app above
+    // or do nothing if there is no app above
+    if(parentPath.length === 0){
+      const parent = this.apps;
+      const index = Number(key);
+      if(index > 0){
+        let sibling = parent[index - 1];
+        while(sibling.toggled && sibling.children.length){
+          sibling = sibling.children[sibling.children.length - 1];
+        }
+        this.selectComponent(sibling.path);
+      }
+    } else {
+      const parent = this.getComponentByPath(parentPath);
+      const index = parent.children.findIndex((child) => child.key === key);
+      if(index > 0){
+        let sibling = parent.children[index - 1];
+        while(sibling.toggled && sibling.children.length){
+          sibling = sibling.children[sibling.children.length - 1];
+        }
+        this.selectComponent(sibling.path);
+      } else {
+        this.selectComponent(parent.path);
+      }
     }
   },
 
   // Action related to the right(toggle)/down(not toggle) arrow keys for navigation purpose
   toggleOrSelectNextElement(toggle) {
+    let component = this.getComponentByPath(this.activeComponent.path);
     if (toggle) {
-      let component = this.getComponentByPath(this.activeComponent.path);
       if (!component.children.length) {
         return;
       } else if (!component.toggled) {
@@ -262,13 +284,28 @@ export const store = reactive({
         return;
       }
     }
-    const currentElement = document.getElementById(
-      "treeElement/" + this.activeComponent.path.join("/")
-    );
-    const nextElement = currentElement.nextElementSibling;
-    if (nextElement) {
-      const nextPath = nextElement.id.substring(12).split("/");
-      this.selectComponent(nextPath);
+    // If component has children and is toggled, select its first child
+    if(component.toggled && component.children.length){
+      this.selectComponent(component.children[0].path);
+    } else {
+      const parentPath = [...this.activeComponent.path];
+      while (true){
+        const key = parentPath.pop();
+        console.log(key, parentPath);
+        if(parentPath.length === 0){
+          const index = Number(key);
+          if(index < (this.apps.length - 1)){
+            this.selectComponent(this.apps[index+1].path);
+          }
+          return;
+        }
+        const parent = this.getComponentByPath(parentPath);
+        const index = parent.children.findIndex((child) => child.key === key);
+        if(index < (parent.children.length - 1) && index > -1){
+          this.selectComponent(parent.children[index+1].path);
+          return;
+        }
+      }
     }
   },
 
@@ -346,7 +383,7 @@ export const store = reactive({
     let obj = this.findObjectInTree(inputObj);
     const result = await evalInWindow(
       "loadGetterContent",
-      [JSON.stringify(this.activeComponent.path), JSON.stringify(obj)],
+      [this.activeComponent.path, obj],
       this.activeFrame
     );
     Object.keys(obj).forEach((key) => {
@@ -365,12 +402,12 @@ export const store = reactive({
       const children = await evalInWindow(
         "loadObjectChildren",
         [
-          JSON.stringify(this.activeComponent.path),
-          JSON.stringify(obj.path),
+          this.activeComponent.path,
+          obj.path,
           obj.depth,
-          JSON.stringify(obj.contentType),
-          JSON.stringify(obj.objectType),
-          JSON.stringify(this.activeComponent),
+          obj.contentType,
+          obj.objectType,
+          this.activeComponent,
         ],
         this.activeFrame
       );
@@ -394,10 +431,10 @@ export const store = reactive({
     evalInWindow(
       "editObject",
       [
-        JSON.stringify(this.activeComponent.path),
-        JSON.stringify(objectPath),
+        this.activeComponent.path,
+        objectPath,
         value,
-        JSON.stringify(objectType),
+        objectType,
       ],
       this.activeFrame
     );
@@ -510,36 +547,51 @@ export const store = reactive({
 
   // Triggers manually the rendering of the selected component
   refreshComponent(path = this.activeComponent.path) {
-    evalInWindow("refreshComponent", [JSON.stringify(path)], this.activeFrame);
+    evalInWindow("refreshComponent", [path], this.activeFrame);
   },
 
   // Allows to log data on the component in the console:
   // type can be "node", "props", "env", "subscription" or "instance"
   logComponentDataInConsole(type, path = this.activeComponent.path) {
-    evalInWindow("sendObjectToConsole", [JSON.stringify(path), '"' + type + '"'], this.activeFrame);
+    evalInWindow("sendObjectToConsole", [path, type], this.activeFrame);
   },
 
   // Inspect the given component's data based on the given type
   inspectComponent(type, path = this.activeComponent.path) {
     switch (type) {
       case "DOM":
-        evalInWindow("inspectComponentDOM", [JSON.stringify(path)], this.activeFrame);
+        evalInWindow("inspectComponentDOM", [path], this.activeFrame);
         break;
       case "source":
-        evalInWindow("inspectComponentSource", [JSON.stringify(path)], this.activeFrame);
+        evalInWindow("inspectComponentSource", [path], this.activeFrame);
         break;
       case "compiled template":
-        evalInWindow("inspectComponentCompiledTemplate", [JSON.stringify(path)], this.activeFrame);
+        evalInWindow("inspectComponentCompiledTemplate", [path], this.activeFrame);
         break;
       case "raw template":
-        evalInWindow("inspectComponentRawTemplate", [JSON.stringify(path)], this.activeFrame);
+        evalInWindow("inspectComponentRawTemplate", [path], this.activeFrame);
         break;
     }
   },
 
   // Trigger the highlight on the component in the page
   highlightComponent(path) {
-    evalInWindow("highlightComponent", [JSON.stringify(path)], this.activeFrame);
+    evalInWindow("highlightComponent", [path], this.activeFrame);
+  },
+
+  // Toggle the recording of events in the page
+  async toggleRecording() {
+    this.activeRecorder = await evalInWindow(
+      "toggleEventsRecording",
+      [!this.activeRecorder, this.events.length],
+      this.activeFrame
+    );
+  },
+
+  clearEventsConsole() {
+    this.events = [];
+    this.eventsTree = [];
+    evalInWindow("resetEvents", [], this.activeFrame);
   },
 });
 
@@ -553,6 +605,9 @@ store.loadComponentsTree(false);
 
 // We also want to detect the different iframes at first loading of the devtools tab
 store.updateIFrameList();
+
+document.addEventListener("click", closeContextMenu, { capture: true });
+document.addEventListener("contextmenu", closeContextMenu, { capture: true });
 
 for (const frame of store.frameUrls) {
   evalInWindow("toggleEventsRecording", [false, 0], frame);
@@ -583,6 +638,13 @@ function keepAlive() {
       }
     );
   }
+}
+
+function closeContextMenu(){
+  if(store.contextMenu.activeMenu){
+    store.contextMenu.activeMenu.classList.add("d-none");
+  }
+  store.contextMenu.activeMenu = null;
 }
 
 // Connect to the port to communicate to the background script
@@ -660,6 +722,7 @@ function loadEvents(events) {
         component: "string",
         key: "string",
         path: "object",
+        time: "number",
         id: "number",
       }) ||
       !(Array.isArray(event.path) && event.path.every((val) => typeof val === "string"))

@@ -1,7 +1,7 @@
 import { minimizeKey } from "../../../../utils";
 import { useStore } from "../../../store/store";
 
-const { Component, useState, onMounted } = owl;
+const { Component } = owl;
 
 export class Event extends Component {
   static template = "devtools.Event";

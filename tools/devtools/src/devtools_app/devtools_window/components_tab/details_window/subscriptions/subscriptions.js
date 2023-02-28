@@ -1,4 +1,4 @@
-const { Component, markup, useState, onMounted, onWillUpdateProps } = owl;
+const { Component } = owl;
 import { useStore } from "../../../../store/store";
 import { ObjectTreeElement } from "../object_tree_element/object_tree_element";
 

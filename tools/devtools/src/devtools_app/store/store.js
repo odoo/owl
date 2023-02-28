@@ -13,7 +13,6 @@ export const store = reactive({
     activeMenu: null,
     // Opens the context menu corresponding with the given menu html element
     open(event, menu) {
-      console.log(menu);
       this.activeMenu = menu;
       menu.classList.remove("d-none");
       const menuWidth = menu.offsetWidth;
@@ -35,7 +34,7 @@ export const store = reactive({
   activeFrame: "top",
   page: "ComponentsTab",
   events: [],
-  eventsTreeView: false,
+  eventsTreeView: true,
   eventsTree: [],
   activeRecorder: false,
   owlStatus: true,
@@ -104,9 +103,7 @@ export const store = reactive({
     }
     const component = await evalInWindow(
       "getComponentDetails",
-      fromOld
-        ? [this.activeComponent.path, this.activeComponent]
-        : [],
+      fromOld ? [this.activeComponent.path, this.activeComponent] : [],
       this.activeFrame
     );
     if (component) {
@@ -141,11 +138,7 @@ export const store = reactive({
     }
     element.selected = true;
     highlightChildren(element);
-    const component = await evalInWindow(
-      "getComponentDetails",
-      [element.path],
-      this.activeFrame
-    );
+    const component = await evalInWindow("getComponentDetails", [element.path], this.activeFrame);
     this.activeComponent = component;
     if (this.page !== "ComponentsTab") {
       this.switchTab("ComponentsTab");
@@ -248,12 +241,12 @@ export const store = reactive({
     const key = parentPath.pop();
     // If component is an app, find descendant with the highest successive children indexes of the app above
     // or do nothing if there is no app above
-    if(parentPath.length === 0){
+    if (parentPath.length === 0) {
       const parent = this.apps;
       const index = Number(key);
-      if(index > 0){
+      if (index > 0) {
         let sibling = parent[index - 1];
-        while(sibling.toggled && sibling.children.length){
+        while (sibling.toggled && sibling.children.length) {
           sibling = sibling.children[sibling.children.length - 1];
         }
         this.selectComponent(sibling.path);
@@ -261,9 +254,9 @@ export const store = reactive({
     } else {
       const parent = this.getComponentByPath(parentPath);
       const index = parent.children.findIndex((child) => child.key === key);
-      if(index > 0){
+      if (index > 0) {
         let sibling = parent.children[index - 1];
-        while(sibling.toggled && sibling.children.length){
+        while (sibling.toggled && sibling.children.length) {
           sibling = sibling.children[sibling.children.length - 1];
         }
         this.selectComponent(sibling.path);
@@ -285,24 +278,24 @@ export const store = reactive({
       }
     }
     // If component has children and is toggled, select its first child
-    if(component.toggled && component.children.length){
+    if (component.toggled && component.children.length) {
       this.selectComponent(component.children[0].path);
     } else {
       const parentPath = [...this.activeComponent.path];
-      while (true){
+      while (true) {
         const key = parentPath.pop();
         console.log(key, parentPath);
-        if(parentPath.length === 0){
+        if (parentPath.length === 0) {
           const index = Number(key);
-          if(index < (this.apps.length - 1)){
-            this.selectComponent(this.apps[index+1].path);
+          if (index < this.apps.length - 1) {
+            this.selectComponent(this.apps[index + 1].path);
           }
           return;
         }
         const parent = this.getComponentByPath(parentPath);
         const index = parent.children.findIndex((child) => child.key === key);
-        if(index < (parent.children.length - 1) && index > -1){
-          this.selectComponent(parent.children[index+1].path);
+        if (index < parent.children.length - 1 && index > -1) {
+          this.selectComponent(parent.children[index + 1].path);
           return;
         }
       }
@@ -430,12 +423,7 @@ export const store = reactive({
   editObjectTreeElement(objectPath, value, objectType) {
     evalInWindow(
       "editObject",
-      [
-        this.activeComponent.path,
-        objectPath,
-        value,
-        objectType,
-      ],
+      [this.activeComponent.path, objectPath, value, objectType],
       this.activeFrame
     );
   },
@@ -640,8 +628,8 @@ function keepAlive() {
   }
 }
 
-function closeContextMenu(){
-  if(store.contextMenu.activeMenu){
+function closeContextMenu() {
+  if (store.contextMenu.activeMenu) {
     store.contextMenu.activeMenu.classList.add("d-none");
   }
   store.contextMenu.activeMenu = null;

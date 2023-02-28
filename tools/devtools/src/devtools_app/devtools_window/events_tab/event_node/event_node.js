@@ -29,11 +29,15 @@ export class EventNode extends Component {
   }
 
   get renderTime() {
-    if(Number.isInteger(this.props.time)){
-      return this.props.time;
+    if (Number.isInteger(this.props.time)) {
+      if (this.props.time === 0) {
+        return "<1";
+      } else {
+        return this.props.time;
+      }
     } else {
-      if(this.props.time < 1.0){
-        return "<1"
+      if (this.props.time < 1.0) {
+        return "<1";
       } else {
         return this.props.time.toFixed(1);
       }

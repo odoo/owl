@@ -8,8 +8,8 @@
         <i title="Clear events" class="fa fa-ban lg-icon pointer-icon p-1" t-on-click.stop="() => this.store.clearEventsConsole()" aria-hidden="true"></i>
         <div class="icons-separator mx-1"/>
         <select class="form-select form-select-sm custom-select border-0" t-on-change="selectDisplayMode">
-          <option value="List">Events log</option>
           <option value="Tree">Tree view</option>
+          <option value="List">Events log</option>
         </select>
         <div class="icons-separator"/>
         <!-- <EventSearchBar/> -->

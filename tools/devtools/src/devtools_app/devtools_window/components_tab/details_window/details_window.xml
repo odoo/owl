@@ -2,7 +2,7 @@
 <templates xml:space="preserve">
   <t t-name="devtools.DetailsWindow" owl="1">
     <div class="w-100 h-100">
-      <div id="detailsWindowHead" class="panel-top  d-flex align-items-center">
+      <div id="detailsWindowHead" class="panel-top d-flex align-items-center">
         <div class="ms-1 p-1" style="width: 100%;">
           <t t-if="store.activeComponent.path.length > 1">&lt;</t><b style="color: var(--component-color)" t-esc="store.activeComponent.name"/><t t-if="store.activeComponent.path.length > 1">&gt;</t>
         </div>
@@ -19,31 +19,39 @@
       </div>
       <div class="details-container">
         <div t-if="Object.keys(store.activeComponent.props).length > 0" class="details-panel ps-2 py-1">
-          <div class="details-panel-head mb-2">
-            <b>props</b>
+          <div class="d-flex mb-2">
+            <div class="w-100">
+              <b>props</b>
+            </div>
           </div>
           <t t-foreach="store.activeComponent.props" t-as="prop" t-key="prop">
             <ObjectTreeElement t-props="prop_value"/>
           </t>
         </div>
         <div t-if="store.activeComponent.subscriptions.length > 0" id="subscriptions" class="details-panel ps-2 py-1">
-          <div class="details-panel-head">
-            <b>observed state</b>
+          <div class="d-flex">
+            <div class="w-100">
+              <b>observed state</b>
+            </div>
             <i title="Store observed states as global variable in the console" class="fa fa-bug utility-icon p-1" t-on-click.stop="() => this.store.logComponentDataInConsole('subscription')"></i>
           </div>
           <Subscriptions/>
         </div>
         <div t-if="Object.keys(store.activeComponent.env).length > 0" id="env" class="details-panel ps-2 py-1">
-          <div class="details-panel-head mb-2">
-            <b>env</b>
+          <div class="d-flex mb-2">
+            <div class="w-100">
+              <b>env</b>
+            </div>
           </div>
           <t t-foreach="store.activeComponent.env" t-as="env" t-key="env">
             <ObjectTreeElement t-props="env_value"/>
           </t>
         </div>
         <div t-if="Object.keys(store.activeComponent.instance).length > 0"  id="instance" class="details-panel ps-2 py-1">
-          <div class="details-panel-head mb-2">
-            <b>instance</b>
+          <div class="d-flex mb-2">
+            <div class="w-100">
+              <b>instance</b>
+            </div>
             <t t-if="store.activeComponent.path.length > 1">
               <i title="Inspect compiled template" class="fa fa-hashtag utility-icon p-1" t-on-click.stop="() => this.store.inspectComponent('compiled template')"></i>
               <i title="Send raw template to console" class="fa fa-file-word-o utility-icon p-1" t-on-click.stop="() => this.store.inspectComponent('raw template')"></i>

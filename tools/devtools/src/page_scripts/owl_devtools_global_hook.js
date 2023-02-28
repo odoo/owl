@@ -1294,11 +1294,15 @@ export class OwlDevtoolsGlobalHook {
   }
   // Edit a reactive state property with the provided value of the given component (path) and the subscription path
   editObject(componentPath, objectPath, value, objectType) {
-    try{
-      value = eval(value);
-    } catch(e){
-      console.warn("Could not evaluate user property\n",e);
-      return;
+    if(value === "undefined"){
+      value = undefined;
+    } else {
+      try{
+        value = JSON.parse(value);
+      } catch(e){
+        console.warn("Could not evaluate user property\n",e);
+        return;
+      }
     }
     const componentNode = this.getComponentNode(componentPath);
     if (objectType === "subscription") {

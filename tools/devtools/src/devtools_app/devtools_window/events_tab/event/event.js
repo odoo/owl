@@ -26,4 +26,16 @@ export class Event extends Component {
   get originMinimizedKey() {
     return minimizeKey(this.props.origin.key);
   }
+
+  get renderTime() {
+    if(Number.isInteger(this.props.time)){
+      return this.props.time;
+    } else {
+      if(this.props.time < 1.0){
+        return "<1"
+      } else {
+        return this.props.time.toFixed(1);
+      }
+    }
+  }
 }

@@ -12,12 +12,8 @@
             </t>
           </select>
         </div>
-        <div t-if="store.page === 'ComponentsTab'" class="position-relative d-flex flex-row">
-          <ComponentsTab/>
-        </div>
-        <div t-if="store.page === 'EventsTab'" class="position-relative d-flex flex-column">
-          <EventsTab/>
-        </div>
+        <ComponentsTab t-if="store.page === 'ComponentsTab'"/>
+        <EventsTab t-if="store.page === 'EventsTab'"/>
       </t>
       <t t-else="">
         <div class="status-message d-flex justify-content-center align-items-center">

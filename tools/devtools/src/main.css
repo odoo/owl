@@ -236,18 +236,12 @@
   color: var(--text-color);
 }
 
-.search-bar-wrapper {
-  width: calc(100% - 30px);
-}
-
 .search-icon {
-  float: left;
   position: relative;
   bottom: 1px;
 }
 
 .utility-icon {
-  float: right;
   cursor: pointer;
   font-size: 1.2em;
 }

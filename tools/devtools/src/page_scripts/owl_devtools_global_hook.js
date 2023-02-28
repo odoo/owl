@@ -28,6 +28,7 @@ export class OwlDevtoolsGlobalHook {
       });
     });
     iFrameObserver.observe(document.body, { subtree: true, childList: true });
+    this.appsPatched = false;
     this.patchAppMethods();
     this.patchAppsSetMethods();
     this.recordEvents = false;
@@ -39,8 +40,10 @@ export class OwlDevtoolsGlobalHook {
   patchAppsSetMethods() {
     const originalAdd = this.apps.add;
     const originalDelete = this.apps.delete;
+    const self = this;
     this.apps.add = function () {
       originalAdd.call(this, ...arguments);
+      self.patchAppMethods();
       window.top.postMessage({ type: "owlDevtools__RefreshApps" });
     };
     this.apps.delete = function () {
@@ -51,9 +54,11 @@ export class OwlDevtoolsGlobalHook {
 
   // Modify methods of each app so that it triggers messages on each flush and component render
   patchAppMethods() {
-    const self = this;
+    if(this.appsPatched){
+      return;
+    }
     let app;
-    for (const appItem of self.apps) {
+    for (const appItem of this.apps) {
       if (appItem.root) {
         app = appItem;
       }
@@ -65,6 +70,7 @@ export class OwlDevtoolsGlobalHook {
     const originalFlush = app.scheduler.constructor.prototype.flush;
     let inFlush = false;
     let _render = false;
+    const self = this;
     app.scheduler.constructor.prototype.flush = function () {
       // Used to know when a render is triggered inside the flush method or not
       inFlush = true;
@@ -182,6 +188,7 @@ export class OwlDevtoolsGlobalHook {
       }
       originalDestroy.call(this, ...arguments);
     };
+    this.appsPatched = true;
   }
 
   // Enables/disables the recording of the render/destroy events based on value
@@ -220,11 +227,9 @@ export class OwlDevtoolsGlobalHook {
 
     for (const element of elements) {
       const rect = element.getBoundingClientRect();
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
 
-      const top = rect.top + scrollTop;
-      const left = rect.left + scrollLeft;
+      const top = rect.top;
+      const left = rect.left;
       const bottom = top + rect.height;
       const right = left + rect.width;
 
@@ -252,7 +257,7 @@ export class OwlDevtoolsGlobalHook {
         highlight.style.left = `${left}px`;
         highlight.style.width = `${width}px`;
         highlight.style.height = `${height}px`;
-        highlight.style.position = "absolute";
+        highlight.style.position = "fixed";
         highlight.style.backgroundColor = "rgba(15, 139, 245, 0.4)";
         highlight.style.borderStyle = "solid";
         highlight.style.borderWidth = `${paddingTop}px ${paddingRight}px ${paddingBottom}px ${paddingLeft}px`;
@@ -267,7 +272,7 @@ export class OwlDevtoolsGlobalHook {
         highlightMargins.style.left = `${left - marginLeft}px`;
         highlightMargins.style.width = `${width + marginLeft + marginRight}px`;
         highlightMargins.style.height = `${height + marginBottom + marginTop}px`;
-        highlightMargins.style.position = "absolute";
+        highlightMargins.style.position = "fixed";
         highlightMargins.style.borderStyle = "solid";
         highlightMargins.style.borderWidth = `${marginTop}px ${marginRight}px ${marginBottom}px ${marginLeft}px`;
         highlightMargins.style.borderColor = "rgba(241, 179, 121, 0.4)";
@@ -282,7 +287,7 @@ export class OwlDevtoolsGlobalHook {
         highlight.style.left = `${left}px`;
         highlight.style.width = `${width}px`;
         highlight.style.height = `${height}px`;
-        highlight.style.position = "absolute";
+        highlight.style.position = "fixed";
         highlight.style.backgroundColor = "rgba(15, 139, 245, 0.4)";
         highlight.style.zIndex = "10000";
         highlight.style.pointerEvents = "none";
@@ -301,7 +306,7 @@ export class OwlDevtoolsGlobalHook {
       2
     )}px x ${height.toFixed(2)}px</div>
     `;
-    detailsBox.style.position = "absolute";
+    detailsBox.style.position = "fixed";
     detailsBox.style.backgroundColor = "black";
     detailsBox.style.padding = "5px";
     detailsBox.style.zIndex = "10000";
@@ -395,6 +400,7 @@ export class OwlDevtoolsGlobalHook {
       let index, offset;
       if (functionString.startsWith("class")) {
         return "class " + value.name;
+      // TODO: rewrite with regex for clarity
       } else {
         let index1 = functionString.indexOf("){");
         let index2 = functionString.indexOf(") {");
@@ -428,6 +434,7 @@ export class OwlDevtoolsGlobalHook {
   // Returns a shortened version of the property as a string
   serializeContent(obj, type) {
     let result = "";
+    // TODO: use array.join inside for instead as well as use a serializer object instead
     let first = true;
     if (type === "array") {
       result += "[";
@@ -949,7 +956,7 @@ export class OwlDevtoolsGlobalHook {
   // Apply manual render to the specified component
   refreshComponent(path) {
     const componentNode = this.getComponentNode(path);
-    componentNode.render(true);
+    componentNode.render();
   }
   // Returns the component's details given its path
   getComponentDetails(path = null, oldTree = null) {
@@ -1250,9 +1257,7 @@ export class OwlDevtoolsGlobalHook {
     if (!component) {
       return;
     }
-    console.log(component);
     const elements = this.getDOMElementsRecursive(component);
-    console.log(elements, component.component.constructor.name);
     this.highlightElements(elements, component.component.constructor.name);
   }
   // Recursively fills the components tree as a parsed version
@@ -1289,15 +1294,20 @@ export class OwlDevtoolsGlobalHook {
   }
   // Edit a reactive state property with the provided value of the given component (path) and the subscription path
   editObject(componentPath, objectPath, value, objectType) {
+    try{
+      value = eval(value);
+    } catch(e){
+      console.warn("Could not evaluate user property\n",e);
+      return;
+    }
     const componentNode = this.getComponentNode(componentPath);
     if (objectType === "subscription") {
-      const target = owl.reactive(componentNode.subscriptions[objectPath[1]].target);
-      objectPath.slice(2).reduce((acc, curr, idx, arr) => {
-        if (idx === arr.length - 1) {
-          acc[curr] = value;
-        }
-        return acc[curr];
-      }, target);
+      const key = objectPath.pop();
+      const obj = this.getObject(componentNode.subscriptions[objectPath[1]].target, objectPath.slice(2));
+      if (!obj) {
+        return;
+      }
+      owl.reactive(obj)[key] = value;
     } else {
       const key = objectPath.pop();
       const obj = this.getObject(componentNode.component, objectPath);

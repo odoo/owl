@@ -1,7 +1,7 @@
 import { evalInWindow } from "../../../../../utils";
 import { useStore } from "../../../../store/store";
 
-const { Component, useState, useEffect, useRef } = owl;
+const { Component, useState, useEffect, useRef, useExternalListener } = owl;
 
 export class ObjectTreeElement extends Component {
   static props = [
@@ -37,7 +37,6 @@ export class ObjectTreeElement extends Component {
       (editMode) => {
         // Focus on the input when it is created
         if (editMode) {
-          inputRef.el.focus();
           inputRef.el.select();
         }
       },
@@ -92,7 +91,7 @@ export class ObjectTreeElement extends Component {
   inspectFunctionSource() {
     evalInWindow(
       "inspectFunctionSource",
-      [JSON.stringify(this.store.activeComponent.path), JSON.stringify(this.props.path)],
+      [this.store.activeComponent.path, this.props.path],
       this.store.activeFrame
     );
   }
@@ -100,7 +99,7 @@ export class ObjectTreeElement extends Component {
   storeObjectAsGlobal() {
     evalInWindow(
       "storeObjectAsGlobal",
-      [JSON.stringify(this.store.activeComponent.path), JSON.stringify(this.props.path)],
+      [this.store.activeComponent.path, this.props.path],
       this.store.activeFrame
     );
   }

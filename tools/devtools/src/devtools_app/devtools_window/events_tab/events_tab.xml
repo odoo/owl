@@ -1,37 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.EventsTab" owl="1">
-    <div class="panel-top d-flex align-items-center">
-      <i title="Start/Stop Recording" class="fa fa-circle pointer-icon ms-1 p-1" t-attf-style="color: {{store.activeRecorder ? 'var(--active-recorder)' : 'var(--text-color)'}};" t-on-click.stop="toggleRecording" aria-hidden="true"></i>
-      <div class="icons-separator mx-1"/>
-      <i title="Clear events" class="fa fa-ban lg-icon pointer-icon p-1" t-on-click.stop="clearConsole" aria-hidden="true"></i>
-      <div class="icons-separator mx-1"/>
-      <select class="form-select form-select-sm custom-select border-0" t-on-change="selectDisplayMode">
-        <option value="List">Events log</option>
-        <option value="Tree">Tree view</option>
-      </select>
-      <div class="icons-separator"/>
-      <!-- <EventSearchBar/> -->
-    </div>
-    <div class="events-container">
-      <t t-if="showHelp()">
-        <div class="status-message d-flex justify-content-center align-items-center">
-          Click on the <i class="fa fa-circle px-2" style="font-size: 0.8em;"></i> button to start recording events.
-        </div>
-      </t>
-      <t t-else="">
-        <t t-if="store.eventsTreeView">
-          <t t-foreach="store.eventsTree" t-as="event" t-key="event.id">
-            <EventNode t-props="event"/>
-          </t>
+    <div class="position-relative d-flex flex-column">
+      <div class="panel-top d-flex align-items-center">
+        <i title="Start/Stop Recording" class="fa fa-circle pointer-icon ms-1 p-1" t-attf-style="color: {{store.activeRecorder ? 'var(--active-recorder)' : 'var(--text-color)'}};" t-on-click.stop="() => this.store.toggleRecording()" aria-hidden="true"></i>
+        <div class="icons-separator mx-1"/>
+        <i title="Clear events" class="fa fa-ban lg-icon pointer-icon p-1" t-on-click.stop="() => this.store.clearEventsConsole()" aria-hidden="true"></i>
+        <div class="icons-separator mx-1"/>
+        <select class="form-select form-select-sm custom-select border-0" t-on-change="selectDisplayMode">
+          <option value="List">Events log</option>
+          <option value="Tree">Tree view</option>
+        </select>
+        <div class="icons-separator"/>
+        <!-- <EventSearchBar/> -->
+      </div>
+      <div class="events-container">
+        <t t-if="showHelp()">
+          <div class="status-message d-flex justify-content-center align-items-center">
+            Click on the <i class="fa fa-circle px-2" style="font-size: 0.8em;"></i> button to start recording events.
+          </div>
         </t>
         <t t-else="">
-          <t t-foreach="store.events" t-as="event" t-key="event_index">
-            <Event t-props="event"/>
+          <t t-if="store.eventsTreeView">
+            <t t-foreach="store.eventsTree" t-as="event" t-key="event.id">
+              <EventNode t-props="event"/>
+            </t>
+          </t>
+          <t t-else="">
+            <t t-foreach="store.events" t-as="event" t-key="event_index">
+              <Event t-props="event"/>
+            </t>
           </t>
         </t>
-        <div class="blank-space"/>
-      </t>
+      </div>
     </div>
   </t>
 </templates>

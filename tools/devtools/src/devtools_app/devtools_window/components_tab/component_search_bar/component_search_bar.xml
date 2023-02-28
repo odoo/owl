@@ -5,7 +5,7 @@
       <i title="Select an element in the page to inspect the corresponding component" class="fa fa-mouse-pointer" t-attf-style="color: {{store.componentSearch.activeSelector ? 'var(--active-icon)' : 'var(--text-color)'}};"></i>
     </div>
     <div class="icons-separator"/>
-    <div class="search-bar-wrapper d-flex align-items-center ms-2">
+    <div class="d-flex align-items-center ms-2 flex-grow-1">
       <i class="fa fa-search search-icon" aria-hidden="true"></i>
       <input type="text" class="search-input ms-1 w-100 border-0 h-100" placeholder="Search" t-on-keyup.stop="updateSearch" t-on-keydown="onSearchKeyDown" t-att-value="store.componentSearch.search"/>
       <t t-if="store.componentSearch.search.length > 0">

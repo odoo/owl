@@ -10,11 +10,10 @@ export const store = reactive({
   contextMenu: {
     top: 0,
     left: 0,
-    activeMenu: null,
+    id: 0,
+    activeMenu: -1,
     // Opens the context menu corresponding with the given menu html element
     open(event, menu) {
-      this.activeMenu = menu;
-      menu.classList.remove("d-none");
       const menuWidth = menu.offsetWidth;
       const menuHeight = menu.offsetHeight;
       let x = event.clientX;
@@ -29,6 +28,10 @@ export const store = reactive({
       // Need 25px offset because of the main navbar from the browser devtools
       this.top = y - 25 + "px";
     },
+    // Close the currently displayed context menu
+    close(){
+      this.activeMenu = -1;
+    }
   },
   frameUrls: ["top"],
   activeFrame: "top",
@@ -594,8 +597,8 @@ store.loadComponentsTree(false);
 // We also want to detect the different iframes at first loading of the devtools tab
 store.updateIFrameList();
 
-document.addEventListener("click", closeContextMenu, { capture: true });
-document.addEventListener("contextmenu", closeContextMenu, { capture: true });
+document.addEventListener("click", () => store.contextMenu.close(), { capture: true });
+document.addEventListener("contextmenu", () => store.contextMenu.close(), { capture: true });
 
 for (const frame of store.frameUrls) {
   evalInWindow("toggleEventsRecording", [false, 0], frame);
@@ -626,13 +629,6 @@ function keepAlive() {
       }
     );
   }
-}
-
-function closeContextMenu() {
-  if (store.contextMenu.activeMenu) {
-    store.contextMenu.activeMenu.classList.add("d-none");
-  }
-  store.contextMenu.activeMenu = null;
 }
 
 // Connect to the port to communicate to the background script

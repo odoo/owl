@@ -4,7 +4,7 @@
     <div t-attf-id="treeElement/{{pathAsString}}" 
       t-att-class="{'component-selected': props.selected,'component-highlighted': props.highlighted}" 
       class="tree-component m-0 p-0 w-100 text-nowrap user-select-none" 
-      t-on-contextmenu.prevent="(ev) => this.store.contextMenu.open(ev, this.contextMenu.el)" 
+      t-on-contextmenu.prevent="openMenu" 
       t-on-mouseover.stop="() => this.store.highlightComponent(props.path)" 
       t-on-click.stop="toggleComponent"
     >
@@ -25,7 +25,7 @@
         </span>
         <span t-if="props.depth">&gt;</span>
       </div>
-      <div class="custom-menu d-none" t-attf-style="top: {{store.contextMenu.top}}; left: {{store.contextMenu.left}}" t-ref="contextmenu">
+      <div t-if="store.contextMenu.activeMenu === contextMenuId" class="custom-menu" t-attf-style="top: {{store.contextMenu.top}}; left: {{store.contextMenu.left}}" t-ref="contextmenu">
         <ul class="my-1">
           <li t-on-click.stop="() => this.store.toggleComponentAndChildren(props.path, true)" class="custom-menu-item py-1 px-4">Expand children</li>
           <li t-on-click.stop="() => this.store.toggleComponentAndChildren(props.path, false)" class="custom-menu-item py-1 px-4">Fold children</li>

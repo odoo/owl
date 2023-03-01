@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.EventsTab" owl="1">
-    <div class="position-relative d-flex flex-column">
+    <div class="position-relative overflow-hidden d-flex flex-column h-100">
       <div class="panel-top d-flex align-items-center">
         <i title="Start/Stop Recording" class="fa fa-circle pointer-icon ms-1 p-1" t-attf-style="color: {{store.activeRecorder ? 'var(--active-recorder)' : 'var(--text-color)'}};" t-on-click.stop="() => this.store.toggleRecording()" aria-hidden="true"></i>
         <div class="icons-separator mx-1"/>
@@ -14,7 +14,7 @@
         <div class="icons-separator"/>
         <!-- <EventSearchBar/> -->
       </div>
-      <div class="events-container">
+      <div class="events-container h-100">
         <t t-if="showHelp()">
           <div class="status-message d-flex justify-content-center align-items-center">
             Click on the <i class="fa fa-circle px-2" style="font-size: 0.8em;"></i> button to start recording events.

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.ComponentsTab" owl="1">
-    <div class="position-relative d-flex flex-row">
-      <div class="split-screen-left" t-attf-style="width:{{store.splitPosition}}%;">
+    <div class="position-relative overflow-hidden d-flex flex-row">
+      <div class="split-screen-left d-flex flex-column" t-attf-style="width:{{store.splitPosition}}%;">
         <div class="panel-top d-flex align-items-center">
           <ComponentSearchBar/>
         </div>
-        <div id="tree-container">
+        <div class="overflow-auto">
           <div id="tree-wrapper">
             <t t-foreach="store.apps" t-as="app" t-key="app_index">
               <TreeElement t-props="app"/> 
@@ -18,7 +18,7 @@
         class="split-screen-border user-select-none"
         t-on-mousedown="onMouseDown"
       />
-      <div class="split-screen-right" t-attf-style="width:{{100 - store.splitPosition}}%;">
+      <div class="split-screen-right d-flex flex-column" t-attf-style="width:{{100 - store.splitPosition}}%;">
         <DetailsWindow/>
       </div>
     </div>

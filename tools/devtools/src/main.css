@@ -69,7 +69,6 @@
 .custom-navbar {
   font-size: 0.9em;
   padding: 0 !important;
-  height: 23px !important;
   background: var(--navbar-bg);
 }
 
@@ -190,7 +189,6 @@
 
 .split-screen-border {
   width: 10px;
-  height: calc(100vh - 23px);
   cursor: col-resize;
   margin: 0px -5px;
   z-index: 1;
@@ -205,23 +203,16 @@
 }
 
 .panel-top {
-  height: 30px;
+  padding: 0.15rem 0;
   border-bottom: 1px solid var(--border-color);
 }
 
-#tree-container {
-  height: calc(100vh - (39px + 1rem));
-  overflow: auto;
-}
-
 .details-container {
-  height: calc(100vh - (39px + 1rem));
   overflow-y: auto;
   overflow-x: hidden;
 }
 
 .events-container {
-  height: calc(100vh - (39px + 1rem));
   overflow-y: auto;
   overflow-x: hidden;
 }

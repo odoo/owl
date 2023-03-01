@@ -4,7 +4,7 @@
     <div class="m-0 p-0 text-nowrap w-100 object-line"
       t-att-class="attenuateIfPrototype" 
       t-on-click.stop="() => this.store.toggleObjectTreeElementsDisplay(this.props)" 
-      t-on-contextmenu.prevent="(ev) => this.store.contextMenu.open(ev, this.contextMenu.el)" 
+      t-on-contextmenu.prevent="openMenu" 
     >
       <div t-attf-style="padding-left: {{objectPadding}}rem">
         <i class="fa mx-1 pointer-icon"
@@ -30,7 +30,7 @@
         </t>
       </div>
     </div>
-    <div class="custom-menu d-none" t-attf-style="top: {{store.contextMenu.top}}; left: {{store.contextMenu.left}}" t-ref="contextmenu">
+    <div t-if="store.contextMenu.activeMenu === contextMenuId" class="custom-menu" t-attf-style="top: {{store.contextMenu.top}}; left: {{store.contextMenu.left}}" t-ref="contextmenu">
       <ul class="my-1">
         <li t-on-click="storeObjectAsGlobal" class="custom-menu-item py-1 px-4 text-nowrap">Store as global variable</li>
         <t t-if='props.contentType == "function"'>

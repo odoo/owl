@@ -140,6 +140,60 @@ exports[`input, type checkbox, with t-att-checked (patching with same value 1`] 
 }"
 `;
 
+exports[`readonly and readOnly are both interpreted as the readOnly property 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<input readonly=\\"\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`readonly and readOnly are both interpreted as the readOnly property 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<input readOnly=\\"\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`readonly and readOnly are both interpreted as the readOnly property 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<input block-property-0=\\"readOnly\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let prop1 = new Boolean(ctx['val']);
+    return block1([prop1]);
+  }
+}"
+`;
+
+exports[`readonly and readOnly are both interpreted as the readOnly property 4`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<input block-property-0=\\"readOnly\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let prop1 = new Boolean(ctx['val']);
+    return block1([prop1]);
+  }
+}"
+`;
+
 exports[`select with t-att-value 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

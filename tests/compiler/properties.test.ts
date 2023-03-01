@@ -186,3 +186,28 @@ test("select with t-att-value", () => {
   patch(bnode1, bnode2);
   expect(elm.value).toBe("onion");
 });
+
+test("readonly and readOnly are both interpreted as the readOnly property", () => {
+  // render input with initial value
+  const staticTemplates = [`<input readonly=""/>`, `<input readOnly=""/>`];
+  for (let template of staticTemplates) {
+    const fixture = makeTestFixture();
+    const bnode1 = renderToBdom(template);
+    mount(bnode1, fixture);
+    const input = fixture.querySelector("input")!;
+    expect(input.readOnly).toBe(true);
+  }
+
+  const dynamicTemplates = [`<input t-att-readonly="val"/>`, `<input t-att-readOnly="val"/>`];
+  for (let template of dynamicTemplates) {
+    const fixture = makeTestFixture();
+    const bnode1 = renderToBdom(template, { val: true });
+    mount(bnode1, fixture);
+    const input = fixture.querySelector("input")!;
+    expect(input.readOnly).toBe(true);
+
+    const bnode2 = renderToBdom(template, { val: false });
+    patch(bnode1, bnode2);
+    expect(input.readOnly).toBe(false);
+  }
+});

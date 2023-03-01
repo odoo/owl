@@ -1,20 +1,24 @@
 import { minimizeKey } from "../../../../utils";
 import { useStore } from "../../../store/store";
 
-const { Component } = owl;
+const { Component, useEffect, useRef } = owl;
 
 export class Event extends Component {
   static template = "devtools.Event";
 
   setup() {
     this.store = useStore();
-  }
-
-  // Expand/fold the event
-  toggleDisplay() {
-    if (this.props.origin) {
-      this.store.events[this.props.id].toggled = !this.store.events[this.props.id].toggled;
-    }
+    this.componentContextMenu = useRef("componentContextmenu");
+    this.componentContextMenuId = this.store.contextMenu.id++;
+    this.contextMenuEvent,
+    useEffect(
+      (menuId) => {
+        if(menuId === this.componentContextMenuId){
+          this.store.contextMenu.open(this.contextMenuEvent, this.componentContextMenu.el)
+        }
+      },
+      () => [this.store.contextMenu.activeMenu]
+    );
   }
 
   // Formatting for displaying the key of the component
@@ -42,4 +46,22 @@ export class Event extends Component {
       }
     }
   }
+
+  // Expand/fold the event
+  toggleDisplay() {
+    if (this.props.origin) {
+      this.store.events[this.props.id].toggled = !this.store.events[this.props.id].toggled;
+    }
+  }
+
+  openComponentMenu(ev){
+    if(this.props.type === "destroy"){
+      return;
+    } else {
+      ev.preventDefault();
+      this.contextMenuEvent = ev;
+      this.store.contextMenu.activeMenu = this.componentContextMenuId;
+    }
+  }
+
 }

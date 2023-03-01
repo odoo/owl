@@ -33,6 +33,16 @@ export class ObjectTreeElement extends Component {
     this.contextMenu = useRef("contextmenu");
     const inputRef = useRef("input");
     this.store = useStore();
+    this.contextMenuId = this.store.contextMenu.id++;
+    this.contextMenuEvent,
+    useEffect(
+      (menuId) => {
+        if(menuId === this.contextMenuId){
+          this.store.contextMenu.open(this.contextMenuEvent, this.contextMenu.el)
+        }
+      },
+      () => [this.store.contextMenu.activeMenu]
+    );
     useEffect(
       (editMode) => {
         // Focus on the input when it is created
@@ -64,6 +74,11 @@ export class ObjectTreeElement extends Component {
 
   get objectPadding() {
     return this.props.depth * 0.8 + 0.3;
+  }
+
+  openMenu(ev){
+    this.contextMenuEvent = ev;
+    this.store.contextMenu.activeMenu = this.contextMenuId;
   }
 
   setupEditMode() {

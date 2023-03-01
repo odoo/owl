@@ -30,6 +30,8 @@ export class TreeElement extends Component {
     this.highlightTimeout = false;
     this.store = useStore();
     this.contextMenu = useRef("contextmenu");
+    this.contextMenuId = this.store.contextMenu.id++;
+    this.contextMenuEvent,
     // Scroll to the selected element when it changes
     onMounted(() => {
       if (this.props.selected) {
@@ -45,6 +47,14 @@ export class TreeElement extends Component {
         }
       }
     });
+    useEffect(
+      (menuId) => {
+        if(menuId === this.contextMenuId){
+          this.store.contextMenu.open(this.contextMenuEvent, this.contextMenu.el)
+        }
+      },
+      () => [this.store.contextMenu.activeMenu]
+    );
     // Effect to apply a short highlight effect to the component when it is rendered
     useEffect(
       (renderPaths) => {
@@ -84,14 +94,19 @@ export class TreeElement extends Component {
   get componentPadding() {
     return this.props.depth * 0.8;
   }
+  
+  get minimizedKey() {
+    return minimizeKey(this.props.key);
+  }
+
+  openMenu(ev){
+    this.contextMenuEvent = ev;
+    this.store.contextMenu.activeMenu = this.contextMenuId;
+  }
 
   // Expand/fold the component node
   toggleDisplay(ev) {
     this.store.toggleComponentTreeElementDisplay(this.props.path);
-  }
-
-  get minimizedKey() {
-    return minimizeKey(this.props.key);
   }
 
   // Used to select the component node

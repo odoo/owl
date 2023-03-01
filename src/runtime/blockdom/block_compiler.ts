@@ -1,13 +1,5 @@
 import { OwlError } from "../error_handling";
-import {
-  attrsSetter,
-  attrsUpdater,
-  createAttrUpdater,
-  isProp,
-  makePropSetter,
-  setClass,
-  updateClass,
-} from "./attributes";
+import { attrsSetter, attrsUpdater, createAttrUpdater, setClass, updateClass } from "./attributes";
 import { config } from "./config";
 import { createEventHandler } from "./events";
 import type { VNode } from "./index";
@@ -24,6 +16,13 @@ const nodeGetFirstChild = getDescriptor(nodeProto, "firstChild").get!;
 const nodeGetNextSibling = getDescriptor(nodeProto, "nextSibling").get!;
 
 const NO_OP = () => {};
+
+function makePropSetter(name: string): Setter<HTMLElement> {
+  return function setProp(this: HTMLElement, value: any) {
+    // support 0, fallback to empty string for other falsy values
+    (this as any)[name] = value === 0 ? 0 : value ? value.valueOf() : "";
+  };
+}
 
 // -----------------------------------------------------------------------------
 // Main compiler code
@@ -101,7 +100,7 @@ function normalizeNode(node: HTMLElement | Text) {
 interface DynamicInfo {
   idx: number;
   refIdx?: number;
-  type: "text" | "child" | "handler" | "attribute" | "attributes" | "ref";
+  type: "text" | "child" | "handler" | "attribute" | "attributes" | "property" | "ref";
   isOnlyChild?: boolean;
   name?: string;
   tag?: string;
@@ -180,6 +179,14 @@ function buildTree(
             const idx = parseInt(attrName.slice(16), 10);
             info.push({
               type: "attribute",
+              idx,
+              name: attrValue,
+              tag: tagName,
+            });
+          } else if (attrName.startsWith("block-property-")) {
+            const idx = parseInt(attrName.slice(15), 10);
+            info.push({
+              type: "property",
               idx,
               name: attrValue,
               tag: tagName,
@@ -377,15 +384,22 @@ function updateCtx(ctx: BlockCtx, tree: IntermediateTree) {
           };
         }
         break;
+      case "property": {
+        const refIdx = info.refIdx!;
+        const setProp = makePropSetter(info.name!);
+        ctx.locations.push({
+          idx: info.idx,
+          refIdx,
+          setData: setProp,
+          updateData: setProp,
+        });
+        break;
+      }
       case "attribute": {
         const refIdx = info.refIdx!;
         let updater: any;
         let setter: any;
-        if (isProp(info.tag!, info.name!)) {
-          const setProp = makePropSetter(info.name!);
-          setter = setProp;
-          updater = setProp;
-        } else if (info.name === "class") {
+        if (info.name === "class") {
           setter = setClass;
           updater = updateClass;
         } else {

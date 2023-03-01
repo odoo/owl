@@ -145,4 +145,3 @@ test("class attribute (with a preexisting value", async () => {
   patch(tree, block([""]));
   expect(fixture.innerHTML).toBe(`<div class="tomato"></div>`);
 });
-

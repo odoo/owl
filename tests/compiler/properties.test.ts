@@ -58,7 +58,6 @@ test("updating property with falsy value", async () => {
   expect(input.value).toBe("");
 });
 
-
 test("input type= checkbox, with t-att-checked", () => {
   const template = `<input type="checkbox" t-att-checked="flag"/>`;
   const result = renderToString(template, { flag: true });

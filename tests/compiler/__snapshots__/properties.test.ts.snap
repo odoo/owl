@@ -19,11 +19,11 @@ exports[`dynamic input value: falsy values 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<input block-attribute-0=\\"value\\"/>\`);
+  let block1 = createBlock(\`<input block-property-0=\\"value\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let attr1 = new String((0) === 0 ? 0 : ((0) || \\"\\"));
-    return block1([attr1]);
+    let prop1 = new String((0) === 0 ? 0 : ((0) || \\"\\"));
+    return block1([prop1]);
   }
 }"
 `;
@@ -33,11 +33,11 @@ exports[`dynamic input value: falsy values 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<input block-attribute-0=\\"value\\"/>\`);
+  let block1 = createBlock(\`<input block-property-0=\\"value\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let attr1 = new String((false) === 0 ? 0 : ((false) || \\"\\"));
-    return block1([attr1]);
+    let prop1 = new String((false) === 0 ? 0 : ((false) || \\"\\"));
+    return block1([prop1]);
   }
 }"
 `;
@@ -47,11 +47,11 @@ exports[`dynamic input value: falsy values 3`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<input block-attribute-0=\\"value\\"/>\`);
+  let block1 = createBlock(\`<input block-property-0=\\"value\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let attr1 = new String((undefined) === 0 ? 0 : ((undefined) || \\"\\"));
-    return block1([attr1]);
+    let prop1 = new String((undefined) === 0 ? 0 : ((undefined) || \\"\\"));
+    return block1([prop1]);
   }
 }"
 `;
@@ -61,11 +61,11 @@ exports[`dynamic input value: falsy values 4`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<input block-attribute-0=\\"value\\"/>\`);
+  let block1 = createBlock(\`<input block-property-0=\\"value\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let attr1 = new String(('') === 0 ? 0 : (('') || \\"\\"));
-    return block1([attr1]);
+    let prop1 = new String(('') === 0 ? 0 : (('') || \\"\\"));
+    return block1([prop1]);
   }
 }"
 `;
@@ -75,11 +75,11 @@ exports[`input of type checkbox with t-att-indeterminate 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<input type=\\"checkbox\\" block-attribute-0=\\"indeterminate\\"/>\`);
+  let block1 = createBlock(\`<input type=\\"checkbox\\" block-property-0=\\"indeterminate\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let attr1 = new Boolean(ctx['v']);
-    return block1([attr1]);
+    let prop1 = new Boolean(ctx['v']);
+    return block1([prop1]);
   }
 }"
 `;
@@ -89,11 +89,11 @@ exports[`input type= checkbox, with t-att-checked 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<input type=\\"checkbox\\" block-attribute-0=\\"checked\\"/>\`);
+  let block1 = createBlock(\`<input type=\\"checkbox\\" block-property-0=\\"checked\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let attr1 = new Boolean(ctx['flag']);
-    return block1([attr1]);
+    let prop1 = new Boolean(ctx['flag']);
+    return block1([prop1]);
   }
 }"
 `;
@@ -103,11 +103,11 @@ exports[`input with t-att-value (patching with same value 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<input block-attribute-0=\\"value\\"/>\`);
+  let block1 = createBlock(\`<input block-property-0=\\"value\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let attr1 = new String((ctx['v']) === 0 ? 0 : ((ctx['v']) || \\"\\"));
-    return block1([attr1]);
+    let prop1 = new String((ctx['v']) === 0 ? 0 : ((ctx['v']) || \\"\\"));
+    return block1([prop1]);
   }
 }"
 `;
@@ -117,11 +117,11 @@ exports[`input with t-att-value 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<input block-attribute-0=\\"value\\"/>\`);
+  let block1 = createBlock(\`<input block-property-0=\\"value\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let attr1 = new String((ctx['v']) === 0 ? 0 : ((ctx['v']) || \\"\\"));
-    return block1([attr1]);
+    let prop1 = new String((ctx['v']) === 0 ? 0 : ((ctx['v']) || \\"\\"));
+    return block1([prop1]);
   }
 }"
 `;
@@ -131,11 +131,11 @@ exports[`input, type checkbox, with t-att-checked (patching with same value 1`] 
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<input type=\\"checkbox\\" block-attribute-0=\\"checked\\"/>\`);
+  let block1 = createBlock(\`<input type=\\"checkbox\\" block-property-0=\\"checked\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let attr1 = new Boolean(ctx['v']);
-    return block1([attr1]);
+    let prop1 = new Boolean(ctx['v']);
+    return block1([prop1]);
   }
 }"
 `;
@@ -145,11 +145,11 @@ exports[`select with t-att-value 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<select block-attribute-0=\\"value\\"><option value=\\"potato\\">Potato</option><option value=\\"tomato\\">Tomato</option><option value=\\"onion\\">Onion</option></select>\`);
+  let block1 = createBlock(\`<select block-property-0=\\"value\\"><option value=\\"potato\\">Potato</option><option value=\\"tomato\\">Tomato</option><option value=\\"onion\\">Onion</option></select>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let attr1 = new String((ctx['value']) === 0 ? 0 : ((ctx['value']) || \\"\\"));
-    return block1([attr1]);
+    let prop1 = new String((ctx['value']) === 0 ? 0 : ((ctx['value']) || \\"\\"));
+    return block1([prop1]);
   }
 }"
 `;
@@ -159,11 +159,11 @@ exports[`textarea with t-att-value 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<textarea block-attribute-0=\\"value\\"/>\`);
+  let block1 = createBlock(\`<textarea block-property-0=\\"value\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let attr1 = new String((ctx['v']) === 0 ? 0 : ((ctx['v']) || \\"\\"));
-    return block1([attr1]);
+    let prop1 = new String((ctx['v']) === 0 ? 0 : ((ctx['v']) || \\"\\"));
+    return block1([prop1]);
   }
 }"
 `;
@@ -173,11 +173,11 @@ exports[`updating property with falsy value 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<input block-attribute-0=\\"value\\"/>\`);
+  let block1 = createBlock(\`<input block-property-0=\\"value\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let attr1 = new String((ctx['v']) === 0 ? 0 : ((ctx['v']) || \\"\\"));
-    return block1([attr1]);
+    let prop1 = new String((ctx['v']) === 0 ? 0 : ((ctx['v']) || \\"\\"));
+    return block1([prop1]);
   }
 }"
 `;

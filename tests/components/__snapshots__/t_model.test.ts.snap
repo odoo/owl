@@ -6,15 +6,15 @@ exports[`t-model directive .lazy modifier 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
-  let block1 = createBlock(\`<div><input block-attribute-0=\\"value\\" block-handler-1=\\"change\\"/><span><block-text-2/></span></div>\`);
+  let block1 = createBlock(\`<div><input block-property-0=\\"value\\" block-handler-1=\\"change\\"/><span><block-text-2/></span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     const expr1 = 'text';
-    let attr1 = bExpr1[expr1];
+    let prop1 = bExpr1[expr1];
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
     let txt1 = ctx['state'].text;
-    return block1([attr1, hdlr1, txt1]);
+    return block1([prop1, hdlr1, txt1]);
   }
 }"
 `;
@@ -25,15 +25,15 @@ exports[`t-model directive .number modifier 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
-  let block1 = createBlock(\`<div><input block-attribute-0=\\"value\\" block-handler-1=\\"input\\"/><span><block-text-2/></span></div>\`);
+  let block1 = createBlock(\`<div><input block-property-0=\\"value\\" block-handler-1=\\"input\\"/><span><block-text-2/></span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     const expr1 = 'number';
-    let attr1 = bExpr1[expr1];
+    let prop1 = bExpr1[expr1];
     let hdlr1 = [(ev) => { bExpr1[expr1] = toNumber(ev.target.value); }];
     let txt1 = ctx['state'].number;
-    return block1([attr1, hdlr1, txt1]);
+    return block1([prop1, hdlr1, txt1]);
   }
 }"
 `;
@@ -44,15 +44,15 @@ exports[`t-model directive .trim modifier 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
-  let block1 = createBlock(\`<div><input block-attribute-0=\\"value\\" block-handler-1=\\"input\\"/><span><block-text-2/></span></div>\`);
+  let block1 = createBlock(\`<div><input block-property-0=\\"value\\" block-handler-1=\\"input\\"/><span><block-text-2/></span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     const expr1 = 'text';
-    let attr1 = bExpr1[expr1];
+    let prop1 = bExpr1[expr1];
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value.trim(); }];
     let txt1 = ctx['state'].text;
-    return block1([attr1, hdlr1, txt1]);
+    return block1([prop1, hdlr1, txt1]);
   }
 }"
 `;
@@ -63,15 +63,15 @@ exports[`t-model directive basic use, on an input 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
-  let block1 = createBlock(\`<div><input block-attribute-0=\\"value\\" block-handler-1=\\"input\\"/><span><block-text-2/></span></div>\`);
+  let block1 = createBlock(\`<div><input block-property-0=\\"value\\" block-handler-1=\\"input\\"/><span><block-text-2/></span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     const expr1 = 'text';
-    let attr1 = bExpr1[expr1];
+    let prop1 = bExpr1[expr1];
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
     let txt1 = ctx['state'].text;
-    return block1([attr1, hdlr1, txt1]);
+    return block1([prop1, hdlr1, txt1]);
   }
 }"
 `;
@@ -82,15 +82,15 @@ exports[`t-model directive basic use, on an input with bracket expression 1`] = 
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
-  let block1 = createBlock(\`<div><input block-attribute-0=\\"value\\" block-handler-1=\\"input\\"/><span><block-text-2/></span></div>\`);
+  let block1 = createBlock(\`<div><input block-property-0=\\"value\\" block-handler-1=\\"input\\"/><span><block-text-2/></span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     const expr1 = 'text';
-    let attr1 = bExpr1[expr1];
+    let prop1 = bExpr1[expr1];
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
     let txt1 = ctx['state'].text;
-    return block1([attr1, hdlr1, txt1]);
+    return block1([prop1, hdlr1, txt1]);
   }
 }"
 `;
@@ -101,15 +101,15 @@ exports[`t-model directive basic use, on another key in component 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
-  let block1 = createBlock(\`<div><input block-attribute-0=\\"value\\" block-handler-1=\\"input\\"/><span><block-text-2/></span></div>\`);
+  let block1 = createBlock(\`<div><input block-property-0=\\"value\\" block-handler-1=\\"input\\"/><span><block-text-2/></span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['some'];
     const expr1 = 'text';
-    let attr1 = bExpr1[expr1];
+    let prop1 = bExpr1[expr1];
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
     let txt1 = ctx['some'].text;
-    return block1([attr1, hdlr1, txt1]);
+    return block1([prop1, hdlr1, txt1]);
   }
 }"
 `;
@@ -120,15 +120,15 @@ exports[`t-model directive can also define t-on directive on same event, part 1 
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
-  let block1 = createBlock(\`<div><input block-attribute-0=\\"value\\" block-handler-1=\\"input\\" block-handler-2=\\"input\\"/></div>\`);
+  let block1 = createBlock(\`<div><input block-property-0=\\"value\\" block-handler-1=\\"input\\" block-handler-2=\\"input\\"/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     const expr1 = 'text';
-    let attr1 = bExpr1[expr1];
+    let prop1 = bExpr1[expr1];
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
     let hdlr2 = [ctx['onInput'], ctx];
-    return block1([attr1, hdlr1, hdlr2]);
+    return block1([prop1, hdlr1, hdlr2]);
   }
 }"
 `;
@@ -139,25 +139,25 @@ exports[`t-model directive can also define t-on directive on same event, part 2 
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
-  let block1 = createBlock(\`<div><input type=\\"radio\\" id=\\"one\\" value=\\"One\\" block-attribute-0=\\"checked\\" block-handler-1=\\"click\\" block-handler-2=\\"click\\"/><input type=\\"radio\\" id=\\"two\\" value=\\"Two\\" block-attribute-3=\\"checked\\" block-handler-4=\\"click\\" block-handler-5=\\"click\\"/><input type=\\"radio\\" id=\\"three\\" value=\\"Three\\" block-attribute-6=\\"checked\\" block-handler-7=\\"click\\" block-handler-8=\\"click\\"/></div>\`);
+  let block1 = createBlock(\`<div><input type=\\"radio\\" id=\\"one\\" value=\\"One\\" block-property-0=\\"checked\\" block-handler-1=\\"click\\" block-handler-2=\\"click\\"/><input type=\\"radio\\" id=\\"two\\" value=\\"Two\\" block-property-3=\\"checked\\" block-handler-4=\\"click\\" block-handler-5=\\"click\\"/><input type=\\"radio\\" id=\\"three\\" value=\\"Three\\" block-property-6=\\"checked\\" block-handler-7=\\"click\\" block-handler-8=\\"click\\"/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     const expr1 = 'choice';
-    let attr1 = bExpr1[expr1] === 'One';
+    let prop1 = bExpr1[expr1] === 'One';
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
     let hdlr2 = [ctx['onClick'], ctx];
     const bExpr2 = ctx['state'];
     const expr2 = 'choice';
-    let attr2 = bExpr2[expr2] === 'Two';
+    let prop2 = bExpr2[expr2] === 'Two';
     let hdlr3 = [(ev) => { bExpr2[expr2] = ev.target.value; }];
     let hdlr4 = [ctx['onClick'], ctx];
     const bExpr3 = ctx['state'];
     const expr3 = 'choice';
-    let attr3 = bExpr3[expr3] === 'Three';
+    let prop3 = bExpr3[expr3] === 'Three';
     let hdlr5 = [(ev) => { bExpr3[expr3] = ev.target.value; }];
     let hdlr6 = [ctx['onClick'], ctx];
-    return block1([attr1, hdlr1, hdlr2, attr2, hdlr3, hdlr4, attr3, hdlr5, hdlr6]);
+    return block1([prop1, hdlr1, hdlr2, prop2, hdlr3, hdlr4, prop3, hdlr5, hdlr6]);
   }
 }"
 `;
@@ -168,7 +168,7 @@ exports[`t-model directive following a scope protecting directive (e.g. t-set) 1
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue, toNumber } = helpers;
   
-  let block1 = createBlock(\`<div><input block-attribute-0=\\"value\\" block-handler-1=\\"input\\"/></div>\`);
+  let block1 = createBlock(\`<div><input block-property-0=\\"value\\" block-handler-1=\\"input\\"/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -176,9 +176,9 @@ exports[`t-model directive following a scope protecting directive (e.g. t-set) 1
     setContextValue(ctx, \\"admiral\\", 'Bruno');
     const bExpr1 = ctx['state'];
     const expr1 = 'text';
-    let attr1 = bExpr1[expr1];
+    let prop1 = bExpr1[expr1];
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
-    return block1([attr1, hdlr1]);
+    return block1([prop1, hdlr1]);
   }
 }"
 `;
@@ -190,7 +190,7 @@ exports[`t-model directive in a t-foreach 1`] = `
   let { prepareList, toNumber, withKey } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<input type=\\"checkbox\\" block-attribute-0=\\"checked\\" block-handler-1=\\"input\\"/>\`);
+  let block3 = createBlock(\`<input type=\\"checkbox\\" block-property-0=\\"checked\\" block-handler-1=\\"input\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -200,9 +200,9 @@ exports[`t-model directive in a t-foreach 1`] = `
       const key1 = ctx['thing'].id;
       const bExpr1 = ctx['thing'];
       const expr1 = 'f';
-      let attr1 = bExpr1[expr1];
+      let prop1 = bExpr1[expr1];
       let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.checked; }];
-      c_block2[i1] = withKey(block3([attr1, hdlr1]), key1);
+      c_block2[i1] = withKey(block3([prop1, hdlr1]), key1);
     }
     const b2 = list(c_block2);
     return block1([], [b2]);
@@ -217,7 +217,7 @@ exports[`t-model directive in a t-foreach, part 2 1`] = `
   let { prepareList, toNumber, withKey } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<input block-attribute-0=\\"value\\" block-handler-1=\\"input\\"/>\`);
+  let block3 = createBlock(\`<input block-property-0=\\"value\\" block-handler-1=\\"input\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -228,9 +228,9 @@ exports[`t-model directive in a t-foreach, part 2 1`] = `
       const key1 = ctx['thing_index'];
       const bExpr1 = ctx['state'];
       const expr1 = ctx['thing_index'];
-      let attr1 = bExpr1[expr1];
+      let prop1 = bExpr1[expr1];
       let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
-      c_block2[i1] = withKey(block3([attr1, hdlr1]), key1);
+      c_block2[i1] = withKey(block3([prop1, hdlr1]), key1);
     }
     const b2 = list(c_block2);
     return block1([], [b2]);
@@ -245,7 +245,7 @@ exports[`t-model directive in a t-foreach, part 3 1`] = `
   let { prepareList, toNumber, withKey } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<input block-attribute-0=\\"value\\" block-handler-1=\\"input\\"/>\`);
+  let block3 = createBlock(\`<input block-property-0=\\"value\\" block-handler-1=\\"input\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
@@ -256,9 +256,9 @@ exports[`t-model directive in a t-foreach, part 3 1`] = `
       const key1 = ctx['name_index'];
       const bExpr1 = ctx['state'].values;
       const expr1 = ctx['name'];
-      let attr1 = bExpr1[expr1];
+      let prop1 = bExpr1[expr1];
       let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
-      c_block2[i1] = withKey(block3([attr1, hdlr1]), key1);
+      c_block2[i1] = withKey(block3([prop1, hdlr1]), key1);
     }
     const b2 = list(c_block2);
     return block1([], [b2]);
@@ -272,15 +272,15 @@ exports[`t-model directive on a select 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
-  let block1 = createBlock(\`<div><select block-attribute-0=\\"value\\" block-handler-1=\\"change\\"><option value=\\"\\">Please select one</option><option value=\\"red\\">Red</option><option value=\\"blue\\">Blue</option></select><span>Choice: <block-text-2/></span></div>\`);
+  let block1 = createBlock(\`<div><select block-property-0=\\"value\\" block-handler-1=\\"change\\"><option value=\\"\\">Please select one</option><option value=\\"red\\">Red</option><option value=\\"blue\\">Blue</option></select><span>Choice: <block-text-2/></span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     const expr1 = 'color';
-    let attr1 = bExpr1[expr1];
+    let prop1 = bExpr1[expr1];
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
     let txt1 = ctx['state'].color;
-    return block1([attr1, hdlr1, txt1]);
+    return block1([prop1, hdlr1, txt1]);
   }
 }"
 `;
@@ -291,14 +291,14 @@ exports[`t-model directive on a select, initial state 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
-  let block1 = createBlock(\`<div><select block-attribute-0=\\"value\\" block-handler-1=\\"change\\"><option value=\\"\\">Please select one</option><option value=\\"red\\">Red</option><option value=\\"blue\\">Blue</option></select></div>\`);
+  let block1 = createBlock(\`<div><select block-property-0=\\"value\\" block-handler-1=\\"change\\"><option value=\\"\\">Please select one</option><option value=\\"red\\">Red</option><option value=\\"blue\\">Blue</option></select></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     const expr1 = 'color';
-    let attr1 = bExpr1[expr1];
+    let prop1 = bExpr1[expr1];
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
-    return block1([attr1, hdlr1]);
+    return block1([prop1, hdlr1]);
   }
 }"
 `;
@@ -309,15 +309,15 @@ exports[`t-model directive on a sub state key 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
-  let block1 = createBlock(\`<div><input block-attribute-0=\\"value\\" block-handler-1=\\"input\\"/><span><block-text-2/></span></div>\`);
+  let block1 = createBlock(\`<div><input block-property-0=\\"value\\" block-handler-1=\\"input\\"/><span><block-text-2/></span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'].something;
     const expr1 = 'text';
-    let attr1 = bExpr1[expr1];
+    let prop1 = bExpr1[expr1];
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
     let txt1 = ctx['state'].something.text;
-    return block1([attr1, hdlr1, txt1]);
+    return block1([prop1, hdlr1, txt1]);
   }
 }"
 `;
@@ -328,19 +328,19 @@ exports[`t-model directive on an input type=radio 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
-  let block1 = createBlock(\`<div><input type=\\"radio\\" id=\\"one\\" value=\\"One\\" block-attribute-0=\\"checked\\" block-handler-1=\\"click\\"/><input type=\\"radio\\" id=\\"two\\" value=\\"Two\\" block-attribute-2=\\"checked\\" block-handler-3=\\"click\\"/><span>Choice: <block-text-4/></span></div>\`);
+  let block1 = createBlock(\`<div><input type=\\"radio\\" id=\\"one\\" value=\\"One\\" block-property-0=\\"checked\\" block-handler-1=\\"click\\"/><input type=\\"radio\\" id=\\"two\\" value=\\"Two\\" block-property-2=\\"checked\\" block-handler-3=\\"click\\"/><span>Choice: <block-text-4/></span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     const expr1 = 'choice';
-    let attr1 = bExpr1[expr1] === 'One';
+    let prop1 = bExpr1[expr1] === 'One';
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
     const bExpr2 = ctx['state'];
     const expr2 = 'choice';
-    let attr2 = bExpr2[expr2] === 'Two';
+    let prop2 = bExpr2[expr2] === 'Two';
     let hdlr2 = [(ev) => { bExpr2[expr2] = ev.target.value; }];
     let txt1 = ctx['state'].choice;
-    return block1([attr1, hdlr1, attr2, hdlr2, txt1]);
+    return block1([prop1, hdlr1, prop2, hdlr2, txt1]);
   }
 }"
 `;
@@ -351,18 +351,18 @@ exports[`t-model directive on an input type=radio, with initial value 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
-  let block1 = createBlock(\`<div><input type=\\"radio\\" id=\\"one\\" value=\\"One\\" block-attribute-0=\\"checked\\" block-handler-1=\\"click\\"/><input type=\\"radio\\" id=\\"two\\" value=\\"Two\\" block-attribute-2=\\"checked\\" block-handler-3=\\"click\\"/></div>\`);
+  let block1 = createBlock(\`<div><input type=\\"radio\\" id=\\"one\\" value=\\"One\\" block-property-0=\\"checked\\" block-handler-1=\\"click\\"/><input type=\\"radio\\" id=\\"two\\" value=\\"Two\\" block-property-2=\\"checked\\" block-handler-3=\\"click\\"/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     const expr1 = 'choice';
-    let attr1 = bExpr1[expr1] === 'One';
+    let prop1 = bExpr1[expr1] === 'One';
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
     const bExpr2 = ctx['state'];
     const expr2 = 'choice';
-    let attr2 = bExpr2[expr2] === 'Two';
+    let prop2 = bExpr2[expr2] === 'Two';
     let hdlr2 = [(ev) => { bExpr2[expr2] = ev.target.value; }];
-    return block1([attr1, hdlr1, attr2, hdlr2]);
+    return block1([prop1, hdlr1, prop2, hdlr2]);
   }
 }"
 `;
@@ -373,20 +373,20 @@ exports[`t-model directive on an input, type=checkbox 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
-  let block1 = createBlock(\`<div><input type=\\"checkbox\\" block-attribute-0=\\"checked\\" block-handler-1=\\"input\\"/><span><block-child-0/><block-child-1/></span></div>\`);
+  let block1 = createBlock(\`<div><input type=\\"checkbox\\" block-property-0=\\"checked\\" block-handler-1=\\"input\\"/><span><block-child-0/><block-child-1/></span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2,b3;
     const bExpr1 = ctx['state'];
     const expr1 = 'flag';
-    let attr1 = bExpr1[expr1];
+    let prop1 = bExpr1[expr1];
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.checked; }];
     if (ctx['state'].flag) {
       b2 = text(\`yes\`);
     } else {
       b3 = text(\`no\`);
     }
-    return block1([attr1, hdlr1], [b2, b3]);
+    return block1([prop1, hdlr1], [b2, b3]);
   }
 }"
 `;
@@ -397,15 +397,15 @@ exports[`t-model directive on an textarea 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
-  let block1 = createBlock(\`<div><textarea block-attribute-0=\\"value\\" block-handler-1=\\"input\\"/><span><block-text-2/></span></div>\`);
+  let block1 = createBlock(\`<div><textarea block-property-0=\\"value\\" block-handler-1=\\"input\\"/><span><block-text-2/></span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     const expr1 = 'text';
-    let attr1 = bExpr1[expr1];
+    let prop1 = bExpr1[expr1];
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
     let txt1 = ctx['state'].text;
-    return block1([attr1, hdlr1, txt1]);
+    return block1([prop1, hdlr1, txt1]);
   }
 }"
 `;
@@ -416,15 +416,15 @@ exports[`t-model directive t-model is applied before t-on-input 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
-  let block1 = createBlock(\`<div><input block-attribute-0=\\"value\\" block-handler-1=\\"input\\" block-handler-2=\\"input\\"/></div>\`);
+  let block1 = createBlock(\`<div><input block-property-0=\\"value\\" block-handler-1=\\"input\\" block-handler-2=\\"input\\"/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     const expr1 = 'text';
-    let attr1 = bExpr1[expr1];
+    let prop1 = bExpr1[expr1];
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
     let hdlr2 = [ctx['onInput'], ctx];
-    return block1([attr1, hdlr1, hdlr2]);
+    return block1([prop1, hdlr1, hdlr2]);
   }
 }"
 `;
@@ -435,14 +435,14 @@ exports[`t-model directive t-model on an input with an undefined value 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
-  let block1 = createBlock(\`<input block-attribute-0=\\"value\\" block-handler-1=\\"input\\"/>\`);
+  let block1 = createBlock(\`<input block-property-0=\\"value\\" block-handler-1=\\"input\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     const expr1 = 'text';
-    let attr1 = bExpr1[expr1];
+    let prop1 = bExpr1[expr1];
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
-    return block1([attr1, hdlr1]);
+    return block1([prop1, hdlr1]);
   }
 }"
 `;
@@ -453,17 +453,17 @@ exports[`t-model directive t-model on select with static options 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
-  let block1 = createBlock(\`<div><select block-attribute-0=\\"value\\" block-handler-1=\\"change\\"><option value=\\"a\\"><block-text-2/></option><option value=\\"b\\"><block-text-3/></option><option value=\\"c\\"><block-text-4/></option></select></div>\`);
+  let block1 = createBlock(\`<div><select block-property-0=\\"value\\" block-handler-1=\\"change\\"><option value=\\"a\\"><block-text-2/></option><option value=\\"b\\"><block-text-3/></option><option value=\\"c\\"><block-text-4/></option></select></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'];
     const expr1 = 'model';
-    let attr1 = bExpr1[expr1];
+    let prop1 = bExpr1[expr1];
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
     let txt1 = 'a';
     let txt2 = 'b';
     let txt3 = 'c';
-    return block1([attr1, hdlr1, txt1, txt2, txt3]);
+    return block1([prop1, hdlr1, txt1, txt2, txt3]);
   }
 }"
 `;
@@ -576,7 +576,7 @@ exports[`t-model directive t-model with radio button group in t-foreach 1`] = `
   let { prepareList, toNumber, withKey } = helpers;
   
   let block1 = createBlock(\`<div id=\\"get_data\\" block-handler-0=\\"click\\"><block-child-0/></div>\`);
-  let block3 = createBlock(\`<input type=\\"radio\\" name=\\"radio_group\\" block-attribute-0=\\"value\\" block-attribute-1=\\"id\\" block-attribute-2=\\"checked\\" block-handler-3=\\"click\\"/>\`);
+  let block3 = createBlock(\`<input type=\\"radio\\" name=\\"radio_group\\" block-property-0=\\"value\\" block-attribute-1=\\"id\\" block-property-2=\\"checked\\" block-handler-3=\\"click\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let hdlr1 = [ctx['getData'], ctx];
@@ -585,13 +585,13 @@ exports[`t-model directive t-model with radio button group in t-foreach 1`] = `
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`opt\`] = v_block2[i1];
       const key1 = ctx['opt'];
-      let attr1 = new String((ctx['opt']) === 0 ? 0 : ((ctx['opt']) || \\"\\"));
-      let attr2 = ctx['opt'];
+      let prop1 = new String((ctx['opt']) === 0 ? 0 : ((ctx['opt']) || \\"\\"));
+      let attr1 = ctx['opt'];
       const bExpr1 = ctx['state'];
       const expr1 = 'group';
-      let attr3 = bExpr1[expr1] === ctx['opt'];
+      let prop2 = bExpr1[expr1] === ctx['opt'];
       let hdlr2 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
-      c_block2[i1] = withKey(block3([attr1, attr2, attr3, hdlr2]), key1);
+      c_block2[i1] = withKey(block3([prop1, attr1, prop2, hdlr2]), key1);
     }
     const b2 = list(c_block2);
     return block1([hdlr1], [b2]);
@@ -606,24 +606,24 @@ exports[`t-model directive two inputs in a div alternating with a t-if 1`] = `
   let { toNumber } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
-  let block2 = createBlock(\`<input class=\\"a\\" block-attribute-0=\\"value\\" block-handler-1=\\"input\\"/>\`);
-  let block3 = createBlock(\`<input class=\\"b\\" block-attribute-0=\\"value\\" block-handler-1=\\"input\\"/>\`);
+  let block2 = createBlock(\`<input class=\\"a\\" block-property-0=\\"value\\" block-handler-1=\\"input\\"/>\`);
+  let block3 = createBlock(\`<input class=\\"b\\" block-property-0=\\"value\\" block-handler-1=\\"input\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2,b3;
     if (ctx['state'].flag) {
       const bExpr1 = ctx['state'];
       const expr1 = 'text1';
-      let attr1 = bExpr1[expr1];
+      let prop1 = bExpr1[expr1];
       let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
-      b2 = block2([attr1, hdlr1]);
+      b2 = block2([prop1, hdlr1]);
     }
     if (!ctx['state'].flag) {
       const bExpr2 = ctx['state'];
       const expr2 = 'text2';
-      let attr2 = bExpr2[expr2];
+      let prop2 = bExpr2[expr2];
       let hdlr2 = [(ev) => { bExpr2[expr2] = ev.target.value; }];
-      b3 = block3([attr2, hdlr2]);
+      b3 = block3([prop2, hdlr2]);
     }
     return block1([], [b2, b3]);
   }
@@ -636,15 +636,15 @@ exports[`t-model directive with expression having a changing key 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { toNumber } = helpers;
   
-  let block1 = createBlock(\`<div><input block-attribute-0=\\"value\\" block-handler-1=\\"input\\"/><span><block-text-2/></span></div>\`);
+  let block1 = createBlock(\`<div><input block-property-0=\\"value\\" block-handler-1=\\"input\\"/><span><block-text-2/></span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const bExpr1 = ctx['state'].something;
     const expr1 = ctx['text'].key;
-    let attr1 = bExpr1[expr1];
+    let prop1 = bExpr1[expr1];
     let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
     let txt1 = ctx['state'].something[ctx['text'].key];
-    return block1([attr1, hdlr1, txt1]);
+    return block1([prop1, hdlr1, txt1]);
   }
 }"
 `;

@@ -140,33 +140,3 @@ export function updateClass(this: HTMLElement, val: any, oldVal: any) {
     }
   }
 }
-
-export function makePropSetter(name: string): Setter<HTMLElement> {
-  return function setProp(this: HTMLElement, value: any) {
-    // support 0, fallback to empty string for other falsy values
-    (this as any)[name] = value === 0 ? 0 : value ? value.valueOf() : "";
-  };
-}
-
-export function isProp(tag: string, key: string): boolean {
-  switch (tag) {
-    case "input":
-      return (
-        key === "checked" ||
-        key === "indeterminate" ||
-        key === "value" ||
-        key === "readonly" ||
-        key === "disabled"
-      );
-    case "option":
-      return key === "selected" || key === "disabled";
-    case "textarea":
-      return key === "value" || key === "readonly" || key === "disabled";
-    case "select":
-      return key === "value" || key === "disabled";
-    case "button":
-    case "optgroup":
-      return key === "disabled";
-  }
-  return false;
-}

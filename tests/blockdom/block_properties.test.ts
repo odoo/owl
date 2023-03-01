@@ -15,9 +15,9 @@ afterEach(() => {
   fixture.remove();
 });
 
-test("input with value attribute", () => {
+test("input with value property", () => {
   // render input with initial value
-  const block = createBlock(`<input block-attribute-0="value"/>`);
+  const block = createBlock(`<input block-property-0="value"/>`);
 
   const tree = block(["zucchini"]);
   mount(tree, fixture);
@@ -37,8 +37,8 @@ test("input with value attribute", () => {
   expect(input.value).toBe("potato");
 });
 
-test("input with value attribute, and falsy value given", () => {
-  const block = createBlock(`<input block-attribute-0="value"/>`);
+test("input with value property, and falsy value given", () => {
+  const block = createBlock(`<input block-property-0="value"/>`);
 
   const tree = block([undefined]);
   mount(tree, fixture);
@@ -58,9 +58,9 @@ test("input with value attribute, and falsy value given", () => {
   expect(input.value).toBe("");
 });
 
-test("input type=checkbox with checked attribute", () => {
+test("input type=checkbox with checked property", () => {
   // render input with initial value
-  const block = createBlock(`<input type="checkbox" block-attribute-0="checked"/>`);
+  const block = createBlock(`<input type="checkbox" block-property-0="checked"/>`);
 
   const tree = block([true]);
   mount(tree, fixture);

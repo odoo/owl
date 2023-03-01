@@ -29,9 +29,9 @@ export const store = reactive({
       this.top = y - 25 + "px";
     },
     // Close the currently displayed context menu
-    close(){
+    close() {
       this.activeMenu = -1;
-    }
+    },
   },
   frameUrls: ["top"],
   activeFrame: "top",
@@ -287,7 +287,6 @@ export const store = reactive({
       const parentPath = [...this.activeComponent.path];
       while (true) {
         const key = parentPath.pop();
-        console.log(key, parentPath);
         if (parentPath.length === 0) {
           const index = Number(key);
           if (index < this.apps.length - 1) {
@@ -311,72 +310,8 @@ export const store = reactive({
     this.selectComponent(this.componentSearch.searchResults[index]);
   },
 
-  // Toggle expansion of the component tree element given by the path
-  toggleComponentTreeElementDisplay(path) {
-    let component = this.getComponentByPath(path);
-    component.toggled = !component.toggled;
-  },
-
-  // Returns the specified object in the right objects tree
-  findObjectInTree(inputObj) {
-    let path = [...inputObj.path];
-    let obj;
-    if (inputObj.objectType !== "instance") {
-      path.shift();
-    }
-    if (typeof path[0] === "object") {
-      if (path[0].type === "prototype") {
-        path[0] = "[[Prototype]]";
-      } else {
-        path[0] = path[0].key;
-      }
-    }
-    if (inputObj.objectType === "props") {
-      obj = this.activeComponent.props[path[0]];
-    } else if (inputObj.objectType === "env") {
-      obj = this.activeComponent.env[path[0]];
-    } else if (inputObj.objectType === "instance") {
-      obj = this.activeComponent.instance[path[0]];
-    } else if (inputObj.objectType === "subscription") {
-      obj = this.activeComponent.subscriptions[path[0]].target;
-    }
-    for (let i = 1; i < path.length; i++) {
-      const match = path[i];
-      if (typeof match === "object") {
-        switch (match.type) {
-          case "map entries":
-          case "set entries":
-            obj = obj.children.find((child) => child.name === "[[Entries]]");
-            break;
-          case "map entry":
-          case "set entry":
-            obj = obj.children[match.index];
-            break;
-          case "map key":
-          case "set value":
-            obj = obj.children[0];
-            break;
-          case "map value":
-            obj = obj.children[1];
-            break;
-          case "prototype":
-            obj = obj.children.find((child) => child.name === "[[Prototype]]");
-            break;
-          case "symbol":
-            obj = obj.children.find((child) => child.name === match.key);
-        }
-      } else if (obj.contentType === "array") {
-        obj = obj.children[match];
-      } else {
-        obj = obj.children.find((child) => child.name === match);
-      }
-    }
-    return obj;
-  },
-
   // Replace the (...) content of a getter with the value returned by the corresponding get method
-  async loadGetterContent(inputObj) {
-    let obj = this.findObjectInTree(inputObj);
+  async loadGetterContent(obj) {
     const result = await evalInWindow(
       "loadGetterContent",
       [this.activeComponent.path, obj],
@@ -389,11 +324,10 @@ export const store = reactive({
   },
 
   // Expand the children of the input object property and load it from page if necessary
-  async toggleObjectTreeElementsDisplay(inputObj) {
-    if (!inputObj.hasChildren) {
+  async toggleObjectTreeElementsDisplay(obj) {
+    if (!obj.hasChildren) {
       return;
     }
-    let obj = this.findObjectInTree(inputObj);
     if (obj.hasChildren && obj.children.length === 0) {
       const children = await evalInWindow(
         "loadObjectChildren",

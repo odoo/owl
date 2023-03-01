@@ -15,35 +15,33 @@ export class EventNode extends Component {
     this.componentContextMenu = useRef("componentContextmenu");
     this.componentContextMenuId = this.store.contextMenu.id++;
     this.contextMenuEvent,
-    useEffect(
-      (menuId) => {
-        if(menuId === this.nodeContextMenuId){
-          this.store.contextMenu.open(this.contextMenuEvent, this.nodeContextMenu.el)
-        }
-        if(menuId === this.componentContextMenuId){
-          this.store.contextMenu.open(this.contextMenuEvent, this.componentContextMenu.el)
-        }
-      },
-      () => [this.store.contextMenu.activeMenu]
-    );
+      useEffect(
+        (menuId) => {
+          if (menuId === this.nodeContextMenuId) {
+            this.store.contextMenu.open(this.contextMenuEvent, this.nodeContextMenu.el);
+          }
+          if (menuId === this.componentContextMenuId) {
+            this.store.contextMenu.open(this.contextMenuEvent, this.componentContextMenu.el);
+          }
+        },
+        () => [this.store.contextMenu.activeMenu]
+      );
   }
 
   get eventPadding() {
-    return this.props.depth * 0.8 + 0.3;
+    return this.props.event.depth * 0.8 + 0.3;
   }
 
-  openNodeMenu(ev){
-    console.log("openNodeMenu");
-    if(this.props.children.length){
+  openNodeMenu(ev) {
+    if (this.props.event.children.length) {
       ev.preventDefault();
       this.contextMenuEvent = ev;
       this.store.contextMenu.activeMenu = this.nodeContextMenuId;
     }
   }
 
-  openComponentMenu(ev){
-    console.log("openComponentMenu");
-    if(this.props.type === "destroy"){
+  openComponentMenu(ev) {
+    if (this.props.event.type === "destroy") {
       return;
     } else {
       ev.preventDefault();
@@ -54,27 +52,26 @@ export class EventNode extends Component {
 
   // Expand/fold the event node
   toggleDisplay() {
-    let event = this.store.findEventInTree(this.props);
-    event.toggled = !event.toggled;
+    this.props.event.toggled = !this.props.event.toggled;
   }
 
   // Formatting for displaying the key of the component
   get minimizedKey() {
-    return minimizeKey(this.props.key);
+    return minimizeKey(this.props.event.key);
   }
 
   get renderTime() {
-    if (Number.isInteger(this.props.time)) {
-      if (this.props.time === 0) {
+    if (Number.isInteger(this.props.event.time)) {
+      if (this.props.event.time === 0) {
         return "<1";
       } else {
-        return this.props.time;
+        return this.props.event.time;
       }
     } else {
-      if (this.props.time < 1.0) {
+      if (this.props.event.time < 1.0) {
         return "<1";
       } else {
-        return this.props.time.toFixed(1);
+        return this.props.event.time.toFixed(1);
       }
     }
   }

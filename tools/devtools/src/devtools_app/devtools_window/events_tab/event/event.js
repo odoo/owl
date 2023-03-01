@@ -11,51 +11,51 @@ export class Event extends Component {
     this.componentContextMenu = useRef("componentContextmenu");
     this.componentContextMenuId = this.store.contextMenu.id++;
     this.contextMenuEvent,
-    useEffect(
-      (menuId) => {
-        if(menuId === this.componentContextMenuId){
-          this.store.contextMenu.open(this.contextMenuEvent, this.componentContextMenu.el)
-        }
-      },
-      () => [this.store.contextMenu.activeMenu]
-    );
+      useEffect(
+        (menuId) => {
+          if (menuId === this.componentContextMenuId) {
+            this.store.contextMenu.open(this.contextMenuEvent, this.componentContextMenu.el);
+          }
+        },
+        () => [this.store.contextMenu.activeMenu]
+      );
   }
 
   // Formatting for displaying the key of the component
   get minimizedKey() {
-    return minimizeKey(this.props.key);
+    return minimizeKey(this.props.event.key);
   }
 
   // Same for the origin component
   get originMinimizedKey() {
-    return minimizeKey(this.props.origin.key);
+    return minimizeKey(this.props.event.origin.key);
   }
 
   get renderTime() {
-    if (Number.isInteger(this.props.time)) {
-      if (this.props.time === 0) {
+    if (Number.isInteger(this.props.event.time)) {
+      if (this.props.event.time === 0) {
         return "<1";
       } else {
-        return this.props.time;
+        return this.props.event.time;
       }
     } else {
-      if (this.props.time < 1.0) {
+      if (this.props.event.time < 1.0) {
         return "<1";
       } else {
-        return this.props.time.toFixed(1);
+        return this.props.event.time.toFixed(1);
       }
     }
   }
 
   // Expand/fold the event
   toggleDisplay() {
-    if (this.props.origin) {
-      this.store.events[this.props.id].toggled = !this.store.events[this.props.id].toggled;
+    if (this.props.event.origin) {
+      this.props.event.toggled = !this.props.event.toggled;
     }
   }
 
-  openComponentMenu(ev){
-    if(this.props.type === "destroy"){
+  openComponentMenu(ev) {
+    if (this.props.event.type === "destroy") {
       return;
     } else {
       ev.preventDefault();
@@ -63,5 +63,4 @@ export class Event extends Component {
       this.store.contextMenu.activeMenu = this.componentContextMenuId;
     }
   }
-
 }

@@ -27,21 +27,24 @@ export class TreeElement extends Component {
     this.state = useState({
       searched: false,
     });
-    this.highlightTimeout = false;
     this.store = useStore();
     this.contextMenu = useRef("contextmenu");
     this.contextMenuId = this.store.contextMenu.id++;
     this.contextMenuEvent,
-    // Scroll to the selected element when it changes
-    onMounted(() => {
-      if (this.props.selected) {
-        const treeElement = document.getElementById("treeElement/" + this.props.path.join("/"));
-        treeElement.scrollIntoView({ block: "center", behavior: "auto" });
-      }
-    });
+      // Scroll to the selected element when it changes
+      onMounted(() => {
+        if (this.props.component.selected) {
+          const treeElement = document.getElementById(
+            "treeElement/" + this.props.component.path.join("/")
+          );
+          treeElement.scrollIntoView({ block: "center", behavior: "auto" });
+        }
+      });
     onWillUpdateProps((nextProps) => {
       if (nextProps.selected) {
-        const treeElement = document.getElementById("treeElement/" + this.props.path.join("/"));
+        const treeElement = document.getElementById(
+          "treeElement/" + this.props.component.path.join("/")
+        );
         if (!isElementInCenterViewport(treeElement)) {
           treeElement.scrollIntoView({ block: "center", behavior: "smooth" });
         }
@@ -49,8 +52,8 @@ export class TreeElement extends Component {
     });
     useEffect(
       (menuId) => {
-        if(menuId === this.contextMenuId){
-          this.store.contextMenu.open(this.contextMenuEvent, this.contextMenu.el)
+        if (menuId === this.contextMenuId) {
+          this.store.contextMenu.open(this.contextMenuEvent, this.contextMenu.el);
         }
       },
       () => [this.store.contextMenu.activeMenu]
@@ -59,15 +62,18 @@ export class TreeElement extends Component {
     useEffect(
       (renderPaths) => {
         let pathsAsStrings = renderPaths.map((p) => p.join("/"));
-        if (pathsAsStrings.includes(this.props.path.join("/"))) {
-          clearTimeout(this.highlightTimeout);
-          const treeElement = document.getElementById("treeElement/" + this.props.path.join("/"));
+        if (pathsAsStrings.includes(this.props.component.path.join("/"))) {
+          const treeElement = document.getElementById(
+            "treeElement/" + this.props.component.path.join("/")
+          );
           if (treeElement) {
-            treeElement.classList.remove("highlight-fade");
             treeElement.classList.add("render-highlight");
-            this.highlightTimeout = setTimeout(() => {
+            setTimeout(() => {
               treeElement.classList.add("highlight-fade");
               treeElement.classList.remove("render-highlight");
+              setTimeout(() => {
+                treeElement.classList.remove("highlight-fade");
+              }, 500);
             }, 50);
           }
         }
@@ -77,7 +83,7 @@ export class TreeElement extends Component {
     // Used to know when the component is in the search bar results
     useEffect(
       (searchResults) => {
-        if (searchResults.includes(this.props.path)) {
+        if (searchResults.includes(this.props.component.path)) {
           this.state.searched = true;
         } else {
           this.state.searched = false;
@@ -88,34 +94,34 @@ export class TreeElement extends Component {
   }
 
   get pathAsString() {
-    return this.props.path.join("/");
+    return this.props.component.path.join("/");
   }
 
   get componentPadding() {
-    return this.props.depth * 0.8;
-  }
-  
-  get minimizedKey() {
-    return minimizeKey(this.props.key);
+    return this.props.component.depth * 0.8;
   }
 
-  openMenu(ev){
+  get minimizedKey() {
+    return minimizeKey(this.props.component.key);
+  }
+
+  openMenu(ev) {
     this.contextMenuEvent = ev;
     this.store.contextMenu.activeMenu = this.contextMenuId;
   }
 
   // Expand/fold the component node
-  toggleDisplay(ev) {
-    this.store.toggleComponentTreeElementDisplay(this.props.path);
+  toggleDisplay() {
+    this.props.component.toggled = !this.props.component.toggled;
   }
 
   // Used to select the component node
-  toggleComponent(ev) {
+  toggleComponent() {
     if (this.store.settings.toggleOnSelected) {
       this.toggleDisplay();
     }
-    if (!this.props.selected) {
-      this.store.selectComponent(this.props.path);
+    if (!this.props.component.selected) {
+      this.store.selectComponent(this.props.component.path);
     }
   }
 }

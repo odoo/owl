@@ -16,7 +16,7 @@
               <t t-esc="key"/>
             </div>
           </div>
-          <ObjectTreeElement t-props="subscription.target"/>
+          <ObjectTreeElement object="subscription.target"/>
         </div>
       </t>
     </div>

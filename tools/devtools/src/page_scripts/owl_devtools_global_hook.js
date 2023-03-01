@@ -227,11 +227,11 @@ export class OwlDevtoolsGlobalHook {
 
     for (const element of elements) {
       let rect;
-      if(element instanceof Text){
+      if (element instanceof Text) {
         const range = document.createRange();
         range.selectNode(element);
         rect = range.getBoundingClientRect();
-      }else {
+      } else {
         rect = element.getBoundingClientRect();
       }
 

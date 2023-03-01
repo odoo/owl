@@ -187,7 +187,7 @@ exports[`misc other complex template 1`] = `
   const comp1 = app.createComponent(\`BundlesList\`, true, false, false, false);
   const comp2 = app.createComponent(\`BundlesList\`, true, false, false, false);
   
-  let block1 = createBlock(\`<div><header><nav class=\\"navbar navbar-expand-md navbar-light bg-light\\"><a block-attribute-0=\\"href\\"><b style=\\"color:#777;\\"><block-text-1/></b></a><button type=\\"button\\" class=\\"navbar-toggler\\" data-toggle=\\"collapse\\" data-target=\\"#top_menu_collapse\\"><span class=\\"navbar-toggler-icon\\"/></button><div class=\\"collapse navbar-collapse\\" id=\\"top_menu_collapse\\" aria-expanded=\\"false\\"><ul class=\\"nav navbar-nav ml-auto text-right\\" id=\\"top_menu\\"><block-child-0/><li class=\\"nav-item divider\\"/><block-child-1/></ul><div><div class=\\"input-group input-group-sm\\"><div class=\\"input-group-prepend input-group-sm\\"><button class=\\"btn btn-default fa fa-cog\\" title=\\"Settings\\" block-handler-2=\\"click\\"/><button class=\\"btn btn-default\\" block-handler-3=\\"click\\"> More </button><block-child-2/></div><input class=\\"form-control\\" type=\\"text\\" placeholder=\\"Search\\" aria-label=\\"Search\\" name=\\"search\\" block-attribute-4=\\"value\\" block-handler-5=\\"keyup\\" block-handler-6=\\"change\\" block-ref=\\"7\\"/><div class=\\"input-group-append\\"><button class=\\"btn btn-default fa fa-eraser\\" block-handler-8=\\"click\\"/></div></div></div></div></nav></header><div class=\\"container-fluid\\" block-ref=\\"9\\"><div class=\\"row\\"><!--div class=\\"form-group col-md-6\\">
+  let block1 = createBlock(\`<div><header><nav class=\\"navbar navbar-expand-md navbar-light bg-light\\"><a block-attribute-0=\\"href\\"><b style=\\"color:#777;\\"><block-text-1/></b></a><button type=\\"button\\" class=\\"navbar-toggler\\" data-toggle=\\"collapse\\" data-target=\\"#top_menu_collapse\\"><span class=\\"navbar-toggler-icon\\"/></button><div class=\\"collapse navbar-collapse\\" id=\\"top_menu_collapse\\" aria-expanded=\\"false\\"><ul class=\\"nav navbar-nav ml-auto text-right\\" id=\\"top_menu\\"><block-child-0/><li class=\\"nav-item divider\\"/><block-child-1/></ul><div><div class=\\"input-group input-group-sm\\"><div class=\\"input-group-prepend input-group-sm\\"><button class=\\"btn btn-default fa fa-cog\\" title=\\"Settings\\" block-handler-2=\\"click\\"/><button class=\\"btn btn-default\\" block-handler-3=\\"click\\"> More </button><block-child-2/></div><input class=\\"form-control\\" type=\\"text\\" placeholder=\\"Search\\" aria-label=\\"Search\\" name=\\"search\\" block-property-4=\\"value\\" block-handler-5=\\"keyup\\" block-handler-6=\\"change\\" block-ref=\\"7\\"/><div class=\\"input-group-append\\"><button class=\\"btn btn-default fa fa-eraser\\" block-handler-8=\\"click\\"/></div></div></div></div></nav></header><div class=\\"container-fluid\\" block-ref=\\"9\\"><div class=\\"row\\"><!--div class=\\"form-group col-md-6\\">
                       <h5>Search options</h5>
                       <input class=\\"form-control\\" type=\\"text\\" name=\\"default_search\\" id=\\"default_search\\" t-att-checked=\\"default_search\\" placeholder=\\"Default search\\"/>
       
@@ -209,8 +209,8 @@ exports[`misc other complex template 1`] = `
   let block12 = createBlock(\`<li class=\\"nav-item divider\\"/>\`);
   let block13 = createBlock(\`<li class=\\"nav-item dropdown\\"><a href=\\"#\\" class=\\"nav-link dropdown-toggle\\" data-toggle=\\"dropdown\\"><b><span><block-text-0/></span></b></a><div class=\\"dropdown-menu js_usermenu\\" role=\\"menu\\"><a class=\\"dropdown-item\\" id=\\"o_logout\\" role=\\"menuitem\\" block-attribute-1=\\"href\\">Logout</a><a class=\\"dropdown-item\\" role=\\"menuitem\\" block-attribute-2=\\"href\\">Web</a></div></li>\`);
   let block14 = createBlock(\`<select class=\\"custom-select\\" name=\\"category\\" id=\\"category\\"><block-child-0/></select>\`);
-  let block16 = createBlock(\`<option block-attribute-0=\\"value\\" block-attribute-1=\\"selected\\"><block-text-2/></option>\`);
-  let block20 = createBlock(\`<div class=\\"form-check\\"><input class=\\"form-check-input\\" type=\\"checkbox\\" block-attribute-0=\\"name\\" block-attribute-1=\\"id\\" block-attribute-2=\\"checked\\" block-attribute-3=\\"data-trigger_id\\" block-handler-4=\\"change\\"/><label class=\\"form-check-label\\" block-attribute-5=\\"for\\"><block-text-6/></label></div>\`);
+  let block16 = createBlock(\`<option block-attribute-0=\\"value\\" block-property-1=\\"selected\\"><block-text-2/></option>\`);
+  let block20 = createBlock(\`<div class=\\"form-check\\"><input class=\\"form-check-input\\" type=\\"checkbox\\" block-attribute-0=\\"name\\" block-attribute-1=\\"id\\" block-property-2=\\"checked\\" block-attribute-3=\\"data-trigger_id\\" block-handler-4=\\"change\\"/><label class=\\"form-check-label\\" block-attribute-5=\\"for\\"><block-text-6/></label></div>\`);
   let block21 = createBlock(\`<div><button class=\\"btn btn-sm btn-default\\" block-handler-0=\\"click\\">All</button><button class=\\"btn btn-sm btn-default\\" block-handler-1=\\"click\\">None</button><button class=\\"btn btn-sm btn-info\\" block-handler-2=\\"click\\">Default</button><button class=\\"btn btn-sm btn-default\\" block-handler-3=\\"click\\">Close</button></div>\`);
   let block23 = createBlock(\`<div class=\\"alert alert-warning\\" role=\\"alert\\"><block-text-0/> <!-- todo fixme--></div>\`);
   let block24 = createBlock(\`<div class=\\"mb32\\"><h1>No project</h1></div>\`);
@@ -269,15 +269,15 @@ exports[`misc other complex template 1`] = `
         ctx[\`category\`] = v_block15[i1];
         const key1 = ctx['category'].id;
         let attr6 = ctx['category'].id;
-        let attr7 = new Boolean(ctx['category'].id==ctx['options'].active_category_id);
+        let prop1 = new Boolean(ctx['category'].id==ctx['options'].active_category_id);
         let txt5 = ctx['category'].name;
-        c_block15[i1] = withKey(block16([attr6, attr7, txt5]), key1);
+        c_block15[i1] = withKey(block16([attr6, prop1, txt5]), key1);
       }
       ctx = ctx.__proto__;
       const b15 = list(c_block15);
       b14 = block14([], [b15]);
     }
-    let attr8 = new String((ctx['search'].value) === 0 ? 0 : ((ctx['search'].value) || \\"\\"));
+    let prop2 = new String((ctx['search'].value) === 0 ? 0 : ((ctx['search'].value) || \\"\\"));
     let hdlr4 = [ctx['updateFilter'], ctx];
     let hdlr5 = [ctx['updateFilter'], ctx];
     let hdlr6 = [ctx['clearSearch'], ctx];
@@ -289,14 +289,14 @@ exports[`misc other complex template 1`] = `
         const key1 = ctx['trigger'].id;
         let b20;
         if (!ctx['trigger'].manual&&ctx['trigger'].project_id===ctx['project'].id&&ctx['trigger'].category_id===ctx['options'].active_category_id) {
-          let attr9 = \`trigger_\${ctx['trigger'].id}\`;
-          let attr10 = \`trigger_\${ctx['trigger'].id}\`;
-          let attr11 = new Boolean(ctx['options'].trigger_display[ctx['trigger'].id]);
-          let attr12 = ctx['trigger'].id;
+          let attr7 = \`trigger_\${ctx['trigger'].id}\`;
+          let attr8 = \`trigger_\${ctx['trigger'].id}\`;
+          let prop3 = new Boolean(ctx['options'].trigger_display[ctx['trigger'].id]);
+          let attr9 = ctx['trigger'].id;
           let hdlr7 = [ctx['updateTriggerDisplay'], ctx];
-          let attr13 = \`trigger_\${ctx['trigger'].id}\`;
+          let attr10 = \`trigger_\${ctx['trigger'].id}\`;
           let txt6 = ctx['trigger'].name;
-          b20 = block20([attr9, attr10, attr11, attr12, hdlr7, attr13, txt6]);
+          b20 = block20([attr7, attr8, prop3, attr9, hdlr7, attr10, txt6]);
         }
         c_block18[i1] = withKey(multi([b20]), key1);
       }
@@ -323,7 +323,7 @@ exports[`misc other complex template 1`] = `
       const b27 = comp2({bundles: ctx['bundles'].dev,search: ctx['search']}, key + \`__3\`, node, this, null);
       b25 = block25([], [b26, b27]);
     }
-    return block1([attr1, txt1, hdlr2, hdlr3, attr8, hdlr4, hdlr5, ref1, hdlr6, ref2], [b2, b4, b14, b17, b22, b23, b24, b25]);
+    return block1([attr1, txt1, hdlr2, hdlr3, prop2, hdlr4, hdlr5, ref1, hdlr6, ref2], [b2, b4, b14, b17, b22, b23, b24, b25]);
   }
 }"
 `;

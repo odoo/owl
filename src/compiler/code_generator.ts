@@ -1,4 +1,3 @@
-import { isProp } from "../runtime/blockdom/attributes";
 import {
   compileExpr,
   compileExprToArray,
@@ -56,6 +55,29 @@ let nextDataIds: { [key: string]: number } = {};
 function generateId(prefix: string = "") {
   nextDataIds[prefix] = (nextDataIds[prefix] || 0) + 1;
   return prefix + nextDataIds[prefix];
+}
+
+function isProp(tag: string, key: string): boolean {
+  switch (tag) {
+    case "input":
+      return (
+        key === "checked" ||
+        key === "indeterminate" ||
+        key === "value" ||
+        key === "readonly" ||
+        key === "disabled"
+      );
+    case "option":
+      return key === "selected" || key === "disabled";
+    case "textarea":
+      return key === "value" || key === "readonly" || key === "disabled";
+    case "select":
+      return key === "value" || key === "disabled";
+    case "button":
+    case "optgroup":
+      return key === "disabled";
+  }
+  return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -585,12 +607,15 @@ export class CodeGenerator {
           } else {
             expr = `new Boolean(${expr})`;
           }
-        }
-        const idx = block!.insertData(expr, "attr");
-        if (key === "t-att") {
-          attrs[`block-attributes`] = String(idx);
+          const idx = block!.insertData(expr, "prop");
+          attrs[`block-property-${idx}`] = attrName!;
         } else {
-          attrs[`block-attribute-${idx}`] = attrName!;
+          const idx = block!.insertData(expr, "attr");
+          if (key === "t-att") {
+            attrs[`block-attributes`] = String(idx);
+          } else {
+            attrs[`block-attribute-${idx}`] = attrName!;
+          }
         }
       } else if (this.translatableAttributes.includes(key)) {
         attrs[key] = this.translateFn(ast.attrs[key]);
@@ -640,15 +665,15 @@ export class CodeGenerator {
             targetExpr = compileExpr(dynamicTgExpr);
           }
         }
-        idx = block!.insertData(`${fullExpression} === ${targetExpr}`, "attr");
-        attrs[`block-attribute-${idx}`] = specialInitTargetAttr;
+        idx = block!.insertData(`${fullExpression} === ${targetExpr}`, "prop");
+        attrs[`block-property-${idx}`] = specialInitTargetAttr;
       } else if (hasDynamicChildren) {
         const bValueId = generateId("bValue");
         tModelSelectedExpr = `${bValueId}`;
         this.define(tModelSelectedExpr, fullExpression);
       } else {
-        idx = block!.insertData(`${fullExpression}`, "attr");
-        attrs[`block-attribute-${idx}`] = targetAttr;
+        idx = block!.insertData(`${fullExpression}`, "prop");
+        attrs[`block-property-${idx}`] = targetAttr;
       }
       this.helpers.add("toNumber");
       let valueCode = `ev.target.${targetAttr}`;

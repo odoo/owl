@@ -65,12 +65,13 @@ function isProp(tag: string, key: string): boolean {
         key === "indeterminate" ||
         key === "value" ||
         key === "readonly" ||
+        key === "readOnly" ||
         key === "disabled"
       );
     case "option":
       return key === "selected" || key === "disabled";
     case "textarea":
-      return key === "value" || key === "readonly" || key === "disabled";
+      return key === "value" || key === "readonly" || key === "readOnly" || key === "disabled";
     case "select":
       return key === "value" || key === "disabled";
     case "button":
@@ -600,6 +601,10 @@ export class CodeGenerator {
         attrName = key === "t-att" ? null : key.slice(6);
         expr = compileExpr(ast.attrs[key]);
         if (attrName && isProp(ast.tag, attrName)) {
+          if (attrName === "readonly") {
+            // the property has a different name than the attribute
+            attrName = "readOnly";
+          }
           // we force a new string or new boolean to bypass the equality check in blockdom when patching same value
           if (attrName === "value") {
             // When the expression is falsy (except 0), fall back to an empty string

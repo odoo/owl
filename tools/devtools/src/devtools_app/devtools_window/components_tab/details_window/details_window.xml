@@ -24,7 +24,7 @@
           </div>
         </div>
         <t t-foreach="store.activeComponent.props" t-as="prop" t-key="prop">
-          <ObjectTreeElement t-props="prop_value"/>
+          <ObjectTreeElement object="prop_value"/>
         </t>
       </div>
       <div t-if="store.activeComponent.subscriptions.length > 0" id="subscriptions" class="details-panel ps-2 py-1">
@@ -43,7 +43,7 @@
           </div>
         </div>
         <t t-foreach="store.activeComponent.env" t-as="env" t-key="env">
-          <ObjectTreeElement t-props="env_value"/>
+          <ObjectTreeElement object="env_value"/>
         </t>
       </div>
       <div t-if="Object.keys(store.activeComponent.instance).length > 0"  id="instance" class="details-panel ps-2 py-1">
@@ -57,7 +57,7 @@
           </t>
         </div>
         <t t-foreach="store.activeComponent.instance" t-as="instance" t-key="instance">
-          <ObjectTreeElement t-props="instance_value"/>
+          <ObjectTreeElement object="instance_value"/>
         </t>
       </div>
     </div>

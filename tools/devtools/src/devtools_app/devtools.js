@@ -24,7 +24,7 @@ if (!isFirefox()) {
   });
 }
 // Try to load the owl panel each 300 ms up to 3 times to make sure we load it if owl is available but delayed
-const checkInterval = setInterval(createPanelsIfOwl, 300);
+const checkInterval = setInterval(createPanelsIfOwl, 500);
 
 // Load the scripts on the page in order to define the __OWL__DEVTOOLS_GLOBAL_HOOK__
 async function loadScripts() {
@@ -43,7 +43,7 @@ async function loadScripts() {
 
 // Load the scripts and create the owl devtools panel if owl on the page is available at a sufficient version
 function createPanelsIfOwl() {
-  if (created || checks++ > 3) {
+  if (created || checks++ > 10) {
     clearInterval(checkInterval);
     return;
   }

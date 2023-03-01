@@ -9,7 +9,7 @@
         <div class="overflow-auto">
           <div id="tree-wrapper">
             <t t-foreach="store.apps" t-as="app" t-key="app_index">
-              <TreeElement t-props="app"/> 
+              <TreeElement component="app"/> 
             </t>
           </div>
         </div>

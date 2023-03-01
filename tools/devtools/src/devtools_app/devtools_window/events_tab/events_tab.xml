@@ -23,12 +23,12 @@
         <t t-else="">
           <t t-if="store.eventsTreeView">
             <t t-foreach="store.eventsTree" t-as="event" t-key="event.id">
-              <EventNode t-props="event"/>
+              <EventNode event="event"/>
             </t>
           </t>
           <t t-else="">
             <t t-foreach="store.events" t-as="event" t-key="event_index">
-              <Event t-props="event"/>
+              <Event event="event"/>
             </t>
           </t>
         </t>

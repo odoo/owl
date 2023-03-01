@@ -35,14 +35,14 @@ export class ObjectTreeElement extends Component {
     this.store = useStore();
     this.contextMenuId = this.store.contextMenu.id++;
     this.contextMenuEvent,
-    useEffect(
-      (menuId) => {
-        if(menuId === this.contextMenuId){
-          this.store.contextMenu.open(this.contextMenuEvent, this.contextMenu.el)
-        }
-      },
-      () => [this.store.contextMenu.activeMenu]
-    );
+      useEffect(
+        (menuId) => {
+          if (menuId === this.contextMenuId) {
+            this.store.contextMenu.open(this.contextMenuEvent, this.contextMenu.el);
+          }
+        },
+        () => [this.store.contextMenu.activeMenu]
+      );
     useEffect(
       (editMode) => {
         // Focus on the input when it is created
@@ -55,14 +55,17 @@ export class ObjectTreeElement extends Component {
   }
 
   get pathAsString() {
-    return JSON.stringify(this.props.path);
+    return JSON.stringify(this.props.object.path);
   }
 
   get objectName() {
-    if (this.props.contentType === "function" && this.props.content.startsWith("get ")) {
-      return "get " + this.props.name;
+    if (
+      this.props.object.contentType === "function" &&
+      this.props.object.content.startsWith("get ")
+    ) {
+      return "get " + this.props.object.name;
     }
-    return this.props.name;
+    return this.props.object.name;
   }
 
   get attenuateIfPrototype() {
@@ -73,10 +76,10 @@ export class ObjectTreeElement extends Component {
   }
 
   get objectPadding() {
-    return this.props.depth * 0.8 + 0.3;
+    return this.props.object.depth * 0.8 + 0.3;
   }
 
-  openMenu(ev){
+  openMenu(ev) {
     this.contextMenuEvent = ev;
     this.store.contextMenu.activeMenu = this.contextMenuId;
   }
@@ -87,8 +90,8 @@ export class ObjectTreeElement extends Component {
     }
     if (!this.state.editMode) {
       if (
-        ["number", "string", "boolean", "undefined"].includes(this.props.contentType) ||
-        this.props.content === "null"
+        ["number", "string", "boolean", "undefined"].includes(this.props.object.contentType) ||
+        this.props.object.content === "null"
       ) {
         this.state.editMode = true;
       }
@@ -98,7 +101,7 @@ export class ObjectTreeElement extends Component {
   editObject(ev) {
     let value = ev.target.value;
     if (ev.keyCode === 13 && value !== "") {
-      this.store.editObjectTreeElement(this.props.path, value, this.props.objectType);
+      this.store.editObjectTreeElement(this.props.object.path, value, this.props.object.objectType);
       this.state.editMode = false;
     }
   }
@@ -106,7 +109,7 @@ export class ObjectTreeElement extends Component {
   inspectFunctionSource() {
     evalInWindow(
       "inspectFunctionSource",
-      [this.store.activeComponent.path, this.props.path],
+      [this.store.activeComponent.path, this.props.object.path],
       this.store.activeFrame
     );
   }
@@ -114,7 +117,7 @@ export class ObjectTreeElement extends Component {
   storeObjectAsGlobal() {
     evalInWindow(
       "storeObjectAsGlobal",
-      [this.store.activeComponent.path, this.props.path],
+      [this.store.activeComponent.path, this.props.object.path],
       this.store.activeFrame
     );
   }

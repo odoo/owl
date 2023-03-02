@@ -12,6 +12,9 @@
           <option value="List">Events log</option>
         </select>
         <div class="icons-separator"/>
+        <label class="m-1 form-check-label" title="Trace renderings in console">
+          <input type="checkbox" class="form-check-input" t-att-checked="store.traceRenderings" t-on-input="() => this.store.toggleTracing()"/> Trace renderings
+        </label>
         <!-- <EventSearchBar/> -->
       </div>
       <div class="events-container h-100">

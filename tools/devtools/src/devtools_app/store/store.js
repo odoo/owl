@@ -46,6 +46,7 @@ export const store = reactive({
   leftWidth: 0,
   rightWidth: 0,
   apps: [],
+  traceRenderings: false,
   activeComponent: {
     path: ["0"],
     name: "App",
@@ -354,6 +355,11 @@ export const store = reactive({
   // Update the value of the given object with the new provided one
   editObjectTreeElement(path, value, objectType) {
     evalFunctionInWindow("editObject", [path, value, objectType], this.activeFrame);
+  },
+
+  toggleTracing() {
+    this.traceRenderings = !this.traceRenderings;
+    evalInWindow("toggleTracing", [this.traceRenderings]);
   },
 
   // Checks for all iframes in the page, register it and load the scripts inside if not already done

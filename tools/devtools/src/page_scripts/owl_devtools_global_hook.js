@@ -34,6 +34,127 @@ export class OwlDevtoolsGlobalHook {
     this.recordEvents = false;
     this.requestedFrame = false;
     this.eventsBatch = [];
+    // Object which defines how different types of data should be displayed when passed to the devtools
+    this.serializer = {
+      // Defines how leaf object nodes should be displayed in the extension when inside a bigger structure
+      // This is also used by default when it is a standalone item (like functions, numbers, strings, etc)
+      // The asConstructorName parameter can be passed to change the display of objects and functions to
+      // be their constructor name (useful for prototype, map and set display)
+      serializeItem(value, asConstructorName = false) {
+        if (typeof value === "array") {
+          return "Array(" + value.length + ")";
+        } else if (typeof value === "object") {
+          if (value == null) {
+            return "null";
+          }
+          if (asConstructorName) {
+            return value.constructor.name;
+          }
+          return "{...}";
+        } else if (typeof value === "undefined") {
+          return "undefined";
+        } else if (typeof value === "string") {
+          return JSON.stringify(value);
+        } else if (typeof value === "function") {
+          if (asConstructorName) {
+            return value.constructor.name;
+          }
+          let functionString = value.toString();
+          if (functionString.startsWith("class")) {
+            return "class " + value.name;
+          } else {
+            // This replaces the body of any function with curly braces by ...
+            const regex = /\{(?![^()]*\))(.*?)\}(?![^{}]*\})/s;
+            return functionString.replace(regex, "{...}");
+          }
+        } else {
+          let valueAsString = value.toString();
+          if (asConstructorName && valueAsString.length > 10) {
+            valueAsString = valueAsString.substring(0, 8) + "...";
+          }
+          return valueAsString;
+        }
+      },
+      array(arr) {
+        const result = [];
+        let length = 0;
+        for (const item of arr) {
+          if (length > 25) {
+            result.push("...");
+            break;
+          }
+          const element = this.serializeItem(item);
+          length += element.length;
+          result.push(element);
+        }
+        return "[" + result.join(", ") + "]";
+      },
+      object(obj) {
+        const result = [];
+        let length = 0;
+        for (const [key, value] of Object.entries(obj)) {
+          if (length > 25) {
+            result.push("...");
+            break;
+          }
+          const element = key + ": " + this.serializeItem(value);
+          length += element.length;
+          result.push(element);
+        }
+        return "{" + result.join(", ") + "}";
+      },
+      map(obj) {
+        const result = [];
+        let length = 0;
+        for (const [key, value] of obj.entries()) {
+          if (length > 25) {
+            result.push("...");
+            break;
+          }
+          const element = this.serializeItem(key, true) + " => " + this.serializeItem(value, true);
+          length += element.length;
+          result.push(element);
+        }
+        return "Map(" + obj.size + "){" + result.join(", ") + "}";
+      },
+      mapEntry(obj) {
+        return (
+          "{" + this.serializeItem(obj[0], true) + " => " + this.serializeItem(obj[1], true) + "}"
+        );
+      },
+      set(obj) {
+        const result = [];
+        let length = 0;
+        for (const value of obj) {
+          if (length > 25) {
+            result.push("...");
+            break;
+          }
+          const element = this.serializeItem(value, true);
+          length += element.length;
+          result.push(element);
+        }
+        return "Set(" + obj.size + "){" + result.join(", ") + "}";
+      },
+      // Returns a shortened string version of a collection of properties for display purposes
+      // Shortcut for serializeItem when it is a standalone item
+      serializeContent(item, type) {
+        switch (type) {
+          case "array":
+            return this.array(item);
+          case "object":
+            return this.object(item);
+          case "map":
+            return this.map(item);
+          case "map entry":
+            return this.mapEntry(item);
+          case "set":
+            return this.set(item);
+          default:
+            return this.serializeItem(item);
+        }
+      },
+    };
   }
 
   // Modify the methods of the apps set in order to send a message each time it is modified.
@@ -227,6 +348,7 @@ export class OwlDevtoolsGlobalHook {
 
     for (const element of elements) {
       let rect;
+      // Since this function accepts text nodes, we need to create a range to get the position and dimensions
       if (element instanceof Text) {
         const range = document.createRange();
         range.selectNode(element);
@@ -383,137 +505,6 @@ export class OwlDevtoolsGlobalHook {
     window.top.postMessage({ type: "owlDevtools__StopSelector" });
   };
 
-  // Defines how leaf object nodes should be displayed in the extension based on their type
-  serializeItem(value, asConstructorName = false) {
-    if (typeof value === "array") {
-      return "Array(" + value.length + ")";
-    } else if (typeof value === "object") {
-      if (value == null) {
-        return "null";
-      }
-      if (asConstructorName) {
-        return value.constructor.name;
-      }
-      return "{...}";
-    } else if (typeof value === "undefined") {
-      return "undefined";
-    } else if (typeof value === "string") {
-      return JSON.stringify(value);
-    } else if (typeof value === "function") {
-      if (asConstructorName) {
-        return value.constructor.name;
-      }
-      let functionString = value.toString();
-      let index, offset;
-      if (functionString.startsWith("class")) {
-        return "class " + value.name;
-        // TODO: rewrite with regex for clarity
-      } else {
-        let index1 = functionString.indexOf("){");
-        let index2 = functionString.indexOf(") {");
-        if (index1 === -1) {
-          index = index2;
-          offset = 3;
-        } else if (index2 === -1) {
-          index = index1;
-          offset = 2;
-        } else {
-          index = Math.min(index1, index2);
-          offset = index1 < index2 ? 2 : 3;
-        }
-        if (index === -1) {
-          return functionString.length > 20
-            ? functionString.substring(0, 18) + "..."
-            : functionString;
-        }
-      }
-      functionString = functionString.substring(0, index + offset);
-      return functionString + "...}";
-    } else {
-      let valueAsString = value.toString();
-      if (asConstructorName && valueAsString.length > 10) {
-        valueAsString = valueAsString.substring(0, 8) + "...";
-      }
-      return valueAsString;
-    }
-  }
-
-  // Returns a shortened version of the property as a string
-  serializeContent(obj, type) {
-    let result = "";
-    // TODO: use array.join inside for instead as well as use a serializer object instead
-    let first = true;
-    if (type === "array") {
-      result += "[";
-      for (const value of obj) {
-        if (!first) {
-          result += ", ";
-        } else {
-          first = false;
-        }
-        if (result.length > 30) {
-          result += "...";
-          break;
-        }
-        result += this.serializeItem(value);
-      }
-      result += "]";
-    } else if (type === "object") {
-      result += "{";
-      for (const [key, value] of Object.entries(obj)) {
-        if (!first) {
-          result += ", " + key + ": ";
-        } else {
-          first = false;
-          result += key + ": ";
-        }
-        if (result.length > 30) {
-          result += "...";
-          break;
-        }
-        result += this.serializeItem(value);
-      }
-      result += "}";
-    } else if (type === "map") {
-      result += "Map(" + obj.size + "){";
-      for (const [key, value] of obj.entries()) {
-        if (!first) {
-          result += ", " + this.serializeItem(key, true) + " => ";
-        } else {
-          first = false;
-          result += this.serializeItem(key, true) + " => ";
-        }
-        if (result.length > 30) {
-          result += "...";
-          break;
-        }
-        result += this.serializeItem(value, true);
-      }
-      result += "}";
-    } else if (type === "map entry") {
-      result +=
-        "{" + this.serializeItem(obj[0], true) + " => " + this.serializeItem(obj[1], true) + "}";
-    } else if (type === "set") {
-      result += "Set(" + obj.size + "){";
-      for (const value of obj) {
-        if (!first) {
-          result += ", ";
-        } else {
-          first = false;
-        }
-        if (result.length > 30) {
-          result += "...";
-          break;
-        }
-        result += this.serializeItem(value);
-      }
-      result += "}";
-    } else {
-      result += this.serializeItem(obj);
-    }
-    return result;
-  }
-
   // Returns the object specified by the path starting from the topParent object
   getObject(topParent, path) {
     let obj = topParent;
@@ -529,17 +520,17 @@ export class OwlDevtoolsGlobalHook {
         case "map entries":
           obj = [...obj];
           break;
-          case "set value":
-          case "map key":
-            obj = obj[0];
-            break;
-          case "map value":
-            obj = obj[1];
-            break;
-          case "set entry":
-          case "map entry":
-          case "item":
-          if(key.hasOwnProperty("symbolIndex") && key.symbolIndex >= 0){
+        case "set value":
+        case "map key":
+          obj = obj[0];
+          break;
+        case "map value":
+          obj = obj[1];
+          break;
+        case "set entry":
+        case "map entry":
+        case "item":
+          if (key.hasOwnProperty("symbolIndex") && key.symbolIndex >= 0) {
             const symbol = Object.getOwnPropertySymbols(obj)[key.symbolIndex];
             if (symbol) {
               obj = obj[symbol];
@@ -564,7 +555,7 @@ export class OwlDevtoolsGlobalHook {
       return [...this.apps][path[0]];
     }
     // Path to the component node is only strings, becomes objects for properties
-    const index = path.findIndex((key) => typeof key !== 'string');
+    const index = path.findIndex((key) => typeof key !== "string");
     const componentNode = this.getComponentNode(path.slice(0, index));
     const obj = this.getObject(componentNode, path.slice(index));
     return obj;
@@ -587,7 +578,7 @@ export class OwlDevtoolsGlobalHook {
       case "prototype":
         child.name = "[[Prototype]]";
         child.contentType = "object";
-        child.content = this.serializeItem(parentObj, true);
+        child.content = this.serializer.serializeItem(parentObj, true);
         child.hasChildren = true;
         break;
       case "set entries":
@@ -620,8 +611,10 @@ export class OwlDevtoolsGlobalHook {
           if (typeof key.value === "symbol") {
             child.name = key.value.toString();
             obj = parentObj[key.value];
-            child.path[child.path.length - 1].symbolIndex = Object.getOwnPropertySymbols(parentObj).findIndex((sym) => sym === key.value);
-            child.path[child.path.length - 1].value = key.value.toString()
+            child.path[child.path.length - 1].symbolIndex = Object.getOwnPropertySymbols(
+              parentObj
+            ).findIndex((sym) => sym === key.value);
+            child.path[child.path.length - 1].value = key.value.toString();
           } else {
             obj = parentObj[key.value];
           }
@@ -676,7 +669,7 @@ export class OwlDevtoolsGlobalHook {
           child.contentType = typeof obj;
           child.hasChildren = false;
       }
-      child.content = this.serializeContent(obj, child.contentType);
+      child.content = this.serializer.serializeContent(obj, child.contentType);
     }
     child.children = [];
     if (child.toggled) {
@@ -693,7 +686,7 @@ export class OwlDevtoolsGlobalHook {
 
   // returns the parsed object in the parsed tree
   getObjectInOldTree(oldTree, completePath, objType) {
-    const objPathIndex = completePath.findIndex((key) => typeof key !== 'string');
+    const objPathIndex = completePath.findIndex((key) => typeof key !== "string");
     let path = completePath.slice(objPathIndex);
     let obj;
     if (objType === "subscription") {
@@ -706,14 +699,14 @@ export class OwlDevtoolsGlobalHook {
       if (objType !== "instance") {
         obj = oldTree[path[0].value];
         path.shift();
-      // there is nothing otherwise but extension side it is in instance
+        // there is nothing otherwise but extension side it is in instance
       } else {
         obj = oldTree.instance;
       }
       // the first element here is directly in an array instead of a children array
-      obj = obj[path[0].childIndex]
+      obj = obj[path[0].childIndex];
       path.shift();
-    } 
+    }
     // just follow the indexes in the rest of the path
     for (const key of path) {
       obj = obj.children[key.childIndex];
@@ -738,7 +731,11 @@ export class OwlDevtoolsGlobalHook {
           for (; index < obj.length; index++) {
             const child = this.serializeObjectChild(
               obj,
-              { type: lastKey.type.replace("entries", "entry"), value: index, childIndex: children.length },
+              {
+                type: lastKey.type.replace("entries", "entry"),
+                value: index,
+                childIndex: children.length,
+              },
               depth,
               objType,
               path,
@@ -753,7 +750,7 @@ export class OwlDevtoolsGlobalHook {
           for (; index < obj.length; index++) {
             const child = this.serializeObjectChild(
               obj,
-              {type: "item", value: index, childIndex: children.length},
+              { type: "item", value: index, childIndex: children.length },
               depth,
               objType,
               path,
@@ -783,7 +780,7 @@ export class OwlDevtoolsGlobalHook {
         }
         const size = this.serializeObjectChild(
           obj,
-          { type: "item", value: "size", childIndex: children.length},
+          { type: "item", value: "size", childIndex: children.length },
           depth,
           objType,
           path,
@@ -860,7 +857,7 @@ export class OwlDevtoolsGlobalHook {
           Reflect.ownKeys(obj).forEach((key) => {
             const child = this.serializeObjectChild(
               obj,
-              { type:"item", value: key, childIndex: children.length},
+              { type: "item", value: key, childIndex: children.length },
               depth,
               objType,
               path,
@@ -894,7 +891,7 @@ export class OwlDevtoolsGlobalHook {
     let node = [...this.apps][path[0]].root;
     for (let i = 2; i < path.length; i++) {
       // From this point onwards, it is an object path inside the component node
-      if(typeof path[i] !== 'string'){
+      if (typeof path[i] !== "string") {
         break;
       }
       if (node.children.hasOwnProperty(path[i])) {
@@ -931,10 +928,10 @@ export class OwlDevtoolsGlobalHook {
       let oldBranch = oldTree?.props[component.props.length];
       const property = this.serializeObjectChild(
         props,
-        { type:"item", value: key, childIndex: component.props.length},
+        { type: "item", value: key, childIndex: component.props.length },
         0,
         "props",
-        [...path, {type: "item", value:"component"}, { type:"item", value: "props"}],
+        [...path, { type: "item", value: "component" }, { type: "item", value: "props" }],
         oldBranch,
         oldTree
       );
@@ -949,10 +946,10 @@ export class OwlDevtoolsGlobalHook {
       let oldBranch = oldTree?.env[component.env.length];
       const envElement = this.serializeObjectChild(
         env,
-        { type:"item", value: key, childIndex: component.env.length},
+        { type: "item", value: key, childIndex: component.env.length },
         0,
         "env",
-        [...path, {type: "item", value:"component"}, {type: "item", value: "env"}],
+        [...path, { type: "item", value: "component" }, { type: "item", value: "env" }],
         oldBranch,
         oldTree
       );
@@ -965,7 +962,7 @@ export class OwlDevtoolsGlobalHook {
       { type: "prototype", childIndex: component.env.length },
       0,
       "env",
-      [...path, {type: "item", value:"component"}, { type:"item", value: "env"}],
+      [...path, { type: "item", value: "component" }, { type: "item", value: "env" }],
       oldTree?.env[component.env.length],
       oldTree
     );
@@ -978,10 +975,10 @@ export class OwlDevtoolsGlobalHook {
         let oldBranch = oldTree?.instance[component.instance.length];
         const instanceElement = this.serializeObjectChild(
           instance,
-          { type:"item", value: key, childIndex: component.instance.length},
+          { type: "item", value: key, childIndex: component.instance.length },
           0,
           "instance",
-          [...path, {type: "item", value:"component"} ],
+          [...path, { type: "item", value: "component" }],
           oldBranch,
           oldTree
         );
@@ -1000,7 +997,11 @@ export class OwlDevtoolsGlobalHook {
             depth: 0,
             toggled: false,
             objectType: "instance",
-            path: [...path, {type: "item", value:"component"}, {type: "item", value: key, childIndex: component.instance.length}],
+            path: [
+              ...path,
+              { type: "item", value: "component" },
+              { type: "item", value: key, childIndex: component.instance.length },
+            ],
             contentType: "getter",
             content: "(...)",
             hasChildren: false,
@@ -1016,7 +1017,7 @@ export class OwlDevtoolsGlobalHook {
       { type: "prototype", childIndex: component.instance.length },
       0,
       "instance",
-      [...path, {type: "item", value:"component"} ],
+      [...path, { type: "item", value: "component" }],
       oldTree?.instance[component.instance.length],
       oldTree
     );
@@ -1040,7 +1041,12 @@ export class OwlDevtoolsGlobalHook {
                   : "object"
                 : rawSubscription.target,
             depth: 0,
-            path: [...path, { type:"item", value: "subscriptions"},{ type:"item", value: index}, { type:"item", value: "target"}],
+            path: [
+              ...path,
+              { type: "item", value: "subscriptions" },
+              { type: "item", value: index },
+              { type: "item", value: "target" },
+            ],
             toggled: false,
             objectType: "subscription",
           },
@@ -1068,7 +1074,7 @@ export class OwlDevtoolsGlobalHook {
           }
           subscription.target.hasChildren = false;
         } else {
-          subscription.target.content = this.serializeContent(
+          subscription.target.content = this.serializer.serializeContent(
             rawSubscription.target,
             subscription.target.contentType
           );
@@ -1133,7 +1139,7 @@ export class OwlDevtoolsGlobalHook {
           getter.contentType = typeof obj;
           getter.hasChildren = false;
       }
-      getter.content = this.serializeContent(obj, getter.contentType);
+      getter.content = this.serializer.serializeContent(obj, getter.contentType);
     }
     return getter;
   }

@@ -128,7 +128,7 @@ export const store = reactive({
     // element is the app here
     if (path.length === 1) {
       element = this.apps[path[0]];
-    // the second element in the path is always the root of the app so no need to check
+      // the second element in the path is always the root of the app so no need to check
     } else {
       element = this.apps[path[0]].children[0];
     }
@@ -333,13 +333,7 @@ export const store = reactive({
     if (obj.hasChildren && obj.children.length === 0) {
       const children = await evalInWindow(
         "loadObjectChildren",
-        [
-          obj.path,
-          obj.depth,
-          obj.contentType,
-          obj.objectType,
-          this.activeComponent,
-        ],
+        [obj.path, obj.depth, obj.contentType, obj.objectType, this.activeComponent],
         this.activeFrame
       );
       obj.children = children;
@@ -359,11 +353,7 @@ export const store = reactive({
 
   // Update the value of the given object with the new provided one
   editObjectTreeElement(path, value, objectType) {
-    evalInWindow(
-      "editObject",
-      [path, value, objectType],
-      this.activeFrame
-    );
+    evalInWindow("editObject", [path, value, objectType], this.activeFrame);
   },
 
   // Checks for all iframes in the page, register it and load the scripts inside if not already done
@@ -478,9 +468,9 @@ export const store = reactive({
 
   // Allows to log any object in the console, defaults to the active component (or app)
   logObjectInConsole(path) {
-    if(!path){
-      if (this.activeComponent.path.length > 1){
-        path = [...this.activeComponent.path, {type: "item", value: "component"}];
+    if (!path) {
+      if (this.activeComponent.path.length > 1) {
+        path = [...this.activeComponent.path, { type: "item", value: "component" }];
       } else {
         path = this.activeComponent.path;
       }
@@ -489,11 +479,7 @@ export const store = reactive({
   },
 
   inspectFunctionSource(path) {
-    evalInWindow(
-      "inspectFunctionSource",
-      [path],
-      this.activeFrame
-    );
+    evalInWindow("inspectFunctionSource", [path], this.activeFrame);
   },
 
   // Inspect the given component's data based on the given type
@@ -503,10 +489,24 @@ export const store = reactive({
         evalInWindow("inspectComponentDOM", [path], this.activeFrame);
         break;
       case "source":
-        if(path.length > 1){
-          evalInWindow("inspectFunctionSource", [[...path, {type: "item", value: "component"}, {type: "item", value: "constructor"}]], this.activeFrame);
+        if (path.length > 1) {
+          evalInWindow(
+            "inspectFunctionSource",
+            [
+              [
+                ...path,
+                { type: "item", value: "component" },
+                { type: "item", value: "constructor" },
+              ],
+            ],
+            this.activeFrame
+          );
         } else {
-          evalInWindow("inspectFunctionSource", [[...path, {type: "item", value: "constructor"}]], this.activeFrame);
+          evalInWindow(
+            "inspectFunctionSource",
+            [[...path, { type: "item", value: "constructor" }]],
+            this.activeFrame
+          );
         }
         break;
       case "compiled template":
@@ -763,7 +763,7 @@ function highlightChildren(component) {
 // Expand the node given in entry and all of its children
 function expandNodes(node) {
   node.toggled = true;
-  for(const child of node.children) {
+  for (const child of node.children) {
     expandNodes(child);
   }
 }
@@ -771,7 +771,7 @@ function expandNodes(node) {
 // Fold the node given in entry and all of its children
 function foldNodes(node) {
   node.toggled = false;
-  for(const child of node.children) {
+  for (const child of node.children) {
     foldNodes(child);
   }
 }

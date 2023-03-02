@@ -10,7 +10,7 @@
               keys: <span class="key-name"><t t-esc="this.keysContent(subscription_index)"/></span>
             </span>
           </div>
-          <div t-foreach="subscription.keys" t-as="key" t-key="keyIndex" class="my-0 p-0 object-line" t-attf-style="display: {{subscription.keysExpanded ? 'flex' : 'none'}}">
+          <div t-foreach="subscription.keys" t-as="key" t-key="key_index" class="my-0 p-0 object-line" t-attf-style="display: {{subscription.keysExpanded ? 'flex' : 'none'}}">
             <div style="transform: translateX(calc(1.1rem))" class="key-content">
               <i class="fa fa-caret-right mx-1" t-attf-style="cursor: pointer; visibility: hidden;"></i>
               <t t-esc="key"/>

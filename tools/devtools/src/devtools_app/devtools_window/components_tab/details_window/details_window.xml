@@ -7,12 +7,12 @@
       </div>
       <t t-if="store.activeComponent.path.length > 1">
         <i title="Inspect component in the Elements tab" class="fa fa-eye utility-icon p-1" t-on-click.stop="() => this.store.inspectComponent('DOM')"></i>
-        <i title="Store component as global variable in the console" class="fa fa-bug utility-icon p-1" t-on-click.stop="() => this.store.logComponentDataInConsole('instance')"></i>
+        <i title="Store component as global variable in the console" class="fa fa-bug utility-icon p-1" t-on-click.stop="() => this.store.logObjectInConsole()"></i>
         <i title="Inspect source code of component" class="fa fa-file-code-o utility-icon p-1" t-on-click.stop="() => this.store.inspectComponent('source')"></i>
         <i title="Trigger rerender of the component" class="fa fa-refresh utility-icon p-1" t-on-click.stop="() => this.store.refreshComponent()"></i>
       </t>
       <t t-else="">
-        <i title="Store app as global variable in the console" class="fa fa-bug utility-icon p-1" t-on-click.stop="() => this.store.logComponentDataInConsole('instance')"></i>
+        <i title="Store app as global variable in the console" class="fa fa-bug utility-icon p-1" t-on-click.stop="() => this.store.logObjectInConsole()"></i>
         <i title="Inspect source code of the app" class="fa fa-file-code-o utility-icon p-1" t-on-click.stop="() => this.store.inspectComponent('source')"></i>
       </t>
     </div>
@@ -23,8 +23,8 @@
             <b>props</b>
           </div>
         </div>
-        <t t-foreach="store.activeComponent.props" t-as="prop" t-key="prop">
-          <ObjectTreeElement object="prop_value"/>
+        <t t-foreach="store.activeComponent.props" t-as="prop" t-key="prop_index">
+          <ObjectTreeElement object="prop"/>
         </t>
       </div>
       <div t-if="store.activeComponent.subscriptions.length > 0" id="subscriptions" class="details-panel ps-2 py-1">
@@ -32,7 +32,7 @@
           <div class="w-100">
             <b>observed state</b>
           </div>
-          <i title="Store observed states as global variable in the console" class="fa fa-bug utility-icon p-1" t-on-click.stop="() => this.store.logComponentDataInConsole('subscription')"></i>
+          <i title="Store observed states as global variable in the console" class="fa fa-bug utility-icon p-1" t-on-click.stop="() => this.store.logObjectInConsole([...this.store.activeComponent.path, {type: 'item', value: 'subscriptions'}])"></i>
         </div>
         <Subscriptions/>
       </div>
@@ -42,8 +42,8 @@
             <b>env</b>
           </div>
         </div>
-        <t t-foreach="store.activeComponent.env" t-as="env" t-key="env">
-          <ObjectTreeElement object="env_value"/>
+        <t t-foreach="store.activeComponent.env" t-as="env" t-key="env_index">
+          <ObjectTreeElement object="env"/>
         </t>
       </div>
       <div t-if="Object.keys(store.activeComponent.instance).length > 0"  id="instance" class="details-panel ps-2 py-1">
@@ -56,8 +56,8 @@
             <i title="Send raw template to console" class="fa fa-file-word-o utility-icon p-1" t-on-click.stop="() => this.store.inspectComponent('raw template')"></i>
           </t>
         </div>
-        <t t-foreach="store.activeComponent.instance" t-as="instance" t-key="instance">
-          <ObjectTreeElement object="instance_value"/>
+        <t t-foreach="store.activeComponent.instance" t-as="instance" t-key="instance_index">
+          <ObjectTreeElement object="instance"/>
         </t>
       </div>
     </div>

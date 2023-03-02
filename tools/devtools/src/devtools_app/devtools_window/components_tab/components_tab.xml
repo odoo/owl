@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.ComponentsTab" owl="1">
-    <div class="position-relative overflow-hidden d-flex flex-row">
+    <div class="position-relative overflow-hidden d-flex flex-row h-100">
       <div class="split-screen-left d-flex flex-column" t-attf-style="width:{{store.splitPosition}}%;">
         <div class="panel-top d-flex align-items-center">
           <ComponentSearchBar/>
         </div>
-        <div class="overflow-auto">
+        <div class="overflow-auto h-100">
           <div id="tree-wrapper">
             <t t-foreach="store.apps" t-as="app" t-key="app_index">
               <TreeElement component="app"/> 

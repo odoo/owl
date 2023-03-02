@@ -1,3 +1,5 @@
+let traceRenderings = false;
+
 export class OwlDevtoolsGlobalHook {
   constructor() {
     // The set of apps exposed by owl
@@ -94,6 +96,12 @@ export class OwlDevtoolsGlobalHook {
       if (this instanceof self.RootFiber && inFlush) {
         flushed = true;
       }
+      if (traceRenderings && this instanceof self.RootFiber) {
+        console.groupCollapsed(`Rendering <${this.node.name}>`);
+        console.trace();
+        console.groupEnd();
+      }
+
       const before = performance.now();
       originalRender.call(this, ...arguments);
       const time = performance.now() - before;
@@ -189,6 +197,10 @@ export class OwlDevtoolsGlobalHook {
       originalDestroy.call(this, ...arguments);
     };
     this.appsPatched = true;
+  }
+
+  toggleTracing(value) {
+    traceRenderings = value;
   }
 
   // Enables/disables the recording of the render/destroy events based on value

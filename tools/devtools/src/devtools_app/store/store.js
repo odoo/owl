@@ -45,6 +45,7 @@ export const store = reactive({
   leftWidth: 0,
   rightWidth: 0,
   apps: [],
+  traceRenderings: false,
   activeComponent: {
     path: ["0"],
     name: "App",
@@ -363,6 +364,11 @@ export const store = reactive({
       [this.activeComponent.path, objectPath, value, objectType],
       this.activeFrame
     );
+  },
+
+  toggleTracing() {
+    this.traceRenderings = !this.traceRenderings;
+    evalInWindow("toggleTracing", [this.traceRenderings]);
   },
 
   // Checks for all iframes in the page, register it and load the scripts inside if not already done

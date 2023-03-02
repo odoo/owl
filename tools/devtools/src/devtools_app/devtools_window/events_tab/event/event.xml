@@ -47,14 +47,17 @@
       </t>
       <div t-if="store.contextMenu.activeMenu === componentContextMenuId" class="custom-menu" t-attf-style="top: {{store.contextMenu.top}}; left: {{store.contextMenu.left}}" t-ref="componentContextmenu">
         <ul class="my-1">
-          <li t-on-click.stop="() => this.store.logComponentDataInConsole('instance', props.event.path)" class="custom-menu-item py-1 px-4">Store as global variable</li>
           <li t-on-click.stop="() => this.store.inspectComponent('source', props.event.path)" class="custom-menu-item py-1 px-4">Inspect source code</li>
           <t t-if="props.event.path.length !== 1">
+            <li t-on-click.stop="() => this.store.logObjectInConsole([...props.event.path, { type: 'item', value: 'component'}])" class="custom-menu-item py-1 px-4">Store as global variable</li>
             <li t-on-click.stop="() => this.store.inspectComponent('DOM', props.event.path)" class="custom-menu-item py-1 px-4">Inspect in Elements tab</li>
             <li t-on-click.stop="() => this.store.refreshComponent(props.event.path)" class="custom-menu-item py-1 px-4">Force rerender</li>
-            <li t-on-click.stop="() => this.store.logComponentDataInConsole('subscription', props.event.path)" class="custom-menu-item py-1 px-4">Store observed states as global variable</li>
+            <li t-on-click.stop="() => this.store.logObjectInConsole([...props.event.path, { type: 'item', value: 'subscriptions'}])" class="custom-menu-item py-1 px-4">Store observed states as global variable</li>
             <li t-on-click.stop="() => this.store.inspectComponent('compiled template', props.event.path)" class="custom-menu-item py-1 px-4">Inspect compiled template</li>
             <li t-on-click.stop="() => this.store.inspectComponent('raw template', props.event.path)" class="custom-menu-item py-1 px-4">Log raw template</li>
+          </t>
+          <t t-else="">
+            <li t-on-click.stop="() => this.store.logObjectInConsole([...props.event.path])" class="custom-menu-item py-1 px-4">Store as global variable</li>
           </t>
         </ul>
       </div>

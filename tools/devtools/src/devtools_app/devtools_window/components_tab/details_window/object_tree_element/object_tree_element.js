@@ -69,7 +69,7 @@ export class ObjectTreeElement extends Component {
   }
 
   get attenuateIfPrototype() {
-    if (this.pathAsString.includes('{"type":"prototype"}')) {
+    if (this.pathAsString.includes('{"type":"prototype",')) {
       return { attenuate: true };
     }
     return {};
@@ -104,21 +104,5 @@ export class ObjectTreeElement extends Component {
       this.store.editObjectTreeElement(this.props.object.path, value, this.props.object.objectType);
       this.state.editMode = false;
     }
-  }
-
-  inspectFunctionSource() {
-    evalInWindow(
-      "inspectFunctionSource",
-      [this.store.activeComponent.path, this.props.object.path],
-      this.store.activeFrame
-    );
-  }
-
-  storeObjectAsGlobal() {
-    evalInWindow(
-      "storeObjectAsGlobal",
-      [this.store.activeComponent.path, this.props.object.path],
-      this.store.activeFrame
-    );
   }
 }

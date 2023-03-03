@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.DevtoolsWindow" owl="1">
-    <div id="container" class="d-flex w-100 h-100 flex-column position-absolute top-0 start-0 overflow-hidden" t-on-mouseover.stop="removeHighlight" t-on-mouseout.stop="removeHighlight">
-      <t t-if="store.owlStatus">
+    <div id="container" class="d-flex w-100 h-100 flex-column position-absolute overflow-hidden" t-on-mouseover.stop="() => this.store.removeHighlights()" t-on-mouseout.stop="() => this.store.removeHighlights()">
+      <t t-if="store.invalidContext">
+        <div class="status-message d-flex justify-content-center align-items-center">
+          Extension context is invalid. Please close the devtools and reload the page.
+        </div>
+      </t>
+      <t t-elif="store.owlStatus">
         <div class="panel-top d-flex align-items-center custom-navbar">
           <Tab tabName="'ComponentsTab'"/>
           <Tab tabName="'EventsTab'"/>

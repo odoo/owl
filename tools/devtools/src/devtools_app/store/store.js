@@ -1,5 +1,5 @@
 const { reactive, useState, toRaw } = owl;
-import { evalInWindow, fuzzySearch } from "../../utils";
+import { fuzzySearch } from "../../utils";
 
 // Main store which contains all states that needs to be maintained throughout all components in the devtools app
 export const store = reactive({
@@ -36,6 +36,7 @@ export const store = reactive({
   frameUrls: ["top"],
   activeFrame: "top",
   page: "ComponentsTab",
+  invalidContext: false,
   events: [],
   eventsTreeView: true,
   eventsTree: [],
@@ -84,27 +85,26 @@ export const store = reactive({
   switchTab(componentName) {
     this.page = componentName;
     this.componentSearch.activeSelector = false;
-    evalInWindow("disableHTMLSelector", [], this.activeFrame);
+    evalFunctionInWindow("disableHTMLSelector", [], this.activeFrame);
   },
 
   // Load all data related to the components tree using the global hook loaded on the page
   // Use fromOld to specify if we want to keep most of the toggled/selected data of the old tree
   // when generating the new one
   async loadComponentsTree(fromOld) {
-    const apps = await evalInWindow(
+    const apps = await evalFunctionInWindow(
       "getComponentsTree",
       fromOld ? [this.activeComponent.path, this.apps] : [],
       this.activeFrame
     );
     if (apps.length === 0) {
-      this.owlStatus = false;
       return;
     }
     this.apps = apps;
     if (!fromOld && this.settings.expandByDefault) {
       this.apps.forEach((tree) => expandNodes(tree));
     }
-    const component = await evalInWindow(
+    const component = await evalFunctionInWindow(
       "getComponentDetails",
       fromOld ? [this.activeComponent.path, this.activeComponent] : [],
       this.activeFrame
@@ -143,7 +143,7 @@ export const store = reactive({
     }
     element.selected = true;
     highlightChildren(element);
-    const component = await evalInWindow("getComponentDetails", [element.path], this.activeFrame);
+    const component = await evalFunctionInWindow("getComponentDetails", [element.path], this.activeFrame);
     this.activeComponent = component;
     if (this.page !== "ComponentsTab") {
       this.switchTab("ComponentsTab");
@@ -314,7 +314,7 @@ export const store = reactive({
 
   // Replace the (...) content of a getter with the value returned by the corresponding get method
   async loadGetterContent(obj) {
-    const result = await evalInWindow(
+    const result = await evalFunctionInWindow(
       "loadGetterContent",
       [this.activeComponent.path, obj],
       this.activeFrame
@@ -331,7 +331,7 @@ export const store = reactive({
       return;
     }
     if (obj.hasChildren && obj.children.length === 0) {
-      const children = await evalInWindow(
+      const children = await evalFunctionInWindow(
         "loadObjectChildren",
         [obj.path, obj.depth, obj.contentType, obj.objectType, this.activeComponent],
         this.activeFrame
@@ -344,7 +344,7 @@ export const store = reactive({
   // Toggle the selector tool which is used to select a component based on the hovered Dom element
   toggleSelector() {
     this.componentSearch.activeSelector = !this.componentSearch.activeSelector;
-    evalInWindow(
+    evalFunctionInWindow(
       this.componentSearch.activeSelector ? "enableHTMLSelector" : "disableHTMLSelector",
       [],
       this.activeFrame
@@ -353,45 +353,49 @@ export const store = reactive({
 
   // Update the value of the given object with the new provided one
   editObjectTreeElement(path, value, objectType) {
-    evalInWindow("editObject", [path, value, objectType], this.activeFrame);
+    evalFunctionInWindow("editObject", [path, value, objectType], this.activeFrame);
   },
 
   // Checks for all iframes in the page, register it and load the scripts inside if not already done
   async updateIFrameList() {
-    const frames = await evalInWindow("getIFrameUrls", []);
+    const frames = await evalFunctionInWindow("getIFrameUrls");
+    this.frameUrls = ["top"];
+    this.selectFrame("top");
     for (const frame of frames) {
-      chrome.devtools.inspectedWindow.eval(
+      const hasOwl = await evalInWindow(
         "window.__OWL_DEVTOOLS__?.Fiber !== undefined;",
-        { frameURL: frame },
-        (hasOwl) => {
-          if (hasOwl) {
-            chrome.devtools.inspectedWindow.eval(
-              "window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;",
-              { frameURL: frame },
-              async (scriptsLoaded) => {
-                if (!scriptsLoaded) {
-                  await loadScripts(frame);
-                }
-              }
-            );
-            if (!this.frameUrls.includes(frame)) {
-              this.frameUrls = [...this.frameUrls, frame];
-            }
-          }
-        }
+        frame
       );
+      if (hasOwl) {
+        const scriptsLoaded = await evalInWindow(
+          "window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;",
+          frame
+        );
+        if (!scriptsLoaded) {
+          await loadScripts(frame);
+        }
+        if (!this.frameUrls.includes(frame)) {
+          this.frameUrls = [...this.frameUrls, frame];
+        }
+      }
+    }
+  },
+
+  removeHighlights(){
+    if(this.owlStatus && (!this.invalidContext)){
+      evalFunctionInWindow("removeHighlights", [], this.activeFrame);
     }
   },
 
   // Resets the context of all values in the devtools tab and load the one from the given frame
   selectFrame(frame) {
-    evalInWindow("removeHighlights", [], this.activeFrame);
-    evalInWindow("toggleEventsRecording", [false, 0], this.activeFrame);
+    this.removeHighlights();
+    evalFunctionInWindow("toggleEventsRecording", [false, 0], this.activeFrame);
     this.events = [];
     this.eventsTree = [];
     this.activeFrame = frame;
     store.loadComponentsTree(false);
-    evalInWindow(
+    evalFunctionInWindow(
       "toggleEventsRecording",
       [this.activeRecorder, this.events.length],
       this.activeFrame
@@ -458,12 +462,12 @@ export const store = reactive({
     this.loadComponentsTree(false);
     this.events = [];
     this.eventsTree = [];
-    evalInWindow("toggleEventsRecording", [false, 0]);
+    evalFunctionInWindow("toggleEventsRecording", [false, 0]);
   },
 
   // Triggers manually the rendering of the selected component
   refreshComponent(path = this.activeComponent.path) {
-    evalInWindow("refreshComponent", [path], this.activeFrame);
+    evalFunctionInWindow("refreshComponent", [path], this.activeFrame);
   },
 
   // Allows to log any object in the console, defaults to the active component (or app)
@@ -475,22 +479,22 @@ export const store = reactive({
         path = this.activeComponent.path;
       }
     }
-    evalInWindow("sendObjectToConsole", [path], this.activeFrame);
+    evalFunctionInWindow("sendObjectToConsole", [path], this.activeFrame);
   },
 
   inspectFunctionSource(path) {
-    evalInWindow("inspectFunctionSource", [path], this.activeFrame);
+    evalFunctionInWindow("inspectFunctionSource", [path], this.activeFrame);
   },
 
   // Inspect the given component's data based on the given type
   inspectComponent(type, path = this.activeComponent.path) {
     switch (type) {
       case "DOM":
-        evalInWindow("inspectComponentDOM", [path], this.activeFrame);
+        evalFunctionInWindow("inspectComponentDOM", [path], this.activeFrame);
         break;
       case "source":
         if (path.length > 1) {
-          evalInWindow(
+          evalFunctionInWindow(
             "inspectFunctionSource",
             [
               [
@@ -502,7 +506,7 @@ export const store = reactive({
             this.activeFrame
           );
         } else {
-          evalInWindow(
+          evalFunctionInWindow(
             "inspectFunctionSource",
             [[...path, { type: "item", value: "constructor" }]],
             this.activeFrame
@@ -510,22 +514,22 @@ export const store = reactive({
         }
         break;
       case "compiled template":
-        evalInWindow("inspectComponentCompiledTemplate", [path], this.activeFrame);
+        evalFunctionInWindow("inspectComponentCompiledTemplate", [path], this.activeFrame);
         break;
       case "raw template":
-        evalInWindow("inspectComponentRawTemplate", [path], this.activeFrame);
+        evalFunctionInWindow("inspectComponentRawTemplate", [path], this.activeFrame);
         break;
     }
   },
 
   // Trigger the highlight on the component in the page
   highlightComponent(path) {
-    evalInWindow("highlightComponent", [path], this.activeFrame);
+    evalFunctionInWindow("highlightComponent", [path], this.activeFrame);
   },
 
   // Toggle the recording of events in the page
   async toggleRecording() {
-    this.activeRecorder = await evalInWindow(
+    this.activeRecorder = await evalFunctionInWindow(
       "toggleEventsRecording",
       [!this.activeRecorder, this.events.length],
       this.activeFrame
@@ -535,7 +539,7 @@ export const store = reactive({
   clearEventsConsole() {
     this.events = [];
     this.eventsTree = [];
-    evalInWindow("resetEvents", [], this.activeFrame);
+    evalFunctionInWindow("resetEvents", [], this.activeFrame);
   },
 });
 
@@ -554,7 +558,7 @@ document.addEventListener("click", () => store.contextMenu.close(), { capture: t
 document.addEventListener("contextmenu", () => store.contextMenu.close(), { capture: true });
 
 for (const frame of store.frameUrls) {
-  evalInWindow("toggleEventsRecording", [false, 0], frame);
+  evalFunctionInWindow("toggleEventsRecording", [false, 0], frame);
 }
 
 let flushRendersTimeout = false;
@@ -565,31 +569,12 @@ if (chrome.devtools.panels.themeName === "dark") {
   document.querySelector("html").classList.remove("dark-mode");
 }
 
-// This is useful for checking regularly if owl is not present on the page while the owl devtools
-// tab is still opened
-const keepAliveInterval = setInterval(keepAlive, 500);
-
-// As explained above
-function keepAlive() {
-  if (!store.owlStatus) {
-    chrome.devtools.inspectedWindow.eval(
-      "window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;",
-      (hasOwl) => {
-        if (hasOwl) {
-          store.owlStatus = true;
-          store.resetData();
-        }
-      }
-    );
-  }
-}
-
 // Connect to the port to communicate to the background script
 chrome.runtime.onConnect.addListener((port) => {
   if (!port.name === "OwlDevtoolsPort") {
     return;
   }
-  port.onMessage.addListener((msg) => {
+  port.onMessage.addListener(async (msg) => {
     // When message of type Flush is received, overwrite the component tree with the new one from page
     // A flush message is sent everytime a component is rendered on the page
     if (msg.type === "Flush") {
@@ -626,24 +611,29 @@ chrome.runtime.onConnect.addListener((port) => {
       loadEvents(events);
     }
 
-    // If we know a new iframe has been added to the page, update the iframe list
+    // If we know a new iframe has been added to the page, load scripts into it and update the
+    // frames list if it has been directly loaded.
     if (msg.type === "NewIFrame") {
-      setTimeout(() => {
+      const isLoaded = await loadScripts(msg.data);
+      if(isLoaded){
         store.updateIFrameList();
-      }, 100);
+      }
+    }
+    
+    // Received when a frame has been delayed when loading the scripts due to owl being lazy loaded
+    if (msg.type === "FrameReady"){
+      store.updateIFrameList();
+      store.owlStatus = true;
+      store.resetData();
     }
 
     // Reload the tree after checking if the scripts are loaded when this message is received
     if (msg.type === "Reload") {
-      chrome.devtools.inspectedWindow.eval(
-        "window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;",
-        (result) => {
-          store.owlStatus = result;
-          if (result) {
-            store.loadComponentsTree(false);
-          }
-        }
-      );
+      store.owlStatus = await evalInWindow(
+        "window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;");
+      if (store.owlStatus) {
+        store.loadComponentsTree(false);
+      }
     }
   });
 });
@@ -780,7 +770,7 @@ function foldNodes(node) {
 async function loadScripts(frameUrl) {
   const response = await fetch("../page_scripts/load_scripts.js");
   const contents = await response.text();
-  chrome.devtools.inspectedWindow.eval(contents, { frameURL: frameUrl });
+  return await evalInWindow(contents, frameUrl);
 }
 
 // Shallow array equality
@@ -790,4 +780,72 @@ function arraysEqual(arr1, arr2) {
     return false;
   }
   return arr1.every((val, i) => val === arr2[i]); // Compare each element of the arrays
+}
+
+// General method for executing functions from the loaded scripts in the right frame of the page
+// using the __OWL__DEVTOOLS_GLOBAL_HOOK__. Take the function's args as an array.
+async function evalFunctionInWindow(fn, args = [], frameUrl = "top") {
+  const stringifiedArgs = [...args].map((arg) => {
+    arg = JSON.stringify(arg);
+    return arg;
+  });
+  const argsString = "(" + stringifiedArgs.join(", ") + ");";
+  let script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.${fn}${argsString}`;
+  try{
+    return await new Promise((resolve, reject) => {
+      if (frameUrl !== "top") {
+        chrome.devtools.inspectedWindow.eval(
+          script,
+          { frameURL: frameUrl },
+          (result, isException) => {
+            if (!isException) {
+              resolve(result);
+            } else {
+              reject(undefined);
+            }
+          }
+        );
+      } else {
+        chrome.devtools.inspectedWindow.eval(script, (result, isException) => {
+          if (!isException) {
+            resolve(result);
+          } else {
+            reject(undefined);
+          }
+        });
+      }
+    });
+  } catch (e) {
+    // store.invalidContext = true;
+  }
+}
+
+// General method for executing code in the window using chrome.devtools.inspectedWindow.eval.
+async function evalInWindow(code, frameUrl = "top") {
+  try{
+    return await new Promise((resolve, reject) => {
+      if (frameUrl !== "top") {
+        chrome.devtools.inspectedWindow.eval(
+          code,
+          { frameURL: frameUrl },
+          (result, isException) => {
+            if (!isException) {
+              resolve(result);
+            } else {
+              reject(undefined);
+            }
+          }
+        );
+      } else {
+        chrome.devtools.inspectedWindow.eval(code, (result, isException) => {
+          if (!isException) {
+            resolve(result);
+          } else {
+            reject(undefined);
+          }
+        });
+      }
+    });
+  } catch (e) {
+  }
 }

@@ -9,15 +9,13 @@ let scriptsLoaded = false;
 // and send a reload message to the devtools owl app (relayed by the background thread)
 if (!isFirefox()) {
   chrome.tabs.onUpdated.addListener((tab) => {
-    chrome.tabs.get(tab, (tabData) => {
+    chrome.tabs.get(tab, async (tabData) => {
       if (tabData?.status === "complete") {
         scriptsLoaded = false;
         // Again we need to wait until owl has got the time to load on the page before loading the scripts
         if (created) {
-          setTimeout(async () => {
-            await loadScripts();
-            chrome.runtime.sendMessage({ type: "Reload" });
-          }, 200);
+          await loadScripts();
+          chrome.runtime.sendMessage({ type: "Reload" });
         }
       }
     });

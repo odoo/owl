@@ -63,23 +63,32 @@ browserInstance.tabs.onUpdated.addListener((tab) => {
         {
           target: { tabId: tabData.id },
           func: () => {
-            if (!Object.hasOwnProperty.call(window, "__OWL_DEVTOOLS__")) {
+            if (!window.__OWL_DEVTOOLS__) {
               let val;
-              Object.defineProperty(window, "__OWL_DEVTOOLS__", {
-                get() {
+              const descriptor = Object.getOwnPropertyDescriptor(window, "__OWL_DEVTOOLS__") || {
+                get(){
                   return val;
                 },
-                set(value) {
+                set(value){
                   val = value;
+                }
+              }
+              Object.defineProperty(window, "__OWL_DEVTOOLS__", {
+                get() {
+                  return descriptor.get.call(this);
+                },
+                set(value) {
+                  descriptor.set.call(this, value);
                   let result = 1;
                   if (value?.Fiber !== undefined) {
                     result = 2;
                   }
                   window.top.postMessage({ type: "owlDevtools__owlStatus", data: result });
                 },
+                configurable: true,
               });
               return 0;
-            } else if (window.__OWL_DEVTOOLS__) {
+            } else  {
               let result = 1;
               if (window.__OWL_DEVTOOLS__.Fiber !== undefined) {
                 result = 2;

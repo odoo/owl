@@ -22,7 +22,7 @@ export class OwlDevtoolsGlobalHook {
              * This process may seem long and indirect but is necessary. This applies to all window.top.postMessage methods in this file.
              * More information in the docs: https://developer.chrome.com/docs/extensions/mv3/devtools/#evaluated-scripts-to-devtools
              */
-            window.top.postMessage({ type: "owlDevtools__NewIFrame" });
+            window.top.postMessage({ type: "owlDevtools__NewIFrame", data: addedNode.contentDocument.location.href });
           }
         });
       });
@@ -117,7 +117,7 @@ export class OwlDevtoolsGlobalHook {
         }
         return "Map(" + obj.size + "){" + result.join(", ") + "}";
       },
-      mapEntry(obj) {
+      ["map entry"](obj) {
         return (
           "{" + this.serializeItem(obj[0], true) + " => " + this.serializeItem(obj[1], true) + "}"
         );
@@ -139,20 +139,10 @@ export class OwlDevtoolsGlobalHook {
       // Returns a shortened string version of a collection of properties for display purposes
       // Shortcut for serializeItem when it is a standalone item
       serializeContent(item, type) {
-        switch (type) {
-          case "array":
-            return this.array(item);
-          case "object":
-            return this.object(item);
-          case "map":
-            return this.map(item);
-          case "map entry":
-            return this.mapEntry(item);
-          case "set":
-            return this.set(item);
-          default:
-            return this.serializeItem(item);
+        if(this[type]){
+          return this[type](item);
         }
+        return this.serializeItem(item);
       },
     };
   }

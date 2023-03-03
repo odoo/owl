@@ -1,9 +1,8 @@
-const { Component, useExternalListener } = owl;
+const { Component } = owl;
 import { ComponentsTab } from "./components_tab/components_tab";
 import { Tab } from "./tab/tab";
 import { EventsTab } from "./events_tab/events_tab";
 import { useStore } from "../store/store";
-import { evalInWindow } from "../../utils";
 
 export class DevtoolsWindow extends Component {
   static props = [];
@@ -11,11 +10,6 @@ export class DevtoolsWindow extends Component {
   static components = { ComponentsTab, Tab, EventsTab };
   setup() {
     this.store = useStore();
-  }
-
-  // Remove the highlight on the DOM element correponding to the component
-  removeHighlight() {
-    evalInWindow("removeHighlights", [], this.store.activeFrame);
   }
 
   selectFrame(ev) {

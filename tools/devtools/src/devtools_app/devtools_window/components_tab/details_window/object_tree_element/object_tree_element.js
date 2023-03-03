@@ -1,25 +1,8 @@
-import { evalInWindow } from "../../../../../utils";
 import { useStore } from "../../../../store/store";
 
-const { Component, useState, useEffect, useRef, useExternalListener } = owl;
+const { Component, useState, useEffect, useRef } = owl;
 
 export class ObjectTreeElement extends Component {
-  static props = [
-    "name",
-    "content",
-    "children",
-    "display",
-    "toggled",
-    "depth",
-    "contentType",
-    "hasChildren",
-    "objectType",
-    "editReactiveState",
-    "updateBag",
-    "componentPath",
-    "loadGetterContent",
-  ];
-
   static template = "devtools.ObjectTreeElement";
 
   static components = { ObjectTreeElement };

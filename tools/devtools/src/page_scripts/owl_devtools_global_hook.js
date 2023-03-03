@@ -1,5 +1,3 @@
-let traceRenderings = false;
-
 export class OwlDevtoolsGlobalHook {
   constructor() {
     // The set of apps exposed by owl
@@ -24,7 +22,10 @@ export class OwlDevtoolsGlobalHook {
              * This process may seem long and indirect but is necessary. This applies to all window.top.postMessage methods in this file.
              * More information in the docs: https://developer.chrome.com/docs/extensions/mv3/devtools/#evaluated-scripts-to-devtools
              */
-            window.top.postMessage({ type: "owlDevtools__NewIFrame", data: addedNode.contentDocument.location.href });
+            window.top.postMessage({
+              type: "owlDevtools__NewIFrame",
+              data: addedNode.contentDocument.location.href,
+            });
           }
         });
       });
@@ -34,6 +35,7 @@ export class OwlDevtoolsGlobalHook {
     this.patchAppMethods();
     this.patchAppsSetMethods();
     this.recordEvents = false;
+    this.traceRenderings = false;
     this.requestedFrame = false;
     this.eventsBatch = [];
     // Object which defines how different types of data should be displayed when passed to the devtools
@@ -141,7 +143,7 @@ export class OwlDevtoolsGlobalHook {
       // Returns a shortened string version of a collection of properties for display purposes
       // Shortcut for serializeItem when it is a standalone item
       serializeContent(item, type) {
-        if(this[type]){
+        if (this[type]) {
           return this[type](item);
         }
         return this.serializeItem(item);
@@ -207,7 +209,7 @@ export class OwlDevtoolsGlobalHook {
       if (this instanceof self.RootFiber && inFlush) {
         flushed = true;
       }
-      if (traceRenderings && this instanceof self.RootFiber) {
+      if (self.traceRenderings && this instanceof self.RootFiber) {
         console.groupCollapsed(`Rendering <${this.node.name}>`);
         console.trace();
         console.groupEnd();
@@ -223,7 +225,7 @@ export class OwlDevtoolsGlobalHook {
           self.eventsBatch.push({
             type: "render (flushed)",
             component: this.node.name,
-            key: this.node.parentKey,
+            key: this.node.parentKey ? this.node.parentKey : "",
             path: path,
             time: time,
             id: id,
@@ -235,7 +237,7 @@ export class OwlDevtoolsGlobalHook {
             self.eventsBatch.push({
               type: "render",
               component: this.node.name,
-              key: this.node.parentKey,
+              key: this.node.parentKey ? this.node.parentKey : "",
               path: path,
               time: time,
               id: id,
@@ -245,7 +247,7 @@ export class OwlDevtoolsGlobalHook {
             self.eventsBatch.push({
               type: "create",
               component: this.node.name,
-              key: this.node.parentKey,
+              key: this.node.parentKey ? this.node.parentKey : "",
               path: path,
               time: time,
               id: id,
@@ -255,7 +257,7 @@ export class OwlDevtoolsGlobalHook {
             self.eventsBatch.push({
               type: "update",
               component: this.node.name,
-              key: this.node.parentKey,
+              key: this.node.parentKey ? this.node.parentKey : "",
               path: path,
               time: time,
               id: id,
@@ -266,7 +268,7 @@ export class OwlDevtoolsGlobalHook {
           self.eventsBatch.push({
             type: "render (delayed)",
             component: this.node.name,
-            key: this.node.parentKey,
+            key: this.node.parentKey ? this.node.parentKey : "",
             path: path,
             time: time,
             id: id,
@@ -311,7 +313,8 @@ export class OwlDevtoolsGlobalHook {
   }
 
   toggleTracing(value) {
-    traceRenderings = value;
+    this.traceRenderings = value;
+    return this.traceRenderings;
   }
 
   // Enables/disables the recording of the render/destroy events based on value

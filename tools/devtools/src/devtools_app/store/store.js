@@ -144,7 +144,11 @@ export const store = reactive({
     }
     element.selected = true;
     highlightChildren(element);
-    const component = await evalFunctionInWindow("getComponentDetails", [element.path], this.activeFrame);
+    const component = await evalFunctionInWindow(
+      "getComponentDetails",
+      [element.path],
+      this.activeFrame
+    );
     this.activeComponent = component;
     if (this.page !== "ComponentsTab") {
       this.switchTab("ComponentsTab");
@@ -357,21 +361,23 @@ export const store = reactive({
     evalFunctionInWindow("editObject", [path, value, objectType], this.activeFrame);
   },
 
-  toggleTracing() {
-    this.traceRenderings = !this.traceRenderings;
-    evalInWindow("toggleTracing", [this.traceRenderings]);
+  async toggleTracing() {
+    this.traceRenderings = await evalFunctionInWindow(
+      "toggleTracing",
+      [!this.traceRenderings],
+      this.activeFrame
+    );
   },
 
   // Checks for all iframes in the page, register it and load the scripts inside if not already done
   async updateIFrameList() {
     const frames = await evalFunctionInWindow("getIFrameUrls");
     this.frameUrls = ["top"];
-    this.selectFrame("top");
+    if (this.activeFrame !== "top") {
+      this.selectFrame("top");
+    }
     for (const frame of frames) {
-      const hasOwl = await evalInWindow(
-        "window.__OWL_DEVTOOLS__?.Fiber !== undefined;",
-        frame
-      );
+      const hasOwl = await evalInWindow("window.__OWL_DEVTOOLS__?.Fiber !== undefined;", frame);
       if (hasOwl) {
         const scriptsLoaded = await evalInWindow(
           "window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;",
@@ -387,8 +393,8 @@ export const store = reactive({
     }
   },
 
-  removeHighlights(){
-    if(this.owlStatus && (!this.invalidContext)){
+  removeHighlights() {
+    if (this.owlStatus && !this.invalidContext) {
       evalFunctionInWindow("removeHighlights", [], this.activeFrame);
     }
   },
@@ -397,6 +403,7 @@ export const store = reactive({
   selectFrame(frame) {
     this.removeHighlights();
     evalFunctionInWindow("toggleEventsRecording", [false, 0], this.activeFrame);
+    evalFunctionInWindow("toggleTracing", [false], this.activeFrame);
     this.events = [];
     this.eventsTree = [];
     this.activeFrame = frame;
@@ -406,6 +413,7 @@ export const store = reactive({
       [this.activeRecorder, this.events.length],
       this.activeFrame
     );
+    evalFunctionInWindow("toggleTracing", [this.traceRenderings], this.activeFrame);
   },
 
   // Constructs the tree that represents the currently recorded events to see them as a tree instead of a temporally accurate list
@@ -621,13 +629,13 @@ chrome.runtime.onConnect.addListener((port) => {
     // frames list if it has been directly loaded.
     if (msg.type === "NewIFrame") {
       const isLoaded = await loadScripts(msg.data);
-      if(isLoaded){
+      if (isLoaded) {
         store.updateIFrameList();
       }
     }
-    
+
     // Received when a frame has been delayed when loading the scripts due to owl being lazy loaded
-    if (msg.type === "FrameReady"){
+    if (msg.type === "FrameReady") {
       store.updateIFrameList();
       store.owlStatus = true;
       store.resetData();
@@ -635,8 +643,7 @@ chrome.runtime.onConnect.addListener((port) => {
 
     // Reload the tree after checking if the scripts are loaded when this message is received
     if (msg.type === "Reload") {
-      store.owlStatus = await evalInWindow(
-        "window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;");
+      store.owlStatus = await evalInWindow("window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;");
       if (store.owlStatus) {
         store.loadComponentsTree(false);
       }
@@ -797,7 +804,7 @@ async function evalFunctionInWindow(fn, args = [], frameUrl = "top") {
   });
   const argsString = "(" + stringifiedArgs.join(", ") + ");";
   let script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.${fn}${argsString}`;
-  try{
+  try {
     return await new Promise((resolve, reject) => {
       if (frameUrl !== "top") {
         chrome.devtools.inspectedWindow.eval(
@@ -828,7 +835,7 @@ async function evalFunctionInWindow(fn, args = [], frameUrl = "top") {
 
 // General method for executing code in the window using chrome.devtools.inspectedWindow.eval.
 async function evalInWindow(code, frameUrl = "top") {
-  try{
+  try {
     return await new Promise((resolve, reject) => {
       if (frameUrl !== "top") {
         chrome.devtools.inspectedWindow.eval(
@@ -852,6 +859,5 @@ async function evalInWindow(code, frameUrl = "top") {
         });
       }
     });
-  } catch (e) {
-  }
+  } catch (e) {}
 }

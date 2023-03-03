@@ -3,15 +3,15 @@ import { OwlDevtoolsGlobalHook } from "./owl_devtools_global_hook";
 if (!window.__OWL_DEVTOOLS__) {
   let val;
   const descriptor = Object.getOwnPropertyDescriptor(window, "__OWL_DEVTOOLS__") || {
-    get(){
+    get() {
       return val;
     },
-    set(value){
+    set(value) {
       val = value;
-    }
+    },
   };
   Object.defineProperty(window, "__OWL_DEVTOOLS__", {
-    get(){
+    get() {
       return descriptor.get.call(this);
     },
     set(value) {
@@ -26,4 +26,3 @@ if (!window.__OWL_DEVTOOLS__) {
   window.__OWL__DEVTOOLS_GLOBAL_HOOK__ = new OwlDevtoolsGlobalHook();
 }
 __OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;
-

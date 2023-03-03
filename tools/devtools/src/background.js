@@ -66,13 +66,13 @@ browserInstance.tabs.onUpdated.addListener((tab) => {
             if (!window.__OWL_DEVTOOLS__) {
               let val;
               const descriptor = Object.getOwnPropertyDescriptor(window, "__OWL_DEVTOOLS__") || {
-                get(){
+                get() {
                   return val;
                 },
-                set(value){
+                set(value) {
                   val = value;
-                }
-              }
+                },
+              };
               Object.defineProperty(window, "__OWL_DEVTOOLS__", {
                 get() {
                   return descriptor.get.call(this);
@@ -88,7 +88,7 @@ browserInstance.tabs.onUpdated.addListener((tab) => {
                 configurable: true,
               });
               return 0;
-            } else  {
+            } else {
               let result = 1;
               if (window.__OWL_DEVTOOLS__.Fiber !== undefined) {
                 result = 2;

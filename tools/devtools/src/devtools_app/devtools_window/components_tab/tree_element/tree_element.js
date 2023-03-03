@@ -4,22 +4,10 @@ import { isElementInCenterViewport, minimizeKey } from "../../../../utils";
 import { useStore } from "../../../store/store";
 import { HighlightText } from "./highlight_text/highlight_text";
 
-const { Component, useRef, useState, useEffect, onMounted, onWillUpdateProps } = owl;
+const { Component, useRef, useState, useEffect, onMounted } = owl;
 
 export class TreeElement extends Component {
   static template = "devtools.TreeElement";
-
-  static props = [
-    "name",
-    "children",
-    "path",
-    "key",
-    "display",
-    "toggled",
-    "depth",
-    "selected",
-    "highlighted",
-  ];
 
   static components = { TreeElement, HighlightText };
 
@@ -29,27 +17,26 @@ export class TreeElement extends Component {
     });
     this.store = useStore();
     this.contextMenu = useRef("contextmenu");
+    this.element = useRef("element");
     this.contextMenuId = this.store.contextMenu.id++;
     this.contextMenuEvent,
       // Scroll to the selected element when it changes
       onMounted(() => {
         if (this.props.component.selected) {
-          const treeElement = document.getElementById(
-            "treeElement/" + this.props.component.path.join("/")
-          );
-          treeElement.scrollIntoView({ block: "center", behavior: "auto" });
+          this.element.el.scrollIntoView({ block: "center", behavior: "auto" });
         }
       });
-    onWillUpdateProps((nextProps) => {
-      if (nextProps.selected) {
-        const treeElement = document.getElementById(
-          "treeElement/" + this.props.component.path.join("/")
-        );
-        if (!isElementInCenterViewport(treeElement)) {
-          treeElement.scrollIntoView({ block: "center", behavior: "smooth" });
+    useEffect(
+      (selected) => {
+        if (selected) {
+          if (!isElementInCenterViewport(this.element.el)) {
+            this.element.el.scrollIntoView({ block: "center", behavior: "smooth" });
+          }
         }
-      }
-    });
+      },
+      () => [this.props.component.selected]
+    );
+    // Open the context menu when the ids match
     useEffect(
       (menuId) => {
         if (menuId === this.contextMenuId) {
@@ -63,9 +50,7 @@ export class TreeElement extends Component {
       (renderPaths) => {
         let pathsAsStrings = renderPaths.map((p) => p.join("/"));
         if (pathsAsStrings.includes(this.props.component.path.join("/"))) {
-          const treeElement = document.getElementById(
-            "treeElement/" + this.props.component.path.join("/")
-          );
+          const treeElement = this.element.el;
           if (treeElement) {
             treeElement.classList.add("render-highlight");
             setTimeout(() => {
@@ -91,10 +76,6 @@ export class TreeElement extends Component {
       },
       () => [this.store.componentSearch.searchResults]
     );
-  }
-
-  get pathAsString() {
-    return this.props.component.path.join("/");
   }
 
   get componentPadding() {

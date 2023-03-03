@@ -43,8 +43,6 @@ export const store = reactive({
   activeRecorder: false,
   owlStatus: true,
   splitPosition: 60,
-  leftWidth: 0,
-  rightWidth: 0,
   apps: [],
   traceRenderings: false,
   activeComponent: {
@@ -217,26 +215,30 @@ export const store = reactive({
 
   // Returns access to the specified component in the tree
   getComponentByPath(path) {
-    let cp = path.slice(2);
     let component;
     if (path.length < 2) {
       component = this.apps[path[0]];
     } else {
       component = this.apps[path[0]].children[0];
     }
+    let cp = path.slice(2);
     for (const key of cp) {
       component = component.children.find((child) => child.key === key);
     }
     return component;
   },
 
-  // Search the component given its path and expand/fold itself and its children based on toggle
-  toggleComponentAndChildren(path, toggle) {
-    let component = this.getComponentByPath(path);
-    toggle ? expandNodes(component) : foldNodes(component);
+  // expand/fold the component and its children based on toggle
+  toggleComponentAndChildren(component, toggle) {
+    if (toggle) {
+      expandNodes(component);
+    } else {
+      foldNodes(component);
+    }
   },
 
   // Action related to the left(toggle)/up(not toggle) arrow keys for navigation purpose
+  // The resulting behaviour is the same as in the Elements tab of the chrome devtools
   toggleOrSelectPrevElement(toggle) {
     if (toggle) {
       const component = this.getComponentByPath(this.activeComponent.path);
@@ -277,6 +279,7 @@ export const store = reactive({
   },
 
   // Action related to the right(toggle)/down(not toggle) arrow keys for navigation purpose
+  // The resulting behaviour is the same as in the Elements tab of the chrome devtools
   toggleOrSelectNextElement(toggle) {
     let component = this.getComponentByPath(this.activeComponent.path);
     if (toggle) {
@@ -335,6 +338,9 @@ export const store = reactive({
     if (!obj.hasChildren) {
       return;
     }
+    // Since it is sometimes impossible (and always ineffective) to load all descendants of a property
+    // when the component details are loaded, we need to populate the children of a property only when
+    // it is first expanded. Do note that it has a limit to how deep we can expand (when reaching a circular dependancy)
     if (obj.hasChildren && obj.children.length === 0) {
       const children = await evalFunctionInWindow(
         "loadObjectChildren",
@@ -361,6 +367,7 @@ export const store = reactive({
     evalFunctionInWindow("editObject", [path, value, objectType], this.activeFrame);
   },
 
+  // toggle the tracing mode which will record all root render events and send their trace in the console
   async toggleTracing() {
     this.traceRenderings = await evalFunctionInWindow(
       "toggleTracing",
@@ -393,13 +400,14 @@ export const store = reactive({
     }
   },
 
+  // Remove all the highlight boxes created above the html elements in the page to show components
   removeHighlights() {
     if (this.owlStatus && !this.invalidContext) {
       evalFunctionInWindow("removeHighlights", [], this.activeFrame);
     }
   },
 
-  // Resets the context of all values in the devtools tab and load the one from the given frame
+  // Reset the context of all values in the devtools tab and load the one from the given frame
   selectFrame(frame) {
     this.removeHighlights();
     evalFunctionInWindow("toggleEventsRecording", [false, 0], this.activeFrame);
@@ -427,13 +435,16 @@ export const store = reactive({
         eventNode.depth = 0;
         tree.push(eventNode);
       } else {
+        // This is litteraly an array.find but which starts searching from the end of the array
         for (let i = tree.length - 1; i >= 0; i--) {
           if (arraysEqual(eventNode.origin.path, tree[i].path)) {
+            // path from the origin event (root render) to the direct parent of the current event
             const relativePath = eventNode.path.slice(
               tree[i].path.length,
               eventNode.path.length - 1
             );
             let parent = tree[i];
+            // find the direct parent in the tree
             for (const key of relativePath) {
               parent = parent.children.find((child) => child.key === key);
             }
@@ -447,31 +458,16 @@ export const store = reactive({
     this.eventsTree = tree;
   },
 
-  // Gives access to the specied event in the events tree
-  findEventInTree(event) {
-    let result;
-    if (event.origin) {
-      result = this.eventsTree.find((eventNode) => eventNode.id === event.origin.id);
-    } else {
-      result = this.eventsTree.find((eventNode) => eventNode.id === event.id);
-      return result;
-    }
-    const relativePath = event.path.slice(result.path.length);
-    for (const key of relativePath) {
-      result = result.children.find((child) => child.key === key);
-    }
-    return result;
-  },
-
+  // expand/fold the event tree node based on toggle
   toggleEventAndChildren(event, toggle) {
-    let eventNode = this.findEventInTree(event);
     if (toggle) {
-      expandNodes(eventNode);
+      expandNodes(event);
     } else {
-      foldNodes(eventNode);
+      foldNodes(event);
     }
   },
 
+  // Reset all the relevant data about the page currently stored
   resetData() {
     this.loadComponentsTree(false);
     this.events = [];
@@ -496,6 +492,7 @@ export const store = reactive({
     evalFunctionInWindow("sendObjectToConsole", [path], this.activeFrame);
   },
 
+  // inspect the source code of the object given by its path
   inspectFunctionSource(path) {
     evalFunctionInWindow("inspectFunctionSource", [path], this.activeFrame);
   },
@@ -550,6 +547,7 @@ export const store = reactive({
     );
   },
 
+  // Reset all events data
   clearEventsConsole() {
     this.events = [];
     this.eventsTree = [];
@@ -568,15 +566,18 @@ store.loadComponentsTree(false);
 // We also want to detect the different iframes at first loading of the devtools tab
 store.updateIFrameList();
 
+// Global listeners to close the currently shown context menu when the user clicks or opens another
 document.addEventListener("click", () => store.contextMenu.close(), { capture: true });
 document.addEventListener("contextmenu", () => store.contextMenu.close(), { capture: true });
 
+// Make sure the events recorder is at its initial state in every frame
 for (const frame of store.frameUrls) {
   evalFunctionInWindow("toggleEventsRecording", [false, 0], frame);
 }
 
 let flushRendersTimeout = false;
 
+// Load dark mode based on the global settings of the chrome devtools
 if (chrome.devtools.panels.themeName === "dark") {
   document.querySelector("html").classList.add("dark-mode");
 } else {
@@ -595,6 +596,7 @@ chrome.runtime.onConnect.addListener((port) => {
       if (!(Array.isArray(msg.data) && msg.data.every((val) => typeof val === "string"))) {
         return;
       }
+      // This determines which components will have a short highlight effect in the tree to indicate they have been rendered
       store.renderPaths = [...store.renderPaths, msg.data];
       clearTimeout(flushRendersTimeout);
       flushRendersTimeout = setTimeout(() => {
@@ -651,11 +653,13 @@ chrome.runtime.onConnect.addListener((port) => {
   });
 });
 
+// Function to handle and store a batch of events coming from the page
 function loadEvents(events) {
   if (!Array.isArray(events)) {
     return;
   }
   for (const event of events) {
+    // Check if the event data has the right shape for security purpose
     if (
       !isObjectWithShape(event, {
         type: "string",
@@ -699,6 +703,7 @@ function loadEvents(events) {
         eventNode.depth = 0;
         store.eventsTree.push(eventNode);
       } else {
+        // Similar to when we're constructing the whole tree
         for (let i = store.eventsTree.length - 1; i >= 0; i--) {
           if (eventNode.origin.path.join("/") === store.eventsTree[i].path.join("/")) {
             const relativePath = eventNode.path.slice(
@@ -716,6 +721,7 @@ function loadEvents(events) {
         }
       }
     }
+    // Make sure we add the event while keeping the whole list ordered by id
     addEventSorted(event);
   }
 }

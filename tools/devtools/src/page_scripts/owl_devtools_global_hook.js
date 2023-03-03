@@ -567,6 +567,8 @@ export class OwlDevtoolsGlobalHook {
   }
 
   // Returns a modified version of an object node that has compatible format with the devtools ObjectTreeElement component
+  // parentObj is the parent of the node, key is the path key of the node, type is where the object belongs to (props, env, instance, ...),
+  // oldBranch is supposedly the same final node in the previous version of the tree and oldTree is the complete old component details
   serializeObjectChild(parentObj, key, depth, type, path, oldBranch, oldTree) {
     let obj;
     let child = {
@@ -689,7 +691,7 @@ export class OwlDevtoolsGlobalHook {
     return child;
   }
 
-  // returns the parsed object in the parsed tree
+  // returns the serialized node corresponding to its path in the serialized tree
   getObjectInOldTree(oldTree, completePath, objType) {
     const objPathIndex = completePath.findIndex((key) => typeof key !== "string");
     let path = completePath.slice(objPathIndex);
@@ -718,8 +720,8 @@ export class OwlDevtoolsGlobalHook {
     }
     return obj;
   }
-  // Returns a parsed version of the children properties of the specified component's property given its path.
-  loadObjectChildren(path, depth, type, objType, oldTree) {
+  // Returns a serialized version of the children properties of the specified component's property given its path.
+  loadObjectChildren(path, depth, contentType, objType, oldTree) {
     const children = [];
     depth = depth + 1;
     let obj = this.getObjectProperty(path);
@@ -730,7 +732,7 @@ export class OwlDevtoolsGlobalHook {
     let index = 0;
     const lastKey = path.at(-1);
     let prototype;
-    switch (type) {
+    switch (contentType) {
       case "array":
         if (typeof lastKey === "object" && lastKey.type.includes("entries")) {
           for (; index < obj.length; index++) {
@@ -1205,7 +1207,6 @@ export class OwlDevtoolsGlobalHook {
     }
     const key = path.pop().value;
     const obj = this.getObjectProperty(path);
-    console.log(obj, key);
     if (!obj) {
       return;
     }

@@ -11,6 +11,7 @@ export class Subscriptions extends Component {
     this.store = useStore();
   }
 
+  // Used to display the keys in a compact way
   keysContent(index) {
     const keys = this.store.activeComponent.subscriptions[index].keys;
     let content = JSON.stringify(keys);

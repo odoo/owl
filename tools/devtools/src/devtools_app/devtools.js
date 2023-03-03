@@ -12,7 +12,6 @@ if (!isFirefox()) {
     chrome.tabs.get(tab, async (tabData) => {
       if (tabData?.status === "complete") {
         scriptsLoaded = false;
-        // Again we need to wait until owl has got the time to load on the page before loading the scripts
         if (created) {
           await loadScripts();
           chrome.runtime.sendMessage({ type: "Reload" });
@@ -21,7 +20,7 @@ if (!isFirefox()) {
     });
   });
 }
-// Try to load the owl panel each 300 ms up to 3 times to make sure we load it if owl is available but delayed
+// Try to load the owl panel each 500 ms up to 10 times to make sure we load it if owl is available but delayed
 const checkInterval = setInterval(createPanelsIfOwl, 500);
 
 // Load the scripts on the page in order to define the __OWL__DEVTOOLS_GLOBAL_HOOK__

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.TreeElement" owl="1">
-    <div t-attf-id="treeElement/{{pathAsString}}" 
+    <div t-ref="element"
       t-att-class="{'component-selected': props.component.selected,'component-highlighted': props.component.highlighted}" 
       class="tree-component m-0 p-0 w-100 text-nowrap user-select-none" 
       t-on-contextmenu.prevent="openMenu" 
@@ -27,8 +27,8 @@
       </div>
       <div t-if="store.contextMenu.activeMenu === contextMenuId" class="custom-menu" t-attf-style="top: {{store.contextMenu.top}}; left: {{store.contextMenu.left}}" t-ref="contextmenu">
         <ul class="my-1">
-          <li t-on-click.stop="() => this.store.toggleComponentAndChildren(props.component.path, true)" class="custom-menu-item py-1 px-4">Expand children</li>
-          <li t-on-click.stop="() => this.store.toggleComponentAndChildren(props.component.path, false)" class="custom-menu-item py-1 px-4">Fold children</li>
+          <li t-on-click.stop="() => this.store.toggleComponentAndChildren(props.component, true)" class="custom-menu-item py-1 px-4">Expand children</li>
+          <li t-on-click.stop="() => this.store.toggleComponentAndChildren(props.component, false)" class="custom-menu-item py-1 px-4">Fold children</li>
           <li t-on-click.stop="() => this.store.inspectComponent('source', props.component.path)" class="custom-menu-item py-1 px-4">Inspect source code</li>
           <t t-if="props.component.path.length !== 1">
             <li t-on-click.stop="() => this.store.logObjectInConsole([...props.component.path, { type: 'item', value: 'component'}])" class="custom-menu-item py-1 px-4">Store as global variable</li>

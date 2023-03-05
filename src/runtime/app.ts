@@ -1,3 +1,4 @@
+import { version } from "../version";
 import { Component, ComponentConstructor, Props } from "./component";
 import { ComponentNode } from "./component_node";
 import { nodeErrorHandlers, OwlError, handleError } from "./error_handling";
@@ -53,6 +54,7 @@ export class App<
   E = any
 > extends TemplateSet {
   static validateTarget = validateTarget;
+  static version = version;
 
   Root: ComponentConstructor<P, E>;
   props: P;

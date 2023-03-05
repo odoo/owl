@@ -1,3 +1,4 @@
+import { App } from "./app";
 import {
   config,
   createBlock,
@@ -56,4 +57,6 @@ export {
 export { validate } from "./validation";
 export { OwlError } from "./error_handling";
 
-export const __info__ = {};
+export const __info__ = {
+  version: App.version,
+};

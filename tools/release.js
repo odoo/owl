@@ -86,6 +86,7 @@ async function startRelease() {
   // ---------------------------------------------------------------------------
   log(`Step 3/${STEPS}: updating package.json...`);
   await replaceInFile("./package.json", current, next);
+  await replaceInFile("./src/version.ts", current, next);
 
   // ---------------------------------------------------------------------------
   log(`Step 4/${STEPS}: creating git commit...`);

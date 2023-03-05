@@ -22,6 +22,7 @@ node_modules
 
 # Extras temp file
 /tools/owl.js
+/tools/devtools/build
 
 release-notes.md
 

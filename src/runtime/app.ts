@@ -14,6 +14,7 @@ export interface Env {
 }
 
 export interface AppConfig<P, E> extends TemplateSetConfig {
+  name?: string;
   props?: P;
   env?: E;
   test?: boolean;
@@ -54,6 +55,7 @@ export class App<
 > extends TemplateSet {
   static validateTarget = validateTarget;
 
+  name: string;
   Root: ComponentConstructor<P, E>;
   props: P;
   env: E;
@@ -63,6 +65,7 @@ export class App<
 
   constructor(Root: ComponentConstructor<P, E>, config: AppConfig<P, E> = {}) {
     super(config);
+    this.name = config.name || "";
     this.Root = Root;
     window.__OWL_DEVTOOLS__.apps.add(this);
     if (config.test) {

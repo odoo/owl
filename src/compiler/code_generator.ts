@@ -192,6 +192,7 @@ class CodeTarget {
   hasCache = false;
   shouldProtectScope: boolean = false;
   on: EventHandlers | null;
+  hasRefWrapper: boolean = false;
 
   constructor(name: string, on?: EventHandlers | null) {
     this.name = name;
@@ -213,6 +214,9 @@ class CodeTarget {
     if (this.shouldProtectScope) {
       result.push(`  ctx = Object.create(ctx);`);
       result.push(`  ctx[isBoundary] = 1`);
+    }
+    if (this.hasRefWrapper) {
+      result.push(`  let refWrapper = makeRefWrapper(this.__owl__);`);
     }
     if (this.hasCache) {
       result.push(`  let cache = ctx.cache || {};`);
@@ -689,12 +693,20 @@ export class CodeGenerator {
 
     // t-ref
     if (ast.ref) {
+      if (this.dev) {
+        this.helpers.add("makeRefWrapper");
+        this.target.hasRefWrapper = true;
+      }
       const isDynamic = INTERP_REGEXP.test(ast.ref);
       let name = `\`${ast.ref}\``;
       if (isDynamic) {
         name = replaceDynamicParts(ast.ref, (expr) => this.captureExpression(expr, true));
       }
-      const idx = block!.insertData(`(el) => this.__owl__.setRef((${name}), el)`, "ref");
+      let setRefStr = `(el) => this.__owl__.setRef((${name}), el)`;
+      if (this.dev) {
+        setRefStr = `refWrapper(${name}, ${setRefStr})`;
+      }
+      const idx = block!.insertData(setRefStr, "ref");
       attrs["block-ref"] = String(idx);
     }
 

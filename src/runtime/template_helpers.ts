@@ -5,6 +5,7 @@ import { isOptional, validateSchema } from "./validation";
 import type { ComponentConstructor } from "./component";
 import { markRaw } from "./reactivity";
 import { OwlError } from "./error_handling";
+import type { ComponentNode } from "./component_node";
 
 const ObjectCreate = Object.create;
 /**
@@ -232,6 +233,19 @@ export function validateProps<P>(name: string | ComponentConstructor<P>, props: 
   }
 }
 
+function makeRefWrapper(node: ComponentNode) {
+  let refNames: Set<String> = new Set();
+  return (name: string, fn: Function) => {
+    if (refNames.has(name)) {
+      throw new OwlError(
+        `Cannot set the same ref more than once in the same component, ref "${name}" was set multiple times in ${node.name}`
+      );
+    }
+    refNames.add(name);
+    return fn;
+  };
+}
+
 export const helpers = {
   withDefault,
   zero: Symbol("zero"),
@@ -250,4 +264,5 @@ export const helpers = {
   createCatcher,
   markRaw,
   OwlError,
+  makeRefWrapper,
 };

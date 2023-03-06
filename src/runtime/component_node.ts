@@ -21,34 +21,6 @@ export function useComponent(): Component {
 }
 
 /**
- * Checks that the component doesn't set the same ref twice when mounted/patched
- */
-function useMultiRefChecker() {
-  let setRefs: { [key: string]: number } = {};
-  const node = getCurrent();
-  node.willPatch.push(() => {
-    setRefs = {};
-  });
-  const check = () => {
-    for (const [refName, setCount] of Object.entries(setRefs)) {
-      if (setCount > 1) {
-        throw new OwlError(
-          `Cannot set the same ref more than once in the same component, ref "${refName}" was set ${setCount} times in ${node.name}`
-        );
-      }
-    }
-  };
-  node.mounted.push(check);
-  node.patched.push(check);
-  node.setRef = function (name: string, el: HTMLElement | null) {
-    if (el) {
-      this.refs[name] = el;
-      setRefs[name] = (setRefs[name] || 0) + 1;
-    }
-  };
-}
-
-/**
  * Apply default props (only top level).
  */
 function applyDefaultProps<P extends object>(props: P, defaultProps: Partial<P>) {
@@ -144,9 +116,6 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     this.component = new C(props, env, this);
     const ctx = Object.assign(Object.create(this.component), { this: this.component });
     this.renderFn = app.getTemplate(C.template).bind(this.component, ctx, this);
-    if (this.app.dev) {
-      useMultiRefChecker();
-    }
     this.component.setup();
     currentNode = null;
   }

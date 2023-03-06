@@ -21,7 +21,7 @@
         <t t-else="">
           <span class="object-content" t-att-class="attenuateIfPrototype" t-on-dblclick.stop="setupEditMode">
             <t t-if="state.editMode">   
-              <input t-attf-id="objectEditionInput/{{pathAsString}}" t-ref="input" type="text" placeholder="" t-att-value="props.object.content" t-on-keyup="editObject"/>
+              <input t-attf-id="objectEditionInput/{{pathAsString}}" t-ref="input" type="text" placeholder="" t-att-value="props.object.content" t-on-keydown.stop="editObject"/>
             </t>
             <t t-else="">
               <t t-esc="props.object.content"/>

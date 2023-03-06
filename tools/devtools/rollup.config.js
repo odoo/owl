@@ -30,12 +30,12 @@ export default ({ "config-browser": browser }) => {
     },
   ];
 
-  function generateRule(input) {
+  function generateRule(input, format = "esm") {
     return {
       input: input,
       output: [
         {
-          format: "esm",
+          format: format,
           file: input.replace("src", "build"),
         },
       ],
@@ -61,7 +61,7 @@ export default ({ "config-browser": browser }) => {
     firstRule,
     secondRule,
     generateRule("tools/devtools/src/devtools_app/devtools.js"),
-    generateRule("tools/devtools/src/page_scripts/load_scripts.js"),
+    generateRule("tools/devtools/src/page_scripts/load_scripts.js", "iife"),
     generateRule("tools/devtools/src/devtools_app/devtools_panel.js"),
     generateRule("tools/devtools/src/popup_app/popup.js"),
     lastRule,

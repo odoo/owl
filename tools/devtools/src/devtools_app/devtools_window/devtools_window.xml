@@ -11,11 +11,12 @@
         <div class="panel-top d-flex align-items-center custom-navbar">
           <Tab tabName="'ComponentsTab'"/>
           <Tab tabName="'EventsTab'"/>
-           <select t-if="store.frameUrls.length > 1" class="form-select form-select-sm custom-select navbar-select border-0" t-on-change="selectFrame">
+          <select t-if="store.frameUrls.length > 1" class="form-select form-select-sm custom-select navbar-select border-0" t-on-change="selectFrame">
             <t t-foreach="store.frameUrls" t-as="frame" t-key="frame_index">
               <option t-att-value="frame"><t t-esc="frame"/></option>
             </t>
           </select>
+          <i class="ms-auto p-1 me-1 lg-icon fa fa-repeat" title="Refresh extension" t-on-click.stop="() => this.store.refreshExtension()"></i>
         </div>
         <ComponentsTab t-if="store.page === 'ComponentsTab'"/>
         <EventsTab t-if="store.page === 'EventsTab'"/>

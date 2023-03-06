@@ -184,34 +184,6 @@ function bind(component: any, fn: Function): Function {
   return boundFn;
 }
 
-type RefMap = { [key: string]: HTMLElement | null };
-type RefSetter = (el: HTMLElement | null) => void;
-
-function multiRefSetter(refs: RefMap, name: string): RefSetter {
-  let count = 0;
-  return (el) => {
-    if (el) {
-      count++;
-      if (count > 1) {
-        throw new OwlError("Cannot have 2 elements with same ref name at the same time");
-      }
-    }
-    if (count === 0 || el) {
-      refs[name] = el;
-    }
-  };
-}
-
-function singleRefSetter(refs: RefMap, name: string): RefSetter {
-  let _el: HTMLElement | null = null;
-  return (el) => {
-    if (el || refs[name] === _el) {
-      refs[name] = el;
-      _el = el;
-    }
-  };
-}
-
 /**
  * Validate the component props (or next props) against the (static) props
  * description.  This is potentially an expensive operation: it may needs to
@@ -269,8 +241,6 @@ export const helpers = {
   withKey,
   prepareList,
   setContextValue,
-  multiRefSetter,
-  singleRefSetter,
   shallowEqual,
   toNumber,
   validateProps,

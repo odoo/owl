@@ -472,6 +472,7 @@ export const store = reactive({
     this.loadComponentsTree(false);
     this.events = [];
     this.eventsTree = [];
+    this.activeRecorder = false;
     evalFunctionInWindow("toggleEventsRecording", [false, 0]);
   },
 
@@ -647,7 +648,7 @@ chrome.runtime.onConnect.addListener((port) => {
     if (msg.type === "Reload") {
       store.owlStatus = await evalInWindow("window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;");
       if (store.owlStatus) {
-        store.loadComponentsTree(false);
+        store.resetData();
       }
     }
   });

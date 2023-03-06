@@ -134,7 +134,7 @@ export class OwlDevtoolsGlobalHook {
             result.push("...");
             break;
           }
-          const element = this.serializeItem(value, true);
+          const element = this.serializeItem(value, false);
           length += element.length;
           result.push(element);
         }
@@ -526,6 +526,8 @@ export class OwlDevtoolsGlobalHook {
           obj = [...obj];
           break;
         case "set value":
+          obj = obj;
+          break;
         case "map key":
           obj = obj[0];
           break;
@@ -581,6 +583,7 @@ export class OwlDevtoolsGlobalHook {
       child.toggled = true;
     }
     child.path = path.concat([key]);
+    child.children = [];
     switch (key.type) {
       case "prototype":
         child.name = "[[Prototype]]";
@@ -597,7 +600,7 @@ export class OwlDevtoolsGlobalHook {
         break;
       case "set value":
         child.name = "value";
-        obj = parentObj[0];
+        obj = parentObj;
         break;
       case "map key":
         child.name = "key";
@@ -626,10 +629,14 @@ export class OwlDevtoolsGlobalHook {
             obj = parentObj[key.value];
           }
         }
+        if (key.type === "map entry") {
+          child.contentType = "array";
+          child.hasChildren = obj.length > 0;
+          child.content = this.serializer.serializeContent(obj, key.type);
+        }
         break;
     }
     if (child.contentType) {
-      child.children = [];
       if (child.toggled) {
         child.children = this.loadObjectChildren(
           child.path,
@@ -676,9 +683,12 @@ export class OwlDevtoolsGlobalHook {
           child.contentType = typeof obj;
           child.hasChildren = false;
       }
-      child.content = this.serializer.serializeContent(obj, child.contentType);
+      if (key.type === "set entry") {
+        child.content = this.serializer.serializeItem(obj, true);
+      } else {
+        child.content = this.serializer.serializeContent(obj, child.contentType);
+      }
     }
-    child.children = [];
     if (child.toggled) {
       child.children = this.loadObjectChildren(
         child.path,
@@ -732,9 +742,45 @@ export class OwlDevtoolsGlobalHook {
     let index = 0;
     const lastKey = path.at(-1);
     let prototype;
+    if (lastKey.type.includes("entry")) {
+      if (lastKey.type === "map entry") {
+        const mapKey = this.serializeObjectChild(
+          obj,
+          { type: "map key", childIndex: 0 },
+          depth,
+          objType,
+          path,
+          oldBranch.children[0],
+          oldTree
+        );
+        children.push(mapKey);
+        const mapValue = this.serializeObjectChild(
+          obj,
+          { type: "map value", childIndex: 1 },
+          depth,
+          objType,
+          path,
+          oldBranch.children[1],
+          oldTree
+        );
+        children.push(mapValue);
+      } else if (lastKey.type === "set entry") {
+        const setValue = this.serializeObjectChild(
+          obj,
+          { type: "set value", childIndex: 0 },
+          depth,
+          objType,
+          path,
+          oldBranch.children[0],
+          oldTree
+        );
+        children.push(setValue);
+      }
+      return children;
+    }
     switch (contentType) {
       case "array":
-        if (typeof lastKey === "object" && lastKey.type.includes("entries")) {
+        if (lastKey.type.includes("entries")) {
           for (; index < obj.length; index++) {
             const child = this.serializeObjectChild(
               obj,
@@ -774,7 +820,7 @@ export class OwlDevtoolsGlobalHook {
       case "map":
         const entries = this.serializeObjectChild(
           obj,
-          { type: type + " entries", value: "[[Entries]]", childIndex: children.length },
+          { type: contentType + " entries", value: "[[Entries]]", childIndex: children.length },
           depth,
           objType,
           path,
@@ -826,65 +872,29 @@ export class OwlDevtoolsGlobalHook {
         break;
       case "object":
       case "function":
-        if (typeof lastKey === "object" && lastKey.type.includes("entry")) {
-          if (lastKey.type === "map entry") {
-            const mapKey = this.serializeObjectChild(
-              obj,
-              { type: "map key", childIndex: children.length },
-              depth,
-              objType,
-              path,
-              oldBranch.children[index],
-              oldTree
-            );
-            children.push(mapKey);
-            const mapValue = this.serializeObjectChild(
-              obj,
-              { type: "map value", childIndex: children.length },
-              depth,
-              objType,
-              path,
-              oldBranch.children[index],
-              oldTree
-            );
-            children.push(mapValue);
-          } else if (lastKey.type === "set entry") {
-            const setValue = this.serializeObjectChild(
-              obj,
-              { type: "set value", childIndex: children.length },
-              depth,
-              objType,
-              path,
-              oldBranch.children[index],
-              oldTree
-            );
-            children.push(setValue);
-          }
-        } else {
-          Reflect.ownKeys(obj).forEach((key) => {
-            const child = this.serializeObjectChild(
-              obj,
-              { type: "item", value: key, childIndex: children.length },
-              depth,
-              objType,
-              path,
-              oldBranch.children[index],
-              oldTree
-            );
-            if (child) children.push(child);
-            index++;
-          });
-          prototype = this.serializeObjectChild(
+        Reflect.ownKeys(obj).forEach((key) => {
+          const child = this.serializeObjectChild(
             obj,
-            { type: "prototype", childIndex: children.length },
+            { type: "item", value: key, childIndex: children.length },
             depth,
             objType,
             path,
-            oldBranch.children.at(-1),
+            oldBranch.children[index],
             oldTree
           );
-          children.push(prototype);
-        }
+          if (child) children.push(child);
+          index++;
+        });
+        prototype = this.serializeObjectChild(
+          obj,
+          { type: "prototype", childIndex: children.length },
+          depth,
+          objType,
+          path,
+          oldBranch.children.at(-1),
+          oldTree
+        );
+        children.push(prototype);
     }
     return children;
   }

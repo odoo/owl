@@ -554,6 +554,12 @@ export const store = reactive({
     this.eventsTree = [];
     evalFunctionInWindow("resetEvents", [], this.activeFrame);
   },
+
+  // Refresh the whole extension
+  async refreshExtension() {
+    this.resetData();
+    await loadScripts();
+  },
 });
 
 // Instantiate the store

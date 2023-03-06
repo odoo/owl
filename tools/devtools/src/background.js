@@ -137,10 +137,9 @@ browserInstance.runtime.onMessage.addListener((message, sender, sendResponse) =>
       path: owlStatus === 2 ? "assets/icon128.png" : "assets/icon_disabled128.png",
     });
   } else {
-    browserInstance.runtime
-      .connect({ name: "OwlDevtoolsPort" })
-      .postMessage(
-        message.data ? { type: message.type, data: message.data } : { type: message.type }
-      );
+    const port = browserInstance.runtime.connect({ name: "OwlDevtoolsPort" });
+    port.postMessage(
+      message.data ? { type: message.type, data: message.data } : { type: message.type }
+    );
   }
 });

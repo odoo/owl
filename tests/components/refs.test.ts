@@ -90,6 +90,28 @@ describe("refs", () => {
     expect(test.ref.el!.tagName).toBe("DIV");
   });
 
+  test("ref is unset when t-if goes to false after unrelated render", async () => {
+    class Comp extends Component {
+      static template = xml`<div t-if="state.show" t-att-class="state.class" t-ref="coucou"/>`;
+      state = useState({ show: true, class: "test" });
+      ref = useRef("coucou");
+    }
+
+    const comp = await mount(Comp, fixture);
+    expect(comp.ref.el).not.toBeNull();
+
+    comp.state.class = "test2";
+    await nextTick();
+
+    comp.state.show = false;
+    await nextTick();
+    expect(comp!.ref.el).toBeNull();
+
+    comp.state.show = true;
+    await nextTick();
+    expect(comp!.ref.el).not.toBeNull();
+  });
+
   test("throws if there are 2 same refs at the same time", async () => {
     const consoleWarn = console.warn;
     console.warn = jest.fn();
@@ -104,10 +126,10 @@ describe("refs", () => {
 
     const app = new App(Test, { test: true });
     const mountProm = expect(app.mount(fixture)).rejects.toThrowError(
-      "Cannot have 2 elements with same ref name at the same time"
+      'Cannot set the same ref more than once in the same component, ref "coucou" was set multiple times in Test'
     );
     await expect(nextAppError(app)).resolves.toThrow(
-      "Cannot have 2 elements with same ref name at the same time"
+      'Cannot set the same ref more than once in the same component, ref "coucou" was set multiple times in Test'
     );
     await mountProm;
     expect(console.warn).toBeCalledTimes(1);

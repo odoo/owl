@@ -182,7 +182,7 @@ exports[`misc other complex template 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, withKey, singleRefSetter } = helpers;
+  let { prepareList, withKey } = helpers;
   const callTemplate_1 = app.getTemplate(\`LOAD_INFOS_TEMPLATE\`);
   const comp1 = app.createComponent(\`BundlesList\`, true, false, false, false);
   const comp2 = app.createComponent(\`BundlesList\`, true, false, false, false);
@@ -217,9 +217,6 @@ exports[`misc other complex template 1`] = `
   let block25 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const refs = this.__owl__.refs;
-    const ref1 = singleRefSetter(refs, \`search_input\`);
-    const ref2 = singleRefSetter(refs, \`settings_menu\`);
     let b2,b4,b14,b17,b22,b23,b24,b25;
     let attr1 = \`/runbot/\${ctx['project'].slug}\`;
     let txt1 = ctx['project'].name;
@@ -280,7 +277,9 @@ exports[`misc other complex template 1`] = `
     let prop2 = new String((ctx['search'].value) === 0 ? 0 : ((ctx['search'].value) || \\"\\"));
     let hdlr4 = [ctx['updateFilter'], ctx];
     let hdlr5 = [ctx['updateFilter'], ctx];
+    let ref1 = (el) => this.__owl__.setRef((\`search_input\`), el);
     let hdlr6 = [ctx['clearSearch'], ctx];
+    let ref2 = (el) => this.__owl__.setRef((\`settings_menu\`), el);
     if (ctx['triggers']) {
       ctx = Object.create(ctx);
       const [k_block18, v_block18, l_block18, c_block18] = prepareList(ctx['triggers']);;

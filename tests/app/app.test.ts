@@ -69,7 +69,7 @@ describe("app", () => {
       static template = xml`<div t-esc="message"/>`;
     }
 
-    await mount(Root, fixture, { dev: true, props: { messge: "hey" }, warnIfNoStaticProps: true });
+    await mount(Root, fixture, { test: true, props: { messge: "hey" }, warnIfNoStaticProps: true });
 
     console.warn = originalconsoleWarn;
     expect(mockConsoleWarn).toBeCalledWith(

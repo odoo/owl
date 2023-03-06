@@ -5,9 +5,10 @@
 
 :root {
   --border-color: lightgray;
-  --navbar-selected: #33a3ff;
-  --component-hover: #baefff;
-  --text-color: #444444;
+  --navbar-selected: #5f9cf0;
+  --component-hover: #d4e3f2;
+  --bs-font-monospace: "Fira Mono";
+  --text-color: #494949;
   --object-color: rgb(119, 34, 255);
   --prototype-color: rgb(123, 97, 165);
   --text-proto-color: #818181;
@@ -16,8 +17,8 @@
   --key-name: rgb(255, 181, 44);
   --key-content: rgb(119, 34, 255);
   --subscription-key: rgb(34, 49, 255);
-  --component-highlighted: #ddf7ff;
-  --component-selected: #33ceff;
+  --component-highlighted: #f0f8fb;
+  --component-selected: #d4e3f2;
   --active-icon: rgb(41, 134, 255);
   --active-recorder: rgb(255, 31, 31);
   --navbar-bg: #f1f3f4;
@@ -55,7 +56,6 @@
 }
 
 #container {
-  font-family: "Fira Mono", monospace;
   font-size: 0.75em;
   color: var(--text-color);
   background-color: var(--background-color);
@@ -67,7 +67,7 @@
 }
 
 .custom-navbar {
-  font-size: 0.9em;
+  font-size: 12px;
   padding: 0 !important;
   background: var(--navbar-bg);
 }
@@ -79,7 +79,7 @@
 .navbar-btn {
   height: 23px;
   padding: 0.5rem;
-  padding-top: 0.4em;
+  padding-top: 0.2em;
   color: var(--text-color);
   border-right: solid 1px lightgrey;
   user-select: none;
@@ -158,6 +158,7 @@
   color: var(--text-color) !important;
   background-color: var(--background-color);
   background-image: var(--select-icon);
+  font-size: 12px;
 }
 
 .navbar-select {
@@ -203,7 +204,6 @@
 }
 
 .panel-top {
-  padding: 0.15rem 0;
   border-bottom: 1px solid var(--border-color);
 }
 

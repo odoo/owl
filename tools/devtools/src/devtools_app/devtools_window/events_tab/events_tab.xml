@@ -4,20 +4,19 @@
     <div class="position-relative overflow-hidden d-flex flex-column h-100">
       <div class="panel-top d-flex align-items-center">
         <i title="Start/Stop Recording" class="fa fa-circle pointer-icon ms-1 p-1" t-attf-style="color: {{store.activeRecorder ? 'var(--active-recorder)' : 'var(--text-color)'}};" t-on-click.stop="() => this.store.toggleRecording()" aria-hidden="true"></i>
-        <div class="icons-separator mx-1"/>
-        <i title="Clear events" class="fa fa-ban lg-icon pointer-icon p-1" t-on-click.stop="() => this.store.clearEventsConsole()" aria-hidden="true"></i>
+        <i title="Clear events" class="fa fa-ban pointer-icon p-1 px-2" t-on-click.stop="() => this.store.clearEventsConsole()" aria-hidden="true"></i>
         <div class="icons-separator mx-1"/>
         <select class="form-select form-select-sm custom-select border-0" t-on-change="selectDisplayMode">
           <option value="Tree">Tree view</option>
           <option value="List">Events log</option>
         </select>
         <div class="icons-separator"/>
-        <label class="m-1 form-check-label" title="Trace renderings in console">
+        <label class="mx-2 form-check-label" title="Trace renderings in console">
           <input type="checkbox" class="form-check-input" t-att-checked="store.traceRenderings" t-on-input="() => this.store.toggleTracing()"/> Trace renderings
         </label>
         <!-- <EventSearchBar/> -->
       </div>
-      <div class="events-container h-100">
+      <div class="events-container h-100 font-monospace">
         <t t-if="showHelp()">
           <div class="status-message d-flex justify-content-center align-items-center">
             Click on the <i class="fa fa-circle px-2" style="font-size: 0.8em;"></i> button to start recording events.

@@ -6,7 +6,7 @@
         <div class="panel-top d-flex align-items-center">
           <ComponentSearchBar/>
         </div>
-        <div class="overflow-auto h-100">
+        <div class="overflow-auto h-100 font-monospace">
           <div id="tree-wrapper">
             <t t-foreach="store.apps" t-as="app" t-key="app_index">
               <TreeElement component="app"/> 
@@ -18,7 +18,7 @@
         class="split-screen-border user-select-none"
         t-on-mousedown="onMouseDown"
       />
-      <div class="split-screen-right d-flex flex-column" t-attf-style="width:{{100 - store.splitPosition}}%;">
+      <div class="split-screen-right d-flex flex-column font-monospace" t-attf-style="width:{{100 - store.splitPosition}}%;">
         <DetailsWindow/>
       </div>
     </div>

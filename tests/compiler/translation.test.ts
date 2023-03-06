@@ -88,4 +88,16 @@ describe("translation support", () => {
     expect(fixture.innerHTML).toBe("<div> mot </div>");
     expect(translateFn).toHaveBeenCalledWith("word");
   });
+
+  test("translation works, even if initial string has inner consecutive white space", async () => {
+    class SomeComponent extends Component {
+      static template = xml`<div>some  word</div>`;
+    }
+
+    const translateFn = jest.fn((expr: string) => (expr === "some  word" ? "un mot" : expr));
+
+    await mount(SomeComponent, fixture, { translateFn });
+    expect(translateFn).toHaveBeenCalledWith("some  word");
+    expect(fixture.innerHTML).toBe("<div>un mot</div>");
+  });
 });

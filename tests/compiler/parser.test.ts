@@ -26,10 +26,10 @@ describe("qweb parser", () => {
     });
   });
 
-  test("white spaces are condensed into a single space", async () => {
+  test("white spaces are maintained", async () => {
     expect(parse("   ")).toEqual({
       type: ASTType.Text,
-      value: " ",
+      value: "   ",
     });
   });
 

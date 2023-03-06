@@ -1,4 +1,4 @@
-const { Component } = owl;
+const { Component, useRef, useEffect } = owl;
 import { useStore } from "../../../store/store";
 import { ObjectTreeElement } from "./object_tree_element/object_tree_element";
 import { Subscriptions } from "./subscriptions/subscriptions";
@@ -8,5 +8,22 @@ export class DetailsWindow extends Component {
   static components = { ObjectTreeElement, Subscriptions };
   setup() {
     this.store = useStore();
+    this.contextMenu = useRef("contextmenu");
+    this.contextMenuId = this.store.contextMenu.id++;
+    this.contextMenuEvent;
+    // Open the context menu when the ids match
+    useEffect(
+      (menuId) => {
+        if (menuId === this.contextMenuId) {
+          this.store.contextMenu.open(this.contextMenuEvent, this.contextMenu.el);
+        }
+      },
+      () => [this.store.contextMenu.activeMenu]
+    );
+  }
+
+  openMenu(ev) {
+    this.contextMenuEvent = ev;
+    this.store.contextMenu.activeMenu = this.contextMenuId;
   }
 }

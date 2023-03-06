@@ -710,8 +710,10 @@ export class OwlDevtoolsGlobalHook {
       obj = oldTree.subscriptions[path[1].value].target;
       path = path.slice(3);
     } else {
-      // Everything here is in component so remove this key of the path
-      path.shift();
+      // Everything here is in component if it is not an app so remove this key of the path in the former case
+      if (objPathIndex > 1) {
+        path.shift();
+      }
       // the value is either "props" or "env" here
       if (objType !== "instance") {
         obj = oldTree[path[0].value];
@@ -885,16 +887,18 @@ export class OwlDevtoolsGlobalHook {
           if (child) children.push(child);
           index++;
         });
-        prototype = this.serializeObjectChild(
-          obj,
-          { type: "prototype", childIndex: children.length },
-          depth,
-          objType,
-          path,
-          oldBranch.children.at(-1),
-          oldTree
-        );
-        children.push(prototype);
+        if (!(obj.constructor.name === "Object")) {
+          prototype = this.serializeObjectChild(
+            obj,
+            { type: "prototype", childIndex: children.length },
+            depth,
+            objType,
+            path,
+            oldBranch.children.at(-1),
+            oldTree
+          );
+          children.push(prototype);
+        }
     }
     return children;
   }
@@ -941,6 +945,9 @@ export class OwlDevtoolsGlobalHook {
     const props = isApp ? node.props : node.component.props;
     component.props = [];
     component.name = isApp ? "App " + (Number(path[0]) + 1) : node.component.constructor.name;
+    const propsPath = isApp
+      ? [...path, { type: "item", value: "props" }]
+      : [...path, { type: "item", value: "component" }, { type: "item", value: "props" }];
     Reflect.ownKeys(props).forEach((key) => {
       let oldBranch = oldTree?.props[component.props.length];
       const property = this.serializeObjectChild(
@@ -948,7 +955,7 @@ export class OwlDevtoolsGlobalHook {
         { type: "item", value: key, childIndex: component.props.length },
         0,
         "props",
-        [...path, { type: "item", value: "component" }, { type: "item", value: "props" }],
+        propsPath,
         oldBranch,
         oldTree
       );
@@ -959,6 +966,9 @@ export class OwlDevtoolsGlobalHook {
     // Load env of the component
     const env = isApp ? node.env : node.component.env;
     component.env = [];
+    const envPath = isApp
+      ? [...path, { type: "item", value: "env" }]
+      : [...path, { type: "item", value: "component" }, { type: "item", value: "env" }];
     Reflect.ownKeys(env).forEach((key) => {
       let oldBranch = oldTree?.env[component.env.length];
       const envElement = this.serializeObjectChild(
@@ -966,7 +976,7 @@ export class OwlDevtoolsGlobalHook {
         { type: "item", value: key, childIndex: component.env.length },
         0,
         "env",
-        [...path, { type: "item", value: "component" }, { type: "item", value: "env" }],
+        envPath,
         oldBranch,
         oldTree
       );
@@ -979,7 +989,7 @@ export class OwlDevtoolsGlobalHook {
       { type: "prototype", childIndex: component.env.length },
       0,
       "env",
-      [...path, { type: "item", value: "component" }, { type: "item", value: "env" }],
+      envPath,
       oldTree?.env[component.env.length],
       oldTree
     );
@@ -987,6 +997,7 @@ export class OwlDevtoolsGlobalHook {
     // Load instance of the component
     const instance = isApp ? node : node.component;
     component.instance = [];
+    const instancePath = isApp ? path : [...path, { type: "item", value: "component" }];
     Reflect.ownKeys(instance).forEach((key) => {
       if (!["env", "props"].includes(key)) {
         let oldBranch = oldTree?.instance[component.instance.length];
@@ -995,7 +1006,7 @@ export class OwlDevtoolsGlobalHook {
           { type: "item", value: key, childIndex: component.instance.length },
           0,
           "instance",
-          [...path, { type: "item", value: "component" }],
+          instancePath,
           oldBranch,
           oldTree
         );
@@ -1006,7 +1017,7 @@ export class OwlDevtoolsGlobalHook {
     });
     // Load instance getters
     let obj = Object.getPrototypeOf(instance);
-    while (obj) {
+    while (obj && obj.constructor.name !== "Object") {
       Reflect.ownKeys(obj).forEach((key) => {
         if (Object.getOwnPropertyDescriptor(obj, key).hasOwnProperty("get")) {
           let child = {
@@ -1015,8 +1026,7 @@ export class OwlDevtoolsGlobalHook {
             toggled: false,
             objectType: "instance",
             path: [
-              ...path,
-              { type: "item", value: "component" },
+              ...instancePath,
               { type: "item", value: key, childIndex: component.instance.length },
             ],
             contentType: "getter",
@@ -1034,7 +1044,7 @@ export class OwlDevtoolsGlobalHook {
       { type: "prototype", childIndex: component.instance.length },
       0,
       "instance",
-      [...path, { type: "item", value: "component" }],
+      instancePath,
       oldTree?.instance[component.instance.length],
       oldTree
     );

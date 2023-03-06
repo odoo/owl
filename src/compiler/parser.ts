@@ -261,16 +261,12 @@ function parseTNode(node: Element, ctx: ParsingContext): AST | null {
 // Text and Comment Nodes
 // -----------------------------------------------------------------------------
 const lineBreakRE = /[\r\n]/;
-const whitespaceRE = /\s+/g;
 
 function parseTextCommentNode(node: Node, ctx: ParsingContext): AST | null {
   if (node.nodeType === Node.TEXT_NODE) {
     let value = node.textContent || "";
-    if (!ctx.inPreTag) {
-      if (lineBreakRE.test(value) && !value.trim()) {
-        return null;
-      }
-      value = value.replace(whitespaceRE, " ");
+    if (!ctx.inPreTag && lineBreakRE.test(value) && !value.trim()) {
+      return null;
     }
 
     return { type: ASTType.Text, value };

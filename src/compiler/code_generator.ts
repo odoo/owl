@@ -32,6 +32,7 @@ import {
 import { OwlError } from "../runtime/error_handling";
 
 type BlockType = "block" | "text" | "multi" | "list" | "html" | "comment";
+const whitespaceRE = /\s+/g;
 
 export interface Config {
   translateFn?: (s: string) => string;
@@ -166,6 +167,7 @@ interface Context {
   nameSpace?: string;
   tModelSelectedExpr?: string;
   ctxVar?: string;
+  inPreTag?: boolean;
 }
 
 function createContext(parentCtx: Context, params?: Partial<Context>): Context {
@@ -534,6 +536,9 @@ export class CodeGenerator {
       const match = translationRE.exec(value) as any;
       value = match[1] + this.translateFn(match[2]) + match[3];
     }
+    if (!ctx.inPreTag) {
+      value = value.replace(whitespaceRE, " ");
+    }
 
     if (!block || forceNewBlock) {
       block = this.createBlock(block, "text", ctx);
@@ -746,6 +751,7 @@ export class CodeGenerator {
           tKeyExpr: ctx.tKeyExpr,
           nameSpace,
           tModelSelectedExpr,
+          inPreTag: ctx.inPreTag || ast.tag === "pre",
         });
         this.compileAST(child, subCtx);
       }

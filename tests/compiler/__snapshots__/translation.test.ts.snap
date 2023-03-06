@@ -64,3 +64,16 @@ exports[`translation support translation is done on the trimmed text, with extra
   }
 }"
 `;
+
+exports[`translation support translation works, even if initial string has inner consecutive white space 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div>un mot</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;

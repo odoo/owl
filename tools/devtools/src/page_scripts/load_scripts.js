@@ -22,7 +22,9 @@ if (!window.__OWL_DEVTOOLS__) {
       window.top.postMessage({ type: "owlDevtools__FrameReady" });
     },
   });
-} else if (window.__OWL_DEVTOOLS__?.Fiber !== undefined) {
+  window.top.postMessage({ type: "owlDevtools__Reload" });
+} else if (window.__OWL_DEVTOOLS__?.Fiber !== undefined && !window.__OWL__DEVTOOLS_GLOBAL_HOOK__) {
   window.__OWL__DEVTOOLS_GLOBAL_HOOK__ = new OwlDevtoolsGlobalHook();
+  window.top.postMessage({ type: "owlDevtools__Reload" });
 }
 __OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;

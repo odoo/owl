@@ -14,7 +14,6 @@ if (!isFirefox()) {
         scriptsLoaded = false;
         if (created) {
           await loadScripts();
-          chrome.runtime.sendMessage({ type: "Reload" });
         }
       }
     });

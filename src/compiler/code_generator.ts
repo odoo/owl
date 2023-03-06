@@ -192,11 +192,9 @@ class CodeTarget {
   code: string[] = [];
   hasRoot = false;
   hasCache = false;
-  hasRef: boolean = false;
-  // maps ref name to [id, expr]
-  refInfo: { [name: string]: [string, string] } = {};
   shouldProtectScope: boolean = false;
   on: EventHandlers | null;
+  hasRefWrapper: boolean = false;
 
   constructor(name: string, on?: EventHandlers | null) {
     this.name = name;
@@ -215,16 +213,12 @@ class CodeTarget {
   generateCode(): string {
     let result: string[] = [];
     result.push(`function ${this.name}(ctx, node, key = "") {`);
-    if (this.hasRef) {
-      result.push(`  const refs = this.__owl__.refs;`);
-      for (let name in this.refInfo) {
-        const [id, expr] = this.refInfo[name];
-        result.push(`  const ${id} = ${expr};`);
-      }
-    }
     if (this.shouldProtectScope) {
       result.push(`  ctx = Object.create(ctx);`);
       result.push(`  ctx[isBoundary] = 1`);
+    }
+    if (this.hasRefWrapper) {
+      result.push(`  let refWrapper = makeRefWrapper(this.__owl__);`);
     }
     if (this.hasCache) {
       result.push(`  let cache = ctx.cache || {};`);
@@ -704,30 +698,21 @@ export class CodeGenerator {
 
     // t-ref
     if (ast.ref) {
-      this.target.hasRef = true;
-      const isDynamic = INTERP_REGEXP.test(ast.ref);
-      if (isDynamic) {
-        this.helpers.add("singleRefSetter");
-        const str = replaceDynamicParts(ast.ref, (expr) => this.captureExpression(expr, true));
-        const idx = block!.insertData(`singleRefSetter(refs, ${str})`, "ref");
-        attrs["block-ref"] = String(idx);
-      } else {
-        let name = ast.ref;
-        if (name in this.target.refInfo) {
-          // ref has already been defined
-          this.helpers.add("multiRefSetter");
-          const info = this.target.refInfo[name];
-          const index = block!.data.push(info[0]) - 1;
-          attrs["block-ref"] = String(index);
-          info[1] = `multiRefSetter(refs, \`${name}\`)`;
-        } else {
-          let id = generateId("ref");
-          this.helpers.add("singleRefSetter");
-          this.target.refInfo[name] = [id, `singleRefSetter(refs, \`${name}\`)`];
-          const index = block!.data.push(id) - 1;
-          attrs["block-ref"] = String(index);
-        }
+      if (this.dev) {
+        this.helpers.add("makeRefWrapper");
+        this.target.hasRefWrapper = true;
       }
+      const isDynamic = INTERP_REGEXP.test(ast.ref);
+      let name = `\`${ast.ref}\``;
+      if (isDynamic) {
+        name = replaceDynamicParts(ast.ref, (expr) => this.captureExpression(expr, true));
+      }
+      let setRefStr = `(el) => this.__owl__.setRef((${name}), el)`;
+      if (this.dev) {
+        setRefStr = `refWrapper(${name}, ${setRefStr})`;
+      }
+      const idx = block!.insertData(setRefStr, "ref");
+      attrs["block-ref"] = String(idx);
     }
 
     const dom = xmlDoc.createElement(ast.tag);

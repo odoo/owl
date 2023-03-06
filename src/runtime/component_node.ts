@@ -281,6 +281,19 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     }
   }
 
+  /**
+   * Sets a ref to a given HTMLElement.
+   *
+   * @param name the name of the ref to set
+   * @param el the HTMLElement to set the ref to. The ref is not set if the el
+   *  is null, but useRef will not return elements that are not in the DOM
+   */
+  setRef(name: string, el: HTMLElement | null) {
+    if (el) {
+      this.refs[name] = el;
+    }
+  }
+
   // ---------------------------------------------------------------------------
   // Block DOM methods
   // ---------------------------------------------------------------------------

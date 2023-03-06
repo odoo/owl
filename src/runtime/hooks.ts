@@ -15,7 +15,8 @@ export function useRef<T extends HTMLElement = HTMLElement>(name: string): { el:
   const refs = node.refs;
   return {
     get el(): T | null {
-      return refs[name] || null;
+      const el = refs[name];
+      return el?.ownerDocument.contains(el) ? el : null;
     },
   };
 }

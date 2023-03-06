@@ -521,13 +521,17 @@ export class OwlDevtoolsGlobalHook {
         case "prototype":
           obj = Object.getPrototypeOf(obj);
           break;
+        // We will be handling maps and sets entries as arrays to keep things stable
         case "set entries":
         case "map entries":
           obj = [...obj];
           break;
+        // Kind of tricky structure-wise but the set entry already is the object itself so this is
+        // only useful for display purpose in the devtools.
         case "set value":
           obj = obj;
           break;
+        // A map entry is a two items array with the key and the value so indexes 0 and 1
         case "map key":
           obj = obj[0];
           break;
@@ -537,11 +541,14 @@ export class OwlDevtoolsGlobalHook {
         case "set entry":
         case "map entry":
         case "item":
+          // When the item is a symbol, we make sure it is the right one by using the index on the
+          // Object.getOwnPropertySymbols array.
           if (key.hasOwnProperty("symbolIndex") && key.symbolIndex >= 0) {
             const symbol = Object.getOwnPropertySymbols(obj)[key.symbolIndex];
             if (symbol) {
               obj = obj[symbol];
             }
+          // When the item is a getter, get its value.
           } else if (Object.getOwnPropertyDescriptor(obj, key.value)?.hasOwnProperty("get")) {
             obj = Object.getOwnPropertyDescriptor(obj, key.value).get;
           } else {

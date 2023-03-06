@@ -817,60 +817,54 @@ async function evalFunctionInWindow(fn, args = [], frameUrl = "top") {
   });
   const argsString = "(" + stringifiedArgs.join(", ") + ");";
   let script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.${fn}${argsString}`;
-  try {
-    return await new Promise((resolve, reject) => {
-      if (frameUrl !== "top") {
-        chrome.devtools.inspectedWindow.eval(
-          script,
-          { frameURL: frameUrl },
-          (result, isException) => {
-            if (!isException) {
-              resolve(result);
-            } else {
-              reject(undefined);
-            }
-          }
-        );
-      } else {
-        chrome.devtools.inspectedWindow.eval(script, (result, isException) => {
+  return await new Promise((resolve, reject) => {
+    if (frameUrl !== "top") {
+      chrome.devtools.inspectedWindow.eval(
+        script,
+        { frameURL: frameUrl },
+        (result, isException) => {
           if (!isException) {
             resolve(result);
           } else {
-            reject(undefined);
+            reject(script);
           }
-        });
-      }
-    });
-  } catch (e) {
-    // store.invalidContext = true;
-  }
+        }
+      );
+    } else {
+      chrome.devtools.inspectedWindow.eval(script, (result, isException) => {
+        if (!isException) {
+          resolve(result);
+        } else {
+          reject(script);
+        }
+      });
+    }
+  });
 }
 
 // General method for executing code in the window using chrome.devtools.inspectedWindow.eval.
 async function evalInWindow(code, frameUrl = "top") {
-  try {
-    return await new Promise((resolve, reject) => {
-      if (frameUrl !== "top") {
-        chrome.devtools.inspectedWindow.eval(
-          code,
-          { frameURL: frameUrl },
-          (result, isException) => {
-            if (!isException) {
-              resolve(result);
-            } else {
-              reject(undefined);
-            }
-          }
-        );
-      } else {
-        chrome.devtools.inspectedWindow.eval(code, (result, isException) => {
+  return await new Promise((resolve, reject) => {
+    if (frameUrl !== "top") {
+      chrome.devtools.inspectedWindow.eval(
+        code,
+        { frameURL: frameUrl },
+        (result, isException) => {
           if (!isException) {
             resolve(result);
           } else {
-            reject(undefined);
+            reject(code);
           }
-        });
-      }
-    });
-  } catch (e) {}
+        }
+      );
+    } else {
+      chrome.devtools.inspectedWindow.eval(code, (result, isException) => {
+        if (!isException) {
+          resolve(result);
+        } else {
+          reject(code);
+        }
+      });
+    }
+  });
 }

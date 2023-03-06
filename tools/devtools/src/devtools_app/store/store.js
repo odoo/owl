@@ -324,7 +324,7 @@ export const store = reactive({
   async loadGetterContent(obj) {
     const result = await evalFunctionInWindow(
       "loadGetterContent",
-      [this.activeComponent.path, obj],
+      [obj],
       this.activeFrame
     );
     Object.keys(obj).forEach((key) => {

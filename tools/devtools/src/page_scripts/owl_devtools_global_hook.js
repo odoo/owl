@@ -1128,8 +1128,8 @@ export class OwlDevtoolsGlobalHook {
     return component;
   }
   // Replace the content of a parsed getter object with the result of the corresponding get method
-  loadGetterContent(componentPath, getter) {
-    let obj = this.getObjectProperty(componentPath, getter.path);
+  loadGetterContent(getter) {
+    let obj = this.getObjectProperty(getter.path);
     if (obj == null) {
       if (typeof obj === "undefined") {
         getter.content = "undefined";

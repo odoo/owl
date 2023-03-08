@@ -2,7 +2,7 @@
 <templates xml:space="preserve">
   <t t-name="devtools.ObjectTreeElement" owl="1">
     <div class="m-0 p-0 text-nowrap w-100 object-line"
-      t-att-class="attenuateIfPrototype" 
+      t-att-class="objectLineClass" 
       t-on-click.stop="() => this.store.toggleObjectTreeElementsDisplay(this.props.object)" 
       t-on-contextmenu.prevent="openMenu" 
     >
@@ -19,7 +19,7 @@
           </span>
         </t>
         <t t-else="">
-          <span class="object-content" t-att-class="attenuateIfPrototype" t-on-dblclick.stop="setupEditMode">
+          <span class="object-content" t-att-class="objectLineClass" t-on-dblclick.stop="setupEditMode">
             <t t-if="state.editMode">   
               <input t-attf-id="objectEditionInput/{{pathAsString}}" t-ref="input" type="text" placeholder="" t-att-value="props.object.content" t-on-keydown.stop="editObject"/>
             </t>
@@ -40,7 +40,8 @@
     </div>
     <t t-if="props.object.toggled">
       <t t-foreach="props.object.children" t-as="child" t-key="child.name">
-        <ObjectTreeElement object="child"/>
+        <ObjectTreeElement t-if="props.object.objectType === 'subscription'" object="child" keys="props.keys"/>
+        <ObjectTreeElement t-else="" object="child"/>
       </t>
     </t>
   </t>

@@ -209,15 +209,15 @@ export class OwlDevtoolsGlobalHook {
       if (this instanceof self.RootFiber && inFlush) {
         flushed = true;
       }
-      if (self.traceRenderings && this instanceof self.RootFiber) {
+      
+      const before = performance.now();
+      originalRender.call(this, ...arguments);
+      const time = performance.now() - before;
+      if (_render && self.traceRenderings && this instanceof self.RootFiber) {
         console.groupCollapsed(`Rendering <${this.node.name}>`);
         console.trace();
         console.groupEnd();
       }
-
-      const before = performance.now();
-      originalRender.call(this, ...arguments);
-      const time = performance.now() - before;
       if (self.recordEvents) {
         const path = self.getComponentPath(this.node);
         // if the render comes from flush

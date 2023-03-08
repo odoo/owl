@@ -72,10 +72,7 @@ export class ObjectTreeElement extends Component {
       return;
     }
     if (!this.state.editMode) {
-      if (
-        ["number", "string", "boolean", "undefined"].includes(this.props.object.contentType) ||
-        this.props.object.content === "null"
-      ) {
+      if (!this.props.object.hasChildren) {
         this.state.editMode = true;
       }
     }

@@ -48,10 +48,10 @@ export const store = reactive({
   activeComponent: {
     path: ["0"],
     name: "App",
-    subscriptions: [],
-    props: [],
-    env: [],
-    instance: [],
+    subscriptions: { toggled: true, children: []},
+    props: { toggled: true, children: []},
+    env: { toggled: false, children: []},
+    instance: { toggled: true, children: []},
   },
   componentSearch: {
     search: "",

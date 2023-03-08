@@ -595,7 +595,7 @@ export class OwlDevtoolsGlobalHook {
       case "prototype":
         child.name = "[[Prototype]]";
         child.contentType = "object";
-        child.content = this.serializer.serializeItem(parentObj, true);
+        child.content = this.serializer.serializeItem(Object.getPrototypeOf(parentObj), true);
         child.hasChildren = true;
         break;
       case "set entries":
@@ -676,7 +676,7 @@ export class OwlDevtoolsGlobalHook {
           break;
         case obj instanceof Array:
           child.contentType = "array";
-          child.hasChildren = true;
+          child.hasChildren = obj.length > 0;
           break;
         case typeof obj === "function":
           child.contentType = "function";
@@ -684,7 +684,7 @@ export class OwlDevtoolsGlobalHook {
           break;
         case obj instanceof Object:
           child.contentType = "object";
-          child.hasChildren = true;
+          child.hasChildren = Object.keys(obj).length > 0;
           break;
         default:
           child.contentType = typeof obj;
@@ -714,7 +714,7 @@ export class OwlDevtoolsGlobalHook {
     let path = completePath.slice(objPathIndex);
     let obj;
     if (objType === "subscription") {
-      obj = oldTree.subscriptions[path[1].value].target;
+      obj = oldTree.subscriptions.children[path[1].value].target;
       path = path.slice(3);
     } else {
       // Everything here is in component if it is not an app so remove this key of the path in the former case
@@ -723,11 +723,11 @@ export class OwlDevtoolsGlobalHook {
       }
       // the value is either "props" or "env" here
       if (objType !== "instance") {
-        obj = oldTree[path[0].value];
+        obj = oldTree[path[0].value].children;
         path.shift();
         // there is nothing otherwise but extension side it is in instance
       } else {
-        obj = oldTree.instance;
+        obj = oldTree.instance.children;
       }
       // the first element here is directly in an array instead of a children array
       obj = obj[path[0].childIndex];
@@ -950,16 +950,16 @@ export class OwlDevtoolsGlobalHook {
     const isApp = path.length === 1;
     // Load props of the component
     const props = isApp ? node.props : node.component.props;
-    component.props = [];
+    component.props = { toggled: oldTree ? oldTree.props.toggled : true, children: []};
     component.name = isApp ? "App " + (Number(path[0]) + 1) : node.component.constructor.name;
     const propsPath = isApp
       ? [...path, { type: "item", value: "props" }]
       : [...path, { type: "item", value: "component" }, { type: "item", value: "props" }];
     Reflect.ownKeys(props).forEach((key) => {
-      let oldBranch = oldTree?.props[component.props.length];
+      let oldBranch = oldTree?.props.children[component.props.children.length];
       const property = this.serializeObjectChild(
         props,
-        { type: "item", value: key, childIndex: component.props.length },
+        { type: "item", value: key, childIndex: component.props.children.length },
         0,
         "props",
         propsPath,
@@ -967,20 +967,20 @@ export class OwlDevtoolsGlobalHook {
         oldTree
       );
       if (property) {
-        component.props.push(property);
+        component.props.children.push(property);
       }
     });
     // Load env of the component
     const env = isApp ? node.env : node.component.env;
-    component.env = [];
+    component.env = { toggled: oldTree ? oldTree.env.toggled : false, children: []};
     const envPath = isApp
       ? [...path, { type: "item", value: "env" }]
       : [...path, { type: "item", value: "component" }, { type: "item", value: "env" }];
     Reflect.ownKeys(env).forEach((key) => {
-      let oldBranch = oldTree?.env[component.env.length];
+      let oldBranch = oldTree?.env.children[component.env.children.length];
       const envElement = this.serializeObjectChild(
         env,
-        { type: "item", value: key, childIndex: component.env.length },
+        { type: "item", value: key, childIndex: component.env.children.length },
         0,
         "env",
         envPath,
@@ -988,29 +988,29 @@ export class OwlDevtoolsGlobalHook {
         oldTree
       );
       if (envElement) {
-        component.env.push(envElement);
+        component.env.children.push(envElement);
       }
     });
     const envPrototype = this.serializeObjectChild(
       env,
-      { type: "prototype", childIndex: component.env.length },
+      { type: "prototype", childIndex: component.env.children.length },
       0,
       "env",
       envPath,
-      oldTree?.env[component.env.length],
+      oldTree?.env[component.env.children.length],
       oldTree
     );
-    component.env.push(envPrototype);
+    component.env.children.push(envPrototype);
     // Load instance of the component
     const instance = isApp ? node : node.component;
-    component.instance = [];
+    component.instance = { toggled: oldTree ? oldTree.instance.toggled : true, children: []};
     const instancePath = isApp ? path : [...path, { type: "item", value: "component" }];
     Reflect.ownKeys(instance).forEach((key) => {
       if (!["env", "props"].includes(key)) {
-        let oldBranch = oldTree?.instance[component.instance.length];
+        let oldBranch = oldTree?.instance.children[component.instance.children.length];
         const instanceElement = this.serializeObjectChild(
           instance,
-          { type: "item", value: key, childIndex: component.instance.length },
+          { type: "item", value: key, childIndex: component.instance.children.length },
           0,
           "instance",
           instancePath,
@@ -1018,7 +1018,7 @@ export class OwlDevtoolsGlobalHook {
           oldTree
         );
         if (instanceElement) {
-          component.instance.push(instanceElement);
+          component.instance.children.push(instanceElement);
         }
       }
     });
@@ -1034,35 +1034,35 @@ export class OwlDevtoolsGlobalHook {
             objectType: "instance",
             path: [
               ...instancePath,
-              { type: "item", value: key, childIndex: component.instance.length },
+              { type: "item", value: key, childIndex: component.instance.children.length },
             ],
             contentType: "getter",
             content: "(...)",
             hasChildren: false,
             children: [],
           };
-          component.instance.push(child);
+          component.instance.children.push(child);
         }
       });
       obj = Object.getPrototypeOf(obj);
     }
     const instancePrototype = this.serializeObjectChild(
       instance,
-      { type: "prototype", childIndex: component.instance.length },
+      { type: "prototype", childIndex: component.instance.children.length },
       0,
       "instance",
       instancePath,
-      oldTree?.instance[component.instance.length],
+      oldTree?.instance[component.instance.children.length],
       oldTree
     );
-    component.instance.push(instancePrototype);
+    component.instance.children.push(instancePrototype);
 
     // Load subscriptions of the component
     if (isApp) {
-      component.subscriptions = [];
+      component.subscriptions = { toggled: oldTree ? oldTree.subscriptions.toggled : true, children: []};
     } else {
       const rawSubscriptions = node.subscriptions;
-      component.subscriptions = [];
+      component.subscriptions = { toggled: oldTree ? oldTree.subscriptions.toggled : true, children: []};
       rawSubscriptions.forEach((rawSubscription, index) => {
         let subscription = {
           keys: [],
@@ -1129,7 +1129,7 @@ export class OwlDevtoolsGlobalHook {
             oldTree
           );
         }
-        component.subscriptions.push(subscription);
+        component.subscriptions.children.push(subscription);
       });
     }
     return component;

@@ -26,4 +26,8 @@ export class DetailsWindow extends Component {
     this.contextMenuEvent = ev;
     this.store.contextMenu.activeMenu = this.contextMenuId;
   }
+
+  toggleCategory(ev, category){
+    this.store.activeComponent[category].toggled = !this.store.activeComponent[category].toggled;
+  }
 }

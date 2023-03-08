@@ -17,46 +17,54 @@
       </t>
     </div>
     <div class="details-container">
-      <div t-if="Object.keys(store.activeComponent.props).length > 0" class="details-panel ps-2 py-1">
+      <div t-if="store.activeComponent.env.children.length > 0" id="env" class="details-panel ps-2 py-1">
         <div class="d-flex mb-2">
-          <div class="w-100">
-            <b>props</b>
+          <div class="w-100" t-on-click.stop="(ev) => this.toggleCategory(ev, 'env')">
+            <i class="fa mx-1 pointer-icon"
+              t-att-class="{'fa-caret-right': !store.activeComponent.env.toggled, 'fa-caret-down': store.activeComponent.env.toggled}"
+            /><b>env</b>
           </div>
         </div>
-        <t t-foreach="store.activeComponent.props" t-as="prop" t-key="prop_index">
-          <ObjectTreeElement object="prop"/>
-        </t>
-      </div>
-      <div t-if="store.activeComponent.subscriptions.length > 0" id="subscriptions" class="details-panel ps-2 py-1">
-        <div class="d-flex">
-          <div class="w-100">
-            <b>observed state</b>
-          </div>
-          <i title="Store observed states as global variable in the console" class="fa fa-bug utility-icon p-1" t-on-click.stop="() => this.store.logObjectInConsole([...this.store.activeComponent.path, {type: 'item', value: 'subscriptions'}])"></i>
-        </div>
-        <Subscriptions/>
-      </div>
-      <div t-if="Object.keys(store.activeComponent.env).length > 0" id="env" class="details-panel ps-2 py-1">
-        <div class="d-flex mb-2">
-          <div class="w-100">
-            <b>env</b>
-          </div>
-        </div>
-        <t t-foreach="store.activeComponent.env" t-as="env" t-key="env_index">
+        <t t-if="store.activeComponent.env.toggled" t-foreach="store.activeComponent.env.children" t-as="env" t-key="env_index">
           <ObjectTreeElement object="env"/>
         </t>
       </div>
-      <div t-if="Object.keys(store.activeComponent.instance).length > 0"  id="instance" class="details-panel ps-2 py-1">
+      <div t-if="store.activeComponent.props.children.length > 0" class="details-panel ps-2 py-1">
         <div class="d-flex mb-2">
-          <div class="w-100">
-            <b>instance</b>
+          <div class="w-100" t-on-click.stop="(ev) => this.toggleCategory(ev, 'props')">
+            <i class="fa mx-1 pointer-icon"
+              t-att-class="{'fa-caret-right': !store.activeComponent.props.toggled, 'fa-caret-down': store.activeComponent.props.toggled}"
+            /><b>props</b>
+          </div>
+        </div>
+        <t t-if="store.activeComponent.props.toggled" t-foreach="store.activeComponent.props.children" t-as="prop" t-key="prop_index">
+          <ObjectTreeElement object="prop"/>
+        </t>
+      </div>
+      <div t-if="store.activeComponent.subscriptions.children.length > 0" id="subscriptions" class="details-panel ps-2 py-1">
+        <div class="d-flex">
+          <div title="Shows all the targets that will trigger a re-render of the component when one of its associated keys is modified" class="w-100" t-on-click.stop="(ev) => this.toggleCategory(ev, 'subscriptions')">
+            <i class="fa mx-1 pointer-icon"
+              t-att-class="{'fa-caret-right': !store.activeComponent.subscriptions.toggled, 'fa-caret-down': store.activeComponent.subscriptions.toggled}"
+            /><b>observed state</b>
+          </div>
+          <i title="Store observed states as global variable in the console" class="fa fa-bug utility-icon p-1" t-on-click.stop="() => this.store.logObjectInConsole([...this.store.activeComponent.path, {type: 'item', value: 'subscriptions'}])"></i>
+        </div>
+        <Subscriptions t-if="store.activeComponent.subscriptions.toggled"/>
+      </div>
+      <div t-if="store.activeComponent.instance.children.length > 0"  id="instance" class="details-panel ps-2 py-1">
+        <div class="d-flex mb-2">
+          <div class="w-100" t-on-click.stop="(ev) => this.toggleCategory(ev, 'instance')">
+            <i class="fa mx-1 pointer-icon"
+              t-att-class="{'fa-caret-right': !store.activeComponent.instance.toggled, 'fa-caret-down': store.activeComponent.instance.toggled}"
+            /><b>instance</b>
           </div>
           <t t-if="store.activeComponent.path.length > 1">
             <i title="Inspect compiled template" class="fa fa-hashtag utility-icon p-1" t-on-click.stop="() => this.store.inspectComponent('compiled template')"></i>
             <i title="Send raw template to console" class="fa fa-file-word-o utility-icon p-1" t-on-click.stop="() => this.store.inspectComponent('raw template')"></i>
           </t>
         </div>
-        <t t-foreach="store.activeComponent.instance" t-as="instance" t-key="instance_index">
+        <t t-if="store.activeComponent.instance.toggled" t-foreach="store.activeComponent.instance.children" t-as="instance" t-key="instance_index">
           <ObjectTreeElement object="instance"/>
         </t>
       </div>

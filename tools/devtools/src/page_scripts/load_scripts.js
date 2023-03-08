@@ -27,5 +27,5 @@ if (!window.__OWL_DEVTOOLS__) {
   window.__OWL__DEVTOOLS_GLOBAL_HOOK__ = new OwlDevtoolsGlobalHook();
   window.top.postMessage({ type: "owlDevtools__Reload" });
 }
-// Completion value used by eval
+// Completion value used by eval to assess whether the scripts have been properly loaded
 export default __OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;

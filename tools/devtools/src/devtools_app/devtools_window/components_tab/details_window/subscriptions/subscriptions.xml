@@ -16,7 +16,7 @@
               <t t-esc="key"/>
             </div>
           </div>
-          <ObjectTreeElement object="subscription.target"/>
+          <ObjectTreeElement object="subscription.target" keys="subscription.keys"/>
         </div>
       </t>
     </div>

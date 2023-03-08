@@ -8,6 +8,7 @@ export class ObjectTreeElement extends Component {
   static components = { ObjectTreeElement };
 
   setup() {
+    console.log(this.props);
     this.state = useState({
       editMode: false,
       menuTop: 0,
@@ -51,9 +52,17 @@ export class ObjectTreeElement extends Component {
     return this.props.object.name;
   }
 
-  get attenuateIfPrototype() {
+  get objectLineClass() {
+    // Prototype items will be dyed down to appear less important
     if (this.pathAsString.includes('{"type":"prototype",')) {
-      return { attenuate: true };
+      return { 'attenuate' : true };
+    }
+    // Same for subscription items which are not present in the keys while the keys will be bold
+    if(this.props.object.objectType === "subscription" && this.props.object.depth > 0) {
+      if(this.props.keys.includes(this.props.object.name)){
+        return { 'fw-bolder': true };
+      }
+      return { 'attenuate' : true };
     }
     return {};
   }

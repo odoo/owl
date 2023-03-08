@@ -13,7 +13,7 @@ export class Subscriptions extends Component {
 
   // Used to display the keys in a compact way
   keysContent(index) {
-    const keys = this.store.activeComponent.subscriptions[index].keys;
+    const keys = this.store.activeComponent.subscriptions.children[index].keys;
     let content = JSON.stringify(keys);
     const maxLength = 50;
     content = content.replace(/,/g, ", ");
@@ -24,7 +24,7 @@ export class Subscriptions extends Component {
   }
 
   expandKeys(event, index) {
-    this.store.activeComponent.subscriptions[index].keysExpanded =
-      !this.store.activeComponent.subscriptions[index].keysExpanded;
+    this.store.activeComponent.subscriptions.children[index].keysExpanded =
+      !this.store.activeComponent.subscriptions.children[index].keysExpanded;
   }
 }

@@ -2,7 +2,7 @@
 <templates xml:space="preserve">
   <t t-name="devtools.Subscriptions" owl="1">
     <div id="subscriptionsPanel">
-      <t t-foreach="store.activeComponent.subscriptions" t-as="subscription" t-key="subscription_index">
+      <t t-foreach="store.activeComponent.subscriptions.children" t-as="subscription" t-key="subscription_index">
         <div class="my-2">
           <div class="my-0 p-0 object-line" t-on-click.stop="(ev) => this.expandKeys(ev, subscription_index)">
             <span class="ps-1 text-nowrap">

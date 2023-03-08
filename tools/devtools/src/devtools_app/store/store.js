@@ -53,6 +53,7 @@ export const store = reactive({
     env: { toggled: false, children: [] },
     instance: { toggled: true, children: [] },
   },
+  selectedElement: null,
   componentSearch: {
     search: "",
     searchResults: [],
@@ -123,31 +124,31 @@ export const store = reactive({
         deselectComponent(child);
       });
     });
-    let element;
+    let component;
     // element is the app here
     if (path.length === 1) {
-      element = this.apps[path[0]];
+      component = this.apps[path[0]];
       // the second element in the path is always the root of the app so no need to check
     } else {
-      element = this.apps[path[0]].children[0];
+      component = this.apps[path[0]].children[0];
     }
     for (let i = 2; i < path.length; i++) {
-      element.toggled = true;
-      const result = element.children.find((child) => child.key === path[i]);
+      component.toggled = true;
+      const result = component.children.find((child) => child.key === path[i]);
       if (result) {
-        element = result;
+        component = result;
       } else {
         break;
       }
     }
-    element.selected = true;
-    highlightChildren(element);
-    const component = await evalFunctionInWindow(
+    component.selected = true;
+    highlightChildren(component);
+    const details = await evalFunctionInWindow(
       "getComponentDetails",
-      [element.path],
+      [component.path],
       this.activeFrame
     );
-    this.activeComponent = component;
+    this.activeComponent = details;
     if (this.page !== "ComponentsTab") {
       this.switchTab("ComponentsTab");
     }
@@ -533,6 +534,11 @@ export const store = reactive({
   // Trigger the highlight on the component in the page
   highlightComponent(path) {
     evalFunctionInWindow("highlightComponent", [path], this.activeFrame);
+  },
+
+  // Center the view around the currently selected component
+  focusSelectedComponent() {
+    this.selectedElement.scrollIntoView({ block: "center", behavior: "smooth" });
   },
 
   // Toggle the recording of events in the page

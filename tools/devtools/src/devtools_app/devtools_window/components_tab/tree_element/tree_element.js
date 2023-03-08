@@ -19,13 +19,13 @@ export class TreeElement extends Component {
     this.contextMenu = useRef("contextmenu");
     this.element = useRef("element");
     this.contextMenuId = this.store.contextMenu.id++;
-    this.contextMenuEvent,
-      // Scroll to the selected element when it changes
-      onMounted(() => {
-        if (this.props.component.selected) {
-          this.element.el.scrollIntoView({ block: "center", behavior: "auto" });
-        }
-      });
+    this.contextMenuEvent;
+    // Scroll to the selected element when it changes
+    onMounted(() => {
+      if (this.props.component.selected) {
+        this.element.el.scrollIntoView({ block: "center", behavior: "auto" });
+      }
+    });
     useEffect(
       (selected) => {
         if (selected) {
@@ -33,6 +33,7 @@ export class TreeElement extends Component {
             this.element.el.scrollIntoView({ block: "center", behavior: "smooth" });
           }
         }
+        this.store.selectedElement = this.element.el;
       },
       () => [this.props.component.selected]
     );

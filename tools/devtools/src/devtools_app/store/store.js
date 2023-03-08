@@ -42,7 +42,7 @@ export const store = reactive({
   eventsTree: [],
   activeRecorder: false,
   owlStatus: true,
-  splitPosition: 60,
+  splitPosition: window.innerWidth > window.innerHeight ? 45 : 60,
   apps: [],
   traceRenderings: false,
   activeComponent: {

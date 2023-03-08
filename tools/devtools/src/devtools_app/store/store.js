@@ -48,10 +48,10 @@ export const store = reactive({
   activeComponent: {
     path: ["0"],
     name: "App",
-    subscriptions: { toggled: true, children: []},
-    props: { toggled: true, children: []},
-    env: { toggled: false, children: []},
-    instance: { toggled: true, children: []},
+    subscriptions: { toggled: true, children: [] },
+    props: { toggled: true, children: [] },
+    env: { toggled: false, children: [] },
+    instance: { toggled: true, children: [] },
   },
   componentSearch: {
     search: "",
@@ -322,11 +322,7 @@ export const store = reactive({
 
   // Replace the (...) content of a getter with the value returned by the corresponding get method
   async loadGetterContent(obj) {
-    const result = await evalFunctionInWindow(
-      "loadGetterContent",
-      [obj],
-      this.activeFrame
-    );
+    const result = await evalFunctionInWindow("loadGetterContent", [obj], this.activeFrame);
     Object.keys(obj).forEach((key) => {
       obj[key] = result[key];
     });
@@ -846,17 +842,13 @@ async function evalFunctionInWindow(fn, args = [], frameUrl = "top") {
 async function evalInWindow(code, frameUrl = "top") {
   return await new Promise((resolve, reject) => {
     if (frameUrl !== "top") {
-      chrome.devtools.inspectedWindow.eval(
-        code,
-        { frameURL: frameUrl },
-        (result, isException) => {
-          if (!isException) {
-            resolve(result);
-          } else {
-            reject(code);
-          }
+      chrome.devtools.inspectedWindow.eval(code, { frameURL: frameUrl }, (result, isException) => {
+        if (!isException) {
+          resolve(result);
+        } else {
+          reject(code);
         }
-      );
+      });
     } else {
       chrome.devtools.inspectedWindow.eval(code, (result, isException) => {
         if (!isException) {

@@ -209,7 +209,7 @@ export class OwlDevtoolsGlobalHook {
       if (this instanceof self.RootFiber && inFlush) {
         flushed = true;
       }
-      
+
       const before = performance.now();
       originalRender.call(this, ...arguments);
       const time = performance.now() - before;
@@ -548,7 +548,7 @@ export class OwlDevtoolsGlobalHook {
             if (symbol) {
               obj = obj[symbol];
             }
-          // When the item is a getter, get its value.
+            // When the item is a getter, get its value.
           } else if (Object.getOwnPropertyDescriptor(obj, key.value)?.hasOwnProperty("get")) {
             obj = Object.getOwnPropertyDescriptor(obj, key.value).get;
           } else {
@@ -950,7 +950,7 @@ export class OwlDevtoolsGlobalHook {
     const isApp = path.length === 1;
     // Load props of the component
     const props = isApp ? node.props : node.component.props;
-    component.props = { toggled: oldTree ? oldTree.props.toggled : true, children: []};
+    component.props = { toggled: oldTree ? oldTree.props.toggled : true, children: [] };
     component.name = isApp ? "App " + (Number(path[0]) + 1) : node.component.constructor.name;
     const propsPath = isApp
       ? [...path, { type: "item", value: "props" }]
@@ -972,7 +972,7 @@ export class OwlDevtoolsGlobalHook {
     });
     // Load env of the component
     const env = isApp ? node.env : node.component.env;
-    component.env = { toggled: oldTree ? oldTree.env.toggled : false, children: []};
+    component.env = { toggled: oldTree ? oldTree.env.toggled : false, children: [] };
     const envPath = isApp
       ? [...path, { type: "item", value: "env" }]
       : [...path, { type: "item", value: "component" }, { type: "item", value: "env" }];
@@ -1003,7 +1003,7 @@ export class OwlDevtoolsGlobalHook {
     component.env.children.push(envPrototype);
     // Load instance of the component
     const instance = isApp ? node : node.component;
-    component.instance = { toggled: oldTree ? oldTree.instance.toggled : true, children: []};
+    component.instance = { toggled: oldTree ? oldTree.instance.toggled : true, children: [] };
     const instancePath = isApp ? path : [...path, { type: "item", value: "component" }];
     Reflect.ownKeys(instance).forEach((key) => {
       if (!["env", "props"].includes(key)) {
@@ -1059,10 +1059,16 @@ export class OwlDevtoolsGlobalHook {
 
     // Load subscriptions of the component
     if (isApp) {
-      component.subscriptions = { toggled: oldTree ? oldTree.subscriptions.toggled : true, children: []};
+      component.subscriptions = {
+        toggled: oldTree ? oldTree.subscriptions.toggled : true,
+        children: [],
+      };
     } else {
       const rawSubscriptions = node.subscriptions;
-      component.subscriptions = { toggled: oldTree ? oldTree.subscriptions.toggled : true, children: []};
+      component.subscriptions = {
+        toggled: oldTree ? oldTree.subscriptions.toggled : true,
+        children: [],
+      };
       rawSubscriptions.forEach((rawSubscription, index) => {
         let subscription = {
           keys: [],

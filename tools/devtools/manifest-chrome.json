@@ -3,6 +3,9 @@
   "version": "1.0",
   "manifest_version": 3,
   "description": "Chrome devtools extension for Odoo Owl framework",
+  "icons": {
+    "128": "assets/icon128.png"
+  },
   "action": {
     "default_icon": {
       "128": "assets/icon_disabled128.png"

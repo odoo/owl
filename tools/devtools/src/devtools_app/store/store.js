@@ -616,8 +616,22 @@ chrome.runtime.onConnect.addListener((port) => {
     return;
   }
   port.onMessage.addListener(async (msg) => {
-    console.log(msg, devtoolsId);
-    // Filter out the messages that are not destined to this devtools tab
+     // Reload the tree after checking if the scripts are loaded when this message is received
+     if (msg.type === "Reload") {
+      store.owlStatus = await evalInWindow("window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;");
+      if (store.owlStatus) {
+        evalInWindow("__OWL__DEVTOOLS_GLOBAL_HOOK__.devtoolsId = " + devtoolsId + ";");
+        store.resetData();
+      }
+    }
+    // Received when a frame has been delayed when loading the scripts due to owl being lazy loaded
+    if (msg.type === "FrameReady") {
+      store.updateIFrameList();
+      store.owlStatus = true;
+      store.resetData();
+    }
+    // Filter out the messages that are not destined to this devtools tab. The messages above are sent before 
+    // the devtoolsId is set
     if(msg.devtoolsId !== devtoolsId){
       return;
     }
@@ -664,21 +678,6 @@ chrome.runtime.onConnect.addListener((port) => {
       const isLoaded = await loadScripts(msg.data);
       if (isLoaded) {
         store.updateIFrameList();
-      }
-    }
-
-    // Received when a frame has been delayed when loading the scripts due to owl being lazy loaded
-    if (msg.type === "FrameReady") {
-      store.updateIFrameList();
-      store.owlStatus = true;
-      store.resetData();
-    }
-
-    // Reload the tree after checking if the scripts are loaded when this message is received
-    if (msg.type === "Reload") {
-      store.owlStatus = await evalInWindow("window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;");
-      if (store.owlStatus) {
-        store.resetData();
       }
     }
   });

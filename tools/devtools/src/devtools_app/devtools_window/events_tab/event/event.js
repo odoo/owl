@@ -39,8 +39,8 @@ export class Event extends Component {
         return this.props.event.time;
       }
     } else {
-      if (this.props.event.time < 1.0) {
-        return "<1";
+      if (this.props.event.time < 0.1) {
+        return "<0.1";
       } else {
         return this.props.event.time.toFixed(1);
       }

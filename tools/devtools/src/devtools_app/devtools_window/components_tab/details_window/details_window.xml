@@ -2,7 +2,7 @@
 <templates xml:space="preserve">
   <t t-name="devtools.DetailsWindow" owl="1">
     <div class="panel-top d-flex align-items-center">
-      <div class="ms-1 p-1" style="width: 100%;">
+      <div class="ms-1 p-1 text-truncate" style="width: 100%;">
         <t t-if="store.activeComponent.path.length > 1">&lt;</t><b style="color: var(--component-color); cursor: pointer;" t-on-mouseover.stop="() => this.store.highlightComponent(this.store.activeComponent.path)" t-on-click.stop="() => this.store.focusSelectedComponent()" t-on-contextmenu.prevent="openMenu" t-esc="store.activeComponent.name"/><t t-if="store.activeComponent.path.length > 1">&gt;</t>
       </div>
       <t t-if="store.activeComponent.path.length > 1">
@@ -43,7 +43,7 @@
       </div>
       <div t-if="store.activeComponent.subscriptions.children.length > 0" id="subscriptions" class="details-panel ps-2 py-1">
         <div class="d-flex">
-          <div title="Shows all the targets that will trigger a re-render of the component when one of its associated keys is modified" class="w-100" t-on-click.stop="(ev) => this.toggleCategory(ev, 'subscriptions')">
+          <div title="Shows all the targets that will trigger a re-render of the component when one of its associated keys is modified" class="w-100 text-truncate" t-on-click.stop="(ev) => this.toggleCategory(ev, 'subscriptions')">
             <i class="fa mx-1 pointer-icon"
               t-att-class="{'fa-caret-right': !store.activeComponent.subscriptions.toggled, 'fa-caret-down': store.activeComponent.subscriptions.toggled}"
             /><b>observed state</b>
@@ -54,7 +54,7 @@
       </div>
       <div t-if="store.activeComponent.instance.children.length > 0"  id="instance" class="details-panel ps-2 py-1">
         <div class="d-flex mb-2">
-          <div class="w-100" t-on-click.stop="(ev) => this.toggleCategory(ev, 'instance')">
+          <div class="w-100 text-truncate" t-on-click.stop="(ev) => this.toggleCategory(ev, 'instance')">
             <i class="fa mx-1 pointer-icon"
               t-att-class="{'fa-caret-right': !store.activeComponent.instance.toggled, 'fa-caret-down': store.activeComponent.instance.toggled}"
             /><b>instance</b>

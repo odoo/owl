@@ -13,7 +13,7 @@
     "default_title": "Owl devtools",
     "default_popup": "popup_app/popup.html"
   },
-  "permissions": ["scripting"],
+  "permissions": ["scripting", "storage"],
   "host_permissions": ["http://*/*", "https://*/*"],
   "content_security_policy": {
     "script-src": "self",

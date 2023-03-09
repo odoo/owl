@@ -6,6 +6,7 @@ export const store = reactive({
   settings: {
     expandByDefault: true,
     toggleOnSelected: false,
+    darkmode: false,
   },
   contextMenu: {
     top: 0,
@@ -570,6 +571,17 @@ export const store = reactive({
     this.resetData();
     await loadScripts();
   },
+
+  // Toggle dark mode in the extension and store result in the storage
+  toggleDarkMode(){
+    this.settings.darkMode = !this.settings.darkMode;
+    if (this.settings.darkMode) {
+      document.querySelector("html").classList.add("dark-mode");
+    } else {
+      document.querySelector("html").classList.remove("dark-mode");
+    }
+    chrome.storage.sync.set({"owl_devtools_dark_mode": this.settings.darkMode});
+  }
 });
 
 // Instantiate the store
@@ -598,12 +610,7 @@ for (const frame of store.frameUrls) {
 
 let flushRendersTimeout = false;
 
-// Load dark mode based on the global settings of the chrome devtools
-if (chrome.devtools.panels.themeName === "dark") {
-  document.querySelector("html").classList.add("dark-mode");
-} else {
-  document.querySelector("html").classList.remove("dark-mode");
-}
+loadSettings();
 
 // Heartbeat message to test whether the extension context is still valid or not
 setInterval(() => {
@@ -688,6 +695,23 @@ chrome.runtime.onConnect.addListener((port) => {
     }
   });
 });
+
+// Load all settings from the chrome sync storage
+async function loadSettings() {
+  let storage = await chrome.storage.sync.get();
+  if(storage.owl_devtools_dark_mode === undefined) {
+    // Load dark mode based on the global settings of the chrome devtools
+    darkMode = chrome.devtools.panels.themeName === "dark";
+  } else {
+    darkMode = storage.owl_devtools_dark_mode;
+  }
+  store.settings.darkMode = darkMode;
+  if (darkMode) {
+    document.querySelector("html").classList.add("dark-mode");
+  } else {
+    document.querySelector("html").classList.remove("dark-mode");
+  }
+}
 
 // Function to handle and store a batch of events coming from the page
 function loadEvents(events) {

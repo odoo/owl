@@ -14,8 +14,8 @@ export class OwlDevtoolsGlobalHook {
     this.eventId = 0;
     // Will be reset as soon as a new devtools owl tab is opened. Allows to avoid sending messages to the wrong devtools tab later on
     this.devtoolsId = 0;
-    const self = this;
     // Allows to launch a message each time an iframe html element is added to the page
+    const self = this;
     const iFrameObserver = new MutationObserver(function (mutationsList) {
       mutationsList.forEach(function (mutation) {
         mutation.addedNodes.forEach(function (addedNode) {

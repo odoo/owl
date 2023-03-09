@@ -22,7 +22,7 @@
               <t t-esc="minimizedKey"/>
             </span>
           </t>&gt;
-          <span t-if="props.event.type !== 'destroy'">
+          <span>
             (<t t-esc="renderTime"/>ms)
           </span>
         </span>

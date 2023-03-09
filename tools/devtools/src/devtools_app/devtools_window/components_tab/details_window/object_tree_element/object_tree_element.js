@@ -8,7 +8,6 @@ export class ObjectTreeElement extends Component {
   static components = { ObjectTreeElement };
 
   setup() {
-    console.log(this.props);
     this.state = useState({
       editMode: false,
       menuTop: 0,

@@ -130,16 +130,19 @@ browserInstance.runtime.onMessage.addListener((message, sender, sendResponse) =>
       }
     });
     return true;
-    // Relay the received message to the devtools app
   } else if (message.type === "owlStatus") {
     owlStatus = message.data;
     chrome.action.setIcon({
       path: owlStatus === 2 ? "assets/icon128.png" : "assets/icon_disabled128.png",
     });
+  // Dummy message to test if the extension context is still valid
+  } else if (message.type === "keepAlive") {
+    return;
+  // Relay the received message to the devtools app
   } else {
     const port = browserInstance.runtime.connect({ name: "OwlDevtoolsPort" });
     port.postMessage(
-      message.data ? { type: message.type, data: message.data } : { type: message.type }
+      message.data ? { type: message.type, data: message.data, devtoolsId: message.devtoolsId } : { type: message.type, devtoolsId: message.devtoolsId }
     );
   }
 });

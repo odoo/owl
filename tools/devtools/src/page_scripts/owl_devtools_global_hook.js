@@ -12,6 +12,9 @@ export class OwlDevtoolsGlobalHook {
     this.addedElements = [];
     // To keep track of the succession order of the render events
     this.eventId = 0;
+    // Will be reset as soon as a new devtools owl tab is opened. Allows to avoid sending messages to the wrong devtools tab later on
+    this.devtoolsId = 0;
+    const self = this;
     // Allows to launch a message each time an iframe html element is added to the page
     const iFrameObserver = new MutationObserver(function (mutationsList) {
       mutationsList.forEach(function (mutation) {
@@ -25,6 +28,7 @@ export class OwlDevtoolsGlobalHook {
             window.top.postMessage({
               type: "owlDevtools__NewIFrame",
               data: addedNode.contentDocument.location.href,
+              devtoolsId: self.devtoolsId 
             });
           }
         });
@@ -159,11 +163,11 @@ export class OwlDevtoolsGlobalHook {
     this.apps.add = function () {
       originalAdd.call(this, ...arguments);
       self.patchAppMethods();
-      window.top.postMessage({ type: "owlDevtools__RefreshApps" });
+      window.top.postMessage({ type: "owlDevtools__RefreshApps", devtoolsId: self.devtoolsId  });
     };
     this.apps.delete = function () {
       originalDelete.call(this, ...arguments);
-      window.top.postMessage({ type: "owlDevtools__RefreshApps" });
+      window.top.postMessage({ type: "owlDevtools__RefreshApps", devtoolsId: self.devtoolsId  });
     };
   }
 
@@ -194,7 +198,7 @@ export class OwlDevtoolsGlobalHook {
           self.queuedFibers.add(fiber);
           const path = self.getComponentPath(fiber.node);
           //Add a functionnality to the flush function which sends a message to the window every time it is triggered.
-          window.top.postMessage({ type: "owlDevtools__Flush", data: path });
+          window.top.postMessage({ type: "owlDevtools__Flush", data: path, devtoolsId: self.devtoolsId });
         }
       });
       originalFlush.call(this, ...arguments);
@@ -289,6 +293,7 @@ export class OwlDevtoolsGlobalHook {
         window.top.postMessage({
           type: "owlDevtools__Event",
           data: self.eventsBatch,
+          devtoolsId: self.devtoolsId 
         });
         self.eventsBatch = [];
       }
@@ -483,7 +488,7 @@ export class OwlDevtoolsGlobalHook {
       const path = this.getElementPath(target);
       this.highlightComponent(path);
       this.currentSelectedElement = target;
-      window.top.postMessage({ type: "owlDevtools__SelectElement", data: path });
+      window.top.postMessage({ type: "owlDevtools__SelectElement", data: path, devtoolsId: this.devtoolsId  });
     }
   };
 
@@ -507,7 +512,7 @@ export class OwlDevtoolsGlobalHook {
     document.removeEventListener("mouseover", this.HTMLSelector, { capture: true });
     document.removeEventListener("click", this.disableHTMLSelector, { capture: true });
     document.removeEventListener("mouseout", this.removeHighlights, { capture: true });
-    window.top.postMessage({ type: "owlDevtools__StopSelector" });
+    window.top.postMessage({ type: "owlDevtools__StopSelector", devtoolsId: this.devtoolsId });
   };
 
   // Returns the object specified by the path starting from the topParent object
@@ -1219,6 +1224,10 @@ export class OwlDevtoolsGlobalHook {
   }
   // Triggers the highlight effect around the specified component.
   highlightComponent(path) {
+    // Try to highlight the root component of the app if function called on an app
+    if(path.length === 1){
+      path.push("root");
+    }
     let component = this.getComponentNode(path);
     if (!component) {
       return;

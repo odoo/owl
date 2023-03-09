@@ -214,9 +214,21 @@ export class OwlDevtoolsGlobalHook {
         flushed = true;
       }
 
-      const before = performance.now();
+      // patch the renderFn function from the node to only measure the time
+      // spent in the template, not in additional work, such as flushing scheduler
+      const node = this.node;
+      const nodeRenderFn = node.renderFn;
+      let time;
+      this.node.renderFn = function() {
+        const before = performance.now();
+        const result = nodeRenderFn.call(this);
+        time = performance.now() - before;
+        // unpatch the node render function
+        node.renderFn = nodeRenderFn;
+        return result;
+      }
+
       originalRender.call(this, ...arguments);
-      const time = performance.now() - before;
       if (_render && self.traceRenderings && this instanceof self.RootFiber) {
         console.groupCollapsed(`Rendering <${this.node.name}>`);
         console.trace();

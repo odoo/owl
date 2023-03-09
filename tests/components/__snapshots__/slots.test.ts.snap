@@ -90,7 +90,7 @@ exports[`slots can define and call slots with bound params 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
-    return comp1({slots: markRaw({'abc': {__render: slot1.bind(this), __ctx: ctx1, getValue: ctx['getValue'].bind(this)}})}, key + \`__1\`, node, this, null);
+    return comp1({slots: markRaw({'abc': {__render: slot1.bind(this), __ctx: ctx1, getValue: (ctx['getValue']).bind(this)}})}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -1516,7 +1516,7 @@ exports[`slots simple default slot with params and bound function 2`] = `
   let { callSlot } = helpers;
   
   return function template(ctx, node, key = \\"\\") {
-    return callSlot(ctx, node, key, 'default', false, {fn: ctx['getValue'].bind(this)});
+    return callSlot(ctx, node, key, 'default', false, {fn: (ctx['getValue']).bind(this)});
   }
 }"
 `;

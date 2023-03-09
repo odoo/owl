@@ -36,12 +36,12 @@ export const store = reactive({
   frameUrls: ["top"],
   activeFrame: "top",
   page: "ComponentsTab",
-  invalidContext: false,
   events: [],
   eventsTreeView: true,
   eventsTree: [],
   activeRecorder: false,
   owlStatus: true,
+  extensionContextStatus: true,
   splitPosition: window.innerWidth > window.innerHeight ? 45 : 60,
   apps: [],
   traceRenderings: false,
@@ -390,6 +390,7 @@ export const store = reactive({
         if (!scriptsLoaded) {
           await loadScripts(frame);
         }
+        evalInWindow("__OWL__DEVTOOLS_GLOBAL_HOOK__.devtoolsId = " + devtoolsId + ";", frame);
         if (!this.frameUrls.includes(frame)) {
           this.frameUrls = [...this.frameUrls, frame];
         }
@@ -471,6 +472,7 @@ export const store = reactive({
     this.eventsTree = [];
     this.activeRecorder = false;
     evalFunctionInWindow("toggleEventsRecording", [false, 0]);
+    evalFunctionInWindow("toggleTracing", [false]);
   },
 
   // Triggers manually the rendering of the selected component
@@ -569,6 +571,10 @@ export function useStore() {
   return useState(store);
 }
 
+const devtoolsId = Date.now();
+
+evalInWindow("__OWL__DEVTOOLS_GLOBAL_HOOK__.devtoolsId = " + devtoolsId + ";");
+
 // We want to load the base components tree when the devtools tab is first opened
 store.loadComponentsTree(false);
 
@@ -593,12 +599,28 @@ if (chrome.devtools.panels.themeName === "dark") {
   document.querySelector("html").classList.remove("dark-mode");
 }
 
+// Heartbeat message to test whether the extension context is still valid or not
+setInterval(() => {
+  if(store.extensionContextStatus){
+    try{
+      chrome.runtime.sendMessage({ type: "keepAlive" });
+    } catch(e) {
+      store.extensionContextStatus = false;
+    }
+  }
+}, 1000);
+
 // Connect to the port to communicate to the background script
 chrome.runtime.onConnect.addListener((port) => {
   if (!port.name === "OwlDevtoolsPort") {
     return;
   }
   port.onMessage.addListener(async (msg) => {
+    console.log(msg, devtoolsId);
+    // Filter out the messages that are not destined to this devtools tab
+    if(msg.devtoolsId !== devtoolsId){
+      return;
+    }
     // When message of type Flush is received, overwrite the component tree with the new one from page
     // A flush message is sent everytime a component is rendered on the page
     if (msg.type === "Flush") {

@@ -16,7 +16,7 @@
               <option t-att-value="frame"><t t-esc="frame"/></option>
             </t>
           </select>
-          <i class="ms-auto p-1 me-1 lg-icon fa fa-repeat" title="Refresh extension" t-on-click.stop="() => this.store.refreshExtension()"></i>
+          <i class="ms-auto p-1 me-1 lg-icon fa fa-repeat pointer-icon" title="Refresh extension" t-on-click.stop="() => this.store.refreshExtension()"></i>
         </div>
         <ComponentsTab t-if="store.page === 'ComponentsTab'"/>
         <EventsTab t-if="store.page === 'EventsTab'"/>

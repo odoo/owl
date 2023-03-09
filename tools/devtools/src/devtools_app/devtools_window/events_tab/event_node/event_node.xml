@@ -6,7 +6,7 @@
       t-on-contextmenu="openNodeMenu" 
     >
       <div class="text-nowrap" t-attf-style="padding-left: {{eventPadding}}rem">
-        <i class="fa mx-1 pointer-icon"
+        <i class="fa px-1 pointer-icon caret"
           t-att-class="{'fa-caret-right': !props.event.toggled, 'fa-caret-down': props.event.toggled}"
           t-attf-style="visibility: {{props.event.children.length > 0 ? '' : 'hidden'}};"
         />

@@ -28,7 +28,7 @@ export class OwlDevtoolsGlobalHook {
             window.top.postMessage({
               type: "owlDevtools__NewIFrame",
               data: addedNode.contentDocument.location.href,
-              devtoolsId: self.devtoolsId 
+              devtoolsId: self.devtoolsId,
             });
           }
         });
@@ -163,11 +163,11 @@ export class OwlDevtoolsGlobalHook {
     this.apps.add = function () {
       originalAdd.call(this, ...arguments);
       self.patchAppMethods();
-      window.top.postMessage({ type: "owlDevtools__RefreshApps", devtoolsId: self.devtoolsId  });
+      window.top.postMessage({ type: "owlDevtools__RefreshApps", devtoolsId: self.devtoolsId });
     };
     this.apps.delete = function () {
       originalDelete.call(this, ...arguments);
-      window.top.postMessage({ type: "owlDevtools__RefreshApps", devtoolsId: self.devtoolsId  });
+      window.top.postMessage({ type: "owlDevtools__RefreshApps", devtoolsId: self.devtoolsId });
     };
   }
 
@@ -198,7 +198,11 @@ export class OwlDevtoolsGlobalHook {
           self.queuedFibers.add(fiber);
           const path = self.getComponentPath(fiber.node);
           //Add a functionnality to the flush function which sends a message to the window every time it is triggered.
-          window.top.postMessage({ type: "owlDevtools__Flush", data: path, devtoolsId: self.devtoolsId });
+          window.top.postMessage({
+            type: "owlDevtools__Flush",
+            data: path,
+            devtoolsId: self.devtoolsId,
+          });
         }
       });
       originalFlush.call(this, ...arguments);
@@ -219,14 +223,14 @@ export class OwlDevtoolsGlobalHook {
       const node = this.node;
       const nodeRenderFn = node.renderFn;
       let time = 0;
-      this.node.renderFn = function() {
+      this.node.renderFn = function () {
         const before = performance.now();
         const result = nodeRenderFn.call(this);
         time = performance.now() - before;
         // unpatch the node render function
         node.renderFn = nodeRenderFn;
         return result;
-      }
+      };
 
       originalRender.call(this, ...arguments);
       if (_render && self.traceRenderings && this instanceof self.RootFiber) {
@@ -305,7 +309,7 @@ export class OwlDevtoolsGlobalHook {
         window.top.postMessage({
           type: "owlDevtools__Event",
           data: self.eventsBatch,
-          devtoolsId: self.devtoolsId 
+          devtoolsId: self.devtoolsId,
         });
         self.eventsBatch = [];
       }
@@ -505,7 +509,11 @@ export class OwlDevtoolsGlobalHook {
       const path = this.getElementPath(target);
       this.highlightComponent(path);
       this.currentSelectedElement = target;
-      window.top.postMessage({ type: "owlDevtools__SelectElement", data: path, devtoolsId: this.devtoolsId  });
+      window.top.postMessage({
+        type: "owlDevtools__SelectElement",
+        data: path,
+        devtoolsId: this.devtoolsId,
+      });
     }
   };
 
@@ -1242,7 +1250,7 @@ export class OwlDevtoolsGlobalHook {
   // Triggers the highlight effect around the specified component.
   highlightComponent(path) {
     // Try to highlight the root component of the app if function called on an app
-    if(path.length === 1){
+    if (path.length === 1) {
       path.push("root");
     }
     let component = this.getComponentNode(path);

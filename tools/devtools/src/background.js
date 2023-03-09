@@ -135,14 +135,16 @@ browserInstance.runtime.onMessage.addListener((message, sender, sendResponse) =>
     chrome.action.setIcon({
       path: owlStatus === 2 ? "assets/icon128.png" : "assets/icon_disabled128.png",
     });
-  // Dummy message to test if the extension context is still valid
+    // Dummy message to test if the extension context is still valid
   } else if (message.type === "keepAlive") {
     return;
-  // Relay the received message to the devtools app
+    // Relay the received message to the devtools app
   } else {
     const port = browserInstance.runtime.connect({ name: "OwlDevtoolsPort" });
     port.postMessage(
-      message.data ? { type: message.type, data: message.data, devtoolsId: message.devtoolsId } : { type: message.type, devtoolsId: message.devtoolsId }
+      message.data
+        ? { type: message.type, data: message.data, devtoolsId: message.devtoolsId }
+        : { type: message.type, devtoolsId: message.devtoolsId }
     );
   }
 });

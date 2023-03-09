@@ -556,7 +556,7 @@ exports[`t-call t-call-context: ComponentNode is not looked up in the context 2`
     let ref1 = (el) => this.__owl__.setRef((\`myRef\`), el);
     const b2 = block2([ref1]);
     const ctx1 = capture(ctx);
-    const b6 = comp1({prop: ctx['method'].bind(this),slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__1\`, node, this, null);
+    const b6 = comp1({prop: (ctx['method']).bind(this),slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__1\`, node, this, null);
     return multi([b2, b6]);
   }
 }"

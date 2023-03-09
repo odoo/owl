@@ -349,7 +349,7 @@ exports[`bound functions are considered 'alike' 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     const b2 = text(ctx['state'].val);
-    const b3 = comp1({fn: ctx['someFunction'].bind(this)}, key + \`__1\`, node, this, null);
+    const b3 = comp1({fn: (ctx['someFunction']).bind(this)}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
   }
 }"
@@ -373,7 +373,7 @@ exports[`bound functions is not referentially equal after update 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"val\\"]);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({val: ctx['state'].val,fn: ctx['someFunction'].bind(this)}, key + \`__1\`, node, this, null);
+    return comp1({val: ctx['state'].val,fn: (ctx['someFunction']).bind(this)}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -396,12 +396,36 @@ exports[`can bind function prop with bind suffix 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = \\"\\") {
-    return comp1({doSomething: ctx['doSomething'].bind(this)}, key + \`__1\`, node, this, null);
+    return comp1({doSomething: (ctx['doSomething']).bind(this)}, key + \`__1\`, node, this, null);
   }
 }"
 `;
 
 exports[`can bind function prop with bind suffix 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`child\`);
+  }
+}"
+`;
+
+exports[`do not crash when binding anonymous function prop with bind suffix 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const v1 = ctx['this'];
+    return comp1({doSomething: ((_val)=>v1.doSomething(_val)).bind(this)}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`do not crash when binding anonymous function prop with bind suffix 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

@@ -1135,7 +1135,7 @@ export class CodeGenerator {
       name = _name;
       switch (suffix) {
         case "bind":
-          value = `${value}.bind(this)`;
+          value = `(${value}).bind(this)`;
           break;
         case "alike":
           break;

@@ -315,16 +315,21 @@ export class OwlDevtoolsGlobalHook {
     app.root.constructor.prototype._destroy = function () {
       if (self.recordEvents) {
         const path = self.getComponentPath(this);
-        self.eventsBatch.push({
+        const event = {
           type: "destroy",
           component: this.name,
           key: this.parentKey,
           path: path,
           time: 0,
           id: self.eventId++,
-        });
+        };
+        self.eventsBatch.push(event);
+        const before = performance.now();
+        originalDestroy.call(this, ...arguments);
+        event.time = performance.now() - before;
+      } else {
+        originalDestroy.call(this, ...arguments);
       }
-      originalDestroy.call(this, ...arguments);
     };
     this.appsPatched = true;
   }

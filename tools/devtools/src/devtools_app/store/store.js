@@ -465,6 +465,12 @@ export const store = reactive({
     }
   },
 
+  collapseAll() {
+    for (let event of this.eventsTree) {
+        event.toggled = false;
+    }
+  },
+
   // Reset all the relevant data about the page currently stored
   resetData() {
     this.loadComponentsTree(false);

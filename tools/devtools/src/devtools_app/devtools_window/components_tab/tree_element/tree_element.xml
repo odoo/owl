@@ -9,10 +9,10 @@
       t-on-click.stop="toggleComponent"
     >
       <div class="component-wrapper" t-attf-style="padding-left: {{componentPadding}}rem">
-        <i class="fa mx-1 pointer-icon"
+        <i class="fa px-1 pointer-icon caret"
           t-att-class="{'fa-caret-right': !props.component.toggled, 'fa-caret-down': props.component.toggled}" 
           t-on-click.stop="toggleDisplay"
-          t-attf-style="visibility: {{props.component.children.length > 0 ? '' : 'hidden'}};"
+          t-attf-style="{{props.component.children.length > 0 ? '' : 'visibility: hidden;'}}"
         />
         <span t-if="props.component.depth">&lt;</span>
         <span style="color: var(--component-color);">

@@ -10,12 +10,12 @@
   --bs-font-monospace: "Fira Mono";
   --text-color: #494949;
   --object-color: rgb(119, 34, 255);
-  --prototype-color: rgb(123, 97, 165);
+  --prototype-color: rgb(179 133 255);
   --text-proto-color: #818181;
   --highlight-color: yellow;
   --component-color: rgb(18, 54, 255);
-  --key-name: rgb(255, 181, 44);
-  --key-content: rgb(119, 34, 255);
+  --key-name: rgb(192 166 118);
+  --key-content: rgb(141 112 188 / 59%);
   --subscription-key: rgb(34, 49, 255);
   --component-highlighted: #f0f8fb;
   --component-selected: #d4e3f2;
@@ -39,8 +39,8 @@
   --text-proto-color: #818181;
   --highlight-color: yellow;
   --component-color: rgb(135 153 255);
-  --key-name: rgb(255, 181, 44);
-  --key-content: rgb(188 147 255);
+  --key-name: rgb(171 212 253 / 51%);
+  --key-content: rgb(227 213 252 / 60%);
   --subscription-key: rgb(154 161 255);
   --component-highlighted: #525d61;
   --component-selected: #287e99;
@@ -53,6 +53,10 @@
   color-scheme: dark;
   /* to change the color here, put it in stroke='%23[color in hexadecimal]' */
   --select-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23c9c9c9' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+}
+
+.caret {
+  width: 0.9rem;
 }
 
 #container {

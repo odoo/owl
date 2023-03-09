@@ -12,14 +12,16 @@
         </select>
         <div class="icons-separator"/>
         <label class="mx-2 form-check-label pointer-icon" title="Trace renderings in console">
-          <input type="checkbox" class="form-check-input" t-att-checked="store.traceRenderings" t-on-input="() => this.store.toggleTracing()"/> Trace renderings
+          <input type="checkbox" class="form-check-input me-1" t-att-checked="store.traceRenderings" t-on-input="() => this.store.toggleTracing()"/> Trace renderings
         </label>
         <!-- <EventSearchBar/> -->
       </div>
       <div class="events-container h-100 font-monospace">
         <t t-if="showHelp()">
           <div class="status-message d-flex justify-content-center align-items-center">
-            Click on the <i class="fa fa-circle px-2" style="font-size: 0.8em;"></i> button to start recording events.
+            <div>
+              Click on the <i class="fa fa-circle" style="font-size: 0.8em;"></i> button to start recording events.
+            </div>
           </div>
         </t>
         <t t-else="">

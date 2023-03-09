@@ -218,7 +218,7 @@ export class OwlDevtoolsGlobalHook {
       // spent in the template, not in additional work, such as flushing scheduler
       const node = this.node;
       const nodeRenderFn = node.renderFn;
-      let time;
+      let time = 0;
       this.node.renderFn = function() {
         const before = performance.now();
         const result = nodeRenderFn.call(this);

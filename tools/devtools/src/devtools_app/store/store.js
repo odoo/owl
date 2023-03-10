@@ -53,6 +53,7 @@ export const store = reactive({
     props: { toggled: true, children: [] },
     env: { toggled: false, children: [] },
     instance: { toggled: true, children: [] },
+    version: "1.0",
   },
   selectedElement: null,
   componentSearch: {

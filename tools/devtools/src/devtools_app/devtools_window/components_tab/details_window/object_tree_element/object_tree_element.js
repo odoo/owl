@@ -76,9 +76,6 @@ export class ObjectTreeElement extends Component {
   }
 
   setupEditMode() {
-    if (this.store.activeComponent.path.length === 1) {
-      return;
-    }
     if (!this.state.editMode) {
       if (!this.props.object.hasChildren) {
         this.state.editMode = true;

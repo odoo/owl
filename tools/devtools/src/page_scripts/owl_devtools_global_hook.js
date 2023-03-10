@@ -978,10 +978,13 @@ export class OwlDevtoolsGlobalHook {
     }
     // A path with only the app index indicates that the component is an App instead
     const isApp = path.length === 1;
+    if(isApp){
+      component.version = node.__proto__.constructor.version;
+    }
     // Load props of the component
     const props = isApp ? node.props : node.component.props;
     component.props = { toggled: oldTree ? oldTree.props.toggled : true, children: [] };
-    component.name = isApp ? "App " + (Number(path[0]) + 1) : node.component.constructor.name;
+    component.name = isApp ? (node?.name ? `App (${node.name})` : "App " + (Number(path[0]) + 1)) : node.component.constructor.name;
     const propsPath = isApp
       ? [...path, { type: "item", value: "props" }]
       : [...path, { type: "item", value: "component" }, { type: "item", value: "props" }];
@@ -1282,7 +1285,12 @@ export class OwlDevtoolsGlobalHook {
     } else {
       obj[key] = value;
       if (objectType === "props" || objectType === "instance") {
-        this.getComponentNode(path).render();
+        const component = this.getComponentNode(path);
+        if(component.__proto__.hasOwnProperty("render")){
+          this.getComponentNode(path).render();
+        } else {
+          component.root.render();
+        }
       } else if (objectType === "env") {
         [...this.apps][path[0]].root.render(true);
       }
@@ -1351,13 +1359,14 @@ export class OwlDevtoolsGlobalHook {
       }
       let appNode = {};
       appNode = {
-        name: "App " + (index + 1),
+        name: app?.name ? `App (${app.name})` : "App " + (index + 1),
         path: [index.toString()],
         key: "",
         depth: 0,
         toggled: false,
         selected: false,
         highlighted: false,
+        version: app.__proto__.constructor?.version ? app.__proto__.constructor.version : "< 2.0.8",
         children: [],
       };
       if (app.root) {

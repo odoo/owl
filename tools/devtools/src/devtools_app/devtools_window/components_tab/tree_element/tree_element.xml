@@ -24,6 +24,7 @@
           </t>
         </span>
         <span t-if="props.component.depth">&gt;</span>
+        <span class="fst-italic" t-else=""> version=<t t-esc="props.component.version"/></span>
       </div>
       <div t-if="store.contextMenu.activeMenu === contextMenuId" class="custom-menu" t-attf-style="top: {{store.contextMenu.top}}; left: {{store.contextMenu.left}}" t-ref="contextmenu">
         <ul class="my-1">

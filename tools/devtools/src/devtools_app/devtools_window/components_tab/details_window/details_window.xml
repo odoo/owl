@@ -3,7 +3,10 @@
   <t t-name="devtools.DetailsWindow" owl="1">
     <div class="panel-top d-flex align-items-center">
       <div class="ms-1 p-1 text-truncate" style="width: 100%;">
-        <t t-if="store.activeComponent.path.length > 1">&lt;</t><b style="color: var(--component-color); cursor: pointer;" t-on-mouseover.stop="() => this.store.highlightComponent(this.store.activeComponent.path)" t-on-click.stop="() => this.store.focusSelectedComponent()" t-on-contextmenu.prevent="openMenu" t-esc="store.activeComponent.name"/><t t-if="store.activeComponent.path.length > 1">&gt;</t>
+        <span t-if="store.activeComponent.path.length > 1">&lt;</span>
+        <b style="color: var(--component-color); cursor: pointer;" t-on-mouseover.stop="() => this.store.highlightComponent(this.store.activeComponent.path)" t-on-click.stop="() => this.store.focusSelectedComponent()" t-on-contextmenu.prevent="openMenu" t-esc="store.activeComponent.name"/>
+        <span t-if="store.activeComponent.path.length > 1">&gt;</span>
+        <span class="fst-italic" t-else=""> version=<t t-debug="" t-esc="store.activeComponent.version"/></span>
       </div>
       <t t-if="store.activeComponent.path.length > 1">
         <i title="Inspect component in the Elements tab" class="fa fa-eye utility-icon p-1" t-on-click.stop="() => this.store.inspectComponent('DOM')"></i>

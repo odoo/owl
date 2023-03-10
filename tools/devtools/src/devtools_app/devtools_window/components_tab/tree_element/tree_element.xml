@@ -28,7 +28,8 @@
       <div t-if="store.contextMenu.activeMenu === contextMenuId" class="custom-menu" t-attf-style="top: {{store.contextMenu.top}}; left: {{store.contextMenu.left}}" t-ref="contextmenu">
         <ul class="my-1">
           <li t-on-click.stop="() => this.store.toggleComponentAndChildren(props.component, true)" class="custom-menu-item py-1 px-4">Expand children</li>
-          <li t-on-click.stop="() => this.store.toggleComponentAndChildren(props.component, false)" class="custom-menu-item py-1 px-4">Fold children</li>
+          <li t-on-click.stop="() => this.store.toggleComponentAndChildren(props.component, false)" class="custom-menu-item py-1 px-4">Fold all children</li>
+          <li t-on-click.stop="() => this.store.foldDirectChildren(props.component)" class="custom-menu-item py-1 px-4">Fold direct children</li>
           <li t-on-click.stop="() => this.store.inspectComponent('source', props.component.path)" class="custom-menu-item py-1 px-4">Inspect source code</li>
           <t t-if="props.component.path.length !== 1">
             <li t-on-click.stop="() => this.store.logObjectInConsole([...props.component.path, { type: 'item', value: 'component'}])" class="custom-menu-item py-1 px-4">Store as global variable</li>

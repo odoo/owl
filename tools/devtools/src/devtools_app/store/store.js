@@ -239,6 +239,12 @@ export const store = reactive({
     }
   },
 
+  foldDirectChildren(element){
+    for (const child of element.children){
+      child.toggled = false;
+    }
+  },
+
   // Action related to the left(toggle)/up(not toggle) arrow keys for navigation purpose
   // The resulting behaviour is the same as in the Elements tab of the chrome devtools
   toggleOrSelectPrevElement(toggle) {

@@ -31,7 +31,8 @@
     <div t-if="store.contextMenu.activeMenu === nodeContextMenuId" class="custom-menu" t-attf-style="top: {{store.contextMenu.top}}; left: {{store.contextMenu.left}}" t-ref="nodeContextMenu">
       <ul class="my-1">
         <li t-on-click.stop="() => this.store.toggleEventAndChildren(props.event, true)" class="custom-menu-item py-1 px-4">Expand children</li>
-        <li t-on-click.stop="() => this.store.toggleEventAndChildren(props.event, false)" class="custom-menu-item py-1 px-4">Fold children</li>
+        <li t-on-click.stop="() => this.store.toggleEventAndChildren(props.event, false)" class="custom-menu-item py-1 px-4">Fold all children</li>
+        <li t-on-click.stop="() => this.store.foldDirectChildren(props.event)" class="custom-menu-item py-1 px-4">Fold direct children</li>
       </ul>
     </div>
     <div t-if="store.contextMenu.activeMenu === componentContextMenuId" class="custom-menu" t-attf-style="top: {{store.contextMenu.top}}; left: {{store.contextMenu.left}}" t-ref="componentContextmenu">

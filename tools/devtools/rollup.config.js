@@ -7,25 +7,25 @@ export default ({ "config-browser": browser }) => {
   const isProduction = process.env.NODE_ENV === "production";
   const isChrome = browser === "chrome";
   const filesToMove = [
-    { src: "tools/devtools/assets/**/*", dest: "tools/devtools/build/assets/" },
+    { src: "tools/devtools/assets/**/*", dest: "dist/devtools/assets/" },
     {
       src: "tools/devtools/src/devtools_app/devtools.html",
-      dest: "tools/devtools/build/devtools_app",
+      dest: "dist/devtools/devtools_app",
     },
     {
       src: "tools/devtools/src/devtools_app/devtools_panel.html",
-      dest: "tools/devtools/build/devtools_app",
+      dest: "dist/devtools/devtools_app",
     },
-    { src: "tools/devtools/src/fonts/*", dest: "tools/devtools/build/fonts/" },
-    { src: "tools/devtools/src/popup_app/popup.html", dest: "tools/devtools/build/popup_app" },
-    { src: "tools/devtools/src/background.html", dest: "tools/devtools/build" },
-    { src: "tools/devtools/src/main.css", dest: "tools/devtools/build/popup_app" },
-    { src: "tools/devtools/src/main.css", dest: "tools/devtools/build/devtools_app" },
+    { src: "tools/devtools/src/fonts/*", dest: "dist/devtools/fonts/" },
+    { src: "tools/devtools/src/popup_app/popup.html", dest: "dist/devtools/popup_app" },
+    { src: "tools/devtools/src/background.html", dest: "dist/devtools" },
+    { src: "tools/devtools/src/main.css", dest: "dist/devtools/popup_app" },
+    { src: "tools/devtools/src/main.css", dest: "dist/devtools/devtools_app" },
     {
       src: isChrome
         ? "tools/devtools/manifest-chrome.json"
         : "tools/devtools/manifest-firefox.json",
-      dest: "tools/devtools/build",
+      dest: "dist/devtools",
       rename: "manifest.json",
     },
   ];
@@ -36,7 +36,7 @@ export default ({ "config-browser": browser }) => {
       output: [
         {
           format: format,
-          file: input.replace("src", "build"),
+          file: input.replace("tools/devtools/src", "dist/devtools"),
         },
       ],
       plugins: [isProduction && terser.terser()],

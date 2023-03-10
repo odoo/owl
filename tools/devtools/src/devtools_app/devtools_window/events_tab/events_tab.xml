@@ -7,8 +7,8 @@
         <i title="Clear events" class="fa fa-ban pointer-icon p-1 px-2" t-on-click.stop="() => this.store.clearEventsConsole()" aria-hidden="true"></i>
         <div class="icons-separator mx-1"/>
         <select class="form-select form-select-sm custom-select border-0" t-on-change="selectDisplayMode">
-          <option value="Tree">Tree view</option>
-          <option value="List">Events log</option>
+          <option t-att-selected="store.eventsTreeView" value="Tree">Tree view</option>
+          <option t-att-selected="!store.eventsTreeView" value="List">Events log</option>
         </select>
         <i title="Collapse All" class="fa fa-list me-1" t-on-click="() => this.store.collapseAll()"></i>
         <div class="icons-separator"/>

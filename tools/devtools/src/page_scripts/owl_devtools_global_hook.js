@@ -255,7 +255,7 @@ export class OwlDevtoolsGlobalHook {
           // A render on a RootFiber is a root render and can propagate other renders to its children
           if (this instanceof self.RootFiber) {
             self.eventsBatch.push({
-              type: "render",
+              type: this.deep ? "render (deep)" : "render",
               component: this.node.name,
               key: this.node.parentKey ? this.node.parentKey : "",
               path: path,

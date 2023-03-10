@@ -58,7 +58,7 @@ export class ObjectTreeElement extends Component {
     }
     // Same for subscription items which are not present in the keys while the keys will be bold
     if (this.props.object.objectType === "subscription" && this.props.object.depth > 0) {
-      if (this.props.keys.includes(this.props.object.name)) {
+      if (this.props.keys.includes(this.props.object.name.toString())) {
         return { "fw-bolder": true };
       }
       return { attenuate: true };

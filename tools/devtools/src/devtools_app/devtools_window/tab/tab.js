@@ -21,7 +21,7 @@ export class Tab extends Component {
     switch (this.props.tabName) {
       case "ComponentsTab":
         return "Components";
-      case "EventsTab":
+      case "ProfilerTab":
         return "Profiler";
     }
   }

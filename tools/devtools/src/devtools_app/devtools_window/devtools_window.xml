@@ -10,7 +10,7 @@
       <t t-elif="store.owlStatus">
         <div class="panel-top d-flex align-items-center custom-navbar">
           <Tab tabName="'ComponentsTab'"/>
-          <Tab tabName="'EventsTab'"/>
+          <Tab tabName="'ProfilerTab'"/>
           <select t-if="store.frameUrls.length > 1" class="form-select form-select-sm custom-select navbar-select border-0" t-on-change="selectFrame">
             <t t-foreach="store.frameUrls" t-as="frame" t-key="frame_index">
               <option t-att-value="frame"><t t-esc="frame"/></option>
@@ -20,7 +20,7 @@
           <i class="p-1 me-1 lg-icon fa fa-repeat pointer-icon" title="Refresh extension" t-on-click.stop="() => this.store.refreshExtension()"></i>
         </div>
         <ComponentsTab t-if="store.page === 'ComponentsTab'"/>
-        <EventsTab t-if="store.page === 'EventsTab'"/>
+        <ProfilerTab t-if="store.page === 'ProfilerTab'"/>
       </t>
       <t t-else="">
         <div class="status-message d-flex justify-content-center align-items-center">

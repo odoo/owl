@@ -4,8 +4,8 @@ import { Event } from "./event/event";
 import { EventNode } from "./event_node/event_node";
 import { EventSearchBar } from "./event_search_bar/event_search_bar";
 
-export class EventsTab extends Component {
-  static template = "devtools.EventsTab";
+export class ProfilerTab extends Component {
+  static template = "devtools.ProfilerTab";
 
   static components = { Event, EventNode, EventSearchBar };
 

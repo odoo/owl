@@ -4509,7 +4509,7 @@
                 name = _name;
                 switch (suffix) {
                     case "bind":
-                        value = `${value}.bind(this)`;
+                        value = `(${value}).bind(this)`;
                         break;
                     case "alike":
                         break;
@@ -5481,7 +5481,7 @@
     }
 
     // do not modify manually. This value is updated by the release script.
-    const version = "2.0.8";
+    const version = "2.0.9";
 
     // -----------------------------------------------------------------------------
     //  Scheduler
@@ -5930,8 +5930,8 @@ See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration 
     Object.defineProperty(exports, '__esModule', { value: true });
 
 
-    __info__.date = '2023-03-09T12:11:42.493Z';
-    __info__.hash = '532ab7f';
+    __info__.date = '2023-03-13T09:55:28.107Z';
+    __info__.hash = '8893e02';
     __info__.url = 'https://github.com/odoo/owl';
 
 

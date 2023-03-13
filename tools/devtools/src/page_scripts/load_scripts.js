@@ -19,15 +19,15 @@ if (!window.__OWL_DEVTOOLS__) {
       if (value?.Fiber !== undefined) {
         window.__OWL__DEVTOOLS_GLOBAL_HOOK__ = new OwlDevtoolsGlobalHook();
       }
-      window.top.postMessage({ type: "owlDevtools__FrameReady" });
+      window.top.postMessage({ source: "owl-devtools", type: "FrameReady" });
     },
   });
   // Do note that the reload message is not sent on the top window so that it is not intercepted when originating
   // from an iframe
-  window.postMessage({ type: "owlDevtools__Reload" });
+  window.postMessage({ source: "owl-devtools", type: "Reload" });
 } else if (window.__OWL_DEVTOOLS__?.Fiber !== undefined && !window.__OWL__DEVTOOLS_GLOBAL_HOOK__) {
   window.__OWL__DEVTOOLS_GLOBAL_HOOK__ = new OwlDevtoolsGlobalHook();
-  window.postMessage({ type: "owlDevtools__Reload" });
+  window.postMessage({ source: "owl-devtools", type: "Reload" });
 }
 // Completion value used by eval to assess whether the scripts have been properly loaded
 export default __OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;

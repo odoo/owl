@@ -240,8 +240,8 @@ export const store = reactive({
     }
   },
 
-  foldDirectChildren(element){
-    for (const child of element.children){
+  foldDirectChildren(element) {
+    for (const child of element.children) {
       child.toggled = false;
     }
   },
@@ -475,7 +475,7 @@ export const store = reactive({
 
   collapseAll() {
     for (let event of this.eventsTree) {
-        event.toggled = false;
+      event.toggled = false;
     }
   },
 
@@ -580,15 +580,15 @@ export const store = reactive({
   },
 
   // Toggle dark mode in the extension and store result in the storage
-  toggleDarkMode(){
+  toggleDarkMode() {
     this.settings.darkMode = !this.settings.darkMode;
     if (this.settings.darkMode) {
       document.querySelector("html").classList.add("dark-mode");
     } else {
       document.querySelector("html").classList.remove("dark-mode");
     }
-    chrome.storage.sync.set({"owl_devtools_dark_mode": this.settings.darkMode});
-  }
+    chrome.storage.sync.set({ owl_devtools_dark_mode: this.settings.darkMode });
+  },
 });
 
 // Instantiate the store
@@ -706,7 +706,7 @@ chrome.runtime.onConnect.addListener((port) => {
 // Load all settings from the chrome sync storage
 async function loadSettings() {
   let storage = await chrome.storage.sync.get();
-  if(storage.owl_devtools_dark_mode === undefined) {
+  if (storage.owl_devtools_dark_mode === undefined) {
     // Load dark mode based on the global settings of the chrome devtools
     darkMode = chrome.devtools.panels.themeName === "dark";
   } else {

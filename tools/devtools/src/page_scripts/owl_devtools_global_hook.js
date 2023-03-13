@@ -26,7 +26,8 @@ export class OwlDevtoolsGlobalHook {
              * More information in the docs: https://developer.chrome.com/docs/extensions/mv3/devtools/#evaluated-scripts-to-devtools
              */
             window.top.postMessage({
-              type: "owlDevtools__NewIFrame",
+              source: "owl-devtools",
+              type: "NewIFrame",
               data: addedNode.contentDocument.location.href,
               devtoolsId: self.devtoolsId,
             });
@@ -163,11 +164,19 @@ export class OwlDevtoolsGlobalHook {
     this.apps.add = function () {
       originalAdd.call(this, ...arguments);
       self.patchAppMethods();
-      window.top.postMessage({ type: "owlDevtools__RefreshApps", devtoolsId: self.devtoolsId });
+      window.top.postMessage({
+        source: "owl-devtools",
+        type: "RefreshApps",
+        devtoolsId: self.devtoolsId,
+      });
     };
     this.apps.delete = function () {
       originalDelete.call(this, ...arguments);
-      window.top.postMessage({ type: "owlDevtools__RefreshApps", devtoolsId: self.devtoolsId });
+      window.top.postMessage({
+        source: "owl-devtools",
+        type: "RefreshApps",
+        devtoolsId: self.devtoolsId,
+      });
     };
   }
 
@@ -199,7 +208,8 @@ export class OwlDevtoolsGlobalHook {
           const path = self.getComponentPath(fiber.node);
           //Add a functionnality to the flush function which sends a message to the window every time it is triggered.
           window.top.postMessage({
-            type: "owlDevtools__Flush",
+            source: "owl-devtools",
+            type: "Flush",
             data: path,
             devtoolsId: self.devtoolsId,
           });
@@ -307,7 +317,8 @@ export class OwlDevtoolsGlobalHook {
       original_Complete.call(this, ...arguments);
       if (self.recordEvents) {
         window.top.postMessage({
-          type: "owlDevtools__Event",
+          source: "owl-devtools",
+          type: "Event",
           data: self.eventsBatch,
           devtoolsId: self.devtoolsId,
         });
@@ -510,7 +521,8 @@ export class OwlDevtoolsGlobalHook {
       this.highlightComponent(path);
       this.currentSelectedElement = target;
       window.top.postMessage({
-        type: "owlDevtools__SelectElement",
+        source: "owl-devtools",
+        type: "SelectElement",
         data: path,
         devtoolsId: this.devtoolsId,
       });
@@ -537,7 +549,11 @@ export class OwlDevtoolsGlobalHook {
     document.removeEventListener("mouseover", this.HTMLSelector, { capture: true });
     document.removeEventListener("click", this.disableHTMLSelector, { capture: true });
     document.removeEventListener("mouseout", this.removeHighlights, { capture: true });
-    window.top.postMessage({ type: "owlDevtools__StopSelector", devtoolsId: this.devtoolsId });
+    window.top.postMessage({
+      source: "owl-devtools",
+      type: "StopSelector",
+      devtoolsId: this.devtoolsId,
+    });
   };
 
   // Returns the object specified by the path starting from the topParent object
@@ -978,13 +994,17 @@ export class OwlDevtoolsGlobalHook {
     }
     // A path with only the app index indicates that the component is an App instead
     const isApp = path.length === 1;
-    if(isApp){
+    if (isApp) {
       component.version = node.__proto__.constructor.version;
     }
     // Load props of the component
     const props = isApp ? node.props : node.component.props;
     component.props = { toggled: oldTree ? oldTree.props.toggled : true, children: [] };
-    component.name = isApp ? (node?.name ? `App (${node.name})` : "App " + (Number(path[0]) + 1)) : node.component.constructor.name;
+    component.name = isApp
+      ? node?.name
+        ? `App (${node.name})`
+        : "App " + (Number(path[0]) + 1)
+      : node.component.constructor.name;
     const propsPath = isApp
       ? [...path, { type: "item", value: "props" }]
       : [...path, { type: "item", value: "component" }, { type: "item", value: "props" }];
@@ -1286,7 +1306,7 @@ export class OwlDevtoolsGlobalHook {
       obj[key] = value;
       if (objectType === "props" || objectType === "instance") {
         const component = this.getComponentNode(path);
-        if(component.__proto__.hasOwnProperty("render")){
+        if (component.__proto__.hasOwnProperty("render")) {
           this.getComponentNode(path).render();
         } else {
           component.root.render();

@@ -6,7 +6,7 @@
         <span t-if="store.activeComponent.path.length > 1">&lt;</span>
         <b style="color: var(--component-color); cursor: pointer;" t-on-mouseover.stop="() => this.store.highlightComponent(this.store.activeComponent.path)" t-on-click.stop="() => this.store.focusSelectedComponent()" t-on-contextmenu.prevent="openMenu" t-esc="store.activeComponent.name"/>
         <span t-if="store.activeComponent.path.length > 1">&gt;</span>
-        <span class="fst-italic" t-else=""> version=<t t-debug="" t-esc="store.activeComponent.version"/></span>
+        <span class="fst-italic" t-else=""> version=<t t-esc="store.activeComponent.version"/></span>
       </div>
       <t t-if="store.activeComponent.path.length > 1">
         <i title="Inspect component in the Elements tab" class="fa fa-eye utility-icon p-1" t-on-click.stop="() => this.store.inspectComponent('DOM')"></i>

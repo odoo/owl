@@ -101,9 +101,12 @@ browserInstance.tabs.onUpdated.addListener((tab) => {
         (results) => {
           if (typeof results !== "undefined") {
             owlStatus = results[0].result;
-            chrome.action.setIcon({
-              path: owlStatus === 2 ? "assets/icon128.png" : "assets/icon_disabled128.png",
-            });
+            if(owlStatus === 2){
+              chrome.action.setIcon({path: "assets/icon128.png"});
+              loadScripts(tabData.id);
+            } else {
+              chrome.action.setIcon({path: "assets/icon_disabled128.png"});
+            }
           }
         }
       );
@@ -132,9 +135,12 @@ browserInstance.runtime.onMessage.addListener((message, sender, sendResponse) =>
     return true;
   } else if (message.type === "owlStatus") {
     owlStatus = message.data;
-    chrome.action.setIcon({
-      path: owlStatus === 2 ? "assets/icon128.png" : "assets/icon_disabled128.png",
-    });
+    if(owlStatus === 2){
+      chrome.action.setIcon({path: "assets/icon128.png"});
+      getActiveTabURL(isFirefox).then((tab) => {loadScripts(tab.id)});
+    } else {
+      chrome.action.setIcon({path: "assets/icon_disabled128.png"});
+    }
     // Dummy message to test if the extension context is still valid
   } else if (message.type === "keepAlive") {
     return;
@@ -148,3 +154,22 @@ browserInstance.runtime.onMessage.addListener((message, sender, sendResponse) =>
     );
   }
 });
+
+// Load the scripts on the page in order to define the __OWL__DEVTOOLS_GLOBAL_HOOK__
+async function loadScripts(tabId) {
+  return new Promise(async (resolve) => {
+    browserInstance.scripting.executeScript(
+      {
+        target: {tabId: tabId},
+        files: ["./page_scripts/load_scripts.js"],
+        world: "MAIN",
+      }, (results) => {
+        if (typeof results !== "undefined"){
+          resolve(results[0]);
+        } else {
+          resolve(undefined);
+        }
+      }
+    )
+  });
+}

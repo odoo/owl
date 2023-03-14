@@ -25,6 +25,7 @@
   --background-color: white;
   --text-selected: white;
   --menu-highlight-bg: rgb(201, 201, 201);
+  --version-bg: teal;
   /* to change the color here, put it in stroke='%23[color in hexadecimal]' */
   --select-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23444444' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
 }
@@ -50,6 +51,7 @@
   --background-color: rgb(45 45 45);
   --text-selected: #c9c9c9;
   --menu-highlight-bg: rgb(65, 65, 65);
+  --version-bg: #805900ad;
   color-scheme: dark;
   /* to change the color here, put it in stroke='%23[color in hexadecimal]' */
   --select-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23c9c9c9' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
@@ -205,6 +207,15 @@
 
 .key-content {
   color: var(--subscription-key);
+}
+
+.version {
+  margin-left: 5px;
+  background-color: var(--version-bg);
+  color: white;
+  padding: 2px 3px;
+  border-radius: 4px;
+  font-size: smaller;
 }
 
 .panel-top {

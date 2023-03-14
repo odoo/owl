@@ -1,14 +1,10 @@
+export const IS_FIREFOX = navigator.userAgent.indexOf("Firefox") !== -1;
+
 export async function getOwlStatus() {
-  const response = isFirefox()
+  const response = IS_FIREFOX
     ? await browser.runtime.sendMessage({ type: "getOwlStatus" })
     : await chrome.runtime.sendMessage({ type: "getOwlStatus" });
   return response.result;
-}
-
-export function isFirefox() {
-  if (navigator.userAgent.indexOf("Firefox") !== -1) {
-    return true;
-  }
 }
 
 // inspired from https://www.tutorialspoint.com/fuzzy-search-algorithm-in-javascript
@@ -54,38 +50,4 @@ export function minimizeKey(key) {
     return key;
   }
   return key;
-}
-
-// General method for executing functions from the loaded scripts in the right frame of the page
-// using the __OWL__DEVTOOLS_GLOBAL_HOOK__. Take the function's args as an array.
-export async function evalInWindow(fn, args = [], frameUrl = "top") {
-  const stringifiedArgs = [...args].map((arg) => {
-    arg = JSON.stringify(arg);
-    return arg;
-  });
-  const argsString = "(" + stringifiedArgs.join(", ") + ");";
-  const script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.${fn}${argsString}`;
-  return new Promise((resolve) => {
-    if (frameUrl !== "top") {
-      chrome.devtools.inspectedWindow.eval(
-        script,
-        { frameURL: frameUrl },
-        (result, isException) => {
-          if (!isException) {
-            resolve(result);
-          } else {
-            resolve(undefined);
-          }
-        }
-      );
-    } else {
-      chrome.devtools.inspectedWindow.eval(script, (result, isException) => {
-        if (!isException) {
-          resolve(result);
-        } else {
-          resolve(undefined);
-        }
-      });
-    }
-  });
 }

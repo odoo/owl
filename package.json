@@ -65,6 +65,7 @@
     "rollup-plugin-delete": "^2.0.0",
     "rollup-plugin-dts": "^4.2.2",
     "rollup-plugin-execute": "^1.1.1",
+    "rollup-plugin-string": "^3.0.0",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.31.1",
     "source-map-support": "^0.5.10",

@@ -1,140 +1,79 @@
+import { IS_FIREFOX } from "./utils";
+
 let owlStatus = 0;
-let tabId;
-let isChrome = false;
-let isFirefox = false;
 
-if (navigator.userAgent.indexOf("Chrome") !== -1) {
-  isChrome = true;
-} else if (navigator.userAgent.indexOf("Firefox") !== -1) {
-  isFirefox = true;
+let browserInstance = IS_FIREFOX ? browser : chrome;
+
+// Load the devtools global hook this way when running on manifest v3 chrome
+if (!IS_FIREFOX) {
+  chrome.scripting.registerContentScripts([
+    {
+      id: "owlDevtoolsGLobalHook",
+      matches: ["<all_urls>"],
+      js: ["page_scripts/owl_devtools_global_hook.js"],
+      world: chrome.scripting.ExecutionWorld.MAIN,
+    },
+  ]);
 }
 
-let browserInstance = isFirefox ? browser : chrome;
-
-// Check if owl is available and up to date on the given tab and adapt the extension icon accordingly
-async function checkOwlStatus(tabId) {
-  return new Promise((resolve) => {
-    if (isChrome) {
-      chrome.scripting.executeScript(
-        {
-          target: { tabId: tabId },
-          func: () => {
-            if (window.__OWL_DEVTOOLS__?.Fiber !== undefined) {
-              return 2;
-            }
-            if (typeof owl === "object" && owl.hasOwnProperty("App")) {
-              return 1;
-            }
-            return 0;
-          },
-          world: "MAIN",
-        },
-        (results) => {
-          if (typeof results !== "undefined") {
-            owlStatus = results[0].result;
-            chrome.action.setIcon({
-              path: owlStatus === 2 ? "assets/icon128.png" : "assets/icon_disabled128.png",
-            });
-            resolve(results[0].result);
-          }
-        }
-      );
-    } else if (isFirefox) {
-      // TODO: Manifest v3 firefox
-    }
-  });
+// Update the owlStatus variable and the extension icon accordingly
+function setOwlStatus(status) {
+  owlStatus = status;
+  if(IS_FIREFOX){
+    browser.browserAction.setIcon({path: owlStatus === 2 ? "assets/icon128.png" : "assets/icon_disabled128.png"});
+  }else{
+    browserInstance.action.setIcon({
+      path: owlStatus === 2 ? "assets/icon128.png" : "assets/icon_disabled128.png"
+    });
+  }
 }
 
-async function getActiveTabURL(isFirefox) {
+async function getActiveTabURL(IS_FIREFOX) {
   let queryOptions = { active: true, lastFocusedWindow: true };
-  let res = isFirefox
+  let res = IS_FIREFOX
     ? await browser.tabs.query(queryOptions)
     : await chrome.tabs.query(queryOptions);
   let [tab] = res;
   return tab;
 }
 
-// Check owl status on tab update by implanting a message sender on the __OWL_DEVTOOLS__ hook
-// if it is not already present on the page
+// Check owl status on tab update
 browserInstance.tabs.onUpdated.addListener((tab) => {
   browserInstance.tabs.get(tab, (tabData) => {
     if (tabData.status === "complete") {
-      chrome.scripting.executeScript(
-        {
-          target: { tabId: tabData.id },
-          func: () => {
-            if (!window.__OWL_DEVTOOLS__) {
-              let val;
-              const descriptor = Object.getOwnPropertyDescriptor(window, "__OWL_DEVTOOLS__") || {
-                get() {
-                  return val;
-                },
-                set(value) {
-                  val = value;
-                },
-              };
-              Object.defineProperty(window, "__OWL_DEVTOOLS__", {
-                get() {
-                  return descriptor.get.call(this);
-                },
-                set(value) {
-                  descriptor.set.call(this, value);
-                  let result = 1;
-                  if (value?.Fiber !== undefined) {
-                    result = 2;
-                  }
-                  window.top.postMessage({ type: "owlDevtools__owlStatus", data: result });
-                },
-                configurable: true,
-              });
-              return 0;
-            } else {
-              let result = 1;
-              if (window.__OWL_DEVTOOLS__.Fiber !== undefined) {
-                result = 2;
-              }
-              return result;
-            }
-          },
-          world: "MAIN",
-        },
-        (results) => {
-          if (typeof results !== "undefined") {
-            owlStatus = results[0].result;
-            chrome.action.setIcon({
-              path: owlStatus === 2 ? "assets/icon128.png" : "assets/icon_disabled128.png",
-            });
-          }
-        }
-      );
+      setOwlStatus(0);
+      checkOwlStatus(tabData.id);
     }
   });
 });
 
-// ...and activation
+// Check owl status on tab activation
 browserInstance.tabs.onActivated.addListener((activeInfo) => {
-  checkOwlStatus(activeInfo.tabId);
+  setOwlStatus(0);
+  checkOwlStatus(activeInfo.tabId)
 });
+
+// send a message to the window which will be intercepted by the page script and will result in a response of type owlStatus
+function checkOwlStatus(tabId){
+  browserInstance.scripting.executeScript({
+    target: { tabId: tabId },
+    func: () => {
+      window.postMessage({
+        source: "owl-devtools-background",
+        type: "checkOwlStatus",
+      });
+    },
+  });
+}
 
 // Messages handler for the background script
 browserInstance.runtime.onMessage.addListener((message, sender, sendResponse) => {
   // Send back the owl status to the sender
   if (message.type === "getOwlStatus") {
-    getActiveTabURL(isFirefox).then(async (tab) => {
-      if (tab) {
-        tabId = tab.id;
-        const result = await checkOwlStatus(tabId);
-        sendResponse({ result: result });
-      } else {
-        sendResponse({ result: 0 });
-      }
-    });
+    sendResponse({ result: owlStatus });
     return true;
   } else if (message.type === "owlStatus") {
-    owlStatus = message.data;
-    chrome.action.setIcon({
-      path: owlStatus === 2 ? "assets/icon128.png" : "assets/icon_disabled128.png",
-    });
+    setOwlStatus(message.data);
     // Dummy message to test if the extension context is still valid
   } else if (message.type === "keepAlive") {
     return;

@@ -1,5 +1,8 @@
 const { reactive, useState, toRaw } = owl;
-import { fuzzySearch } from "../../utils";
+import { fuzzySearch, IS_FIREFOX } from "../../utils";
+import globalHook from "../../page_scripts/owl_devtools_global_hook";
+
+const browserInstance = IS_FIREFOX ? browser : chrome;
 
 // Main store which contains all states that needs to be maintained throughout all components in the devtools app
 export const store = reactive({
@@ -587,7 +590,7 @@ export const store = reactive({
     } else {
       document.querySelector("html").classList.remove("dark-mode");
     }
-    chrome.storage.sync.set({ owl_devtools_dark_mode: this.settings.darkMode });
+    browserInstance.storage.local.set({ owl_devtools_dark_mode: this.settings.darkMode });
   },
 });
 
@@ -623,7 +626,7 @@ loadSettings();
 setInterval(() => {
   if (store.extensionContextStatus) {
     try {
-      chrome.runtime.sendMessage({ type: "keepAlive" });
+      browserInstance.runtime.sendMessage({ type: "keepAlive" });
     } catch (e) {
       store.extensionContextStatus = false;
     }
@@ -631,7 +634,7 @@ setInterval(() => {
 }, 1000);
 
 // Connect to the port to communicate to the background script
-chrome.runtime.onConnect.addListener((port) => {
+browserInstance.runtime.onConnect.addListener((port) => {
   if (!port.name === "OwlDevtoolsPort") {
     return;
   }
@@ -705,10 +708,10 @@ chrome.runtime.onConnect.addListener((port) => {
 
 // Load all settings from the chrome sync storage
 async function loadSettings() {
-  let storage = await chrome.storage.sync.get();
+  let storage = await browserInstance.storage.local.get();
   if (storage.owl_devtools_dark_mode === undefined) {
     // Load dark mode based on the global settings of the chrome devtools
-    darkMode = chrome.devtools.panels.themeName === "dark";
+    darkMode = browserInstance.devtools.panels.themeName === "dark";
   } else {
     darkMode = storage.owl_devtools_dark_mode;
   }
@@ -854,9 +857,7 @@ function foldNodes(node) {
 
 // Load the scripts in the specified frame
 async function loadScripts(frameUrl) {
-  const response = await fetch("../page_scripts/load_scripts.js");
-  const contents = await response.text();
-  return await evalInWindow(contents, frameUrl);
+  return await evalInWindow(globalHook, frameUrl);
 }
 
 // Shallow array equality
@@ -879,7 +880,7 @@ async function evalFunctionInWindow(fn, args = [], frameUrl = "top") {
   let script = `__OWL__DEVTOOLS_GLOBAL_HOOK__.${fn}${argsString}`;
   return await new Promise((resolve, reject) => {
     if (frameUrl !== "top") {
-      chrome.devtools.inspectedWindow.eval(
+      browserInstance.devtools.inspectedWindow.eval(
         script,
         { frameURL: frameUrl },
         (result, isException) => {
@@ -891,7 +892,7 @@ async function evalFunctionInWindow(fn, args = [], frameUrl = "top") {
         }
       );
     } else {
-      chrome.devtools.inspectedWindow.eval(script, (result, isException) => {
+      browserInstance.devtools.inspectedWindow.eval(script, (result, isException) => {
         if (!isException) {
           resolve(result);
         } else {
@@ -906,7 +907,7 @@ async function evalFunctionInWindow(fn, args = [], frameUrl = "top") {
 async function evalInWindow(code, frameUrl = "top") {
   return await new Promise((resolve, reject) => {
     if (frameUrl !== "top") {
-      chrome.devtools.inspectedWindow.eval(code, { frameURL: frameUrl }, (result, isException) => {
+      browserInstance.devtools.inspectedWindow.eval(code, { frameURL: frameUrl }, (result, isException) => {
         if (!isException) {
           resolve(result);
         } else {
@@ -914,7 +915,7 @@ async function evalInWindow(code, frameUrl = "top") {
         }
       });
     } else {
-      chrome.devtools.inspectedWindow.eval(code, (result, isException) => {
+      browserInstance.devtools.inspectedWindow.eval(code, (result, isException) => {
         if (!isException) {
           resolve(result);
         } else {

@@ -1,3 +1,6 @@
+import globalHook from "./page_scripts/owl_devtools_global_hook";
+import { IS_FIREFOX } from "./utils";
+
 // Relays the owlDevtools__... type top window messages to the background script so that it can relay it to the devtools app
 window.addEventListener(
   "message",
@@ -17,3 +20,11 @@ window.addEventListener(
   },
   false
 );
+
+// Load the devtools global hook this way when running on firefox
+if (IS_FIREFOX) {
+  const script = document.createElement("script");
+  script.textContent = globalHook;
+  document.documentElement.appendChild(script);
+  script.parentNode.removeChild(script);
+}

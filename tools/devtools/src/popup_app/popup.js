@@ -1,5 +1,5 @@
 import { templates } from "../../assets/templates.js";
-import { getOwlStatus } from "../utils.js";
+import { getOwlStatus } from "../utils"
 const { Component, useState, onWillStart, mount, App } = owl;
 
 class PopUpApp extends Component {
@@ -8,7 +8,11 @@ class PopUpApp extends Component {
   setup() {
     this.state = useState({ status: 0 });
     onWillStart(async () => {
-      this.state.status = await getOwlStatus();
+      try {
+        this.state.status = await getOwlStatus();
+      } catch (e) {
+        this.state.status = -1;
+      }
     });
   }
 }

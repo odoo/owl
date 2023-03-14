@@ -2,6 +2,7 @@ import terser from "rollup-plugin-terser";
 import copy from "rollup-plugin-copy";
 import execute from "rollup-plugin-execute";
 import del from "rollup-plugin-delete";
+import { string } from "rollup-plugin-string";
 
 export default ({ "config-browser": browser }) => {
   const isProduction = process.env.NODE_ENV === "production";
@@ -15,6 +16,10 @@ export default ({ "config-browser": browser }) => {
     {
       src: "tools/devtools/src/devtools_app/devtools_panel.html",
       dest: "dist/devtools/devtools_app",
+    },
+    {
+      src: "tools/devtools/src/page_scripts/owl_devtools_global_hook.js",
+      dest: "dist/devtools/page_scripts",
     },
     { src: "tools/devtools/src/fonts/*", dest: "dist/devtools/fonts/" },
     { src: "tools/devtools/src/popup_app/popup.html", dest: "dist/devtools/popup_app" },
@@ -39,14 +44,18 @@ export default ({ "config-browser": browser }) => {
           file: input.replace("tools/devtools/src", "dist/devtools"),
         },
       ],
-      plugins: [isProduction && terser.terser()],
+      plugins: [
+        string({
+          include: "**/page_scripts/owl_devtools_global_hook.js",
+        }),
+        isProduction && terser.terser(),
+      ],
     };
   }
-
   const commands = new Array(2);
   commands[1] =
     "npm run compile_templates -- tools/devtools/src && mv templates.js tools/devtools/assets/templates.js";
-  const firstRule = generateRule("tools/devtools/src/utils.js");
+  const firstRule = generateRule("tools/devtools/src/page_scripts/owl_devtools_global_hook.js");
   if (isProduction)
     commands[0] =
       "npm run build && cp dist/owl.iife.js tools/devtools/assets/owl.js && npm run build:compiler";
@@ -61,7 +70,7 @@ export default ({ "config-browser": browser }) => {
     firstRule,
     secondRule,
     generateRule("tools/devtools/src/devtools_app/devtools.js"),
-    generateRule("tools/devtools/src/page_scripts/load_scripts.js", "iife"),
+    generateRule("tools/devtools/src/utils.js"),
     generateRule("tools/devtools/src/devtools_app/devtools_panel.js"),
     generateRule("tools/devtools/src/popup_app/popup.js"),
     lastRule,

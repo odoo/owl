@@ -3,6 +3,12 @@
   "version": "1.0",
   "description": "Firefox devtools extension for Odoo Owl framework",
   "manifest_version": 2,
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "@owl-devtools",
+      "strict_min_version": "55.0"
+    }
+  },
   "icons": {
     "128": "assets/icon128.png"
   },

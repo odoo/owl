@@ -1162,8 +1162,8 @@
           };
           if (
             oldTree &&
-            oldTree.subscriptions[index] &&
-            oldTree.subscriptions[index].target.toggled
+            oldTree.subscriptions.children[index] &&
+            oldTree.subscriptions.children[index].target.toggled
           ) {
             subscription.target.toggled = true;
           }

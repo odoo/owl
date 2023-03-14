@@ -1434,7 +1434,8 @@
             }
           }
           if (inspectedPath.join("/") === index.toString()) {
-            root.selected = true;
+            appNode.selected = true;
+            root.highlighted = true;
           } else if (inspectedPath.join("/") === index.toString() + "/root") {
             root.selected = true;
           }

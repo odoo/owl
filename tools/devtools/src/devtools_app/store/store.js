@@ -37,6 +37,7 @@ export const store = reactive({
       this.activeMenu = -1;
     },
   },
+  isFirefox: IS_FIREFOX,
   frameUrls: ["top"],
   activeFrame: "top",
   page: "ComponentsTab",

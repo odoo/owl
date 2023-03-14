@@ -1,11 +1,12 @@
 const { reactive, useState, toRaw } = owl;
-import { fuzzySearch, IS_FIREFOX } from "../../utils";
+import { fuzzySearch, IS_FIREFOX, getActiveTabURL } from "../../utils";
 import globalHook from "../../page_scripts/owl_devtools_global_hook";
 
 const browserInstance = IS_FIREFOX ? browser : chrome;
 
 // Main store which contains all states that needs to be maintained throughout all components in the devtools app
 export const store = reactive({
+  devtoolsId: 0,
   settings: {
     expandByDefault: true,
     toggleOnSelected: false,
@@ -402,7 +403,7 @@ export const store = reactive({
         if (!scriptsLoaded) {
           await loadScripts(frame);
         }
-        evalInWindow("__OWL__DEVTOOLS_GLOBAL_HOOK__.devtoolsId = " + devtoolsId + ";", frame);
+        evalInWindow("__OWL__DEVTOOLS_GLOBAL_HOOK__.devtoolsId = " + store.devtoolsId + ";", frame);
         if (!this.frameUrls.includes(frame)) {
           this.frameUrls = [...this.frameUrls, frame];
         }
@@ -600,28 +601,30 @@ export function useStore() {
   return useState(store);
 }
 
-const devtoolsId = Date.now();
+init();
 
-evalInWindow("__OWL__DEVTOOLS_GLOBAL_HOOK__.devtoolsId = " + devtoolsId + ";");
+async function init() {
+  store.devtoolsId = await getTabURL();
 
-// We want to load the base components tree when the devtools tab is first opened
-store.loadComponentsTree(false);
+  evalInWindow("__OWL__DEVTOOLS_GLOBAL_HOOK__.devtoolsId = " + store.devtoolsId + ";");
 
-// We also want to detect the different iframes at first loading of the devtools tab
-store.updateIFrameList();
+  // We want to load the base components tree when the devtools tab is first opened
+  store.loadComponentsTree(false);
 
-// Global listeners to close the currently shown context menu when the user clicks or opens another
-document.addEventListener("click", () => store.contextMenu.close(), { capture: true });
-document.addEventListener("contextmenu", () => store.contextMenu.close(), { capture: true });
+  // We also want to detect the different iframes at first loading of the devtools tab
+  store.updateIFrameList();
 
-// Make sure the events recorder is at its initial state in every frame
-for (const frame of store.frameUrls) {
-  evalFunctionInWindow("toggleEventsRecording", [false, 0], frame);
+  // Global listeners to close the currently shown context menu when the user clicks or opens another
+  document.addEventListener("click", () => store.contextMenu.close(), { capture: true });
+  document.addEventListener("contextmenu", () => store.contextMenu.close(), { capture: true });
+
+  // Make sure the events recorder is at its initial state in every frame
+  for (const frame of store.frameUrls) {
+    evalFunctionInWindow("toggleEventsRecording", [false, 0], frame);
+  }
+
+  loadSettings();
 }
-
-let flushRendersTimeout = false;
-
-loadSettings();
 
 // Heartbeat message to test whether the extension context is still valid or not
 setInterval(() => {
@@ -634,6 +637,7 @@ setInterval(() => {
   }
 }, 1000);
 
+let flushRendersTimeout = false;
 // Connect to the port to communicate to the background script
 browserInstance.runtime.onConnect.addListener((port) => {
   if (!port.name === "OwlDevtoolsPort") {
@@ -642,21 +646,31 @@ browserInstance.runtime.onConnect.addListener((port) => {
   port.onMessage.addListener(async (msg) => {
     // Reload the tree after checking if the scripts are loaded when this message is received
     if (msg.type === "Reload") {
+      const tab = await getTabURL();
+      // Since this message is sent to all devtools windows, only take it into account when this is the active tab
+      if (tab !== store.devtoolsId) {
+        return;
+      }
       store.owlStatus = await evalInWindow("window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;");
       if (store.owlStatus) {
-        evalInWindow("__OWL__DEVTOOLS_GLOBAL_HOOK__.devtoolsId = " + devtoolsId + ";");
+        evalInWindow("__OWL__DEVTOOLS_GLOBAL_HOOK__.devtoolsId = " + store.devtoolsId + ";");
         store.resetData();
       }
     }
     // Received when a frame has been delayed when loading the scripts due to owl being lazy loaded
     if (msg.type === "FrameReady") {
+      const tab = await getTabURL();
+      // Same as for the reload message
+      if (tab !== store.devtoolsId) {
+        return;
+      }
       store.updateIFrameList();
       store.owlStatus = true;
       store.resetData();
     }
     // Filter out the messages that are not destined to this devtools tab. The messages above are sent before
     // the devtoolsId is set
-    if (msg.devtoolsId !== devtoolsId) {
+    if (msg.devtoolsId !== store.devtoolsId) {
       return;
     }
     // When message of type Flush is received, overwrite the component tree with the new one from page
@@ -870,6 +884,17 @@ function arraysEqual(arr1, arr2) {
   return arr1.every((val, i) => val === arr2[i]); // Compare each element of the arrays
 }
 
+async function getTabURL(){
+  if(IS_FIREFOX){
+    // This happens in firefox when the method is called inside devtools so we ask the background to execute it instead
+    browserInstance.runtime.sendMessage({ type: "getActiveTabURL" }).then((response) => {
+      return response.result;
+    });
+  } else {
+    return await getActiveTabURL();
+  }
+}
+
 // General method for executing functions from the loaded scripts in the right frame of the page
 // using the __OWL__DEVTOOLS_GLOBAL_HOOK__. Take the function's args as an array.
 async function evalFunctionInWindow(fn, args = [], frameUrl = "top") {
@@ -908,13 +933,17 @@ async function evalFunctionInWindow(fn, args = [], frameUrl = "top") {
 async function evalInWindow(code, frameUrl = "top") {
   return await new Promise((resolve, reject) => {
     if (frameUrl !== "top") {
-      browserInstance.devtools.inspectedWindow.eval(code, { frameURL: frameUrl }, (result, isException) => {
-        if (!isException) {
-          resolve(result);
-        } else {
-          reject(code);
+      browserInstance.devtools.inspectedWindow.eval(
+        code,
+        { frameURL: frameUrl },
+        (result, isException) => {
+          if (!isException) {
+            resolve(result);
+          } else {
+            reject(code);
+          }
         }
-      });
+      );
     } else {
       browserInstance.devtools.inspectedWindow.eval(code, (result, isException) => {
         if (!isException) {

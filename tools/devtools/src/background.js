@@ -1,8 +1,11 @@
-import { IS_FIREFOX } from "./utils";
+import { IS_FIREFOX, getActiveTabURL } from "./utils";
 
 let owlStatus = 0;
 
-let browserInstance = IS_FIREFOX ? browser : chrome;
+const browserInstance = IS_FIREFOX ? browser : chrome;
+
+// Used to keep track of the tabs where the owl devtools have been opened
+const activePanels = new Set();
 
 // Load the devtools global hook this way when running on manifest v3 chrome
 if (!IS_FIREFOX) {
@@ -19,23 +22,21 @@ if (!IS_FIREFOX) {
 // Update the owlStatus variable and the extension icon accordingly
 function setOwlStatus(status) {
   owlStatus = status;
-  if(IS_FIREFOX){
-    browser.browserAction.setIcon({path: owlStatus === 2 ? "assets/icon128.png" : "assets/icon_disabled128.png"});
-  }else{
+  if (IS_FIREFOX) {
+    browser.browserAction.setIcon({
+      path: owlStatus === 2 ? "assets/icon128.png" : "assets/icon_disabled128.png",
+    });
+  } else {
     browserInstance.action.setIcon({
-      path: owlStatus === 2 ? "assets/icon128.png" : "assets/icon_disabled128.png"
+      path: owlStatus === 2 ? "assets/icon128.png" : "assets/icon_disabled128.png",
     });
   }
 }
 
-async function getActiveTabURL(IS_FIREFOX) {
-  let queryOptions = { active: true, lastFocusedWindow: true };
-  let res = IS_FIREFOX
-    ? await browser.tabs.query(queryOptions)
-    : await chrome.tabs.query(queryOptions);
-  let [tab] = res;
-  return tab;
-}
+// Delete from the set when the tab is closed
+browserInstance.tabs.onRemoved.addListener((tabId) => {
+  activePanels.delete(tabId);
+});
 
 // Check owl status on tab update
 browserInstance.tabs.onUpdated.addListener((tab) => {
@@ -50,11 +51,11 @@ browserInstance.tabs.onUpdated.addListener((tab) => {
 // Check owl status on tab activation
 browserInstance.tabs.onActivated.addListener((activeInfo) => {
   setOwlStatus(0);
-  checkOwlStatus(activeInfo.tabId)
+  checkOwlStatus(activeInfo.tabId);
 });
 
 // send a message to the window which will be intercepted by the page script and will result in a response of type owlStatus
-function checkOwlStatus(tabId){
+function checkOwlStatus(tabId) {
   browserInstance.scripting.executeScript({
     target: { tabId: tabId },
     func: () => {
@@ -67,7 +68,7 @@ function checkOwlStatus(tabId){
 }
 
 // Messages handler for the background script
-browserInstance.runtime.onMessage.addListener((message, sender, sendResponse) => {
+browserInstance.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   // Send back the owl status to the sender
   if (message.type === "getOwlStatus") {
     sendResponse({ result: owlStatus });
@@ -78,7 +79,20 @@ browserInstance.runtime.onMessage.addListener((message, sender, sendResponse) =>
   } else if (message.type === "keepAlive") {
     return;
     // Relay the received message to the devtools app
+  } else if (message.type === "newDevtoolsPanel") {
+    const tab = await getActiveTabURL();
+    activePanels.add(tab);
+    // This is solely for firefox which doesnt allow access to the chrome.tabs api inside devtools
+  } else if(message.type === "getActiveTabURL"){
+    getActiveTabURL().then((tab) => {
+      sendResponse({ result: tab });
+    });
+    return true;
   } else {
+    const tab = await getActiveTabURL();
+    if (!activePanels.has(tab)) {
+      return;
+    }
     const port = browserInstance.runtime.connect({ name: "OwlDevtoolsPort" });
     port.postMessage(
       message.data

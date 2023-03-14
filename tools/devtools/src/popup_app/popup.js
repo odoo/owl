@@ -1,5 +1,5 @@
 import { templates } from "../../assets/templates.js";
-import { getOwlStatus } from "../utils"
+import { getOwlStatus } from "../utils";
 const { Component, useState, onWillStart, mount, App } = owl;
 
 class PopUpApp extends Component {

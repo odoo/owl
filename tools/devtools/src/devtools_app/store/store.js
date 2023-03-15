@@ -668,7 +668,11 @@ browserInstance.runtime.onConnect.addListener((port) => {
       store.owlStatus = true;
       store.resetData();
     }
-    // Filter out the messages that are not destined to this devtools tab. The messages above are sent before
+    // We need to reload the components tree when the set of apps in the page is modified
+    if (msg.type === "RefreshApps") {
+      store.loadComponentsTree(true);
+    }
+    // Filter out the messages that are not destined to this devtools tab. The messages above may be sent before
     // the devtoolsId is set
     if (msg.devtoolsId !== store.devtoolsId) {
       return;
@@ -699,10 +703,6 @@ browserInstance.runtime.onConnect.addListener((port) => {
       store.componentSearch.activeSelector = false;
     }
 
-    // We need to reload the components tree when the set of apps in the page is modified
-    if (msg.type === "RefreshApps") {
-      store.loadComponentsTree(true);
-    }
 
     // Logic for recording an event when the event message is received
     if (msg.type === "Event") {

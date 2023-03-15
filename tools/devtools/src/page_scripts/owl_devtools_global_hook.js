@@ -175,7 +175,6 @@
         window.top.postMessage({
           source: "owl-devtools",
           type: "RefreshApps",
-          devtoolsId: self.devtoolsId,
         });
       };
       this.apps.delete = function () {
@@ -183,7 +182,6 @@
         window.top.postMessage({
           source: "owl-devtools",
           type: "RefreshApps",
-          devtoolsId: self.devtoolsId,
         });
       };
     }
@@ -1010,7 +1008,9 @@
       // A path with only the app index indicates that the component is an App instead
       const isApp = path.length === 1;
       if (isApp) {
-        component.version = node.__proto__.constructor.version;
+        component.version = node.__proto__.constructor?.version
+            ? node.__proto__.constructor.version
+            : "<2.0.8";
       }
       // Load props of the component
       const props = isApp ? node.props : node.component.props;
@@ -1398,12 +1398,12 @@
           path: [index.toString()],
           key: "",
           depth: 0,
-          toggled: false,
+          toggled: true,
           selected: false,
           highlighted: false,
           version: app.__proto__.constructor?.version
             ? app.__proto__.constructor.version
-            : "< 2.0.8",
+            : "<2.0.8",
           children: [],
         };
         if (app.root) {
@@ -1412,18 +1412,16 @@
             path: [index.toString(), "root"],
             key: "",
             depth: 1,
-            toggled: false,
+            toggled: true,
             selected: false,
             highlighted: false,
           };
           if (oldTree) {
-            if (oldTree.toggled) {
-              appNode.toggled = true;
-            }
+            appNode.toggled = oldTree.toggled;
             oldTree = oldTree.children[0];
           }
-          if (oldTree && oldTree.toggled) {
-            root.toggled = true;
+          if (oldTree) {
+            root.toggled = oldTree.toggled;
           }
           // If no path is provided, it defaults to the target of the inspect element action
           if (!inspectedPath) {
@@ -1454,7 +1452,7 @@
           name: appChild.component.constructor.name,
           key: key,
           depth: treeNode.depth + 1,
-          toggled: false,
+          toggled: true,
           selected: false,
           highlighted: false,
         };

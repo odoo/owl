@@ -6,7 +6,7 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "@owl-devtools",
-      "strict_min_version": "55.0"
+      "strict_min_version": "74.0"
     }
   },
   "icons": {

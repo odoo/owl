@@ -51,6 +51,7 @@ export const store = reactive({
   splitPosition: window.innerWidth > window.innerHeight ? 45 : 60,
   apps: [],
   traceRenderings: false,
+  traceSubscriptions: false,
   activeComponent: {
     path: ["0"],
     name: "App",
@@ -386,6 +387,15 @@ export const store = reactive({
     );
   },
 
+  // toggle subscriptions tracing mode which will record all new subscriptions
+  async toggleSubscriptionTracing() {
+    this.traceSubscriptions = await evalFunctionInWindow(
+      "toggleSubscriptionTracing",
+      [!this.traceSubscriptions],
+      this.activeFrame
+    );
+  },
+  
   // Checks for all iframes in the page, register it and load the scripts inside if not already done
   async updateIFrameList() {
     const frames = await evalFunctionInWindow("getIFrameUrls");
@@ -423,6 +433,7 @@ export const store = reactive({
     this.removeHighlights();
     evalFunctionInWindow("toggleEventsRecording", [false, 0], this.activeFrame);
     evalFunctionInWindow("toggleTracing", [false], this.activeFrame);
+    evalFunctionInWindow("toggleSubscriptionTracing", [false], this.activeFrame);
     this.events = [];
     this.eventsTree = [];
     this.activeFrame = frame;
@@ -433,6 +444,7 @@ export const store = reactive({
       this.activeFrame
     );
     evalFunctionInWindow("toggleTracing", [this.traceRenderings], this.activeFrame);
+    evalFunctionInWindow("toggleSubscriptionTracing", [this.traceSubscriptions], this.activeFrame);
   },
 
   // Constructs the tree that represents the currently recorded events to see them as a tree instead of a temporally accurate list

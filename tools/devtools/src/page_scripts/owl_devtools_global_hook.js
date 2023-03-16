@@ -48,6 +48,7 @@
       }, 200);
       this.recordEvents = false;
       this.traceRenderings = false;
+      this.traceSubscriptions = false;
       this.requestedFrame = false;
       this.eventsBatch = [];
       // Object which defines how different types of data should be displayed when passed to the devtools
@@ -355,11 +356,78 @@
       this.appsPatched = true;
     }
 
+    // patch reactivity system to activate subscription tracing
+    patchReactivity() {
+      // i am simultaneously proud and ashamed of this code...
+      const WeakMapGet = WeakMap.prototype.get;
+      const MapGet = Map.prototype.get;
+      const SetAdd = Set.prototype.add;
+      const self = this;
+  
+      let callbacksToTargets;
+      let targetToKeysToCallbacks;
+  
+      // Step 1: extract internal values from owl
+      const obj = owl.reactive({}, () => {});
+      let count = 0;
+      WeakMap.prototype.get = function () {
+          count++;
+          if (count === 1) {
+              targetToKeysToCallbacks = this;
+          }
+          if (count === 3) {
+              callbacksToTargets = this;
+              WeakMap.prototype.get = WeakMapGet;
+          }
+          return WeakMapGet.call(this, ...arguments);
+      }
+      obj.a;
+  
+      // Step 2: patch these objects
+      let key;
+      function getKey (_key) {
+          key = _key;
+          return MapGet.call(this, _key);
+      }
+  
+      targetToKeysToCallbacks.get = function(target) {
+          const keyToCallbacks = WeakMapGet.call(this, target);
+          if (keyToCallbacks) {
+              keyToCallbacks.get = getKey;
+          }
+          return keyToCallbacks;
+      }
+  
+      function addTarget(target) {
+          // HERE
+          if (self.traceSubscriptions && !this.has(target)) {
+            console.groupCollapsed(`Observing:`, key, target);
+            console.trace();
+            console.groupEnd();
+          }
+          return SetAdd.call(this, target);
+      }
+      callbacksToTargets.get = function(callback) {
+          const targets = WeakMapGet.call(this, callback);
+          if (targets) {
+              targets.add = addTarget;
+          }
+          return targets;
+      }
+  }
+  
     toggleTracing(value) {
       this.traceRenderings = value;
       return this.traceRenderings;
     }
-
+    toggleSubscriptionTracing(value) {
+      if (value) {
+        this.patchReactivity();
+        this.patchReactivity = () => {}; // to only patch once
+      }
+      this.traceSubscriptions = value;
+      return value;
+    }
     // Enables/disables the recording of the render/destroy events based on value
     toggleEventsRecording(value, index) {
       this.recordEvents = value;

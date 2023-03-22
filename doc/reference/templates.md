@@ -477,7 +477,7 @@ not work with other iterables, such as `Set`. However, it is only a matter of
 using the `...` javascript operator. For example:
 
 ```xml
-<t t-foreach="...items" t-as="item">...</t>
+<t t-foreach="[...items]" t-as="item">...</t>
 ```
 
 The `...` operator will convert the `Set` (or any other iterables) into a list,

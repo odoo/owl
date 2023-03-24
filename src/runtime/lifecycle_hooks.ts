@@ -63,7 +63,7 @@ export function onMounted(fn: () => void | any) {
   node.mounted.push(decorate(fn.bind(node.component), "onMounted"));
 }
 
-export function onWillPatch(fn: () => Promise<void> | any | void) {
+export function onWillPatch(fn: () => any | void) {
   const node = getCurrent();
   const decorate = node.app.dev ? wrapError : (fn: any) => fn;
   node.willPatch.unshift(decorate(fn.bind(node.component), "onWillPatch"));
@@ -75,13 +75,13 @@ export function onPatched(fn: () => void | any) {
   node.patched.push(decorate(fn.bind(node.component), "onPatched"));
 }
 
-export function onWillUnmount(fn: () => Promise<void> | void | any) {
+export function onWillUnmount(fn: () => void | any) {
   const node = getCurrent();
   const decorate = node.app.dev ? wrapError : (fn: any) => fn;
   node.willUnmount.unshift(decorate(fn.bind(node.component), "onWillUnmount"));
 }
 
-export function onWillDestroy(fn: () => Promise<void> | void | any) {
+export function onWillDestroy(fn: () => void | any) {
   const node = getCurrent();
   const decorate = node.app.dev ? wrapError : (fn: any) => fn;
   node.willDestroy.push(decorate(fn.bind(node.component), "onWillDestroy"));

@@ -122,8 +122,28 @@ Owl is available on `npm` and can be installed with the following command:
 ```
 npm install @odoo/owl
 ```
-
 If you want to use a simple `<script>` tag, the last release can be downloaded here:
 
 - [owl](https://github.com/odoo/owl/releases/latest)
+
+## Installing Owl devtools
+
+The Owl devtools browser extension is also available in the [release](https://github.com/odoo/owl/releases/latest):
+Unzip the owl-devtools.zip file and follow the instructions depending on your browser:
+
+### Chrome
+
+Go to your chrome extensions admin panel, activate developer mode and click on `Load unpacked`.
+Select the devtools-chrome folder and that's it, your extension is active! 
+There is a convenient refresh button on the extension card (still on the same admin page) to update your code. 
+Do note that if you got some problems, you may need to completly remove and reload the extension to completly refresh the extension.
+
+### Firefox 
+Go to the address about:debugging#/runtime/this-firefox and click on `Load temporary Add-on...`.
+Select any file in the devtools-firefox folder and that's it, your extension is active! 
+Here, you can use the reload button to refresh the extension.
+
+Note that you may have to open another window or reload your tab to see the extension working.
+Also note that the extension will only be active on pages that have a sufficient version of owl.
+
 

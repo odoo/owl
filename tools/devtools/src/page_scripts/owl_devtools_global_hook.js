@@ -507,6 +507,7 @@
           highlight.style.left = `${left}px`;
           highlight.style.width = `${width}px`;
           highlight.style.height = `${height}px`;
+          highlight.style.boxSizing = "border-box";
           highlight.style.position = "fixed";
           highlight.style.backgroundColor = "rgba(15, 139, 245, 0.4)";
           highlight.style.borderStyle = "solid";
@@ -524,6 +525,7 @@
           highlightMargins.style.height = `${height + marginBottom + marginTop}px`;
           highlightMargins.style.position = "fixed";
           highlightMargins.style.borderStyle = "solid";
+          highlightMargins.style.boxSizing = "border-box";
           highlightMargins.style.borderWidth = `${marginTop}px ${marginRight}px ${marginBottom}px ${marginLeft}px`;
           highlightMargins.style.borderColor = "rgba(241, 179, 121, 0.4)";
           highlightMargins.style.zIndex = "10000";
@@ -537,6 +539,7 @@
           highlight.style.left = `${left}px`;
           highlight.style.width = `${width}px`;
           highlight.style.height = `${height}px`;
+          highlight.style.boxSizing = "border-box";
           highlight.style.position = "fixed";
           highlight.style.backgroundColor = "rgba(15, 139, 245, 0.4)";
           highlight.style.zIndex = "10000";

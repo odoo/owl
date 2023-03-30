@@ -98,13 +98,27 @@ async function startRelease() {
   }
 
   // ----------------------------------------------------------------------------
-  log(`Step 5/${STEPS}: building owl...`);
+  log(`Step 5/${STEPS}: building owl and devtools...`);
   await execCommand("rm -rf dist/");
   const buildResult = await execCommand("npm run build");
   if (buildResult !== 0) {
     logError("Build failed. Aborting.");
     return;
   }
+  const chromeResult = await execCommand("npm run build:devtools-chrome");
+  if (chromeResult !== 0) {
+    logError("Build devtools chrome failed. Aborting.");
+    return;
+  }
+  await execCommand("mv dist/devtools dist/devtools-chrome");
+  const firefoxResult = await execCommand("npm run build:devtools-firefox");
+  if (firefoxResult !== 0) {
+    logError("Build devtools firefox failed. Aborting.");
+    return;
+  }
+  await execCommand("mv dist/devtools dist/devtools-firefox");
+  await execCommand("cd dist && zip -r owl-devtools.zip devtools-chrome devtools-firefox && cd ..");
+  await execCommand("rm -r dist/devtools-chrome dist/devtools-firefox && rm dist/compiler.js");
 
   // ---------------------------------------------------------------------------
   log(`Step 6/${STEPS}: pushing on github...`);
@@ -117,7 +131,7 @@ async function startRelease() {
   // ---------------------------------------------------------------------------
 
   log(`Step 7/${STEPS}: Creating the release...`);
-  const relaseResult = await execCommand(`gh release create v${next} dist/*.js ${draft} -F ${file}`);
+  const relaseResult = await execCommand(`gh release create v${next} dist/*.js dist/*.zip ${draft} -F ${file}`);
   if (relaseResult !== 0) {
     logError("github release failed. Aborting.");
     return;

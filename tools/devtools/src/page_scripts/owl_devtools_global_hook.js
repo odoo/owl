@@ -28,7 +28,7 @@
           mutation.addedNodes.forEach(function (addedNode) {
             if (addedNode.tagName == "IFRAME") {
               // Ensure it is not an empty iframe element
-              if(addedNode.contentDocument){
+              if (addedNode.contentDocument) {
                 /*
                  * This message is intercepted by the content script which relays it to the background script which relays it to the devtools app.
                  * This process may seem long and indirect but is necessary. This applies to all window.top.postMessage methods in this file.

@@ -10,7 +10,7 @@
           <option t-att-selected="store.eventsTreeView" value="Tree">Tree view</option>
           <option t-att-selected="!store.eventsTreeView" value="List">Events log</option>
         </select>
-        <i title="Collapse All" class="fa fa-list me-1" t-on-click="() => this.store.collapseAll()"></i>
+        <i title="Collapse All" type="button" class="fa fa-list me-2" t-on-click="() => this.store.collapseAll()" t-attf-style="{{store.eventsTreeView ? '' : 'visibility: hidden;'}}"></i>
         <div class="icons-separator"/>
         <label class="mx-2 form-check-label pointer-icon" title="Trace renderings in console">
           <input type="checkbox" class="form-check-input me-1" t-att-checked="store.traceRenderings" t-on-input="() => this.store.toggleTracing()"/> Trace Renderings

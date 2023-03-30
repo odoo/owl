@@ -236,6 +236,7 @@
 .search-input {
   background-color: var(--background-color);
   color: var(--text-color);
+  padding: 0.4rem 0rem;
 }
 
 .search-icon {

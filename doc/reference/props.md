@@ -212,6 +212,7 @@ For each key, a `prop` definition is either a boolean, a constructor, a list of 
   - `type`: the main type of the prop being validated
   - `element`: if the type was `Array`, then the `element` key describes the type of each element in the array. If it is not set, then we only validate the array, not its elements,
   - `shape`: if the type was `Object`, then the `shape` key describes the interface of the object. If it is not set, then we only validate the object, not its elements,
+  - `values`: if the type was `Object`, then the `values` key describes the interface of values in the object, this allows validating objects that are used as mappings, where keys are not known in advance but the shape of the values is.
   - `validate`: this is a function which should return a boolean to determine if
     the value is valid or not. Useful for custom validation logic.
   - `optional`: if true, the prop is not mandatory
@@ -276,6 +277,10 @@ class ComponentB extends owl.Component {
         name: {type: String, optional: true},
         url: String
       ]},    // object, with keys id (number), name (string, optional) and url (string)
+    someObj3: {
+      type: Object,
+      values: { type: Array, element: String },
+    }, // object with arbitary keys where values are arrays of strings
     someFlag: Boolean,     // a boolean, mandatory (even if `false`)
     someVal: [Boolean, Date],   // either a boolean or a date
     otherValue: true,     // indicates that it is a prop

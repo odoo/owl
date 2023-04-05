@@ -54,7 +54,7 @@ export {
   onWillDestroy,
   onError,
 } from "./lifecycle_hooks";
-export { validate } from "./validation";
+export { validate, validateType } from "./validation";
 export { OwlError } from "./error_handling";
 
 export const __info__ = {

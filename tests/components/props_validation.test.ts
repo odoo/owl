@@ -404,7 +404,7 @@ describe("props validation", () => {
     await mountProm;
     expect(error!).toBeDefined();
     expect(error!.message).toBe(
-      "Invalid props for component 'SubComp': 'p' has not the correct shape (unknown key 'extra')"
+      "Invalid props for component 'SubComp': 'p' doesn't have the correct shape (unknown key 'extra')"
     );
     props = { p: { id: "1", url: "url" } };
     app = new App(Parent, { test: true });
@@ -413,7 +413,7 @@ describe("props validation", () => {
     await mountProm;
     expect(error!).toBeDefined();
     expect(error!.message).toBe(
-      "Invalid props for component 'SubComp': 'p' has not the correct shape ('id' is not a number)"
+      "Invalid props for component 'SubComp': 'p' doesn't have the correct shape ('id' is not a number)"
     );
     error = undefined;
     props = { p: { id: 1 } };
@@ -423,7 +423,7 @@ describe("props validation", () => {
     await mountProm;
     expect(error!).toBeDefined();
     expect(error!.message).toBe(
-      "Invalid props for component 'SubComp': 'p' has not the correct shape ('url' is missing (should be a string))"
+      "Invalid props for component 'SubComp': 'p' doesn't have the correct shape ('url' is missing (should be a string))"
     );
   });
 
@@ -470,7 +470,7 @@ describe("props validation", () => {
     await mountProm;
     expect(error!).toBeDefined();
     expect(error!.message).toBe(
-      "Invalid props for component 'SubComp': 'p' has not the correct shape ('url' is not a boolean or list of numbers)"
+      "Invalid props for component 'SubComp': 'p' doesn't have the correct shape ('url' is not a boolean or list of numbers)"
     );
   });
 
@@ -502,7 +502,7 @@ describe("props validation", () => {
     }
     expect(error!).toBeDefined();
     expect(error!.message).toBe(
-      "Invalid props for component 'TestComponent': 'myprop[0]' has not the correct shape (unknown key 'a')"
+      "Invalid props for component 'TestComponent': 'myprop[0]' doesn't have the correct shape (unknown key 'a')"
     );
   });
 

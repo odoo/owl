@@ -145,14 +145,48 @@ describe("validateSchema", () => {
     const schema: Schema = { p: { type: Object, shape: { id: Number, url: String } } };
     expect(validateSchema({ p: [] }, schema)).toEqual(["'p' is not an object"]);
     expect(validateSchema({ p: {} }, schema)).toEqual([
-      "'p' has not the correct shape ('id' is missing (should be a number), 'url' is missing (should be a string))",
+      "'p' doesn't have the correct shape ('id' is missing (should be a number), 'url' is missing (should be a string))",
     ]);
     expect(validateSchema({ p: { id: 1, url: "asf" } }, schema)).toEqual([]);
     expect(validateSchema({ p: { id: 1, url: 1 } }, schema)).toEqual([
-      "'p' has not the correct shape ('url' is not a string)",
+      "'p' doesn't have the correct shape ('url' is not a string)",
     ]);
     expect(validateSchema({ p: undefined }, schema)).toEqual([
       "'p' is undefined (should be a object)",
+    ]);
+  });
+
+  test("objects with a values schema", () => {
+    const schema: Schema = {
+      p: { type: Object, values: { type: Object, shape: { id: Number, url: String } } },
+    };
+    expect(validateSchema({ p: [] }, schema)).toEqual(["'p' is not an object"]);
+    expect(validateSchema({ p: {} }, schema)).toEqual([]);
+    expect(validateSchema({ p: { id: 1, url: "asf" } }, schema)).toEqual([
+      "some of the values in 'p' are invalid ('id' is not an object, 'url' is not an object)",
+    ]);
+    expect(
+      validateSchema(
+        {
+          p: {
+            a: { id: 1, url: "asf" },
+          },
+        },
+        schema
+      )
+    ).toEqual([]);
+    expect(
+      validateSchema(
+        {
+          p: {
+            a: { id: 1, url: "asf" },
+            b: { id: 1, url: 1 },
+          },
+        },
+        schema
+      )
+    ).toEqual([
+      "some of the values in 'p' are invalid ('b' doesn't have the correct shape ('url' is not a string))",
     ]);
   });
 
@@ -168,10 +202,10 @@ describe("validateSchema", () => {
     };
     expect(validateSchema({ p: [] }, schema)).toEqual(["'p' is not an object"]);
     expect(validateSchema({ p: {} }, schema)).toEqual([
-      "'p' has not the correct shape ('id' is missing (should be a number), 'url' is missing (should be a boolean or list of numbers))",
+      "'p' doesn't have the correct shape ('id' is missing (should be a number), 'url' is missing (should be a boolean or list of numbers))",
     ]);
     expect(validateSchema({ p: { id: 1, url: "asf" } }, schema)).toEqual([
-      "'p' has not the correct shape ('url' is not a boolean or list of numbers)",
+      "'p' doesn't have the correct shape ('url' is not a boolean or list of numbers)",
     ]);
     expect(validateSchema({ p: { id: 1, url: true } }, schema)).toEqual([]);
     expect(validateSchema({ p: undefined }, schema)).toEqual([
@@ -183,11 +217,11 @@ describe("validateSchema", () => {
     const schema: Schema = { p: { type: Object, shape: { id: Number, "*": true } } };
     expect(validateSchema({ p: [] }, schema)).toEqual(["'p' is not an object"]);
     expect(validateSchema({ p: {} }, schema)).toEqual([
-      "'p' has not the correct shape ('id' is missing (should be a number))",
+      "'p' doesn't have the correct shape ('id' is missing (should be a number))",
     ]);
     expect(validateSchema({ p: { id: 1 } }, schema)).toEqual([]);
     expect(validateSchema({ p: { id: "asdf" } }, schema)).toEqual([
-      "'p' has not the correct shape ('id' is not a number)",
+      "'p' doesn't have the correct shape ('id' is not a number)",
     ]);
     expect(validateSchema({ p: { id: 1, url: 1 } }, schema)).toEqual([]);
     expect(validateSchema({ p: undefined }, schema)).toEqual([
@@ -222,7 +256,7 @@ describe("validateSchema", () => {
     expect(validateSchema({ p: [{}] }, schema)).toEqual([]);
     expect(validateSchema({ p: [{ num: 1 }] }, schema)).toEqual([]);
     expect(validateSchema({ p: [{ num: true }] }, schema)).toEqual([
-      "'p[0]' has not the correct shape ('num' is not a number)",
+      "'p[0]' doesn't have the correct shape ('num' is not a number)",
     ]);
   });
 

@@ -17,6 +17,7 @@ interface TypeInfo {
   validate?: Function;
   shape?: Schema;
   element?: TypeDescription;
+  values?: TypeDescription;
 }
 
 type ValueType = { value: any };
@@ -137,7 +138,7 @@ function validateArrayType(key: string, value: any, descr: TypeDescription): str
   return null;
 }
 
-function validateType(key: string, value: any, descr: TypeDescription): string | null {
+export function validateType(key: string, value: any, descr: TypeDescription): string | null {
   if (value === undefined) {
     return isOptional(descr) ? null : `'${key}' is undefined (should be a ${describe(descr)})`;
   } else if (isBaseType(descr)) {
@@ -151,13 +152,24 @@ function validateType(key: string, value: any, descr: TypeDescription): string |
   let result: string | null = null;
   if ("element" in descr) {
     result = validateArrayType(key, value, descr.element!);
-  } else if ("shape" in descr && !result) {
+  } else if ("shape" in descr) {
     if (typeof value !== "object" || Array.isArray(value)) {
       result = `'${key}' is not an object`;
     } else {
       const errors = validateSchema(value, descr.shape!);
       if (errors.length) {
-        result = `'${key}' has not the correct shape (${errors.join(", ")})`;
+        result = `'${key}' doesn't have the correct shape (${errors.join(", ")})`;
+      }
+    }
+  } else if ("values" in descr) {
+    if (typeof value !== "object" || Array.isArray(value)) {
+      result = `'${key}' is not an object`;
+    } else {
+      const errors = Object.entries(value)
+        .map(([key, value]) => validateType(key, value, descr.values!))
+        .filter(Boolean);
+      if (errors.length) {
+        result = `some of the values in '${key}' are invalid (${errors.join(", ")})`;
       }
     }
   }

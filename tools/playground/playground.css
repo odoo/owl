@@ -79,6 +79,19 @@ body {
   margin: 5px;
 }
 
+.share-code {
+  position: relative;
+}
+
+.copied-notification {
+  font-size: x-small;
+  position: absolute;
+  bottom: -5px;
+  white-space: nowrap;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
 /* TABBED EDITOR ****************************************/
 
 .tabbed-editor {

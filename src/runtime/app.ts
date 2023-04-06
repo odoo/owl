@@ -84,7 +84,10 @@ export class App<
     this.props = config.props || ({} as P);
   }
 
-  mount(target: HTMLElement, options?: MountOptions): Promise<Component<P, E> & InstanceType<T>> {
+  mount(
+    target: HTMLElement | ShadowRoot,
+    options?: MountOptions
+  ): Promise<Component<P, E> & InstanceType<T>> {
     App.validateTarget(target);
     if (this.dev) {
       validateProps(this.Root, this.props, { __owl__: { app: this } });
@@ -99,7 +102,7 @@ export class App<
     return new ComponentNode(Component, props, this, null, null);
   }
 
-  mountNode(node: ComponentNode, target: HTMLElement, options?: MountOptions) {
+  mountNode(node: ComponentNode, target: HTMLElement | ShadowRoot, options?: MountOptions) {
     const promise: any = new Promise((resolve, reject) => {
       let isResolved = false;
       // manually set a onMounted callback.

@@ -27,13 +27,28 @@ export function batched(callback: Callback): Callback {
   };
 }
 
-export function validateTarget(target: HTMLElement) {
+/**
+ * Determine whether the given element is contained in its ownerDocument:
+ * either directly or with a shadow root in between.
+ */
+export function inOwnerDocument(el?: HTMLElement) {
+  if (!el) {
+    return false;
+  }
+  if (el.ownerDocument.contains(el)) {
+    return true;
+  }
+  const rootNode = el.getRootNode();
+  return rootNode instanceof ShadowRoot && el.ownerDocument.contains(rootNode.host);
+}
+
+export function validateTarget(target: HTMLElement | ShadowRoot) {
   // Get the document and HTMLElement corresponding to the target to allow mounting in iframes
   const document = target && target.ownerDocument;
   if (document) {
     const HTMLElement = document.defaultView!.HTMLElement;
-    if (target instanceof HTMLElement) {
-      if (!document.body.contains(target)) {
+    if (target instanceof HTMLElement || target instanceof ShadowRoot) {
+      if (!document.body.contains(target instanceof HTMLElement ? target : target.host)) {
         throw new OwlError("Cannot mount a component on a detached dom node");
       }
       return;

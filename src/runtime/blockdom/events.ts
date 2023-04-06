@@ -1,3 +1,4 @@
+import { inOwnerDocument } from "../utils";
 import { config } from "./config";
 
 type EventHandlerSetter = (this: HTMLElement, data: any) => void;
@@ -28,7 +29,7 @@ function createElementHandler(evName: string, capture: boolean = false): EventHa
 
   function listener(ev: Event) {
     const currentTarget = ev.currentTarget as HTMLElement;
-    if (!currentTarget || !currentTarget.ownerDocument.contains(currentTarget)) return;
+    if (!currentTarget || !inOwnerDocument(currentTarget)) return;
     const data = (currentTarget as any)[eventKey];
     if (!data) return;
     config.mainEventHandler(data, ev, currentTarget);

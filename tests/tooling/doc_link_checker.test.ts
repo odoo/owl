@@ -92,6 +92,10 @@ export function isLinkValid(link: MarkDownLink, current: FileData, files: FileDa
     // no check on external links
     return true;
   }
+  if (current.name.endsWith(".png")) {
+    // no check on png files
+    return true;
+  }
   // Step 1: extract path, name, hash
   //      path = ['doc', 'architecture]
   //      name = 'rendering.md'

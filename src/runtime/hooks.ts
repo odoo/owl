@@ -1,6 +1,7 @@
 import type { Env } from "./app";
 import { getCurrent } from "./component_node";
 import { onMounted, onPatched, onWillUnmount } from "./lifecycle_hooks";
+import { inOwnerDocument } from "./utils";
 
 // -----------------------------------------------------------------------------
 // useRef
@@ -16,7 +17,7 @@ export function useRef<T extends HTMLElement = HTMLElement>(name: string): { el:
   return {
     get el(): T | null {
       const el = refs[name];
-      return el?.ownerDocument.contains(el) ? el : null;
+      return inOwnerDocument(el) ? el : null;
     },
   };
 }

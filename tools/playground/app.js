@@ -226,6 +226,15 @@ class App extends owl.Component {
     this.downloadCode = debounce(this.downloadCode, 250, true);
     this.content = useRef("content");
     this.updateCode = this.updateCode.bind(this);
+    if (window.location.hash) {
+      try {
+        const { js, css, xml } = JSON.parse(atob(decodeURIComponent(window.location.hash.slice(1))));
+        if (![js, css, xml].every(item => typeof item === "string")) {
+          return;
+        }
+        Object.assign(this.state, { js, css, xml });
+      } catch {}
+    }
   }
 
   runCode() {
@@ -235,6 +244,18 @@ class App extends owl.Component {
     const { js, css, xml } = this.state;
     const subiframe = makeCodeIframe(js, css, xml);
     this.content.el.appendChild(subiframe);
+  }
+
+  shareCode() {
+    const state = btoa(JSON.stringify({ js: this.state.js, css: this.state.css, xml: this.state.xml }));
+    const link = new URL(window.location.href);
+    link.hash = state;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(link.href);
+      clearTimeout(this.state.copied)
+      this.state.copied = setTimeout(() => this.state.copied = null, 2000);
+    }
+    window.location.href = link.href;
   }
 
   setSample(ev) {

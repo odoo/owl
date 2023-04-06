@@ -22,6 +22,7 @@
           </select>
           <a class="btn flash" t-on-click="downloadCode" title="Download a Zip with this Code"><i class="fas fa-download"></i></a>
           <a class="layout-selector flash" t-on-click="toggleLayout" title="Toggle Layout"><i class="fas"  t-att-class="state.splitLayout ?  'fa-toggle-on' : 'fa-toggle-off'"></i></a>
+          <a class="btn flash share-code" t-on-click="shareCode" title="Copy a link to this playground"><span>Share</span><span class="copied-notification" t-if="state.copied">Copied link to clipboard!</span></a>
         </div>
         <TabbedEditor
             js="state.js"

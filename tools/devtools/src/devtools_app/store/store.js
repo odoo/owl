@@ -618,6 +618,10 @@ export const store = reactive({
     }
     browserInstance.storage.local.set({ owl_devtools_dark_mode: this.settings.darkMode });
   },
+
+  openDocumentation() {
+    browserInstance.runtime.sendMessage({ type: "openDoc" });
+  },
 });
 
 // Instantiate the store

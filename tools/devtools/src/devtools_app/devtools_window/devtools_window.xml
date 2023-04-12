@@ -16,7 +16,8 @@
               <option t-att-value="frame"><t t-esc="frame"/></option>
             </t>
           </select>
-          <i class="ms-auto p-1 me-1 lg-icon fa pointer-icon" title="Toggle dark mode" t-att-class="{ 'fa-sun-o': store.settings.darkMode, 'fa-moon-o' : !store.settings.darkMode}" t-on-click.stop="() => this.store.toggleDarkMode()"></i>
+          <i class="ms-auto p-1 me-1 lg-icon fa fa-question-circle pointer-icon" title="Open devtools doc" t-on-click.stop="() => this.store.openDocumentation()"></i>
+          <i class="p-1 me-1 lg-icon fa pointer-icon" title="Toggle dark mode" t-att-class="{ 'fa-sun-o': store.settings.darkMode, 'fa-moon-o' : !store.settings.darkMode}" t-on-click.stop="() => this.store.toggleDarkMode()"></i>
           <i class="p-1 me-1 lg-icon fa fa-repeat pointer-icon" title="Refresh extension" t-on-click.stop="() => this.store.refreshExtension()"></i>
         </div>
         <ComponentsTab t-if="store.page === 'ComponentsTab'"/>

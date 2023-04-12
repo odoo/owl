@@ -78,6 +78,15 @@ browserInstance.runtime.onMessage.addListener(async (message, sender, sendRespon
     // Dummy message to test if the extension context is still valid
   } else if (message.type === "keepAlive") {
     return;
+    // Open the devtools documentation in a new tab
+  } else if (message.type === "openDoc") {
+    browserInstance.tabs.create(
+      { url: "https://github.com/odoo/owl/blob/master/doc/tools/devtools_guide.md", active: false },
+      function (tab) {
+        browserInstance.tabs.update(tab.id, { active: true });
+      }
+    );
+    return;
     // Relay the received message to the devtools app
   } else if (message.type === "newDevtoolsPanel") {
     const tab = await getActiveTabURL();

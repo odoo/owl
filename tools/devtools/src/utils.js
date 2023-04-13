@@ -8,8 +8,9 @@ export async function getOwlStatus() {
 }
 
 export async function getActiveTabURL() {
-  const [tab] = await browserInstance.tabs.query({ active: true, lastFocusedWindow: true });
-  return tab.id;
+  const window = await browserInstance.windows.getLastFocused({ populate: true });
+  const activeTab = window.tabs.find((tab) => tab.active);
+  return activeTab.id;
 }
 
 // inspired from https://www.tutorialspoint.com/fuzzy-search-algorithm-in-javascript

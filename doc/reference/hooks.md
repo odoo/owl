@@ -112,17 +112,16 @@ of a component, rendered by Owl. It only work on a html element tagged by the
 
 ```xml
 <div>
-    <input t-ref="someDiv"/>
+    <input t-ref="someInput"/>
     <span>hello</span>
 </div>
 ```
 
-In this example, the component will be able to access the `div` and the component
-`SubComponent` with the `useRef` hook:
+In this example, the component will be able to access the `input` with the `useRef` hook:
 
 ```js
 class Parent extends Component {
-  inputRef = useRef("someComponent");
+  inputRef = useRef("someInput");
 
   someMethod() {
     // here, if component is mounted, refs are active:
@@ -139,18 +138,18 @@ The `t-ref` directive also accepts dynamic values with string interpolation
 `t-component` directives). For example,
 
 ```xml
-<div t-ref="component_{{someCondition ? '1' : '2'}}"/>
+<div t-ref="div_{{someCondition ? '1' : '2'}}"/>
 ```
 
 Here, the references need to be set like this:
 
 ```js
-this.ref1 = useRef("component_1");
-this.ref2 = useRef("component_2");
+this.ref1 = useRef("div_1");
+this.ref2 = useRef("div_2");
 ```
 
 References are only guaranteed to be active while the parent component is mounted.
-If this is not the case, accessing `el` or `comp` on it will return `null`.
+If this is not the case, accessing `el` on it will return `null`.
 
 ### `useSubEnv` and `useChildSubEnv`
 

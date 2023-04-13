@@ -4,8 +4,10 @@ import execute from "rollup-plugin-execute";
 import del from "rollup-plugin-delete";
 import { string } from "rollup-plugin-string";
 
-export default ({ "config-browser": browser }) => {
-  const isProduction = process.env.NODE_ENV === "production";
+const isWindows = process.platform === "win32";
+
+export default ({ "config-browser": browser, "config-env": env }) => {
+  const isProduction = env === "production";
   const isChrome = browser === "chrome";
   const filesToMove = [
     { src: "tools/devtools/assets/**/*", dest: "dist/devtools/assets/" },
@@ -53,13 +55,19 @@ export default ({ "config-browser": browser }) => {
     };
   }
   const commands = new Array(2);
-  commands[1] =
-    "npm run compile_templates -- tools/devtools/src && mv templates.js tools/devtools/assets/templates.js";
+  commands[1] = isWindows
+    ? "npm run compile_templates -- tools\\devtools\\src && move templates.js tools\\devtools\\assets\\templates.js"
+    : "npm run compile_templates -- tools/devtools/src && mv templates.js tools/devtools/assets/templates.js";
   const firstRule = generateRule("tools/devtools/src/page_scripts/owl_devtools_global_hook.js");
-  if (isProduction)
-    commands[0] =
-      "npm run build && cp dist/owl.iife.js tools/devtools/assets/owl.js && npm run build:compiler";
-  else commands[0] = "cp dist/owl.iife.js tools/devtools/assets/owl.js";
+  if (isProduction) {
+    commands[0] = isWindows
+      ? "npm run build && copy dist\\owl.iife.js tools\\devtools\\assets\\owl.js && npm run build:compiler"
+      : "npm run build && cp dist/owl.iife.js tools/devtools/assets/owl.js && npm run build:compiler";
+  } else {
+    commands[0] = isWindows
+      ? "copy dist\\owl.iife.js tools\\devtools\\assets\\owl.js"
+      : "cp dist/owl.iife.js tools/devtools/assets/owl.js";
+  }
   firstRule.plugins.push(execute(commands, true));
   const secondRule = generateRule("tools/devtools/src/content.js");
   secondRule.plugins.push(copy({ targets: filesToMove }));

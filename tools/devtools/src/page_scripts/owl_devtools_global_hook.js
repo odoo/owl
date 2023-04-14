@@ -17,8 +17,6 @@
       this.addedElements = [];
       // To keep track of the succession order of the render events
       this.eventId = 0;
-      // Will be reset as soon as a new devtools owl tab is opened. Allows to avoid sending messages to the wrong devtools tab later on
-      this.devtoolsId = 0;
       // Set to keep track of the frame on which this script is loaded
       this.frame = "top";
       // Allows to launch a message each time an iframe html element is added to the page
@@ -38,7 +36,6 @@
                   source: "owl-devtools",
                   type: "NewIFrame",
                   data: addedNode.contentDocument.location.href,
-                  origin: { id: self.devtoolsId },
                 });
               }
             }
@@ -263,7 +260,7 @@
               source: "owl-devtools",
               type: "Flush",
               data: path,
-              origin: { id: self.devtoolsId, frame: self.frame },
+              origin: { frame: self.frame },
             });
           }
         });
@@ -372,7 +369,6 @@
             source: "owl-devtools",
             type: "Event",
             data: self.eventsBatch,
-            origin: { id: self.devtoolsId },
           });
           self.eventsBatch = [];
         }
@@ -628,7 +624,6 @@
           source: "owl-devtools",
           type: "SelectElement",
           data: path,
-          origin: { id: this.devtoolsId },
         });
       }
     };
@@ -656,7 +651,6 @@
       window.top.postMessage({
         source: "owl-devtools",
         type: "StopSelector",
-        origin: { id: this.devtoolsId },
       });
     };
 
@@ -1767,6 +1761,6 @@
     false
   );
   checkOwlStatus();
-  // Indicates whether the scripts loaded successfully or not (useful when loaded with eval in iframes only)
+  // Indicates whether the scripts loaded successfully or not (only useful when loaded with eval in iframes)
   return window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;
 })();

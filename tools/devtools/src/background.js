@@ -5,7 +5,7 @@ let owlStatus = 0;
 const browserInstance = IS_FIREFOX ? browser : chrome;
 
 // Used to keep track of the tabs where the owl devtools have been opened
-const activePanels = new Set();
+const activePanels = new Map();
 
 // Load the devtools global hook this way when running on manifest v3 chrome
 if (!IS_FIREFOX) {
@@ -75,8 +75,23 @@ browserInstance.runtime.onMessage.addListener(async (message, sender, sendRespon
     return true;
   } else if (message.type === "owlStatus") {
     setOwlStatus(message.data);
-    // Dummy message to test if the extension context is still valid
+    // Refresh panel connection timeout
   } else if (message.type === "keepAlive") {
+    const panel = activePanels.get(message.id);
+    if (panel) {
+      clearTimeout(panel.expirationTimeout);
+      panel.expirationTimeout = setTimeout(() => {
+        activePanels.delete(message.id);
+        panel.port.disconnect();
+      }, 750);
+    } else {
+      const port = browserInstance.runtime.connect({ name: "OwlDevtoolsPort_" + message.id });
+      const expirationTimeout = setTimeout(() => {
+        activePanels.delete(message.id);
+        port.disconnect();
+      }, 750);
+      activePanels.set(message.id, { port: port, expirationTimeout: expirationTimeout });
+    }
     return;
     // Open the devtools documentation in a new tab
   } else if (message.type === "openDoc") {
@@ -87,10 +102,15 @@ browserInstance.runtime.onMessage.addListener(async (message, sender, sendRespon
       }
     );
     return;
-    // Relay the received message to the devtools app
+    // Register a new port for the devtools panel
   } else if (message.type === "newDevtoolsPanel") {
-    const tab = await getActiveTabURL();
-    activePanels.add(tab);
+    const id = message.id;
+    const port = browserInstance.runtime.connect({ name: "OwlDevtoolsPort_" + id });
+    const expirationTimeout = setTimeout(() => {
+      activePanels.delete(id);
+      port.disconnect();
+    }, 750);
+    activePanels.set(message.id, { port: port, expirationTimeout: expirationTimeout });
     // This is solely for firefox which doesnt allow access to the chrome.tabs api inside devtools
   } else if (message.type === "getActiveTabURL") {
     getActiveTabURL().then((tab) => {
@@ -98,15 +118,13 @@ browserInstance.runtime.onMessage.addListener(async (message, sender, sendRespon
     });
     return true;
   } else {
-    const tab = await getActiveTabURL();
-    if (!activePanels.has(tab)) {
-      return;
+    const destinationPanel = activePanels.get(sender.tab.id);
+    if (destinationPanel) {
+      destinationPanel.port.postMessage(
+        message.data
+          ? { type: message.type, data: message.data, origin: message.origin }
+          : { type: message.type, origin: message.origin }
+      );
     }
-    const port = browserInstance.runtime.connect({ name: "OwlDevtoolsPort" });
-    port.postMessage(
-      message.data
-        ? { type: message.type, data: message.data, origin: message.origin }
-        : { type: message.type, origin: message.origin }
-    );
   }
 });

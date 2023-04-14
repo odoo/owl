@@ -652,103 +652,89 @@ async function init() {
   }
 
   loadSettings();
-}
 
-// Heartbeat message to test whether the extension context is still valid or not
-setInterval(() => {
-  if (store.extensionContextStatus) {
-    try {
-      browserInstance.runtime.sendMessage({ type: "keepAlive" });
-    } catch (e) {
-      store.extensionContextStatus = false;
+  browserInstance.runtime.sendMessage({ type: "newDevtoolsPanel", id: store.devtoolsId });
+
+  // Heartbeat message to test whether the extension context is still valid or not
+  setInterval(() => {
+    if (store.extensionContextStatus) {
+      try {
+        browserInstance.runtime.sendMessage({ type: "keepAlive", id: store.devtoolsId });
+      } catch (e) {
+        store.extensionContextStatus = false;
+      }
     }
-  }
-}, 1000);
+  }, 500);
+}
 
 let flushRendersTimeout = false;
 // Connect to the port to communicate to the background script
 browserInstance.runtime.onConnect.addListener((port) => {
-  if (!port.name === "OwlDevtoolsPort") {
-    return;
-  }
-  port.onMessage.addListener(async (msg) => {
-    // Reload the tree after checking if the scripts are loaded when this message is received
-    if (msg.type === "Reload") {
-      const tab = await getTabURL();
-      // Since this message is sent to all devtools windows, only take it into account when this is the active tab
-      if (tab !== store.devtoolsId) {
-        return;
+  if (port.name === "OwlDevtoolsPort_" + store.devtoolsId) {
+    port.onMessage.addListener(async (msg) => {
+      // Reload the tree after checking if the scripts are loaded when this message is received
+      if (msg.type === "Reload") {
+        store.owlStatus = await evalInWindow("window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;");
+        if (store.owlStatus) {
+          evalInWindow("__OWL__DEVTOOLS_GLOBAL_HOOK__.devtoolsId = " + store.devtoolsId + ";");
+          store.resetData();
+        }
       }
-      store.owlStatus = await evalInWindow("window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;");
-      if (store.owlStatus) {
-        evalInWindow("__OWL__DEVTOOLS_GLOBAL_HOOK__.devtoolsId = " + store.devtoolsId + ";");
+      // Received when a frame has been delayed when loading the scripts due to owl being lazy loaded
+      if (msg.type === "FrameReady") {
+        store.updateIFrameList();
+        store.owlStatus = true;
         store.resetData();
       }
-    }
-    // Received when a frame has been delayed when loading the scripts due to owl being lazy loaded
-    if (msg.type === "FrameReady") {
-      const tab = await getTabURL();
-      // Same as for the reload message
-      if (tab !== store.devtoolsId) {
-        return;
+      // We need to reload the components tree when the set of apps in the page is modified
+      if (msg.type === "RefreshApps") {
+        store.loadComponentsTree(true);
       }
-      store.updateIFrameList();
-      store.owlStatus = true;
-      store.resetData();
-    }
-    // We need to reload the components tree when the set of apps in the page is modified
-    if (msg.type === "RefreshApps") {
-      store.loadComponentsTree(true);
-    }
-    // Filter out the messages that are not destined to this devtools tab. The messages above may be sent before
-    // the devtoolsId is set
-    if (msg.origin.id !== store.devtoolsId) {
-      return;
-    }
-    // When message of type Flush is received, overwrite the component tree with the new one from page
-    // A flush message is sent everytime a component is rendered on the page
-    if (msg.type === "Flush") {
-      if (msg.origin.frame !== store.activeFrame) {
-        return;
+      // When message of type Flush is received, overwrite the component tree with the new one from page
+      // A flush message is sent everytime a component is rendered on the page
+      if (msg.type === "Flush") {
+        if (msg.origin.frame !== store.activeFrame) {
+          return;
+        }
+        if (!(Array.isArray(msg.data) && msg.data.every((val) => typeof val === "string"))) {
+          return;
+        }
+        // This determines which components will have a short highlight effect in the tree to indicate they have been rendered
+        store.renderPaths.add(JSON.stringify(msg.data));
+        clearTimeout(flushRendersTimeout);
+        flushRendersTimeout = setTimeout(() => {
+          store.renderPaths.clear();
+        }, 100);
+        store.loadComponentsTree(true);
       }
-      if (!(Array.isArray(msg.data) && msg.data.every((val) => typeof val === "string"))) {
-        return;
+      // Select the component based on the path received with the SelectElement message
+      if (msg.type === "SelectElement") {
+        if (!(Array.isArray(msg.data) && msg.data.every((val) => typeof val === "string"))) {
+          return;
+        }
+        store.selectComponent(msg.data);
       }
-      // This determines which components will have a short highlight effect in the tree to indicate they have been rendered
-      store.renderPaths.add(JSON.stringify(msg.data));
-      clearTimeout(flushRendersTimeout);
-      flushRendersTimeout = setTimeout(() => {
-        store.renderPaths.clear();
-      }, 100);
-      store.loadComponentsTree(true);
-    }
-    // Select the component based on the path received with the SelectElement message
-    if (msg.type === "SelectElement") {
-      if (!(Array.isArray(msg.data) && msg.data.every((val) => typeof val === "string"))) {
-        return;
+      // Stop the DOM element selector tool upon receiving the StopSelector message
+      if (msg.type === "StopSelector") {
+        store.componentSearch.activeSelector = false;
       }
-      store.selectComponent(msg.data);
-    }
-    // Stop the DOM element selector tool upon receiving the StopSelector message
-    if (msg.type === "StopSelector") {
-      store.componentSearch.activeSelector = false;
-    }
 
-    // Logic for recording an event when the event message is received
-    if (msg.type === "Event") {
-      let events = msg.data;
-      loadEvents(events);
-    }
-
-    // If we know a new iframe has been added to the page, load scripts into it and update the
-    // frames list if it has been directly loaded.
-    if (msg.type === "NewIFrame") {
-      const isLoaded = await loadScripts(msg.data);
-      if (isLoaded) {
-        store.updateIFrameList();
+      // Logic for recording an event when the event message is received
+      if (msg.type === "Event") {
+        let events = msg.data;
+        loadEvents(events);
       }
-    }
-  });
+
+      // If we know a new iframe has been added to the page, load scripts into it and update the
+      // frames list if it has been directly loaded.
+      if (msg.type === "NewIFrame") {
+        const isLoaded = await loadScripts(msg.data);
+        if (isLoaded) {
+          store.updateIFrameList();
+        }
+      }
+    });
+  }
 });
 
 // Load all settings from the chrome sync storage

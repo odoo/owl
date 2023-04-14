@@ -27,7 +27,6 @@ function createPanelsIfOwl() {
         "../../assets/icon128.png",
         IS_FIREFOX ? "devtools_panel.html" : "devtools_app/devtools_panel.html"
       );
-      browserInstance.runtime.sendMessage({ type: "newDevtoolsPanel" });
     }
   );
 }

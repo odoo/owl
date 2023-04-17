@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`shadow_dom can bind event handler 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let hdlr1 = [ctx['add'], ctx];
+    return block1([hdlr1]);
+  }
+}"
+`;
+
+exports[`shadow_dom can mount app 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div class=\\"my-div\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`shadow_dom useRef hook 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div class=\\"my-div\\" block-ref=\\"0\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let ref1 = (el) => this.__owl__.setRef((\`refName\`), el);
+    return block1([ref1]);
+  }
+}"
+`;

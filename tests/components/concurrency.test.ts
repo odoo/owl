@@ -4126,6 +4126,80 @@ test("delayed render does not go through when t-component value changed", async 
   ]).toBeLogged();
 });
 
+test("delayed render is not cancelled by upcoming render", async () => {
+  let b: any;
+
+  class B extends Component {
+    static template = xml`
+        <t t-esc="props.state.groups.length"/>
+        <t t-esc="props.state.config.test"/>`;
+
+    setup() {
+      useLogLifecycle();
+      b = this;
+    }
+  }
+
+  class A extends Component {
+    static components = { B };
+    static template = xml`<B state="state" isEmpty="state.groups.length === 0"/>`;
+
+    state = useState({ groups: [], config: { test: "initial" } });
+    setup() {
+      useLogLifecycle();
+    }
+  }
+
+  await mount(A, fixture);
+
+  expect([
+    "A:setup",
+    "A:willStart",
+    "A:willRender",
+    "B:setup",
+    "B:willStart",
+    "A:rendered",
+    "B:willRender",
+    "B:rendered",
+    "B:mounted",
+    "A:mounted",
+  ]).toBeLogged();
+
+  expect(fixture.innerHTML).toBe("0initial");
+
+  b.props.state.config.test = "red";
+  b.props.state.groups.push(1);
+  expect([]).toBeLogged();
+  await Promise.resolve();
+  await Promise.resolve();
+  await Promise.resolve();
+  await Promise.resolve();
+  await Promise.resolve();
+  b.props.state.config.test = "black";
+  b.props.state.groups.push(1);
+  expect([
+    "A:willRender",
+    "B:willUpdateProps",
+    "A:rendered",
+    "B:willRender",
+    "B:rendered",
+  ]).toBeLogged();
+
+  await nextTick();
+  expect(fixture.innerHTML).toBe("2black");
+  expect([
+    "A:willRender",
+    "B:willUpdateProps",
+    "A:rendered",
+    "B:willRender",
+    "B:rendered",
+    "A:willPatch",
+    "B:willPatch",
+    "B:patched",
+    "A:patched",
+  ]).toBeLogged();
+});
+
 //   test.skip("components with shouldUpdate=false", async () => {
 //     const state = { p: 1, cc: 10 };
 

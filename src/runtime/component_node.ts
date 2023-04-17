@@ -73,6 +73,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
   forceNextRender: boolean = false;
   parentKey: string | null;
   props: P;
+  nextProps: P | null = null;
 
   renderFn: Function;
   parent: ComponentNode | null;
@@ -220,7 +221,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
   }
 
   async updateAndRender(props: P, parentFiber: Fiber) {
-    const rawProps = props;
+    this.nextProps = props;
     props = Object.assign({}, props);
     // update
     const fiber = makeChildFiber(this, parentFiber);
@@ -245,7 +246,6 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
       return;
     }
     component.props = props;
-    this.props = rawProps;
     fiber.render();
     const parentRoot = parentFiber.root!;
     if (this.willPatch.length) {
@@ -327,6 +327,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
       // by the component will be patched independently in the appropriate
       // fiber.complete
       this._patch();
+      this.props = this.nextProps!;
     }
   }
   _patch() {

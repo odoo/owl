@@ -24,7 +24,6 @@ class Root extends Component {
     }
 }
 
-// Application setup
 mount(Root, document.body, { templates: TEMPLATES, dev: true });`;
 
 const COMPONENTS_XML = /*xml*/`
@@ -934,7 +933,7 @@ const env = {
   ui: createUI()
 };
 
-mount(Root, document.body, { templates: TEMPLATES, env });
+mount(Root, document.body, { templates: TEMPLATES, env, dev: true });
 `;
 
 const RESPONSIVE_XML = /*xml*/`
@@ -1741,7 +1740,8 @@ class Root extends Component {
 }
 
 
-mount(Root, document.body, { templates: TEMPLATES, dev: true });
+// dev=false for benchmarking. we don't want to benchmark dev code!
+mount(Root, document.body, { templates: TEMPLATES, dev: false });
 
 `;
 

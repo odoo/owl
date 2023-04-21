@@ -1,7 +1,19 @@
-import { SAMPLES } from "./samples.js";
 import { debounce, loadJS } from "./utils.js";
-import { exportStandaloneApp } from "./export_snippet.js";
-const { useState, useRef, onMounted, onWillUnmount, onPatched, onWillUpdateProps } = owl;
+import {
+  App,
+  Component,
+  useState,
+  useRef,
+  onMounted,
+  onWillUnmount,
+  onPatched,
+  onWillUpdateProps,
+  loadFile as _loadFile,
+  whenReady,
+  __info__,
+  useEffect,
+  onWillStart,
+} from "../owl.js";
 
 //------------------------------------------------------------------------------
 // Constants, helpers, utils
@@ -16,40 +28,38 @@ const MODES = {
 const DEFAULT_XML = `<templates>
 </templates>`;
 
+// Memoize loadFile so that samples aren't reloaded whenever a sample is selected
+const fileCache = {};
+const loadFile = (path) => {
+  if (!(path in fileCache)) {
+    fileCache[path] = _loadFile(path);
+  }
+  return fileCache[path];
+}
+
 /**
  * Make an iframe, with all the js, css and xml properly injected.
  */
 function makeCodeIframe(js, css, xml) {
-  const sanitizedXML = xml.replace(/<!--[\s\S]*?-->/g, "").replace(/`/g, '\\\`');
+  // escape backticks in the xml so they don't close the template string
+  const escapedXml = xml.replace(/`/g, '\\\`');
 
-  // create iframe
   const iframe = document.createElement("iframe");
-
   iframe.onload = () => {
     const doc = iframe.contentDocument;
-    const utilsMod = doc.createElement("script");
-    utilsMod.setAttribute("type", "module");
-    utilsMod.setAttribute("src", "utils.js");
-    doc.head.appendChild(utilsMod);
-    // inject js
-    const owlScript = doc.createElement("script");
-    owlScript.type = "text/javascript";
-    owlScript.src = "../owl.js";
-    owlScript.addEventListener("load", () => {
-      const script = doc.createElement("script");
-      script.type = "module";
-      const content = `
-        (async function(TEMPLATES) {
-          ${js}
-        })(\`${sanitizedXML}\`)`;
-      script.innerHTML = content;
-      doc.body.appendChild(script);
-    });
-    doc.head.appendChild(owlScript);
 
-    // inject css
+    const importMap = doc.createElement("script");
+    importMap.type = "importmap";
+    importMap.textContent = `{ "imports": { "@odoo/owl": "../owl.js" } }`;
+    doc.head.appendChild(importMap);
+
+    const script = doc.createElement("script");
+    script.type = "module";
+    script.textContent = `const TEMPLATES = \`${escapedXml}\`\n${js}`;
+    doc.body.appendChild(script);
+
     const style = document.createElement("style");
-    style.innerHTML = css;
+    style.innerText = css;
     doc.head.appendChild(style);
   };
   return iframe;
@@ -58,53 +68,84 @@ function makeCodeIframe(js, css, xml) {
 //------------------------------------------------------------------------------
 // SAMPLES
 //------------------------------------------------------------------------------
+
+const SAMPLES = [
+  {
+    description: "Components",
+    folder: "components",
+    code: ["js", "xml", "css"],
+  },
+  {
+    description: "Form Input Bindings",
+    folder: "form",
+    code: ["js", "xml"],
+  },
+  {
+    description: "Inline templates",
+    folder: "single_file_component",
+    code: ["js"],
+  },
+  {
+    description: "Lifecycle demo",
+    folder: "lifecycle_demo",
+    code: ["js", "xml", "css"],
+  },
+  {
+    description: "Customized hook",
+    folder: "custom_hooks",
+    code: ["js", "xml", "css"],
+  },
+  {
+    description: "Todo List App (with reactivity)",
+    folder: "todo_app",
+    code: ["js", "xml", "css"],
+  },
+  {
+    description: "Responsive app",
+    folder: "responsive_app",
+    code: ["js", "xml", "css"],
+  },
+  {
+    description: "Slots And Generic Components",
+    folder: "slots",
+    code: ["js", "xml", "css"],
+  },
+  {
+    description: "Window Management System",
+    folder: "window_manager",
+    code: ["js", "xml", "css"],
+  },
+  {
+    description: "Benchmark example",
+    folder: "benchmark",
+    code: ["js", "xml", "css"],
+  },
+]
+
 function loadSamples() {
-  let result = SAMPLES.slice();
+  const result = SAMPLES.map(({ description, folder, code }) => ({
+    description,
+    code: async () => Object.fromEntries(
+      await Promise.all(
+        code.map(async (type) => [type, await loadFile(`./samples/${folder}/${folder}.${type}`)])
+      )
+    ),
+  }));
   const localSample = localStorage.getItem("owl-playground-local-sample");
   if (localSample) {
     const { js, css, xml } = JSON.parse(localSample);
     result.unshift({
       description: "Local Storage Code",
-      code: js,
-      xml,
-      css
+      code: () => Promise.resolve({ js, xml, css }),
     });
   }
   return result;
 }
 
-function saveLocalSample(js, css, xml) {
-  const str = JSON.stringify({ js, css, xml });
-  localStorage.setItem("owl-playground-local-sample", str);
-}
-
-function deleteLocalSample() {
-  localStorage.removeItem("owl-playground-local-sample");
-}
-
-function useSamples() {
-  const samples = loadSamples();
-  const component = owl.useComponent();
-  let interval;
-
-  onMounted(() => {
-    const state = component.state;
-    interval = setInterval(() => {
-      if (component.isDirty) {
-        saveLocalSample(state.js, state.css, state.xml);
-      }
-    }, 1000);
-  });
-  onWillUnmount(() => {
-    clearInterval(interval);
-  });
-  return samples;
-}
-
 //------------------------------------------------------------------------------
 // Tabbed editor
 //------------------------------------------------------------------------------
-class TabbedEditor extends owl.Component {
+class TabbedEditor extends Component {
   setup() {
     const props = this.props;
     this.state = useState({
@@ -168,7 +209,7 @@ class TabbedEditor extends owl.Component {
       const resizer = ev => {
         const delta = ev.clientY - y;
         y = ev.clientY;
-        this.trigger("updatePanelHeight", { delta });
+        this.props.updatePanelHeight({ delta });
       };
       document.body.addEventListener("mousemove", resizer);
       document.body.addEventListener("mouseup", () => {
@@ -205,36 +246,53 @@ TabbedEditor.template = "TabbedEditor";
 //------------------------------------------------------------------------------
 // MAIN APP
 //------------------------------------------------------------------------------
-class App extends owl.Component {
+class Playground extends Component {
+  static template = "Playground";
+  static components = { TabbedEditor };
   setup() {
-    this.version = owl.__info__.version;
-    this.SAMPLES = useSamples();
-    this.isDirty = false;
+    this.version = __info__.version;
 
+    this.isDirty = false;
     this.state = useState({
-      js: this.SAMPLES[0].code,
-      css: this.SAMPLES[0].css || "",
-      xml: this.SAMPLES[0].xml || DEFAULT_XML,
+      js: "",
+      css: "",
+      xml: DEFAULT_XML,
       displayWelcome: true,
       splitLayout: true,
       leftPaneWidth: Math.ceil(window.innerWidth / 2),
       topPanelHeight: null
     });
 
-    this.toggleLayout = debounce(this.toggleLayout, 250, true);
-    this.runCode = debounce(this.runCode, 250, true);
-    this.downloadCode = debounce(this.downloadCode, 250, true);
-    this.content = useRef("content");
-    this.updateCode = this.updateCode.bind(this);
+    this.samples = loadSamples();
     if (window.location.hash) {
       try {
         const { js, css, xml } = JSON.parse(atob(decodeURIComponent(window.location.hash.slice(1))));
-        if (![js, css, xml].every(item => typeof item === "string")) {
-          return;
+        if ([js, css, xml].every(item => typeof item === "string")) {
+          Object.assign(this.state, { js, css, xml });
         }
-        Object.assign(this.state, { js, css, xml });
       } catch {}
     }
+    onWillStart(async () => {
+      if (!this.state.js) {
+        this.setSample(await this.samples[0].code());
+      }
+    })
+    useEffect(() => {
+      const interval = setInterval(() => {
+        if (this.isDirty) {
+          const { js, css, xml } = this.state;
+          const str = JSON.stringify({ js, css, xml });
+          localStorage.setItem("owl-playground-local-sample", str);
+        }
+      }, 1000);
+      return () => clearInterval(interval);
+    }, () => []);
+
+    this.toggleLayout = debounce(this.toggleLayout, 250, true);
+    this.runCode = debounce(this.runCode, 250, true);
+    this.exportStandaloneApp = debounce(this.exportStandaloneApp, 250, true);
+    this.content = useRef("content");
+    this.updateCode = this.updateCode.bind(this);
   }
 
   runCode() {
@@ -258,12 +316,11 @@ class App extends owl.Component {
     window.location.href = link.href;
   }
 
-  setSample(ev) {
-    const sample = this.SAMPLES.find(s => s.description === ev.target.value);
-    this.state.js = sample.code;
+  setSample(sample) {
+    this.state.js = sample.js;
     this.state.css = sample.css || "";
     this.state.xml = sample.xml || DEFAULT_XML;
-    deleteLocalSample();
+    localStorage.removeItem("owl-playground-local-sample");
     this.isDirty = false;
   }
 
@@ -271,12 +328,12 @@ class App extends owl.Component {
     return `width:${this.state.leftPaneWidth}px`;
   }
 
-  get rightPaneStyle() {
-    return `width:${window.innerWidth - 6 - this.state.leftPaneWidth}px`;
-  }
-
   get topEditorStyle() {
     return `flex: 0 0 ${this.state.topPanelHeight}px`;
+  }
+
+  async onSampleChange(ev) {
+    this.setSample(await this.samples.find(s => s.description === ev.target.value).code());
   }
 
   onMouseDown() {
@@ -305,39 +362,40 @@ class App extends owl.Component {
   toggleLayout() {
     this.state.splitLayout = !this.state.splitLayout;
   }
-  updatePanelHeight(ev) {
-    if (!ev.detail.delta) {
-      return;
-    }
-    let height = this.state.topPanelHeight;
-    if (!height) {
-      height = document.getElementsByClassName("tabbed-editor")[0].clientHeight;
-    }
-    this.state.topPanelHeight = height + ev.detail.delta;
+  updatePanelHeight({ delta }) {
+    let height = this.state.topPanelHeight || document.querySelector(".tabbed-editor").clientHeight;
+    this.state.topPanelHeight = height + delta;
   }
 
-  async downloadCode() {
+  async exportStandaloneApp() {
     const { js, css, xml } = this.state;
-    const content = await exportStandaloneApp(js, css, xml);
+
+    await loadJS("libs/jszip.min.js");
+    const zip = new JSZip();
+    zip.file("app.py", await loadFile("./standalone_app/app.py"));
+    zip.file("index.html", await loadFile("./standalone_app/index.html"));
+    zip.file("owl.js", await loadFile("../owl.js"));
+    zip.file("app.js", `const TEMPLATES = await (await fetch('app.xml')).text();\n${js}`);
+    zip.file("app.css", css);
+    zip.file("app.xml", xml);
+
     await loadJS("libs/FileSaver.min.js");
-    saveAs(content, "app.zip");
+    saveAs(await zip.generateAsync({ type: "blob" }), "app.zip");
   }
 }
-App.components = { TabbedEditor };
-App.template = "App";
 
 //------------------------------------------------------------------------------
 // Application initialization
 //------------------------------------------------------------------------------
 async function start() {
-  document.title = `${document.title} (v${owl.__info__.version})`;
-  const commit = `https://github.com/odoo/owl/commit/${owl.__info__.hash}`;
+  document.title = `${document.title} (v${__info__.version})`;
+  const commit = `https://github.com/odoo/owl/commit/${__info__.hash}`;
   console.info(`This application is using Owl built with the following commit:`, commit);
   const [templates] = await Promise.all([
-    owl.loadFile("templates.xml"),
-    owl.whenReady()
+    loadFile("templates.xml"),
+    whenReady()
   ]);
-  const rootApp = new owl.App(App);
+  const rootApp = new App(Playground);
   rootApp.addTemplates(templates);
 
   await  rootApp.mount(document.body);

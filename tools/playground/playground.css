@@ -20,7 +20,7 @@ body {
   display: grid;
   height: 100%;
   width: 100%;
-  grid-template-columns: auto 8px 100%;
+  grid-template-columns: auto 8px 1fr;
 }
 
 /* LEFT BAR ****************************************/

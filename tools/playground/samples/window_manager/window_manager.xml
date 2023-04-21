@@ -1,0 +1,32 @@
+<templates>
+  <div t-name="Window" class="window" t-att-style="style" t-on-click="updateZIndex" t-ref="root">
+    <div class="header">
+      <span t-on-mousedown="startDragAndDrop"><t t-esc="props.info.title"/></span>
+      <span class="close" t-on-click.stop="close">×</span>
+    </div>
+    <t t-slot="default"/>
+  </div>
+
+  <div t-name="WindowContainer" class="window-manager">
+    <Window t-foreach="windowService.getWindows()" t-as="w" t-key="w.id" info="w">
+      <t t-component="w.Component"/>
+    </Window>
+  </div>
+
+  <div t-name="Root" class="app">
+    <WindowContainer/>
+    <div class="menubar">
+      <button t-on-click="() => this.addWindow('Hello')">Say Hello</button>
+      <button t-on-click="() => this.addWindow('Counter')">Counter</button>
+    </div>
+  </div>
+
+  <div t-name="HelloWorld">
+    Some content here...
+  </div>
+
+  <div t-name="Counter" class="counter">
+    <button t-on-click="inc">Click</button>
+    <span><t t-esc="state.value"/></span>
+  </div>
+</templates>

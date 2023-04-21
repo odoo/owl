@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>OWL App</title>
+    <link rel="icon" href="data:,">
+
+    <link rel="stylesheet" href="app.css">
+    <script type="importmap">{ "imports": { "@odoo/owl": "./owl.js" } }</script>
+    <script type="module" src="app.js"></script>
+  </head>
+  <body>
+    <pre>
+This app requires a web server, simply opening the html file using your browser will not work.
+You can run a simple web server with one of the following:
+- if you have python3 installed, run app.py with python3 or run 'python3 -m http.server' in the app folder
+- if you have node/npm installed, run 'npx serve' in the app folder
+- if you have php installed, run 'php -S localhost:8080 -t .' in the app folder
+    </pre>
+    <script>if (window.location.protocol !== "file:") document.querySelector("pre").remove()</script>
+  </body>
+</html>

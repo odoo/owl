@@ -1,5 +1,5 @@
 <templates>
-  <div t-name="TabbedEditor" class="tabbed-editor">
+  <div t-name="TabbedEditor" class="tabbed-editor" t-att-style="props.style">
     <div class="tabBar" t-att-class="{resizeable: props.resizeable}" t-on-mousedown="onMouseDown">
         <t t-foreach="['js', 'xml', 'css']" t-as="tab" t-key="tab">
             <a t-ref="{{tab}}" t-if="props[tab] !== false" t-key="tab" class="tab flash" t-att-class="{active: state.currentTab===tab}" t-on-click="() => setTab(tab)">
@@ -10,17 +10,17 @@
     <div class="code-editor" t-ref="editor"></div>
   </div>
 
-  <div t-name="App" class="playground">
+  <div t-name="Root" class="playground">
       <div class="left-bar" t-att-class="{split: state.splitLayout}"
            t-att-style="leftPaneStyle">
         <div class="menubar">
           <a class="btn run-code flash" t-on-click="runCode" title="Execute this Code">▶ Run</a>
-          <select t-on-change="setSample">
-            <option t-foreach="SAMPLES" t-as="sample" t-key="sample_index">
+          <select t-on-change="onSampleChange">
+            <option t-foreach="samples" t-as="sample" t-key="sample_index">
               <t t-esc="sample.description"/>
             </option>
           </select>
-          <a class="btn flash" t-on-click="downloadCode" title="Download a Zip with this Code"><i class="fas fa-download"></i></a>
+          <a class="btn flash" t-on-click="exportStandaloneApp" title="Download zip that bundles this app with a tiny python web server"><i class="fas fa-download"></i></a>
           <a class="layout-selector flash" t-on-click="toggleLayout" title="Toggle Layout"><i class="fas"  t-att-class="state.splitLayout ?  'fa-toggle-on' : 'fa-toggle-off'"></i></a>
           <a class="btn flash share-code" t-on-click="shareCode" title="Copy a link to this playground"><span>Share</span><span class="copied-notification" t-if="state.copied">Copied link to clipboard!</span></a>
         </div>
@@ -37,19 +37,19 @@
              css="state.css"
              xml="state.xml"
              resizeable="true"
-             onUpdatePanelHeight="updatePanelHeight"
+             updatePanelHeight.bind="updatePanelHeight"
              updateCode="updateCode"/>
         </t>
       </div>
       <div class="separator vertical" t-on-mousedown="onMouseDown"/>
-      <div class="right-pane"  t-att-style="rightPaneStyle">
+      <div class="right-pane">
         <div class="welcome" t-if="state.displayWelcome">
           <div>🦉 Odoo Web Library 🦉</div>
           <div>v<t t-esc="version"/></div>
           <div class="url"><a href="https://github.com/odoo/owl">https://github.com/odoo/owl</a></div>
           <div class="note">
-            <p>Note: these examples are using recent features of Javascript, and require a recent browser to work without a transpilation step!
-              For example, it makes use of class fields and class static fields. These examples should work in a recent Chrome version.
+            <p>
+              Note: these examples make use of recent features of Javascript, and require a recent browser to work without a transpilation step! Among other things, it uses class fields and import maps. If you encounter issues, make sure your browser is up to date.
             </p>
           </div>
         </div>

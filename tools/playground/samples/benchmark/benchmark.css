@@ -1,0 +1,11 @@
+tr.danger {
+  font-weight: bold;
+}
+
+.remove:hover {
+  font-weight: bold;
+}
+.remove {
+  cursor: pointer;
+}
+  

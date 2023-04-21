@@ -1,0 +1,7 @@
+
+<templates>
+  <div t-name="Root">
+    <button t-on-click="increment">Click! <t t-esc="counter.value"/></button>
+    <div>Mouse: <t t-esc="mouse.x"/>, <t t-esc="mouse.y"/></div>
+  </div>
+</templates>

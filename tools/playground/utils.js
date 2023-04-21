@@ -18,12 +18,6 @@ export function debounce(func, wait, immediate) {
   };
 }
 
-export function useBus(bus, evName, cb) {
-  bus.addEventListener(evName, cb);
-  owl.onWillUnmount(() => {
-    bus.removeEventListener(evName, cb);
-  });
-}
 
 const loadedScripts = {};
 

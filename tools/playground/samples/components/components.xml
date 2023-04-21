@@ -1,0 +1,9 @@
+<templates>
+  <div t-name="Greeter" class="greeter" t-on-click="toggle">
+    <t t-esc="state.word"/>, <t t-esc="props.name"/>
+  </div>
+
+  <t t-name="Root">
+    <Greeter name="state.name"/>
+  </t>
+</templates>

@@ -15,8 +15,8 @@ URL = 'http://{0}:{1}/tools/playground'.format(HOST, PORT)
 # we want to update the playground.
 class OWLHandler(SimpleHTTPRequestHandler):
     def do_GET(self): 
-        if self.path == '/tools/owl.js':
-            self.path = '/dist/owl.iife.js'
+        if self.path == '/tools/owl.js' or self.path == '/tools/playground/owl.js':
+            self.path = '/dist/owl.es.js'
         return SimpleHTTPRequestHandler.do_GET(self)
 
     def end_headers(self):

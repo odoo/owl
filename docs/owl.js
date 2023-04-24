@@ -3017,7 +3017,7 @@ class LazyValue {
  * Safely outputs `value` as a block depending on the nature of `value`
  */
 function safeOutput(value, defaultValue) {
-    if (value === undefined) {
+    if (value === undefined || value === null) {
         return defaultValue ? toggler("default", defaultValue) : toggler("undefined", text(""));
     }
     let safeKey;
@@ -5920,6 +5920,6 @@ TemplateSet.prototype._compileTemplate = function _compileTemplate(name, templat
 export { App, Component, EventBus, OwlError, __info__, blockDom, loadFile, markRaw, markup, mount, onError, onMounted, onPatched, onRendered, onWillDestroy, onWillPatch, onWillRender, onWillStart, onWillUnmount, onWillUpdateProps, reactive, status, toRaw, useChildSubEnv, useComponent, useEffect, useEnv, useExternalListener, useRef, useState, useSubEnv, validate, validateType, whenReady, xml };
 
 
-__info__.date = '2023-04-24T13:41:41.071Z';
-__info__.hash = '53ce7ed';
+__info__.date = '2023-04-24T14:29:32.376Z';
+__info__.hash = 'f9d810a';
 __info__.url = 'https://github.com/odoo/owl';

@@ -20,9 +20,6 @@ yarn-error.log*
 
 node_modules
 
-# Extras temp file
-/tools/owl.js
-
 release-notes.md
 
 .rpt2_cache

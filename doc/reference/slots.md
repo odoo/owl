@@ -175,7 +175,7 @@ class Notebook extends Component {
     <div class="notebook">
       <div class="tabs">
         <t t-foreach="tabNames" t-as="tab" t-key="tab_index">
-          <span t-att-class="{active:tab_index === activeTab}" t-on-click="() => state.activeTab=tab">
+          <span t-att-class="{active:tab_index === activeTab}" t-on-click="() => state.activeTab=tab_index">
             <t t-esc="props.slots[tab].title"/>
           </span>
         </t>

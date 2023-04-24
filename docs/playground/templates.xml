@@ -10,7 +10,7 @@
     <div class="code-editor" t-ref="editor"></div>
   </div>
 
-  <div t-name="Root" class="playground">
+  <div t-name="Playground" class="playground">
       <div class="left-bar" t-att-class="{split: state.splitLayout}"
            t-att-style="leftPaneStyle">
         <div class="menubar">

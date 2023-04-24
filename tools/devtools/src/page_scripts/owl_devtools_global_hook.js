@@ -47,10 +47,8 @@
       });
       iFrameObserver.observe(document.body, { subtree: true, childList: true });
       this.appsPatched = false;
+      this.destroyPatched = false;
       this.patchAppsSetMethods();
-      setTimeout(() => {
-        this.patchAppMethods();
-      }, 200);
       this.recordEvents = false;
       this.traceRenderings = false;
       this.traceSubscriptions = false;
@@ -177,6 +175,26 @@
       const self = this;
       this.apps.add = function () {
         originalAdd.call(this, ...arguments);
+        if (!self.destroyPatched) {
+          const newApp = arguments[0];
+          // It is not a given that apps have a root node at creation so we need to wait
+          if (newApp.root) {
+            self.patchDestroyMethod(newApp.root);
+          } else {
+            let root = null;
+            Object.defineProperty(newApp, "root", {
+              get() {
+                return root;
+              },
+              set(value) {
+                root = value;
+                if (!self.destroyPatched) {
+                  self.patchDestroyMethod(root);
+                }
+              },
+            });
+          }
+        }
         self.patchAppMethods();
         window.top.postMessage({
           source: "owl-devtools",
@@ -192,18 +210,40 @@
       };
     }
 
+    patchDestroyMethod(root) {
+      if (!this.destroyPatched) {
+        // Signals when a component is destroyed
+        const originalDestroy = root.constructor.prototype._destroy;
+        const self = this;
+        root.constructor.prototype._destroy = function () {
+          if (self.recordEvents) {
+            const path = self.getComponentPath(this);
+            const event = {
+              type: "destroy",
+              component: this.name,
+              key: this.parentKey,
+              path: path,
+              time: 0,
+              id: self.eventId++,
+            };
+            self.eventsBatch.push(event);
+            const before = performance.now();
+            originalDestroy.call(this, ...arguments);
+            event.time = performance.now() - before;
+          } else {
+            originalDestroy.call(this, ...arguments);
+          }
+        };
+        this.destroyPatched = true;
+      }
+    }
+
     // Modify methods of each app so that it triggers messages on each flush and component render
     patchAppMethods() {
       if (this.appsPatched) {
         return;
       }
-      let app;
-      for (const appItem of this.apps) {
-        if (appItem.root) {
-          app = appItem;
-        }
-      }
-      // We don't want to bother patching the apps methods if none have components inside
+      let app = this.apps.values().next().value;
       if (!app) {
         return;
       }
@@ -335,27 +375,6 @@
             origin: { id: self.devtoolsId },
           });
           self.eventsBatch = [];
-        }
-      };
-      // Signals when a component is destroyed
-      const originalDestroy = app.root.constructor.prototype._destroy;
-      app.root.constructor.prototype._destroy = function () {
-        if (self.recordEvents) {
-          const path = self.getComponentPath(this);
-          const event = {
-            type: "destroy",
-            component: this.name,
-            key: this.parentKey,
-            path: path,
-            time: 0,
-            id: self.eventId++,
-          };
-          self.eventsBatch.push(event);
-          const before = performance.now();
-          originalDestroy.call(this, ...arguments);
-          event.time = performance.now() - before;
-        } else {
-          originalDestroy.call(this, ...arguments);
         }
       };
       this.appsPatched = true;

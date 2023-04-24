@@ -434,6 +434,18 @@ exports[`t-out t-out with the 0 number, in a p 1`] = `
 }"
 `;
 
+exports[`t-out top level t-out with null 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return safeOutput(ctx['var']);
+  }
+}"
+`;
+
 exports[`t-out top level t-out with undefined 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

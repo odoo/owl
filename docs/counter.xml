@@ -1,0 +1,7 @@
+<templates>
+  <t t-name="Counter">
+    <button t-on-click="increment">
+      Click Me! [<t t-esc="state.value"/>]
+    </button>
+  </t>
+</templates>

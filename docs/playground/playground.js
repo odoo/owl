@@ -395,7 +395,7 @@ async function start() {
     loadFile("templates.xml"),
     whenReady()
   ]);
-  const rootApp = new App(Playground);
+  const rootApp = new App(App, { name: "Owl Playground" });
   rootApp.addTemplates(templates);
 
   await  rootApp.mount(document.body);

@@ -11,6 +11,10 @@
       this.Fiber = window.__OWL_DEVTOOLS__.Fiber;
       // Same but for RootFiber
       this.RootFiber = window.__OWL_DEVTOOLS__.RootFiber;
+      // This is for retrocompatibility purposes since new versions of owl should always expose toRaw and reactive
+      // in __OWL_DEVTOOLS__
+      this.toRaw = window.__OWL_DEVTOOLS__.toRaw ?? window.owl?.toRaw;
+      this.reactive = window.__OWL_DEVTOOLS__.reactive ?? window.owl?.reactive;
       // Set to keep track of the fibers that are in the flush queue
       this.queuedFibers = new WeakSet();
       // Set to keep track of the HTML elements we added to the page
@@ -400,7 +404,7 @@
       let targetToKeysToCallbacks;
 
       // Step 1: extract internal values from owl
-      const obj = owl.reactive({}, () => {});
+      const obj = self.reactive({}, () => {});
       let count = 0;
       WeakMap.prototype.get = function () {
         count++;
@@ -728,7 +732,7 @@
             }
         }
         if (obj) {
-          obj = owl.toRaw(obj);
+          obj = this.toRaw(obj);
         }
       }
       return obj;
@@ -836,7 +840,7 @@
         child.contentType = "undefined";
         child.hasChildren = false;
       } else {
-        obj = owl.toRaw(obj);
+        obj = this.toRaw(obj);
         switch (true) {
           case obj instanceof Map:
             child.contentType = "map";
@@ -1388,7 +1392,7 @@
         }
         getter.hasChildren = false;
       } else {
-        obj = owl.toRaw(obj);
+        obj = this.toRaw(obj);
         switch (true) {
           case obj instanceof Map:
             getter.contentType = "map";
@@ -1483,7 +1487,7 @@
         return;
       }
       if (objectType === "subscription") {
-        owl.reactive(obj)[key] = value;
+        this.reactive(obj)[key] = value;
       } else {
         obj[key] = value;
         if (objectType === "props" || objectType === "instance") {

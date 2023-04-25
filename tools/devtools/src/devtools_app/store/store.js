@@ -513,6 +513,7 @@ export const store = reactive({
     evalFunctionInWindow("toggleTracing", [false]);
     this.traceSubscriptions = false;
     evalFunctionInWindow("toggleSubscriptionTracing", [false]);
+    this.updateIFrameList();
   },
 
   // Triggers manually the rendering of the selected component

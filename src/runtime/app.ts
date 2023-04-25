@@ -7,6 +7,7 @@ import { Scheduler } from "./scheduler";
 import { validateProps } from "./template_helpers";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
 import { validateTarget } from "./utils";
+import { toRaw, reactive } from "./reactivity";
 
 // reimplement dev mode stuff see last change in 0f7a8289a6fb8387c3c1af41c6664b2a8448758f
 
@@ -39,6 +40,8 @@ declare global {
       apps: Set<App>;
       Fiber: typeof Fiber;
       RootFiber: typeof RootFiber;
+      toRaw: typeof toRaw;
+      reactive: typeof reactive;
     };
   }
 }
@@ -47,6 +50,8 @@ window.__OWL_DEVTOOLS__ ||= {
   apps: new Set<App>(),
   Fiber: Fiber,
   RootFiber: RootFiber,
+  toRaw: toRaw,
+  reactive: reactive,
 };
 
 export class App<

@@ -509,7 +509,10 @@ export const store = reactive({
     this.eventsTree = [];
     this.activeRecorder = false;
     evalFunctionInWindow("toggleEventsRecording", [false, 0]);
+    this.traceRenderings = false;
     evalFunctionInWindow("toggleTracing", [false]);
+    this.traceSubscriptions = false;
+    evalFunctionInWindow("toggleSubscriptionTracing", [false]);
   },
 
   // Triggers manually the rendering of the selected component

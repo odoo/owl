@@ -46,6 +46,9 @@
       this.appsPatched = false;
       this.destroyPatched = false;
       this.patchAppsSetMethods();
+      if (this.apps.size > 0) {
+        this.patchAppMethods();
+      }
       this.recordEvents = false;
       this.traceRenderings = false;
       this.traceSubscriptions = false;
@@ -241,13 +244,22 @@
         return;
       }
       let app = this.apps.values().next().value;
-      if (!app) {
-        return;
+      const self = this;
+      if (app.root) {
+        this.patchDestroyMethod(app.root);
+      } else {
+        const originalMount = app.constructor.prototype.mount;
+        app.constructor.prototype.mount = async function (...args) {
+          const result = await originalMount.call(this, ...args);
+          const root = this.root;
+          self.patchDestroyMethod(root);
+          app.constructor.prototype.mount = originalMount;
+          return result;
+        };
       }
       const originalFlush = app.scheduler.constructor.prototype.flush;
       let inFlush = false;
       let _render = false;
-      const self = this;
       app.scheduler.constructor.prototype.flush = function () {
         // Used to know when a render is triggered inside the flush method or not
         inFlush = true;

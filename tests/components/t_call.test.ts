@@ -398,4 +398,31 @@ describe("t-call", () => {
     });
     expect(fixture.innerHTML).toBe("");
   });
+
+  test("dynamic t-call with same sub component", async () => {
+    class Child extends Component {
+      static template = xml`child`;
+    }
+
+    class Root extends Component {
+      static template = xml`
+        <t t-esc="current.template"/>
+        <t t-call="{{current.template}}"/>`;
+      static components = { Child };
+      current = useState({ template: "A" });
+    }
+
+    const root = await mount(Root, fixture, {
+      templates: `
+        <templates>
+          <t t-name="A"><Child/></t>
+          <t t-name="B"><Child/></t>
+        </templates>`,
+    });
+    expect(fixture.innerHTML).toBe("Achild");
+
+    root.current.template = "B";
+    await nextTick();
+    expect(fixture.innerHTML).toBe("Bchild");
+  });
 });

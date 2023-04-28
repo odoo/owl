@@ -125,7 +125,7 @@ export class TemplateSet {
 
   callTemplate(owner: any, subTemplate: string, ctx: any, parent: any, key: any): any {
     const template = this.getTemplate(subTemplate);
-    return toggler(subTemplate, template.call(owner, ctx, parent, key));
+    return toggler(subTemplate, template.call(owner, ctx, parent, key + subTemplate));
   }
 }
 

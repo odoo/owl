@@ -42,6 +42,56 @@ exports[`t-call dynamic t-call 3`] = `
 }"
 `;
 
+exports[`t-call dynamic t-call with same sub component 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const call = app.callTemplate.bind(app);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(ctx['current'].template);
+    const template1 = (ctx['current'].template);
+    const b3 = call(this, template1, ctx, node, key + \`__1\`);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`t-call dynamic t-call with same sub component 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return comp1({}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`t-call dynamic t-call with same sub component 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`child\`);
+  }
+}"
+`;
+
+exports[`t-call dynamic t-call with same sub component 4`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return comp1({}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
 exports[`t-call dynamic t-call: key is propagated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

@@ -1028,3 +1028,21 @@ describe("Portal: Props validation", () => {
     expect(error!.message).toBe(`invalid portal target`);
   });
 });
+
+describe("portal .closest suffix", () => {
+  test("basic use of .suffix", async () => {
+    class Parent extends Component {
+      static template = xml`
+        <p class="target">far target</p>
+        <div>
+          <p class="target">close target</p>
+          <t t-portal.closest="'.target'">portal content</t>
+        </div>`;
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe(
+      '<p class="target">far target</p><div><p class="target">close targetportal content</p></div>'
+    );
+  });
+});

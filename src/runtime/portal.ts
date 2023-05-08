@@ -5,20 +5,34 @@ import { OwlError } from "./error_handling";
 
 const VText: any = text("").constructor;
 
+function getTarget(
+  currentParentEl: HTMLElement | Document,
+  selector: string,
+  isClosest: boolean
+): HTMLElement | null {
+  if (!isClosest || currentParentEl === document) {
+    return document.querySelector(selector);
+  }
+  const attempt = currentParentEl.querySelector(selector) as HTMLElement | null;
+  return attempt || getTarget(currentParentEl.parentElement!, selector, true);
+}
+
 class VPortal extends VText implements Partial<VNode<VPortal>> {
   content: BDom | null;
   selector: string;
+  isClosest: boolean;
   target: HTMLElement | null = null;
 
-  constructor(selector: string, content: BDom) {
+  constructor(selector: string, isClosest: boolean, content: BDom) {
     super("");
     this.selector = selector;
+    this.isClosest = isClosest;
     this.content = content;
   }
 
   mount(parent: HTMLElement, anchor: ChildNode) {
     super.mount(parent, anchor);
-    this.target = document.querySelector(this.selector) as any;
+    this.target = getTarget(parent, this.selector, this.isClosest);
     if (this.target) {
       this.content!.mount(this.target!, null);
     } else {
@@ -54,16 +68,19 @@ class VPortal extends VText implements Partial<VNode<VPortal>> {
 export function portalTemplate(app: any, bdom: any, helpers: any) {
   let { callSlot } = helpers;
   return function template(ctx: any, node: any, key = ""): any {
-    return new VPortal(ctx.props.target, callSlot(ctx, node, key, "default", false, null));
+    return new VPortal(
+      ctx.props.target,
+      ctx.props.isClosest,
+      callSlot(ctx, node, key, "default", false, null)
+    );
   };
 }
 
 export class Portal extends Component {
   static template = "__portal__";
   static props = {
-    target: {
-      type: String,
-    },
+    target: String,
+    isClosest: { type: Boolean, optional: true },
     slots: true,
   };
 
@@ -73,7 +90,7 @@ export class Portal extends Component {
     onMounted(() => {
       const portal: VPortal = node.bdom;
       if (!portal.target) {
-        const target: HTMLElement = document.querySelector(this.props.target);
+        const target = getTarget(portal.parentEl, this.props.target, this.props.isClosest);
         if (target) {
           portal.content!.moveBeforeDOMNode(target.firstChild, target);
         } else {

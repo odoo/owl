@@ -1371,7 +1371,9 @@ export class CodeGenerator {
     });
 
     const target = compileExpr(ast.target);
-    const blockString = `${id}({target: ${target},slots: {'default': {__render: ${name}.bind(this), __ctx: ${ctxStr}}}}, key + \`${key}\`, node, ctx, Portal)`;
+    const blockString = `${id}({target: ${target},${
+      ast.isClosest ? "isClosest: true," : ""
+    }slots: {'default': {__render: ${name}.bind(this), __ctx: ${ctxStr}}}}, key + \`${key}\`, node, ctx, Portal)`;
     if (block) {
       this.insertAnchor(block);
     }

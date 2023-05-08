@@ -1998,6 +1998,7 @@ describe("qweb parser", () => {
   test("t-portal", async () => {
     expect(parse(`<t t-portal="target">Content</t>`)).toEqual({
       type: ASTType.TPortal,
+      isClosest: false,
       target: "target",
       content: { type: ASTType.Text, value: "Content" },
     });
@@ -2008,12 +2009,22 @@ describe("qweb parser", () => {
       condition: "condition",
       content: {
         content: { type: ASTType.Text, value: "Content" },
+        isClosest: false,
         target: "target",
         type: ASTType.TPortal,
       },
       tElif: null,
       tElse: null,
       type: ASTType.TIf,
+    });
+  });
+
+  test("t-portal with .closest", async () => {
+    expect(parse(`<t t-portal.closest="target">Content</t>`)).toEqual({
+      type: ASTType.TPortal,
+      isClosest: true,
+      target: "target",
+      content: { type: ASTType.Text, value: "Content" },
     });
   });
 });

@@ -38,8 +38,8 @@
         </t>
       </ul>
     </div>
-    <t t-if="props.object.toggled">
-      <t t-foreach="props.object.children" t-as="child" t-key="child.name">
+    <t t-if="props.object.toggled" t-key="contextMenuId">
+      <t t-foreach="props.object.children" t-as="child" t-key="child_index">
         <ObjectTreeElement t-if="props.object.objectType === 'subscription'" object="child" keys="props.keys"/>
         <ObjectTreeElement t-else="" object="child"/>
       </t>

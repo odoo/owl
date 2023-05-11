@@ -1000,19 +1000,6 @@
             children.push(entries);
             index++;
           }
-          const size = this.serializeObjectChild(
-            obj,
-            { type: "item", value: "size", childIndex: children.length },
-            depth,
-            objType,
-            path,
-            oldBranch.children[index],
-            oldTree
-          );
-          if (size) {
-            children.push(size);
-            index++;
-          }
           Reflect.ownKeys(obj).forEach((key) => {
             const child = this.serializeObjectChild(
               obj,

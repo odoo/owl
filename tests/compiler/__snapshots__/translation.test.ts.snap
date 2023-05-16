@@ -1,5 +1,79 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`translation support body of t-sets are translated 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    setContextValue(ctx, \\"label\\", \`translated\`);
+    return text(ctx['label']);
+  }
+}"
+`;
+
+exports[`translation support body of t-sets inside translation=off are not translated 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    setContextValue(ctx, \\"label\\", \`untranslated\`);
+    return text(ctx['label']);
+  }
+}"
+`;
+
+exports[`translation support body of t-sets with html content are translated 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, LazyValue, safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div>translated</div>\`);
+  
+  function value1(ctx, node, key = \\"\\") {
+    return block1();
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    ctx[\`label\`] = new LazyValue(value1, ctx, this, node, key);
+    return safeOutput(ctx['label']);
+  }
+}"
+`;
+
+exports[`translation support body of t-sets with text and html content are translated 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, LazyValue, safeOutput } = helpers;
+  
+  let block3 = createBlock(\`<div>translated</div>\`);
+  
+  function value1(ctx, node, key = \\"\\") {
+    const b2 = text(\` translated \`);
+    const b3 = block3();
+    return multi([b2, b3]);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    ctx[\`label\`] = new LazyValue(value1, ctx, this, node, key);
+    return safeOutput(ctx['label']);
+  }
+}"
+`;
+
 exports[`translation support can set and remove translatable attributes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -48,6 +122,21 @@ exports[`translation support some attributes are translated 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     return block1();
+  }
+}"
+`;
+
+exports[`translation support t-set and falsy t-value: t-body are translated 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    setContextValue(ctx, \\"label\\", withDefault(false, \`translated\`));
+    return text(ctx['label']);
   }
 }"
 `;

@@ -100,4 +100,74 @@ describe("translation support", () => {
     expect(translateFn).toHaveBeenCalledWith("some  word");
     expect(fixture.innerHTML).toBe("<div>un mot</div>");
   });
+
+  test("body of t-sets are translated", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+        <t t-set="label">untranslated</t>
+        <t t-esc="label"/>`;
+    }
+
+    const translateFn = () => "translated";
+
+    await mount(SomeComponent, fixture, { translateFn });
+    expect(fixture.innerHTML).toBe("translated");
+  });
+
+  test("body of t-sets inside translation=off are not translated", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+        <t t-translation="off">
+          <t t-set="label">untranslated</t>
+          <t t-esc="label"/>
+        </t>`;
+    }
+
+    const translateFn = () => "translated";
+
+    await mount(SomeComponent, fixture, { translateFn });
+    expect(fixture.innerHTML).toBe("untranslated");
+  });
+
+  test("body of t-sets with html content are translated", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+        <t t-set="label"><div>untranslated</div></t>
+        <t t-out="label"/>`;
+    }
+
+    const translateFn = () => "translated";
+
+    await mount(SomeComponent, fixture, { translateFn });
+    expect(fixture.innerHTML).toBe("<div>translated</div>");
+  });
+
+  test("body of t-sets with text and html content are translated", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+        <t t-set="label">
+          some text
+          <div>untranslated</div>
+        </t>
+        <t t-out="label"/>`;
+    }
+
+    const translateFn = () => "translated";
+
+    await mount(SomeComponent, fixture, { translateFn });
+    expect(fixture.innerHTML).toBe(" translated <div>translated</div>");
+  });
+
+  test("t-set and falsy t-value: t-body are translated", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+          <t t-set="label" t-value="false">untranslated</t>
+          <t t-esc="label"/>`;
+    }
+
+    const translateFn = () => "translated";
+
+    await mount(SomeComponent, fixture, { translateFn });
+    expect(fixture.innerHTML).toBe("translated");
+  });
 });

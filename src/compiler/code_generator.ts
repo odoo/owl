@@ -447,6 +447,11 @@ export class CodeGenerator {
       .join("");
   }
 
+  translate(str: string): string {
+    const match = translationRE.exec(str) as any;
+    return match[1] + this.translateFn(match[2]) + match[3];
+  }
+
   /**
    * @returns the newly created block name, if any
    */
@@ -527,8 +532,7 @@ export class CodeGenerator {
 
     let value = ast.value;
     if (value && ctx.translate !== false) {
-      const match = translationRE.exec(value) as any;
-      value = match[1] + this.translateFn(match[2]) + match[3];
+      value = this.translate(value);
     }
     if (!ctx.inPreTag) {
       value = value.replace(whitespaceRE, " ");
@@ -1095,10 +1099,11 @@ export class CodeGenerator {
     } else {
       let value: string;
       if (ast.defaultValue) {
+        const defaultValue = ctx.translate ? this.translate(ast.defaultValue) : ast.defaultValue;
         if (ast.value) {
-          value = `withDefault(${expr}, \`${ast.defaultValue}\`)`;
+          value = `withDefault(${expr}, \`${defaultValue}\`)`;
         } else {
-          value = `\`${ast.defaultValue}\``;
+          value = `\`${defaultValue}\``;
         }
       } else {
         value = expr;

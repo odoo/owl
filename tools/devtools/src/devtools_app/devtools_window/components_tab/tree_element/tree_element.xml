@@ -26,7 +26,7 @@
         <span t-if="props.component.depth">&gt;</span>
         <span class="version" t-else="">owl=<t t-esc="props.component.version"/></span>
       </div>
-      <div t-if="store.contextMenu.activeMenu === contextMenuId" class="custom-menu" t-attf-style="top: {{store.contextMenu.top}}; left: {{store.contextMenu.left}}" t-ref="contextmenu">
+      <div t-if="store.contextMenu.activeMenu === contextMenuId" class="custom-menu" t-ref="contextmenu">
         <ul class="my-1">
           <li t-on-click.stop="() => this.store.toggleComponentAndChildren(props.component, true)" class="custom-menu-item py-1 px-4">Expand children</li>
           <li t-on-click.stop="() => this.store.toggleComponentAndChildren(props.component, false)" class="custom-menu-item py-1 px-4">Fold all children</li>

@@ -30,7 +30,7 @@
         </t>
       </div>
     </div>
-    <div t-if="store.contextMenu.activeMenu === contextMenuId" class="custom-menu" t-attf-style="top: {{store.contextMenu.top}}; left: {{store.contextMenu.left}}" t-ref="contextmenu">
+    <div t-if="store.contextMenu.activeMenu === contextMenuId" class="custom-menu" t-ref="contextmenu">
       <ul class="my-1">
         <li t-on-click="() => this.store.logObjectInConsole(this.props.object.path)" class="custom-menu-item py-1 px-4 text-nowrap">Store as global variable</li>
         <t t-if='props.object.contentType == "function"'>

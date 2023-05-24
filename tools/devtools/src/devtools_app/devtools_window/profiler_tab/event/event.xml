@@ -43,7 +43,7 @@
           </span>
         </div>
       </t>
-      <div t-if="store.contextMenu.activeMenu === componentContextMenuId" class="custom-menu" t-attf-style="top: {{store.contextMenu.top}}; left: {{store.contextMenu.left}}" t-ref="componentContextmenu">
+      <div t-if="store.contextMenu.activeMenu === componentContextMenuId" class="custom-menu" t-ref="componentContextmenu">
         <ul class="my-1">
           <li t-on-click.stop="() => this.store.inspectComponent('source', props.event.path)" class="custom-menu-item py-1 px-4">Inspect source code</li>
           <t t-if="props.event.path.length !== 1">

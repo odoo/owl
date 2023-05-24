@@ -14,8 +14,6 @@ export const store = reactive({
     componentsToggleBlacklist: new Set(),
   },
   contextMenu: {
-    top: 0,
-    left: 0,
     id: 0,
     activeMenu: -1,
     // Opens the context menu corresponding with the given menu html element
@@ -30,9 +28,9 @@ export const store = reactive({
       if (y + menuHeight > window.innerHeight) {
         y = window.innerHeight - menuHeight;
       }
-      this.left = x + "px";
+      menu.style.left = x + "px";
       // Need 25px offset because of the main navbar from the browser devtools
-      this.top = y - 25 + "px";
+      menu.style.top = y - 25 + "px";
     },
     // Close the currently displayed context menu
     close() {

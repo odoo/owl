@@ -11,6 +11,7 @@ export const store = reactive({
     expandByDefault: true,
     toggleOnSelected: false,
     darkmode: false,
+    componentsToggleBlacklist: new Set(),
   },
   contextMenu: {
     top: 0,
@@ -110,7 +111,7 @@ export const store = reactive({
     );
     this.apps = apps ? apps : [];
     if (!fromOld && this.settings.expandByDefault) {
-      this.apps.forEach((tree) => expandNodes(tree));
+      this.apps.forEach((tree) => expandNodes(tree, true));
     }
     const component = await evalFunctionInWindow(
       "getComponentDetails",
@@ -503,7 +504,8 @@ export const store = reactive({
   },
 
   // Reset all the relevant data about the page currently stored
-  resetData() {
+  async resetData() {
+    await loadSettings();
     this.loadComponentsTree(false);
     this.events = [];
     this.eventsTree = [];
@@ -609,7 +611,7 @@ export const store = reactive({
   // Refresh the whole extension
   async refreshExtension() {
     await loadScripts();
-    this.resetData();
+    await this.resetData();
   },
 
   // Toggle dark mode in the extension and store result in the storage
@@ -620,7 +622,7 @@ export const store = reactive({
     } else {
       document.querySelector("html").classList.remove("dark-mode");
     }
-    browserInstance.storage.local.set({ owl_devtools_dark_mode: this.settings.darkMode });
+    browserInstance.storage.local.set({ owlDevtoolsDarkMode: this.settings.darkMode });
   },
 
   openDocumentation() {
@@ -640,6 +642,8 @@ async function init() {
 
   evalInWindow("__OWL__DEVTOOLS_GLOBAL_HOOK__.devtoolsId = " + store.devtoolsId + ";");
 
+  await loadSettings();
+
   // We want to load the base components tree when the devtools tab is first opened
   store.loadComponentsTree(false);
 
@@ -654,8 +658,6 @@ async function init() {
   for (const frame of store.frameUrls) {
     evalFunctionInWindow("toggleEventsRecording", [false, 0], frame);
   }
-
-  loadSettings();
 
   browserInstance.runtime.sendMessage({ type: "newDevtoolsPanel", id: store.devtoolsId });
 
@@ -681,14 +683,14 @@ browserInstance.runtime.onConnect.addListener((port) => {
         store.owlStatus = await evalInWindow("window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;");
         if (store.owlStatus) {
           evalInWindow("__OWL__DEVTOOLS_GLOBAL_HOOK__.devtoolsId = " + store.devtoolsId + ";");
-          store.resetData();
+          await store.resetData();
         }
       }
       // Received when a frame has been delayed when loading the scripts due to owl being lazy loaded
       if (msg.type === "FrameReady") {
         store.updateIFrameList();
         store.owlStatus = true;
-        store.resetData();
+        await store.resetData();
       }
       // We need to reload the components tree when the set of apps in the page is modified
       if (msg.type === "RefreshApps") {
@@ -744,17 +746,24 @@ browserInstance.runtime.onConnect.addListener((port) => {
 // Load all settings from the chrome sync storage
 async function loadSettings() {
   let storage = await browserInstance.storage.local.get();
-  if (storage.owl_devtools_dark_mode === undefined) {
+  // Darkmode
+  if (storage.owlDevtoolsDarkMode === undefined) {
     // Load dark mode based on the global settings of the chrome devtools
     darkMode = browserInstance.devtools.panels.themeName === "dark";
   } else {
-    darkMode = storage.owl_devtools_dark_mode;
+    darkMode = storage.owlDevtoolsDarkMode;
   }
   store.settings.darkMode = darkMode;
   if (darkMode) {
     document.querySelector("html").classList.add("dark-mode");
   } else {
     document.querySelector("html").classList.remove("dark-mode");
+  }
+  // Components toggle blacklist
+  if (storage.owlDevtoolsComponentsToggleBlacklist !== undefined) {
+    store.settings.componentsToggleBlacklist = new Set(
+      storage.owlDevtoolsComponentsToggleBlacklist
+    );
   }
 }
 
@@ -875,10 +884,14 @@ function highlightChildren(component) {
 }
 
 // Expand the node given in entry and all of its children
-function expandNodes(node) {
-  node.toggled = true;
+function expandNodes(node, blacklist = false) {
+  if (blacklist && store.settings.componentsToggleBlacklist.has(node.name)) {
+    node.toggled = false;
+  } else {
+    node.toggled = true;
+  }
   for (const child of node.children) {
-    expandNodes(child);
+    expandNodes(child, blacklist);
   }
 }
 

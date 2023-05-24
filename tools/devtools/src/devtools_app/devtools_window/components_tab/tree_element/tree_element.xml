@@ -43,6 +43,10 @@
           <t t-else="">
             <li t-on-click.stop="() => this.store.logObjectInConsole([...props.component.path])" class="custom-menu-item py-1 px-4">Store as global variable</li>
           </t>
+          <li t-on-click.stop="() => this.toggleComponentToBlacklist()" class="custom-menu-item py-1 px-4">
+            <t t-if="store.settings.componentsToggleBlacklist.has(props.component.name)">Don't fold component by default</t>
+            <t t-else="">Fold component by default</t>
+          </li>
         </ul>
       </div>
     </div>

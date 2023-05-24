@@ -336,10 +336,10 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
 
   for (let attr of nodeAttrsNames) {
     const value = node.getAttribute(attr)!;
-    if (attr.startsWith("t-on")) {
-      if (attr === "t-on") {
-        throw new OwlError("Missing event name with t-on directive");
-      }
+    if (attr === "t-on" || attr === "t-on-") {
+      throw new OwlError("Missing event name with t-on directive");
+    }
+    if (attr.startsWith("t-on-")) {
       on = on || {};
       on[attr.slice(5)] = value;
     } else if (attr.startsWith("t-model")) {

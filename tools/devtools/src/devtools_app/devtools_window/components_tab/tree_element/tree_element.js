@@ -1,8 +1,10 @@
 /** @odoo-module **/
 
-import { isElementInCenterViewport, minimizeKey } from "../../../../utils";
+import { isElementInCenterViewport, minimizeKey, IS_FIREFOX } from "../../../../utils";
 import { useStore } from "../../../store/store";
 import { HighlightText } from "./highlight_text/highlight_text";
+
+const browserInstance = IS_FIREFOX ? browser : chrome;
 
 const { Component, useRef, useState, useEffect, onMounted } = owl;
 
@@ -103,6 +105,32 @@ export class TreeElement extends Component {
     }
     if (!this.props.component.selected) {
       this.store.selectComponent(this.props.component.path);
+    }
+  }
+
+  // Adds the component name to the components toggle blacklist if not already present
+  // Else, remove it from the blacklist
+  toggleComponentToBlacklist() {
+    if (this.store.settings.componentsToggleBlacklist.has(this.props.component.name)) {
+      if (!this.props.component.toggled) {
+        this.props.component.toggled = !this.props.component.toggled;
+      }
+      this.store.settings.componentsToggleBlacklist.delete(this.props.component.name);
+      browserInstance.storage.local.set({
+        owlDevtoolsComponentsToggleBlacklist: Array.from(
+          this.store.settings.componentsToggleBlacklist
+        ),
+      });
+    } else {
+      if (this.props.component.toggled) {
+        this.props.component.toggled = !this.props.component.toggled;
+      }
+      this.store.settings.componentsToggleBlacklist.add(this.props.component.name);
+      browserInstance.storage.local.set({
+        owlDevtoolsComponentsToggleBlacklist: Array.from(
+          this.store.settings.componentsToggleBlacklist
+        ),
+      });
     }
   }
 }

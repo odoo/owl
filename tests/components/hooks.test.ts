@@ -285,6 +285,26 @@ describe("hooks", () => {
     expect(fixture.innerHTML).toBe("<div>brain maggot</div>");
   });
 
+  test("useSubEnv applies on prototype chain", async () => {
+    expect.assertions(3);
+    class Child extends Component {
+      static template = xml`<t t-esc="env.valueA"/><div><t t-esc="env.valueB"/></div>`;
+      setup() {
+        useSubEnv(Object.create({ valueA: "foo" }));
+        useSubEnv(Object.create({ valueB: "bar" }));
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<Child/>`;
+      static components = { Child }
+      setup() {
+        useSubEnv(Object.create({ valueA: "far" }));
+      }
+    }
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("foo<div>bar</div>");
+  });
+
   test("can use useComponent", async () => {
     expect.assertions(2);
     class Test extends Component {

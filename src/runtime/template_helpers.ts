@@ -8,6 +8,12 @@ import { OwlError } from "./error_handling";
 import type { ComponentNode } from "./component_node";
 
 const ObjectCreate = Object.create;
+const ObjectGetPrototypeOf = Object.getPrototypeOf;
+const ObjectGetOwnPropertyDescriptors = Object.getOwnPropertyDescriptors;
+const ObjectDefineProperty = Object.defineProperty;
+const ObjectEntries = Object.entries;
+const hasOwnProperty = (obj: Object, prop: PropertyKey) =>
+  Object.prototype.hasOwnProperty.call(obj, prop);
 /**
  * This file contains utility functions that will be injected in each template,
  * to perform various useful tasks in the compiled code.
@@ -49,8 +55,14 @@ function callSlot(
 
 function capture(ctx: any): any {
   const result = ObjectCreate(ctx);
-  for (let k in ctx) {
-    result[k] = ctx[k];
+  let current = ctx;
+  while (current && current !== Object.prototype) {
+    for (const [key, descriptor] of ObjectEntries(ObjectGetOwnPropertyDescriptors(current))) {
+      if (!hasOwnProperty(result, key) && "value" in descriptor) {
+        ObjectDefineProperty(result, key, descriptor);
+      }
+    }
+    current = ObjectGetPrototypeOf(current);
   }
   return result;
 }

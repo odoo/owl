@@ -1,5 +1,50 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`t-call component with an enumerable getter, t-call inside slot 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { capture, markRaw } = helpers;
+  const callTemplate_1 = app.getTemplate(\`sub\`);
+  const comp1 = app.createComponent(\`Child\`, true, true, false, []);
+  
+  function slot1(ctx, node, key = \\"\\") {
+    return callTemplate_1.call(this, ctx, node, key + \`__1\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx1 = capture(ctx);
+    return comp1({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__2\`, node, this, null);
+  }
+}"
+`;
+
+exports[`t-call component with an enumerable getter, t-call inside slot 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let txt1 = ctx['foo'];
+    return block1([txt1]);
+  }
+}"
+`;
+
+exports[`t-call component with an enumerable getter, t-call inside slot 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { callSlot } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return callSlot(ctx, node, key, 'default', false, {});
+  }
+}"
+`;
+
 exports[`t-call dynamic t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

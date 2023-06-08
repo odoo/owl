@@ -425,4 +425,26 @@ describe("t-call", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("Bchild");
   });
+
+  test("component with an enumerable getter, t-call inside slot", async () => {
+    class Child extends Component {
+      static template = xml`<t t-slot="default"/>`;
+    }
+    class Parent extends Component {
+      static components = { Child };
+      static template = xml`<Child><t t-call="sub"/></Child>`;
+    }
+    // simulate adding a getter with patch in odoo: getter will be enumarable
+    Object.defineProperty(Parent.prototype, "foo", {
+      get() {
+        return 1;
+      },
+      enumerable: true,
+    });
+    const app = new App(Parent);
+    app.addTemplate("sub", `<div t-esc="foo"/>`);
+
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div>1</div>");
+  });
 });

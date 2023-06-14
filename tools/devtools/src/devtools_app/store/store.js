@@ -784,6 +784,7 @@ function loadEvents(events) {
     }
     event.origin = null;
     event.toggled = false;
+    event.isLast = false;
     // Logic to retrace the origin of the event if it is not a root render event
     if (!event.type.includes("render")) {
       for (let i = store.events.length - 1; i >= 0; i--) {
@@ -833,6 +834,7 @@ function loadEvents(events) {
     // Make sure we add the event while keeping the whole list ordered by id
     addEventSorted(event);
   }
+  store.events[store.events.length - 1].isLast = true;
 }
 
 // Deselect component and remove highlight on all children

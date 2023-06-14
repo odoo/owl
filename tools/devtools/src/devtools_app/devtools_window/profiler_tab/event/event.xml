@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.Event" owl="1">
-    <div class="event-container">
+    <div class="event-container" t-att-class="{ 'event-last': props.event.isLast }">
       <div class="my-0 p-0 object-line" t-on-click.stop="toggleDisplay">
         <div class="ps-2 text-nowrap">
           <i class="fa px-1 pointer-icon caret"

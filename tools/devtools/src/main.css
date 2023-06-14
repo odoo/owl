@@ -133,6 +133,10 @@
   font-size: 11px;
 }
 
+.event-last {
+  border-bottom: 3px solid rgb(225, 154, 0);
+}
+
 .getter-content:hover {
   text-decoration: underline;
 }

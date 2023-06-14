@@ -15,8 +15,6 @@
       // in __OWL_DEVTOOLS__
       this.toRaw = window.__OWL_DEVTOOLS__.toRaw ?? window.owl?.toRaw;
       this.reactive = window.__OWL_DEVTOOLS__.reactive ?? window.owl?.reactive;
-      // Set to keep track of the fibers that are in the flush queue
-      this.queuedFibers = new WeakSet();
       // Set to keep track of the HTML elements we added to the page
       this.addedElements = [];
       // To keep track of the succession order of the render events
@@ -267,19 +265,6 @@
       app.scheduler.constructor.prototype.flush = function () {
         // Used to know when a render is triggered inside the flush method or not
         inFlush = true;
-        [...this.tasks].map((fiber) => {
-          if (fiber.counter === 0 && !self.queuedFibers.has(fiber)) {
-            self.queuedFibers.add(fiber);
-            const path = self.getComponentPath(fiber.node);
-            //Add a functionnality to the flush function which sends a message to the window every time it is triggered.
-            window.top.postMessage({
-              source: "owl-devtools",
-              type: "Flush",
-              data: path,
-              origin: { frame: self.frame },
-            });
-          }
-        });
         originalFlush.call(this, ...arguments);
         inFlush = false;
       };
@@ -380,6 +365,14 @@
       const original_Complete = self.RootFiber.prototype.complete;
       self.RootFiber.prototype.complete = function () {
         original_Complete.call(this, ...arguments);
+        const path = self.getComponentPath(this.node);
+        //Add a functionnality to the complete function which sends a message to the window every time it is triggered.
+        window.top.postMessage({
+          source: "owl-devtools",
+          type: "Complete",
+          data: path,
+          origin: { frame: self.frame },
+        });
         if (self.recordEvents) {
           window.top.postMessage({
             source: "owl-devtools",
@@ -1556,7 +1549,7 @@
     }
     // Returns the tree of components of the inspected page in a parsed format
     // Use inspectedPath to specify the path of the selected component
-    getComponentsTree(inspectedPath = null, oldTrees = null) {
+    getComponentsTree(inspectedPath = null, oldTrees = null, oldDetails = null) {
       const appsArray = [...this.apps];
       const trees = appsArray.map((app, index) => {
         let oldTree;
@@ -1609,7 +1602,8 @@
         }
         return appNode;
       });
-      return trees ? trees : [];
+      const component = this.getComponentDetails(inspectedPath, oldDetails);
+      return trees ? [trees, component] : [];
     }
     // Recursively fills the components tree as a parsed version
     fillTree(appNode, treeNode, inspectedPathString, oldBranch) {

@@ -102,20 +102,17 @@ export const store = reactive({
     if (IS_FIREFOX) {
       await evalInWindow("window.$0 = $0;", this.activeFrame);
     }
-    const apps = await evalFunctionInWindow(
+    const [apps, component] = await evalFunctionInWindow(
       "getComponentsTree",
-      fromOld && this.activeComponent ? [this.activeComponent.path, this.apps] : [],
+      fromOld && this.activeComponent
+        ? [this.activeComponent.path, this.apps, this.activeComponent]
+        : [],
       this.activeFrame
     );
     this.apps = apps ? apps : [];
     if (!fromOld && this.settings.expandByDefault) {
       this.apps.forEach((tree) => expandNodes(tree, true));
     }
-    const component = await evalFunctionInWindow(
-      "getComponentDetails",
-      fromOld && this.activeComponent ? [this.activeComponent.path, this.activeComponent] : [],
-      this.activeFrame
-    );
     this.activeComponent = component;
   },
 
@@ -671,7 +668,7 @@ async function init() {
   }, 500);
 }
 
-let flushRendersTimeout = false;
+let rootRendersTimeout = false;
 // Connect to the port to communicate to the background script
 browserInstance.runtime.onConnect.addListener((port) => {
   if (port.name === "OwlDevtoolsPort_" + store.devtoolsId) {
@@ -694,9 +691,9 @@ browserInstance.runtime.onConnect.addListener((port) => {
       if (msg.type === "RefreshApps") {
         store.loadComponentsTree(true);
       }
-      // When message of type Flush is received, overwrite the component tree with the new one from page
-      // A flush message is sent everytime a component is rendered on the page
-      if (msg.type === "Flush") {
+      // When message of type Complete is received, overwrite the component tree with the new one from page
+      // A Complete message is sent everytime a root render is triggered on the page
+      if (msg.type === "Complete") {
         if (msg.origin.frame !== store.activeFrame) {
           return;
         }
@@ -705,8 +702,8 @@ browserInstance.runtime.onConnect.addListener((port) => {
         }
         // This determines which components will have a short highlight effect in the tree to indicate they have been rendered
         store.renderPaths.add(JSON.stringify(msg.data));
-        clearTimeout(flushRendersTimeout);
-        flushRendersTimeout = setTimeout(() => {
+        clearTimeout(rootRendersTimeout);
+        rootRendersTimeout = setTimeout(() => {
           store.renderPaths.clear();
         }, 100);
         store.loadComponentsTree(true);

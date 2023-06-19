@@ -36,10 +36,18 @@ export function createAttrUpdater(attr: string): Setter<HTMLElement> {
 
 export function attrsSetter(this: HTMLElement, attrs: any) {
   if (isArray(attrs)) {
-    setAttribute.call(this, attrs[0], attrs[1]);
+    if (attrs[0] === "class") {
+      setClass.call(this, attrs[1]);
+    } else {
+      setAttribute.call(this, attrs[0], attrs[1]);
+    }
   } else {
     for (let k in attrs) {
-      setAttribute.call(this, k, attrs[k]);
+      if (k === "class") {
+        setClass.call(this, attrs[k]);
+      } else {
+        setAttribute.call(this, k, attrs[k]);
+      }
     }
   }
 }
@@ -52,7 +60,11 @@ export function attrsUpdater(this: HTMLElement, attrs: any, oldAttrs: any) {
       if (val === oldAttrs[1]) {
         return;
       }
-      setAttribute.call(this, name, val);
+      if (name === "class") {
+        updateClass.call(this, val, oldAttrs[1]);
+      } else {
+        setAttribute.call(this, name, val);
+      }
     } else {
       removeAttribute.call(this, oldAttrs[0]);
       setAttribute.call(this, name, val);
@@ -60,13 +72,21 @@ export function attrsUpdater(this: HTMLElement, attrs: any, oldAttrs: any) {
   } else {
     for (let k in oldAttrs) {
       if (!(k in attrs)) {
-        removeAttribute.call(this, k);
+        if (k === "class") {
+          updateClass.call(this, "", oldAttrs[k]);
+        } else {
+          removeAttribute.call(this, k);
+        }
       }
     }
     for (let k in attrs) {
       const val = attrs[k];
       if (val !== oldAttrs[k]) {
-        setAttribute.call(this, k, val);
+        if (k === "class") {
+          updateClass.call(this, val, oldAttrs[k]);
+        } else {
+          setAttribute.call(this, k, val);
+        }
       }
     }
   }

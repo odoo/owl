@@ -145,3 +145,34 @@ test("class attribute (with a preexisting value", async () => {
   patch(tree, block([""]));
   expect(fixture.innerHTML).toBe(`<div class="tomato"></div>`);
 });
+
+test("block-class attributes with preexisting class attribute", async () => {
+  const block = createBlock('<div block-attributes="0" class="owl"></div>');
+  const tree = block([{ class: "eagle" }]);
+
+  mount(tree, fixture);
+  expect(fixture.innerHTML).toBe(`<div class="owl eagle"></div>`);
+
+  patch(tree, block([{ class: "falcon" }]));
+  expect(fixture.innerHTML).toBe(`<div class="owl falcon"></div>`);
+
+  patch(tree, block([{}]));
+  expect(fixture.innerHTML).toBe(`<div class="owl"></div>`);
+});
+
+test("block-class attributes (array syntax) with preexisting class attribute", async () => {
+  const block = createBlock('<div block-attributes="0" class="owl"></div>');
+  const tree = block([["class", "eagle"]]);
+
+  mount(tree, fixture);
+  expect(fixture.innerHTML).toBe(`<div class="owl eagle"></div>`);
+
+  patch(tree, block([["class", "falcon"]]));
+  expect(fixture.innerHTML).toBe(`<div class="owl falcon"></div>`);
+
+  patch(tree, block([["class", ""]]));
+  expect(fixture.innerHTML).toBe(`<div class="owl"></div>`);
+
+  patch(tree, block([["class", "buzzard"]]));
+  expect(fixture.innerHTML).toBe(`<div class="owl buzzard"></div>`);
+});

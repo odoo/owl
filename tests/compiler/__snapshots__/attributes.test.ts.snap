@@ -707,6 +707,123 @@ exports[`attributes updating classes (with obj notation) 1`] = `
 }"
 `;
 
+exports[`attributes various combinations of class, t-att-class, and t-att 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div block-attributes=\\"0\\" class=\\"c\\">content</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let attr1 = {class:'a'};
+    return block1([attr1]);
+  }
+}"
+`;
+
+exports[`attributes various combinations of class, t-att-class, and t-att 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div block-attributes=\\"0\\" block-attribute-1=\\"class\\" class=\\"c\\">content</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let attr1 = {class:'a'};
+    let attr2 = {'b':true};
+    return block1([attr1, attr2]);
+  }
+}"
+`;
+
+exports[`attributes various combinations of class, t-att-class, and t-att 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div block-attributes=\\"0\\" class=\\"c\\" block-attribute-1=\\"class\\">content</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let attr1 = {class:'a'};
+    let attr2 = {'b':true};
+    return block1([attr1, attr2]);
+  }
+}"
+`;
+
+exports[`attributes various combinations of class, t-att-class, and t-att 4`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div class=\\"c\\" block-attributes=\\"0\\" block-attribute-1=\\"class\\">content</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let attr1 = {class:'a'};
+    let attr2 = {'b':true};
+    return block1([attr1, attr2]);
+  }
+}"
+`;
+
+exports[`attributes various combinations of class, t-att-class, and t-att 5`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div class=\\"c\\" block-attribute-0=\\"class\\" block-attributes=\\"1\\">content</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let attr1 = {'b':true};
+    let attr2 = {class:'a'};
+    return block1([attr1, attr2]);
+  }
+}"
+`;
+
+exports[`attributes various combinations of class, t-att-class, and t-att 6`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div class=\\"c\\" block-attribute-0=\\"class\\">content</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let attr1 = {'b':true};
+    return block1([attr1]);
+  }
+}"
+`;
+
+exports[`attributes various combinations of class, t-att-class, and t-att 7`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div class=\\"c\\" block-attribute-0=\\"class\\">content</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let attr1 = ('b');
+    return block1([attr1]);
+  }
+}"
+`;
+
+exports[`attributes various combinations of class, t-att-class, and t-att 8`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div block-attributes=\\"0\\" block-attribute-1=\\"class\\">content</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let attr1 = {class:'a'};
+    let attr2 = {'b':true};
+    return block1([attr1, attr2]);
+  }
+}"
+`;
+
 exports[`attributes various escapes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

@@ -371,4 +371,33 @@ describe("attributes", () => {
     // not sure about this. maybe we want to remove the attribute?
     expect(fixture.innerHTML).toBe('<div class="hoy a b"></div>');
   });
+
+  test("various combinations of class, t-att-class, and t-att", () => {
+    const template1 = `<div t-att="{ class: 'a' }" class="c">content</div>`;
+    expect(renderToString(template1)).toBe('<div class="c a">content</div>');
+
+    const template2 = `<div t-att="{ class: 'a' }" t-att-class="{'b': true}" class="c">content</div>`;
+    expect(renderToString(template2)).toBe('<div class="c a b">content</div>');
+
+    const template3 = `<div t-att="{ class: 'a' }" class="c" t-att-class="{'b': true}">content</div>`;
+    expect(renderToString(template3)).toBe('<div class="c a b">content</div>');
+
+    const template4 = `<div class="c" t-att="{ class: 'a' }" t-att-class="{'b': true}">content</div>`;
+    expect(renderToString(template4)).toBe('<div class="c a b">content</div>');
+
+    const template5 = `<div class="c" t-att-class="{'b': true}" t-att="{ class: 'a' }">content</div>`;
+    expect(renderToString(template5)).toBe('<div class="c b a">content</div>');
+
+    const template6 = `<div class="c" t-att-class="{'b': true}">content</div>`;
+    expect(renderToString(template6)).toBe('<div class="c b">content</div>');
+
+    const template7 = `<div class="c" t-attf-class="{{'b'}}">content</div>`;
+    expect(renderToString(template7)).toBe('<div class="c b">content</div>');
+
+    const template8 = `<div t-att="{ class: 'a' }" class="c" t-att-class="{'b': true}">content</div>`;
+    expect(renderToString(template8)).toBe('<div class="c a b">content</div>');
+
+    const template9 = `<div t-att="{ class: 'a' }" t-att-class="{'b': true}">content</div>`;
+    expect(renderToString(template9)).toBe('<div class="a b">content</div>');
+  });
 });

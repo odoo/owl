@@ -410,12 +410,7 @@ export const store = reactive({
         if (!scriptsLoaded) {
           await loadScripts(frame);
         }
-        evalInWindow(
-          `__OWL__DEVTOOLS_GLOBAL_HOOK__.devtoolsId = ${
-            store.devtoolsId
-          }; __OWL__DEVTOOLS_GLOBAL_HOOK__.frame = ${JSON.stringify(frame)};`,
-          frame
-        );
+        evalFunctionInWindow("initDevtools", [frame], frame);
         if (!this.frameUrls.includes(frame)) {
           this.frameUrls = [...this.frameUrls, frame];
         }
@@ -635,7 +630,7 @@ init();
 async function init() {
   store.devtoolsId = await getTabURL();
 
-  evalInWindow("__OWL__DEVTOOLS_GLOBAL_HOOK__.devtoolsId = " + store.devtoolsId + ";");
+  evalFunctionInWindow("initDevtools", []);
 
   await loadSettings();
 
@@ -677,7 +672,7 @@ browserInstance.runtime.onConnect.addListener((port) => {
       if (msg.type === "Reload") {
         store.owlStatus = await evalInWindow("window.__OWL__DEVTOOLS_GLOBAL_HOOK__ !== undefined;");
         if (store.owlStatus) {
-          evalInWindow("__OWL__DEVTOOLS_GLOBAL_HOOK__.devtoolsId = " + store.devtoolsId + ";");
+          evalFunctionInWindow("initDevtools", []);
           await store.resetData();
         }
       }

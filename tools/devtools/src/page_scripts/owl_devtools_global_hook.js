@@ -22,7 +22,6 @@
       // Set to keep track of the frame on which this script is loaded
       this.frame = "top";
       // Allows to launch a message each time an iframe html element is added to the page
-      const self = this;
       const iFrameObserver = new MutationObserver(function (mutationsList) {
         mutationsList.forEach(function (mutation) {
           mutation.addedNodes.forEach(function (addedNode) {
@@ -45,12 +44,7 @@
         });
       });
       iFrameObserver.observe(document.body, { subtree: true, childList: true });
-      this.appsPatched = false;
-      this.destroyPatched = false;
       this.patchAppsSetMethods();
-      if (this.apps.size > 0) {
-        this.patchAppMethods();
-      }
       this.recordEvents = false;
       this.traceRenderings = false;
       this.traceSubscriptions = false;
@@ -170,34 +164,40 @@
       };
     }
 
+    initDevtools(frame = "top") {
+      if (!this.devtoolsInit) {
+        this.frame = frame;
+        const self = this;
+        // Flush the events batcher when a root render is completed
+        const original_Complete = self.RootFiber.prototype.complete;
+        self.RootFiber.prototype.complete = function () {
+          original_Complete.call(this, ...arguments);
+          const path = self.getComponentPath(this.node);
+          //Add a functionnality to the complete function which sends a message to the window every time it is triggered.
+          window.top.postMessage({
+            source: "owl-devtools",
+            type: "Complete",
+            data: path,
+            origin: { frame: self.frame },
+          });
+          if (self.recordEvents) {
+            window.top.postMessage({
+              source: "owl-devtools",
+              type: "Event",
+              data: self.eventsBatch,
+            });
+            self.eventsBatch = [];
+          }
+        };
+        this.devtoolsInit = true;
+      }
+    }
     // Modify the methods of the apps set in order to send a message each time it is modified.
     patchAppsSetMethods() {
       const originalAdd = this.apps.add;
       const originalDelete = this.apps.delete;
-      const self = this;
       this.apps.add = function () {
         originalAdd.call(this, ...arguments);
-        if (!self.destroyPatched) {
-          const newApp = arguments[0];
-          // It is not a given that apps have a root node at creation so we need to wait
-          if (newApp.root) {
-            self.patchDestroyMethod(newApp.root);
-          } else {
-            let root = null;
-            Object.defineProperty(newApp, "root", {
-              get() {
-                return root;
-              },
-              set(value) {
-                root = value;
-                if (!self.destroyPatched) {
-                  self.patchDestroyMethod(root);
-                }
-              },
-            });
-          }
-        }
-        self.patchAppMethods();
         window.top.postMessage({
           source: "owl-devtools",
           type: "RefreshApps",
@@ -212,53 +212,18 @@
       };
     }
 
-    patchDestroyMethod(root) {
-      if (!this.destroyPatched) {
-        // Signals when a component is destroyed
-        const originalDestroy = root.constructor.prototype._destroy;
-        const self = this;
-        root.constructor.prototype._destroy = function () {
-          if (self.recordEvents) {
-            const path = self.getComponentPath(this);
-            const event = {
-              type: "destroy",
-              component: this.name,
-              key: this.parentKey,
-              path: path,
-              time: 0,
-              id: self.eventId++,
-            };
-            self.eventsBatch.push(event);
-            const before = performance.now();
-            originalDestroy.call(this, ...arguments);
-            event.time = performance.now() - before;
-          } else {
-            originalDestroy.call(this, ...arguments);
-          }
-        };
-        this.destroyPatched = true;
-      }
-    }
-
     // Modify methods of each app so that it triggers messages on each flush and component render
     patchAppMethods() {
-      if (this.appsPatched) {
+      let app;
+      for (const appItem of this.apps) {
+        if (appItem.root) {
+          app = appItem;
+        }
+      }
+      if (!app.root) {
         return;
       }
-      let app = this.apps.values().next().value;
       const self = this;
-      if (app.root) {
-        this.patchDestroyMethod(app.root);
-      } else {
-        const originalMount = app.constructor.prototype.mount;
-        app.constructor.prototype.mount = async function (...args) {
-          const result = await originalMount.call(this, ...args);
-          const root = this.root;
-          self.patchDestroyMethod(root);
-          app.constructor.prototype.mount = originalMount;
-          return result;
-        };
-      }
       const originalFlush = app.scheduler.constructor.prototype.flush;
       let inFlush = false;
       let _render = false;
@@ -361,28 +326,27 @@
         _render = true;
         original_Render.call(this, ...arguments);
       };
-      // Flush the events batcher when a root render is completed
-      const original_Complete = self.RootFiber.prototype.complete;
-      self.RootFiber.prototype.complete = function () {
-        original_Complete.call(this, ...arguments);
-        const path = self.getComponentPath(this.node);
-        //Add a functionnality to the complete function which sends a message to the window every time it is triggered.
-        window.top.postMessage({
-          source: "owl-devtools",
-          type: "Complete",
-          data: path,
-          origin: { frame: self.frame },
-        });
+      // Signals when a component is destroyed
+      const originalDestroy = app.root.constructor.prototype._destroy;
+      app.root.constructor.prototype._destroy = function () {
         if (self.recordEvents) {
-          window.top.postMessage({
-            source: "owl-devtools",
-            type: "Event",
-            data: self.eventsBatch,
-          });
-          self.eventsBatch = [];
+          const path = self.getComponentPath(this);
+          const event = {
+            type: "destroy",
+            component: this.name,
+            key: this.parentKey,
+            path: path,
+            time: 0,
+            id: self.eventId++,
+          };
+          self.eventsBatch.push(event);
+          const before = performance.now();
+          originalDestroy.call(this, ...arguments);
+          event.time = performance.now() - before;
+        } else {
+          originalDestroy.call(this, ...arguments);
         }
       };
-      this.appsPatched = true;
     }
 
     // patch reactivity system to activate subscription tracing
@@ -446,9 +410,14 @@
     }
 
     toggleTracing(value) {
+      if (value) {
+        this.patchAppMethods();
+        this.patchAppMethods = () => {}; // to only patch once
+      }
       this.traceRenderings = value;
       return this.traceRenderings;
     }
+
     toggleSubscriptionTracing(value) {
       if (value) {
         this.patchReactivity();
@@ -459,6 +428,10 @@
     }
     // Enables/disables the recording of the render/destroy events based on value
     toggleEventsRecording(value, index) {
+      if (value) {
+        this.patchAppMethods();
+        this.patchAppMethods = () => {}; // to only patch once
+      }
       this.recordEvents = value;
       this.eventId = index;
       return this.recordEvents;

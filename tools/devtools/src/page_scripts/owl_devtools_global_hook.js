@@ -847,7 +847,10 @@
       let path = completePath.slice(objPathIndex);
       let obj;
       if (objType === "subscription") {
-        obj = oldTree.subscriptions.children[path[1].value].target;
+        const subscriptionPath = completePath.slice(0, objPathIndex + 3);
+        obj = oldTree.subscriptions.children.find(
+          (child) => JSON.stringify(child.target.path) === JSON.stringify(subscriptionPath)
+        ).target;
         path = path.slice(3);
       } else {
         // Everything here is in component if it is not an app so remove this key of the path in the former case
@@ -1265,7 +1268,7 @@
           toggled: oldTree ? oldTree.subscriptions.toggled : true,
           children: [],
         };
-        rawSubscriptions.forEach((rawSubscription, index) => {
+        rawSubscriptions.forEach((rawSubscription) => {
           let subscription = {
             target: {
               name: this.targetName(rawSubscription.target, node),
@@ -1279,7 +1282,7 @@
               path: [
                 ...path,
                 { type: "item", value: "subscriptions" },
-                { type: "item", value: index },
+                { type: "item", value: rawSubscription.index },
                 { type: "item", value: "target" },
               ],
               toggled: false,
@@ -1288,8 +1291,8 @@
           };
           if (
             oldTree &&
-            oldTree.subscriptions.children[index] &&
-            oldTree.subscriptions.children[index].target.toggled
+            oldTree.subscriptions.children[rawSubscription.index] &&
+            oldTree.subscriptions.children[rawSubscription.index].target.toggled
           ) {
             subscription.target.toggled = true;
           }
@@ -1682,9 +1685,12 @@
      *  subscriptions of the node
      */
     topLevelSubscriptions(node) {
-      const subscriptions = node.subscriptions;
+      const subscriptions = node.subscriptions.map((s, index) => ({ ...s, index }));
+      const topLevelValues = new Set(Object.values(node.component).map((o) => this.toRaw(o)));
       const toOmit = new Set(
-        subscriptions.flatMap(({ keys, target }) => keys.map((k) => this.toRaw(target[k])))
+        subscriptions
+          .flatMap(({ keys, target }) => keys.map((k) => this.toRaw(target[k])))
+          .filter((obj) => !topLevelValues.has(obj))
       );
       return subscriptions.filter(({ target }) => !toOmit.has(target));
     }

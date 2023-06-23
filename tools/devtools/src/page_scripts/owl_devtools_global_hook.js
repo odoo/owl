@@ -785,57 +785,47 @@
           }
           break;
       }
-      if (child.contentType) {
-        if (child.toggled) {
-          child.children = this.loadObjectChildren(
-            child.path,
-            child.depth,
-            child.contentType,
-            child.objectType,
-            oldTree
-          );
-        }
-        return child;
-      }
-      if (obj === null) {
-        child.content = "null";
-        child.contentType = "object";
-        child.hasChildren = false;
-      } else if (obj === undefined) {
-        child.content = "undefined";
-        child.contentType = "undefined";
-        child.hasChildren = false;
-      } else {
-        obj = this.toRaw(obj);
-        switch (true) {
-          case obj instanceof Map:
-            child.contentType = "map";
-            child.hasChildren = true;
-            break;
-          case obj instanceof Set:
-            child.contentType = "set";
-            child.hasChildren = true;
-            break;
-          case obj instanceof Array:
-            child.contentType = "array";
-            child.hasChildren = obj.length > 0;
-            break;
-          case typeof obj === "function":
-            child.contentType = "function";
-            child.hasChildren = true;
-            break;
-          case obj instanceof Object:
-            child.contentType = "object";
-            child.hasChildren = Object.keys(obj).length > 0;
-            break;
-          default:
-            child.contentType = typeof obj;
-            child.hasChildren = false;
-        }
-        if (key.type === "set entry") {
-          child.content = this.serializer.serializeItem(obj, true);
+      if (!child.contentType) {
+        if (obj === null) {
+          child.content = "null";
+          child.contentType = "object";
+          child.hasChildren = false;
+        } else if (obj === undefined) {
+          child.content = "undefined";
+          child.contentType = "undefined";
+          child.hasChildren = false;
         } else {
-          child.content = this.serializer.serializeContent(obj, child.contentType);
+          obj = this.toRaw(obj);
+          switch (true) {
+            case obj instanceof Map:
+              child.contentType = "map";
+              child.hasChildren = true;
+              break;
+            case obj instanceof Set:
+              child.contentType = "set";
+              child.hasChildren = true;
+              break;
+            case obj instanceof Array:
+              child.contentType = "array";
+              child.hasChildren = obj.length > 0;
+              break;
+            case typeof obj === "function":
+              child.contentType = "function";
+              child.hasChildren = true;
+              break;
+            case obj instanceof Object:
+              child.contentType = "object";
+              child.hasChildren = Object.keys(obj).length > 0;
+              break;
+            default:
+              child.contentType = typeof obj;
+              child.hasChildren = false;
+          }
+          if (key.type === "set entry") {
+            child.content = this.serializer.serializeItem(obj, true);
+          } else {
+            child.content = this.serializer.serializeContent(obj, child.contentType);
+          }
         }
       }
       if (child.toggled) {
@@ -847,6 +837,7 @@
           oldTree
         );
       }
+      this.addHighlightedKeys(child);
       return child;
     }
 
@@ -1269,16 +1260,15 @@
           children: [],
         };
       } else {
-        const rawSubscriptions = node.subscriptions;
+        const rawSubscriptions = this.topLevelSubscriptions(node);
         component.subscriptions = {
           toggled: oldTree ? oldTree.subscriptions.toggled : true,
           children: [],
         };
         rawSubscriptions.forEach((rawSubscription, index) => {
           let subscription = {
-            keys: [],
             target: {
-              name: "target",
+              name: this.targetName(rawSubscription.target, node),
               contentType:
                 typeof rawSubscription.target === "object"
                   ? Array.isArray(rawSubscription.target)
@@ -1295,7 +1285,6 @@
               toggled: false,
               objectType: "subscription",
             },
-            keysExpanded: false,
           };
           if (
             oldTree &&
@@ -1304,13 +1293,6 @@
           ) {
             subscription.target.toggled = true;
           }
-          rawSubscription.keys.forEach((key) => {
-            if (typeof key === "symbol") {
-              subscription.keys.push(key.toString());
-            } else {
-              subscription.keys.push(key);
-            }
-          });
           if (rawSubscription.target == null) {
             if (subscription.target.contentType === "undefined") {
               subscription.target.content = "undefined";
@@ -1340,6 +1322,7 @@
               oldTree
             );
           }
+          this.addHighlightedKeys(subscription.target);
           component.subscriptions.children.push(subscription);
         });
       }
@@ -1670,6 +1653,51 @@
         window.$temp = obj;
       } else {
         inspect(obj);
+      }
+    }
+
+    targetName(target, node) {
+      // check on component
+      const { component } = node;
+      for (const [key, value] of Object.entries(component)) {
+        if (target === this.toRaw(value)) {
+          return key;
+        }
+      }
+      // check on props
+      for (const [key, value] of Object.entries(component.props)) {
+        if (target === this.toRaw(value)) {
+          return `props.${key}`;
+        }
+      }
+      return "[unknown]";
+    }
+
+    /**
+     * Removes subscriptions that are a direct child of another subscription:
+     * they will be reachable from the top level by expanding observed keys.
+     *
+     * @param {ComponentNode} node
+     * @returns {{ keys: PropertyKey[], target: unknown}[]} the top level
+     *  subscriptions of the node
+     */
+    topLevelSubscriptions(node) {
+      const subscriptions = node.subscriptions;
+      const toOmit = new Set(
+        subscriptions.flatMap(({ keys, target }) => keys.map((k) => this.toRaw(target[k])))
+      );
+      return subscriptions.filter(({ target }) => !toOmit.has(target));
+    }
+
+    addHighlightedKeys(child) {
+      const { path } = child;
+      const subscriptionIndex = path.findIndex((item) => typeof item !== "string");
+      if (path[subscriptionIndex]?.value === "subscriptions") {
+        const node = this.getComponentNode(path.slice(0, subscriptionIndex));
+        // Add observed keys
+        const targetToKeys = new Map(node.subscriptions.map(({ keys, target }) => [target, keys]));
+        const target = this.getObjectProperty(child.path);
+        child.keys = targetToKeys.get(target)?.map((k) => String(k));
       }
     }
   }

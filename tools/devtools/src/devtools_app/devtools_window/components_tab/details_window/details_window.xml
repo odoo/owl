@@ -53,7 +53,11 @@
           </div>
           <i title="Store observed states as global variable in the console" class="fa fa-bug utility-icon p-1" t-on-click.stop="() => this.store.logObjectInConsole([...this.store.activeComponent.path, {type: 'item', value: 'subscriptions'}])"></i>
         </div>
-        <Subscriptions t-if="store.activeComponent.subscriptions.toggled"/>
+        <div t-if="store.activeComponent.subscriptions.toggled" id="subscriptionsPanel">
+          <t t-foreach="store.activeComponent.subscriptions.children" t-as="subscription" t-key="subscription_index">
+            <ObjectTreeElement object="subscription.target"/>
+          </t>
+        </div>
       </div>
       <div t-if="store.activeComponent.instance.children.length > 0"  id="instance" class="details-panel ps-2 py-1">
         <div class="d-flex mb-2">

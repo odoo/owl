@@ -126,6 +126,10 @@
   color: var(--prototype-color);
 }
 
+.key-changes {
+  background-color: var(--version-bg);
+}
+
 .event-container {
   border-bottom: 1px solid rgb(240, 238, 238);
   padding-top: 2px!important;

@@ -41,23 +41,22 @@ export class ObjectTreeElement extends Component {
     return JSON.stringify(this.props.object.path);
   }
 
-  get objectName() {
-    return this.props.object.name;
+  get keyChanges() {
+    return this.props.object.keys?.includes("Symbol(Key changes)");
   }
 
-  get objectLineClass() {
+  classFor(object) {
     // Prototype items will be dyed down to appear less important
-    if (this.pathAsString.includes('{"type":"prototype",')) {
-      return { attenuate: true };
+    if (object.path.some((item) => item?.type === "prototype")) {
+      return "attenuate";
     }
     // Same for subscription items which are not present in the keys while the keys will be bold
-    if (this.props.object.objectType === "subscription" && this.props.object.depth > 0) {
-      if (this.props.keys.includes(this.props.object.name.toString())) {
-        return { "fw-bolder": true };
+    if (object.objectType === "subscription" && object.depth > 0) {
+      if (this.props.object.keys?.includes(object.name.toString())) {
+        return "fw-bolder";
       }
-      return { attenuate: true };
+      return "attenuate";
     }
-    return {};
   }
 
   get objectPadding() {

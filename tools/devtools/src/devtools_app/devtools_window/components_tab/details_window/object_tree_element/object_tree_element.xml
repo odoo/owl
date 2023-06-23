@@ -2,7 +2,7 @@
 <templates xml:space="preserve">
   <t t-name="devtools.ObjectTreeElement" owl="1">
     <div class="m-0 p-0 text-nowrap w-100 object-line"
-      t-att-class="objectLineClass" 
+      t-att-class="props.class"
       t-on-click.stop="() => this.store.toggleObjectTreeElementsDisplay(this.props.object)" 
       t-on-contextmenu.prevent="openMenu" 
     >
@@ -11,7 +11,7 @@
           t-att-class="{'fa-caret-right': !props.object.toggled, 'fa-caret-down': props.object.toggled}"
           t-attf-style="visibility: {{props.object.hasChildren ? '' : 'hidden'}};"
         />
-        <t t-esc="objectName"/>
+        <t t-esc="props.object.name"/>
         <t t-if="props.object.content.length > 0">: </t> 
         <t t-if="props.object.contentType == 'getter'">
           <span class="getter-content object-content" t-att-class="objectLineClass" t-on-click.stop="() => this.store.loadGetterContent(this.props.object)">
@@ -28,6 +28,7 @@
             </t>
           </span> 
         </t>
+        <span t-if="keyChanges" class="key-changes ms-1 badge p-1" title="Key additions/deletions are observed">+/-</span>
       </div>
     </div>
     <div t-if="store.contextMenu.activeMenu === contextMenuId" class="custom-menu" t-ref="contextmenu">
@@ -40,8 +41,7 @@
     </div>
     <t t-if="props.object.toggled" t-key="contextMenuId">
       <t t-foreach="props.object.children" t-as="child" t-key="child_index">
-        <ObjectTreeElement t-if="props.object.objectType === 'subscription'" object="child" keys="props.keys"/>
-        <ObjectTreeElement t-else="" object="child"/>
+        <ObjectTreeElement object="child" class="this.classFor(child)"/>
       </t>
     </t>
   </t>

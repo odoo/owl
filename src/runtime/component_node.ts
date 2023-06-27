@@ -145,6 +145,9 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
   }
 
   async render(deep: boolean) {
+    if (this.status >= STATUS.CANCELLED) {
+      return;
+    }
     let current = this.fiber;
     if (current && (current.root!.locked || (current as any).bdom === true)) {
       await Promise.resolve();
@@ -171,7 +174,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
 
     this.app.scheduler.addFiber(fiber);
     await Promise.resolve();
-    if (this.status === STATUS.DESTROYED) {
+    if (this.status >= STATUS.CANCELLED) {
       return;
     }
     // We only want to actually render the component if the following two
@@ -187,6 +190,20 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     //   in the next microtick anyway, so we should not render it again.
     if (this.fiber === fiber && (current || !fiber.parent)) {
       fiber.render();
+    }
+  }
+
+  cancel() {
+    this._cancel();
+    delete this.parent!.children[this.parentKey!];
+    this.app.scheduler.scheduleDestroy(this);
+  }
+
+  _cancel() {
+    this.status = STATUS.CANCELLED;
+    const children = this.children;
+    for (let childKey in children) {
+      children[childKey]._cancel();
     }
   }
 

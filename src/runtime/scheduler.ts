@@ -1,3 +1,4 @@
+import type { ComponentNode } from "./component_node";
 import { fibersInError } from "./error_handling";
 import { Fiber, RootFiber } from "./fibers";
 import { STATUS } from "./status";
@@ -14,6 +15,7 @@ export class Scheduler {
   requestAnimationFrame: Window["requestAnimationFrame"];
   frame: number = 0;
   delayedRenders: Fiber[] = [];
+  cancelledNodes: Set<ComponentNode> = new Set();
 
   constructor() {
     this.requestAnimationFrame = Scheduler.requestAnimationFrame;
@@ -21,6 +23,13 @@ export class Scheduler {
 
   addFiber(fiber: Fiber) {
     this.tasks.add(fiber.root!);
+  }
+
+  scheduleDestroy(node: ComponentNode) {
+    this.cancelledNodes.add(node);
+    if (this.frame === 0) {
+      this.frame = this.requestAnimationFrame(() => this.processTasks());
+    }
   }
 
   /**
@@ -39,15 +48,23 @@ export class Scheduler {
     }
 
     if (this.frame === 0) {
-      this.frame = this.requestAnimationFrame(() => {
-        this.frame = 0;
-        this.tasks.forEach((fiber) => this.processFiber(fiber));
-        for (let task of this.tasks) {
-          if (task.node.status === STATUS.DESTROYED) {
-            this.tasks.delete(task);
-          }
-        }
-      });
+      this.frame = this.requestAnimationFrame(() => this.processTasks());
+    }
+  }
+
+  processTasks() {
+    this.frame = 0;
+    for (let node of this.cancelledNodes) {
+      node._destroy();
+    }
+    this.cancelledNodes.clear();
+    for (let task of this.tasks) {
+      this.processFiber(task);
+    }
+    for (let task of this.tasks) {
+      if (task.node.status === STATUS.DESTROYED) {
+        this.tasks.delete(task);
+      }
     }
   }
 

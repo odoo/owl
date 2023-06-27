@@ -1444,6 +1444,7 @@ describe("can catch errors", () => {
       "Parent:willPatch",
       "Child:willUnmount",
       "Child:willDestroy",
+      "Parent:patched",
       "Parent:willRender",
       "Parent:rendered",
       "Parent:willPatch",
@@ -1506,12 +1507,15 @@ describe("can catch errors", () => {
     parent.state.hasChild = false;
     await nextTick();
     expect([
+      "Parent:willRender",
+      "Parent:rendered",
       "Child:willDestroy",
       "Parent:willRender",
       "Parent:rendered",
-      "Parent:willPatch",
-      "Parent:patched",
     ]).toBeLogged();
+    expect(fixture.innerHTML).toBe("1");
+    await nextTick();
+    expect(["Parent:willPatch", "Parent:patched"]).toBeLogged();
     expect(fixture.innerHTML).toBe("2");
   });
 });

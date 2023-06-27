@@ -451,5 +451,6 @@ console.log(status(component));
 // logs either:
 // - 'new', if the component is new and has not been mounted yet
 // - 'mounted', if the component is currently mounted
+// - 'cancelled', if the component has not been mounted yet but will be destroyed soon
 // - 'destroyed' if the component is currently destroyed
 ```

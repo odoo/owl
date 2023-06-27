@@ -55,8 +55,7 @@ function cancelFibers(fibers: Fiber[]): number {
     let node = fiber.node;
     fiber.render = throwOnRender;
     if (node.status === STATUS.NEW) {
-      node.destroy();
-      delete node.parent!.children[node.parentKey!];
+      node.cancel();
     }
     node.fiber = null;
     if (fiber.bdom) {

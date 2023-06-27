@@ -115,13 +115,7 @@ test("destroying/recreating a subwidget with different props (if start is not ov
   await nextMicroTick();
   expect(n).toBe(2);
 
-  expect([
-    "Child:willDestroy",
-    "W:willRender",
-    "Child:setup",
-    "Child:willStart",
-    "W:rendered",
-  ]).toBeLogged();
+  expect(["W:willRender", "Child:setup", "Child:willStart", "W:rendered"]).toBeLogged();
 
   def.resolve();
   await nextTick();
@@ -130,6 +124,7 @@ test("destroying/recreating a subwidget with different props (if start is not ov
   expect([
     "Child:willRender",
     "Child:rendered",
+    "Child:willDestroy",
     "W:willPatch",
     "Child:mounted",
     "W:patched",
@@ -178,13 +173,13 @@ test("destroying/recreating a subcomponent, other scenario", async () => {
     "Child:setup",
     "Child:willStart",
     "Parent:rendered",
-    "Child:willDestroy",
     "Parent:willRender",
     "Child:setup",
     "Child:willStart",
     "Parent:rendered",
     "Child:willRender",
     "Child:rendered",
+    "Child:willDestroy",
     "Parent:willPatch",
     "Child:mounted",
     "Parent:patched",
@@ -251,13 +246,13 @@ test("creating two async components, scenario 1", async () => {
   await nextTick();
   expect(fixture.innerHTML).toBe("");
   expect([
-    "ChildA:willDestroy",
     "Parent:willRender",
     "ChildA:setup",
     "ChildA:willStart",
     "ChildB:setup",
     "ChildB:willStart",
     "Parent:rendered",
+    "ChildA:willDestroy",
   ]).toBeLogged();
 
   defB.resolve();
@@ -703,13 +698,13 @@ test("rendering component again in next microtick", async () => {
     "Child:setup",
     "Child:willStart",
     "Parent:rendered",
-    "Child:willDestroy",
     "Parent:willRender",
     "Child:setup",
     "Child:willStart",
     "Parent:rendered",
     "Child:willRender",
     "Child:rendered",
+    "Child:willDestroy",
     "Parent:willPatch",
     "Child:mounted",
     "Parent:patched",
@@ -1732,9 +1727,9 @@ test("concurrent renderings scenario 10", async () => {
   expect(fixture.innerHTML).toBe("<div><p></p></div>");
   expect([
     "ComponentA:willRender",
-    "ComponentC:willDestroy",
     "ComponentB:willUpdateProps",
     "ComponentA:rendered",
+    "ComponentC:willDestroy",
   ]).toBeLogged();
 
   defB.resolve();
@@ -2282,7 +2277,6 @@ test("concurrent renderings scenario 16", async () => {
     "D:setup",
     "D:willStart",
     "C:rendered",
-    "D:willDestroy",
     "B:willRender",
     "C:willUpdateProps",
     "B:rendered",
@@ -2290,6 +2284,7 @@ test("concurrent renderings scenario 16", async () => {
     "D:setup",
     "D:willStart",
     "C:rendered",
+    "D:willDestroy",
   ]).toBeLogged();
 
   // at this point, C rendering is still pending, and nothing should have been
@@ -2997,11 +2992,11 @@ test("t-key on dom node having a component", async () => {
 
   expect(fixture.innerHTML).toBe("<div>3</div>");
   expect([
-    "Child (2):willDestroy",
     "Child (3):setup",
     "Child (3):willStart",
     "Child (3):willRender",
     "Child (3):rendered",
+    "Child (2):willDestroy",
     "Child (1):willUnmount",
     "Child (1):willDestroy",
     "Child (3):mounted",
@@ -3055,11 +3050,11 @@ test("t-key on dynamic async component (toggler is never patched)", async () => 
 
   expect(fixture.innerHTML).toBe("<div>3</div>");
   expect([
-    "Child (2):willDestroy",
     "Child (3):setup",
     "Child (3):willStart",
     "Child (3):willRender",
     "Child (3):rendered",
+    "Child (2):willDestroy",
     "Child (1):willUnmount",
     "Child (1):willDestroy",
     "Child (3):mounted",
@@ -3114,11 +3109,11 @@ test("t-foreach with dynamic async component", async () => {
 
   expect(fixture.innerHTML).toBe("<div>3</div>");
   expect([
-    "Child (2):willDestroy",
     "Child (3):setup",
     "Child (3):willStart",
     "Child (3):willRender",
     "Child (3):rendered",
+    "Child (2):willDestroy",
     "Child (1):willUnmount",
     "Child (1):willDestroy",
     "Child (3):mounted",
@@ -3801,7 +3796,7 @@ test("destroyed component causes other soon to be destroyed component to rerende
     static template = xml`<t t-esc="state.val + props.value"/>`;
     state = useState({ val: 0 });
     setup() {
-      c = this;
+      c = c || this;
       useLogLifecycle();
     }
   }
@@ -3846,8 +3841,6 @@ test("destroyed component causes other soon to be destroyed component to rerende
   parent.state.valueB = 2;
   await nextTick();
   expect([
-    "B:willDestroy",
-    "C:willDestroy",
     "A:willRender",
     "B:setup",
     "B:willStart",
@@ -3858,6 +3851,8 @@ test("destroyed component causes other soon to be destroyed component to rerende
     "B:rendered",
     "C:willRender",
     "C:rendered",
+    "B:willDestroy",
+    "C:willDestroy",
     "A:willPatch",
     "C:mounted",
     "B:mounted",
@@ -4198,6 +4193,116 @@ test("delayed render is not cancelled by upcoming render", async () => {
     "B:patched",
     "A:patched",
   ]).toBeLogged();
+});
+
+test("components are not destroyed between animation frame", async () => {
+  const def = makeDeferred();
+  class C extends Component {
+    static template = xml`C`;
+    setup() {
+      useLogLifecycle();
+    }
+  }
+  class B extends Component {
+    static template = xml`B<C/>`;
+    static components = { C };
+    setup() {
+      useLogLifecycle();
+      onWillStart(() => {
+        return def;
+      });
+    }
+  }
+  class A extends Component {
+    static template = xml`A<B t-if="state.flag"/>`;
+    static components = { B };
+
+    state = useState({ flag: false });
+    setup() {
+      useLogLifecycle();
+    }
+  }
+  const a = await mount(A, fixture);
+  expect(fixture.innerHTML).toBe("A");
+  expect(["A:setup", "A:willStart", "A:willRender", "A:rendered", "A:mounted"]).toBeLogged();
+
+  // turn the flag on, this will render A and stops at B because of def
+  a.state.flag = true;
+  await nextTick();
+  expect(["A:willRender", "B:setup", "B:willStart", "A:rendered"]).toBeLogged();
+
+  // force a render of A
+  //  => owl will need to create a new B component
+  //  => initial B component will be cancelled
+  a.render();
+  await nextMicroTick();
+  expect([
+    // note that B is not destroyed here. It is cancelled instead
+    "A:willRender",
+    "B:setup",
+    "B:willStart",
+    "A:rendered",
+  ]).toBeLogged();
+
+  // resolve def, so B render is unblocked
+  def.resolve();
+  await nextTick();
+  expect([
+    "B:willRender",
+    "C:setup",
+    "C:willStart",
+    "B:rendered",
+    "C:willRender",
+    "C:rendered",
+    // animation frame callback starts here
+    "B:willDestroy", // B is destroyed here
+    "A:willPatch",
+    "C:mounted",
+    "B:mounted",
+    "A:patched",
+  ]).toBeLogged();
+});
+
+test("component destroyed just after render", async () => {
+  let stateB: any;
+
+  class B extends Component {
+    static template = xml`B<t t-esc="state.value"/>`;
+    state = useState({ value: 1 });
+    setup() {
+      stateB = this.state;
+      useLogLifecycle();
+    }
+  }
+  class A extends Component {
+    static template = xml`<B/>`;
+    static components = { B };
+    setup() {
+      useLogLifecycle();
+    }
+  }
+  const a = await mount(A, fixture);
+  expect(fixture.innerHTML).toBe("B1");
+  expect([
+    "A:setup",
+    "A:willStart",
+    "A:willRender",
+    "B:setup",
+    "B:willStart",
+    "A:rendered",
+    "B:willRender",
+    "B:rendered",
+    "B:mounted",
+    "A:mounted",
+  ]).toBeLogged();
+
+  stateB!.value++; // force a render of B
+  await nextMicroTick(); // wait for B render to actually start
+  a.__owl__.app.destroy();
+  expect(["A:willUnmount", "B:willUnmount", "B:willDestroy", "A:willDestroy"]).toBeLogged();
+  await nextTick();
+  // check that B was not rendered after being destroyed
+  expect([]).toBeLogged();
 });
 
 //   test.skip("components with shouldUpdate=false", async () => {

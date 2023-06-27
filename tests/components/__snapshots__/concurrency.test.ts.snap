@@ -212,6 +212,73 @@ exports[`changing state before first render does not trigger a render 1`] = `
 }"
 `;
 
+exports[`component destroyed just after render 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`B\`, true, false, false, []);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return comp1({}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`component destroyed just after render 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`B\`);
+    const b3 = text(ctx['state'].value);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`components are not destroyed between animation frame 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`B\`, true, false, false, []);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2,b3;
+    b2 = text(\`A\`);
+    if (ctx['state'].flag) {
+      b3 = comp1({}, key + \`__1\`, node, this, null);
+    }
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`components are not destroyed between animation frame 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`C\`, true, false, false, []);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`B\`);
+    const b3 = comp1({}, key + \`__1\`, node, this, null);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`components are not destroyed between animation frame 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`C\`);
+  }
+}"
+`;
+
 exports[`concurrent renderings scenario 1 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

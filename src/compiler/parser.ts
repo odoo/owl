@@ -365,10 +365,8 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
       const typeAttr = node.getAttribute("type");
       const isInput = tagName === "input";
       const isSelect = tagName === "select";
-      const isTextarea = tagName === "textarea";
       const isCheckboxInput = isInput && typeAttr === "checkbox";
       const isRadioInput = isInput && typeAttr === "radio";
-      const isOtherInput = isInput && !isCheckboxInput && !isRadioInput;
       const hasLazyMod = attr.includes(".lazy");
       const hasNumberMod = attr.includes(".number");
       const hasTrimMod = attr.includes(".trim");
@@ -381,8 +379,8 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
         specialInitTargetAttr: isRadioInput ? "checked" : null,
         eventType,
         hasDynamicChildren: false,
-        shouldTrim: hasTrimMod && (isOtherInput || isTextarea),
-        shouldNumberize: hasNumberMod && (isOtherInput || isTextarea),
+        shouldTrim: hasTrimMod,
+        shouldNumberize: hasNumberMod,
       };
       if (isSelect) {
         // don't pollute the original ctx

@@ -468,6 +468,36 @@ exports[`t-model directive t-model on select with static options 1`] = `
 }"
 `;
 
+exports[`t-model directive t-model with dynamic number values on select options in foreach 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { toNumber, prepareList, withKey } = helpers;
+  
+  let block1 = createBlock(\`<select block-handler-0=\\"change\\"><block-child-0/></select>\`);
+  let block3 = createBlock(\`<option block-attribute-0=\\"value\\" block-attribute-1=\\"selected\\"><block-text-2/></option>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const bExpr1 = ctx['state'];
+    const expr1 = 'value';
+    const bValue1 = bExpr1[expr1];
+    let hdlr1 = [(ev) => { bExpr1[expr1] = toNumber(ev.target.value); }];
+    ctx = Object.create(ctx);
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].options);;
+    for (let i1 = 0; i1 < l_block2; i1++) {
+      ctx[\`o\`] = v_block2[i1];
+      const key1 = ctx['o'].value;
+      let attr1 = ctx['o'].value;
+      let attr2 = bValue1 === ctx['o'].value;
+      let txt1 = ctx['o'].value;
+      c_block2[i1] = withKey(block3([attr1, attr2, txt1]), key1);
+    }
+    const b2 = list(c_block2);
+    return block1([hdlr1], [b2]);
+  }
+}"
+`;
+
 exports[`t-model directive t-model with dynamic values on select options -- 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

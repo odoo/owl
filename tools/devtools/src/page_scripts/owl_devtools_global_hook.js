@@ -117,6 +117,15 @@
             length += element.length;
             result.push(element);
           }
+          for (const key of Object.getOwnPropertySymbols(obj)) {
+            if (length > 25) {
+              result.push("...");
+              break;
+            }
+            const element = key.toString() + ": " + this.serializeItem(obj[key]);
+            length += element.length;
+            result.push(element);
+          }
           return "{" + result.join(", ") + "}";
         },
         map(obj) {
@@ -815,7 +824,8 @@
               break;
             case obj instanceof Object:
               child.contentType = "object";
-              child.hasChildren = Object.keys(obj).length > 0;
+              child.hasChildren =
+                Object.keys(obj).length || Object.getOwnPropertySymbols(obj).length;
               break;
             default:
               child.contentType = typeof obj;
@@ -1433,8 +1443,11 @@
           return;
         }
       }
-      const key = path.pop().value;
+      const item = path.pop();
       const obj = this.getObjectProperty(path);
+      const key = item.hasOwnProperty("symbolIndex")
+        ? Object.getOwnPropertySymbols(obj)[item.symbolIndex]
+        : item.value;
       if (!obj) {
         return;
       }

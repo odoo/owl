@@ -626,6 +626,39 @@ describe("t-model directive", () => {
     expect(fixture.querySelector("select")!.value).toEqual("b");
   });
 
+  test("t-model with dynamic number values on select options in foreach", async () => {
+    class Test extends Component {
+      static template = xml`
+          <select t-model.number="state.value">
+            <t t-foreach="state.options" t-as="o" t-key="o.value">
+                <option t-att-value="o.value" t-esc="o.value"/>
+            </t>
+          </select>
+      `;
+      state: any;
+      setup() {
+        this.state = useState({
+          value: 2,
+          options: [{ value: 1 }, { value: 2 }, { value: 3 }],
+        });
+      }
+    }
+
+    const comp = await mount(Test, fixture);
+    // check that we have a value of 2 selected
+    expect(fixture.querySelector("select")!.value).toEqual("2");
+    expect(comp.state.value).toBe(2);
+
+    // emulate a click on the option=3 element
+    fixture.querySelectorAll("option")[2].selected = true;
+    fixture.querySelector("select")!.dispatchEvent(new Event("change"));
+
+    await nextTick();
+    // check that we have now selected the number 3 (and not the string)
+    expect(fixture.querySelector("select")!.value).toEqual("3");
+    expect(comp.state.value).toBe(3);
+  });
+
   test("t-model is applied before t-on-input", async () => {
     expect.assertions(3);
     class SomeComponent extends Component {

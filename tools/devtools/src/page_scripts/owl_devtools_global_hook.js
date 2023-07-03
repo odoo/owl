@@ -748,6 +748,9 @@
           child.contentType = "object";
           child.content = this.serializer.serializeItem(Object.getPrototypeOf(parentObj), true);
           child.hasChildren = true;
+          if (!oldTree && type === "env") {
+            child.toggled = true;
+          }
           break;
         case "set entries":
         case "map entries":
@@ -890,7 +893,7 @@
       const children = [];
       depth = depth + 1;
       let obj = this.getObjectProperty(path);
-      let oldBranch = this.getObjectInOldTree(oldTree, path, objType);
+      let oldBranch = oldTree && this.getObjectInOldTree(oldTree, path, objType);
       if (!obj) {
         return [];
       }
@@ -905,7 +908,7 @@
             depth,
             objType,
             path,
-            oldBranch.children[0],
+            oldBranch?.children[0],
             oldTree
           );
           children.push(mapKey);
@@ -915,7 +918,7 @@
             depth,
             objType,
             path,
-            oldBranch.children[1],
+            oldBranch?.children[1],
             oldTree
           );
           children.push(mapValue);
@@ -926,7 +929,7 @@
             depth,
             objType,
             path,
-            oldBranch.children[0],
+            oldBranch?.children[0],
             oldTree
           );
           children.push(setValue);
@@ -947,7 +950,7 @@
                 depth,
                 objType,
                 path,
-                oldBranch.children[index],
+                oldBranch?.children[index],
                 oldTree
               );
               if (child) {
@@ -962,7 +965,7 @@
                 depth,
                 objType,
                 path,
-                oldBranch.children[index],
+                oldBranch?.children[index],
                 oldTree
               );
               if (child) {
@@ -979,7 +982,7 @@
             depth,
             objType,
             path,
-            oldBranch.children[index],
+            oldBranch?.children[index],
             oldTree
           );
           if (entries) {
@@ -993,7 +996,7 @@
               depth,
               objType,
               path,
-              oldBranch.children[index],
+              oldBranch?.children[index],
               oldTree
             );
             if (child) {
@@ -1028,7 +1031,7 @@
               depth,
               objType,
               path,
-              oldBranch.children[index],
+              oldBranch?.children[index],
               oldTree
             );
             if (child) children.push(child);
@@ -1061,14 +1064,14 @@
         });
         proto = Object.getPrototypeOf(proto);
       }
-      if (!(obj.constructor.name === "Object")) {
+      if (obj.__proto__) {
         prototype = this.serializeObjectChild(
           obj,
           { type: "prototype", childIndex: children.length },
           depth,
           objType,
           path,
-          oldBranch.children.at(-1),
+          oldBranch?.children.at(-1),
           oldTree
         );
         children.push(prototype);

@@ -47,7 +47,7 @@ export class ObjectTreeElement extends Component {
 
   classFor(object) {
     // Prototype items will be dyed down to appear less important
-    if (object.path.some((item) => item?.type === "prototype")) {
+    if (object.path.some((item) => item?.type === "prototype") && !object.keepLit) {
       return "attenuate";
     }
     // Same for subscription items which are not present in the keys while the keys will be bold

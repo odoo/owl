@@ -102,7 +102,7 @@ export const store = reactive({
     if (IS_FIREFOX) {
       await evalInWindow("window.$0 = $0;", this.activeFrame);
     }
-    const [apps, component] = await evalFunctionInWindow(
+    const [apps, details] = await evalFunctionInWindow(
       "getComponentsTree",
       fromOld && this.activeComponent
         ? [this.activeComponent.path, this.apps, this.activeComponent]
@@ -113,7 +113,8 @@ export const store = reactive({
     if (!fromOld && this.settings.expandByDefault) {
       this.apps.forEach((tree) => expandNodes(tree, true));
     }
-    this.activeComponent = component;
+    keepEnvLit(details);
+    this.activeComponent = details;
   },
 
   // Select a component by retrieving its details from the page based on its path
@@ -150,9 +151,11 @@ export const store = reactive({
       [component.path],
       this.activeFrame
     );
-    this.activeComponent = details;
-    if (!this.activeComponent) {
+    if (!details) {
       await this.loadComponentsTree(false);
+    } else {
+      keepEnvLit(details);
+      this.activeComponent = details;
     }
     if (this.page !== "ComponentsTab") {
       this.switchTab("ComponentsTab");
@@ -884,6 +887,31 @@ function expandNodes(node, blacklist = false) {
   }
   for (const child of node.children) {
     expandNodes(child, blacklist);
+  }
+}
+
+// This function transforms the env part of the details such that all env keys are not
+// greyed out in the UI at their first occurence
+function keepEnvLit(details) {
+  let alreadyMet = new Set();
+  for (let i = 0; i < details.env.children.length; i++) {
+    if (i < details.env.children.length - 1) {
+      alreadyMet.add(details.env.children[i].name);
+    } else {
+      let lastElement = details.env.children[i];
+      while (lastElement.children.at(-1).name === "[[Prototype]]") {
+        for (const [index, child] of lastElement.children.entries()) {
+          if (index < lastElement.children.length - 1) {
+            if (!alreadyMet.has(child.name)) {
+              child.keepLit = true;
+              alreadyMet.add(child.name);
+            }
+          } else {
+            lastElement = child;
+          }
+        }
+      }
+    }
   }
 }
 

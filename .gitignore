@@ -1,5 +1,7 @@
 /node_modules
 /dist
+# compiled devtools files
+/tools/devtools/assets/*.js
 
 npm-debug.log
 

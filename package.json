@@ -21,15 +21,19 @@
     "dev:devtools-firefox": "npm run build:devtools -- --config-browser=firefox",
     "build:devtools-chrome": "npm run dev:devtools-chrome -- --config-env=production",
     "build:devtools-firefox": "npm run dev:devtools-firefox -- --config-env=production",
-    "test": "jest",
-    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --watch --testTimeout=5000000",
-    "test:watch": "jest --watch",
+    "test-owl": "jest",
+    "test-owl:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --watch --testTimeout=5000000",
+    "test-owl:watch": "jest --watch",
+    "test-devtools": "npm run build:devtools-chrome && jest --config=tools/devtools/tests/jest.config.json",
+    "test-devtools:debug": "npm run build:devtools-chrome && node --inspect-brk node_modules/.bin/jest --config=tools/devtools/tests/jest.config.json --runInBand --watch --testTimeout=5000000",
+    "test-devtools:watch": "jest --config=tools/devtools/tests/jest.config.json --watch",
+    "test": "npm run test-owl && npm run test-devtools",
     "playground:serve": "python3 tools/playground_server.py || python tools/playground_server.py",
     "playground": "npm run build && npm run playground:serve",
     "preplayground:watch": "npm run build",
     "playground:watch": "npm-run-all  --parallel playground:serve \"build:* -- --watch\"",
     "prettier": "prettier {src/*.ts,src/**/*.ts,tests/*.ts,tests/**/*.ts,doc/*.md,doc/**/*.md,tools/devtools/**/*.js} --write",
-    "check-formatting": "prettier {src/*.ts,src/**/*.ts,tests/*.ts,tests/**/*.ts,doc/*.md,doc/**/*.md,tools/devtools/**/*.js} --check",
+    "check-formatting": "npm run prettier -- --check",
     "lint": "eslint src/**/*.ts tests/**/*.ts",
     "release": "node tools/release.js",
     "compile_templates": "node tools/compile_xml.js"
@@ -55,13 +59,13 @@
     "git-rev-sync": "^3.0.2",
     "github-api": "^3.3.0",
     "jest": "^27.1.0",
+    "jest-chrome": "^0.8.0",
     "jest-diff": "^27.3.1",
     "jest-environment-jsdom": "^27.1.0",
     "npm-run-all": "^4.1.5",
     "prettier": "2.4.1",
     "rollup": "^2.56.3",
     "rollup-plugin-copy": "^3.3.0",
-    "rollup-plugin-delete": "^2.0.0",
     "rollup-plugin-dts": "^4.2.2",
     "rollup-plugin-execute": "^1.1.1",
     "rollup-plugin-string": "^3.0.0",
@@ -70,29 +74,6 @@
     "source-map-support": "^0.5.10",
     "ts-jest": "^27.0.5",
     "typescript": "4.5.2"
-  },
-  "jest": {
-    "testEnvironment": "jsdom",
-    "roots": [
-      "<rootDir>/src",
-      "<rootDir>/tests"
-    ],
-    "setupFiles": [
-      "./tests/mocks/mockEventTarget.js"
-    ],
-    "transform": {
-      "^.+\\.ts?$": "ts-jest"
-    },
-    "verbose": false,
-    "testRegex": "(/tests/.*(test|spec))\\.ts?$",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx",
-      "json",
-      "node"
-    ]
   },
   "prettier": {
     "printWidth": 100,

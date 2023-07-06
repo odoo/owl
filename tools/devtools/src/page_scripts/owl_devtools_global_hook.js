@@ -1519,8 +1519,9 @@
           }
         }
       }
-      // If nothing was found, return the first app's root component path
-      return ["0", "root"];
+      // If nothing was found, return the path of the first root component found in the apps
+      const appIndex = [...this.apps].findIndex((app) => app.root);
+      return [appIndex.toString(), "root"];
     }
     // Returns the tree of components of the inspected page in a parsed format
     // Use inspectedPath to specify the path of the selected component

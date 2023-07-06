@@ -504,6 +504,48 @@ test("update a sub-component twice in the same frame", async () => {
   ]).toBeLogged();
 });
 
+test.only("abcde", async () => {
+  class Parent extends Component {
+    static template = xml`<span t-esc="state.x"/>`;
+    state = useState({ x: 1 });
+    setup() {
+      useLogLifecycle();
+    }
+
+    async _doIt() {
+      await Promise.resolve();
+      this.state.x++;
+    }
+
+    async doIt() {
+      await this._doIt();
+      this.state.x++;
+    }
+  }
+
+  const parent = await mount(Parent, fixture);
+  expect([
+    "Parent:setup",
+    "Parent:willStart",
+    "Parent:willRender",
+    "Parent:rendered",
+    "Parent:mounted",
+  ]).toBeLogged();
+  expect(fixture.innerHTML).toBe("<span>1</span>");
+
+  parent.doIt();
+  await nextTick();
+  expect([
+    "Parent:willRender",
+    "Parent:rendered",
+    "Parent:willRender",
+    "Parent:rendered",
+    "Parent:willPatch",
+    "Parent:patched",
+  ]).toBeLogged();
+  expect(fixture.innerHTML).toBe("<span>3</span>");
+});
+
 test("update a sub-component twice in the same frame, 2", async () => {
   class ChildA extends Component {
     static template = xml`<span><t t-esc="val()"/></span>`;

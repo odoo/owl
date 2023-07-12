@@ -376,15 +376,16 @@ An important difference should be made with the usual `QWeb` behaviour: Owl
 requires the presence of a `t-key` directive, to be able to properly reconcile
 renderings.
 
-`t-foreach` can iterate on an array (the current item will be the current value)
-or an object (the current item will be the current key).
+`t-foreach` can iterate on any iterable, and also has special support for objects
+and maps, it will expose the key of the current iteration as the contents of the
+`t-as`, and the corresponding value with the same name and the suffix `_value`.
 
-In addition to the name passed via t-as, `t-foreach` provides a few other
-variables for various data points (note: `$as` will be replaced with the name
-passed to `t-as`):
+In addition to the name passed via t-as, `t-foreach` provides a few other useful
+variables (note: `$as` will be replaced with the name passed to `t-as`):
 
-- `$as_value`: the current iteration value, identical to `$as` for lists and
-  integers, but for objects, it provides the value (where `$as` provides the key)
+- `$as_value`: the current iteration value, identical to `$as` for arrays and
+  other iterables, but for objects and maps, it provides the value (where `$as`
+  provides the key)
 - `$as_index`: the current iteration index (the first item of the iteration has index 0)
 - `$as_first`: whether the current item is the first of the iteration
   (equivalent to `$as_index == 0`)

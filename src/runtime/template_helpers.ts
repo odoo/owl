@@ -60,18 +60,26 @@ function withKey(elem: any, k: string) {
   return elem;
 }
 
-function prepareList(collection: any): [any[], any[], number, any[]] {
-  let keys: any[];
-  let values: any[];
+function prepareList(collection: unknown): [unknown[], unknown[], number, undefined[]] {
+  let keys: unknown[];
+  let values: unknown[];
 
   if (Array.isArray(collection)) {
     keys = collection;
     values = collection;
-  } else if (collection) {
-    values = Object.keys(collection);
-    keys = Object.values(collection);
+  } else if (collection instanceof Map) {
+    keys = [...collection.keys()];
+    values = [...collection.values()];
+  } else if (collection && typeof collection === "object") {
+    if (Symbol.iterator in collection) {
+      keys = [...(<Iterable<unknown>>collection)];
+      values = keys;
+    } else {
+      values = Object.keys(collection);
+      keys = Object.values(collection);
+    }
   } else {
-    throw new OwlError("Invalid loop expression");
+    throw new OwlError(`Invalid loop expression: "${collection}" is not iterable`);
   }
   const n = values.length;
   return [keys, values, n, new Array(n)];

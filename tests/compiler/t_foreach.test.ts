@@ -105,6 +105,64 @@ describe("t-foreach", () => {
     expect(renderToString(template, context)).toBe(expected);
   });
 
+  test("iterate, Map param", () => {
+    const template = `
+      <t t-foreach="value" t-as="item" t-key="item_index">
+        [<t t-esc="item_index"/>: <t t-esc="item"/> <t t-esc="item_value"/>]
+      </t>`;
+    const expected = ` [0: 1 a]  [1: 2 b]  [2: 3 c] `;
+    const context = {
+      value: new Map([
+        ["a", 1],
+        ["b", 2],
+        ["c", 3],
+      ]),
+    };
+    expect(renderToString(template, context)).toBe(expected);
+  });
+
+  test("iterate, Set param", () => {
+    const template = `
+      <t t-foreach="value" t-as="item" t-key="item_index">
+        [<t t-esc="item_index"/>: <t t-esc="item"/> <t t-esc="item_value"/>]
+      </t>`;
+    const expected = ` [0: 1 1]  [1: 2 2]  [2: 3 3] `;
+    const context = { value: new Set([1, 2, 3]) };
+    expect(renderToString(template, context)).toBe(expected);
+  });
+
+  test("iterate, iterable param", () => {
+    const template = `
+      <t t-foreach="map.values()" t-as="item" t-key="item_index">
+        [<t t-esc="item_index"/>: <t t-esc="item"/> <t t-esc="item_value"/>]
+      </t>`;
+    const expected = ` [0: 1 1]  [1: 2 2]  [2: 3 3] `;
+    const context = {
+      map: new Map([
+        ["a", 1],
+        ["b", 2],
+        ["c", 3],
+      ]),
+    };
+    expect(renderToString(template, context)).toBe(expected);
+  });
+
+  test("iterate, generator param", () => {
+    const template = `
+      <t t-foreach="gen()" t-as="item" t-key="item_index">
+        [<t t-esc="item_index"/>: <t t-esc="item"/> <t t-esc="item_value"/>]
+      </t>`;
+    const expected = ` [0: 1 1]  [1: 2 2]  [2: 3 3] `;
+    const context = {
+      *gen() {
+        yield 1;
+        yield 2;
+        yield 3;
+      },
+    };
+    expect(renderToString(template, context)).toBe(expected);
+  });
+
   test("does not pollute the rendering context", () => {
     const template = `
         <div>
@@ -193,7 +251,9 @@ describe("t-foreach", () => {
 
   test("throws error if invalid loop expression", () => {
     const test = `<div><t t-foreach="abc" t-as="item" t-key="item"><span t-key="item_index"/></t></div>`;
-    expect(() => renderToString(test)).toThrow("Invalid loop expression");
+    expect(() => renderToString(test)).toThrow(
+      'Invalid loop expression: "undefined" is not iterable'
+    );
   });
 
   test("t-foreach with t-if inside", () => {

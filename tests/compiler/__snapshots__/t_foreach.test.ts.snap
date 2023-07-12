@@ -77,6 +77,62 @@ exports[`t-foreach iterate on items 1`] = `
 }"
 `;
 
+exports[`t-foreach iterate, Map param 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { prepareList, withKey } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['value']);;
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      ctx[\`item\`] = v_block1[i1];
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k_block1[i1];
+      const key1 = ctx['item_index'];
+      const b3 = text(\` [\`);
+      const b4 = text(ctx['item_index']);
+      const b5 = text(\`: \`);
+      const b6 = text(ctx['item']);
+      const b7 = text(\` \`);
+      const b8 = text(ctx['item_value']);
+      const b9 = text(\`] \`);
+      c_block1[i1] = withKey(multi([b3, b4, b5, b6, b7, b8, b9]), key1);
+    }
+    return list(c_block1);
+  }
+}"
+`;
+
+exports[`t-foreach iterate, Set param 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { prepareList, withKey } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['value']);;
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      ctx[\`item\`] = v_block1[i1];
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k_block1[i1];
+      const key1 = ctx['item_index'];
+      const b3 = text(\` [\`);
+      const b4 = text(ctx['item_index']);
+      const b5 = text(\`: \`);
+      const b6 = text(ctx['item']);
+      const b7 = text(\` \`);
+      const b8 = text(ctx['item_value']);
+      const b9 = text(\`] \`);
+      c_block1[i1] = withKey(multi([b3, b4, b5, b6, b7, b8, b9]), key1);
+    }
+    return list(c_block1);
+  }
+}"
+`;
+
 exports[`t-foreach iterate, dict param 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -104,6 +160,62 @@ exports[`t-foreach iterate, dict param 1`] = `
     }
     const b2 = list(c_block2);
     return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`t-foreach iterate, generator param 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { prepareList, withKey } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['gen']());;
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      ctx[\`item\`] = v_block1[i1];
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k_block1[i1];
+      const key1 = ctx['item_index'];
+      const b3 = text(\` [\`);
+      const b4 = text(ctx['item_index']);
+      const b5 = text(\`: \`);
+      const b6 = text(ctx['item']);
+      const b7 = text(\` \`);
+      const b8 = text(ctx['item_value']);
+      const b9 = text(\`] \`);
+      c_block1[i1] = withKey(multi([b3, b4, b5, b6, b7, b8, b9]), key1);
+    }
+    return list(c_block1);
+  }
+}"
+`;
+
+exports[`t-foreach iterate, iterable param 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { prepareList, withKey } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['map'].values());;
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      ctx[\`item\`] = v_block1[i1];
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = k_block1[i1];
+      const key1 = ctx['item_index'];
+      const b3 = text(\` [\`);
+      const b4 = text(ctx['item_index']);
+      const b5 = text(\`: \`);
+      const b6 = text(ctx['item']);
+      const b7 = text(\` \`);
+      const b8 = text(ctx['item_value']);
+      const b9 = text(\`] \`);
+      c_block1[i1] = withKey(multi([b3, b4, b5, b6, b7, b8, b9]), key1);
+    }
+    return list(c_block1);
   }
 }"
 `;

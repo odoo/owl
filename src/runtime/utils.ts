@@ -11,7 +11,7 @@ export type Callback = () => void;
 export function batched(callback: Callback): Callback {
   let scheduled = false;
   return async (...args) => {
-    if (!scheduled) {
+    if (scheduled === false) {
       scheduled = true;
       await Promise.resolve();
       scheduled = false;

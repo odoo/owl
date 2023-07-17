@@ -306,7 +306,7 @@ interface IndexedLocation extends Location {
 
 interface Child {
   parentRefIdx: number;
-  afterRefIdx?: number;
+  afterRefIdx: number;
   isOnlyChild?: boolean;
 }
 
@@ -374,6 +374,7 @@ function updateCtx(ctx: BlockCtx, tree: IntermediateTree) {
           // tree is the parentnode here
           ctx.children[info.idx] = {
             parentRefIdx: info.refIdx!,
+            afterRefIdx: 0,
             isOnlyChild: true,
           };
         } else {
@@ -568,7 +569,7 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
       }
 
       // applying data to all update points
-      if (locN) {
+      if (locN !== 0) {
         const data = this.data!;
         for (let i = 0; i < locN; i++) {
           const loc = locations[i];
@@ -579,13 +580,14 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
       nodeInsertBefore.call(parent, el, afterNode);
 
       // preparing all children
-      if (childN) {
+      if (childN !== 0) {
         const children = this.children;
         for (let i = 0; i < childN; i++) {
           const child = children![i];
-          if (child) {
+          if (child !== undefined) {
             const loc = childrenLocs[i];
-            const afterNode = loc.afterRefIdx ? refs[loc.afterRefIdx] : null;
+            const afterRefIdx = loc.afterRefIdx;
+            const afterNode = afterRefIdx !== 0 ? refs[afterRefIdx] : null;
             child.isOnlyChild = loc.isOnlyChild;
             child.mount(refs[loc.parentRefIdx] as any, afterNode);
           }
@@ -601,7 +603,7 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
       }
       const refs = this.refs!;
       // update texts/attributes/
-      if (locN) {
+      if (locN !== 0) {
         const data1 = this.data!;
         const data2 = other.data!;
         for (let i = 0; i < locN; i++) {
@@ -616,14 +618,14 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
       }
 
       // update children
-      if (childN) {
+      if (childN !== 0) {
         let children1 = this.children;
         const children2 = other.children;
         for (let i = 0; i < childN; i++) {
           const child1 = children1![i];
           const child2 = children2![i];
-          if (child1) {
-            if (child2) {
+          if (child1 !== undefined) {
+            if (child2 !== undefined) {
               child1.patch(child2, withBeforeRemove);
             } else {
               if (withBeforeRemove) {
@@ -632,9 +634,10 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
               child1.remove();
               children1![i] = undefined;
             }
-          } else if (child2) {
+          } else if (child2 !== undefined) {
             const loc = childrenLocs[i];
-            const afterNode = loc.afterRefIdx ? refs[loc.afterRefIdx] : null;
+            const afterRefIdx = loc.afterRefIdx;
+            const afterNode = afterRefIdx !== 0 ? refs[afterRefIdx] : null;
             child2.mount(refs[loc.parentRefIdx] as any, afterNode);
             children1![i] = child2;
           }

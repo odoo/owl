@@ -30,7 +30,7 @@ function callSlot(
   const slots = ctx.props.slots || {};
   const { __render, __ctx, __scope } = slots[name] || {};
   const slotScope = ObjectCreate(__ctx || {});
-  if (__scope) {
+  if (__scope !== undefined) {
     slotScope[__scope] = extra;
   }
   const slotBDom = __render ? __render(slotScope, parent, key) : null;

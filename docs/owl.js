@@ -122,14 +122,16 @@ function handleError(params) {
     }
     const node = "node" in params ? params.node : params.fiber.node;
     const fiber = "fiber" in params ? params.fiber : node.fiber;
-    // resets the fibers on components if possible. This is important so that
-    // new renderings can be properly included in the initial one, if any.
-    let current = fiber;
-    do {
-        current.node.fiber = current;
-        current = current.parent;
-    } while (current);
-    fibersInError.set(fiber.root, error);
+    if (fiber) {
+        // resets the fibers on components if possible. This is important so that
+        // new renderings can be properly included in the initial one, if any.
+        let current = fiber;
+        do {
+            current.node.fiber = current;
+            current = current.parent;
+        } while (current);
+        fibersInError.set(fiber.root, error);
+    }
     const handled = _handleError(node, error);
     if (!handled) {
         console.warn(`[Owl] Unhandled error. Destroying the root component`);
@@ -311,20 +313,13 @@ function updateClass(val, oldVal) {
  * @returns a batched version of the original callback
  */
 function batched(callback) {
-    let called = false;
-    return async () => {
-        // This await blocks all calls to the callback here, then releases them sequentially
-        // in the next microtick. This line decides the granularity of the batch.
-        await Promise.resolve();
-        if (!called) {
-            called = true;
-            // wait for all calls in this microtick to fall through before resetting "called"
-            // so that only the first call to the batched function calls the original callback.
-            // Schedule this before calling the callback so that calls to the batched function
-            // within the callback will proceed only after resetting called to false, and have
-            // a chance to execute the callback again
-            Promise.resolve().then(() => (called = false));
-            callback();
+    let scheduled = false;
+    return async (...args) => {
+        if (!scheduled) {
+            scheduled = true;
+            await Promise.resolve();
+            scheduled = false;
+            callback(...args);
         }
     };
 }
@@ -1657,8 +1652,7 @@ function cancelFibers(fibers) {
         let node = fiber.node;
         fiber.render = throwOnRender;
         if (node.status === 0 /* NEW */) {
-            node.destroy();
-            delete node.parent.children[node.parentKey];
+            node.cancel();
         }
         node.fiber = null;
         if (fiber.bdom) {
@@ -2385,6 +2379,9 @@ class ComponentNode {
         }
     }
     async render(deep) {
+        if (this.status >= 2 /* CANCELLED */) {
+            return;
+        }
         let current = this.fiber;
         if (current && (current.root.locked || current.bdom === true)) {
             await Promise.resolve();
@@ -2410,7 +2407,7 @@ class ComponentNode {
         this.fiber = fiber;
         this.app.scheduler.addFiber(fiber);
         await Promise.resolve();
-        if (this.status === 2 /* DESTROYED */) {
+        if (this.status >= 2 /* CANCELLED */) {
             return;
         }
         // We only want to actually render the component if the following two
@@ -2426,6 +2423,18 @@ class ComponentNode {
         //   in the next microtick anyway, so we should not render it again.
         if (this.fiber === fiber && (current || !fiber.parent)) {
             fiber.render();
+        }
+    }
+    cancel() {
+        this._cancel();
+        delete this.parent.children[this.parentKey];
+        this.app.scheduler.scheduleDestroy(this);
+    }
+    _cancel() {
+        this.status = 2 /* CANCELLED */;
+        const children = this.children;
+        for (let childKey in children) {
+            children[childKey]._cancel();
         }
     }
     destroy() {
@@ -2455,7 +2464,7 @@ class ComponentNode {
                 this.app.handleError({ error: e, node: this });
             }
         }
-        this.status = 2 /* DESTROYED */;
+        this.status = 3 /* DESTROYED */;
     }
     async updateAndRender(props, parentFiber) {
         this.nextProps = props;
@@ -2988,12 +2997,22 @@ function prepareList(collection) {
         keys = collection;
         values = collection;
     }
-    else if (collection) {
-        values = Object.keys(collection);
-        keys = Object.values(collection);
+    else if (collection instanceof Map) {
+        keys = [...collection.keys()];
+        values = [...collection.values()];
+    }
+    else if (collection && typeof collection === "object") {
+        if (Symbol.iterator in collection) {
+            keys = [...collection];
+            values = keys;
+        }
+        else {
+            values = Object.keys(collection);
+            keys = Object.values(collection);
+        }
     }
     else {
-        throw new OwlError("Invalid loop expression");
+        throw new OwlError(`Invalid loop expression: "${collection}" is not iterable`);
     }
     const n = values.length;
     return [keys, values, n, new Array(n)];
@@ -4936,10 +4955,8 @@ function parseDOMNode(node, ctx) {
             const typeAttr = node.getAttribute("type");
             const isInput = tagName === "input";
             const isSelect = tagName === "select";
-            const isTextarea = tagName === "textarea";
             const isCheckboxInput = isInput && typeAttr === "checkbox";
             const isRadioInput = isInput && typeAttr === "radio";
-            const isOtherInput = isInput && !isCheckboxInput && !isRadioInput;
             const hasLazyMod = attr.includes(".lazy");
             const hasNumberMod = attr.includes(".number");
             const hasTrimMod = attr.includes(".trim");
@@ -4951,8 +4968,8 @@ function parseDOMNode(node, ctx) {
                 specialInitTargetAttr: isRadioInput ? "checked" : null,
                 eventType,
                 hasDynamicChildren: false,
-                shouldTrim: hasTrimMod && (isOtherInput || isTextarea),
-                shouldNumberize: hasNumberMod && (isOtherInput || isTextarea),
+                shouldTrim: hasTrimMod,
+                shouldNumberize: hasNumberMod,
             };
             if (isSelect) {
                 // don't pollute the original ctx
@@ -5535,7 +5552,7 @@ function compile(template, options = {}) {
 }
 
 // do not modify manually. This file is generated by the release script.
-const version = "2.1.3";
+const version = "2.1.4";
 
 // -----------------------------------------------------------------------------
 //  Scheduler
@@ -5545,10 +5562,17 @@ class Scheduler {
         this.tasks = new Set();
         this.frame = 0;
         this.delayedRenders = [];
+        this.cancelledNodes = new Set();
         this.requestAnimationFrame = Scheduler.requestAnimationFrame;
     }
     addFiber(fiber) {
         this.tasks.add(fiber.root);
+    }
+    scheduleDestroy(node) {
+        this.cancelledNodes.add(node);
+        if (this.frame === 0) {
+            this.frame = this.requestAnimationFrame(() => this.processTasks());
+        }
     }
     /**
      * Process all current tasks. This only applies to the fibers that are ready.
@@ -5559,21 +5583,28 @@ class Scheduler {
             let renders = this.delayedRenders;
             this.delayedRenders = [];
             for (let f of renders) {
-                if (f.root && f.node.status !== 2 /* DESTROYED */ && f.node.fiber === f) {
+                if (f.root && f.node.status !== 3 /* DESTROYED */ && f.node.fiber === f) {
                     f.render();
                 }
             }
         }
         if (this.frame === 0) {
-            this.frame = this.requestAnimationFrame(() => {
-                this.frame = 0;
-                this.tasks.forEach((fiber) => this.processFiber(fiber));
-                for (let task of this.tasks) {
-                    if (task.node.status === 2 /* DESTROYED */) {
-                        this.tasks.delete(task);
-                    }
-                }
-            });
+            this.frame = this.requestAnimationFrame(() => this.processTasks());
+        }
+    }
+    processTasks() {
+        this.frame = 0;
+        for (let node of this.cancelledNodes) {
+            node._destroy();
+        }
+        this.cancelledNodes.clear();
+        for (let task of this.tasks) {
+            this.processFiber(task);
+        }
+        for (let task of this.tasks) {
+            if (task.node.status === 3 /* DESTROYED */) {
+                this.tasks.delete(task);
+            }
         }
     }
     processFiber(fiber) {
@@ -5586,7 +5617,7 @@ class Scheduler {
             this.tasks.delete(fiber);
             return;
         }
-        if (fiber.node.status === 2 /* DESTROYED */) {
+        if (fiber.node.status === 3 /* DESTROYED */) {
             this.tasks.delete(fiber);
             return;
         }
@@ -5810,9 +5841,11 @@ function status(component) {
     switch (component.__owl__.status) {
         case 0 /* NEW */:
             return "new";
+        case 2 /* CANCELLED */:
+            return "cancelled";
         case 1 /* MOUNTED */:
             return "mounted";
-        case 2 /* DESTROYED */:
+        case 3 /* DESTROYED */:
             return "destroyed";
     }
 }
@@ -5952,6 +5985,6 @@ TemplateSet.prototype._compileTemplate = function _compileTemplate(name, templat
 export { App, Component, EventBus, OwlError, __info__, blockDom, loadFile, markRaw, markup, mount, onError, onMounted, onPatched, onRendered, onWillDestroy, onWillPatch, onWillRender, onWillStart, onWillUnmount, onWillUpdateProps, reactive, status, toRaw, useChildSubEnv, useComponent, useEffect, useEnv, useExternalListener, useRef, useState, useSubEnv, validate, validateType, whenReady, xml };
 
 
-__info__.date = '2023-06-28T09:17:13.630Z';
-__info__.hash = '432ff44';
+__info__.date = '2023-07-18T14:07:26.565Z';
+__info__.hash = '836e12b';
 __info__.url = 'https://github.com/odoo/owl';

@@ -1,5 +1,5 @@
 import { OwlError } from "../common/owl_error";
-export type Callback = () => void;
+export type Callback = (() => void) | [first: Callback, second: Callback];
 
 /**
  * Creates a batched version of a callback so that all calls to it in the same
@@ -8,9 +8,9 @@ export type Callback = () => void;
  * @param callback the callback to batch
  * @returns a batched version of the original callback
  */
-export function batched(callback: Callback): Callback {
+export function batched<Args extends any[]>(callback: (...args: Args) => any) {
   let scheduled = false;
-  return async (...args) => {
+  return async (...args: Args) => {
     if (!scheduled) {
       scheduled = true;
       await Promise.resolve();

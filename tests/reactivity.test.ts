@@ -9,7 +9,7 @@ import {
   markRaw,
   toRaw,
 } from "../src";
-import { reactive, getSubscriptions } from "../src/runtime/reactivity";
+import { reactive, getSubscriptions, multiReactive } from "../src/runtime/reactivity";
 import { batched } from "../src/runtime/utils";
 import {
   makeDeferred,
@@ -2422,5 +2422,106 @@ describe("Reactivity: useState", () => {
     await nextTick();
 
     expect(fixture.innerHTML).toBe("<div><p><span>2b</span></p></div>");
+  });
+});
+
+describe("multiReactive", () => {
+  /**
+   * A version of effect that combines with the reactive
+   * object so that both have the same dependencies.
+   */
+  function effectMulti<T extends object>(dep: T, fn: (o: T) => void) {
+    const r: any = multiReactive(dep, () => fn(r));
+    fn(r);
+  }
+
+  test("basic", async () => {
+    let count = 0;
+    const expectCount = (expected: number) => {
+      expect(count).toBe(expected);
+      count = 0;
+    };
+
+    const t = reactive({ a: 3, b: 2 }, () => count++);
+
+    let val = 0;
+    effectMulti(t, (t) => {
+      count++;
+      val = t.a + t.b;
+    });
+
+    expect(val).toBe(5);
+    // count is one initially because only the effect is called.
+    // This is the time that the callback of t starts subscribing to changes of t.
+    expectCount(1);
+
+    t.a = 4;
+    expect(val).toBe(6);
+    // count will be 2 because t's callback is called and the effect is called.
+    expectCount(2);
+  });
+
+  test("doesn't call the NO_CALLBACK function", async () => {
+    let count = 0;
+    const expectCount = (expected: number) => {
+      expect(count).toBe(expected);
+      count = 0;
+    };
+
+    // This target has the NO_CALLBACK function as reactive.
+    const t = reactive({ a: 3, b: 2 });
+
+    let val = 0;
+    effectMulti(t, (t) => {
+      count++;
+      val = t.a + t.b;
+    });
+
+    expect(val).toBe(5);
+    expectCount(1);
+
+    t.a = 4;
+    expect(val).toBe(6);
+    expectCount(1);
+
+    t.a = 4;
+    expect(val).toBe(6);
+    expectCount(0);
+  });
+
+  test("properly clear reactives from other observed keys when already called", async () => {
+    // This only works for batched effects because there is time to clear
+    // the already called callbacks before the effect is called.
+
+    let counts = { t: 0, mt: 0 };
+    function expectCounts(expected: { t: number; mt: number }) {
+      expect(counts).toEqual(expected);
+      counts = { t: 0, mt: 0 };
+    }
+
+    const t = reactive({ a: 3, b: 2 }, () => counts.t++);
+    const mt = multiReactive(t, () => counts.mt++);
+
+    let val = 0;
+    effectMulti(
+      mt,
+      batched((t) => {
+        val = t.a * t.b;
+      })
+    );
+
+    await nextMicroTick();
+    expect(val).toBe(6);
+    expectCounts({ t: 0, mt: 0 });
+
+    t.a = 4;
+    t.b = 3;
+    await nextMicroTick();
+    expect(val).toBe(12);
+    // Even if both a and b changed, the reactives are only called once.
+    // When `a` is set, the mt and t reactives are notified, and during this
+    // notification, these reactives' subscription to `b` is removed. So when
+    // `b` is set, there are no more callbacks to call.
+    expectCounts({ t: 1, mt: 1 });
   });
 });

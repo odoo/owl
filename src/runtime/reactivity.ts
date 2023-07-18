@@ -11,8 +11,8 @@ const NO_CALLBACK = () => {
 
 // The following types only exist to signify places where objects are expected
 // to be reactive or not, they provide no type checking benefit over "object"
-type Target = object;
-type Reactive<T extends Target> = T;
+export type Target = object;
+export type Reactive<T extends Target> = T;
 
 type Collection = Set<any> | Map<any, any> | WeakMap<any, any>;
 type CollectionRawType = "Set" | "Map" | "WeakMap";
@@ -107,6 +107,19 @@ function observeTargetKey(target: Target, key: PropertyKey, callback: Callback):
   }
   callbacksToTargets.get(callback)!.add(target);
 }
+
+function clearAndCall(callback: Callback) {
+  clearReactivesForCallback(callback);
+  if (callback instanceof Array) {
+    // Recursively clear and call all callback pairs.
+    for (const cb of callback) {
+      clearAndCall(cb);
+    }
+  } else {
+    callback();
+  }
+}
+
 /**
  * Notify Reactives that are observing a given target that a key has changed on
  * the target.
@@ -127,8 +140,7 @@ function notifyReactives(target: Target, key: PropertyKey): void {
   }
   // Loop on copy because clearReactivesForCallback will modify the set in place
   for (const callback of [...callbacks]) {
-    clearReactivesForCallback(callback);
-    callback();
+    clearAndCall(callback);
   }
 }
 
@@ -176,6 +188,7 @@ export function getSubscriptions(callback: Callback) {
 // Maps reactive objects to the underlying target
 export const targets = new WeakMap<Reactive<Target>, Target>();
 const reactiveCache = new WeakMap<Target, WeakMap<Callback, Reactive<Target>>>();
+const proxyToCallback = new WeakMap<Reactive<Target>, Callback>();
 /**
  * Creates a reactive proxy for an object. Reading data on the reactive object
  * subscribes to changes to the data. Writing data on the object will cause the
@@ -225,10 +238,27 @@ export function reactive<T extends Target>(target: T, callback: Callback = NO_CA
       : basicProxyHandler<T>(callback);
     const proxy = new Proxy(target, handler as ProxyHandler<T>) as Reactive<T>;
     reactivesForTarget.set(callback, proxy);
+    proxyToCallback.set(proxy, callback);
     targets.set(proxy, target);
   }
   return reactivesForTarget.get(callback) as Reactive<T>;
 }
+
+/**
+ * Creates a target that will notify multiple reactives when dependencies change.
+ */
+export function multiReactive<T extends Target>(
+  reactiveTarget: T | Reactive<T>,
+  callback: Callback
+): T {
+  const existingCB = proxyToCallback.get(reactiveTarget);
+  if (existingCB && existingCB !== NO_CALLBACK) {
+    return reactive(reactiveTarget, [callback, existingCB]);
+  } else {
+    return reactive(reactiveTarget, callback);
+  }
+}
+
 /**
  * Creates a basic proxy handler for regular objects and arrays.
  *

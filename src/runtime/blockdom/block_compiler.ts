@@ -93,6 +93,17 @@ function normalizeNode(node: HTMLElement | Text) {
   }
 }
 
+/**
+ * Encode 2 numbers and 1 boolean in a number, using 31 bits:
+ * n1 => encoded in 16 most significant bits
+ * n2 => encoded in 15 next bits
+ * boolean => encoded in last significant bit.
+ * This code assumes that n1 and n2 are small enough to fit in that number of bits
+ */
+function encodeValue(n1: number, n2: number, b: boolean): number {
+  return (((n1 << 15) | n2) << 1) | (b ? 1 : 0);
+}
+
 // -----------------------------------------------------------------------------
 // building a intermediate tree
 // -----------------------------------------------------------------------------
@@ -502,7 +513,6 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
   }));
   const locN = locations.length;
   const childN = children.length;
-  const childrenLocs = children;
   const isDynamic = refN > 0;
 
   // these values are defined here to make them faster to lookup in the class
@@ -557,6 +567,19 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
   }
 
   if (isDynamic) {
+    const nextSibling = nodeGetNextSibling;
+    const firstChild = nodeGetFirstChild;
+    const bitPackedCollectors = new Uint32Array(
+      collectors.map((c) => {
+        return encodeValue(c.idx, c.prevIdx, c.getVal === nextSibling);
+      })
+    );
+    const childrenLocs = new Uint32Array(
+      children.map((c) => {
+        return encodeValue(c.afterRefIdx, c.parentRefIdx, Boolean(c.isOnlyChild));
+      })
+    );
+
     Block.prototype.mount = function mount(parent: HTMLElement, afterNode: Node | null) {
       const el = nodeCloneNode.call(template, true);
       // collecting references
@@ -564,8 +587,13 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
       this.refs = refs;
       refs[0] = el;
       for (let i = 0; i < colN; i++) {
-        const w = collectors[i];
-        refs[w.idx] = w.getVal.call(refs[w.prevIdx]);
+        let info = bitPackedCollectors[i];
+        // decode info
+        const fn = (info & 1) === 1 ? nextSibling : firstChild;
+        info = info >> 1;
+        const prevIdx = info & 0b111111111111111;
+        const idx = info >> 15;
+        refs[idx] = fn.call(refs[prevIdx]);
       }
 
       // applying data to all update points
@@ -585,11 +613,16 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
         for (let i = 0; i < childN; i++) {
           const child = children![i];
           if (child !== undefined) {
-            const loc = childrenLocs[i];
-            const afterRefIdx = loc.afterRefIdx;
+            let info = childrenLocs[i];
+            // decode info
+            const isOnlyChild = info & 1;
+            info = info >> 1;
+            const parentRefIdx = info & 0b111111111111111;
+            const afterRefIdx = info >> 15;
+
             const afterNode = afterRefIdx !== 0 ? refs[afterRefIdx] : null;
-            child.isOnlyChild = loc.isOnlyChild;
-            child.mount(refs[loc.parentRefIdx] as any, afterNode);
+            child.isOnlyChild = isOnlyChild as any;
+            child.mount(refs[parentRefIdx] as any, afterNode);
           }
         }
       }
@@ -635,10 +668,14 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
               children1![i] = undefined;
             }
           } else if (child2 !== undefined) {
-            const loc = childrenLocs[i];
-            const afterRefIdx = loc.afterRefIdx;
+            let info = childrenLocs[i];
+            // decode info
+            info = info >> 1;
+            const parentRefIdx = info & 0b111111111111111;
+            const afterRefIdx = info >> 15;
+
             const afterNode = afterRefIdx !== 0 ? refs[afterRefIdx] : null;
-            child2.mount(refs[loc.parentRefIdx] as any, afterNode);
+            child2.mount(refs[parentRefIdx] as any, afterNode);
             children1![i] = child2;
           }
         }

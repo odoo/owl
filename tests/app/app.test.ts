@@ -1,6 +1,14 @@
-import { App, Component, mount, xml } from "../../src";
+import { App, Component, mount, onWillStart, useState, xml } from "../../src";
 import { status } from "../../src/runtime/status";
-import { makeTestFixture, snapshotEverything, nextTick, elem } from "../helpers";
+import {
+  makeTestFixture,
+  snapshotEverything,
+  nextTick,
+  elem,
+  useLogLifecycle,
+  makeDeferred,
+  nextMicroTick,
+} from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -93,5 +101,45 @@ describe("app", () => {
     app.destroy();
     expect(iframeDoc.contains(div)).toBe(false);
     expect(status(comp)).toBe("destroyed");
+  });
+
+  test("app: clear scheduler tasks and destroy cancelled nodes immediately on destroy", async () => {
+    let def = makeDeferred();
+    class B extends Component {
+      static template = xml`B`;
+      setup() {
+        useLogLifecycle();
+        onWillStart(() => def);
+      }
+    }
+    class A extends Component {
+      static template = xml`A<t t-if="state.value"><B/></t>`;
+      static components = { B };
+      state = useState({ value: false });
+      setup() {
+        useLogLifecycle();
+      }
+    }
+
+    const app = new App(A);
+    const comp = await app.mount(fixture);
+    expect(["A:setup", "A:willStart", "A:willRender", "A:rendered", "A:mounted"]).toBeLogged();
+
+    comp.state.value = true;
+    await nextTick();
+    expect(["A:willRender", "B:setup", "B:willStart", "A:rendered"]).toBeLogged();
+
+    // rerender to force the instantiation of a new B component (and cancelling the first)
+    comp.render();
+    await nextMicroTick();
+    expect(["A:willRender", "B:setup", "B:willStart", "A:rendered"]).toBeLogged();
+
+    app.destroy();
+    expect([
+      "A:willUnmount",
+      "B:willDestroy",
+      "A:willDestroy",
+      "B:willDestroy", // make sure the 2 B instances have been destroyed synchronously
+    ]).toBeLogged();
   });
 });

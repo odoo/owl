@@ -136,8 +136,8 @@ export class App<
 
   destroy() {
     if (this.root) {
-      this.scheduler.flush();
       this.root.destroy();
+      this.scheduler.processTasks();
     }
     window.__OWL_DEVTOOLS__.apps.delete(this);
   }

@@ -235,10 +235,10 @@ function parseNode(node: Node, ctx: ParsingContext): AST | null {
     parseTCall(node, ctx) ||
     parseTCallBlock(node, ctx) ||
     parseTEscNode(node, ctx) ||
+    parseTOutNode(node, ctx) ||
     parseTKey(node, ctx) ||
     parseTTranslation(node, ctx) ||
     parseTSlot(node, ctx) ||
-    parseTOutNode(node, ctx) ||
     parseComponent(node, ctx) ||
     parseDOMNode(node, ctx) ||
     parseTSetNode(node, ctx) ||
@@ -443,9 +443,6 @@ function parseTEscNode(node: Element, ctx: ParsingContext): AST | null {
       ref,
       content: [tesc],
     };
-  }
-  if (ast.type === ASTType.TComponent) {
-    throw new OwlError("t-esc is not supported on Component nodes");
   }
   return tesc;
 }
@@ -941,21 +938,23 @@ function normalizeTIf(el: Element) {
  *
  * @param el the element containing the tree that should be normalized
  */
-function normalizeTEsc(el: Element) {
-  const elements = [...el.querySelectorAll("[t-esc]")].filter(
-    (el) => el.tagName[0] === el.tagName[0].toUpperCase() || el.hasAttribute("t-component")
-  );
-  for (const el of elements) {
-    if (el.childNodes.length) {
-      throw new OwlError("Cannot have t-esc on a component that already has content");
+function normalizeTEscTOut(el: Element) {
+  for (const d of ["t-esc", "t-out"]) {
+    const elements = [...el.querySelectorAll(`[${d}]`)].filter(
+      (el) => el.tagName[0] === el.tagName[0].toUpperCase() || el.hasAttribute("t-component")
+    );
+    for (const el of elements) {
+      if (el.childNodes.length) {
+        throw new OwlError(`Cannot have ${d} on a component that already has content`);
+      }
+      const value = el.getAttribute(d);
+      el.removeAttribute(d);
+      const t = el.ownerDocument.createElement("t");
+      if (value != null) {
+        t.setAttribute(d, value);
+      }
+      el.appendChild(t);
     }
-    const value = el.getAttribute("t-esc");
-    el.removeAttribute("t-esc");
-    const t = el.ownerDocument.createElement("t");
-    if (value != null) {
-      t.setAttribute("t-esc", value);
-    }
-    el.appendChild(t);
   }
 }
 
@@ -967,7 +966,7 @@ function normalizeTEsc(el: Element) {
  */
 function normalizeXML(el: Element) {
   normalizeTIf(el);
-  normalizeTEsc(el);
+  normalizeTEscTOut(el);
 }
 
 /**

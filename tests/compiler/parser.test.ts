@@ -1569,6 +1569,12 @@ describe("qweb parser", () => {
     );
   });
 
+  test("component with t-out", async () => {
+    expect(parse(`<MyComponent t-out="someValue"/>`)).toEqual(
+      parse(`<MyComponent><t t-out="someValue"/></MyComponent>`)
+    );
+  });
+
   test("component with t-esc and content", async () => {
     expect(() => parse(`<MyComponent t-esc="someValue">Some content</MyComponent>`)).toThrow(
       "Cannot have t-esc on a component that already has content"

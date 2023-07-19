@@ -15,6 +15,34 @@ exports[`app App supports env with getters/setters 1`] = `
 }"
 `;
 
+exports[`app app: clear scheduler tasks and destroy cancelled nodes immediately on destroy 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`B\`, true, false, false, []);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2,b3;
+    b2 = text(\`A\`);
+    if (ctx['state'].value) {
+      b3 = comp1({}, key + \`__1\`, node, this, null);
+    }
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`app app: clear scheduler tasks and destroy cancelled nodes immediately on destroy 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`B\`);
+  }
+}"
+`;
+
 exports[`app can configure an app with props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

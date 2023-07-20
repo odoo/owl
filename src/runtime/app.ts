@@ -1,7 +1,8 @@
 import { version } from "../version";
 import { Component, ComponentConstructor, Props } from "./component";
 import { ComponentNode } from "./component_node";
-import { nodeErrorHandlers, OwlError, handleError } from "./error_handling";
+import { nodeErrorHandlers, handleError } from "./error_handling";
+import { OwlError } from "../common/owl_error";
 import { Fiber, RootFiber, MountOptions } from "./fibers";
 import { Scheduler } from "./scheduler";
 import { validateProps } from "./template_helpers";

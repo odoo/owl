@@ -1,5 +1,6 @@
 import { getCurrent } from "./component_node";
-import { nodeErrorHandlers, OwlError } from "./error_handling";
+import { nodeErrorHandlers } from "./error_handling";
+import { OwlError } from "../common/owl_error";
 
 const TIMEOUT = Symbol("timeout");
 function wrapError(fn: (...args: any[]) => any, hookName: string) {

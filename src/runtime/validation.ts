@@ -1,4 +1,4 @@
-import { OwlError } from "./error_handling";
+import { OwlError } from "../common/owl_error";
 import { toRaw } from "./reactivity";
 
 type BaseType =

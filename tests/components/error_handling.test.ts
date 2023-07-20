@@ -20,7 +20,7 @@ import {
   useLogLifecycle,
   nextAppError,
 } from "../helpers";
-import { OwlError } from "../../src/runtime/error_handling";
+import { OwlError } from "../../src/common/owl_error";
 
 let fixture: HTMLElement;
 

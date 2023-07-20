@@ -19,7 +19,7 @@ import { helpers } from "../src/runtime/template_helpers";
 import { TemplateSet, globalTemplates } from "../src/runtime/template_set";
 import { BDom } from "../src/runtime/blockdom";
 import { compile } from "../src/compiler";
-import { OwlError } from "../src/runtime/error_handling";
+import { OwlError } from "../src/common/owl_error";
 
 const mount = blockDom.mount;
 

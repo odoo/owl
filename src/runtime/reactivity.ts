@@ -1,5 +1,5 @@
 import type { Callback } from "./utils";
-import { OwlError } from "./error_handling";
+import { OwlError } from "../common/owl_error";
 
 // Special key to subscribe to, to be notified of key creation/deletion
 const KEYCHANGES = Symbol("Key changes");

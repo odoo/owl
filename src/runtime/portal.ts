@@ -1,7 +1,7 @@
 import { onMounted, onWillUnmount } from "./lifecycle_hooks";
 import { BDom, text, VNode } from "./blockdom";
 import { Component } from "./component";
-import { OwlError } from "./error_handling";
+import { OwlError } from "../common/owl_error";
 
 const VText: any = text("").constructor;
 

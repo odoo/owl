@@ -2,7 +2,7 @@ import type { TemplateSet } from "../runtime/template_set";
 import type { BDom } from "../runtime/blockdom";
 import { CodeGenerator, Config } from "./code_generator";
 import { parse } from "./parser";
-import { OwlError } from "../runtime";
+import { OwlError } from "../common/owl_error";
 
 export type Template = (context: any, vnode: any, key?: string) => BDom;
 

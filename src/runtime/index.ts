@@ -55,7 +55,7 @@ export {
   onError,
 } from "./lifecycle_hooks";
 export { validate, validateType } from "./validation";
-export { OwlError } from "./error_handling";
+export { OwlError } from "../common/owl_error";
 
 export const __info__ = {
   version: App.version,

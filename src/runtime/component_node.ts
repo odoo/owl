@@ -1,7 +1,8 @@
 import type { App, Env } from "./app";
 import { BDom, VNode } from "./blockdom";
 import { Component, ComponentConstructor, Props } from "./component";
-import { fibersInError, OwlError } from "./error_handling";
+import { fibersInError } from "./error_handling";
+import { OwlError } from "../common/owl_error";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";
 import { clearReactivesForCallback, getSubscriptions, reactive, targets } from "./reactivity";
 import { STATUS } from "./status";

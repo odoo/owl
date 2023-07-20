@@ -1,6 +1,6 @@
 import { filterOutModifiersFromData } from "./blockdom/config";
 import { STATUS } from "./status";
-import { OwlError } from "./error_handling";
+import { OwlError } from "../common/owl_error";
 
 export const mainEventHandler = (data: any, ev: Event, currentTarget?: EventTarget | null) => {
   const { data: _data, modifiers } = filterOutModifiersFromData(data);

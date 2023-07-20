@@ -899,7 +899,7 @@ function keepEnvLit(details) {
       alreadyMet.add(details.env.children[i].name);
     } else {
       let lastElement = details.env.children[i];
-      while (lastElement.children.at(-1).name === "[[Prototype]]") {
+      while (lastElement.children.at(-1)?.name === "[[Prototype]]") {
         for (const [index, child] of lastElement.children.entries()) {
           if (index < lastElement.children.length - 1) {
             if (!alreadyMet.has(child.name)) {

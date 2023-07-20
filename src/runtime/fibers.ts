@@ -1,6 +1,7 @@
 import { BDom, mount } from "./blockdom";
 import type { ComponentNode } from "./component_node";
-import { fibersInError, OwlError } from "./error_handling";
+import { fibersInError } from "./error_handling";
+import { OwlError } from "../common/owl_error";
 import { STATUS } from "./status";
 
 export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {

@@ -1,4 +1,4 @@
-import { OwlError } from "../../src/runtime/error_handling";
+import { OwlError } from "../../src/common/owl_error";
 import { App, Component, mount, onMounted, useState, xml } from "../../src";
 import { makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
 

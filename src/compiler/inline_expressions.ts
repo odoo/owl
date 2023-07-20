@@ -1,4 +1,4 @@
-import { OwlError } from "../runtime/error_handling";
+import { OwlError } from "../common/owl_error";
 
 /**
  * Owl QWeb Expression Parser

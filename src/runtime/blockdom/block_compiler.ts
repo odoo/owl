@@ -1,4 +1,4 @@
-import { OwlError } from "../error_handling";
+import { OwlError } from "../../common/owl_error";
 import { attrsSetter, attrsUpdater, createAttrUpdater, setClass, updateClass } from "./attributes";
 import { config } from "./config";
 import { createEventHandler } from "./events";

@@ -29,7 +29,7 @@ import {
   Attrs,
   EventHandlers,
 } from "./parser";
-import { OwlError } from "../runtime/error_handling";
+import { OwlError } from "../common/owl_error";
 
 type BlockType = "block" | "text" | "multi" | "list" | "html" | "comment";
 const whitespaceRE = /\s+/g;

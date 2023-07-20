@@ -4,7 +4,7 @@ import { html } from "./blockdom/index";
 import { isOptional, validateSchema } from "./validation";
 import type { ComponentConstructor } from "./component";
 import { markRaw } from "./reactivity";
-import { OwlError } from "./error_handling";
+import { OwlError } from "../common/owl_error";
 import type { ComponentNode } from "./component_node";
 
 const ObjectCreate = Object.create;

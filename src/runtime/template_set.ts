@@ -3,7 +3,7 @@ import { comment, createBlock, html, list, multi, text, toggler } from "./blockd
 import { getCurrent } from "./component_node";
 import { Portal, portalTemplate } from "./portal";
 import { helpers } from "./template_helpers";
-import { OwlError } from "./error_handling";
+import { OwlError } from "../common/owl_error";
 
 const bdom = { text, createBlock, list, multi, html, toggler, comment };
 

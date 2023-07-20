@@ -1,10 +1,6 @@
+import { OwlError } from "../common/owl_error";
 import type { ComponentNode } from "./component_node";
 import type { Fiber } from "./fibers";
-
-// Custom error class that wraps error that happen in the owl lifecycle
-export class OwlError extends Error {
-  cause?: any;
-}
 
 // Maps fibers to thrown errors
 export const fibersInError: WeakMap<Fiber, any> = new WeakMap();

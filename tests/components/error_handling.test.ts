@@ -143,6 +143,66 @@ describe("basics", () => {
     );
   });
 
+  test("display a nice error if the root component template fails to compile", async () => {
+    // This is a special case: mount throws synchronously and we don't have any
+    // node which can handle the error, hence the different structure of this test
+    class Comp extends Component {
+      static template = xml`<div t-att-class="a b">test</div>`;
+    }
+    const app = new App(Comp);
+    let error: Error;
+    try {
+      await app.mount(fixture);
+    } catch (e) {
+      error = e as Error;
+    }
+    const expectedErrorMessage = `Failed to compile anonymous template: Unexpected identifier
+
+generated code:
+function(app, bdom, helpers) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div block-attribute-0="class">test</div>\`);
+  
+  return function template(ctx, node, key = "") {
+    let attr1 = ctx['a']ctx['b'];
+    return block1([attr1]);
+  }
+}`;
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe(expectedErrorMessage);
+  });
+
+  test("display a nice error if a non-root component template fails to compile", async () => {
+    class Child extends Component {
+      static template = xml`<div t-att-class="a b">test</div>`;
+    }
+    class Parent extends Component {
+      static components = { Child };
+      static template = xml`<Child/>`;
+    }
+    const expectedErrorMessage = `Failed to compile anonymous template: Unexpected identifier
+
+generated code:
+function(app, bdom, helpers) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div block-attribute-0="class">test</div>\`);
+  
+  return function template(ctx, node, key = "") {
+    let attr1 = ctx['a']ctx['b'];
+    return block1([attr1]);
+  }
+}`;
+    const app = new App(Parent as typeof Component);
+    let error: Error;
+    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    await expect(nextAppError(app)).resolves.toThrow(expectedErrorMessage);
+    await mountProm;
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe(expectedErrorMessage);
+  });
+
   test("simple catchError", async () => {
     class Boom extends Component {
       static template = xml`<div t-esc="a.b.c"/>`;

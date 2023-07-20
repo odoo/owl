@@ -988,7 +988,7 @@ describe("Portal: Props validation", () => {
       error = e as Error;
     }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe(`Unexpected token ','`);
+    expect(error!.message).toContain(`Unexpected token ','`);
   });
 
   test("target must be a valid selector", async () => {

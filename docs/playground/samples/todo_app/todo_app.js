@@ -43,10 +43,6 @@ class TaskList {
         }
     }
 
-    toggleTask(task) {
-        task.isCompleted = !task.isCompleted;
-    }
-
     toggleTask(id) {
         const task = this.tasks.find(t => t.id === id);
         task.isCompleted = !task.isCompleted;
@@ -61,7 +57,7 @@ class TaskList {
     clearCompleted() {
         const tasks = this.tasks.filter(t => t.isCompleted);
         for (let task of tasks) {
-            this.deleteTask(task);
+            this.deleteTask(task.id);
         }
     }
     

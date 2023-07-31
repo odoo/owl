@@ -156,9 +156,10 @@ exports[`t-on handler is bound to proper owner, part 3 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"main\\"
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function main(ctx, node, key = \\"\\") {
     return callTemplate_1.call(this, ctx, node, key + \`__1\`);
   }
 }"
@@ -168,10 +169,11 @@ exports[`t-on handler is bound to proper owner, part 3 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"sub\\"
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function sub(ctx, node, key = \\"\\") {
     let hdlr1 = [ctx['add'], ctx];
     return block1([hdlr1]);
   }
@@ -183,9 +185,10 @@ exports[`t-on handler is bound to proper owner, part 4 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  // Template name: \\"main\\"
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function main(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block1, v_block1, l_block1, c_block1] = prepareList([1]);;
     for (let i1 = 0; i1 < l_block1; i1++) {
@@ -206,10 +209,11 @@ exports[`t-on handler is bound to proper owner, part 4 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"sub\\"
   
   let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function sub(ctx, node, key = \\"\\") {
     let hdlr1 = [ctx['add'], ctx];
     return block1([hdlr1]);
   }
@@ -471,11 +475,12 @@ exports[`t-on t-on with t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"main\\"
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function main(ctx, node, key = \\"\\") {
     const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
@@ -486,10 +491,11 @@ exports[`t-on t-on with t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"sub\\"
   
   let block1 = createBlock(\`<p block-handler-0=\\"click\\">lucas</p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function sub(ctx, node, key = \\"\\") {
     let hdlr1 = [ctx['update'], ctx];
     return block1([hdlr1]);
   }
@@ -500,11 +506,12 @@ exports[`t-on t-on, with arguments and t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"main\\"
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function main(ctx, node, key = \\"\\") {
     const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
@@ -515,10 +522,11 @@ exports[`t-on t-on, with arguments and t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"sub\\"
   
   let block1 = createBlock(\`<p block-handler-0=\\"click\\">lucas</p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function sub(ctx, node, key = \\"\\") {
     const v1 = ctx['this'];
     const v2 = ctx['value'];
     let hdlr1 = [()=>v1.update(v2), ctx];

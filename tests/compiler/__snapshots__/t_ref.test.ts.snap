@@ -48,11 +48,12 @@ exports[`t-ref ref in a t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"main\\"
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function main(ctx, node, key = \\"\\") {
     const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
@@ -63,10 +64,11 @@ exports[`t-ref ref in a t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"sub\\"
   
   let block1 = createBlock(\`<div>1<span block-ref=\\"0\\"/>2</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function sub(ctx, node, key = \\"\\") {
     let ref1 = (el) => this.__owl__.setRef((\`name\`), el);
     return block1([ref1]);
   }

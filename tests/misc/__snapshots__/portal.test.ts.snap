@@ -5,6 +5,7 @@ exports[`Portal Add and remove portals 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, capture, withKey } = helpers;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -14,7 +15,7 @@ exports[`Portal Add and remove portals 1`] = `
     return multi([b3, b4]);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['portalIds']);;
     for (let i1 = 0; i1 < l_block1; i1++) {
@@ -33,6 +34,7 @@ exports[`Portal Add and remove portals on div 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, capture, withKey } = helpers;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -43,7 +45,7 @@ exports[`Portal Add and remove portals on div 1`] = `
     return block2([txt1]);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['portalIds']);;
     for (let i1 = 0; i1 < l_block1; i1++) {
@@ -62,6 +64,7 @@ exports[`Portal Add and remove portals with t-foreach 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, capture, withKey } = helpers;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -73,7 +76,7 @@ exports[`Portal Add and remove portals with t-foreach 1`] = `
     return multi([b4, b5]);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['portalIds']);;
     for (let i1 = 0; i1 < l_block1; i1++) {
@@ -94,6 +97,7 @@ exports[`Portal Add and remove portals with t-foreach and destroy 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, capture, withKey } = helpers;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -105,7 +109,7 @@ exports[`Portal Add and remove portals with t-foreach and destroy 1`] = `
     return multi([b4, b5]);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['portalIds']);;
     for (let i1 = 0; i1 < l_block1; i1++) {
@@ -126,6 +130,7 @@ exports[`Portal Add and remove portals with t-foreach inside div 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, capture, withKey } = helpers;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -138,7 +143,7 @@ exports[`Portal Add and remove portals with t-foreach inside div 1`] = `
     return multi([b5, b6]);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['portalIds']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -159,11 +164,12 @@ exports[`Portal Child and Portal 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block3 = createBlock(\`<div class=\\"portal\\"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const b2 = comp1({}, key + \`__1\`, node, this, null);
     const b3 = block3();
     return multi([b2, b3]);
@@ -175,6 +181,7 @@ exports[`Portal Child and Portal 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -185,7 +192,7 @@ exports[`Portal Child and Portal 2`] = `
     return block3();
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     const b2 = block2();
     const b4 = comp1({target: '.portal',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return multi([b2, b4]);
@@ -198,6 +205,7 @@ exports[`Portal Portal composed with t-slot 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  // Template name: \\"xml_template_1001\\"
   const comp1 = app.createComponent(\`Child2\`, true, false, false, [\\"customHandler\\"]);
   const comp2 = app.createComponent(\`Child\`, true, true, false, []);
   
@@ -207,7 +215,7 @@ exports[`Portal Portal composed with t-slot 1`] = `
     return comp1({customHandler: ctx['_handled']}, key + \`__1\`, node, this, null);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1001_Parent(ctx, node, key = \\"\\") {
     const b3 = comp2({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__2\`, node, this, null);
     return block1([], [b3]);
   }
@@ -219,6 +227,7 @@ exports[`Portal Portal composed with t-slot 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
+  // Template name: \\"xml_template_1000\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -226,7 +235,7 @@ exports[`Portal Portal composed with t-slot 2`] = `
     return callSlot(ctx, node, key, 'default', false, {});
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Child(ctx, node, key = \\"\\") {
     return comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
   }
 }"
@@ -236,10 +245,11 @@ exports[`Portal Portal composed with t-slot 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div block-handler-0=\\"custom\\"><span id=\\"childSpan\\">child2</span></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child2(ctx, node, key = \\"\\") {
     let hdlr1 = [ctx['onCustom'], ctx];
     return block1([hdlr1]);
   }
@@ -250,6 +260,7 @@ exports[`Portal basic use of portal 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -260,7 +271,7 @@ exports[`Portal basic use of portal 1`] = `
     return block2();
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const b3 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b3]);
   }
@@ -271,6 +282,7 @@ exports[`Portal basic use of portal in dev mode 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -281,7 +293,7 @@ exports[`Portal basic use of portal in dev mode 1`] = `
     return block2();
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const b3 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b3]);
   }
@@ -292,6 +304,7 @@ exports[`Portal basic use of portal on div 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -302,7 +315,7 @@ exports[`Portal basic use of portal on div 1`] = `
     return block2();
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const b3 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b3]);
   }
@@ -313,6 +326,7 @@ exports[`Portal basic use of portal, variation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -323,7 +337,7 @@ exports[`Portal basic use of portal, variation 1`] = `
     return block2();
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const b3 = comp1({target: ctx['target'],slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b3]);
   }
@@ -334,6 +348,7 @@ exports[`Portal conditional use of Portal (with sub Component) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"val\\"]);
   const comp2 = app.createComponent(null, false, true, false, false);
@@ -344,7 +359,7 @@ exports[`Portal conditional use of Portal (with sub Component) 1`] = `
     return comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     let b2,b4;
     b2 = block2();
     if (ctx['state'].hasPortal) {
@@ -359,10 +374,11 @@ exports[`Portal conditional use of Portal (with sub Component) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<p><block-text-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].val;
     return block1([txt1]);
   }
@@ -373,6 +389,7 @@ exports[`Portal conditional use of Portal 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -383,7 +400,7 @@ exports[`Portal conditional use of Portal 1`] = `
     return block3();
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     let b2,b4;
     b2 = block2();
     if (ctx['state'].hasPortal) {
@@ -398,9 +415,10 @@ exports[`Portal conditional use of Portal with child and div 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].hasPortal) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
@@ -415,6 +433,7 @@ exports[`Portal conditional use of Portal with child and div 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, capture, withKey } = helpers;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -425,7 +444,7 @@ exports[`Portal conditional use of Portal with child and div 2`] = `
     return block3();
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList([1]);;
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -444,11 +463,12 @@ exports[`Portal conditional use of Portal with child and div, variation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block2 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].hasPortal) {
       const b3 = comp1({}, key + \`__1\`, node, this, null);
@@ -464,6 +484,7 @@ exports[`Portal conditional use of Portal with child and div, variation 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, capture, withKey } = helpers;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -474,7 +495,7 @@ exports[`Portal conditional use of Portal with child and div, variation 2`] = `
     return block4();
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     const b2 = block2();
     ctx = Object.create(ctx);
     const [k_block3, v_block3, l_block3, c_block3] = prepareList([1]);;
@@ -494,6 +515,7 @@ exports[`Portal conditional use of Portal with div 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -504,7 +526,7 @@ exports[`Portal conditional use of Portal with div 1`] = `
     return block3();
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].hasPortal) {
       const b4 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
@@ -519,6 +541,7 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 1`] 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"val\\"]);
   const comp2 = app.createComponent(null, false, true, false, false);
@@ -529,7 +552,7 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 1`] 
     return comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     let b3;
     if (ctx['state'].hasChild) {
       b3 = comp2({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
@@ -543,10 +566,11 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 2`] 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].val;
     return block1([txt1]);
   }
@@ -557,11 +581,12 @@ exports[`Portal portal and Child 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block2 = createBlock(\`<div class=\\"portal\\"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const b2 = block2();
     const b3 = comp1({}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
@@ -573,6 +598,7 @@ exports[`Portal portal and Child 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -583,7 +609,7 @@ exports[`Portal portal and Child 2`] = `
     return block3();
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     const b2 = block2();
     const b4 = comp1({target: '.portal',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return multi([b2, b4]);
@@ -595,6 +621,7 @@ exports[`Portal portal could have dynamically no content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -610,7 +637,7 @@ exports[`Portal portal could have dynamically no content 1`] = `
     return multi([b3]);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const b4 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b4]);
   }
@@ -621,6 +648,7 @@ exports[`Portal portal destroys on crash 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"error\\"]);
   const comp2 = app.createComponent(null, false, true, false, false);
@@ -631,7 +659,7 @@ exports[`Portal portal destroys on crash 1`] = `
     return comp1({error: ctx['state'].error}, key + \`__1\`, node, this, null);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const b3 = comp2({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
     return block1([], [b3]);
   }
@@ -642,10 +670,11 @@ exports[`Portal portal destroys on crash 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].error&&ctx['this'].will.crash;
     return block1([txt1]);
   }
@@ -656,6 +685,7 @@ exports[`Portal portal with child and props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"val\\"]);
   const comp2 = app.createComponent(null, false, true, false, false);
@@ -666,7 +696,7 @@ exports[`Portal portal with child and props 1`] = `
     return comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const b3 = comp2({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
     return block1([], [b3]);
   }
@@ -677,10 +707,11 @@ exports[`Portal portal with child and props 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].val;
     return block1([txt1]);
   }
@@ -691,6 +722,7 @@ exports[`Portal portal with dynamic body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -709,7 +741,7 @@ exports[`Portal portal with dynamic body 1`] = `
     return multi([b3, b4]);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const b5 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b5]);
   }
@@ -720,6 +752,7 @@ exports[`Portal portal with many children 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -733,7 +766,7 @@ exports[`Portal portal with many children 1`] = `
     return multi([b3, b4]);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const b5 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b5]);
   }
@@ -744,6 +777,7 @@ exports[`Portal portal with no content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -757,7 +791,7 @@ exports[`Portal portal with no content 1`] = `
     return multi([b3]);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const b4 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b4]);
   }
@@ -768,6 +802,7 @@ exports[`Portal portal with only text as content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -777,7 +812,7 @@ exports[`Portal portal with only text as content 1`] = `
     return text('only text');
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const b3 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b3]);
   }
@@ -788,6 +823,7 @@ exports[`Portal portal with target not in dom 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -798,7 +834,7 @@ exports[`Portal portal with target not in dom 1`] = `
     return block2();
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const b3 = comp1({target: '#does-not-exist',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b3]);
   }
@@ -809,6 +845,7 @@ exports[`Portal portal's parent's env is not polluted 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   const comp2 = app.createComponent(null, false, true, false, false);
@@ -819,7 +856,7 @@ exports[`Portal portal's parent's env is not polluted 1`] = `
     return comp1({}, key + \`__1\`, node, this, null);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const b3 = comp2({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
     return block1([], [b3]);
   }
@@ -830,10 +867,11 @@ exports[`Portal portal's parent's env is not polluted 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<button>child</button>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -843,11 +881,12 @@ exports[`Portal simple catchError with portal 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Boom\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     let b2,b3;
     if (ctx['error']) {
       b2 = text(\`Error\`);
@@ -863,6 +902,7 @@ exports[`Portal simple catchError with portal 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -874,7 +914,7 @@ exports[`Portal simple catchError with portal 2`] = `
     return block2([txt1]);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Boom(ctx, node, key = \\"\\") {
     const b3 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b3]);
   }
@@ -885,6 +925,7 @@ exports[`Portal with target in template (after portal) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -895,7 +936,7 @@ exports[`Portal with target in template (after portal) 1`] = `
     return block2();
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const b3 = comp1({target: '#local-target',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b3]);
   }
@@ -906,6 +947,7 @@ exports[`Portal with target in template (before portal) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -916,7 +958,7 @@ exports[`Portal with target in template (before portal) 1`] = `
     return block2();
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const b3 = comp1({target: '#local-target',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b3]);
   }
@@ -927,6 +969,7 @@ exports[`Portal: Props validation target must be a valid selector 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -937,7 +980,7 @@ exports[`Portal: Props validation target must be a valid selector 1`] = `
     return block2();
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const b3 = comp1({target: ' ',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b3]);
   }
@@ -948,6 +991,7 @@ exports[`Portal: Props validation target must be a valid selector 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(null, false, true, false, false);
   
@@ -958,7 +1002,7 @@ exports[`Portal: Props validation target must be a valid selector 2 1`] = `
     return block2();
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const b3 = comp1({target: 'aa',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b3]);
   }
@@ -969,6 +1013,7 @@ exports[`Portal: UI/UX focus is kept across re-renders 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const Portal = app.Portal;
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"val\\"]);
   const comp2 = app.createComponent(null, false, true, false, false);
@@ -979,7 +1024,7 @@ exports[`Portal: UI/UX focus is kept across re-renders 1`] = `
     return comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const b3 = comp2({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
     return block1([], [b3]);
   }
@@ -990,10 +1035,11 @@ exports[`Portal: UI/UX focus is kept across re-renders 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<input id=\\"target-me\\" block-attribute-0=\\"placeholder\\"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let attr1 = ctx['props'].val;
     return block1([attr1]);
   }

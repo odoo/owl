@@ -5,12 +5,13 @@ exports[`list of components components in a node in a t-foreach  1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"item\\"]);
   
   let block1 = createBlock(\`<div><ul><block-child-0/></ul></div>\`);
   let block3 = createBlock(\`<li><block-child-0/></li>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['items']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -29,10 +30,11 @@ exports[`list of components components in a node in a t-foreach  2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].item;
     return block1([txt1]);
   }
@@ -44,9 +46,10 @@ exports[`list of components crash on duplicate key in dev mode 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, OwlError, withKey } = helpers;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block1, v_block1, l_block1, c_block1] = prepareList([1,2]);;
     const keys1 = new Set();
@@ -68,8 +71,9 @@ exports[`list of components crash on duplicate key in dev mode 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return text(\`\`);
   }
 }"
@@ -80,9 +84,10 @@ exports[`list of components crash when using object as keys that serialize to th
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, OwlError, withKey } = helpers;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block1, v_block1, l_block1, c_block1] = prepareList([{},{}]);;
     const keys1 = new Set();
@@ -104,8 +109,9 @@ exports[`list of components crash when using object as keys that serialize to th
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return text(\`\`);
   }
 }"
@@ -116,12 +122,13 @@ exports[`list of components list of sub components inside other nodes 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComponent\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].blips);;
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -140,10 +147,11 @@ exports[`list of components list of sub components inside other nodes 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span>asdf</span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SubComponent(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -154,6 +162,7 @@ exports[`list of components order is correct when slots are not of same type 1`]
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, markRaw } = helpers;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, true, false, []);
   
   let block2 = createBlock(\`<div>A</div>\`);
@@ -174,7 +183,7 @@ exports[`list of components order is correct when slots are not of same type 1`]
     return text(\`C\`);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
     return comp1({slots: markRaw({'a': {__render: slot1.bind(this), __ctx: ctx1, active: !ctx['state'].active}, 'b': {__render: slot2.bind(this), __ctx: ctx1, active: true}, 'c': {__render: slot3.bind(this), __ctx: ctx1, active: ctx['state'].active}})}, key + \`__1\`, node, this, null);
   }
@@ -186,8 +195,9 @@ exports[`list of components order is correct when slots are not of same type 2`]
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, callSlot, withKey } = helpers;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['slotNames']);;
     for (let i1 = 0; i1 < l_block1; i1++) {
@@ -206,11 +216,12 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"blip\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].s);;
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -238,10 +249,11 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].blip;
     return block1([txt1]);
   }
@@ -253,13 +265,14 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"row\\",\\"col\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<p><block-child-0/></p>\`);
   let block5 = createBlock(\`<p><block-child-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].rows);;
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -287,10 +300,11 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].row+'_'+ctx['props'].col;
     return block1([txt1]);
   }
@@ -302,9 +316,10 @@ exports[`list of components simple list 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"value\\"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['state'].elems);;
     for (let i1 = 0; i1 < l_block1; i1++) {
@@ -321,10 +336,11 @@ exports[`list of components simple list 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].value;
     return block1([txt1]);
   }
@@ -336,11 +352,12 @@ exports[`list of components sub components rendered in a loop 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"n\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].numbers);;
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -358,10 +375,11 @@ exports[`list of components sub components rendered in a loop 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<p><block-text-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].n;
     return block1([txt1]);
   }
@@ -373,11 +391,12 @@ exports[`list of components sub components with some state rendered in a loop 1`
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].numbers);;
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -395,10 +414,11 @@ exports[`list of components sub components with some state rendered in a loop 2`
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<p><block-text-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let txt1 = ctx['state'].n;
     return block1([txt1]);
   }
@@ -410,11 +430,12 @@ exports[`list of components switch component position 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"key\\"]);
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['clist']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -432,10 +453,11 @@ exports[`list of components switch component position 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].key;
     return block1([txt1]);
   }
@@ -447,11 +469,12 @@ exports[`list of components t-foreach with t-component, and update 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"val\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(Array(2));;
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -470,10 +493,11 @@ exports[`list of components t-foreach with t-component, and update 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let txt1 = ctx['state'].val;
     let txt2 = ctx['props'].val;
     return block1([txt1, txt2]);

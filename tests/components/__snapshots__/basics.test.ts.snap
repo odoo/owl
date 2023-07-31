@@ -4,9 +4,10 @@ exports[`basics GrandChild display is controlled by its GrandParent 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1001\\"
   const comp1 = app.createComponent(null, false, false, false, [\\"displayGrandChild\\"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1001_Parent(ctx, node, key = \\"\\") {
     const Comp1 = ctx['myComp'];
     return toggler(Comp1, comp1({displayGrandChild: ctx['displayGrandChild']}, (Comp1).name + key + \`__1\`, node, this, Comp1));
   }
@@ -17,9 +18,10 @@ exports[`basics GrandChild display is controlled by its GrandParent 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`GrandChild\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Child(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['props'].displayGrandChild) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
@@ -33,10 +35,11 @@ exports[`basics GrandChild display is controlled by its GrandParent 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_GrandChild(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -46,11 +49,12 @@ exports[`basics Multi root component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block2 = createBlock(\`<span>1</span>\`);
   let block4 = createBlock(\`<span>2</span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Test(ctx, node, key = \\"\\") {
     const b2 = block2();
     const b3 = text(\`text\`);
     const b4 = block4();
@@ -63,9 +67,10 @@ exports[`basics a class component inside a class component, no external dom 1`] 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
@@ -75,10 +80,11 @@ exports[`basics a class component inside a class component, no external dom 2`] 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>simple vnode</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -88,10 +94,11 @@ exports[`basics a component cannot be mounted in a detached node (even if node i
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Test(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -101,11 +108,12 @@ exports[`basics a component inside a component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const b2 = comp1({}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
@@ -116,10 +124,11 @@ exports[`basics a component inside a component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>simple vnode</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -129,10 +138,11 @@ exports[`basics can be clicked on and updated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/><button block-handler-1=\\"click\\">Inc</button></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Counter(ctx, node, key = \\"\\") {
     let txt1 = ctx['state'].counter;
     const v1 = ctx['state'];
     let hdlr1 = [()=>v1.counter++, ctx];
@@ -145,11 +155,12 @@ exports[`basics can handle empty props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"val\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const b2 = comp1({val: undefined}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
@@ -160,10 +171,11 @@ exports[`basics can handle empty props 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].val;
     return block1([txt1]);
   }
@@ -174,9 +186,10 @@ exports[`basics can inject values in tagged templates 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const callTemplate_1 = app.getTemplate(\`__template__999\`);
+  // Template name: \\"xml_template_1000\\"
+  const callTemplate_1 = app.getTemplate(\`xml_template_999\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     return callTemplate_1.call(this, ctx, node, key + \`__1\`);
   }
 }"
@@ -186,10 +199,11 @@ exports[`basics can inject values in tagged templates 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999(ctx, node, key = \\"\\") {
     let txt1 = ctx['state'].n;
     return block1([txt1]);
   }
@@ -200,8 +214,9 @@ exports[`basics can mount a component with just some text 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Test(ctx, node, key = \\"\\") {
     return text(\`just text\`);
   }
 }"
@@ -211,8 +226,9 @@ exports[`basics can mount a component with no text 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Test(ctx, node, key = \\"\\") {
     return text(\`\`);
   }
 }"
@@ -222,10 +238,11 @@ exports[`basics can mount a simple component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span>simple vnode</span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Test(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -235,11 +252,12 @@ exports[`basics can mount a simple component with multiple roots 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block2 = createBlock(\`<span/>\`);
   let block3 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Test(ctx, node, key = \\"\\") {
     const b2 = block2();
     const b3 = block3();
     return multi([b2, b3]);
@@ -251,10 +269,11 @@ exports[`basics can mount a simple component with props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Test(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].value;
     return block1([txt1]);
   }
@@ -265,9 +284,10 @@ exports[`basics child can be updated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"value\\"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     return comp1({value: ctx['state'].counter}, key + \`__1\`, node, this, null);
   }
 }"
@@ -277,8 +297,9 @@ exports[`basics child can be updated 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return text(ctx['props'].value);
   }
 }"
@@ -288,10 +309,11 @@ exports[`basics class component with dynamic text 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span>My value: <block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Test(ctx, node, key = \\"\\") {
     let txt1 = ctx['value'];
     return block1([txt1]);
   }
@@ -302,9 +324,10 @@ exports[`basics class parent, class child component with props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"value\\"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     return comp1({value: 42}, key + \`__1\`, node, this, null);
   }
 }"
@@ -314,10 +337,11 @@ exports[`basics class parent, class child component with props 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].value;
     return block1([txt1]);
   }
@@ -328,9 +352,10 @@ exports[`basics component children doesn't leak (if case) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['ifVar']) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
@@ -344,10 +369,11 @@ exports[`basics component children doesn't leak (if case) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -357,9 +383,10 @@ exports[`basics component children doesn't leak (t-key case) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['keyVar'];
     return toggler(tKey_1, comp1({}, tKey_1 + key + \`__1\`, node, this, null));
   }
@@ -370,10 +397,11 @@ exports[`basics component children doesn't leak (t-key case) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -383,10 +411,11 @@ exports[`basics component with dynamic content can be updated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Test(ctx, node, key = \\"\\") {
     let txt1 = ctx['value'];
     return block1([txt1]);
   }
@@ -397,10 +426,11 @@ exports[`basics do not remove previously rendered dom if not necessary 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SomeComponent(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -410,10 +440,11 @@ exports[`basics do not remove previously rendered dom if not necessary, variatio
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><h1>h1</h1><span><block-text-0/></span></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SomeComponent(ctx, node, key = \\"\\") {
     let txt1 = ctx['state'].value;
     return block1([txt1]);
   }
@@ -424,9 +455,10 @@ exports[`basics higher order components parent and child 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1002\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"child\\"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1002_Parent(ctx, node, key = \\"\\") {
     return comp1({child: ctx['state'].child}, key + \`__1\`, node, this, null);
   }
 }"
@@ -436,10 +468,11 @@ exports[`basics higher order components parent and child 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1001\\"
   const comp1 = app.createComponent(\`ChildA\`, true, false, false, []);
   const comp2 = app.createComponent(\`ChildB\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1001_Child(ctx, node, key = \\"\\") {
     let b2,b3;
     if (ctx['props'].child==='a') {
       b2 = comp1({}, key + \`__1\`, node, this, null);
@@ -455,10 +488,11 @@ exports[`basics higher order components parent and child 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>a</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_ChildA(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -468,10 +502,11 @@ exports[`basics higher order components parent and child 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   
   let block1 = createBlock(\`<span>b</span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_ChildB(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -482,13 +517,14 @@ exports[`basics list of two sub components inside other nodes 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubWidget\`, true, false, false, []);
   const comp2 = app.createComponent(\`SubWidget\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].blips);;
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -508,10 +544,11 @@ exports[`basics list of two sub components inside other nodes 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span>asdf</span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SubWidget(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -521,9 +558,10 @@ exports[`basics parent, child and grandchild 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1001\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1001_Parent(ctx, node, key = \\"\\") {
     return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
@@ -533,9 +571,10 @@ exports[`basics parent, child and grandchild 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`GrandChild\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Child(ctx, node, key = \\"\\") {
     return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
@@ -545,10 +584,11 @@ exports[`basics parent, child and grandchild 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_GrandChild(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -558,10 +598,11 @@ exports[`basics props is set on root component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span>simple vnode</span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Test(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -571,10 +612,11 @@ exports[`basics props value are own property of props object 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span>simple vnode</span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Test(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -584,10 +626,11 @@ exports[`basics props value are own property of props object, even with default 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span>simple vnode</span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Test(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -597,12 +640,13 @@ exports[`basics reconciliation alg is not confused in some specific situation 1`
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   const comp2 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const b2 = comp1({}, key + \`__1\`, node, this, null);
     const tKey_1 = 4;
     const b3 = toggler(tKey_1, comp2({}, tKey_1 + key + \`__2\`, node, this, null));
@@ -615,10 +659,11 @@ exports[`basics reconciliation alg is not confused in some specific situation 2`
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span>child</span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -628,9 +673,10 @@ exports[`basics rerendering a widget with a sub widget 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Counter\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
@@ -640,10 +686,11 @@ exports[`basics rerendering a widget with a sub widget 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/><button block-handler-1=\\"click\\">Inc</button></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Counter(ctx, node, key = \\"\\") {
     let txt1 = ctx['state'].counter;
     const v1 = ctx['state'];
     let hdlr1 = [()=>v1.counter++, ctx];
@@ -656,12 +703,13 @@ exports[`basics same t-keys in two different places 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"blip\\"]);
   const comp2 = app.createComponent(\`Child\`, true, false, false, [\\"blip\\"]);
   
   let block1 = createBlock(\`<div><div><block-child-0/></div><div><block-child-1/></div></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const tKey_1 = 1;
     const b2 = toggler(tKey_1, comp1({blip: '1'}, tKey_1 + key + \`__1\`, node, this, null));
     const tKey_2 = 1;
@@ -675,10 +723,11 @@ exports[`basics same t-keys in two different places 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].blip;
     return block1([txt1]);
   }
@@ -689,10 +738,11 @@ exports[`basics simple component with a dynamic text 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Test(ctx, node, key = \\"\\") {
     let txt1 = ctx['value'];
     return block1([txt1]);
   }
@@ -703,10 +753,11 @@ exports[`basics simple component, useState 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Test(ctx, node, key = \\"\\") {
     let txt1 = ctx['state'].value;
     return block1([txt1]);
   }
@@ -717,10 +768,11 @@ exports[`basics some simple sanity checks (el/status) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span>simple vnode</span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Test(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -730,6 +782,7 @@ exports[`basics sub components between t-ifs 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><span><block-child-2/></span><block-child-3/></div>\`);
@@ -737,7 +790,7 @@ exports[`basics sub components between t-ifs 1`] = `
   let block3 = createBlock(\`<h2>noo</h2>\`);
   let block5 = createBlock(\`<span>test</span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     let b2,b3,b4,b5;
     if (ctx['state'].flag) {
       b2 = block2();
@@ -757,10 +810,11 @@ exports[`basics sub components between t-ifs 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span>child</span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -770,12 +824,13 @@ exports[`basics t-elif works with t-component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   let block2 = createBlock(\`<div>somediv</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     let b2,b3;
     if (ctx['state'].flag) {
       b2 = block2();
@@ -791,10 +846,11 @@ exports[`basics t-elif works with t-component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span>hey</span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -804,12 +860,13 @@ exports[`basics t-else with empty string works with t-component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   let block2 = createBlock(\`<div>somediv</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     let b2,b3;
     if (ctx['state'].flag) {
       b2 = block2();
@@ -825,10 +882,11 @@ exports[`basics t-else with empty string works with t-component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span>hey</span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -838,12 +896,13 @@ exports[`basics t-else works with t-component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   let block2 = createBlock(\`<div>somediv</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     let b2,b3;
     if (ctx['state'].flag) {
       b2 = block2();
@@ -859,10 +918,11 @@ exports[`basics t-else works with t-component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span>hey</span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -872,11 +932,12 @@ exports[`basics t-if works with t-component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].flag) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
@@ -890,10 +951,11 @@ exports[`basics t-if works with t-component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span>hey</span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -903,12 +965,13 @@ exports[`basics t-key on a component with t-if, and a sibling component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   const comp2 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-0/><block-child-1/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     let b2,b3;
     if (false) {
       const tKey_1 = 'str';
@@ -924,10 +987,11 @@ exports[`basics t-key on a component with t-if, and a sibling component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span>child</span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -937,11 +1001,12 @@ exports[`basics text after a conditional component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><span><block-text-0/></span></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].hasChild) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
@@ -956,10 +1021,11 @@ exports[`basics text after a conditional component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<p>simple vnode</p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -969,9 +1035,10 @@ exports[`basics three level of components with collapsing root nodes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1001\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1001_Parent(ctx, node, key = \\"\\") {
     return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
@@ -981,9 +1048,10 @@ exports[`basics three level of components with collapsing root nodes 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`GrandChild\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Child(ctx, node, key = \\"\\") {
     return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
@@ -993,10 +1061,11 @@ exports[`basics three level of components with collapsing root nodes 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>2</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_GrandChild(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -1006,10 +1075,11 @@ exports[`basics two child components 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   const comp2 = app.createComponent(\`Child\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const b2 = comp1({}, key + \`__1\`, node, this, null);
     const b3 = comp2({}, key + \`__2\`, node, this, null);
     return multi([b2, b3]);
@@ -1021,10 +1091,11 @@ exports[`basics two child components 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>simple vnode</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -1034,11 +1105,12 @@ exports[`basics update props of component without concrete own node 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1001\\"
   const comp1 = app.createComponent(\`Child\`, true, false, true, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1001_Parent(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['childProps'].key;
     const b2 = toggler(tKey_1, comp1(Object.assign({}, ctx['childProps']), tKey_1 + key + \`__1\`, node, this, null));
     return block1([], [b2]);
@@ -1050,9 +1122,10 @@ exports[`basics update props of component without concrete own node 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Custom\`, true, false, false, [\\"key\\",\\"subKey\\"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Child(ctx, node, key = \\"\\") {
     const tKey_1 = ctx['props'].subKey;
     return toggler(tKey_1, comp1({key: ctx['props'].key,subKey: ctx['props'].subKey}, tKey_1 + key + \`__1\`, node, this, null));
   }
@@ -1063,10 +1136,11 @@ exports[`basics update props of component without concrete own node 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div class=\\"widget-subkey\\"><block-text-0/>__<block-text-1/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Custom(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].key;
     let txt2 = ctx['props'].subKey;
     return block1([txt1, txt2]);
@@ -1079,8 +1153,9 @@ exports[`basics updating a component with t-foreach as root 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Test(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['items']);;
     for (let i1 = 0; i1 < l_block1; i1++) {
@@ -1097,9 +1172,10 @@ exports[`basics updating widget immediately 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"flag\\"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     return comp1({flag: ctx['state'].flag}, key + \`__1\`, node, this, null);
   }
 }"
@@ -1109,10 +1185,11 @@ exports[`basics updating widget immediately 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span>abc<block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['props'].flag) {
       b2 = text(\`def\`);
@@ -1127,11 +1204,12 @@ exports[`basics widget after a t-foreach 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SomeComponent\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Test(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(Array(2));;
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -1152,10 +1230,11 @@ exports[`basics widget after a t-foreach 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SomeComponent(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -1165,9 +1244,10 @@ exports[`basics zero or one child components 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].hasChild) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
@@ -1181,10 +1261,11 @@ exports[`basics zero or one child components 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>simple vnode</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -1194,10 +1275,11 @@ exports[`mount targets can mount a component (with default position='last-child'
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>app</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Root(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -1207,10 +1289,11 @@ exports[`mount targets can mount a component (with position='first-child') 1`] =
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>app</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Root(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -1220,10 +1303,11 @@ exports[`mount targets default mount option is 'last-child' 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>app</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Root(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -1233,10 +1317,11 @@ exports[`mount targets mount function: can mount a component (with default posit
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>app</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Root(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -1246,11 +1331,12 @@ exports[`support svg components add proper namespace to svg 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`GComp\`, true, false, false, []);
   
   let block1 = createBlock(\`<svg block-ns=\\"http://www.w3.org/2000/svg\\"><block-child-0/></svg>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Svg(ctx, node, key = \\"\\") {
     const b2 = comp1({}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
@@ -1261,10 +1347,11 @@ exports[`support svg components add proper namespace to svg 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<g block-ns=\\"http://www.w3.org/2000/svg\\"><circle cx=\\"50\\" cy=\\"50\\" r=\\"4\\" stroke=\\"green\\" stroke-width=\\"1\\" fill=\\"yellow\\"/></g>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_GComp(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -1275,10 +1362,11 @@ exports[`t-out in components can render list of t-out  1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, safeOutput, withKey } = helpers;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Test(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].items);;
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -1299,8 +1387,9 @@ exports[`t-out in components can switch the contents of two t-out repeatedly 1`]
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Test(ctx, node, key = \\"\\") {
     const b2 = safeOutput(ctx['state'].a);
     const b3 = safeOutput(ctx['state'].b);
     return multi([b2, b3]);
@@ -1313,8 +1402,9 @@ exports[`t-out in components t-out and updating falsy values,  1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Test(ctx, node, key = \\"\\") {
     return safeOutput(ctx['state'].a);
   }
 }"
@@ -1325,10 +1415,11 @@ exports[`t-out in components update properly on state changes 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Test(ctx, node, key = \\"\\") {
     const b2 = safeOutput(ctx['state'].value);
     return block1([], [b2]);
   }

@@ -4,9 +4,10 @@ exports[`children, default props and renderings 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const b2 = text(ctx['state'].value);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
@@ -18,8 +19,9 @@ exports[`children, default props and renderings 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return text(\`child\`);
   }
 }"
@@ -29,9 +31,10 @@ exports[`force render in case of existing render 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1001\\"
   const comp1 = app.createComponent(\`B\`, true, false, false, [\\"val\\"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1001_A(ctx, node, key = \\"\\") {
     return comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
   }
 }"
@@ -41,9 +44,10 @@ exports[`force render in case of existing render 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`C\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_B(ctx, node, key = \\"\\") {
     const b2 = comp1({}, key + \`__1\`, node, this, null);
     const b3 = text(ctx['props'].val);
     return multi([b2, b3]);
@@ -55,8 +59,9 @@ exports[`force render in case of existing render 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_C(ctx, node, key = \\"\\") {
     return text(\`C\`);
   }
 }"
@@ -66,9 +71,10 @@ exports[`rendering semantics can force a render to update sub tree 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const b2 = text(ctx['state'].value);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
@@ -80,8 +86,9 @@ exports[`rendering semantics can force a render to update sub tree 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return text(\`child\`);
   }
 }"
@@ -91,9 +98,10 @@ exports[`rendering semantics can render a parent without rendering child 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const b2 = text(ctx['state'].value);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
@@ -105,8 +113,9 @@ exports[`rendering semantics can render a parent without rendering child 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return text(\`child\`);
   }
 }"
@@ -116,9 +125,10 @@ exports[`rendering semantics props are reactive (nested prop) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"a\\"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     return comp1({a: ctx['state']}, key + \`__1\`, node, this, null);
   }
 }"
@@ -128,8 +138,9 @@ exports[`rendering semantics props are reactive (nested prop) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return text(ctx['props'].a.b.c);
   }
 }"
@@ -139,9 +150,10 @@ exports[`rendering semantics props are reactive 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"a\\"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     return comp1({a: ctx['state']}, key + \`__1\`, node, this, null);
   }
 }"
@@ -151,8 +163,9 @@ exports[`rendering semantics props are reactive 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return text(ctx['props'].a.b);
   }
 }"
@@ -162,9 +175,10 @@ exports[`rendering semantics render need a boolean = true to be 'deep' 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const b2 = text(ctx['state'].value);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
@@ -176,8 +190,9 @@ exports[`rendering semantics render need a boolean = true to be 'deep' 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return text(\`child\`);
   }
 }"
@@ -187,9 +202,10 @@ exports[`rendering semantics render with deep=true followed by render with deep=
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const b2 = text(\`parent\`);
     const b3 = text(ctx['state'].value);
     const b4 = comp1({}, key + \`__1\`, node, this, null);
@@ -202,8 +218,9 @@ exports[`rendering semantics render with deep=true followed by render with deep=
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     const b2 = text(\`child\`);
     const b3 = text(ctx['env'].getValue());
     return multi([b2, b3]);
@@ -215,9 +232,10 @@ exports[`rendering semantics rendering is atomic (for one subtree) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1001\\"
   const comp1 = app.createComponent(\`B\`, true, false, false, [\\"obj\\"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1001_A(ctx, node, key = \\"\\") {
     const b2 = text(ctx['state'].obj.val);
     const b3 = comp1({obj: ctx['state'].obj}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
@@ -229,9 +247,10 @@ exports[`rendering semantics rendering is atomic (for one subtree) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`C\`, true, false, false, [\\"obj\\"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_B(ctx, node, key = \\"\\") {
     return comp1({obj: ctx['props'].obj}, key + \`__1\`, node, this, null);
   }
 }"
@@ -241,8 +260,9 @@ exports[`rendering semantics rendering is atomic (for one subtree) 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_C(ctx, node, key = \\"\\") {
     return text(ctx['props'].obj.val);
   }
 }"
@@ -252,9 +272,10 @@ exports[`rendering semantics works as expected for dynamic number of props 1`] =
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, true, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     return comp1(Object.assign({}, ctx['state']), key + \`__1\`, node, this, null);
   }
 }"
@@ -264,8 +285,9 @@ exports[`rendering semantics works as expected for dynamic number of props 2`] =
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return text(Object.keys(ctx['props']).length);
   }
 }"

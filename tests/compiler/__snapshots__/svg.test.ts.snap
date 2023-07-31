@@ -56,12 +56,13 @@ exports[`properly support svg svg creates new block if it is within html -- 2 1`
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<svg block-ns=\\"http://www.w3.org/2000/svg\\"><polygon fill=\\"#000000\\" points=\\"0 0 4 4 8 0\\" transform=\\"translate(5 7)\\"/><block-child-0/></svg>\`);
   let block3 = createBlock(\`<path block-ns=\\"http://www.w3.org/2000/svg\\"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Test(ctx, node, key = \\"\\") {
     let b3;
     if (ctx['hasPath']) {
       b3 = block3();
@@ -76,11 +77,12 @@ exports[`properly support svg svg creates new block if it is within html 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<svg block-ns=\\"http://www.w3.org/2000/svg\\"><polygon fill=\\"#000000\\" points=\\"0 0 4 4 8 0\\" transform=\\"translate(5 7)\\"/></svg>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Test(ctx, node, key = \\"\\") {
     const b2 = block2();
     return block1([], [b2]);
   }
@@ -91,11 +93,12 @@ exports[`properly support svg svg namespace added to sub templates if root tag i
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"svg\\"
   const callTemplate_1 = app.getTemplate(\`path\`);
   
   let block1 = createBlock(\`<svg block-ns=\\"http://www.w3.org/2000/svg\\"><block-child-0/></svg>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function svg_Svg(ctx, node, key = \\"\\") {
     const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
@@ -106,10 +109,11 @@ exports[`properly support svg svg namespace added to sub templates if root tag i
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"path\\"
   
   let block1 = createBlock(\`<path block-ns=\\"http://www.w3.org/2000/svg\\"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function path(ctx, node, key = \\"\\") {
     return block1();
   }
 }"

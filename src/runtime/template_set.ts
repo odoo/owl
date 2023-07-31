@@ -94,7 +94,7 @@ export class TemplateSet {
     }
   }
 
-  getTemplate(name: string): Template {
+  getTemplate(name: string, alias?: string): Template {
     if (!(name in this.templates)) {
       const rawTemplate = this.rawTemplates[name];
       if (rawTemplate === undefined) {
@@ -106,7 +106,7 @@ export class TemplateSet {
         throw new OwlError(`Missing template: "${name}"${extraInfo}`);
       }
       const isFn = typeof rawTemplate === "function" && !(rawTemplate instanceof Element);
-      const templateFn = isFn ? rawTemplate : this._compileTemplate(name, rawTemplate);
+      const templateFn = isFn ? rawTemplate : this._compileTemplate(name, rawTemplate, alias);
       // first add a function to lazily get the template, in case there is a
       // recursive call to the template name
       const templates = this.templates;
@@ -119,7 +119,7 @@ export class TemplateSet {
     return this.templates[name];
   }
 
-  _compileTemplate(name: string, template: string | Element): ReturnType<typeof compile> {
+  _compileTemplate(name: string, template: string | Element, alias?: string): ReturnType<typeof compile> {
     throw new OwlError(`Unable to compile a template. Please use owl full build instead`);
   }
 
@@ -135,7 +135,7 @@ export class TemplateSet {
 export const globalTemplates: { [key: string]: string | Element | TemplateFunction } = {};
 
 export function xml(...args: Parameters<typeof String.raw>) {
-  const name = `__template__${xml.nextId++}`;
+  const name = `xml_template_${xml.nextId++}`;
   const value = String.raw(...args);
   globalTemplates[name] = value;
   return name;

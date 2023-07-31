@@ -5,6 +5,7 @@ exports[`t-set slot setted value (with t-set) not accessible with t-esc 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue, capture, markRaw } = helpers;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Childcomp\`, true, true, false, []);
   
   let block1 = createBlock(\`<div><p><block-text-0/></p><block-child-0/><p><block-text-1/></p></div>\`);
@@ -16,7 +17,7 @@ exports[`t-set slot setted value (with t-set) not accessible with t-esc 1`] = `
   return text('');
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Comp(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"iter\\", 'source');
@@ -34,10 +35,11 @@ exports[`t-set slot setted value (with t-set) not accessible with t-esc 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/><block-text-1/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Childcomp(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     let txt1 = ctx['iter'];
@@ -53,6 +55,7 @@ exports[`t-set slots with a t-set with a component in body 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, isBoundary, withDefault, LazyValue, safeOutput, markRaw } = helpers;
+  // Template name: \\"xml_template_1001\\"
   const comp1 = app.createComponent(\`C\`, true, false, false, []);
   const comp2 = app.createComponent(\`Child\`, true, true, false, []);
   
@@ -69,7 +72,7 @@ exports[`t-set slots with a t-set with a component in body 1`] = `
     return comp1({}, key + \`__1\`, node, this, null);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1001_Comp(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
     return comp2({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__2\`, node, this, null);
   }
@@ -81,8 +84,9 @@ exports[`t-set slots with a t-set with a component in body 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
+  // Template name: \\"xml_template_1000\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Child(ctx, node, key = \\"\\") {
     const b2 = text(\`Child \`);
     const b3 = callSlot(ctx, node, key, 'default', false, {});
     return multi([b2, b3]);
@@ -94,8 +98,9 @@ exports[`t-set slots with a t-set with a component in body 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_C(ctx, node, key = \\"\\") {
     return text(\`C\`);
   }
 }"
@@ -106,6 +111,7 @@ exports[`t-set slots with an t-set with a component in body 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, isBoundary, withDefault, LazyValue, safeOutput, markRaw } = helpers;
+  // Template name: \\"xml_template_1001\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   const comp2 = app.createComponent(\`Blorg\`, true, true, false, []);
   
@@ -126,7 +132,7 @@ exports[`t-set slots with an t-set with a component in body 1`] = `
     return multi([b3, b4]);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1001_Comp(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
     return comp2({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__2\`, node, this, null);
   }
@@ -138,8 +144,9 @@ exports[`t-set slots with an t-set with a component in body 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
+  // Template name: \\"xml_template_1000\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Blorg(ctx, node, key = \\"\\") {
     const b2 = text(\`Blorg \`);
     const b3 = callSlot(ctx, node, key, 'default', false, {});
     return multi([b2, b3]);
@@ -151,8 +158,9 @@ exports[`t-set slots with an t-set with a component in body 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return text(\`Child\`);
   }
 }"
@@ -163,6 +171,7 @@ exports[`t-set slots with an unused t-set with a component in body 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { capture, isBoundary, withDefault, LazyValue, markRaw } = helpers;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   const comp2 = app.createComponent(\`Child\`, true, true, false, []);
   
@@ -177,7 +186,7 @@ exports[`t-set slots with an unused t-set with a component in body 1`] = `
     return comp1({}, key + \`__1\`, node, this, null);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Comp(ctx, node, key = \\"\\") {
     const ctx1 = capture(ctx);
     return comp2({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__2\`, node, this, null);
   }
@@ -189,8 +198,9 @@ exports[`t-set slots with an unused t-set with a component in body 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     const b2 = text(\`Child \`);
     const b3 = callSlot(ctx, node, key, 'default', false, {});
     return multi([b2, b3]);
@@ -203,10 +213,11 @@ exports[`t-set t-set can't alter component even if key in component 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><p><block-text-0/></p><p><block-text-1/></p></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Comp(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     let txt1 = ctx['iter'];
@@ -222,10 +233,11 @@ exports[`t-set t-set can't alter component if key not in component 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><p><block-text-0/></p><p><block-text-1/></p></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Comp(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     let txt1 = ctx['iter'];
@@ -241,10 +253,11 @@ exports[`t-set t-set in t-if 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><p><block-text-0/></p></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Comp(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"flag\\", ctx['state'].flag);
@@ -266,11 +279,12 @@ exports[`t-set t-set not altered by child comp 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Childcomp\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><p><block-text-0/></p><block-child-0/><p><block-text-1/></p></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Comp(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"iter\\", 'source');
@@ -287,10 +301,11 @@ exports[`t-set t-set not altered by child comp 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/><block-text-1/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Childcomp(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     let txt1 = ctx['iter'];
@@ -306,10 +321,11 @@ exports[`t-set t-set outside modified in t-if 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><p><block-text-0/></p></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Comp(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"iter\\", 0);
@@ -332,6 +348,7 @@ exports[`t-set t-set with a component in body 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, LazyValue, safeOutput } = helpers;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><div><block-child-0/></div></div>\`);
@@ -340,7 +357,7 @@ exports[`t-set t-set with a component in body 1`] = `
     return comp1({}, key + \`__1\`, node, this, null);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Comp(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     ctx[\`v\`] = new LazyValue(value1, ctx, this, node, key);
@@ -354,8 +371,9 @@ exports[`t-set t-set with a component in body 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return text(\`Child\`);
   }
 }"
@@ -366,6 +384,7 @@ exports[`t-set t-set with something in body 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, LazyValue, safeOutput } = helpers;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><div><block-child-0/></div></div>\`);
   let block2 = createBlock(\`<p>coucou</p>\`);
@@ -374,7 +393,7 @@ exports[`t-set t-set with something in body 1`] = `
     return block2();
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Comp(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     ctx[\`v\`] = new LazyValue(value1, ctx, this, node, key);

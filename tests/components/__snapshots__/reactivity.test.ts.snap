@@ -4,9 +4,10 @@ exports[`reactivity in lifecycle Child component doesn't render when state they 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"state\\"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].renderChild) {
       b2 = comp1({state: ctx['state']}, key + \`__1\`, node, this, null);
@@ -20,8 +21,9 @@ exports[`reactivity in lifecycle Child component doesn't render when state they 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return text(ctx['props'].state.content.a);
   }
 }"
@@ -31,9 +33,10 @@ exports[`reactivity in lifecycle Component is automatically subscribed to reacti
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"obj\\",\\"reactiveObj\\"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     return comp1({obj: ctx['obj'],reactiveObj: ctx['reactiveObj']}, key + \`__1\`, node, this, null);
   }
 }"
@@ -43,8 +46,9 @@ exports[`reactivity in lifecycle Component is automatically subscribed to reacti
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     const b2 = text(ctx['props'].obj.a);
     const b3 = text(ctx['props'].reactiveObj.b);
     return multi([b2, b3]);
@@ -56,10 +60,11 @@ exports[`reactivity in lifecycle can use a state hook 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Counter(ctx, node, key = \\"\\") {
     let txt1 = ctx['counter'].value;
     return block1([txt1]);
   }
@@ -70,10 +75,11 @@ exports[`reactivity in lifecycle can use a state hook 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Comp(ctx, node, key = \\"\\") {
     let txt1 = ctx['state'].a;
     return block1([txt1]);
   }
@@ -84,10 +90,11 @@ exports[`reactivity in lifecycle can use a state hook on Map 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Counter(ctx, node, key = \\"\\") {
     let txt1 = ctx['counter'].get('value');
     return block1([txt1]);
   }
@@ -98,10 +105,11 @@ exports[`reactivity in lifecycle change state while mounting component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Comp(ctx, node, key = \\"\\") {
     let txt1 = ctx['state'].val;
     return block1([txt1]);
   }
@@ -112,11 +120,12 @@ exports[`reactivity in lifecycle state changes in willUnmount do not trigger rer
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"val\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].flag) {
       b2 = comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
@@ -130,10 +139,11 @@ exports[`reactivity in lifecycle state changes in willUnmount do not trigger rer
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].val;
     let txt2 = ctx['state'].n;
     return block1([txt1, txt2]);
@@ -145,8 +155,9 @@ exports[`subscriptions subscriptions returns the keys and targets observed by th
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Comp(ctx, node, key = \\"\\") {
     return text(ctx['state'].a);
   }
 }"
@@ -156,9 +167,10 @@ exports[`subscriptions subscriptions returns the keys observed by the component 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"state\\"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const b2 = text(ctx['state'].a);
     const b3 = comp1({state: ctx['state']}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
@@ -170,8 +182,9 @@ exports[`subscriptions subscriptions returns the keys observed by the component 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return text(ctx['props'].state.b);
   }
 }"

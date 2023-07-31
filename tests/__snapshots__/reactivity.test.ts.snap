@@ -50,11 +50,12 @@ exports[`Reactivity: useState destroyed component before being mounted is inacti
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].flag) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
@@ -68,10 +69,11 @@ exports[`Reactivity: useState destroyed component before being mounted is inacti
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let txt1 = ctx['contextObj'].a;
     return block1([txt1]);
   }
@@ -82,11 +84,12 @@ exports[`Reactivity: useState destroyed component is inactive 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     let b2;
     if (ctx['state'].flag) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
@@ -100,10 +103,11 @@ exports[`Reactivity: useState destroyed component is inactive 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let txt1 = ctx['contextObj'].a;
     return block1([txt1]);
   }
@@ -114,10 +118,11 @@ exports[`Reactivity: useState one components can subscribe twice to same context
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/><block-text-1/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Comp(ctx, node, key = \\"\\") {
     let txt1 = ctx['contextObj1'].a;
     let txt2 = ctx['contextObj2'].b;
     return block1([txt1, txt2]);
@@ -129,11 +134,12 @@ exports[`Reactivity: useState parent and children subscribed to same context 1`]
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-text-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const b2 = comp1({}, key + \`__1\`, node, this, null);
     let txt1 = ctx['contextObj'].b;
     return block1([txt1], [b2]);
@@ -145,10 +151,11 @@ exports[`Reactivity: useState parent and children subscribed to same context 2`]
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let txt1 = ctx['contextObj'].a;
     return block1([txt1]);
   }
@@ -222,12 +229,13 @@ exports[`Reactivity: useState two components are updated in parallel 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   const comp2 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const b2 = comp1({}, key + \`__1\`, node, this, null);
     const b3 = comp2({}, key + \`__2\`, node, this, null);
     return block1([], [b2, b3]);
@@ -239,10 +247,11 @@ exports[`Reactivity: useState two components are updated in parallel 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let txt1 = ctx['contextObj'].value;
     return block1([txt1]);
   }
@@ -253,12 +262,13 @@ exports[`Reactivity: useState two components can subscribe to same context 1`] =
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   const comp2 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const b2 = comp1({}, key + \`__1\`, node, this, null);
     const b3 = comp2({}, key + \`__2\`, node, this, null);
     return block1([], [b2, b3]);
@@ -270,10 +280,11 @@ exports[`Reactivity: useState two components can subscribe to same context 2`] =
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let txt1 = ctx['contextObj'].value;
     return block1([txt1]);
   }
@@ -284,12 +295,13 @@ exports[`Reactivity: useState two independent components on different levels are
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1001\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   const comp2 = app.createComponent(\`Parent\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1001_GrandFather(ctx, node, key = \\"\\") {
     const b2 = comp1({}, key + \`__1\`, node, this, null);
     const b3 = comp2({}, key + \`__2\`, node, this, null);
     return block1([], [b2, b3]);
@@ -301,10 +313,11 @@ exports[`Reactivity: useState two independent components on different levels are
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let txt1 = ctx['contextObj'].value;
     return block1([txt1]);
   }
@@ -315,11 +328,12 @@ exports[`Reactivity: useState two independent components on different levels are
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const b2 = comp1({}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
@@ -330,10 +344,11 @@ exports[`Reactivity: useState useContext=useState hook is reactive, for one comp
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Comp(ctx, node, key = \\"\\") {
     let txt1 = ctx['contextObj'].value;
     return block1([txt1]);
   }
@@ -345,11 +360,12 @@ exports[`Reactivity: useState useless atoms should be deleted 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Quantity\`, true, false, false, [\\"id\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/> Total: <block-text-0/> Count: <block-text-1/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_ListOfQuantities(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(Object.keys(ctx['state']));;
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -370,10 +386,11 @@ exports[`Reactivity: useState useless atoms should be deleted 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Quantity(ctx, node, key = \\"\\") {
     let txt1 = ctx['state'].quantity;
     return block1([txt1]);
   }
@@ -384,10 +401,11 @@ exports[`Reactivity: useState very simple use, with initial value 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Comp(ctx, node, key = \\"\\") {
     let txt1 = ctx['contextObj'].value;
     return block1([txt1]);
   }

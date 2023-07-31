@@ -328,12 +328,13 @@ exports[`t-foreach t-call with body in t-foreach in t-foreach 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, isBoundary, withDefault, setContextValue, withKey } = helpers;
+  // Template name: \\"main\\"
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/><span>[<block-text-0/>][<block-text-1/>][<block-text-2/>]</span></div>\`);
   let block6 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function main(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     ctx = Object.create(ctx);
@@ -380,8 +381,9 @@ exports[`t-foreach t-call with body in t-foreach in t-foreach 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"sub\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function sub(ctx, node, key = \\"\\") {
     const b2 = text(\` [\`);
     const b3 = text(ctx['a']);
     const b4 = text(\`] [\`);
@@ -399,12 +401,13 @@ exports[`t-foreach t-call without body in t-foreach in t-foreach 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
+  // Template name: \\"main\\"
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/><span>[<block-text-0/>][<block-text-1/>][<block-text-2/>]</span></div>\`);
   let block6 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function main(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['numbers']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -446,8 +449,9 @@ exports[`t-foreach t-call without body in t-foreach in t-foreach 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
+  // Template name: \\"sub\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function sub(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"c\\", 'x'+'_'+ctx['a']+'_'+ctx['b']);

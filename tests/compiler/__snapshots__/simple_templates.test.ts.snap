@@ -158,8 +158,9 @@ exports[`simple templates, mostly static empty string in a template set 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"potato\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function potato(ctx, node, key = \\"\\") {
     return text(\`\`);
   }
 }"

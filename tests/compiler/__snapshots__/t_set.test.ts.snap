@@ -219,11 +219,12 @@ exports[`t-set t-set can't alter from within callee 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
+  // Template name: \\"main\\"
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><p><block-text-0/></p><block-child-0/><p><block-text-1/></p></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function main(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"iter\\", 'source');
@@ -240,10 +241,11 @@ exports[`t-set t-set can't alter from within callee 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
+  // Template name: \\"sub\\"
   
   let block1 = createBlock(\`<div><block-text-0/><block-text-1/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function sub(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     let txt1 = ctx['iter'];
@@ -259,11 +261,12 @@ exports[`t-set t-set can't alter in t-call body 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
+  // Template name: \\"main\\"
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><p><block-text-0/></p><block-child-0/><p><block-text-1/></p></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function main(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"iter\\", 'source');
@@ -284,10 +287,11 @@ exports[`t-set t-set can't alter in t-call body 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
+  // Template name: \\"sub\\"
   
   let block1 = createBlock(\`<div><block-text-0/><block-text-1/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function sub(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     let txt1 = ctx['iter'];

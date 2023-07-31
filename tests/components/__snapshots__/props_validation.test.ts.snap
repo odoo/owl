@@ -4,9 +4,10 @@ exports[`default props a default prop cannot be defined on a mandatory prop 1`] 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {};
     helpers.validateProps(\`Child\`, props1, this);
     return comp1(props1, key + \`__1\`, node, this, null);
@@ -18,11 +19,12 @@ exports[`default props can set default boolean values 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -35,10 +37,11 @@ exports[`default props can set default boolean values 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<span><block-child-0/><block-child-1/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SubComp(ctx, node, key = \\"\\") {
     let b2,b3;
     if (ctx['props'].p) {
       b2 = text(\`hey\`);
@@ -55,11 +58,12 @@ exports[`default props can set default values 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -72,10 +76,11 @@ exports[`default props can set default values 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SubComp(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].p;
     return block1([txt1]);
   }
@@ -86,11 +91,12 @@ exports[`default props default values are also set whenever component is updated
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['state'].p};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -103,10 +109,11 @@ exports[`default props default values are also set whenever component is updated
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SubComp(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].p;
     return block1([txt1]);
   }
@@ -117,9 +124,10 @@ exports[`props validation can specify that additional props are allowed (array) 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"message\\",\\"otherProp\\"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {message: 'm',otherProp: 'o'};
     helpers.validateProps(\`Child\`, props1, this);
     return comp1(props1, key + \`__1\`, node, this, null);
@@ -131,10 +139,11 @@ exports[`props validation can specify that additional props are allowed (array) 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -144,9 +153,10 @@ exports[`props validation can specify that additional props are allowed (object)
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"message\\",\\"otherProp\\"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {message: 'm',otherProp: 'o'};
     helpers.validateProps(\`Child\`, props1, this);
     return comp1(props1, key + \`__1\`, node, this, null);
@@ -158,10 +168,11 @@ exports[`props validation can specify that additional props are allowed (object)
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -171,11 +182,12 @@ exports[`props validation can validate a prop with multiple types 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -188,10 +200,11 @@ exports[`props validation can validate a prop with multiple types 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SubComp(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -201,11 +214,12 @@ exports[`props validation can validate a prop with multiple types 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -218,10 +232,11 @@ exports[`props validation can validate a prop with multiple types 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SubComp(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -231,11 +246,12 @@ exports[`props validation can validate a prop with multiple types 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -248,11 +264,12 @@ exports[`props validation can validate an array with given primitive type 1`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -265,10 +282,11 @@ exports[`props validation can validate an array with given primitive type 2`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SubComp(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -278,11 +296,12 @@ exports[`props validation can validate an array with given primitive type 3`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -295,10 +314,11 @@ exports[`props validation can validate an array with given primitive type 4`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SubComp(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -308,11 +328,12 @@ exports[`props validation can validate an array with given primitive type 5`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -325,11 +346,12 @@ exports[`props validation can validate an array with given primitive type 6`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -342,11 +364,12 @@ exports[`props validation can validate an array with multiple sub element types 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -359,10 +382,11 @@ exports[`props validation can validate an array with multiple sub element types 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SubComp(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -372,11 +396,12 @@ exports[`props validation can validate an array with multiple sub element types 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -389,10 +414,11 @@ exports[`props validation can validate an array with multiple sub element types 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SubComp(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -402,11 +428,12 @@ exports[`props validation can validate an array with multiple sub element types 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -419,10 +446,11 @@ exports[`props validation can validate an array with multiple sub element types 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SubComp(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -432,11 +460,12 @@ exports[`props validation can validate an array with multiple sub element types 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -449,11 +478,12 @@ exports[`props validation can validate an object with simple shape 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -466,10 +496,11 @@ exports[`props validation can validate an object with simple shape 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SubComp(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -479,11 +510,12 @@ exports[`props validation can validate an object with simple shape 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -496,11 +528,12 @@ exports[`props validation can validate an object with simple shape 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -513,11 +546,12 @@ exports[`props validation can validate an object with simple shape 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -530,11 +564,12 @@ exports[`props validation can validate an optional props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -547,10 +582,11 @@ exports[`props validation can validate an optional props 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SubComp(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -560,11 +596,12 @@ exports[`props validation can validate an optional props 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -577,10 +614,11 @@ exports[`props validation can validate an optional props 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SubComp(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -590,11 +628,12 @@ exports[`props validation can validate an optional props 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -607,11 +646,12 @@ exports[`props validation can validate recursively complicated prop def 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -624,10 +664,11 @@ exports[`props validation can validate recursively complicated prop def 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SubComp(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -637,11 +678,12 @@ exports[`props validation can validate recursively complicated prop def 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -654,10 +696,11 @@ exports[`props validation can validate recursively complicated prop def 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SubComp(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -667,11 +710,12 @@ exports[`props validation can validate recursively complicated prop def 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -685,6 +729,7 @@ exports[`props validation can validate through slots 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  // Template name: \\"xml_template_1001\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   const comp2 = app.createComponent(\`Wrapper\`, true, true, false, []);
   
@@ -694,7 +739,7 @@ exports[`props validation can validate through slots 1`] = `
     return comp1(props1, key + \`__1\`, node, this, null);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1001_Parent(ctx, node, key = \\"\\") {
     const props2 = {slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})};
     helpers.validateProps(\`Wrapper\`, props2, this);
     return comp2(props2, key + \`__2\`, node, this, null);
@@ -707,8 +752,9 @@ exports[`props validation can validate through slots 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
+  // Template name: \\"xml_template_1000\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Wrapper(ctx, node, key = \\"\\") {
     return callSlot(ctx, node, key, 'default', false, {});
   }
 }"
@@ -718,11 +764,12 @@ exports[`props validation default values are applied before validating props at 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['state'].p};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -735,10 +782,11 @@ exports[`props validation default values are applied before validating props at 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SubComp(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].p;
     return block1([txt1]);
   }
@@ -749,11 +797,12 @@ exports[`props validation missing required boolean prop causes an error 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -766,11 +815,12 @@ exports[`props validation mix of optional and mandatory 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {};
     helpers.validateProps(\`Child\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -783,11 +833,12 @@ exports[`props validation props are validated in dev mode (code snapshot) 1`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"message\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {message: 1};
     helpers.validateProps(\`Child\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -800,10 +851,11 @@ exports[`props validation props are validated in dev mode (code snapshot) 2`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].message;
     return block1([txt1]);
   }
@@ -814,11 +866,12 @@ exports[`props validation props are validated whenever component is updated 1`] 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['state'].p};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -831,10 +884,11 @@ exports[`props validation props are validated whenever component is updated 2`] 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SubComp(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].p;
     return block1([txt1]);
   }
@@ -845,9 +899,10 @@ exports[`props validation props validation does not cause additional subscriptio
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"obj\\"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {obj: ctx['obj']};
     helpers.validateProps(\`Child\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -861,8 +916,9 @@ exports[`props validation props validation does not cause additional subscriptio
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Child(ctx, node, key = \\"\\") {
     return text(ctx['props'].obj.value);
   }
 }"
@@ -872,11 +928,12 @@ exports[`props validation props: list of strings 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -889,11 +946,12 @@ exports[`props validation validate simple types 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -906,11 +964,12 @@ exports[`props validation validate simple types 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -923,10 +982,11 @@ exports[`props validation validate simple types 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000__a(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -936,11 +996,12 @@ exports[`props validation validate simple types 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -953,11 +1014,12 @@ exports[`props validation validate simple types 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -970,11 +1032,12 @@ exports[`props validation validate simple types 6`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -987,10 +1050,11 @@ exports[`props validation validate simple types 7`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1001\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1001__a(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -1000,11 +1064,12 @@ exports[`props validation validate simple types 8`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1017,11 +1082,12 @@ exports[`props validation validate simple types 9`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1034,11 +1100,12 @@ exports[`props validation validate simple types 10`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1051,10 +1118,11 @@ exports[`props validation validate simple types 11`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1002\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1002__a(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -1064,11 +1132,12 @@ exports[`props validation validate simple types 12`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1081,11 +1150,12 @@ exports[`props validation validate simple types 13`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1098,11 +1168,12 @@ exports[`props validation validate simple types 14`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1115,10 +1186,11 @@ exports[`props validation validate simple types 15`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1003\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1003__a(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -1128,11 +1200,12 @@ exports[`props validation validate simple types 16`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1145,11 +1218,12 @@ exports[`props validation validate simple types 17`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1162,11 +1236,12 @@ exports[`props validation validate simple types 18`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1179,10 +1254,11 @@ exports[`props validation validate simple types 19`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1004\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1004__a(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -1192,11 +1268,12 @@ exports[`props validation validate simple types 20`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1209,11 +1286,12 @@ exports[`props validation validate simple types 21`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1226,11 +1304,12 @@ exports[`props validation validate simple types 22`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1243,10 +1322,11 @@ exports[`props validation validate simple types 23`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1005\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1005__a(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -1256,11 +1336,12 @@ exports[`props validation validate simple types 24`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1273,11 +1354,12 @@ exports[`props validation validate simple types, alternate form 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1290,11 +1372,12 @@ exports[`props validation validate simple types, alternate form 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1307,10 +1390,11 @@ exports[`props validation validate simple types, alternate form 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000__a(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -1320,11 +1404,12 @@ exports[`props validation validate simple types, alternate form 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1337,11 +1422,12 @@ exports[`props validation validate simple types, alternate form 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1354,11 +1440,12 @@ exports[`props validation validate simple types, alternate form 6`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1371,10 +1458,11 @@ exports[`props validation validate simple types, alternate form 7`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1001\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1001__a(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -1384,11 +1472,12 @@ exports[`props validation validate simple types, alternate form 8`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1401,11 +1490,12 @@ exports[`props validation validate simple types, alternate form 9`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1418,11 +1508,12 @@ exports[`props validation validate simple types, alternate form 10`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1435,10 +1526,11 @@ exports[`props validation validate simple types, alternate form 11`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1002\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1002__a(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -1448,11 +1540,12 @@ exports[`props validation validate simple types, alternate form 12`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1465,11 +1558,12 @@ exports[`props validation validate simple types, alternate form 13`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1482,11 +1576,12 @@ exports[`props validation validate simple types, alternate form 14`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1499,10 +1594,11 @@ exports[`props validation validate simple types, alternate form 15`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1003\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1003__a(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -1512,11 +1608,12 @@ exports[`props validation validate simple types, alternate form 16`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1529,11 +1626,12 @@ exports[`props validation validate simple types, alternate form 17`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1546,11 +1644,12 @@ exports[`props validation validate simple types, alternate form 18`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1563,10 +1662,11 @@ exports[`props validation validate simple types, alternate form 19`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1004\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1004__a(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -1576,11 +1676,12 @@ exports[`props validation validate simple types, alternate form 20`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1593,11 +1694,12 @@ exports[`props validation validate simple types, alternate form 21`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1610,11 +1712,12 @@ exports[`props validation validate simple types, alternate form 22`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1627,10 +1730,11 @@ exports[`props validation validate simple types, alternate form 23`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1005\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1005__a(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -1640,11 +1744,12 @@ exports[`props validation validate simple types, alternate form 24`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, [\\"p\\"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Parent(ctx, node, key = \\"\\") {
     const props1 = {p: ctx['p']};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1657,11 +1762,12 @@ exports[`props validation validation is only done in dev mode 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const props1 = {};
     helpers.validateProps(\`SubComp\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
@@ -1674,11 +1780,12 @@ exports[`props validation validation is only done in dev mode 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_Parent(ctx, node, key = \\"\\") {
     const b2 = comp1({}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
@@ -1689,10 +1796,11 @@ exports[`props validation validation is only done in dev mode 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>hey</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SubComp(ctx, node, key = \\"\\") {
     return block1();
   }
 }"

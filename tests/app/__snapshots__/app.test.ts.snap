@@ -4,10 +4,11 @@ exports[`app App supports env with getters/setters 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/> <block-text-1/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SomeComponent(ctx, node, key = \\"\\") {
     let txt1 = ctx['env'].someVal;
     let txt2 = Object.keys(ctx['env'].services);
     return block1([txt1, txt2]);
@@ -19,9 +20,10 @@ exports[`app app: clear scheduler tasks and destroy cancelled nodes immediately 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_1000\\"
   const comp1 = app.createComponent(\`B\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_1000_A(ctx, node, key = \\"\\") {
     let b2,b3;
     b2 = text(\`A\`);
     if (ctx['state'].value) {
@@ -36,8 +38,9 @@ exports[`app app: clear scheduler tasks and destroy cancelled nodes immediately 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_B(ctx, node, key = \\"\\") {
     return text(\`B\`);
   }
 }"
@@ -47,10 +50,11 @@ exports[`app can configure an app with props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SomeComponent(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].value;
     return block1([txt1]);
   }
@@ -61,10 +65,11 @@ exports[`app can mount app in an iframe 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div class=\\"my-div\\"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SomeComponent(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -74,10 +79,11 @@ exports[`app destroy remove the widget from the DOM 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SomeComponent(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -87,10 +93,11 @@ exports[`app warnIfNoStaticProps works as expected 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_Root(ctx, node, key = \\"\\") {
     let txt1 = ctx['message'];
     return block1([txt1]);
   }

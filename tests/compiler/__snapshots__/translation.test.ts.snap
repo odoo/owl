@@ -5,8 +5,9 @@ exports[`translation support body of t-sets are translated 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SomeComponent(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"label\\", \`translated\`);
@@ -20,8 +21,9 @@ exports[`translation support body of t-sets inside translation=off are not trans
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SomeComponent(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"label\\", \`untranslated\`);
@@ -35,6 +37,7 @@ exports[`translation support body of t-sets with html content are translated 1`]
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, LazyValue, safeOutput } = helpers;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>translated</div>\`);
   
@@ -42,7 +45,7 @@ exports[`translation support body of t-sets with html content are translated 1`]
     return block1();
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SomeComponent(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     ctx[\`label\`] = new LazyValue(value1, ctx, this, node, key);
@@ -56,6 +59,7 @@ exports[`translation support body of t-sets with text and html content are trans
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, LazyValue, safeOutput } = helpers;
+  // Template name: \\"xml_template_999\\"
   
   let block3 = createBlock(\`<div>translated</div>\`);
   
@@ -65,7 +69,7 @@ exports[`translation support body of t-sets with text and html content are trans
     return multi([b2, b3]);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SomeComponent(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     ctx[\`label\`] = new LazyValue(value1, ctx, this, node, key);
@@ -78,10 +82,11 @@ exports[`translation support can set and remove translatable attributes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div tomato=\\"word\\" potato=\\"mot\\" title=\\"mot\\" label=\\"word\\">text</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SomeComponent(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -91,10 +96,11 @@ exports[`translation support can translate node content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>mot</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SomeComponent(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -104,10 +110,11 @@ exports[`translation support does not translate node content if disabled 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><span>mot</span><span>word</span></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SomeComponent(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -117,10 +124,11 @@ exports[`translation support some attributes are translated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div><p label=\\"mot\\">mot</p><p title=\\"mot\\">mot</p><p placeholder=\\"mot\\">mot</p><p alt=\\"mot\\">mot</p><p something=\\"word\\">mot</p></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SomeComponent(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -131,8 +139,9 @@ exports[`translation support t-set and falsy t-value: t-body are translated 1`] 
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { isBoundary, withDefault, setContextValue } = helpers;
+  // Template name: \\"xml_template_999\\"
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SomeComponent(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"label\\", withDefault(false, \`translated\`));
@@ -145,10 +154,11 @@ exports[`translation support translation is done on the trimmed text, with extra
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div> mot </div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SomeComponent(ctx, node, key = \\"\\") {
     return block1();
   }
 }"
@@ -158,10 +168,11 @@ exports[`translation support translation works, even if initial string has inner
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  // Template name: \\"xml_template_999\\"
   
   let block1 = createBlock(\`<div>un mot</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function xml_template_999_SomeComponent(ctx, node, key = \\"\\") {
     return block1();
   }
 }"

@@ -10,6 +10,7 @@ export type TemplateFunction = (app: TemplateSet, bdom: any, helpers: any) => Te
 
 interface CompileOptions extends Config {
   name?: string;
+  alias?: string;
 }
 export function compile(
   template: string | Element,

@@ -5,10 +5,12 @@ export * from "./runtime";
 
 TemplateSet.prototype._compileTemplate = function _compileTemplate(
   name: string,
-  template: string | Element
+  template: string | Element,
+  alias?: string
 ) {
   return compile(template, {
     name,
+    alias,
     dev: this.dev,
     translateFn: this.translateFn,
     translatableAttributes: this.translatableAttributes,

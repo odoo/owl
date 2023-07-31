@@ -43,6 +43,7 @@ export interface Config {
 export interface CodeGenOptions extends Config {
   hasSafeContext?: boolean;
   name?: string;
+  alias?: string;
 }
 
 // using a non-html document so that <inner/outer>HTML serializes as XML instead
@@ -197,6 +198,7 @@ class CodeTarget {
   hasRefWrapper: boolean = false;
 
   constructor(name: string, on?: EventHandlers | null) {
+    debugger
     this.name = name;
     this.on = on || null;
   }
@@ -243,6 +245,13 @@ class CodeTarget {
   }
 }
 
+function toFnName(name: string = "", alias?: string) {
+  if (alias) {
+    name += `_${alias}`;
+  }
+  return name.replace(/[^A-Za-z_$0-9]+/g, "_") || "template";
+}
+
 const TRANSLATABLE_ATTRS = ["label", "title", "placeholder", "alt"];
 const translationRE = /^(\s*)([\s\S]+?)(\s*)$/;
 
@@ -252,7 +261,7 @@ export class CodeGenerator {
   hasSafeContext: boolean;
   isDebug: boolean = false;
   targets: CodeTarget[] = [];
-  target = new CodeTarget("template");
+  target: CodeTarget;
   templateName?: string;
   dev: boolean;
   translateFn: (s: string) => string;
@@ -263,6 +272,7 @@ export class CodeGenerator {
   helpers: Set<string> = new Set();
 
   constructor(ast: AST, options: CodeGenOptions) {
+    this.target = new CodeTarget(toFnName(options.name, options.alias));
     this.translateFn = options.translateFn || ((s: string) => s);
     if (options.translatableAttributes) {
       const attrs = new Set(TRANSLATABLE_ATTRS);

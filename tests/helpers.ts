@@ -128,8 +128,8 @@ export function snapshotEverything() {
   });
 
   const originalCompileTemplate = TemplateSet.prototype._compileTemplate;
-  TemplateSet.prototype._compileTemplate = function (name: string, template: string | Element) {
-    const fn = originalCompileTemplate.call(this, "", template);
+  TemplateSet.prototype._compileTemplate = function (name: string, template: string | Element, alias?: string) {
+    const fn = originalCompileTemplate.call(this, name, template, alias);
     if (!globalTemplateNames.has(name)) {
       expect(fn.toString()).toMatchSnapshot();
     }

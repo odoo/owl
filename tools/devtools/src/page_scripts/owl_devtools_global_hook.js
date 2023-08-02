@@ -1527,6 +1527,9 @@
     // Use inspectedPath to specify the path of the selected component
     getComponentsTree(inspectedPath = null, oldTrees = null, oldDetails = null) {
       const appsArray = [...this.apps];
+      if (inspectedPath && !this.getComponentNode(inspectedPath)) {
+        inspectedPath = null;
+      }
       const trees = appsArray.map((app, index) => {
         let oldTree;
         if (oldTrees) {

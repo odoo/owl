@@ -110,7 +110,7 @@ describe("t-foreach", () => {
       <t t-foreach="value" t-as="item" t-key="item_index">
         [<t t-esc="item_index"/>: <t t-esc="item"/> <t t-esc="item_value"/>]
       </t>`;
-    const expected = ` [0: 1 a]  [1: 2 b]  [2: 3 c] `;
+    const expected = ` [0: a 1]  [1: b 2]  [2: c 3] `;
     const context = {
       value: new Map([
         ["a", 1],

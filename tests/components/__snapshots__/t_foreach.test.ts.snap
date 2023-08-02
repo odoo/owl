@@ -14,7 +14,7 @@ exports[`list of components components in a node in a t-foreach  1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['items']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`item\`] = v_block2[i1];
+      ctx[\`item\`] = k_block2[i1];
       const key1 = 'li_'+ctx['item'];
       const b4 = comp1({item: ctx['item']}, key + \`__1__\${key1}\`, node, this, null);
       c_block2[i1] = withKey(block3([], [b4]), key1);
@@ -51,7 +51,7 @@ exports[`list of components crash on duplicate key in dev mode 1`] = `
     const [k_block1, v_block1, l_block1, c_block1] = prepareList([1,2]);;
     const keys1 = new Set();
     for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`item\`] = v_block1[i1];
+      ctx[\`item\`] = k_block1[i1];
       const key1 = 'child';
       if (keys1.has(String(key1))) { throw new OwlError(\`Got duplicate key in t-foreach: \${key1}\`)}
       keys1.add(String(key1));
@@ -87,7 +87,7 @@ exports[`list of components crash when using object as keys that serialize to th
     const [k_block1, v_block1, l_block1, c_block1] = prepareList([{},{}]);;
     const keys1 = new Set();
     for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`item\`] = v_block1[i1];
+      ctx[\`item\`] = k_block1[i1];
       const key1 = ctx['item'];
       if (keys1.has(String(key1))) { throw new OwlError(\`Got duplicate key in t-foreach: \${key1}\`)}
       keys1.add(String(key1));
@@ -125,7 +125,7 @@ exports[`list of components list of sub components inside other nodes 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].blips);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`blip\`] = v_block2[i1];
+      ctx[\`blip\`] = k_block2[i1];
       const key1 = ctx['blip'].id;
       const b4 = comp1({}, key + \`__1__\${key1}\`, node, this, null);
       c_block2[i1] = withKey(block3([], [b4]), key1);
@@ -191,7 +191,7 @@ exports[`list of components order is correct when slots are not of same type 2`]
     ctx = Object.create(ctx);
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['slotNames']);;
     for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`slotName\`] = v_block1[i1];
+      ctx[\`slotName\`] = k_block1[i1];
       const key1 = ctx['slotName'];
       const slot1 = (ctx['slotName']);
       c_block1[i1] = withKey(toggler(slot1, callSlot(ctx, node, key1 + \`__1__\${key1}\`, slot1, true, {})), key1);
@@ -214,13 +214,13 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].s);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`section\`] = v_block2[i1];
+      ctx[\`section\`] = k_block2[i1];
       ctx[\`section_index\`] = i1;
       const key1 = ctx['section_index'];
       ctx = Object.create(ctx);
       const [k_block3, v_block3, l_block3, c_block3] = prepareList(ctx['section'].blips);;
       for (let i2 = 0; i2 < l_block3; i2++) {
-        ctx[\`blip\`] = v_block3[i2];
+        ctx[\`blip\`] = k_block3[i2];
         ctx[\`blip_index\`] = i2;
         const key2 = ctx['blip_index'];
         c_block3[i2] = withKey(comp1({blip: ctx['blip']}, key + \`__1__\${key1}__\${key2}\`, node, this, null), key2);
@@ -263,12 +263,12 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].rows);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`row\`] = v_block2[i1];
+      ctx[\`row\`] = k_block2[i1];
       const key1 = ctx['row'];
       ctx = Object.create(ctx);
       const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['state'].cols);;
       for (let i2 = 0; i2 < l_block4; i2++) {
-        ctx[\`col\`] = v_block4[i2];
+        ctx[\`col\`] = k_block4[i2];
         const key2 = ctx['col'];
         const b6 = comp1({row: ctx['row'],col: ctx['col']}, key + \`__1__\${key1}__\${key2}\`, node, this, null);
         c_block4[i2] = withKey(block5([], [b6]), key2);
@@ -308,7 +308,7 @@ exports[`list of components simple list 1`] = `
     ctx = Object.create(ctx);
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['state'].elems);;
     for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`elem\`] = v_block1[i1];
+      ctx[\`elem\`] = k_block1[i1];
       const key1 = ctx['elem'].id;
       c_block1[i1] = withKey(comp1({value: ctx['elem'].value}, key + \`__1__\${key1}\`, node, this, null), key1);
     }
@@ -344,7 +344,7 @@ exports[`list of components sub components rendered in a loop 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].numbers);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`number\`] = v_block2[i1];
+      ctx[\`number\`] = k_block2[i1];
       const key1 = ctx['number'];
       c_block2[i1] = withKey(comp1({n: ctx['number']}, key + \`__1__\${key1}\`, node, this, null), key1);
     }
@@ -381,7 +381,7 @@ exports[`list of components sub components with some state rendered in a loop 1`
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].numbers);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`number\`] = v_block2[i1];
+      ctx[\`number\`] = k_block2[i1];
       const key1 = ctx['number'];
       c_block2[i1] = withKey(comp1({}, key + \`__1__\${key1}\`, node, this, null), key1);
     }
@@ -418,7 +418,7 @@ exports[`list of components switch component position 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['clist']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`c\`] = v_block2[i1];
+      ctx[\`c\`] = k_block2[i1];
       const key1 = ctx['c'];
       c_block2[i1] = withKey(comp1({key: ctx['c']}, key + \`__1__\${key1}\`, node, this, null), key1);
     }
@@ -455,7 +455,7 @@ exports[`list of components t-foreach with t-component, and update 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(Array(2));;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`n\`] = v_block2[i1];
+      ctx[\`n\`] = k_block2[i1];
       ctx[\`n_index\`] = i1;
       const key1 = ctx['n_index'];
       c_block2[i1] = withKey(comp1({val: ctx['n_index']}, key + \`__1__\${key1}\`, node, this, null), key1);

@@ -13,7 +13,7 @@ exports[`Cascading renders after microtaskTick 1`] = `
     ctx = Object.create(ctx);
     const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['state']);;
     for (let i1 = 0; i1 < l_block4; i1++) {
-      ctx[\`elem\`] = v_block4[i1];
+      ctx[\`elem\`] = k_block4[i1];
       const key1 = ctx['elem'].id;
       c_block4[i1] = withKey(text(ctx['elem'].id), key1);
     }
@@ -34,7 +34,7 @@ exports[`Cascading renders after microtaskTick 2`] = `
     ctx = Object.create(ctx);
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['state']);;
     for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`elem\`] = v_block1[i1];
+      ctx[\`elem\`] = k_block1[i1];
       const key1 = ctx['elem'].id;
       c_block1[i1] = withKey(comp1({id: ctx['elem'].id}, key + \`__1__\${key1}\`, node, this, null), key1);
     }
@@ -1901,7 +1901,7 @@ exports[`t-foreach with dynamic async component 1`] = `
     ctx = Object.create(ctx);
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['list']);;
     for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`arr\`] = v_block1[i1];
+      ctx[\`arr\`] = k_block1[i1];
       ctx[\`arr_index\`] = i1;
       const key1 = ctx['arr_index'];
       let b3;

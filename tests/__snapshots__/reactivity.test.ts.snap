@@ -353,7 +353,7 @@ exports[`Reactivity: useState useless atoms should be deleted 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(Object.keys(ctx['state']));;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`id\`] = v_block2[i1];
+      ctx[\`id\`] = k_block2[i1];
       const key1 = ctx['id'];
       c_block2[i1] = withKey(comp1({id: ctx['id']}, key + \`__1__\${key1}\`, node, this, null), key1);
     }

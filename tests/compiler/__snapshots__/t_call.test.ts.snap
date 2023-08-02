@@ -440,11 +440,11 @@ exports[`t-call (template calling) recursive template, part 2 2`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['node'].children||[]);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`subtree\`] = v_block2[i1];
+      ctx[\`subtree\`] = k_block2[i1];
       ctx[\`subtree_first\`] = i1 === 0;
-      ctx[\`subtree_last\`] = i1 === v_block2.length - 1;
+      ctx[\`subtree_last\`] = i1 === k_block2.length - 1;
       ctx[\`subtree_index\`] = i1;
-      ctx[\`subtree_value\`] = k_block2[i1];
+      ctx[\`subtree_value\`] = v_block2[i1];
       const key1 = ctx['subtree_index'];
       ctx = Object.create(ctx);
       ctx[isBoundary] = 1;
@@ -495,11 +495,11 @@ exports[`t-call (template calling) recursive template, part 3 2`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['node'].children||[]);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`subtree\`] = v_block2[i1];
+      ctx[\`subtree\`] = k_block2[i1];
       ctx[\`subtree_first\`] = i1 === 0;
-      ctx[\`subtree_last\`] = i1 === v_block2.length - 1;
+      ctx[\`subtree_last\`] = i1 === k_block2.length - 1;
       ctx[\`subtree_index\`] = i1;
-      ctx[\`subtree_value\`] = k_block2[i1];
+      ctx[\`subtree_value\`] = v_block2[i1];
       const key1 = ctx['subtree_index'];
       ctx = Object.create(ctx);
       ctx[isBoundary] = 1;
@@ -553,11 +553,11 @@ exports[`t-call (template calling) recursive template, part 4: with t-set recurs
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['node'].children||[]);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`subtree\`] = v_block2[i1];
+      ctx[\`subtree\`] = k_block2[i1];
       ctx[\`subtree_first\`] = i1 === 0;
-      ctx[\`subtree_last\`] = i1 === v_block2.length - 1;
+      ctx[\`subtree_last\`] = i1 === k_block2.length - 1;
       ctx[\`subtree_index\`] = i1;
-      ctx[\`subtree_value\`] = k_block2[i1];
+      ctx[\`subtree_value\`] = v_block2[i1];
       const key1 = ctx['subtree_index'];
       ctx = Object.create(ctx);
       ctx[isBoundary] = 1;
@@ -813,11 +813,11 @@ exports[`t-call (template calling) t-call with t-set inside and outside 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['list']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`v\`] = v_block2[i1];
+      ctx[\`v\`] = k_block2[i1];
       ctx[\`v_first\`] = i1 === 0;
-      ctx[\`v_last\`] = i1 === v_block2.length - 1;
+      ctx[\`v_last\`] = i1 === k_block2.length - 1;
       ctx[\`v_index\`] = i1;
-      ctx[\`v_value\`] = k_block2[i1];
+      ctx[\`v_value\`] = v_block2[i1];
       const key1 = ctx['v_index'];
       setContextValue(ctx, \\"val\\", ctx['v'].val);
       ctx = Object.create(ctx);
@@ -880,11 +880,11 @@ exports[`t-call (template calling) t-call with t-set inside and outside. 2 2`] =
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['list']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`v\`] = v_block2[i1];
+      ctx[\`v\`] = k_block2[i1];
       ctx[\`v_first\`] = i1 === 0;
-      ctx[\`v_last\`] = i1 === v_block2.length - 1;
+      ctx[\`v_last\`] = i1 === k_block2.length - 1;
       ctx[\`v_index\`] = i1;
-      ctx[\`v_value\`] = k_block2[i1];
+      ctx[\`v_value\`] = v_block2[i1];
       const key1 = ctx['v_index'];
       setContextValue(ctx, \\"val\\", ctx['v'].val);
       ctx = Object.create(ctx);

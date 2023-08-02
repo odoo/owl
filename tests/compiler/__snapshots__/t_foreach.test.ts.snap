@@ -12,7 +12,7 @@ exports[`t-foreach does not pollute the rendering context 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList([1]);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`item\`] = v_block2[i1];
+      ctx[\`item\`] = k_block2[i1];
       const key1 = ctx['item'];
       c_block2[i1] = withKey(text(ctx['item']), key1);
     }
@@ -35,7 +35,7 @@ exports[`t-foreach iterate on items (on a element node) 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList([1,2]);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`item\`] = v_block2[i1];
+      ctx[\`item\`] = k_block2[i1];
       const key1 = ctx['item'];
       let txt1 = ctx['item'];
       c_block2[i1] = withKey(block3([txt1]), key1);
@@ -58,9 +58,9 @@ exports[`t-foreach iterate on items 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList([3,2,1]);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`item\`] = v_block2[i1];
+      ctx[\`item\`] = k_block2[i1];
       ctx[\`item_index\`] = i1;
-      ctx[\`item_value\`] = k_block2[i1];
+      ctx[\`item_value\`] = v_block2[i1];
       const key1 = ctx['item'];
       const b4 = text(\` [\`);
       const b5 = text(ctx['item_index']);
@@ -87,9 +87,9 @@ exports[`t-foreach iterate, Map param 1`] = `
     ctx = Object.create(ctx);
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['value']);;
     for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`item\`] = v_block1[i1];
+      ctx[\`item\`] = k_block1[i1];
       ctx[\`item_index\`] = i1;
-      ctx[\`item_value\`] = k_block1[i1];
+      ctx[\`item_value\`] = v_block1[i1];
       const key1 = ctx['item_index'];
       const b3 = text(\` [\`);
       const b4 = text(ctx['item_index']);
@@ -115,9 +115,9 @@ exports[`t-foreach iterate, Set param 1`] = `
     ctx = Object.create(ctx);
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['value']);;
     for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`item\`] = v_block1[i1];
+      ctx[\`item\`] = k_block1[i1];
       ctx[\`item_index\`] = i1;
-      ctx[\`item_value\`] = k_block1[i1];
+      ctx[\`item_value\`] = v_block1[i1];
       const key1 = ctx['item_index'];
       const b3 = text(\` [\`);
       const b4 = text(ctx['item_index']);
@@ -145,9 +145,9 @@ exports[`t-foreach iterate, dict param 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['value']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`item\`] = v_block2[i1];
+      ctx[\`item\`] = k_block2[i1];
       ctx[\`item_index\`] = i1;
-      ctx[\`item_value\`] = k_block2[i1];
+      ctx[\`item_value\`] = v_block2[i1];
       const key1 = ctx['item_index'];
       const b4 = text(\` [\`);
       const b5 = text(ctx['item_index']);
@@ -174,9 +174,9 @@ exports[`t-foreach iterate, generator param 1`] = `
     ctx = Object.create(ctx);
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['gen']());;
     for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`item\`] = v_block1[i1];
+      ctx[\`item\`] = k_block1[i1];
       ctx[\`item_index\`] = i1;
-      ctx[\`item_value\`] = k_block1[i1];
+      ctx[\`item_value\`] = v_block1[i1];
       const key1 = ctx['item_index'];
       const b3 = text(\` [\`);
       const b4 = text(ctx['item_index']);
@@ -202,9 +202,9 @@ exports[`t-foreach iterate, iterable param 1`] = `
     ctx = Object.create(ctx);
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['map'].values());;
     for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`item\`] = v_block1[i1];
+      ctx[\`item\`] = k_block1[i1];
       ctx[\`item_index\`] = i1;
-      ctx[\`item_value\`] = k_block1[i1];
+      ctx[\`item_value\`] = v_block1[i1];
       const key1 = ctx['item_index'];
       const b3 = text(\` [\`);
       const b4 = text(ctx['item_index']);
@@ -232,9 +232,9 @@ exports[`t-foreach iterate, position 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(Array(5));;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`elem\`] = v_block2[i1];
+      ctx[\`elem\`] = k_block2[i1];
       ctx[\`elem_first\`] = i1 === 0;
-      ctx[\`elem_last\`] = i1 === v_block2.length - 1;
+      ctx[\`elem_last\`] = i1 === k_block2.length - 1;
       ctx[\`elem_index\`] = i1;
       const key1 = ctx['elem'];
       let b4,b5,b6,b7,b8,b9;
@@ -268,7 +268,7 @@ exports[`t-foreach simple iteration (in a node) 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList([3,2,1]);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`item\`] = v_block2[i1];
+      ctx[\`item\`] = k_block2[i1];
       const key1 = ctx['item'];
       c_block2[i1] = withKey(text(ctx['item']), key1);
     }
@@ -288,7 +288,7 @@ exports[`t-foreach simple iteration 1`] = `
     ctx = Object.create(ctx);
     const [k_block1, v_block1, l_block1, c_block1] = prepareList([3,2,1]);;
     for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`item\`] = v_block1[i1];
+      ctx[\`item\`] = k_block1[i1];
       const key1 = ctx['item'];
       c_block1[i1] = withKey(text(ctx['item']), key1);
     }
@@ -310,7 +310,7 @@ exports[`t-foreach simple iteration with two nodes inside 1`] = `
     ctx = Object.create(ctx);
     const [k_block1, v_block1, l_block1, c_block1] = prepareList([3,2,1]);;
     for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`item\`] = v_block1[i1];
+      ctx[\`item\`] = k_block1[i1];
       const key1 = ctx['item'];
       let txt1 = ctx['item'];
       const b3 = block3([txt1]);
@@ -339,20 +339,20 @@ exports[`t-foreach t-call with body in t-foreach in t-foreach 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['numbers']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`a\`] = v_block2[i1];
+      ctx[\`a\`] = k_block2[i1];
       ctx[\`a_first\`] = i1 === 0;
-      ctx[\`a_last\`] = i1 === v_block2.length - 1;
+      ctx[\`a_last\`] = i1 === k_block2.length - 1;
       ctx[\`a_index\`] = i1;
-      ctx[\`a_value\`] = k_block2[i1];
+      ctx[\`a_value\`] = v_block2[i1];
       const key1 = ctx['a'];
       ctx = Object.create(ctx);
       const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['letters']);;
       for (let i2 = 0; i2 < l_block4; i2++) {
-        ctx[\`b\`] = v_block4[i2];
+        ctx[\`b\`] = k_block4[i2];
         ctx[\`b_first\`] = i2 === 0;
-        ctx[\`b_last\`] = i2 === v_block4.length - 1;
+        ctx[\`b_last\`] = i2 === k_block4.length - 1;
         ctx[\`b_index\`] = i2;
-        ctx[\`b_value\`] = k_block4[i2];
+        ctx[\`b_value\`] = v_block4[i2];
         const key2 = ctx['b'];
         ctx = Object.create(ctx);
         ctx[isBoundary] = 1;
@@ -408,20 +408,20 @@ exports[`t-foreach t-call without body in t-foreach in t-foreach 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['numbers']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`a\`] = v_block2[i1];
+      ctx[\`a\`] = k_block2[i1];
       ctx[\`a_first\`] = i1 === 0;
-      ctx[\`a_last\`] = i1 === v_block2.length - 1;
+      ctx[\`a_last\`] = i1 === k_block2.length - 1;
       ctx[\`a_index\`] = i1;
-      ctx[\`a_value\`] = k_block2[i1];
+      ctx[\`a_value\`] = v_block2[i1];
       const key1 = ctx['a'];
       ctx = Object.create(ctx);
       const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['letters']);;
       for (let i2 = 0; i2 < l_block4; i2++) {
-        ctx[\`b\`] = v_block4[i2];
+        ctx[\`b\`] = k_block4[i2];
         ctx[\`b_first\`] = i2 === 0;
-        ctx[\`b_last\`] = i2 === v_block4.length - 1;
+        ctx[\`b_last\`] = i2 === k_block4.length - 1;
         ctx[\`b_index\`] = i2;
-        ctx[\`b_value\`] = k_block4[i2];
+        ctx[\`b_value\`] = v_block4[i2];
         const key2 = ctx['b'];
         c_block4[i2] = withKey(callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}__\${key2}\`), key2);
       }
@@ -475,12 +475,12 @@ exports[`t-foreach t-foreach in t-foreach 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['numbers']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`number\`] = v_block2[i1];
+      ctx[\`number\`] = k_block2[i1];
       const key1 = ctx['number'];
       ctx = Object.create(ctx);
       const [k_block3, v_block3, l_block3, c_block3] = prepareList(ctx['letters']);;
       for (let i2 = 0; i2 < l_block3; i2++) {
-        ctx[\`letter\`] = v_block3[i2];
+        ctx[\`letter\`] = k_block3[i2];
         const key2 = ctx['letter'];
         const b5 = text(\` [\`);
         const b6 = text(ctx['number']);
@@ -509,7 +509,7 @@ exports[`t-foreach t-foreach with t-if inside (no external node) 1`] = `
     ctx = Object.create(ctx);
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['elems']);;
     for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`elem\`] = v_block1[i1];
+      ctx[\`elem\`] = k_block1[i1];
       const key1 = ctx['elem'].id;
       let b3;
       if (ctx['elem'].id<3) {
@@ -536,7 +536,7 @@ exports[`t-foreach t-foreach with t-if inside 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['elems']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`elem\`] = v_block2[i1];
+      ctx[\`elem\`] = k_block2[i1];
       const key1 = ctx['elem'].id;
       let b4;
       if (ctx['elem'].id<3) {
@@ -564,7 +564,7 @@ exports[`t-foreach t-key on t-foreach 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['things']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`thing\`] = v_block2[i1];
+      ctx[\`thing\`] = k_block2[i1];
       const key1 = ctx['thing'];
       c_block2[i1] = withKey(block3(), key1);
     }
@@ -587,7 +587,7 @@ exports[`t-foreach throws error if invalid loop expression 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['abc']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`item\`] = v_block2[i1];
+      ctx[\`item\`] = k_block2[i1];
       ctx[\`item_index\`] = i1;
       const key1 = ctx['item'];
       const tKey_1 = ctx['item_index'];
@@ -614,7 +614,7 @@ exports[`t-foreach with t-memo 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['items']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`item\`] = v_block2[i1];
+      ctx[\`item\`] = k_block2[i1];
       const key1 = ctx['item'].id;
       const memo1 = [ctx['item'].x];
       const vnode1 = cache[key1];;

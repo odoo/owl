@@ -117,7 +117,7 @@ exports[`event handling objects from scope are properly captured by t-on 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['items']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`item\`] = v_block2[i1];
+      ctx[\`item\`] = k_block2[i1];
       const key1 = ctx['item'];
       const v1 = ctx['onClick'];
       const v2 = ctx['item'];
@@ -158,7 +158,7 @@ exports[`event handling t-on with handler bound to dynamic argument on a t-forea
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['items']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`item\`] = v_block2[i1];
+      ctx[\`item\`] = k_block2[i1];
       const key1 = ctx['item'];
       const v1 = ctx['onClick'];
       const v2 = ctx['item'];

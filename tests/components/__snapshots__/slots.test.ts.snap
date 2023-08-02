@@ -2140,7 +2140,7 @@ exports[`slots slot in t-foreach locations 2`] = `
     ctx = Object.create(ctx);
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['props'].list);;
     for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`elem\`] = v_block1[i1];
+      ctx[\`elem\`] = k_block1[i1];
       ctx[\`elem_index\`] = i1;
       const key1 = ctx['elem_index'];
       let txt1 = ctx['elem'];
@@ -2430,7 +2430,7 @@ exports[`slots slots are rendered with proper context, part 2 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].users);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`user\`] = v_block2[i1];
+      ctx[\`user\`] = k_block2[i1];
       const key1 = ctx['user'].id;
       const ctx1 = capture(ctx);
       const b7 = comp1({to: '/user/'+ctx['user'].id,slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__1__\${key1}\`, node, this, null);
@@ -2478,7 +2478,7 @@ exports[`slots slots are rendered with proper context, part 3 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].users);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`user\`] = v_block2[i1];
+      ctx[\`user\`] = k_block2[i1];
       const key1 = ctx['user'].id;
       setContextValue(ctx, \\"userdescr\\", 'User '+ctx['user'].name);
       const ctx1 = capture(ctx);
@@ -2625,7 +2625,7 @@ exports[`slots slots in t-foreach and re-rendering 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(Array(2));;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`n\`] = v_block2[i1];
+      ctx[\`n\`] = k_block2[i1];
       ctx[\`n_index\`] = i1;
       const key1 = ctx['n_index'];
       const ctx1 = capture(ctx);
@@ -2674,14 +2674,14 @@ exports[`slots slots in t-foreach in t-foreach 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['tree']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`node1\`] = v_block2[i1];
+      ctx[\`node1\`] = k_block2[i1];
       const key1 = ctx['node1'].key;
       let txt1 = ctx['node1'].value;
       const b4 = block4([txt1]);
       ctx = Object.create(ctx);
       const [k_block6, v_block6, l_block6, c_block6] = prepareList(ctx['node1'].nodes);;
       for (let i2 = 0; i2 < l_block6; i2++) {
-        ctx[\`node2\`] = v_block6[i2];
+        ctx[\`node2\`] = k_block6[i2];
         const key2 = ctx['node2'].key;
         const ctx1 = capture(ctx);
         c_block6[i2] = withKey(comp1({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__1__\${key1}__\${key2}\`, node, this, null), key2);
@@ -2731,7 +2731,7 @@ exports[`slots slots in t-foreach with t-set and re-rendering 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(Array(2));;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`n\`] = v_block2[i1];
+      ctx[\`n\`] = k_block2[i1];
       ctx[\`n_index\`] = i1;
       const key1 = ctx['n_index'];
       setContextValue(ctx, \\"dummy\\", ctx['n_index']);
@@ -2881,11 +2881,11 @@ exports[`slots t-slot in recursive templates 1`] = `
     ctx = Object.create(ctx);
     const [k_block3, v_block3, l_block3, c_block3] = prepareList(ctx['items']);;
     for (let i1 = 0; i1 < l_block3; i1++) {
-      ctx[\`item\`] = v_block3[i1];
+      ctx[\`item\`] = k_block3[i1];
       ctx[\`item_first\`] = i1 === 0;
-      ctx[\`item_last\`] = i1 === v_block3.length - 1;
+      ctx[\`item_last\`] = i1 === k_block3.length - 1;
       ctx[\`item_index\`] = i1;
-      ctx[\`item_value\`] = k_block3[i1];
+      ctx[\`item_value\`] = v_block3[i1];
       const key1 = ctx['item'].name;
       let b5,b6;
       if (!ctx['item'].children.length) {

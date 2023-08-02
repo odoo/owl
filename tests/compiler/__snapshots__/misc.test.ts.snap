@@ -33,7 +33,7 @@ exports[`misc complex template 1`] = `
     ctx = Object.create(ctx);
     const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['batch'].slot_ids.filter(_slot=>_slot.build_id.id&&!_slot.trigger_id.manual&&(ctx['options'].trigger_display[_slot.trigger_id.id])));;
     for (let i1 = 0; i1 < l_block4; i1++) {
-      ctx[\`slot\`] = v_block4[i1];
+      ctx[\`slot\`] = k_block4[i1];
       const key1 = ctx['slot'].id;
       c_block4[i1] = withKey(comp1({class: ctx['slot_container'],slot: ctx['slot']}, key + \`__1__\${key1}\`, node, this, null), key1);
     }
@@ -42,7 +42,7 @@ exports[`misc complex template 1`] = `
     ctx = Object.create(ctx);
     const [k_block6, v_block6, l_block6, c_block6] = prepareList([1,2,3,4]);;
     for (let i1 = 0; i1 < l_block6; i1++) {
-      ctx[\`x\`] = v_block6[i1];
+      ctx[\`x\`] = k_block6[i1];
       const key1 = ctx['x'];
       c_block6[i1] = withKey(block7(), key1);
     }
@@ -51,7 +51,7 @@ exports[`misc complex template 1`] = `
     ctx = Object.create(ctx);
     const [k_block8, v_block8, l_block8, c_block8] = prepareList(ctx['commit_links']);;
     for (let i1 = 0; i1 < l_block8; i1++) {
-      ctx[\`commit_link\`] = v_block8[i1];
+      ctx[\`commit_link\`] = k_block8[i1];
       const key1 = ctx['commit_link'].id;
       let b10,b11,b12,b13;
       let attr5 = \`/runbot/commit/\${ctx['commit_link'].commit_id}\`;
@@ -99,11 +99,11 @@ exports[`misc global 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList([4,5,6]);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`value\`] = v_block2[i1];
+      ctx[\`value\`] = k_block2[i1];
       ctx[\`value_first\`] = i1 === 0;
-      ctx[\`value_last\`] = i1 === v_block2.length - 1;
+      ctx[\`value_last\`] = i1 === k_block2.length - 1;
       ctx[\`value_index\`] = i1;
-      ctx[\`value_value\`] = k_block2[i1];
+      ctx[\`value_value\`] = v_block2[i1];
       const key1 = ctx['value'];
       let txt1 = ctx['value'];
       const b4 = block4([txt1]);
@@ -223,7 +223,7 @@ exports[`misc other complex template 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['projects']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`project\`] = v_block2[i1];
+      ctx[\`project\`] = k_block2[i1];
       const key1 = ctx['project'].id;
       let hdlr1 = [ctx['selectProject'](ctx['project']), ctx];
       let txt2 = ctx['project'].name;
@@ -263,7 +263,7 @@ exports[`misc other complex template 1`] = `
       ctx = Object.create(ctx);
       const [k_block15, v_block15, l_block15, c_block15] = prepareList(ctx['categories']);;
       for (let i1 = 0; i1 < l_block15; i1++) {
-        ctx[\`category\`] = v_block15[i1];
+        ctx[\`category\`] = k_block15[i1];
         const key1 = ctx['category'].id;
         let attr6 = ctx['category'].id;
         let prop1 = new Boolean(ctx['category'].id==ctx['options'].active_category_id);
@@ -284,7 +284,7 @@ exports[`misc other complex template 1`] = `
       ctx = Object.create(ctx);
       const [k_block18, v_block18, l_block18, c_block18] = prepareList(ctx['triggers']);;
       for (let i1 = 0; i1 < l_block18; i1++) {
-        ctx[\`trigger\`] = v_block18[i1];
+        ctx[\`trigger\`] = k_block18[i1];
         const key1 = ctx['trigger'].id;
         let b20;
         if (!ctx['trigger'].manual&&ctx['trigger'].project_id===ctx['project'].id&&ctx['trigger'].category_id===ctx['options'].active_category_id) {

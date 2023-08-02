@@ -196,7 +196,7 @@ exports[`t-model directive in a t-foreach 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`thing\`] = v_block2[i1];
+      ctx[\`thing\`] = k_block2[i1];
       const key1 = ctx['thing'].id;
       const bExpr1 = ctx['thing'];
       const expr1 = 'f';
@@ -223,7 +223,7 @@ exports[`t-model directive in a t-foreach, part 2 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`thing\`] = v_block2[i1];
+      ctx[\`thing\`] = k_block2[i1];
       ctx[\`thing_index\`] = i1;
       const key1 = ctx['thing_index'];
       const bExpr1 = ctx['state'];
@@ -251,7 +251,7 @@ exports[`t-model directive in a t-foreach, part 3 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['names']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`name\`] = v_block2[i1];
+      ctx[\`name\`] = k_block2[i1];
       ctx[\`name_index\`] = i1;
       const key1 = ctx['name_index'];
       const bExpr1 = ctx['state'].values;
@@ -485,7 +485,7 @@ exports[`t-model directive t-model with dynamic number values on select options 
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].options);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`o\`] = v_block2[i1];
+      ctx[\`o\`] = k_block2[i1];
       const key1 = ctx['o'].value;
       let attr1 = ctx['o'].value;
       let attr2 = bValue1 === ctx['o'].value;
@@ -586,7 +586,7 @@ exports[`t-model directive t-model with dynamic values on select options in fore
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['options']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`v\`] = v_block2[i1];
+      ctx[\`v\`] = k_block2[i1];
       const key1 = ctx['v'];
       let attr1 = ctx['v'];
       let attr2 = bValue1 === ctx['v'];
@@ -613,7 +613,7 @@ exports[`t-model directive t-model with radio button group in t-foreach 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['options']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`opt\`] = v_block2[i1];
+      ctx[\`opt\`] = k_block2[i1];
       const key1 = ctx['opt'];
       let prop1 = new String((ctx['opt']) === 0 ? 0 : ((ctx['opt']) || \\"\\"));
       let attr1 = ctx['opt'];

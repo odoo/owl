@@ -415,11 +415,11 @@ exports[`t-call t-call in t-foreach and children component 1`] = `
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(['a','b','c']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`val\`] = v_block2[i1];
+      ctx[\`val\`] = k_block2[i1];
       ctx[\`val_first\`] = i1 === 0;
-      ctx[\`val_last\`] = i1 === v_block2.length - 1;
+      ctx[\`val_last\`] = i1 === k_block2.length - 1;
       ctx[\`val_index\`] = i1;
-      ctx[\`val_value\`] = k_block2[i1];
+      ctx[\`val_value\`] = v_block2[i1];
       const key1 = ctx['val'];
       c_block2[i1] = withKey(callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}\`), key1);
     }

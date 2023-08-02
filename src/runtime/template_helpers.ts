@@ -78,6 +78,9 @@ function prepareList(collection: unknown): [unknown[], unknown[], number, undefi
       values = Object.values(collection);
       keys = Object.keys(collection);
     }
+  } else if (typeof collection === "string") {
+    keys = [...collection];
+    values = keys;
   } else {
     throw new OwlError(`Invalid loop expression: "${collection}" is not iterable`);
   }

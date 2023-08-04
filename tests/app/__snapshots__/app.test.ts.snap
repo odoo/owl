@@ -22,7 +22,7 @@ exports[`app app: clear scheduler tasks and destroy cancelled nodes immediately 
   const comp1 = app.createComponent(\`B\`, true, false, false, []);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     b2 = text(\`A\`);
     if (ctx['state'].value) {
       b3 = comp1({}, key + \`__1\`, node, this, null);

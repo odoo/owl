@@ -34,7 +34,7 @@ exports[`comments properly handle comments between t-if/t-else 1`] = `
   let block3 = createBlock(\`<span>owl</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (true) {
       b2 = block2();
     } else {

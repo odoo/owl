@@ -39,7 +39,7 @@ exports[`default props can set default boolean values 2`] = `
   let block1 = createBlock(\`<span><block-child-0/><block-child-1/></span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['props'].p) {
       b2 = text(\`hey\`);
     }

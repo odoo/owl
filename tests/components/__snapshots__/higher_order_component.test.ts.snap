@@ -34,7 +34,7 @@ exports[`basics can select a sub widget  1`] = `
   const comp2 = app.createComponent(\`OtherChild\`, true, false, false, []);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['env'].options.flag) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     }
@@ -80,7 +80,7 @@ exports[`basics can select a sub widget, part 2 1`] = `
   const comp2 = app.createComponent(\`OtherChild\`, true, false, false, []);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['state'].flag) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     }

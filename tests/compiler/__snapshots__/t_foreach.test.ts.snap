@@ -237,7 +237,7 @@ exports[`t-foreach iterate, position 1`] = `
       ctx[\`elem_last\`] = i1 === k_block2.length - 1;
       ctx[\`elem_index\`] = i1;
       const key1 = ctx['elem'];
-      let b4,b5,b6,b7,b8,b9;
+      let b4, b5, b6, b7, b8, b9;
       b4 = text(\` -\`);
       if (ctx['elem_first']) {
         b5 = text(\` first\`);

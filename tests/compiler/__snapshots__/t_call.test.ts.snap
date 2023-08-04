@@ -928,7 +928,7 @@ exports[`t-call (template calling) t-call, conditional and t-set in t-call body 
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    let b2,b3;
+    let b2, b3;
     setContextValue(ctx, \\"v1\\", 'elif');
     if (ctx['v1']==='if') {
       b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);

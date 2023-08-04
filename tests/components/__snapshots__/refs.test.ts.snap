@@ -23,7 +23,7 @@ exports[`refs can use 2 refs with same name in a t-if/t-else situation 1`] = `
   let block3 = createBlock(\`<span block-ref=\\"0\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['state'].value) {
       let ref1 = (el) => this.__owl__.setRef((\`coucou\`), el);
       b2 = block2([ref1]);

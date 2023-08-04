@@ -440,7 +440,7 @@ exports[`basics higher order components parent and child 2`] = `
   const comp2 = app.createComponent(\`ChildB\`, true, false, false, []);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['props'].child==='a') {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     } else {
@@ -738,7 +738,7 @@ exports[`basics sub components between t-ifs 1`] = `
   let block5 = createBlock(\`<span>test</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3,b4,b5;
+    let b2, b3, b4, b5;
     if (ctx['state'].flag) {
       b2 = block2();
     } else {
@@ -776,7 +776,7 @@ exports[`basics t-elif works with t-component 1`] = `
   let block2 = createBlock(\`<div>somediv</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['state'].flag) {
       b2 = block2();
     } else if (!ctx['state'].flag) {
@@ -810,7 +810,7 @@ exports[`basics t-else with empty string works with t-component 1`] = `
   let block2 = createBlock(\`<div>somediv</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['state'].flag) {
       b2 = block2();
     } else {
@@ -844,7 +844,7 @@ exports[`basics t-else works with t-component 1`] = `
   let block2 = createBlock(\`<div>somediv</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['state'].flag) {
       b2 = block2();
     } else {
@@ -909,7 +909,7 @@ exports[`basics t-key on a component with t-if, and a sibling component 1`] = `
   let block1 = createBlock(\`<div><block-child-0/><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (false) {
       const tKey_1 = 'str';
       b2 = toggler(tKey_1, comp1({}, tKey_1 + key + \`__1\`, node, this, null));

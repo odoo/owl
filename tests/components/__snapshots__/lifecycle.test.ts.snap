@@ -54,7 +54,7 @@ exports[`lifecycle hooks component semantics 3`] = `
   let block1 = createBlock(\`<div>C<block-child-0/><block-child-1/><block-child-2/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3,b4;
+    let b2, b3, b4;
     b2 = comp1({}, key + \`__1\`, node, this, null);
     if (ctx['state'].flag) {
       b3 = comp2({}, key + \`__2\`, node, this, null);
@@ -174,7 +174,7 @@ exports[`lifecycle hooks destroy new children before being mountged 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3,b4;
+    let b2, b3, b4;
     b2 = text(\`before\`);
     if (ctx['state'].flag) {
       b3 = comp1({}, key + \`__1\`, node, this, null);
@@ -826,7 +826,7 @@ exports[`lifecycle hooks willStart, mounted on subwidget rendered after main is 
   let block3 = createBlock(\`<div/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['state'].ok) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     } else {

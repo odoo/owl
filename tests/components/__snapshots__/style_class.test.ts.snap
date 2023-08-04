@@ -166,7 +166,7 @@ exports[`style and class handling class on sub component, which is switched to a
   const comp2 = app.createComponent(\`ChildB\`, true, false, false, [\\"class\\"]);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['props'].child==='a') {
       b2 = comp1({class: ctx['props'].class}, key + \`__1\`, node, this, null);
     } else {

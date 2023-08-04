@@ -94,7 +94,7 @@ exports[`t-set set from body literal (with t-if/t-else 1`] = `
   let { isBoundary, withDefault, LazyValue } = helpers;
   
   function value1(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['condition']) {
       b2 = text(\`true\`);
     } else {

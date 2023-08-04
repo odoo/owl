@@ -103,7 +103,7 @@ exports[`basics simple catchError 1`] = `
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['error']) {
       b2 = text(\`Error\`);
     } else {
@@ -201,7 +201,7 @@ exports[`can catch errors an error in onWillDestroy 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     b2 = text(ctx['state'].value);
     if (ctx['state'].hasChild) {
       b3 = comp1({}, key + \`__1\`, node, this, null);
@@ -231,7 +231,7 @@ exports[`can catch errors an error in onWillDestroy, variation 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     b2 = text(ctx['state'].value);
     if (ctx['state'].hasChild) {
       b3 = comp1({}, key + \`__1\`, node, this, null);
@@ -295,7 +295,7 @@ exports[`can catch errors can catch an error in a component render function 2`] 
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
@@ -350,7 +350,7 @@ exports[`can catch errors can catch an error in the constructor call of a compon
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
@@ -394,7 +394,7 @@ exports[`can catch errors can catch an error in the constructor call of a compon
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
@@ -474,7 +474,7 @@ exports[`can catch errors can catch an error in the initial call of a component 
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
@@ -532,7 +532,7 @@ exports[`can catch errors can catch an error in the initial call of a component 
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
@@ -593,7 +593,7 @@ exports[`can catch errors can catch an error in the mounted call (in child of ch
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
@@ -626,7 +626,7 @@ exports[`can catch errors can catch an error in the mounted call (in root compon
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
@@ -680,7 +680,7 @@ exports[`can catch errors can catch an error in the mounted call 2`] = `
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
@@ -735,7 +735,7 @@ exports[`can catch errors can catch an error in the willPatch call 2`] = `
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
@@ -790,7 +790,7 @@ exports[`can catch errors can catch an error in the willStart call 2`] = `
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
@@ -847,7 +847,7 @@ exports[`can catch errors can catch an error origination from a child's willStar
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
@@ -893,7 +893,7 @@ exports[`can catch errors catchError in catchError 1`] = `
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['error']) {
       b2 = text(\`Error\`);
     } else {
@@ -1123,7 +1123,7 @@ exports[`can catch errors error in mounted on a component with a sibling (proper
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['state'].error) {
       b2 = text(\`Error handled\`);
     } else {
@@ -1167,7 +1167,7 @@ exports[`can catch errors onError in class inheritance is called if rethrown 2`]
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (!ctx['state'].error) {
       b2 = text(ctx['this'].will.crash);
     } else {
@@ -1198,7 +1198,7 @@ exports[`can catch errors onError in class inheritance is not called if no rethr
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (!ctx['state'].error) {
       b2 = text(ctx['this'].will.crash);
     } else {

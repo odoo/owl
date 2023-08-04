@@ -364,7 +364,7 @@ exports[`t-call sub components in two t-calls 1`] = `
   let block3 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['state'].val===1) {
       b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     } else {

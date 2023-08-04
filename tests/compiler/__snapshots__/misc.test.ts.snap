@@ -18,7 +18,7 @@ exports[`misc complex template 1`] = `
   let block13 = createBlock(\`<i class=\\"fa fa-fw fa-clock-o\\" title=\\"This commit is the head of a base branch\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3,b4,b6,b8;
+    let b2, b3, b4, b6, b8;
     let attr1 = \`batch_tile \${ctx['options'].more?'more':'nomore'}\`;
     let attr2 = \`card bg-\${ctx['klass']}-light\`;
     let attr3 = \`/runbot/batch/\${ctx['batch'].id}\`;
@@ -53,7 +53,7 @@ exports[`misc complex template 1`] = `
     for (let i1 = 0; i1 < l_block8; i1++) {
       ctx[\`commit_link\`] = k_block8[i1];
       const key1 = ctx['commit_link'].id;
-      let b10,b11,b12,b13;
+      let b10, b11, b12, b13;
       let attr5 = \`/runbot/commit/\${ctx['commit_link'].commit_id}\`;
       let attr6 = \`badge badge-light batch_commit match_type_\${ctx['commit_link'].match_type}\`;
       if (ctx['commit_link'].match_type=='new') {
@@ -217,7 +217,7 @@ exports[`misc other complex template 1`] = `
   let block25 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b4,b14,b17,b22,b23,b24,b25;
+    let b2, b4, b14, b17, b22, b23, b24, b25;
     let attr1 = \`/runbot/\${ctx['project'].slug}\`;
     let txt1 = ctx['project'].name;
     ctx = Object.create(ctx);
@@ -232,12 +232,12 @@ exports[`misc other complex template 1`] = `
     ctx = ctx.__proto__;
     b2 = list(c_block2);
     if (ctx['user']) {
-      let b5,b6;
+      let b5, b6;
       if (ctx['user'].public) {
         let attr2 = \`/web/login?redirect=/\`;
         b5 = block5([attr2]);
       } else {
-        let b7,b10,b13;
+        let b7, b10, b13;
         if (ctx['nb_assigned_errors']&&ctx['nb_assigned_errors']>0) {
           let attr3 = \`You have \${ctx['nb_assigned_errors']} random bug assigned\`;
           let txt3 = ctx['nb_assigned_errors'];

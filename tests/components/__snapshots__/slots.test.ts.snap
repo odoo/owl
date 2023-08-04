@@ -509,7 +509,7 @@ exports[`slots default slot with slot scope: shorthand syntax 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, true, false, []);
   
   function slot1(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['slotScope'].bool) {
       b2 = text(\`some text\`);
     } else {
@@ -633,7 +633,7 @@ exports[`slots dynamic slot in multiple locations 2`] = `
   let block2 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b4;
+    let b2, b4;
     if (ctx['props'].location===1) {
       const slot1 = ('coffee');
       const b3 = toggler(slot1, callSlot(ctx, node, key + \`__1\`, slot1, true, {}));
@@ -1462,7 +1462,7 @@ exports[`slots simple default slot with params 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, true, false, []);
   
   function slot1(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['slotScope'].bool) {
       b2 = text(\`some text\`);
     } else {
@@ -1558,7 +1558,7 @@ exports[`slots simple dynamic slot with slot scope 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, true, false, []);
   
   function slot1(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['slotScope'].bool) {
       b2 = text(\`some text\`);
     } else {
@@ -1665,7 +1665,7 @@ exports[`slots simple slot with slot scope 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, true, false, []);
   
   function slot1(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['slotScope'].bool) {
       b2 = text(\`some text\`);
     } else {
@@ -2082,7 +2082,7 @@ exports[`slots slot in multiple locations 2`] = `
   let block2 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b4;
+    let b2, b4;
     if (ctx['props'].location===1) {
       const b3 = callSlot(ctx, node, key, 'default', false, {});
       b2 = block2([], [b3]);
@@ -2887,7 +2887,7 @@ exports[`slots t-slot in recursive templates 1`] = `
       ctx[\`item_index\`] = i1;
       ctx[\`item_value\`] = v_block3[i1];
       const key1 = ctx['item'].name;
-      let b5,b6;
+      let b5, b6;
       if (!ctx['item'].children.length) {
         b5 = text(ctx['item'].name);
       } else {

@@ -761,7 +761,7 @@ export class CodeGenerator {
             if (!current) break;
           }
         }
-        this.addLine(`let ${block!.children.map((c) => c.varName)};`, codeIdx);
+        this.addLine(`let ${block!.children.map((c) => c.varName).join(", ")};`, codeIdx);
       }
     }
     return block!.varName;
@@ -863,7 +863,7 @@ export class CodeGenerator {
             if (!current) break;
           }
         }
-        this.addLine(`let ${block!.children.map((c) => c.varName)};`, codeIdx);
+        this.addLine(`let ${block!.children.map((c) => c.varName).join(", ")};`, codeIdx);
       }
 
       // note: this part is duplicated from end of compilemulti:
@@ -998,20 +998,18 @@ export class CodeGenerator {
       }
     }
     if (isNewBlock) {
-      if (block!.hasDynamicChildren) {
-        if (block!.children.length) {
-          const code = this.target.code;
-          const children = block!.children.slice();
-          let current = children.shift();
-          for (let i = codeIdx; i < code.length; i++) {
-            if (code[i].trimStart().startsWith(`const ${current!.varName} `)) {
-              code[i] = code[i].replace(`const ${current!.varName}`, current!.varName);
-              current = children.shift();
-              if (!current) break;
-            }
+      if (block!.hasDynamicChildren && block!.children.length) {
+        const code = this.target.code;
+        const children = block!.children.slice();
+        let current = children.shift();
+        for (let i = codeIdx; i < code.length; i++) {
+          if (code[i].trimStart().startsWith(`const ${current!.varName} `)) {
+            code[i] = code[i].replace(`const ${current!.varName}`, current!.varName);
+            current = children.shift();
+            if (!current) break;
           }
-          this.addLine(`let ${block!.children.map((c) => c.varName)};`, codeIdx);
         }
+        this.addLine(`let ${block!.children.map((c) => c.varName).join(", ")};`, codeIdx);
       }
 
       const args = block!.children.map((c) => c.varName).join(", ");

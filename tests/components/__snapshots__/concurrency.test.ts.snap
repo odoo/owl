@@ -61,7 +61,7 @@ exports[`another scenario with delayed rendering 1`] = `
   const comp1 = app.createComponent(\`B\`, true, false, false, [\\"value\\"]);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     b2 = text(\`A\`);
     if (ctx['state'].value<15) {
       b3 = comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null);
@@ -244,7 +244,7 @@ exports[`components are not destroyed between animation frame 1`] = `
   const comp1 = app.createComponent(\`B\`, true, false, false, []);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     b2 = text(\`A\`);
     if (ctx['state'].flag) {
       b3 = comp1({}, key + \`__1\`, node, this, null);
@@ -831,7 +831,7 @@ exports[`concurrent renderings scenario 13 1`] = `
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     b2 = comp1({}, key + \`__1\`, node, this, null);
     if (ctx['state'].bool) {
       b3 = comp2({}, key + \`__2\`, node, this, null);
@@ -978,7 +978,7 @@ exports[`concurrent renderings scenario 16 3`] = `
   const comp1 = app.createComponent(\`D\`, true, false, false, []);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3,b4,b5,b6,b7,b8;
+    let b2, b3, b4, b5, b6, b7, b8;
     b2 = text(ctx['props'].fromA);
     b3 = text(\`:\`);
     b4 = text(ctx['props'].fromB);
@@ -1012,7 +1012,7 @@ exports[`creating two async components, scenario 1 1`] = `
   const comp2 = app.createComponent(\`ChildB\`, true, false, false, []);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['state'].flagA) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     }
@@ -1061,7 +1061,7 @@ exports[`creating two async components, scenario 2 1`] = `
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     b2 = comp1({val: ctx['state'].valA}, key + \`__1\`, node, this, null);
     if (ctx['state'].flagB) {
       b3 = comp2({val: ctx['state'].valB}, key + \`__2\`, node, this, null);
@@ -1109,7 +1109,7 @@ exports[`creating two async components, scenario 3 (patching in the same frame) 
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     b2 = comp1({val: ctx['state'].valA}, key + \`__1\`, node, this, null);
     if (ctx['state'].flagB) {
       b3 = comp2({val: ctx['state'].valB}, key + \`__2\`, node, this, null);
@@ -1421,7 +1421,7 @@ exports[`delayed rendering, destruction, stuff happens 2`] = `
   const comp1 = app.createComponent(\`C\`, true, false, false, [\\"value\\"]);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     b2 = text(\`B\`);
     if (ctx['state'].hasChild) {
       b3 = comp1({value: ctx['state'].someValue+ctx['props'].value}, key + \`__1\`, node, this, null);
@@ -1514,7 +1514,7 @@ exports[`delayed rendering, reusing fiber then component is destroyed and  stuff
   const comp1 = app.createComponent(\`B\`, true, false, false, [\\"value\\"]);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     b2 = text(\`A\`);
     if (ctx['state'].value<15) {
       b3 = comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null);
@@ -1572,7 +1572,7 @@ exports[`delayed rendering, then component is destroyed and  stuff 2`] = `
   const comp1 = app.createComponent(\`C\`, true, false, false, []);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     b2 = text(ctx['props'].value);
     if (ctx['props'].value<10) {
       b3 = comp1({}, key + \`__1\`, node, this, null);
@@ -1605,7 +1605,7 @@ exports[`destroyed component causes other soon to be destroyed component to rere
   const comp2 = app.createComponent(\`C\`, true, false, false, [\\"value\\"]);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     b2 = text(\` A \`);
     if (ctx['state'].flag) {
       const b4 = comp1({value: ctx['state'].valueB}, key + \`__1\`, node, this, null);
@@ -1646,7 +1646,7 @@ exports[`destroying/recreating a subcomponent, other scenario 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     b2 = text(\`parent\`);
     if (ctx['state'].hasChild) {
       b3 = comp1({}, key + \`__1\`, node, this, null);
@@ -1846,7 +1846,7 @@ exports[`renderings, destruction, patch, stuff, ... yet another variation 2`] = 
   const comp1 = app.createComponent(\`C\`, true, false, false, []);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     b2 = text(\`B\`);
     if (ctx['props'].value===33) {
       b3 = comp1({}, key + \`__1\`, node, this, null);

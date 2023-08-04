@@ -376,7 +376,7 @@ exports[`t-model directive on an input, type=checkbox 1`] = `
   let block1 = createBlock(\`<div><input type=\\"checkbox\\" block-property-0=\\"checked\\" block-handler-1=\\"input\\"/><span><block-child-0/><block-child-1/></span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     const bExpr1 = ctx['state'];
     const expr1 = 'flag';
     let prop1 = bExpr1[expr1];
@@ -640,7 +640,7 @@ exports[`t-model directive two inputs in a div alternating with a t-if 1`] = `
   let block3 = createBlock(\`<input class=\\"b\\" block-property-0=\\"value\\" block-handler-1=\\"input\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['state'].flag) {
       const bExpr1 = ctx['state'];
       const expr1 = 'text1';

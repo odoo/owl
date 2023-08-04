@@ -79,7 +79,7 @@ exports[`t-key t-key on sub dom node pushes a child block in its parent 1`] = `
   let block3 = createBlock(\`<div><h1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['hasSpan']) {
       b2 = block2();
     }

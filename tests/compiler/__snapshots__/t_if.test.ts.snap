@@ -8,7 +8,7 @@ exports[`t-if a t-if next to a div 1`] = `
   let block2 = createBlock(\`<div>foo</div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     b2 = block2();
     if (ctx['cond']) {
       b3 = text(\`1\`);
@@ -44,7 +44,7 @@ exports[`t-if boolean value condition elif (no outside node) 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3,b4,b5;
+    let b2, b3, b4, b5;
     if (ctx['color']=='black') {
       b2 = text(\`black pearl\`);
     } else if (ctx['color']=='yellow') {
@@ -67,7 +67,7 @@ exports[`t-if boolean value condition elif 1`] = `
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-2/><block-child-3/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3,b4,b5;
+    let b2, b3, b4, b5;
     if (ctx['color']=='black') {
       b2 = text(\`black pearl\`);
     } else if (ctx['color']=='yellow') {
@@ -90,7 +90,7 @@ exports[`t-if boolean value condition else 1`] = `
   let block1 = createBlock(\`<div><span>begin</span><block-child-0/><block-child-1/><span>end</span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['condition']) {
       b2 = text(\`ok\`);
     } else {
@@ -109,7 +109,7 @@ exports[`t-if boolean value condition false else 1`] = `
   let block1 = createBlock(\`<div><span>begin</span><block-child-0/><block-child-1/><span>end</span></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['condition']) {
       b2 = text(\`fail\`);
     } else {
@@ -145,7 +145,7 @@ exports[`t-if can use some boolean operators in expressions 1`] = `
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-2/><block-child-3/><block-child-4/><block-child-5/><block-child-6/><block-child-7/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3,b4,b5,b6,b7,b8,b9;
+    let b2, b3, b4, b5, b6, b7, b8, b9;
     if (ctx['cond1']&&ctx['cond2']) {
       b2 = text(\`and\`);
     }
@@ -239,7 +239,7 @@ exports[`t-if simple t-if/t-else 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['condition']) {
       b2 = text(\`1\`);
     } else {
@@ -258,7 +258,7 @@ exports[`t-if simple t-if/t-else in a div 1`] = `
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['condition']) {
       b2 = text(\`1\`);
     } else {
@@ -277,7 +277,7 @@ exports[`t-if t-esc with t-elif 1`] = `
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (false) {
       b2 = text(\`abc\`);
     } else {
@@ -314,7 +314,7 @@ exports[`t-if t-if and t-else with two nodes 1`] = `
   let block5 = createBlock(\`<span>b</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['condition']) {
       b2 = text(\`1\`);
     } else {
@@ -372,7 +372,7 @@ exports[`t-if t-if with empty content 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     b2 = text(\`hello\`);
     if (ctx['condition']) {
       b3 = text(\`\`);
@@ -388,7 +388,7 @@ exports[`t-if t-if/t-else with more content 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['condition']) {
       if (ctx['condition']) {
         b2 = text(\`asf\`);
@@ -458,7 +458,7 @@ exports[`t-if t-set, then t-if, part 3 1`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    let b2,b3;
+    let b2, b3;
     setContextValue(ctx, \\"y\\", false);
     setContextValue(ctx, \\"x\\", ctx['y']);
     if (ctx['x']) {
@@ -477,7 +477,7 @@ exports[`t-if two consecutive t-if 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['cond1']) {
       b2 = text(\`1\`);
     }
@@ -497,7 +497,7 @@ exports[`t-if two consecutive t-if in a div 1`] = `
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['cond1']) {
       b2 = text(\`1\`);
     }
@@ -520,7 +520,7 @@ exports[`t-if two t-ifs next to each other 1`] = `
   let block5 = createBlock(\`<p>2</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['condition']) {
       let txt1 = ctx['text'];
       b2 = block2([txt1]);

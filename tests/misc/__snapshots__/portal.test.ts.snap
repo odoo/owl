@@ -345,7 +345,7 @@ exports[`Portal conditional use of Portal (with sub Component) 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b4;
+    let b2, b4;
     b2 = block2();
     if (ctx['state'].hasPortal) {
       b4 = comp2({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
@@ -384,7 +384,7 @@ exports[`Portal conditional use of Portal 1`] = `
   }
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b4;
+    let b2, b4;
     b2 = block2();
     if (ctx['state'].hasPortal) {
       b4 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
@@ -699,7 +699,7 @@ exports[`Portal portal with dynamic body 1`] = `
   let block4 = createBlock(\`<div/>\`);
   
   function slot1(ctx, node, key = \\"\\") {
-    let b3,b4;
+    let b3, b4;
     if (ctx['state'].val) {
       let txt1 = ctx['state'].val;
       b3 = block3([txt1]);
@@ -848,7 +848,7 @@ exports[`Portal simple catchError with portal 1`] = `
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    let b2,b3;
+    let b2, b3;
     if (ctx['error']) {
       b2 = text(\`Error\`);
     } else {

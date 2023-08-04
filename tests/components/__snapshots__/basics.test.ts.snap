@@ -1248,7 +1248,7 @@ exports[`support svg components add proper namespace to svg 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`GComp\`, true, false, false, []);
   
-  let block1 = createBlock(\`<svg block-ns=\\"http://www.w3.org/2000/svg\\"><block-child-0/></svg>\`);
+  let block1 = createBlock(\`<svg xmlns=\\"http://www.w3.org/2000/svg\\"><block-child-0 xmlns=\\"\\"/></svg>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const b2 = comp1({}, key + \`__1\`, node, this, null);
@@ -1262,7 +1262,7 @@ exports[`support svg components add proper namespace to svg 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<g block-ns=\\"http://www.w3.org/2000/svg\\"><circle cx=\\"50\\" cy=\\"50\\" r=\\"4\\" stroke=\\"green\\" stroke-width=\\"1\\" fill=\\"yellow\\"/></g>\`);
+  let block1 = createBlock(\`<g xmlns=\\"http://www.w3.org/2000/svg\\"><circle cx=\\"50\\" cy=\\"50\\" r=\\"4\\" stroke=\\"green\\" stroke-width=\\"1\\" fill=\\"yellow\\"/></g>\`);
   
   return function template(ctx, node, key = \\"\\") {
     return block1();

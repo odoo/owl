@@ -144,12 +144,7 @@ function buildTree(
         info.push({ type: "child", idx: index });
         el = document.createTextNode("");
       }
-      const attrs = (node as Element).attributes;
-      const ns = attrs.getNamedItem("block-ns");
-      if (ns) {
-        attrs.removeNamedItem("block-ns");
-        currentNS = ns.value;
-      }
+      currentNS ||= (node as Element).namespaceURI;
       if (!el) {
         el = currentNS
           ? document.createElementNS(currentNS, tagName)
@@ -165,6 +160,7 @@ function buildTree(
           const fragment = document.createElement("template").content;
           fragment.appendChild(el);
         }
+        const attrs = (node as Element).attributes;
         for (let i = 0; i < attrs.length; i++) {
           const attrName = attrs[i].name;
           const attrValue = attrs[i].value;

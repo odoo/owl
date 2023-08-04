@@ -30,22 +30,22 @@ describe("namespace", () => {
     expect(fixture.firstElementChild!.namespaceURI).toBe(XHTML_URI);
   });
 
-  test("namespace can be changed with block-ns", () => {
-    const block = createBlock(`<tag block-ns="${SVG_URI}"/>`);
+  test("namespace can be changed with xmlns", () => {
+    const block = createBlock(`<tag xmlns="${SVG_URI}"/>`);
     const tree = block();
     mount(tree, fixture);
-    expect(fixture.innerHTML).toBe("<tag></tag>");
+    expect(fixture.innerHTML).toBe(`<tag xmlns="${SVG_URI}"></tag>`);
     expect(fixture.firstElementChild!.namespaceURI).toBe(SVG_URI);
   });
 
   test("namespace is kept for children", () => {
     const block = createBlock(
-      `<parent block-ns="${SVG_URI}"><child><subchild/></child><child/></parent>`
+      `<parent xmlns="${SVG_URI}"><child><subchild/></child><child/></parent>`
     );
     const tree = block();
     mount(tree, fixture);
     expect(fixture.innerHTML).toBe(
-      "<parent><child><subchild></subchild></child><child></child></parent>"
+      `<parent xmlns="${SVG_URI}"><child><subchild></subchild></child><child></child></parent>`
     );
     const parent = fixture.firstElementChild!;
     const child1 = parent.firstElementChild!;
@@ -58,10 +58,10 @@ describe("namespace", () => {
   });
 
   test("various namespaces in same block", () => {
-    const block = createBlock(`<none><one block-ns="one"/><two block-ns="two"/></none>`);
+    const block = createBlock(`<none><one xmlns="one"/><two xmlns="two"/></none>`);
     const tree = block();
     mount(tree, fixture);
-    expect(fixture.innerHTML).toBe("<none><one></one><two></two></none>");
+    expect(fixture.innerHTML).toBe('<none><one xmlns="one"></one><two xmlns="two"></two></none>');
     const none = fixture.firstElementChild!;
     const one = none.firstElementChild!;
     const two = one.nextElementSibling!;

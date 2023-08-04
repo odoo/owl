@@ -5,7 +5,7 @@ exports[`properly support svg add proper namespace to g tags 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<g block-ns=\\"http://www.w3.org/2000/svg\\"><circle cx=\\"50\\" cy=\\"50\\" r=\\"4\\" stroke=\\"green\\" stroke-width=\\"1\\" fill=\\"yellow\\"/> </g>\`);
+  let block1 = createBlock(\`<g xmlns=\\"http://www.w3.org/2000/svg\\"><circle cx=\\"50\\" cy=\\"50\\" r=\\"4\\" stroke=\\"green\\" stroke-width=\\"1\\" fill=\\"yellow\\"/> </g>\`);
   
   return function template(ctx, node, key = \\"\\") {
     return block1();
@@ -18,7 +18,7 @@ exports[`properly support svg add proper namespace to svg 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<svg block-ns=\\"http://www.w3.org/2000/svg\\" width=\\"100px\\" height=\\"90px\\"><circle cx=\\"50\\" cy=\\"50\\" r=\\"4\\" stroke=\\"green\\" stroke-width=\\"1\\" fill=\\"yellow\\"/> </svg>\`);
+  let block1 = createBlock(\`<svg xmlns=\\"http://www.w3.org/2000/svg\\" width=\\"100px\\" height=\\"90px\\"><circle cx=\\"50\\" cy=\\"50\\" r=\\"4\\" stroke=\\"green\\" stroke-width=\\"1\\" fill=\\"yellow\\"/> </svg>\`);
   
   return function template(ctx, node, key = \\"\\") {
     return block1();
@@ -31,7 +31,7 @@ exports[`properly support svg namespace to g tags not added if already in svg na
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<svg block-ns=\\"http://www.w3.org/2000/svg\\"><g/></svg>\`);
+  let block1 = createBlock(\`<svg xmlns=\\"http://www.w3.org/2000/svg\\"><g/></svg>\`);
   
   return function template(ctx, node, key = \\"\\") {
     return block1();
@@ -44,7 +44,7 @@ exports[`properly support svg namespace to svg tags added even if already in svg
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<svg block-ns=\\"http://www.w3.org/2000/svg\\"><svg/></svg>\`);
+  let block1 = createBlock(\`<svg xmlns=\\"http://www.w3.org/2000/svg\\"><svg/></svg>\`);
   
   return function template(ctx, node, key = \\"\\") {
     return block1();
@@ -58,8 +58,8 @@ exports[`properly support svg svg creates new block if it is within html -- 2 1`
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block2 = createBlock(\`<svg block-ns=\\"http://www.w3.org/2000/svg\\"><polygon fill=\\"#000000\\" points=\\"0 0 4 4 8 0\\" transform=\\"translate(5 7)\\"/><block-child-0/></svg>\`);
-  let block3 = createBlock(\`<path block-ns=\\"http://www.w3.org/2000/svg\\"/>\`);
+  let block2 = createBlock(\`<svg xmlns=\\"http://www.w3.org/2000/svg\\"><polygon fill=\\"#000000\\" points=\\"0 0 4 4 8 0\\" transform=\\"translate(5 7)\\"/><block-child-0 xmlns=\\"\\"/></svg>\`);
+  let block3 = createBlock(\`<path xmlns=\\"http://www.w3.org/2000/svg\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b3;
@@ -78,7 +78,7 @@ exports[`properly support svg svg creates new block if it is within html 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block2 = createBlock(\`<svg block-ns=\\"http://www.w3.org/2000/svg\\"><polygon fill=\\"#000000\\" points=\\"0 0 4 4 8 0\\" transform=\\"translate(5 7)\\"/></svg>\`);
+  let block2 = createBlock(\`<svg xmlns=\\"http://www.w3.org/2000/svg\\"><polygon fill=\\"#000000\\" points=\\"0 0 4 4 8 0\\" transform=\\"translate(5 7)\\"/></svg>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const b2 = block2();
@@ -93,7 +93,7 @@ exports[`properly support svg svg namespace added to sub templates if root tag i
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const callTemplate_1 = app.getTemplate(\`path\`);
   
-  let block1 = createBlock(\`<svg block-ns=\\"http://www.w3.org/2000/svg\\"><block-child-0/></svg>\`);
+  let block1 = createBlock(\`<svg xmlns=\\"http://www.w3.org/2000/svg\\"><block-child-0 xmlns=\\"\\"/></svg>\`);
   
   return function template(ctx, node, key = \\"\\") {
     const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
@@ -107,7 +107,7 @@ exports[`properly support svg svg namespace added to sub templates if root tag i
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<path block-ns=\\"http://www.w3.org/2000/svg\\"/>\`);
+  let block1 = createBlock(\`<path xmlns=\\"http://www.w3.org/2000/svg\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
     return block1();
@@ -120,8 +120,8 @@ exports[`properly support svg svg namespace added to sub-blocks 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<svg block-ns=\\"http://www.w3.org/2000/svg\\"><block-child-0/></svg>\`);
-  let block2 = createBlock(\`<path block-ns=\\"http://www.w3.org/2000/svg\\"/>\`);
+  let block1 = createBlock(\`<svg xmlns=\\"http://www.w3.org/2000/svg\\"><block-child-0 xmlns=\\"\\"/></svg>\`);
+  let block2 = createBlock(\`<path xmlns=\\"http://www.w3.org/2000/svg\\"/>\`);
   
   return function template(ctx, node, key = \\"\\") {
     let b2;

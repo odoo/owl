@@ -1024,7 +1024,7 @@ describe("support svg components", () => {
     await mount(Svg, fixture);
 
     expect(fixture.innerHTML).toBe(
-      '<svg><g><circle cx="50" cy="50" r="4" stroke="green" stroke-width="1" fill="yellow"></circle></g></svg>'
+      '<svg xmlns="http://www.w3.org/2000/svg"><g xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="4" stroke="green" stroke-width="1" fill="yellow"></circle></g></svg>'
     );
   });
 });

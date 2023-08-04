@@ -9,20 +9,20 @@ describe("properly support svg", () => {
   test("add proper namespace to svg", () => {
     const template = `<svg width="100px" height="90px"><circle cx="50" cy="50" r="4" stroke="green" stroke-width="1" fill="yellow"/> </svg>`;
     expect(renderToString(template)).toBe(
-      `<svg width=\"100px\" height=\"90px\"><circle cx=\"50\" cy=\"50\" r=\"4\" stroke=\"green\" stroke-width=\"1\" fill=\"yellow\"></circle> </svg>`
+      `<svg xmlns="http://www.w3.org/2000/svg" width="100px" height="90px"><circle cx="50" cy="50" r="4" stroke="green" stroke-width="1" fill="yellow"></circle> </svg>`
     );
   });
 
   test("add proper namespace to g tags", () => {
     const template = `<g><circle cx="50" cy="50" r="4" stroke="green" stroke-width="1" fill="yellow"/> </g>`;
     expect(renderToString(template)).toBe(
-      `<g><circle cx=\"50\" cy=\"50\" r=\"4\" stroke=\"green\" stroke-width=\"1\" fill=\"yellow\"></circle> </g>`
+      `<g xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="4" stroke="green" stroke-width="1" fill="yellow"></circle> </g>`
     );
   });
 
   test("namespace to g tags not added if already in svg namespace", () => {
     const template = `<svg><g/></svg>`;
-    expect(renderToString(template)).toBe(`<svg><g></g></svg>`);
+    expect(renderToString(template)).toBe(`<svg xmlns="http://www.w3.org/2000/svg"><g></g></svg>`);
   });
 
   test("namespace to svg tags added even if already in svg namespace", () => {
@@ -41,8 +41,13 @@ describe("properly support svg", () => {
   test("svg namespace added to sub-blocks", () => {
     const template = `<svg><path t-if="path"/></svg>`;
 
-    expect(renderToString(template, { path: false })).toBe(`<svg></svg>`);
-    expect(renderToString(template, { path: true })).toBe(`<svg><path></path></svg>`);
+    expect(renderToString(template, { path: false })).toBe(
+      `<svg xmlns="http://www.w3.org/2000/svg"></svg>`
+    );
+    // Because the path is its own block, it has its own xmlns attribute
+    expect(renderToString(template, { path: true })).toBe(
+      `<svg xmlns="http://www.w3.org/2000/svg"><path xmlns="http://www.w3.org/2000/svg"></path></svg>`
+    );
 
     const bdom = renderToBdom(template, { path: true });
     const fixture = makeTestFixture();

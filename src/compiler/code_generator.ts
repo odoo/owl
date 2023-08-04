@@ -585,11 +585,6 @@ export class CodeGenerator {
     }
     // attributes
     const attrs: Attrs = {};
-    const nameSpace = ast.ns || ctx.nameSpace;
-    if (nameSpace && isNewBlock) {
-      // specific namespace uri
-      attrs["block-ns"] = nameSpace;
-    }
 
     for (let key in ast.attrs) {
       let expr, attrName;
@@ -718,7 +713,10 @@ export class CodeGenerator {
       attrs["block-ref"] = String(idx);
     }
 
-    const dom = xmlDoc.createElement(ast.tag);
+    const nameSpace = ast.ns || ctx.nameSpace;
+    const dom = nameSpace
+      ? xmlDoc.createElementNS(nameSpace, ast.tag)
+      : xmlDoc.createElement(ast.tag);
     for (const [attr, val] of Object.entries(attrs)) {
       if (!(attr === "class" && val === "")) {
         dom.setAttribute(attr, val);

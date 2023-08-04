@@ -244,12 +244,14 @@ describe("misc", () => {
   });
 
   test("namespace is not propagated to siblings", () => {
-    const block = createBlock(`<div><svg block-ns="someNameSpace"><g/></svg><div></div></div>`);
+    const block = createBlock(`<div><svg xmlns="someNameSpace"><g/></svg><div></div></div>`);
 
     const fixture = makeTestFixture();
     mount(block(), fixture);
 
-    expect(fixture.innerHTML).toBe("<div><svg><g></g></svg><div></div></div>");
+    expect(fixture.innerHTML).toBe(
+      '<div><svg xmlns="someNameSpace"><g></g></svg><div></div></div>'
+    );
     expect(fixture.querySelector("svg")!.namespaceURI).toBe("someNameSpace");
     expect(fixture.querySelector("g")!.namespaceURI).toBe("someNameSpace");
     const allDivs = fixture.querySelectorAll("div");

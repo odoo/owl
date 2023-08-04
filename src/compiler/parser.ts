@@ -213,14 +213,14 @@ export function parse(xml: string | Element): AST {
 
 function _parse(xml: Element): AST {
   normalizeXML(xml);
-  const ctx = { inPreTag: false, inSVG: false };
+  const ctx = { inPreTag: false };
   return parseNode(xml, ctx) || { type: ASTType.Text, value: "" };
 }
 
 interface ParsingContext {
   tModelInfo?: TModelInfo | null;
+  nameSpace?: string;
   inPreTag: boolean;
-  inSVG: boolean;
 }
 
 function parseNode(node: Node, ctx: ParsingContext): AST | null {
@@ -323,9 +323,8 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
   if (tagName === "pre") {
     ctx.inPreTag = true;
   }
-  const shouldAddSVGNS = ROOT_SVG_TAGS.has(tagName) && !ctx.inSVG;
-  ctx.inSVG = ctx.inSVG || shouldAddSVGNS;
-  const ns = shouldAddSVGNS ? "http://www.w3.org/2000/svg" : null;
+
+  let ns = !ctx.nameSpace && ROOT_SVG_TAGS.has(tagName) ? "http://www.w3.org/2000/svg" : null;
   const ref = node.getAttribute("t-ref");
   node.removeAttribute("t-ref");
 
@@ -389,6 +388,8 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
       }
     } else if (attr.startsWith("block-")) {
       throw new OwlError(`Invalid attribute: '${attr}'`);
+    } else if (attr === "xmlns") {
+      ns = value;
     } else if (attr !== "t-name") {
       if (attr.startsWith("t-") && !attr.startsWith("t-att")) {
         throw new OwlError(`Unknown QWeb directive: '${attr}'`);
@@ -400,6 +401,9 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
       attrs = attrs || {};
       attrs[attr] = value;
     }
+  }
+  if (ns) {
+    ctx.nameSpace = ns;
   }
 
   const children = parseChildren(node, ctx);

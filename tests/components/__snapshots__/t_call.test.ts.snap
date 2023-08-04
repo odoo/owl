@@ -10,8 +10,8 @@ exports[`t-call dynamic t-call 1`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
-    const b1 = text(\` owl \`);
-    ctx[zero] = b1;
+    const b2 = text(\` owl \`);
+    ctx[zero] = b2;
     const template1 = (ctx['current'].template);
     return call(this, template1, ctx, node, key + \`__1\`);
   }

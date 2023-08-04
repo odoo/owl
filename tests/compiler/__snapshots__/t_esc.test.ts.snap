@@ -180,15 +180,15 @@ exports[`t-esc t-esc=0 is escaped 1`] = `
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block2 = createBlock(\`<p>escaped</p>\`);
+  let block3 = createBlock(\`<p>escaped</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
-    const b2 = block2();
-    ctx[zero] = b2;
-    const b3 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
-    return block1([], [b3]);
+    const b3 = block3();
+    ctx[zero] = b3;
+    const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    return block1([], [b2]);
   }
 }"
 `;

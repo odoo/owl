@@ -430,6 +430,48 @@ describe("t-call (template calling)", () => {
     expect(context.renderToString("main")).toBe(expected);
   });
 
+  test("root t-call with body: t-if true", () => {
+    const context = new TestContext();
+    const subTemplate = `sub`;
+    const main = `<t t-call="subTemplate"><t t-if="true">zero</t></t>`;
+    context.addTemplate("subTemplate", subTemplate);
+    context.addTemplate("main", main);
+    const expected = "sub";
+    expect(context.renderToString("main")).toBe(expected);
+  });
+
+  test("root t-call with body: t-if false", () => {
+    const context = new TestContext();
+    const subTemplate = `sub`;
+    const main = `<t t-call="subTemplate"><t t-if="false">zero</t></t>`;
+    context.addTemplate("subTemplate", subTemplate);
+    context.addTemplate("main", main);
+    const expected = "sub";
+    expect(context.renderToString("main")).toBe(expected);
+  });
+
+  test("root t-call with body: t-out with default", () => {
+    const context = new TestContext();
+    const subTemplate = `sub`;
+    const main = `<t t-call="subTemplate"><t t-out="nothing">default</t></t>`;
+    context.addTemplate("subTemplate", subTemplate);
+    context.addTemplate("main", main);
+    const expected = "sub";
+    expect(context.renderToString("main")).toBe(expected);
+  });
+
+  test("root t-call with body: t-foreach", () => {
+    const context = new TestContext();
+    const subTemplate = `sub`;
+    const main = `<t t-call="subTemplate">
+      <t t-foreach="[1]" t-as="i" t-key="i">1</t>
+    </t>`;
+    context.addTemplate("subTemplate", subTemplate);
+    context.addTemplate("main", main);
+    const expected = "sub";
+    expect(context.renderToString("main")).toBe(expected);
+  });
+
   test("dynamic t-call", () => {
     const context = new TestContext();
     const foo = `<foo><t t-esc="val"/></foo>`;

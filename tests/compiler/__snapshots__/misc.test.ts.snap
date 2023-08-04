@@ -112,16 +112,16 @@ exports[`misc global 1`] = `
       ctx = Object.create(ctx);
       ctx[isBoundary] = 1;
       setContextValue(ctx, \\"foo\\", 'aaa');
-      const b6 = callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}\`);
+      const b7 = callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}\`);
       ctx = ctx.__proto__;
-      const b7 = callTemplate_2.call(this, ctx, node, key + \`__2__\${key1}\`);
+      const b8 = callTemplate_2.call(this, ctx, node, key + \`__2__\${key1}\`);
       setContextValue(ctx, \\"foo\\", 'bbb');
-      const b8 = callTemplate_3.call(this, ctx, node, key + \`__3__\${key1}\`);
-      const b5 = multi([b6, b7, b8]);
-      ctx[zero] = b5;
-      const b9 = callTemplate_4.call(this, ctx, node, key + \`__4__\${key1}\`);
+      const b9 = callTemplate_3.call(this, ctx, node, key + \`__3__\${key1}\`);
+      const b6 = multi([b7, b8, b9]);
+      ctx[zero] = b6;
+      const b5 = callTemplate_4.call(this, ctx, node, key + \`__4__\${key1}\`);
       ctx = ctx.__proto__;
-      c_block2[i1] = withKey(multi([b4, b9]), key1);
+      c_block2[i1] = withKey(multi([b4, b5]), key1);
     }
     ctx = ctx.__proto__;
     const b2 = list(c_block2);

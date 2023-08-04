@@ -61,19 +61,19 @@ exports[`t-call (template calling) call with several sub nodes on same line 1`] 
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<span>hey</span>\`);
-  let block5 = createBlock(\`<span>yay</span>\`);
+  let block4 = createBlock(\`<span>hey</span>\`);
+  let block6 = createBlock(\`<span>yay</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
-    const b3 = block3();
-    const b4 = text(\` \`);
-    const b5 = block5();
-    const b2 = multi([b3, b4, b5]);
-    ctx[zero] = b2;
-    const b6 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
-    return block1([], [b6]);
+    const b4 = block4();
+    const b5 = text(\` \`);
+    const b6 = block6();
+    const b3 = multi([b4, b5, b6]);
+    ctx[zero] = b3;
+    const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -101,19 +101,19 @@ exports[`t-call (template calling) cascading t-call t-out='0' 1`] = `
   const callTemplate_1 = app.getTemplate(\`subTemplate\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<span>hey</span>\`);
-  let block5 = createBlock(\`<span>yay</span>\`);
+  let block4 = createBlock(\`<span>hey</span>\`);
+  let block6 = createBlock(\`<span>yay</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
-    const b3 = block3();
-    const b4 = text(\` \`);
-    const b5 = block5();
-    const b2 = multi([b3, b4, b5]);
-    ctx[zero] = b2;
-    const b6 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
-    return block1([], [b6]);
+    const b4 = block4();
+    const b5 = text(\` \`);
+    const b6 = block6();
+    const b3 = multi([b4, b5, b6]);
+    ctx[zero] = b3;
+    const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -126,17 +126,17 @@ exports[`t-call (template calling) cascading t-call t-out='0' 2`] = `
   const callTemplate_1 = app.getTemplate(\`subSubTemplate\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<span>cascade 0</span>\`);
+  let block4 = createBlock(\`<span>cascade 0</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
-    const b3 = block3();
-    const b4 = ctx[zero];
-    const b2 = multi([b3, b4]);
-    ctx[zero] = b2;
-    const b5 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
-    return block1([], [b5]);
+    const b4 = block4();
+    const b5 = ctx[zero];
+    const b3 = multi([b4, b5]);
+    ctx[zero] = b3;
+    const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -149,17 +149,17 @@ exports[`t-call (template calling) cascading t-call t-out='0' 3`] = `
   const callTemplate_1 = app.getTemplate(\`finalTemplate\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<span>cascade 1</span>\`);
+  let block4 = createBlock(\`<span>cascade 1</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
-    const b3 = block3();
-    const b4 = ctx[zero];
-    const b2 = multi([b3, b4]);
-    ctx[zero] = b2;
-    const b5 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
-    return block1([], [b5]);
+    const b4 = block4();
+    const b5 = ctx[zero];
+    const b3 = multi([b4, b5]);
+    ctx[zero] = b3;
+    const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -186,17 +186,17 @@ exports[`t-call (template calling) cascading t-call t-out='0', without external 
   let { isBoundary, zero } = helpers;
   const callTemplate_1 = app.getTemplate(\`subTemplate\`);
   
-  let block2 = createBlock(\`<span>hey</span>\`);
-  let block4 = createBlock(\`<span>yay</span>\`);
+  let block3 = createBlock(\`<span>hey</span>\`);
+  let block5 = createBlock(\`<span>yay</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
-    const b2 = block2();
-    const b3 = text(\` \`);
-    const b4 = block4();
-    const b1 = multi([b2, b3, b4]);
-    ctx[zero] = b1;
+    const b3 = block3();
+    const b4 = text(\` \`);
+    const b5 = block5();
+    const b2 = multi([b3, b4, b5]);
+    ctx[zero] = b2;
     return callTemplate_1.call(this, ctx, node, key + \`__1\`);
   }
 }"
@@ -209,15 +209,15 @@ exports[`t-call (template calling) cascading t-call t-out='0', without external 
   let { isBoundary, zero } = helpers;
   const callTemplate_1 = app.getTemplate(\`subSubTemplate\`);
   
-  let block2 = createBlock(\`<span>cascade 0</span>\`);
+  let block3 = createBlock(\`<span>cascade 0</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
-    const b2 = block2();
-    const b3 = ctx[zero];
-    const b1 = multi([b2, b3]);
-    ctx[zero] = b1;
+    const b3 = block3();
+    const b4 = ctx[zero];
+    const b2 = multi([b3, b4]);
+    ctx[zero] = b2;
     return callTemplate_1.call(this, ctx, node, key + \`__1\`);
   }
 }"
@@ -230,15 +230,15 @@ exports[`t-call (template calling) cascading t-call t-out='0', without external 
   let { isBoundary, zero } = helpers;
   const callTemplate_1 = app.getTemplate(\`finalTemplate\`);
   
-  let block2 = createBlock(\`<span>cascade 1</span>\`);
+  let block3 = createBlock(\`<span>cascade 1</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
-    const b2 = block2();
-    const b3 = ctx[zero];
-    const b1 = multi([b2, b3]);
-    ctx[zero] = b1;
+    const b3 = block3();
+    const b4 = ctx[zero];
+    const b2 = multi([b3, b4]);
+    ctx[zero] = b2;
     return callTemplate_1.call(this, ctx, node, key + \`__1\`);
   }
 }"
@@ -342,15 +342,15 @@ exports[`t-call (template calling) nested t-calls with magic variable 0 1`] = `
   const callTemplate_1 = app.getTemplate(\`grandchild\`);
   const callTemplate_2 = app.getTemplate(\`child\`);
   
-  let block1 = createBlock(\`<p>Some content...</p>\`);
+  let block3 = createBlock(\`<p>Some content...</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
-    const b1 = block1();
-    ctx[zero] = b1;
+    const b3 = block3();
+    ctx[zero] = b3;
     const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     ctx = ctx.__proto__;
     ctx[zero] = b2;
@@ -571,6 +571,134 @@ exports[`t-call (template calling) recursive template, part 4: with t-set recurs
 }"
 `;
 
+exports[`t-call (template calling) root t-call with body: t-foreach 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, prepareList, withKey, zero } = helpers;
+  const callTemplate_1 = app.getTemplate(\`subTemplate\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1;
+    ctx = Object.create(ctx);
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList([1]);;
+    for (let i1 = 0; i1 < l_block2; i1++) {
+      ctx[\`i\`] = k_block2[i1];
+      const key1 = ctx['i'];
+      c_block2[i1] = withKey(text(\`1\`), key1);
+    }
+    ctx = ctx.__proto__;
+    const b2 = list(c_block2);
+    ctx[zero] = b2;
+    return callTemplate_1.call(this, ctx, node, key + \`__1\`);
+  }
+}"
+`;
+
+exports[`t-call (template calling) root t-call with body: t-foreach 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`sub\`);
+  }
+}"
+`;
+
+exports[`t-call (template calling) root t-call with body: t-if false 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, zero } = helpers;
+  const callTemplate_1 = app.getTemplate(\`subTemplate\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1;
+    let b3;
+    if (false) {
+      b3 = text(\`zero\`);
+    }
+    const b2 = multi([b3]);
+    ctx[zero] = b2;
+    return callTemplate_1.call(this, ctx, node, key + \`__1\`);
+  }
+}"
+`;
+
+exports[`t-call (template calling) root t-call with body: t-if false 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`sub\`);
+  }
+}"
+`;
+
+exports[`t-call (template calling) root t-call with body: t-if true 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, zero } = helpers;
+  const callTemplate_1 = app.getTemplate(\`subTemplate\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1;
+    let b3;
+    if (true) {
+      b3 = text(\`zero\`);
+    }
+    const b2 = multi([b3]);
+    ctx[zero] = b2;
+    return callTemplate_1.call(this, ctx, node, key + \`__1\`);
+  }
+}"
+`;
+
+exports[`t-call (template calling) root t-call with body: t-if true 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`sub\`);
+  }
+}"
+`;
+
+exports[`t-call (template calling) root t-call with body: t-out with default 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, safeOutput, zero } = helpers;
+  const callTemplate_1 = app.getTemplate(\`subTemplate\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1;
+    const b2 = safeOutput(ctx['nothing']);
+    ctx[zero] = b2;
+    return callTemplate_1.call(this, ctx, node, key + \`__1\`);
+  }
+}"
+`;
+
+exports[`t-call (template calling) root t-call with body: t-out with default 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`sub\`);
+  }
+}"
+`;
+
 exports[`t-call (template calling) scoped parameters 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -705,13 +833,13 @@ exports[`t-call (template calling) t-call with body content as root of a templat
   let { isBoundary, zero } = helpers;
   const callTemplate_1 = app.getTemplate(\`antony\`);
   
-  let block1 = createBlock(\`<p>antony</p>\`);
+  let block2 = createBlock(\`<p>antony</p>\`);
   
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
-    const b1 = block1();
-    ctx[zero] = b1;
+    const b2 = block2();
+    ctx[zero] = b2;
     return callTemplate_1.call(this, ctx, node, key + \`__1\`);
   }
 }"
@@ -1075,8 +1203,8 @@ exports[`t-call (template calling) with unused body 1`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
-    const b1 = text(\`WHEEE\`);
-    ctx[zero] = b1;
+    const b2 = text(\`WHEEE\`);
+    ctx[zero] = b2;
     return callTemplate_1.call(this, ctx, node, key + \`__1\`);
   }
 }"
@@ -1136,8 +1264,8 @@ exports[`t-call (template calling) with used body 1`] = `
   return function template(ctx, node, key = \\"\\") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
-    const b1 = text(\`ok\`);
-    ctx[zero] = b1;
+    const b2 = text(\`ok\`);
+    ctx[zero] = b2;
     return callTemplate_1.call(this, ctx, node, key + \`__1\`);
   }
 }"

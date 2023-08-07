@@ -710,12 +710,7 @@ function buildTree(node, parent = null, domParentTree = null) {
                 info.push({ type: "child", idx: index });
                 el = document.createTextNode("");
             }
-            const attrs = node.attributes;
-            const ns = attrs.getNamedItem("block-ns");
-            if (ns) {
-                attrs.removeNamedItem("block-ns");
-                currentNS = ns.value;
-            }
+            currentNS || (currentNS = node.namespaceURI);
             if (!el) {
                 el = currentNS
                     ? document.createElementNS(currentNS, tagName)
@@ -731,6 +726,7 @@ function buildTree(node, parent = null, domParentTree = null) {
                     const fragment = document.createElement("template").content;
                     fragment.appendChild(el);
                 }
+                const attrs = node.attributes;
                 for (let i = 0; i < attrs.length; i++) {
                     const attrName = attrs[i].name;
                     const attrValue = attrs[i].value;
@@ -3854,7 +3850,7 @@ class CodeGenerator {
     createBlock(parentBlock, type, ctx) {
         const hasRoot = this.target.hasRoot;
         const block = new BlockDescription(this.target, type);
-        if (!hasRoot && !ctx.preventRoot) {
+        if (!hasRoot) {
             this.target.hasRoot = true;
             block.isRoot = true;
         }
@@ -3877,7 +3873,7 @@ class CodeGenerator {
         if (ctx.tKeyExpr) {
             blockExpr = `toggler(${ctx.tKeyExpr}, ${blockExpr})`;
         }
-        if (block.isRoot && !ctx.preventRoot) {
+        if (block.isRoot) {
             if (this.target.on) {
                 blockExpr = this.wrapWithEventCatcher(blockExpr, this.target.on);
             }
@@ -4053,11 +4049,6 @@ class CodeGenerator {
         }
         // attributes
         const attrs = {};
-        const nameSpace = ast.ns || ctx.nameSpace;
-        if (nameSpace && isNewBlock) {
-            // specific namespace uri
-            attrs["block-ns"] = nameSpace;
-        }
         for (let key in ast.attrs) {
             let expr, attrName;
             if (key.startsWith("t-attf")) {
@@ -4173,7 +4164,10 @@ class CodeGenerator {
             const idx = block.insertData(setRefStr, "ref");
             attrs["block-ref"] = String(idx);
         }
-        const dom = xmlDoc.createElement(ast.tag);
+        const nameSpace = ast.ns || ctx.nameSpace;
+        const dom = nameSpace
+            ? xmlDoc.createElementNS(nameSpace, ast.tag)
+            : xmlDoc.createElement(ast.tag);
         for (const [attr, val] of Object.entries(attrs)) {
             if (!(attr === "class" && val === "")) {
                 dom.setAttribute(attr, val);
@@ -4215,7 +4209,7 @@ class CodeGenerator {
                             break;
                     }
                 }
-                this.addLine(`let ${block.children.map((c) => c.varName)};`, codeIdx);
+                this.addLine(`let ${block.children.map((c) => c.varName).join(", ")};`, codeIdx);
             }
         }
         return block.varName;
@@ -4318,7 +4312,7 @@ class CodeGenerator {
                             break;
                     }
                 }
-                this.addLine(`let ${block.children.map((c) => c.varName)};`, codeIdx);
+                this.addLine(`let ${block.children.map((c) => c.varName).join(", ")};`, codeIdx);
             }
             // note: this part is duplicated from end of compilemulti:
             const args = block.children.map((c) => c.varName).join(", ");
@@ -4433,7 +4427,6 @@ class CodeGenerator {
                 block,
                 index,
                 forceNewBlock: !isTSet,
-                preventRoot: ctx.preventRoot,
                 isLast: ctx.isLast && i === l - 1,
             });
             this.compileAST(child, subCtx);
@@ -4442,21 +4435,19 @@ class CodeGenerator {
             }
         }
         if (isNewBlock) {
-            if (block.hasDynamicChildren) {
-                if (block.children.length) {
-                    const code = this.target.code;
-                    const children = block.children.slice();
-                    let current = children.shift();
-                    for (let i = codeIdx; i < code.length; i++) {
-                        if (code[i].trimStart().startsWith(`const ${current.varName} `)) {
-                            code[i] = code[i].replace(`const ${current.varName}`, current.varName);
-                            current = children.shift();
-                            if (!current)
-                                break;
-                        }
+            if (block.hasDynamicChildren && block.children.length) {
+                const code = this.target.code;
+                const children = block.children.slice();
+                let current = children.shift();
+                for (let i = codeIdx; i < code.length; i++) {
+                    if (code[i].trimStart().startsWith(`const ${current.varName} `)) {
+                        code[i] = code[i].replace(`const ${current.varName}`, current.varName);
+                        current = children.shift();
+                        if (!current)
+                            break;
                     }
-                    this.addLine(`let ${block.children.map((c) => c.varName)};`, codeIdx);
                 }
+                this.addLine(`let ${block.children.map((c) => c.varName).join(", ")};`, codeIdx);
             }
             const args = block.children.map((c) => c.varName).join(", ");
             this.insertBlock(`multi([${args}])`, block, ctx);
@@ -4470,22 +4461,21 @@ class CodeGenerator {
             ctxVar = generateId("ctx");
             this.addLine(`let ${ctxVar} = ${compileExpr(ast.context)};`);
         }
+        const isDynamic = INTERP_REGEXP.test(ast.name);
+        const subTemplate = isDynamic ? interpolate(ast.name) : "`" + ast.name + "`";
+        if (block && !forceNewBlock) {
+            this.insertAnchor(block);
+        }
+        block = this.createBlock(block, "multi", ctx);
         if (ast.body) {
             this.addLine(`${ctxVar} = Object.create(${ctxVar});`);
             this.addLine(`${ctxVar}[isBoundary] = 1;`);
             this.helpers.add("isBoundary");
-            const subCtx = createContext(ctx, { preventRoot: true, ctxVar });
+            const subCtx = createContext(ctx, { ctxVar });
             const bl = this.compileMulti({ type: 3 /* Multi */, content: ast.body }, subCtx);
             if (bl) {
                 this.helpers.add("zero");
                 this.addLine(`${ctxVar}[zero] = ${bl};`);
-            }
-        }
-        const isDynamic = INTERP_REGEXP.test(ast.name);
-        const subTemplate = isDynamic ? interpolate(ast.name) : "`" + ast.name + "`";
-        if (block) {
-            if (!forceNewBlock) {
-                this.insertAnchor(block);
             }
         }
         const key = `key + \`${this.generateComponentKey()}\``;
@@ -4495,7 +4485,6 @@ class CodeGenerator {
                 this.staticDefs.push({ id: "call", expr: `app.callTemplate.bind(app)` });
             }
             this.define(templateVar, subTemplate);
-            block = this.createBlock(block, "multi", ctx);
             this.insertBlock(`call(this, ${templateVar}, ${ctxVar}, node, ${key})`, block, {
                 ...ctx,
                 forceNewBlock: !block,
@@ -4504,7 +4493,6 @@ class CodeGenerator {
         else {
             const id = generateId(`callTemplate_`);
             this.staticDefs.push({ id, expr: `app.getTemplate(${subTemplate})` });
-            block = this.createBlock(block, "multi", ctx);
             this.insertBlock(`${id}.call(this, ${ctxVar}, node, ${key})`, block, {
                 ...ctx,
                 forceNewBlock: !block,
@@ -4826,7 +4814,7 @@ function parse(xml) {
 }
 function _parse(xml) {
     normalizeXML(xml);
-    const ctx = { inPreTag: false, inSVG: false };
+    const ctx = { inPreTag: false };
     return parseNode(xml, ctx) || { type: 0 /* Text */, value: "" };
 }
 function parseNode(node, ctx) {
@@ -4917,9 +4905,7 @@ function parseDOMNode(node, ctx) {
     if (tagName === "pre") {
         ctx.inPreTag = true;
     }
-    const shouldAddSVGNS = ROOT_SVG_TAGS.has(tagName) && !ctx.inSVG;
-    ctx.inSVG = ctx.inSVG || shouldAddSVGNS;
-    const ns = shouldAddSVGNS ? "http://www.w3.org/2000/svg" : null;
+    let ns = !ctx.nameSpace && ROOT_SVG_TAGS.has(tagName) ? "http://www.w3.org/2000/svg" : null;
     const ref = node.getAttribute("t-ref");
     node.removeAttribute("t-ref");
     const nodeAttrsNames = node.getAttributeNames();
@@ -4981,6 +4967,9 @@ function parseDOMNode(node, ctx) {
         else if (attr.startsWith("block-")) {
             throw new OwlError(`Invalid attribute: '${attr}'`);
         }
+        else if (attr === "xmlns") {
+            ns = value;
+        }
         else if (attr !== "t-name") {
             if (attr.startsWith("t-") && !attr.startsWith("t-att")) {
                 throw new OwlError(`Unknown QWeb directive: '${attr}'`);
@@ -4992,6 +4981,9 @@ function parseDOMNode(node, ctx) {
             attrs = attrs || {};
             attrs[attr] = value;
         }
+    }
+    if (ns) {
+        ctx.nameSpace = ns;
     }
     const children = parseChildren(node, ctx);
     return {
@@ -5561,7 +5553,7 @@ function compile(template, options = {}) {
 }
 
 // do not modify manually. This file is generated by the release script.
-const version = "2.2.4";
+const version = "2.2.5";
 
 // -----------------------------------------------------------------------------
 //  Scheduler
@@ -5994,6 +5986,6 @@ TemplateSet.prototype._compileTemplate = function _compileTemplate(name, templat
 export { App, Component, EventBus, OwlError, __info__, blockDom, loadFile, markRaw, markup, mount, onError, onMounted, onPatched, onRendered, onWillDestroy, onWillPatch, onWillRender, onWillStart, onWillUnmount, onWillUpdateProps, reactive, status, toRaw, useChildSubEnv, useComponent, useEffect, useEnv, useExternalListener, useRef, useState, useSubEnv, validate, validateType, whenReady, xml };
 
 
-__info__.date = '2023-08-02T06:20:03.634Z';
-__info__.hash = '8f9ad98';
+__info__.date = '2023-08-07T10:26:30.557Z';
+__info__.hash = 'b25e988';
 __info__.url = 'https://github.com/odoo/owl';

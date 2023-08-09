@@ -256,6 +256,34 @@ exports[`t-foreach iterate, position 1`] = `
 }"
 `;
 
+exports[`t-foreach iterate, string param 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { prepareList, withKey } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList('abc');;
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      ctx[\`item\`] = k_block1[i1];
+      ctx[\`item_index\`] = i1;
+      ctx[\`item_value\`] = v_block1[i1];
+      const key1 = ctx['item_index'];
+      const b3 = text(\` [\`);
+      const b4 = text(ctx['item_index']);
+      const b5 = text(\`: \`);
+      const b6 = text(ctx['item']);
+      const b7 = text(\` \`);
+      const b8 = text(ctx['item_value']);
+      const b9 = text(\`] \`);
+      c_block1[i1] = withKey(multi([b3, b4, b5, b6, b7, b8, b9]), key1);
+    }
+    return list(c_block1);
+  }
+}"
+`;
+
 exports[`t-foreach simple iteration (in a node) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

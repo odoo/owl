@@ -131,6 +131,15 @@ describe("t-foreach", () => {
     expect(renderToString(template, context)).toBe(expected);
   });
 
+  test("iterate, string param", () => {
+    const template = `
+      <t t-foreach="'abc'" t-as="item" t-key="item_index">
+        [<t t-esc="item_index"/>: <t t-esc="item"/> <t t-esc="item_value"/>]
+      </t>`;
+    const expected = ` [0: a a]  [1: b b]  [2: c c] `;
+    expect(renderToString(template)).toBe(expected);
+  });
+
   test("iterate, iterable param", () => {
     const template = `
       <t t-foreach="map.values()" t-as="item" t-key="item_index">

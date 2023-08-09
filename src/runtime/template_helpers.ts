@@ -70,14 +70,12 @@ function prepareList(collection: unknown): [unknown[], unknown[], number, undefi
   } else if (collection instanceof Map) {
     keys = [...collection.keys()];
     values = [...collection.values()];
+  } else if (Symbol.iterator in Object(collection)) {
+    keys = [...(<Iterable<unknown>>collection)];
+    values = keys;
   } else if (collection && typeof collection === "object") {
-    if (Symbol.iterator in collection) {
-      keys = [...(<Iterable<unknown>>collection)];
-      values = keys;
-    } else {
-      values = Object.values(collection);
-      keys = Object.keys(collection);
-    }
+    values = Object.values(collection);
+    keys = Object.keys(collection);
   } else {
     throw new OwlError(`Invalid loop expression: "${collection}" is not iterable`);
   }

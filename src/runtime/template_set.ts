@@ -66,6 +66,10 @@ export class TemplateSet {
 
   addTemplate(name: string, template: string | Element) {
     if (name in this.rawTemplates) {
+      // this check can be expensive, just silently ignore double definitions outside dev mode
+      if (!this.dev) {
+        return;
+      }
       const rawTemplate = this.rawTemplates[name];
       const currentAsString =
         typeof rawTemplate === "string"

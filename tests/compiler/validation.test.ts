@@ -11,13 +11,20 @@ describe("basic validation", () => {
     expect(() => context.getTemplate("invalidname")).toThrow("Missing template");
   });
 
-  test("cannot add a different template with the same name", () => {
-    const context = new TemplateSet();
+  test("cannot add a different template with the same name in dev mode", () => {
+    const context = new TemplateSet({ dev: true });
     context.addTemplate("test", `<t/>`);
     // Same template with the same name is fine
     expect(() => context.addTemplate("test", "<t/>")).not.toThrow();
     // Different template with the same name crashes
     expect(() => context.addTemplate("test", "<div/>")).toThrow("already defined");
+  });
+
+  test("adding different template with same name outside dev mode silently ignores it", () => {
+    const context = new TemplateSet({ dev: false });
+    context.addTemplate("test", `<t/>`);
+    expect(() => context.addTemplate("test", "<div/>")).not.toThrow();
+    expect(context.rawTemplates.test).toBe("<t/>");
   });
 
   test("invalid xml", () => {

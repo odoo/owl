@@ -35,6 +35,8 @@ This is not suitable for production use.
 See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration for more information.`;
 };
 
+const apps = new Set<App>();
+
 declare global {
   interface Window {
     __OWL_DEVTOOLS__: {
@@ -47,13 +49,7 @@ declare global {
   }
 }
 
-window.__OWL_DEVTOOLS__ ||= {
-  apps: new Set<App>(),
-  Fiber: Fiber,
-  RootFiber: RootFiber,
-  toRaw: toRaw,
-  reactive: reactive,
-};
+window.__OWL_DEVTOOLS__ ||= { apps, Fiber, RootFiber, toRaw, reactive };
 
 export class App<
   T extends abstract new (...args: any) => any = any,
@@ -61,6 +57,7 @@ export class App<
   E = any
 > extends TemplateSet {
   static validateTarget = validateTarget;
+  static apps = apps;
   static version = version;
 
   name: string;
@@ -75,7 +72,7 @@ export class App<
     super(config);
     this.name = config.name || "";
     this.Root = Root;
-    window.__OWL_DEVTOOLS__.apps.add(this);
+    apps.add(this);
     if (config.test) {
       this.dev = true;
     }
@@ -140,7 +137,7 @@ export class App<
       this.root.destroy();
       this.scheduler.processTasks();
     }
-    window.__OWL_DEVTOOLS__.apps.delete(this);
+    apps.delete(this);
   }
 
   createComponent<P extends Props>(

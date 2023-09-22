@@ -1292,6 +1292,12 @@ describe("Collections", () => {
 
       state.add(3); // setting unobserved key doesn't notify
       expect(observer).toHaveBeenCalledTimes(3);
+      expect(state.has(3)).toBe(true); // subscribe to 3
+      state.add(3); // adding observed key doesn't notify if key was already present
+      expect(observer).toHaveBeenCalledTimes(3);
+      expect(state.has(4)).toBe(false); // subscribe to 4
+      state.delete(4); // deleting observed key doesn't notify if key was already not present
+      expect(observer).toHaveBeenCalledTimes(3);
     });
 
     test("iterating on keys returns reactives", async () => {
@@ -1485,6 +1491,12 @@ describe("Collections", () => {
 
       state.set(3, 4); // setting unobserved key doesn't notify
       expect(observer).toHaveBeenCalledTimes(3);
+      expect(state.has(3)).toBe(true); // subscribe to 3
+      state.set(3, 4); // setting the same value doesn't notify
+      expect(observer).toHaveBeenCalledTimes(3);
+      expect(state.has(4)).toBe(false); // subscribe to 4
+      state.delete(4); // deleting observed key doesn't notify if key was already not present
+      expect(observer).toHaveBeenCalledTimes(3);
     });
 
     test("checking for a key with 'get' subscribes the callback to changes to that key", () => {
@@ -1509,6 +1521,12 @@ describe("Collections", () => {
       expect(observer).toHaveBeenCalledTimes(3);
 
       state.set(3, 4); // setting unobserved key doesn't notify
+      expect(observer).toHaveBeenCalledTimes(3);
+      expect(state.get(3)).toBe(4); // subscribe to 3
+      state.set(3, 4); // setting the same value doesn't notify
+      expect(observer).toHaveBeenCalledTimes(3);
+      expect(state.get(4)).toBe(undefined); // subscribe to 4
+      state.delete(4); // deleting observed key doesn't notify if key was already not present
       expect(observer).toHaveBeenCalledTimes(3);
     });
 

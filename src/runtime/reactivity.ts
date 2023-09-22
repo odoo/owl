@@ -368,7 +368,7 @@ function delegateAndNotify(
     if (hadKey !== hasKey) {
       notifyReactives(target, KEYCHANGES);
     }
-    if (originalValue !== value) {
+    if (originalValue !== target[getterName](key)) {
       notifyReactives(target, key);
     }
     return ret;

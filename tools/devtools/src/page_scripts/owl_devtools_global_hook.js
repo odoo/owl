@@ -1396,7 +1396,7 @@
         return this.getDOMElementsRecursive(node.content);
       }
       if (node.hasOwnProperty("el")) {
-        if (node.el instanceof HTMLElement || node.el instanceof Text) {
+        if (node.el instanceof Element || node.el instanceof Text) {
           return [node.el];
         }
       }
@@ -1415,7 +1415,7 @@
         }
       }
       if (node.hasOwnProperty("parentEl")) {
-        if (node.parentEl instanceof HTMLElement) {
+        if (node.parentEl instanceof Element) {
           return [node.parentEl];
         }
       }

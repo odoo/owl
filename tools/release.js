@@ -31,6 +31,10 @@ async function startRelease() {
 
   log(`*** Owl release script ***`);
   log(`Current Version: ${package.version}`);
+  log(`Warning: this script will push to the master branch!`);
+  log(`Make sure that github is configured to allow it:`);
+  log(`   settings => branches => edit master => uncheck Do not allow bypassing the above settings`);
+  log(`   (and probably a good idea to readd the protection after)`)
   
   const STEPS = 11;
   let step = 1;

@@ -137,7 +137,7 @@ export function snapshotEverything() {
   };
 }
 
-const steps: string[] = [];
+export const steps: string[] = [];
 
 export function logStep(step: string) {
   steps.push(step);

@@ -32,7 +32,7 @@ exports[`app app: clear scheduler tasks and destroy cancelled nodes immediately 
 }"
 `;
 
-exports[`app app: clear scheduler tasks and destroy cancelled nodes immediately on destroy 2`] = `
+exports[`app app: clear scheduler tasks and destroy cancelled nodes immediately on destroy 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

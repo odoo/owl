@@ -92,7 +92,7 @@ exports[`lifecycle hooks component semantics 5`] = `
 }"
 `;
 
-exports[`lifecycle hooks component semantics 6`] = `
+exports[`lifecycle hooks component semantics 7`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -185,7 +185,7 @@ exports[`lifecycle hooks destroy new children before being mountged 1`] = `
 }"
 `;
 
-exports[`lifecycle hooks destroy new children before being mountged 2`] = `
+exports[`lifecycle hooks destroy new children before being mountged 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -291,7 +291,7 @@ exports[`lifecycle hooks lifecycle semantics, part 2 1`] = `
 }"
 `;
 
-exports[`lifecycle hooks lifecycle semantics, part 2 2`] = `
+exports[`lifecycle hooks lifecycle semantics, part 2 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -303,7 +303,7 @@ exports[`lifecycle hooks lifecycle semantics, part 2 2`] = `
 }"
 `;
 
-exports[`lifecycle hooks lifecycle semantics, part 2 3`] = `
+exports[`lifecycle hooks lifecycle semantics, part 2 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -348,7 +348,7 @@ exports[`lifecycle hooks lifecycle semantics, part 4 1`] = `
 }"
 `;
 
-exports[`lifecycle hooks lifecycle semantics, part 4 2`] = `
+exports[`lifecycle hooks lifecycle semantics, part 4 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -360,7 +360,7 @@ exports[`lifecycle hooks lifecycle semantics, part 4 2`] = `
 }"
 `;
 
-exports[`lifecycle hooks lifecycle semantics, part 4 3`] = `
+exports[`lifecycle hooks lifecycle semantics, part 4 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

@@ -8,6 +8,7 @@ import {
   useLogLifecycle,
   makeDeferred,
   nextMicroTick,
+  steps,
 } from "../helpers";
 
 let fixture: HTMLElement;
@@ -123,23 +124,47 @@ describe("app", () => {
 
     const app = new App(A);
     const comp = await app.mount(fixture);
-    expect(["A:setup", "A:willStart", "A:willRender", "A:rendered", "A:mounted"]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "A:setup",
+        "A:willStart",
+        "A:willRender",
+        "A:rendered",
+        "A:mounted",
+      ]
+    `);
 
     comp.state.value = true;
     await nextTick();
-    expect(["A:willRender", "B:setup", "B:willStart", "A:rendered"]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "A:willRender",
+        "B:setup",
+        "B:willStart",
+        "A:rendered",
+      ]
+    `);
 
     // rerender to force the instantiation of a new B component (and cancelling the first)
     comp.render();
     await nextMicroTick();
-    expect(["A:willRender", "B:setup", "B:willStart", "A:rendered"]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "A:willRender",
+        "B:setup",
+        "B:willStart",
+        "A:rendered",
+      ]
+    `);
 
     app.destroy();
-    expect([
-      "A:willUnmount",
-      "B:willDestroy",
-      "A:willDestroy",
-      "B:willDestroy", // make sure the 2 B instances have been destroyed synchronously
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "A:willUnmount",
+        "B:willDestroy",
+        "A:willDestroy",
+        "B:willDestroy",
+      ]
+    `);
   });
 });

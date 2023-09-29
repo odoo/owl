@@ -357,7 +357,7 @@ cleaning operation, since the component may be destroyed before it has even been
 mounted. The `willDestroy` hook is useful in that situation, since it is always
 called.
 
-The `onWillUnmount` hook is used to register a function that will be executed at
+The `onWillDestroy` hook is used to register a function that will be executed at
 this moment:
 
 ```javascript

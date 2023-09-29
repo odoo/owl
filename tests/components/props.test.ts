@@ -1,5 +1,5 @@
 import { Component, mount, onWillUpdateProps, useState, xml } from "../../src";
-import { makeTestFixture, nextTick, snapshotEverything, useLogLifecycle } from "../helpers";
+import { makeTestFixture, nextTick, snapshotEverything, steps, useLogLifecycle } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -272,26 +272,30 @@ test("bound functions are considered 'alike'", async () => {
 
   const parent = await mount(Parent, fixture);
   expect(fixture.innerHTML).toBe("1child");
-  expect([
-    "Parent:setup",
-    "Parent:willStart",
-    "Parent:willRender",
-    "Child:setup",
-    "Child:willStart",
-    "Parent:rendered",
-    "Child:willRender",
-    "Child:rendered",
-    "Child:mounted",
-    "Parent:mounted",
-  ]).toBeLogged();
+  expect(steps.splice(0)).toMatchInlineSnapshot(`
+    Array [
+      "Parent:setup",
+      "Parent:willStart",
+      "Parent:willRender",
+      "Child:setup",
+      "Child:willStart",
+      "Parent:rendered",
+      "Child:willRender",
+      "Child:rendered",
+      "Child:mounted",
+      "Parent:mounted",
+    ]
+  `);
   parent.state.val = 3;
   await nextTick();
-  expect([
-    "Parent:willRender",
-    "Parent:rendered",
-    "Parent:willPatch",
-    "Parent:patched",
-  ]).toBeLogged();
+  expect(steps.splice(0)).toMatchInlineSnapshot(`
+    Array [
+      "Parent:willRender",
+      "Parent:rendered",
+      "Parent:willPatch",
+      "Parent:patched",
+    ]
+  `);
   expect(fixture.innerHTML).toBe("3child");
 });
 
@@ -330,29 +334,33 @@ test(".alike suffix in a simple case", async () => {
   }
 
   const parent = await mount(Parent, fixture);
-  expect([
-    "Parent:setup",
-    "Parent:willStart",
-    "Parent:willRender",
-    "Child:setup",
-    "Child:willStart",
-    "Parent:rendered",
-    "Child:willRender",
-    "Child:rendered",
-    "Child:mounted",
-    "Parent:mounted",
-  ]).toBeLogged();
+  expect(steps.splice(0)).toMatchInlineSnapshot(`
+    Array [
+      "Parent:setup",
+      "Parent:willStart",
+      "Parent:willRender",
+      "Child:setup",
+      "Child:willStart",
+      "Parent:rendered",
+      "Child:willRender",
+      "Child:rendered",
+      "Child:mounted",
+      "Parent:mounted",
+    ]
+  `);
 
   expect(fixture.innerHTML).toBe("01");
   parent.state.counter++;
   await nextTick();
   expect(fixture.innerHTML).toBe("11");
-  expect([
-    "Parent:willRender",
-    "Parent:rendered",
-    "Parent:willPatch",
-    "Parent:patched",
-  ]).toBeLogged();
+  expect(steps.splice(0)).toMatchInlineSnapshot(`
+    Array [
+      "Parent:willRender",
+      "Parent:rendered",
+      "Parent:willPatch",
+      "Parent:patched",
+    ]
+  `);
 });
 
 test(".alike suffix in a list", async () => {
@@ -388,36 +396,40 @@ test(".alike suffix in a list", async () => {
   }
 
   await mount(Parent, fixture);
-  expect([
-    "Parent:setup",
-    "Parent:willStart",
-    "Parent:willRender",
-    "Todo:setup",
-    "Todo:willStart",
-    "Todo:setup",
-    "Todo:willStart",
-    "Parent:rendered",
-    "Todo:willRender",
-    "Todo:rendered",
-    "Todo:willRender",
-    "Todo:rendered",
-    "Todo:mounted",
-    "Todo:mounted",
-    "Parent:mounted",
-  ]).toBeLogged();
+  expect(steps.splice(0)).toMatchInlineSnapshot(`
+    Array [
+      "Parent:setup",
+      "Parent:willStart",
+      "Parent:willRender",
+      "Todo:setup",
+      "Todo:willStart",
+      "Todo:setup",
+      "Todo:willStart",
+      "Parent:rendered",
+      "Todo:willRender",
+      "Todo:rendered",
+      "Todo:willRender",
+      "Todo:rendered",
+      "Todo:mounted",
+      "Todo:mounted",
+      "Parent:mounted",
+    ]
+  `);
 
   expect(fixture.innerHTML).toBe("<button>1</button><button>2V</button>");
   fixture.querySelector("button")?.click();
   await nextTick();
   expect(fixture.innerHTML).toBe("<button>1V</button><button>2V</button>");
-  expect([
-    "Parent:willRender",
-    "Parent:rendered",
-    "Todo:willRender",
-    "Todo:rendered",
-    "Todo:willPatch",
-    "Todo:patched",
-    "Parent:willPatch",
-    "Parent:patched",
-  ]).toBeLogged();
+  expect(steps.splice(0)).toMatchInlineSnapshot(`
+    Array [
+      "Parent:willRender",
+      "Parent:rendered",
+      "Todo:willRender",
+      "Todo:rendered",
+      "Todo:willPatch",
+      "Todo:patched",
+      "Parent:willPatch",
+      "Parent:patched",
+    ]
+  `);
 });

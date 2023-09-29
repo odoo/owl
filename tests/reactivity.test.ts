@@ -17,6 +17,7 @@ import {
   nextMicroTick,
   nextTick,
   snapshotEverything,
+  steps,
   useLogLifecycle,
 } from "./helpers";
 
@@ -1850,37 +1851,41 @@ describe("Reactivity: useState", () => {
       }
     }
     await mount(Parent, fixture);
-    expect([
-      "Parent:setup",
-      "Parent:willStart",
-      "Parent:willRender",
-      "Child:setup",
-      "Child:willStart",
-      "Child:setup",
-      "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:mounted",
-      "Child:mounted",
-      "Parent:mounted",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:setup",
+        "Parent:willStart",
+        "Parent:willRender",
+        "Child:setup",
+        "Child:willStart",
+        "Child:setup",
+        "Child:willStart",
+        "Parent:rendered",
+        "Child:willRender",
+        "Child:rendered",
+        "Child:willRender",
+        "Child:rendered",
+        "Child:mounted",
+        "Child:mounted",
+        "Parent:mounted",
+      ]
+    `);
 
     expect(fixture.innerHTML).toBe("<div><span>123</span><span>123</span></div>");
     testContext.value = 321;
     await nextTick();
-    expect([
-      "Child:willRender",
-      "Child:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:willPatch",
-      "Child:patched",
-      "Child:willPatch",
-      "Child:patched",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Child:willRender",
+        "Child:rendered",
+        "Child:willRender",
+        "Child:rendered",
+        "Child:willPatch",
+        "Child:patched",
+        "Child:willPatch",
+        "Child:patched",
+      ]
+    `);
     expect(fixture.innerHTML).toBe("<div><span>321</span><span>321</span></div>");
   });
 
@@ -1904,38 +1909,49 @@ describe("Reactivity: useState", () => {
     }
 
     await mount(Parent, fixture);
-    expect([
-      "Parent:setup",
-      "Parent:willStart",
-      "Parent:willRender",
-      "Child:setup",
-      "Child:willStart",
-      "Child:setup",
-      "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:mounted",
-      "Child:mounted",
-      "Parent:mounted",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:setup",
+        "Parent:willStart",
+        "Parent:willRender",
+        "Child:setup",
+        "Child:willStart",
+        "Child:setup",
+        "Child:willStart",
+        "Parent:rendered",
+        "Child:willRender",
+        "Child:rendered",
+        "Child:willRender",
+        "Child:rendered",
+        "Child:mounted",
+        "Child:mounted",
+        "Parent:mounted",
+      ]
+    `);
 
     expect(fixture.innerHTML).toBe("<div><span>123</span><span>123</span></div>");
     testContext.value = 321;
     await nextMicroTick();
     await nextMicroTick();
-    expect([
-      "Child:willRender",
-      "Child:rendered",
-      "Child:willRender",
-      "Child:rendered",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Child:willRender",
+        "Child:rendered",
+        "Child:willRender",
+        "Child:rendered",
+      ]
+    `);
     expect(fixture.innerHTML).toBe("<div><span>123</span><span>123</span></div>");
 
     await nextTick();
-    expect(["Child:willPatch", "Child:patched", "Child:willPatch", "Child:patched"]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Child:willPatch",
+        "Child:patched",
+        "Child:willPatch",
+        "Child:patched",
+      ]
+    `);
     expect(fixture.innerHTML).toBe("<div><span>321</span><span>321</span></div>");
   });
 
@@ -1969,43 +1985,54 @@ describe("Reactivity: useState", () => {
 
     await mount(GrandFather, fixture);
     expect(fixture.innerHTML).toBe("<div><span>123</span><div><span>123</span></div></div>");
-    expect([
-      "GrandFather:setup",
-      "GrandFather:willStart",
-      "GrandFather:willRender",
-      "Child:setup",
-      "Child:willStart",
-      "Parent:setup",
-      "Parent:willStart",
-      "GrandFather:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Parent:willRender",
-      "Child:setup",
-      "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:mounted",
-      "Parent:mounted",
-      "Child:mounted",
-      "GrandFather:mounted",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "GrandFather:setup",
+        "GrandFather:willStart",
+        "GrandFather:willRender",
+        "Child:setup",
+        "Child:willStart",
+        "Parent:setup",
+        "Parent:willStart",
+        "GrandFather:rendered",
+        "Child:willRender",
+        "Child:rendered",
+        "Parent:willRender",
+        "Child:setup",
+        "Child:willStart",
+        "Parent:rendered",
+        "Child:willRender",
+        "Child:rendered",
+        "Child:mounted",
+        "Parent:mounted",
+        "Child:mounted",
+        "GrandFather:mounted",
+      ]
+    `);
 
     testContext.value = 321;
     await nextMicroTick();
     await nextMicroTick();
     expect(fixture.innerHTML).toBe("<div><span>123</span><div><span>123</span></div></div>");
-    expect([
-      "Child:willRender",
-      "Child:rendered",
-      "Child:willRender",
-      "Child:rendered",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Child:willRender",
+        "Child:rendered",
+        "Child:willRender",
+        "Child:rendered",
+      ]
+    `);
 
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>321</span><div><span>321</span></div></div>");
-    expect(["Child:willPatch", "Child:patched", "Child:willPatch", "Child:patched"]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Child:willPatch",
+        "Child:patched",
+        "Child:willPatch",
+        "Child:patched",
+      ]
+    `);
   });
 
   test("one components can subscribe twice to same context", async () => {
@@ -2181,38 +2208,49 @@ describe("Reactivity: useState", () => {
     }
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div><span>123</span></div>");
-    expect([
-      "Parent:setup",
-      "Parent:willStart",
-      "Parent:willRender",
-      "Child:setup",
-      "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:mounted",
-      "Parent:mounted",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:setup",
+        "Parent:willStart",
+        "Parent:willRender",
+        "Child:setup",
+        "Child:willStart",
+        "Parent:rendered",
+        "Child:willRender",
+        "Child:rendered",
+        "Child:mounted",
+        "Parent:mounted",
+      ]
+    `);
 
     testContext.a = 321;
     await nextTick();
-    expect(["Child:willRender", "Child:rendered", "Child:willPatch", "Child:patched"]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Child:willRender",
+        "Child:rendered",
+        "Child:willPatch",
+        "Child:patched",
+      ]
+    `);
 
     parent.state.flag = false;
     await nextTick();
     expect(fixture.innerHTML).toBe("<div></div>");
-    expect([
-      "Parent:willRender",
-      "Parent:rendered",
-      "Parent:willPatch",
-      "Child:willUnmount",
-      "Child:willDestroy",
-      "Parent:patched",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:willRender",
+        "Parent:rendered",
+        "Parent:willPatch",
+        "Child:willUnmount",
+        "Child:willDestroy",
+        "Parent:patched",
+      ]
+    `);
 
     testContext.a = 456;
     await nextTick();
-    expect([]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`Array []`);
   });
 
   test("destroyed component before being mounted is inactive", async () => {

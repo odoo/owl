@@ -180,7 +180,7 @@ exports[`t-component switching dynamic component 2`] = `
 }"
 `;
 
-exports[`t-component switching dynamic component 3`] = `
+exports[`t-component switching dynamic component 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

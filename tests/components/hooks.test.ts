@@ -641,6 +641,56 @@ describe("hooks", () => {
       ]);
     });
 
+    test("effect types are inferred from dependencies", async () => {
+      // @ts-ignore (declared but never used)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      class MyComponent extends Component {
+        static template = xml`<div/>`;
+
+        setup() {
+          useEffect(
+            (a, b) => {
+              expectType<number>(a);
+              expectType<string>(b);
+            },
+            () => [3, "hello"]
+          );
+        }
+      }
+    });
+
+    test("effect type allows an effect with partial dependencies parameters", async () => {
+      // @ts-ignore (declared but never used)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      class MyComponent extends Component {
+        static template = xml`<div/>`;
+
+        setup() {
+          useEffect(
+            (a) => {
+              expectType<number>(a);
+            },
+            () => [3, "hello"]
+          );
+        }
+      }
+    });
+
+    test("effect type allows an effect with no dependency parameter", async () => {
+      // @ts-ignore (declared but never used)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      class MyComponent extends Component {
+        static template = xml`<div/>`;
+
+        setup() {
+          useEffect(
+            () => {},
+            () => [3, "hello"]
+          );
+        }
+      }
+    });
+
     test("properly behaves when the effect function throws", async () => {
       let originalconsoleError = console.error;
       let originalconsoleWarn = console.warn;
@@ -673,3 +723,5 @@ describe("hooks", () => {
     });
   });
 });
+
+function expectType<T>(t: T) {}

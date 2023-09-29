@@ -235,7 +235,7 @@ expect.extend({
     };
 
     const currentSteps = steps.splice(0);
-    const pass = this.equals(currentSteps, expected);
+    let pass = this.equals(currentSteps, expected);
 
     const message = pass
       ? () =>

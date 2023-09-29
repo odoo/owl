@@ -660,8 +660,9 @@ describe("hooks", () => {
 
       let error: OwlError;
       const app = new App(MyComponent);
+      const appError = nextAppError(app);
       const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-      await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
+      await expect(appError).resolves.toThrow("error occured in the owl lifecycle");
       await mountProm;
       expect(error!.cause.message).toBe("Intentional error");
       // no console.error because the error has been caught in this test

@@ -206,13 +206,15 @@ test("destroying/recreating a subcomponent, other scenario", async () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
+      "Child:willRender",
+      "Child:rendered",
       "Parent:rendered",
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Child:willDestroy",
       "Parent:willPatch",
       "Child:mounted",
@@ -369,9 +371,9 @@ test("creating two async components, scenario 2", async () => {
       "Parent:willRender",
       "ChildA:setup",
       "ChildA:willStart",
-      "Parent:rendered",
       "ChildA:willRender",
       "ChildA:rendered",
+      "Parent:rendered",
       "ChildA:mounted",
       "Parent:mounted",
     ]
@@ -467,9 +469,9 @@ test("creating two async components, scenario 3 (patching in the same frame)", a
       "Parent:willRender",
       "ChildA:setup",
       "ChildA:willStart",
-      "Parent:rendered",
       "ChildA:willRender",
       "ChildA:rendered",
+      "Parent:rendered",
       "ChildA:mounted",
       "Parent:mounted",
     ]
@@ -550,9 +552,9 @@ test("update a sub-component twice in the same frame", async () => {
       "Parent:willRender",
       "ChildA:setup",
       "ChildA:willStart",
-      "Parent:rendered",
       "ChildA:willRender",
       "ChildA:rendered",
+      "Parent:rendered",
       "ChildA:mounted",
       "Parent:mounted",
     ]
@@ -626,9 +628,9 @@ test("update a sub-component twice in the same frame, 2", async () => {
       "Parent:willRender",
       "ChildA:setup",
       "ChildA:willStart",
-      "Parent:rendered",
       "ChildA:willRender",
       "ChildA:rendered",
+      "Parent:rendered",
       "ChildA:mounted",
       "Parent:mounted",
     ]
@@ -642,6 +644,8 @@ test("update a sub-component twice in the same frame, 2", async () => {
     Array [
       "Parent:willRender",
       "ChildA:willUpdateProps",
+      "ChildA:willRender",
+      "ChildA:rendered",
       "Parent:rendered",
     ]
   `);
@@ -651,12 +655,7 @@ test("update a sub-component twice in the same frame, 2", async () => {
   // I do not see anything harmful in waiting an extra tick. But it is annoying to not
   // know what is different.
   await nextMicroTick();
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    Array [
-      "ChildA:willRender",
-      "ChildA:rendered",
-    ]
-  `);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`Array []`);
   expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
   parent.state.valA = 3;
   await nextMicroTick();
@@ -665,6 +664,8 @@ test("update a sub-component twice in the same frame, 2", async () => {
     Array [
       "Parent:willRender",
       "ChildA:willUpdateProps",
+      "ChildA:willRender",
+      "ChildA:rendered",
       "Parent:rendered",
     ]
   `);
@@ -672,12 +673,7 @@ test("update a sub-component twice in the same frame, 2", async () => {
   await nextMicroTick();
   // same as above
   await nextMicroTick();
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    Array [
-      "ChildA:willRender",
-      "ChildA:rendered",
-    ]
-  `);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`Array []`);
   expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
 
   await nextTick();
@@ -733,13 +729,13 @@ test("properly behave when destroyed/unmounted while rendering ", async () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "SubChild:setup",
       "SubChild:willStart",
-      "Child:rendered",
       "SubChild:willRender",
       "SubChild:rendered",
+      "Child:rendered",
+      "Parent:rendered",
       "SubChild:mounted",
       "Child:mounted",
       "Parent:mounted",
@@ -755,10 +751,10 @@ test("properly behave when destroyed/unmounted while rendering ", async () => {
     Array [
       "Parent:willRender",
       "Child:willUpdateProps",
-      "Parent:rendered",
       "Child:willRender",
       "SubChild:willUpdateProps",
       "Child:rendered",
+      "Parent:rendered",
     ]
   `);
 
@@ -835,13 +831,15 @@ test("rendering component again in next microtick", async () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
+      "Child:willRender",
+      "Child:rendered",
       "Parent:rendered",
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Child:willDestroy",
       "Parent:willPatch",
       "Child:mounted",
@@ -895,13 +893,13 @@ test("concurrent renderings scenario 1", async () => {
       "ComponentA:willRender",
       "ComponentB:setup",
       "ComponentB:willStart",
-      "ComponentA:rendered",
       "ComponentB:willRender",
       "ComponentC:setup",
       "ComponentC:willStart",
-      "ComponentB:rendered",
       "ComponentC:willRender",
       "ComponentC:rendered",
+      "ComponentB:rendered",
+      "ComponentA:rendered",
       "ComponentC:mounted",
       "ComponentB:mounted",
       "ComponentA:mounted",
@@ -926,10 +924,10 @@ test("concurrent renderings scenario 1", async () => {
     Array [
       "ComponentA:willRender",
       "ComponentB:willUpdateProps",
-      "ComponentA:rendered",
       "ComponentB:willRender",
       "ComponentC:willUpdateProps",
       "ComponentB:rendered",
+      "ComponentA:rendered",
     ]
   `);
   expect(ComponentC.prototype.someValue).toBeCalledTimes(1);
@@ -996,13 +994,13 @@ test("concurrent renderings scenario 2", async () => {
       "ComponentA:willRender",
       "ComponentB:setup",
       "ComponentB:willStart",
-      "ComponentA:rendered",
       "ComponentB:willRender",
       "ComponentC:setup",
       "ComponentC:willStart",
-      "ComponentB:rendered",
       "ComponentC:willRender",
       "ComponentC:rendered",
+      "ComponentB:rendered",
+      "ComponentA:rendered",
       "ComponentC:mounted",
       "ComponentB:mounted",
       "ComponentA:mounted",
@@ -1016,10 +1014,10 @@ test("concurrent renderings scenario 2", async () => {
     Array [
       "ComponentA:willRender",
       "ComponentB:willUpdateProps",
-      "ComponentA:rendered",
       "ComponentB:willRender",
       "ComponentC:willUpdateProps",
       "ComponentB:rendered",
+      "ComponentA:rendered",
     ]
   `);
 
@@ -1099,13 +1097,13 @@ test("concurrent renderings scenario 2bis", async () => {
       "ComponentA:willRender",
       "ComponentB:setup",
       "ComponentB:willStart",
-      "ComponentA:rendered",
       "ComponentB:willRender",
       "ComponentC:setup",
       "ComponentC:willStart",
-      "ComponentB:rendered",
       "ComponentC:willRender",
       "ComponentC:rendered",
+      "ComponentB:rendered",
+      "ComponentA:rendered",
       "ComponentC:mounted",
       "ComponentB:mounted",
       "ComponentA:mounted",
@@ -1119,10 +1117,10 @@ test("concurrent renderings scenario 2bis", async () => {
     Array [
       "ComponentA:willRender",
       "ComponentB:willUpdateProps",
-      "ComponentA:rendered",
       "ComponentB:willRender",
       "ComponentC:willUpdateProps",
       "ComponentB:rendered",
+      "ComponentA:rendered",
     ]
   `);
 
@@ -1217,17 +1215,17 @@ test("concurrent renderings scenario 3", async () => {
       "ComponentA:willRender",
       "ComponentB:setup",
       "ComponentB:willStart",
-      "ComponentA:rendered",
       "ComponentB:willRender",
       "ComponentC:setup",
       "ComponentC:willStart",
-      "ComponentB:rendered",
       "ComponentC:willRender",
       "ComponentD:setup",
       "ComponentD:willStart",
-      "ComponentC:rendered",
       "ComponentD:willRender",
       "ComponentD:rendered",
+      "ComponentC:rendered",
+      "ComponentB:rendered",
+      "ComponentA:rendered",
       "ComponentD:mounted",
       "ComponentC:mounted",
       "ComponentB:mounted",
@@ -1258,10 +1256,10 @@ test("concurrent renderings scenario 3", async () => {
     Array [
       "ComponentB:willRender",
       "ComponentC:willUpdateProps",
-      "ComponentB:rendered",
       "ComponentC:willRender",
       "ComponentD:willUpdateProps",
       "ComponentC:rendered",
+      "ComponentB:rendered",
     ]
   `);
 
@@ -1273,12 +1271,12 @@ test("concurrent renderings scenario 3", async () => {
       "ComponentD:willRender",
       "ComponentD:rendered",
       "ComponentA:willPatch",
-      "ComponentB:willPatch",
       "ComponentC:willPatch",
+      "ComponentB:willPatch",
       "ComponentD:willPatch",
       "ComponentD:patched",
-      "ComponentC:patched",
       "ComponentB:patched",
+      "ComponentC:patched",
       "ComponentA:patched",
     ]
   `);
@@ -1343,17 +1341,17 @@ test("concurrent renderings scenario 4", async () => {
       "ComponentA:willRender",
       "ComponentB:setup",
       "ComponentB:willStart",
-      "ComponentA:rendered",
       "ComponentB:willRender",
       "ComponentC:setup",
       "ComponentC:willStart",
-      "ComponentB:rendered",
       "ComponentC:willRender",
       "ComponentD:setup",
       "ComponentD:willStart",
-      "ComponentC:rendered",
       "ComponentD:willRender",
       "ComponentD:rendered",
+      "ComponentC:rendered",
+      "ComponentB:rendered",
+      "ComponentA:rendered",
       "ComponentD:mounted",
       "ComponentC:mounted",
       "ComponentB:mounted",
@@ -1384,10 +1382,10 @@ test("concurrent renderings scenario 4", async () => {
     Array [
       "ComponentB:willRender",
       "ComponentC:willUpdateProps",
-      "ComponentB:rendered",
       "ComponentC:willRender",
       "ComponentD:willUpdateProps",
       "ComponentC:rendered",
+      "ComponentB:rendered",
     ]
   `);
 
@@ -1406,12 +1404,12 @@ test("concurrent renderings scenario 4", async () => {
       "ComponentD:willRender",
       "ComponentD:rendered",
       "ComponentA:willPatch",
-      "ComponentB:willPatch",
       "ComponentC:willPatch",
+      "ComponentB:willPatch",
       "ComponentD:willPatch",
       "ComponentD:patched",
-      "ComponentC:patched",
       "ComponentB:patched",
+      "ComponentC:patched",
       "ComponentA:patched",
     ]
   `);
@@ -1452,9 +1450,9 @@ test("concurrent renderings scenario 5", async () => {
       "ComponentA:willRender",
       "ComponentB:setup",
       "ComponentB:willStart",
-      "ComponentA:rendered",
       "ComponentB:willRender",
       "ComponentB:rendered",
+      "ComponentA:rendered",
       "ComponentB:mounted",
       "ComponentA:mounted",
     ]
@@ -1540,9 +1538,9 @@ test("concurrent renderings scenario 6", async () => {
       "ComponentA:willRender",
       "ComponentB:setup",
       "ComponentB:willStart",
-      "ComponentA:rendered",
       "ComponentB:willRender",
       "ComponentB:rendered",
+      "ComponentA:rendered",
       "ComponentB:mounted",
       "ComponentA:mounted",
     ]
@@ -1628,9 +1626,9 @@ test("concurrent renderings scenario 7", async () => {
       "ComponentA:willRender",
       "ComponentB:setup",
       "ComponentB:willStart",
-      "ComponentA:rendered",
       "ComponentB:willRender",
       "ComponentB:rendered",
+      "ComponentA:rendered",
       "ComponentB:mounted",
       "ComponentA:mounted",
     ]
@@ -1639,11 +1637,13 @@ test("concurrent renderings scenario 7", async () => {
   component.state.fromA = 2;
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><p>2c</p></div>");
-  expect(ComponentB.prototype.someValue).toBeCalledTimes(2);
+  expect(ComponentB.prototype.someValue).toBeCalledTimes(3);
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     Array [
       "ComponentA:willRender",
       "ComponentB:willUpdateProps",
+      "ComponentB:willRender",
+      "ComponentB:rendered",
       "ComponentA:rendered",
       "ComponentB:willRender",
       "ComponentB:rendered",
@@ -1686,9 +1686,9 @@ test("concurrent renderings scenario 8", async () => {
       "ComponentA:willRender",
       "ComponentB:setup",
       "ComponentB:willStart",
-      "ComponentA:rendered",
       "ComponentB:willRender",
       "ComponentB:rendered",
+      "ComponentA:rendered",
       "ComponentB:mounted",
       "ComponentA:mounted",
     ]
@@ -1789,17 +1789,17 @@ test("concurrent renderings scenario 9", async () => {
       "ComponentA:willRender",
       "ComponentB:setup",
       "ComponentB:willStart",
-      "ComponentC:setup",
-      "ComponentC:willStart",
-      "ComponentA:rendered",
       "ComponentB:willRender",
       "ComponentB:rendered",
+      "ComponentC:setup",
+      "ComponentC:willStart",
       "ComponentC:willRender",
       "ComponentD:setup",
       "ComponentD:willStart",
-      "ComponentC:rendered",
       "ComponentD:willRender",
       "ComponentD:rendered",
+      "ComponentC:rendered",
+      "ComponentA:rendered",
       "ComponentD:mounted",
       "ComponentC:mounted",
       "ComponentB:mounted",
@@ -1815,12 +1815,12 @@ test("concurrent renderings scenario 9", async () => {
       "ComponentA:willRender",
       "ComponentB:willUpdateProps",
       "ComponentC:willUpdateProps",
-      "ComponentA:rendered",
       "ComponentC:willRender",
       "ComponentD:willUpdateProps",
-      "ComponentC:rendered",
       "ComponentD:willRender",
       "ComponentD:rendered",
+      "ComponentC:rendered",
+      "ComponentA:rendered",
     ]
   `);
 
@@ -1831,9 +1831,9 @@ test("concurrent renderings scenario 9", async () => {
     Array [
       "ComponentC:willRender",
       "ComponentD:willUpdateProps",
-      "ComponentC:rendered",
       "ComponentD:willRender",
       "ComponentD:rendered",
+      "ComponentC:rendered",
     ]
   `);
 
@@ -1918,9 +1918,9 @@ test("concurrent renderings scenario 10", async () => {
       "ComponentA:willRender",
       "ComponentB:setup",
       "ComponentB:willStart",
-      "ComponentA:rendered",
       "ComponentB:willRender",
       "ComponentB:rendered",
+      "ComponentA:rendered",
       "ComponentB:mounted",
       "ComponentA:mounted",
     ]
@@ -2010,9 +2010,9 @@ test("concurrent renderings scenario 11", async () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]
@@ -2086,9 +2086,9 @@ test("concurrent renderings scenario 12", async () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]
@@ -2175,9 +2175,9 @@ test("concurrent renderings scenario 13", async () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Child:mounted",
       "Parent:mounted",
       "Child:willRender",
@@ -2201,9 +2201,9 @@ test("concurrent renderings scenario 13", async () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Parent:willPatch",
       "Child:mounted",
       "Parent:patched",
@@ -2271,13 +2271,13 @@ test("concurrent renderings scenario 14", async () => {
       "A:willRender",
       "B:setup",
       "B:willStart",
-      "A:rendered",
       "B:willRender",
       "C:setup",
       "C:willStart",
-      "B:rendered",
       "C:willRender",
       "C:rendered",
+      "B:rendered",
+      "A:rendered",
       "C:mounted",
       "B:mounted",
       "A:mounted",
@@ -2297,10 +2297,12 @@ test("concurrent renderings scenario 14", async () => {
     Array [
       "A:willRender",
       "B:willUpdateProps",
-      "A:rendered",
       "B:willRender",
       "C:willUpdateProps",
+      "C:willRender",
+      "C:rendered",
       "B:rendered",
+      "A:rendered",
     ]
   `);
 
@@ -2317,13 +2319,11 @@ test("concurrent renderings scenario 14", async () => {
   );
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     Array [
-      "C:willRender",
-      "C:rendered",
       "B:willRender",
       "C:willUpdateProps",
-      "B:rendered",
       "C:willRender",
       "C:rendered",
+      "B:rendered",
       "A:willPatch",
       "B:willPatch",
       "C:willPatch",
@@ -2378,13 +2378,13 @@ test("concurrent renderings scenario 15", async () => {
       "A:willRender",
       "B:setup",
       "B:willStart",
-      "A:rendered",
       "B:willRender",
       "C:setup",
       "C:willStart",
-      "B:rendered",
       "C:willRender",
       "C:rendered",
+      "B:rendered",
+      "A:rendered",
       "C:mounted",
       "B:mounted",
       "A:mounted",
@@ -2404,10 +2404,12 @@ test("concurrent renderings scenario 15", async () => {
     Array [
       "A:willRender",
       "B:willUpdateProps",
-      "A:rendered",
       "B:willRender",
       "C:willUpdateProps",
+      "C:willRender",
+      "C:rendered",
       "B:rendered",
+      "A:rendered",
     ]
   `);
 
@@ -2426,12 +2428,7 @@ test("concurrent renderings scenario 15", async () => {
   await nextMicroTick();
   app.scheduler.flush();
   expect(fixture.innerHTML).toBe("<p><p><p><span>1</span><span>2</span><span>3</span></p></p></p>");
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    Array [
-      "C:willRender",
-      "C:rendered",
-    ]
-  `);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`Array []`);
 
   await nextTick();
   expect(fixture.innerHTML).toBe(
@@ -2441,9 +2438,9 @@ test("concurrent renderings scenario 15", async () => {
     Array [
       "B:willRender",
       "C:willUpdateProps",
-      "B:rendered",
       "C:willRender",
       "C:rendered",
+      "B:rendered",
       "A:willPatch",
       "B:willPatch",
       "C:willPatch",
@@ -2506,13 +2503,13 @@ test("concurrent renderings scenario 16", async () => {
       "A:willRender",
       "B:setup",
       "B:willStart",
-      "A:rendered",
       "B:willRender",
       "C:setup",
       "C:willStart",
-      "B:rendered",
       "C:willRender",
       "C:rendered",
+      "B:rendered",
+      "A:rendered",
       "C:mounted",
       "B:mounted",
       "A:mounted",
@@ -2533,12 +2530,12 @@ test("concurrent renderings scenario 16", async () => {
     Array [
       "A:willRender",
       "B:willUpdateProps",
-      "A:rendered",
       "B:willRender",
       "C:willUpdateProps",
-      "B:rendered",
       "C:willRender",
       "C:rendered",
+      "B:rendered",
+      "A:rendered",
     ]
   `);
 
@@ -2558,11 +2555,11 @@ test("concurrent renderings scenario 16", async () => {
       "C:rendered",
       "B:willRender",
       "C:willUpdateProps",
-      "B:rendered",
       "C:willRender",
       "D:setup",
       "D:willStart",
       "C:rendered",
+      "B:rendered",
       "D:willDestroy",
     ]
   `);
@@ -2722,7 +2719,7 @@ test("changing state before first render does not trigger a render", async () =>
     setup() {
       useLogLifecycle();
       this.state.drinks++;
-      onWillStart(() => {
+      onWillStart(async () => {
         this.state.drinks++;
       });
     }
@@ -2757,7 +2754,7 @@ test("changing state before first render does not trigger a render (with parent)
     setup() {
       useLogLifecycle();
       this.state.drinks++;
-      onWillStart(() => {
+      onWillStart(async () => {
         this.state.drinks++;
       });
     }
@@ -2843,24 +2840,21 @@ test("two renderings initiated between willPatch and patched", async () => {
       "Parent:willRender",
       "Panel:setup",
       "Panel:willStart",
-      "Parent:rendered",
       "Panel:willRender",
       "Panel:rendered",
+      "Parent:rendered",
       "Panel:mounted",
       "Parent:mounted",
       "Parent:willRender",
       "Panel:willUpdateProps",
+      "Panel:willRender",
+      "Panel:rendered",
       "Parent:rendered",
     ]
   `);
 
   await nextMicroTick();
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    Array [
-      "Panel:willRender",
-      "Panel:rendered",
-    ]
-  `);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`Array []`);
 
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
@@ -2881,9 +2875,9 @@ test("two renderings initiated between willPatch and patched", async () => {
       "Parent:willRender",
       "Panel:setup",
       "Panel:willStart",
-      "Parent:rendered",
       "Panel:willRender",
       "Panel:rendered",
+      "Parent:rendered",
       "Parent:willPatch",
       "Panel:willUnmount",
       "Panel:willDestroy",
@@ -2891,6 +2885,8 @@ test("two renderings initiated between willPatch and patched", async () => {
       "Parent:patched",
       "Parent:willRender",
       "Panel:willUpdateProps",
+      "Panel:willRender",
+      "Panel:rendered",
       "Parent:rendered",
     ]
   `);
@@ -2899,8 +2895,6 @@ test("two renderings initiated between willPatch and patched", async () => {
   expect(fixture.innerHTML).toBe("<div><abc>Panel2Mounted</abc></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     Array [
-      "Panel:willRender",
-      "Panel:rendered",
       "Parent:willPatch",
       "Panel:willPatch",
       "Panel:patched",
@@ -2963,9 +2957,9 @@ test("parent and child rendered at exact same time", async () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]
@@ -2980,9 +2974,9 @@ test("parent and child rendered at exact same time", async () => {
     Array [
       "Parent:willRender",
       "Child:willUpdateProps",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Parent:willPatch",
       "Child:willPatch",
       "Child:patched",
@@ -3026,9 +3020,9 @@ test("delay willUpdateProps", async () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]
@@ -3148,17 +3142,17 @@ test("delay willUpdateProps with rendering grandchild", async () => {
       "GrandParent:willRender",
       "Parent:setup",
       "Parent:willStart",
-      "GrandParent:rendered",
       "Parent:willRender",
       "DelayedChild:setup",
       "DelayedChild:willStart",
-      "ReactiveChild:setup",
-      "ReactiveChild:willStart",
-      "Parent:rendered",
       "DelayedChild:willRender",
       "DelayedChild:rendered",
+      "ReactiveChild:setup",
+      "ReactiveChild:willStart",
       "ReactiveChild:willRender",
       "ReactiveChild:rendered",
+      "Parent:rendered",
+      "GrandParent:rendered",
       "ReactiveChild:mounted",
       "DelayedChild:mounted",
       "Parent:mounted",
@@ -3178,13 +3172,13 @@ test("delay willUpdateProps with rendering grandchild", async () => {
     Array [
       "GrandParent:willRender",
       "Parent:willUpdateProps",
-      "GrandParent:rendered",
       "Parent:willRender",
       "DelayedChild:willUpdateProps",
       "ReactiveChild:willUpdateProps",
-      "Parent:rendered",
       "ReactiveChild:willRender",
       "ReactiveChild:rendered",
+      "Parent:rendered",
+      "GrandParent:rendered",
     ]
   `);
 
@@ -3200,13 +3194,13 @@ test("delay willUpdateProps with rendering grandchild", async () => {
     Array [
       "GrandParent:willRender",
       "Parent:willUpdateProps",
-      "GrandParent:rendered",
       "Parent:willRender",
       "DelayedChild:willUpdateProps",
       "ReactiveChild:willUpdateProps",
-      "Parent:rendered",
       "ReactiveChild:willRender",
       "ReactiveChild:rendered",
+      "Parent:rendered",
+      "GrandParent:rendered",
     ]
   `);
 
@@ -3218,12 +3212,12 @@ test("delay willUpdateProps with rendering grandchild", async () => {
       "DelayedChild:willRender",
       "DelayedChild:rendered",
       "GrandParent:willPatch",
-      "Parent:willPatch",
       "ReactiveChild:willPatch",
+      "Parent:willPatch",
       "DelayedChild:willPatch",
       "DelayedChild:patched",
-      "ReactiveChild:patched",
       "Parent:patched",
+      "ReactiveChild:patched",
       "GrandParent:patched",
     ]
   `);
@@ -3266,9 +3260,9 @@ test("two sequential renderings before an animation frame", async () => {
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]
@@ -3285,9 +3279,9 @@ test("two sequential renderings before an animation frame", async () => {
     Array [
       "Parent:willRender",
       "Child:willUpdateProps",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
     ]
   `);
 
@@ -3303,9 +3297,9 @@ test("two sequential renderings before an animation frame", async () => {
     Array [
       "Parent:willRender",
       "Child:willUpdateProps",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
     ]
   `);
 
@@ -3581,9 +3575,9 @@ test("rendering parent twice, with different props on child and stuff", async ()
       "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]
@@ -3599,9 +3593,9 @@ test("rendering parent twice, with different props on child and stuff", async ()
     Array [
       "Parent:willRender",
       "Child:willUpdateProps",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
     ]
   `);
   expect(fixture.innerHTML).toBe("1");
@@ -3614,9 +3608,9 @@ test("rendering parent twice, with different props on child and stuff", async ()
     Array [
       "Parent:willRender",
       "Child:willUpdateProps",
-      "Parent:rendered",
       "Child:willRender",
       "Child:rendered",
+      "Parent:rendered",
       "Parent:willPatch",
       "Child:willPatch",
       "Child:patched",
@@ -3677,17 +3671,17 @@ test("delayed rendering, but then initial rendering is cancelled by yet another 
       "A:willRender",
       "B:setup",
       "B:willStart",
-      "A:rendered",
       "B:willRender",
       "C:setup",
       "C:willStart",
-      "B:rendered",
       "C:willRender",
       "D:setup",
       "D:willStart",
-      "C:rendered",
       "D:willRender",
       "D:rendered",
+      "C:rendered",
+      "B:rendered",
+      "A:rendered",
       "D:mounted",
       "C:mounted",
       "B:mounted",
@@ -3718,10 +3712,10 @@ test("delayed rendering, but then initial rendering is cancelled by yet another 
     Array [
       "A:willRender",
       "B:willUpdateProps",
-      "A:rendered",
       "B:willRender",
       "C:willUpdateProps",
       "B:rendered",
+      "A:rendered",
     ]
   `);
 
@@ -3798,13 +3792,13 @@ test("delayed rendering, reusing fiber and stuff", async () => {
       "A:willRender",
       "B:setup",
       "B:willStart",
-      "A:rendered",
       "B:willRender",
       "C:setup",
       "C:willStart",
-      "B:rendered",
       "C:willRender",
       "C:rendered",
+      "B:rendered",
+      "A:rendered",
       "C:mounted",
       "B:mounted",
       "A:mounted",
@@ -3901,13 +3895,13 @@ test("delayed rendering, then component is destroyed and  stuff", async () => {
       "A:willRender",
       "B:setup",
       "B:willStart",
-      "A:rendered",
       "B:willRender",
       "C:setup",
       "C:willStart",
-      "B:rendered",
       "C:willRender",
       "C:rendered",
+      "B:rendered",
+      "A:rendered",
       "C:mounted",
       "B:mounted",
       "A:mounted",
@@ -3989,13 +3983,13 @@ test("delayed rendering, reusing fiber then component is destroyed and  stuff", 
       "A:willRender",
       "B:setup",
       "B:willStart",
-      "A:rendered",
       "B:willRender",
       "C:setup",
       "C:willStart",
-      "B:rendered",
       "C:willRender",
       "C:rendered",
+      "B:rendered",
+      "A:rendered",
       "C:mounted",
       "B:mounted",
       "A:mounted",
@@ -4085,13 +4079,13 @@ test("another scenario with delayed rendering", async () => {
       "A:willRender",
       "B:setup",
       "B:willStart",
-      "A:rendered",
       "B:willRender",
       "C:setup",
       "C:willStart",
-      "B:rendered",
       "C:willRender",
       "C:rendered",
+      "B:rendered",
+      "A:rendered",
       "C:mounted",
       "B:mounted",
       "A:mounted",
@@ -4197,15 +4191,15 @@ test("delayed fiber does not get rendered if it was cancelled", async () => {
       "A:setup",
       "A:willRender",
       "B:setup",
-      "A:rendered",
       "B:willRender",
       "C:setup",
-      "B:rendered",
       "C:willRender",
       "D:setup",
-      "C:rendered",
       "D:willRender",
       "D:rendered",
+      "C:rendered",
+      "B:rendered",
+      "A:rendered",
       "D:mounted",
       "C:mounted",
       "B:mounted",
@@ -4218,6 +4212,8 @@ test("delayed fiber does not get rendered if it was cancelled", async () => {
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     Array [
       "C:willRender",
+      "D:willRender",
+      "D:rendered",
       "C:rendered",
     ]
   `);
@@ -4229,20 +4225,20 @@ test("delayed fiber does not get rendered if it was cancelled", async () => {
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     Array [
       "A:willRender",
-      "A:rendered",
       "B:willRender",
-      "B:rendered",
       "C:willRender",
-      "C:rendered",
       "D:willRender",
       "D:rendered",
+      "C:rendered",
+      "B:rendered",
+      "A:rendered",
       "A:willPatch",
-      "B:willPatch",
-      "C:willPatch",
       "D:willPatch",
-      "D:patched",
-      "C:patched",
+      "C:willPatch",
+      "B:willPatch",
       "B:patched",
+      "C:patched",
+      "D:patched",
       "A:patched",
     ]
   `);
@@ -4310,13 +4306,13 @@ test("destroyed component causes other soon to be destroyed component to rerende
       "A:willRender",
       "B:setup",
       "B:willStart",
-      "C:setup",
-      "C:willStart",
-      "A:rendered",
       "B:willRender",
       "B:rendered",
+      "C:setup",
+      "C:willStart",
       "C:willRender",
       "C:rendered",
+      "A:rendered",
     ]
   `);
 
@@ -4328,13 +4324,13 @@ test("destroyed component causes other soon to be destroyed component to rerende
       "A:willRender",
       "B:setup",
       "B:willStart",
-      "C:setup",
-      "C:willStart",
-      "A:rendered",
       "B:willRender",
       "B:rendered",
+      "C:setup",
+      "C:willStart",
       "C:willRender",
       "C:rendered",
+      "A:rendered",
       "B:willDestroy",
       "C:willDestroy",
       "A:willPatch",
@@ -4399,17 +4395,17 @@ test("delayed rendering, destruction, stuff happens", async () => {
       "A:willRender",
       "B:setup",
       "B:willStart",
-      "A:rendered",
       "B:willRender",
       "C:setup",
       "C:willStart",
-      "B:rendered",
       "C:willRender",
       "D:setup",
       "D:willStart",
-      "C:rendered",
       "D:willRender",
       "D:rendered",
+      "C:rendered",
+      "B:rendered",
+      "A:rendered",
       "D:mounted",
       "C:mounted",
       "B:mounted",
@@ -4424,10 +4420,10 @@ test("delayed rendering, destruction, stuff happens", async () => {
     Array [
       "A:willRender",
       "B:willUpdateProps",
-      "A:rendered",
       "B:willRender",
       "C:willUpdateProps",
       "B:rendered",
+      "A:rendered",
     ]
   `);
 
@@ -4506,19 +4502,19 @@ test("renderings, destruction, patch, stuff, ... yet another variation", async (
       "A:willRender",
       "B:setup",
       "B:willStart",
-      "D:setup",
-      "D:willStart",
-      "A:rendered",
       "B:willRender",
       "C:setup",
       "C:willStart",
-      "B:rendered",
-      "D:willRender",
-      "D:rendered",
       "C:willRender",
       "C:rendered",
-      "C:mounted",
+      "B:rendered",
+      "D:setup",
+      "D:willStart",
+      "D:willRender",
+      "D:rendered",
+      "A:rendered",
       "D:mounted",
+      "C:mounted",
       "B:mounted",
       "A:mounted",
     ]
@@ -4604,9 +4600,9 @@ test("delayed render does not go through when t-component value changed", async 
       "A:setup",
       "A:willRender",
       "B:setup",
-      "A:rendered",
       "B:willRender",
       "B:rendered",
+      "A:rendered",
       "B:mounted",
       "A:mounted",
     ]
@@ -4621,9 +4617,9 @@ test("delayed render does not go through when t-component value changed", async 
     Array [
       "A:willRender",
       "C:setup",
-      "A:rendered",
       "C:willRender",
       "C:rendered",
+      "A:rendered",
       "A:willPatch",
       "B:willUnmount",
       "B:willDestroy",
@@ -4666,9 +4662,9 @@ test("delayed render is not cancelled by upcoming render", async () => {
       "A:willRender",
       "B:setup",
       "B:willStart",
-      "A:rendered",
       "B:willRender",
       "B:rendered",
+      "A:rendered",
       "B:mounted",
       "A:mounted",
     ]
@@ -4690,9 +4686,9 @@ test("delayed render is not cancelled by upcoming render", async () => {
     Array [
       "A:willRender",
       "B:willUpdateProps",
-      "A:rendered",
       "B:willRender",
       "B:rendered",
+      "A:rendered",
     ]
   `);
 
@@ -4702,9 +4698,9 @@ test("delayed render is not cancelled by upcoming render", async () => {
     Array [
       "A:willRender",
       "B:willUpdateProps",
-      "A:rendered",
       "B:willRender",
       "B:rendered",
+      "A:rendered",
       "A:willPatch",
       "B:willPatch",
       "B:patched",
@@ -4785,9 +4781,9 @@ test("components are not destroyed between animation frame", async () => {
       "B:willRender",
       "C:setup",
       "C:willStart",
-      "B:rendered",
       "C:willRender",
       "C:rendered",
+      "B:rendered",
       "B:willDestroy",
       "A:willPatch",
       "C:mounted",
@@ -4824,9 +4820,9 @@ test("component destroyed just after render", async () => {
       "A:willRender",
       "B:setup",
       "B:willStart",
-      "A:rendered",
       "B:willRender",
       "B:rendered",
+      "A:rendered",
       "B:mounted",
       "A:mounted",
     ]

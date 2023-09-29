@@ -151,9 +151,10 @@ describe("reactivity in lifecycle", () => {
       }
     }
     const prom = mount(Comp, fixture);
+    expect(steps).toEqual([1]);
     (STATE as any).val = 2;
     await prom;
-    expect(steps).toEqual([2]);
+    expect(steps).toEqual([1, 2]);
     expect(fixture.innerHTML).toBe("<div>2</div>");
   });
 
@@ -182,9 +183,9 @@ describe("reactivity in lifecycle", () => {
         "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
         "Child:willRender",
         "Child:rendered",
+        "Parent:rendered",
         "Child:mounted",
         "Parent:mounted",
       ]

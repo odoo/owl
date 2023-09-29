@@ -76,8 +76,9 @@ describe("basics", () => {
     }
     const app = new App(Parent);
     let error: Error;
+    const appError = nextAppError(app);
     const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
+    await expect(appError).resolves.toThrow(
       'Cannot find the definition of component "SomeMispelledComponent"'
     );
     await mountProm;
@@ -96,8 +97,9 @@ describe("basics", () => {
     }
     const app = new App(Parent, { test: true });
     let error: Error;
+    const appError = nextAppError(app);
     const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
+    await expect(appError).resolves.toThrow(
       'Cannot find the definition of component "SomeMispelledComponent"'
     );
     await mountProm;
@@ -116,8 +118,9 @@ describe("basics", () => {
     }
     const app = new App(Parent as typeof Component);
     let error: Error;
+    const appError = nextAppError(app);
     const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
+    await expect(appError).resolves.toThrow(
       '"SomeComponent" is not a Component. It must inherit from the Component class'
     );
     await mountProm;
@@ -133,8 +136,9 @@ describe("basics", () => {
     }
     const app = new App(Parent as typeof Component);
     let error: Error;
+    const appError = nextAppError(app);
     const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
+    await expect(appError).resolves.toThrow(
       'Cannot find the definition of component "MissingChild", missing static components key in parent'
     );
     await mountProm;
@@ -197,8 +201,9 @@ function(app, bdom, helpers) {
 }`;
     const app = new App(Parent as typeof Component);
     let error: Error;
+    const appError = nextAppError(app);
     const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(expectedErrorMessage);
+    await expect(appError).resolves.toThrow(expectedErrorMessage);
     await mountProm;
     expect(error!).toBeDefined();
     expect(error!.message).toBe(expectedErrorMessage);
@@ -244,8 +249,9 @@ describe("errors and promises", () => {
 
     const app = new App(Root);
     let error: OwlError;
+    const appError = nextAppError(app);
     const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
+    await expect(appError).resolves.toThrow("error occured in the owl lifecycle");
     await mountProm;
     expect(error!).toBeDefined();
     expect(error!.cause).toBeDefined();
@@ -268,8 +274,9 @@ describe("errors and promises", () => {
 
     const app = new App(Root);
     let error: OwlError;
+    const appError = nextAppError(app);
     const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
+    await expect(appError).resolves.toThrow("error occured in the owl lifecycle");
     await mountProm;
     expect(error!).toBeDefined();
     expect(error!.cause).toBeDefined();
@@ -291,8 +298,9 @@ describe("errors and promises", () => {
 
     const app = new App(Root, { test: true });
     let error: OwlError;
+    const appError = nextAppError(app);
     const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occurred in onMounted");
+    await expect(appError).resolves.toThrow("error occurred in onMounted");
     await mountProm;
     expect(error!).toBeDefined();
     expect(error!.stack).toContain("Root.setup");
@@ -317,8 +325,9 @@ describe("errors and promises", () => {
 
     const app = new App(Root, { test: true });
     let error: OwlError;
+    const appError = nextAppError(app);
     const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occurred in onWillRender");
+    await expect(appError).resolves.toThrow("error occurred in onWillRender");
     await mountProm;
     expect(error!).toBeDefined();
     expect(error!.message).toBe(
@@ -358,8 +367,9 @@ describe("errors and promises", () => {
 
     const app = new App(Root, { test: true });
     let error: OwlError;
+    const appError = nextAppError(app);
     const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occurred in onWillStart");
+    await expect(appError).resolves.toThrow("error occurred in onWillStart");
     await mountProm;
     expect(error!).toBeDefined();
     expect(error!.message).toBe(
@@ -426,8 +436,9 @@ describe("errors and promises", () => {
 
     const app = new App(Parent);
     let error: OwlError;
+    const appError = nextAppError(app);
     const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
+    await expect(appError).resolves.toThrow("error occured in the owl lifecycle");
     await mountProm;
     expect(error!).toBeDefined();
     expect(error!.cause).toBeDefined();
@@ -472,8 +483,9 @@ describe("errors and promises", () => {
 
     const app = new App(Parent);
     let error: OwlError;
+    const appError = nextAppError(app);
     const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
+    await expect(appError).resolves.toThrow("error occured in the owl lifecycle");
     await mountProm;
     expect(error!).toBeDefined();
     expect(error!.cause).toBeDefined();
@@ -502,8 +514,9 @@ describe("errors and promises", () => {
 
     const app = new App(Example, { test: true });
     let error: OwlError;
+    const appError = nextAppError(app);
     const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occurred in onMounted");
+    await expect(appError).resolves.toThrow("error occurred in onMounted");
     await mountProm;
     expect(error!.message).toBe(`The following error occurred in onMounted: "Error in mounted"`);
     // 1 additional error is logged because the destruction of the app causes
@@ -577,9 +590,9 @@ describe("can catch errors", () => {
     }
     const app = new App(Root, { test: true });
     let error: OwlError;
-    const crashProm = expect(nextAppError(app)).resolves.toThrow("error occurred in onWillStart");
+    const appError = nextAppError(app);
     await app.mount(fixture).catch((e: Error) => (error = e));
-    await crashProm;
+    await expect(appError).resolves.toThrow("error occurred in onWillStart");
     expect(error!.message).toBe(
       `The following error occurred in onWillStart: "No active component (a hook function should only be called in 'setup')"`
     );
@@ -599,8 +612,9 @@ describe("can catch errors", () => {
     }
     const app = new App(Root, { test: true });
     let error: OwlError;
+    const appError = nextAppError(app);
     const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occurred in onMounted");
+    await expect(appError).resolves.toThrow("error occurred in onMounted");
     await mountProm;
     expect(error!.message).toBe(`The following error occurred in onMounted: "test error"`);
     expect(error!.cause).toBe(err);
@@ -621,8 +635,9 @@ describe("can catch errors", () => {
     }
     const app = new App(Root, { test: true });
     let error: OwlError;
+    const appError = nextAppError(app);
     const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occurred in onWillStart");
+    await expect(appError).resolves.toThrow("error occurred in onWillStart");
     await mountProm;
     expect(error!.message).toBe(`The following error occurred in onWillStart: "test error"`);
     expect(error!.cause).toBe(err);
@@ -642,8 +657,9 @@ describe("can catch errors", () => {
     }
     const app = new App(Root);
     let error: OwlError;
+    const appError = nextAppError(app);
     const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
+    await expect(appError).resolves.toThrow("error occured in the owl lifecycle");
     await mountProm;
     expect(error!.message).toBe(
       `An error occured in the owl lifecycle (see this Error's "cause" property)`
@@ -666,8 +682,9 @@ describe("can catch errors", () => {
     }
     const app = new App(Root);
     let error: OwlError;
+    const appError = nextAppError(app);
     const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
+    await expect(appError).resolves.toThrow("error occured in the owl lifecycle");
     await mountProm;
     expect(error!.message).toBe(
       `An error occured in the owl lifecycle (see this Error's "cause" property)`
@@ -688,8 +705,9 @@ describe("can catch errors", () => {
     }
     const app = new App(Root, { test: true });
     let error: OwlError;
+    const appError = nextAppError(app);
     const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("not an Error was thrown in onMounted");
+    await expect(appError).resolves.toThrow("not an Error was thrown in onMounted");
     await mountProm;
     expect(error!.message).toBe(
       `Something that is not an Error was thrown in onMounted (see this Error's "cause" property)`
@@ -710,8 +728,9 @@ describe("can catch errors", () => {
     }
     const app = new App(Root);
     let error: OwlError;
+    const appError = nextAppError(app);
     const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
+    await expect(appError).resolves.toThrow("error occured in the owl lifecycle");
     await mountProm;
     expect(error!.message).toBe(
       `An error occured in the owl lifecycle (see this Error's "cause" property)`
@@ -956,13 +975,13 @@ describe("can catch errors", () => {
         "Root:willRender",
         "ErrorBoundary:setup",
         "ErrorBoundary:willStart",
-        "Root:rendered",
         "ErrorBoundary:willRender",
         "ErrorComponent:setup",
         "ErrorComponent:willStart",
-        "ErrorBoundary:rendered",
         "ErrorComponent:willRender",
         "ErrorComponent:rendered",
+        "ErrorBoundary:rendered",
+        "Root:rendered",
         "ErrorComponent:mounted",
         "boom",
         "ErrorBoundary:willRender",
@@ -1008,9 +1027,9 @@ describe("can catch errors", () => {
         "Root:willRender",
         "ErrorComponent:setup",
         "ErrorComponent:willStart",
-        "Root:rendered",
         "ErrorComponent:willRender",
         "ErrorComponent:rendered",
+        "Root:rendered",
         "ErrorComponent:mounted",
         "boom",
         "Root:willRender",
@@ -1071,17 +1090,17 @@ describe("can catch errors", () => {
         "A:willRender",
         "B:setup",
         "B:willStart",
-        "A:rendered",
         "B:willRender",
         "C:setup",
         "C:willStart",
-        "B:rendered",
         "C:willRender",
         "Boom:setup",
         "Boom:willStart",
-        "C:rendered",
         "Boom:willRender",
         "Boom:rendered",
+        "C:rendered",
+        "B:rendered",
+        "A:rendered",
         "Boom:mounted",
         "boom",
         "C:willRender",
@@ -1144,17 +1163,17 @@ describe("can catch errors", () => {
         "Root:willRender",
         "OK:setup",
         "OK:willStart",
-        "ErrorBoundary:setup",
-        "ErrorBoundary:willStart",
-        "Root:rendered",
         "OK:willRender",
         "OK:rendered",
+        "ErrorBoundary:setup",
+        "ErrorBoundary:willStart",
         "ErrorBoundary:willRender",
         "ErrorComponent:setup",
         "ErrorComponent:willStart",
-        "ErrorBoundary:rendered",
         "ErrorComponent:willRender",
         "ErrorComponent:rendered",
+        "ErrorBoundary:rendered",
+        "Root:rendered",
         "ErrorComponent:mounted",
         "boom",
         "ErrorBoundary:willRender",
@@ -1497,9 +1516,9 @@ describe("can catch errors", () => {
         "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
         "Child:willRender",
         "Child:rendered",
+        "Parent:rendered",
         "Child:mounted",
         "Parent:mounted",
       ]
@@ -1576,9 +1595,9 @@ describe("can catch errors", () => {
         "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
         "Child:willRender",
         "Child:rendered",
+        "Parent:rendered",
       ]
     `);
     parent.state.hasChild = false;

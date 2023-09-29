@@ -51,8 +51,8 @@ that render its content, and a fallback if an error happened.
 ```js
 class ErrorBoundary extends Component {
   static template = xml`
-    <t t-if="error" t-slot="fallback">An error occurred</t>
-    <t t-else="" t-slot="content"`;
+    <t t-if="state.error" t-slot="fallback">An error occurred</t>
+    <t t-else="" t-slot="default"/>`;
 
   setup() {
     this.state = useState({ error: false });

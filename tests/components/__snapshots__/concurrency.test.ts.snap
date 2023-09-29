@@ -184,7 +184,7 @@ exports[`changing state before first render does not trigger a render (with pare
 }"
 `;
 
-exports[`changing state before first render does not trigger a render (with parent) 2`] = `
+exports[`changing state before first render does not trigger a render (with parent) 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -254,7 +254,7 @@ exports[`components are not destroyed between animation frame 1`] = `
 }"
 `;
 
-exports[`components are not destroyed between animation frame 2`] = `
+exports[`components are not destroyed between animation frame 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -268,7 +268,7 @@ exports[`components are not destroyed between animation frame 2`] = `
 }"
 `;
 
-exports[`components are not destroyed between animation frame 3`] = `
+exports[`components are not destroyed between animation frame 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -748,7 +748,7 @@ exports[`concurrent renderings scenario 10 2`] = `
 }"
 `;
 
-exports[`concurrent renderings scenario 10 3`] = `
+exports[`concurrent renderings scenario 10 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -993,7 +993,7 @@ exports[`concurrent renderings scenario 16 3`] = `
 }"
 `;
 
-exports[`concurrent renderings scenario 16 4`] = `
+exports[`concurrent renderings scenario 16 6`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1024,7 +1024,7 @@ exports[`creating two async components, scenario 1 1`] = `
 }"
 `;
 
-exports[`creating two async components, scenario 1 2`] = `
+exports[`creating two async components, scenario 1 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1038,7 +1038,7 @@ exports[`creating two async components, scenario 1 2`] = `
 }"
 `;
 
-exports[`creating two async components, scenario 1 3`] = `
+exports[`creating two async components, scenario 1 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1085,7 +1085,7 @@ exports[`creating two async components, scenario 2 2`] = `
 }"
 `;
 
-exports[`creating two async components, scenario 2 3`] = `
+exports[`creating two async components, scenario 2 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1133,7 +1133,7 @@ exports[`creating two async components, scenario 3 (patching in the same frame) 
 }"
 `;
 
-exports[`creating two async components, scenario 3 (patching in the same frame) 3`] = `
+exports[`creating two async components, scenario 3 (patching in the same frame) 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1308,7 +1308,7 @@ exports[`delayed render does not go through when t-component value changed 2`] =
 }"
 `;
 
-exports[`delayed render does not go through when t-component value changed 3`] = `
+exports[`delayed render does not go through when t-component value changed 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1617,7 +1617,7 @@ exports[`destroyed component causes other soon to be destroyed component to rere
 }"
 `;
 
-exports[`destroyed component causes other soon to be destroyed component to rerender, weird stuff happens 2`] = `
+exports[`destroyed component causes other soon to be destroyed component to rerender, weird stuff happens 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1628,7 +1628,7 @@ exports[`destroyed component causes other soon to be destroyed component to rere
 }"
 `;
 
-exports[`destroyed component causes other soon to be destroyed component to rerender, weird stuff happens 3`] = `
+exports[`destroyed component causes other soon to be destroyed component to rerender, weird stuff happens 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1656,7 +1656,7 @@ exports[`destroying/recreating a subcomponent, other scenario 1`] = `
 }"
 `;
 
-exports[`destroying/recreating a subcomponent, other scenario 2`] = `
+exports[`destroying/recreating a subcomponent, other scenario 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1685,7 +1685,7 @@ exports[`destroying/recreating a subwidget with different props (if start is not
 }"
 `;
 
-exports[`destroying/recreating a subwidget with different props (if start is not over) 2`] = `
+exports[`destroying/recreating a subwidget with different props (if start is not over) 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1787,7 +1787,7 @@ exports[`rendering component again in next microtick 1`] = `
 }"
 `;
 
-exports[`rendering component again in next microtick 2`] = `
+exports[`rendering component again in next microtick 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

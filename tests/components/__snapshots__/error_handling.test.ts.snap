@@ -241,7 +241,7 @@ exports[`can catch errors an error in onWillDestroy, variation 1`] = `
 }"
 `;
 
-exports[`can catch errors an error in onWillDestroy, variation 2`] = `
+exports[`can catch errors an error in onWillDestroy, variation 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

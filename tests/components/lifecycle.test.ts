@@ -17,6 +17,7 @@ import {
   nextMicroTick,
   nextTick,
   snapshotEverything,
+  steps,
   useLogLifecycle,
 } from "../helpers";
 
@@ -455,45 +456,51 @@ describe("lifecycle hooks", () => {
 
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div><span>0</span></div>");
-    expect([
-      "Parent:setup",
-      "Parent:willStart",
-      "Parent:willRender",
-      "Child:setup",
-      "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:mounted",
-      "Parent:mounted",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:setup",
+        "Parent:willStart",
+        "Parent:willRender",
+        "Child:setup",
+        "Child:willStart",
+        "Parent:rendered",
+        "Child:willRender",
+        "Child:rendered",
+        "Child:mounted",
+        "Parent:mounted",
+      ]
+    `);
 
     parent.increment();
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
-    expect([
-      "Parent:willRender",
-      "Child:willUpdateProps",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Parent:willPatch",
-      "Child:willPatch",
-      "Child:patched",
-      "Parent:patched",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:willRender",
+        "Child:willUpdateProps",
+        "Parent:rendered",
+        "Child:willRender",
+        "Child:rendered",
+        "Parent:willPatch",
+        "Child:willPatch",
+        "Child:patched",
+        "Parent:patched",
+      ]
+    `);
 
     parent.toggleSubWidget();
     await nextTick();
     expect(fixture.innerHTML).toBe("");
-    expect([
-      "Parent:willRender",
-      "Parent:rendered",
-      "Parent:willPatch",
-      "Child:willUnmount",
-      "Child:willDestroy",
-      "Parent:patched",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:willRender",
+        "Parent:rendered",
+        "Parent:willPatch",
+        "Child:willUnmount",
+        "Child:willDestroy",
+        "Parent:patched",
+      ]
+    `);
   });
 
   test("hooks are called in proper order in widget creation/destruction", async () => {
@@ -514,26 +521,30 @@ describe("lifecycle hooks", () => {
 
     const app = new App(Parent);
     await app.mount(fixture);
-    expect([
-      "Parent:setup",
-      "Parent:willStart",
-      "Parent:willRender",
-      "Child:setup",
-      "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:mounted",
-      "Parent:mounted",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:setup",
+        "Parent:willStart",
+        "Parent:willRender",
+        "Child:setup",
+        "Child:willStart",
+        "Parent:rendered",
+        "Child:willRender",
+        "Child:rendered",
+        "Child:mounted",
+        "Parent:mounted",
+      ]
+    `);
 
     app.destroy();
-    expect([
-      "Parent:willUnmount",
-      "Child:willUnmount",
-      "Child:willDestroy",
-      "Parent:willDestroy",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:willUnmount",
+        "Child:willUnmount",
+        "Child:willDestroy",
+        "Parent:willDestroy",
+      ]
+    `);
   });
 
   test("willUpdateProps hook is called", async () => {
@@ -632,26 +643,30 @@ describe("lifecycle hooks", () => {
 
     const app = new App(Parent);
     await app.mount(fixture);
-    expect([
-      "Parent:setup",
-      "Parent:willStart",
-      "Parent:willRender",
-      "Child:setup",
-      "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:mounted",
-      "Parent:mounted",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:setup",
+        "Parent:willStart",
+        "Parent:willRender",
+        "Child:setup",
+        "Child:willStart",
+        "Parent:rendered",
+        "Child:willRender",
+        "Child:rendered",
+        "Child:mounted",
+        "Parent:mounted",
+      ]
+    `);
 
     app.destroy();
-    expect([
-      "Parent:willUnmount",
-      "Child:willUnmount",
-      "Child:willDestroy",
-      "Parent:willDestroy",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:willUnmount",
+        "Child:willUnmount",
+        "Child:willDestroy",
+        "Parent:willDestroy",
+      ]
+    `);
   });
 
   test("lifecycle semantics, part 2", async () => {
@@ -680,42 +695,48 @@ describe("lifecycle hooks", () => {
 
     const app = new App(Parent);
     const parent = await app.mount(fixture);
-    expect([
-      "Parent:setup",
-      "Parent:willStart",
-      "Parent:willRender",
-      "Parent:rendered",
-      "Parent:mounted",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:setup",
+        "Parent:willStart",
+        "Parent:willRender",
+        "Parent:rendered",
+        "Parent:mounted",
+      ]
+    `);
 
     parent.state.hasChild = true;
     await nextTick();
-    expect([
-      "Parent:willRender",
-      "Child:setup",
-      "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "GrandChild:setup",
-      "GrandChild:willStart",
-      "Child:rendered",
-      "GrandChild:willRender",
-      "GrandChild:rendered",
-      "Parent:willPatch",
-      "GrandChild:mounted",
-      "Child:mounted",
-      "Parent:patched",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:willRender",
+        "Child:setup",
+        "Child:willStart",
+        "Parent:rendered",
+        "Child:willRender",
+        "GrandChild:setup",
+        "GrandChild:willStart",
+        "Child:rendered",
+        "GrandChild:willRender",
+        "GrandChild:rendered",
+        "Parent:willPatch",
+        "GrandChild:mounted",
+        "Child:mounted",
+        "Parent:patched",
+      ]
+    `);
 
     app.destroy();
-    expect([
-      "Parent:willUnmount",
-      "Child:willUnmount",
-      "GrandChild:willUnmount",
-      "GrandChild:willDestroy",
-      "Child:willDestroy",
-      "Parent:willDestroy",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:willUnmount",
+        "Child:willUnmount",
+        "GrandChild:willUnmount",
+        "GrandChild:willDestroy",
+        "Child:willDestroy",
+        "Parent:willDestroy",
+      ]
+    `);
   });
 
   test("lifecycle semantics, part 3", async () => {
@@ -744,19 +765,26 @@ describe("lifecycle hooks", () => {
 
     const app = new App(Parent);
     const parent = await app.mount(fixture);
-    expect([
-      "Parent:setup",
-      "Parent:willStart",
-      "Parent:willRender",
-      "Parent:rendered",
-      "Parent:mounted",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:setup",
+        "Parent:willStart",
+        "Parent:willRender",
+        "Parent:rendered",
+        "Parent:mounted",
+      ]
+    `);
 
     parent.state.hasChild = true;
     // immediately destroy everything
     app.destroy();
     await nextTick();
-    expect(["Parent:willUnmount", "Parent:willDestroy"]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:willUnmount",
+        "Parent:willDestroy",
+      ]
+    `);
   });
 
   test("lifecycle semantics, part 4", async () => {
@@ -789,34 +817,40 @@ describe("lifecycle hooks", () => {
     const app = new App(Parent);
     const parent = await app.mount(fixture);
 
-    expect([
-      "Parent:setup",
-      "Parent:willStart",
-      "Parent:willRender",
-      "Parent:rendered",
-      "Parent:mounted",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:setup",
+        "Parent:willStart",
+        "Parent:willRender",
+        "Parent:rendered",
+        "Parent:mounted",
+      ]
+    `);
 
     parent.state.hasChild = true;
     await nextTick();
-    expect([
-      "Parent:willRender",
-      "Child:setup",
-      "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "GrandChild:setup",
-      "GrandChild:willStart",
-      "Child:rendered",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:willRender",
+        "Child:setup",
+        "Child:willStart",
+        "Parent:rendered",
+        "Child:willRender",
+        "GrandChild:setup",
+        "GrandChild:willStart",
+        "Child:rendered",
+      ]
+    `);
 
     app.destroy();
-    expect([
-      "Parent:willUnmount",
-      "GrandChild:willDestroy",
-      "Child:willDestroy",
-      "Parent:willDestroy",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:willUnmount",
+        "GrandChild:willDestroy",
+        "Child:willDestroy",
+        "Parent:willDestroy",
+      ]
+    `);
   });
 
   test("lifecycle semantics, part 5", async () => {
@@ -837,29 +871,33 @@ describe("lifecycle hooks", () => {
     }
 
     const parent = await mount(Parent, fixture);
-    expect([
-      "Parent:setup",
-      "Parent:willStart",
-      "Parent:willRender",
-      "Child:setup",
-      "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:mounted",
-      "Parent:mounted",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:setup",
+        "Parent:willStart",
+        "Parent:willRender",
+        "Child:setup",
+        "Child:willStart",
+        "Parent:rendered",
+        "Child:willRender",
+        "Child:rendered",
+        "Child:mounted",
+        "Parent:mounted",
+      ]
+    `);
 
     parent.state.hasChild = false;
     await nextTick();
-    expect([
-      "Parent:willRender",
-      "Parent:rendered",
-      "Parent:willPatch",
-      "Child:willUnmount",
-      "Child:willDestroy",
-      "Parent:patched",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:willRender",
+        "Parent:rendered",
+        "Parent:willPatch",
+        "Child:willUnmount",
+        "Child:willDestroy",
+        "Parent:patched",
+      ]
+    `);
   });
 
   test("lifecycle semantics, part 6", async () => {
@@ -880,32 +918,36 @@ describe("lifecycle hooks", () => {
     }
 
     const parent = await mount(Parent, fixture);
-    expect([
-      "Parent:setup",
-      "Parent:willStart",
-      "Parent:willRender",
-      "Child:setup",
-      "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:mounted",
-      "Parent:mounted",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:setup",
+        "Parent:willStart",
+        "Parent:willRender",
+        "Child:setup",
+        "Child:willStart",
+        "Parent:rendered",
+        "Child:willRender",
+        "Child:rendered",
+        "Child:mounted",
+        "Parent:mounted",
+      ]
+    `);
 
     parent.state.value = 2;
     await nextTick();
-    expect([
-      "Parent:willRender",
-      "Child:willUpdateProps",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Parent:willPatch",
-      "Child:willPatch",
-      "Child:patched",
-      "Parent:patched",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:willRender",
+        "Child:willUpdateProps",
+        "Parent:rendered",
+        "Child:willRender",
+        "Child:rendered",
+        "Parent:willPatch",
+        "Child:willPatch",
+        "Child:patched",
+        "Parent:patched",
+      ]
+    `);
   });
 
   test("onWillRender", async () => {
@@ -937,43 +979,53 @@ describe("lifecycle hooks", () => {
 
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<button>1</button>");
-    expect([
-      "Parent:setup",
-      "Parent:willStart",
-      "Parent:willRender",
-      "Child:setup",
-      "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:mounted",
-      "Parent:mounted",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:setup",
+        "Parent:willStart",
+        "Parent:willRender",
+        "Child:setup",
+        "Child:willStart",
+        "Parent:rendered",
+        "Child:willRender",
+        "Child:rendered",
+        "Child:mounted",
+        "Parent:mounted",
+      ]
+    `);
 
     parent.state.value++; // to block child render
     await nextTick();
-    expect(["Parent:willRender", "Child:willUpdateProps", "Parent:rendered"]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:willRender",
+        "Child:willUpdateProps",
+        "Parent:rendered",
+      ]
+    `);
 
     fixture.querySelector("button")!.click();
     await nextTick();
-    expect([]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`Array []`);
 
     fixture.querySelector("button")!.click();
     await nextTick();
-    expect([]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`Array []`);
     expect(fixture.innerHTML).toBe("<button>1</button>");
 
     def.resolve();
     await nextTick();
     expect(fixture.innerHTML).toBe("<button>3</button>");
-    expect([
-      "Child:willRender",
-      "Child:rendered",
-      "Parent:willPatch",
-      "Child:willPatch",
-      "Child:patched",
-      "Parent:patched",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Child:willRender",
+        "Child:rendered",
+        "Parent:willPatch",
+        "Child:willPatch",
+        "Child:patched",
+        "Parent:patched",
+      ]
+    `);
   });
 
   // TODO: rename (remove? seems covered by lifecycle semantics)
@@ -1054,50 +1106,54 @@ describe("lifecycle hooks", () => {
 
     await mount(A, fixture);
     expect(fixture.innerHTML).toBe(`<div>A<div>B</div><div>C<div>D</div><div>E</div></div></div>`);
-    expect([
-      "A:setup",
-      "A:willStart",
-      "A:willRender",
-      "B:setup",
-      "B:willStart",
-      "C:setup",
-      "C:willStart",
-      "A:rendered",
-      "B:willRender",
-      "B:rendered",
-      "C:willRender",
-      "D:setup",
-      "D:willStart",
-      "E:setup",
-      "E:willStart",
-      "C:rendered",
-      "D:willRender",
-      "D:rendered",
-      "E:willRender",
-      "E:rendered",
-      "E:mounted",
-      "D:mounted",
-      "C:mounted",
-      "B:mounted",
-      "A:mounted",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "A:setup",
+        "A:willStart",
+        "A:willRender",
+        "B:setup",
+        "B:willStart",
+        "C:setup",
+        "C:willStart",
+        "A:rendered",
+        "B:willRender",
+        "B:rendered",
+        "C:willRender",
+        "D:setup",
+        "D:willStart",
+        "E:setup",
+        "E:willStart",
+        "C:rendered",
+        "D:willRender",
+        "D:rendered",
+        "E:willRender",
+        "E:rendered",
+        "E:mounted",
+        "D:mounted",
+        "C:mounted",
+        "B:mounted",
+        "A:mounted",
+      ]
+    `);
 
     // update
     c!.state.flag = false;
     await nextTick();
-    expect([
-      "C:willRender",
-      "F:setup",
-      "F:willStart",
-      "C:rendered",
-      "F:willRender",
-      "F:rendered",
-      "C:willPatch",
-      "E:willUnmount",
-      "E:willDestroy",
-      "F:mounted",
-      "C:patched",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "C:willRender",
+        "F:setup",
+        "F:willStart",
+        "C:rendered",
+        "F:willRender",
+        "F:rendered",
+        "C:willPatch",
+        "E:willUnmount",
+        "E:willDestroy",
+        "F:mounted",
+        "C:patched",
+      ]
+    `);
   });
 
   test("mounted hook is called on every mount, not just the first one", async () => {
@@ -1118,43 +1174,49 @@ describe("lifecycle hooks", () => {
     }
 
     const parent = await mount(Parent, fixture);
-    expect([
-      "Parent:setup",
-      "Parent:willStart",
-      "Parent:willRender",
-      "Child:setup",
-      "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:mounted",
-      "Parent:mounted",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:setup",
+        "Parent:willStart",
+        "Parent:willRender",
+        "Child:setup",
+        "Child:willStart",
+        "Parent:rendered",
+        "Child:willRender",
+        "Child:rendered",
+        "Child:mounted",
+        "Parent:mounted",
+      ]
+    `);
 
     parent.state.hasChild = false;
     await nextTick();
-    expect([
-      "Parent:willRender",
-      "Parent:rendered",
-      "Parent:willPatch",
-      "Child:willUnmount",
-      "Child:willDestroy",
-      "Parent:patched",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:willRender",
+        "Parent:rendered",
+        "Parent:willPatch",
+        "Child:willUnmount",
+        "Child:willDestroy",
+        "Parent:patched",
+      ]
+    `);
 
     parent.state.hasChild = true;
     await nextTick();
-    expect([
-      "Parent:willRender",
-      "Child:setup",
-      "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Parent:willPatch",
-      "Child:mounted",
-      "Parent:patched",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:willRender",
+        "Child:setup",
+        "Child:willStart",
+        "Parent:rendered",
+        "Child:willRender",
+        "Child:rendered",
+        "Parent:willPatch",
+        "Child:mounted",
+        "Parent:patched",
+      ]
+    `);
   });
 
   test("render in mounted", async () => {
@@ -1172,19 +1234,26 @@ describe("lifecycle hooks", () => {
 
     await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<span></span>");
-    expect([
-      "Parent:setup",
-      "Parent:willStart",
-      "Parent:willRender",
-      "Parent:rendered",
-      "Parent:mounted",
-      "Parent:willRender",
-      "Parent:rendered",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:setup",
+        "Parent:willStart",
+        "Parent:willRender",
+        "Parent:rendered",
+        "Parent:mounted",
+        "Parent:willRender",
+        "Parent:rendered",
+      ]
+    `);
 
     await nextTick();
     expect(fixture.innerHTML).toBe("<span>Patched</span>");
-    expect(["Parent:willPatch", "Parent:patched"]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:willPatch",
+        "Parent:patched",
+      ]
+    `);
   });
 
   test("render in patched", async () => {
@@ -1205,29 +1274,38 @@ describe("lifecycle hooks", () => {
 
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<span></span>");
-    expect([
-      "Parent:setup",
-      "Parent:willStart",
-      "Parent:willRender",
-      "Parent:rendered",
-      "Parent:mounted",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:setup",
+        "Parent:willStart",
+        "Parent:willRender",
+        "Parent:rendered",
+        "Parent:mounted",
+      ]
+    `);
 
     parent.render();
     await nextTick();
     expect(fixture.innerHTML).toBe("<span></span>");
-    expect([
-      "Parent:willRender",
-      "Parent:rendered",
-      "Parent:willPatch",
-      "Parent:patched",
-      "Parent:willRender",
-      "Parent:rendered",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:willRender",
+        "Parent:rendered",
+        "Parent:willPatch",
+        "Parent:patched",
+        "Parent:willRender",
+        "Parent:rendered",
+      ]
+    `);
 
     await nextTick();
     expect(fixture.innerHTML).toBe("<span>Patched</span>");
-    expect(["Parent:willPatch", "Parent:patched"]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:willPatch",
+        "Parent:patched",
+      ]
+    `);
   });
 
   test("render in willPatch", async () => {
@@ -1248,29 +1326,38 @@ describe("lifecycle hooks", () => {
 
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<span></span>");
-    expect([
-      "Parent:setup",
-      "Parent:willStart",
-      "Parent:willRender",
-      "Parent:rendered",
-      "Parent:mounted",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:setup",
+        "Parent:willStart",
+        "Parent:willRender",
+        "Parent:rendered",
+        "Parent:mounted",
+      ]
+    `);
 
     parent.render();
     await nextTick();
     expect(fixture.innerHTML).toBe("<span></span>");
 
-    expect([
-      "Parent:willRender",
-      "Parent:rendered",
-      "Parent:willPatch",
-      "Parent:patched",
-      "Parent:willRender",
-      "Parent:rendered",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:willRender",
+        "Parent:rendered",
+        "Parent:willPatch",
+        "Parent:patched",
+        "Parent:willRender",
+        "Parent:rendered",
+      ]
+    `);
 
     await nextTick();
-    expect(["Parent:willPatch", "Parent:patched"]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:willPatch",
+        "Parent:patched",
+      ]
+    `);
     expect(fixture.innerHTML).toBe("<span>Patched</span>");
   });
 
@@ -1313,19 +1400,21 @@ describe("lifecycle hooks", () => {
     await nextTick();
     app.destroy();
 
-    expect([
-      "onWillStart",
-      "onWillRender",
-      "onRendered",
-      "onMounted",
-      "onWillUpdateProps",
-      "onWillRender",
-      "onRendered",
-      "onWillPatch",
-      "onPatched",
-      "onWillUnmount",
-      "onWillDestroy",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "onWillStart",
+        "onWillRender",
+        "onRendered",
+        "onMounted",
+        "onWillUpdateProps",
+        "onWillRender",
+        "onRendered",
+        "onWillPatch",
+        "onPatched",
+        "onWillUnmount",
+        "onWillDestroy",
+      ]
+    `);
   });
 
   test("destroy new children before being mountged", async () => {
@@ -1357,26 +1446,30 @@ describe("lifecycle hooks", () => {
     const app = new App(Parent);
     const parent = await app.mount(fixture);
     expect(fixture.innerHTML).toBe("beforeafter");
-    expect([
-      "Parent:setup",
-      "Parent:willStart",
-      "Parent:willRender",
-      "Parent:rendered",
-      "Parent:mounted",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:setup",
+        "Parent:willStart",
+        "Parent:willRender",
+        "Parent:rendered",
+        "Parent:mounted",
+      ]
+    `);
 
     parent.state.flag = true;
 
     await nextTick();
     expect(fixture.innerHTML).toBe("");
-    expect([
-      "Parent:willRender",
-      "Child:setup",
-      "Child:willStart",
-      "Parent:rendered",
-      "Parent:willUnmount",
-      "Child:willDestroy",
-      "Parent:willDestroy",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:willRender",
+        "Child:setup",
+        "Child:willStart",
+        "Parent:rendered",
+        "Parent:willUnmount",
+        "Child:willDestroy",
+        "Parent:willDestroy",
+      ]
+    `);
   });
 });

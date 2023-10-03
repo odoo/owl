@@ -115,6 +115,9 @@ export const store = reactive({
     }
     keepEnvLit(details);
     this.activeComponent = details;
+    if (this.componentSearch.search.length) {
+      this.updateSearch(this.componentSearch.search);
+    }
   },
 
   // Select a component by retrieving its details from the page based on its path

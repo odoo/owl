@@ -748,7 +748,7 @@
           child.contentType = "object";
           child.content = this.serializer.serializeItem(Object.getPrototypeOf(parentObj), true);
           child.hasChildren = true;
-          if (!oldTree && type === "env") {
+          if (!oldTree && type === "env" && Object.getPrototypeOf(parentObj) !== Object.prototype) {
             child.toggled = true;
           }
           break;

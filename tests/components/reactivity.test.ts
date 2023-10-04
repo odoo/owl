@@ -9,7 +9,7 @@ import {
   xml,
   toRaw,
 } from "../../src";
-import { makeTestFixture, nextTick, snapshotEverything, useLogLifecycle } from "../helpers";
+import { makeTestFixture, nextTick, snapshotEverything, steps, useLogLifecycle } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -151,9 +151,10 @@ describe("reactivity in lifecycle", () => {
       }
     }
     const prom = mount(Comp, fixture);
+    expect(steps).toEqual([1]);
     (STATE as any).val = 2;
     await prom;
-    expect(steps).toEqual([2]);
+    expect(steps).toEqual([1, 2]);
     expect(fixture.innerHTML).toBe("<div>2</div>");
   });
 
@@ -175,30 +176,34 @@ describe("reactivity in lifecycle", () => {
 
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("2");
-    expect([
-      "Parent:setup",
-      "Parent:willStart",
-      "Parent:willRender",
-      "Child:setup",
-      "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:mounted",
-      "Parent:mounted",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:setup",
+        "Parent:willStart",
+        "Parent:willRender",
+        "Child:setup",
+        "Child:willStart",
+        "Child:willRender",
+        "Child:rendered",
+        "Parent:rendered",
+        "Child:mounted",
+        "Parent:mounted",
+      ]
+    `);
 
     parent.state.content = null;
     parent.state.renderChild = false;
     await nextTick();
-    expect([
-      "Parent:willRender",
-      "Parent:rendered",
-      "Parent:willPatch",
-      "Child:willUnmount",
-      "Child:willDestroy",
-      "Parent:patched",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:willRender",
+        "Parent:rendered",
+        "Parent:willPatch",
+        "Child:willUnmount",
+        "Child:willDestroy",
+        "Parent:patched",
+      ]
+    `);
   });
 
   test("Component is automatically subscribed to reactive object received as prop", async () => {

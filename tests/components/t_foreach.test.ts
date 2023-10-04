@@ -4,6 +4,7 @@ import {
   nextAppError,
   nextTick,
   snapshotEverything,
+  steps,
   useLogLifecycle,
 } from "../helpers";
 
@@ -91,23 +92,25 @@ describe("list of components", () => {
     expect(fixture.innerHTML).toBe(
       "<div><ul><li><div>1</div></li><li><div>2</div></li></ul></div>"
     );
-    expect([
-      "Parent:setup",
-      "Parent:willStart",
-      "Parent:willRender",
-      "Child:setup",
-      "Child:willStart",
-      "Child:setup",
-      "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:mounted",
-      "Child:mounted",
-      "Parent:mounted",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Parent:setup",
+        "Parent:willStart",
+        "Parent:willRender",
+        "Child:setup",
+        "Child:willStart",
+        "Child:willRender",
+        "Child:rendered",
+        "Child:setup",
+        "Child:willStart",
+        "Child:willRender",
+        "Child:rendered",
+        "Parent:rendered",
+        "Child:mounted",
+        "Child:mounted",
+        "Parent:mounted",
+      ]
+    `);
   });
 
   test("reconciliation alg works for t-foreach in t-foreach", async () => {
@@ -323,10 +326,11 @@ describe("list of components", () => {
     }
 
     const app = new App(Parent, { test: true });
+    const appError = nextAppError(app);
     const mountProm = expect(app.mount(fixture)).rejects.toThrow(
       "Got duplicate key in t-foreach: child"
     );
-    await expect(nextAppError(app)).resolves.toThrow("Got duplicate key in t-foreach: child");
+    await expect(appError).resolves.toThrow("Got duplicate key in t-foreach: child");
     await mountProm;
     console.info = consoleInfo;
     expect(mockConsoleWarn).toBeCalledTimes(1);
@@ -349,12 +353,11 @@ describe("list of components", () => {
     }
 
     const app = new App(Parent, { test: true });
+    const appError = nextAppError(app);
     const mountProm = expect(app.mount(fixture)).rejects.toThrow(
       "Got duplicate key in t-foreach: [object Object]"
     );
-    await expect(nextAppError(app)).resolves.toThrow(
-      "Got duplicate key in t-foreach: [object Object]"
-    );
+    await expect(appError).resolves.toThrow("Got duplicate key in t-foreach: [object Object]");
     await mountProm;
     console.info = consoleInfo;
     expect(mockConsoleWarn).toBeCalledTimes(1);

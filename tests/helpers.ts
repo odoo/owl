@@ -137,7 +137,7 @@ export function snapshotEverything() {
   };
 }
 
-const steps: string[] = [];
+export const steps: string[] = [];
 
 export function logStep(step: string) {
   steps.push(step);
@@ -235,7 +235,7 @@ expect.extend({
     };
 
     const currentSteps = steps.splice(0);
-    const pass = this.equals(currentSteps, expected);
+    let pass = this.equals(currentSteps, expected);
 
     const message = pass
       ? () =>

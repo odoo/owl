@@ -88,3 +88,24 @@ export class Markup extends String {}
 export function markup(value: any) {
   return new Markup(value);
 }
+
+export function possiblySync(computation: Function, onSuccess: Function, onError?: Function) {
+  try {
+    let result;
+    if (onError) {
+      try {
+        result = computation();
+      } catch (e) {
+        return onError(e);
+      }
+    } else {
+      result = computation();
+    }
+    if (typeof result?.then === "function") {
+      return result.then(onSuccess, onError);
+    }
+    return onSuccess(result);
+  } catch (e) {
+    return Promise.reject(e);
+  }
+}

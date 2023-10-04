@@ -270,8 +270,9 @@ describe("Portal", () => {
 
     let error: Error;
     const app = new App(Parent);
+    const appError = nextAppError(app);
     const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("invalid portal target");
+    await expect(appError).resolves.toThrow("invalid portal target");
     await mountProm;
 
     expect(error!).toBeDefined();
@@ -1002,8 +1003,9 @@ describe("Portal: Props validation", () => {
     }
     let error: OwlError;
     const app = new App(Parent);
+    const appError = nextAppError(app);
     const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
+    await expect(appError).resolves.toThrow("error occured in the owl lifecycle");
     await mountProm;
     expect(error!).toBeDefined();
     expect(error!.cause).toBeDefined();
@@ -1021,8 +1023,9 @@ describe("Portal: Props validation", () => {
     }
     let error: Error;
     const app = new App(Parent);
+    const appError = nextAppError(app);
     const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("invalid portal target");
+    await expect(appError).resolves.toThrow("invalid portal target");
     await mountProm;
     expect(error!).toBeDefined();
     expect(error!.message).toBe(`invalid portal target`);

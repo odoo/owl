@@ -223,8 +223,9 @@ describe("slots", () => {
 
     let error: Error;
     const app = new App(Parent);
+    const appError = nextAppError(app);
     const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
+    await expect(appError).resolves.toThrow("error occured in the owl lifecycle");
     await mountProm;
     expect(error!).not.toBeNull();
     expect(mockConsoleWarn).toBeCalledTimes(1);

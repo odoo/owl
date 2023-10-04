@@ -5,6 +5,7 @@ import {
   nextAppError,
   nextTick,
   snapshotEverything,
+  steps,
   useLogLifecycle,
 } from "../helpers";
 import { markup } from "../../src/runtime/utils";
@@ -868,19 +869,26 @@ describe("basics", () => {
 
     const parent = await mount(Parent, fixture);
     expect(Object.keys(parent.__owl__.children).length).toStrictEqual(1);
-    expect([
-      "Child:setup",
-      "Child:willStart",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:mounted",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Child:setup",
+        "Child:willStart",
+        "Child:willRender",
+        "Child:rendered",
+        "Child:mounted",
+      ]
+    `);
 
     parent.ifVar = false;
     parent.render();
     await nextTick();
     expect(Object.keys(parent.__owl__.children).length).toStrictEqual(0);
-    expect(["Child:willUnmount", "Child:willDestroy"]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Child:willUnmount",
+        "Child:willDestroy",
+      ]
+    `);
   });
 
   test("component children doesn't leak (t-key case)", async () => {
@@ -899,27 +907,31 @@ describe("basics", () => {
 
     const parent = await mount(Parent, fixture);
     expect(Object.keys(parent.__owl__.children).length).toStrictEqual(1);
-    expect([
-      "Child:setup",
-      "Child:willStart",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:mounted",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Child:setup",
+        "Child:willStart",
+        "Child:willRender",
+        "Child:rendered",
+        "Child:mounted",
+      ]
+    `);
 
     parent.keyVar = 2;
     parent.render();
     await nextTick();
     expect(Object.keys(parent.__owl__.children).length).toStrictEqual(1);
-    expect([
-      "Child:setup",
-      "Child:willStart",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:willUnmount",
-      "Child:willDestroy",
-      "Child:mounted",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Child:setup",
+        "Child:willStart",
+        "Child:willRender",
+        "Child:rendered",
+        "Child:willUnmount",
+        "Child:willDestroy",
+        "Child:mounted",
+      ]
+    `);
   });
 
   test("GrandChild display is controlled by its GrandParent", async () => {
@@ -943,20 +955,27 @@ describe("basics", () => {
 
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div></div>");
-    expect([
-      "GrandChild:setup",
-      "GrandChild:willStart",
-      "GrandChild:willRender",
-      "GrandChild:rendered",
-      "GrandChild:mounted",
-    ]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "GrandChild:setup",
+        "GrandChild:willStart",
+        "GrandChild:willRender",
+        "GrandChild:rendered",
+        "GrandChild:mounted",
+      ]
+    `);
 
     parent.displayGrandChild = false;
     parent.render();
     await nextTick();
     expect(fixture.innerHTML).toBe("");
 
-    expect(["GrandChild:willUnmount", "GrandChild:willDestroy"]).toBeLogged();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "GrandChild:willUnmount",
+        "GrandChild:willDestroy",
+      ]
+    `);
   });
 });
 

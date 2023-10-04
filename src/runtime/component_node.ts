@@ -6,7 +6,7 @@ import { OwlError } from "../common/owl_error";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";
 import { clearReactivesForCallback, getSubscriptions, reactive, targets } from "./reactivity";
 import { STATUS } from "./status";
-import { batched, Callback } from "./utils";
+import { batched, Callback, possiblySync } from "./utils";
 
 let currentNode: ComponentNode | null = null;
 
@@ -128,21 +128,29 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     this.initiateRender(fiber);
   }
 
-  async initiateRender(fiber: Fiber | MountFiber) {
+  initiateRender(fiber: Fiber | MountFiber) {
     this.fiber = fiber;
     if (this.mounted.length) {
       fiber.root!.mounted.push(fiber);
     }
     const component = this.component;
-    try {
-      await Promise.all(this.willStart.map((f) => f.call(component)));
-    } catch (e) {
-      this.app.handleError({ node: this, error: e });
-      return;
-    }
-    if (this.status === STATUS.NEW && this.fiber === fiber) {
-      fiber.render();
-    }
+    return possiblySync(
+      () => {
+        const willStartResults = this.willStart.map((f) => f.call(component));
+        if (willStartResults.some((r) => typeof r?.then === "function")) {
+          return Promise.all(willStartResults);
+        }
+        return;
+      },
+      () => {
+        if (this.status === STATUS.NEW && this.fiber === fiber) {
+          fiber.render();
+        }
+      },
+      (e: any) => {
+        this.app.handleError({ node: this, error: e });
+      }
+    );
   }
 
   async render(deep: boolean) {
@@ -238,7 +246,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     this.status = STATUS.DESTROYED;
   }
 
-  async updateAndRender(props: P, parentFiber: Fiber) {
+  updateAndRender(props: P, parentFiber: Fiber) {
     this.nextProps = props;
     props = Object.assign({}, props);
     // update
@@ -258,20 +266,29 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
       }
     }
     currentNode = null;
-    const prom = Promise.all(this.willUpdateProps.map((f) => f.call(component, props)));
-    await prom;
-    if (fiber !== this.fiber) {
-      return;
-    }
-    component.props = props;
-    fiber.render();
-    const parentRoot = parentFiber.root!;
-    if (this.willPatch.length) {
-      parentRoot.willPatch.push(fiber);
-    }
-    if (this.patched.length) {
-      parentRoot.patched.push(fiber);
-    }
+    return possiblySync(
+      () => {
+        const willUpdateProps = this.willUpdateProps.map((f) => f.call(component, props));
+        if (willUpdateProps.some((p) => typeof p?.then === "function")) {
+          return Promise.all(willUpdateProps);
+        }
+        return;
+      },
+      () => {
+        if (fiber !== this.fiber) {
+          return;
+        }
+        component.props = props;
+        fiber.render();
+        const parentRoot = parentFiber.root!;
+        if (this.willPatch.length) {
+          parentRoot.willPatch.push(fiber);
+        }
+        if (this.patched.length) {
+          parentRoot.patched.push(fiber);
+        }
+      }
+    );
   }
 
   /**

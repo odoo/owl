@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
   <t t-name="devtools.ComponentSearchBar" owl="1">
-    <div class="pointer-icon ms-1 px-2 py-1" t-on-click.stop='() => this.store.toggleSelector()'>
-      <i title="Select an element in the page to inspect the corresponding component" class="fa fa-mouse-pointer" t-attf-style="color: {{store.componentSearch.activeSelector ? 'var(--active-icon)' : 'var(--text-color)'}};"></i>
+    <div class="mouse-icon p-1" t-on-click.stop='() => this.store.toggleSelector()'>
+      <i title="Select an element in the page to inspect the corresponding component" class="fa fa-fw fa-mouse-pointer" t-attf-style="color: {{store.componentSearch.activeSelector ? 'var(--active-icon)' : 'var(--text-color)'}};"></i>
     </div>
     <div class="icons-separator"/>
     <div class="d-flex align-items-center ms-2 flex-grow-1">

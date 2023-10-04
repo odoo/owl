@@ -350,7 +350,7 @@ export const store = reactive({
 
   // Expand the children of the input object property and load it from page if necessary
   async toggleObjectTreeElementsDisplay(obj) {
-    if (!obj.hasChildren) {
+    if (!obj.hasChildren || window.getSelection().toString().length) {
       return;
     }
     // Since it is sometimes impossible (and always ineffective) to load all descendants of a property

@@ -2,8 +2,8 @@
 <templates xml:space="preserve">
   <t t-name="devtools.ObjectTreeElement" owl="1">
     <div class="m-0 p-0 text-nowrap w-100 object-line"
-      t-att-class="props.class"
-      t-on-click.stop="() => this.store.toggleObjectTreeElementsDisplay(this.props.object)" 
+      t-att-class="props.class + (props.object.hasChildren ? ' bg-feedback' : '')"
+      t-on-click.stop="() => this.store.toggleObjectTreeElementsDisplay(this.props.object)"
       t-on-contextmenu.prevent="openMenu" 
     >
       <div t-attf-style="padding-left: {{objectPadding}}rem">

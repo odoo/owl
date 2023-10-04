@@ -15,6 +15,7 @@ export class ComponentsTab extends Component {
     this.store = useStore();
     this.flushRendersTimeout = false;
     useExternalListener(document, "keydown", this.onKeyboardEvent);
+    useExternalListener(window, "resize", this.onWindowResize);
 
     onWillUnmount(() => {
       window.removeEventListener("mousemove", this.onMouseMove);
@@ -53,9 +54,11 @@ export class ComponentsTab extends Component {
 
   // Adjust the position of the split between the left and right right window of the components tab
   onMouseMove = (event) => {
+    const minWidth = (147 / window.innerWidth) * 100;
+    const maxWidth = 100 - (100 / window.innerWidth) * 100;
     this.store.splitPosition = Math.max(
-      Math.min((event.clientX / window.innerWidth) * 100, 85),
-      15
+      Math.min((event.clientX / window.innerWidth) * 100, maxWidth),
+      minWidth
     );
   };
 
@@ -63,5 +66,10 @@ export class ComponentsTab extends Component {
     // Remove the event listeners when the user releases the mouse button
     window.removeEventListener("mousemove", this.onMouseMove);
     window.removeEventListener("mouseup", this.onMouseUp);
+  };
+
+  onWindowResize = () => {
+    const minWidth = (147 / window.innerWidth) * 100;
+    this.store.splitPosition = Math.max(this.store.splitPosition, minWidth);
   };
 }

@@ -190,12 +190,13 @@ will then be updated accordingly.
 ### `useExternalListener`
 
 The `useExternalListener` hook helps solve a very common problem: adding and removing
-a listener on some target whenever a component is mounted/unmounted. For example,
+a listener on some target whenever a component is mounted/unmounted. It takes a target
+as its first argument, forwards the other arguments to `addEventListener`. For example,
 a dropdown menu (or its parent) may need to listen to a `click` event on `window`
 to be closed:
 
 ```js
-useExternalListener(window, "click", this.closeMenu);
+useExternalListener(window, "click", this.closeMenu, { capture: true });
 ```
 
 ### `useComponent`

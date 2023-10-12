@@ -249,7 +249,7 @@ function basicProxyHandler<T extends Target>(callback: Callback): ProxyHandler<T
     set(target, key, value, receiver) {
       const hadKey = objectHasOwnProperty.call(target, key);
       const originalValue = Reflect.get(target, key, receiver);
-      const ret = Reflect.set(target, key, value, receiver);
+      const ret = Reflect.set(target, key, toRaw(value), receiver);
       if (!hadKey && objectHasOwnProperty.call(target, key)) {
         notifyReactives(target, KEYCHANGES);
       }

@@ -993,32 +993,33 @@ describe("Reactivity", () => {
     const obj2 = createReactive({ b: {} }, () => n2++);
     const obj3 = createReactive({ c: {} }, () => n3++);
 
+    // assign the same object should'nt notify reactivity
     obj2.b = obj2.b;
     obj2.b;
     obj3.c = obj3.c;
     obj3.c;
     expect(n1).toBe(0);
-    expect(n2).toBe(1);
-    expect(n3).toBe(1);
+    expect(n2).toBe(0);
+    expect(n3).toBe(0);
 
     obj2.b = obj1;
     obj2.b;
     obj3.c = obj1;
     obj3.c;
     expect(n1).toBe(0);
-    expect(n2).toBe(2);
-    expect(n3).toBe(2);
+    expect(n2).toBe(1);
+    expect(n3).toBe(1);
 
     obj1.a = obj1.a + 2;
     obj1.a;
     expect(n1).toBe(1);
-    expect(n2).toBe(2);
-    expect(n3).toBe(2);
+    expect(n2).toBe(1);
+    expect(n3).toBe(1);
 
     obj2.b.a = obj2.b.a + 1;
     expect(n1).toBe(2);
-    expect(n2).toBe(3);
-    expect(n3).toBe(2);
+    expect(n2).toBe(2);
+    expect(n3).toBe(1);
   });
 
   test("reactive inside other: reading the inner reactive from outer doesn't affect the inner's subscriptions", async () => {

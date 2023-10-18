@@ -1,8 +1,6 @@
-import { IS_FIREFOX, getActiveTabURL } from "./utils";
+import { IS_FIREFOX, getActiveTabURL, browserInstance } from "./utils";
 
 let owlStatus = 0;
-
-const browserInstance = IS_FIREFOX ? browser : chrome;
 
 // Used to keep track of the tabs where the owl devtools have been opened
 const activePanels = new Map();
@@ -71,6 +69,9 @@ function checkOwlStatus(tabId) {
 browserInstance.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   // Send back the owl status to the sender
   if (message.type === "getOwlStatus") {
+    if (IS_FIREFOX) {
+      return { result: owlStatus };
+    }
     sendResponse({ result: owlStatus });
     return true;
   } else if (message.type === "owlStatus") {
@@ -112,11 +113,10 @@ browserInstance.runtime.onMessage.addListener(async (message, sender, sendRespon
     }, 750);
     activePanels.set(message.id, { port: port, expirationTimeout: expirationTimeout });
     // This is solely for firefox which doesnt allow access to the chrome.tabs api inside devtools
+    // We therefore only use the firefox syntax to send the response here
   } else if (message.type === "getActiveTabURL") {
-    getActiveTabURL().then((tab) => {
-      sendResponse({ result: tab });
-    });
-    return true;
+    const tab = await getActiveTabURL();
+    return { result: tab };
   } else {
     const destinationPanel = activePanels.get(sender.tab.id);
     if (destinationPanel) {

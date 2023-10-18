@@ -29,7 +29,7 @@
     "scripts": ["background.js"]
   },
   "devtools_page": "devtools_app/devtools.html",
-  "content_security_policy": "script-src 'self' 'unsafe-eval' blob:; object-src 'self'",
+  "content_security_policy": "script-src 'self'; object-src 'self'",
   "content_scripts": [
     {
       "matches": ["<all_urls>"],

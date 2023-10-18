@@ -70,6 +70,8 @@ export class ComponentsTab extends Component {
 
   onWindowResize = () => {
     const minWidth = (147 / window.innerWidth) * 100;
-    this.store.splitPosition = Math.max(this.store.splitPosition, minWidth);
+    if (minWidth <= 100) {
+      this.store.splitPosition = Math.max(this.store.splitPosition, minWidth);
+    }
   };
 }

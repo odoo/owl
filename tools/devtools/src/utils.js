@@ -1,6 +1,6 @@
 export const IS_FIREFOX = navigator.userAgent.indexOf("Firefox") !== -1;
 
-const browserInstance = IS_FIREFOX ? browser : chrome;
+export const browserInstance = IS_FIREFOX ? browser : chrome;
 
 export async function getOwlStatus() {
   const response = await browserInstance.runtime.sendMessage({ type: "getOwlStatus" });

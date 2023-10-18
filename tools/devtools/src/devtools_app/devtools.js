@@ -1,7 +1,6 @@
-import { IS_FIREFOX } from "../utils";
+import { IS_FIREFOX, browserInstance } from "../utils";
 
 let created = false;
-let browserInstance = IS_FIREFOX ? browser : chrome;
 
 // Try to load the owl panel each 1000 ms in case it (re)appears on the page later on
 const checkInterval = setInterval(createPanelsIfOwl, 1000);

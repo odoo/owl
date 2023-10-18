@@ -1,5 +1,5 @@
 import globalHook from "./page_scripts/owl_devtools_global_hook";
-import { IS_FIREFOX } from "./utils";
+import { IS_FIREFOX, browserInstance } from "./utils";
 
 // Relays the owlDevtools__... type top window messages to the background script so that it can relay it to the devtools app
 window.addEventListener(
@@ -7,7 +7,7 @@ window.addEventListener(
   function (event) {
     if (event.data.type && event.data.source === "owl-devtools") {
       try {
-        chrome.runtime.sendMessage(
+        browserInstance.runtime.sendMessage(
           event.data.data
             ? { type: event.data.type, data: event.data.data, origin: event.data.origin }
             : { type: event.data.type, origin: event.data.origin }

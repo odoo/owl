@@ -1,10 +1,8 @@
 /** @odoo-module **/
 
-import { isElementInCenterViewport, minimizeKey, IS_FIREFOX } from "../../../../utils";
+import { isElementInCenterViewport, minimizeKey, browserInstance } from "../../../../utils";
 import { useStore } from "../../../store/store";
 import { HighlightText } from "./highlight_text/highlight_text";
-
-const browserInstance = IS_FIREFOX ? browser : chrome;
 
 const { Component, useRef, useState, useEffect, onMounted } = owl;
 

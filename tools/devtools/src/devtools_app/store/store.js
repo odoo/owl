@@ -1,8 +1,6 @@
 const { reactive, useState, toRaw } = owl;
-import { fuzzySearch, IS_FIREFOX, getActiveTabURL } from "../../utils";
+import { fuzzySearch, IS_FIREFOX, getActiveTabURL, browserInstance } from "../../utils";
 import globalHook from "../../page_scripts/owl_devtools_global_hook";
-
-const browserInstance = IS_FIREFOX ? browser : chrome;
 
 // Main store which contains all states that needs to be maintained throughout all components in the devtools app
 export const store = reactive({
@@ -943,10 +941,9 @@ function arraysEqual(arr1, arr2) {
 
 async function getTabURL() {
   if (IS_FIREFOX) {
-    // This happens in firefox when the method is called inside devtools so we ask the background to execute it instead
-    browserInstance.runtime.sendMessage({ type: "getActiveTabURL" }).then((response) => {
-      return response.result;
-    });
+    // It is not possible to run getActiveTabURL inside the devtools when using firefox so we ask the background to execute it instead
+    const response = await browserInstance.runtime.sendMessage({ type: "getActiveTabURL" });
+    return response.result;
   } else {
     return await getActiveTabURL();
   }

@@ -15,7 +15,7 @@ yarn-debug.log*
 yarn-error.log*
 
 #ide's
-.vscode
+**/.vscode/*
 .idea
 
 node_modules
@@ -26,3 +26,10 @@ release-notes.md
 
 # useful in some cases
 /temp
+
+# owl-vision
+*/owl-vision/out/
+*/owl-vision/.vs/
+**/*.vsix
+!*/owl-vision/.vscode/launch.json
+!*/owl-vision/.vscode/tasks.json

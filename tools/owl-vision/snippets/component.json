@@ -1,0 +1,18 @@
+{
+    "Basic owl component": {
+        "prefix": "owlcomponent",
+        "body": [
+            "export class ${1:component-name} extends Component {",
+            "   static template = \"${2:template-name}\";",
+            "   static components = {};",
+            "   static props = {};",
+            "",
+            "   setup() {",
+            "",
+            "   }",
+            "}",
+            ""
+        ],
+        "description": "The starting base for an owl component"
+    }
+}

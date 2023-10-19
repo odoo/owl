@@ -1,0 +1,37 @@
+{
+    "injectionSelector": "L:source.js -comment",
+    "scopeName": "owl.template.inline",
+    "patterns": [
+        {
+            "include": "#xml-tag"
+        }
+    ],
+    "repository": {
+        "xml-tag": {
+            "begin": "\\s+(xml)(`)",
+            "contentName": "meta.embedded.block.xml",
+            "beginCaptures": {
+                "1": {
+                    "name": "entity.name.function.tagged-template.js owl-inline-template"
+                },
+                "2": {
+                    "name": "punctuation.definition.string.template.begin.js string.template.js"
+                }
+            },
+            "end": "(`)",
+            "endCaptures": {
+                "1": {
+                    "name": "punctuation.definition.string.template.end.js string.template.js"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "owl.template"
+                },
+                {
+                    "include": "text.xml"
+                }
+            ]
+        }
+    }
+}

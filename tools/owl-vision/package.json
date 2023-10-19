@@ -1,0 +1,136 @@
+{
+    "name": "owl-vision",
+    "displayName": "Owl Vision",
+    "description": "Owl framework extension that highlights templates and ease navigation between components and templates.",
+    "publisher": "Odoo",
+    "license": "LGPL-3.0-only",
+    "version": "0.0.1",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/odoo/owl/tree/master/tools/owl-vision"
+    },
+    "icon": "assets/icon128.png",
+    "engines": {
+        "vscode": "^1.73.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onLanguage:xml",
+        "onLanguage:js"
+    ],
+    "main": "./out/main.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "owl-vision.switch",
+                "title": "Switch",
+                "category": "Owl Vision"
+            },
+            {
+                "command": "owl-vision.switch-besides",
+                "title": "Switch Besides",
+                "category": "Owl Vision"
+            },
+            {
+                "command": "owl-vision.find-component",
+                "title": "Find Component",
+                "category": "Owl Vision"
+            },
+            {
+                "command": "owl-vision.find-template",
+                "title": "Find Template",
+                "category": "Owl Vision"
+            }
+        ],
+        "configuration": {
+            "title": "Owl Vision",
+            "properties": {
+                "owl-vision.include": {
+                    "order": 0,
+                    "type": "string",
+                    "default": "**/*.js,**/*.ts,**/*.mjs,**/static/**/*.xml",
+                    "description": "Files to include in search"
+                },
+                "owl-vision.exclude": {
+                    "order": 1,
+                    "type": "string",
+                    "default": "**/node_modules/**,**/lib/**,**/tests/**",
+                    "description": "Files to exclude in search"
+                }
+            }
+        },
+        "snippets": [
+            {
+                "language": "javascript",
+                "path": "./snippets/component.json"
+            }
+        ],
+        "grammars": [
+            {
+                "scopeName": "owl.template",
+                "path": "./syntaxes/owl.template.json",
+                "embeddedLanguages": {
+                    "meta.embedded.block.javascript": "source.js"
+                },
+                "tokenTypes": {
+                    "string.quoted.double.xml": "other"
+                },
+                "injectTo": [
+                    "text.xml"
+                ]
+            },
+            {
+                "scopeName": "owl.template.inline",
+                "path": "./syntaxes/owl.template.inline.json",
+                "embeddedLanguages": {
+                    "meta.embedded.block.xml": "xml"
+                },
+                "injectTo": [
+                    "source.js",
+                    "source.jsx",
+                    "source.ts",
+                    "source.tsx",
+                    "text.html"
+                ]
+            },
+            {
+                "scopeName": "owl.markup.inline",
+                "path": "./syntaxes/owl.markup.inline.json",
+                "embeddedLanguages": {
+                    "meta.embedded.block.html": "html"
+                },
+                "injectTo": [
+                    "source.js",
+                    "source.jsx",
+                    "source.ts",
+                    "source.tsx",
+                    "text.html"
+                ]
+            }
+        ]
+    },
+    "scripts": {
+        "compile": "tsc -p ./",
+        "package": "vsce package",
+        "watch": "tsc -watch -p ./",
+        "lint": "eslint src --ext ts",
+        "pretest": "npm run compile && npm run lint",
+        "vscode:prepublish": "npm run esbuild-base -- --minify",
+        "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+        "esbuild": "npm run esbuild-base -- --sourcemap",
+        "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch"
+    },
+    "devDependencies": {
+        "@types/node": "20.2.5",
+        "@types/vscode": "^1.73.0",
+        "@typescript-eslint/eslint-plugin": "^5.59.8",
+        "@typescript-eslint/parser": "^5.59.8",
+        "@vscode/test-electron": "^2.3.2",
+        "@vscode/vsce": "^2.20.1",
+        "esbuild": "^0.19.5",
+        "eslint": "^8.41.0",
+        "typescript": "^5.1.3"
+    }
+}

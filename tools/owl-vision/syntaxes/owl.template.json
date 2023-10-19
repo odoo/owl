@@ -1,0 +1,257 @@
+{
+    "injectionSelector": "L:text.xml -comment",
+    "scopeName": "owl.template",
+    "patterns": [
+        {
+            "include": "#component-tags"
+        },
+        {
+            "include": "#t-tag"
+        },
+        {
+            "include": "#xml-tags"
+        },
+        {
+            "include": "#props"
+        }
+    ],
+    "repository": {
+        "component-tags": {
+            "begin": "(</?)([A-Z][a-zA-Z0-9_]*)",
+            "beginCaptures": {
+                "1": {
+                    "name": "punctuation.definition.tag.xml owl.punctuation"
+                },
+                "2": {
+                    "name": "entity.name.type.class owl.component"
+                }
+            },
+            "end": "\\s*([/?]?>)",
+            "endCaptures": {
+                "1": {
+                    "name": "punctuation.definition.tag.xml punctuation"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#qweb-directives-interpreted"
+                },
+                {
+                    "include": "#qweb-directives-string"
+                },
+                {
+                    "include": "#component-props"
+                }
+            ]
+        },
+        "component-props": {
+            "contentName": "meta.embedded.block.javascript string.quoted.double.xml",
+            "begin": "(\\s*)([a-zA-Z_:.]*)(=)(\")",
+            "beginCaptures": {
+                "2": {
+                    "name": "entity.other.attribute-name.localname.xml owl.component.props"
+                },
+                "4": {
+                    "name": "punctuation.definition.string.begin.xml punctuation"
+                }
+            },
+            "end": "(\")",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.definition.string.end.xml punctuation"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "source.js"
+                },
+                {
+                    "name": "keyword.operator.logical.js",
+                    "match": "\\s(and|or)\\s"
+                }
+            ]
+        },
+        "xml-tags": {
+            "begin": "(</?)([a-z][a-zA-Z0-9_:.]*)",
+            "beginCaptures": {
+                "1": {
+                    "name": "punctuation.definition.tag.xml owl.xml.punctuation"
+                },
+                "2": {
+                    "name": "entity.name.tag.localname.xml owl.xml.tag"
+                }
+            },
+            "end": "\\s*([/?]?>)",
+            "endCaptures": {
+                "1": {
+                    "name": "punctuation.definition.tag.xml owl.xml.punctuation"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#qweb-directives-interpreted"
+                },
+                {
+                    "include": "#qweb-directives-string"
+                },
+                {
+                    "include": "#qweb-directives-formatted-string"
+                },
+                {
+                    "include": "#xml-attributes"
+                },
+                {
+                    "name": "string.quoted.double.xml",
+                    "match": "(\")((.*)(=>)(.*))(\")"
+                }
+            ]
+        },
+        "xml-attributes": {
+            "contentName": "string.quoted.double.xml owl.xml.string",
+            "begin": "(\\s)([a-z][a-z_:.-]+)(=)(\")",
+            "beginCaptures": {
+                "2": {
+                    "name": "entity.other.attribute-name.localname.xml owl.xml.attribute"
+                },
+                "4": {
+                    "name": "punctuation.definition.string.begin.xml owl.xml.punctuation"
+                }
+            },
+            "end": "(\")",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.definition.string.end.xml owl.xml.punctuation"
+                }
+            }
+        },
+        "t-tag": {
+            "begin": "(</?)(t(?![a-zA-Z]))",
+            "beginCaptures": {
+                "1": {
+                    "name": "punctuation.definition.tag.xml owl.punctuation"
+                },
+                "2": {
+                    "name": "entity.name.tag.localname.xml owl.tag"
+                }
+            },
+            "end": "\\s*([/?]?>)",
+            "endCaptures": {
+                "1": {
+                    "name": "punctuation.definition.tag.xml owl.punctuation"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#qweb-directives-interpreted"
+                },
+                {
+                    "include": "#qweb-directives-string"
+                },
+                {
+                    "include": "#xml-attributes"
+                },
+                {
+                    "name": "string.quoted.double.xml",
+                    "match": "(\")((.*)(=>)(.*))(\")"
+                }
+            ]
+        },
+        "qweb-directives-interpreted": {
+            "contentName": "meta.embedded.block.javascript string.quoted.double.xml",
+            "begin": "(\\s)(t-if|t-else|t-elif|t-foreach|t-as|t-key|t-esc|t-out|t-props|t-component|t-set|t-value|t-portal|(t-att-|t-on-)[a-z_:.-]+)(=)(\")",
+            "beginCaptures": {
+                "2": {
+                    "name": "entity.other.attribute-name.localname.xml owl.attribute"
+                },
+                "5": {
+                    "name": "punctuation.definition.string.begin.xml owl.punctuation owl.doublequote"
+                }
+            },
+            "end": "(\")",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.definition.string.end.xml owl.punctuation owl.doublequote"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "source.js"
+                },
+                {
+                    "name": "keyword.operator.logical.js",
+                    "match": "\\s(and|or)\\s"
+                }
+            ]
+        },
+        "qweb-directives-string": {
+            "contentName": "string.quoted.double.xml",
+            "begin": "(\\s)(t-name|t-ref|t-slot|t-set-slot|t-model|t-translation)(=)(\")",
+            "beginCaptures": {
+                "2": {
+                    "name": "entity.other.attribute-name.localname.xml owl.attribute"
+                },
+                "5": {
+                    "name": "punctuation.definition.string.begin.xml owl.punctuation owl.doublequote"
+                }
+            },
+            "end": "(\")",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.definition.string.end.xml owl.punctuation owl.doublequote"
+                }
+            }
+        },
+        "qweb-directives-formatted-string": {
+            "begin": "(\\s)(t-call|(t-attf-)[a-z_:.-]+)(=)(\")",
+            "beginCaptures": {
+                "2": {
+                    "name": "entity.other.attribute-name.localname.xml owl.attribute owl.attribute.formatted"
+                },
+                "5": {
+                    "name": "punctuation.definition.string.begin.xml owl.punctuation owl.doublequote"
+                }
+            },
+            "end": "(\")",
+            "endCaptures": {
+                "0": {
+                    "name": "punctuation.definition.string.end.xml owl.punctuation owl.doublequote"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "#formatted-string"
+                }
+            ]
+        },
+        "formatted-string": {
+            "contentName": "meta.embedded.block.javascript string.quoted.double.xml",
+            "begin": "([^\"|}}]*)({{)",
+            "beginCaptures": {
+                "1": {
+                    "name": "string.quoted.double.xml"
+                },
+                "2": {
+                    "name": "string.quoted.double.xml owl.doublecurlybrackets"
+                }
+            },
+            "end": "(}})([^\"|{{]*)",
+            "endCaptures": {
+                "1": {
+                    "name": "string.quoted.double.xml owl.doublecurlybrackets"
+                },
+                "2": {
+                    "name": "string.quoted.double.xml"
+                }
+            },
+            "patterns": [
+                {
+                    "include": "source.js"
+                }
+            ]
+        },
+        "props": {
+            "name": "variable.language owl.expression.props",
+            "match": "\\b(props)\\b"
+        }
+    }
+}

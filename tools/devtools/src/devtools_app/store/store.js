@@ -630,9 +630,7 @@ export function useStore() {
   return useState(store);
 }
 
-init();
-
-async function init() {
+export async function createStore() {
   store.devtoolsId = await getTabURL();
 
   evalFunctionInWindow("initDevtools", []);

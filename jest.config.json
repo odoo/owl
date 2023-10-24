@@ -1,0 +1,22 @@
+{
+    "testEnvironment": "jsdom",
+  "roots": [
+    "<rootDir>/tests"
+  ],
+  "setupFiles": [
+    "./tests/mocks/mockEventTarget.js"
+  ],
+  "transform": {
+    "^.+\\.ts?$": "ts-jest"
+  },
+  "verbose": false,
+  "testRegex": "(/tests/.*(test|spec))\\.ts?$",
+  "moduleFileExtensions": [
+    "ts",
+    "tsx",
+    "js",
+    "jsx",
+    "json",
+    "node"
+  ]
+}

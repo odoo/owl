@@ -33,11 +33,14 @@
                  * This process may seem long and indirect but is necessary. This applies to all window.top.postMessage methods in this file.
                  * More information in the docs: https://developer.chrome.com/docs/extensions/mv3/devtools/#evaluated-scripts-to-devtools
                  */
-                window.top.postMessage({
-                  source: "owl-devtools",
-                  type: "NewIFrame",
-                  data: addedNode.contentDocument.location.href,
-                });
+                window.top.postMessage(
+                  {
+                    source: "owl-devtools",
+                    type: "NewIFrame",
+                    data: addedNode.contentDocument.location.href,
+                  },
+                  "/"
+                );
               }
             }
           });
@@ -183,18 +186,24 @@
           original_Complete.call(this, ...arguments);
           const path = self.getComponentPath(this.node);
           //Add a functionnality to the complete function which sends a message to the window every time it is triggered.
-          window.top.postMessage({
-            source: "owl-devtools",
-            type: "Complete",
-            data: path,
-            origin: { frame: self.frame },
-          });
-          if (self.recordEvents) {
-            window.top.postMessage({
+          window.top.postMessage(
+            {
               source: "owl-devtools",
-              type: "Event",
-              data: self.eventsBatch,
-            });
+              type: "Complete",
+              data: path,
+              origin: { frame: self.frame },
+            },
+            "/"
+          );
+          if (self.recordEvents) {
+            window.top.postMessage(
+              {
+                source: "owl-devtools",
+                type: "Event",
+                data: self.eventsBatch,
+              },
+              "/"
+            );
             self.eventsBatch = [];
           }
         };
@@ -207,17 +216,23 @@
       const originalDelete = this.apps.delete;
       this.apps.add = function () {
         originalAdd.call(this, ...arguments);
-        window.top.postMessage({
-          source: "owl-devtools",
-          type: "RefreshApps",
-        });
+        window.top.postMessage(
+          {
+            source: "owl-devtools",
+            type: "RefreshApps",
+          },
+          "/"
+        );
       };
       this.apps.delete = function () {
         originalDelete.call(this, ...arguments);
-        window.top.postMessage({
-          source: "owl-devtools",
-          type: "RefreshApps",
-        });
+        window.top.postMessage(
+          {
+            source: "owl-devtools",
+            type: "RefreshApps",
+          },
+          "/"
+        );
       };
     }
 
@@ -611,11 +626,14 @@
         const path = this.getElementPath(target);
         this.highlightComponent(path);
         this.currentSelectedElement = target;
-        window.top.postMessage({
-          source: "owl-devtools",
-          type: "SelectElement",
-          data: path,
-        });
+        window.top.postMessage(
+          {
+            source: "owl-devtools",
+            type: "SelectElement",
+            data: path,
+          },
+          "/"
+        );
       }
     };
 
@@ -639,10 +657,13 @@
       document.removeEventListener("mouseover", this.HTMLSelector, { capture: true });
       document.removeEventListener("click", this.disableHTMLSelector, { capture: true });
       document.removeEventListener("mouseout", this.removeHighlights, { capture: true });
-      window.top.postMessage({
-        source: "owl-devtools",
-        type: "StopSelector",
-      });
+      window.top.postMessage(
+        {
+          source: "owl-devtools",
+          type: "StopSelector",
+        },
+        "/"
+      );
     };
 
     // Returns the object specified by the path starting from the topParent object
@@ -1738,7 +1759,7 @@
         owlStatus = -1;
       }
     }
-    window.postMessage({ source: "owl-devtools", type: "owlStatus", data: owlStatus });
+    window.postMessage({ source: "owl-devtools", type: "owlStatus", data: owlStatus }, "/");
   }
 
   if (!window.__OWL_DEVTOOLS__) {
@@ -1760,19 +1781,19 @@
         if (value?.Fiber !== undefined) {
           window.__OWL__DEVTOOLS_GLOBAL_HOOK__ = new OwlDevtoolsGlobalHook();
         }
-        window.top.postMessage({ source: "owl-devtools", type: "FrameReady" });
+        window.top.postMessage({ source: "owl-devtools", type: "FrameReady" }, "/");
         checkOwlStatus();
       },
     });
     // Do note that the reload message is not sent on the top window so that it is not intercepted when originating
     // from an iframe
-    window.postMessage({ source: "owl-devtools", type: "Reload" });
+    window.postMessage({ source: "owl-devtools", type: "Reload" }, "/");
   } else if (
     window.__OWL_DEVTOOLS__?.Fiber !== undefined &&
     !window.__OWL__DEVTOOLS_GLOBAL_HOOK__
   ) {
     window.__OWL__DEVTOOLS_GLOBAL_HOOK__ = new OwlDevtoolsGlobalHook();
-    window.postMessage({ source: "owl-devtools", type: "Reload" });
+    window.postMessage({ source: "owl-devtools", type: "Reload" }, "/");
   }
   // Listener that checks whether owl is available on the page and if it has the right version
   window.addEventListener(

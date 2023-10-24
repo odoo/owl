@@ -1,0 +1,28 @@
+{
+  "testEnvironment": "jsdom",
+  "roots": [
+    "<rootDir>"
+  ],
+  "setupFiles": [
+    "<rootDir>/../../../tests/mocks/mockEventTarget.js",
+    "<rootDir>/setup.ts"
+  ],
+  "globals": {
+    "ts-jest": {
+      "tsconfig": "<rootDir>/tsconfig.json"
+    }
+  },
+  "transform": {
+    "^.+\\.[jt]s?$": "ts-jest"
+  },
+  "verbose": false,
+  "testRegex": "(/tests/.*(test|spec))\\.ts?$",
+  "moduleFileExtensions": [
+    "ts",
+    "tsx",
+    "js",
+    "jsx",
+    "json",
+    "node"
+  ]
+}

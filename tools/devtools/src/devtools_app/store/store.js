@@ -147,6 +147,7 @@ export const store = reactive({
     }
     component.selected = true;
     highlightChildren(component);
+    this.highlightComponent(path);
     const details = await evalFunctionInWindow(
       "getComponentDetails",
       [component.path],
@@ -334,7 +335,6 @@ export const store = reactive({
   setSearchIndex(index) {
     this.componentSearch.searchIndex = index;
     this.selectComponent(this.componentSearch.searchResults[index]);
-    this.highlightComponent(this.componentSearch.searchResults[index]);
   },
 
   // Replace the (...) content of a getter with the value returned by the corresponding get method

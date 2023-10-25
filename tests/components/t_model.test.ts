@@ -30,6 +30,25 @@ describe("t-model directive", () => {
     expect(fixture.innerHTML).toBe("<div><input><span>test</span></div>");
   });
 
+  test("basic use, on an input with $", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+        <div>
+          <input t-model="state.$text"/>
+          <span><t t-esc="state.$text"/></span>
+        </div>`;
+      state = useState({ $text: "" });
+    }
+    const comp = await mount(SomeComponent, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><input><span></span></div>");
+
+    const input = fixture.querySelector("input")!;
+    await editInput(input, "test");
+    expect(comp.state.$text).toBe("test");
+    expect(fixture.innerHTML).toBe("<div><input><span>test</span></div>");
+  });
+
   test("t-model on an input with an undefined value", async () => {
     class SomeComponent extends Component {
       static template = xml`<input t-model="state.text"/>`;

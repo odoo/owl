@@ -76,6 +76,25 @@ exports[`t-model directive basic use, on an input 1`] = `
 }"
 `;
 
+exports[`t-model directive basic use, on an input with $ 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { toNumber } = helpers;
+  
+  let block1 = createBlock(\`<div><input block-property-0=\\"value\\" block-handler-1=\\"input\\"/><span><block-text-2/></span></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const bExpr1 = ctx['state'];
+    const expr1 = '$text';
+    let prop1 = bExpr1[expr1];
+    let hdlr1 = [(ev) => { bExpr1[expr1] = ev.target.value; }];
+    let txt1 = ctx['state'].$text;
+    return block1([prop1, hdlr1, txt1]);
+  }
+}"
+`;
+
 exports[`t-model directive basic use, on an input with bracket expression 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

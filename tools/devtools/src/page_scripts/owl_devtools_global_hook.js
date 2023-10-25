@@ -49,6 +49,7 @@
       this.traceRenderings = false;
       this.traceSubscriptions = false;
       this.requestedFrame = false;
+      this.enabledSelector = false;
       this.eventsBatch = [];
       // Object which defines how different types of data should be displayed when passed to the devtools
       this.serializer = {
@@ -175,6 +176,7 @@
 
     initDevtools(frame = "top") {
       if (!this.devtoolsInit) {
+        document.addEventListener("mouseover", this.HTMLSelector, { capture: true });
         this.frame = frame;
         const self = this;
         // Flush the events batcher when a root render is completed
@@ -606,28 +608,33 @@
     // Identify the hovered component based on the corresponding DOM element and send the Select message
     // when the target changes
     HTMLSelector = (ev) => {
-      const target = ev.target;
-      if (!this.currentSelectedElement || !target.isEqualNode(this.currentSelectedElement)) {
-        const path = this.getElementPath(target);
-        this.highlightComponent(path);
-        this.currentSelectedElement = target;
-        window.top.postMessage({
-          source: "owl-devtools",
-          type: "SelectElement",
-          data: path,
-        });
+      if (this.enabledSelector) {
+        const target = ev.target;
+        if (!this.currentSelectedElement || !target.isEqualNode(this.currentSelectedElement)) {
+          const path = this.getElementPath(target);
+          this.highlightComponent(path);
+          this.currentSelectedElement = target;
+          window.top.postMessage({
+            source: "owl-devtools",
+            type: "SelectElement",
+            data: path,
+          });
+        }
+      } else {
+        this.removeHighlights();
       }
     };
 
     // Activate the HTML selector tool
     enableHTMLSelector() {
-      document.addEventListener("mouseover", this.HTMLSelector, { capture: true });
+      this.enabledSelector = true;
       document.addEventListener("click", this.disableHTMLSelector, { capture: true });
-      document.addEventListener("mouseout", this.removeHighlights, { capture: true });
+      document.addEventListener("scroll", this.removeHighlights, { capture: true });
     }
 
     // Diasble the HTML selector tool
     disableHTMLSelector = (ev = undefined) => {
+      this.enabledSelector = false;
       if (ev) {
         if (!ev.isTrusted) {
           return;
@@ -636,9 +643,8 @@
         ev.preventDefault();
       }
       this.removeHighlights();
-      document.removeEventListener("mouseover", this.HTMLSelector, { capture: true });
       document.removeEventListener("click", this.disableHTMLSelector, { capture: true });
-      document.removeEventListener("mouseout", this.removeHighlights, { capture: true });
+      document.removeEventListener("scroll", this.removeHighlights, { capture: true });
       window.top.postMessage({
         source: "owl-devtools",
         type: "StopSelector",

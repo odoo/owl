@@ -4,7 +4,9 @@ Owl Vision is an extension for the amazing [Owl framework](https://github.com/od
 
 ![Syntax highlight preview](https://raw.githubusercontent.com/odoo/owl/master/tools/owl-vision/assets/syntax_highlight.png)
 
-This extension also adds a small Component snippet to allow you to create beautiful components as fast as possible!
+This extension also adds:
+- A basic component snippent.
+- "Go to definition" providers for component tags in xml or in inline templates.
 
 ## Commands
 
@@ -13,11 +15,10 @@ This extension also adds a small Component snippet to allow you to create beauti
     - If the cursor is on a component, finds the template of the selected component.
 * `Owl Vision: Find Component`: Finds the selected component definition.
 * `Owl Vision: Switch`: Finds the corresponding template or component depending on the current file.
-* `Owl Vision: Switch Besides`: Finds the corresponding template or component depending on the current file and opens it besides.
+* `Owl Vision: Switch (Besides)`: Finds the corresponding template or component depending on the current file and opens it besides.
+* `Owl Vision: Switch (Below)`: Finds the corresponding template or component depending on the current file and opens it below.
 
-## Extension Settings
-
-This extension contributes the following settings:
+## Settings
 
 * `owl-vision.include`: Glob filter for files to include while searching.
 * `owl-vision.exclude`: Glob filter for files to exclude while searching.

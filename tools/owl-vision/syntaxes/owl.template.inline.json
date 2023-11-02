@@ -1,5 +1,5 @@
 {
-    "injectionSelector": "L:source.js -comment",
+    "injectionSelector": "L:source.js -comment -(string -meta.embedded)",
     "scopeName": "owl.template.inline",
     "patterns": [
         {
@@ -12,16 +12,19 @@
             "contentName": "meta.embedded.block.xml",
             "beginCaptures": {
                 "1": {
-                    "name": "entity.name.function.tagged-template.js owl-inline-template"
+                    "name": "entity.name.function.tagged-template.js"
                 },
                 "2": {
-                    "name": "punctuation.definition.string.template.begin.js string.template.js"
+                    "name": "punctuation.definition.string.template.begin.js"
                 }
             },
             "end": "(`)",
             "endCaptures": {
+                "0": {
+                    "name": "string.js"
+                },
                 "1": {
-                    "name": "punctuation.definition.string.template.end.js string.template.js"
+                    "name": "punctuation.definition.string.template.end.js"
                 }
             },
             "patterns": [

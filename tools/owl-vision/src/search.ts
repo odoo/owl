@@ -1,22 +1,12 @@
+import { GlobPattern, Location, Range, Uri, window, workspace } from 'vscode';
+import { OpenDirection, getClosestMatch, getSelectedText, hideStatusMessage, showResult, showStatusMessage } from './utils';
 import path = require('path');
-import * as vscode from 'vscode';
-import { getSelectedText, showStatusMessage, hideStatusMessage, getActiveCursorIndex, getClosestMatch } from './utils';
-
-class SearchResult {
-    uri: vscode.Uri;
-    range: vscode.Range;
-
-    constructor(uri: vscode.Uri, range: vscode.Range) {
-        this.uri = uri;
-        this.range = range;
-    }
-}
 
 export class Search {
 
-    finderCache = new Map<string, vscode.Uri>();
+    finderCache = new Map<string, Uri>();
 
-    public async switchCommand(openBesides: Boolean = false) {
+    public async switch(openDirection: OpenDirection = OpenDirection.Active) {
         if (!this.currentDocument) {
             return;
         }
@@ -24,26 +14,20 @@ export class Search {
         let result = undefined;
         const text = this.currentDocument.getText();
         const isJs = this.currentDocument.fileName.endsWith(".js");
-        const isXml = this.currentDocument.fileName.endsWith(".xml");
+        const templateName = this.getTemplateName(text, isJs);
 
-        if (isJs) {
-            const templateName = this.getTemplateNameInJS(text);
-            if (templateName) {
-                result = await this.findTemplate(templateName);
-            }
-        } else if (isXml) {
-            const templateName = this.getTemplateNameInXML(text);
-            if (templateName) {
-                result = await this.findComponentFromTemplateName(templateName);
-            }
+        if (templateName && isJs) {
+            result = await this.findTemplate(templateName);
+        } else if (templateName) {
+            result = await this.findComponentFromTemplateName(templateName);
         }
 
         if (result !== undefined) {
-            this.showResult(result, openBesides);
+            showResult(result, openDirection);
         } else if (isJs) {
-            vscode.window.showWarningMessage(`Could not find a template for current component`);
-        } else if (isXml) {
-            vscode.window.showWarningMessage(`Could not find a component for current template`);
+            window.showWarningMessage(`Could not find a template for current component`);
+        } else {
+            window.showWarningMessage(`Could not find a component for current template`);
         }
     }
 
@@ -56,9 +40,9 @@ export class Search {
         showStatusMessage(`Searching for component "${currentWord}"`);
         const result = await this.findComponent(currentWord);
         if (result) {
-            this.showResult(result);
+            showResult(result);
         } else {
-            vscode.window.showWarningMessage(`Could not find a component for "${currentWord}"`);
+            window.showWarningMessage(`Could not find a component for "${currentWord}"`);
         }
         hideStatusMessage();
     }
@@ -72,14 +56,14 @@ export class Search {
         showStatusMessage(`Searching for template "${currentWord}"`);
         const result = await this.findTemplate(currentWord);
         if (result) {
-            this.showResult(result);
+            showResult(result);
         } else {
-            vscode.window.showWarningMessage(`Could not find a template for "${currentWord}"`);
+            window.showWarningMessage(`Could not find a template for "${currentWord}"`);
         }
         hideStatusMessage();
     }
 
-    public async findComponent(componentName: string): Promise<SearchResult | undefined> {
+    public async findComponent(componentName: string): Promise<Location | undefined> {
         if (componentName.toLowerCase() === componentName || componentName.includes(".") || componentName.includes("-")) {
             return;
         }
@@ -88,7 +72,7 @@ export class Search {
         return await this.find(componentName, query, "js");
     }
 
-    public async findTemplate(templateName: string): Promise<SearchResult | undefined> {
+    public async findTemplate(templateName: string): Promise<Location | undefined> {
         const isComponentName = templateName.match(/^[A-Z][a-zA-Z0-9_]*$/);
 
         if (isComponentName) {
@@ -96,9 +80,8 @@ export class Search {
             if (!componentResult) {
                 return;
             } else {
-                const document = await vscode.workspace.openTextDocument(componentResult.uri);
-                const text = document.getText();
-                const foundTemplateName = this.getTemplateNameInJS(text);
+                const text = (await workspace.openTextDocument(componentResult.uri)).getText();
+                const foundTemplateName = this.getTemplateName(text, true);
                 if (foundTemplateName) {
                     templateName = foundTemplateName;
                 } else {
@@ -111,24 +94,24 @@ export class Search {
         return await this.find(templateName, query, "xml");
     }
 
-    private async findComponentFromTemplateName(templateName: string): Promise<SearchResult | undefined> {
+    private findComponentFromTemplateName(templateName: string): Promise<Location | undefined> {
         const query = this.buildQuery(`template\\s*=\\s*["']`, templateName, `["']`);
-        return await this.find(templateName, query, "js");
+        return this.find(templateName, query, "js");
     }
 
-    private getTemplateNameInJS(str: string): string | undefined {
-        return getClosestMatch(str, /template\s*=\s*["']([a-zA-Z0-9_\-\.]+)["']/g, +1);
+    private getTemplateName(str: string, isJsFile: boolean): string | undefined {
+        if (isJsFile) {
+            return getClosestMatch(str, /template\s*=\s*["']([a-zA-Z0-9_\-\.]+)["']/g, +1);
+        } else {
+            return getClosestMatch(str, /t-name="([a-zA-Z0-9_\-\.]+)"/g);
+        }
     }
 
-    private getTemplateNameInXML(str: string): string | undefined {
-        return getClosestMatch(str, /t-name="([a-zA-Z0-9_\-\.]+)"/g);
-    }
-
-    private async find(
+    public async find(
         name: string,
         searchQuery: string,
         fileType: "js" | "xml",
-    ) {
+    ): Promise<Location | undefined> {
         const key = `${name}-${fileType}`;
         const cachedUri = this.finderCache.get(key);
         if (cachedUri) {
@@ -140,8 +123,8 @@ export class Search {
             }
         }
 
-        const include = `{${vscode.workspace.getConfiguration().get(`owl-vision.include`)}}`;
-        const exclude = `{${vscode.workspace.getConfiguration().get(`owl-vision.exclude`)}}`;
+        const include = `{${workspace.getConfiguration().get(`owl-vision.include`)}, *.${fileType}}`;
+        const exclude = `{${workspace.getConfiguration().get(`owl-vision.exclude`)}}`;
         const files = await this.getFiles(name, include, exclude);
 
         for (const file of files) {
@@ -155,10 +138,10 @@ export class Search {
 
     private async getFiles(
         searchQuery: string,
-        include: vscode.GlobPattern,
-        exclude: vscode.GlobPattern,
-    ): Promise<Array<vscode.Uri>> {
-        const files = await vscode.workspace.findFiles(include, exclude);
+        include: GlobPattern,
+        exclude: GlobPattern,
+    ): Promise<Array<Uri>> {
+        const files = await workspace.findFiles(include, exclude);
         const parts = searchQuery.split(".").flatMap(s => s.split(/(?=[A-Z])/)).map(s => s.toLowerCase());
         const currentDir = this.currentDocument ? path.dirname(this.currentDocument.uri.path) : "";
 
@@ -182,33 +165,24 @@ export class Search {
     }
 
     private async findInFile(
-        file: vscode.Uri,
+        file: Uri,
         searchQuery: string,
-    ): Promise<SearchResult | undefined> {
-        const document = await vscode.workspace.openTextDocument(file);
+    ): Promise<Location | undefined> {
+        const document = await workspace.openTextDocument(file);
         const text = document.getText();
         const match = text.match(new RegExp(searchQuery));
 
         if (match) {
             const index = match.index || 0;
-            return new SearchResult(file, new vscode.Range(
+            return new Location(file, new Range(
                 document.positionAt(index),
                 document.positionAt(index)
             ));
         }
     }
 
-    private async showResult(result: SearchResult, openBesides: Boolean = false) {
-        const editor = await vscode.window.showTextDocument(result.uri, {
-            viewColumn: openBesides ? vscode.ViewColumn.Beside : vscode.ViewColumn.Active,
-        });
-
-        editor.revealRange(result.range);
-        editor.selection = new vscode.Selection(result.range.start, result.range.end);
-    }
-
     private get currentDocument() {
-        return vscode.window.activeTextEditor?.document;
+        return window.activeTextEditor?.document;
     }
 
     private buildQuery(

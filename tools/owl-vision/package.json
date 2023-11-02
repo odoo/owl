@@ -4,7 +4,7 @@
     "description": "Owl framework extension that highlights templates and ease navigation between components and templates.",
     "publisher": "Odoo",
     "license": "LGPL-3.0-only",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "repository": {
         "type": "git",
         "url": "https://github.com/odoo/owl/tree/master/tools/owl-vision"
@@ -30,7 +30,12 @@
             },
             {
                 "command": "owl-vision.switch-besides",
-                "title": "Switch Besides",
+                "title": "Switch (Besides)",
+                "category": "Owl Vision"
+            },
+            {
+                "command": "owl-vision.switch-below",
+                "title": "Switch (Below)",
                 "category": "Owl Vision"
             },
             {
@@ -73,9 +78,6 @@
                 "path": "./syntaxes/owl.template.json",
                 "embeddedLanguages": {
                     "meta.embedded.block.javascript": "source.js"
-                },
-                "tokenTypes": {
-                    "string.quoted.double.xml": "other"
                 },
                 "injectTo": [
                     "text.xml"
@@ -120,7 +122,8 @@
         "vscode:prepublish": "npm run esbuild-base -- --minify",
         "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
         "esbuild": "npm run esbuild-base -- --sourcemap",
-        "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch"
+        "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
+        "build-syntax": "node ./scripts/owl_template_syntax.mjs"
     },
     "devDependencies": {
         "@types/node": "20.2.5",

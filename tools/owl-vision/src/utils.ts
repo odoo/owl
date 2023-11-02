@@ -67,3 +67,38 @@ export function getClosestMatch(str: string, regex: RegExp, lineDelta = 0): stri
 
     return closestMatch[1];
 }
+
+export enum OpenDirection {
+    Active,
+    Besides,
+    Below,
+}
+
+export async function showResult(result: vscode.Location, openDirection: OpenDirection = OpenDirection.Active) {
+    let editor = undefined;
+
+    if (openDirection == OpenDirection.Active) {
+        editor = await vscode.window.showTextDocument(result.uri);
+    } else {
+        let targetColumn = vscode.ViewColumn.Beside;
+        const existingDocument = vscode.workspace.textDocuments.find(t => t.uri.path === result.uri.path);
+        if (existingDocument) {
+            const currentColumn = vscode.window.activeTextEditor?.viewColumn;
+            if (currentColumn == vscode.ViewColumn.One) {
+                targetColumn = vscode.ViewColumn.Two;
+            } else if (currentColumn == vscode.ViewColumn.Two) {
+                targetColumn = vscode.ViewColumn.One;
+            }
+            editor = await vscode.window.showTextDocument(existingDocument, { viewColumn: targetColumn });
+        } else {
+            editor = await vscode.window.showTextDocument(result.uri, { viewColumn: targetColumn });
+        }
+    }
+
+    if (openDirection === OpenDirection.Below) {
+        await vscode.commands.executeCommand('workbench.action.editorLayoutTwoRows');
+    }
+
+    editor.revealRange(result.range);
+    editor.selection = new vscode.Selection(result.range.start, result.range.end);
+}

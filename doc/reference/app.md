@@ -55,6 +55,9 @@ The `config` object is an object with some of the following keys:
   [`dev` mode](#dev-mode);
 - **`test (boolean, default=false)`**: `test` mode is the same as `dev` mode, except
   that Owl will not log a message to warn that Owl is in `dev` mode.
+- **`shareTemplates (boolean, default=false)`**: if `true`, each compiled template
+  will be shared between instances of `App`. Useful for speeding test suites, because
+  it prevent recompiling the same templates again and again.
 - **`translatableAttributes (string[])`**: a list of additional attributes that should
   be translated (see [translations](translations.md))
 - **`translateFn (function)`**: a function that will be called by owl to translate

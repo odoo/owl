@@ -35,13 +35,13 @@ The components tab is separated into two sub windows: the components tree in the
 the component details in the right. The components tree will display all the different
 components that are present in the tab in the form of a tree. The root of this tree is
 actually the app which is not a component but can still be inspected by the devtools like
-one. There can also be multiple apps loaded in the page like in the following:
+one. There can also be multiple apps loaded in the page like in website:
 
 <img src="screenshots/multi_apps.png"/>
 
 There is a convenient search bar at the top of the components tree which will help finding
 the components tou want in the tree and also, an element picker can be used to directly select
-the component you want to focus on in the page which is especially useful when trying to find
+the component you want to focus on in the page which is especially useful when 1trying to find
 what you want. Just click on the elements picker icon and click on the element you want to focus
 on in the page and it will be selected in the devtools accordingly. Hovering any element in the
 page in this mode will highlight it and the same happens anytime in the components tree.
@@ -64,25 +64,18 @@ as its env, props, observed states and all the other variables that are present 
 While the props and the env are already present on the actual instance of the component and are
 pretty explicit by themselves, the observed state value is a bit more complicated to grasp.
 
-The observed state is actually information about which variables are observed by the component
-which will trigger a rerender of the component when it is modified. The keys represent which part of the
-variable is actually observed and the target is the actual variable. For simplicity, the properties
-that are not observed by the component are greyed out while the others are in bold. This means that
-editing bold ones will trigger a rerender while the greyed out ones will not.
+The observed state is actually information about which variables are being observed by the component:
+when any property of a reactive object is being read by the component, the component will subscribe
+to this property which means it will listen to any change that can occur on the property and render
+when such a change occurs. This can be visualized easily within the devtools inside of the observed
+state section: observed properties of the reactive object(s) are displayed in bold while the others
+are greyed out. Do keep in mind that a greyed out property in the observed state of one component
+may be observed by another and the other way around is also possible. Here is an example for some
+user Field component:
 
 <img src="screenshots/states.png"/>
 
-In the given example, we have two keys/target pairs for two different variables. The first one indicates
-that adding or removing an element to the array will trigger a rerender since the length will have changed.
-Replacing the element at index 0, 1 or 2 will also have the same effect as implied by the keys. It doesn't
-mean that editing the properties of element at index 0, 1 or 2 will rerender the component though. It may
-be the case for some but this will be described in another keys/target pair. The second keys/target pair
-is actually the element at index 0 of the first pair. It only has id in the keys meaning that only the
-id property will actually trigger a rerender the component when modified. Be aware however that the other
-properties may be in the observed state of another component like a child one in this case. A greyed out
-property only implies it is not reactive for the selected component and not for the others.
-
-The navigation inside the properties is also similar to the one in console variables: properties have
+Navigation inside the properties is also similar to the one in console variables: properties have
 their prototype displayed and getters will get their value when clicked on (...). It is also possible to
 send any property to the console using the right-click context menu on it and functions can be inspected
 in the sources tab as well.
@@ -96,8 +89,10 @@ component's name. Using the left click on the component's name will focus it in 
 It is also possible to edit any of the leaf node properties. To do so, you must double click on the
 property's value and modify it using the freshly created input then press enter to apply the changes.
 Do note that the modified values should be written in JSON format in order to be valid (examples:
-89, "yes", undefined, null, \["hello", 15\], {"a": 1}, true, ...). Whether it has an impact on the
-component or not and whether it produces an error is the responsability of the user.
+89, "yes", undefined, null, \["hello", 15\], {"a": 1}, true, ...). Editing any value will produce a
+manual render of the component (or the root component of the application in the case of env values).
+Whether the edition has an impact on the component or not and whether it produces an error is the
+responsability of the user.
 
 <img src="screenshots/edit.png"/>
 
@@ -117,7 +112,8 @@ are intercepted by the devtools using the record button.
 The second button is used to clear all the events that have been recorded. The select can be used to
 switch between the tree view (which shows the causality between renders) and the events log view which
 simply displays the events in the exact order they were triggered. In this view, you can expand the create,
-update and destroy events which reveals the component that initiated the event.
+update and destroy events which reveals the component that initiated the event. Also, a transition line will
+appear each time a new animation frame has been loaded between events.
 
 <img src="screenshots/events_log.png"/>
 
@@ -131,20 +127,29 @@ There is also the Trace Renderings and Trace Subscriptions features. These featu
 recording of events and have no effect on the profiler tab. The Trace Renderings option is used to log in
 the console all the render events and allows to show their traceback information. Similarly, the Trace
 Subscriptions option logs all the properties that caused a render event and also allows to see the traceback
-of the modification
+of the modification.
 
 <img src="screenshots/trace_rendering.png"/>
 <img src="screenshots/trace_subscriptions.png"/>
 
+The Owl Devtools also allow to inspect iframes coded in Owl: when an Owl iframe is detected in the page,
+the iframe selector will appear next to the tabs. This allows to switch from an iframe to another easily.
+Be aware that switching iframes will clear all record events from the profiler tab. Iframes detection is
+currently not working in the firefox version, we are aware of this issue and will try to address it in the
+future.
+
+<img src="screenshots/iframes.png"/>
+
 ## Options
 
 The owl devtools extension has a dark mode feature which defaults to your general devtools settings and can
-be toggled using the sun/moon icon at the top-right corner of the tab. All the examples above were created
-with the dark mode enabled. There is also a refresh button to completely reset the owl devtools.
+be toggled using the sun/moon icon at the top-right corner of the tab. There is also a refresh button to
+completely reset the owl devtools.
 
 <img src="screenshots/darkmode.png"/>
 
 ## Troubleshooting
 
-If the feedback from the page to the devtools seems to be cut, just close the devtools and refresh the page.
+If the feedback from the page to the devtools seems to be cut, you can first try to use the refresh
+button mentioned above but if it still doesn't seem to work, just close the devtools and refresh the page.
 This will eventually happen any time a tab stays opened for too long without being refreshed.

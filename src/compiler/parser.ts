@@ -740,14 +740,14 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
       // be ignored)
       let el = slotNode.parentElement!;
       let isInSubComponent = false;
-      while (el !== clone) {
+      while (el && el !== clone) {
         if (el!.hasAttribute("t-component") || el!.tagName[0] === el!.tagName[0].toUpperCase()) {
           isInSubComponent = true;
           break;
         }
         el = el.parentElement!;
       }
-      if (isInSubComponent) {
+      if (isInSubComponent || !el) {
         continue;
       }
 

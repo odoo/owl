@@ -1673,6 +1673,31 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><div><p>Ablip</p><div><p>Bblip</p></div></div></div>");
   });
 
+  test("named slot inside named slot in t-component", async () => {
+    class Child extends Component {
+      static template = xml`<t t-slot="brol"/>`;
+    }
+    class Parent extends Component {
+      static template = xml`
+        <Child>
+          <t t-set-slot="brol">
+            outer
+            <t t-component="Child">
+              <t t-set-slot="brol">
+                <t t-esc="value"/>
+              </t>
+            </t>
+          </t>
+        </Child>`;
+      static components = { Child };
+      Child = Child;
+      value = "inner";
+    }
+    await mount(Parent, fixture);
+
+    expect(fixture.innerHTML).toBe(" outer inner");
+  });
+
   test("can render only empty slot", async () => {
     class Parent extends Component {
       static template = xml`<t t-slot="default"/>`;

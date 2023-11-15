@@ -1066,6 +1066,45 @@ exports[`slots multiple slots containing components 3`] = `
 }"
 `;
 
+exports[`slots named slot inside named slot in t-component 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(null, false, true, false, []);
+  const comp2 = app.createComponent(\`Child\`, true, true, false, []);
+  
+  function slot1(ctx, node, key = \\"\\") {
+    const b2 = text(\` outer \`);
+    const ctx2 = capture(ctx);
+    const Comp1 = ctx['Child'];
+    const b4 = toggler(Comp1, comp1({slots: markRaw({'brol': {__render: slot2.bind(this), __ctx: ctx2}})}, (Comp1).name + key + \`__1\`, node, this, Comp1));
+    return multi([b2, b4]);
+  }
+  
+  function slot2(ctx, node, key = \\"\\") {
+    return text(ctx['value']);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx1 = capture(ctx);
+    return comp2({slots: markRaw({'brol': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__2\`, node, this, null);
+  }
+}"
+`;
+
+exports[`slots named slot inside named slot in t-component 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { callSlot } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return callSlot(ctx, node, key, 'brol', false, {});
+  }
+}"
+`;
+
 exports[`slots named slot inside slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

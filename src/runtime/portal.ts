@@ -65,7 +65,7 @@ export class Portal extends Component {
       type: String,
     },
     slots: true,
-  };
+  } as const;
 
   setup() {
     const node: any = this.__owl__;

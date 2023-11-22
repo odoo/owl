@@ -594,7 +594,7 @@ describe("props validation", () => {
 
   test("props: can be defined with a boolean", async () => {
     class SubComp extends Component {
-      static props = { message: true };
+      static props = { message: true } as const;
     }
     expect(() => {
       validateProps(SubComp as any, {});
@@ -636,7 +636,7 @@ describe("props validation", () => {
 
   test("props: extra props cause an error, part 2", async () => {
     class SubComp extends Component {
-      static props = { message: true };
+      static props = { message: true } as const;
     }
     expect(() => {
       validateProps(SubComp as any, { message: 1, flag: true });

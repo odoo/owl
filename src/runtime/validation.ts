@@ -8,6 +8,7 @@ type BaseType =
   | typeof Date
   | typeof Object
   | typeof Array
+  | typeof Function
   | true
   | "*";
 

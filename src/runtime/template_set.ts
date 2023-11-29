@@ -41,7 +41,7 @@ export interface TemplateSetConfig {
   dev?: boolean;
   translatableAttributes?: string[];
   translateFn?: (s: string) => string;
-  templates?: string | Document;
+  templates?: string | Document | Record<string, string>;
 }
 
 export class TemplateSet {
@@ -60,7 +60,13 @@ export class TemplateSet {
     this.translateFn = config.translateFn;
     this.translatableAttributes = config.translatableAttributes;
     if (config.templates) {
-      this.addTemplates(config.templates);
+      if (config.templates instanceof Document || typeof config.templates === "string") {
+        this.addTemplates(config.templates);
+      } else {
+        for (const name in config.templates) {
+          this.addTemplate(name, config.templates[name]);
+        }
+      }
     }
   }
 

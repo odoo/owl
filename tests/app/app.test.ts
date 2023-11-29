@@ -167,4 +167,21 @@ describe("app", () => {
       ]
     `);
   });
+
+  test("can load templates from an object name-string", async () => {
+    const templates = {
+      hello: `<div class="hello">hello</div>`,
+      world: `<div>world</div>`,
+    };
+    class SomeComponent extends Component {
+      static template = "hello";
+    }
+
+    const app = new App(SomeComponent, { templates });
+    await app.mount(fixture);
+    expect(fixture.querySelector(".hello")).toBeDefined();
+    // Only the "hello" template is used, so the "world" template is not yet loaded
+    expect(Object.keys(app.templates)).toEqual(["hello"]);
+    expect(Object.keys(app.rawTemplates)).toEqual(["hello", "world"]);
+  });
 });

@@ -57,6 +57,19 @@ exports[`app can configure an app with props 1`] = `
 }"
 `;
 
+exports[`app can load templates from an object name-string 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div class=\\"hello\\">hello</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`app can mount app in an iframe 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

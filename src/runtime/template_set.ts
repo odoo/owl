@@ -4,38 +4,9 @@ import { getCurrent } from "./component_node";
 import { Portal, portalTemplate } from "./portal";
 import { helpers } from "./template_helpers";
 import { OwlError } from "../common/owl_error";
+import { parseXML } from "../common/utils";
 
 const bdom = { text, createBlock, list, multi, html, toggler, comment };
-
-function parseXML(xml: string): Document {
-  const parser = new DOMParser();
-
-  const doc = parser.parseFromString(xml, "text/xml");
-  if (doc.getElementsByTagName("parsererror").length) {
-    let msg = "Invalid XML in template.";
-    const parsererrorText = doc.getElementsByTagName("parsererror")[0].textContent;
-    if (parsererrorText) {
-      msg += "\nThe parser has produced the following error message:\n" + parsererrorText;
-      const re = /\d+/g;
-      const firstMatch = re.exec(parsererrorText);
-      if (firstMatch) {
-        const lineNumber = Number(firstMatch[0]);
-        const line = xml.split("\n")[lineNumber - 1];
-        const secondMatch = re.exec(parsererrorText);
-        if (line && secondMatch) {
-          const columnIndex = Number(secondMatch[0]) - 1;
-          if (line[columnIndex]) {
-            msg +=
-              `\nThe error might be located at xml line ${lineNumber} column ${columnIndex}\n` +
-              `${line}\n${"-".repeat(columnIndex - 1)}^`;
-          }
-        }
-      }
-    }
-    throw new OwlError(msg);
-  }
-  return doc;
-}
 
 export interface TemplateSetConfig {
   dev?: boolean;

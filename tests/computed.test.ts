@@ -183,6 +183,93 @@ describe("computed - with effect", () => {
     expect(orderTotal).toEqual(244.8);
     expectOrderComputeCounts({ itemTotal: 0, orderTotal: 1 });
   });
+
+  test("computed sorted array", async () => {
+    let sortingCount = 0;
+    const expectSortingCount = (expected: number) => {
+      expect(sortingCount).toBe(expected);
+      sortingCount = 0;
+    };
+
+    const array = reactive([
+      52, 26, 71, 63, 72, 57, 71, 11, 17, 30, 52, 90, 14, 33, 86, 13, 62, 34, 99, 61, 21, 92, 95,
+      99, 0, 92, 6, 35, 95, 39, 87, 30, 50, 74, 21, 67, 34, 98, 99, 46, 85, 63, 41, 56, 18, 43, 23,
+      59, 52, 12,
+    ]);
+
+    const sortedArray = computed((a: typeof array) => {
+      sortingCount++;
+      const copy = [...a];
+      return copy.sort((a, b) => a - b);
+    });
+
+    const range = computed((a: typeof array) => {
+      a = sortedArray(a);
+      return a[a.length - 1] - a[0];
+    });
+
+    const average = computed((a: typeof array) => {
+      let sum = 0;
+      for (let i = 0; i < a.length; i++) {
+        sum += a[i];
+      }
+      return Math.trunc(sum / a.length);
+    });
+
+    const min = computed((a: typeof array) => {
+      a = sortedArray(a);
+      return a[0];
+    });
+
+    const max = computed((a: typeof array) => {
+      a = sortedArray(a);
+      return a[a.length - 1];
+    });
+
+    const statTotal = computed((a: typeof array) => {
+      return range(a) + average(a) + min(a) + max(a);
+    });
+
+    let val = 0;
+    effect(
+      array,
+      batched((a) => {
+        val = statTotal(a) + statTotal(a) + statTotal(a);
+      })
+    );
+
+    await nextMicroTick();
+
+    expectSortingCount(1);
+    expect(val).toEqual(250 * 3);
+
+    array.push(99, 100);
+    await nextMicroTick();
+
+    expectSortingCount(1);
+    expect(val).toEqual(254 * 3);
+
+    array.push(-50);
+    await nextMicroTick();
+
+    expectSortingCount(1);
+    expect(val).toEqual(252 * 3);
+
+    // After some mutations, the original order is kept because the `sortedArray` getter makes a copy of the array before sorting.
+    const arrayCopy = [...array];
+    for (let i = 0; i < array.length; i++) {
+      expect(array[i]).toEqual(arrayCopy[i]);
+    }
+
+    // Sort will perform so many mutations in the original array.
+    // This will register several of recomputations.
+    // But since the effect is batched, it will only be recomputed once.
+    array.sort((a, b) => b - a);
+    await nextMicroTick();
+
+    expectSortingCount(1);
+    expect(val).toEqual(252 * 3);
+  });
 });
 
 describe("computed - with components", () => {

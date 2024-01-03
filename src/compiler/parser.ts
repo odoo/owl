@@ -367,9 +367,9 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
       const isSelect = tagName === "select";
       const isCheckboxInput = isInput && typeAttr === "checkbox";
       const isRadioInput = isInput && typeAttr === "radio";
-      const hasLazyMod = attr.includes(".lazy");
-      const hasNumberMod = attr.includes(".number");
       const hasTrimMod = attr.includes(".trim");
+      const hasLazyMod = hasTrimMod || attr.includes(".lazy");
+      const hasNumberMod = attr.includes(".number");
       const eventType = isRadioInput ? "click" : isSelect || hasLazyMod ? "change" : "input";
 
       model = {

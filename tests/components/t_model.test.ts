@@ -331,6 +331,32 @@ describe("t-model directive", () => {
     expect(fixture.innerHTML).toBe("<div><input><span>test</span></div>");
   });
 
+  test(".trim modifier implies .lazy modifier", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+        <div>
+            <input t-model.trim="state.text"/>
+            <span><t t-esc="state.text"/></span>
+        </div>
+      `;
+      state = useState({ text: "" });
+    }
+    const comp = await mount(SomeComponent, fixture);
+
+    expect(fixture.innerHTML).toBe("<div><input><span></span></div>");
+
+    const input = fixture.querySelector("input")!;
+    input.value = "test ";
+    input.dispatchEvent(new Event("input"));
+    await nextTick();
+    expect(comp.state.text).toBe("");
+    expect(fixture.innerHTML).toBe("<div><input><span></span></div>");
+    input.dispatchEvent(new Event("change"));
+    await nextTick();
+    expect(comp.state.text).toBe("test");
+    expect(fixture.innerHTML).toBe("<div><input><span>test</span></div>");
+  });
+
   test(".number modifier", async () => {
     class SomeComponent extends Component {
       static template = xml`

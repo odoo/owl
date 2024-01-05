@@ -1,10 +1,35 @@
-import { reactive, computed, mount, Component, useState, onRendered, xml } from "../src";
+import { Component, mount, onRendered, reactive, useState, xml } from "../src";
 import { batched } from "../src/runtime/utils";
 import { makeTestFixture, nextMicroTick, nextTick } from "./helpers";
 
-function effect<T extends object>(dep: T, fn: (o: T) => void) {
-  const r: any = reactive(dep, () => fn(r));
-  fn(r);
+function effect(cb: any, deps: any) {
+  const reactiveDeps = reactive(deps, function recompute() {
+    cb(...reactiveDeps);
+  });
+  cb(...reactiveDeps);
+}
+
+function lazyComputed(obj: any, propName: string, compute: any) {
+  const key = Symbol(propName);
+  Object.defineProperty(obj, propName, {
+    get() {
+      return this[key]();
+    },
+    configurable: true,
+  });
+
+  effect(
+    function recompute(obj: any) {
+      const value: any[] = [];
+      obj[key] = () => {
+        if (!value.length) {
+          value.push(compute(obj));
+        }
+        return value[0];
+      };
+    },
+    [obj]
+  );
 }
 
 describe("computed - with effect", () => {
@@ -24,36 +49,36 @@ describe("computed - with effect", () => {
   });
 
   type Product = { unitPrice: number };
-  type OrderItem = { product: Product; quantity: number };
-  type Order = { items: OrderItem[]; discount: number };
+  type OrderItem = { product: Product; quantity: number; itemTotal: number };
+  type Order = { items: any[]; discount: number; orderTotal: number };
 
   const createProduct = (unitPrice: number): Product => {
     return reactive({ unitPrice });
   };
 
   const createOrderItem = (product: Product, quantity: number) => {
-    return reactive({ product, quantity });
+    const item = reactive({ product, quantity });
+    lazyComputed(item, "itemTotal", (item: OrderItem) => {
+      orderComputeCounts.itemTotal++;
+
+      return item.product.unitPrice * item.quantity;
+    });
+    return item;
   };
 
-  const createOrder = (): Order => {
-    return reactive({ items: [], discount: 0 });
+  const createOrder = () => {
+    const order = reactive({ items: [], discount: 0 });
+    lazyComputed(order, "orderTotal", (order: Order) => {
+      orderComputeCounts.orderTotal++;
+
+      let result = 0;
+      for (let item of order.items) {
+        result += item.itemTotal;
+      }
+      return result * (1 - order.discount / 100);
+    });
+    return order as unknown as Order;
   };
-
-  const getItemTotal = computed((item: OrderItem) => {
-    orderComputeCounts.itemTotal++;
-
-    return item.product.unitPrice * item.quantity;
-  });
-
-  const getOrderTotal = computed((order: Order) => {
-    orderComputeCounts.orderTotal++;
-
-    let result = 0;
-    for (let item of order.items) {
-      result += getItemTotal(item);
-    }
-    return result * (1 - order.discount / 100);
-  });
 
   test("effect depends on getter", () => {
     let distanceComputeCount = 0;
@@ -63,45 +88,49 @@ describe("computed - with effect", () => {
     };
 
     // point <- computed distance <- computed deepComputedVal
-    const point = reactive({ x: 0, y: 0 });
-    const distance = computed((p: typeof point) => {
+    const point = reactive({ x: 0, y: 0 }) as any;
+    lazyComputed(point, "distance", (p: typeof point) => {
       distanceComputeCount++;
       return Math.sqrt(Math.pow(p.x, 2) + Math.pow(p.y, 2));
     });
-    const deepComputedVal = computed((p: typeof point) => {
+    lazyComputed(point, "deepComputedVal", (p: typeof point) => {
       // absurd computation to test that the getter is not recomputed
       let result = 0;
       for (let i = 0; i < 5; i++) {
-        result += distance(p);
+        // @ts-ignore
+        result += p.distance;
       }
       return result;
     });
 
     let val = 0;
-    effect(point, (p) => {
-      // Notice that in this effect, only the `deepComputedVal` is directly used.
-      // It is indirectly dependent on the `x` and `y` of `p`.
-      // Nevertheless, mutating `x` or `y` should trigger this effect.
-      val = deepComputedVal(p);
-    });
+    effect(
+      (p: any) => {
+        // Notice that in this effect, only the `deepComputedVal` is directly used.
+        // It is indirectly dependent on the `x` and `y` of `p`.
+        // Nevertheless, mutating `x` or `y` should trigger this effect.
+        val = p.deepComputedVal;
+      },
+      [point]
+    );
 
     expect(val).toEqual(0);
     expectDistanceComputeCount(1);
-    expect(distance(point)).toEqual(0);
+    expect(point.distance).toEqual(0);
     // No recomputation even after the previous `distance` call.
     expectDistanceComputeCount(0);
 
     point.x = 3;
     expect(val).toEqual(15);
     expectDistanceComputeCount(1);
-    expect(distance(point)).toEqual(3);
+    expect(point.distance).toEqual(3);
     // No recomputation even after the previous `distance` call.
     expectDistanceComputeCount(0);
 
     point.y = 4;
     expect(val).toEqual(25);
     expectDistanceComputeCount(1);
-    expect(distance(point)).toEqual(5);
+    expect(point.distance).toEqual(5);
     // No recomputation even after the previous `distance` call.
     expectDistanceComputeCount(0);
   });
@@ -116,9 +145,12 @@ describe("computed - with effect", () => {
     o.items.push(createOrderItem(p3, 3));
 
     let orderTotal = 0;
-    effect(o, (o) => {
-      orderTotal = getOrderTotal(o);
-    });
+    effect(
+      (o: any) => {
+        orderTotal = o.orderTotal;
+      },
+      [o]
+    );
 
     expect(orderTotal).toEqual(140);
 
@@ -143,10 +175,10 @@ describe("computed - with effect", () => {
 
     let orderTotal = 0;
     effect(
-      o,
       batched((o) => {
-        orderTotal = getOrderTotal(o);
-      })
+        orderTotal = o.orderTotal;
+      }),
+      [o]
     );
 
     await nextMicroTick();
@@ -174,7 +206,7 @@ describe("computed - with effect", () => {
 
     expect(orderTotal).toEqual(272);
     expectOrderComputeCounts({ itemTotal: 3, orderTotal: 1 });
-    expect(getOrderTotal(o)).toEqual(272);
+    expect(o.orderTotal).toEqual(272);
     // No recomputation even after the previous `getOrderTotal` call.
     expectOrderComputeCounts({ itemTotal: 0, orderTotal: 0 });
 
@@ -197,18 +229,19 @@ describe("computed - with effect", () => {
       59, 52, 12,
     ]);
 
-    const sortedArray = computed((a: typeof array) => {
+    lazyComputed(array, "sortedArray", (a: typeof array) => {
       sortingCount++;
       const copy = [...a];
       return copy.sort((a, b) => a - b);
     });
 
-    const range = computed((a: typeof array) => {
-      a = sortedArray(a);
+    lazyComputed(array, "range", (a: typeof array) => {
+      // @ts-ignore
+      a = a.sortedArray;
       return a[a.length - 1] - a[0];
     });
 
-    const average = computed((a: typeof array) => {
+    lazyComputed(array, "average", (a: typeof array) => {
       let sum = 0;
       for (let i = 0; i < a.length; i++) {
         sum += a[i];
@@ -216,26 +249,29 @@ describe("computed - with effect", () => {
       return Math.trunc(sum / a.length);
     });
 
-    const min = computed((a: typeof array) => {
-      a = sortedArray(a);
+    lazyComputed(array, "min", (a: typeof array) => {
+      // @ts-ignore
+      a = a.sortedArray;
       return a[0];
     });
 
-    const max = computed((a: typeof array) => {
-      a = sortedArray(a);
+    lazyComputed(array, "max", (a: typeof array) => {
+      // @ts-ignore
+      a = a.sortedArray;
       return a[a.length - 1];
     });
 
-    const statTotal = computed((a: typeof array) => {
-      return range(a) + average(a) + min(a) + max(a);
+    lazyComputed(array, "statTotal", (a: typeof array) => {
+      // @ts-ignore
+      return a.range + a.average + a.min + a.max;
     });
 
     let val = 0;
     effect(
-      array,
       batched((a) => {
-        val = statTotal(a) + statTotal(a) + statTotal(a);
-      })
+        val = a.statTotal + a.statTotal + a.statTotal;
+      }),
+      [array]
     );
 
     await nextMicroTick();
@@ -288,31 +324,6 @@ describe("computed - with components", () => {
     computeCounts = { c: 0, d: 0, e: 0, f: 0 };
   });
 
-  const c = computed((self: State) => {
-    computeCounts.c++;
-    return self.a + self.b;
-  });
-  const d = computed((self: State) => {
-    computeCounts.d++;
-    return 2 * self.a;
-  });
-  const e = computed((self: State) => {
-    computeCounts.e++;
-    let result = 0;
-    for (let i = 0; i < 5; i++) {
-      result += c(self) + d(self);
-    }
-    return result;
-  });
-  const f = computed((self: State) => {
-    computeCounts.f++;
-    let result = 0;
-    for (let i = 0; i < 10; i++) {
-      result += d(self);
-    }
-    return result;
-  });
-
   const updateA = (self: State, by: number) => {
     self.a += by;
   };
@@ -321,6 +332,30 @@ describe("computed - with components", () => {
   };
 
   const createComponents = (state: State) => {
+    lazyComputed(state, "c", (self: any) => {
+      computeCounts.c++;
+      return self.a + self.b;
+    });
+    lazyComputed(state, "d", (self: any) => {
+      computeCounts.d++;
+      return 2 * self.a;
+    });
+    lazyComputed(state, "e", (self: any) => {
+      computeCounts.e++;
+      let result = 0;
+      for (let i = 0; i < 5; i++) {
+        result += self.c + self.d;
+      }
+      return result;
+    });
+    lazyComputed(state, "f", (self: any) => {
+      computeCounts.f++;
+      let result = 0;
+      for (let i = 0; i < 10; i++) {
+        result += self.d;
+      }
+      return result;
+    });
     let renderCounts = { App: 0, C: 0, D: 0, E: 0, F: 0 };
     const expectRenderCounts = (expected: {
       App: number;
@@ -336,7 +371,6 @@ describe("computed - with components", () => {
     class BaseComp extends Component {
       state = useState(state);
       setup() {
-        Object.assign(this, { c, d, e, f });
         onRendered(() => {
           const name = (this.constructor as any).name as keyof typeof renderCounts;
           renderCounts[name]++;
@@ -365,13 +399,13 @@ describe("computed - with components", () => {
     const state = reactive({ a: 1, b: 1 });
     const { App, C, D, E, F, expectRenderCounts } = createComponents(state);
 
-    C.template = xml`<p t-out="c(state)" />`;
+    C.template = xml`<p t-out="state.c" />`;
 
-    D.template = xml`<p t-out="d(state)" />`;
+    D.template = xml`<p t-out="state.d" />`;
 
-    E.template = xml`<p t-out="e(state)" />`;
+    E.template = xml`<p t-out="state.e" />`;
 
-    F.template = xml`<p t-out="f(state)" />`;
+    F.template = xml`<p t-out="state.f" />`;
 
     App.template = xml`<div><C /><D /><E /><F /></div>`;
     App.components = { C, D, E, F };
@@ -401,15 +435,15 @@ describe("computed - with components", () => {
     const state = reactive({ a: 1, b: 1 });
     const { App, C, D, E, F, expectRenderCounts } = createComponents(state);
 
-    F.template = xml`<p t-out="f(state)" />`;
+    F.template = xml`<p t-out="state.f" />`;
 
-    E.template = xml`<div><p t-out="e(state)" /><F /></div>`;
+    E.template = xml`<div><p t-out="state.e" /><F /></div>`;
     E.components = { F };
 
-    D.template = xml`<div><p t-out="d(state)" /><E /></div>`;
+    D.template = xml`<div><p t-out="state.d" /><E /></div>`;
     D.components = { E };
 
-    C.template = xml`<div><p t-out="c(state)" /><D /></div>`;
+    C.template = xml`<div><p t-out="state.c" /><D /></div>`;
     C.components = { D };
 
     App.template = xml`<div><C /></div>`;
@@ -440,13 +474,13 @@ describe("computed - with components", () => {
     const state = reactive({ a: 1, b: 1 });
     const { App, C, D, E, F } = createComponents(state);
 
-    C.template = xml`<p t-out="c(state)" />`;
+    C.template = xml`<p t-out="state.c" />`;
 
-    D.template = xml`<p t-out="d(state)" />`;
+    D.template = xml`<p t-out="state.d" />`;
 
-    E.template = xml`<p t-out="e(state)" />`;
+    E.template = xml`<p t-out="state.e" />`;
 
-    F.template = xml`<p t-out="f(state)" />`;
+    F.template = xml`<p t-out="state.f" />`;
 
     App.template = xml`<div><C /><D /><E /><F /></div>`;
     App.components = { C, D, E, F };
@@ -474,15 +508,16 @@ describe("computed - with components", () => {
 
   test("more complicated compute tree", async () => {
     const state = reactive({ x: 3, y: 2 });
-    const b = computed((self: typeof state) => {
+
+    lazyComputed(state, "b", (self: any) => {
       return self.x + self.y;
-    }, "computed b");
-    const e = computed((self: typeof state) => {
-      return b(self) * self.x;
-    }, "computed e");
-    const f = computed((self: typeof state) => {
-      return e(self) + b(self);
-    }, "computed f");
+    });
+    lazyComputed(state, "e", (self: any) => {
+      return self.b * self.x;
+    });
+    lazyComputed(state, "f", (self: any) => {
+      return self.e + self.b;
+    });
 
     const renderCounts = { A: 0, C: 0 };
     const expectRenderCounts = (expected: { A: number; C: number }) => {
@@ -493,13 +528,10 @@ describe("computed - with components", () => {
 
     class BaseComp extends Component {
       state = useState(state);
-      setup() {
-        Object.assign(this, { b, e, f });
-      }
     }
     class A extends BaseComp {
       static components = {};
-      static template = xml`<p id="A" t-out="f(state)" />`;
+      static template = xml`<p id="A" t-out="state.f" />`;
       setup() {
         super.setup();
         onRendered(() => {
@@ -509,7 +541,7 @@ describe("computed - with components", () => {
     }
     class C extends BaseComp {
       static components = {};
-      static template = xml`<p id="C" t-out="f(state)" />`;
+      static template = xml`<p id="C" t-out="state.f" />`;
       setup() {
         super.setup();
         onRendered(() => {

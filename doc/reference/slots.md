@@ -215,7 +215,7 @@ bind a function if needed.
 
 ## Slot scopes
 
-For other kinds of advanced use cases, the content of a slot may depends on some
+For other kinds of advanced use cases, the content of a slot may depend on some
 information specific to the generic component. This is the opposite of the slot
 params.
 

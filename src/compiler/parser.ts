@@ -1,5 +1,4 @@
 import { OwlError } from "../common/owl_error";
-import { parseXML } from "../common/utils";
 
 // -----------------------------------------------------------------------------
 // AST Type definition
@@ -198,11 +197,7 @@ export type AST =
 // -----------------------------------------------------------------------------
 const cache: WeakMap<Element, AST> = new WeakMap();
 
-export function parse(xml: string | Element): AST {
-  if (typeof xml === "string") {
-    const elem = parseXML(`<t>${xml}</t>`).firstChild as Element;
-    return _parse(elem);
-  }
+export function parse(xml: Element): AST {
   let ast = cache.get(xml);
   if (!ast) {
     // we clone here the xml to prevent modifying it in place

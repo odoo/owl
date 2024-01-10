@@ -78,4 +78,62 @@ describe("loading templates", () => {
     context.addTemplates(xml);
     expect(Object.keys(context.rawTemplates)).toEqual([]);
   });
+
+  test("getTemplate: element returned", () => {
+    const context = new TestContext({
+      getTemplate: (name) => {
+        if (name === "main") {
+          const data = `<div>Hello World!</div>`;
+          const xml = new DOMParser().parseFromString(data, "text/xml");
+          return xml.firstChild as Element;
+        }
+        return;
+      },
+    });
+    const result = context.renderToString("main");
+    expect(result).toBe("<div>Hello World!</div>");
+  });
+
+  test("getTemplate: element returned (2)", () => {
+    const context = new TestContext({
+      getTemplate: (name) => {
+        if (name === "main") {
+          const doc = new Document();
+          const div = doc.createElement("div");
+          div.append(doc.createTextNode("Hello World!"));
+          return div;
+        }
+        return;
+      },
+    });
+    const result = context.renderToString("main");
+    expect(result).toBe("<div>Hello World!</div>");
+  });
+
+  test("getTemplate: template string returned", () => {
+    const context = new TestContext({
+      getTemplate: (name) => {
+        if (name === "main") {
+          return `<div>Hello World!</div>`;
+        }
+        return;
+      },
+    });
+    const result = context.renderToString("main");
+    expect(result).toBe("<div>Hello World!</div>");
+  });
+
+  test("getTemplate: undefined returned", () => {
+    const context = new TestContext({
+      getTemplate: () => {},
+    });
+    const data = `<?xml version="1.0" encoding="UTF-8"?>
+    <templates id="template" xml:space="preserve">
+      <div t-name="main">Hello World!</div>
+    </templates>`;
+    const xml = new DOMParser().parseFromString(data, "text/xml");
+    context.addTemplates(xml);
+    const result = context.renderToString("main");
+    expect(result).toBe("<div>Hello World!</div>");
+  });
 });

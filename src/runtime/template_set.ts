@@ -13,6 +13,7 @@ export interface TemplateSetConfig {
   translatableAttributes?: string[];
   translateFn?: (s: string) => string;
   templates?: string | Document | Record<string, string>;
+  getTemplate?: (s: string) => Element | Function | string | void;
 }
 
 export class TemplateSet {
@@ -22,6 +23,7 @@ export class TemplateSet {
   dev: boolean;
   rawTemplates: typeof globalTemplates = Object.create(globalTemplates);
   templates: { [name: string]: Template } = {};
+  getRawTemplate?: (s: string) => Element | Function | string | void;
   translateFn?: (s: string) => string;
   translatableAttributes?: string[];
   Portal = Portal;
@@ -39,6 +41,7 @@ export class TemplateSet {
         }
       }
     }
+    this.getRawTemplate = config.getTemplate;
   }
 
   addTemplate(name: string, template: string | Element) {
@@ -77,7 +80,7 @@ export class TemplateSet {
 
   getTemplate(name: string): Template {
     if (!(name in this.templates)) {
-      const rawTemplate = this.rawTemplates[name];
+      const rawTemplate = this.getRawTemplate?.(name) || this.rawTemplates[name];
       if (rawTemplate === undefined) {
         let extraInfo = "";
         try {

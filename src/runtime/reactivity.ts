@@ -20,8 +20,9 @@ type CollectionRawType = "Set" | "Map" | "WeakMap";
 const objectToString = Object.prototype.toString;
 const objectHasOwnProperty = Object.prototype.hasOwnProperty;
 
-const SUPPORTED_RAW_TYPES = new Set(["Object", "Array", "Set", "Map", "WeakMap"]);
-const COLLECTION_RAWTYPES = new Set(["Set", "Map", "WeakMap"]);
+// Use arrays because Array.includes is faster than Set.has for small arrays
+const SUPPORTED_RAW_TYPES = ["Object", "Array", "Set", "Map", "WeakMap"];
+const COLLECTION_RAW_TYPES = ["Set", "Map", "WeakMap"];
 
 /**
  * extract "RawType" from strings like "[object RawType]" => this lets us ignore
@@ -45,7 +46,7 @@ function canBeMadeReactive(value: any): boolean {
   if (typeof value !== "object") {
     return false;
   }
-  return SUPPORTED_RAW_TYPES.has(rawType(value));
+  return SUPPORTED_RAW_TYPES.includes(rawType(value));
 }
 /**
  * Creates a reactive from the given object/callback if possible and returns it,
@@ -220,7 +221,7 @@ export function reactive<T extends Target>(target: T, callback: Callback = NO_CA
   const reactivesForTarget = reactiveCache.get(target)!;
   if (!reactivesForTarget.has(callback)) {
     const targetRawType = rawType(target);
-    const handler = COLLECTION_RAWTYPES.has(targetRawType)
+    const handler = COLLECTION_RAW_TYPES.includes(targetRawType)
       ? collectionsProxyHandler(target as Collection, callback, targetRawType as CollectionRawType)
       : basicProxyHandler<T>(callback);
     const proxy = new Proxy(target, handler as ProxyHandler<T>) as Reactive<T>;

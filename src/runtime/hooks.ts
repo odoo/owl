@@ -56,7 +56,7 @@ export function useChildSubEnv(envExtension: Env) {
   node.childEnv = extendEnv(node.childEnv, envExtension);
 }
 // -----------------------------------------------------------------------------
-// useEffect
+// useEffect & useEffectAsync
 // -----------------------------------------------------------------------------
 
 type EffectDeps<T extends unknown[]> = T | (T extends [...infer H, never] ? EffectDeps<H> : never);
@@ -68,6 +68,14 @@ type EffectDeps<T extends unknown[]> = T | (T extends [...infer H, never] ? Effe
  *      effects of the effect callback.
  */
 type Effect<T extends unknown[]> = (...dependencies: EffectDeps<T>) => void | (() => void);
+
+/**
+ * @template T
+ * @param {...T} dependencies the dependencies computed by computeDependencies
+ * @returns {void|(()=>void)} a cleanup function that reverses the side
+ *      effects of the effect callback.
+ */
+type EffectAsync<T extends unknown[]> = (...dependencies: EffectDeps<T>) => Promise<void> | (() => void)
 
 /**
  * This hook will run a callback when a component is mounted and patched, and
@@ -106,6 +114,44 @@ export function useEffect<T extends unknown[]>(
   });
 
   onWillUnmount(() => cleanup && cleanup());
+}
+
+
+/**
+ * This hook will run an async callback when a component is mounted and patched, and
+ * will run a cleanup function before patching and before unmounting the
+ * the component.
+ *
+ * @template T
+ * @param {EffectAsync<T>} effect the effect to run on component mount and/or patch
+ * @param {()=>[...T]} [computeDependencies=()=>[NaN]] a callback to compute
+ *      dependencies that will decide if the effect needs to be cleaned up and
+ *      run again. If the dependencies did not change, the effect will not run
+ *      again. The default value returns an array containing only NaN because
+ *      NaN !== NaN, which will cause the effect to rerun on every patch.
+ */
+
+export function useEffectAsync<T extends any[]>(effect: EffectAsync<T>, computeDependencies: () => [...T] = () => [NaN] as never) {
+	let cleanup: (() => void) | void
+	let dependencies: T
+	onMounted(async () => {
+		dependencies = computeDependencies()
+		cleanup = await effect(...dependencies)
+	})
+
+	onPatched(async () => {
+		const newDeps = computeDependencies()
+		const shouldReapply = newDeps.some((val, i) => val !== dependencies[i])
+		if (shouldReapply) {
+			dependencies = newDeps
+			if (cleanup) {
+				cleanup()
+			}
+			cleanup = await effect(...dependencies)
+		}
+	})
+
+	onWillUnmount(() => cleanup && cleanup())
 }
 
 // -----------------------------------------------------------------------------

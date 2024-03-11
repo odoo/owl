@@ -152,7 +152,7 @@ This may seem counter-intuitive, but it makes perfect sense in the context of co
 ```js
 class DoubleCounter extends Component {
   static template = xml`
-    <t t-esc="state.selected + ': ' + state[state.selected].value"/>
+    <t t-esc="'selected: ' + state.selected + ', value: ' + state[state.selected]"/>
     <button t-on-click="() => this.state.count1++">increment count 1</button>
     <button t-on-click="() => this.state.count2++">increment count 2</button>
     <button t-on-click="changeCounter">Switch counter</button>

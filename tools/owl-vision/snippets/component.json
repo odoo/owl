@@ -1,18 +1,43 @@
 {
-    "Basic owl component": {
+    "Basic OWL Component": {
         "prefix": "owlcomponent",
+        "scope": "javascript,typescript",
         "body": [
-            "export class ${1:component-name} extends Component {",
-            "    static template = \"${2:template-name}\";",
+            "import { Component } from \"@odoo/owl\";",
+            "",
+            "class ${1:${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/g}} extends ${2:Component} {",
+            "",
+            "    static template = \"${3:${RELATIVE_FILEPATH/(.*[\\|\\/])??([a-zA-Z_]+)([\\|\\/]static[\\|\\/].*)/${2}/g}}.${4:${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/g}}\";",
             "    static components = {};",
             "    static props = {};",
             "",
             "    setup() {",
-            "",
+            "        ${5:super.setup();}",
             "    }",
+            "",
+            "    ${6:// Do Something}",
             "}",
             ""
+
         ],
         "description": "The starting base for an owl component"
+    },
+
+    "Basic OWL Template": {
+        "prefix": "owltemplate",
+        "scope": "xml",
+        "body": [
+            "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>",
+            "",
+            "<templates xml:space=\"preserve\">",
+            "",
+            "    <t t-name=\"${2:${RELATIVE_FILEPATH/(.*[\\|\\/])??([a-zA-Z_]+)([\\|\\/]static[\\|\\/].*)/${2}/g}}.${3:${TM_FILENAME_BASE/(.*)/${1:/pascalcase}/g}}\">",
+            "        ${3:<h1>Hello World</h1>}",
+            "    </t>",
+            "",
+            "</templates>",
+            ""
+        ],
+        "description": "Generate a basic OWL template XML file"
     }
 }

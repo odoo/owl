@@ -386,7 +386,7 @@ exports[`t-on t-on on t-set-slots 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { capture, createCatcher, markRaw } = helpers;
+  let { createCatcher, markRaw } = helpers;
   const catcher1 = createCatcher({\\"click\\":0});
   const comp1 = app.createComponent(\`Child\`, true, true, false, []);
   
@@ -405,8 +405,7 @@ exports[`t-on t-on on t-set-slots 1`] = `
     const b2 = text(\` [\`);
     const b3 = text(ctx['state'].count);
     const b4 = text(\`] \`);
-    const ctx1 = capture(ctx);
-    const b8 = comp1({slots: markRaw({'myslot': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__1\`, node, this, null);
+    const b8 = comp1({slots: markRaw({'myslot': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__1\`, node, this, null);
     return multi([b2, b3, b4, b8]);
   }
 }"

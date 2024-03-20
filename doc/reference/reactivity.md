@@ -193,7 +193,7 @@ to be able to opt out of creating them in the first place. This is the purpose o
 ### `markRaw`
 
 Marks an object so that it is ignored by the reactivity system, meaning that if this object is ever
-part of a of a reactive object, it will be returned as is, and no keys in that object will be
+part of a reactive object, it will be returned as is, and no keys in that object will be
 observed.
 
 ```js

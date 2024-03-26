@@ -122,6 +122,19 @@ describe("t-set", () => {
     expect(renderToString(template, { list: ["a", "b"] })).toBe(expected);
   });
 
+  test("t-set should reuse variable if possible: for..of", () => {
+    const template = `
+        <div>
+          <t t-set="v" t-value="1"/>
+          <div t-for="elem" t-of="list" t-key="elem_index">
+              <span>v<t t-esc="v"/></span>
+              <t t-set="v" t-value="elem"/>
+          </div>
+        </div>`;
+    const expected = "<div><div><span>v1</span></div><div><span>va</span></div></div>";
+    expect(renderToString(template, { list: ["a", "b"] })).toBe(expected);
+  });
+
   test("t-set with content and sub t-esc", () => {
     const template = `
         <div>
@@ -232,6 +245,22 @@ describe("t-set", () => {
     );
   });
 
+  test("t-set outside modified in t-for", async () => {
+    const template = `
+      <div>
+        <t t-set="iter" t-value="0"/>
+        <t t-for="val" t-of="['a','b']" t-key="val">
+          <p>InLoop: <t t-esc="iter"/></p>
+          <t t-set="iter" t-value="iter + 1"/>
+        </t>
+        <p>EndLoop: <t t-esc="iter"/></p>
+      </div>
+    `;
+    expect(renderToString(template)).toBe(
+      "<div><p>InLoop: 0</p><p>InLoop: 1</p><p>EndLoop: 2</p></div>"
+    );
+  });
+
   test("t-set outside modified in t-foreach increment-after operator", async () => {
     const template = `
       <div>
@@ -248,11 +277,43 @@ describe("t-set", () => {
     );
   });
 
+  test("t-set outside modified in t-for increment-after operator", async () => {
+    const template = `
+      <div>
+        <t t-set="iter" t-value="0"/>
+        <t t-for="val" t-of="['a','b']" t-key="val">
+          <p>InLoop: <t t-esc="iter"/></p>
+          <t t-set="iter" t-value="iter++"/>
+        </t>
+        <p>EndLoop: <t t-esc="iter"/></p>
+      </div>
+    `;
+    expect(renderToString(template)).toBe(
+      "<div><p>InLoop: 0</p><p>InLoop: 0</p><p>EndLoop: 0</p></div>"
+    );
+  });
+
   test("t-set outside modified in t-foreach increment-before operator", async () => {
     const template = `
       <div>
         <t t-set="iter" t-value="0"/>
         <t t-foreach="['a','b']" t-as="val" t-key="val">
+          <p>InLoop: <t t-esc="iter"/></p>
+          <t t-set="iter" t-value="++iter"/>
+        </t>
+        <p>EndLoop: <t t-esc="iter"/></p>
+      </div>
+    `;
+    expect(renderToString(template)).toBe(
+      "<div><p>InLoop: 0</p><p>InLoop: 1</p><p>EndLoop: 0</p></div>"
+    );
+  });
+
+  test("t-set outside modified in t-for increment-before operator", async () => {
+    const template = `
+      <div>
+        <t t-set="iter" t-value="0"/>
+        <t t-for="val" t-of="['a','b']" t-key="val">
           <p>InLoop: <t t-esc="iter"/></p>
           <t t-set="iter" t-value="++iter"/>
         </t>

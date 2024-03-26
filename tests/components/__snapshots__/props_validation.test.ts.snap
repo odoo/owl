@@ -167,6 +167,45 @@ exports[`props validation can specify that additional props are allowed (object)
 }"
 `;
 
+exports[`props validation can use custom class as type 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"customObj\\"]);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const props1 = {customObj: ctx['customObj']};
+    helpers.validateProps(\`Child\`, props1, this);
+    return comp1(props1, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`props validation can use custom class as type 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['props'].customObj.val);
+  }
+}"
+`;
+
+exports[`props validation can use custom class as type: validation failure 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"customObj\\"]);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const props1 = {customObj: ctx['customObj']};
+    helpers.validateProps(\`Child\`, props1, this);
+    return comp1(props1, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
 exports[`props validation can validate a prop with multiple types 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

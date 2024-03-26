@@ -1,16 +1,7 @@
 import { OwlError } from "../common/owl_error";
 import { toRaw } from "./reactivity";
 
-type BaseType =
-  | typeof String
-  | typeof Boolean
-  | typeof Number
-  | typeof Date
-  | typeof Object
-  | typeof Array
-  | typeof Function
-  | true
-  | "*";
+type BaseType = { new (...args: any[]): any } | true | "*";
 
 interface TypeInfo {
   type?: TypeDescription;

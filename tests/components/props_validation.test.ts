@@ -829,6 +829,52 @@ describe("props validation", () => {
     expect(error!).toBeDefined();
     expect(error!.message).toBe("Invalid props for component 'Child': 'message' is missing");
   });
+
+  test("can use custom class as type", async () => {
+    class CustomClass {
+      val = "hey";
+    }
+    class Child extends Component {
+      static props = { customObj: CustomClass };
+      static template = xml`<t t-esc="props.customObj.val"/>`;
+    }
+
+    class Parent extends Component {
+      static components = { Child };
+      static template = xml`<Child customObj="customObj" />`;
+      customObj = new CustomClass();
+    }
+
+    const app = new App(Parent, { test: true });
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("hey");
+  });
+
+  test("can use custom class as type: validation failure", async () => {
+    class CustomClass {}
+    class Child extends Component {
+      static props = { customObj: CustomClass };
+      static template = xml`<div>hey</div>`;
+    }
+
+    class Parent extends Component {
+      static components = { Child };
+      static template = xml`<Child customObj="customObj" />`;
+      customObj = {};
+    }
+
+    const app = new App(Parent, { test: true });
+    let error: OwlError | undefined;
+    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    await expect(nextAppError(app)).resolves.toThrow(
+      "Invalid props for component 'Child': 'customObj' is not a customclass"
+    );
+    await mountProm;
+    expect(error!).toBeDefined();
+    expect(error!.message).toBe(
+      "Invalid props for component 'Child': 'customObj' is not a customclass"
+    );
+  });
 });
 
 //------------------------------------------------------------------------------

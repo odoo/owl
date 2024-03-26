@@ -9,6 +9,7 @@ type BaseType =
   | typeof Object
   | typeof Array
   | typeof Function
+  | typeof Set
   | true
   | "*";
 

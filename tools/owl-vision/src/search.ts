@@ -94,6 +94,31 @@ export class Search {
         return await this.find(templateName, query, "xml");
     }
 
+    public async getCurrentComponent(): Promise<any | undefined> {
+        if (!this.currentDocument) {
+            return;
+        }
+
+        const text = this.currentDocument.getText();
+        const templateName = this.getTemplateName(text, false);
+
+        if (templateName) {
+            const component = await this.findComponentFromTemplateName(templateName);
+
+            if (component) {
+                const componentFile = await workspace.fs.readFile(component.uri);
+                const componentText = Buffer.from(componentFile).toString('utf8');
+                const componentName = this.getComponentName(componentText, templateName);
+
+                return {
+                    uri: component.uri,
+                    templateName,
+                    componentName,
+                };
+            }
+        }
+    }
+
     private findComponentFromTemplateName(templateName: string): Promise<Location | undefined> {
         const query = this.buildQuery(`template\\s*=\\s*["']`, templateName, `["']`);
         return this.find(templateName, query, "js");
@@ -105,6 +130,27 @@ export class Search {
         } else {
             return getClosestMatch(str, /t-name="([a-zA-Z0-9_\-\.]+)"/g);
         }
+    }
+
+    private getComponentName(str: string, templateName: string): string {
+        const templateNameRegex = new RegExp(`template\\s*=\\s*["'](${templateName})["']`, 'g');
+        const templateIndex = [...str.matchAll(templateNameRegex)][0]?.index ?? 0;
+
+        const matches = [...str.matchAll(new RegExp(`class\\s+([A-Za-z_]+)\\sextends\\s+[A-Za-z_]+`, 'g'))];
+        let result = "";
+        let currentIndex = -1;
+        for (const match of matches) {
+            if (match.index > templateIndex) {
+                continue;
+            }
+
+            if (match.index > currentIndex) {
+                result = match[1];
+                currentIndex = match.index;
+            }
+        }
+
+        return result;
     }
 
     public async find(

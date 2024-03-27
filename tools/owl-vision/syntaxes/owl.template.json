@@ -160,7 +160,7 @@
             "patterns": [
                 {
                     "contentName": "meta.embedded.block.javascript string.quoted.double.xml",
-                    "begin": "(\\s*)(t-if|t-else|t-elif|t-foreach|t-as|t-key|t-esc|t-out|t-props|t-component|t-set|t-value|t-portal|t-slot-scope|t-att-[a-z_:.-]+|t-on-[a-z_:.-]+)(=)(\")",
+                    "begin": "(\\s*)(t-if|t-elif|t-foreach|t-as|t-key|t-esc|t-out|t-props|t-component|t-set|t-value|t-portal|t-slot-scope|t-att|t-tag|t-log|t-model|t-att-[a-z_:.-]+|t-on-[a-z_:.-]+)(=)(\")",
                     "beginCaptures": {
                         "2": {
                             "name": "entity.other.attribute-name.localname.xml owl.attribute owl.attribute.dynamic"
@@ -183,7 +183,7 @@
                 },
                 {
                     "contentName": "meta.embedded.block.javascript string.quoted.single.xml",
-                    "begin": "(\\s*)(t-if|t-else|t-elif|t-foreach|t-as|t-key|t-esc|t-out|t-props|t-component|t-set|t-value|t-portal|t-slot-scope|t-att-[a-z_:.-]+|t-on-[a-z_:.-]+)(=)(')",
+                    "begin": "(\\s*)(t-if|t-elif|t-foreach|t-as|t-key|t-esc|t-out|t-props|t-component|t-set|t-value|t-portal|t-slot-scope|t-att|t-tag|t-log|t-model|t-att-[a-z_:.-]+|t-on-[a-z_:.-]+)(=)(')",
                     "beginCaptures": {
                         "2": {
                             "name": "entity.other.attribute-name.localname.xml owl.attribute owl.attribute.dynamic"
@@ -210,7 +210,7 @@
             "patterns": [
                 {
                     "contentName": "string.quoted.double.xml",
-                    "begin": "(\\s*)(t-name|t-ref|t-set-slot|t-model|t-inherit|t-inherit-mode|t-translation)(=)(\")",
+                    "begin": "(\\s*)(t-name|t-else|t-ref|t-set-slot|t-inherit|t-inherit-mode|t-translation|t-debug)(=)(\")",
                     "beginCaptures": {
                         "2": {
                             "name": "entity.other.attribute-name.localname.xml owl.attribute owl.attribute.static"
@@ -229,7 +229,7 @@
                 },
                 {
                     "contentName": "string.quoted.single.xml",
-                    "begin": "(\\s*)(t-name|t-ref|t-set-slot|t-model|t-inherit|t-inherit-mode|t-translation)(=)(')",
+                    "begin": "(\\s*)(t-name|t-else|t-ref|t-set-slot|t-inherit|t-inherit-mode|t-translation|t-debug)(=)(')",
                     "beginCaptures": {
                         "2": {
                             "name": "entity.other.attribute-name.localname.xml owl.attribute owl.attribute.static"

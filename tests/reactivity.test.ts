@@ -9,7 +9,7 @@ import {
   markRaw,
   toRaw,
 } from "../src";
-import { reactive, getSubscriptions } from "../src/runtime/reactivity";
+import { reactive, getSubscriptions, derived } from "../src/runtime/reactivity";
 import { batched } from "../src/runtime/utils";
 import {
   makeDeferred,
@@ -2422,5 +2422,158 @@ describe("Reactivity: useState", () => {
     await nextTick();
 
     expect(fixture.innerHTML).toBe("<div><p><span>2b</span></p></div>");
+  });
+});
+
+describe("derived", () => {
+  test("can read", async () => {
+    const state = reactive({ a: derived([], () => 1) });
+    expect(state.a).toBe(1);
+  });
+
+  test("can create new keys", () => {
+    const state: any = reactive({ b: derived([], () => 2) });
+    state.a = 1;
+    expect(state.a).toBe(1);
+  });
+
+  test("can update", () => {
+    const o = reactive({ a: 1 });
+    let computeCall = 0;
+    const state = reactive({
+      a: derived([o], (o) => {
+        computeCall++;
+        return o.a;
+      }),
+    });
+    expect(computeCall).toBe(1);
+    expect(state.a).toBe(1);
+    o.a = 2;
+    expect(computeCall).toBe(2);
+    expect(state.a).toBe(2);
+  });
+
+  test("callback is called when changing an observed property", async () => {
+    let notifyCount = 0;
+    const o = reactive({ a: 1 });
+    let computeCall = 0;
+    const state = reactive(
+      {
+        a: derived([o], (o) => {
+          computeCall++;
+          return o.a;
+        }),
+      },
+      () => notifyCount++
+    );
+    expect(computeCall).toBe(1);
+    expect(notifyCount).toBe(0);
+    expect(state.a).toBe(1);
+    o.a = 2;
+    expect(computeCall).toBe(2);
+    expect(notifyCount).toBe(1);
+    expect(state.a).toBe(2);
+    o.a = 5;
+    expect(computeCall).toBe(3);
+    expect(notifyCount).toBe(2);
+    expect(state.a).toBe(5);
+  });
+
+  test("multiple dependencies", async () => {
+    let notifyCount = 0;
+    const a = reactive({ val: 1 });
+    const b = reactive({ val: 2 });
+    let computeCall = 0;
+    const state = reactive(
+      {
+        c: derived([a, b], (a, b) => {
+          computeCall++;
+          return a.val + b.val;
+        }),
+      },
+      () => notifyCount++
+    );
+    expect(computeCall).toBe(1);
+    a.val = 2;
+    expect(computeCall).toBe(2);
+    expect(notifyCount).toBe(0);
+    expect(state.c).toBe(4);
+    a.val = 4;
+    expect(computeCall).toBe(3);
+    expect(notifyCount).toBe(1);
+    expect(state.c).toBe(6);
+    b.val = 3;
+    expect(computeCall).toBe(4);
+    expect(notifyCount).toBe(2);
+    expect(state.c).toBe(7);
+  });
+
+  test("dependency on own fields", async () => {
+    let notifyCount = 0;
+    const a = reactive({ val: 1 });
+    let computeCall = 0;
+    const state = reactive(
+      {
+        b: 2,
+        c: derived([a], function (this: any, a) {
+          computeCall++;
+          return a.val + this.b;
+        }),
+      },
+      () => notifyCount++
+    );
+    expect(computeCall).toBe(1);
+    a.val = 2;
+    expect(computeCall).toBe(2);
+    expect(notifyCount).toBe(0);
+    expect(state.c).toBe(4);
+    a.val = 4;
+    expect(computeCall).toBe(3);
+    expect(notifyCount).toBe(1);
+    expect(state.c).toBe(6);
+    state.b = 3;
+    expect(computeCall).toBe(4);
+    expect(notifyCount).toBe(2);
+    expect(state.c).toBe(7);
+  });
+
+  test("dependency on derived property", () => {
+    let computeB = 0;
+    let computeC = 0;
+    const state = reactive({
+      a: 1,
+      b: derived([], function (this: any) {
+        computeB++;
+        return this.a + 1;
+      }),
+      c: derived([], function (this: any) {
+        computeC++;
+        return this.b + 1;
+      }),
+    });
+    expect(computeB).toBe(1);
+    expect(computeC).toBe(1);
+    expect(state.c).toBe(3);
+  });
+
+  test("dependency on derived property appearing later in object", () => {
+    let computeB = 0;
+    let computeC = 0;
+    const state = reactive({
+      a: 1,
+      c: derived([], function (this: any) {
+        computeC++;
+        return this.b + 1;
+      }),
+      b: derived([], function (this: any) {
+        computeB++;
+        return this.a + 1;
+      }),
+    });
+    expect(computeB).toBe(1);
+    // because computation is eager and naive, C is first computed to be undefined, then B is computed
+    // to be 2, and the computation of B causes C to recompute and become 3. This causes C to compute twice.
+    expect(computeC).toBe(2);
+    expect(state.c).toBe(3);
   });
 });

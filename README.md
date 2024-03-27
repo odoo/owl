@@ -29,7 +29,7 @@ Quick links:
 
 - [documentation](#documentation),
 - [changelog](CHANGELOG.md) (from Owl 1.x to 2.x),
-- [playground](https://odoo.github.io/owl/playground)
+- [playground](https://odoo.github.io/owl/playground),
 
 ## Example
 

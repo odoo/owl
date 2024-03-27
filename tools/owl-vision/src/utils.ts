@@ -102,3 +102,20 @@ export async function showResult(result: vscode.Location, openDirection: OpenDir
     editor.revealRange(result.range);
     editor.selection = new vscode.Selection(result.range.start, result.range.end);
 }
+
+export async function readFile(uri: vscode.Uri): Promise<string> {
+    const data = await vscode.workspace.fs.readFile(uri);
+    return Buffer.from(data).toString('utf8');
+}
+
+export function hash(str: string) {
+    var hash = 0,
+        i, chr;
+    if (str.length === 0) return hash;
+    for (i = 0; i < str.length; i++) {
+        chr = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + chr;
+        hash |= 0;
+    }
+    return hash;
+}

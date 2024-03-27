@@ -62,7 +62,6 @@ export const propsAttributes = createAttributePatterns("props-attributes", {
 export const owlAttributesDynamic = createAttributePatterns("owl-attributes-dynamic", {
     match: [
         "t-if",
-        "t-else",
         "t-elif",
         "t-foreach",
         "t-as",
@@ -75,6 +74,10 @@ export const owlAttributesDynamic = createAttributePatterns("owl-attributes-dyna
         "t-value",
         "t-portal",
         "t-slot-scope",
+        "t-att",
+        "t-tag",
+        "t-log",
+        "t-model",
         "t-att-[a-z_:.-]+",
         "t-on-[a-z_:.-]+"
     ].join("|"),
@@ -86,12 +89,13 @@ export const owlAttributesDynamic = createAttributePatterns("owl-attributes-dyna
 export const owlAttributesStatic = createAttributePatterns("owl-attributes-static", {
     match: [
         "t-name",
+        "t-else",
         "t-ref",
         "t-set-slot",
-        "t-model",
         "t-inherit",
         "t-inherit-mode",
-        "t-translation"
+        "t-translation",
+        "t-debug",
     ].join("|"),
     attributeName: "owl.attribute owl.attribute.static",
 });

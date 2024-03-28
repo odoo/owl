@@ -23,6 +23,7 @@ export type ComponentConstructor<P extends Props = any, E = any> = (new (
 
 export class Component<Props = any, Env = any> {
   static template: string = "";
+  static components?: { [componentName: string]: ComponentConstructor };
   static props?: Schema;
   static defaultProps?: any;
 

@@ -683,6 +683,19 @@ exports[`lifecycle hooks sub widget (inside sub node): hooks are correctly calle
 }"
 `;
 
+exports[`lifecycle hooks timeout in onWillStart doesn't emit a warning if app is destroyed 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<span/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`lifecycle hooks timeout in onWillStart emits a warning 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

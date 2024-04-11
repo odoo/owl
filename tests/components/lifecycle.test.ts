@@ -1,5 +1,9 @@
-import { App, Component, mount, onMounted, onWillStart, useState, xml } from "../../src";
 import {
+  App,
+  Component,
+  mount,
+  useState,
+  xml,
   onWillPatch,
   onWillUnmount,
   onPatched,
@@ -7,7 +11,9 @@ import {
   onWillRender,
   onWillDestroy,
   onRendered,
-} from "../../src/runtime/lifecycle_hooks";
+  onMounted,
+  onWillStart,
+} from "../../src";
 import { status } from "../../src/runtime/status";
 import {
   elem,
@@ -117,24 +123,60 @@ describe("lifecycle hooks", () => {
       timeoutCbs[++timeoutId] = cb;
       return timeoutId;
     }) as any;
-    class Test extends Component {
-      static template = xml`<span/>`;
-      setup() {
-        onWillStart(() => new Promise(() => {}));
+    try {
+      class Test extends Component {
+        static template = xml`<span/>`;
+        setup() {
+          onWillStart(() => new Promise(() => {}));
+        }
       }
+      mount(Test, fixture, { test: true });
+      nextTick();
+      for (const id in timeoutCbs) {
+        timeoutCbs[id]();
+        delete timeoutCbs[id];
+      }
+      await nextMicroTick();
+      await nextMicroTick();
+      expect(console.warn).toHaveBeenCalledTimes(1);
+      expect(warnArgs![0]!.message).toBe("onWillStart's promise hasn't resolved after 3 seconds");
+    } finally {
+      console.warn = warn;
+      window.setTimeout = setTimeout;
     }
-    mount(Test, fixture, { test: true });
-    nextTick();
-    for (const id in timeoutCbs) {
-      timeoutCbs[id]();
-      delete timeoutCbs[id];
+  });
+
+  test("timeout in onWillStart doesn't emit a warning if app is destroyed", async () => {
+    const { warn } = console;
+    console.warn = jest.fn();
+    const { setTimeout } = window;
+    let timeoutCbs: any = {};
+    let timeoutId = 0;
+    window.setTimeout = ((cb: any) => {
+      timeoutCbs[++timeoutId] = cb;
+      return timeoutId;
+    }) as any;
+    try {
+      class Test extends Component {
+        static template = xml`<span/>`;
+        setup() {
+          onWillStart(() => new Promise(() => {}));
+        }
+      }
+      const app = new App(Test, { test: true });
+      app.mount(fixture);
+      app.destroy();
+      for (const id in timeoutCbs) {
+        timeoutCbs[id]();
+        delete timeoutCbs[id];
+      }
+      await nextMicroTick();
+      await nextMicroTick();
+      expect(console.warn).toHaveBeenCalledTimes(0);
+    } finally {
+      console.warn = warn;
+      window.setTimeout = setTimeout;
     }
-    await nextMicroTick();
-    await nextMicroTick();
-    expect(console.warn).toHaveBeenCalledTimes(1);
-    expect(warnArgs![0]!.message).toBe("onWillStart's promise hasn't resolved after 3 seconds");
-    console.warn = warn;
-    window.setTimeout = setTimeout;
   });
 
   test("timeout in onWillUpdateProps emits a warning", async () => {
@@ -162,25 +204,28 @@ describe("lifecycle hooks", () => {
       return timeoutId;
     }) as any;
 
-    parent.state.prop = 2;
-    let tick = nextTick();
-    for (const id in timeoutCbs) {
-      timeoutCbs[id]();
-      delete timeoutCbs[id];
+    try {
+      parent.state.prop = 2;
+      let tick = nextTick();
+      for (const id in timeoutCbs) {
+        timeoutCbs[id]();
+        delete timeoutCbs[id];
+      }
+      await tick;
+      tick = nextTick();
+      for (const id in timeoutCbs) {
+        timeoutCbs[id]();
+        delete timeoutCbs[id];
+      }
+      await tick;
+      expect(console.warn).toHaveBeenCalledTimes(1);
+      expect(warnArgs![0]!.message).toBe(
+        "onWillUpdateProps's promise hasn't resolved after 3 seconds"
+      );
+    } finally {
+      console.warn = warn;
+      window.setTimeout = setTimeout;
     }
-    await tick;
-    tick = nextTick();
-    for (const id in timeoutCbs) {
-      timeoutCbs[id]();
-      delete timeoutCbs[id];
-    }
-    await tick;
-    expect(console.warn).toHaveBeenCalledTimes(1);
-    expect(warnArgs![0]!.message).toBe(
-      "onWillUpdateProps's promise hasn't resolved after 3 seconds"
-    );
-    console.warn = warn;
-    window.setTimeout = setTimeout;
   });
 
   test("mounted hook is called if mounted in DOM", async () => {

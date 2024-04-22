@@ -276,7 +276,8 @@ class ComponentB extends owl.Component {
         id: Number,
         name: {type: String, optional: true},
         url: String
-      ]},    // object, with keys id (number), name (string, optional) and url (string)
+      }
+    },  // object, with keys id (number), name (string, optional) and url (string)
     someObj3: {
       type: Object,
       values: { type: Array, element: String },

@@ -133,7 +133,7 @@ Slots can define a default content, in case the parent did not define them:
 ## Dynamic Slots
 
 The `t-slot` directive is actually able to use any expressions, using string
-interplolation:
+interpolation:
 
 ```xml
  <t t-slot="{{current}}" />

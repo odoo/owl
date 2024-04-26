@@ -999,3 +999,26 @@ exports[`Portal: UI/UX focus is kept across re-renders 2`] = `
   }
 }"
 `;
+
+exports[`portal .closest suffix basic use of .suffix 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const Portal = app.Portal;
+  const comp1 = app.createComponent(null, false, true, false, false);
+  
+  let block2 = createBlock(\`<p class=\\"target\\">far target</p>\`);
+  let block3 = createBlock(\`<div><p class=\\"target\\">close target</p><block-child-0/></div>\`);
+  
+  function slot1(ctx, node, key = \\"\\") {
+    return text(\`portal content\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = block2();
+    const b5 = comp1({target: '.target',isClosest: true,slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = block3([], [b5]);
+    return multi([b2, b3]);
+  }
+}"
+`;

@@ -170,6 +170,7 @@ export interface ASTTranslation {
 export interface ASTTPortal {
   type: ASTType.TPortal;
   target: string;
+  isClosest: boolean;
   content: AST;
 }
 
@@ -833,11 +834,18 @@ function parseTTranslation(node: Element, ctx: ParsingContext): AST | null {
 // -----------------------------------------------------------------------------
 
 function parseTPortal(node: Element, ctx: ParsingContext): AST | null {
-  if (!node.hasAttribute("t-portal")) {
+  let target, isClosest;
+  if (node.hasAttribute("t-portal")) {
+    target = node.getAttribute("t-portal")!;
+    node.removeAttribute("t-portal");
+    isClosest = false;
+  } else if (node.hasAttribute("t-portal.closest")) {
+    target = node.getAttribute("t-portal.closest")!;
+    node.removeAttribute("t-portal.closest");
+    isClosest = true;
+  } else {
     return null;
   }
-  const target = node.getAttribute("t-portal")!;
-  node.removeAttribute("t-portal");
   const content = parseNode(node, ctx);
   if (!content) {
     return {
@@ -848,6 +856,7 @@ function parseTPortal(node: Element, ctx: ParsingContext): AST | null {
   return {
     type: ASTType.TPortal,
     target,
+    isClosest,
     content,
   };
 }

@@ -1,5 +1,30 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`slots .translate slot props are translated 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false, []);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx1 = capture(ctx);
+    return comp1({slots: markRaw({'default': {message: \`translated message\`}})}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`slots .translate slot props are translated 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['props'].slots.default.message);
+  }
+}"
+`;
+
 exports[`slots can define a default content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -197,6 +222,31 @@ exports[`slots can render only empty slot 1`] = `
   
   return function template(ctx, node, key = \\"\\") {
     return callSlot(ctx, node, key, 'default', false, {});
+  }
+}"
+`;
+
+exports[`slots can use .translate suffix on slot props 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, true, false, []);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx1 = capture(ctx);
+    return comp1({slots: markRaw({'default': {message: \`some message\`}})}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`slots can use .translate suffix on slot props 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['props'].slots.default.message);
   }
 }"
 `;

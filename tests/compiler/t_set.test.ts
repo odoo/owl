@@ -54,6 +54,21 @@ describe("t-set", () => {
     expect(renderToString(template)).toBe("ok");
   });
 
+  test("body with backslash at top level", () => {
+    const template = '<t t-set="value">\\</t><t t-esc="value"/>';
+    expect(renderToString(template)).toBe("\\");
+  });
+
+  test("body with backtick at top-level", () => {
+    const template = '<t t-set="value">`</t><t t-esc="value"/>';
+    expect(renderToString(template)).toBe("`");
+  });
+
+  test("body with interpolation sigil at top level", () => {
+    const template = '<t t-set="value">${very cool}</t><t t-esc="value"/>';
+    expect(renderToString(template)).toBe("${very cool}");
+  });
+
   test("set from body literal (with t-if/t-else", () => {
     const template = `
       <t>

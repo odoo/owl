@@ -1,5 +1,50 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`t-set body with backslash at top level 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    setContextValue(ctx, \\"value\\", \`\\\\\\\\\`);
+    return text(ctx['value']);
+  }
+}"
+`;
+
+exports[`t-set body with backtick at top-level 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    setContextValue(ctx, \\"value\\", \`\\\\\`\`);
+    return text(ctx['value']);
+  }
+}"
+`;
+
+exports[`t-set body with interpolation sigil at top level 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    setContextValue(ctx, \\"value\\", \`\\\\\${very cool}\`);
+    return text(ctx['value']);
+  }
+}"
+`;
+
 exports[`t-set evaluate value expression 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

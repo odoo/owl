@@ -1,5 +1,38 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`comments comment node with backslash at top level 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return comment(\` \\\\\\\\ \`);
+  }
+}"
+`;
+
+exports[`comments comment node with backtick at top-level 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return comment(\` \\\\\` \`);
+  }
+}"
+`;
+
+exports[`comments comment node with interpolation sigil at top level 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return comment(\` \\\\\${very cool} \`);
+  }
+}"
+`;
+
 exports[`comments only a comment 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

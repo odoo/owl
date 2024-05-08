@@ -154,4 +154,19 @@ describe("simple templates, mostly static", () => {
       </div>`;
     expect(renderToString(template, { a: "a", b: "b", c: "c" })).toBe("<div>abLoadingc</div>");
   });
+
+  test("text node with backslash at top level", () => {
+    const template = "\\";
+    expect(renderToString(template)).toBe("\\");
+  });
+
+  test("text node with backtick at top-level", () => {
+    const template = "`";
+    expect(renderToString(template)).toBe("`");
+  });
+
+  test("text node with interpolation sigil at top level", () => {
+    const template = "${very cool}";
+    expect(renderToString(template)).toBe("${very cool}");
+  });
 });

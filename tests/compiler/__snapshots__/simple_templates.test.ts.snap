@@ -341,6 +341,39 @@ exports[`simple templates, mostly static template with t tag with multiple conte
 }"
 `;
 
+exports[`simple templates, mostly static text node with backslash at top level 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`\\\\\\\\\`);
+  }
+}"
+`;
+
+exports[`simple templates, mostly static text node with backtick at top-level 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`\\\\\`\`);
+  }
+}"
+`;
+
+exports[`simple templates, mostly static text node with interpolation sigil at top level 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`\\\\\${very cool}\`);
+  }
+}"
+`;
+
 exports[`simple templates, mostly static two t-escs next to each other 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

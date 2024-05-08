@@ -1,5 +1,41 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`t-esc default with backslash at top level 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { withDefault } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(withDefault(undefined, \`\\\\\\\\\`));
+  }
+}"
+`;
+
+exports[`t-esc default with backtick at top-level 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { withDefault } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(withDefault(undefined, \`\\\\\`\`));
+  }
+}"
+`;
+
+exports[`t-esc default with interpolation sigil at top level 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { withDefault } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(withDefault(undefined, \`\\\\\${very cool}\`));
+  }
+}"
+`;
+
 exports[`t-esc div with falsy values 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

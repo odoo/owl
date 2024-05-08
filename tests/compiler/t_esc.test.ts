@@ -121,4 +121,19 @@ describe("t-esc", () => {
     mount(bdom, fixture);
     expect(fixture.querySelector("span")!.textContent).toBe("<p>escaped</p>");
   });
+
+  test("default with backslash at top level", () => {
+    const template = '<t t-esc="undefined">\\</t>';
+    expect(renderToString(template)).toBe("\\");
+  });
+
+  test("default with backtick at top-level", () => {
+    const template = '<t t-esc="undefined">`</t>';
+    expect(renderToString(template)).toBe("`");
+  });
+
+  test("default with interpolation sigil at top level", () => {
+    const template = '<t t-esc="undefined">${very cool}</t>';
+    expect(renderToString(template)).toBe("${very cool}");
+  });
 });

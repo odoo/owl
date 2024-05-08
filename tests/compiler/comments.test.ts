@@ -26,4 +26,19 @@ describe("comments", () => {
         </div>`;
     expect(renderToString(template)).toBe("<div><span>true</span></div>");
   });
+
+  test("comment node with backslash at top level", () => {
+    const template = "<!-- \\ -->";
+    expect(renderToString(template)).toBe("<!-- \\ -->");
+  });
+
+  test("comment node with backtick at top-level", () => {
+    const template = "<!-- ` -->";
+    expect(renderToString(template)).toBe("<!-- ` -->");
+  });
+
+  test("comment node with interpolation sigil at top level", () => {
+    const template = "<!-- ${very cool} -->";
+    expect(renderToString(template)).toBe("<!-- ${very cool} -->");
+  });
 });

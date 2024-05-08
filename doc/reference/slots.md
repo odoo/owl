@@ -201,16 +201,17 @@ use this `Notebook` component:
 
 ```xml
 <Notebook>
-  <t t-set-slot="page1" title="'Page 1'">
+  <t t-set-slot="page1" title.translate="Page 1">
     <div>this is in the page 1</div>
   </t>
-  <t t-set-slot="page2" title="'Page 2'" hidden="somevalue">
+  <t t-set-slot="page2" title.translate="Page 2" hidden="somevalue">
     <div>this is in the page 2</div>
   </t>
 </Notebook>
 ```
 
-Slot params works like normal props, so one can use the `.bind` suffix to
+Slot params works like normal props, so one can use suffixes like `.translate`
+when a prop is a user facing string and should be translated, or `.bind` to
 bind a function if needed.
 
 ## Slot scopes

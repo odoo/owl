@@ -179,6 +179,34 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<span>default empty</span>");
   });
 
+  test("can use .translate suffix on slot props", async () => {
+    class Child extends Component {
+      static template = xml`<t t-esc="props.slots.default.message"/>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child><t t-set-slot="default" message.translate="some message"/></Child>`;
+      static components = { Child };
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("some message");
+  });
+
+  test(".translate slot props are translated", async () => {
+    class Child extends Component {
+      static template = xml`<t t-esc="props.slots.default.message"/>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child><t t-set-slot="default" message.translate="some message"/></Child>`;
+      static components = { Child };
+    }
+
+    await mount(Parent, fixture, { translateFn: () => "translated message" });
+    expect(fixture.innerHTML).toBe("translated message");
+  });
+
   test("default slot with slot scope: shorthand syntax", async () => {
     let child: any;
     class Child extends Component {

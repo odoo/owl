@@ -41,9 +41,6 @@ const loadFile = (path) => {
  * Make an iframe, with all the js, css and xml properly injected.
  */
 function makeCodeIframe(js, css, xml) {
-  // escape backticks in the xml so they don't close the template string
-  const escapedXml = xml.replace(/`/g, '\\\`');
-
   const iframe = document.createElement("iframe");
   iframe.onload = () => {
     const doc = iframe.contentDocument;
@@ -55,6 +52,8 @@ function makeCodeIframe(js, css, xml) {
 
     const script = doc.createElement("script");
     script.type = "module";
+    // escape characters with special meaning in template literals
+    const escapedXml = xml.replace(/\\/g, "\\\\").replace(/`/g, "\\`").replace(/\$\{/, "\\${");
     script.textContent = `const TEMPLATES = \`${escapedXml}\`\n${js}`;
     doc.body.appendChild(script);
 

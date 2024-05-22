@@ -47,3 +47,4 @@ Utility/helpers:
 - [`status`](reference/component.md#status-helper): utility function to get the status of a component (new, mounted or destroyed)
 - [`validate`](reference/utils.md#validate): validates if an object satisfies a specified schema
 - [`whenReady`](reference/utils.md#whenready): utility function to execute code when DOM is ready
+- [`batched`](reference/utils.md#batched): utility function to batch function calls

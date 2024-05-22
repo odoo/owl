@@ -9,6 +9,7 @@ functions are all available in the `owl.utils` namespace.
 - [`loadFile`](#loadfile): loading a file (useful for templates)
 - [`EventBus`](#eventbus): a simple EventBus
 - [`validate`](#validate): a validation function
+- [`batched`](#batched): batch function calls
 
 ## `whenReady`
 
@@ -77,4 +78,23 @@ validate(
 //    - unknown key 'a',
 //    - 'id' is missing (should be a number),
 //    - 'url' is missing (should be a boolean or list of numbers),
+```
+
+## `batched`
+
+The `batched` function creates a batched version of a callback so that multiple calls to it within the same microtick will only result in a single invocation of the original callback.
+
+```js
+function hello() {
+  console.log("hello");
+}
+
+const batchedHello = batched(hello);
+batchedHello();
+// Nothing is logged
+batchedHello();
+// Still not logged
+
+await Promise.resolve(); // Await the next microtick
+// "hello" is logged only once
 ```

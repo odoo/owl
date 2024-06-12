@@ -1,4 +1,7 @@
-import { ASTType, parse } from "../../src/compiler/parser";
+import { parseXML } from "../../src/common/utils";
+import { ASTType, parse as _parse } from "../../src/compiler/parser";
+
+const parse = (template: string) => _parse(parseXML(`<t>${template}</t>`).firstChild as Element);
 
 describe("qweb parser", () => {
   // ---------------------------------------------------------------------------

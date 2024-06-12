@@ -3,6 +3,7 @@ import type { BDom } from "../runtime/blockdom";
 import { CodeGenerator, Config } from "./code_generator";
 import { parse } from "./parser";
 import { OwlError } from "../common/owl_error";
+import { parseXML } from "../common/utils";
 
 export type Template = (context: any, vnode: any, key?: string) => BDom;
 
@@ -16,13 +17,13 @@ export function compile(
   options: CompileOptions = {}
 ): TemplateFunction {
   // parsing
+  if (typeof template === "string") {
+    template = parseXML(`<t>${template}</t>`).firstChild as Element;
+  }
   const ast = parse(template);
 
   // some work
-  const hasSafeContext =
-    template instanceof Node
-      ? !(template instanceof Element) || template.querySelector("[t-set], [t-call]") === null
-      : !template.includes("t-set") && !template.includes("t-call");
+  const hasSafeContext = template.querySelector("[t-set], [t-call]") === null;
 
   // code generation
   const codeGenerator = new CodeGenerator(ast, { ...options, hasSafeContext });

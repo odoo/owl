@@ -1136,7 +1136,11 @@ export class CodeGenerator {
    * "onClick.bind"    "onClick"        "onClick: bind(ctx, ctx['onClick'])"
    */
   formatProp(name: string, value: string): string {
-    value = this.captureExpression(value);
+    if (name.endsWith(".translate")) {
+      value = toStringExpression(this.translateFn(value));
+    } else {
+      value = this.captureExpression(value);
+    }
     if (name.includes(".")) {
       let [_name, suffix] = name.split(".");
       name = _name;
@@ -1145,6 +1149,7 @@ export class CodeGenerator {
           value = `(${value}).bind(this)`;
           break;
         case "alike":
+        case "translate":
           break;
         default:
           throw new OwlError("Invalid prop suffix");

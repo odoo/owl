@@ -140,6 +140,28 @@ class SomeComponent extends Component {
 The `.bind` suffix also implies `.alike`, so these props will not cause additional
 renderings.
 
+## Translatable props
+
+When you need to pass a user-facing string to a subcomponent, you likely want it
+to be translated. Unfortunately, because props are arbitrary expressions, it wouldn't
+be practical for Owl to find out which parts of the expression are strings and translate
+them, and it also makes it difficult for tooling to extract these strings to generate
+terms to translate. While you can work around this issue by doing the translation in
+JavaScript, or by using `t-set` with a body (the body of `t-set` is translated),
+and passing the variable as a prop, this is a sufficiently common use case that Owl
+provides a suffix for this purpose: `.translate`.
+
+```xml
+<t t-name="ParentComponent">
+    <Child someProp.translate="some message"/>
+</t>
+```
+
+Note that the content of this attribute is _NOT_ treated as a JavaScript expression:
+it is treated as a string, as if it was an attribute on an HTML element, and translated
+before being passed to the component. If you need to interpolate some data into the
+string, you will still have to do this in JavaScript.
+
 ## Dynamic Props
 
 The `t-props` directive can be used to specify totally dynamic props:

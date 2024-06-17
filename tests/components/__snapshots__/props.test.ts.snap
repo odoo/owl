@@ -66,6 +66,29 @@ exports[`.alike suffix in a simple case 2`] = `
 }"
 `;
 
+exports[`.translate props are translated 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return comp1({message: \`translated message\`}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`.translate props are translated 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['props'].message);
+  }
+}"
+`;
+
 exports[`basics accept ES6-like syntax for props (with getters) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -408,6 +431,29 @@ exports[`can bind function prop with bind suffix 2`] = `
   
   return function template(ctx, node, key = \\"\\") {
     return text(\`child\`);
+  }
+}"
+`;
+
+exports[`can use .translate suffix 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return comp1({message: \`some message\`}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`can use .translate suffix 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(ctx['props'].message);
   }
 }"
 `;

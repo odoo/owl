@@ -299,6 +299,34 @@ test("bound functions are considered 'alike'", async () => {
   expect(fixture.innerHTML).toBe("3child");
 });
 
+test("can use .translate suffix", async () => {
+  class Child extends Component {
+    static template = xml`<t t-esc="props.message"/>`;
+  }
+
+  class Parent extends Component {
+    static template = xml`<Child message.translate="some message"/>`;
+    static components = { Child };
+  }
+
+  await mount(Parent, fixture);
+  expect(fixture.innerHTML).toBe("some message");
+});
+
+test(".translate props are translated", async () => {
+  class Child extends Component {
+    static template = xml`<t t-esc="props.message"/>`;
+  }
+
+  class Parent extends Component {
+    static template = xml`<Child message.translate="some message"/>`;
+    static components = { Child };
+  }
+
+  await mount(Parent, fixture, { translateFn: () => "translated message" });
+  expect(fixture.innerHTML).toBe("translated message");
+});
+
 test("throw if prop uses an unknown suffix", async () => {
   class Child extends Component {
     static template = xml`<t t-esc="props.val"/>`;

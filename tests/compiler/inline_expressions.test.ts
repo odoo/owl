@@ -174,6 +174,9 @@ describe("expression evaluation", () => {
     expect(compileExpr("list.data.map((data) => data)")).toBe(
       "ctx['list'].data.map((_data)=>_data)"
     );
+    expect(compileExpr("(ev) => { myFunc(v1, v2, ev.target.value); }")).toBe(
+      "(_ev)=>{ctx['myFunc'](ctx['v1'],ctx['v2'],_ev.target.value);}"
+    );
   });
   test.skip("arrow functions: not yet supported", () => {
     // e is added to localvars in inline_expression but not removed after the arrow func body

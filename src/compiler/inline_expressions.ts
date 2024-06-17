@@ -268,7 +268,7 @@ export function compileExprToArray(expr: string): Token[] {
   const localVars = new Set<string>();
   const tokens = tokenize(expr);
   let i = 0;
-  let stack = []; // to track last opening [ or {
+  let stack = []; // to track last opening (, [ or {
 
   while (i < tokens.length) {
     let token = tokens[i];
@@ -279,10 +279,12 @@ export function compileExprToArray(expr: string): Token[] {
     switch (token.type) {
       case "LEFT_BRACE":
       case "LEFT_BRACKET":
+      case "LEFT_PAREN":
         stack.push(token.type);
         break;
       case "RIGHT_BRACE":
       case "RIGHT_BRACKET":
+      case "RIGHT_PAREN":
         stack.pop();
     }
 

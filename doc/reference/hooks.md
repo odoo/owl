@@ -121,7 +121,7 @@ In this example, the component will be able to access the `input` with the `useR
 
 ```js
 class Parent extends Component {
-  inputRef = useRef("someInput");
+  this.inputRef = useRef("someInput");
 
   someMethod() {
     // here, if component is mounted, refs are active:

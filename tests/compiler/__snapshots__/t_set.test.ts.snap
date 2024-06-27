@@ -380,6 +380,99 @@ exports[`t-set t-set evaluates an expression only once 1`] = `
 }"
 `;
 
+exports[`t-set t-set outside modified in t-for 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue, withKey } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/><p>EndLoop: <block-text-0/></p></div>\`);
+  let block3 = createBlock(\`<p>InLoop: <block-text-0/></p>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    setContextValue(ctx, \\"iter\\", 0);
+    ctx = Object.create(ctx);
+    const c_block2 = [];
+    let i1 = 0;
+    for (ctx['val'] of ['a','b']) {
+      const key1 = ctx['val'];
+      let txt1 = ctx['iter'];
+      c_block2[i1] = withKey(block3([txt1]), key1);
+      setContextValue(ctx, \\"iter\\", ctx['iter']+1);
+      i1++;
+    }
+    ctx = ctx.__proto__;
+    const b2 = list(c_block2);
+    let txt2 = ctx['iter'];
+    return block1([txt2], [b2]);
+  }
+}"
+`;
+
+exports[`t-set t-set outside modified in t-for increment-after operator 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue, withKey } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/><p>EndLoop: <block-text-0/></p></div>\`);
+  let block3 = createBlock(\`<p>InLoop: <block-text-0/></p>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    setContextValue(ctx, \\"iter\\", 0);
+    ctx = Object.create(ctx);
+    const c_block2 = [];
+    let i1 = 0;
+    for (ctx['val'] of ['a','b']) {
+      const key1 = ctx['val'];
+      let txt1 = ctx['iter'];
+      c_block2[i1] = withKey(block3([txt1]), key1);
+      setContextValue(ctx, \\"iter\\", ctx['iter']++);
+      i1++;
+    }
+    ctx = ctx.__proto__;
+    const b2 = list(c_block2);
+    let txt2 = ctx['iter'];
+    return block1([txt2], [b2]);
+  }
+}"
+`;
+
+exports[`t-set t-set outside modified in t-for increment-before operator 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue, withKey } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/><p>EndLoop: <block-text-0/></p></div>\`);
+  let block3 = createBlock(\`<p>InLoop: <block-text-0/></p>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    setContextValue(ctx, \\"iter\\", 0);
+    ctx = Object.create(ctx);
+    const c_block2 = [];
+    let i1 = 0;
+    for (ctx['val'] of ['a','b']) {
+      const key1 = ctx['val'];
+      let txt1 = ctx['iter'];
+      c_block2[i1] = withKey(block3([txt1]), key1);
+      setContextValue(ctx, \\"iter\\", ++ctx['iter']);
+      i1++;
+    }
+    ctx = ctx.__proto__;
+    const b2 = list(c_block2);
+    let txt2 = ctx['iter'];
+    return block1([txt2], [b2]);
+  }
+}"
+`;
+
 exports[`t-set t-set outside modified in t-foreach 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -492,6 +585,35 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
       let txt1 = ctx['v'];
       setContextValue(ctx, \\"v\\", ctx['elem']);
       c_block2[i1] = withKey(block3([txt1]), key1);
+    }
+    const b2 = list(c_block2);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`t-set t-set should reuse variable if possible: for..of 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue, withKey } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block3 = createBlock(\`<div><span>v<block-text-0/></span></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    setContextValue(ctx, \\"v\\", 1);
+    ctx = Object.create(ctx);
+    const c_block2 = [];
+    let i1 = 0;
+    for (ctx['elem'] of ctx['list']) {
+      const key1 = ctx['elem_index'];
+      let txt1 = ctx['v'];
+      setContextValue(ctx, \\"v\\", ctx['elem']);
+      c_block2[i1] = withKey(block3([txt1]), key1);
+      i1++;
     }
     const b2 = list(c_block2);
     return block1([], [b2]);

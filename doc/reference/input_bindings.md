@@ -32,7 +32,7 @@ example:
 
 ```js
 class Form extends owl.Component {
-  state = { text: "" };
+  state = useState({ text: "" });
 }
 ```
 

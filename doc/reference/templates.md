@@ -118,7 +118,7 @@ It is useful to explain the various rules that apply on these expressions:
 2. it can use anything in the rendering context (which typically contains the properties of the component):
 
    ```xml
-   <p t-if="user.birthday === today()">Happy bithday!</p>
+   <p t-if="user.birthday === today()">Happy birthday!</p>
    ```
 
    is valid, and will read the `user` object from the context, and call the

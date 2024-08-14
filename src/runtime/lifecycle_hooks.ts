@@ -29,7 +29,7 @@ function wrapError(fn: (...args: any[]) => any, hookName: string) {
             new Promise((resolve) => setTimeout(() => resolve(TIMEOUT), 3000)),
           ]).then((res) => {
             if (res === TIMEOUT && node.fiber === fiber && node.status <= 2) {
-              console.warn(timeoutError);
+              console.log(timeoutError);
             }
           });
         }

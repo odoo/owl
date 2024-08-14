@@ -112,10 +112,10 @@ describe("lifecycle hooks", () => {
     await mount(Test, fixture);
   });
 
-  test("timeout in onWillStart emits a warning", async () => {
-    const { warn } = console;
-    let warnArgs: any[];
-    console.warn = jest.fn((...args) => (warnArgs = args));
+  test("timeout in onWillStart emits a console log", async () => {
+    const { log } = console;
+    let logArgs: any[];
+    console.log = jest.fn((...args) => (logArgs = args));
     const { setTimeout } = window;
     let timeoutCbs: any = {};
     let timeoutId = 0;
@@ -138,17 +138,17 @@ describe("lifecycle hooks", () => {
       }
       await nextMicroTick();
       await nextMicroTick();
-      expect(console.warn).toHaveBeenCalledTimes(1);
-      expect(warnArgs![0]!.message).toBe("onWillStart's promise hasn't resolved after 3 seconds");
+      expect(console.log).toHaveBeenCalledTimes(1);
+      expect(logArgs![0]!.message).toBe("onWillStart's promise hasn't resolved after 3 seconds");
     } finally {
-      console.warn = warn;
+      console.log = log;
       window.setTimeout = setTimeout;
     }
   });
 
-  test("timeout in onWillStart doesn't emit a warning if app is destroyed", async () => {
-    const { warn } = console;
-    console.warn = jest.fn();
+  test("timeout in onWillStart doesn't emit a console log if app is destroyed", async () => {
+    const { log } = console;
+    console.log = jest.fn();
     const { setTimeout } = window;
     let timeoutCbs: any = {};
     let timeoutId = 0;
@@ -172,14 +172,14 @@ describe("lifecycle hooks", () => {
       }
       await nextMicroTick();
       await nextMicroTick();
-      expect(console.warn).toHaveBeenCalledTimes(0);
+      expect(console.log).toHaveBeenCalledTimes(0);
     } finally {
-      console.warn = warn;
+      console.log = log;
       window.setTimeout = setTimeout;
     }
   });
 
-  test("timeout in onWillUpdateProps emits a warning", async () => {
+  test("timeout in onWillUpdateProps emits a console log", async () => {
     class Child extends Component {
       static template = xml``;
       setup() {
@@ -193,9 +193,9 @@ describe("lifecycle hooks", () => {
     }
     const parent = await mount(Parent, fixture, { test: true });
 
-    const { warn } = console;
-    let warnArgs: any[];
-    console.warn = jest.fn((...args) => (warnArgs = args));
+    const { log } = console;
+    let logArgs: any[];
+    console.log = jest.fn((...args) => (logArgs = args));
     const { setTimeout } = window;
     let timeoutCbs: any = {};
     let timeoutId = 0;
@@ -218,12 +218,12 @@ describe("lifecycle hooks", () => {
         delete timeoutCbs[id];
       }
       await tick;
-      expect(console.warn).toHaveBeenCalledTimes(1);
-      expect(warnArgs![0]!.message).toBe(
+      expect(console.log).toHaveBeenCalledTimes(1);
+      expect(logArgs![0]!.message).toBe(
         "onWillUpdateProps's promise hasn't resolved after 3 seconds"
       );
     } finally {
-      console.warn = warn;
+      console.log = log;
       window.setTimeout = setTimeout;
     }
   });

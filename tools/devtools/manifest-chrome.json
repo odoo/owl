@@ -14,7 +14,7 @@
     "default_popup": "popup_app/popup.html"
   },
   "permissions": ["scripting", "storage"],
-  "host_permissions": ["http://*/*", "https://*/*"],
+  "host_permissions": ["http://*/*", "https://*/*", "file://*"],
   "content_security_policy": {
     "script-src": "self",
     "object-src": "self"

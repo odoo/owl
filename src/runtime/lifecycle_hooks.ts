@@ -3,42 +3,50 @@ import { nodeErrorHandlers } from "./error_handling";
 import { OwlError } from "../common/owl_error";
 
 const TIMEOUT = Symbol("timeout");
+const HOOK_TIMEOUT: { [key: string]: number } = {
+  onWillStart: 3000,
+  onWillUpdateProps: 3000,
+};
 function wrapError(fn: (...args: any[]) => any, hookName: string) {
-  const error = new OwlError(`The following error occurred in ${hookName}: `) as Error & {
+  const error = new OwlError() as Error & {
     cause: any;
   };
-  const timeoutError = new OwlError(`${hookName}'s promise hasn't resolved after 3 seconds`);
+  const timeoutError = new OwlError();
   const node = getCurrent();
   return (...args: any[]) => {
     const onError = (cause: any) => {
       error.cause = cause;
-      if (cause instanceof Error) {
-        error.message += `"${cause.message}"`;
-      } else {
-        error.message = `Something that is not an Error was thrown in ${hookName} (see this Error's "cause" property)`;
-      }
+      error.message =
+        cause instanceof Error
+          ? `The following error occurred in ${hookName}: "${cause.message}"`
+          : `Something that is not an Error was thrown in ${hookName} (see this Error's "cause" property)`;
       throw error;
     };
+    let result;
     try {
-      const result = fn(...args);
-      if (result instanceof Promise) {
-        if (hookName === "onWillStart" || hookName === "onWillUpdateProps") {
-          const fiber = node.fiber;
-          Promise.race([
-            result.catch(() => {}),
-            new Promise((resolve) => setTimeout(() => resolve(TIMEOUT), 3000)),
-          ]).then((res) => {
-            if (res === TIMEOUT && node.fiber === fiber && node.status <= 2) {
-              console.log(timeoutError);
-            }
-          });
-        }
-        return result.catch(onError);
-      }
-      return result;
+      result = fn(...args);
     } catch (cause) {
       onError(cause);
     }
+    if (!(result instanceof Promise)) {
+      return result;
+    }
+    const timeout = HOOK_TIMEOUT[hookName];
+    if (timeout) {
+      const fiber = node.fiber;
+      Promise.race([
+        result.catch(() => {}),
+        new Promise((resolve) => setTimeout(() => resolve(TIMEOUT), timeout)),
+      ]).then((res) => {
+        if (res === TIMEOUT && node.fiber === fiber && node.status <= 2) {
+          timeoutError.message = `${hookName}'s promise hasn't resolved after ${
+            timeout / 1000
+          } seconds`;
+          console.log(timeoutError);
+        }
+      });
+    }
+    return result.catch(onError);
   };
 }
 

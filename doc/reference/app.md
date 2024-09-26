@@ -6,6 +6,7 @@
 - [API](#api)
 - [Configuration](#configuration)
 - [`mount` helper](#mount-helper)
+- [Roots](#roots)
 - [Loading templates](#loading-templates)
 
 ## Overview
@@ -91,6 +92,33 @@ Here is the `mount` function signature:
 Most of the time, the `mount` helper is more convenient, but whenever one needs
 a reference to the actual Owl App, then using the `App` class directly is
 possible.
+
+## Roots
+
+An application can have multiple roots. It is sometimes useful to instantiate
+sub components in places that are not managed by Owl, such as an html editor
+with dynamic content (the Knowledge application in Odoo).
+
+To create a root, one can use the `createRoot` method, which takes two arguments:
+
+- **`Component`**: a component class (Root component of the app)
+- **`config (optional)`**: a config object that may contain a `props` object or a
+  `env` object.
+
+The `createRoot` method returns an object with a `mount` method (same API as
+the `App.mount` method), and a `destroy` method.
+
+```js
+const root = app.createRoot(MyComponent, { props: { someProps: true } });
+await root.mount(targetElement);
+
+// later
+root.destroy();
+```
+
+Note that, like with owl `App`, it is the responsibility of the code that created
+the root to properly destroy it (before it has been removed from the DOM!). Owl
+has no way of doing it itself.
 
 ## Loading templates
 

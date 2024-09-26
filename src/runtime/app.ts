@@ -16,10 +16,13 @@ export interface Env {
   [key: string]: any;
 }
 
-export interface AppConfig<P, E> extends TemplateSetConfig {
-  name?: string;
+export interface RootConfig<P, E> {
   props?: P;
   env?: E;
+}
+
+export interface AppConfig<P, E> extends TemplateSetConfig, RootConfig<P, E> {
+  name?: string;
   test?: boolean;
   warnIfNoStaticProps?: boolean;
 }
@@ -49,6 +52,12 @@ declare global {
   }
 }
 
+interface Root<P, E> {
+  node: ComponentNode<P, E>;
+  mount(target: HTMLElement | ShadowRoot, options?: MountOptions): Promise<Component<P, E>>;
+  destroy(): void;
+}
+
 window.__OWL_DEVTOOLS__ ||= { apps, Fiber, RootFiber, toRaw, reactive };
 
 export class App<
@@ -65,6 +74,7 @@ export class App<
   props: P;
   env: E;
   scheduler = new Scheduler();
+  subRoots: Set<ComponentNode> = new Set();
   root: ComponentNode<P, E> | null = null;
   warnIfNoStaticProps: boolean;
 
@@ -91,14 +101,46 @@ export class App<
     target: HTMLElement | ShadowRoot,
     options?: MountOptions
   ): Promise<Component<P, E> & InstanceType<T>> {
-    App.validateTarget(target);
-    if (this.dev) {
-      validateProps(this.Root, this.props, { __owl__: { app: this } });
+    const root = this.createRoot(this.Root, { props: this.props });
+    this.root = root.node;
+    this.subRoots.delete(root.node);
+    return root.mount(target, options) as any;
+  }
+
+  createRoot<Props extends object, SubEnv = any>(
+    Root: ComponentConstructor<Props, E>,
+    config: RootConfig<Props, SubEnv> = {}
+  ): Root<Props, SubEnv> {
+    const props = config.props || ({} as Props);
+    // hack to make sure the sub root get the sub env if necessary. for owl 3,
+    // would be nice to rethink the initialization process to make sure that
+    // we can create a ComponentNode and give it explicitely the env, instead
+    // of looking it up in the app
+    const env = this.env;
+    if (config.env) {
+      this.env = config.env as any;
     }
-    const node = this.makeNode(this.Root, this.props);
-    const prom = this.mountNode(node, target, options);
-    this.root = node;
-    return prom;
+    const node = this.makeNode(Root, props);
+    if (config.env) {
+      this.env = env;
+    }
+    this.subRoots.add(node);
+    return {
+      node,
+      mount: (target: HTMLElement | ShadowRoot, options?: MountOptions) => {
+        App.validateTarget(target);
+        if (this.dev) {
+          validateProps(Root, props, { __owl__: { app: this } });
+        }
+        const prom = this.mountNode(node, target, options);
+        return prom;
+      },
+      destroy: () => {
+        this.subRoots.delete(node);
+        node.destroy();
+        this.scheduler.processTasks();
+      },
+    };
   }
 
   makeNode(Component: ComponentConstructor, props: any): ComponentNode {
@@ -134,6 +176,9 @@ export class App<
 
   destroy() {
     if (this.root) {
+      for (let subroot of this.subRoots) {
+        subroot.destroy();
+      }
       this.root.destroy();
       this.scheduler.processTasks();
     }

@@ -97,6 +97,19 @@ exports[`basics a component cannot be mounted in a detached node (even if node i
 }"
 `;
 
+exports[`basics a component cannot be mounted in a detached node 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`basics a component inside a component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -257,6 +270,19 @@ exports[`basics can mount a simple component with props 1`] = `
   return function template(ctx, node, key = \\"\\") {
     let txt1 = ctx['props'].value;
     return block1([txt1]);
+  }
+}"
+`;
+
+exports[`basics cannot mount on a documentFragment 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div>content</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
   }
 }"
 `;
@@ -995,6 +1021,19 @@ exports[`basics three level of components with collapsing root nodes 3`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div>2</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`basics throws if mounting on target=null 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<span>simple vnode</span>\`);
   
   return function template(ctx, node, key = \\"\\") {
     return block1();

@@ -834,7 +834,9 @@
             case obj instanceof Object:
               child.contentType = "object";
               child.hasChildren =
-                Object.keys(obj).length || Object.getOwnPropertySymbols(obj).length;
+                Object.keys(obj).length ||
+                Object.getOwnPropertySymbols(obj).length ||
+                obj.constructor.name !== "Object";
               break;
             default:
               child.contentType = typeof obj;

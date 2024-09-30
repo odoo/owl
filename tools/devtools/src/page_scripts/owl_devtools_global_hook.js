@@ -109,23 +109,34 @@
         object(obj) {
           const result = [];
           let length = 0;
-          for (const [key, value] of Object.entries(obj)) {
-            if (length > 25) {
-              result.push("...");
-              break;
+          if (obj instanceof String) {
+            result[0] = `'${obj.toString()}'`;
+          } else if (obj instanceof Array) {
+            return `${obj.constructor.name} ${this.array([...obj])}`;
+          } else if (obj instanceof Number) {
+            result[0] = obj.toString();
+          } else {
+            for (const [key, value] of Object.entries(obj)) {
+              if (length > 25) {
+                result.push("...");
+                break;
+              }
+              const element = key + ": " + this.serializeItem(value);
+              length += element.length;
+              result.push(element);
             }
-            const element = key + ": " + this.serializeItem(value);
-            length += element.length;
-            result.push(element);
+            for (const key of Object.getOwnPropertySymbols(obj)) {
+              if (length > 25) {
+                result.push("...");
+                break;
+              }
+              const element = key.toString() + ": " + this.serializeItem(obj[key]);
+              length += element.length;
+              result.push(element);
+            }
           }
-          for (const key of Object.getOwnPropertySymbols(obj)) {
-            if (length > 25) {
-              result.push("...");
-              break;
-            }
-            const element = key.toString() + ": " + this.serializeItem(obj[key]);
-            length += element.length;
-            result.push(element);
+          if (obj.constructor.name !== "Object") {
+            return obj.constructor.name + " {" + result.join(", ") + "}";
           }
           return "{" + result.join(", ") + "}";
         },
@@ -823,7 +834,7 @@
               child.contentType = "set";
               child.hasChildren = true;
               break;
-            case obj instanceof Array:
+            case obj.constructor.name === "Array":
               child.contentType = "array";
               child.hasChildren = obj.length > 0;
               break;

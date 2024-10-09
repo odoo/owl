@@ -9,7 +9,7 @@
     "dist"
   ],
   "engines": {
-    "node": ">=12.18.3"
+    "node": ">=20.0.0"
   },
   "scripts": {
     "build:bundle": "rollup -c --failAfterWarnings",

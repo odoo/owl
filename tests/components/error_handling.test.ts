@@ -157,7 +157,7 @@ describe("basics", () => {
     } catch (e) {
       error = e as Error;
     }
-    const expectedErrorMessage = `Failed to compile anonymous template: Unexpected identifier
+    const expectedErrorMessage = `Failed to compile anonymous template: Unexpected identifier 'ctx'
 
 generated code:
 function(app, bdom, helpers) {
@@ -182,7 +182,7 @@ function(app, bdom, helpers) {
       static components = { Child };
       static template = xml`<Child/>`;
     }
-    const expectedErrorMessage = `Failed to compile anonymous template: Unexpected identifier
+    const expectedErrorMessage = `Failed to compile anonymous template: Unexpected identifier 'ctx'
 
 generated code:
 function(app, bdom, helpers) {

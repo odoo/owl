@@ -48,7 +48,7 @@ describe("basic validation", () => {
   test("compilation error", () => {
     const template = `<div t-att-class="a b">test</div>`;
     expect(() => renderToString(template))
-      .toThrow(`Failed to compile anonymous template: Unexpected identifier
+      .toThrow(`Failed to compile anonymous template: Unexpected identifier 'ctx'
 
 generated code:
 function(app, bdom, helpers) {

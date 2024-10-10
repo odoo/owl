@@ -100,6 +100,11 @@ const SAMPLES = [
     code: ["js", "xml", "css"],
   },
   {
+    description: "Tic-Tac-Toe (with reactivity)",
+    folder: "tic_tac_toe",
+    code: ["js", "xml", "css"],
+  },
+  {
     description: "Responsive app",
     folder: "responsive_app",
     code: ["js", "xml", "css"],

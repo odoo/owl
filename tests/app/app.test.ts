@@ -1,4 +1,4 @@
-import { App, Component, mount, onWillStart, useState, xml } from "../../src";
+import { App, Component, mount, onWillPatch, onWillStart, useState, xml } from "../../src";
 import { status } from "../../src/runtime/status";
 import {
   makeTestFixture,
@@ -183,5 +183,22 @@ describe("app", () => {
     // Only the "hello" template is used, so the "world" template is not yet loaded
     expect(Object.keys(app.templates)).toEqual(["hello"]);
     expect(Object.keys(app.rawTemplates)).toEqual(["hello", "world"]);
+  });
+
+  test("can call processTask twice in a row without crashing", async () => {
+    class Child extends Component {
+      static template = xml`<div/>`;
+      setup() {
+        onWillPatch(() => app.scheduler.processTasks());
+      }
+    }
+    class SomeComponent extends Component {
+      static template = xml`parent<Child/>`;
+      static components = { Child };
+    }
+
+    const app = new App(SomeComponent);
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("parent<div></div>");
   });
 });

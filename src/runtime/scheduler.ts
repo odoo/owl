@@ -16,6 +16,7 @@ export class Scheduler {
   frame: number = 0;
   delayedRenders: Fiber[] = [];
   cancelledNodes: Set<ComponentNode> = new Set();
+  processing = false;
 
   constructor() {
     this.requestAnimationFrame = Scheduler.requestAnimationFrame;
@@ -53,6 +54,10 @@ export class Scheduler {
   }
 
   processTasks() {
+    if (this.processing) {
+      return;
+    }
+    this.processing = true;
     this.frame = 0;
     for (let node of this.cancelledNodes) {
       node._destroy();
@@ -66,6 +71,7 @@ export class Scheduler {
         this.tasks.delete(task);
       }
     }
+    this.processing = false;
   }
 
   processFiber(fiber: RootFiber) {

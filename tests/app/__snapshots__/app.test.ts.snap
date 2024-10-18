@@ -43,6 +43,33 @@ exports[`app app: clear scheduler tasks and destroy cancelled nodes immediately 
 }"
 `;
 
+exports[`app can call processTask twice in a row without crashing 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`parent\`);
+    const b3 = comp1({}, key + \`__1\`, node, this, null);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`app can call processTask twice in a row without crashing 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`app can configure an app with props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

@@ -10,6 +10,13 @@ import { batched, Callback } from "./utils";
 
 let currentNode: ComponentNode | null = null;
 
+export function saveCurrent() {
+  let n = currentNode;
+  return () => {
+    currentNode = n;
+  };
+}
+
 export function getCurrent(): ComponentNode {
   if (!currentNode) {
     throw new OwlError("No active component (a hook function should only be called in 'setup')");

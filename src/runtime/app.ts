@@ -1,6 +1,6 @@
 import { version } from "../version";
 import { Component, ComponentConstructor, Props } from "./component";
-import { ComponentNode } from "./component_node";
+import { ComponentNode, saveCurrent } from "./component_node";
 import { nodeErrorHandlers, handleError } from "./error_handling";
 import { OwlError } from "../common/owl_error";
 import { Fiber, RootFiber, MountOptions } from "./fibers";
@@ -52,7 +52,7 @@ declare global {
   }
 }
 
-interface Root<P, E> {
+interface Root<P extends Props, E> {
   node: ComponentNode<P, E>;
   mount(target: HTMLElement | ShadowRoot, options?: MountOptions): Promise<Component<P, E>>;
   destroy(): void;
@@ -120,7 +120,10 @@ export class App<
     if (config.env) {
       this.env = config.env as any;
     }
+
+    const restore = saveCurrent();
     const node = this.makeNode(Root, props);
+    restore();
     if (config.env) {
       this.env = env;
     }

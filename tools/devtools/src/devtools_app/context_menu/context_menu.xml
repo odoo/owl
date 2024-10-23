@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+  <t t-name="devtools.ContextMenu">
+    <div class="custom-menu" t-ref="contextmenu">
+        <ul class="my-1">
+          <li t-foreach="props.items" t-as="item" t-key="item_index" t-if="item.show" t-esc="item.title" t-on-click.stop="() => this.onClickItem(item.action)" class="custom-menu-item py-1 px-4"/>
+        </ul>
+    </div>
+  </t>
+</templates>

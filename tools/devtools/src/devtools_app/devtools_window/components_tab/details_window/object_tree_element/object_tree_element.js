@@ -13,19 +13,8 @@ export class ObjectTreeElement extends Component {
       menuTop: 0,
       menuLeft: 0,
     });
-    this.contextMenu = useRef("contextmenu");
     const inputRef = useRef("input");
     this.store = useStore();
-    this.contextMenuId = this.store.contextMenu.id++;
-    this.contextMenuEvent,
-      useEffect(
-        (menuId) => {
-          if (menuId === this.contextMenuId) {
-            this.store.contextMenu.open(this.contextMenuEvent, this.contextMenu.el);
-          }
-        },
-        () => [this.store.contextMenu.activeMenu]
-      );
     useEffect(
       (editMode) => {
         // Focus on the input when it is created
@@ -63,9 +52,23 @@ export class ObjectTreeElement extends Component {
     return this.props.object.depth * 0.8 + 0.3;
   }
 
+  get contextMenuItems() {
+    return [
+      {
+        title: "Store as global variable",
+        show: true,
+        action: () => this.store.logObjectInConsole(this.props.object.path),
+      },
+      {
+        title: "Inspect function source code",
+        show: this.props.object.contentType === "function",
+        action: () => this.store.inspectFunctionSource(this.props.object.path),
+      },
+    ];
+  }
+
   openMenu(ev) {
-    this.contextMenuEvent = ev;
-    this.store.contextMenu.activeMenu = this.contextMenuId;
+    this.store.openContextMenu(ev, this.contextMenuItems);
   }
 
   setupEditMode() {

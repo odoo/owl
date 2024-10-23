@@ -4,7 +4,7 @@
     <div class="m-0 p-0 text-nowrap w-100 object-line"
       t-att-class="props.class + (props.object.hasChildren ? ' bg-feedback' : '')"
       t-on-click.stop="() => this.store.toggleObjectTreeElementsDisplay(this.props.object)"
-      t-on-contextmenu.prevent="openMenu" 
+      t-on-contextmenu.prevent="openMenu"
     >
       <div t-attf-style="padding-left: {{objectPadding}}rem">
         <i class="fa px-1 pointer-icon caret"
@@ -12,7 +12,7 @@
           t-attf-style="visibility: {{props.object.hasChildren ? '' : 'hidden'}};"
         />
         <t t-esc="props.object.name"/>
-        <t t-if="props.object.content.length > 0">: </t> 
+        <t t-if="props.object.content.length > 0">: </t>
         <t t-if="props.object.contentType == 'getter'">
           <span class="getter-content object-content" t-att-class="objectLineClass" t-on-click.stop="() => this.store.loadGetterContent(this.props.object)">
             <t t-esc="props.object.content"/>
@@ -20,24 +20,16 @@
         </t>
         <t t-else="">
           <span class="object-content" t-att-class="objectLineClass" t-on-dblclick.stop="setupEditMode">
-            <t t-if="state.editMode">   
+            <t t-if="state.editMode">
               <input t-attf-id="objectEditionInput/{{pathAsString}}" t-ref="input" type="text" placeholder="" t-att-value="props.object.content" t-on-keydown.stop="editObject"/>
             </t>
             <t t-else="">
               <t t-esc="props.object.content"/>
             </t>
-          </span> 
+          </span>
         </t>
         <span t-if="keyChanges" class="key-changes ms-1 badge p-1" title="Key additions/deletions are observed">+/-</span>
       </div>
-    </div>
-    <div t-if="store.contextMenu.activeMenu === contextMenuId" class="custom-menu" t-ref="contextmenu">
-      <ul class="my-1">
-        <li t-on-click="() => this.store.logObjectInConsole(this.props.object.path)" class="custom-menu-item py-1 px-4 text-nowrap">Store as global variable</li>
-        <t t-if='props.object.contentType == "function"'>
-          <li t-on-click="() => this.store.inspectFunctionSource(this.props.object.path)" class="custom-menu-item py-1 px-4 text-nowrap">Inspect function source code</li>
-        </t>
-      </ul>
     </div>
     <t t-if="props.object.toggled" t-key="contextMenuId">
       <t t-foreach="props.object.children" t-as="child" t-key="child_index">

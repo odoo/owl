@@ -16,10 +16,7 @@ export class TreeElement extends Component {
       searched: false,
     });
     this.store = useStore();
-    this.contextMenu = useRef("contextmenu");
     this.element = useRef("element");
-    this.contextMenuId = this.store.contextMenu.id++;
-    this.contextMenuEvent;
     this.stringifiedPath = JSON.stringify(this.props.component.path);
     // Scroll to the selected element when it changes
     onMounted(() => {
@@ -37,15 +34,6 @@ export class TreeElement extends Component {
         this.store.selectedElement = this.element.el;
       },
       () => [this.props.component.selected]
-    );
-    // Open the context menu when the ids match
-    useEffect(
-      (menuId) => {
-        if (menuId === this.contextMenuId) {
-          this.store.contextMenu.open(this.contextMenuEvent, this.contextMenu.el);
-        }
-      },
-      () => [this.store.contextMenu.activeMenu]
     );
     // Effect to apply a short highlight effect to the component when it is rendered
     useEffect(
@@ -86,9 +74,86 @@ export class TreeElement extends Component {
     return minimizeKey(this.props.component.key);
   }
 
+  get contextMenuItems() {
+    return [
+      {
+        title: "Expand children",
+        show: true,
+        action: () => this.store.toggleComponentAndChildren(this.props.component, true),
+      },
+      {
+        title: "Fold all children",
+        show: true,
+        action: () => this.store.toggleComponentAndChildren(this.props.component, false),
+      },
+      {
+        title: "Fold direct children",
+        show: true,
+        action: () => this.store.foldDirectChildren(this.props.component),
+      },
+      {
+        title: "Inspect source code",
+        show: true,
+        action: () => this.store.inspectComponent("source", this.props.component.path),
+      },
+      {
+        title: "Store as global variable",
+        show: this.props.component.path.length !== 1,
+        action: () =>
+          this.store.logObjectInConsole([
+            ...this.props.component.path,
+            { type: "item", value: "component" },
+          ]),
+      },
+      {
+        title: "Inspect in Elements tab",
+        show: this.props.component.path.length !== 1,
+        action: () => this.store.inspectComponent("DOM", this.props.component.path),
+      },
+      {
+        title: "Force rerender",
+        show: this.props.component.path.length !== 1,
+        action: () => this.store.refreshComponent(this.props.component.path),
+      },
+      {
+        title: "Store observed states as global variable",
+        show: this.props.component.path.length !== 1,
+        action: () =>
+          this.store.logObjectInConsole([
+            ...this.props.component.path,
+            { type: "item", value: "subscriptions" },
+          ]),
+      },
+      {
+        title: "Inspect compiled template",
+        show: this.props.component.path.length !== 1,
+        action: () => this.store.inspectComponent("compiled template", this.props.component.path),
+      },
+      {
+        title: "Log raw template",
+        show: this.props.component.path.length !== 1,
+        action: () => this.store.inspectComponent("raw template", this.props.component.path),
+      },
+      {
+        title: "Store as global variable",
+        show: this.props.component.path.length === 1,
+        action: () => this.store.logObjectInConsole([...this.props.component.path]),
+      },
+      {
+        title: "Don't fold component by default",
+        show: this.store.settings.componentsToggleBlacklist.has(this.props.component.name),
+        action: () => this.toggleComponentToBlacklist(),
+      },
+      {
+        title: "Fold component by default",
+        show: !this.store.settings.componentsToggleBlacklist.has(this.props.component.name),
+        action: () => this.toggleComponentToBlacklist(),
+      },
+    ];
+  }
+
   openMenu(ev) {
-    this.contextMenuEvent = ev;
-    this.store.contextMenu.activeMenu = this.contextMenuId;
+    this.store.openContextMenu(ev, this.contextMenuItems);
   }
 
   // Expand/fold the component node

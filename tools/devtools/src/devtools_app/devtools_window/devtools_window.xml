@@ -28,6 +28,7 @@
           Owl is not loaded on this page.
         </div>
       </t>
+      <ContextMenu t-if="store.contextMenu" items="store.contextMenu.items"/>
     </div>
   </t>
 </templates>

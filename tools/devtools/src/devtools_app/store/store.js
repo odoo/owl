@@ -11,30 +11,7 @@ export const store = reactive({
     darkmode: false,
     componentsToggleBlacklist: new Set(),
   },
-  contextMenu: {
-    id: 0,
-    activeMenu: -1,
-    // Opens the context menu corresponding with the given menu html element
-    open(event, menu) {
-      const menuWidth = menu.offsetWidth;
-      const menuHeight = menu.offsetHeight;
-      let x = event.clientX;
-      let y = event.clientY;
-      if (x + menuWidth > window.innerWidth) {
-        x = window.innerWidth - menuWidth;
-      }
-      if (y + menuHeight > window.innerHeight) {
-        y = window.innerHeight - menuHeight;
-      }
-      menu.style.left = x + "px";
-      // Need 25px offset because of the main navbar from the browser devtools
-      menu.style.top = y - 25 + "px";
-    },
-    // Close the currently displayed context menu
-    close() {
-      this.activeMenu = -1;
-    },
-  },
+  contextMenu: null,
   isFirefox: IS_FIREFOX,
   frameUrls: ["top"],
   activeFrame: "top",
@@ -91,6 +68,16 @@ export const store = reactive({
     this.page = componentName;
     this.componentSearch.activeSelector = false;
     evalFunctionInWindow("disableHTMLSelector", [], this.activeFrame);
+  },
+
+  openContextMenu(event, items) {
+    this.contextMenu = {
+      position: {
+        x: event.clientX,
+        y: event.clientY,
+      },
+      items,
+    };
   },
 
   // Load all data related to the components tree using the global hook loaded on the page
@@ -646,8 +633,9 @@ async function init() {
   store.updateIFrameList();
 
   // Global listeners to close the currently shown context menu when the user clicks or opens another
-  document.addEventListener("click", () => store.contextMenu.close(), { capture: true });
-  document.addEventListener("contextmenu", () => store.contextMenu.close(), { capture: true });
+  document.addEventListener("click", () => (store.contextMenu = null), { capture: true });
+  document.addEventListener("contextmenu", () => (store.contextMenu = null), { capture: true });
+  window.addEventListener("blur", () => (store.contextMenu = null), { capture: true });
 
   // Make sure the events recorder is at its initial state in every frame
   for (const frame of store.frameUrls) {

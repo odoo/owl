@@ -1,24 +1,13 @@
 import { minimizeKey } from "../../../../utils";
 import { useStore } from "../../../store/store";
 
-const { Component, useEffect, useRef } = owl;
+const { Component } = owl;
 
 export class Event extends Component {
   static template = "devtools.Event";
 
   setup() {
     this.store = useStore();
-    this.componentContextMenu = useRef("componentContextmenu");
-    this.componentContextMenuId = this.store.contextMenu.id++;
-    this.contextMenuEvent,
-      useEffect(
-        (menuId) => {
-          if (menuId === this.componentContextMenuId) {
-            this.store.contextMenu.open(this.contextMenuEvent, this.componentContextMenu.el);
-          }
-        },
-        () => [this.store.contextMenu.activeMenu]
-      );
   }
 
   // Formatting for displaying the key of the component
@@ -54,13 +43,65 @@ export class Event extends Component {
     }
   }
 
-  openComponentMenu(ev) {
+  get contextMenuItems() {
+    return [
+      {
+        title: "Inspect source code",
+        show: true,
+        action: () => this.store.inspectComponent("source", this.props.event.path),
+      },
+      {
+        title: "Store as global variable",
+        show: this.props.event.path.length !== 1,
+        action: () =>
+          this.store.logObjectInConsole([
+            ...this.props.event.path,
+            { type: "item", value: "component" },
+          ]),
+      },
+      {
+        title: "Inspect in Elements tab",
+        show: this.props.event.path.length !== 1,
+        action: () => this.store.inspectComponent("DOM", this.props.event.path),
+      },
+      {
+        title: "Force rerender",
+        show: this.props.event.path.length !== 1,
+        action: () => this.store.refreshComponent(this.props.event.path),
+      },
+      {
+        title: "Store observed states as global variable",
+        show: this.props.event.path.length !== 1,
+        action: () =>
+          this.store.logObjectInConsole([
+            ...this.props.event.path,
+            { type: "item", value: "subscriptions" },
+          ]),
+      },
+      {
+        title: "Inspect compiled template",
+        show: this.props.event.path.length !== 1,
+        action: () => this.store.inspectComponent("compiled template", this.props.event.path),
+      },
+      {
+        title: "Log raw template",
+        show: this.props.event.path.length !== 1,
+        action: () => this.store.inspectComponent("raw template", this.props.event.path),
+      },
+      {
+        title: "Store as global variable",
+        show: this.props.event.path.length === 1,
+        action: () => this.store.logObjectInConsole([...this.props.event.path]),
+      },
+    ];
+  }
+
+  openMenu(ev) {
     if (this.props.event.type === "destroy") {
       return;
     } else {
       ev.preventDefault();
-      this.contextMenuEvent = ev;
-      this.store.contextMenu.activeMenu = this.componentContextMenuId;
+      this.store.openContextMenu(ev, this.contextMenuItems);
     }
   }
 }

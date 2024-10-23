@@ -1,7 +1,7 @@
 import { minimizeKey } from "../../../../utils";
 import { useStore } from "../../../store/store";
 
-const { Component, useRef, useEffect } = owl;
+const { Component } = owl;
 
 export class EventNode extends Component {
   static template = "devtools.EventNode";
@@ -10,33 +10,89 @@ export class EventNode extends Component {
 
   setup() {
     this.store = useStore();
-    this.nodeContextMenu = useRef("nodeContextMenu");
-    this.nodeContextMenuId = this.store.contextMenu.id++;
-    this.componentContextMenu = useRef("componentContextmenu");
-    this.componentContextMenuId = this.store.contextMenu.id++;
-    this.contextMenuEvent,
-      useEffect(
-        (menuId) => {
-          if (menuId === this.nodeContextMenuId) {
-            this.store.contextMenu.open(this.contextMenuEvent, this.nodeContextMenu.el);
-          }
-          if (menuId === this.componentContextMenuId) {
-            this.store.contextMenu.open(this.contextMenuEvent, this.componentContextMenu.el);
-          }
-        },
-        () => [this.store.contextMenu.activeMenu]
-      );
   }
 
   get eventPadding() {
     return this.props.event.depth * 0.8 + 0.3;
   }
 
+  get nodeContextMenuItems() {
+    return [
+      {
+        title: "Expand children",
+        show: true,
+        action: () => this.store.toggleEventAndChildren(this.props.event, true),
+      },
+      {
+        title: "Fold all children",
+        show: true,
+        action: () => this.store.toggleEventAndChildren(this.props.event, false),
+      },
+      {
+        title: "Fold direct children",
+        show: true,
+        action: () => this.store.foldDirectChildren(this.props.event),
+      },
+    ];
+  }
+
+  get componentContextMenuItems() {
+    return [
+      {
+        title: "Inspect source code",
+        show: true,
+        action: () => this.store.inspectComponent("source", this.props.event.path),
+      },
+      {
+        title: "Store as global variable",
+        show: this.props.event.path.length !== 1,
+        action: () =>
+          this.store.logObjectInConsole([
+            ...this.props.event.path,
+            { type: "item", value: "component" },
+          ]),
+      },
+      {
+        title: "Inspect in Elements tab",
+        show: this.props.event.path.length !== 1,
+        action: () => this.store.inspectComponent("DOM", this.props.event.path),
+      },
+      {
+        title: "Force rerender",
+        show: this.props.event.path.length !== 1,
+        action: () => this.store.refreshComponent(this.props.event.path),
+      },
+      {
+        title: "Store observed states as global variable",
+        show: this.props.event.path.length !== 1,
+        action: () =>
+          this.store.logObjectInConsole([
+            ...this.props.event.path,
+            { type: "item", value: "subscriptions" },
+          ]),
+      },
+      {
+        title: "Inspect compiled template",
+        show: this.props.event.path.length !== 1,
+        action: () => this.store.inspectComponent("compiled template", this.props.event.path),
+      },
+      {
+        title: "Log raw template",
+        show: this.props.event.path.length !== 1,
+        action: () => this.store.inspectComponent("raw template", this.props.event.path),
+      },
+      {
+        title: "Store as global variable",
+        show: this.props.event.path.length === 1,
+        action: () => this.store.logObjectInConsole([...this.props.event.path]),
+      },
+    ];
+  }
+
   openNodeMenu(ev) {
     if (this.props.event.children.length) {
       ev.preventDefault();
-      this.contextMenuEvent = ev;
-      this.store.contextMenu.activeMenu = this.nodeContextMenuId;
+      this.store.openContextMenu(ev, this.nodeContextMenuItems);
     }
   }
 
@@ -45,8 +101,7 @@ export class EventNode extends Component {
       return;
     } else {
       ev.preventDefault();
-      this.contextMenuEvent = ev;
-      this.store.contextMenu.activeMenu = this.componentContextMenuId;
+      this.store.openContextMenu(ev, this.componentContextMenuItems);
     }
   }
 

@@ -51,6 +51,8 @@
       this.requestedFrame = false;
       this.enabledSelector = false;
       this.eventsBatch = [];
+      this.breakpointsClassMap = new Map();
+      this.breakpointsHookMap = new Map();
       // Object which defines how different types of data should be displayed when passed to the devtools
       this.serializer = {
         // Defines how leaf object nodes should be displayed in the extension when inside a bigger structure
@@ -744,6 +746,9 @@
       }
       // Path to the component node is only strings, becomes objects for properties
       const index = path.findIndex((key) => typeof key !== "string");
+      if (index === -1) {
+        return this.getComponentNode(path);
+      }
       const componentNode = this.getComponentNode(path.slice(0, index));
       const obj = this.getObject(componentNode, path.slice(index));
       return obj;
@@ -896,12 +901,15 @@
           path.shift();
         }
         // the value is either "props" or "env" here
-        if (objType !== "instance") {
+        if (objType !== "instance" && objType !== "hook") {
           obj = oldTree[path[0].value].children;
           path.shift();
           // there is nothing otherwise but extension side it is in instance
-        } else {
+        } else if (objType === "instance") {
           obj = oldTree.instance.children;
+        } else {
+          obj = oldTree.hooks.children;
+          path.shift();
         }
         // the first element here is directly in an array instead of a children array
         obj = obj[path[0].childIndex];
@@ -1377,6 +1385,39 @@
           component.subscriptions.children.push(subscription);
         });
       }
+      // Load hooks of the component
+      if (!isApp) {
+        component.hooks = { toggled: oldTree ? oldTree.hooks.toggled : true, children: [] };
+        const hooksList = [
+          "mounted",
+          "patched",
+          "willDestroy",
+          "willPatch",
+          "willStart",
+          "willUnmount",
+          "willUpdateProps",
+        ];
+        const hooksPath = [...instancePath, { type: "item", value: "__owl__" }];
+        Reflect.ownKeys(instance.__owl__)
+          .sort(compareKeys)
+          .forEach((key) => {
+            if (hooksList.includes(key)) {
+              let oldBranch = oldTree?.hooks.children[component.hooks.children.length];
+              const property = this.serializeObjectChild(
+                instance.__owl__,
+                { type: "item", value: key, childIndex: component.hooks.children.length },
+                0,
+                "hook",
+                hooksPath,
+                oldBranch,
+                oldTree
+              );
+              if (property) {
+                component.hooks.children.push(property);
+              }
+            }
+          });
+      }
       return component;
     }
     // Replace the content of a parsed getter object with the result of the corresponding get method
@@ -1712,6 +1753,48 @@
       } else {
         inspect(obj);
       }
+    }
+
+    injectBreakpoint(hook, path, instanceOnly, condition) {
+      const componentNode = this.getObjectProperty(path);
+      const injectFunctionInHook = (comp, hook, fn) => {
+        comp[hook].push(fn);
+      };
+      const originalHook = [...componentNode.component.__owl__[hook]];
+      injectFunctionInHook(componentNode.component.__owl__, hook, () => {
+        debugger;
+      });
+      if (!this.breakpointsHookMap.get([componentNode.component.__owl__, hook])) {
+        this.breakpointsHookMap.set([componentNode.component.__owl__, hook], originalHook);
+      }
+      if (!instanceOnly) {
+        const componentClass = componentNode.component.constructor;
+        const originalSetup = componentClass.prototype.setup;
+        if (!this.breakpointsClassMap.get(componentClass)) {
+          this.breakpointsClassMap.set(componentClass, originalSetup);
+        }
+        componentClass.prototype.setup = function () {
+          const debuggerFunc = () => {
+            if (eval(condition)) {
+              this;
+              debugger;
+            }
+          };
+          injectFunctionInHook(this.__owl__, hook, debuggerFunc);
+          originalSetup.call(this, ...arguments);
+        };
+      }
+    }
+
+    removeBreakpoints() {
+      for (const [component, setup] of this.breakpointsClassMap) {
+        component.prototype.setup = setup;
+      }
+      this.breakpointsClassMap.clear();
+      for (const [ref, originalHook] of this.breakpointsHookMap) {
+        ref[0][ref[1]] = originalHook;
+      }
+      this.breakpointsHookMap.clear();
     }
 
     targetName(target, node) {

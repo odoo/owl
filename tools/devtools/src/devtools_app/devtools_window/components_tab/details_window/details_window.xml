@@ -59,7 +59,7 @@
           </t>
         </div>
       </div>
-      <div t-if="store.activeComponent.instance.children.length > 0"  id="instance" class="details-panel ps-2 py-1">
+      <div t-if="store.activeComponent.instance.children.length > 0" id="instance" class="details-panel ps-2 py-1">
         <div class="d-flex mb-2">
           <div class="w-100 text-truncate" t-on-click.stop="(ev) => this.toggleCategory(ev, 'instance')">
             <i class="fa mx-1 pointer-icon"
@@ -73,6 +73,19 @@
         </div>
         <t t-if="store.activeComponent.instance.toggled" t-foreach="store.activeComponent.instance.children" t-as="instance" t-key="instance_index">
           <ObjectTreeElement object="instance"/>
+        </t>
+      </div>
+      <div t-if="store.activeComponent.hooks?.children.length > 0" id="hooks" class="details-panel ps-2 py-1">
+        <div class="d-flex mb-2">
+          <div class="w-100" t-on-click.stop="(ev) => this.toggleCategory(ev, 'hooks')">
+            <i class="fa mx-1 pointer-icon"
+              t-att-class="{'fa-caret-right': !store.activeComponent.hooks.toggled, 'fa-caret-down': store.activeComponent.hooks.toggled}"
+            /><b>hooks</b>
+          </div>
+          <i title="Remove breakpoints" class="fa fa-times utility-icon p-1" t-on-click.stop="() => this.store.removeBreakpoints()"></i>
+        </div>
+        <t t-if="store.activeComponent.hooks.toggled" t-foreach="store.activeComponent.hooks.children" t-as="hook" t-key="hook_index">
+          <ObjectTreeElement object="hook"/>
         </t>
       </div>
     </div>

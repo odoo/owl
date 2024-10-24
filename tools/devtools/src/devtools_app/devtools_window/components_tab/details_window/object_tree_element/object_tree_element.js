@@ -64,6 +64,40 @@ export class ObjectTreeElement extends Component {
         show: this.props.object.contentType === "function",
         action: () => this.store.inspectFunctionSource(this.props.object.path),
       },
+      {
+        title: "Inject breakpoint on component",
+        show: this.props.object.contentType === "array" && this.props.object.objectType === "hook",
+        action: () =>
+          this.store.injectBreakpoint(this.props.object.name, this.store.activeComponent.path),
+      },
+      {
+        title: "Inject conditional breakpoint on component",
+        show: this.props.object.contentType === "array" && this.props.object.objectType === "hook",
+        action: () => {
+          const condition = window.prompt("Enter the condition");
+          if (condition) {
+            this.store.injectBreakpoint(
+              this.props.object.name,
+              this.store.activeComponent.path,
+              false,
+              condition
+            );
+          }
+        },
+      },
+      {
+        title: "Inject breakpoint on instance",
+        show:
+          this.props.object.contentType === "array" &&
+          this.props.object.objectType === "hook" &&
+          !["mounted", "willStart"].includes(this.props.object.name),
+        action: () =>
+          this.store.injectBreakpoint(
+            this.props.object.name,
+            this.store.activeComponent.path,
+            true
+          ),
+      },
     ];
   }
 

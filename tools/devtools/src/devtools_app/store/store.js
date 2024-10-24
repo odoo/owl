@@ -33,6 +33,7 @@ export const store = reactive({
     props: { toggled: true, children: [] },
     env: { toggled: false, children: [] },
     instance: { toggled: true, children: [] },
+    hooks: { toggled: true, children: [] },
     version: "1.0",
   },
   selectedElement: null,
@@ -562,6 +563,21 @@ export const store = reactive({
     if (IS_FIREFOX && type !== "raw template") {
       await evalInWindow("inspect(window.$temp);", this.activeFrame);
     }
+  },
+
+  async injectBreakpoint(hook, path, instanceOnly = false, condition = "1") {
+    path = [...path];
+    await evalFunctionInWindow(
+      "injectBreakpoint",
+      [hook, path, instanceOnly, condition],
+      this.activeFrame
+    );
+    await this.loadComponentsTree(true);
+  },
+
+  async removeBreakpoints() {
+    await evalFunctionInWindow("removeBreakpoints", [], this.activeFrame);
+    await this.loadComponentsTree(true);
   },
 
   // Trigger the highlight on the component in the page

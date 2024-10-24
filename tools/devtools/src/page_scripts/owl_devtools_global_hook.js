@@ -58,14 +58,15 @@
         // The asConstructorName parameter can be passed to change the display of objects and functions to
         // be their constructor name (useful for prototype, map and set display)
         serializeItem(value, asConstructorName = false) {
-          if (typeof value === "array") {
-            return "Array(" + value.length + ")";
-          } else if (typeof value === "object") {
+          if (typeof value === "object") {
             if (value == null) {
               return "null";
             }
             if (asConstructorName) {
               return value.constructor.name;
+            }
+            if (value instanceof Array) {
+              return "Array(" + value.length + ")";
             }
             return "{...}";
           } else if (typeof value === "undefined") {

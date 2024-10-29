@@ -207,7 +207,7 @@ export class RootFiber extends Fiber {
   }
 }
 
-type Position = "first-child" | "last-child";
+type Position = "first-child" | "last-child" | "attach";
 
 export interface MountOptions {
   position?: Position;

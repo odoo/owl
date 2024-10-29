@@ -136,3 +136,20 @@ export function useExternalListener(
   onMounted(() => target.addEventListener(eventName, boundHandler, eventParams));
   onWillUnmount(() => target.removeEventListener(eventName, boundHandler, eventParams));
 }
+
+// -----------------------------------------------------------------------------
+// useAttachedEl
+// -----------------------------------------------------------------------------
+
+/**
+ * The purpose of this hook is to allow attached components to get a reference to
+ * the element they have been attached on.
+ */
+export function useAttachedEl(): HTMLElement {
+  const node = getCurrent();
+  const el = node.app._lastRootEl as HTMLElement;
+  if (!el) {
+    throw new Error("useAttachedEl can only be called with component that are attached");
+  }
+  return el;
+}

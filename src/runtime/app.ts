@@ -1,14 +1,14 @@
+import { OwlError } from "../common/owl_error";
 import { version } from "../version";
 import { Component, ComponentConstructor, Props } from "./component";
 import { ComponentNode, saveCurrent } from "./component_node";
-import { nodeErrorHandlers, handleError } from "./error_handling";
-import { OwlError } from "../common/owl_error";
-import { Fiber, RootFiber, MountOptions } from "./fibers";
+import { handleError, nodeErrorHandlers } from "./error_handling";
+import { Fiber, MountOptions, RootFiber } from "./fibers";
+import { reactive, toRaw } from "./reactivity";
 import { Scheduler } from "./scheduler";
 import { validateProps } from "./template_helpers";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
 import { validateTarget } from "./utils";
-import { toRaw, reactive } from "./reactivity";
 
 // reimplement dev mode stuff see last change in 0f7a8289a6fb8387c3c1af41c6664b2a8448758f
 
@@ -77,6 +77,7 @@ export class App<
   subRoots: Set<Root<any, any>> = new Set();
   root: Root<P, E> | null = null;
   warnIfNoStaticProps: boolean;
+  _lastRootEl: HTMLElement | ShadowRoot | null = null; // temporary ref to propagate to roots
 
   constructor(Root: ComponentConstructor<P, E>, config: AppConfig<P, E> = {}) {
     super(config);
@@ -114,6 +115,8 @@ export class App<
     const root: Root<Props, SubEnv> = {
       node: null,
       mount: (target: HTMLElement | ShadowRoot, options?: MountOptions) => {
+        App.validateTarget(target);
+
         // hack to make sure the sub root get the sub env if necessary. for owl 3,
         // would be nice to rethink the initialization process to make sure that
         // we can create a ComponentNode and give it explicitely the env, instead
@@ -122,13 +125,24 @@ export class App<
           this.env = config.env as any;
         }
         const restore = saveCurrent();
+        if (options?.position === "attach") {
+          if (Root.template) {
+            throw new Error("Cannot attach a component with a template");
+          }
+          this._lastRootEl = target;
+        } else {
+          if (!Root.template) {
+            // no template => trigger an error
+            this.getTemplate("");
+          }
+        }
         const node = this.makeNode(Root, props);
         root.node = node;
+        this._lastRootEl = null;
         restore();
         if (config.env) {
           this.env = env;
         }
-        App.validateTarget(target);
         if (this.dev) {
           validateProps(Root, props, { __owl__: { app: this } });
         }

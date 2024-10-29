@@ -4,7 +4,7 @@ import {
   interpolate,
   INTERP_REGEXP,
   replaceDynamicParts,
-} from "./inline_expressions";
+} from "../common/inline_expressions";
 import {
   AST,
   ASTComment,

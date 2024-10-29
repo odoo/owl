@@ -1,4 +1,4 @@
-import { OwlError } from "../common/owl_error";
+import { OwlError } from "./owl_error";
 
 /**
  * Owl QWeb Expression Parser

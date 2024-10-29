@@ -9,6 +9,7 @@ export type Props = { [key: string]: any };
 
 interface StaticComponentProperties {
   template: string;
+  dynamicContent?: { [spec: string]: string };
   defaultProps?: any;
   props?: Schema;
   components?: { [componentName: string]: ComponentConstructor };

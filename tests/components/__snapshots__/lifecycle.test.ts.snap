@@ -332,6 +332,31 @@ exports[`lifecycle hooks lifecycle semantics, part 3 1`] = `
 }"
 `;
 
+exports[`lifecycle hooks lifecycle semantics, part 3 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`GrandChild\`, true, false, false, []);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return comp1({}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`lifecycle hooks lifecycle semantics, part 3 4`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`lifecycle hooks lifecycle semantics, part 4 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

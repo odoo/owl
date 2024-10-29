@@ -6,7 +6,9 @@ import { OwlError } from "../common/owl_error";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";
 import { clearReactivesForCallback, getSubscriptions, reactive, targets } from "./reactivity";
 import { STATUS } from "./status";
-import { batched, Callback } from "./utils";
+import { batched, Callback, Markup } from "./utils";
+import { xml } from "./template_set";
+import { compileExpr } from "../common/inline_expressions";
 
 let currentNode: ComponentNode | null = null;
 
@@ -124,9 +126,100 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     }
     this.component = new C(props, env, this);
     const ctx = Object.assign(Object.create(this.component), { this: this.component });
-    this.renderFn = app.getTemplate(C.template).bind(this.component, ctx, this);
+    if (C.template) {
+      this.renderFn = app.getTemplate(C.template).bind(this.component, ctx, this);
+    } else {
+      // component will be attached
+      this.renderFn = app.getTemplate(xml``).bind(this.component, ctx, this);
+      if (C.dynamicContent) {
+        this.prepareAttach(app._lastRootEl!, C.dynamicContent, ctx);
+      }
+    }
     this.component.setup();
     currentNode = null;
+  }
+
+  prepareAttach(
+    el: HTMLElement | ShadowRoot,
+    dynamicContent: { [spec: string]: string },
+    ctx: any
+  ) {
+    const attrs: { selector: string; attr: string; fn: Function }[] = [];
+    const handlers: { selector: string; event: string; fn: any }[] = [];
+    const tOuts: { selector: string; fn: Function }[] = [];
+    for (let key in dynamicContent) {
+      const value = dynamicContent[key];
+      const parts = key.split(":");
+      if (parts[1].startsWith("t-att-")) {
+        const attr = parts[1].slice(6);
+        const fn = new Function("ctx", `return ${compileExpr(value)};`);
+        attrs.push({
+          selector: parts[0],
+          attr,
+          fn,
+        });
+      }
+      if (parts[1].startsWith("t-on-")) {
+        const event = parts[1].slice(5);
+        // const fn = new Function("ctx", "ev", `${compileExpr(value)}(ev);`);
+        const fn = (ev: any) => (this as any).component[value](ev);
+        handlers.push({
+          selector: parts[0],
+          event,
+          fn,
+        });
+      }
+      if (parts[1] === "t-out") {
+        const fn = new Function("ctx", `return ${compileExpr(value)};`);
+        tOuts.push({ selector: parts[0], fn });
+      }
+    }
+    const handleAttrs = () => {
+      for (let attr of attrs) {
+        const val = attr.fn.call(this.component, ctx);
+        // todo: cache the queryselector result?
+        const target = attr.selector === "root" ? el : (el.querySelector(attr.selector) as any);
+        if (target) {
+          target.setAttribute(attr.attr, val);
+        }
+      }
+    };
+    const handleEvents = () => {
+      for (let handler of handlers) {
+        // const val = attr.fn.call(this.component, ctx);
+        // todo: cache the queryselector result?
+        const target =
+          handler.selector === "root" ? el : (el.querySelector(handler.selector) as any);
+        if (target) {
+          target.addEventListener(handler.event, handler.fn);
+        }
+      }
+    };
+    const handleTOuts = () => {
+      for (let tOut of tOuts) {
+        const val = tOut.fn.call(this.component, ctx);
+        // todo: cache the queryselector result?
+        const target = tOut.selector === "root" ? el : (el.querySelector(tOut.selector) as any);
+        if (target) {
+          if (val instanceof Markup) {
+            target.innerHTML = val as any;
+          } else {
+            target.textContent = val;
+          }
+        }
+      }
+    };
+    if (attrs.length) {
+      this.mounted.push(handleAttrs);
+      this.patched.push(handleAttrs);
+    }
+    if (handlers.length) {
+      this.mounted.push(handleEvents);
+    }
+    if (tOuts.length) {
+      this.mounted.push(handleTOuts);
+      this.patched.push(handleTOuts);
+    }
   }
 
   mountComponent(target: any, options?: MountOptions) {

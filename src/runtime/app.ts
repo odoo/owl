@@ -53,7 +53,7 @@ declare global {
 }
 
 interface Root<P extends Props, E> {
-  node: ComponentNode<P, E>;
+  node: ComponentNode<P, E> | null;
   mount(target: HTMLElement | ShadowRoot, options?: MountOptions): Promise<Component<P, E>>;
   destroy(): void;
 }
@@ -74,8 +74,8 @@ export class App<
   props: P;
   env: E;
   scheduler = new Scheduler();
-  subRoots: Set<ComponentNode> = new Set();
-  root: ComponentNode<P, E> | null = null;
+  subRoots: Set<Root<any, any>> = new Set();
+  root: Root<P, E> | null = null;
   warnIfNoStaticProps: boolean;
 
   constructor(Root: ComponentConstructor<P, E>, config: AppConfig<P, E> = {}) {
@@ -101,10 +101,8 @@ export class App<
     target: HTMLElement | ShadowRoot,
     options?: MountOptions
   ): Promise<Component<P, E> & InstanceType<T>> {
-    const root = this.createRoot(this.Root, { props: this.props });
-    this.root = root.node;
-    this.subRoots.delete(root.node);
-    return root.mount(target, options) as any;
+    this.root = this.createRoot(this.Root, { props: this.props });
+    return this.root.mount(target, options) as any;
   }
 
   createRoot<Props extends object, SubEnv = any>(
@@ -112,25 +110,24 @@ export class App<
     config: RootConfig<Props, SubEnv> = {}
   ): Root<Props, SubEnv> {
     const props = config.props || ({} as Props);
-    // hack to make sure the sub root get the sub env if necessary. for owl 3,
-    // would be nice to rethink the initialization process to make sure that
-    // we can create a ComponentNode and give it explicitely the env, instead
-    // of looking it up in the app
     const env = this.env;
-    if (config.env) {
-      this.env = config.env as any;
-    }
-
-    const restore = saveCurrent();
-    const node = this.makeNode(Root, props);
-    restore();
-    if (config.env) {
-      this.env = env;
-    }
-    this.subRoots.add(node);
-    return {
-      node,
+    const root: Root<Props, SubEnv> = {
+      node: null,
       mount: (target: HTMLElement | ShadowRoot, options?: MountOptions) => {
+        // hack to make sure the sub root get the sub env if necessary. for owl 3,
+        // would be nice to rethink the initialization process to make sure that
+        // we can create a ComponentNode and give it explicitely the env, instead
+        // of looking it up in the app
+        if (config.env) {
+          this.env = config.env as any;
+        }
+        const restore = saveCurrent();
+        const node = this.makeNode(Root, props);
+        root.node = node;
+        restore();
+        if (config.env) {
+          this.env = env;
+        }
         App.validateTarget(target);
         if (this.dev) {
           validateProps(Root, props, { __owl__: { app: this } });
@@ -139,11 +136,16 @@ export class App<
         return prom;
       },
       destroy: () => {
-        this.subRoots.delete(node);
-        node.destroy();
-        this.scheduler.processTasks();
+        this.subRoots.delete(root);
+        if (root.node) {
+          root.node?.destroy();
+          this.scheduler.processTasks();
+        }
       },
     };
+
+    this.subRoots.add(root);
+    return root;
   }
 
   makeNode(Component: ComponentConstructor, props: any): ComponentNode {
@@ -178,13 +180,17 @@ export class App<
   }
 
   destroy() {
-    if (this.root) {
-      for (let subroot of this.subRoots) {
-        subroot.destroy();
-      }
-      this.root.destroy();
-      this.scheduler.processTasks();
+    const roots = [...this.subRoots].reverse();
+    for (let root of roots) {
+      root.destroy();
     }
+    // if (this.root) {
+    //   for (let subroot of this.subRoots) {
+    //     subroot.destroy();
+    //   }
+    //   this.root.destroy();
+    this.scheduler.processTasks();
+    // }
     apps.delete(this);
   }
 

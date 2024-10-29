@@ -94,17 +94,6 @@ exports[`subroot can create a root in a setup function, then use a hook 1`] = `
 }"
 `;
 
-exports[`subroot can create a root in a setup function, then use a hook 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  return function template(ctx, node, key = \\"\\") {
-    return text(\`c\`);
-  }
-}"
-`;
-
 exports[`subroot can mount subroot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

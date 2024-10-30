@@ -37,6 +37,7 @@ export const store = reactive({
     version: "1.0",
   },
   selectedElement: null,
+  observedVariables: [],
   componentSearch: {
     search: "",
     searchResults: [],
@@ -580,6 +581,27 @@ export const store = reactive({
     await this.loadComponentsTree(true);
   },
 
+  async observeVariable(path) {
+    this.observedVariables.push({ path: [...path], visible: false });
+    this.observedVariables = await evalFunctionInWindow(
+      "getObservedVariables",
+      [store.observedVariables],
+      store.activeFrame
+    );
+    await browserInstance.storage.local.set({
+      observedVariables: toRaw(this.observedVariables).map((o) => o.path),
+    });
+  },
+
+  clearObservedVariable(index) {
+    if (index !== undefined) {
+      this.observedVariables.splice(index, 1);
+    } else {
+      this.observedVariables = [];
+    }
+    browserInstance.storage.local.set({ observedVariables: toRaw(this.observedVariables) });
+  },
+
   // Trigger the highlight on the component in the page
   highlightComponent(path) {
     evalFunctionInWindow("highlightComponent", [path], this.activeFrame);
@@ -670,6 +692,14 @@ async function init() {
       }
     }
   }, 500);
+  // Refresh observed variables values every 200 ms
+  setInterval(async () => {
+    store.observedVariables = await evalFunctionInWindow(
+      "getObservedVariables",
+      [[...store.observedVariables]],
+      store.activeFrame
+    );
+  }, 200);
 }
 
 let rootRendersTimeout = false;
@@ -763,6 +793,16 @@ async function loadSettings() {
     store.settings.componentsToggleBlacklist = new Set(
       storage.owlDevtoolsComponentsToggleBlacklist
     );
+  }
+  // Observed variables
+  if (storage.observedVariables) {
+    store.observedVariables = [];
+    for (const path of storage.observedVariables) {
+      store.observedVariables.push({
+        path: [...path],
+        visible: false,
+      });
+    }
   }
 }
 

@@ -65,6 +65,16 @@ export class ObjectTreeElement extends Component {
         action: () => this.store.inspectFunctionSource(this.props.object.path),
       },
       {
+        title: "Observe variable",
+        show: this.props.object.objectType !== "observed",
+        action: () => this.store.observeVariable(this.props.object.path),
+      },
+      {
+        title: "Unobserve variable",
+        show: this.props.object.objectType === "observed",
+        action: () => this.store.clearObservedVariable(this.props.index),
+      },
+      {
         title: "Inject breakpoint on component",
         show: this.props.object.contentType === "array" && this.props.object.objectType === "hook",
         action: () =>
@@ -106,10 +116,12 @@ export class ObjectTreeElement extends Component {
   }
 
   setupEditMode() {
-    if (!this.state.editMode) {
-      if (!this.props.object.hasChildren) {
-        this.state.editMode = true;
-      }
+    if (
+      !this.state.editMode &&
+      !this.props.object.hasChildren &&
+      !(this.props.object.objectType === "observed")
+    ) {
+      this.state.editMode = true;
     }
   }
 

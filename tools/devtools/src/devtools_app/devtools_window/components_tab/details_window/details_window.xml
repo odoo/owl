@@ -20,6 +20,17 @@
       </t>
     </div>
     <div class="details-container">
+      <div t-if="store.observedVariables.length and store.observedVariables.some((v) => v.visible)" id="observedVariables" class="details-panel ps-2 py-1">
+        <div class="d-flex mb-2">
+          <div class="w-100">
+            <b class="ps-2">observed variables</b>
+          </div>
+          <i title="Remove observed variables" class="fa fa-times utility-icon p-1" t-on-click.stop="() => this.store.clearObservedVariable()"></i>
+        </div>
+        <t t-foreach="store.observedVariables" t-as="observed" t-key="observed_index" t-if="observed.visible">
+          <ObjectTreeElement object="observed" index="observed_index"/>
+        </t>
+      </div>
       <div t-if="store.activeComponent.env.children.length > 0" id="env" class="details-panel ps-2 py-1">
         <div class="d-flex mb-2">
           <div class="w-100" t-on-click.stop="(ev) => this.toggleCategory(ev, 'env')">

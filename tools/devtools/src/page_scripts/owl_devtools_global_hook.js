@@ -143,7 +143,7 @@
               result.push(element);
             }
           }
-          if (obj.constructor.name !== "Object") {
+          if (obj.constructor && obj.constructor.name !== "Object") {
             return obj.constructor.name + " {" + result.join(", ") + "}";
           }
           return "{" + result.join(", ") + "}";
@@ -703,7 +703,7 @@
             try {
               obj = Object.getOwnPropertyDescriptor(obj, key.value).get.call(obj);
             } catch (e) {
-              obj = e.toString();
+              obj = "Exception: " + e.toString();
             }
             break;
           case "prototype getter":
@@ -721,13 +721,13 @@
               try {
                 obj = Object.getOwnPropertyDescriptor(obj, key.value).get;
               } catch (e) {
-                obj = e.toString();
+                obj = "Exception: " + e.toString();
               }
             } else {
               try {
                 obj = obj[key.value];
               } catch (e) {
-                obj = e.toString();
+                obj = "Exception: " + e.toString();
               }
             }
         }
@@ -749,9 +749,11 @@
       if (index === -1) {
         return this.getComponentNode(path);
       }
-      const componentNode = this.getComponentNode(path.slice(0, index));
-      const obj = this.getObject(componentNode, path.slice(index));
-      return obj;
+      const componentNode = this.getComponentNode(index === 1 ? path[0] : path.slice(0, index));
+      if (componentNode) {
+        return this.getObject(componentNode, path.slice(index));
+      }
+      return "Exception: component not found";
     }
 
     // Returns a modified version of an object node that has compatible format with the devtools ObjectTreeElement component
@@ -799,6 +801,11 @@
           child.name = "value";
           obj = parentObj[1];
           break;
+        case "getter":
+          child.name = key.value;
+          obj = parentObj[key.value];
+          break;
+        case "prototype getter":
         case "set entry":
         case "map entry":
         case "item":
@@ -814,6 +821,8 @@
                 parentObj
               ).findIndex((sym) => sym === key.value);
               child.path[child.path.length - 1].value = key.value.toString();
+            } else if (key.hasOwnProperty("symbolIndex")) {
+              obj = parentObj[Object.getOwnPropertySymbols(parentObj)[key.symbolIndex]];
             } else {
               obj = parentObj[key.value];
             }
@@ -845,7 +854,7 @@
               child.contentType = "set";
               child.hasChildren = true;
               break;
-            case obj.constructor.name === "Array":
+            case obj.constructor?.name === "Array":
               child.contentType = "array";
               child.hasChildren = obj.length > 0;
               break;
@@ -853,11 +862,11 @@
               child.contentType = "function";
               child.hasChildren = true;
               break;
-            case obj instanceof Object:
+            case typeof obj === "object":
               child.contentType = "object";
               child.hasChildren =
-                Object.keys(obj).length ||
-                Object.getOwnPropertySymbols(obj).length ||
+                Object.keys(obj).length > 0 ||
+                Object.getOwnPropertySymbols(obj).length > 0 ||
                 obj.constructor.name !== "Object";
               break;
             default:
@@ -1123,18 +1132,32 @@
       }
       // The second element in the path will always be the root of the app
       let node = [...this.apps][path[0]]?.root;
-      if (!node) {
-        return null;
-      }
-      for (let i = 2; i < path.length; i++) {
-        // From this point onwards, it is an object path inside the component node
-        if (typeof path[i] !== "string") {
-          break;
-        }
-        if (node.children.hasOwnProperty(path[i])) {
-          node = node.children[path[i]];
-        } else {
+      if (path instanceof Array) {
+        if (!node) {
           return null;
+        }
+        for (let i = 2; i < path.length; i++) {
+          // From this point onwards, it is an object path inside the component node
+          if (typeof path[i] !== "string") {
+            break;
+          }
+          if (node.children.hasOwnProperty(path[i])) {
+            node = node.children[path[i]];
+          } else {
+            return null;
+          }
+        }
+      } else {
+        const simplifiedPathArray = path.split("/");
+        if (node.name !== simplifiedPathArray[1]) {
+          return null;
+        }
+        for (let i = 2; i < simplifiedPathArray.length; i += 2) {
+          const key = Reflect.ownKeys(node.children)[simplifiedPathArray[i]];
+          node = node.children[key];
+          if (node.name !== simplifiedPathArray[i + 1]) {
+            return null;
+          }
         }
       }
       return node;
@@ -1692,6 +1715,37 @@
       }
       return children;
     }
+    getObservedVariables(current) {
+      const res = [...current];
+      for (let i = 0; i < current.length; i++) {
+        const path = current[i].path;
+        const parent = this.getObjectProperty(path.slice(0, path.length - 1));
+        if (parent && !(typeof parent === "string" && parent.startsWith("Exception: "))) {
+          const result = this.serializeObjectChild(
+            parent,
+            path.at(-1),
+            0,
+            "observed",
+            path.slice(0, path.length - 1),
+            {},
+            {}
+          );
+          result.hasChildren = false;
+          result.visible = true;
+          const index = path.findIndex((key) => typeof key !== "string");
+          if (index > 1) {
+            const componentNode = this.getComponentNode(path.slice(0, index));
+            result.path = [this.getComponentSimplifiedPath(componentNode)].concat(
+              path.slice(index)
+            );
+          }
+          res[i] = result;
+        } else {
+          res[i].visible = false;
+        }
+      }
+      return res;
+    }
     // Returns the path of the given component node
     getComponentPath(componentNode) {
       let path = [];
@@ -1706,6 +1760,23 @@
       const appsArray = [...this.apps];
       let index = appsArray.findIndex((app) => app === componentNode.app);
       path.unshift(index.toString());
+      return path;
+    }
+    // Returns the simplified path of the given component node (using component names and indexes)
+    getComponentSimplifiedPath(componentNode) {
+      let path = componentNode.name;
+      if (componentNode.parentKey) {
+        while (componentNode.parent) {
+          const previousKey = componentNode.parentKey;
+          componentNode = componentNode.parent;
+          path = `${componentNode.name}/${Reflect.ownKeys(componentNode.children).indexOf(
+            previousKey
+          )}/${path}`;
+        }
+      }
+      const appsArray = [...this.apps];
+      let index = appsArray.findIndex((app) => app === componentNode.app);
+      path = index.toString() + (path.length ? `/${path}` : "");
       return path;
     }
     // Store the object into a temp window variable and log it to the console

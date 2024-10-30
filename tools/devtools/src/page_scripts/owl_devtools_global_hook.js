@@ -1026,36 +1026,40 @@
           break;
         case "object":
         case "function":
-          Reflect.ownKeys(obj).forEach((key) => {
-            if (
-              key !== "__proto__" &&
-              Object.getOwnPropertyDescriptor(obj, key).hasOwnProperty("get")
-            ) {
-              let child = {
-                name: key,
-                depth: depth,
-                toggled: false,
-                objectType: objType,
-                path: [...path, { type: "getter", value: key, childIndex: children.length }],
-                contentType: "getter",
-                content: "(...)",
-                hasChildren: false,
-                children: [],
-              };
-              children.push(child);
-            }
-            const child = this.serializeObjectChild(
-              obj,
-              { type: "item", value: key, childIndex: children.length },
-              depth,
-              objType,
-              path,
-              oldBranch?.children[index],
-              oldTree
-            );
-            if (child) children.push(child);
-            index++;
-          });
+          Reflect.ownKeys(obj)
+            .sort(compareKeys)
+            .forEach((key) => {
+              if (
+                key !== "__proto__" &&
+                Object.getOwnPropertyDescriptor(obj, key).hasOwnProperty("get")
+              ) {
+                let child = {
+                  name: key,
+                  depth: depth,
+                  toggled: false,
+                  objectType: objType,
+                  path: [...path, { type: "getter", value: key, childIndex: children.length }],
+                  contentType: "getter",
+                  content: "(...)",
+                  hasChildren: false,
+                  children: [],
+                };
+                children.push(child);
+              }
+              const child = this.serializeObjectChild(
+                obj,
+                { type: "item", value: key, childIndex: children.length },
+                depth,
+                objType,
+                path,
+                oldBranch?.children[index],
+                oldTree
+              );
+              if (child) {
+                children.push(child);
+              }
+              index++;
+            });
       }
       let proto = Object.getPrototypeOf(obj);
       while (proto) {
@@ -1155,42 +1159,46 @@
       const propsPath = isApp
         ? [...path, { type: "item", value: "props" }]
         : [...path, { type: "item", value: "component" }, { type: "item", value: "props" }];
-      Reflect.ownKeys(props).forEach((key) => {
-        let oldBranch = oldTree?.props.children[component.props.children.length];
-        const property = this.serializeObjectChild(
-          props,
-          { type: "item", value: key, childIndex: component.props.children.length },
-          0,
-          "props",
-          propsPath,
-          oldBranch,
-          oldTree
-        );
-        if (property) {
-          component.props.children.push(property);
-        }
-      });
+      Reflect.ownKeys(props)
+        .sort(compareKeys)
+        .forEach((key) => {
+          let oldBranch = oldTree?.props.children[component.props.children.length];
+          const property = this.serializeObjectChild(
+            props,
+            { type: "item", value: key, childIndex: component.props.children.length },
+            0,
+            "props",
+            propsPath,
+            oldBranch,
+            oldTree
+          );
+          if (property) {
+            component.props.children.push(property);
+          }
+        });
       // Load env of the component
       const env = isApp ? node.env : node.component.env;
       component.env = { toggled: oldTree ? oldTree.env.toggled : false, children: [] };
       const envPath = isApp
         ? [...path, { type: "item", value: "env" }]
         : [...path, { type: "item", value: "component" }, { type: "item", value: "env" }];
-      Reflect.ownKeys(env).forEach((key) => {
-        let oldBranch = oldTree?.env.children[component.env.children.length];
-        const envElement = this.serializeObjectChild(
-          env,
-          { type: "item", value: key, childIndex: component.env.children.length },
-          0,
-          "env",
-          envPath,
-          oldBranch,
-          oldTree
-        );
-        if (envElement) {
-          component.env.children.push(envElement);
-        }
-      });
+      Reflect.ownKeys(env)
+        .sort(compareKeys)
+        .forEach((key) => {
+          let oldBranch = oldTree?.env.children[component.env.children.length];
+          const envElement = this.serializeObjectChild(
+            env,
+            { type: "item", value: key, childIndex: component.env.children.length },
+            0,
+            "env",
+            envPath,
+            oldBranch,
+            oldTree
+          );
+          if (envElement) {
+            component.env.children.push(envElement);
+          }
+        });
       // Load env getters
       let obj = Object.getPrototypeOf(env);
       Reflect.ownKeys(obj).forEach((key) => {
@@ -1229,23 +1237,25 @@
       const instance = isApp ? node : node.component;
       component.instance = { toggled: oldTree ? oldTree.instance.toggled : true, children: [] };
       const instancePath = isApp ? path : [...path, { type: "item", value: "component" }];
-      Reflect.ownKeys(instance).forEach((key) => {
-        if (!["env", "props"].includes(key)) {
-          let oldBranch = oldTree?.instance.children[component.instance.children.length];
-          const instanceElement = this.serializeObjectChild(
-            instance,
-            { type: "item", value: key, childIndex: component.instance.children.length },
-            0,
-            "instance",
-            instancePath,
-            oldBranch,
-            oldTree
-          );
-          if (instanceElement) {
-            component.instance.children.push(instanceElement);
+      Reflect.ownKeys(instance)
+        .sort(compareKeys)
+        .forEach((key) => {
+          if (!["env", "props"].includes(key)) {
+            let oldBranch = oldTree?.instance.children[component.instance.children.length];
+            const instanceElement = this.serializeObjectChild(
+              instance,
+              { type: "item", value: key, childIndex: component.instance.children.length },
+              0,
+              "instance",
+              instancePath,
+              oldBranch,
+              oldTree
+            );
+            if (instanceElement) {
+              component.instance.children.push(instanceElement);
+            }
           }
-        }
-      });
+        });
       // Load instance getters
       obj = Object.getPrototypeOf(instance);
       while (obj) {
@@ -1744,6 +1754,19 @@
         const target = this.getObjectProperty(child.path);
         child.keys = targetToKeys.get(target)?.map((k) => String(k));
       }
+    }
+  }
+
+  function compareKeys(a, b) {
+    const isSymbolA = typeof a === "symbol";
+    const isSymbolB = typeof b === "symbol";
+
+    if (isSymbolA && !isSymbolB) {
+      return 1; // Place Symbols at the end
+    } else if (!isSymbolA && isSymbolB) {
+      return -1; // Place non-Symbols at the beginning
+    } else {
+      return String(a).localeCompare(String(b)); // Sort other keys alphabetically
     }
   }
 

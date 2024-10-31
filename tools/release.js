@@ -140,7 +140,6 @@ async function startRelease() {
   }
 
   // ---------------------------------------------------------------------------
-
   log(`Step ${step++}/${STEPS}: Creating the release...`);
   const relaseResult = await execCommand(`gh release create v${next} dist/*.js dist/*.zip ${draft} -F ${file}`);
   if (relaseResult !== 0) {

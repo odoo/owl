@@ -66,6 +66,8 @@ The `config` object is an object with some of the following keys:
   needs a template. If undefined is returned, owl looks into the app templates.
 - **`warnIfNoStaticProps (boolean, default=false)`**: if true, Owl will log a warning
   whenever it encounters a component that does not provide a [static props description](props.md#props-validation).
+- **`customDirectives (object)`**: if given, the corresponding function on the object will be called
+  on the template custom directives: `t-custom-*` (see [Custom Directives](templates.md#custom-directives)).
 
 ## `mount` helper
 

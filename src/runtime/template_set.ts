@@ -5,6 +5,7 @@ import { Portal, portalTemplate } from "./portal";
 import { helpers } from "./template_helpers";
 import { OwlError } from "../common/owl_error";
 import { parseXML } from "../common/utils";
+import type { customDirectives } from "../common/types";
 
 const bdom = { text, createBlock, list, multi, html, toggler, comment };
 
@@ -14,6 +15,7 @@ export interface TemplateSetConfig {
   translateFn?: (s: string) => string;
   templates?: string | Document | Record<string, string>;
   getTemplate?: (s: string) => Element | Function | string | void;
+  customDirectives?: customDirectives;
 }
 
 export class TemplateSet {
@@ -27,6 +29,7 @@ export class TemplateSet {
   translateFn?: (s: string) => string;
   translatableAttributes?: string[];
   Portal = Portal;
+  customDirectives: customDirectives;
 
   constructor(config: TemplateSetConfig = {}) {
     this.dev = config.dev || false;
@@ -42,6 +45,7 @@ export class TemplateSet {
       }
     }
     this.getRawTemplate = config.getTemplate;
+    this.customDirectives = config.customDirectives || {};
   }
 
   addTemplate(name: string, template: string | Element) {

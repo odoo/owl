@@ -12,5 +12,6 @@ TemplateSet.prototype._compileTemplate = function _compileTemplate(
     dev: this.dev,
     translateFn: this.translateFn,
     translatableAttributes: this.translatableAttributes,
+    customDirectives: this.customDirectives,
   });
 };

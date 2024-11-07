@@ -1,3 +1,4 @@
+import type { customDirectives } from "../common/types";
 import type { TemplateSet } from "../runtime/template_set";
 import type { BDom } from "../runtime/blockdom";
 import { CodeGenerator, Config } from "./code_generator";
@@ -10,13 +11,14 @@ export type TemplateFunction = (app: TemplateSet, bdom: any, helpers: any) => Te
 
 interface CompileOptions extends Config {
   name?: string;
+  customDirectives?: customDirectives;
 }
 export function compile(
   template: string | Element,
   options: CompileOptions = {}
 ): TemplateFunction {
   // parsing
-  const ast = parse(template);
+  const ast = parse(template, options.customDirectives);
 
   // some work
   const hasSafeContext =

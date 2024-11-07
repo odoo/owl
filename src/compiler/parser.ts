@@ -1,4 +1,5 @@
 import { OwlError } from "../common/owl_error";
+import type { customDirectives } from "../common/types";
 import { parseXML } from "../common/utils";
 
 // -----------------------------------------------------------------------------
@@ -198,23 +199,26 @@ export type AST =
 // -----------------------------------------------------------------------------
 const cache: WeakMap<Element, AST> = new WeakMap();
 
-export function parse(xml: string | Element): AST {
+export function parse(xml: string | Element, customDir?: customDirectives): AST {
+  const ctx = {
+    inPreTag: false,
+    customDirectives: customDir,
+  };
   if (typeof xml === "string") {
     const elem = parseXML(`<t>${xml}</t>`).firstChild as Element;
-    return _parse(elem);
+    return _parse(elem, ctx);
   }
   let ast = cache.get(xml);
   if (!ast) {
     // we clone here the xml to prevent modifying it in place
-    ast = _parse(xml.cloneNode(true) as Element);
+    ast = _parse(xml.cloneNode(true) as Element, ctx);
     cache.set(xml, ast);
   }
   return ast;
 }
 
-function _parse(xml: Element): AST {
+function _parse(xml: Element, ctx: ParsingContext): AST {
   normalizeXML(xml);
-  const ctx = { inPreTag: false };
   return parseNode(xml, ctx) || { type: ASTType.Text, value: "" };
 }
 
@@ -222,6 +226,7 @@ interface ParsingContext {
   tModelInfo?: TModelInfo | null;
   nameSpace?: string;
   inPreTag: boolean;
+  customDirectives?: customDirectives;
 }
 
 function parseNode(node: Node, ctx: ParsingContext): AST | null {
@@ -229,6 +234,7 @@ function parseNode(node: Node, ctx: ParsingContext): AST | null {
     return parseTextCommentNode(node, ctx);
   }
   return (
+    parseTCustom(node, ctx) ||
     parseTDebugLog(node, ctx) ||
     parseTForEach(node, ctx) ||
     parseTIf(node, ctx) ||
@@ -273,6 +279,37 @@ function parseTextCommentNode(node: Node, ctx: ParsingContext): AST | null {
     return { type: ASTType.Text, value };
   } else if (node.nodeType === Node.COMMENT_NODE) {
     return { type: ASTType.Comment, value: node.textContent || "" };
+  }
+  return null;
+}
+
+function parseTCustom(node: Element, ctx: ParsingContext): AST | null {
+  if (!ctx.customDirectives) {
+    return null;
+  }
+  const nodeAttrsNames = node.getAttributeNames();
+  for (let attr of nodeAttrsNames) {
+    if (attr === "t-custom" || attr === "t-custom-") {
+      throw new OwlError("Missing custom directive name with t-custom directive");
+    }
+    if (attr.startsWith("t-custom-")) {
+      const directiveName = attr.split(".")[0].slice(9);
+      const customDirective = ctx.customDirectives[directiveName];
+      if (!customDirective) {
+        throw new OwlError(`Custom directive "${directiveName}" is not defined`);
+      }
+      const value = node.getAttribute(attr)!;
+      const modifier = attr.split(".").length > 1 ? attr.split(".")[1] : undefined;
+      node.removeAttribute(attr);
+      try {
+        customDirective(node, value, modifier);
+      } catch (error) {
+        throw new OwlError(
+          `Custom directive "${directiveName}" throw the following error: ${error}`
+        );
+      }
+      return parseNode(node, ctx);
+    }
   }
   return null;
 }

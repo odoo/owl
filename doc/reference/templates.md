@@ -18,6 +18,7 @@
   - [Sub Templates](#sub-templates)
   - [Dynamic Sub Templates](#dynamic-sub-templates)
   - [Debugging](#debugging)
+  - [Custom Directives](#custom-directives)
 - [Fragments](#fragments)
 - [Inline templates](#inline-templates)
 - [Rendering svg](#rendering-svg)
@@ -80,6 +81,7 @@ needs. Here is a list of all Owl specific directives:
 | `t-slot`, `t-set-slot`, `t-slot-scope` | [Rendering a slot](slots.md)                                    |
 | `t-model`                              | [Form input bindings](input_bindings.md)                        |
 | `t-tag`                                | [Rendering nodes with dynamic tag name](#dynamic-tag-names)     |
+| `t-custom-*`                           | [Rendering nodes with custom directives](#custom-directives)    |
 
 ## QWeb Template Reference
 
@@ -587,6 +589,35 @@ will stop execution if the browser dev tools are open.
 ```
 
 will print 42 to the console.
+
+### Custom Directives
+
+Owl 2 supports the declaration of custom directives. To use them, an Object of functions needs to be configured on the owl APP:
+
+```js
+ new App(..., {
+    customDirectives: {
+     test_directive: function (el, value) {
+            el.setAttribute("t-on-click", value);
+       }
+   }
+  });
+```
+
+The functions will be called when a custom directive with the name of the
+function is found. The original element will be replaced with the one
+modified by the function.
+This :
+
+```xml
+<div t-custom-test_directive="click" />
+```
+
+will be replaced by :
+
+```xml
+<div t-on-click="value"/>
+```
 
 ## Fragments
 

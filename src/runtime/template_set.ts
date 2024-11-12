@@ -16,6 +16,7 @@ export interface TemplateSetConfig {
   templates?: string | Document | Record<string, string>;
   getTemplate?: (s: string) => Element | Function | string | void;
   customDirectives?: customDirectives;
+  globalValues?: object;
 }
 
 export class TemplateSet {
@@ -30,6 +31,8 @@ export class TemplateSet {
   translatableAttributes?: string[];
   Portal = Portal;
   customDirectives: customDirectives;
+  runtimeUtils: object;
+  hasGlobalValues: boolean;
 
   constructor(config: TemplateSetConfig = {}) {
     this.dev = config.dev || false;
@@ -46,6 +49,8 @@ export class TemplateSet {
     }
     this.getRawTemplate = config.getTemplate;
     this.customDirectives = config.customDirectives || {};
+    this.runtimeUtils = { ...helpers, __globals__: config.globalValues || {} };
+    this.hasGlobalValues = Boolean(config.globalValues && Object.keys(config.globalValues).length);
   }
 
   addTemplate(name: string, template: string | Element) {
@@ -101,7 +106,7 @@ export class TemplateSet {
       this.templates[name] = function (context, parent) {
         return templates[name].call(this, context, parent);
       };
-      const template = templateFn(this, bdom, helpers);
+      const template = templateFn(this, bdom, this.runtimeUtils);
       this.templates[name] = template;
     }
     return this.templates[name];

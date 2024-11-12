@@ -43,6 +43,7 @@ export interface Config {
 export interface CodeGenOptions extends Config {
   hasSafeContext?: boolean;
   name?: string;
+  hasGlobalValues: boolean;
 }
 
 // using a non-html document so that <inner/outer>HTML serializes as XML instead
@@ -286,6 +287,9 @@ export class CodeGenerator {
     this.dev = options.dev || false;
     this.ast = ast;
     this.templateName = options.name;
+    if (options.hasGlobalValues) {
+      this.helpers.add("__globals__");
+    }
   }
 
   generateCode(): string {

@@ -43,6 +43,21 @@ exports[`app app: clear scheduler tasks and destroy cancelled nodes immediately 
 }"
 `;
 
+exports[`app can add functions to the bdom 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { __globals__ } = helpers;
+  
+  let block1 = createBlock(\`<div class=\\"my-div\\" block-handler-0=\\"click\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let hdlr1 = [()=>__globals__.plop('click'), ctx];
+    return block1([hdlr1]);
+  }
+}"
+`;
+
 exports[`app can call processTask twice in a row without crashing 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

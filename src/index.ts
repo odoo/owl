@@ -13,5 +13,6 @@ TemplateSet.prototype._compileTemplate = function _compileTemplate(
     translateFn: this.translateFn,
     translatableAttributes: this.translatableAttributes,
     customDirectives: this.customDirectives,
+    hasGlobalValues: this.hasGlobalValues,
   });
 };

@@ -12,10 +12,13 @@ export type TemplateFunction = (app: TemplateSet, bdom: any, helpers: any) => Te
 interface CompileOptions extends Config {
   name?: string;
   customDirectives?: customDirectives;
+  hasGlobalValues: boolean;
 }
 export function compile(
   template: string | Element,
-  options: CompileOptions = {}
+  options: CompileOptions = {
+    hasGlobalValues: false,
+  }
 ): TemplateFunction {
   // parsing
   const ast = parse(template, options.customDirectives);

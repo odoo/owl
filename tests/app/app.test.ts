@@ -201,4 +201,22 @@ describe("app", () => {
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("parent<div></div>");
   });
+
+  test("can add functions to the bdom", async () => {
+    const steps: string[] = [];
+    class SomeComponent extends Component {
+      static template = xml`<div t-on-click="() => __globals__.plop('click')" class="my-div"/>`;
+    }
+    const app = new App(SomeComponent, {
+      globalValues: {
+        plop: (string: any) => {
+          steps.push(string);
+        },
+      },
+    });
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe(`<div class="my-div"></div>`);
+    fixture.querySelector("div")!.click();
+    expect(steps).toEqual(["click"]);
+  });
 });

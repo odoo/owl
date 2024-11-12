@@ -28,7 +28,7 @@ import { OwlError } from "../common/owl_error";
 //------------------------------------------------------------------------------
 
 const RESERVED_WORDS =
-  "true,false,NaN,null,undefined,debugger,console,window,in,instanceof,new,function,return,eval,void,Math,RegExp,Array,Object,Date".split(
+  "true,false,NaN,null,undefined,debugger,console,window,in,instanceof,new,function,return,eval,void,Math,RegExp,Array,Object,Date,__globals__".split(
     ","
   );
 

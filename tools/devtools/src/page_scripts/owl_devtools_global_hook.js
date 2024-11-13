@@ -116,12 +116,17 @@
           } else if (obj instanceof Number) {
             result[0] = obj.toString();
           } else {
-            for (const [key, value] of Object.entries(obj)) {
+            for (const key of Reflect.ownKeys(obj)) {
               if (length > 25) {
                 result.push("...");
                 break;
               }
-              const element = key + ": " + this.serializeItem(value);
+              let element;
+              if (Object.getOwnPropertyDescriptor(obj, key).hasOwnProperty("get")) {
+                element = key.toString() + ": (...)";
+              } else {
+                element = key.toString() + ": " + this.serializeItem(obj[key]);
+              }
               length += element.length;
               result.push(element);
             }

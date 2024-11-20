@@ -1,4 +1,4 @@
-import { App, Component, mount, onMounted, useState, xml } from "../../src/index";
+import { App, Component, mount, onMounted, onRendered, useState, xml } from "../../src/index";
 import { children, makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -60,6 +60,28 @@ describe("slots", () => {
     await mount(Parent, fixture);
 
     expect(fixture.innerHTML).toBe("some other text");
+  });
+
+  test("t-set-slot doesn't cause context to be captured", async () => {
+    class Child extends Component {
+      static template = xml`<t t-slot="default"/>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child>
+        <t t-set-slot="default"><t t-esc="someVal"/></t>
+      </Child>`;
+      static components = { Child };
+      someVal = "some text";
+      setup() {
+        onRendered(() => {
+          this.someVal = "some other text";
+        });
+      }
+    }
+    await mount(Parent, fixture);
+
+    expect(fixture.textContent).toBe("some other text");
   });
 
   test("simple slot with slot scope", async () => {

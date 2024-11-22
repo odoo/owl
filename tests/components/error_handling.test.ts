@@ -564,6 +564,82 @@ describe("can catch errors", () => {
     expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
+  test("can catch an error in onmounted", async () => {
+    class ErrorComponent extends Component {
+      static template = xml`<div>Error!!!</div>`;
+      setup() {
+        useLogLifecycle();
+        onMounted(() => {
+          throw new Error("error");
+        });
+      }
+    }
+    class PerfectComponent extends Component {
+      static template = xml`<div>perfect</div>`;
+      setup() {
+        useLogLifecycle();
+      }
+    }
+    class Main extends Component {
+      static template = xml`Main<t t-if="state.ok" t-component="component"/>`;
+      component: any;
+      state: any;
+      setup() {
+        this.state = useState({ ok: false });
+        useLogLifecycle();
+        this.component = ErrorComponent;
+        onError(() => {
+          this.component = PerfectComponent;
+          this.render();
+        });
+      }
+    }
+
+    const app = await mount(Main, fixture);
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Main:setup",
+        "Main:willStart",
+        "Main:willRender",
+        "Main:rendered",
+        "Main:mounted",
+      ]
+    `);
+    expect(fixture.innerHTML).toBe("Main");
+    (app as any).state.ok = true;
+    await nextTick();
+    expect(fixture.innerHTML).toBe("Main<div>Error!!!</div>");
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Main:willRender",
+        "ErrorComponent:setup",
+        "ErrorComponent:willStart",
+        "Main:rendered",
+        "ErrorComponent:willRender",
+        "ErrorComponent:rendered",
+        "Main:willPatch",
+        "ErrorComponent:mounted",
+        "Main:willRender",
+        "PerfectComponent:setup",
+        "PerfectComponent:willStart",
+        "Main:rendered",
+      ]
+    `);
+    await nextTick();
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "PerfectComponent:willRender",
+        "PerfectComponent:rendered",
+        "Main:willPatch",
+        "ErrorComponent:willUnmount",
+        "ErrorComponent:willDestroy",
+        "PerfectComponent:mounted",
+        "Main:patched",
+      ]
+    `);
+    expect(fixture.innerHTML).toBe("Main<div>perfect</div>");
+  });
+
   test("calling a hook outside setup should crash", async () => {
     class Root extends Component {
       static template = xml`<t t-esc="state.value"/>`;

@@ -93,7 +93,14 @@ export class Scheduler {
       if (!hasError) {
         fiber.complete();
       }
-      this.tasks.delete(fiber);
+      // at this point, the fiber should have been applied to the DOM, so we can
+      // remove it from the task list. If it is not the case, it means that there
+      // was an error and an error handler triggered a new rendering that recycled
+      // the fiber, so in that case, we actually want to keep the fiber around,
+      // otherwise it will just be ignored.
+      if (fiber.appliedToDom) {
+        this.tasks.delete(fiber);
+      }
     }
   }
 }

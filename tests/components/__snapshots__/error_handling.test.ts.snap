@@ -320,6 +320,50 @@ exports[`can catch errors can catch an error in a component render function 3`] 
 }"
 `;
 
+exports[`can catch errors can catch an error in onmounted 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(null, false, false, false, []);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2, b3;
+    b2 = text(\`Main\`);
+    if (ctx['state'].ok) {
+      const Comp1 = ctx['component'];
+      b3 = toggler(Comp1, comp1({}, (Comp1).name + key + \`__1\`, node, this, Comp1));
+    }
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`can catch errors can catch an error in onmounted 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div>Error!!!</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`can catch errors can catch an error in onmounted 4`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div>perfect</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`can catch errors can catch an error in the constructor call of a component render function 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

@@ -31,25 +31,27 @@ describe("t-custom", () => {
     expect(steps).toEqual(["clicked"]);
   });
 
-  test("can use t-custom directive with modifier on a node", async () => {
+  test("can use t-custom directive with modifiers on a node", async () => {
     const steps: string[] = [];
     class SomeComponent extends Component {
-      static template = xml`<div t-custom-plop.mouse="click" class="my-div"/>`;
+      static template = xml`<div t-custom-plop.mouse.stop="click" class="my-div"/>`;
       click() {
         steps.push("clicked");
       }
     }
     const app = new App(SomeComponent, {
       customDirectives: {
-        plop: (node, value, modifier) => {
+        plop: (node, value, modifiers) => {
           node.setAttribute("t-on-click", value);
-          steps.push(modifier || "");
+          for (let mod of modifiers) {
+            steps.push(mod);
+          }
         },
       },
     });
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe(`<div class="my-div"></div>`);
     fixture.querySelector("div")!.click();
-    expect(steps).toEqual(["mouse", "clicked"]);
+    expect(steps).toEqual(["mouse", "stop", "clicked"]);
   });
 });

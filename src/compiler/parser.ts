@@ -299,10 +299,10 @@ function parseTCustom(node: Element, ctx: ParsingContext): AST | null {
         throw new OwlError(`Custom directive "${directiveName}" is not defined`);
       }
       const value = node.getAttribute(attr)!;
-      const modifier = attr.split(".").length > 1 ? attr.split(".")[1] : undefined;
+      const modifiers = attr.split(".").slice(1);
       node.removeAttribute(attr);
       try {
-        customDirective(node, value, modifier);
+        customDirective(node, value, modifiers);
       } catch (error) {
         throw new OwlError(
           `Custom directive "${directiveName}" throw the following error: ${error}`

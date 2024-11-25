@@ -14,7 +14,7 @@ exports[`t-custom can use t-custom directive on a node 1`] = `
 }"
 `;
 
-exports[`t-custom can use t-custom directive with modifier on a node 1`] = `
+exports[`t-custom can use t-custom directive with modifiers on a node 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

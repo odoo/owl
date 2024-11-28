@@ -30,6 +30,13 @@ export function makeRootFiber(node: ComponentNode): Fiber {
       fibersInError.delete(current);
       fibersInError.delete(root);
       current.appliedToDom = false;
+      if (current instanceof RootFiber) {
+        // it is possible that this fiber is a fiber that crashed while being
+        // mounted, so the mounted list is possibly corrupted. We restore it to
+        // its normal initial state (which is empty list or a list with a mount
+        // fiber.
+        current.mounted = current instanceof MountFiber ? [current] : [];
+      }
     }
     return current;
   }
@@ -152,6 +159,7 @@ export class RootFiber extends Fiber {
     const node = this.node;
     this.locked = true;
     let current: Fiber | undefined = undefined;
+    let mountedFibers = this.mounted;
     try {
       // Step 1: calling all willPatch lifecycle hooks
       for (current of this.willPatch) {
@@ -173,7 +181,6 @@ export class RootFiber extends Fiber {
       this.locked = false;
 
       // Step 4: calling all mounted lifecycle hooks
-      let mountedFibers = this.mounted;
       while ((current = mountedFibers.pop())) {
         current = current;
         if (current.appliedToDom) {
@@ -194,6 +201,15 @@ export class RootFiber extends Fiber {
         }
       }
     } catch (e) {
+      // if mountedFibers is not empty, this means that a crash occured while
+      // calling the mounted hooks of some component. So, there may still be
+      // some component that have been mounted, but for which the mounted hooks
+      // have not been called. Here, we remove the willUnmount hooks for these
+      // specific component to prevent a worse situation (willUnmount being
+      // called even though mounted has not been called)
+      for (let fiber of mountedFibers) {
+        fiber.node.willUnmount = [];
+      }
       this.locked = false;
       node.app.handleError({ fiber: current || this, error: e });
     }

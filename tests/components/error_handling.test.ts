@@ -1678,4 +1678,198 @@ describe("can catch errors", () => {
     `);
     expect(fixture.innerHTML).toBe("2");
   });
+
+  test("error in onMounted, graceful recovery", async () => {
+    class Child extends Component {
+      static template = xml`abc`;
+      setup() {
+        useLogLifecycle();
+      }
+    }
+
+    class OtherChild extends Component {
+      static template = xml`def`;
+      setup() {
+        useLogLifecycle();
+      }
+    }
+
+    class Boom extends Component {
+      static template = xml`boom`;
+      setup() {
+        useLogLifecycle();
+        onMounted(() => {
+          throw new Error("boom");
+        });
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`parent<Child/><Boom/>`;
+      static components = { Child, Boom };
+      setup() {
+        useLogLifecycle();
+      }
+    }
+
+    class Root extends Component {
+      static template = xml`<t t-component="component"/>`;
+
+      component: any = Parent;
+      setup() {
+        useLogLifecycle();
+        onError(() => {
+          logStep("error");
+          this.component = OtherChild;
+          this.render();
+        });
+      }
+    }
+
+    await mount(Root, fixture);
+    expect(fixture.innerHTML).toBe("def");
+
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Root:setup",
+        "Root:willStart",
+        "Root:willRender",
+        "Parent:setup",
+        "Parent:willStart",
+        "Root:rendered",
+        "Parent:willRender",
+        "Child:setup",
+        "Child:willStart",
+        "Boom:setup",
+        "Boom:willStart",
+        "Parent:rendered",
+        "Child:willRender",
+        "Child:rendered",
+        "Boom:willRender",
+        "Boom:rendered",
+        "Boom:mounted",
+        "error",
+        "Root:willRender",
+        "OtherChild:setup",
+        "OtherChild:willStart",
+        "Root:rendered",
+        "OtherChild:willRender",
+        "OtherChild:rendered",
+        "OtherChild:mounted",
+        "Root:mounted",
+      ]
+    `);
+  });
+
+  test("error in onMounted, graceful recovery, variation", async () => {
+    class Child extends Component {
+      static template = xml`abc`;
+      setup() {
+        useLogLifecycle();
+      }
+    }
+
+    class OtherChild extends Component {
+      static template = xml`def`;
+      setup() {
+        useLogLifecycle();
+      }
+    }
+
+    class Boom extends Component {
+      static template = xml`boom`;
+      setup() {
+        useLogLifecycle();
+        onMounted(() => {
+          throw new Error("boom");
+        });
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`parent<Child/><Boom/>`;
+      static components = { Child, Boom };
+      setup() {
+        useLogLifecycle();
+      }
+    }
+
+    class Root extends Component {
+      static template = xml`R<t t-if="state.gogogo" t-component="component"/>`;
+
+      component: any = Parent;
+      state = useState({ gogogo: false });
+
+      setup() {
+        useLogLifecycle();
+        onError(() => {
+          logStep("error");
+          this.component = OtherChild;
+          this.render();
+        });
+      }
+    }
+
+    const root = await mount(Root, fixture);
+    expect(fixture.innerHTML).toBe("R");
+
+    // standard mounting process
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Root:setup",
+        "Root:willStart",
+        "Root:willRender",
+        "Root:rendered",
+        "Root:mounted",
+      ]
+    `);
+
+    root.state.gogogo = true;
+    await nextTick();
+
+    expect(fixture.innerHTML).toBe("Rparentabcboom");
+    // rerender, root creates sub components, it crashes, tries to recover
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "Root:willRender",
+        "Parent:setup",
+        "Parent:willStart",
+        "Root:rendered",
+        "Parent:willRender",
+        "Child:setup",
+        "Child:willStart",
+        "Boom:setup",
+        "Boom:willStart",
+        "Parent:rendered",
+        "Child:willRender",
+        "Child:rendered",
+        "Boom:willRender",
+        "Boom:rendered",
+        "Root:willPatch",
+        "Boom:mounted",
+        "error",
+        "Root:willRender",
+        "OtherChild:setup",
+        "OtherChild:willStart",
+        "Root:rendered",
+      ]
+    `);
+
+    await nextTick();
+    expect(fixture.innerHTML).toBe("Rdef");
+
+    expect(steps.splice(0)).toMatchInlineSnapshot(`
+      Array [
+        "OtherChild:willRender",
+        "OtherChild:rendered",
+        "Root:willPatch",
+        "Child:willDestroy",
+        "Boom:willUnmount",
+        "Boom:willDestroy",
+        "Parent:willDestroy",
+        "OtherChild:mounted",
+        "Root:patched",
+      ]
+    `);
+  });
 });

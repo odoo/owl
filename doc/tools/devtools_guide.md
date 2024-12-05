@@ -82,6 +82,22 @@ in the sources tab as well.
 
 <img src="screenshots/function_menu.png"/>
 
+Using the right-click context menu on a property also allows to observe variables. Observed variables will
+be sent to a dedicated section of the details window and their value will be refreshed every 200ms. These
+variables are only shown when they are found and their access path will be kept in memory inside the
+browser so that it will always persist until the user decides to stop observing the variable. As in the
+browser's devtools, observed objects are displayed in reduced form and cannot be interacted with. It is
+still possible to send them to the console or remove them from the list using right-click.
+
+<img src="screenshots/observe_variables.png"/>
+
+The last section of the details window is filled with the component's lifecycle hooks. Using right click on
+them allows to place breakpoints inside the hook (either on its instance or class, hooks like mounted and
+willStart cannot have instance-based breakpoints because they will never trigger). Conditions in conditional
+breakpoints will be evaluated in the context of the component's definition.
+
+<img src="screenshots/hooks.png"/>
+
 There are several icons available to perform several of the actions described before in the components
 tree context menu and all these actions are also available by opening the menu by right-clicking on the
 component's name. Using the left click on the component's name will focus it in the components tree.

@@ -740,8 +740,8 @@
 
     // Returns the asked property given its global path
     getObjectProperty(path) {
-      // Just return the corresponding app if path is of length 1
-      if (path.length === 1) {
+      // Just return the corresponding app if path is of length 1 and not simplified
+      if (path.length === 1 && !isNaN(path[0])) {
         return [...this.apps][path[0]];
       }
       // Path to the component node is only strings, becomes objects for properties
@@ -749,7 +749,7 @@
       if (index === -1) {
         return this.getComponentNode(path);
       }
-      const componentNode = this.getComponentNode(index === 1 ? path[0] : path.slice(0, index));
+      const componentNode = this.getComponentNode(index === 1 ? [path[0]] : path.slice(0, index));
       if (componentNode) {
         return this.getObject(componentNode, path.slice(index));
       }
@@ -1126,13 +1126,15 @@
     }
     // Returns the Component node given its path and the root component node
     getComponentNode(path) {
-      // The node is an app and not a component
-      if (path.length === 1) {
+      // All paths that consists in an array containing a single stringified number lead to an app
+      if (path.length === 1 && !isNaN(path[0])) {
         return [...this.apps][path[0]];
       }
-      // The second element in the path will always be the root of the app
-      let node = [...this.apps][path[0]]?.root;
-      if (path instanceof Array) {
+      let node;
+      // If the path is longer and its first item is indeed an app number, it is a regular path
+      if (!isNaN(path[0])) {
+        // The second element in the path will always be the root of the app
+        node = [...this.apps][path[0]]?.root;
         if (!node) {
           return null;
         }
@@ -1147,8 +1149,11 @@
             return null;
           }
         }
+        // If the first path item is a more complex string, it is a simplified path where elements
+        // are a series of component names and indexes separated by slashes
       } else {
-        const simplifiedPathArray = path.split("/");
+        const simplifiedPathArray = path[0].split("/");
+        node = [...this.apps][simplifiedPathArray[0]]?.root;
         if (node.name !== simplifiedPathArray[1]) {
           return null;
         }

@@ -694,11 +694,13 @@ async function init() {
   }, 500);
   // Refresh observed variables values every 200 ms
   setInterval(async () => {
-    store.observedVariables = await evalFunctionInWindow(
-      "getObservedVariables",
-      [[...store.observedVariables]],
-      store.activeFrame
-    );
+    if (store.owlStatus) {
+      store.observedVariables = await evalFunctionInWindow(
+        "getObservedVariables",
+        [[...store.observedVariables]],
+        store.activeFrame
+      );
+    }
   }, 200);
 }
 

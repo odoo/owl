@@ -150,7 +150,7 @@ const { loadFile, mount } = owl;
 Dev mode activates some additional checks and developer amenities:
 
 - [Props validation](./props.md#props-validation) is performed
-- [t-foreach](./templates.md#loops) loops check for key unicity
+- [t-for and t-foreach](./templates.md#loops) loops check for key unicity
 - Lifecycle hooks are wrapped to report their errors in a more developer-friendly way
 - onWillStart and onWillUpdateProps will emit a warning in the console when they
   take longer than 3 seconds in an effort to ease debugging the presence of deadlocks

@@ -62,7 +62,7 @@ For reference, here is a list of all standard QWeb directives:
 | `t-out`                        | [Outputting value, possibly without escaping](#outputting-data) |
 | `t-set`, `t-value`             | [Setting variables](#setting-variables)                         |
 | `t-if`, `t-elif`, `t-else`,    | [conditionally rendering](#conditionals)                        |
-| `t-foreach`, `t-as`            | [Loops](#loops)                                                 |
+| `t-for/t-of`, `t-foreach/t-as` | [Loops](#loops)                                                 |
 | `t-att`, `t-attf-*`, `t-att-*` | [Dynamic attributes](#dynamic-attributes)                       |
 | `t-call`                       | [Rendering sub templates](#sub-templates)                       |
 | `t-debug`, `t-log`             | [Debugging](#debugging)                                         |
@@ -374,6 +374,24 @@ Like conditions, `t-foreach` applies to the element bearing the directive’s at
 
 is equivalent to the previous example.
 
+Owl also has another pair of directives that can be used for looping that allow
+destructuring the contents of the loop item: `t-for` and `t-of`, which behaves
+much like `for..of` in javascript:
+
+```xml
+<t t-for="[left, right]" t-of="[['a', 1], ['b', 2], ['c', 3]]" t-key="left">
+    <p><t t-esc="left"/>: <t t-esc="right"/></p>
+</t>
+```
+
+will be rendered as:
+
+```xml
+<p>a: 1</p>
+<p>b: 2</p>
+<p>c: 3</p>
+```
+
 An important difference should be made with the usual `QWeb` behaviour: Owl
 requires the presence of a `t-key` directive, to be able to properly reconcile
 renderings.
@@ -382,8 +400,9 @@ renderings.
 and maps, it will expose the key of the current iteration as the contents of the
 `t-as`, and the corresponding value with the same name and the suffix `_value`.
 
-In addition to the name passed via t-as, `t-foreach` provides a few other useful
-variables (note: `$as` will be replaced with the name passed to `t-as`):
+In addition to the name passed via t-as, `t-foreach` (but not `t-for`) provides
+a few other useful variables (note: `$as` will be replaced with the name passed
+to `t-as`):
 
 - `$as_value`: the current iteration value, identical to `$as` for arrays and
   other iterables, but for objects and maps, it provides the value (where `$as`
@@ -395,10 +414,9 @@ variables (note: `$as` will be replaced with the name passed to `t-as`):
   (equivalent to `$as_index + 1 == $as_size`), requires the iteratee’s size be
   available
 
-These extra variables provided and all new variables created into the `t-foreach`
-are only available in the scope of the `t-foreach`. If the variable exists outside
-the context of the `t-foreach`, the value is copied at the end of the foreach
-into the global context.
+These variables and all new variables created inside`t-foreach` and `t-for` are
+only available inside of the loop. If a variable existed outside the context of
+the loop, the assignment will affect the outer variable.
 
 ```xml
 <t t-set="existing_variable" t-value="false"/>
@@ -410,7 +428,7 @@ into the global context.
     <!-- existing_variable and new_variable now true -->
 </p>
 
-<!-- existing_variable always true -->
+<!-- existing_variable still true -->
 <!-- new_variable undefined -->
 ```
 
@@ -473,18 +491,11 @@ are all equivalent:
 </t>
 ```
 
-If there is no `t-key` directive, Owl will use the index as a default key.
-
-Note: the `t-foreach` directive only accepts arrays (lists) or objects. It does
-not work with other iterables, such as `Set`. However, it is only a matter of
-using the `...` javascript operator. For example:
-
-```xml
-<t t-foreach="[...items]" t-as="item">...</t>
-```
-
-The `...` operator will convert the `Set` (or any other iterables) into a list,
-which will work with Owl QWeb.
+The `t-key` directive is mandatory, and as mentioned should represent the object's
+identity. You may be tempted to use the loop index as a key, but keep in mind that
+this is only correct if items in the loop cannot be reordered. If this is not the
+case, using the index as the key can lead to bugs that are difficult to find, so
+use the index as the key only if you are sure items cannot be reordered.
 
 ### Sub Templates
 

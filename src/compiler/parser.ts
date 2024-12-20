@@ -28,6 +28,7 @@ export const enum ASTType {
   TCallBlock,
   TTranslation,
   TPortal,
+  TFor,
 }
 
 export interface ASTText {
@@ -106,7 +107,15 @@ export interface ASTTForEach {
   hasNoLast: boolean;
   hasNoIndex: boolean;
   hasNoValue: boolean;
-  key: string | null;
+  key: string;
+}
+
+export interface ASTTFor {
+  type: ASTType.TFor;
+  iterable: string;
+  binding: string;
+  body: AST;
+  key: string;
 }
 
 export interface ASTTKey {
@@ -185,6 +194,7 @@ export type AST =
   | ASTTCall
   | ASTTOut
   | ASTTForEach
+  | ASTTFor
   | ASTTKey
   | ASTComponent
   | ASTSlot
@@ -237,6 +247,7 @@ function parseNode(node: Node, ctx: ParsingContext): AST | null {
     parseTCustom(node, ctx) ||
     parseTDebugLog(node, ctx) ||
     parseTForEach(node, ctx) ||
+    parseTFor(node, ctx) ||
     parseTIf(node, ctx) ||
     parseTPortal(node, ctx) ||
     parseTCall(node, ctx) ||
@@ -570,6 +581,36 @@ function parseTForEach(node: Element, ctx: ParsingContext): AST | null {
     hasNoLast,
     hasNoIndex,
     hasNoValue,
+  };
+}
+
+function parseTFor(node: Element, ctx: ParsingContext): AST | null {
+  if (!node.hasAttribute("t-for")) {
+    return null;
+  }
+  const binding = node.getAttribute("t-for")!;
+  node.removeAttribute("t-for");
+  const iterable = node.getAttribute("t-of") || "";
+  node.removeAttribute("t-of");
+  const key = node.getAttribute("t-key");
+  if (!key) {
+    throw new OwlError(
+      `"Directive t-for should always be used with a t-key!" (expression: t-for="${binding}" t-of="${iterable}")`
+    );
+  }
+  node.removeAttribute("t-key");
+  const body = parseNode(node, ctx);
+
+  if (!body) {
+    return null;
+  }
+
+  return {
+    type: ASTType.TFor,
+    iterable,
+    binding,
+    body,
+    key,
   };
 }
 

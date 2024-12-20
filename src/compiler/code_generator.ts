@@ -18,6 +18,7 @@ import {
   ASTTCallBlock,
   ASTTEsc,
   ASTText,
+  ASTTFor,
   ASTTForEach,
   ASTTif,
   ASTTKey,
@@ -481,6 +482,8 @@ export class CodeGenerator {
         return this.compileTIf(ast, ctx);
       case ASTType.TForEach:
         return this.compileTForeach(ast, ctx);
+      case ASTType.TFor:
+        return this.compileTFor(ast, ctx);
       case ASTType.TKey:
         return this.compileTKey(ast, ctx);
       case ASTType.Multi:
@@ -916,7 +919,7 @@ export class CodeGenerator {
     if (!ast.hasNoValue) {
       this.addLine(`ctx[\`${ast.elem}_value\`] = ${vals}[${loopVar}];`);
     }
-    this.define(`key${this.target.loopLevel}`, ast.key ? compileExpr(ast.key) : loopVar);
+    this.define(`key${this.target.loopLevel}`, compileExpr(ast.key));
     if (this.dev) {
       // Throw error on duplicate keys in dev mode
       this.helpers.add("OwlError");
@@ -953,6 +956,46 @@ export class CodeGenerator {
         }] = Object.assign(${c}[${loopVar}], {memo: memo${id!}});`
       );
     }
+    this.target.indentLevel--;
+    this.target.loopLevel--;
+    this.addLine(`}`);
+    if (!ctx.isLast) {
+      this.addLine(`ctx = ctx.__proto__;`);
+    }
+    this.insertBlock("l", block, ctx);
+    return block.varName;
+  }
+
+  compileTFor(ast: ASTTFor, ctx: Context): string {
+    let { block } = ctx;
+    if (block) {
+      this.insertAnchor(block);
+    }
+    block = this.createBlock(block, "list", ctx);
+    this.target.loopLevel++;
+    this.addLine(`ctx = Object.create(ctx);`);
+    // Throw errors on duplicate keys in dev mode
+    if (this.dev) {
+      this.define(`keys${block.id}`, `new Set()`);
+    }
+    this.define(`c_block${block.id}`, "[]");
+    const index = `i${this.target.loopLevel}`;
+    this.addLine(`let ${index} = ${0};`);
+    const binding = compileExpr(ast.binding);
+    this.addLine(`for (${binding} of ${compileExpr(ast.iterable)}) {`);
+    this.target.indentLevel++;
+    this.define(`key${this.target.loopLevel}`, compileExpr(ast.key));
+    if (this.dev) {
+      // Throw error on duplicate keys in dev mode
+      this.helpers.add("OwlError");
+      this.addLine(
+        `if (keys${block.id}.has(String(key${this.target.loopLevel}))) { throw new OwlError(\`Got duplicate key in t-for: \${key${this.target.loopLevel}}\`)}`
+      );
+      this.addLine(`keys${block.id}.add(String(key${this.target.loopLevel}));`);
+    }
+    const subCtx = createContext(ctx, { block, index });
+    this.compileAST(ast.body, subCtx);
+    this.addLine(`${index}++;`);
     this.target.indentLevel--;
     this.target.loopLevel--;
     this.addLine(`}`);

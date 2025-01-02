@@ -1156,7 +1156,7 @@ export class CodeGenerator {
         case "translate":
           break;
         default:
-          throw new OwlError("Invalid prop suffix");
+          throw new OwlError(`Invalid prop suffix: ${suffix}`);
       }
     }
     name = /^[a-z_]+$/i.test(name) ? name : `'${name}'`;

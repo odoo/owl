@@ -1931,7 +1931,7 @@
     } else if (!isSymbolA && isSymbolB) {
       return -1; // Place non-Symbols at the beginning
     } else {
-      return String(a).localeCompare(String(b)); // Sort other keys alphabetically
+      return String(a).localeCompare(String(b), undefined, { numeric: true }); // Sort other keys alphabetically
     }
   }
 

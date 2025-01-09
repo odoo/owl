@@ -32,7 +32,10 @@
     "check-formatting": "prettier {src/*.ts,src/**/*.ts,tests/*.ts,tests/**/*.ts,doc/*.md,doc/**/*.md,tools/devtools/**/*.js} --check",
     "lint": "eslint src/**/*.ts tests/**/*.ts",
     "release": "node tools/release.js",
-    "compile_templates": "node tools/compile_xml.js"
+    "compile_templates": "node tools/compile_owl_templates.mjs"
+  },
+  "bin": {
+    "compile_owl_templates": "tools/compile_owl_templates.mjs"
   },
   "repository": {
     "type": "git",
@@ -46,6 +49,7 @@
   "homepage": "https://github.com/odoo/owl#readme",
   "devDependencies": {
     "@types/jest": "^27.0.1",
+    "@types/jsdom": "^21.1.7",
     "@types/node": "^14.11.8",
     "@typescript-eslint/eslint-plugin": "5.48.1",
     "@typescript-eslint/parser": "5.48.1",
@@ -97,5 +101,8 @@
   "prettier": {
     "printWidth": 100,
     "endOfLine": "auto"
+  },
+  "dependencies": {
+    "jsdom": "^25.0.1"
   }
 }

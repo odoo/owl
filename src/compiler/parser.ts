@@ -27,6 +27,7 @@ export const enum ASTType {
   TSlot,
   TCallBlock,
   TTranslation,
+  TTranslationContext,
   TPortal,
 }
 
@@ -56,6 +57,7 @@ export interface ASTDomNode {
   tag: string;
   content: AST[];
   attrs: Attrs | null;
+  attrsTranslationCtx: Attrs | null;
   ref: string | null;
   on: EventHandlers | null;
   model: TModelInfo | null;
@@ -127,6 +129,7 @@ interface SlotDefinition {
   scope: string | null;
   on: EventHandlers | null;
   attrs: Attrs | null;
+  attrsTranslationCtx: Attrs | null;
 }
 
 export interface ASTComponent {
@@ -136,6 +139,7 @@ export interface ASTComponent {
   dynamicProps: string | null;
   on: EventHandlers | null;
   props: { [name: string]: string } | null;
+  propsTranslationCtx: { [name: string]: string } | null;
   slots: { [name: string]: SlotDefinition } | null;
 }
 
@@ -143,6 +147,7 @@ export interface ASTSlot {
   type: ASTType.TSlot;
   name: string;
   attrs: Attrs | null;
+  attrsTranslationCtx: Attrs | null;
   on: EventHandlers | null;
   defaultContent: AST | null;
 }
@@ -166,6 +171,12 @@ export interface ASTLog {
 export interface ASTTranslation {
   type: ASTType.TTranslation;
   content: AST | null;
+}
+
+export interface ASTTranslationContext {
+  type: ASTType.TTranslationContext;
+  content: AST | null;
+  translationCtx: string;
 }
 
 export interface ASTTPortal {
@@ -192,6 +203,7 @@ export type AST =
   | ASTLog
   | ASTDebug
   | ASTTranslation
+  | ASTTranslationContext
   | ASTTPortal;
 
 // -----------------------------------------------------------------------------
@@ -245,6 +257,7 @@ function parseNode(node: Node, ctx: ParsingContext): AST | null {
     parseTOutNode(node, ctx) ||
     parseTKey(node, ctx) ||
     parseTTranslation(node, ctx) ||
+    parseTTranslationContext(node, ctx) ||
     parseTSlot(node, ctx) ||
     parseComponent(node, ctx) ||
     parseDOMNode(node, ctx) ||
@@ -368,6 +381,7 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
 
   const nodeAttrsNames = node.getAttributeNames();
   let attrs: ASTDomNode["attrs"] = null;
+  let attrsTranslationCtx: ASTDomNode["attrsTranslationCtx"] = null;
   let on: EventHandlers | null = null;
   let model: TModelInfo | null = null;
 
@@ -428,6 +442,10 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
       throw new OwlError(`Invalid attribute: '${attr}'`);
     } else if (attr === "xmlns") {
       ns = value;
+    } else if (attr.startsWith("t-translation-context-")) {
+      const attrName = attr.slice(22);
+      attrsTranslationCtx = attrsTranslationCtx || {};
+      attrsTranslationCtx[attrName] = value;
     } else if (attr !== "t-name") {
       if (attr.startsWith("t-") && !attr.startsWith("t-att")) {
         throw new OwlError(`Unknown QWeb directive: '${attr}'`);
@@ -450,6 +468,7 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
     tag: tagName,
     dynamicTag,
     attrs,
+    attrsTranslationCtx,
     on,
     ref,
     content: children,
@@ -609,7 +628,15 @@ function parseTCall(node: Element, ctx: ParsingContext): AST | null {
     if (ast && ast.type === ASTType.TComponent) {
       return {
         ...ast,
-        slots: { default: { content: tcall, scope: null, on: null, attrs: null } },
+        slots: {
+          default: {
+            content: tcall,
+            scope: null,
+            on: null,
+            attrs: null,
+            attrsTranslationCtx: null,
+          },
+        },
       };
     }
   }
@@ -744,9 +771,14 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
   let on: ASTComponent["on"] = null;
 
   let props: ASTComponent["props"] = null;
+  let propsTranslationCtx: ASTComponent["propsTranslationCtx"] = null;
   for (let name of node.getAttributeNames()) {
     const value = node.getAttribute(name)!;
-    if (name.startsWith("t-")) {
+    if (name.startsWith("t-translation-context-")) {
+      const attrName = name.slice(22);
+      propsTranslationCtx = propsTranslationCtx || {};
+      propsTranslationCtx[attrName] = value;
+    } else if (name.startsWith("t-")) {
       if (name.startsWith("t-on-")) {
         on = on || {};
         on[name.slice(5)] = value;
@@ -794,12 +826,17 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
       const slotAst = parseNode(slotNode, ctx);
       let on: SlotDefinition["on"] = null;
       let attrs: Attrs | null = null;
+      let attrsTranslationCtx: Attrs | null = null;
       let scope: string | null = null;
       for (let attributeName of slotNode.getAttributeNames()) {
         const value = slotNode.getAttribute(attributeName)!;
         if (attributeName === "t-slot-scope") {
           scope = value;
           continue;
+        } else if (attributeName.startsWith("t-translation-context-")) {
+          const attrName = attributeName.slice(22);
+          attrsTranslationCtx = attrsTranslationCtx || {};
+          attrsTranslationCtx[attrName] = value;
         } else if (attributeName.startsWith("t-on-")) {
           on = on || {};
           on[attributeName.slice(5)] = value;
@@ -809,7 +846,7 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
         }
       }
       slots = slots || {};
-      slots[name] = { content: slotAst, on, attrs, scope };
+      slots[name] = { content: slotAst, on, attrs, attrsTranslationCtx, scope };
     }
 
     // default slot
@@ -817,10 +854,25 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
     slots = slots || {};
     // t-set-slot="default" has priority over content
     if (defaultContent && !slots.default) {
-      slots.default = { content: defaultContent, on, attrs: null, scope: defaultSlotScope };
+      slots.default = {
+        content: defaultContent,
+        on,
+        attrs: null,
+        attrsTranslationCtx: null,
+        scope: defaultSlotScope,
+      };
     }
   }
-  return { type: ASTType.TComponent, name, isDynamic, dynamicProps, props, slots, on };
+  return {
+    type: ASTType.TComponent,
+    name,
+    isDynamic,
+    dynamicProps,
+    props,
+    propsTranslationCtx,
+    slots,
+    on,
+  };
 }
 
 // -----------------------------------------------------------------------------
@@ -834,12 +886,17 @@ function parseTSlot(node: Element, ctx: ParsingContext): AST | null {
   const name = node.getAttribute("t-slot")!;
   node.removeAttribute("t-slot");
   let attrs: Attrs | null = null;
+  let attrsTranslationCtx: Attrs | null = null;
   let on: ASTComponent["on"] = null;
   for (let attributeName of node.getAttributeNames()) {
     const value = node.getAttribute(attributeName)!;
     if (attributeName.startsWith("t-on-")) {
       on = on || {};
       on[attributeName.slice(5)] = value;
+    } else if (attributeName.startsWith("t-translation-context-")) {
+      const attrName = attributeName.slice(22);
+      attrsTranslationCtx = attrsTranslationCtx || {};
+      attrsTranslationCtx[attrName] = value;
     } else {
       attrs = attrs || {};
       attrs[attributeName] = value;
@@ -849,10 +906,15 @@ function parseTSlot(node: Element, ctx: ParsingContext): AST | null {
     type: ASTType.TSlot,
     name,
     attrs,
+    attrsTranslationCtx,
     on,
     defaultContent: parseChildNodes(node, ctx),
   };
 }
+
+// -----------------------------------------------------------------------------
+// Translation
+// -----------------------------------------------------------------------------
 
 function parseTTranslation(node: Element, ctx: ParsingContext): AST | null {
   if (node.getAttribute("t-translation") !== "off") {
@@ -862,6 +924,23 @@ function parseTTranslation(node: Element, ctx: ParsingContext): AST | null {
   return {
     type: ASTType.TTranslation,
     content: parseNode(node, ctx),
+  };
+}
+
+// -----------------------------------------------------------------------------
+// Translation Context
+// -----------------------------------------------------------------------------
+
+function parseTTranslationContext(node: Element, ctx: ParsingContext): AST | null {
+  const translationCtx = node.getAttribute("t-translation-context");
+  if (!translationCtx) {
+    return null;
+  }
+  node.removeAttribute("t-translation-context");
+  return {
+    type: ASTType.TTranslationContext,
+    content: parseNode(node, ctx),
+    translationCtx,
   };
 }
 

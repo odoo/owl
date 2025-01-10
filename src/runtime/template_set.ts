@@ -12,7 +12,7 @@ const bdom = { text, createBlock, list, multi, html, toggler, comment };
 export interface TemplateSetConfig {
   dev?: boolean;
   translatableAttributes?: string[];
-  translateFn?: (s: string) => string;
+  translateFn?: (s: string, translationCtx: string) => string;
   templates?: string | Document | Record<string, string>;
   getTemplate?: (s: string) => Element | Function | string | void;
   customDirectives?: customDirectives;
@@ -27,7 +27,7 @@ export class TemplateSet {
   rawTemplates: typeof globalTemplates = Object.create(globalTemplates);
   templates: { [name: string]: Template } = {};
   getRawTemplate?: (s: string) => Element | Function | string | void;
-  translateFn?: (s: string) => string;
+  translateFn?: (s: string, translationCtx: string) => string;
   translatableAttributes?: string[];
   Portal = Portal;
   customDirectives: customDirectives;

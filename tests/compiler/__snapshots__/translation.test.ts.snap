@@ -1,5 +1,128 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`translation context body of t-sets are translated in context 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    setContextValue(ctx, \\"label\\", \`traduit\`);
+    const b2 = text(ctx['label']);
+    return multi([b2]);
+  }
+}"
+`;
+
+exports[`translation context default slot params and content translated in context 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { callSlot } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  function defaultContent1(ctx, node, key = \\"\\") {
+    return text(\` foo \`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b3 = callSlot(ctx, node, key, 'default', false, {param: \`param\`,title: \`título\`}, defaultContent1.bind(this));
+    return block1([], [b3]);
+  }
+}"
+`;
+
+exports[`translation context props with modifier .translate are translated in context 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`ChildComponent\`, true, false, false, []);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return comp1({text: \`jeu\`}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`translation context props with modifier .translate are translated in context 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let txt1 = ctx['props'].text;
+    return block1([txt1]);
+  }
+}"
+`;
+
+exports[`translation context slot attrs and text contents are translated in context 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`ChildComponent\`, true, true, false, []);
+  
+  function slot1(ctx, node, key = \\"\\") {
+    return text(\`jeu\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx1 = capture(ctx);
+    return comp1({slots: markRaw({'a': {__render: slot1.bind(this), __ctx: ctx1, title: \`título\`}})}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`translation context slot attrs and text contents are translated in context 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { callSlot } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = callSlot(ctx, node, key, 'a', false, {});
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`translation context translation of attributes in context 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div title=\\"titre\\" label=\\"game\\"/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`translation context translation of text in context 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block2 = createBlock(\`<div>word</div>\`);
+  let block3 = createBlock(\`<div>mot</div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = block2();
+    const b3 = block3();
+    return multi([b2, b3]);
+  }
+}"
+`;
+
 exports[`translation support body of t-sets are translated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

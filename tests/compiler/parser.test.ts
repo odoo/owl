@@ -43,6 +43,7 @@ describe("qweb parser", () => {
       dynamicTag: null,
       content: [],
       attrs: null,
+      attrsTranslationCtx: null,
       on: null,
       ref: null,
       model: null,
@@ -70,6 +71,7 @@ describe("qweb parser", () => {
       tag: "div",
       dynamicTag: null,
       attrs: null,
+      attrsTranslationCtx: null,
       on: null,
       ref: null,
       model: null,
@@ -84,6 +86,7 @@ describe("qweb parser", () => {
       tag: "div",
       dynamicTag: null,
       attrs: null,
+      attrsTranslationCtx: null,
       on: null,
       ref: null,
       model: null,
@@ -98,6 +101,7 @@ describe("qweb parser", () => {
       tag: "div",
       dynamicTag: null,
       attrs: null,
+      attrsTranslationCtx: null,
       on: null,
       ref: null,
       model: null,
@@ -109,6 +113,7 @@ describe("qweb parser", () => {
           tag: "span",
           dynamicTag: null,
           attrs: null,
+          attrsTranslationCtx: null,
           on: null,
           ref: null,
           model: null,
@@ -128,6 +133,7 @@ describe("qweb parser", () => {
           tag: "div",
           dynamicTag: null,
           attrs: null,
+          attrsTranslationCtx: null,
           on: null,
           ref: null,
           model: null,
@@ -139,6 +145,7 @@ describe("qweb parser", () => {
           tag: "span",
           dynamicTag: null,
           attrs: null,
+          attrsTranslationCtx: null,
           on: null,
           ref: null,
           model: null,
@@ -156,6 +163,7 @@ describe("qweb parser", () => {
       tag: "div",
       dynamicTag: null,
       attrs: null,
+      attrsTranslationCtx: null,
       on: null,
       ref: null,
       model: null,
@@ -181,6 +189,7 @@ describe("qweb parser", () => {
       tag: "div",
       dynamicTag: null,
       attrs: null,
+      attrsTranslationCtx: null,
       on: null,
       ref: null,
       model: null,
@@ -201,6 +210,7 @@ describe("qweb parser", () => {
       tag: "div",
       dynamicTag: null,
       attrs: null,
+      attrsTranslationCtx: null,
       on: null,
       ref: null,
       model: null,
@@ -223,6 +233,7 @@ describe("qweb parser", () => {
       tag: "div",
       dynamicTag: null,
       attrs: null,
+      attrsTranslationCtx: null,
       on: null,
       ref: null,
       model: null,
@@ -246,6 +257,7 @@ describe("qweb parser", () => {
           tag: "span",
           dynamicTag: null,
           attrs: null,
+          attrsTranslationCtx: null,
           on: null,
           ref: null,
           model: null,
@@ -262,6 +274,7 @@ describe("qweb parser", () => {
       tag: "div",
       dynamicTag: null,
       attrs: { class: "abc" },
+      attrsTranslationCtx: null,
       on: null,
       ref: null,
       model: null,
@@ -280,6 +293,7 @@ describe("qweb parser", () => {
         height: "90px",
         width: "100px",
       },
+      attrsTranslationCtx: null,
       content: [
         {
           attrs: {
@@ -290,6 +304,7 @@ describe("qweb parser", () => {
             stroke: "green",
             "stroke-width": "1",
           },
+          attrsTranslationCtx: null,
           content: [],
           dynamicTag: null,
           model: null,
@@ -312,6 +327,7 @@ describe("qweb parser", () => {
       parse(`<g><circle cx="50" cy="50" r="4" stroke="green" stroke-width="1" fill="yellow"/></g>`)
     ).toEqual({
       attrs: null,
+      attrsTranslationCtx: null,
       content: [
         {
           attrs: {
@@ -322,6 +338,7 @@ describe("qweb parser", () => {
             stroke: "green",
             "stroke-width": "1",
           },
+          attrsTranslationCtx: null,
           content: [],
           dynamicTag: null,
           model: null,
@@ -348,6 +365,7 @@ describe("qweb parser", () => {
       tag: "div",
       dynamicTag: null,
       attrs: null,
+      attrsTranslationCtx: null,
       on: null,
       ref: null,
       content: [
@@ -356,6 +374,7 @@ describe("qweb parser", () => {
           tag: "pre",
           dynamicTag: null,
           attrs: null,
+          attrsTranslationCtx: null,
           on: null,
           ref: null,
           content: [],
@@ -391,6 +410,7 @@ describe("qweb parser", () => {
       tag: "span",
       dynamicTag: null,
       attrs: null,
+      attrsTranslationCtx: null,
       on: null,
       ref: null,
       model: null,
@@ -413,6 +433,7 @@ describe("qweb parser", () => {
       tag: "div",
       dynamicTag: null,
       attrs: null,
+      attrsTranslationCtx: null,
       on: null,
       ref: null,
       model: null,
@@ -455,6 +476,7 @@ describe("qweb parser", () => {
       tag: "div",
       dynamicTag: null,
       attrs: null,
+      attrsTranslationCtx: null,
       on: null,
       ref: null,
       model: null,
@@ -469,6 +491,7 @@ describe("qweb parser", () => {
       tag: "div",
       dynamicTag: null,
       attrs: null,
+      attrsTranslationCtx: null,
       on: null,
       ref: null,
       model: null,
@@ -489,6 +512,7 @@ describe("qweb parser", () => {
       tag: "div",
       dynamicTag: null,
       attrs: null,
+      attrsTranslationCtx: null,
       on: null,
       ref: null,
       model: null,
@@ -530,6 +554,7 @@ describe("qweb parser", () => {
         tag: "div",
         dynamicTag: null,
         attrs: null,
+        attrsTranslationCtx: null,
         on: null,
         ref: null,
         model: null,
@@ -607,6 +632,7 @@ describe("qweb parser", () => {
         tag: "div",
         dynamicTag: null,
         attrs: null,
+        attrsTranslationCtx: null,
         on: null,
         ref: null,
         model: null,
@@ -626,6 +652,7 @@ describe("qweb parser", () => {
             tag: "h1",
             dynamicTag: null,
             attrs: null,
+            attrsTranslationCtx: null,
             on: null,
             ref: null,
             model: null,
@@ -639,6 +666,7 @@ describe("qweb parser", () => {
         tag: "h2",
         dynamicTag: null,
         attrs: null,
+        attrsTranslationCtx: null,
         on: null,
         ref: null,
         model: null,
@@ -685,6 +713,7 @@ describe("qweb parser", () => {
         {
           type: ASTType.DomNode,
           attrs: null,
+          attrsTranslationCtx: null,
           on: null,
           tag: "div",
           dynamicTag: null,
@@ -705,6 +734,7 @@ describe("qweb parser", () => {
         {
           type: ASTType.DomNode,
           attrs: null,
+          attrsTranslationCtx: null,
           on: null,
           tag: "div",
           dynamicTag: null,
@@ -742,6 +772,7 @@ describe("qweb parser", () => {
       tag: "div",
       dynamicTag: null,
       attrs: null,
+      attrsTranslationCtx: null,
       on: null,
       ref: null,
       model: null,
@@ -811,6 +842,7 @@ describe("qweb parser", () => {
         tag: "div",
         dynamicTag: null,
         attrs: null,
+        attrsTranslationCtx: null,
         on: null,
         ref: null,
         model: null,
@@ -853,6 +885,7 @@ describe("qweb parser", () => {
         tag: "span",
         dynamicTag: null,
         attrs: null,
+        attrsTranslationCtx: null,
         on: null,
         ref: null,
         model: null,
@@ -887,6 +920,7 @@ describe("qweb parser", () => {
           tag: "span",
           dynamicTag: null,
           attrs: null,
+          attrsTranslationCtx: null,
           on: null,
           ref: null,
           model: null,
@@ -920,6 +954,7 @@ describe("qweb parser", () => {
           "t-att-selected": "category.id==options.active_category_id",
           "t-att-value": "category.id",
         },
+        attrsTranslationCtx: null,
         on: null,
         ref: null,
         model: null,
@@ -940,6 +975,7 @@ describe("qweb parser", () => {
     ).toEqual({
       type: ASTType.DomNode,
       attrs: null,
+      attrsTranslationCtx: null,
       on: null,
       ref: null,
       model: null,
@@ -987,6 +1023,7 @@ describe("qweb parser", () => {
         ref: null,
         model: null,
         attrs: null,
+        attrsTranslationCtx: null,
         ns: null,
         content: [{ type: ASTType.TEsc, expr: "item", defaultValue: "" }],
       },
@@ -1010,6 +1047,7 @@ describe("qweb parser", () => {
         name: "Comp",
         dynamicProps: null,
         props: null,
+        propsTranslationCtx: null,
         slots: null,
         on: null,
       },
@@ -1099,6 +1137,7 @@ describe("qweb parser", () => {
       tag: "div",
       dynamicTag: null,
       attrs: null,
+      attrsTranslationCtx: null,
       on: null,
       ref: null,
       model: null,
@@ -1139,6 +1178,7 @@ describe("qweb parser", () => {
       tag: "button",
       dynamicTag: null,
       attrs: null,
+      attrsTranslationCtx: null,
       on: { click: "add" },
       ref: null,
       model: null,
@@ -1175,6 +1215,7 @@ describe("qweb parser", () => {
       tag: "select",
       dynamicTag: null,
       attrs: null,
+      attrsTranslationCtx: null,
       on: null,
       ref: null,
       content: [
@@ -1183,6 +1224,7 @@ describe("qweb parser", () => {
           tag: "option",
           dynamicTag: null,
           attrs: { value: "1" },
+          attrsTranslationCtx: null,
           on: null,
           ref: null,
           content: [],
@@ -1212,6 +1254,7 @@ describe("qweb parser", () => {
       tag: "select",
       dynamicTag: null,
       attrs: null,
+      attrsTranslationCtx: null,
       on: null,
       ref: null,
       content: [
@@ -1220,6 +1263,7 @@ describe("qweb parser", () => {
           tag: "option",
           dynamicTag: null,
           attrs: { "t-att-value": "valueVar" },
+          attrsTranslationCtx: null,
           on: null,
           ref: null,
           content: [],
@@ -1251,6 +1295,7 @@ describe("qweb parser", () => {
       name: "MyComponent",
       dynamicProps: null,
       props: null,
+      propsTranslationCtx: null,
       on: null,
       slots: null,
       isDynamic: false,
@@ -1263,6 +1308,7 @@ describe("qweb parser", () => {
       name: "MyComponent",
       dynamicProps: null,
       props: { a: "1", b: "'b'" },
+      propsTranslationCtx: null,
       isDynamic: false,
       on: null,
       slots: null,
@@ -1275,6 +1321,7 @@ describe("qweb parser", () => {
       name: "MyComponent",
       dynamicProps: "state",
       props: { a: "1" },
+      propsTranslationCtx: null,
       isDynamic: false,
       on: null,
       slots: null,
@@ -1287,6 +1334,7 @@ describe("qweb parser", () => {
       name: "MyComponent",
       dynamicProps: null,
       props: null,
+      propsTranslationCtx: null,
       isDynamic: false,
       on: { click: "someMethod" },
       slots: null,
@@ -1329,12 +1377,14 @@ describe("qweb parser", () => {
       name: "MyComponent",
       dynamicProps: null,
       props: null,
+      propsTranslationCtx: null,
       isDynamic: false,
       on: null,
       slots: {
         default: {
           content: { type: ASTType.Text, value: "foo" },
           attrs: null,
+          attrsTranslationCtx: null,
           on: null,
           scope: null,
         },
@@ -1350,12 +1400,14 @@ describe("qweb parser", () => {
       name: "MyComponent",
       dynamicProps: null,
       props: null,
+      propsTranslationCtx: null,
       isDynamic: false,
       on: null,
       slots: {
         default: {
           content: { type: ASTType.Text, value: "foo" },
           attrs: { param: "param" },
+          attrsTranslationCtx: null,
           on: null,
           scope: null,
         },
@@ -1370,6 +1422,7 @@ describe("qweb parser", () => {
       isDynamic: false,
       dynamicProps: null,
       props: null,
+      propsTranslationCtx: null,
       on: null,
       slots: {
         default: {
@@ -1381,6 +1434,7 @@ describe("qweb parser", () => {
                 tag: "span",
                 dynamicTag: null,
                 attrs: null,
+                attrsTranslationCtx: null,
                 content: [],
                 ref: null,
                 model: null,
@@ -1392,6 +1446,7 @@ describe("qweb parser", () => {
                 tag: "div",
                 dynamicTag: null,
                 attrs: null,
+                attrsTranslationCtx: null,
                 content: [],
                 ref: null,
                 model: null,
@@ -1401,6 +1456,7 @@ describe("qweb parser", () => {
             ],
           },
           attrs: null,
+          attrsTranslationCtx: null,
           on: null,
           scope: null,
         },
@@ -1415,9 +1471,11 @@ describe("qweb parser", () => {
       name: "MyComponent",
       on: null,
       props: null,
+      propsTranslationCtx: null,
       slots: {
         mySlot: {
           attrs: null,
+          attrsTranslationCtx: null,
           content: null,
           on: null,
           scope: null,
@@ -1434,9 +1492,16 @@ describe("qweb parser", () => {
       isDynamic: false,
       dynamicProps: null,
       props: null,
+      propsTranslationCtx: null,
       on: null,
       slots: {
-        name: { content: { type: ASTType.Text, value: "foo" }, attrs: null, on: null, scope: null },
+        name: {
+          content: { type: ASTType.Text, value: "foo" },
+          attrs: null,
+          attrsTranslationCtx: null,
+          on: null,
+          scope: null,
+        },
       },
     });
   });
@@ -1448,11 +1513,13 @@ describe("qweb parser", () => {
       isDynamic: false,
       dynamicProps: null,
       props: null,
+      propsTranslationCtx: null,
       on: null,
       slots: {
         name: {
           content: { type: ASTType.Text, value: "foo" },
           attrs: { param: "param" },
+          attrsTranslationCtx: null,
           on: null,
           scope: null,
         },
@@ -1469,12 +1536,14 @@ describe("qweb parser", () => {
       isDynamic: false,
       dynamicProps: null,
       props: null,
+      propsTranslationCtx: null,
       on: null,
       slots: {
         name: {
           content: { type: ASTType.Text, value: "foo" },
           on: { click: "doStuff" },
           attrs: null,
+          attrsTranslationCtx: null,
           scope: null,
         },
       },
@@ -1493,16 +1562,24 @@ describe("qweb parser", () => {
       name: "MyComponent",
       dynamicProps: null,
       props: null,
+      propsTranslationCtx: null,
       isDynamic: false,
       on: null,
       slots: {
         default: {
           content: { type: ASTType.Text, value: " " },
           attrs: null,
+          attrsTranslationCtx: null,
           on: null,
           scope: null,
         },
-        name: { content: { type: ASTType.Text, value: "foo" }, attrs: null, on: null, scope: null },
+        name: {
+          content: { type: ASTType.Text, value: "foo" },
+          attrs: null,
+          attrsTranslationCtx: null,
+          on: null,
+          scope: null,
+        },
       },
     });
   });
@@ -1518,11 +1595,24 @@ describe("qweb parser", () => {
       name: "MyComponent",
       dynamicProps: null,
       props: null,
+      propsTranslationCtx: null,
       isDynamic: false,
       on: null,
       slots: {
-        a: { content: { type: ASTType.Text, value: "foo" }, attrs: null, on: null, scope: null },
-        b: { content: { type: ASTType.Text, value: "bar" }, attrs: null, on: null, scope: null },
+        a: {
+          content: { type: ASTType.Text, value: "foo" },
+          attrs: null,
+          attrsTranslationCtx: null,
+          on: null,
+          scope: null,
+        },
+        b: {
+          content: { type: ASTType.Text, value: "bar" },
+          attrs: null,
+          attrsTranslationCtx: null,
+          on: null,
+          scope: null,
+        },
       },
     });
   });
@@ -1533,6 +1623,7 @@ describe("qweb parser", () => {
       name: "myComponent",
       dynamicProps: null,
       props: null,
+      propsTranslationCtx: null,
       isDynamic: true,
       on: null,
       slots: null,
@@ -1545,6 +1636,7 @@ describe("qweb parser", () => {
       name: "mycomponent",
       dynamicProps: null,
       props: { a: "1", b: "'b'" },
+      propsTranslationCtx: null,
       isDynamic: true,
       on: null,
       slots: null,
@@ -1557,6 +1649,7 @@ describe("qweb parser", () => {
       name: "mycomponent",
       dynamicProps: "state",
       props: { a: "1" },
+      propsTranslationCtx: null,
       isDynamic: true,
       on: null,
       slots: null,
@@ -1587,12 +1680,14 @@ describe("qweb parser", () => {
       name: "MyComponent",
       dynamicProps: null,
       props: null,
+      propsTranslationCtx: null,
       isDynamic: false,
       on: null,
       slots: {
         default: {
           content: { body: null, name: "subTemplate", type: ASTType.TCall, context: null },
           attrs: null,
+          attrsTranslationCtx: null,
           scope: null,
           on: null,
         },
@@ -1613,11 +1708,13 @@ describe("qweb parser", () => {
       name: "MyComponent",
       dynamicProps: null,
       props: null,
+      propsTranslationCtx: null,
       isDynamic: false,
       on: null,
       slots: {
         default: {
           attrs: null,
+          attrsTranslationCtx: null,
           on: null,
           scope: null,
           content: {
@@ -1626,11 +1723,13 @@ describe("qweb parser", () => {
             name: "Child",
             dynamicProps: null,
             props: null,
+            propsTranslationCtx: null,
             on: null,
             slots: {
               brol: {
                 content: { type: ASTType.Text, value: "coucou" },
                 attrs: null,
+                attrsTranslationCtx: null,
                 scope: null,
                 on: null,
               },
@@ -1654,11 +1753,13 @@ describe("qweb parser", () => {
       name: "MyComponent",
       dynamicProps: null,
       props: null,
+      propsTranslationCtx: null,
       isDynamic: false,
       on: null,
       slots: {
         default: {
           attrs: null,
+          attrsTranslationCtx: null,
           on: null,
           scope: null,
           content: {
@@ -1667,11 +1768,13 @@ describe("qweb parser", () => {
             name: "Child",
             dynamicProps: null,
             props: null,
+            propsTranslationCtx: null,
             on: null,
             slots: {
               brol: {
                 content: { type: ASTType.Text, value: "coucou" },
                 attrs: null,
+                attrsTranslationCtx: null,
                 on: null,
                 scope: null,
               },
@@ -1691,6 +1794,7 @@ describe("qweb parser", () => {
       type: ASTType.TSlot,
       name: "default",
       attrs: null,
+      attrsTranslationCtx: null,
       on: null,
       defaultContent: null,
     });
@@ -1701,6 +1805,7 @@ describe("qweb parser", () => {
       type: ASTType.TSlot,
       name: "header",
       attrs: null,
+      attrsTranslationCtx: null,
       on: null,
       defaultContent: { type: ASTType.Text, value: "default content" },
     });
@@ -1711,6 +1816,7 @@ describe("qweb parser", () => {
       type: ASTType.TSlot,
       name: "default",
       attrs: null,
+      attrsTranslationCtx: null,
       on: { "click.prevent": "doSomething" },
       defaultContent: null,
     });
@@ -1728,6 +1834,7 @@ describe("qweb parser", () => {
         tag: "div",
         dynamicTag: null,
         attrs: null,
+        attrsTranslationCtx: null,
         on: null,
         ref: null,
         model: null,
@@ -1746,6 +1853,7 @@ describe("qweb parser", () => {
         tag: "div",
         dynamicTag: null,
         attrs: null,
+        attrsTranslationCtx: null,
         on: null,
         ref: null,
         model: null,
@@ -1765,6 +1873,7 @@ describe("qweb parser", () => {
       tag: "div",
       dynamicTag: null,
       attrs: null,
+      attrsTranslationCtx: null,
       on: null,
       ref: "name",
       model: null,
@@ -1779,6 +1888,7 @@ describe("qweb parser", () => {
       tag: "div",
       dynamicTag: null,
       attrs: null,
+      attrsTranslationCtx: null,
       on: null,
       ref: "name",
       model: null,
@@ -1795,6 +1905,7 @@ describe("qweb parser", () => {
       tag: "div",
       dynamicTag: null,
       attrs: null,
+      attrsTranslationCtx: null,
       on: null,
       ref: "name",
       model: null,
@@ -1831,6 +1942,7 @@ describe("qweb parser", () => {
       body: {
         content: {
           attrs: null,
+          attrsTranslationCtx: null,
           content: [
             {
               type: ASTType.Text,
@@ -1860,12 +1972,99 @@ describe("qweb parser", () => {
   });
 
   // ---------------------------------------------------------------------------
+  // t-translation-context
+  // ---------------------------------------------------------------------------
+
+  test('t-translation-context="fr"', async () => {
+    expect(parse(`<t t-translation-context="fr">word</t>`)).toEqual({
+      type: ASTType.TTranslationContext,
+      content: {
+        type: ASTType.Text,
+        value: "word",
+      },
+      translationCtx: "fr",
+    });
+
+    expect(parse(`<div t-translation-context="fr">word</div>`)).toEqual({
+      content: {
+        attrs: null,
+        attrsTranslationCtx: null,
+        content: [
+          {
+            type: 0,
+            value: "word",
+          },
+        ],
+        dynamicTag: null,
+        model: null,
+        ns: null,
+        on: null,
+        ref: null,
+        tag: "div",
+        type: ASTType.DomNode,
+      },
+      translationCtx: "fr",
+      type: ASTType.TTranslationContext,
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // t-translation-context-attr
+  // ---------------------------------------------------------------------------
+
+  test('t-translation-context="fr" and t-translation-context-title="pt" for a div attr title', async () => {
+    expect(
+      parse(
+        `<div t-translation-context="fr" title="hello" t-translation-context-title="pt">word</div>`
+      )
+    ).toEqual({
+      content: {
+        attrs: { title: "hello" },
+        attrsTranslationCtx: { title: "pt" },
+        content: [
+          {
+            type: 0,
+            value: "word",
+          },
+        ],
+        dynamicTag: null,
+        model: null,
+        ns: null,
+        on: null,
+        ref: null,
+        tag: "div",
+        type: ASTType.DomNode,
+      },
+      translationCtx: "fr",
+      type: ASTType.TTranslationContext,
+    });
+  });
+
+  test('t-translation-context-title="fr" for component prop title', async () => {
+    expect(parse(`<Comp title="hello" t-translation-context-title="fr" />`)).toEqual({
+      dynamicProps: null,
+      isDynamic: false,
+      name: "Comp",
+      on: null,
+      props: {
+        title: "hello",
+      },
+      propsTranslationCtx: {
+        title: "fr",
+      },
+      slots: null,
+      type: ASTType.TComponent,
+    });
+  });
+
+  // ---------------------------------------------------------------------------
   // t-model
   // ---------------------------------------------------------------------------
   test("t-model", async () => {
     expect(parse(`<input t-model="state.stuff" />`)).toEqual({
       type: ASTType.DomNode,
       attrs: null,
+      attrsTranslationCtx: null,
       content: [],
       on: null,
       ref: null,
@@ -1886,6 +2085,7 @@ describe("qweb parser", () => {
     expect(parse(`<input t-model="state['stuff']" />`)).toEqual({
       type: ASTType.DomNode,
       attrs: null,
+      attrsTranslationCtx: null,
       content: [],
       on: null,
       ref: null,
@@ -1906,6 +2106,7 @@ describe("qweb parser", () => {
     expect(parse(`<input t-model.lazy.trim.number="state.stuff" />`)).toEqual({
       type: ASTType.DomNode,
       attrs: null,
+      attrsTranslationCtx: null,
       content: [],
       on: null,
       ref: null,
@@ -1927,6 +2128,7 @@ describe("qweb parser", () => {
   expect(parse(`<textarea t-model="state.stuff" />`)).toEqual({
     type: ASTType.DomNode,
     attrs: null,
+    attrsTranslationCtx: null,
     content: [],
     on: null,
     ref: null,
@@ -1947,6 +2149,7 @@ describe("qweb parser", () => {
   expect(parse(`<input type="checkbox" t-model="state.stuff" />`)).toEqual({
     type: ASTType.DomNode,
     attrs: { type: "checkbox" },
+    attrsTranslationCtx: null,
     content: [],
     on: null,
     ref: null,
@@ -1967,6 +2170,7 @@ describe("qweb parser", () => {
   expect(parse(`<input type="radio" t-model="state.stuff" />`)).toEqual({
     type: ASTType.DomNode,
     attrs: { type: "radio" },
+    attrsTranslationCtx: null,
     content: [],
     on: null,
     ref: null,
@@ -1987,6 +2191,7 @@ describe("qweb parser", () => {
   expect(parse(`<input type="radio" t-model.lazy.trim.number="state.stuff" />`)).toEqual({
     type: ASTType.DomNode,
     attrs: { type: "radio" },
+    attrsTranslationCtx: null,
     content: [],
     on: null,
     ref: null,
@@ -2012,6 +2217,7 @@ describe("qweb parser", () => {
     expect(parse(`<div t-tag="theTag" />`)).toEqual({
       type: ASTType.DomNode,
       attrs: null,
+      attrsTranslationCtx: null,
       content: [],
       on: null,
       ref: null,

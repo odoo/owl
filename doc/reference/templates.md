@@ -56,17 +56,19 @@ extensions.
 
 For reference, here is a list of all standard QWeb directives:
 
-| Name                           | Description                                                     |
-| ------------------------------ | --------------------------------------------------------------- |
-| `t-esc`                        | [Outputting safely a value](#outputting-data)                   |
-| `t-out`                        | [Outputting value, possibly without escaping](#outputting-data) |
-| `t-set`, `t-value`             | [Setting variables](#setting-variables)                         |
-| `t-if`, `t-elif`, `t-else`,    | [conditionally rendering](#conditionals)                        |
-| `t-foreach`, `t-as`            | [Loops](#loops)                                                 |
-| `t-att`, `t-attf-*`, `t-att-*` | [Dynamic attributes](#dynamic-attributes)                       |
-| `t-call`                       | [Rendering sub templates](#sub-templates)                       |
-| `t-debug`, `t-log`             | [Debugging](#debugging)                                         |
-| `t-translation`                | [Disabling the translation of a node](translations.md)          |
+| Name                           | Description                                                             |
+| ------------------------------ | ----------------------------------------------------------------------- |
+| `t-esc`                        | [Outputting safely a value](#outputting-data)                           |
+| `t-out`                        | [Outputting value, possibly without escaping](#outputting-data)         |
+| `t-set`, `t-value`             | [Setting variables](#setting-variables)                                 |
+| `t-if`, `t-elif`, `t-else`,    | [conditionally rendering](#conditionals)                                |
+| `t-foreach`, `t-as`            | [Loops](#loops)                                                         |
+| `t-att`, `t-attf-*`, `t-att-*` | [Dynamic attributes](#dynamic-attributes)                               |
+| `t-call`                       | [Rendering sub templates](#sub-templates)                               |
+| `t-debug`, `t-log`             | [Debugging](#debugging)                                                 |
+| `t-translation`                | [Disabling the translation of a node](translations.md)                  |
+| `t-translation-context`        | [Context of translations within a node](translations.md)                |
+| `t-translation-context-*`      | [Context of translation for a specific node attribute](translations.md) |
 
 The component system in Owl requires additional directives, to express various
 needs. Here is a list of all Owl specific directives:

@@ -1,17 +1,28 @@
 # 🦉 Translations 🦉
 
 If properly setup, Owl can translate all rendered templates. To do
-so, it needs a translate function, which takes a string and returns a string.
+so, it needs a translate function, which takes
+
+- a string (the term to translate)
+- a string (the translation context of the term)
+  and returns a string.
 
 For example:
 
 ```js
 const translations = {
-  hello: "bonjour",
-  yes: "oui",
-  no: "non",
+  fr: {
+    hello: "bonjour",
+    yes: "oui",
+    no: "non",
+  },
+  pt: {
+    hello: "bom dia",
+    yes: "sim",
+    no: "não",
+  },
 };
-const translateFn = (str) => translations[str] || str;
+const translateFn = (str, ctx) => translations[ctx]?.[str] || str;
 
 const app = new App(Root, { templates, tranaslateFn });
 // ...
@@ -27,6 +38,11 @@ Once setup, all rendered templates will be translated using `translateFn`:
   `placeholder`, `label` and `alt`,
 - translating text nodes can be disabled with the special attribute `t-translation`,
   if its value is `off`.
+- the translate function receives as second parameter a context that can be used
+  to contextualized the translation. That context can be set globally on a node
+  and its children by using `t-translation-context`. If a specific node
+  attribute `x` needs another context, that context can be specified with a
+  special directive `t-translation-context-x`.
 
 So, with the above `translateFn`, the following templates:
 
@@ -44,6 +60,22 @@ will be rendered as:
 <div>hello</div>
 <div>Are you sure?</div>
 <input placeholder="bonjour" other="yes"/>
+```
+
+and the following template:
+
+```xml
+<div t-translation-context="fr" title="hello">hello</div>
+<div>Are you sure?</div>
+<input t-translation-context-placeholder="pt" placeholder="hello" other="yes"/>
+```
+
+will be rendered as:
+
+```xml
+<div title="bonjour">bonjour</div>
+<div>Are you sure?</div>
+<input placeholder="bom dia" other="yes"/>
 ```
 
 Note that the translation is done during the compilation of the template, not

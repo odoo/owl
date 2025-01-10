@@ -86,7 +86,7 @@ describe("translation support", () => {
 
     await mount(SomeComponent, fixture, { translateFn });
     expect(fixture.innerHTML).toBe("<div> mot </div>");
-    expect(translateFn).toHaveBeenCalledWith("word");
+    expect(translateFn).toHaveBeenCalledWith("word", "");
   });
 
   test("translation works, even if initial string has inner consecutive white space", async () => {
@@ -97,7 +97,7 @@ describe("translation support", () => {
     const translateFn = jest.fn((expr: string) => (expr === "some  word" ? "un mot" : expr));
 
     await mount(SomeComponent, fixture, { translateFn });
-    expect(translateFn).toHaveBeenCalledWith("some  word");
+    expect(translateFn).toHaveBeenCalledWith("some  word", "");
     expect(fixture.innerHTML).toBe("<div>un mot</div>");
   });
 
@@ -169,5 +169,128 @@ describe("translation support", () => {
 
     await mount(SomeComponent, fixture, { translateFn });
     expect(fixture.innerHTML).toBe("translated");
+  });
+});
+
+describe("translation context", () => {
+  test("translation of text in context", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+        <div>word</div>
+        <div t-translation-context="fr">word</div>
+      `;
+    }
+
+    const translateFn = jest.fn((expr: string, translationCtx: string) =>
+      translationCtx === "fr" ? (expr === "word" ? "mot" : expr) : expr
+    );
+
+    await mount(SomeComponent, fixture, { translateFn });
+    expect(fixture.innerHTML).toBe("<div>word</div><div>mot</div>");
+    expect(translateFn).toHaveBeenCalledWith("word", "");
+    expect(translateFn).toHaveBeenCalledWith("word", "fr");
+  });
+  test("translation of attributes in context", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+        <div t-translation-context="en" t-translation-context-title="fr" title="title" label="game"/>
+      `;
+    }
+
+    const translateFn = jest.fn((expr: string, translationCtx: string) =>
+      translationCtx === "fr" ? (expr === "title" ? "titre" : expr) : expr
+    );
+
+    await mount(SomeComponent, fixture, { translateFn });
+    expect(fixture.innerHTML).toBe(`<div title="titre" label="game"></div>`);
+    expect(translateFn).toHaveBeenCalledWith("title", "fr");
+    expect(translateFn).toHaveBeenCalledWith("game", "en");
+  });
+  test("body of t-sets are translated in context", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+        <t t-set="label" t-translation-context="fr">untranslated</t>
+        <t t-esc="label"/>`;
+    }
+
+    const translateFn = jest.fn((expr: string, translationCtx: string) =>
+      translationCtx === "fr" ? "traduit" : expr
+    );
+
+    await mount(SomeComponent, fixture, { translateFn });
+    expect(fixture.innerHTML).toBe("traduit");
+    expect(translateFn).toHaveBeenCalledWith("untranslated", "fr");
+  });
+  test("props with modifier .translate are translated in context", async () => {
+    class ChildComponent extends Component {
+      static props = ["text"];
+      static template = xml`<span t-esc="props.text"/>`;
+    }
+
+    class SomeComponent extends Component {
+      static components = { ChildComponent };
+      static template = xml`
+        <ChildComponent text.translate="game" t-translation-context-text.translate="fr" />`;
+    }
+
+    const translateFn = jest.fn((expr: string, translationCtx: string) =>
+      translationCtx === "fr" ? "jeu" : expr
+    );
+
+    await mount(SomeComponent, fixture, { translateFn });
+    expect(fixture.innerHTML).toBe("<span>jeu</span>");
+    expect(translateFn).toHaveBeenCalledWith("game", "fr");
+  });
+  test("slot attrs and text contents are translated in context", async () => {
+    class ChildComponent extends Component {
+      static template = xml`
+        <div t-translation-context="ja">
+          <t t-slot="a"/>
+        </div>`;
+    }
+
+    class SomeComponent extends Component {
+      static components = { ChildComponent };
+      static template = xml`
+        <ChildComponent t-translation-context="fr">
+          <t t-set-slot="a" title.translate="title" t-translation-context-title.translate="pt">game</t>
+        </ChildComponent>
+        `;
+    }
+
+    const translateFn = jest.fn((expr: string, translationCtx: string) =>
+      translationCtx === "fr" ? "jeu" : translationCtx === "pt" ? "título" : expr
+    );
+
+    await mount(SomeComponent, fixture, { translateFn });
+    expect(fixture.innerHTML).toBe("<div>jeu</div>");
+    expect(translateFn).toHaveBeenCalledWith("game", "fr");
+    expect(translateFn).toHaveBeenCalledWith("title", "pt");
+  });
+  test("default slot params and content translated in context", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+        <div>
+          <t
+            t-slot="default"
+            t-translation-context="fr"
+            param.translate="param"
+            title.translate="title"
+            t-translation-context-title.translate="pt"
+          >
+            foo
+          </t>
+        </div>`;
+    }
+
+    const translateFn = jest.fn((expr: string, translationCtx: string) =>
+      translationCtx === "pt" ? "título" : expr
+    );
+
+    await mount(SomeComponent, fixture, { translateFn });
+    expect(fixture.innerHTML).toBe("<div> foo </div>");
+    expect(translateFn).toHaveBeenCalledWith("foo", "fr");
+    expect(translateFn).toHaveBeenCalledWith("param", "fr");
+    expect(translateFn).toHaveBeenCalledWith("title", "pt");
   });
 });

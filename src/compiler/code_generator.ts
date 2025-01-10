@@ -24,6 +24,7 @@ import {
   ASTTOut,
   ASTTPortal,
   ASTTranslation,
+  ASTTranslationContext,
   ASTTSet,
   ASTType,
   Attrs,
@@ -35,7 +36,7 @@ type BlockType = "block" | "text" | "multi" | "list" | "html" | "comment";
 const whitespaceRE = /\s+/g;
 
 export interface Config {
-  translateFn?: (s: string) => string;
+  translateFn?: (s: string, translationCtx: string) => string;
   translatableAttributes?: string[];
   dev?: boolean;
 }
@@ -171,6 +172,7 @@ interface Context {
   forceNewBlock: boolean;
   isLast?: boolean;
   translate: boolean;
+  translationCtx: string;
   tKeyExpr: string | null;
   nameSpace?: string;
   tModelSelectedExpr?: string;
@@ -185,6 +187,7 @@ function createContext(parentCtx: Context, params?: Partial<Context>): Context {
       index: 0,
       forceNewBlock: true,
       translate: parentCtx.translate,
+      translationCtx: parentCtx.translationCtx,
       tKeyExpr: null,
       nameSpace: parentCtx.nameSpace,
       tModelSelectedExpr: parentCtx.tModelSelectedExpr,
@@ -263,7 +266,7 @@ export class CodeGenerator {
   target = new CodeTarget("template");
   templateName?: string;
   dev: boolean;
-  translateFn: (s: string) => string;
+  translateFn: (s: string, translationCtx: string) => string;
   translatableAttributes: string[] = TRANSLATABLE_ATTRS;
   ast: AST;
   staticDefs: { id: string; expr: string }[] = [];
@@ -303,6 +306,7 @@ export class CodeGenerator {
       forceNewBlock: false,
       isLast: true,
       translate: true,
+      translationCtx: "",
       tKeyExpr: null,
     });
     // define blocks and utility functions
@@ -457,9 +461,9 @@ export class CodeGenerator {
       .join("");
   }
 
-  translate(str: string): string {
+  translate(str: string, translationCtx: string): string {
     const match = translationRE.exec(str) as any;
-    return match[1] + this.translateFn(match[2]) + match[3];
+    return match[1] + this.translateFn(match[2], translationCtx) + match[3];
   }
 
   /**
@@ -501,6 +505,8 @@ export class CodeGenerator {
         return this.compileTSlot(ast, ctx);
       case ASTType.TTranslation:
         return this.compileTTranslation(ast, ctx);
+      case ASTType.TTranslationContext:
+        return this.compileTTranslationContext(ast, ctx);
       case ASTType.TPortal:
         return this.compileTPortal(ast, ctx);
     }
@@ -542,7 +548,7 @@ export class CodeGenerator {
 
     let value = ast.value;
     if (value && ctx.translate !== false) {
-      value = this.translate(value);
+      value = this.translate(value, ctx.translationCtx);
     }
     if (!ctx.inPreTag) {
       value = value.replace(whitespaceRE, " ");
@@ -631,7 +637,8 @@ export class CodeGenerator {
           }
         }
       } else if (this.translatableAttributes.includes(key)) {
-        attrs[key] = this.translateFn(ast.attrs[key]);
+        const attrTranslationCtx = ast.attrsTranslationCtx?.[key] || ctx.translationCtx;
+        attrs[key] = this.translateFn(ast.attrs[key], attrTranslationCtx);
       } else {
         expr = `"${ast.attrs[key]}"`;
         attrName = key;
@@ -1104,7 +1111,7 @@ export class CodeGenerator {
       let value: string;
       if (ast.defaultValue) {
         const defaultValue = toStringExpression(
-          ctx.translate ? this.translate(ast.defaultValue) : ast.defaultValue
+          ctx.translate ? this.translate(ast.defaultValue, ctx.translationCtx) : ast.defaultValue
         );
         if (ast.value) {
           value = `withDefault(${expr}, ${defaultValue})`;
@@ -1139,9 +1146,15 @@ export class CodeGenerator {
    * "some-prop"       "state"          "'some-prop': ctx['state']"
    * "onClick.bind"    "onClick"        "onClick: bind(ctx, ctx['onClick'])"
    */
-  formatProp(name: string, value: string): string {
+  formatProp(
+    name: string,
+    value: string,
+    attrsTranslationCtx: { [name: string]: string } | null,
+    translationCtx: string
+  ): string {
     if (name.endsWith(".translate")) {
-      value = toStringExpression(this.translateFn(value));
+      const attrTranslationCtx = attrsTranslationCtx?.[name] || translationCtx;
+      value = toStringExpression(this.translateFn(value, attrTranslationCtx));
     } else {
       value = this.captureExpression(value);
     }
@@ -1163,8 +1176,14 @@ export class CodeGenerator {
     return `${name}: ${value || undefined}`;
   }
 
-  formatPropObject(obj: { [prop: string]: any }): string[] {
-    return Object.entries(obj).map(([k, v]) => this.formatProp(k, v));
+  formatPropObject(
+    obj: { [prop: string]: any },
+    attrsTranslationCtx: { [name: string]: string } | null,
+    translationCtx: string
+  ): string[] {
+    return Object.entries(obj).map(([k, v]) =>
+      this.formatProp(k, v, attrsTranslationCtx, translationCtx)
+    );
   }
 
   getPropString(props: string[], dynProps: string | null): string {
@@ -1181,7 +1200,9 @@ export class CodeGenerator {
     let { block } = ctx;
     // props
     const hasSlotsProp = "slots" in (ast.props || {});
-    const props: string[] = ast.props ? this.formatPropObject(ast.props) : [];
+    const props: string[] = ast.props
+      ? this.formatPropObject(ast.props, ast.propsTranslationCtx, ctx.translationCtx)
+      : [];
 
     // slots
     let slotDef: string = "";
@@ -1205,7 +1226,13 @@ export class CodeGenerator {
           params.push(`__scope: "${scope}"`);
         }
         if (ast.slots[slotName].attrs) {
-          params.push(...this.formatPropObject(ast.slots[slotName].attrs!));
+          params.push(
+            ...this.formatPropObject(
+              ast.slots[slotName].attrs!,
+              ast.slots[slotName].attrsTranslationCtx,
+              ctx.translationCtx
+            )
+          );
         }
         const slotInfo = `{${params.join(", ")}}`;
         slotStr.push(`'${slotName}': ${slotInfo}`);
@@ -1332,7 +1359,9 @@ export class CodeGenerator {
       key = this.generateComponentKey(key);
     }
 
-    const props = ast.attrs ? this.formatPropObject(ast.attrs) : [];
+    const props = ast.attrs
+      ? this.formatPropObject(ast.attrs, ast.attrsTranslationCtx, ctx.translationCtx)
+      : [];
     const scope = this.getPropString(props, dynProps);
     if (ast.defaultContent) {
       const name = this.compileInNewTarget("defaultContent", ast.defaultContent, ctx);
@@ -1362,6 +1391,15 @@ export class CodeGenerator {
   compileTTranslation(ast: ASTTranslation, ctx: Context): string | null {
     if (ast.content) {
       return this.compileAST(ast.content, Object.assign({}, ctx, { translate: false }));
+    }
+    return null;
+  }
+  compileTTranslationContext(ast: ASTTranslationContext, ctx: Context): string | null {
+    if (ast.content) {
+      return this.compileAST(
+        ast.content,
+        Object.assign({}, ctx, { translationCtx: ast.translationCtx })
+      );
     }
     return null;
   }

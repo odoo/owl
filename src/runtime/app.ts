@@ -29,15 +29,6 @@ export interface AppConfig<P, E> extends TemplateSetConfig, RootConfig<P, E> {
 
 let hasBeenLogged = false;
 
-export const DEV_MSG = () => {
-  const hash = (window as any).owl ? (window as any).owl.__info__.hash : "master";
-
-  return `Owl is running in 'dev' mode.
-
-This is not suitable for production use.
-See https://github.com/odoo/owl/blob/${hash}/doc/reference/app.md#configuration for more information.`;
-};
-
 const apps = new Set<App>();
 
 declare global {
@@ -88,7 +79,7 @@ export class App<
     }
     this.warnIfNoStaticProps = config.warnIfNoStaticProps || false;
     if (this.dev && !config.test && !hasBeenLogged) {
-      console.info(DEV_MSG());
+      console.info(`Owl is running in 'dev' mode.`);
       hasBeenLogged = true;
     }
     const env = config.env || {};

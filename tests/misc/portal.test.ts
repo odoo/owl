@@ -11,7 +11,6 @@ import {
   useState,
 } from "../../src";
 import { xml } from "../../src/";
-import { DEV_MSG } from "../../src/runtime/app";
 import { elem, makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
@@ -30,7 +29,7 @@ snapshotEverything();
 
 beforeAll(() => {
   console.info = (message: any) => {
-    if (message === DEV_MSG()) {
+    if (message === `Owl is running in 'dev' mode.`) {
       return;
     }
     info(message);

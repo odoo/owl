@@ -1,6 +1,6 @@
 import { makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
 import { Component, onError, xml, mount, OwlError, useState } from "../../src";
-import { App, DEV_MSG } from "../../src/runtime/app";
+import { App } from "../../src/runtime/app";
 import { validateProps } from "../../src/runtime/template_helpers";
 import { Schema } from "../../src/runtime/validation";
 
@@ -13,7 +13,7 @@ let mockConsoleWarn: any;
 
 beforeAll(() => {
   console.info = (message: any) => {
-    if (message === DEV_MSG()) {
+    if (message === `Owl is running in 'dev' mode.`) {
       return;
     }
     info(message);

@@ -36,8 +36,15 @@ export function useEnv<E extends Env>(): E {
 
 function extendEnv(currentEnv: Object, extension: Object): Object {
   const env = Object.create(currentEnv);
-  const descrs = Object.getOwnPropertyDescriptors(extension);
-  return Object.freeze(Object.defineProperties(env, descrs));
+  while (extension !== Object.prototype) {
+    const descrs = Object.getOwnPropertyDescriptors(extension);
+    Object.defineProperties(env, descrs);
+    for (const key in descrs) {
+      descrs[key].configurable = true;
+    }
+    extension = Object.getPrototypeOf(extension);
+  }
+  return Object.freeze(env);
 }
 
 /**

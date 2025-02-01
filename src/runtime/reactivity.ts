@@ -227,6 +227,30 @@ export function reactive<T extends Target>(target: T, callback: Callback = NO_CA
     const proxy = new Proxy(target, handler as ProxyHandler<T>) as Reactive<T>;
     reactivesForTarget.set(callback, proxy);
     targets.set(proxy, target);
+    // FIXME: this probably slows down reactive creation significantly, we probably don't want to do
+    // it all the time. Maybe should be a separate function.
+    const derivedDescriptors = Object.entries(Object.getOwnPropertyDescriptors(target)).filter(
+      ([k, descriptor]) => {
+        if (toRaw(descriptor.value)?.[IS_DERIVED_DESCRIPTOR]) {
+          delete target[k as keyof typeof target]; // prevent circular call in effect below
+          return true;
+        }
+        return false;
+      }
+    );
+    for (const [
+      key,
+      {
+        value: [deps, compute],
+      },
+    ] of derivedDescriptors) {
+      effect(
+        (proxy, deps) => {
+          proxy[key as keyof typeof proxy] = Reflect.apply(compute, proxy, deps);
+        },
+        [proxy, deps]
+      );
+    }
   }
   return reactivesForTarget.get(callback) as Reactive<T>;
 }
@@ -462,4 +486,19 @@ function collectionsProxyHandler<T extends Collection>(
       return possiblyReactive(target[key], callback);
     },
   }) as ProxyHandler<T>;
+}
+
+const IS_DERIVED_DESCRIPTOR = Symbol("is derived descriptor");
+export function derived<T extends Reactive<any>[], U>(deps: T, compute: (...args: T) => U) {
+  return Object.assign([deps, compute], { [IS_DERIVED_DESCRIPTOR]: true }) as unknown as U;
+}
+
+/**
+ * Creates a side-effect that runs based on the content of reactive objects.
+ */
+export function effect<T extends object[]>(cb: (...args: [...T]) => void, deps: [...T]) {
+  const reactiveDeps = reactive(deps, () => {
+    cb(...reactiveDeps);
+  });
+  cb(...reactiveDeps);
 }

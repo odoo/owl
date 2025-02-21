@@ -1350,17 +1350,16 @@ export class CodeGenerator {
       isMultiple = isMultiple || this.slotNames.has(ast.name);
       this.slotNames.add(ast.name);
     }
-    const dynProps = ast.attrs ? ast.attrs["t-props"] : null;
-    if (ast.attrs) {
-      delete ast.attrs["t-props"];
-    }
+    const attrs = { ...ast.attrs };
+    const dynProps = attrs["t-props"];
+    delete attrs["t-props"];
     let key = this.target.loopLevel ? `key${this.target.loopLevel}` : "key";
     if (isMultiple) {
       key = this.generateComponentKey(key);
     }
 
     const props = ast.attrs
-      ? this.formatPropObject(ast.attrs, ast.attrsTranslationCtx, ctx.translationCtx)
+      ? this.formatPropObject(attrs, ast.attrsTranslationCtx, ctx.translationCtx)
       : [];
     const scope = this.getPropString(props, dynProps);
     if (ast.defaultContent) {

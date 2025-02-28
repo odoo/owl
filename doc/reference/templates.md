@@ -193,6 +193,15 @@ The first `t-out` will act as a `t-esc` directive, which means that the content
 of `value1` will be escaped. However, since `value2` has been tagged as a markup,
 this will be injected as html.
 
+`markup` can also be used as a tag function, allowing the interpolated values to
+be safely escaped:
+
+```js
+const maliciousInput = "<script>alert('💥💥')</script>";
+// <b>&lt;script&gt;alert(&#x27;💥💥&#x27;)&lt;/script&gt;</b>
+const value = markup`<b>${maliciousInput}</b>`;
+```
+
 ### Setting Variables
 
 QWeb allows creating variables from within the template, to memoize a computation (to use it multiple times), give a piece of data a clearer name, ...

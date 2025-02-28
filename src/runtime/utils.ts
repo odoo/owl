@@ -81,10 +81,50 @@ export async function loadFile(url: string): Promise<string> {
  */
 export class Markup extends String {}
 
+function _escapeHtml(str: any): string | Markup {
+  if (str instanceof Markup) {
+    return str;
+  }
+  if (str === undefined) {
+    return "";
+  }
+  if (typeof str === "number") {
+    return String(str);
+  }
+  [
+    ["&", "&amp;"],
+    ["<", "&lt;"],
+    [">", "&gt;"],
+    ["'", "&#x27;"],
+    ['"', "&quot;"],
+    ["`", "&#x60;"],
+  ].forEach((pairs) => {
+    str = String(str).replace(new RegExp(pairs[0], "g"), pairs[1]);
+  });
+  return str;
+}
+
 /*
  * Marks a value as safe, that is, a value that can be injected as HTML directly.
  * It should be used to wrap the value passed to a t-out directive to allow a raw rendering.
+ *
+ * If called as a tag function, the interpolated strings are escaped.
  */
-export function markup(value: any) {
-  return new Markup(value);
+export function markup(strings: TemplateStringsArray, ...placeholders: unknown[]): Markup;
+export function markup(value: string): Markup;
+export function markup(
+  valueOrStrings: string | TemplateStringsArray,
+  ...placeholders: unknown[]
+): Markup {
+  if (!Array.isArray(valueOrStrings)) {
+    return new Markup(valueOrStrings);
+  }
+  const strings = valueOrStrings;
+  let acc = "";
+  let i = 0;
+  for (; i < placeholders.length; ++i) {
+    acc += strings[i] + _escapeHtml(placeholders[i]);
+  }
+  acc += strings[i];
+  return new Markup(acc);
 }

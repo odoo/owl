@@ -1,4 +1,4 @@
-import { batched, EventBus } from "../src/runtime/utils";
+import { batched, EventBus, markup } from "../src/runtime/utils";
 import { nextMicroTick } from "./helpers";
 
 describe("event bus behaviour", () => {
@@ -69,5 +69,35 @@ describe("batched", () => {
     expect(n).toBe(2);
     await nextMicroTick();
     expect(n).toBe(2);
+  });
+});
+
+const Markup = markup("").constructor;
+describe("markup", () => {
+  test("string is flagged as safe", () => {
+    const html = markup("<blink>Hello</blink>");
+    expect(html).toBeInstanceOf(Markup);
+  });
+  describe("tag function", () => {
+    test("interpolated values are escaped", () => {
+      const maliciousInput = "<script>alert('💥💥')</script>";
+      const html = markup`<b>${maliciousInput}</b>`;
+      expect(html.toString()).toBe("<b>&lt;script&gt;alert(&#x27;💥💥&#x27;)&lt;/script&gt;</b>");
+      expect(html).toBeInstanceOf(Markup);
+    });
+    test("interpolated markups aren't escaped", () => {
+      const shouldBeEscaped = "<script>alert('should be escaped')</script>";
+      const shouldnt = markup("<b>this is safe</b>");
+      const html = markup`<div>${shouldBeEscaped} ${shouldnt}</div>`;
+      expect(html.toString()).toBe(
+        "<div>&lt;script&gt;alert(&#x27;should be escaped&#x27;)&lt;/script&gt; <b>this is safe</b></div>"
+      );
+      expect(html).toBeInstanceOf(Markup);
+    });
+    test("quotes in interpolated values are escaped", () => {
+      const imgUrl = `lol" onerror="alert('xss')`;
+      const html = markup`<img src="${imgUrl}">`;
+      expect(html.toString()).toBe(`<img src="lol&quot; onerror=&quot;alert(&#x27;xss&#x27;)">`);
+    });
   });
 });

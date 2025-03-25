@@ -322,7 +322,7 @@ dist/
     "webpack-dev-server": "^3.10.2"
   },
   "dependencies": {
-    "@odoo/owl": "^1.0.4"
+    "@odoo/owl": "^2.6.1"
   },
   "babel": {
     "plugins": ["@babel/plugin-proposal-class-properties"],

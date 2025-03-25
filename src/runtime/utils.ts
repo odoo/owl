@@ -35,13 +35,43 @@ export function inOwnerDocument(el?: HTMLElement) {
   return rootNode instanceof ShadowRoot && el.ownerDocument.contains(rootNode.host);
 }
 
+/**
+ * Determine whether the given element is contained in a specific root documnet:
+ * either directly or with a shadow root in between or in an iframe.
+ */
+function isAttachedToDocument(
+  element: HTMLElement | ShadowRoot,
+  documentElement: Document
+): boolean {
+  let current: Node = element;
+  const shadowRoot = documentElement.defaultView!.ShadowRoot;
+  while (current) {
+    if (current === documentElement) {
+      return true;
+    }
+    if (current.parentNode) {
+      current = current.parentNode;
+    } else if (current instanceof shadowRoot && current.host) {
+      current = current.host;
+    } else {
+      return false;
+    }
+  }
+  return false;
+}
+
 export function validateTarget(target: HTMLElement | ShadowRoot) {
   // Get the document and HTMLElement corresponding to the target to allow mounting in iframes
   const document = target && target.ownerDocument;
   if (document) {
-    const HTMLElement = document.defaultView!.HTMLElement;
+    if (!document.defaultView) {
+      throw new OwlError(
+        "Cannot mount a component: the target document is not attached to a window (defaultView is missing)"
+      );
+    }
+    const HTMLElement = document.defaultView.HTMLElement;
     if (target instanceof HTMLElement || target instanceof ShadowRoot) {
-      if (!document.body.contains(target instanceof HTMLElement ? target : target.host)) {
+      if (!isAttachedToDocument(target, document)) {
         throw new OwlError("Cannot mount a component on a detached dom node");
       }
       return;

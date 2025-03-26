@@ -81,15 +81,15 @@ export async function loadFile(url: string): Promise<string> {
  */
 export class Markup extends String {}
 
-function _escapeHtml(str: any): string | Markup {
+export function htmlEscape(str: any): Markup {
   if (str instanceof Markup) {
     return str;
   }
   if (str === undefined) {
-    return "";
+    return markup("");
   }
   if (typeof str === "number") {
-    return String(str);
+    return markup(String(str));
   }
   [
     ["&", "&amp;"],
@@ -101,7 +101,7 @@ function _escapeHtml(str: any): string | Markup {
   ].forEach((pairs) => {
     str = String(str).replace(new RegExp(pairs[0], "g"), pairs[1]);
   });
-  return str;
+  return markup(str);
 }
 
 /*
@@ -123,7 +123,7 @@ export function markup(
   let acc = "";
   let i = 0;
   for (; i < placeholders.length; ++i) {
-    acc += strings[i] + _escapeHtml(placeholders[i]);
+    acc += strings[i] + htmlEscape(placeholders[i]);
   }
   acc += strings[i];
   return new Markup(acc);

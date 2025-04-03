@@ -254,7 +254,16 @@ class CodeTarget {
   }
 }
 
-const TRANSLATABLE_ATTRS = ["label", "title", "placeholder", "alt"];
+const TRANSLATABLE_ATTRS = [
+  "alt",
+  "aria-label",
+  "aria-placeholder",
+  "aria-roledescription",
+  "aria-valuetext",
+  "label",
+  "placeholder",
+  "title",
+];
 const translationRE = /^(\s*)([\s\S]+?)(\s*)$/;
 
 export class CodeGenerator {

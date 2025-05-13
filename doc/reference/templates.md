@@ -680,7 +680,7 @@ class MyComponent extends Component {
 mount(MyComponent, document.body);
 ```
 
-This function simply generates an unique string id, and register the template
+This function simply generates a unique string id, and register the template
 under that id in the internals of Owl, then return the id.
 
 ## Rendering svg

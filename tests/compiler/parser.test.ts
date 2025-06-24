@@ -1971,6 +1971,54 @@ describe("qweb parser", () => {
     });
   });
 
+  test('t-translation="off": interaction with t-esc', async () => {
+    expect(parse(`<span t-esc="a" t-translation="off"/>`)).toEqual({
+      type: ASTType.TTranslation,
+      content: {
+        attrs: null,
+        attrsTranslationCtx: null,
+        content: [
+          {
+            defaultValue: "",
+            expr: "a",
+            type: ASTType.TEsc,
+          },
+        ],
+        dynamicTag: null,
+        model: null,
+        ns: null,
+        on: null,
+        ref: null,
+        tag: "span",
+        type: ASTType.DomNode,
+      },
+    });
+  });
+
+  test('t-translation="off": interaction with t-out', async () => {
+    expect(parse(`<span t-out="a" t-translation="off"/>`)).toEqual({
+      type: ASTType.TTranslation,
+      content: {
+        attrs: null,
+        attrsTranslationCtx: null,
+        content: [
+          {
+            body: null,
+            expr: "a",
+            type: ASTType.TOut,
+          },
+        ],
+        dynamicTag: null,
+        model: null,
+        ns: null,
+        on: null,
+        ref: null,
+        tag: "span",
+        type: ASTType.DomNode,
+      },
+    });
+  });
+
   // ---------------------------------------------------------------------------
   // t-translation-context
   // ---------------------------------------------------------------------------
@@ -2005,6 +2053,56 @@ describe("qweb parser", () => {
       },
       translationCtx: "fr",
       type: ASTType.TTranslationContext,
+    });
+  });
+
+  test("t-translation-context: interaction with t-esc", async () => {
+    expect(parse(`<span t-esc="a" t-translation-context="fr"/>`)).toEqual({
+      type: ASTType.TTranslationContext,
+      content: {
+        attrs: null,
+        attrsTranslationCtx: null,
+        content: [
+          {
+            defaultValue: "",
+            expr: "a",
+            type: ASTType.TEsc,
+          },
+        ],
+        dynamicTag: null,
+        model: null,
+        ns: null,
+        on: null,
+        ref: null,
+        tag: "span",
+        type: ASTType.DomNode,
+      },
+      translationCtx: "fr",
+    });
+  });
+
+  test("t-translation-context: interaction with t-out", async () => {
+    expect(parse(`<span t-out="a" t-translation-context="fr"/>`)).toEqual({
+      type: ASTType.TTranslationContext,
+      content: {
+        attrs: null,
+        attrsTranslationCtx: null,
+        content: [
+          {
+            body: null,
+            expr: "a",
+            type: ASTType.TOut,
+          },
+        ],
+        dynamicTag: null,
+        model: null,
+        ns: null,
+        on: null,
+        ref: null,
+        tag: "span",
+        type: ASTType.DomNode,
+      },
+      translationCtx: "fr",
     });
   });
 

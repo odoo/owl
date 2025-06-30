@@ -355,7 +355,7 @@ function parseTDebugLog(node: Element, ctx: ParsingContext): AST | null {
 // -----------------------------------------------------------------------------
 // Regular dom node
 // -----------------------------------------------------------------------------
-const hasDotAtTheEnd = /\.[\w_]+\s*$/;
+const hasDotAtTheEnd = /\.[\w$_]+\s*$/;
 const hasBracketsAtTheEnd = /\[[^\[]+\]\s*$/;
 
 const ROOT_SVG_TAGS = new Set(["svg", "g", "path"]);

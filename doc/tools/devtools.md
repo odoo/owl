@@ -2,7 +2,7 @@
 
 The owl devtools browser extension is an extension available on chrome or firefox which adds an owl tab
 to the browser devtools in order to inspect all owl apps that are present on any web page, their components
-and allows to interract with their data to a certain extend. There is also a profiler available to visualize
+and allows to interact with their data to a certain extend. There is also a profiler available to visualize
 the components' lifecycle and be able to trace their origin.
 
 See the [`devtools doc`](devtools_guide.md) for more information.

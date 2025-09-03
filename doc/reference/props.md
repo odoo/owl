@@ -320,6 +320,28 @@ class ComponentB extends owl.Component {
 
 Note: the props validation code is done by using the [validate utility function](utils.md#validate).
 
+### `slots` prop
+
+If a component that uses [slots](slots.md) also lists or validates its props, then
+you will have to explicitely allow the `slots` prop (with an `Object` type), or
+allow extra props using the `*` notation mentioned above. This is because slots
+are provided to a component [as props](slots.md#slots-and-props).
+
+For example:
+
+```js
+class MyComponent extends Component {
+  static props = [someProp, slots?];
+}
+
+class MyComponentWithValidation extends Component {
+  static props = {
+    someProp: {type: Number, optional: true},
+    slots : {type: Object, optional: true},
+  }
+}
+```
+
 ## Good Practices
 
 A `props` object is a collection of values that come from the parent. As such,

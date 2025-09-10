@@ -103,3 +103,18 @@ exports[`t-key t-key on sub dom node pushes a child block in its parent 2`] = `
   }
 }"
 `;
+
+exports[`t-key t-key: interaction with t-esc 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<p><block-text-0/></p>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const tKey_1 = ctx['key'];
+    let txt1 = ctx['text'];
+    return toggler(tKey_1, block1([txt1]));
+  }
+}"
+`;

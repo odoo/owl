@@ -129,6 +129,21 @@ describe("translation support", () => {
     expect(fixture.innerHTML).toBe("untranslated");
   });
 
+  test("body of t-sets inside translation=off are not translated 2", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+        <t>
+          <t t-translation="off" t-set="label">untranslated</t>
+          <t t-esc="label"/>
+        </t>`;
+    }
+
+    const translateFn = () => "translated";
+
+    await mount(SomeComponent, fixture, { translateFn });
+    expect(fixture.innerHTML).toBe("untranslated");
+  });
+
   test("body of t-sets with html content are translated", async () => {
     class SomeComponent extends Component {
       static template = xml`
@@ -169,6 +184,22 @@ describe("translation support", () => {
 
     await mount(SomeComponent, fixture, { translateFn });
     expect(fixture.innerHTML).toBe("translated");
+  });
+
+  test("t-translation with several children", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+          <div>
+            <t t-translation="off">
+                <div/>
+                <div/>
+            </t>
+            <t t-if="true"/>
+        </div>
+      `;
+    }
+    await mount(SomeComponent, fixture);
+    expect(fixture.outerHTML).toBe("<div><div><div></div><div></div></div></div>");
   });
 });
 
@@ -292,5 +323,21 @@ describe("translation context", () => {
     expect(translateFn).toHaveBeenCalledWith("foo", "fr");
     expect(translateFn).toHaveBeenCalledWith("param", "fr");
     expect(translateFn).toHaveBeenCalledWith("title", "pt");
+  });
+
+  test("t-translation-context with several children", async () => {
+    class SomeComponent extends Component {
+      static template = xml`
+          <div>
+            <t t-translation-context="ctx">
+                <div/>
+                <div/>
+            </t>
+            <t t-if="true"/>
+        </div>
+      `;
+    }
+    await mount(SomeComponent, fixture);
+    expect(fixture.outerHTML).toBe("<div><div><div></div><div></div></div></div>");
   });
 });

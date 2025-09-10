@@ -995,7 +995,7 @@ export class CodeGenerator {
     const isNewBlock = !block || forceNewBlock;
     let codeIdx = this.target.code.length;
     if (isNewBlock) {
-      const n = ast.content.filter((c) => c.type !== ASTType.TSet).length;
+      const n = ast.content.filter((c) => !c.hasNoRepresentation).length;
       let result: string | null = null;
       if (n <= 1) {
         for (let child of ast.content) {
@@ -1009,15 +1009,15 @@ export class CodeGenerator {
     let index = 0;
     for (let i = 0, l = ast.content.length; i < l; i++) {
       const child = ast.content[i];
-      const isTSet = child.type === ASTType.TSet;
+      const forceNewBlock = !child.hasNoRepresentation;
       const subCtx = createContext(ctx, {
         block,
         index,
-        forceNewBlock: !isTSet,
+        forceNewBlock,
         isLast: ctx.isLast && i === l - 1,
       });
       this.compileAST(child, subCtx);
-      if (!isTSet) {
+      if (forceNewBlock) {
         index++;
       }
     }

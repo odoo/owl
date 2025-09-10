@@ -692,6 +692,7 @@ describe("qweb parser", () => {
       value: "value",
       defaultValue: null,
       body: null,
+      hasNoRepresentation: true,
     });
   });
 
@@ -702,6 +703,7 @@ describe("qweb parser", () => {
       defaultValue: "ok",
       value: null,
       body: null,
+      hasNoRepresentation: true,
     });
 
     expect(parse(`<t t-set="v"><div>ok</div></t>`)).toEqual({
@@ -723,6 +725,7 @@ describe("qweb parser", () => {
           content: [{ type: ASTType.Text, value: "ok" }],
         },
       ],
+      hasNoRepresentation: true,
     });
 
     expect(parse(`<t t-set="v"><div>ok</div>abc</t>`)).toEqual({
@@ -745,6 +748,7 @@ describe("qweb parser", () => {
         },
         { type: ASTType.Text, value: "abc" },
       ],
+      hasNoRepresentation: true,
     });
   });
 
@@ -758,6 +762,7 @@ describe("qweb parser", () => {
         defaultValue: "ok",
         value: null,
         body: null,
+        hasNoRepresentation: true,
       },
       tElif: null,
       tElse: null,
@@ -783,7 +788,14 @@ describe("qweb parser", () => {
           condition: "flag",
           content: { type: ASTType.Text, value: "1" },
           tElif: null,
-          tElse: { type: ASTType.TSet, name: "ourvar", value: "0", defaultValue: null, body: null },
+          tElse: {
+            type: ASTType.TSet,
+            name: "ourvar",
+            value: "0",
+            defaultValue: null,
+            body: null,
+            hasNoRepresentation: true,
+          },
         },
       ],
     });

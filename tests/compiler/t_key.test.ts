@@ -63,4 +63,10 @@ describe("t-key", () => {
 
     expect(renderToString(template2, { key: "1" })).toBe("<div><h1></h1></div>");
   });
+
+  test("t-key: interaction with t-esc", async () => {
+    const template = `<p t-key="key" t-esc="text"/>`;
+
+    expect(renderToString(template, { key: "1", text: "abc" })).toBe("<p>abc</p>");
+  });
 });

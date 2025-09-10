@@ -38,4 +38,34 @@ describe("debugging", () => {
     expect(console.log).toHaveBeenCalledWith(45);
     console.log = consoleLog;
   });
+
+  test("t-log: interaction with t-set", () => {
+    const consoleLog = console.log;
+    console.log = jest.fn();
+
+    const template = `
+      <t>
+        <t t-log="foo" t-set="foo" t-value="42"/>
+        <t t-log="bar" t-set="bar" t-value="49"/>
+        <span t-esc="foo + bar"/>
+      </t>
+    `;
+    snapshotTemplate(template);
+    renderToString(template);
+    expect(console.log).toHaveBeenCalledWith(undefined);
+    expect(console.log).toHaveBeenCalledWith(undefined);
+    console.log = consoleLog;
+  });
+
+  test("t-debug: interaction with t-set", () => {
+    const template = `
+      <t>
+        <t t-debug="" t-set="foo" t-value="42"/>
+        <t t-debug="" t-set="bar" t-value="49"/>
+        <span t-esc="foo + bar"/>
+      </t>
+    `;
+    snapshotTemplate(template);
+    renderToString(template);
+  });
 });

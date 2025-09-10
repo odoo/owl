@@ -31,12 +31,17 @@ export const enum ASTType {
   TPortal,
 }
 
-export interface ASTText {
+export interface BaseAST {
+  type: ASTType;
+  hasNoRepresentation?: true;
+}
+
+export interface ASTText extends BaseAST {
   type: ASTType.Text;
   value: string;
 }
 
-export interface ASTComment {
+export interface ASTComment extends BaseAST {
   type: ASTType.Comment;
   value: string;
 }
@@ -52,7 +57,7 @@ interface TModelInfo {
   specialInitTargetAttr: string | null;
 }
 
-export interface ASTDomNode {
+export interface ASTDomNode extends BaseAST {
   type: ASTType.DomNode;
   tag: string;
   content: AST[];
@@ -65,24 +70,24 @@ export interface ASTDomNode {
   ns: string | null;
 }
 
-export interface ASTMulti {
+export interface ASTMulti extends BaseAST {
   type: ASTType.Multi;
   content: AST[];
 }
 
-export interface ASTTEsc {
+export interface ASTTEsc extends BaseAST {
   type: ASTType.TEsc;
   expr: string;
   defaultValue: string;
 }
 
-export interface ASTTOut {
+export interface ASTTOut extends BaseAST {
   type: ASTType.TOut;
   expr: string;
   body: AST[] | null;
 }
 
-export interface ASTTif {
+export interface ASTTif extends BaseAST {
   type: ASTType.TIf;
   condition: string;
   content: AST;
@@ -90,15 +95,16 @@ export interface ASTTif {
   tElse: AST | null;
 }
 
-export interface ASTTSet {
+export interface ASTTSet extends BaseAST {
   type: ASTType.TSet;
   name: string;
   value: string | null; // value defined in attribute
   defaultValue: string | null; // value defined in body, if text
   body: AST[] | null; // content of body if not text
+  hasNoRepresentation: true;
 }
 
-export interface ASTTForEach {
+export interface ASTTForEach extends BaseAST {
   type: ASTType.TForEach;
   collection: string;
   elem: string;
@@ -111,13 +117,13 @@ export interface ASTTForEach {
   key: string | null;
 }
 
-export interface ASTTKey {
+export interface ASTTKey extends BaseAST {
   type: ASTType.TKey;
   expr: string;
   content: AST;
 }
 
-export interface ASTTCall {
+export interface ASTTCall extends BaseAST {
   type: ASTType.TCall;
   name: string;
   body: AST[] | null;
@@ -132,7 +138,7 @@ interface SlotDefinition {
   attrsTranslationCtx: Attrs | null;
 }
 
-export interface ASTComponent {
+export interface ASTComponent extends BaseAST {
   type: ASTType.TComponent;
   name: string;
   isDynamic: boolean;
@@ -143,7 +149,7 @@ export interface ASTComponent {
   slots: { [name: string]: SlotDefinition } | null;
 }
 
-export interface ASTSlot {
+export interface ASTSlot extends BaseAST {
   type: ASTType.TSlot;
   name: string;
   attrs: Attrs | null;
@@ -152,34 +158,34 @@ export interface ASTSlot {
   defaultContent: AST | null;
 }
 
-export interface ASTTCallBlock {
+export interface ASTTCallBlock extends BaseAST {
   type: ASTType.TCallBlock;
   name: string;
 }
 
-export interface ASTDebug {
+export interface ASTDebug extends BaseAST {
   type: ASTType.TDebug;
   content: AST | null;
 }
 
-export interface ASTLog {
+export interface ASTLog extends BaseAST {
   type: ASTType.TLog;
   expr: string;
   content: AST | null;
 }
 
-export interface ASTTranslation {
+export interface ASTTranslation extends BaseAST {
   type: ASTType.TTranslation;
   content: AST | null;
 }
 
-export interface ASTTranslationContext {
+export interface ASTTranslationContext extends BaseAST {
   type: ASTType.TTranslationContext;
   content: AST | null;
   translationCtx: string;
 }
 
-export interface ASTTPortal {
+export interface ASTTPortal extends BaseAST {
   type: ASTType.TPortal;
   target: string;
   content: AST;
@@ -255,9 +261,9 @@ function parseNode(node: Node, ctx: ParsingContext): AST | null {
     parseTCallBlock(node, ctx) ||
     parseTTranslation(node, ctx) ||
     parseTTranslationContext(node, ctx) ||
+    parseTKey(node, ctx) ||
     parseTEscNode(node, ctx) ||
     parseTOutNode(node, ctx) ||
-    parseTKey(node, ctx) ||
     parseTSlot(node, ctx) ||
     parseComponent(node, ctx) ||
     parseDOMNode(node, ctx) ||
@@ -334,20 +340,30 @@ function parseTCustom(node: Element, ctx: ParsingContext): AST | null {
 function parseTDebugLog(node: Element, ctx: ParsingContext): AST | null {
   if (node.hasAttribute("t-debug")) {
     node.removeAttribute("t-debug");
-    return {
+    const content = parseNode(node, ctx);
+    const ast: ASTDebug = {
       type: ASTType.TDebug,
-      content: parseNode(node, ctx),
+      content,
     };
+    if (content?.hasNoRepresentation) {
+      ast.hasNoRepresentation = true;
+    }
+    return ast;
   }
 
   if (node.hasAttribute("t-log")) {
     const expr = node.getAttribute("t-log")!;
     node.removeAttribute("t-log");
-    return {
+    const content = parseNode(node, ctx);
+    const ast: ASTLog = {
       type: ASTType.TLog,
       expr,
-      content: parseNode(node, ctx),
+      content,
     };
+    if (content?.hasNoRepresentation) {
+      ast.hasNoRepresentation = true;
+    }
+    return ast;
   }
   return null;
 }
@@ -598,11 +614,19 @@ function parseTKey(node: Element, ctx: ParsingContext): AST | null {
   }
   const key = node.getAttribute("t-key")!;
   node.removeAttribute("t-key");
-  const body = parseNode(node, ctx);
-  if (!body) {
+  const content = parseNode(node, ctx);
+  if (!content) {
     return null;
   }
-  return { type: ASTType.TKey, expr: key, content: body };
+  const ast: ASTTKey = {
+    type: ASTType.TKey,
+    expr: key,
+    content,
+  };
+  if (content.hasNoRepresentation) {
+    ast.hasNoRepresentation = true;
+  }
+  return ast;
 }
 
 // -----------------------------------------------------------------------------
@@ -724,7 +748,7 @@ function parseTSetNode(node: Element, ctx: ParsingContext): AST | null {
   if (node.textContent !== node.innerHTML) {
     body = parseChildren(node, ctx);
   }
-  return { type: ASTType.TSet, name, value, defaultValue, body };
+  return { type: ASTType.TSet, name, value, defaultValue, body, hasNoRepresentation: true };
 }
 
 // -----------------------------------------------------------------------------
@@ -916,20 +940,42 @@ function parseTSlot(node: Element, ctx: ParsingContext): AST | null {
 // Translation
 // -----------------------------------------------------------------------------
 
+function wrapInTTranslationAST(r: AST | null) {
+  const ast: ASTTranslation = { type: ASTType.TTranslation, content: r };
+  if (r?.hasNoRepresentation) {
+    ast.hasNoRepresentation = true;
+  }
+  return ast;
+}
+
 function parseTTranslation(node: Element, ctx: ParsingContext): AST | null {
   if (node.getAttribute("t-translation") !== "off") {
     return null;
   }
   node.removeAttribute("t-translation");
-  return {
-    type: ASTType.TTranslation,
-    content: parseNode(node, ctx),
-  };
+  const result = parseNode(node, ctx);
+  if (result?.type === ASTType.Multi) {
+    const children = result.content.map(wrapInTTranslationAST);
+    return makeASTMulti(children);
+  }
+  return wrapInTTranslationAST(result);
 }
 
 // -----------------------------------------------------------------------------
 // Translation Context
 // -----------------------------------------------------------------------------
+
+function wrapInTTranslationContextAST(r: AST | null, translationCtx: string) {
+  const ast: ASTTranslationContext = {
+    type: ASTType.TTranslationContext,
+    content: r,
+    translationCtx,
+  };
+  if (r?.hasNoRepresentation) {
+    ast.hasNoRepresentation = true;
+  }
+  return ast;
+}
 
 function parseTTranslationContext(node: Element, ctx: ParsingContext): AST | null {
   const translationCtx = node.getAttribute("t-translation-context");
@@ -937,11 +983,12 @@ function parseTTranslationContext(node: Element, ctx: ParsingContext): AST | nul
     return null;
   }
   node.removeAttribute("t-translation-context");
-  return {
-    type: ASTType.TTranslationContext,
-    content: parseNode(node, ctx),
-    translationCtx,
-  };
+  const result = parseNode(node, ctx);
+  if (result?.type === ASTType.Multi) {
+    const children = result.content.map((c) => wrapInTTranslationContextAST(c, translationCtx));
+    return makeASTMulti(children);
+  }
+  return wrapInTTranslationContextAST(result, translationCtx);
 }
 
 // -----------------------------------------------------------------------------
@@ -990,6 +1037,14 @@ function parseChildren(node: Element, ctx: ParsingContext): AST[] {
   return children;
 }
 
+function makeASTMulti(children: AST[]) {
+  const ast: ASTMulti = { type: ASTType.Multi, content: children };
+  if (children.every((c) => c.hasNoRepresentation)) {
+    ast.hasNoRepresentation = true;
+  }
+  return ast;
+}
+
 /**
  * Parse all the child nodes of a given node and return an ast if possible.
  * In the case there are multiple children, they are wrapped in a astmulti.
@@ -1002,7 +1057,7 @@ function parseChildNodes(node: Element, ctx: ParsingContext): AST | null {
     case 1:
       return children[0];
     default:
-      return { type: ASTType.Multi, content: children };
+      return makeASTMulti(children);
   }
 }
 

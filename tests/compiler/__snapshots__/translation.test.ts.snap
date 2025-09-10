@@ -10,8 +10,7 @@ exports[`translation context body of t-sets are translated in context 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"label\\", \`traduit\`);
-    const b2 = text(ctx['label']);
-    return multi([b2]);
+    return text(ctx['label']);
   }
 }"
 `;
@@ -94,6 +93,23 @@ exports[`translation context slot attrs and text contents are translated in cont
 }"
 `;
 
+exports[`translation context t-translation-context with several children 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><div/><div/><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2;
+    if (true) {
+      b2 = text(\`\`);
+    }
+    return block1([], [b2]);
+  }
+}"
+`;
+
 exports[`translation context translation of attributes in context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -139,6 +155,21 @@ exports[`translation support body of t-sets are translated 1`] = `
 `;
 
 exports[`translation support body of t-sets inside translation=off are not translated 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    setContextValue(ctx, \\"label\\", \`untranslated\`);
+    return text(ctx['label']);
+  }
+}"
+`;
+
+exports[`translation support body of t-sets inside translation=off are not translated 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -260,6 +291,23 @@ exports[`translation support t-set and falsy t-value: t-body are translated 1`] 
     ctx[isBoundary] = 1
     setContextValue(ctx, \\"label\\", withDefault(false, \`translated\`));
     return text(ctx['label']);
+  }
+}"
+`;
+
+exports[`translation support t-translation with several children 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><div/><div/><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2;
+    if (true) {
+      b2 = text(\`\`);
+    }
+    return block1([], [b2]);
   }
 }"
 `;

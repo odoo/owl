@@ -330,12 +330,8 @@ describe("rendering semantics", () => {
     expect(fixture.innerHTML).toBe("444");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       Array [
-        "Parent:willRender",
-        "Parent:rendered",
         "Child:willRender",
         "Child:rendered",
-        "Parent:willPatch",
-        "Parent:patched",
         "Child:willPatch",
         "Child:patched",
       ]

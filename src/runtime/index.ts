@@ -32,7 +32,6 @@ export const blockDom = {
   html,
   comment,
 };
-
 export { App, mount } from "./app";
 export { xml } from "./template_set";
 export { Component } from "./component";
@@ -40,6 +39,7 @@ export type { ComponentConstructor } from "./component";
 export { useComponent, useState } from "./component_node";
 export { status } from "./status";
 export { reactive, markRaw, toRaw } from "./reactivity";
+export { effect, withoutReactivity, derived } from "./signals";
 export { useEffect, useEnv, useExternalListener, useRef, useChildSubEnv, useSubEnv } from "./hooks";
 export { batched, EventBus, htmlEscape, whenReady, loadFile, markup } from "./utils";
 export {

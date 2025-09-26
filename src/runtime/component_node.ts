@@ -56,18 +56,6 @@ function applyDefaultProps<P extends object>(props: P, defaultProps: Partial<P>)
  * @see reactive
  */
 export function useState<T extends object>(state: T): T {
-  // const node = getCurrent();
-  // let render = batchedRenderFunctions.get(node)!;
-  // if (!render) {
-  //   render = batched(() => {
-  //     debugger;
-  //     const r = node.render(false);
-  //     return r;
-  //   });
-  //   batchedRenderFunctions.set(node, render);
-  //   // manual implementation of onWillDestroy to break cyclic dependency
-  //   node.willDestroy.push(clearReactivesForCallback.bind(null, render));
-  // }
   return reactive(state);
 }
 

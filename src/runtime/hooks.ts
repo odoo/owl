@@ -99,15 +99,25 @@ export function useEffect<T extends unknown[]>(
       popExecutionContext();
     }
   };
+  const computeDependenciesWithContext = () => {
+    pushExecutionContext(context);
+    let r: any;
+    try {
+      r = computeDependencies();
+    } finally {
+      popExecutionContext();
+    }
+    return r;
+  };
 
   onMounted(() => {
-    dependencies = computeDependencies();
+    dependencies = computeDependenciesWithContext();
     runEffect();
   });
 
   onPatched(() => {
-    const newDeps = computeDependencies();
-    const shouldReapply = newDeps.some((val, i) => val !== dependencies[i]);
+    const newDeps = computeDependenciesWithContext();
+    const shouldReapply = newDeps.some((val: any, i: number) => val !== dependencies[i]);
     if (shouldReapply) {
       dependencies = newDeps;
       if (cleanup) {

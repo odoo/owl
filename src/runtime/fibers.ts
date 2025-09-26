@@ -3,6 +3,7 @@ import type { ComponentNode } from "./component_node";
 import { fibersInError } from "./error_handling";
 import { OwlError } from "../common/owl_error";
 import { STATUS } from "./status";
+import { runWithComputation } from "./signals";
 
 export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
   let current = node.fiber;
@@ -133,12 +134,15 @@ export class Fiber {
     const node = this.node;
     const root = this.root;
     if (root) {
-      try {
-        (this.bdom as any) = true;
-        this.bdom = node.renderFn();
-      } catch (e) {
-        node.app.handleError({ node, error: e });
-      }
+      // todo: should use updateComputation somewhere else.
+      runWithComputation(node.signalComputation, () => {
+        try {
+          (this.bdom as any) = true;
+          this.bdom = node.renderFn();
+        } catch (e) {
+          node.app.handleError({ node, error: e });
+        }
+      });
       root.setCounter(root.counter - 1);
     }
   }

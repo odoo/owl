@@ -1,12 +1,13 @@
+import { OwlError } from "../common/owl_error";
+import { Atom, Computation, ComputationState } from "../common/types";
 import type { App, Env } from "./app";
 import { BDom, VNode } from "./blockdom";
 import { Component, ComponentConstructor, Props } from "./component";
 import { fibersInError } from "./error_handling";
-import { OwlError } from "../common/owl_error";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";
-import { clearReactivesForCallback, getSubscriptions, reactive, targets } from "./reactivity";
+import { reactive } from "./reactivity";
+import { getCurrentComputation, setComputation, withoutReactivity } from "./signals";
 import { STATUS } from "./status";
-import { batched, Callback } from "./utils";
 
 let currentNode: ComponentNode | null = null;
 
@@ -42,7 +43,6 @@ function applyDefaultProps<P extends object>(props: P, defaultProps: Partial<P>)
 // Integration with reactivity system (useState)
 // -----------------------------------------------------------------------------
 
-const batchedRenderFunctions = new WeakMap<ComponentNode, Callback>();
 /**
  * Creates a reactive object that will be observed by the current component.
  * Reading data from the returned object (eg during rendering) will cause the
@@ -54,15 +54,7 @@ const batchedRenderFunctions = new WeakMap<ComponentNode, Callback>();
  * @see reactive
  */
 export function useState<T extends object>(state: T): T {
-  const node = getCurrent();
-  let render = batchedRenderFunctions.get(node)!;
-  if (!render) {
-    render = batched(node.render.bind(node, false));
-    batchedRenderFunctions.set(node, render);
-    // manual implementation of onWillDestroy to break cyclic dependency
-    node.willDestroy.push(clearReactivesForCallback.bind(null, render));
-  }
-  return reactive(state, render);
+  return reactive(state);
 }
 
 // -----------------------------------------------------------------------------
@@ -96,6 +88,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
   willPatch: LifecycleHook[] = [];
   patched: LifecycleHook[] = [];
   willDestroy: LifecycleHook[] = [];
+  signalComputation: Computation;
 
   constructor(
     C: ComponentConstructor<P, E>,
@@ -109,6 +102,12 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     this.parent = parent;
     this.props = props;
     this.parentKey = parentKey;
+    this.signalComputation = {
+      value: undefined,
+      compute: () => this.render(false),
+      sources: new Set<Atom>(),
+      state: ComputationState.EXECUTED,
+    };
     const defaultProps = C.defaultProps;
     props = Object.assign({}, props);
     if (defaultProps) {
@@ -116,16 +115,13 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     }
     const env = (parent && parent.childEnv) || app.env;
     this.childEnv = env;
-    for (const key in props) {
-      const prop = props[key];
-      if (prop && typeof prop === "object" && targets.has(prop)) {
-        props[key] = useState(prop);
-      }
-    }
+    const previousComputation = getCurrentComputation();
+    setComputation(this.signalComputation);
     this.component = new C(props, env, this);
     const ctx = Object.assign(Object.create(this.component), { this: this.component });
     this.renderFn = app.getTemplate(C.template).bind(this.component, ctx, this);
     this.component.setup();
+    setComputation(previousComputation);
     currentNode = null;
   }
 
@@ -142,7 +138,11 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     }
     const component = this.component;
     try {
-      await Promise.all(this.willStart.map((f) => f.call(component)));
+      let prom: Promise<any[]>;
+      withoutReactivity(() => {
+        prom = Promise.all(this.willStart.map((f) => f.call(component)));
+      });
+      await prom!;
     } catch (e) {
       this.app.handleError({ node: this, error: e });
       return;
@@ -257,16 +257,11 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
       applyDefaultProps(props, defaultProps);
     }
 
-    currentNode = this;
-    for (const key in props) {
-      const prop = props[key];
-      if (prop && typeof prop === "object" && targets.has(prop)) {
-        props[key] = useState(prop);
-      }
-    }
-    currentNode = null;
-    const prom = Promise.all(this.willUpdateProps.map((f) => f.call(component, props)));
-    await prom;
+    let prom: Promise<any[]>;
+    withoutReactivity(() => {
+      prom = Promise.all(this.willUpdateProps.map((f) => f.call(component, props)));
+    });
+    await prom!;
     if (fiber !== this.fiber) {
       return;
     }
@@ -382,10 +377,5 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
   // ---------------------------------------------------------------------------
   get name(): string {
     return this.component.constructor.name;
-  }
-
-  get subscriptions(): ReturnType<typeof getSubscriptions> {
-    const render = batchedRenderFunctions.get(this);
-    return render ? getSubscriptions(render) : [];
   }
 }

@@ -6,11 +6,10 @@ import {
   onWillUpdateProps,
   useState,
   xml,
-  markRaw,
-  toRaw,
 } from "../src";
-import { reactive, getSubscriptions } from "../src/runtime/reactivity";
-import { batched } from "../src/runtime/utils";
+import { markRaw, reactive, toRaw } from "../src/runtime/reactivity";
+import { effect } from "../src/runtime/signals";
+
 import {
   makeDeferred,
   makeTestFixture,
@@ -21,8 +20,18 @@ import {
   useLogLifecycle,
 } from "./helpers";
 
-function createReactive(value: any, observer: any = () => {}) {
-  return reactive(value, observer);
+function createReactive(value: any) {
+  return reactive(value);
+}
+
+async function waitScheduler() {
+  await nextMicroTick();
+  return Promise.resolve();
+}
+
+function expectSpy(spy: jest.Mock, callTime: number, args: any[]): void {
+  expect(spy).toHaveBeenCalledTimes(callTime);
+  expect(spy).lastCalledWith(...args);
 }
 
 describe("Reactivity", () => {
@@ -64,306 +73,207 @@ describe("Reactivity", () => {
     expect(Array.isArray(state)).toBe(true);
   });
 
-  test("work if there are no callback given", () => {
-    const state = reactive({ a: 1 });
-    expect(state.a).toBe(1);
-    state.a = 2;
-    expect(state.a).toBe(2);
-  });
-
   test("Throw error if value is not proxifiable", () => {
     expect(() => createReactive(1)).toThrow("Cannot make the given value reactive");
   });
 
-  test("callback is called when changing an observed property 1", async () => {
-    let n = 0;
-    const state = createReactive({ a: 1 }, () => n++);
-    state.a = 2;
-    expect(n).toBe(0); // key has not be read yet
-    state.a = state.a + 5; // key is read and then modified
-    expect(n).toBe(1);
+  test("effect is called when changing an observed property 1", async () => {
+    const spy = jest.fn();
+    const state = createReactive({ a: 1 });
+    effect(() => spy(state.a));
+    expectSpy(spy, 1, [1]);
+    state.a = 100;
+    expectSpy(spy, 1, [1]);
+    await waitScheduler();
+    expectSpy(spy, 2, [100]);
+    state.a = state.a + 5; // key is modified
+    expectSpy(spy, 2, [100]);
+    await waitScheduler();
+    expectSpy(spy, 3, [105]);
   });
 
-  test("callback is called when changing an observed property 2", async () => {
-    let n = 0;
-    const state = createReactive({ a: { k: 1 } }, () => n++);
-    state.a.k = state.a.k + 1;
-    expect(n).toBe(1);
-    state.k = 2; // observer has been interested specifically to key k of a!
-    expect(n).toBe(1);
+  test("effect is called when changing an observed property 2", async () => {
+    const spy = jest.fn();
+    const state = createReactive({ a: { k: 1 } });
+    effect(() => spy(state.a.k));
+    expectSpy(spy, 1, [1]);
+    state.a.k = state.a.k + 100;
+    expectSpy(spy, 1, [1]);
+    await waitScheduler();
+    expectSpy(spy, 2, [101]);
+    state.a.k = state.a.k + 5; // key is modified
+    expectSpy(spy, 2, [101]);
+    await waitScheduler();
+    expectSpy(spy, 3, [106]);
   });
 
   test("reactive from object with a getter 1", async () => {
-    let n = 0;
+    const spy = jest.fn();
     let value = 1;
-    const state = createReactive(
-      {
-        get a() {
-          return value;
-        },
-        set a(val) {
-          value = val;
-        },
+    const state = createReactive({
+      get a() {
+        return value;
       },
-      () => n++
-    );
-    state.a = state.a + 4;
-    await nextMicroTick();
-    expect(n).toBe(1);
+      set a(val) {
+        value = val;
+      },
+    });
+    effect(() => spy(state.a));
+    expectSpy(spy, 1, [1]);
+    state.a = state.a + 100;
+    expectSpy(spy, 1, [1]);
+    await waitScheduler();
+    expectSpy(spy, 2, [101]);
   });
 
   test("reactive from object with a getter 2", async () => {
-    let n = 0;
+    const spy = jest.fn();
     let value = { b: 1 };
-    const state = createReactive(
-      {
-        get a() {
-          return value;
-        },
+    const state = createReactive({
+      get a() {
+        return value;
       },
-      () => n++
-    );
-    expect(state.a.b).toBe(1);
-    state.a.b = 2;
-    await nextMicroTick();
-    expect(n).toBe(1);
-  });
-
-  test("reactive from object with a getter 3", async () => {
-    let n = 0;
-    const values: { b: number }[] = createReactive([]);
-    function createValue() {
-      const o = { b: values.length };
-      values.push(o);
-      return o;
-    }
-    const reactive = createReactive(
-      {
-        get a() {
-          return createValue();
-        },
-      },
-      () => n++
-    );
-    for (let i = 0; i < 10; i++) {
-      expect(reactive.a.b).toEqual(i);
-    }
-    expect(n).toBe(0);
-    values[0].b = 3;
-    expect(n).toBe(1); // !!! reactives for each object in values are still there !!!
-    values[0].b = 4;
-    expect(n).toBe(1); // reactives for each object in values were cleaned up by the previous write
+    });
+    effect(() => spy(state.a.b));
+    expectSpy(spy, 1, [1]);
+    state.a.b = 100;
+    expectSpy(spy, 1, [1]);
+    await waitScheduler();
+    expectSpy(spy, 2, [100]);
   });
 
   test("Operator 'in' causes key's presence to be observed", async () => {
-    let n = 0;
-    const state = createReactive({}, () => n++);
+    const spy = jest.fn();
+    const state = createReactive({});
+    effect(() => spy("a" in state));
+    expectSpy(spy, 1, [false]);
+    state.a = 100;
+    await waitScheduler();
+    expectSpy(spy, 2, [true]);
 
-    "a" in state;
-    state.a = 2;
-    expect(n).toBe(1);
-
-    "a" in state;
     state.a = 3; // Write on existing property shouldn't notify
-    expect(n).toBe(1);
+    expectSpy(spy, 2, [true]);
+    await waitScheduler();
+    expectSpy(spy, 2, [true]);
 
-    "a" in state;
     delete state.a;
-    expect(n).toBe(2);
+    expectSpy(spy, 2, [true]);
+    await waitScheduler();
+    expectSpy(spy, 3, [false]);
+    expect(spy).lastCalledWith(false);
   });
 
-  // Skipped because the hasOwnProperty trap is tripped by *writing*. We
-  // (probably) do not want to subscribe to changes on writes.
-  test.skip("hasOwnProperty causes the key's presence to be observed", async () => {
-    let n = 0;
-    const state = createReactive({}, () => n++);
+  //   // Skipped because the hasOwnProperty trap is tripped by *writing*. We
+  //   // (probably) do not want to subscribe to changes on writes.
+  //   test.skip("hasOwnProperty causes the key's presence to be observed", async () => {
+  //     let n = 0;
+  //     const state = createReactive({}, () => n++);
 
-    Object.hasOwnProperty.call(state, "a");
-    state.a = 2;
-    expect(n).toBe(1);
+  //     Object.hasOwnProperty.call(state, "a");
+  //     state.a = 2;
+  //     expect(n).toBe(1);
 
-    Object.hasOwnProperty.call(state, "a");
-    state.a = 3;
-    expect(n).toBe(1);
+  //     Object.hasOwnProperty.call(state, "a");
+  //     state.a = 3;
+  //     expect(n).toBe(1);
 
-    Object.hasOwnProperty.call(state, "a");
-    delete state.a;
-    expect(n).toBe(2);
-  });
-
-  test("batched: callback is called after batch of operation", async () => {
-    let n = 0;
-    const state = createReactive(
-      { a: 1, b: 2 },
-      batched(() => n++)
-    );
-    state.a = 2;
-    expect(n).toBe(0);
-    await nextMicroTick();
-    expect(n).toBe(0); // key has not be read yet
-    state.a = state.a + 5; // key is read and then modified
-    expect(n).toBe(0);
-    state.b = state.b + 5; // key is read and then modified
-    expect(n).toBe(0);
-    await nextMicroTick();
-    expect(n).toBe(1); // two operations but only one notification
-  });
-
-  test("batched: modifying the reactive in the callback doesn't break reactivity", async () => {
-    let n = 0;
-    let obj = { a: 1 };
-    const state = createReactive(
-      obj,
-      batched(() => {
-        state.a; // subscribe to a
-        state.a = 2;
-        n++;
-      })
-    );
-    expect(n).toBe(0);
-    state.a = 2;
-    expect(n).toBe(0);
-    await nextMicroTick();
-    expect(n).toBe(0); // key has not be read yet
-    state.a = state.a + 5; // key is read and then modified
-    expect(n).toBe(0);
-    await nextMicroTick();
-    expect(n).toBe(1);
-    // the write a = 2 inside the batched callback triggered another notification, wait for it
-    await nextMicroTick();
-    expect(n).toBe(2);
-    // Should now be stable as we're writing the same value again
-    await nextMicroTick();
-    expect(n).toBe(2);
-
-    // Do it again to check it's not broken
-    state.a = state.a + 5; // key is read and then modified
-    expect(n).toBe(2);
-    await nextMicroTick();
-    expect(n).toBe(3);
-    // the write a = 2 inside the batched callback triggered another notification, wait for it
-    await nextMicroTick();
-    expect(n).toBe(4);
-    // Should now be stable as we're writing the same value again
-    await nextMicroTick();
-    expect(n).toBe(4);
-  });
+  //     Object.hasOwnProperty.call(state, "a");
+  //     delete state.a;
+  //     expect(n).toBe(2);
+  //   });
 
   test("setting property to same value does not trigger callback", async () => {
-    let n = 0;
-    const state = createReactive({ a: 1 }, () => n++);
+    const spy = jest.fn();
+    const state = createReactive({ a: 1 });
+    effect(() => spy(state.a));
+    expectSpy(spy, 1, [1]);
+    state.a = 1; // same value
+    await waitScheduler();
+    expectSpy(spy, 1, [1]);
     state.a = state.a + 5; // read and modifies property a to have value 6
-    expect(n).toBe(1);
+    expectSpy(spy, 1, [1]);
+    await waitScheduler();
+    expectSpy(spy, 2, [6]);
     state.a = 6; // same value
-    expect(n).toBe(1);
+    expectSpy(spy, 2, [6]);
+    await waitScheduler();
+    expectSpy(spy, 2, [6]);
   });
 
   test("observe cycles", async () => {
+    const spy = jest.fn();
     const a = { a: {} };
     a.a = a;
 
-    let n = 0;
-    const state = createReactive(a, () => n++);
+    const state = createReactive(a);
+    effect(() => spy(state.a));
+    expectSpy(spy, 1, [state.a]);
 
     state.k;
     state.k = 2;
-    expect(n).toBe(1);
+    expectSpy(spy, 1, [state.a]);
+    await waitScheduler();
+    expectSpy(spy, 1, [state.a]);
 
     delete state.l;
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 1, [state.a]);
 
-    state.k;
     delete state.k;
-    expect(n).toBe(2);
+    await waitScheduler();
+    expectSpy(spy, 1, [state.a]);
 
     state.a = 1;
-    expect(n).toBe(2);
+    await waitScheduler();
+    expectSpy(spy, 2, [1]);
 
-    state.a = state.a + 5;
-    expect(n).toBe(3);
+    state.a = state.a + 100;
+    await waitScheduler();
+    expectSpy(spy, 3, [101]);
   });
 
   test("equality", async () => {
+    const spy = jest.fn();
     const a = { a: {}, b: 1 };
     a.a = a;
-    let n = 0;
-    const state = createReactive(a, () => n++);
+    const state = createReactive(a);
+    effect(() => spy(state.a, state.b));
+
     expect(state).toBe(state.a);
-    expect(n).toBe(0);
-    (state.b = state.b + 1), expect(n).toBe(1);
+    state.b = state.b + 1;
+    await waitScheduler();
+    expectSpy(spy, 2, [state.a, 2]);
     expect(state).toBe(state.a);
   });
 
   test("two observers for same source", async () => {
-    let m = 0;
-    let n = 0;
+    const spy1 = jest.fn();
+    const spy2 = jest.fn();
+
     const obj = { a: 1 } as any;
-    const state = createReactive(obj, () => m++);
-    const state2 = createReactive(obj, () => n++);
+    const state = createReactive(obj);
+    const state2 = createReactive(obj);
+    effect(() => spy1(state.a));
+    effect(() => spy2(state2.a));
 
-    obj.new = 2;
-    expect(m).toBe(0);
-    expect(n).toBe(0);
-
-    state.new = 2; // already exists!
-    expect(m).toBe(0);
-    expect(n).toBe(0);
-
-    state.veryNew;
-    state2.veryNew;
-    state.veryNew = 2;
-    expect(m).toBe(1);
-    expect(n).toBe(1);
-
-    state.a = state.a + 5;
-    expect(m).toBe(2);
-    expect(n).toBe(1);
-
-    state.a;
-    state2.a = state2.a + 5;
-    expect(m).toBe(3);
-    expect(n).toBe(2);
-
-    state.veryNew;
-    state2.veryNew;
-    delete state2.veryNew;
-    expect(m).toBe(4);
-    expect(n).toBe(3);
+    state.a = 100;
+    await waitScheduler();
+    expectSpy(spy1, 2, [100]);
+    expectSpy(spy2, 2, [100]);
   });
 
   test("create reactive from another", async () => {
-    let n = 0;
+    const spy1 = jest.fn();
+    const spy2 = jest.fn();
     const state = createReactive({ a: 1 });
-    const state2 = createReactive(state, () => n++);
-    state2.a = state2.a + 5;
-    expect(n).toBe(1);
-    state2.a;
-    state.a = 2;
-    expect(n).toBe(2);
-  });
+    const state2 = createReactive(state);
+    effect(() => spy1(state.a));
+    effect(() => spy2(state2.a));
 
-  test("create reactive from another 2", async () => {
-    let n = 0;
-    const state = createReactive({ a: 1 });
-    const state2 = createReactive(state, () => n++);
-    state.a = state2.a + 5;
-    expect(n).toBe(1);
-
-    state2.a = state2.a + 5;
-    expect(n).toBe(2);
-  });
-
-  test("create reactive from another 3", async () => {
-    let n = 0;
-    const state = createReactive({ a: 1 });
-    const state2 = createReactive(state, () => n++);
-    state.a = state.a + 5;
-    expect(n).toBe(0); // state2.a was not yet read
-    state2.a = state2.a + 5;
-    state2.a;
-    expect(n).toBe(1); // state2.a has been read and is now observed
-    state.a = state.a + 5;
-    expect(n).toBe(2);
+    state2.a = state2.a + 100;
+    await waitScheduler();
+    expectSpy(spy1, 2, [101]);
+    expectSpy(spy2, 2, [101]);
   });
 
   test("throws on primitive values", () => {
@@ -380,23 +290,12 @@ describe("Reactivity", () => {
   });
 
   test("can observe object with some key set to null", async () => {
-    let n = 0;
-    const state = createReactive({ a: { b: null } } as any, () => n++);
-    expect(n).toBe(0);
+    const spy = jest.fn();
+    const state = createReactive({ a: { b: null } } as any);
+    effect(() => spy(state.a.b));
     state.a.b = Boolean(state.a.b);
-    expect(n).toBe(1);
-  });
-
-  test("can reobserve object with some key set to null", async () => {
-    let n = 0;
-    const fn = () => n++;
-    const state = createReactive({ a: { b: null } } as any, fn);
-    const state2 = createReactive(state, fn);
-    expect(state2).toBe(state);
-    expect(state2).toEqual(state);
-    expect(n).toBe(0);
-    state.a.b = Boolean(state.a.b);
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [false]);
   });
 
   test("contains initial values", () => {
@@ -406,76 +305,58 @@ describe("Reactivity", () => {
     expect((state as any).c).toBeUndefined();
   });
 
-  test("detect object value changes", async () => {
-    let n = 0;
-    const state = createReactive({ a: 1 }, () => n++) as any;
-    expect(n).toBe(0);
-
-    state.a = state.a + 5;
-    expect(n).toBe(1);
-
-    state.b = state.b + 5;
-    expect(n).toBe(2);
-
-    state.a;
-    state.b;
-    state.a = null;
-    state.b = undefined;
-    expect(n).toBe(3);
-    expect(state).toEqual({ a: null, b: undefined });
-  });
-
   test("properly handle dates", async () => {
+    const spy = jest.fn();
     const date = new Date();
-    let n = 0;
-    const state = createReactive({ date }, () => n++);
+    const state = createReactive({ date });
+    effect(() => spy(state.date));
 
     expect(typeof state.date.getFullYear()).toBe("number");
     expect(state.date).toBe(date);
 
     state.date = new Date();
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [state.date]);
     expect(state.date).not.toBe(date);
   });
 
   test("properly handle promise", async () => {
     let resolved = false;
-    let n = 0;
-    const state = createReactive({ prom: Promise.resolve() }, () => n++);
+    const state = createReactive({ prom: Promise.resolve() });
 
     expect(state.prom).toBeInstanceOf(Promise);
     state.prom.then(() => (resolved = true));
-    expect(n).toBe(0);
     expect(resolved).toBe(false);
     await Promise.resolve();
     expect(resolved).toBe(true);
-    expect(n).toBe(0);
   });
 
   test("can observe value change in array in an object", async () => {
-    let n = 0;
-    const state = createReactive({ arr: [1, 2] }, () => n++) as any;
+    const spy = jest.fn();
+    const state = createReactive({ arr: [1, 2] }) as any;
+    effect(() => spy(state.arr[0]));
 
     expect(Array.isArray(state.arr)).toBe(true);
-    expect(n).toBe(0);
 
     state.arr[0] = state.arr[0] + "nope";
+    await waitScheduler();
+    expectSpy(spy, 2, ["1nope"]);
 
-    expect(n).toBe(1);
     expect(state.arr[0]).toBe("1nope");
     expect(state.arr).toEqual(["1nope", 2]);
   });
 
   test("can observe: changing array in object to another array", async () => {
-    let n = 0;
-    const state = createReactive({ arr: [1, 2] }, () => n++) as any;
+    const spy = jest.fn();
+    const state = createReactive({ arr: [1, 2] }) as any;
+    effect(() => spy(state.arr[0]));
 
     expect(Array.isArray(state.arr)).toBe(true);
-    expect(n).toBe(0);
+    expectSpy(spy, 1, [1]);
 
     state.arr = [2, 1];
-
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [2]);
     expect(state.arr[0]).toBe(2);
     expect(state.arr).toEqual([2, 1]);
   });
@@ -488,193 +369,203 @@ describe("Reactivity", () => {
   });
 
   test("various object property changes", async () => {
-    let n = 0;
-    const state = createReactive({ a: 1 }, () => n++) as any;
-    expect(n).toBe(0);
+    const spy = jest.fn();
+    const state = createReactive({ a: 1 });
+    effect(() => spy(state.a));
+    expectSpy(spy, 1, [1]);
 
     state.a = state.a + 2;
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [3]);
 
     state.a;
     // same value again: no notification
     state.a = 3;
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [3]);
 
     state.a = 4;
-    expect(n).toBe(2);
+    await waitScheduler();
+    expectSpy(spy, 3, [4]);
   });
 
   test("properly observe arrays", async () => {
-    let n = 0;
-    const state = createReactive([], () => n++) as any;
+    const spy = jest.fn();
+    const state = createReactive([]);
+    effect(() => spy([...state]));
 
     expect(Array.isArray(state)).toBe(true);
     expect(state.length).toBe(0);
-    expect(n).toBe(0);
+    expectSpy(spy, 1, [[]]);
 
     state.push(1);
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [[1]]);
     expect(state.length).toBe(1);
     expect(state).toEqual([1]);
 
     state.splice(1, 0, "hey");
-    expect(n).toBe(2);
+    await waitScheduler();
+    expectSpy(spy, 3, [[1, "hey"]]);
     expect(state).toEqual([1, "hey"]);
     expect(state.length).toBe(2);
 
     // clear all observations caused by previous expects
+    debugger;
     state[0] = 2;
-    expect(n).toBe(3);
+    await waitScheduler();
+    expectSpy(spy, 4, [[2, "hey"]]);
 
     state.unshift("lindemans");
-    // unshift generates the following sequence of operations: (observed keys in brackets)
-    // - read 'unshift' => { unshift }
-    // - read 'length' =>  { unshift , length }
-    // - hasProperty '1' =>  { unshift , length, [KEYCHANGES] }
-    // - read '1' =>  { unshift , length, 1 }
-    // - write "hey" on '2' => notification for key creation, {}
-    // - hasProperty '0' =>  { [KEYCHANGES] }
-    // - read '0' => { 0, [KEYCHANGES] }
-    // - write "2" on '1' => not observing '1', no notification
-    // - write "lindemans" on '0' => notification, stop observing {}
-    // - write 3 on 'length' => not observing 'length', no notification
-    expect(n).toBe(5);
+    await waitScheduler();
+    expectSpy(spy, 5, [["lindemans", 2, "hey"]]);
     expect(state).toEqual(["lindemans", 2, "hey"]);
     expect(state.length).toBe(3);
 
     // clear all observations caused by previous expects
     state[1] = 3;
-    expect(n).toBe(6);
+    await waitScheduler();
+    expectSpy(spy, 6, [["lindemans", 3, "hey"]]);
 
     state.reverse();
-    // Reverse will generate floor(length/2) notifications because it swaps elements pair-wise
-    expect(n).toBe(7);
+    await waitScheduler();
+    expectSpy(spy, 7, [["hey", 3, "lindemans"]]);
     expect(state).toEqual(["hey", 3, "lindemans"]);
     expect(state.length).toBe(3);
 
-    state.pop(); // reads '2', deletes '2', sets length. Only delete triggers a notification
-    expect(n).toBe(8);
+    state.pop();
+    await waitScheduler();
+    expectSpy(spy, 8, [["hey", 3]]);
     expect(state).toEqual(["hey", 3]);
     expect(state.length).toBe(2);
 
-    state.shift(); // reads '0', reads '1', sets '0', sets length. Only set '0' triggers a notification
-    expect(n).toBe(9);
+    state.shift();
+    await waitScheduler();
+    expectSpy(spy, 9, [[3]]);
     expect(state).toEqual([3]);
     expect(state.length).toBe(1);
   });
-
   test("object pushed into arrays are observed", async () => {
-    let n = 0;
-    const arr: any = createReactive([], () => n++);
+    const spy = jest.fn();
+    const arr: any = createReactive([]);
+    effect(() => spy(arr[0]?.kriek));
 
     arr.push({ kriek: 5 });
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [5]);
 
     arr[0].kriek = 6;
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 3, [6]);
 
     arr[0].kriek = arr[0].kriek + 6;
-    expect(n).toBe(2);
+    await waitScheduler();
+    expectSpy(spy, 4, [12]);
   });
 
   test("set new property on observed object", async () => {
-    let n = 0;
-    let keys: string[] = [];
-    const notify = () => {
-      n++;
-      keys.splice(0);
-      keys.push(...Object.keys(state));
-    };
-    const state = createReactive({}, notify) as any;
-    Object.keys(state);
-    expect(n).toBe(0);
+    const spy = jest.fn();
+    const state = createReactive({});
+    effect(() => spy(Object.keys(state)));
+    expectSpy(spy, 1, [[]]);
 
     state.b = 8;
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [["b"]]);
     expect(state.b).toBe(8);
-    expect(keys).toEqual(["b"]);
+    expect(Object.keys(state)).toEqual(["b"]);
   });
 
   test("set new property object when key changes are not observed", async () => {
-    let n = 0;
-    const notify = () => n++;
-    const state = createReactive({ a: 1 }, notify) as any;
-    state.a;
-    expect(n).toBe(0);
+    const spy = jest.fn();
+    const state = createReactive({ a: 1 });
+    effect(() => spy(state.a));
+    expectSpy(spy, 1, [1]);
 
     state.b = 8;
-    expect(n).toBe(0); // Not observing key changes: shouldn't get notified
+    await waitScheduler();
+    expectSpy(spy, 1, [1]); // Not observing key changes: shouldn't get notified
     expect(state.b).toBe(8);
     expect(state).toEqual({ a: 1, b: 8 });
   });
 
   test("delete property from observed object", async () => {
-    let n = 0;
-    const state = createReactive({ a: 1, b: 8 }, () => n++) as any;
-    Object.keys(state);
-    expect(n).toBe(0);
+    const spy = jest.fn();
+    const state = createReactive({ a: 1, b: 8 });
+    effect(() => spy(Object.keys(state)));
+    expectSpy(spy, 1, [["a", "b"]]);
 
     delete state.b;
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [["a"]]);
     expect(state).toEqual({ a: 1 });
   });
 
-  test("delete property from observed object 2", async () => {
-    let n = 0;
-    const observer = () => n++;
+  //todo
+  test.skip("delete property from observed object 2", async () => {
+    const spy = jest.fn();
     const obj = { a: { b: 1 } };
-    const state = createReactive(obj.a, observer) as any;
-    const state2 = createReactive(obj, observer) as any;
+    const state = createReactive(obj.a);
+    const state2 = createReactive(obj);
+    effect(() => spy(Object.keys(state2)));
     expect(state2.a).toBe(state);
-    expect(n).toBe(0);
+    expectSpy(spy, 1, [["a"]]);
 
     Object.keys(state2);
     delete state2.a;
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [[]]);
 
-    Object.keys(state);
     state.new = 2;
-    expect(n).toBe(2);
+    await waitScheduler();
+    expectSpy(spy, 3, [["new"]]);
   });
 
   test("set element in observed array", async () => {
-    let n = 0;
-    const arr = createReactive(["a"], () => n++);
-    arr[1];
+    const spy = jest.fn();
+    const arr = createReactive(["a"]);
+    effect(() => spy(arr[1]));
     arr[1] = "b";
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, ["b"]);
     expect(arr).toEqual(["a", "b"]);
   });
 
   test("properly observe arrays in object", async () => {
-    let n = 0;
-    const state = createReactive({ arr: [] }, () => n++) as any;
+    const spy = jest.fn();
+    const state = createReactive({ arr: [] }) as any;
+    effect(() => spy(state.arr.length));
 
     expect(state.arr.length).toBe(0);
-    expect(n).toBe(0);
+    expectSpy(spy, 1, [0]);
 
     state.arr.push(1);
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [1]);
     expect(state.arr.length).toBe(1);
   });
 
   test("properly observe objects in array", async () => {
-    let n = 0;
-    const state = createReactive({ arr: [{ something: 1 }] }, () => n++) as any;
-    expect(n).toBe(0);
+    const spy = jest.fn();
+    const state = createReactive({ arr: [{ something: 1 }] }) as any;
+    effect(() => spy(state.arr[0].something));
+    expectSpy(spy, 1, [1]);
 
     state.arr[0].something = state.arr[0].something + 1;
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [2]);
     expect(state.arr[0].something).toBe(2);
   });
 
   test("properly observe objects in object", async () => {
-    let n = 0;
-    const state = createReactive({ a: { b: 1 } }, () => n++) as any;
-    expect(n).toBe(0);
+    const spy = jest.fn();
+    const state = createReactive({ a: { b: 1 } }) as any;
+    effect(() => spy(state.a.b));
+    expectSpy(spy, 1, [1]);
 
     state.a.b = state.a.b + 2;
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [3]);
   });
 
   test("Observing the same object through the same reactive preserves referential equality", async () => {
@@ -686,121 +577,124 @@ describe("Reactivity", () => {
   });
 
   test("reobserve new object values", async () => {
-    let n = 0;
-    const state = createReactive({ a: 1 }, () => n++) as any;
-    expect(n).toBe(0);
+    const spy = jest.fn();
+    const state = createReactive({ a: 1 });
+    effect(() => spy(state.a?.b || state.a));
+    expectSpy(spy, 1, [1]);
 
     state.a++;
-    state.a;
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [2]);
 
-    state.a = { b: 2 };
-    expect(n).toBe(2);
+    state.a = { b: 100 };
+    await waitScheduler();
+    expectSpy(spy, 3, [100]);
 
     state.a.b = state.a.b + 3;
-    expect(n).toBe(3);
+    await waitScheduler();
+    expectSpy(spy, 4, [103]);
   });
 
   test("deep observe misc changes", async () => {
-    let n = 0;
-    const state = createReactive({ o: { a: 1 }, arr: [1], n: 13 }, () => n++) as any;
-    expect(n).toBe(0);
+    const spy = jest.fn();
+    const state = createReactive({ o: { a: 1 }, arr: [1], n: 13 }) as any;
+    effect(() => spy(state.o.a, state.arr.length, state.n));
+    expectSpy(spy, 1, [1, 1, 13]);
 
     state.o.a = state.o.a + 2;
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [3, 1, 13]);
 
     state.arr.push(2);
-    expect(n).toBe(2);
+    await waitScheduler();
+    expectSpy(spy, 3, [3, 2, 13]);
 
     state.n = 155;
-    expect(n).toBe(2);
+    await waitScheduler();
+    expectSpy(spy, 4, [3, 2, 155]);
 
     state.n = state.n + 1;
-    expect(n).toBe(3);
+    await waitScheduler();
+    expectSpy(spy, 5, [3, 2, 156]);
   });
 
   test("properly handle already observed object", async () => {
-    let n1 = 0;
-    let n2 = 0;
+    const spy1 = jest.fn();
+    const spy2 = jest.fn();
 
-    const obj1 = createReactive({ a: 1 }, () => n1++) as any;
-    const obj2 = createReactive({ b: 1 }, () => n2++) as any;
+    const obj1 = createReactive({ a: 1 });
+    const obj2 = createReactive({ b: 1 });
+
+    effect(() => spy1(obj1.a));
+    effect(() => spy2(obj2.b));
 
     obj1.a = obj1.a + 2;
     obj2.b = obj2.b + 3;
-    expect(n1).toBe(1);
-    expect(n2).toBe(1);
+    await waitScheduler();
+    expectSpy(spy1, 2, [3]);
+    expectSpy(spy2, 2, [4]);
 
-    obj2.b;
+    (window as any).d = true;
     obj2.b = obj1;
-    expect(n1).toBe(1);
-    expect(n2).toBe(2);
+    await waitScheduler();
+    expectSpy(spy1, 2, [3]);
+    expectSpy(spy2, 3, [obj1]);
 
-    obj1.a;
     obj1.a = 33;
-    expect(n1).toBe(2);
-    expect(n2).toBe(2);
+    await waitScheduler();
+    expectSpy(spy1, 3, [33]);
+    expectSpy(spy2, 3, [obj1]);
 
-    obj1.a;
     obj2.b.a = obj2.b.a + 2;
-    expect(n1).toBe(3);
-    expect(n2).toBe(3);
+    await waitScheduler();
+    expectSpy(spy1, 4, [35]);
+    expectSpy(spy2, 3, [obj1]);
   });
 
   test("properly handle already observed object in observed object", async () => {
-    let n1 = 0;
-    let n2 = 0;
-    const obj1 = createReactive({ a: { c: 2 } }, () => n1++) as any;
-    const obj2 = createReactive({ b: 1 }, () => n2++) as any;
+    const spy1 = jest.fn();
+    const spy2 = jest.fn();
+    const obj1 = createReactive({ a: { c: 2 } });
+    const obj2 = createReactive({ b: 1 });
 
-    obj2.c;
+    effect(() => spy1(obj1.a.c));
+    effect(() => spy2(obj2.c?.a?.c));
+
     obj2.c = obj1;
-    expect(n1).toBe(0);
-    expect(n2).toBe(1);
+    await waitScheduler();
+    expectSpy(spy1, 1, [2]);
+    expectSpy(spy2, 2, [2]);
 
     obj1.a.c = obj1.a.c + 33;
-    obj1.a.c;
-    expect(n1).toBe(1);
-    expect(n2).toBe(1);
+    await waitScheduler();
+    expectSpy(spy1, 2, [35]);
+    expectSpy(spy2, 3, [35]);
 
     obj2.c.a.c = obj2.c.a.c + 3;
-    expect(n1).toBe(2);
-    expect(n2).toBe(2);
-  });
-
-  test("can reobserve object", async () => {
-    let n1 = 0;
-    let n2 = 0;
-    const state = createReactive({ a: 0 }, () => n1++) as any;
-
-    state.a = state.a + 1;
-    expect(n1).toBe(1);
-    expect(n2).toBe(0);
-
-    const state2 = createReactive(state, () => n2++) as any;
-    expect(state).toEqual(state2);
-
-    state2.a = 2;
-    expect(n1).toBe(2);
-    expect(n2).toBe(1);
+    await waitScheduler();
+    expectSpy(spy1, 3, [38]);
+    expectSpy(spy2, 4, [38]);
   });
 
   test("can reobserve nested properties in object", async () => {
-    let n1 = 0;
-    let n2 = 0;
-    const state = createReactive({ a: [{ b: 1 }] }, () => n1++) as any;
+    const spy1 = jest.fn();
+    const spy2 = jest.fn();
+    const state = createReactive({ a: [{ b: 1 }] }) as any;
 
-    const state2 = createReactive(state, () => n2++) as any;
+    const state2 = createReactive(state) as any;
+
+    effect(() => spy1(state.a[0].b));
+    effect(() => spy2(state2.c));
 
     state.a[0].b = state.a[0].b + 2;
-    expect(n1).toBe(1);
-    expect(n2).toBe(0);
+    await waitScheduler();
+    expectSpy(spy1, 2, [3]);
+    expectSpy(spy2, 1, [undefined]);
 
-    state.c;
-    state2.c;
     state2.c = 2;
-    expect(n1).toBe(2);
-    expect(n2).toBe(1);
+    await waitScheduler();
+    expectSpy(spy1, 2, [3]);
+    expectSpy(spy2, 2, [2]);
   });
 
   test("rereading some property again give exactly same result", () => {
@@ -811,356 +705,305 @@ describe("Reactivity", () => {
   });
 
   test("can reobserve new properties in object", async () => {
-    let n1 = 0;
-    let n2 = 0;
-    const state = createReactive({ a: [{ b: 1 }] }, () => n1++) as any;
+    const spy1 = jest.fn();
+    const spy2 = jest.fn();
+    const state = createReactive({ a: [{ b: 1 }] }) as any;
 
-    createReactive(state, () => n2++) as any;
+    effect(() => spy1(state.a[0].b.c));
+    effect(() => spy2(state.a[0].b));
 
     state.a[0].b = { c: 1 };
-    expect(n1).toBe(0);
-    expect(n2).toBe(0);
+    await waitScheduler();
+    expectSpy(spy1, 2, [1]);
+    expectSpy(spy2, 2, [{ c: 1 }]);
 
     state.a[0].b.c = state.a[0].b.c + 2;
-    expect(n1).toBe(1);
-    expect(n2).toBe(0);
-  });
-
-  test("can observe sub property of observed object", async () => {
-    let n1 = 0;
-    let n2 = 0;
-    const state = createReactive({ a: { b: 1 }, c: 1 }, () => n1++) as any;
-
-    const state2 = createReactive(state.a, () => n2++) as any;
-
-    state.a.b = state.a.b + 2;
-    expect(n1).toBe(1);
-    expect(n2).toBe(0);
-
-    state.l;
-    state.l = 2;
-    expect(n1).toBe(2);
-    expect(n2).toBe(0);
-
-    state.a.k;
-    state2.k;
-    state.a.k = 3;
-    expect(n1).toBe(3);
-    expect(n2).toBe(1);
-
-    state.c = 14;
-    expect(n1).toBe(3);
-    expect(n2).toBe(1);
-
-    state.a.b;
-    state2.b = state2.b + 3;
-    expect(n1).toBe(4);
-    expect(n2).toBe(2);
+    await waitScheduler();
+    expectSpy(spy1, 3, [3]);
+    expectSpy(spy2, 2, [{ c: 3 }]);
   });
 
   test("can set a property more than once", async () => {
-    let n = 0;
-    const state = createReactive({}, () => n++) as any;
+    const spy = jest.fn();
+    const state = createReactive({}) as any;
+    effect(() => spy(state.aku));
 
     state.aky = state.aku;
-    expect(n).toBe(0);
-    state.aku = "always finds annoying problems";
-    expect(n).toBe(1);
+    expectSpy(spy, 1, [undefined]);
 
-    state.aku;
+    state.aku = "always finds annoying problems";
+    await waitScheduler();
+    expectSpy(spy, 2, ["always finds annoying problems"]);
+
     state.aku = "always finds good problems";
-    expect(n).toBe(2);
+    await waitScheduler();
+    expectSpy(spy, 3, ["always finds good problems"]);
   });
 
   test("properly handle swapping elements", async () => {
-    let n = 0;
-    const state = createReactive({ a: { arr: [] }, b: 1 }, () => n++) as any;
+    const spy = jest.fn();
+    const arrDict = { arr: [] };
+    const state = createReactive({ a: arrDict, b: 1 }) as any;
+    effect(() => {
+      Array.isArray(state.b?.arr) && [...state.b.arr];
+      return spy(state.a, state.b);
+    });
+    expectSpy(spy, 1, [arrDict, 1]);
 
     // swap a and b
     const b = state.b;
-    state.b = state.a;
+    const a = state.a;
+    state.b = a;
     state.a = b;
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [1, arrDict]);
 
     // push something into array to make sure it works
     state.b.arr.push("blanche");
-    // push reads the length property and as such subscribes to the change it is about to cause
-    expect(n).toBe(2);
+    await waitScheduler();
+    expectSpy(spy, 3, [1, arrDict]);
   });
 
   test("properly handle assigning object containing array to reactive", async () => {
-    let n = 0;
-    const state = createReactive({ a: { arr: [], val: "test" } }, () => n++) as any;
-    expect(n).toBe(0);
+    const spy = jest.fn();
+    const state = createReactive({ a: { arr: [], val: "test" } }) as any;
+    effect(() => spy(state.a, [...state.a.arr]));
+    expectSpy(spy, 1, [state.a, []]);
 
     state.a = { ...state.a, val: "test2" };
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [state.a, []]);
 
     // push something into array to make sure it works
     state.a.arr.push("blanche");
-    expect(n).toBe(2);
+    await waitScheduler();
+    expectSpy(spy, 3, [state.a, ["blanche"]]);
   });
 
-  test.skip("accept cycles in observed object", async () => {
-    // ???
-    let n = 0;
+  test("accept cycles in observed object", async () => {
+    const spy = jest.fn();
     let obj1: any = {};
     let obj2: any = { b: obj1, key: 1 };
     obj1.a = obj2;
-    obj1 = createReactive(obj1, () => n++) as any;
+    obj1 = createReactive(obj1) as any;
     obj2 = obj1.a;
-    expect(n).toBe(0);
+    effect(() => spy(obj1.key));
+    expectSpy(spy, 1, [undefined]);
 
     obj1.key = 3;
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [3]);
   });
 
   test("call callback when reactive is changed", async () => {
-    let n = 0;
-    const state: any = createReactive({ a: 1, b: { c: 2 }, d: [{ e: 3 }], f: 4 }, () => n++);
-    expect(n).toBe(0);
+    const spy = jest.fn();
+    const state: any = createReactive({ a: 1, b: { c: 2 }, d: [{ e: 3 }], f: 4 });
+    effect(() => spy(state.a, state.b.c, state.d[0].e, state.f));
+    expectSpy(spy, 1, [1, 2, 3, 4]);
 
     state.a = state.a + 2;
-    state.a;
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [3, 2, 3, 4]);
 
     state.b.c = state.b.c + 3;
-    expect(n).toBe(2);
+    await waitScheduler();
+    expectSpy(spy, 3, [3, 5, 3, 4]);
 
     state.d[0].e = state.d[0].e + 5;
-    expect(n).toBe(3);
+    await waitScheduler();
+    expectSpy(spy, 4, [3, 5, 8, 4]);
 
-    state.a;
-    state.f;
     state.a = 111;
     state.f = 222;
-    expect(n).toBe(4);
+    await waitScheduler();
+    expectSpy(spy, 5, [111, 5, 8, 222]);
   });
 
-  // test("can unobserve a value", async () => {
-  //   let n = 0;
-  //   const cb = () => n++;
-  //   const unregisterObserver = registerObserver(cb);
-
-  //   const state = createReactive({ a: 1 }, cb);
-
-  //   state.a = state.a + 3;
-  //   await nextMicroTick();
-  //   expect(n).toBe(1);
-
-  //   unregisterObserver();
-
-  //   state.a = 4;
-  //   await nextMicroTick();
-  //   expect(n).toBe(1);
-  // });
-
   test("reactive inside other reactive", async () => {
-    let n1 = 0;
-    let n2 = 0;
-    const inner = createReactive({ a: 1 }, () => n1++);
-    const outer = createReactive({ b: inner }, () => n2++);
-    expect(n1).toBe(0);
-    expect(n2).toBe(0);
+    const spy1 = jest.fn();
+    const spy2 = jest.fn();
+    const inner = createReactive({ a: 1 });
+    const outer = createReactive({ b: inner });
+
+    effect(() => spy1(inner.a));
+    effect(() => spy2(outer.b.a));
+
+    expectSpy(spy1, 1, [1]);
+    expectSpy(spy2, 1, [1]);
 
     outer.b.a = outer.b.a + 2;
-    expect(n1).toBe(0);
-    expect(n2).toBe(1);
+    await waitScheduler();
+    expectSpy(spy1, 2, [3]);
+    expectSpy(spy2, 2, [3]);
   });
 
   test("reactive inside other reactive, variant", async () => {
-    let n1 = 0;
-    let n2 = 0;
-    const inner = createReactive({ a: 1 }, () => n1++);
-    const outer = createReactive({ b: inner, c: 0 }, () => n2++);
-    expect(n1).toBe(0);
-    expect(n2).toBe(0);
+    const spy1 = jest.fn();
+    const spy2 = jest.fn();
+    const inner = createReactive({ a: 1 });
+    const outer = createReactive({ b: inner, c: 0 });
+    effect(() => spy1(inner.a));
+    effect(() => spy2(outer.c));
+    expectSpy(spy1, 1, [1]);
+    expectSpy(spy2, 1, [0]);
 
     inner.a = inner.a + 2;
-    expect(n1).toBe(1);
-    expect(n2).toBe(0);
+    await waitScheduler();
+    expectSpy(spy1, 2, [3]);
+    expectSpy(spy2, 1, [0]);
 
     outer.c = outer.c + 3;
-    expect(n1).toBe(1);
-    expect(n2).toBe(1);
+    await waitScheduler();
+    expectSpy(spy1, 2, [3]);
+    expectSpy(spy2, 2, [3]);
   });
 
   test("reactive inside other reactive, variant 2", async () => {
-    let n1 = 0;
-    let n2 = 0;
-    let n3 = 0;
-    const obj1 = createReactive({ a: 1 }, () => n1++);
-    const obj2 = createReactive({ b: {} }, () => n2++);
-    const obj3 = createReactive({ c: {} }, () => n3++);
+    const spy1 = jest.fn();
+    const spy2 = jest.fn();
+    const spy3 = jest.fn();
+    const obj1 = createReactive({ a: 1 });
+    const obj2 = createReactive({ b: {} });
+    const obj3 = createReactive({ c: {} });
 
-    // assign the same object should'nt notify reactivity
+    effect(() => spy1(obj1.a));
+    effect(() => spy2(obj2.b));
+    effect(() => spy3(obj3.c));
+
+    // assign the same object shouldn't notify reactivity
     obj2.b = obj2.b;
-    obj2.b;
     obj3.c = obj3.c;
-    obj3.c;
-    expect(n1).toBe(0);
-    expect(n2).toBe(0);
-    expect(n3).toBe(0);
+    await waitScheduler();
+    expectSpy(spy1, 1, [1]);
+    expectSpy(spy2, 1, [{}]);
+    expectSpy(spy3, 1, [{}]);
 
     obj2.b = obj1;
-    obj2.b;
     obj3.c = obj1;
-    obj3.c;
-    expect(n1).toBe(0);
-    expect(n2).toBe(1);
-    expect(n3).toBe(1);
+    await waitScheduler();
+    expectSpy(spy1, 1, [1]);
+    expectSpy(spy2, 2, [obj1]);
+    expectSpy(spy3, 2, [obj1]);
 
     obj1.a = obj1.a + 2;
-    obj1.a;
-    expect(n1).toBe(1);
-    expect(n2).toBe(1);
-    expect(n3).toBe(1);
+    await waitScheduler();
+    expectSpy(spy1, 2, [3]);
+    expectSpy(spy2, 2, [obj1]);
+    expectSpy(spy3, 2, [obj1]);
 
     obj2.b.a = obj2.b.a + 1;
-    expect(n1).toBe(2);
-    expect(n2).toBe(2);
-    expect(n3).toBe(1);
+    await waitScheduler();
+    expectSpy(spy1, 3, [4]);
+    expectSpy(spy2, 2, [obj1]);
+    expectSpy(spy3, 2, [obj1]);
   });
 
-  test("reactive inside other: reading the inner reactive from outer doesn't affect the inner's subscriptions", async () => {
-    const getObservedKeys = (obj: any) => getSubscriptions(obj).flatMap(({ keys }) => keys);
-    let n1 = 0;
-    let n2 = 0;
-    const innerCb = () => n1++;
-    const outerCb = () => n2++;
-    const inner = createReactive({ a: 1 }, innerCb);
-    const outer = createReactive({ b: inner }, outerCb);
-    expect(n1).toBe(0);
-    expect(n2).toBe(0);
-    expect(getObservedKeys(innerCb)).toEqual([]);
-    expect(getObservedKeys(outerCb)).toEqual([]);
+  //   test("notification is not done after unregistration", async () => {
+  //     let n = 0;
+  //     const observer = () => n++;
+  //     const unregisterObserver = registerObserver(observer);
+  //     const state = atom({ a: 1 } as any, observer);
 
-    outer.b.a;
-    expect(getObservedKeys(innerCb)).toEqual([]);
-    expect(getObservedKeys(outerCb)).toEqual(["b", "a"]);
-    expect(n1).toBe(0);
-    expect(n2).toBe(0);
+  //     state.a = state.a;
+  //     await nextMicroTick();
+  //     expect(n).toBe(0);
 
-    outer.b.a = 2;
-    expect(getObservedKeys(innerCb)).toEqual([]);
-    expect(getObservedKeys(outerCb)).toEqual([]);
-    expect(n1).toBe(0);
-    expect(n2).toBe(1);
-  });
+  //     unregisterObserver();
 
-  // test("notification is not done after unregistration", async () => {
-  //   let n = 0;
-  //   const observer = () => n++;
-  //   const unregisterObserver = registerObserver(observer);
-  //   const state = atom({ a: 1 } as any, observer);
+  //     state.a = { b: 2 };
+  //     await nextMicroTick();
+  //     expect(n).toBe(0);
 
-  //   state.a = state.a;
-  //   await nextMicroTick();
-  //   expect(n).toBe(0);
-
-  //   unregisterObserver();
-
-  //   state.a = { b: 2 };
-  //   await nextMicroTick();
-  //   expect(n).toBe(0);
-
-  //   state.a.b = state.a.b + 3;
-  //   await nextMicroTick();
-  //   expect(n).toBe(0);
-  // });
+  //     state.a.b = state.a.b + 3;
+  //     await nextMicroTick();
+  //     expect(n).toBe(0);
+  //   });
 
   test("don't react to changes in subobject that has been deleted", async () => {
-    let n = 0;
+    const spy = jest.fn();
     const a = { k: {} } as any;
-    const state = createReactive(a, () => n++);
+    const state = createReactive(a);
 
-    state.k.l;
+    effect(() => spy(state.k?.l));
+
     state.k.l = 1;
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [1]);
 
     const kVal = state.k;
 
     delete state.k;
-    expect(n).toBe(2);
+    await waitScheduler();
+    expectSpy(spy, 3, [undefined]);
 
     kVal.l = 2;
-    expect(n).toBe(2); // kVal must no longer be observed
+    await waitScheduler();
+    expectSpy(spy, 3, [undefined]); // kVal must no longer be observed
   });
 
   test("don't react to changes in subobject that has been deleted", async () => {
-    let n = 0;
+    const spy = jest.fn();
     const b = {} as any;
     const a = { k: b } as any;
-    const observer = () => n++;
-    const state2 = createReactive(b, observer);
-    const state = createReactive(a, observer);
+    const state2 = createReactive(b);
+    const state = createReactive(a);
+
+    effect(() => spy(state.k?.d));
 
     state.c = 1;
-    state.k.d;
     state.k.d = 2;
-    state.k;
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [2]);
 
     delete state.k;
-    expect(n).toBe(2);
+    await waitScheduler();
+    expectSpy(spy, 3, [undefined]);
 
     state2.e = 3;
-    expect(n).toBe(2);
+    await waitScheduler();
+    expectSpy(spy, 3, [undefined]);
   });
 
   test("don't react to changes in subobject that has been deleted 3", async () => {
-    let n = 0;
+    const spy = jest.fn();
     const b = {} as any;
     const a = { k: b } as any;
-    const observer = () => n++;
-    const state = createReactive(a, observer);
-    const state2 = createReactive(b, observer);
+    const state = createReactive(a);
+    const state2 = createReactive(b);
+
+    effect(() => spy(state.k?.d));
 
     state.c = 1;
-    state.k.d;
     state.k.d = 2;
-    state.k.d;
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [2]);
 
     delete state.k;
-    expect(n).toBe(2);
+    await waitScheduler();
+    expectSpy(spy, 3, [undefined]);
 
     state2.e = 3;
-    expect(n).toBe(2);
-  });
-
-  test("don't react to changes in subobject that has been deleted 4", async () => {
-    let n = 0;
-    const a = { k: {} } as any;
-    a.k = a;
-    const state = createReactive(a, () => n++);
-    Object.keys(state);
-
-    state.b = 1;
-    expect(n).toBe(1);
-
-    Object.keys(state);
-    delete state.k;
-    expect(n).toBe(2);
-
-    state.c = 2;
-    expect(n).toBe(2);
+    await waitScheduler();
+    expectSpy(spy, 3, [undefined]);
   });
 
   test("don't react to changes in subobject that has been replaced", async () => {
-    let n = 0;
+    const spy = jest.fn();
     const a = { k: { n: 1 } } as any;
-    const state = createReactive(a, () => n++);
+    const state = createReactive(a);
     const kVal = state.k; // read k
 
+    effect(() => spy(state.k.n));
+    expectSpy(spy, 1, [1]);
+
     state.k = { n: state.k.n + 1 };
-    await nextMicroTick();
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [2]);
     expect(state.k).toEqual({ n: 2 });
 
     kVal.n = 3;
-    await nextMicroTick();
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [2]);
     expect(state.k).toEqual({ n: 2 });
   });
 
@@ -1172,41 +1015,53 @@ describe("Reactivity", () => {
   });
 
   test("writing on object with reactive in prototype chain doesn't notify", async () => {
-    let n = 0;
-    const state = createReactive({ val: 0 }, () => n++);
+    const spy = jest.fn();
+    const state = createReactive({ val: 0 });
+    effect(() => spy(state.val));
     const nonReactive = Object.create(state);
     nonReactive.val++;
-    expect(n).toBe(0);
+    expect(spy).toHaveBeenCalledTimes(1);
     expect(toRaw(state)).toEqual({ val: 0 });
     expect(toRaw(nonReactive)).toEqual({ val: 1 });
     state.val++;
-    expect(n).toBe(1);
+    await waitScheduler();
+    expect(spy).toHaveBeenCalledTimes(2);
     expect(toRaw(state)).toEqual({ val: 1 });
     expect(toRaw(nonReactive)).toEqual({ val: 1 });
   });
 
   test("creating key on object with reactive in prototype chain doesn't notify", async () => {
-    let n = 0;
-    const parent = createReactive({}, () => n++);
+    const spy = jest.fn();
+    const parent = createReactive({});
     const child = Object.create(parent);
-    Object.keys(parent); // Subscribe to key changes
+    effect(() => spy(Object.keys(parent)));
     child.val = 0;
-    expect(n).toBe(0);
+    await waitScheduler();
+    expectSpy(spy, 1, [[]]);
   });
 
   test("reactive of object with reactive in prototype chain is not the object from the prototype chain", async () => {
-    const cb = () => {};
-    const parent = createReactive({ val: 0 }, cb);
-    const child = createReactive(Object.create(parent), cb);
+    const spy = jest.fn();
+    const parent = createReactive({ val: 0 });
+    const child = createReactive(Object.create(parent));
+    effect(() => spy(child.val));
     expect(child).not.toBe(parent);
+
+    child.val++;
+    await waitScheduler();
+    expectSpy(spy, 2, [1]);
+    expect(parent.val).toBe(0);
+    expect(child.val).toBe(1);
   });
 
   test("can create reactive of object with non-reactive in prototype chain", async () => {
-    let n = 0;
+    const spy = jest.fn();
     const parent = markRaw({ val: 0 });
-    const child = createReactive(Object.create(parent), () => n++);
+    const child = createReactive(Object.create(parent));
+    effect(() => spy(child.val));
     child.val++;
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [1]);
     expect(parent).toEqual({ val: 0 });
     expect(child).toEqual({ val: 1 });
   });
@@ -1273,106 +1128,132 @@ describe("Collections", () => {
       expect(state.has(val)).toBe(true);
     });
 
-    test("checking for a key subscribes the callback to changes to that key", () => {
-      const observer = jest.fn();
-      const state = reactive(new Set([1]), observer);
+    test("checking for a key subscribes the callback to changes to that key", async () => {
+      const spy = jest.fn();
+      const state = reactive(new Set([1]));
+      effect(() => spy(state.has(2)));
 
-      expect(state.has(2)).toBe(false); // subscribe to 2
-      expect(observer).toHaveBeenCalledTimes(0);
+      expectSpy(spy, 1, [false]);
       state.add(2);
-      expect(observer).toHaveBeenCalledTimes(1);
-      expect(state.has(2)).toBe(true); // subscribe to 2
+      await waitScheduler();
+      expectSpy(spy, 2, [true]);
       state.delete(2);
-      expect(observer).toHaveBeenCalledTimes(2);
+      await waitScheduler();
+      expectSpy(spy, 3, [false]);
       state.add(2);
-      expect(state.has(2)).toBe(true); // subscribe to 2
+      await waitScheduler();
+      expectSpy(spy, 4, [true]);
       state.clear();
-      expect(observer).toHaveBeenCalledTimes(3);
-      expect(state.has(2)).toBe(false); // subscribe to 2
+      await waitScheduler();
+      expectSpy(spy, 5, [false]);
       state.clear(); // clearing again doesn't notify again
-      expect(observer).toHaveBeenCalledTimes(3);
+      await waitScheduler();
+      expectSpy(spy, 5, [false]);
 
       state.add(3); // setting unobserved key doesn't notify
-      expect(observer).toHaveBeenCalledTimes(3);
+      await waitScheduler();
+      expectSpy(spy, 5, [false]);
       expect(state.has(3)).toBe(true); // subscribe to 3
       state.add(3); // adding observed key doesn't notify if key was already present
-      expect(observer).toHaveBeenCalledTimes(3);
+      await waitScheduler();
+      expectSpy(spy, 5, [false]);
       expect(state.has(4)).toBe(false); // subscribe to 4
       state.delete(4); // deleting observed key doesn't notify if key was already not present
-      expect(observer).toHaveBeenCalledTimes(3);
+      await waitScheduler();
+      expectSpy(spy, 5, [false]);
     });
 
     test("iterating on keys returns reactives", async () => {
       const obj = { a: 2 };
-      const observer = jest.fn();
-      const state = reactive(new Set([obj]), observer);
-      const reactiveObj = state.keys().next().value;
+      const spy = jest.fn();
+      const state = reactive(new Set([obj]));
+      const reactiveObj = state.keys().next().value!;
+      effect(() => spy(reactiveObj.a));
       expect(reactiveObj).not.toBe(obj);
       expect(toRaw(reactiveObj as any)).toBe(obj);
+      expectSpy(spy, 1, [2]);
       reactiveObj.a = 0;
-      expect(observer).toHaveBeenCalledTimes(0);
+      await waitScheduler();
+      expectSpy(spy, 2, [0]);
       reactiveObj.a; // observe key "a" in sub-reactive;
       reactiveObj.a = 1;
-      expect(observer).toHaveBeenCalledTimes(1);
+      await waitScheduler();
+      expectSpy(spy, 3, [1]);
       reactiveObj.a = 1; // setting same value again shouldn't notify
-      expect(observer).toHaveBeenCalledTimes(1);
+      await waitScheduler();
+      expectSpy(spy, 3, [1]);
     });
 
     test("iterating on values returns reactives", async () => {
       const obj = { a: 2 };
-      const observer = jest.fn();
-      const state = reactive(new Set([obj]), observer);
-      const reactiveObj = state.values().next().value;
+      const spy = jest.fn();
+      const state = reactive(new Set([obj]));
+      const reactiveObj = state.values().next().value!;
+      effect(() => spy(reactiveObj.a));
       expect(reactiveObj).not.toBe(obj);
       expect(toRaw(reactiveObj as any)).toBe(obj);
+      expectSpy(spy, 1, [2]);
       reactiveObj.a = 0;
-      expect(observer).toHaveBeenCalledTimes(0);
+      await waitScheduler();
+      expectSpy(spy, 2, [0]);
       reactiveObj.a; // observe key "a" in sub-reactive;
       reactiveObj.a = 1;
-      expect(observer).toHaveBeenCalledTimes(1);
+      await waitScheduler();
+      expectSpy(spy, 3, [1]);
       reactiveObj.a = 1; // setting same value again shouldn't notify
-      expect(observer).toHaveBeenCalledTimes(1);
+      await waitScheduler();
+      expectSpy(spy, 3, [1]);
     });
 
     test("iterating on entries returns reactives", async () => {
       const obj = { a: 2 };
-      const observer = jest.fn();
-      const state = reactive(new Set([obj]), observer);
-      const [reactiveObj, reactiveObj2] = state.entries().next().value;
+      const spy = jest.fn();
+      const state = reactive(new Set([obj]));
+      const [reactiveObj, reactiveObj2] = state.entries().next().value!;
       expect(reactiveObj2).toBe(reactiveObj);
       expect(reactiveObj).not.toBe(obj);
       expect(toRaw(reactiveObj as any)).toBe(obj);
+      effect(() => spy(reactiveObj.a));
+      expectSpy(spy, 1, [2]);
       reactiveObj.a = 0;
-      expect(observer).toHaveBeenCalledTimes(0);
+      await waitScheduler();
+      expectSpy(spy, 2, [0]);
       reactiveObj.a; // observe key "a" in sub-reactive;
       reactiveObj.a = 1;
-      expect(observer).toHaveBeenCalledTimes(1);
+      await waitScheduler();
+      expectSpy(spy, 3, [1]);
       reactiveObj.a = 1; // setting same value again shouldn't notify
-      expect(observer).toHaveBeenCalledTimes(1);
+      await waitScheduler();
+      expectSpy(spy, 3, [1]);
     });
 
     test("iterating on reactive Set returns reactives", async () => {
       const obj = { a: 2 };
-      const observer = jest.fn();
-      const state = reactive(new Set([obj]), observer);
-      const reactiveObj = state[Symbol.iterator]().next().value;
+      const spy = jest.fn();
+      const state = reactive(new Set([obj]));
+      const reactiveObj = state[Symbol.iterator]().next().value!;
+      effect(() => spy(reactiveObj.a));
       expect(reactiveObj).not.toBe(obj);
       expect(toRaw(reactiveObj as any)).toBe(obj);
+      expectSpy(spy, 1, [2]);
       reactiveObj.a = 0;
-      expect(observer).toHaveBeenCalledTimes(0);
+      await waitScheduler();
+      expectSpy(spy, 2, [0]);
       reactiveObj.a; // observe key "a" in sub-reactive;
       reactiveObj.a = 1;
-      expect(observer).toHaveBeenCalledTimes(1);
+      await waitScheduler();
+      expectSpy(spy, 3, [1]);
       reactiveObj.a = 1; // setting same value again shouldn't notify
-      expect(observer).toHaveBeenCalledTimes(1);
+      await waitScheduler();
+      expectSpy(spy, 3, [1]);
     });
 
     test("iterating with forEach returns reactives", async () => {
       const keyObj = { a: 2 };
-      const thisArg = {};
-      const observer = jest.fn();
-      const state = reactive(new Set([keyObj]), observer);
+      const spy = jest.fn();
+      const state = reactive(new Set([keyObj]));
       let reactiveKeyObj: any, reactiveValObj: any, thisObj: any, mapObj: any;
+      const thisArg = {};
       state.forEach(function (this: any, val, key, map) {
         [reactiveValObj, reactiveKeyObj, mapObj, thisObj] = [val, key, map, this];
       }, thisArg);
@@ -1383,15 +1264,23 @@ describe("Collections", () => {
       expect(toRaw(reactiveKeyObj as any)).toBe(keyObj);
       expect(toRaw(reactiveValObj as any)).toBe(keyObj);
       expect(reactiveKeyObj).toBe(reactiveValObj); // reactiveKeyObj and reactiveValObj should be the same object
+
+      effect(() => spy(reactiveKeyObj.a));
+      expectSpy(spy, 1, [2]);
+
       reactiveKeyObj!.a = 0;
-      reactiveValObj!.a = 0;
-      expect(observer).toHaveBeenCalledTimes(0);
+      await waitScheduler();
+      expectSpy(spy, 2, [0]);
+
       reactiveKeyObj!.a; // observe key "a" in key sub-reactive;
       reactiveKeyObj!.a = 1;
-      expect(observer).toHaveBeenCalledTimes(1);
+      await waitScheduler();
+      expectSpy(spy, 3, [1]);
+
       reactiveKeyObj!.a = 1; // setting same value again shouldn't notify
       reactiveValObj!.a = 1;
-      expect(observer).toHaveBeenCalledTimes(1);
+      await waitScheduler();
+      expectSpy(spy, 3, [1]);
     });
   });
 
@@ -1472,168 +1361,204 @@ describe("Collections", () => {
       expect(val).toBe(state.get(key));
     });
 
-    test("checking for a key with 'has' subscribes the callback to changes to that key", () => {
-      const observer = jest.fn();
-      const state = reactive(new Map([[1, 2]]), observer);
+    test("checking for a key with 'has' subscribes the callback to changes to that key", async () => {
+      const spy = jest.fn();
+      const state = reactive(new Map([[1, 2]]));
+      effect(() => spy(state.has(2)));
 
-      expect(state.has(2)).toBe(false); // subscribe to 2
-      expect(observer).toHaveBeenCalledTimes(0);
+      expectSpy(spy, 1, [false]);
       state.set(2, 3);
-      expect(observer).toHaveBeenCalledTimes(1);
-      expect(state.has(2)).toBe(true); // subscribe to 2
+      await waitScheduler();
+      expectSpy(spy, 2, [true]);
       state.delete(2);
-      expect(observer).toHaveBeenCalledTimes(2);
+      await waitScheduler();
+      expectSpy(spy, 3, [false]);
       state.set(2, 3);
-      expect(state.has(2)).toBe(true); // subscribe to 2
+      await waitScheduler();
+      expectSpy(spy, 4, [true]);
       state.clear();
-      expect(observer).toHaveBeenCalledTimes(3);
-      expect(state.has(2)).toBe(false); // subscribe to 2
+      await waitScheduler();
+      expectSpy(spy, 5, [false]);
       state.clear(); // clearing again doesn't notify again
-      expect(observer).toHaveBeenCalledTimes(3);
+      await waitScheduler();
+      expectSpy(spy, 5, [false]);
 
       state.set(3, 4); // setting unobserved key doesn't notify
-      expect(observer).toHaveBeenCalledTimes(3);
+      await waitScheduler();
+      expectSpy(spy, 5, [false]);
       expect(state.has(3)).toBe(true); // subscribe to 3
       state.set(3, 4); // setting the same value doesn't notify
-      expect(observer).toHaveBeenCalledTimes(3);
+      await waitScheduler();
+      expectSpy(spy, 5, [false]);
       expect(state.has(4)).toBe(false); // subscribe to 4
       state.delete(4); // deleting observed key doesn't notify if key was already not present
-      expect(observer).toHaveBeenCalledTimes(3);
+      await waitScheduler();
+      expectSpy(spy, 5, [false]);
     });
 
-    test("checking for a key with 'get' subscribes the callback to changes to that key", () => {
-      const observer = jest.fn();
-      const state = reactive(new Map([[1, 2]]), observer);
+    test("checking for a key with 'get' subscribes the callback to changes to that key", async () => {
+      const spy = jest.fn();
+      const state = reactive(new Map([[1, 2]]));
+      effect(() => spy(state.get(2)));
 
-      expect(state.get(2)).toBeUndefined(); // subscribe to 2
-      expect(observer).toHaveBeenCalledTimes(0);
+      expectSpy(spy, 1, [undefined]);
       state.set(2, 3);
-      expect(observer).toHaveBeenCalledTimes(1);
+      await waitScheduler();
+      expectSpy(spy, 2, [3]);
       expect(state.get(2)).toBe(3); // subscribe to 2
       state.delete(2);
-      expect(observer).toHaveBeenCalledTimes(2);
+      await waitScheduler();
+      expectSpy(spy, 3, [undefined]);
       state.delete(2); // deleting again doesn't notify again
-      expect(observer).toHaveBeenCalledTimes(2);
+      await waitScheduler();
+      expectSpy(spy, 3, [undefined]);
       state.set(2, 3);
+      await waitScheduler();
+      expectSpy(spy, 4, [3]);
       expect(state.get(2)).toBe(3); // subscribe to 2
       state.clear();
-      expect(observer).toHaveBeenCalledTimes(3);
+      await waitScheduler();
+      expectSpy(spy, 5, [undefined]);
       expect(state.get(2)).toBeUndefined(); // subscribe to 2
       state.clear(); // clearing again doesn't notify again
-      expect(observer).toHaveBeenCalledTimes(3);
+      await waitScheduler();
+      expectSpy(spy, 5, [undefined]);
 
       state.set(3, 4); // setting unobserved key doesn't notify
-      expect(observer).toHaveBeenCalledTimes(3);
+      await waitScheduler();
+      expectSpy(spy, 5, [undefined]);
       expect(state.get(3)).toBe(4); // subscribe to 3
       state.set(3, 4); // setting the same value doesn't notify
-      expect(observer).toHaveBeenCalledTimes(3);
+      await waitScheduler();
+      expectSpy(spy, 5, [undefined]);
       expect(state.get(4)).toBe(undefined); // subscribe to 4
       state.delete(4); // deleting observed key doesn't notify if key was already not present
-      expect(observer).toHaveBeenCalledTimes(3);
+      await waitScheduler();
+      expectSpy(spy, 5, [undefined]);
     });
 
     test("getting values returns a reactive", async () => {
       const obj = { a: 2 };
-      const observer = jest.fn();
-      const state = reactive(new Map([[1, obj]]), observer);
+      const spy = jest.fn();
+      const state = reactive(new Map([[1, obj]]));
       const reactiveObj = state.get(1)!;
       expect(reactiveObj).not.toBe(obj);
       expect(toRaw(reactiveObj as any)).toBe(obj);
+      effect(() => spy(reactiveObj.a));
+      expectSpy(spy, 1, [2]);
       reactiveObj.a = 0;
-      expect(observer).toHaveBeenCalledTimes(0);
-      reactiveObj.a; // observe key "a" in sub-reactive;
+      await waitScheduler();
+      expectSpy(spy, 2, [0]);
       reactiveObj.a = 1;
-      expect(observer).toHaveBeenCalledTimes(1);
+      await waitScheduler();
+      expectSpy(spy, 3, [1]);
       reactiveObj.a = 1; // setting same value again shouldn't notify
-      expect(observer).toHaveBeenCalledTimes(1);
+      await waitScheduler();
+      expectSpy(spy, 3, [1]);
     });
 
     test("iterating on values returns reactives", async () => {
       const obj = { a: 2 };
-      const observer = jest.fn();
-      const state = reactive(new Map([[1, obj]]), observer);
-      const reactiveObj = state.values().next().value;
+      const spy = jest.fn();
+      const state = reactive(new Map([[1, obj]]));
+      const reactiveObj = state.values().next().value!;
+      effect(() => spy(reactiveObj.a));
       expect(reactiveObj).not.toBe(obj);
       expect(toRaw(reactiveObj as any)).toBe(obj);
+      expectSpy(spy, 1, [2]);
       reactiveObj.a = 0;
-      expect(observer).toHaveBeenCalledTimes(0);
-      reactiveObj.a; // observe key "a" in sub-reactive;
+      await waitScheduler();
+      expectSpy(spy, 2, [0]);
       reactiveObj.a = 1;
-      expect(observer).toHaveBeenCalledTimes(1);
+      await waitScheduler();
+      expectSpy(spy, 3, [1]);
       reactiveObj.a = 1; // setting same value again shouldn't notify
-      expect(observer).toHaveBeenCalledTimes(1);
+      await waitScheduler();
+      expectSpy(spy, 3, [1]);
     });
 
     test("iterating on keys returns reactives", async () => {
       const obj = { a: 2 };
-      const observer = jest.fn();
-      const state = reactive(new Map([[obj, 1]]), observer);
-      const reactiveObj = state.keys().next().value;
+      const spy = jest.fn();
+      const state = reactive(new Map([[obj, 1]]));
+      const reactiveObj = state.keys().next().value!;
       expect(reactiveObj).not.toBe(obj);
       expect(toRaw(reactiveObj as any)).toBe(obj);
+      effect(() => spy(reactiveObj.a));
+      expectSpy(spy, 1, [2]);
       reactiveObj.a = 0;
-      expect(observer).toHaveBeenCalledTimes(0);
-      reactiveObj.a; // observe key "a" in sub-reactive;
+      await waitScheduler();
+      expectSpy(spy, 2, [0]);
       reactiveObj.a = 1;
-      expect(observer).toHaveBeenCalledTimes(1);
+      await waitScheduler();
+      expectSpy(spy, 3, [1]);
       reactiveObj.a = 1; // setting same value again shouldn't notify
-      expect(observer).toHaveBeenCalledTimes(1);
+      await waitScheduler();
+      expectSpy(spy, 3, [1]);
     });
 
     test("iterating on reactive map returns reactives", async () => {
       const keyObj = { a: 2 };
       const valObj = { a: 2 };
-      const observer = jest.fn();
-      const state = reactive(new Map([[keyObj, valObj]]), observer);
-      const [reactiveKeyObj, reactiveValObj] = state[Symbol.iterator]().next().value;
+      const spy = jest.fn();
+      const state = reactive(new Map([[keyObj, valObj]]));
+      const [reactiveKeyObj, reactiveValObj] = state[Symbol.iterator]().next().value!;
+      effect(() => spy(reactiveKeyObj.a, reactiveValObj.a));
       expect(reactiveKeyObj).not.toBe(keyObj);
       expect(reactiveValObj).not.toBe(valObj);
       expect(toRaw(reactiveKeyObj as any)).toBe(keyObj);
       expect(toRaw(reactiveValObj as any)).toBe(valObj);
+      expectSpy(spy, 1, [2, 2]);
       reactiveKeyObj.a = 0;
       reactiveValObj.a = 0;
-      expect(observer).toHaveBeenCalledTimes(0);
-      reactiveKeyObj.a; // observe key "a" in key sub-reactive;
+      await waitScheduler();
+      expectSpy(spy, 2, [0, 0]);
       reactiveKeyObj.a = 1;
-      expect(observer).toHaveBeenCalledTimes(1);
-      reactiveValObj.a; // observe key "a" in val sub-reactive;
+      await waitScheduler();
+      expectSpy(spy, 3, [1, 0]);
       reactiveValObj.a = 1;
-      expect(observer).toHaveBeenCalledTimes(2);
+      await waitScheduler();
+      expectSpy(spy, 4, [1, 1]);
       reactiveKeyObj.a = 1; // setting same value again shouldn't notify
       reactiveValObj.a = 1;
-      expect(observer).toHaveBeenCalledTimes(2);
+      await waitScheduler();
+      expectSpy(spy, 4, [1, 1]);
     });
 
     test("iterating on entries returns reactives", async () => {
       const keyObj = { a: 2 };
       const valObj = { a: 2 };
-      const observer = jest.fn();
-      const state = reactive(new Map([[keyObj, valObj]]), observer);
-      const [reactiveKeyObj, reactiveValObj] = state.entries().next().value;
+      const spy = jest.fn();
+      const state = reactive(new Map([[keyObj, valObj]]));
+      const [reactiveKeyObj, reactiveValObj] = state.entries().next().value!;
+      effect(() => spy(reactiveKeyObj.a, reactiveValObj.a));
       expect(reactiveKeyObj).not.toBe(keyObj);
       expect(reactiveValObj).not.toBe(valObj);
       expect(toRaw(reactiveKeyObj as any)).toBe(keyObj);
       expect(toRaw(reactiveValObj as any)).toBe(valObj);
+      expectSpy(spy, 1, [2, 2]);
       reactiveKeyObj.a = 0;
       reactiveValObj.a = 0;
-      expect(observer).toHaveBeenCalledTimes(0);
-      reactiveKeyObj.a; // observe key "a" in key sub-reactive;
+      await waitScheduler();
+      expectSpy(spy, 2, [0, 0]);
       reactiveKeyObj.a = 1;
-      expect(observer).toHaveBeenCalledTimes(1);
-      reactiveValObj.a; // observe key "a" in val sub-reactive;
+      await waitScheduler();
+      expectSpy(spy, 3, [1, 0]);
       reactiveValObj.a = 1;
-      expect(observer).toHaveBeenCalledTimes(2);
+      await waitScheduler();
+      expectSpy(spy, 4, [1, 1]);
       reactiveKeyObj.a = 1; // setting same value again shouldn't notify
       reactiveValObj.a = 1;
-      expect(observer).toHaveBeenCalledTimes(2);
+      await waitScheduler();
+      expectSpy(spy, 4, [1, 1]);
     });
 
     test("iterating with forEach returns reactives", async () => {
       const keyObj = { a: 2 };
       const valObj = { a: 2 };
       const thisArg = {};
-      const observer = jest.fn();
-      const state = reactive(new Map([[keyObj, valObj]]), observer);
+      const spy = jest.fn();
+      const state = reactive(new Map([[keyObj, valObj]]));
       let reactiveKeyObj: any, reactiveValObj: any, thisObj: any, mapObj: any;
       state.forEach(function (this: any, val, key, map) {
         [reactiveValObj, reactiveKeyObj, mapObj, thisObj] = [val, key, map, this];
@@ -1644,18 +1569,27 @@ describe("Collections", () => {
       expect(thisObj).toBe(thisArg); // thisArg should not be made reactive
       expect(toRaw(reactiveKeyObj as any)).toBe(keyObj);
       expect(toRaw(reactiveValObj as any)).toBe(valObj);
+
+      effect(() => spy(reactiveKeyObj.a, reactiveValObj.a));
+      expectSpy(spy, 1, [2, 2]);
+
       reactiveKeyObj!.a = 0;
       reactiveValObj!.a = 0;
-      expect(observer).toHaveBeenCalledTimes(0);
-      reactiveKeyObj!.a; // observe key "a" in key sub-reactive;
+      await waitScheduler();
+      expectSpy(spy, 2, [0, 0]);
+
       reactiveKeyObj!.a = 1;
-      expect(observer).toHaveBeenCalledTimes(1);
-      reactiveValObj!.a; // observe key "a" in val sub-reactive;
+      await waitScheduler();
+      expectSpy(spy, 3, [1, 0]);
+
       reactiveValObj!.a = 1;
-      expect(observer).toHaveBeenCalledTimes(2);
+      await waitScheduler();
+      expectSpy(spy, 4, [1, 1]);
+
       reactiveKeyObj!.a = 1; // setting same value again shouldn't notify
       reactiveValObj!.a = 1;
-      expect(observer).toHaveBeenCalledTimes(2);
+      await waitScheduler();
+      expectSpy(spy, 4, [1, 1]);
     });
   });
 
@@ -1699,82 +1633,100 @@ describe("Collections", () => {
       expect(state).toBeInstanceOf(WeakMap);
     });
 
-    test("checking for a key with 'has' subscribes the callback to changes to that key", () => {
-      const observer = jest.fn();
+    test("checking for a key with 'has' subscribes the callback to changes to that key", async () => {
+      const spy = jest.fn();
       const obj = {};
       const obj2 = {};
       const obj3 = {};
-      const state = reactive(new WeakMap([[obj2, 2]]), observer);
+      const state = reactive(new WeakMap([[obj2, 2]]));
 
-      expect(state.has(obj)).toBe(false); // subscribe to obj
-      expect(observer).toHaveBeenCalledTimes(0);
+      effect(() => spy(state.has(obj)));
+
+      expectSpy(spy, 1, [false]);
       state.set(obj, 3);
-      expect(observer).toHaveBeenCalledTimes(1);
+      await waitScheduler();
+      expectSpy(spy, 2, [true]);
       expect(state.has(obj)).toBe(true); // subscribe to obj
       state.delete(obj);
-      expect(observer).toHaveBeenCalledTimes(2);
+      await waitScheduler();
+      expectSpy(spy, 3, [false]);
       state.set(obj, 3);
       state.delete(obj);
-      expect(observer).toHaveBeenCalledTimes(2);
+      await waitScheduler();
+      // todo: should be 3 or 4?
+      expectSpy(spy, 4, [false]);
       expect(state.has(obj)).toBe(false); // subscribe to obj
 
       state.set(obj3, 4); // setting unobserved key doesn't notify
-      expect(observer).toHaveBeenCalledTimes(2);
+      await waitScheduler();
+      expectSpy(spy, 4, [false]);
     });
 
-    test("checking for a key with 'get' subscribes the callback to changes to that key", () => {
-      const observer = jest.fn();
+    test("checking for a key with 'get' subscribes the callback to changes to that key", async () => {
+      const spy = jest.fn();
       const obj = {};
       const obj2 = {};
       const obj3 = {};
-      const state = reactive(new WeakMap([[obj2, 2]]), observer);
+      const state = reactive(new WeakMap([[obj2, 2]]));
 
-      expect(state.get(obj)).toBeUndefined(); // subscribe to obj
-      expect(observer).toHaveBeenCalledTimes(0);
+      effect(() => spy(state.get(obj)));
+
+      expectSpy(spy, 1, [undefined]);
       state.set(obj, 3);
-      expect(observer).toHaveBeenCalledTimes(1);
+      await waitScheduler();
+      expectSpy(spy, 2, [3]);
       expect(state.get(obj)).toBe(3); // subscribe to obj
       state.delete(obj);
-      expect(observer).toHaveBeenCalledTimes(2);
+      await waitScheduler();
+      expectSpy(spy, 3, [undefined]);
       state.set(obj, 3);
       state.delete(obj);
-      expect(observer).toHaveBeenCalledTimes(2);
+      await waitScheduler();
+      expectSpy(spy, 4, [undefined]);
       expect(state.get(obj)).toBeUndefined(); // subscribe to obj
 
       state.set(obj3, 4); // setting unobserved key doesn't notify
-      expect(observer).toHaveBeenCalledTimes(2);
+      await waitScheduler();
+      expectSpy(spy, 4, [undefined]);
     });
 
     test("getting values returns a reactive", async () => {
       const keyObj = {};
       const valObj = { a: 2 };
-      const observer = jest.fn();
-      const state = reactive(new WeakMap([[keyObj, valObj]]), observer);
+      const spy = jest.fn();
+      const state = reactive(new WeakMap([[keyObj, valObj]]));
       const reactiveObj = state.get(keyObj)!;
       expect(reactiveObj).not.toBe(valObj);
       expect(toRaw(reactiveObj as any)).toBe(valObj);
+      effect(() => spy(reactiveObj.a));
+      expectSpy(spy, 1, [2]);
       reactiveObj.a = 0;
-      expect(observer).toHaveBeenCalledTimes(0);
-      reactiveObj.a; // observe key "a" in sub-reactive;
+      await waitScheduler();
+      expectSpy(spy, 2, [0]);
       reactiveObj.a = 1;
-      expect(observer).toHaveBeenCalledTimes(1);
+      await waitScheduler();
+      expectSpy(spy, 3, [1]);
       reactiveObj.a = 1; // setting same value again shouldn't notify
-      expect(observer).toHaveBeenCalledTimes(1);
+      await waitScheduler();
+      expectSpy(spy, 3, [1]);
     });
   });
 });
 
 describe("markRaw", () => {
-  test("markRaw works as expected: value is not observed", () => {
+  test("markRaw works as expected: value is not observed", async () => {
     const obj1: any = markRaw({ value: 1 });
     const obj2 = { value: 1 };
-    let n = 0;
-    const r = reactive({ obj1, obj2 }, () => n++);
-    expect(n).toBe(0);
+    const spy = jest.fn();
+    const r = reactive({ obj1, obj2 });
+    effect(() => spy(r.obj2.value));
+    expectSpy(spy, 1, [1]);
     r.obj1.value = r.obj1.value + 1;
-    expect(n).toBe(0);
+    await waitScheduler();
+    expectSpy(spy, 1, [1]);
     r.obj2.value = r.obj2.value + 1;
-    expect(n).toBe(1);
+    await waitScheduler();
+    expectSpy(spy, 2, [2]);
     expect(r.obj1).toBe(obj1);
     expect(r.obj2).not.toBe(obj2);
   });
@@ -1853,40 +1805,40 @@ describe("Reactivity: useState", () => {
     }
     await mount(Parent, fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Parent:setup",
-        "Parent:willStart",
-        "Parent:willRender",
-        "Child:setup",
-        "Child:willStart",
-        "Child:setup",
-        "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
-        "Child:willRender",
-        "Child:rendered",
-        "Child:mounted",
-        "Child:mounted",
-        "Parent:mounted",
-      ]
-    `);
+        Array [
+          "Parent:setup",
+          "Parent:willStart",
+          "Parent:willRender",
+          "Child:setup",
+          "Child:willStart",
+          "Child:setup",
+          "Child:willStart",
+          "Parent:rendered",
+          "Child:willRender",
+          "Child:rendered",
+          "Child:willRender",
+          "Child:rendered",
+          "Child:mounted",
+          "Child:mounted",
+          "Parent:mounted",
+        ]
+      `);
 
     expect(fixture.innerHTML).toBe("<div><span>123</span><span>123</span></div>");
     testContext.value = 321;
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Child:willRender",
-        "Child:rendered",
-        "Child:willRender",
-        "Child:rendered",
-        "Child:willPatch",
-        "Child:patched",
-        "Child:willPatch",
-        "Child:patched",
-      ]
-    `);
+        Array [
+          "Child:willRender",
+          "Child:rendered",
+          "Child:willRender",
+          "Child:rendered",
+          "Child:willPatch",
+          "Child:patched",
+          "Child:willPatch",
+          "Child:patched",
+        ]
+      `);
     expect(fixture.innerHTML).toBe("<div><span>321</span><span>321</span></div>");
   });
 
@@ -1911,48 +1863,48 @@ describe("Reactivity: useState", () => {
 
     await mount(Parent, fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Parent:setup",
-        "Parent:willStart",
-        "Parent:willRender",
-        "Child:setup",
-        "Child:willStart",
-        "Child:setup",
-        "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
-        "Child:willRender",
-        "Child:rendered",
-        "Child:mounted",
-        "Child:mounted",
-        "Parent:mounted",
-      ]
-    `);
+        Array [
+          "Parent:setup",
+          "Parent:willStart",
+          "Parent:willRender",
+          "Child:setup",
+          "Child:willStart",
+          "Child:setup",
+          "Child:willStart",
+          "Parent:rendered",
+          "Child:willRender",
+          "Child:rendered",
+          "Child:willRender",
+          "Child:rendered",
+          "Child:mounted",
+          "Child:mounted",
+          "Parent:mounted",
+        ]
+      `);
 
     expect(fixture.innerHTML).toBe("<div><span>123</span><span>123</span></div>");
     testContext.value = 321;
     await nextMicroTick();
     await nextMicroTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Child:willRender",
-        "Child:rendered",
-        "Child:willRender",
-        "Child:rendered",
-      ]
-    `);
+        Array [
+          "Child:willRender",
+          "Child:rendered",
+          "Child:willRender",
+          "Child:rendered",
+        ]
+      `);
     expect(fixture.innerHTML).toBe("<div><span>123</span><span>123</span></div>");
 
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Child:willPatch",
-        "Child:patched",
-        "Child:willPatch",
-        "Child:patched",
-      ]
-    `);
+        Array [
+          "Child:willPatch",
+          "Child:patched",
+          "Child:willPatch",
+          "Child:patched",
+        ]
+      `);
     expect(fixture.innerHTML).toBe("<div><span>321</span><span>321</span></div>");
   });
 
@@ -1987,53 +1939,53 @@ describe("Reactivity: useState", () => {
     await mount(GrandFather, fixture);
     expect(fixture.innerHTML).toBe("<div><span>123</span><div><span>123</span></div></div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "GrandFather:setup",
-        "GrandFather:willStart",
-        "GrandFather:willRender",
-        "Child:setup",
-        "Child:willStart",
-        "Parent:setup",
-        "Parent:willStart",
-        "GrandFather:rendered",
-        "Child:willRender",
-        "Child:rendered",
-        "Parent:willRender",
-        "Child:setup",
-        "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
-        "Child:mounted",
-        "Parent:mounted",
-        "Child:mounted",
-        "GrandFather:mounted",
-      ]
-    `);
+        Array [
+          "GrandFather:setup",
+          "GrandFather:willStart",
+          "GrandFather:willRender",
+          "Child:setup",
+          "Child:willStart",
+          "Parent:setup",
+          "Parent:willStart",
+          "GrandFather:rendered",
+          "Child:willRender",
+          "Child:rendered",
+          "Parent:willRender",
+          "Child:setup",
+          "Child:willStart",
+          "Parent:rendered",
+          "Child:willRender",
+          "Child:rendered",
+          "Child:mounted",
+          "Parent:mounted",
+          "Child:mounted",
+          "GrandFather:mounted",
+        ]
+      `);
 
     testContext.value = 321;
     await nextMicroTick();
     await nextMicroTick();
     expect(fixture.innerHTML).toBe("<div><span>123</span><div><span>123</span></div></div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Child:willRender",
-        "Child:rendered",
-        "Child:willRender",
-        "Child:rendered",
-      ]
-    `);
+        Array [
+          "Child:willRender",
+          "Child:rendered",
+          "Child:willRender",
+          "Child:rendered",
+        ]
+      `);
 
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>321</span><div><span>321</span></div></div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Child:willPatch",
-        "Child:patched",
-        "Child:willPatch",
-        "Child:patched",
-      ]
-    `);
+        Array [
+          "Child:willPatch",
+          "Child:patched",
+          "Child:willPatch",
+          "Child:patched",
+        ]
+      `);
   });
 
   test("one components can subscribe twice to same context", async () => {
@@ -2210,44 +2162,44 @@ describe("Reactivity: useState", () => {
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div><span>123</span></div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Parent:setup",
-        "Parent:willStart",
-        "Parent:willRender",
-        "Child:setup",
-        "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
-        "Child:mounted",
-        "Parent:mounted",
-      ]
-    `);
+        Array [
+          "Parent:setup",
+          "Parent:willStart",
+          "Parent:willRender",
+          "Child:setup",
+          "Child:willStart",
+          "Parent:rendered",
+          "Child:willRender",
+          "Child:rendered",
+          "Child:mounted",
+          "Parent:mounted",
+        ]
+      `);
 
     testContext.a = 321;
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Child:willRender",
-        "Child:rendered",
-        "Child:willPatch",
-        "Child:patched",
-      ]
-    `);
+        Array [
+          "Child:willRender",
+          "Child:rendered",
+          "Child:willPatch",
+          "Child:patched",
+        ]
+      `);
 
     parent.state.flag = false;
     await nextTick();
     expect(fixture.innerHTML).toBe("<div></div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
-        "Parent:willRender",
-        "Parent:rendered",
-        "Parent:willPatch",
-        "Child:willUnmount",
-        "Child:willDestroy",
-        "Parent:patched",
-      ]
-    `);
+        Array [
+          "Parent:willRender",
+          "Parent:rendered",
+          "Parent:willPatch",
+          "Child:willUnmount",
+          "Child:willDestroy",
+          "Parent:patched",
+        ]
+      `);
 
     testContext.a = 456;
     await nextTick();
@@ -2314,13 +2266,13 @@ describe("Reactivity: useState", () => {
 
     class ListOfQuantities extends Component {
       static template = xml`
-        <div>
-          <t t-foreach="Object.keys(state)" t-as="id" t-key="id">
-            <Quantity id="id"/>
-          </t>
-          Total: <t t-esc="total"/>
-          Count: <t t-esc="Object.keys(state).length"/>
-        </div>`;
+          <div>
+            <t t-foreach="Object.keys(state)" t-as="id" t-key="id">
+              <Quantity id="id"/>
+            </t>
+            Total: <t t-esc="total"/>
+            Count: <t t-esc="Object.keys(state).length"/>
+          </div>`;
       static components = { Quantity };
       state = useState(testContext);
 

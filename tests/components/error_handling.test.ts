@@ -1,27 +1,28 @@
 import { App, Component, mount, onWillDestroy } from "../../src";
+import { OwlError } from "../../src/common/owl_error";
 import {
   onError,
   onMounted,
   onPatched,
-  onWillPatch,
-  onWillStart,
-  onWillRender,
   onRendered,
+  onWillPatch,
+  onWillRender,
+  onWillStart,
   onWillUnmount,
   useState,
   xml,
 } from "../../src/index";
+import { getCurrent } from "../../src/runtime/component_node";
 import {
   logStep,
   makeTestFixture,
-  nextTick,
-  nextMicroTick,
-  snapshotEverything,
-  useLogLifecycle,
   nextAppError,
+  nextMicroTick,
+  nextTick,
+  snapshotEverything,
   steps,
+  useLogLifecycle,
 } from "../helpers";
-import { OwlError } from "../../src/common/owl_error";
 
 let fixture: HTMLElement;
 
@@ -685,7 +686,7 @@ describe("can catch errors", () => {
 
       setup() {
         onWillStart(() => {
-          this.state = useState({ value: 2 });
+          getCurrent();
         });
       }
     }

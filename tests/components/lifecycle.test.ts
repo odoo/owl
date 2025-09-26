@@ -1051,6 +1051,8 @@ describe("lifecycle hooks", () => {
 
     fixture.querySelector("button")!.click();
     await nextTick();
+    await nextTick();
+    await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`Array []`);
 
     fixture.querySelector("button")!.click();

@@ -1,13 +1,9 @@
-import type { Callback } from "./utils";
 import { OwlError } from "../common/owl_error";
+import { ExecutionContext, Signal } from "../common/types";
+import { getExecutionContext, popExecutionContext, pushExecutionContext } from "./executionContext";
 
 // Special key to subscribe to, to be notified of key creation/deletion
 const KEYCHANGES = Symbol("Key changes");
-// Used to specify the absence of a callback, can be used as WeakMap key but
-// should only be used as a sentinel value and never called.
-const NO_CALLBACK = () => {
-  throw new Error("Called NO_CALLBACK. Owl is broken, please report this to the maintainers.");
-};
 
 // The following types only exist to signify places where objects are expected
 // to be reactive or not, they provide no type checking benefit over "object"
@@ -55,8 +51,8 @@ function canBeMadeReactive(value: any): boolean {
  * @param value the value make reactive
  * @returns a reactive for the given object when possible, the original otherwise
  */
-function possiblyReactive(val: any, cb: Callback) {
-  return canBeMadeReactive(val) ? reactive(val, cb) : val;
+function possiblyReactive(val: any) {
+  return canBeMadeReactive(val) ? reactive(val) : val;
 }
 
 const skipped = new WeakSet<Target>();
@@ -81,7 +77,16 @@ export function toRaw<T extends Target, U extends Reactive<T>>(value: U | T): T 
   return targets.has(value) ? (targets.get(value) as T) : value;
 }
 
-const targetToKeysToCallbacks = new WeakMap<Target, Map<PropertyKey, Set<Callback>>>();
+const targetToKeysToSignalItem = new WeakMap<Target, Map<PropertyKey, Signal>>();
+const scheduledSignals = new Set<Signal>();
+
+function makeSignal() {
+  const signal: Signal = {
+    executionContexts: new Set<ExecutionContext>(),
+  };
+  return signal;
+}
+
 /**
  * Observes a given key on a target with an callback. The callback will be
  * called when the given key changes on the target.
@@ -91,23 +96,69 @@ const targetToKeysToCallbacks = new WeakMap<Target, Map<PropertyKey, Set<Callbac
  *  or deletion)
  * @param callback the function to call when the key changes
  */
-function observeTargetKey(target: Target, key: PropertyKey, callback: Callback): void {
-  if (callback === NO_CALLBACK) {
-    return;
+function onReadTargetKey(target: Target, key: PropertyKey): void {
+  const executionContext = getExecutionContext();
+  if (!executionContext) return;
+
+  let keyToSignalItem: Map<PropertyKey, Signal> = targetToKeysToSignalItem.get(target)!;
+  if (!keyToSignalItem) {
+    keyToSignalItem = new Map();
+    targetToKeysToSignalItem.set(target, keyToSignalItem);
   }
-  if (!targetToKeysToCallbacks.get(target)) {
-    targetToKeysToCallbacks.set(target, new Map());
+  let signal = keyToSignalItem.get(key)!;
+  if (!signal) {
+    signal = makeSignal();
+    keyToSignalItem.set(key, signal);
   }
-  const keyToCallbacks = targetToKeysToCallbacks.get(target)!;
-  if (!keyToCallbacks.get(key)) {
-    keyToCallbacks.set(key, new Set());
-  }
-  keyToCallbacks.get(key)!.add(callback);
-  if (!callbacksToTargets.has(callback)) {
-    callbacksToTargets.set(callback, new Set());
-  }
-  callbacksToTargets.get(callback)!.add(target);
+  // observerSignals.add(signal);
+  executionContext.signals.add(signal);
+  signal.executionContexts.add(executionContext);
 }
+
+let scheduled = false;
+function scheduleSignal(signal: Signal) {
+  scheduledSignals.add(signal);
+  if (scheduled) return;
+  scheduled = true;
+  Promise.resolve().then(() => {
+    scheduled = false;
+    processSignals();
+  });
+}
+
+function processSignals() {
+  const scheduledContexts = new Set(
+    [...scheduledSignals.values()].map((s) => [...s.executionContexts]).flat()
+  );
+
+  for (const ctx of [...scheduledContexts]) {
+    removeSignalsFromContext(ctx);
+    // custom unsubscribe depending on the context.
+    // scheduledContexts might be updated while we're iterating over it.
+    ctx.unsubcribe?.(scheduledContexts);
+  }
+
+  for (const context of scheduledContexts) {
+    pushExecutionContext(context);
+    try {
+      context.update();
+    } finally {
+      popExecutionContext();
+    }
+  }
+  scheduledSignals.clear();
+}
+
+/**
+ * Notify Reactives that are observing a given target that a key has changed on
+      }
+    });
+  };
+  for (const context of executionContexts) {
+    context.update();
+  }
+}
+
 /**
  * Notify Reactives that are observing a given target that a key has changed on
  * the target.
@@ -117,66 +168,21 @@ function observeTargetKey(target: Target, key: PropertyKey, callback: Callback):
  * @param key the key that changed (or Symbol `KEYCHANGES` if a key was created
  *   or deleted)
  */
-function notifyReactives(target: Target, key: PropertyKey): void {
-  const keyToCallbacks = targetToKeysToCallbacks.get(target);
-  if (!keyToCallbacks) {
+function onWriteTargetKey(target: Target, key: PropertyKey): void {
+  const keyToSignalItem = targetToKeysToSignalItem.get(target)!;
+  if (!keyToSignalItem) {
     return;
   }
-  const callbacks = keyToCallbacks.get(key);
-  if (!callbacks) {
+  const signal = keyToSignalItem.get(key);
+  if (!signal) {
     return;
   }
-  // Loop on copy because clearReactivesForCallback will modify the set in place
-  for (const callback of [...callbacks]) {
-    clearReactivesForCallback(callback);
-    callback();
-  }
+  scheduleSignal(signal);
 }
 
-const callbacksToTargets = new WeakMap<Callback, Set<Target>>();
-/**
- * Clears all subscriptions of the Reactives associated with a given callback.
- *
- * @param callback the callback for which the reactives need to be cleared
- */
-export function clearReactivesForCallback(callback: Callback): void {
-  const targetsToClear = callbacksToTargets.get(callback);
-  if (!targetsToClear) {
-    return;
-  }
-  for (const target of targetsToClear) {
-    const observedKeys = targetToKeysToCallbacks.get(target);
-    if (!observedKeys) {
-      continue;
-    }
-    for (const [key, callbacks] of observedKeys.entries()) {
-      callbacks.delete(callback);
-      if (!callbacks.size) {
-        observedKeys.delete(key);
-      }
-    }
-  }
-  targetsToClear.clear();
-}
-
-export function getSubscriptions(callback: Callback) {
-  const targets = callbacksToTargets.get(callback) || [];
-  return [...targets].map((target) => {
-    const keysToCallbacks = targetToKeysToCallbacks.get(target);
-    let keys = [];
-    if (keysToCallbacks) {
-      for (const [key, cbs] of keysToCallbacks) {
-        if (cbs.has(callback)) {
-          keys.push(key);
-        }
-      }
-    }
-    return { target, keys };
-  });
-}
 // Maps reactive objects to the underlying target
 export const targets = new WeakMap<Reactive<Target>, Target>();
-const reactiveCache = new WeakMap<Target, WeakMap<Callback, Reactive<Target>>>();
+const reactiveCache = new WeakMap<Target, Reactive<Target>>();
 /**
  * Creates a reactive proxy for an object. Reading data on the reactive object
  * subscribes to changes to the data. Writing data on the object will cause the
@@ -204,7 +210,7 @@ const reactiveCache = new WeakMap<Target, WeakMap<Callback, Reactive<Target>>>()
  *  reactive has changed
  * @returns a proxy that tracks changes to it
  */
-export function reactive<T extends Target>(target: T, callback: Callback = NO_CALLBACK): T {
+export function reactive<T extends Target>(target: T): T {
   if (!canBeMadeReactive(target)) {
     throw new OwlError(`Cannot make the given value reactive`);
   }
@@ -213,30 +219,86 @@ export function reactive<T extends Target>(target: T, callback: Callback = NO_CA
   }
   if (targets.has(target)) {
     // target is reactive, create a reactive on the underlying object instead
-    return reactive(targets.get(target) as T, callback);
+    // return reactive(targets.get(target) as T);
+    return target;
   }
-  if (!reactiveCache.has(target)) {
-    reactiveCache.set(target, new WeakMap());
-  }
-  const reactivesForTarget = reactiveCache.get(target)!;
-  if (!reactivesForTarget.has(callback)) {
-    const targetRawType = rawType(target);
-    const handler = COLLECTION_RAW_TYPES.includes(targetRawType)
-      ? collectionsProxyHandler(target as Collection, callback, targetRawType as CollectionRawType)
-      : basicProxyHandler<T>(callback);
-    const proxy = new Proxy(target, handler as ProxyHandler<T>) as Reactive<T>;
-    reactivesForTarget.set(callback, proxy);
-    targets.set(proxy, target);
-  }
-  return reactivesForTarget.get(callback) as Reactive<T>;
+  const reactive = reactiveCache.get(target)!;
+  if (reactive) return reactive as T;
+
+  const targetRawType = rawType(target);
+  const handler = COLLECTION_RAW_TYPES.includes(targetRawType)
+    ? collectionsProxyHandler(target as Collection, targetRawType as CollectionRawType)
+    : basicProxyHandler<T>();
+  const proxy = new Proxy(target, handler as ProxyHandler<T>) as Reactive<T>;
+
+  reactiveCache.set(target, proxy);
+  targets.set(proxy, target);
+
+  return proxy;
 }
+function removeSignalsFromContext(executionContext: ExecutionContext) {
+  for (const sig of executionContext.signals) {
+    sig.executionContexts.delete(executionContext);
+  }
+  executionContext.signals.clear();
+}
+/**
+ * Unsubscribe an execution context and all its children from all signals
+ * they are subscribed to.
+ *
+ * @param executionContext the context to unsubscribe
+ */
+function unsubscribeChildEffect(
+  executionContext: ExecutionContext,
+  scheduledContexts: Set<ExecutionContext>
+) {
+  // executionContext.update = () => {};
+
+  for (const children of executionContext.meta.children) {
+    children.meta.parent = undefined;
+    removeSignalsFromContext(children);
+    scheduledContexts.delete(children);
+    unsubscribeChildEffect(children, scheduledContexts);
+  }
+  executionContext.meta.children.length = 0;
+}
+export function effect(fn: Function) {
+  const parent = getExecutionContext();
+  const executionContext: ExecutionContext = {
+    unsubcribe: (scheduledContexts: Set<ExecutionContext>) => {
+      unsubscribeChildEffect(executionContext, scheduledContexts);
+    },
+    update: fn,
+    getParent: () => {
+      return executionContext.meta.parent;
+    },
+    getChildren: () => {
+      return executionContext.meta.children || [];
+    },
+    signals: new Set(),
+    meta: {
+      parent: getExecutionContext(),
+      children: [],
+    },
+  };
+  if (parent) {
+    parent.meta.children.push(executionContext);
+  }
+  pushExecutionContext(executionContext);
+  try {
+    fn();
+  } finally {
+    popExecutionContext();
+  }
+}
+
 /**
  * Creates a basic proxy handler for regular objects and arrays.
  *
  * @param callback @see reactive
  * @returns a proxy handler object
  */
-function basicProxyHandler<T extends Target>(callback: Callback): ProxyHandler<T> {
+function basicProxyHandler<T extends Target>(): ProxyHandler<T> {
   return {
     get(target, key, receiver) {
       // non-writable non-configurable properties cannot be made reactive
@@ -244,15 +306,15 @@ function basicProxyHandler<T extends Target>(callback: Callback): ProxyHandler<T
       if (desc && !desc.writable && !desc.configurable) {
         return Reflect.get(target, key, receiver);
       }
-      observeTargetKey(target, key, callback);
-      return possiblyReactive(Reflect.get(target, key, receiver), callback);
+      onReadTargetKey(target, key);
+      return possiblyReactive(Reflect.get(target, key, receiver));
     },
     set(target, key, value, receiver) {
       const hadKey = objectHasOwnProperty.call(target, key);
       const originalValue = Reflect.get(target, key, receiver);
       const ret = Reflect.set(target, key, toRaw(value), receiver);
       if (!hadKey && objectHasOwnProperty.call(target, key)) {
-        notifyReactives(target, KEYCHANGES);
+        onWriteTargetKey(target, KEYCHANGES);
       }
       // While Array length may trigger the set trap, it's not actually set by this
       // method but is updated behind the scenes, and the trap is not called with the
@@ -261,26 +323,26 @@ function basicProxyHandler<T extends Target>(callback: Callback): ProxyHandler<T
         originalValue !== Reflect.get(target, key, receiver) ||
         (key === "length" && Array.isArray(target))
       ) {
-        notifyReactives(target, key);
+        onWriteTargetKey(target, key);
       }
       return ret;
     },
     deleteProperty(target, key) {
       const ret = Reflect.deleteProperty(target, key);
       // TODO: only notify when something was actually deleted
-      notifyReactives(target, KEYCHANGES);
-      notifyReactives(target, key);
+      onWriteTargetKey(target, KEYCHANGES);
+      onWriteTargetKey(target, key);
       return ret;
     },
     ownKeys(target) {
-      observeTargetKey(target, KEYCHANGES, callback);
+      onReadTargetKey(target, KEYCHANGES);
       return Reflect.ownKeys(target);
     },
     has(target, key) {
       // TODO: this observes all key changes instead of only the presence of the argument key
       // observing the key itself would observe value changes instead of presence changes
       // so we may need a finer grained system to distinguish observing value vs presence.
-      observeTargetKey(target, KEYCHANGES, callback);
+      onReadTargetKey(target, KEYCHANGES);
       return Reflect.has(target, key);
     },
   } as ProxyHandler<T>;
@@ -293,11 +355,11 @@ function basicProxyHandler<T extends Target>(callback: Callback): ProxyHandler<T
  * @param target @see reactive
  * @param callback @see reactive
  */
-function makeKeyObserver(methodName: "has" | "get", target: any, callback: Callback) {
+function makeKeyObserver(methodName: "has" | "get", target: any) {
   return (key: any) => {
     key = toRaw(key);
-    observeTargetKey(target, key, callback);
-    return possiblyReactive(target[methodName](key), callback);
+    onReadTargetKey(target, key);
+    return possiblyReactive(target[methodName](key));
   };
 }
 /**
@@ -310,16 +372,15 @@ function makeKeyObserver(methodName: "has" | "get", target: any, callback: Callb
  */
 function makeIteratorObserver(
   methodName: "keys" | "values" | "entries" | typeof Symbol.iterator,
-  target: any,
-  callback: Callback
+  target: any
 ) {
   return function* () {
-    observeTargetKey(target, KEYCHANGES, callback);
+    onReadTargetKey(target, KEYCHANGES);
     const keys = target.keys();
     for (const item of target[methodName]()) {
       const key = keys.next().value;
-      observeTargetKey(target, key, callback);
-      yield possiblyReactive(item, callback);
+      onReadTargetKey(target, key);
+      yield possiblyReactive(item);
     }
   };
 }
@@ -331,16 +392,16 @@ function makeIteratorObserver(
  * @param target @see reactive
  * @param callback @see reactive
  */
-function makeForEachObserver(target: any, callback: Callback) {
+function makeForEachObserver(target: any) {
   return function forEach(forEachCb: (val: any, key: any, target: any) => void, thisArg: any) {
-    observeTargetKey(target, KEYCHANGES, callback);
+    onReadTargetKey(target, KEYCHANGES);
     target.forEach(function (val: any, key: any, targetObj: any) {
-      observeTargetKey(target, key, callback);
+      onReadTargetKey(target, key);
       forEachCb.call(
         thisArg,
-        possiblyReactive(val, callback),
-        possiblyReactive(key, callback),
-        possiblyReactive(targetObj, callback)
+        possiblyReactive(val),
+        possiblyReactive(key),
+        possiblyReactive(targetObj)
       );
     }, thisArg);
   };
@@ -367,10 +428,10 @@ function delegateAndNotify(
     const ret = target[setterName](key, value);
     const hasKey = target.has(key);
     if (hadKey !== hasKey) {
-      notifyReactives(target, KEYCHANGES);
+      onWriteTargetKey(target, KEYCHANGES);
     }
     if (originalValue !== target[getterName](key)) {
-      notifyReactives(target, key);
+      onWriteTargetKey(target, key);
     }
     return ret;
   };
@@ -385,9 +446,9 @@ function makeClearNotifier(target: Map<any, any> | Set<any>) {
   return () => {
     const allKeys = [...target.keys()];
     target.clear();
-    notifyReactives(target, KEYCHANGES);
+    onWriteTargetKey(target, KEYCHANGES);
     for (const key of allKeys) {
-      notifyReactives(target, key);
+      onWriteTargetKey(target, key);
     }
   };
 }
@@ -399,40 +460,40 @@ function makeClearNotifier(target: Map<any, any> | Set<any>) {
  * reactives that the key which is being added or deleted has been modified.
  */
 const rawTypeToFuncHandlers = {
-  Set: (target: any, callback: Callback) => ({
-    has: makeKeyObserver("has", target, callback),
+  Set: (target: any) => ({
+    has: makeKeyObserver("has", target),
     add: delegateAndNotify("add", "has", target),
     delete: delegateAndNotify("delete", "has", target),
-    keys: makeIteratorObserver("keys", target, callback),
-    values: makeIteratorObserver("values", target, callback),
-    entries: makeIteratorObserver("entries", target, callback),
-    [Symbol.iterator]: makeIteratorObserver(Symbol.iterator, target, callback),
-    forEach: makeForEachObserver(target, callback),
+    keys: makeIteratorObserver("keys", target),
+    values: makeIteratorObserver("values", target),
+    entries: makeIteratorObserver("entries", target),
+    [Symbol.iterator]: makeIteratorObserver(Symbol.iterator, target),
+    forEach: makeForEachObserver(target),
     clear: makeClearNotifier(target),
     get size() {
-      observeTargetKey(target, KEYCHANGES, callback);
+      onReadTargetKey(target, KEYCHANGES);
       return target.size;
     },
   }),
-  Map: (target: any, callback: Callback) => ({
-    has: makeKeyObserver("has", target, callback),
-    get: makeKeyObserver("get", target, callback),
+  Map: (target: any) => ({
+    has: makeKeyObserver("has", target),
+    get: makeKeyObserver("get", target),
     set: delegateAndNotify("set", "get", target),
     delete: delegateAndNotify("delete", "has", target),
-    keys: makeIteratorObserver("keys", target, callback),
-    values: makeIteratorObserver("values", target, callback),
-    entries: makeIteratorObserver("entries", target, callback),
-    [Symbol.iterator]: makeIteratorObserver(Symbol.iterator, target, callback),
-    forEach: makeForEachObserver(target, callback),
+    keys: makeIteratorObserver("keys", target),
+    values: makeIteratorObserver("values", target),
+    entries: makeIteratorObserver("entries", target),
+    [Symbol.iterator]: makeIteratorObserver(Symbol.iterator, target),
+    forEach: makeForEachObserver(target),
     clear: makeClearNotifier(target),
     get size() {
-      observeTargetKey(target, KEYCHANGES, callback);
+      onReadTargetKey(target, KEYCHANGES);
       return target.size;
     },
   }),
-  WeakMap: (target: any, callback: Callback) => ({
-    has: makeKeyObserver("has", target, callback),
-    get: makeKeyObserver("get", target, callback),
+  WeakMap: (target: any) => ({
+    has: makeKeyObserver("has", target),
+    get: makeKeyObserver("get", target),
     set: delegateAndNotify("set", "get", target),
     delete: delegateAndNotify("delete", "has", target),
   }),
@@ -446,20 +507,19 @@ const rawTypeToFuncHandlers = {
  */
 function collectionsProxyHandler<T extends Collection>(
   target: T,
-  callback: Callback,
   targetRawType: CollectionRawType
 ): ProxyHandler<T> {
   // TODO: if performance is an issue we can create the special handlers lazily when each
   // property is read.
-  const specialHandlers = rawTypeToFuncHandlers[targetRawType](target, callback);
-  return Object.assign(basicProxyHandler(callback), {
+  const specialHandlers = rawTypeToFuncHandlers[targetRawType](target);
+  return Object.assign(basicProxyHandler(), {
     // FIXME: probably broken when part of prototype chain since we ignore the receiver
     get(target: any, key: PropertyKey) {
       if (objectHasOwnProperty.call(specialHandlers, key)) {
         return (specialHandlers as any)[key];
       }
-      observeTargetKey(target, key, callback);
-      return possiblyReactive(target[key], callback);
+      onReadTargetKey(target, key);
+      return possiblyReactive(target[key]);
     },
   }) as ProxyHandler<T>;
 }

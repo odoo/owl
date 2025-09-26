@@ -3,6 +3,8 @@ import type { ComponentNode } from "./component_node";
 import { fibersInError } from "./error_handling";
 import { OwlError } from "../common/owl_error";
 import { STATUS } from "./status";
+import { popTaskContext, pushTaskContext } from "./cancellableContext";
+import { popExecutionContext, pushExecutionContext } from "./executionContext";
 
 export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
   let current = node.fiber;
@@ -133,12 +135,16 @@ export class Fiber {
     const node = this.node;
     const root = this.root;
     if (root) {
+      pushTaskContext(node.taskContext);
+      pushExecutionContext(node.executionContext);
       try {
         (this.bdom as any) = true;
         this.bdom = node.renderFn();
       } catch (e) {
         node.app.handleError({ node, error: e });
       }
+      popExecutionContext();
+      popTaskContext();
       root.setCounter(root.counter - 1);
     }
   }

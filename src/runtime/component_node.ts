@@ -1,12 +1,14 @@
+import { OwlError } from "../common/owl_error";
+import { ExecutionContext } from "../common/types";
 import type { App, Env } from "./app";
 import { BDom, VNode } from "./blockdom";
+import { makeTaskContext, TaskContext } from "./cancellableContext";
 import { Component, ComponentConstructor, Props } from "./component";
 import { fibersInError } from "./error_handling";
-import { OwlError } from "../common/owl_error";
+import { makeExecutionContext } from "./executionContext";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";
-import { clearReactivesForCallback, getSubscriptions, reactive, targets } from "./reactivity";
+import { reactive, targets } from "./reactivity";
 import { STATUS } from "./status";
-import { batched, Callback } from "./utils";
 
 let currentNode: ComponentNode | null = null;
 
@@ -42,7 +44,7 @@ function applyDefaultProps<P extends object>(props: P, defaultProps: Partial<P>)
 // Integration with reactivity system (useState)
 // -----------------------------------------------------------------------------
 
-const batchedRenderFunctions = new WeakMap<ComponentNode, Callback>();
+// const batchedRenderFunctions = new WeakMap<ComponentNode, Callback>();
 /**
  * Creates a reactive object that will be observed by the current component.
  * Reading data from the returned object (eg during rendering) will cause the
@@ -54,15 +56,19 @@ const batchedRenderFunctions = new WeakMap<ComponentNode, Callback>();
  * @see reactive
  */
 export function useState<T extends object>(state: T): T {
-  const node = getCurrent();
-  let render = batchedRenderFunctions.get(node)!;
-  if (!render) {
-    render = batched(node.render.bind(node, false));
-    batchedRenderFunctions.set(node, render);
-    // manual implementation of onWillDestroy to break cyclic dependency
-    node.willDestroy.push(clearReactivesForCallback.bind(null, render));
-  }
-  return reactive(state, render);
+  // const node = getCurrent();
+  // let render = batchedRenderFunctions.get(node)!;
+  // if (!render) {
+  //   render = batched(() => {
+  //     debugger;
+  //     const r = node.render(false);
+  //     return r;
+  //   });
+  //   batchedRenderFunctions.set(node, render);
+  //   // manual implementation of onWillDestroy to break cyclic dependency
+  //   node.willDestroy.push(clearReactivesForCallback.bind(null, render));
+  // }
+  return reactive(state);
 }
 
 // -----------------------------------------------------------------------------
@@ -96,6 +102,8 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
   willPatch: LifecycleHook[] = [];
   patched: LifecycleHook[] = [];
   willDestroy: LifecycleHook[] = [];
+  taskContext: TaskContext;
+  executionContext: ExecutionContext;
 
   constructor(
     C: ComponentConstructor<P, E>,
@@ -109,6 +117,17 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     this.parent = parent;
     this.props = props;
     this.parentKey = parentKey;
+    this.taskContext = makeTaskContext();
+    this.executionContext = makeExecutionContext({
+      update: () => {
+        this.render(false);
+      },
+      getParent: () => this.parent?.executionContext,
+      getChildren: () => {
+        return Object.values(this.children).map((c) => c.executionContext);
+      },
+      meta: this,
+    });
     const defaultProps = C.defaultProps;
     props = Object.assign({}, props);
     if (defaultProps) {
@@ -384,8 +403,8 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     return this.component.constructor.name;
   }
 
-  get subscriptions(): ReturnType<typeof getSubscriptions> {
-    const render = batchedRenderFunctions.get(this);
-    return render ? getSubscriptions(render) : [];
-  }
+  // get subscriptions(): ReturnType<typeof getSubscriptions> {
+  //   const render = batchedRenderFunctions.get(this);
+  //   return render ? getSubscriptions(render) : [];
+  // }
 }

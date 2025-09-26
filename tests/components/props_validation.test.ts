@@ -702,7 +702,7 @@ describe("props validation", () => {
     const app = new App(Parent, { test: true });
     await app.mount(fixture);
     expect(fixture.innerHTML).toBe("12");
-    expect(app.root!.subscriptions).toEqual([{ keys: ["otherValue"], target: obj }]);
+    // expect(app.root!.subscriptions).toEqual([{ keys: ["otherValue"], target: obj }]);
   });
 
   test("props are validated whenever component is updated", async () => {

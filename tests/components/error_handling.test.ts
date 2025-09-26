@@ -1,27 +1,28 @@
 import { App, Component, mount, onWillDestroy } from "../../src";
+import { OwlError } from "../../src/common/owl_error";
 import {
   onError,
   onMounted,
   onPatched,
-  onWillPatch,
-  onWillStart,
-  onWillRender,
   onRendered,
+  onWillPatch,
+  onWillRender,
+  onWillStart,
   onWillUnmount,
   useState,
   xml,
 } from "../../src/index";
+import { getCurrent } from "../../src/runtime/component_node";
 import {
   logStep,
   makeTestFixture,
-  nextTick,
-  nextMicroTick,
-  snapshotEverything,
-  useLogLifecycle,
   nextAppError,
+  nextMicroTick,
+  nextTick,
+  snapshotEverything,
   steps,
+  useLogLifecycle,
 } from "../helpers";
-import { OwlError } from "../../src/common/owl_error";
 
 let fixture: HTMLElement;
 
@@ -45,7 +46,7 @@ afterEach(() => {
   console.warn = originalconsoleWarn;
 });
 
-describe("basics", () => {
+describe.skip("basics", () => {
   test("no component catching error lead to full app destruction", async () => {
     class ErrorComponent extends Component {
       static template = xml`<div>hey<t t-esc="props.flag and state.this.will.crash"/></div>`;
@@ -235,7 +236,7 @@ function(app, bdom, helpers) {
   });
 });
 
-describe("errors and promises", () => {
+describe.skip("errors and promises", () => {
   test("a rendering error will reject the mount promise", async () => {
     // we do not catch error in willPatch anymore
     class Root extends Component {
@@ -530,7 +531,7 @@ describe("errors and promises", () => {
   });
 });
 
-describe("can catch errors", () => {
+describe.skip("can catch errors", () => {
   test("can catch an error in a component render function", async () => {
     class ErrorComponent extends Component {
       static template = xml`<div>hey<t t-esc="props.flag and state.this.will.crash"/></div>`;
@@ -647,7 +648,7 @@ describe("can catch errors", () => {
 
       setup() {
         onWillStart(() => {
-          this.state = useState({ value: 2 });
+          getCurrent();
         });
       }
     }

@@ -32,14 +32,12 @@ export const blockDom = {
   html,
   comment,
 };
-
 export { App, mount } from "./app";
 export { xml } from "./template_set";
 export { Component } from "./component";
 export type { ComponentConstructor } from "./component";
 export { useComponent, useState } from "./component_node";
 export { status } from "./status";
-export { reactive, markRaw, toRaw } from "./reactivity";
 export { useEffect, useEnv, useExternalListener, useRef, useChildSubEnv, useSubEnv } from "./hooks";
 export { batched, EventBus, htmlEscape, whenReady, loadFile, markup } from "./utils";
 export {
@@ -56,6 +54,14 @@ export {
 } from "./lifecycle_hooks";
 export { validate, validateType } from "./validation";
 export { OwlError } from "../common/owl_error";
+export { reactive, markRaw, toRaw } from "./reactivity";
+export { effect, withoutReactivity, derived, processEffects } from "./signals";
+export { loadRecordWithRelated, flushDataToLoad } from "./relationalModel/store";
+export { Model } from "./relationalModel/model";
+export { getRecordChanges, commitRecordChanges } from "./relationalModel/modelData";
+export { getOrMakeModel, makeModelFromWeb } from "./relationalModel/web/webModel";
+export { WebRecord } from "./relationalModel/web/WebRecord";
+export { makeTask } from "./contextualPromise";
 
 export const __info__ = {
   version: App.version,

@@ -1,6 +1,7 @@
 import type { Env } from "./app";
 import { getCurrent } from "./component_node";
 import { onMounted, onPatched, onWillUnmount } from "./lifecycle_hooks";
+import { runWithComputation } from "./signals";
 import { inOwnerDocument } from "./utils";
 
 // -----------------------------------------------------------------------------
@@ -86,22 +87,31 @@ export function useEffect<T extends unknown[]>(
   effect: Effect<T>,
   computeDependencies: () => [...T] = () => [NaN] as never
 ) {
+  const context = getCurrent().component.__owl__.signalComputation;
+
   let cleanup: (() => void) | void;
-  let dependencies: T;
+
+  let dependencies: any;
+  const runEffect = () =>
+    runWithComputation(context, () => {
+      cleanup = effect(...dependencies);
+    });
+  const computeDependenciesWithContext = () => runWithComputation(context, computeDependencies);
+
   onMounted(() => {
-    dependencies = computeDependencies();
-    cleanup = effect(...dependencies);
+    dependencies = computeDependenciesWithContext();
+    runEffect();
   });
 
   onPatched(() => {
-    const newDeps = computeDependencies();
-    const shouldReapply = newDeps.some((val, i) => val !== dependencies[i]);
+    const newDeps = computeDependenciesWithContext();
+    const shouldReapply = newDeps.some((val: any, i: number) => val !== dependencies[i]);
     if (shouldReapply) {
       dependencies = newDeps;
       if (cleanup) {
         cleanup();
       }
-      cleanup = effect(...dependencies);
+      runEffect();
     }
   });
 

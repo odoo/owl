@@ -213,7 +213,6 @@ export class App<
       };
     }
 
-    const updateAndRender = ComponentNode.prototype.updateAndRender;
     const initiateRender = ComponentNode.prototype.initiateRender;
 
     return (props: P, key: string, ctx: ComponentNode, parent: any, C: any) => {
@@ -223,12 +222,7 @@ export class App<
         node = undefined;
       }
       const parentFiber = ctx.fiber!;
-      if (node) {
-        if (arePropsDifferent(node.props, props) || parentFiber.deep || node.forceNextRender) {
-          node.forceNextRender = false;
-          updateAndRender.call(node, props, parentFiber);
-        }
-      } else {
+      if (!node) {
         // new component
         if (isStatic) {
           const components = parent.constructor.components;
@@ -248,7 +242,7 @@ export class App<
         }
         node = new ComponentNode(C, props, this, ctx, key);
         children[key] = node;
-        initiateRender.call(node, new Fiber(node, parentFiber));
+        initiateRender.call(node);
       }
       parentFiber.childrenMap[key] = node;
       return node;

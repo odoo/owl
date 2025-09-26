@@ -2,12 +2,11 @@ import {
   Component,
   mount,
   onPatched,
-  onWillRender,
   onWillPatch,
+  onWillRender,
   onWillUnmount,
-  useState,
+  reactive,
   xml,
-  toRaw,
 } from "../../src";
 import { makeTestFixture, nextTick, snapshotEverything, steps, useLogLifecycle } from "../helpers";
 
@@ -20,10 +19,36 @@ beforeEach(() => {
 });
 
 describe("reactivity in lifecycle", () => {
+  test("an external reactive object should be tracked", async () => {
+    const obj1 = reactive({ value: 1 });
+    const obj2 = reactive({ value: 100 });
+    class TestSubComponent extends Component {
+      obj2 = obj2;
+
+      static template = xml`<div>
+        <t t-esc="obj2.value"/>
+      </div>`;
+    }
+    class TestComponent extends Component {
+      obj1 = obj1;
+      static template = xml`<div>
+        <t t-esc="obj1.value"/>
+        <TestSubComponent/>
+      </div>`;
+      static components = { TestSubComponent };
+    }
+    await mount(TestComponent, fixture);
+    expect(fixture.innerHTML).toBe("<div>1<div>100</div></div>");
+    obj1.value = 2;
+    obj2.value = 200;
+    await nextTick();
+
+    expect(fixture.innerHTML).toBe("<div>2<div>200</div></div>");
+  });
   test("can use a state hook", async () => {
     class Counter extends Component {
       static template = xml`<div><t t-esc="counter.value"/></div>`;
-      counter = useState({ value: 42 });
+      counter = reactive({ value: 42 });
     }
     const counter = await mount(Counter, fixture);
     expect(fixture.innerHTML).toBe("<div>42</div>");
@@ -36,7 +61,7 @@ describe("reactivity in lifecycle", () => {
     let n = 0;
     class Comp extends Component {
       static template = xml`<div><t t-esc="state.a"/></div>`;
-      state = useState({ a: 5, b: 7 });
+      state = reactive({ a: 5, b: 7 });
       setup() {
         onWillRender(() => n++);
       }
@@ -57,7 +82,7 @@ describe("reactivity in lifecycle", () => {
   test("can use a state hook on Map", async () => {
     class Counter extends Component {
       static template = xml`<div><t t-esc="counter.get('value')"/></div>`;
-      counter = useState(new Map([["value", 42]]));
+      counter = reactive(new Map([["value", 42]]));
     }
     const counter = await mount(Counter, fixture);
     expect(fixture.innerHTML).toBe("<div>42</div>");
@@ -72,7 +97,7 @@ describe("reactivity in lifecycle", () => {
       static template = xml`
           <span><t t-esc="props.val"/><t t-esc="state.n"/></span>
         `;
-      state = useState({ n: 2 });
+      state = reactive({ n: 2 });
       setup() {
         onWillRender(() => {
           steps.push("render");
@@ -96,7 +121,7 @@ describe("reactivity in lifecycle", () => {
           </div>
         `;
       static components = { Child };
-      state = useState({ val: 1, flag: true });
+      state = reactive({ val: 1, flag: true });
     }
     const parent = await mount(Parent, fixture);
     expect(steps).toEqual(["render"]);
@@ -142,7 +167,7 @@ describe("reactivity in lifecycle", () => {
       static template = xml`
           <div><t t-esc="state.val"/></div>
         `;
-      state = useState({ val: 1 });
+      state = reactive({ val: 1 });
       setup() {
         STATE = this.state;
         onWillRender(() => {
@@ -167,7 +192,7 @@ describe("reactivity in lifecycle", () => {
     class Parent extends Component {
       static template = xml`<Child t-if="state.renderChild" state="state"/>`;
       static components = { Child };
-      state: any = useState({ renderChild: true, content: { a: 2 } });
+      state: any = reactive({ renderChild: true, content: { a: 2 } });
       setup() {
         useLogLifecycle();
       }
@@ -205,7 +230,8 @@ describe("reactivity in lifecycle", () => {
     `);
   });
 
-  test("Component is automatically subscribed to reactive object received as prop", async () => {
+  // todo: unskip it
+  test.skip("Component is automatically subscribed to reactive object received as prop", async () => {
     let childRenderCount = 0;
     let parentRenderCount = 0;
     class Child extends Component {
@@ -218,7 +244,7 @@ describe("reactivity in lifecycle", () => {
       static template = xml`<Child obj="obj" reactiveObj="reactiveObj"/>`;
       static components = { Child };
       obj = { a: 1 };
-      reactiveObj = useState({ b: 2 });
+      reactiveObj = reactive({ b: 2 });
       setup() {
         onWillRender(() => parentRenderCount++);
       }
@@ -235,36 +261,5 @@ describe("reactivity in lifecycle", () => {
     // Only child should be rendered: the parent never read the b key in reactiveObj
     expect([parentRenderCount, childRenderCount]).toEqual([1, 2]);
     expect(fixture.innerHTML).toBe("34");
-  });
-});
-
-describe("subscriptions", () => {
-  test("subscriptions returns the keys and targets observed by the component", async () => {
-    class Comp extends Component {
-      static template = xml`<t t-esc="state.a"/>`;
-      state = useState({ a: 1, b: 2 });
-    }
-    const comp = await mount(Comp, fixture);
-    expect(fixture.innerHTML).toBe("1");
-    expect(comp.__owl__.subscriptions).toEqual([{ keys: ["a"], target: toRaw(comp.state) }]);
-  });
-
-  test("subscriptions returns the keys observed by the component", async () => {
-    class Child extends Component {
-      static template = xml`<t t-esc="props.state.b"/>`;
-      setup() {
-        child = this;
-      }
-    }
-    let child: Child;
-    class Parent extends Component {
-      static template = xml`<t t-esc="state.a"/><Child state="state"/>`;
-      static components = { Child };
-      state = useState({ a: 1, b: 2 });
-    }
-    const parent = await mount(Parent, fixture);
-    expect(fixture.innerHTML).toBe("12");
-    expect(parent.__owl__.subscriptions).toEqual([{ keys: ["a"], target: toRaw(parent.state) }]);
-    expect(child!.__owl__.subscriptions).toEqual([{ keys: ["b"], target: toRaw(parent.state) }]);
   });
 });

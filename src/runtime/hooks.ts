@@ -1,5 +1,6 @@
 import type { Env } from "./app";
 import { getCurrent } from "./component_node";
+import { popExecutionContext, pushExecutionContext } from "./executionContext";
 import { onMounted, onPatched, onWillUnmount } from "./lifecycle_hooks";
 import { inOwnerDocument } from "./utils";
 
@@ -86,11 +87,22 @@ export function useEffect<T extends unknown[]>(
   effect: Effect<T>,
   computeDependencies: () => [...T] = () => [NaN] as never
 ) {
+  const context = getCurrent().component.__owl__.executionContext;
   let cleanup: (() => void) | void;
   let dependencies: T;
+
+  const runEffect = () => {
+    pushExecutionContext(context);
+    try {
+      cleanup = effect(...dependencies);
+    } finally {
+      popExecutionContext();
+    }
+  };
+
   onMounted(() => {
     dependencies = computeDependencies();
-    cleanup = effect(...dependencies);
+    runEffect();
   });
 
   onPatched(() => {
@@ -101,7 +113,7 @@ export function useEffect<T extends unknown[]>(
       if (cleanup) {
         cleanup();
       }
-      cleanup = effect(...dependencies);
+      runEffect();
     }
   });
 

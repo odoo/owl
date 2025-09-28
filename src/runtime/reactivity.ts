@@ -131,6 +131,11 @@ function processSignals() {
     [...scheduledSignals.values()].map((s) => [...s.executionContexts]).flat()
   );
 
+  // schedule before context.update in case there is write operations during update
+  // todo: add a test in case there is write operations during update the test
+  // will break is scheduledSignals.clear(); is called after context.update();
+  // that writes
+  scheduledSignals.clear();
   for (const ctx of [...scheduledContexts]) {
     removeSignalsFromContext(ctx);
     // custom unsubscribe depending on the context.
@@ -146,7 +151,6 @@ function processSignals() {
       popExecutionContext();
     }
   }
-  scheduledSignals.clear();
 }
 
 /**
@@ -263,7 +267,11 @@ function unsubscribeChildEffect(
   executionContext.meta.children.length = 0;
 }
 export function effect(fn: Function) {
-  const parent = getExecutionContext();
+  let parent = getExecutionContext();
+  // todo: is it useful?
+  if (parent && !parent?.meta.children) {
+    parent = undefined!;
+  }
   const executionContext: ExecutionContext = {
     unsubcribe: (scheduledContexts: Set<ExecutionContext>) => {
       unsubscribeChildEffect(executionContext, scheduledContexts);
@@ -277,12 +285,13 @@ export function effect(fn: Function) {
     },
     signals: new Set(),
     meta: {
-      parent: getExecutionContext(),
+      parent: parent,
       children: [],
     },
   };
   if (parent) {
-    parent.meta.children.push(executionContext);
+    // todo: is it useful?
+    parent.meta.children?.push?.(executionContext);
   }
   pushExecutionContext(executionContext);
   try {

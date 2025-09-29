@@ -266,6 +266,16 @@ function unsubscribeChildEffect(
   }
   executionContext.meta.children.length = 0;
 }
+export function withoutReactivity<T extends (...args: any[]) => any>(fn: T): ReturnType<T> {
+  pushExecutionContext(undefined!);
+  let r: ReturnType<T>;
+  try {
+    r = fn();
+  } finally {
+    popExecutionContext();
+  }
+  return r;
+}
 export function effect(fn: Function) {
   let parent = getExecutionContext();
   // todo: is it useful?

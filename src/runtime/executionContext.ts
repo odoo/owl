@@ -1,10 +1,11 @@
 import { ExecutionContext } from "../common/types";
 
-export const executionContext: ExecutionContext[] = [];
+export const executionContexts: ExecutionContext[] = [];
+(window as any).executionContexts = executionContexts;
 // export const scheduledContexts: Set<ExecutionContext> = new Set();
 
 export function getExecutionContext() {
-  return executionContext[executionContext.length - 1];
+  return executionContexts[executionContexts.length - 1];
 }
 
 export function makeExecutionContext({
@@ -29,9 +30,9 @@ export function makeExecutionContext({
 }
 
 export function pushExecutionContext(context: ExecutionContext) {
-  executionContext.push(context);
+  executionContexts.push(context);
 }
 
 export function popExecutionContext() {
-  executionContext.pop();
+  executionContexts.pop();
 }

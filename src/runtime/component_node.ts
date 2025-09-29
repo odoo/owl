@@ -7,7 +7,7 @@ import { Component, ComponentConstructor, Props } from "./component";
 import { fibersInError } from "./error_handling";
 import { makeExecutionContext } from "./executionContext";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";
-import { reactive, targets } from "./reactivity";
+import { reactive, targets, withoutReactivity } from "./reactivity";
 import { STATUS } from "./status";
 
 let currentNode: ComponentNode | null = null;
@@ -149,7 +149,11 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     }
     const component = this.component;
     try {
-      await Promise.all(this.willStart.map((f) => f.call(component)));
+      let prom: Promise<any[]>;
+      withoutReactivity(() => {
+        prom = Promise.all(this.willStart.map((f) => f.call(component)));
+      });
+      await prom!;
     } catch (e) {
       this.app.handleError({ node: this, error: e });
       return;
@@ -272,8 +276,11 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
       }
     }
     currentNode = null;
-    const prom = Promise.all(this.willUpdateProps.map((f) => f.call(component, props)));
-    await prom;
+    let prom: Promise<any[]>;
+    withoutReactivity(() => {
+      prom = Promise.all(this.willUpdateProps.map((f) => f.call(component, props)));
+    });
+    await prom!;
     if (fiber !== this.fiber) {
       return;
     }

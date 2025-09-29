@@ -39,7 +39,7 @@ export { Component } from "./component";
 export type { ComponentConstructor } from "./component";
 export { useComponent, useState } from "./component_node";
 export { status } from "./status";
-export { reactive, markRaw, toRaw, effect } from "./reactivity";
+export { reactive, markRaw, toRaw, effect, withoutReactivity } from "./reactivity";
 export { useEffect, useEnv, useExternalListener, useRef, useChildSubEnv, useSubEnv } from "./hooks";
 export { batched, EventBus, htmlEscape, whenReady, loadFile, markup } from "./utils";
 export {

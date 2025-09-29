@@ -132,7 +132,9 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     this.component = new C(props, env, this);
     const ctx = Object.assign(Object.create(this.component), { this: this.component });
     this.renderFn = app.getTemplate(C.template).bind(this.component, ctx, this);
-    this.component.setup();
+    withoutReactivity(() => {
+      this.component.setup();
+    });
     currentNode = null;
   }
 

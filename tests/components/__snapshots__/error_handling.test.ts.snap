@@ -94,6 +94,52 @@ exports[`basics no component catching error lead to full app destruction 2`] = `
 }"
 `;
 
+exports[`basics render from above on error -- handler is not a Root or MountFiber 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Parent\`, true, false, false, []);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return comp1({}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`basics render from above on error -- handler is not a Root or MountFiber 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Boom\`, true, false, false, []);
+  
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2, b3;
+    if (ctx['error']) {
+      b2 = text(\`Error\`);
+    } else {
+      b3 = comp1({onError: (ctx['handleError']).bind(this)}, key + \`__1\`, node, this, null);
+    }
+    return block1([], [b2, b3]);
+  }
+}"
+`;
+
+exports[`basics render from above on error -- handler is not a Root or MountFiber 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let txt1 = ctx['a'].b.c;
+    return block1([txt1]);
+  }
+}"
+`;
+
 exports[`basics simple catchError 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

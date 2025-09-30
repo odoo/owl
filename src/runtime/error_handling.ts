@@ -55,6 +55,7 @@ export function handleError(params: ErrorParams) {
     let current: Fiber | null = fiber;
     do {
       current.node.fiber = current;
+      fibersInError.set(current, error);
       current = current.parent;
     } while (current);
 

@@ -233,6 +233,44 @@ function(app, bdom, helpers) {
     expect(mockConsoleError).toBeCalledTimes(0);
     expect(mockConsoleWarn).toBeCalledTimes(0);
   });
+
+  test("render from above on error -- handler is not a Root or MountFiber", async () => {
+    class Boom extends Component {
+      static template = xml`<div t-esc="a.b.c"/>`;
+      setup() {
+        onError((err) => {
+          this.props.onError(err);
+        });
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <t t-if="error">Error</t>
+          <t t-else="">
+            <Boom onError.bind="handleError"/>
+          </t>
+        </div>`;
+      static components = { Boom };
+
+      error: any = false;
+
+      handleError(err: Error) {
+        this.error = err;
+        this.render();
+      }
+    }
+
+    class GrandParent extends Component {
+      static template: string = xml`<Parent />`;
+      static components = { Parent };
+    }
+    await mount(GrandParent, fixture);
+    expect(fixture.innerHTML).toBe("<div>Error</div>");
+    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
+  });
 });
 
 describe("errors and promises", () => {

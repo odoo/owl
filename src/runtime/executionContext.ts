@@ -10,20 +10,20 @@ export function getExecutionContext() {
 
 export function makeExecutionContext({
   update,
-  getParent,
-  getChildren,
+  // getParent,
+  // getChildren,
   meta,
 }: {
   update: () => void;
-  getParent?: () => ExecutionContext | undefined;
-  getChildren?: () => ExecutionContext[];
+  // getParent?: () => ExecutionContext | undefined;
+  // getChildren?: () => ExecutionContext[];
   meta?: any;
 }) {
   const executionContext: ExecutionContext = {
     update,
-    getParent: getParent!,
-    getChildren: getChildren!,
-    signals: new Set(),
+    // getParent: getParent!,
+    // getChildren: getChildren!,
+    atoms: new Set(),
     meta: meta || {},
   };
   return executionContext;

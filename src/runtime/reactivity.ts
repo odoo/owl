@@ -1,5 +1,5 @@
 import { OwlError } from "../common/owl_error";
-import { ExecutionContext, Signal } from "../common/types";
+import { ExecutionContext, Atom } from "../common/types";
 import { getExecutionContext, popExecutionContext, pushExecutionContext } from "./executionContext";
 
 // Special key to subscribe to, to be notified of key creation/deletion
@@ -77,14 +77,29 @@ export function toRaw<T extends Target, U extends Reactive<T>>(value: U | T): T 
   return targets.has(value) ? (targets.get(value) as T) : value;
 }
 
-const targetToKeysToSignalItem = new WeakMap<Target, Map<PropertyKey, Signal>>();
-const scheduledSignals = new Set<Signal>();
+const targetToKeysToAtomItem = new WeakMap<Target, Map<PropertyKey, Atom>>();
+const scheduledAtoms = new Set<Atom>();
 
-function makeSignal() {
-  const signal: Signal = {
+function makeAtom() {
+  const atom: Atom = {
     executionContexts: new Set<ExecutionContext>(),
+    // dependents: new Set<Atom>(),
   };
-  return signal;
+  return atom;
+}
+
+function getTargetKeyAtom(target: Target, key: PropertyKey): Atom {
+  let keyToAtomItem: Map<PropertyKey, Atom> = targetToKeysToAtomItem.get(target)!;
+  if (!keyToAtomItem) {
+    keyToAtomItem = new Map();
+    targetToKeysToAtomItem.set(target, keyToAtomItem);
+  }
+  let atom = keyToAtomItem.get(key)!;
+  if (!atom) {
+    atom = makeAtom();
+    keyToAtomItem.set(key, atom);
+  }
+  return atom;
 }
 
 /**
@@ -100,44 +115,37 @@ function onReadTargetKey(target: Target, key: PropertyKey): void {
   const executionContext = getExecutionContext();
   if (!executionContext) return;
 
-  let keyToSignalItem: Map<PropertyKey, Signal> = targetToKeysToSignalItem.get(target)!;
-  if (!keyToSignalItem) {
-    keyToSignalItem = new Map();
-    targetToKeysToSignalItem.set(target, keyToSignalItem);
-  }
-  let signal = keyToSignalItem.get(key)!;
-  if (!signal) {
-    signal = makeSignal();
-    keyToSignalItem.set(key, signal);
-  }
-  // observerSignals.add(signal);
-  executionContext.signals.add(signal);
-  signal.executionContexts.add(executionContext);
+  const atom = getTargetKeyAtom(target, key);
+
+  // observerAtoms.add(atom);
+  executionContext.atoms.add(atom);
+  atom.executionContexts.add(executionContext);
 }
 
 let scheduled = false;
-function scheduleSignal(signal: Signal) {
-  scheduledSignals.add(signal);
+function scheduleAtom(atom: Atom) {
+  scheduledAtoms.add(atom);
+  // batched(processAtoms)();
   if (scheduled) return;
   scheduled = true;
   Promise.resolve().then(() => {
     scheduled = false;
-    processSignals();
+    processAtoms();
   });
 }
 
-function processSignals() {
+function processAtoms() {
   const scheduledContexts = new Set(
-    [...scheduledSignals.values()].map((s) => [...s.executionContexts]).flat()
+    [...scheduledAtoms.values()].map((s) => [...s.executionContexts]).flat()
   );
 
   // schedule before context.update in case there is write operations during update
   // todo: add a test in case there is write operations during update the test
-  // will break is scheduledSignals.clear(); is called after context.update();
+  // will break is scheduledAtoms.clear(); is called after context.update();
   // that writes
-  scheduledSignals.clear();
+  scheduledAtoms.clear();
   for (const ctx of [...scheduledContexts]) {
-    removeSignalsFromContext(ctx);
+    removeAtomsFromContext(ctx);
     // custom unsubscribe depending on the context.
     // scheduledContexts might be updated while we're iterating over it.
     ctx.unsubcribe?.(scheduledContexts);
@@ -173,15 +181,15 @@ function processSignals() {
  *   or deleted)
  */
 function onWriteTargetKey(target: Target, key: PropertyKey): void {
-  const keyToSignalItem = targetToKeysToSignalItem.get(target)!;
-  if (!keyToSignalItem) {
+  const keyToAtomItem = targetToKeysToAtomItem.get(target)!;
+  if (!keyToAtomItem) {
     return;
   }
-  const signal = keyToSignalItem.get(key);
-  if (!signal) {
+  const atom = keyToAtomItem.get(key);
+  if (!atom) {
     return;
   }
-  scheduleSignal(signal);
+  scheduleAtom(atom);
 }
 
 // Maps reactive objects to the underlying target
@@ -240,31 +248,31 @@ export function reactive<T extends Target>(target: T): T {
 
   return proxy;
 }
-function removeSignalsFromContext(executionContext: ExecutionContext) {
-  for (const sig of executionContext.signals) {
+function removeAtomsFromContext(executionContext: ExecutionContext) {
+  for (const sig of executionContext.atoms) {
     sig.executionContexts.delete(executionContext);
   }
-  executionContext.signals.clear();
+  executionContext.atoms.clear();
 }
 /**
- * Unsubscribe an execution context and all its children from all signals
+ * Unsubscribe an execution context and all its children from all atoms
  * they are subscribed to.
  *
- * @param executionContext the context to unsubscribe
+ * @param parentExecutionContext the context to unsubscribe
  */
 function unsubscribeChildEffect(
-  executionContext: ExecutionContext,
+  parentExecutionContext: ExecutionContext,
   scheduledContexts: Set<ExecutionContext>
 ) {
   // executionContext.update = () => {};
 
-  for (const children of executionContext.meta.children) {
+  for (const children of parentExecutionContext.meta.children) {
     children.meta.parent = undefined;
-    removeSignalsFromContext(children);
+    removeAtomsFromContext(children);
     scheduledContexts.delete(children);
     unsubscribeChildEffect(children, scheduledContexts);
   }
-  executionContext.meta.children.length = 0;
+  parentExecutionContext.meta.children.length = 0;
 }
 export function withoutReactivity<T extends (...args: any[]) => any>(fn: T): ReturnType<T> {
   pushExecutionContext(undefined!);
@@ -276,6 +284,7 @@ export function withoutReactivity<T extends (...args: any[]) => any>(fn: T): Ret
   }
   return r;
 }
+
 export function effect(fn: Function) {
   let parent = getExecutionContext();
   // todo: is it useful?
@@ -287,13 +296,13 @@ export function effect(fn: Function) {
       unsubscribeChildEffect(executionContext, scheduledContexts);
     },
     update: fn,
-    getParent: () => {
-      return executionContext.meta.parent;
-    },
-    getChildren: () => {
-      return executionContext.meta.children || [];
-    },
-    signals: new Set(),
+    // getParent: () => {
+    //   return executionContext.meta.parent;
+    // },
+    // getChildren: () => {
+    //   return executionContext.meta.children || [];
+    // },
+    atoms: new Set(),
     meta: {
       parent: parent,
       children: [],
@@ -310,6 +319,25 @@ export function effect(fn: Function) {
     popExecutionContext();
   }
 }
+
+// const dependentStack: any[][] = [];
+
+// const derivedDependecies = new Set<Atom>();
+// // const derrivedToAtom = new WeakMap<Function, Atom>();
+// export function derived(fn: Function) {
+//   const derivedAtom: DerivedAtom = {
+//     executionContexts: new Set<ExecutionContext>(),
+//     // parent: null,
+//     dependencies: new Set<Atom>(),
+//     dependents: new Set<Atom>(),
+//   };
+
+//   return () => {
+//     dependentStack.push([]);
+//     fn();
+//     dependentStack.pop();
+//   };
+// }
 
 /**
  * Creates a basic proxy handler for regular objects and arrays.

@@ -1,9 +1,9 @@
 export type ExecutionContext = {
   unsubcribe?: (scheduledContexts: Set<ExecutionContext>) => void;
   update: Function;
-  signals: Set<Signal>;
-  getParent: () => ExecutionContext | undefined;
-  getChildren: () => ExecutionContext[];
+  atoms: Set<Atom>;
+  // getParent: () => ExecutionContext | undefined;
+  // getChildren: () => ExecutionContext[];
   meta: any;
   // schedule: () => void;
 };
@@ -13,6 +13,11 @@ export type customDirectives = Record<
   (node: Element, value: string, modifier: string[]) => void
 >;
 
-export type Signal = {
+export type Atom = {
   executionContexts: Set<ExecutionContext>;
+  // dependents: Set<Atom>;
 };
+
+// export type DerivedAtom = Atom & {
+//   dependencies: Set<Atom>;
+// };

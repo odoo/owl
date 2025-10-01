@@ -36,3 +36,12 @@ export function pushExecutionContext(context: ExecutionContext) {
 export function popExecutionContext() {
   executionContexts.pop();
 }
+
+export function makeExecutionContext({ update, meta }: { update: () => void; meta?: any }) {
+  const executionContext: ExecutionContext = {
+    update,
+    atoms: new Set(),
+    meta: meta || {},
+  };
+  return executionContext;
+}

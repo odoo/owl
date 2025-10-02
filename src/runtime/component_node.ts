@@ -1,13 +1,12 @@
 import { OwlError } from "../common/owl_error";
-import { ExecutionContext } from "../common/types";
+import { Atom, ExecutionContext } from "../common/types";
 import type { App, Env } from "./app";
 import { BDom, VNode } from "./blockdom";
 import { makeTaskContext, TaskContext } from "./cancellableContext";
 import { Component, ComponentConstructor, Props } from "./component";
 import { fibersInError } from "./error_handling";
-import { makeExecutionContext } from "./executionContext";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";
-import { reactive, targets, withoutReactivity } from "./reactivity";
+import { addAtomToContext, reactive, targets, withoutReactivity } from "./reactivity";
 import { STATUS } from "./status";
 
 let currentNode: ComponentNode | null = null;
@@ -106,16 +105,14 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     this.props = props;
     this.parentKey = parentKey;
     this.taskContext = makeTaskContext();
-    this.executionContext = makeExecutionContext({
+    this.executionContext = {
+      meta: this,
       update: () => {
         this.render(false);
       },
-      getParent: () => this.parent?.executionContext,
-      getChildren: () => {
-        return Object.values(this.children).map((c) => c.executionContext);
-      },
-      meta: this,
-    });
+      onReadAtom: (atom: Atom) => addAtomToContext(atom, this.executionContext),
+      atoms: new Set<Atom>(),
+    };
     const defaultProps = C.defaultProps;
     props = Object.assign({}, props);
     if (defaultProps) {
@@ -123,12 +120,12 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     }
     const env = (parent && parent.childEnv) || app.env;
     this.childEnv = env;
-    for (const key in props) {
-      const prop = props[key];
-      if (prop && typeof prop === "object" && targets.has(prop)) {
-        props[key] = useState(prop);
-      }
-    }
+    // for (const key in props) {
+    //   const prop = props[key];
+    //   if (prop && typeof prop === "object" && targets.has(prop)) {
+    //     props[key] = useState(prop);
+    //   }
+    // }
     this.component = new C(props, env, this);
     const ctx = Object.assign(Object.create(this.component), { this: this.component });
     this.renderFn = app.getTemplate(C.template).bind(this.component, ctx, this);
@@ -271,12 +268,12 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     }
 
     currentNode = this;
-    for (const key in props) {
-      const prop = props[key];
-      if (prop && typeof prop === "object" && targets.has(prop)) {
-        props[key] = useState(prop);
-      }
-    }
+    // for (const key in props) {
+    //   const prop = props[key];
+    //   if (prop && typeof prop === "object" && targets.has(prop)) {
+    //     props[key] = useState(prop);
+    //   }
+    // }
     currentNode = null;
     let prom: Promise<any[]>;
     withoutReactivity(() => {

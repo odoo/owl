@@ -1,10 +1,11 @@
 export type ExecutionContext = {
+  onReadAtom: (atom: Atom) => void;
   unsubcribe?: (scheduledContexts: Set<ExecutionContext>) => void;
-  update: Function;
-  atoms: Set<Atom>;
+  update?: Function;
+  atoms?: Set<Atom>;
+  meta?: any;
   // getParent: () => ExecutionContext | undefined;
   // getChildren: () => ExecutionContext[];
-  meta: any;
   // schedule: () => void;
 };
 
@@ -15,9 +16,13 @@ export type customDirectives = Record<
 
 export type Atom = {
   executionContexts: Set<ExecutionContext>;
-  // dependents: Set<Atom>;
+  dependents: Set<DerivedAtom>;
+  getValue: () => any;
 };
 
-// export type DerivedAtom = Atom & {
-//   dependencies: Set<Atom>;
-// };
+export type OldValue = any;
+
+export type DerivedAtom = Atom & {
+  dependencies: Map<Atom, OldValue>;
+  computed: boolean;
+};

@@ -1,5 +1,5 @@
 import { OwlError } from "../common/owl_error";
-import { ExecutionContext, Atom } from "../common/types";
+import { ExecutionContext, Atom, DerivedAtom, OldValue } from "../common/types";
 import { getExecutionContext, popExecutionContext, pushExecutionContext } from "./executionContext";
 
 // Special key to subscribe to, to be notified of key creation/deletion
@@ -80,10 +80,11 @@ export function toRaw<T extends Target, U extends Reactive<T>>(value: U | T): T 
 const targetToKeysToAtomItem = new WeakMap<Target, Map<PropertyKey, Atom>>();
 const scheduledAtoms = new Set<Atom>();
 
-function makeAtom() {
+function makeAtom(getValue: () => any): Atom {
   const atom: Atom = {
     executionContexts: new Set<ExecutionContext>(),
-    // dependents: new Set<Atom>(),
+    dependents: new Set<Atom>(),
+    // getValue,
   };
   return atom;
 }
@@ -96,10 +97,15 @@ function getTargetKeyAtom(target: Target, key: PropertyKey): Atom {
   }
   let atom = keyToAtomItem.get(key)!;
   if (!atom) {
-    atom = makeAtom();
+    atom = makeAtom(() => Reflect.get(target, key));
     keyToAtomItem.set(key, atom);
   }
   return atom;
+}
+
+export function addAtomToContext(atom: Atom, executionContext: ExecutionContext) {
+  executionContext.atoms.add(atom);
+  atom.executionContexts.add(executionContext);
 }
 
 /**
@@ -111,15 +117,9 @@ function getTargetKeyAtom(target: Target, key: PropertyKey): Atom {
  *  or deletion)
  * @param callback the function to call when the key changes
  */
-function onReadTargetKey(target: Target, key: PropertyKey): void {
+function onReadTargetKey(target: Target, key: PropertyKey, receiver: any): void {
   const executionContext = getExecutionContext();
-  if (!executionContext) return;
-
-  const atom = getTargetKeyAtom(target, key);
-
-  // observerAtoms.add(atom);
-  executionContext.atoms.add(atom);
-  atom.executionContexts.add(executionContext);
+  executionContext?.onReadAtom(getTargetKeyAtom(target, key));
 }
 
 let scheduled = false;
@@ -134,7 +134,20 @@ function scheduleAtom(atom: Atom) {
   });
 }
 
+function processDerivedAtoms() {
+  const processedAtoms = new Set<Atom>();
+  for (const atom of scheduledAtoms) {
+    for (const dep of atom.dependents) {
+      if (processedAtoms.has(dep)) continue;
+      dep.computed = false;
+      processedAtoms.add(dep);
+    }
+  }
+}
+
 function processAtoms() {
+  processDerivedAtoms();
+
   const scheduledContexts = new Set(
     [...scheduledAtoms.values()].map((s) => [...s.executionContexts]).flat()
   );
@@ -154,7 +167,7 @@ function processAtoms() {
   for (const context of scheduledContexts) {
     pushExecutionContext(context);
     try {
-      context.update();
+      context.update?.();
     } finally {
       popExecutionContext();
     }
@@ -296,12 +309,7 @@ export function effect(fn: Function) {
       unsubscribeChildEffect(executionContext, scheduledContexts);
     },
     update: fn,
-    // getParent: () => {
-    //   return executionContext.meta.parent;
-    // },
-    // getChildren: () => {
-    //   return executionContext.meta.children || [];
-    // },
+    onReadAtom: (atom: Atom) => addAtomToContext(atom, executionContext),
     atoms: new Set(),
     meta: {
       parent: parent,
@@ -320,24 +328,38 @@ export function effect(fn: Function) {
   }
 }
 
-// const dependentStack: any[][] = [];
+export function derived(fn: Function) {
+  let lastValue: any;
 
-// const derivedDependecies = new Set<Atom>();
-// // const derrivedToAtom = new WeakMap<Function, Atom>();
-// export function derived(fn: Function) {
-//   const derivedAtom: DerivedAtom = {
-//     executionContexts: new Set<ExecutionContext>(),
-//     // parent: null,
-//     dependencies: new Set<Atom>(),
-//     dependents: new Set<Atom>(),
-//   };
+  const derivedAtom: DerivedAtom = {
+    executionContexts: new Set<ExecutionContext>(),
+    dependents: new Set<Atom>(),
+    dependencies: new Map<Atom, OldValue>(),
+    getValue: () => lastValue,
+    computed: false,
+  };
 
-//   return () => {
-//     dependentStack.push([]);
-//     fn();
-//     dependentStack.pop();
-//   };
-// }
+  return () => {
+    const executionContext = getExecutionContext();
+    executionContext?.onReadAtom(derivedAtom);
+    if (derivedAtom.computed) return lastValue;
+
+    const derivedExecutionContext: ExecutionContext = {
+      onReadAtom: (atom: Atom) => {
+        atom.dependents.add(derivedAtom);
+        // derivedAtom.executionContexts.add(executionContext);
+      },
+    };
+    pushExecutionContext(derivedExecutionContext);
+    try {
+      lastValue = fn();
+    } finally {
+      popExecutionContext();
+    }
+    derivedAtom.computed = true;
+    return lastValue;
+  };
+}
 
 /**
  * Creates a basic proxy handler for regular objects and arrays.

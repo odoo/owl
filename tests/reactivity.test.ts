@@ -410,6 +410,7 @@ describe("Reactivity", () => {
     expect(state.length).toBe(2);
 
     // clear all observations caused by previous expects
+    debugger;
     state[0] = 2;
     await waitScheduler();
     expectSpy(spy, 4, [[2, "hey"]]);
@@ -2376,11 +2377,11 @@ describe("Reactivity: useState", () => {
 });
 
 describe("derived", () => {
-  test("derived works as expected", async () => {
+  test("derived 1", async () => {
     const state = reactive({ a: 1, b: 100 });
     const derivedState = derived(() => state.a + state.b);
     const spy = jest.fn();
-    effect(() => spy(derivedState().value));
+    effect(() => spy(derivedState()));
     expectSpy(spy, 1, [101]);
     state.a = 2;
     await waitScheduler();

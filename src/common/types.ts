@@ -5,8 +5,7 @@ export enum ExecutionState {
 }
 
 export type ExecutionContext<T = any> = {
-  onReadAtom: (atom: Atom) => void;
-  unsubcribe?: (scheduledContexts: Set<ExecutionContext>) => void;
+  unsubcribe?: () => void;
   compute?: () => T;
   // atoms?: Set<Atom>;
   meta?: any;

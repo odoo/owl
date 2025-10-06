@@ -6,13 +6,7 @@ import { makeTaskContext, TaskContext } from "./cancellableContext";
 import { Component, ComponentConstructor, Props } from "./component";
 import { fibersInError } from "./error_handling";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";
-import {
-  addAtomToContext,
-  CurrentContext,
-  reactive,
-  setContext,
-  withoutReactivity,
-} from "./reactivity";
+import { CurrentContext, reactive, setContext, withoutReactivity } from "./reactivity";
 import { STATUS } from "./status";
 
 let currentNode: ComponentNode | null = null;
@@ -116,7 +110,6 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
       compute: () => {
         this.render(false);
       },
-      onReadAtom: (atom: Atom) => addAtomToContext(atom, this.executionContext),
       sources: new Set<Atom>(),
       state: ExecutionState.EXECUTED,
     };

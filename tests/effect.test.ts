@@ -90,7 +90,6 @@ describe("effect", () => {
       expectSpy(spy2, 2, [20]);
     });
   });
-
   describe("unsubscribe", () => {
     it("should be able to unsubscribe", async () => {
       const state = reactive({ a: 1 });
@@ -126,58 +125,73 @@ describe("effect", () => {
       expectSpy(spy, 3, [3]);
       expect(cleanup).toHaveBeenCalledTimes(2);
     });
-
-    describe("nested", () => {
-      it("should call cleanup when unsubscribing", async () => {
-        const state = reactive({ a: 1, b: 10 });
-        const spy1 = jest.fn();
-        const spy2 = jest.fn();
-        const cleanup1 = jest.fn();
-        const cleanup2 = jest.fn();
-        const unsubscribe = effect(() => {
-          spy1(state.a);
-          if (state.a === 1) {
-            effect(() => {
-              spy2(state.b);
-              return cleanup2;
-            });
-          }
-          return cleanup1;
+    it("should call cleanup when unsubscribing nested effects", async () => {
+      const state = reactive({ a: 1, b: 10, c: 100 });
+      const spy1 = jest.fn();
+      const spy2 = jest.fn();
+      const spy3 = jest.fn();
+      const cleanup1 = jest.fn();
+      const cleanup2 = jest.fn();
+      const cleanup3 = jest.fn();
+      const unsubscribe = effect(() => {
+        spy1(state.a);
+        if (state.a === 1) {
+          effect(() => {
+            spy2(state.b);
+            return cleanup2;
+          });
+        }
+        effect(() => {
+          spy3(state.c);
+          return cleanup3;
         });
-        expectSpy(spy1, 1, [1]);
-        expectSpy(spy2, 1, [10]);
-        expect(cleanup1).toHaveBeenCalledTimes(0);
-        expect(cleanup2).toHaveBeenCalledTimes(0);
-        state.b = 20;
-        await waitScheduler();
-        expectSpy(spy1, 1, [1]);
-        expectSpy(spy2, 2, [20]);
-        expect(cleanup1).toHaveBeenCalledTimes(0);
-        expect(cleanup2).toHaveBeenCalledTimes(1);
-        (global as any).d = true;
-        state.a = 2;
-        await waitScheduler();
-        expectSpy(spy1, 2, [2]);
-        expectSpy(spy2, 2, [20]);
-        expect(cleanup1).toHaveBeenCalledTimes(1);
-        expect(cleanup2).toHaveBeenCalledTimes(2);
-        state.b = 30;
-        await waitScheduler();
-        expectSpy(spy1, 2, [2]);
-        expectSpy(spy2, 2, [20]);
-        expect(cleanup1).toHaveBeenCalledTimes(1);
-        expect(cleanup2).toHaveBeenCalledTimes(2);
-        unsubscribe();
-        expect(cleanup1).toHaveBeenCalledTimes(2);
-        expect(cleanup2).toHaveBeenCalledTimes(2);
-        state.a = 1;
-        state.b = 10;
-        await waitScheduler();
-        expectSpy(spy1, 2, [2]);
-        expectSpy(spy2, 2, [20]);
-        expect(cleanup1).toHaveBeenCalledTimes(2);
-        expect(cleanup2).toHaveBeenCalledTimes(2);
+        return cleanup1;
       });
+      expectSpy(spy1, 1, [1]);
+      expectSpy(spy2, 1, [10]);
+      expectSpy(spy3, 1, [100]);
+      expect(cleanup1).toHaveBeenCalledTimes(0);
+      expect(cleanup2).toHaveBeenCalledTimes(0);
+      expect(cleanup3).toHaveBeenCalledTimes(0);
+      state.b = 20;
+      await waitScheduler();
+      expectSpy(spy1, 1, [1]);
+      expectSpy(spy2, 2, [20]);
+      expectSpy(spy3, 1, [100]);
+      expect(cleanup1).toHaveBeenCalledTimes(0);
+      expect(cleanup2).toHaveBeenCalledTimes(1);
+      expect(cleanup3).toHaveBeenCalledTimes(0);
+      (global as any).d = true;
+      state.a = 2;
+      await waitScheduler();
+      expectSpy(spy1, 2, [2]);
+      expectSpy(spy2, 2, [20]);
+      expectSpy(spy3, 2, [100]);
+      expect(cleanup1).toHaveBeenCalledTimes(1);
+      expect(cleanup2).toHaveBeenCalledTimes(2);
+      expect(cleanup3).toHaveBeenCalledTimes(1);
+      state.b = 30;
+      await waitScheduler();
+      expectSpy(spy1, 2, [2]);
+      expectSpy(spy2, 2, [20]);
+      expectSpy(spy3, 2, [100]);
+      expect(cleanup1).toHaveBeenCalledTimes(1);
+      expect(cleanup2).toHaveBeenCalledTimes(2);
+      expect(cleanup3).toHaveBeenCalledTimes(1);
+      unsubscribe();
+      expect(cleanup1).toHaveBeenCalledTimes(2);
+      expect(cleanup2).toHaveBeenCalledTimes(2);
+      expect(cleanup3).toHaveBeenCalledTimes(2);
+      state.a = 4;
+      state.b = 40;
+      state.c = 400;
+      await waitScheduler();
+      expectSpy(spy1, 2, [2]);
+      expectSpy(spy2, 2, [20]);
+      expectSpy(spy3, 2, [100]);
+      expect(cleanup1).toHaveBeenCalledTimes(2);
+      expect(cleanup2).toHaveBeenCalledTimes(2);
+      expect(cleanup3).toHaveBeenCalledTimes(2);
     });
   });
 });

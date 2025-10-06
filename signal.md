@@ -13,6 +13,11 @@
   - A similar situation happened with onWillUpdateProps (see Transition)
   - solution: prevent tracking reads in onWillStart and onWillUpdateProps
 
+# derived
+## todo
+- unsubscribe from derived when there is no need to read from them
+- 
+
 # optimization
 - fragmented memory
 - Entity-Component-System

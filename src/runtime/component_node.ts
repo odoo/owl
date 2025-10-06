@@ -107,6 +107,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     this.taskContext = makeTaskContext();
     this.executionContext = {
       meta: this,
+      value: undefined,
       compute: () => {
         this.render(false);
       },

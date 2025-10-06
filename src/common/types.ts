@@ -12,6 +12,7 @@ export type ExecutionContext<T = any> = {
   state: ExecutionState;
   sources: Set<Atom | Memo<any, any>>;
   isMemo?: boolean;
+  value: T;
   // getParent: () => ExecutionContext | undefined;
   // getChildren: () => ExecutionContext[];
   // schedule: () => void;

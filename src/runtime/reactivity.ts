@@ -306,11 +306,17 @@ export function reactive<T extends Target>(target: T): T {
   return proxy;
 }
 function removeAtomsFromContext(executionContext: ExecutionContext) {
-  for (const sig of executionContext.sources!) {
-    sig.observers.delete(executionContext);
+  for (const source of executionContext.sources!) {
+    source.observers.delete(executionContext);
+    // if source has no observer anymore, remove its sources too
+    if (source.observers.size === 0 && "sources" in source) {
+      removeAtomsFromContext(source as Memo<any, any>);
+      source.state = ExecutionState.STALE;
+    }
   }
   executionContext.sources!.clear();
 }
+
 /**
  * Unsubscribe an execution context and all its children from all atoms
  * they are subscribed to.
@@ -320,6 +326,7 @@ function removeAtomsFromContext(executionContext: ExecutionContext) {
 function unsubscribeChildEffect(parentExecutionContext: ExecutionContext) {
   for (const children of parentExecutionContext.meta.children) {
     children.meta.parent = undefined;
+    cleanupComputation(children);
     removeAtomsFromContext(children);
     // Consider it executed to avoid it's re-execution
     children.state = ExecutionState.EXECUTED;
@@ -331,6 +338,14 @@ export function withoutReactivity<T extends (...args: any[]) => any>(fn: T): Ret
   return runWithContext(undefined!, fn);
 }
 
+function cleanupComputation(computation: ExecutionContext) {
+  // the computation.value of an effect is a cleanup function
+  if (typeof computation.value === "function") {
+    computation.value();
+  }
+  computation.value = undefined;
+}
+
 export function effect<T>(fn: () => T) {
   let parent = CurrentContext;
   // todo: is it useful?
@@ -340,9 +355,10 @@ export function effect<T>(fn: () => T) {
   const executionContext: ExecutionContext = {
     // unsubcribe: () => ,
     state: ExecutionState.EXECUTED,
+    value: undefined,
     compute: () => {
       unsubscribeChildEffect(executionContext);
-      fn();
+      executionContext.value = fn();
     },
     sources: new Set(),
     meta: {
@@ -354,13 +370,12 @@ export function effect<T>(fn: () => T) {
     // todo: is it useful?
     parent.meta.children?.push?.(executionContext);
   }
-  const currentContext = CurrentContext;
-  CurrentContext = executionContext;
-  try {
-    fn();
-  } finally {
-    CurrentContext = currentContext;
-  }
+  runComputation(executionContext);
+  return () => {
+    cleanupComputation(executionContext);
+    removeAtomsFromContext(executionContext);
+    unsubscribeChildEffect(executionContext);
+  };
 }
 
 // function removeContextSources<A, B>(ctx: Memo<A, B>) {
@@ -394,8 +409,10 @@ export function effect<T>(fn: () => T) {
 
 function runComputation(computation: ExecutionContext) {
   const executionContext = CurrentContext;
-  CurrentContext = computation;
+  CurrentContext = undefined!;
   removeAtomsFromContext(computation);
+  cleanupComputation(computation);
+  CurrentContext = computation;
   computation.compute?.();
   computation.state = ExecutionState.EXECUTED;
   CurrentContext = executionContext;
@@ -406,7 +423,9 @@ function processEffects() {
   for (const computation of Updates) {
     runComputation(computation);
   }
+
   Updates = undefined!;
+  if (!Effects) return;
   for (const computation of Effects) {
     runComputation(computation);
   }
@@ -450,6 +469,10 @@ function computeMemo(memo: Memo<any, any>) {
   return memo.value;
 }
 
+export const hooks = {
+  makeMemo(memo: Memo<any, any>) {},
+};
+
 const makeMemo = (fn: () => any) => {
   const memo: Memo<any, any> = {
     state: ExecutionState.STALE,
@@ -468,6 +491,7 @@ const makeMemo = (fn: () => any) => {
     value: undefined,
     observers: new Set<ExecutionContext>(),
   };
+  hooks.makeMemo(memo);
   return memo;
 };
 

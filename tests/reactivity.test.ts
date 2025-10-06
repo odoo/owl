@@ -7,7 +7,7 @@ import {
   useState,
   xml,
 } from "../src";
-import { derived, effect, markRaw, reactive, toRaw } from "../src/runtime/reactivity";
+import { effect, markRaw, reactive, toRaw } from "../src/runtime/reactivity";
 
 import {
   makeDeferred,
@@ -2373,24 +2373,5 @@ describe("Reactivity: useState", () => {
     await nextTick();
 
     expect(fixture.innerHTML).toBe("<div><p><span>2b</span></p></div>");
-  });
-});
-
-describe("derived", () => {
-  test("derived 1", async () => {
-    const state = reactive({ a: 1, b: 100 });
-    const derivedState = derived(() => state.a + state.b);
-    const spy = jest.fn();
-    effect(() => spy(derivedState()));
-    expectSpy(spy, 1, [101]);
-    state.a = 2;
-    await waitScheduler();
-    expectSpy(spy, 2, [102]);
-    state.b = 200;
-    await waitScheduler();
-    expectSpy(spy, 3, [202]);
-    state.b = 200; // setting same value again shouldn't notify
-    await waitScheduler();
-    expectSpy(spy, 3, [202]);
   });
 });

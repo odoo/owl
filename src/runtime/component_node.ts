@@ -1,12 +1,18 @@
 import { OwlError } from "../common/owl_error";
-import { Atom, ExecutionContext } from "../common/types";
+import { Atom, ExecutionContext, ExecutionState } from "../common/types";
 import type { App, Env } from "./app";
 import { BDom, VNode } from "./blockdom";
 import { makeTaskContext, TaskContext } from "./cancellableContext";
 import { Component, ComponentConstructor, Props } from "./component";
 import { fibersInError } from "./error_handling";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";
-import { addAtomToContext, reactive, targets, withoutReactivity } from "./reactivity";
+import {
+  addAtomToContext,
+  CurrentContext,
+  reactive,
+  setContext,
+  withoutReactivity,
+} from "./reactivity";
 import { STATUS } from "./status";
 
 let currentNode: ComponentNode | null = null;
@@ -107,11 +113,12 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     this.taskContext = makeTaskContext();
     this.executionContext = {
       meta: this,
-      update: () => {
+      compute: () => {
         this.render(false);
       },
       onReadAtom: (atom: Atom) => addAtomToContext(atom, this.executionContext),
-      atoms: new Set<Atom>(),
+      sources: new Set<Atom>(),
+      state: ExecutionState.EXECUTED,
     };
     const defaultProps = C.defaultProps;
     props = Object.assign({}, props);
@@ -126,12 +133,13 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     //     props[key] = useState(prop);
     //   }
     // }
+    const currentContext = CurrentContext;
+    setContext(this.executionContext);
     this.component = new C(props, env, this);
     const ctx = Object.assign(Object.create(this.component), { this: this.component });
     this.renderFn = app.getTemplate(C.template).bind(this.component, ctx, this);
-    withoutReactivity(() => {
-      this.component.setup();
-    });
+    this.component.setup();
+    setContext(currentContext);
     currentNode = null;
   }
 
@@ -267,14 +275,6 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
       applyDefaultProps(props, defaultProps);
     }
 
-    currentNode = this;
-    // for (const key in props) {
-    //   const prop = props[key];
-    //   if (prop && typeof prop === "object" && targets.has(prop)) {
-    //     props[key] = useState(prop);
-    //   }
-    // }
-    currentNode = null;
     let prom: Promise<any[]>;
     withoutReactivity(() => {
       prom = Promise.all(this.willUpdateProps.map((f) => f.call(component, props)));

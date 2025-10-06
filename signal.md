@@ -13,6 +13,11 @@
   - A similar situation happened with onWillUpdateProps (see Transition)
   - solution: prevent tracking reads in onWillStart and onWillUpdateProps
 
+# optimization
+- fragmented memory
+- Entity-Component-System
+
 # future
 - worker for computation?
 - cap'n web
+

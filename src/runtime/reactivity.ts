@@ -1,6 +1,23 @@
 import { OwlError } from "../common/owl_error";
-import { ExecutionContext, Atom, DerivedAtom, OldValue } from "../common/types";
-import { getExecutionContext, popExecutionContext, pushExecutionContext } from "./executionContext";
+import { ExecutionContext, Atom, ExecutionState } from "../common/types";
+import { batched } from "./utils";
+
+export let CurrentContext: ExecutionContext;
+export function setContext(context: ExecutionContext) {
+  CurrentContext = context;
+}
+
+export function runWithContext<T>(context: ExecutionContext, fn: () => T): T {
+  const currentContext = CurrentContext;
+  CurrentContext = context;
+  let result: T;
+  try {
+    result = fn();
+  } finally {
+    CurrentContext = currentContext!;
+  }
+  return result;
+}
 
 // Special key to subscribe to, to be notified of key creation/deletion
 const KEYCHANGES = Symbol("Key changes");
@@ -19,6 +36,9 @@ const objectHasOwnProperty = Object.prototype.hasOwnProperty;
 // Use arrays because Array.includes is faster than Set.has for small arrays
 const SUPPORTED_RAW_TYPES = ["Object", "Array", "Set", "Map", "WeakMap"];
 const COLLECTION_RAW_TYPES = ["Set", "Map", "WeakMap"];
+
+let Updates: ExecutionContext[];
+let Effects: ExecutionContext[];
 
 /**
  * extract "RawType" from strings like "[object RawType]" => this lets us ignore
@@ -78,12 +98,12 @@ export function toRaw<T extends Target, U extends Reactive<T>>(value: U | T): T 
 }
 
 const targetToKeysToAtomItem = new WeakMap<Target, Map<PropertyKey, Atom>>();
-const scheduledAtoms = new Set<Atom>();
 
-function makeAtom(getValue: () => any): Atom {
+function makeAtom(): Atom {
   const atom: Atom = {
-    executionContexts: new Set<ExecutionContext>(),
-    dependents: new Set<Atom>(),
+    // value: getValue(),
+    value: undefined,
+    observers: new Set(),
     // getValue,
   };
   return atom;
@@ -97,15 +117,15 @@ function getTargetKeyAtom(target: Target, key: PropertyKey): Atom {
   }
   let atom = keyToAtomItem.get(key)!;
   if (!atom) {
-    atom = makeAtom(() => Reflect.get(target, key));
+    atom = makeAtom();
     keyToAtomItem.set(key, atom);
   }
   return atom;
 }
 
 export function addAtomToContext(atom: Atom, executionContext: ExecutionContext) {
-  executionContext.atoms.add(atom);
-  atom.executionContexts.add(executionContext);
+  executionContext.sources!.add(atom);
+  atom.observers.add(executionContext);
 }
 
 /**
@@ -117,61 +137,79 @@ export function addAtomToContext(atom: Atom, executionContext: ExecutionContext)
  *  or deletion)
  * @param callback the function to call when the key changes
  */
-function onReadTargetKey(target: Target, key: PropertyKey, receiver: any): void {
-  const executionContext = getExecutionContext();
-  executionContext?.onReadAtom(getTargetKeyAtom(target, key));
+function onReadTargetKey(target: Target, key: PropertyKey): void {
+  CurrentContext?.onReadAtom(getTargetKeyAtom(target, key));
 }
 
-let scheduled = false;
-function scheduleAtom(atom: Atom) {
-  scheduledAtoms.add(atom);
-  // batched(processAtoms)();
-  if (scheduled) return;
-  scheduled = true;
-  Promise.resolve().then(() => {
-    scheduled = false;
-    processAtoms();
+const batchProcessEffects = batched(processEffects);
+
+function writeAtom(atom: Atom) {
+  runUpdates(() => {
+    processAtom(atom);
   });
+  batchProcessEffects();
 }
 
-function processDerivedAtoms() {
-  const processedAtoms = new Set<Atom>();
-  for (const atom of scheduledAtoms) {
-    for (const dep of atom.dependents) {
-      if (processedAtoms.has(dep)) continue;
-      dep.computed = false;
-      processedAtoms.add(dep);
+// function isDerivedAtom(atom: Atom): atom is DerivedAtom {
+//   return (atom as DerivedAtom).dependencies !== undefined;
+// }
+
+// let lastCheckId = 0;
+// const atomicValue = Symbol();
+// const processedAtoms = new Set<Atom>();
+// function processAtomDependencyUp(atom: Atom) {
+//   let result: any;
+//   if (processedAtoms.has(atom)) return;
+//   if (isDerivedAtom(atom)) {
+//     result = processAtomDependencyUp(atom);
+//     if (result === atomicValue) {
+//     }
+//   }
+//   return result;
+// }
+
+// function markDownstream<A, B>(memo: Memo<A, B>) {
+//   for (const observer of memo.observers) {
+//     // if the state has already been marked, skip it
+//     if (observer.state) continue;
+//     observer.state = ExecutionState.PENDING;
+//     observer.isMemo && markDownstream(observer as Memo<any, any>);
+//   }
+// }
+
+function processAtom(atom: Atom) {
+  for (const ctx of atom.observers) {
+    if (ctx.state === ExecutionState.EXECUTED) {
+      ctx.state = ExecutionState.STALE;
+      if (ctx.isMemo) Updates.push(ctx);
+      else Effects.push(ctx);
     }
   }
-}
 
-function processAtoms() {
-  processDerivedAtoms();
-
-  const scheduledContexts = new Set(
-    [...scheduledAtoms.values()].map((s) => [...s.executionContexts]).flat()
-  );
-
-  // schedule before context.update in case there is write operations during update
-  // todo: add a test in case there is write operations during update the test
-  // will break is scheduledAtoms.clear(); is called after context.update();
-  // that writes
-  scheduledAtoms.clear();
-  for (const ctx of [...scheduledContexts]) {
-    removeAtomsFromContext(ctx);
-    // custom unsubscribe depending on the context.
-    // scheduledContexts might be updated while we're iterating over it.
-    ctx.unsubcribe?.(scheduledContexts);
-  }
-
-  for (const context of scheduledContexts) {
-    pushExecutionContext(context);
-    try {
-      context.update?.();
-    } finally {
-      popExecutionContext();
-    }
-  }
+  // const scheduledContexts = new Set(
+  //   [...scheduledAtoms.values()].map((s) => [...s.executionContexts]).flat()
+  // );
+  // // schedule before context.update in case there is write operations during update
+  // // todo: add a test in case there is write operations during update the test
+  // // will break is scheduledAtoms.clear(); is called after context.update();
+  // // that writes
+  // scheduledAtoms.clear();
+  // for (const ctx of [...scheduledContexts]) {
+  //   removeAtomsFromContext(ctx);
+  //   // custom unsubscribe depending on the context.
+  //   // scheduledContexts might be updated while we're iterating over it.
+  //   ctx.unsubcribe?.(scheduledContexts);
+  // }
+  // const currentContext = CurrentContext;
+  // for (const context of scheduledContexts) {
+  //   CurrentContext = context;
+  //   try {
+  //     context.update?.();
+  //   } catch (e) {
+  //     throw e;
+  //   }
+  // }
+  // CurrentContext = currentContext;
 }
 
 /**
@@ -202,7 +240,7 @@ function onWriteTargetKey(target: Target, key: PropertyKey): void {
   if (!atom) {
     return;
   }
-  scheduleAtom(atom);
+  writeAtom(atom);
 }
 
 // Maps reactive objects to the underlying target
@@ -262,10 +300,10 @@ export function reactive<T extends Target>(target: T): T {
   return proxy;
 }
 function removeAtomsFromContext(executionContext: ExecutionContext) {
-  for (const sig of executionContext.atoms) {
-    sig.executionContexts.delete(executionContext);
+  for (const sig of executionContext.sources!) {
+    sig.observers.delete(executionContext);
   }
-  executionContext.atoms.clear();
+  executionContext.sources!.clear();
 }
 /**
  * Unsubscribe an execution context and all its children from all atoms
@@ -288,18 +326,11 @@ function unsubscribeChildEffect(
   parentExecutionContext.meta.children.length = 0;
 }
 export function withoutReactivity<T extends (...args: any[]) => any>(fn: T): ReturnType<T> {
-  pushExecutionContext(undefined!);
-  let r: ReturnType<T>;
-  try {
-    r = fn();
-  } finally {
-    popExecutionContext();
-  }
-  return r;
+  return runWithContext(undefined!, fn);
 }
 
-export function effect(fn: Function) {
-  let parent = getExecutionContext();
+export function effect<T>(fn: () => T) {
+  let parent = CurrentContext;
   // todo: is it useful?
   if (parent && !parent?.meta.children) {
     parent = undefined!;
@@ -308,9 +339,10 @@ export function effect(fn: Function) {
     unsubcribe: (scheduledContexts: Set<ExecutionContext>) => {
       unsubscribeChildEffect(executionContext, scheduledContexts);
     },
-    update: fn,
+    state: ExecutionState.EXECUTED,
+    compute: fn,
     onReadAtom: (atom: Atom) => addAtomToContext(atom, executionContext),
-    atoms: new Set(),
+    sources: new Set(),
     meta: {
       parent: parent,
       children: [],
@@ -320,46 +352,112 @@ export function effect(fn: Function) {
     // todo: is it useful?
     parent.meta.children?.push?.(executionContext);
   }
-  pushExecutionContext(executionContext);
+  const currentContext = CurrentContext;
+  CurrentContext = executionContext;
   try {
     fn();
   } finally {
-    popExecutionContext();
+    CurrentContext = currentContext;
   }
 }
 
-export function derived(fn: Function) {
-  let lastValue: any;
+// function removeContextSources<A, B>(ctx: Memo<A, B>) {
+//   // If ctx is an Atom or if ctx is still observed, do nothing.
+//   if (!ctx.sources || ctx.observers.size) return;
+//   ctx.state = ExecutionState.STALE;
+//   for (const dep of ctx.sources) {
+//     removeContextSources(dep as Memo<A, B>);
+//   }
+// }
 
-  const derivedAtom: DerivedAtom = {
-    executionContexts: new Set<ExecutionContext>(),
-    dependents: new Set<Atom>(),
-    dependencies: new Map<Atom, OldValue>(),
-    getValue: () => lastValue,
-    computed: false,
-  };
+// export function createSignal<T = any>(initialValue?: T): [() => T, (v: T) => void] {
+//   const atom: Atom<T> = {
+//     value: initialValue!,
+//     observers: new Set<ExecutionContext>(),
+//     // getValue: () => value,
+//   };
 
-  return () => {
-    const executionContext = getExecutionContext();
-    executionContext?.onReadAtom(derivedAtom);
-    if (derivedAtom.computed) return lastValue;
+//   const read = () => {
+//     const executionContext = getExecutionContext();
+//     executionContext?.onReadAtom(atom);
+//     return atom.value;
+//   };
+//   const write = (value: any) => {
+//     atom.value = value;
+//     writeAtom(atom);
+//   };
 
-    const derivedExecutionContext: ExecutionContext = {
-      onReadAtom: (atom: Atom) => {
-        atom.dependents.add(derivedAtom);
-        // derivedAtom.executionContexts.add(executionContext);
-      },
-    };
-    pushExecutionContext(derivedExecutionContext);
-    try {
-      lastValue = fn();
-    } finally {
-      popExecutionContext();
-    }
-    derivedAtom.computed = true;
-    return lastValue;
-  };
+//   return [read, write];
+// }
+
+function processEffects() {
+  for (const u of Updates) {
+    u.compute?.();
+  }
+  Updates = undefined!;
+  for (const e of Effects) {
+    e.compute?.();
+    e.state = ExecutionState.EXECUTED;
+  }
+  Effects = undefined!;
 }
+
+function runUpdates(fn: Function) {
+  if (Updates) return fn();
+  Updates = [];
+  Effects = [];
+  try {
+    return fn();
+  } finally {
+    // processEffects();
+    true;
+  }
+}
+
+// export function derived(fn: Function) {
+//   let lastValue: any;
+
+//   const derivedComptation: DerivedAtom = {
+//     executionContexts: new Set<ExecutionContext>(),
+//     dependents: new Set<DerivedAtom>(),
+//     sources: new Map<Atom, OldValue>(),
+//     // getValue: () => lastValue,
+//     computed: false,
+//     value: undefined,
+//     // checkId: 0,
+//   };
+
+//   return () => {
+//     const executionContext = getExecutionContext();
+//     executionContext?.onReadAtom(derivedComptation);
+//     if (derivedComptation.computed) return lastValue;
+//     // check if it needs to be recomputed by checking the oldValues
+
+//     const derivedExecutionContext: Memo<any, any> = {
+//       state: ExecutionState.STALE,
+//       sources: new Set(),
+//       unsubcribe: (scheduledContexts: Set<ExecutionContext>) => {
+//         removeContextSources(derivedComptation);
+//       },
+//       onReadAtom: (atom: Atom) => {
+//         atom.observers.add(derivedExecutionContext);
+//         derivedExecutionContext.sources.add(atom);
+//       },
+//       value: undefined,
+//       observers: new Set<ExecutionContext>(),
+//     };
+//     const currentContext = CurrentContext;
+//     CurrentContext = derivedExecutionContext;
+//     try {
+//       lastValue = fn();
+//     } finally {
+//       CurrentContext = currentContext;
+//     }
+//     derivedComptation.computed = true;
+//     derivedComptation.value = lastValue;
+//     return lastValue;
+//   };
+// }
 
 /**
  * Creates a basic proxy handler for regular objects and arrays.

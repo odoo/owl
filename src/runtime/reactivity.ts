@@ -37,7 +37,6 @@ const objectHasOwnProperty = Object.prototype.hasOwnProperty;
 const SUPPORTED_RAW_TYPES = ["Object", "Array", "Set", "Map", "WeakMap"];
 const COLLECTION_RAW_TYPES = ["Set", "Map", "WeakMap"];
 
-let Updates: ExecutionContext[];
 let Effects: ExecutionContext[];
 
 /**
@@ -151,7 +150,13 @@ const batchProcessEffects = batched(processEffects);
 
 function onWriteAtom(atom: Atom) {
   runUpdates(() => {
-    processAtom(atom);
+    for (const ctx of atom.observers) {
+      if (ctx.state === ExecutionState.EXECUTED) {
+        ctx.state = ExecutionState.STALE;
+        if (ctx.isMemo) markDownstream(ctx as Memo<any, any>);
+        else Effects.push(ctx);
+      }
+    }
   });
   batchProcessEffects();
 }
@@ -174,49 +179,42 @@ function onWriteAtom(atom: Atom) {
 //   return result;
 // }
 
-// function markDownstream<A, B>(memo: Memo<A, B>) {
-//   for (const observer of memo.observers) {
-//     // if the state has already been marked, skip it
-//     if (observer.state) continue;
-//     observer.state = ExecutionState.PENDING;
-//     observer.isMemo && markDownstream(observer as Memo<any, any>);
-//   }
-// }
-
-function processAtom(atom: Atom) {
-  for (const ctx of atom.observers) {
-    if (ctx.state === ExecutionState.EXECUTED) {
-      ctx.state = ExecutionState.STALE;
-      if (ctx.isMemo) Updates.push(ctx);
-      else Effects.push(ctx);
-    }
+function markDownstream<A, B>(memo: Memo<A, B>) {
+  for (const observer of memo.observers) {
+    // if the state has already been marked, skip it
+    if (observer.state) continue;
+    observer.state = ExecutionState.PENDING;
+    if (observer.isMemo) markDownstream(observer as Memo<any, any>);
+    else Effects.push(observer);
   }
-
-  // const scheduledContexts = new Set(
-  //   [...scheduledAtoms.values()].map((s) => [...s.executionContexts]).flat()
-  // );
-  // // schedule before context.update in case there is write operations during update
-  // // todo: add a test in case there is write operations during update the test
-  // // will break is scheduledAtoms.clear(); is called after context.update();
-  // // that writes
-  // scheduledAtoms.clear();
-  // for (const ctx of [...scheduledContexts]) {
-  //   removeAtomsFromContext(ctx);
-  //   // custom unsubscribe depending on the context.
-  //   // scheduledContexts might be updated while we're iterating over it.
-  //   ctx.unsubcribe?.(scheduledContexts);
-  // }
-  // const currentContext = CurrentContext;
-  // for (const context of scheduledContexts) {
-  //   CurrentContext = context;
-  //   try {
-  //     context.update?.();
-  //   } catch (e) {
-  //     throw e;
-  //   }
-  // }
-  // CurrentContext = currentContext;
 }
+
+// function processAtom(atom: Atom) {
+//   // const scheduledContexts = new Set(
+//   //   [...scheduledAtoms.values()].map((s) => [...s.executionContexts]).flat()
+//   // );
+//   // // schedule before context.update in case there is write operations during update
+//   // // todo: add a test in case there is write operations during update the test
+//   // // will break is scheduledAtoms.clear(); is called after context.update();
+//   // // that writes
+//   // scheduledAtoms.clear();
+//   // for (const ctx of [...scheduledContexts]) {
+//   //   removeAtomsFromContext(ctx);
+//   //   // custom unsubscribe depending on the context.
+//   //   // scheduledContexts might be updated while we're iterating over it.
+//   //   ctx.unsubcribe?.(scheduledContexts);
+//   // }
+//   // const currentContext = CurrentContext;
+//   // for (const context of scheduledContexts) {
+//   //   CurrentContext = context;
+//   //   try {
+//   //     context.update?.();
+//   //   } catch (e) {
+//   //     throw e;
+//   //   }
+//   // }
+//   // CurrentContext = currentContext;
+// }
 
 /**
  * Notify Reactives that are observing a given target that a key has changed on
@@ -340,10 +338,10 @@ export function withoutReactivity<T extends (...args: any[]) => any>(fn: T): Ret
 
 function cleanupComputation(computation: ExecutionContext) {
   // the computation.value of an effect is a cleanup function
-  if (typeof computation.value === "function") {
+  if (computation.value && typeof computation.value === "function") {
     computation.value();
+    computation.value = undefined;
   }
-  computation.value = undefined;
 }
 
 export function effect<T>(fn: () => T) {
@@ -354,11 +352,14 @@ export function effect<T>(fn: () => T) {
   }
   const executionContext: ExecutionContext = {
     // unsubcribe: () => ,
-    state: ExecutionState.EXECUTED,
+    state: ExecutionState.STALE,
     value: undefined,
     compute: () => {
+      CurrentContext = undefined!;
+      cleanupComputation(executionContext);
       unsubscribeChildEffect(executionContext);
-      executionContext.value = fn();
+      CurrentContext = executionContext;
+      return fn();
     },
     sources: new Set(),
     meta: {
@@ -408,23 +409,21 @@ export function effect<T>(fn: () => T) {
 // }
 
 function runComputation(computation: ExecutionContext) {
+  const state = computation.state;
+  computation.isMemo && onReadAtom(computation as Memo<any, any>);
+  if (state === ExecutionState.EXECUTED) return;
+  if (state === ExecutionState.PENDING) {
+    computeSources(computation as Memo<any, any>);
+  }
   const executionContext = CurrentContext;
   CurrentContext = undefined!;
   removeAtomsFromContext(computation);
-  cleanupComputation(computation);
   CurrentContext = computation;
-  computation.compute?.();
+  computation.value = computation.compute?.();
   computation.state = ExecutionState.EXECUTED;
   CurrentContext = executionContext;
 }
 function processEffects() {
-  if (!Updates) return;
-
-  for (const computation of Updates) {
-    runComputation(computation);
-  }
-
-  Updates = undefined!;
   if (!Effects) return;
   for (const computation of Effects) {
     runComputation(computation);
@@ -433,8 +432,7 @@ function processEffects() {
 }
 
 function runUpdates(fn: Function) {
-  if (Updates) return fn();
-  Updates = [];
+  if (Effects) return fn();
   Effects = [];
   try {
     return fn();
@@ -458,13 +456,6 @@ function computeMemo(memo: Memo<any, any>) {
   } else if (memo.state === ExecutionState.PENDING) {
     computeSources(memo);
   }
-  const currentContext = CurrentContext;
-  CurrentContext = memo;
-  try {
-    memo.value = memo.compute?.();
-  } finally {
-    CurrentContext = currentContext;
-  }
   onReadAtom(memo);
   return memo.value;
 }
@@ -478,11 +469,8 @@ const makeMemo = (fn: () => any) => {
     state: ExecutionState.STALE,
     sources: new Set(),
     compute: () => {
-      const value = fn();
-      memo.value = value;
-      memo.state = ExecutionState.EXECUTED;
       onWriteAtom(memo);
-      return value;
+      return fn();
     },
     isMemo: true,
     // unsubcribe: (scheduledContexts: Set<ExecutionContext>) => {
@@ -500,7 +488,8 @@ export function derived<T>(fn: () => T): () => T {
 
   return () => {
     if (!memo) memo = makeMemo(fn);
-    return computeMemo(memo);
+    runComputation(memo);
+    return memo.value;
   };
 }
 

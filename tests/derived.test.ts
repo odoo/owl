@@ -126,14 +126,45 @@ describe("derived", () => {
     expect(spy).toHaveReturnedWith(3);
     state.a = 2;
     await waitScheduler();
-    // todo: should not be called unless in an effect
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(1);
     expect(d()).toBe(4);
     expect(spy).toHaveBeenCalledTimes(2);
     expect(spy).toHaveReturnedWith(4);
     expect(d()).toBe(4);
     expect(spy).toHaveBeenCalledTimes(2);
     expect(spy).toHaveReturnedWith(4);
+  });
+
+  test("derived should not subscribe to change if no effect is using it", async () => {
+    const state = reactive({ a: 1, b: 10 });
+    const spy = jest.fn();
+    const d = derived(() => spy(state.a));
+    expect(spy).not.toHaveBeenCalled();
+    const unsubscribe = effect(() => {
+      d();
+    });
+    expectSpy(spy, 1, [1]);
+    state.a = 2;
+    await waitScheduler();
+    expectSpy(spy, 2, [2]);
+    unsubscribe();
+    state.a = 3;
+    await waitScheduler();
+    expectSpy(spy, 2, [2]);
+  });
+
+  test("derived should not be recomputed when called from effect if none of its source changed", async () => {
+    const state = reactive({ a: 1 });
+    const spy = jest.fn(() => state.a * 0);
+    const d = derived(spy);
+    expect(spy).not.toHaveBeenCalled();
+    effect(() => {
+      d();
+    });
+    expect(spy).toHaveBeenCalledTimes(1);
+    state.a = 2;
+    await waitScheduler();
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 });
 describe("unsubscription", () => {

@@ -13,10 +13,15 @@
   - A similar situation happened with onWillUpdateProps (see Transition)
   - solution: prevent tracking reads in onWillStart and onWillUpdateProps
 
+# questions
+to batch write in next tick or directly?
+
 # derived
 ## todo
 - unsubscribe from derived when there is no need to read from them
-- 
+- improve test
+  - more assertion within one test
+  - less test to compress the noise?
 
 # optimization
 - fragmented memory

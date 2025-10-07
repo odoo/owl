@@ -11,7 +11,7 @@ exports[`t-call dynamic t-call 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
     const b2 = text(\` owl \`);
-    ctx[zero] = b2;
+    ctx[zero] = () => b2;
     const template1 = (ctx['current'].template);
     return call(this, template1, ctx, node, key + \`__1\`);
   }

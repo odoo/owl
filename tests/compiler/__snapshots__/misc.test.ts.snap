@@ -118,7 +118,7 @@ exports[`misc global 1`] = `
       setContextValue(ctx, \\"foo\\", 'bbb');
       const b9 = callTemplate_3.call(this, ctx, node, key + \`__3__\${key1}\`);
       const b6 = multi([b7, b8, b9]);
-      ctx[zero] = b6;
+      ctx[zero] = () => b6;
       const b5 = callTemplate_4.call(this, ctx, node, key + \`__4__\${key1}\`);
       ctx = ctx.__proto__;
       c_block2[i1] = withKey(multi([b4, b5]), key1);
@@ -156,7 +156,7 @@ exports[`misc global 3`] = `
   
   return function template(ctx, node, key = \\"\\") {
     let attr1 = 'agüero';
-    const b2 = ctx[zero];
+    const b2 = ctx[zero]?.(node, key);
     return block1([attr1], [b2]);
   }
 }"

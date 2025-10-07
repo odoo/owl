@@ -126,7 +126,9 @@ export interface ASTTKey extends BaseAST {
 export interface ASTTCall extends BaseAST {
   type: ASTType.TCall;
   name: string;
-  body: AST[] | null;
+  attrs: Attrs | null;
+  attrsTranslationCtx: Attrs | null;
+  body: AST | null;
   context: string | null;
 }
 
@@ -642,9 +644,35 @@ function parseTCall(node: Element, ctx: ParsingContext): AST | null {
   node.removeAttribute("t-call");
   node.removeAttribute("t-call-context");
 
+  let attrs: Attrs | null = null;
+  let attrsTranslationCtx: Attrs | null = null;
+  for (let attributeName of node.getAttributeNames()) {
+    const value = node.getAttribute(attributeName)!;
+    if (attributeName.startsWith("t-translation-context-")) {
+      const attrName = attributeName.slice(22);
+      attrsTranslationCtx = attrsTranslationCtx || {};
+      attrsTranslationCtx[attrName] = value;
+    } else {
+      attrs = attrs || {};
+      attrs[attributeName] = value;
+    }
+  }
+
   if (node.tagName !== "t") {
+    if (attrs) {
+      throw new OwlError(
+        `Directive 't-call' with params can only be used on <t> nodes (used on a <${node.tagName}>)`
+      );
+    }
     const ast = parseNode(node, ctx);
-    const tcall: AST = { type: ASTType.TCall, name: subTemplate, body: null, context };
+    const tcall: AST = {
+      type: ASTType.TCall,
+      name: subTemplate,
+      attrs: null,
+      attrsTranslationCtx: null,
+      body: null,
+      context,
+    };
     if (ast && ast.type === ASTType.DomNode) {
       ast.content = [tcall];
       return ast;
@@ -664,12 +692,13 @@ function parseTCall(node: Element, ctx: ParsingContext): AST | null {
       };
     }
   }
-  const body = parseChildren(node, ctx);
-
+  const body = parseChildNodes(node, ctx);
   return {
     type: ASTType.TCall,
     name: subTemplate,
-    body: body.length ? body : null,
+    attrs,
+    attrsTranslationCtx,
+    body,
     context,
   };
 }

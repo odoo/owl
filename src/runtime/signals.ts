@@ -58,17 +58,36 @@ export function onReadAtom(atom: Atom) {
   CurrentComputation.sources!.add(atom);
   atom.observers.add(CurrentComputation);
 }
+
 export function onWriteAtom(atom: Atom) {
-  stackEffects(() => {
+  collectEffects(() => {
     for (const ctx of atom.observers) {
       if (ctx.state === ComputationState.EXECUTED) {
-        ctx.state = ComputationState.STALE;
         if (ctx.isDerived) markDownstream(ctx as Derived<any, any>);
         else Effects.push(ctx);
       }
+      ctx.state = ComputationState.STALE;
     }
   });
   batchProcessEffects();
+}
+function collectEffects(fn: Function) {
+  if (Effects) return fn();
+  Effects = [];
+  try {
+    return fn();
+  } finally {
+    // processEffects();
+    true;
+  }
+}
+const batchProcessEffects = batched(processEffects);
+function processEffects() {
+  if (!Effects) return;
+  for (const computation of Effects) {
+    updateComputation(computation);
+  }
+  Effects = undefined!;
 }
 
 export function withoutReactivity<T extends (...args: any[]) => any>(fn: T): ReturnType<T> {
@@ -98,6 +117,13 @@ function updateComputation(computation: Computation) {
   if (state === ComputationState.EXECUTED) return;
   if (state === ComputationState.PENDING) {
     computeSources(computation as Derived<any, any>);
+    // If the state is still not stale after processing the sources, it means
+    // none of the dependencies have changed.
+    // todo: test it
+    if (computation.state !== ComputationState.STALE) {
+      computation.state = ComputationState.EXECUTED;
+      return;
+    }
   }
   // todo: test performance. We might want to avoid removing the atoms to
   // directly re-add them at compute. Especially as we are making them stale.
@@ -108,40 +134,15 @@ function updateComputation(computation: Computation) {
   computation.state = ComputationState.EXECUTED;
   CurrentComputation = previousComputation;
 }
-
 function removeSources(computation: Computation) {
   const sources = computation.sources;
   for (const source of sources) {
     const observers = source.observers;
     observers.delete(computation);
-    // if source has no observer anymore, remove its sources too
-    if (observers.size === 0 && "sources" in source) {
-      removeSources(source as Derived<any, any>);
-      if (source.state !== ComputationState.STALE) {
-        source.state = ComputationState.PENDING;
-      }
-    }
+    // todo: if source has no effect observer anymore, remove its sources too
+    // todo: test it
   }
   sources.clear();
-}
-
-function stackEffects(fn: Function) {
-  if (Effects) return fn();
-  Effects = [];
-  try {
-    return fn();
-  } finally {
-    // processEffects();
-    true;
-  }
-}
-const batchProcessEffects = batched(processEffects);
-function processEffects() {
-  if (!Effects) return;
-  for (const computation of Effects) {
-    updateComputation(computation);
-  }
-  Effects = undefined!;
 }
 
 function unsubscribeEffect(effectComputation: Computation) {
@@ -176,7 +177,7 @@ function markDownstream<A, B>(derived: Derived<A, B>) {
 }
 function computeSources(derived: Derived<any, any>) {
   for (const source of derived.sources) {
-    if ("sources" in source) continue;
+    if (!("compute" in source)) continue;
     updateComputation(source as Derived<any, any>);
   }
 }

@@ -14,7 +14,9 @@ export function effect<T>(fn: () => T) {
     value: undefined,
     compute() {
       CurrentComputation = undefined!;
+      // removing the sources is made by `runComputation`.
       unsubscribe();
+      // reseting the context will be made by `runComputation`.
       CurrentComputation = effectComputation;
       return fn();
     },
@@ -24,7 +26,8 @@ export function effect<T>(fn: () => T) {
   // Push to the parent effect if any
   CurrentComputation?.childrenEffect?.push?.(effectComputation);
   runComputation(effectComputation);
-  // Unsubscribe from the effect and all it's child effect
+
+  // Remove sources and unsubscribe
   return () => {
     removeSources(effectComputation);
     const currentComputation = CurrentComputation;
@@ -36,7 +39,18 @@ export function effect<T>(fn: () => T) {
 export function derived<T>(fn: () => T): () => T {
   let derivedComputation: Derived<any, any>;
   return () => {
-    derivedComputation ??= makeDerivedComputation(fn);
+    derivedComputation ??= {
+      state: ComputationState.STALE,
+      sources: new Set(),
+      compute: () => {
+        onWriteAtom(derivedComputation);
+        return fn();
+      },
+      isDerived: true,
+      value: undefined,
+      observers: new Set<Computation>(),
+    };
+    onDerived?.(derivedComputation);
     runComputation(derivedComputation);
     return derivedComputation.value;
   };
@@ -100,7 +114,6 @@ function runComputation(computation: Computation) {
     computeSources(computation as Derived<any, any>);
   }
   const executionContext = CurrentComputation;
-  CurrentComputation = undefined!;
   // todo: test performance. We might want to avoid removing the atoms to
   // directly re-add them at compute. Especially as we are making them stale.
   removeSources(computation);
@@ -188,22 +201,6 @@ function computeMemo(derived: Derived<any, any>) {
   return derived.value;
 }
 
-function makeDerivedComputation(fn: () => any) {
-  const derived: Derived<any, any> = {
-    state: ComputationState.STALE,
-    sources: new Set(),
-    compute: () => {
-      onWriteAtom(derived);
-      return fn();
-    },
-    isDerived: true,
-    value: undefined,
-    observers: new Set<Computation>(),
-  };
-  testHooks.makeDerived(derived);
-  return derived;
-}
-
 function markDownstream<A, B>(derived: Derived<A, B>) {
   for (const observer of derived.observers) {
     // if the state has already been marked, skip it
@@ -216,7 +213,11 @@ function markDownstream<A, B>(derived: Derived<A, B>) {
 
 // For tests
 // todo: find a better way to test
+let onDerived: (derived: Derived<any, any>) => void;
 
-export const testHooks = {
-  makeDerived(derived: Derived<any, any>) {},
-};
+export function setSginalHooks(hooks: { onDerived: (derived: Derived<any, any>) => void }) {
+  if (hooks.onDerived) onDerived = hooks.onDerived;
+}
+export function resetSignalHooks() {
+  onDerived = (void 0)!;
+}

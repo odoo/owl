@@ -1,7 +1,7 @@
 import type { Env } from "./app";
 import { getCurrent } from "./component_node";
 import { onMounted, onPatched, onWillUnmount } from "./lifecycle_hooks";
-import { runWithContext } from "./reactivity";
+import { runWithComputation } from "./signals";
 import { inOwnerDocument } from "./utils";
 
 // -----------------------------------------------------------------------------
@@ -93,10 +93,10 @@ export function useEffect<T extends unknown[]>(
 
   let dependencies: any;
   const runEffect = () =>
-    runWithContext(context, () => {
+    runWithComputation(context, () => {
       cleanup = effect(...dependencies);
     });
-  const computeDependenciesWithContext = () => runWithContext(context, computeDependencies);
+  const computeDependenciesWithContext = () => runWithComputation(context, computeDependencies);
 
   onMounted(() => {
     dependencies = computeDependenciesWithContext();

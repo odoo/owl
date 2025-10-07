@@ -1,21 +1,17 @@
-export enum ExecutionState {
+export enum ComputationState {
   EXECUTED = 0,
   STALE = 1,
   PENDING = 2,
 }
 
-export type ExecutionContext<T = any> = {
+export type Computation<T = any> = {
   unsubcribe?: () => void;
   compute?: () => T;
-  // atoms?: Set<Atom>;
   meta?: any;
-  state: ExecutionState;
-  sources: Set<Atom | Memo<any, any>>;
-  isMemo?: boolean;
+  state: ComputationState;
+  sources: Set<Atom | Derived<any, any>>;
+  isDerived?: boolean;
   value: T;
-  // getParent: () => ExecutionContext | undefined;
-  // getChildren: () => ExecutionContext[];
-  // schedule: () => void;
 };
 
 export type customDirectives = Record<
@@ -25,16 +21,9 @@ export type customDirectives = Record<
 
 export type Atom<T = any> = {
   value: T;
-  observers: Set<ExecutionContext>;
-  // getValue: () => any;
-  // checkId: number;
+  observers: Set<Computation>;
 };
 
-export interface Memo<Prev, Next = Prev> extends Atom<Next>, ExecutionContext<Next> {}
+export interface Derived<Prev, Next = Prev> extends Atom<Next>, Computation<Next> {}
 
 export type OldValue = any;
-
-// export type DerivedAtom = Atom & {
-//   sources: Map<Atom, OldValue>;
-//   computed: boolean;
-// };

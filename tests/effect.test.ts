@@ -1,4 +1,5 @@
-import { effect, reactive } from "../src/runtime/reactivity";
+import { reactive } from "../src/runtime/reactivity";
+import { effect } from "../src/runtime/signals";
 import { expectSpy, nextMicroTick } from "./helpers";
 
 async function waitScheduler() {

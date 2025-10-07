@@ -4,7 +4,7 @@ import { fibersInError } from "./error_handling";
 import { OwlError } from "../common/owl_error";
 import { STATUS } from "./status";
 import { popTaskContext, pushTaskContext } from "./cancellableContext";
-import { runWithContext } from "./reactivity";
+import { runWithComputation } from "./signals";
 
 export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
   let current = node.fiber;
@@ -136,7 +136,7 @@ export class Fiber {
     const root = this.root;
     if (root) {
       pushTaskContext(node.taskContext);
-      runWithContext(node.executionContext, () => {
+      runWithComputation(node.executionContext, () => {
         try {
           (this.bdom as any) = true;
           this.bdom = node.renderFn();

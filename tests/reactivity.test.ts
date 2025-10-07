@@ -7,7 +7,8 @@ import {
   useState,
   xml,
 } from "../src";
-import { effect, markRaw, reactive, toRaw } from "../src/runtime/reactivity";
+import { markRaw, reactive, toRaw } from "../src/runtime/reactivity";
+import { effect } from "../src/runtime/signals";
 
 import {
   makeDeferred,

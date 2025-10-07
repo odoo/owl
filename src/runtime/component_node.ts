@@ -1,12 +1,13 @@
 import { OwlError } from "../common/owl_error";
-import { Atom, ExecutionContext, ExecutionState } from "../common/types";
+import { Atom, Computation, ComputationState } from "../common/types";
 import type { App, Env } from "./app";
 import { BDom, VNode } from "./blockdom";
 import { makeTaskContext, TaskContext } from "./cancellableContext";
 import { Component, ComponentConstructor, Props } from "./component";
 import { fibersInError } from "./error_handling";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";
-import { CurrentContext, reactive, setContext, withoutReactivity } from "./reactivity";
+import { reactive } from "./reactivity";
+import { CurrentComputation, setComputation, withoutReactivity } from "./signals";
 import { STATUS } from "./status";
 
 let currentNode: ComponentNode | null = null;
@@ -90,7 +91,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
   patched: LifecycleHook[] = [];
   willDestroy: LifecycleHook[] = [];
   taskContext: TaskContext;
-  executionContext: ExecutionContext;
+  executionContext: Computation;
 
   constructor(
     C: ComponentConstructor<P, E>,
@@ -112,7 +113,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
         this.render(false);
       },
       sources: new Set<Atom>(),
-      state: ExecutionState.EXECUTED,
+      state: ComputationState.EXECUTED,
     };
     const defaultProps = C.defaultProps;
     props = Object.assign({}, props);
@@ -127,13 +128,13 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     //     props[key] = useState(prop);
     //   }
     // }
-    const currentContext = CurrentContext;
-    setContext(this.executionContext);
+    const currentContext = CurrentComputation;
+    setComputation(this.executionContext);
     this.component = new C(props, env, this);
     const ctx = Object.assign(Object.create(this.component), { this: this.component });
     this.renderFn = app.getTemplate(C.template).bind(this.component, ctx, this);
     this.component.setup();
-    setContext(currentContext);
+    setComputation(currentContext);
     currentNode = null;
   }
 

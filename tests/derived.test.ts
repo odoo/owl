@@ -1,5 +1,6 @@
-import { Memo } from "../src/common/types";
-import { derived, effect, hooks, reactive } from "../src/runtime/reactivity";
+import { reactive, effect } from "../src";
+import { Derived } from "../src/common/types";
+import { derived, testHooks } from "../src/runtime/signals";
 import { expectSpy, nextMicroTick } from "./helpers";
 
 async function waitScheduler() {
@@ -169,16 +170,16 @@ describe("derived", () => {
 });
 describe("unsubscription", () => {
   let currentMakeMemo: any;
-  let memos: Memo<any, any>[] = [];
+  let memos: Derived<any, any>[] = [];
 
   beforeAll(() => {
-    currentMakeMemo = hooks.makeMemo;
+    currentMakeMemo = testHooks.makeDerived;
   });
   afterAll(() => {
-    hooks.makeMemo = currentMakeMemo;
+    testHooks.makeDerived = currentMakeMemo;
   });
   beforeEach(() => {
-    hooks.makeMemo = (m: Memo<any, any>) => memos.push(m);
+    testHooks.makeDerived = (m: Derived<any, any>) => memos.push(m);
   });
   afterEach(() => {
     memos.splice(0);

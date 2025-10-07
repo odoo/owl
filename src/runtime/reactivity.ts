@@ -1,6 +1,6 @@
 import { OwlError } from "../common/owl_error";
 import { Atom } from "../common/types";
-import { makeAtom, onReadAtom, onWriteAtom } from "./signals";
+import { onReadAtom, onWriteAtom } from "./signals";
 
 // Special key to subscribe to, to be notified of key creation/deletion
 const KEYCHANGES = Symbol("Key changes");
@@ -87,7 +87,10 @@ function getTargetKeyAtom(target: Target, key: PropertyKey): Atom {
   }
   let atom = keyToAtomItem.get(key)!;
   if (!atom) {
-    atom = makeAtom();
+    atom = {
+      value: undefined,
+      observers: new Set(),
+    };
     keyToAtomItem.set(key, atom);
   }
   return atom;

@@ -1,6 +1,6 @@
 import { reactive, effect } from "../src";
 import { Derived } from "../src/common/types";
-import { derived, resetSignalHooks, setSginalHooks } from "../src/runtime/signals";
+import { derived, resetSignalHooks, setSignalHooks } from "../src/runtime/signals";
 // import * as signals from "../src/runtime/signals";
 import { expectSpy, nextMicroTick } from "./helpers";
 
@@ -170,12 +170,15 @@ describe("derived", () => {
   });
 });
 describe("unsubscription", () => {
-  let memos: Derived<any, any>[] = [];
-  beforeEach(() => {
-    setSginalHooks({ onDerived: (m: Derived<any, any>) => memos.push(m) });
+  const memos: Derived<any, any>[] = [];
+  beforeAll(() => {
+    setSignalHooks({ onDerived: (m: Derived<any, any>) => memos.push(m) });
+  });
+  afterAll(() => {
+    resetSignalHooks();
   });
   afterEach(() => {
-    resetSignalHooks();
+    memos.length = 0;
   });
 
   test("derived shoud unsubscribes from dependencies when effect is unsubscribed", async () => {

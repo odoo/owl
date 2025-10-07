@@ -9,8 +9,8 @@ export type Computation<T = any> = {
   state: ComputationState;
   sources: Set<Atom | Derived<any, any>>;
   isDerived?: boolean;
-  value: T;
-  childrenEffect?: Computation[];
+  value: T; // for effects, this is the cleanup function
+  childrenEffect?: Computation[]; // only for effects
 };
 
 export type customDirectives = Record<

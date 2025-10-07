@@ -5,34 +5,28 @@ let Effects: Computation[];
 let CurrentComputation: Computation;
 
 export function effect<T>(fn: () => T) {
-  const unsubscribe = () => {
-    cleanupComputation(effectComputation);
-    unsubscribeChildEffect(effectComputation);
-  };
   const effectComputation: Computation = {
     state: ComputationState.STALE,
     value: undefined,
     compute() {
       CurrentComputation = undefined!;
-      // removing the sources is made by `runComputation`.
-      unsubscribe();
-      // reseting the context will be made by `runComputation`.
+      // `removeSources` is made by `runComputation`.
+      unsubscribeEffect(effectComputation);
       CurrentComputation = effectComputation;
       return fn();
     },
     sources: new Set(),
     childrenEffect: [],
   };
-  // Push to the parent effect if any
   CurrentComputation?.childrenEffect?.push?.(effectComputation);
-  runComputation(effectComputation);
+  updateComputation(effectComputation);
 
   // Remove sources and unsubscribe
   return () => {
     removeSources(effectComputation);
     const currentComputation = CurrentComputation;
     CurrentComputation = undefined!;
-    unsubscribe();
+    unsubscribeEffect(effectComputation);
     CurrentComputation = currentComputation!;
   };
 }
@@ -51,7 +45,7 @@ export function derived<T>(fn: () => T): () => T {
       observers: new Set<Computation>(),
     };
     onDerived?.(derivedComputation);
-    runComputation(derivedComputation);
+    updateComputation(derivedComputation);
     return derivedComputation.value;
   };
 }
@@ -61,9 +55,8 @@ export function onReadAtom(atom: Atom) {
   CurrentComputation.sources!.add(atom);
   atom.observers.add(CurrentComputation);
 }
-
 export function onWriteAtom(atom: Atom) {
-  runUpdates(() => {
+  stackEffects(() => {
     for (const ctx of atom.observers) {
       if (ctx.state === ComputationState.EXECUTED) {
         ctx.state = ComputationState.STALE;
@@ -74,6 +67,13 @@ export function onWriteAtom(atom: Atom) {
   });
   batchProcessEffects();
 }
+export function makeAtom(): Atom {
+  const atom: Atom = {
+    value: undefined,
+    observers: new Set(),
+  };
+  return atom;
+}
 
 export function getCurrentComputation() {
   return CurrentComputation;
@@ -81,7 +81,6 @@ export function getCurrentComputation() {
 export function setComputation(computation: Computation) {
   CurrentComputation = computation;
 }
-
 export function runWithComputation<T>(computation: Computation, fn: () => T): T {
   const currentComputation = CurrentComputation;
   CurrentComputation = computation;
@@ -93,43 +92,25 @@ export function runWithComputation<T>(computation: Computation, fn: () => T): T 
   }
   return result;
 }
-
 export function withoutReactivity<T extends (...args: any[]) => any>(fn: T): ReturnType<T> {
   return runWithComputation(undefined!, fn);
 }
 
-export function makeAtom(): Atom {
-  const atom: Atom = {
-    value: undefined,
-    observers: new Set(),
-  };
-  return atom;
-}
-
-function runComputation(computation: Computation) {
+function updateComputation(computation: Computation) {
   const state = computation.state;
   computation.isDerived && onReadAtom(computation as Derived<any, any>);
   if (state === ComputationState.EXECUTED) return;
   if (state === ComputationState.PENDING) {
     computeSources(computation as Derived<any, any>);
   }
-  const executionContext = CurrentComputation;
   // todo: test performance. We might want to avoid removing the atoms to
   // directly re-add them at compute. Especially as we are making them stale.
   removeSources(computation);
+  const executionContext = CurrentComputation;
   CurrentComputation = computation;
   computation.value = computation.compute?.();
   computation.state = ComputationState.EXECUTED;
   CurrentComputation = executionContext;
-}
-
-const batchProcessEffects = batched(processEffects);
-function processEffects() {
-  if (!Effects) return;
-  for (const computation of Effects) {
-    runComputation(computation);
-  }
-  Effects = undefined!;
 }
 
 function removeSources(computation: Computation) {
@@ -148,32 +129,7 @@ function removeSources(computation: Computation) {
   sources.clear();
 }
 
-/**
- * Unsubscribe an execution context and all its children from all atoms
- * they are subscribed to.
- *
- * @param parentExecutionContext the context to unsubscribe
- */
-function unsubscribeChildEffect(parentExecutionContext: Computation) {
-  for (const children of parentExecutionContext.childrenEffect!) {
-    cleanupComputation(children);
-    removeSources(children);
-    // Consider it executed to avoid it's re-execution
-    children.state = ComputationState.EXECUTED;
-    unsubscribeChildEffect(children);
-  }
-  parentExecutionContext.childrenEffect!.length = 0;
-}
-
-function cleanupComputation(computation: Computation) {
-  // the computation.value of an effect is a cleanup function
-  if (computation.value && typeof computation.value === "function") {
-    computation.value();
-    computation.value = undefined;
-  }
-}
-
-function runUpdates(fn: Function) {
+function stackEffects(fn: Function) {
   if (Effects) return fn();
   Effects = [];
   try {
@@ -183,14 +139,52 @@ function runUpdates(fn: Function) {
     true;
   }
 }
-function computeSources(derived: Derived<any, any>) {
-  for (const source of derived.sources) {
-    if ("sources" in source) continue;
-    computeMemo(source as Derived<any, any>);
+const batchProcessEffects = batched(processEffects);
+function processEffects() {
+  if (!Effects) return;
+  for (const computation of Effects) {
+    updateComputation(computation);
+  }
+  Effects = undefined!;
+}
+
+function unsubscribeEffect(effectComputation: Computation) {
+  cleanupEffect(effectComputation);
+  unsubscribeChildEffect(effectComputation);
+}
+/**
+ * Unsubscribe an execution context and all its children from all atoms
+ * they are subscribed to.
+ *
+ * @param parentEffect the context to unsubscribe
+ */
+function unsubscribeChildEffect(parentEffect: Computation) {
+  for (const children of parentEffect.childrenEffect!) {
+    cleanupEffect(children);
+    removeSources(children);
+    // Consider it executed to avoid it's re-execution
+    children.state = ComputationState.EXECUTED;
+    unsubscribeChildEffect(children);
+  }
+  parentEffect.childrenEffect!.length = 0;
+}
+function cleanupEffect(computation: Computation) {
+  // the computation.value of an effect is a cleanup function
+  const cleanupFn = computation.value;
+  if (cleanupFn && typeof cleanupFn === "function") {
+    cleanupFn();
+    computation.value = undefined;
   }
 }
 
-function computeMemo(derived: Derived<any, any>) {
+function computeSources(derived: Derived<any, any>) {
+  for (const source of derived.sources) {
+    if ("sources" in source) continue;
+    computeDerived(source as Derived<any, any>);
+  }
+}
+
+function computeDerived(derived: Derived<any, any>) {
   if (derived.state === ComputationState.EXECUTED) {
     onReadAtom(derived);
     return derived.value;
@@ -212,10 +206,10 @@ function markDownstream<A, B>(derived: Derived<A, B>) {
 }
 
 // For tests
-// todo: find a better way to test
+
 let onDerived: (derived: Derived<any, any>) => void;
 
-export function setSginalHooks(hooks: { onDerived: (derived: Derived<any, any>) => void }) {
+export function setSignalHooks(hooks: { onDerived: (derived: Derived<any, any>) => void }) {
   if (hooks.onDerived) onDerived = hooks.onDerived;
 }
 export function resetSignalHooks() {

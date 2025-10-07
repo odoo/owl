@@ -5,13 +5,12 @@ export enum ComputationState {
 }
 
 export type Computation<T = any> = {
-  unsubcribe?: () => void;
   compute?: () => T;
-  meta?: any;
   state: ComputationState;
   sources: Set<Atom | Derived<any, any>>;
   isDerived?: boolean;
   value: T;
+  childrenEffect?: Computation[];
 };
 
 export type customDirectives = Record<

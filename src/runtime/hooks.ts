@@ -87,7 +87,7 @@ export function useEffect<T extends unknown[]>(
   effect: Effect<T>,
   computeDependencies: () => [...T] = () => [NaN] as never
 ) {
-  const context = getCurrent().component.__owl__.executionContext;
+  const context = getCurrent().component.__owl__.signalComputation;
 
   let cleanup: (() => void) | void;
 

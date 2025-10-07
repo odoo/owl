@@ -7,7 +7,7 @@ import { Component, ComponentConstructor, Props } from "./component";
 import { fibersInError } from "./error_handling";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";
 import { reactive } from "./reactivity";
-import { CurrentComputation, setComputation, withoutReactivity } from "./signals";
+import { getCurrentComputation, setComputation, withoutReactivity } from "./signals";
 import { STATUS } from "./status";
 
 let currentNode: ComponentNode | null = null;
@@ -91,7 +91,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
   patched: LifecycleHook[] = [];
   willDestroy: LifecycleHook[] = [];
   taskContext: TaskContext;
-  executionContext: Computation;
+  signalComputation: Computation;
 
   constructor(
     C: ComponentConstructor<P, E>,
@@ -106,8 +106,8 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     this.props = props;
     this.parentKey = parentKey;
     this.taskContext = makeTaskContext();
-    this.executionContext = {
-      meta: this,
+    this.signalComputation = {
+      // data: this,
       value: undefined,
       compute: () => {
         this.render(false);
@@ -128,8 +128,8 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     //     props[key] = useState(prop);
     //   }
     // }
-    const currentContext = CurrentComputation;
-    setComputation(this.executionContext);
+    const currentContext = getCurrentComputation();
+    setComputation(this.signalComputation);
     this.component = new C(props, env, this);
     const ctx = Object.assign(Object.create(this.component), { this: this.component });
     this.renderFn = app.getTemplate(C.template).bind(this.component, ctx, this);

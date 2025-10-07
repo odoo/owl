@@ -13,8 +13,13 @@
   - A similar situation happened with onWillUpdateProps (see Transition)
   - solution: prevent tracking reads in onWillStart and onWillUpdateProps
 
+
 # questions
 to batch write in next tick or directly?
+
+# owl component
+## todo
+- test proper unsubscription
 
 # derived
 ## todo

@@ -136,7 +136,7 @@ export class Fiber {
     const root = this.root;
     if (root) {
       pushTaskContext(node.taskContext);
-      runWithComputation(node.executionContext, () => {
+      runWithComputation(node.signalComputation, () => {
         try {
           (this.bdom as any) = true;
           this.bdom = node.renderFn();

@@ -35,6 +35,7 @@ describe("derived", () => {
 
     expectSpy(spyEffect, 1, { args: [] });
     expectSpy(spyDerived, 1, { args: [], result: 2 });
+    state.a = 3;
     await waitScheduler();
     expectSpy(spyEffect, 2, { args: [] });
     expectSpy(spyDerived, 2, { args: [], result: 6 });

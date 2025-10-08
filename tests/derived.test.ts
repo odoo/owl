@@ -35,7 +35,6 @@ describe("derived", () => {
 
     expectSpy(spyEffect, 1, []);
     expectSpy(spyDerived, 1, [], 2);
-    state.a = 3;
     await waitScheduler();
     expectSpy(spyEffect, 2, []);
     expectSpy(spyDerived, 2, [], 6);
@@ -45,15 +44,20 @@ describe("derived", () => {
     expectSpy(spyDerived, 3, [], 12);
   });
 
-  test("derived does not update when unrelated property changes", async () => {
+  test("derived does not update when unrelated property changes, but updates when dependencies change", async () => {
     const state = reactive({ a: 1, b: 2, c: 3 });
-    const d = derived(() => state.a + state.b);
-    const spy = jest.fn();
-    effect(() => spy(d()));
-    expectSpy(spy, 1, [3]);
+    const spyDerived = jest.fn(() => state.a + state.b);
+    const d = derived(spyDerived);
+    const spyEffect = jest.fn(() => d());
+    effect(spyEffect);
+
+    expectSpy(spyEffect, 1, []);
+    expectSpy(spyDerived, 1, [], 3);
+
     state.c = 10;
     await waitScheduler();
-    expectSpy(spy, 1, [3]);
+    expectSpy(spyEffect, 1, []);
+    expectSpy(spyDerived, 1, [], 3);
   });
 
   test("derived does not notify when value is unchanged", async () => {

@@ -219,16 +219,10 @@ export async function editInput(input: HTMLInputElement | HTMLTextAreaElement, v
   return nextTick();
 }
 
-const noReturnValue = Symbol();
-export function expectSpy(
-  spy: jest.Mock,
-  callTime: number,
-  args: any[],
-  returnValue: any = noReturnValue
-): void {
-  expect(spy).toHaveBeenCalledTimes(callTime);
-  expect(spy).lastCalledWith(...args);
-  !noReturnValue && expect(spy).toHaveReturnedWith(returnValue);
+export function expectSpy(spy: jest.Mock, count: number, opt: { args: any[]; result?: any }): void {
+  expect(spy).toHaveBeenCalledTimes(count);
+  if ("args" in opt) expect(spy).lastCalledWith(...opt.args);
+  if ("result" in opt) expect(spy).toHaveReturnedWith(opt.result);
 }
 
 afterEach(() => {

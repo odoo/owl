@@ -33,16 +33,16 @@ describe("derived", () => {
     const spyEffect = jest.fn(() => d());
     effect(spyEffect);
 
-    expectSpy(spyEffect, 1, { args: [] });
-    expectSpy(spyDerived, 1, { args: [], result: 2 });
+    expectSpy(spyEffect, 1);
+    expectSpy(spyDerived, 1, { result: 2 });
     state.a = 3;
     await waitScheduler();
-    expectSpy(spyEffect, 2, { args: [] });
-    expectSpy(spyDerived, 2, { args: [], result: 6 });
+    expectSpy(spyEffect, 2);
+    expectSpy(spyDerived, 2, { result: 6 });
     state.b = 4;
     await waitScheduler();
-    expectSpy(spyEffect, 3, { args: [] });
-    expectSpy(spyDerived, 3, { args: [], result: 12 });
+    expectSpy(spyEffect, 3);
+    expectSpy(spyDerived, 3, { result: 12 });
   });
 
   test("derived does not update when unrelated property changes, but updates when dependencies change", async () => {
@@ -52,77 +52,82 @@ describe("derived", () => {
     const spyEffect = jest.fn(() => d());
     effect(spyEffect);
 
-    expectSpy(spyEffect, 1, { args: [] });
-    expectSpy(spyDerived, 1, { args: [], result: 3 });
+    expectSpy(spyEffect, 1);
+    expectSpy(spyDerived, 1, { result: 3 });
 
     state.c = 10;
     await waitScheduler();
-    expectSpy(spyEffect, 1, { args: [] });
-    expectSpy(spyDerived, 1, { args: [], result: 3 });
+    expectSpy(spyEffect, 1);
+    expectSpy(spyDerived, 1, { result: 3 });
   });
 
   test("derived does not notify when value is unchanged", async () => {
     const state = reactive({ a: 1, b: 2 });
-    const d = derived(() => state.a + state.b);
-    const spy = jest.fn();
-    effect(() => spy(d()));
-    expectSpy(spy, 1, { args: [3] });
+    const spyDerived = jest.fn(() => state.a + state.b);
+    const d = derived(spyDerived);
+    const spyEffect = jest.fn(() => d());
+    effect(spyEffect);
+    expectSpy(spyEffect, 1);
+    expectSpy(spyDerived, 1, { result: 3 });
     state.a = 1;
     state.b = 2;
     await waitScheduler();
-    expectSpy(spy, 1, { args: [3] });
+    expectSpy(spyEffect, 1);
+    expectSpy(spyDerived, 1, { result: 3 });
   });
 
   test("multiple deriveds can depend on same state", async () => {
     const state = reactive({ a: 1, b: 2 });
-    const d1 = derived(() => state.a + state.b);
-    const d2 = derived(() => state.a * state.b);
-    const spy1 = jest.fn();
-    const spy2 = jest.fn();
-    effect(() => spy1(d1()));
-    effect(() => spy2(d2()));
-    expectSpy(spy1, 1, { args: [3] });
-    expectSpy(spy2, 1, { args: [2] });
+    const spyDerived1 = jest.fn(() => state.a + state.b);
+    const d1 = derived(spyDerived1);
+    const spyDerived2 = jest.fn(() => state.a * state.b);
+    const d2 = derived(spyDerived2);
+    const spyEffect1 = jest.fn(() => d1());
+    const spyEffect2 = jest.fn(() => d2());
+    effect(spyEffect1);
+    effect(spyEffect2);
+    expectSpy(spyEffect1, 1);
+    expectSpy(spyDerived1, 1, { result: 3 });
+    expectSpy(spyEffect2, 1);
+    expectSpy(spyDerived2, 1, { result: 2 });
     state.a = 3;
     await waitScheduler();
-    expectSpy(spy1, 2, { args: [5] });
-    expectSpy(spy2, 2, { args: [6] });
-  });
-
-  test("derived can return objects", async () => {
-    const state = reactive({ a: 1, b: 2 });
-    const d = derived(() => state.a + state.b);
-    const spy = jest.fn();
-    effect(() => spy(d()));
-    expectSpy(spy, 1, { args: [3] });
-    state.a = 5;
-    await waitScheduler();
-    expectSpy(spy, 2, { args: [7] });
+    expectSpy(spyEffect1, 2);
+    expectSpy(spyDerived1, 2, { result: 5 });
+    expectSpy(spyEffect2, 2);
+    expectSpy(spyDerived2, 2, { result: 6 });
   });
 
   test("derived can depend on arrays", async () => {
     const state = reactive({ arr: [1, 2, 3] });
-    const d = derived(() => state.arr.reduce((a, b) => a + b, 0));
-    const spy = jest.fn();
-    effect(() => spy(d()));
-    expectSpy(spy, 1, { args: [6] });
+    const spyDerived = jest.fn(() => state.arr.reduce((a, b) => a + b, 0));
+    const d = derived(spyDerived);
+    const spyEffect = jest.fn(() => d());
+    effect(spyEffect);
+    expectSpy(spyEffect, 1);
+    expectSpy(spyDerived, 1, { result: 6 });
     state.arr.push(4);
     await waitScheduler();
-    expectSpy(spy, 2, { args: [10] });
+    expectSpy(spyEffect, 2);
+    expectSpy(spyDerived, 2, { result: 10 });
     state.arr[0] = 10;
     await waitScheduler();
-    expectSpy(spy, 3, { args: [19] });
+    expectSpy(spyEffect, 3);
+    expectSpy(spyDerived, 3, { result: 19 });
   });
 
   test("derived can depend on nested reactives", async () => {
     const state = reactive({ nested: { a: 1 } });
-    const d = derived(() => state.nested.a * 2);
-    const spy = jest.fn();
-    effect(() => spy(d()));
-    expectSpy(spy, 1, { args: [2] });
+    const spyDerived = jest.fn(() => state.nested.a * 2);
+    const d = derived(spyDerived);
+    const spyEffect = jest.fn(() => d());
+    effect(spyEffect);
+    expectSpy(spyEffect, 1);
+    expectSpy(spyDerived, 1, { result: 2 });
     state.nested.a = 5;
     await waitScheduler();
-    expectSpy(spy, 2, { args: [10] });
+    expectSpy(spyEffect, 2);
+    expectSpy(spyDerived, 2, { result: 10 });
   });
 
   test("derived can be called multiple times and returns same value if unchanged", async () => {
@@ -132,87 +137,98 @@ describe("derived", () => {
     const d = derived(spy);
     expect(spy).not.toHaveBeenCalled();
     expect(d()).toBe(3);
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveReturnedWith(3);
+    expectSpy(spy, 1, { result: 3 });
     expect(d()).toBe(3);
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).toHaveReturnedWith(3);
+    expectSpy(spy, 1, { result: 3 });
     state.a = 2;
     await waitScheduler();
-    expect(spy).toHaveBeenCalledTimes(1);
+    expectSpy(spy, 1, { result: 3 });
     expect(d()).toBe(4);
-    expect(spy).toHaveBeenCalledTimes(2);
-    expect(spy).toHaveReturnedWith(4);
+    expectSpy(spy, 2, { result: 4 });
     expect(d()).toBe(4);
-    expect(spy).toHaveBeenCalledTimes(2);
-    expect(spy).toHaveReturnedWith(4);
+    expectSpy(spy, 2, { result: 4 });
   });
 
   test("derived should not subscribe to change if no effect is using it", async () => {
     const state = reactive({ a: 1, b: 10 });
-    const spy = jest.fn();
-    const d = derived(() => spy(state.a));
-    expect(spy).not.toHaveBeenCalled();
-    const unsubscribe = effect(() => {
+    const spyDerived = jest.fn(() => state.a);
+    const d = derived(spyDerived);
+    expect(spyDerived).not.toHaveBeenCalled();
+    const spyEffect = jest.fn(() => {
       d();
     });
-    expectSpy(spy, 1, { args: [1] });
+    const unsubscribe = effect(spyEffect);
+    expectSpy(spyEffect, 1);
+    expectSpy(spyDerived, 1, { result: 1 });
     state.a = 2;
     await waitScheduler();
-    expectSpy(spy, 2, { args: [2] });
+    expectSpy(spyEffect, 2);
+    expectSpy(spyDerived, 2, { result: 2 });
     unsubscribe();
     state.a = 3;
     await waitScheduler();
-    expectSpy(spy, 2, { args: [2] });
+    expectSpy(spyEffect, 2);
+    expectSpy(spyDerived, 2, { result: 2 });
   });
 
   test("derived should not be recomputed when called from effect if none of its source changed", async () => {
     const state = reactive({ a: 1 });
-    const spy = jest.fn(() => state.a * 0);
-    const d = derived(spy);
-    expect(spy).not.toHaveBeenCalled();
-    effect(() => {
+    const spyDerived = jest.fn(() => state.a * 0);
+    const d = derived(spyDerived);
+    expect(spyDerived).not.toHaveBeenCalled();
+    const spyEffect = jest.fn(() => {
       d();
     });
-    expect(spy).toHaveBeenCalledTimes(1);
+    effect(spyEffect);
+    expectSpy(spyEffect, 1);
+    expectSpy(spyDerived, 1, { result: 0 });
     state.a = 2;
     await waitScheduler();
-    expect(spy).toHaveBeenCalledTimes(2);
+    expectSpy(spyEffect, 2);
+    expectSpy(spyDerived, 2, { result: 0 });
   });
 });
 describe("unsubscription", () => {
-  const memos: Derived<any, any>[] = [];
+  const deriveds: Derived<any, any>[] = [];
   beforeAll(() => {
-    setSignalHooks({ onDerived: (m: Derived<any, any>) => memos.push(m) });
+    setSignalHooks({ onDerived: (m: Derived<any, any>) => deriveds.push(m) });
   });
   afterAll(() => {
     resetSignalHooks();
   });
   afterEach(() => {
-    memos.length = 0;
+    deriveds.length = 0;
   });
 
   test("derived shoud unsubscribes from dependencies when effect is unsubscribed", async () => {
     const state = reactive({ a: 1, b: 2 });
-    const d = derived(() => state.a + state.b);
+    const spyDerived = jest.fn(() => state.a + state.b);
+    const d = derived(spyDerived);
+    const spyEffect = jest.fn(() => d());
     d();
-    expect(memos[0]!.observers.size).toBe(0);
-    const unsubscribe = effect(() => d());
-    expect(memos[0]!.observers.size).toBe(1);
+    expect(deriveds[0]!.observers.size).toBe(0);
+    const unsubscribe = effect(spyEffect);
+    expect(deriveds[0]!.observers.size).toBe(1);
     unsubscribe();
-    expect(memos[0]!.observers.size).toBe(0);
+    expect(deriveds[0]!.observers.size).toBe(0);
   });
 });
 describe("nested derived", () => {
   test("derived can depend on another derived", async () => {
     const state = reactive({ a: 1, b: 2 });
-    const d1 = derived(() => state.a + state.b);
-    const d2 = derived(() => d1() * 2);
-    const spy = jest.fn();
-    effect(() => spy(d2()));
-    expectSpy(spy, 1, { args: [6] });
+    const spyDerived1 = jest.fn(() => state.a + state.b);
+    const d1 = derived(spyDerived1);
+    const spyDerived2 = jest.fn(() => d1() * 2);
+    const d2 = derived(spyDerived2);
+    const spyEffect = jest.fn(() => d2());
+    effect(spyEffect);
+    expectSpy(spyEffect, 1);
+    expectSpy(spyDerived1, 1, { result: 3 });
+    expectSpy(spyDerived2, 1, { result: 6 });
     state.a = 3;
     await waitScheduler();
-    expectSpy(spy, 2, { args: [10] });
+    expectSpy(spyEffect, 2);
+    expectSpy(spyDerived1, 2, { result: 5 });
+    expectSpy(spyDerived2, 2, { result: 10 });
   });
 });

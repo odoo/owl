@@ -219,9 +219,13 @@ export async function editInput(input: HTMLInputElement | HTMLTextAreaElement, v
   return nextTick();
 }
 
-export function expectSpy(spy: jest.Mock, count: number, opt: { args: any[]; result?: any }): void {
+export function expectSpy(
+  spy: jest.Mock,
+  count: number,
+  opt: { args?: any[]; result?: any } = {}
+): void {
   expect(spy).toHaveBeenCalledTimes(count);
-  if ("args" in opt) expect(spy).lastCalledWith(...opt.args);
+  if ("args" in opt) expect(spy).lastCalledWith(...opt.args!);
   if ("result" in opt) expect(spy).toHaveReturnedWith(opt.result);
 }
 

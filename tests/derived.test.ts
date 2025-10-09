@@ -275,4 +275,54 @@ describe("nested derived", () => {
     expectSpy(spyDerived1, 2, { result: 3 });
     expectSpy(spyDerived2, 2, { result: 0 });
   });
+  test("find a better name", async () => {
+    /**
+     *        +-------+
+     *        |  s1   |
+     *        +-------+
+     *            v
+     *        +-------+
+     *        |  d1   |
+     *        +-------+
+     *      v           v
+     *  +-------+       +-------+
+     *  |  d2   |       |  d3   |
+     *  +-------+       +-------+
+     *    |   v          v
+     *    |    +-------+
+     *    |    |  d4   |
+     *    |    +-------+
+     *    |      |
+     *    v      v
+     *    +-------+
+     *    |  e1   |
+     *    +-------+
+     *
+     * change s1
+     * -> d1, d2, d3, d4, e1 should recomputes
+     */
+    const state = reactive({ a: 1 });
+    const spyDerived1 = jest.fn(() => state.a);
+    const d1 = derived(spyDerived1);
+    const spyDerived2 = jest.fn(() => d1() + 1); // 1 + 1 = 2
+    const d2 = derived(spyDerived2);
+    const spyDerived3 = jest.fn(() => d1() + 2); // 1 + 2 = 3
+    const d3 = derived(spyDerived3);
+    const spyDerived4 = jest.fn(() => d2() + d3()); // 2 + 3 = 5
+    const d4 = derived(spyDerived4);
+    const spyEffect = jest.fn(() => d4());
+    effect(spyEffect);
+    expectSpy(spyEffect, 1);
+    expectSpy(spyDerived1, 1, { result: 1 });
+    expectSpy(spyDerived2, 1, { result: 2 });
+    expectSpy(spyDerived3, 1, { result: 3 });
+    expectSpy(spyDerived4, 1, { result: 5 });
+    state.a = 2;
+    await waitScheduler();
+    expectSpy(spyEffect, 2);
+    expectSpy(spyDerived1, 2, { result: 2 });
+    expectSpy(spyDerived2, 2, { result: 3 });
+    expectSpy(spyDerived3, 2, { result: 4 });
+    expectSpy(spyDerived4, 2, { result: 7 });
+  });
 });

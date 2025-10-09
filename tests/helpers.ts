@@ -292,3 +292,21 @@ declare global {
     }
   }
 }
+
+import { derived, effect } from "../src/runtime/signals";
+
+export type SpyDerived<T> = (() => T) & { spy: jest.Mock<any, T[]> };
+export function spyDerived<T>(fn: () => T): SpyDerived<T> {
+  const spy = jest.fn(fn);
+  const d = derived(spy) as SpyDerived<T>;
+  d.spy = spy;
+  return d;
+}
+
+export type SpyEffect<T> = (() => () => void) & { spy: jest.Mock<any, T[]> };
+export function spyEffect<T>(fn: () => T): SpyEffect<T> {
+  const spy = jest.fn(fn);
+  const unsubscribeWrapper = () => effect(spy);
+  const wrapped = Object.assign(unsubscribeWrapper, { spy }) as SpyEffect<T>;
+  return wrapped;
+}

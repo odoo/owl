@@ -45,6 +45,21 @@ describe("derived", () => {
     expectSpy(spyDerived, 3, { result: 12 });
   });
 
+  test("derived should not update even if the effect updates", async () => {
+    const state = reactive({ a: 1, b: 2 });
+    const spyDerived = jest.fn(() => state.a);
+    const d = derived(spyDerived);
+    const spyEffect = jest.fn(() => state.b + d());
+    effect(spyEffect);
+    expectSpy(spyEffect, 1);
+    expectSpy(spyDerived, 1, { result: 1 });
+    // change unrelated state
+    state.b = 3;
+    await waitScheduler();
+    expectSpy(spyEffect, 2);
+    expectSpy(spyDerived, 1, { result: 1 });
+  });
+
   test("derived does not update when unrelated property changes, but updates when dependencies change", async () => {
     const state = reactive({ a: 1, b: 2, c: 3 });
     const spyDerived = jest.fn(() => state.a + state.b);
@@ -230,5 +245,34 @@ describe("nested derived", () => {
     expectSpy(spyEffect, 2);
     expectSpy(spyDerived1, 2, { result: 5 });
     expectSpy(spyDerived2, 2, { result: 10 });
+  });
+  test("nested derived should not recompute if none of its sources changed", async () => {
+    /**
+     *   s1
+     *    ↓
+     *   d1 = s1 * 0
+     *    ↓
+     *   d2 = d1
+     *    ↓
+     *   e1
+     *
+     * change s1
+     * -> d1 should recomputes but d2 should not
+     */
+    const state = reactive({ a: 1 });
+    const spyDerived1 = jest.fn(() => state.a);
+    const d1 = derived(spyDerived1);
+    const spyDerived2 = jest.fn(() => d1() * 0);
+    const d2 = derived(spyDerived2);
+    const spyEffect = jest.fn(() => d2());
+    effect(spyEffect);
+    expectSpy(spyEffect, 1);
+    expectSpy(spyDerived1, 1, { result: 1 });
+    expectSpy(spyDerived2, 1, { result: 0 });
+    state.a = 3;
+    await waitScheduler();
+    expectSpy(spyEffect, 2);
+    expectSpy(spyDerived1, 2, { result: 3 });
+    expectSpy(spyDerived2, 2, { result: 0 });
   });
 });

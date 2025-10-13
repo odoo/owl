@@ -14,6 +14,16 @@
   - solution: prevent tracking reads in onWillStart and onWillUpdateProps
 
 
+# todo
+## Models
+- relations one2many, many2many
+  - delete
+- automatic models
+
+## Optimisation
+- map/filter/reducte/... with delta data structure
+
+
 # questions
 to batch write in next tick or directly?
 
@@ -36,3 +46,8 @@ to batch write in next tick or directly?
 - worker for computation?
 - cap'n web
 
+
+
+# pos
+- createRelatedModels
+- pos_available_models").getAll

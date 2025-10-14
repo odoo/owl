@@ -1,12 +1,7 @@
 import { reactive } from "../src";
 import { Derived } from "../src/common/types";
 import { derived, resetSignalHooks, setSignalHooks } from "../src/runtime/signals";
-import { expectSpy, nextMicroTick, spyDerived, spyEffect } from "./helpers";
-
-async function waitScheduler() {
-  await nextMicroTick();
-  await nextMicroTick();
-}
+import { expectSpy, spyDerived, spyEffect, waitScheduler } from "./helpers";
 
 describe("derived", () => {
   test("derived returns correct initial value", () => {

@@ -40,7 +40,7 @@ export type { ComponentConstructor } from "./component";
 export { useComponent, useState } from "./component_node";
 export { status } from "./status";
 export { reactive, markRaw, toRaw } from "./reactivity";
-export { effect, withoutReactivity } from "./signals";
+export { effect, withoutReactivity, derived } from "./signals";
 export { useEffect, useEnv, useExternalListener, useRef, useChildSubEnv, useSubEnv } from "./hooks";
 export { batched, EventBus, htmlEscape, whenReady, loadFile, markup } from "./utils";
 export {

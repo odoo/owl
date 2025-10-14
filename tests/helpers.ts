@@ -27,6 +27,12 @@ export function nextMicroTick(): Promise<void> {
   return Promise.resolve();
 }
 
+// todo: investigate why two ticks are needed
+export async function waitScheduler() {
+  await nextMicroTick();
+  await nextMicroTick();
+}
+
 let lastFixture: any = null;
 
 export function makeTestFixture() {

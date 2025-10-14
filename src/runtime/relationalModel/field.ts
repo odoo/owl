@@ -4,8 +4,11 @@ export function fieldString(): FieldDefinition {
   return field("string", {});
 }
 
-export function fieldOne2Many(modelId: ModelId): FieldDefinition {
-  return field("one2Many", { modelId });
+export function fieldOne2Many(
+  modelId: ModelId,
+  { relatedField }: { relatedField?: string } = {}
+): FieldDefinition {
+  return field("one2Many", { modelId, relatedField });
 }
 
 export function fieldMany2One(modelId: ModelId): FieldDefinition {

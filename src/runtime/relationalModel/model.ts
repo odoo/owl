@@ -91,26 +91,18 @@ export class Model {
     // get all many2one fields in the static fields
     const constructor = this.constructor as typeof Model;
     for (const [fieldName, def] of Object.entries(constructor.fields)) {
-      if (def.type === "many2one") {
-        // do something with the many2one field
-        const relatedModelId = def.modelId;
-        const RelatedModel = Models[relatedModelId];
-        if (!RelatedModel) {
-          throw new Error(`Model with id ${relatedModelId} not found in registry`);
-        }
-        // todo: should be configurable rather than taking the first one2many field
-        const relatedFieldName = getRelatedFieldName(RelatedModel, fieldName);
-        const relatedId = this.reactiveData[fieldName] as InstanceId;
-        const recordItem = RelatedModel.getRecordItem(relatedId);
-        const arr = recordItem.data[relatedFieldName] as number[];
-        const reactiveArr = recordItem.reactiveData[relatedFieldName] as number[];
-        const indexOfId = arr.findIndex((id: InstanceId) => id === this.id);
-        // splice
-        if (indexOfId !== -1) {
-          reactiveArr.splice(indexOfId, 1);
-        }
-        // set the many2one field to null
-        this.reactiveData[fieldName] = null;
+      switch (def.type) {
+        case "many2one":
+          (this as any)[fieldName] = null;
+          break;
+        case "many2many":
+        case "one2many":
+          const manyField = (this as any)[fieldName] as ManyFn<Model>;
+          const records = manyField();
+          for (var i = records.length - 1; i >= 0; i--) {
+            manyField.delete(records[i]);
+          }
+          break;
       }
     }
   }
@@ -212,12 +204,19 @@ function defineLazyProperty<T, V>(
     this: T
   ) => readonly [() => V | null] | readonly [() => V | null, (this: T, value: V) => void]
 ) {
+  function makeAndRedefine(this: T) {
+    const tuple = makeGetterAndSetter.call(this);
+    Object.defineProperty(this, property, { get: tuple[0], set: tuple[1] });
+    return tuple;
+  }
   Object.defineProperty(object, property, {
     get() {
-      const [get, set] = makeGetterAndSetter.call(this as T);
-      // Once the getter and setter are created, redefine the property.
-      Object.defineProperty(this, property, { get, set });
+      const get = makeAndRedefine.call(this as T)[0];
       return get();
+    },
+    set(value) {
+      const set = makeAndRedefine.call(this as T)[1];
+      set?.call(this as T, value);
     },
     configurable: true,
   });

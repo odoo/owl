@@ -1,36 +1,50 @@
 import { Model } from "./model";
 
-export type FieldTypes = "one2Many" | "many2One" | "string" | "number";
+export type FieldTypes = FieldDefinition["type"];
 export type ModelId = string;
 export type NormalizedDomain = string;
 export type InstanceId = number;
 export type ItemData = Record<string, any>;
-export type ItemStuff = {
+export type RecordItem = {
   data: ItemData;
   reactiveData: ItemData;
-  model: Model;
+  instance: Model;
 };
 
-export type FieldDefinitionOne2Many = {
-  type: "one2Many";
+export interface FieldDefinitionBase {
+  fieldName: string;
+}
+export interface FieldDefinitionString extends FieldDefinitionBase {
+  type: "string";
+}
+export interface FieldDefinitionNumber extends FieldDefinitionBase {
+  type: "number";
+}
+export interface FieldDefinitionX2Many extends FieldDefinitionBase {
   modelId: ModelId;
+}
+export interface FieldDefinitionOne2Many extends FieldDefinitionX2Many {
+  type: "one2many";
   relatedField?: string;
-};
-export type FieldDefinitionMany2One = {
-  type: "many2One";
-  modelId: ModelId;
-};
-export type FieldDefinitionString = { type: "string" };
-export type FieldDefinitionNumber = { type: "number" };
-export type FieldDefinition =
+}
+export interface FieldDefinitionMany2One extends FieldDefinitionX2Many {
+  type: "many2one";
+}
+export interface FieldDefinitionMany2Many extends FieldDefinitionX2Many {
+  type: "many2many";
+  relationTableName?: string;
+}
+export type X2ManyFieldDefinition =
   | FieldDefinitionOne2Many
   | FieldDefinitionMany2One
-  | FieldDefinitionString
-  | FieldDefinitionNumber;
+  | FieldDefinitionMany2Many;
+export type FieldDefinition = FieldDefinitionString | FieldDefinitionNumber | X2ManyFieldDefinition;
 
-export type One2Many<T extends Model> = (() => T[]) & {
-  push: (m: T) => void;
+export type ManyFn<T extends Model> = (() => T[]) & {
+  add: (m: T) => void;
+  delete: (m: T) => void;
 };
+
 export type SearchEntry = {
   ids: InstanceId[];
 };

@@ -8,7 +8,8 @@ import {
   xml,
 } from "../src";
 import { markRaw, reactive, toRaw } from "../src/runtime/reactivity";
-import { effect } from "../src/runtime/signals";
+import { changesMap, effect } from "../src/runtime/signals";
+import { reactiveMap } from "../src/runtime/listOperation";
 
 import {
   makeDeferred,
@@ -16,6 +17,7 @@ import {
   nextMicroTick,
   nextTick,
   snapshotEverything,
+  spyEffect,
   steps,
   useLogLifecycle,
 } from "./helpers";
@@ -2374,5 +2376,33 @@ describe("Reactivity: useState", () => {
     await nextTick();
 
     expect(fixture.innerHTML).toBe("<div><p><span>2b</span></p></div>");
+  });
+});
+describe("reactive list operation", () => {
+  test.only("Map over an array and only track the necessary items", async () => {
+    const r = reactive(["a", "b", "c", "d", "e", "f"]);
+    const mapSpy = jest.fn((item) => item.toUpperCase());
+    const newMap = reactiveMap(r, mapSpy);
+    const e1 = spyEffect(() => newMap());
+    e1();
+    // expectSpy(e1.spy, 1, [["A", "B", "C", "D", "E", "F"]]);
+    expect(e1.spy).toHaveBeenCalledTimes(1);
+    expect(e1.spy).toHaveReturnedWith(["A", "B", "C", "D", "E", "F"]);
+    expect(mapSpy).toBeCalledTimes(6);
+    mapSpy.mockClear();
+    r.push("g");
+    await waitScheduler();
+    expect(e1.spy).toHaveBeenCalledTimes(2);
+    expect(e1.spy).toHaveReturnedWith(["A", "B", "C", "D", "E", "F", "G"]);
+    expect(mapSpy).toBeCalledTimes(1);
+    expect(mapSpy).toBeCalledWith("g", 6);
+    mapSpy.mockClear();
+
+    const m = changesMap;
+    console.warn(`m:`, m);
+
+    // r.splice(2, 2, "C", "D");
+    // r.shift();
+    // r.pop();
   });
 });

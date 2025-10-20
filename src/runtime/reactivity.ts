@@ -1,6 +1,6 @@
 import { OwlError } from "../common/owl_error";
 import { Atom } from "../common/types";
-import { onReadAtom, onWriteAtom } from "./signals";
+import { onReadAtom, onWriteAtom, trackChanges } from "./signals";
 
 // Special key to subscribe to, to be notified of key creation/deletion
 const KEYCHANGES = Symbol("Key changes");
@@ -79,7 +79,7 @@ export function toRaw<T extends Target, U extends Reactive<T>>(value: U | T): T 
 
 const targetToKeysToAtomItem = new WeakMap<Target, Map<PropertyKey, Atom>>();
 
-function getTargetKeyAtom(target: Target, key: PropertyKey): Atom {
+export function getTargetKeyAtom(target: Target, key: PropertyKey): Atom {
   let keyToAtomItem: Map<PropertyKey, Atom> = targetToKeysToAtomItem.get(target)!;
   if (!keyToAtomItem) {
     keyToAtomItem = new Map();
@@ -118,7 +118,7 @@ function onReadTargetKey(target: Target, key: PropertyKey): void {
  * @param key the key that changed (or Symbol `KEYCHANGES` if a key was created
  *   or deleted)
  */
-function onWriteTargetKey(target: Target, key: PropertyKey): void {
+function onWriteTargetKey(target: Target, key: PropertyKey, receiver?: any): void {
   const keyToAtomItem = targetToKeysToAtomItem.get(target)!;
   if (!keyToAtomItem) {
     return;
@@ -128,6 +128,7 @@ function onWriteTargetKey(target: Target, key: PropertyKey): void {
     return;
   }
   onWriteAtom(atom);
+  if (receiver) trackChanges(key, receiver);
 }
 
 // Maps reactive objects to the underlying target
@@ -217,7 +218,7 @@ function basicProxyHandler<T extends Target>(): ProxyHandler<T> {
         originalValue !== Reflect.get(target, key, receiver) ||
         (key === "length" && Array.isArray(target))
       ) {
-        onWriteTargetKey(target, key);
+        onWriteTargetKey(target, key, receiver);
       }
       return ret;
     },

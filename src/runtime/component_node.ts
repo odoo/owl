@@ -113,7 +113,8 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
         this.render(false);
       },
       sources: new Set<Atom>(),
-      state: ComputationState.EXECUTED,
+      state: ComputationState.STALE,
+      name: `ComponentNode(${C.name})`,
     };
     const defaultProps = C.defaultProps;
     props = Object.assign({}, props);

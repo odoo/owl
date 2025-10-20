@@ -1,83 +1,109 @@
+import { reactive } from "../reactivity";
 import { derived } from "../signals";
-import { modelRegistry } from "./modelRegistry";
+import { Models } from "./modelRegistry";
 import { globalStore } from "./store";
 import {
   ModelId,
   InstanceId,
   FieldDefinition,
-  ItemStuff,
-  One2Many,
-  FieldDefinitionOne2Many,
+  RecordItem,
+  ManyFn,
+  X2ManyFieldDefinition,
 } from "./types";
 
 export class Model {
   static id: ModelId;
-  static fields: Record<string, FieldDefinition> = {};
-  id?: InstanceId;
-  data!: ItemStuff["data"];
-  reactiveData!: ItemStuff["reactiveData"];
+  static fields: Record<string, FieldDefinition> = Object.create(null);
+  static relatedFields: Record<string, string> = Object.create(null);
+  static recordsData: Record<InstanceId, RecordItem>;
 
   static get<T extends typeof Model>(this: T, id: InstanceId): InstanceType<T> {
-    return globalStore.getModelInstance(this.id, id) as InstanceType<T>;
+    const recordItem = this.getRecordItem(id);
+    const instance = recordItem.instance as InstanceType<T> | undefined;
+    if (instance) return instance;
+
+    const newInstance = new this(id) as InstanceType<T>;
+    recordItem.instance = newInstance;
+    return newInstance;
   }
-  static _getAllDerived: typeof Model["getAll"];
   static getAll<T extends typeof Model>(this: T): InstanceType<T>[] {
-    if (this._getAllDerived) return this._getAllDerived();
+    if ((this as any)._getAll) return (this as any)._getAll();
     const modelId = this.id;
     const ids = globalStore.searches[modelId]?.["[]"]!.ids;
-    this._getAllDerived = derived(() => {
+    (this as any)._getAll = derived(() => {
       return ids.map((id) => this.get(id)) as InstanceType<T>[];
     });
-    return this._getAllDerived();
+    return (this as any)._getAll();
   }
 
   static register<T extends typeof Model>(this: T) {
     const targetModelId = this.id;
-    modelRegistry[targetModelId] = this;
+    this.recordsData = globalStore.getModelData(targetModelId);
+    Models[targetModelId] = this;
     for (const [fieldName, def] of Object.entries(this.fields)) {
+      def.fieldName = fieldName;
       switch (def.type) {
         case "string":
         case "number":
-          setBaseField(this, fieldName);
+          attachBaseField(this, fieldName);
           break;
-        case "one2Many":
-          setOne2ManyField(this, fieldName, targetModelId, def.modelId);
+        case "many2many":
+          attachMany2ManyField(this, fieldName, def.modelId);
           break;
-        case "many2One":
-          setMany2OneField(this, fieldName, targetModelId, def.modelId);
+        case "one2many":
+          attachOne2ManyField(this, fieldName, def.modelId);
+          break;
+        case "many2one":
+          attachMany2OneField(this, fieldName, def.modelId);
           break;
       }
     }
+    return this;
   }
+  static getRecordItem(id: InstanceId): RecordItem {
+    const modelData = this.recordsData;
+    let recordItem = modelData[id];
+    if (recordItem) {
+      return recordItem;
+    }
+    recordItem = modelData[id] = { data: {} } as RecordItem;
+    const reactiveData = reactive(recordItem.data);
+    recordItem.reactiveData = reactiveData;
+    recordItem.instance = undefined!;
+    return recordItem;
+  }
+
+  // Instance properties and methods
+
+  id?: InstanceId;
+  data!: RecordItem["data"];
+  reactiveData!: RecordItem["reactiveData"];
+
   constructor(id?: InstanceId) {
     this.id = id;
     const C = this.constructor as typeof Model;
-    const stuff = globalStore.getItemSuff(C.id, this.id!);
-    this.data = stuff.data;
-    this.reactiveData = stuff.reactiveData;
+    const recordItem = C.getRecordItem(id!);
+    this.data = recordItem.data;
+    this.reactiveData = recordItem.reactiveData;
   }
 
   delete() {
     // get all many2one fields in the static fields
     const constructor = this.constructor as typeof Model;
     for (const [fieldName, def] of Object.entries(constructor.fields)) {
-      if (def.type === "many2One") {
+      if (def.type === "many2one") {
         // do something with the many2one field
         const relatedModelId = def.modelId;
-        const RelatedModel = modelRegistry[relatedModelId];
+        const RelatedModel = Models[relatedModelId];
         if (!RelatedModel) {
           throw new Error(`Model with id ${relatedModelId} not found in registry`);
         }
         // todo: should be configurable rather than taking the first one2many field
-        const relatedFieldName = getRelatedOne2manyFieldName(
-          RelatedModel,
-          constructor.id,
-          fieldName
-        );
+        const relatedFieldName = getRelatedFieldName(RelatedModel, fieldName);
         const relatedId = this.reactiveData[fieldName] as InstanceId;
-        const stuff = globalStore.getItemSuff(relatedModelId, relatedId);
-        const arr = stuff.data[relatedFieldName] as number[];
-        const reactiveArr = stuff.reactiveData[relatedFieldName] as number[];
+        const recordItem = RelatedModel.getRecordItem(relatedId);
+        const arr = recordItem.data[relatedFieldName] as number[];
+        const reactiveArr = recordItem.reactiveData[relatedFieldName] as number[];
         const indexOfId = arr.findIndex((id: InstanceId) => id === this.id);
         // splice
         if (indexOfId !== -1) {
@@ -90,22 +116,7 @@ export class Model {
   }
 }
 
-function getRelatedOne2manyFieldName(
-  RelatedModel: typeof Model,
-  modelId: string,
-  fieldName: string
-) {
-  return Object.entries(RelatedModel.fields).find(([, d]) => {
-    return (
-      d.type === "one2Many" &&
-      d.modelId === modelId &&
-      (!d.relatedField || d.relatedField === fieldName)
-    );
-  })?.[0]!;
-}
-
-// Base field
-function setBaseField(target: typeof Model, fieldName: string) {
+function attachBaseField(target: typeof Model, fieldName: string) {
   //define getter and setter
   Object.defineProperty(target.prototype, fieldName, {
     get() {
@@ -116,163 +127,182 @@ function setBaseField(target: typeof Model, fieldName: string) {
     },
   });
 }
-
-// One2Many field
-function setOne2ManyField(
-  target: typeof Model,
-  fieldName: string,
-  fromModelId: ModelId,
-  toModelId: ModelId
-) {
-  Object.defineProperty(target.prototype, fieldName, {
-    get() {
-      const ToModel = modelRegistry[toModelId];
-      const def = (this.constructor as typeof Model).fields[fieldName] as FieldDefinitionOne2Many;
-      const relatedField = def.relatedField || fromModelId;
-
-      const fn: One2Many<Model> = derived(() => {
-        const list = globalStore.getItemSuff(fromModelId, this.id!).reactiveData[fieldName];
-        return list.map((id: InstanceId) => {
-          return globalStore.getModelInstance(toModelId, id);
-        });
-      }) as One2Many<Model>;
-      for (const [key, method] of Object.entries(mutableArrayMethods)) {
-        Object.defineProperty(fn, key, {
-          value: (method as any).bind(this, ToModel, relatedField, fieldName),
-        });
-      }
-      (target as any)[fieldName] = fn;
-      return fn;
-    },
+function attachOne2ManyField(target: typeof Model, fieldName: string, relatedModelId: ModelId) {
+  const fieldInfos = getFieldInfos(target, fieldName, relatedModelId);
+  defineLazyProperty(target.prototype, fieldName, function (this: Model) {
+    const { relatedFieldName, RelatedModel } = fieldInfos;
+    const get = derived(() => {
+      const list = this.reactiveData[fieldName];
+      return list.map((id: InstanceId) => RelatedModel.get(id));
+    }) as ManyFn<Model>;
+    get.add = (m2oRecord: Model) => {
+      const o2MRecordIdFrom = m2oRecord.reactiveData[relatedFieldName] as number | undefined;
+      const o2MRecordFrom = o2MRecordIdFrom ? target.get(o2MRecordIdFrom) : undefined;
+      setMany2One(relatedFieldName, m2oRecord, fieldName, o2MRecordFrom, this);
+    };
+    get.delete = (m2oRecord: Model) => {
+      setMany2One(relatedFieldName, m2oRecord, fieldName, this, undefined);
+    };
+    return [() => get] as const;
   });
 }
-const mutableArrayMethods = {
-  // eg. Partner, Messages, partner, messages, record
-  push(this: Model, ToModel: typeof Model, relatedField: string, fieldName: string, record: Model) {
-    const currentId = this.data[fieldName];
-    if (currentId === this.id) return;
-    setMany2One(
-      record.id!,
-      ToModel,
-      fieldName,
-      this.reactiveData,
+function attachMany2ManyField(target: typeof Model, fieldName: string, relatedModelId: ModelId) {
+  const fieldInfos = getFieldInfos(target, fieldName, relatedModelId);
+  defineLazyProperty(target.prototype, fieldName, function (this: Model) {
+    const { relatedFieldName, RelatedModel } = fieldInfos;
+    const get = derived(() => {
+      const list = this.reactiveData[fieldName];
+      return list.map((id: InstanceId) => RelatedModel.get(id));
+    }) as ManyFn<Model>;
 
-      this.constructor as typeof Model,
-      relatedField,
-      record.data[relatedField],
-      this.id,
-      record.reactiveData
-    );
-  },
-  shift(this: Model, ToModel: typeof Model, relatedField: string, fieldName: string) {
-    if (!this.data[fieldName].length) return;
-    // const firstId = (this as any).data[fieldName][0];
-    // setMany2One(ToModel, firstId, fieldName, this.id, undefined, this.reactiveData);
-  },
-  pop(this: Model, ToModel: typeof Model, relatedField: string, fieldName: string) {
-    if (!this.data[fieldName].length) return;
-    // const lastId = (this as any).data[fieldName][this.data[fieldName].length - 1];
-    // setMany2One(ToModel, lastId, fieldName, this.id, undefined, this.reactiveData);
-  },
-  unshift(
-    this: Model,
-    ToModel: typeof Model,
-    relatedField: string,
-    fieldName: string,
-    record: Model
-  ) {
-    // const id = m.id;
-    // if (this.data[fieldName].includes(id)) return;
-    // const currentId = this.data[fieldName];
-    // setMany2One(ToModel, id!, fieldName, currentId, this.id, this.reactiveData);
-  },
-  splice(
-    this: Model,
-    ToModel: typeof Model,
-    relatedField: string,
-    fieldName: string,
-    start: number,
-    deleteCount?: number
-  ) {
-    // const ids: InstanceId[] = this.data[fieldName];
-    // const toDelete = ids.slice(start, start + (deleteCount ?? ids.length - start));
-    // for (const id of toDelete) {
-    //   setMany2One(ToModel, id, fieldName, this.id, undefined, this.reactiveData);
-    // }
-  },
-  sort(this: Model, ToModel: typeof Model, relatedField: string, fieldName: string) {
-    this.reactiveData[fieldName].sort();
-  },
-};
+    get.add = (m2mRecord: Model) => {
+      this.reactiveData[fieldName].push(m2mRecord.id!);
+      m2mRecord.reactiveData[relatedFieldName].push(this.id!);
+    };
+    get.delete = (m2mRecord: Model) => {
+      recordArrayDelete(this, fieldName, m2mRecord.id!);
+      recordArrayDelete(m2mRecord, relatedFieldName, this.id!);
+    };
+    return [() => get] as const;
+  });
+}
+function attachMany2OneField(target: typeof Model, fieldName: string, relatedModelId: ModelId) {
+  const fieldInfos = getFieldInfos(target, fieldName, relatedModelId);
 
-function setMany2One(
-  recordId: InstanceId, // eg. message id 1
-  ToModel: typeof Model, // eg. Messages
-  fieldName: string, // eg. partner
-  toReactiveData: ItemStuff["reactiveData"], // eg. partner.reactiveData
-
-  RelatedModel: typeof Model, // eg. Partner
-  relatedField: string, // eg. partner
-  relatedIdFrom: InstanceId | undefined, // eg. partner id 1
-  relatedIdTo: InstanceId | undefined, // eg. partner id 2
-  relatedReactiveData: ItemStuff["reactiveData"] // eg. message.reactiveData
-) {
-  if (relatedIdFrom === relatedIdTo) return;
-  const relatedModelId = RelatedModel.id;
-
-  if (typeof relatedIdFrom === "number") {
-    // remove from related record array
-    const relatedStuffFrom = globalStore.getItemSuff(relatedModelId, relatedIdFrom);
-    // could be optimized when called from mutableArrayMethods
-    const index = (relatedStuffFrom.data[fieldName] as number[]).indexOf(relatedIdFrom);
-    (relatedStuffFrom.reactiveData[fieldName] as number[]).splice(index, 1);
-  }
-
-  if (typeof relatedIdTo === "number") {
-    toReactiveData[fieldName].push(recordId);
-    relatedReactiveData[relatedField] = relatedIdTo;
-  }
+  defineLazyProperty(target.prototype, fieldName, function (this: Model) {
+    const get = derived(() => {
+      const { RelatedModel } = fieldInfos;
+      const id = this.reactiveData[fieldName];
+      if (id === undefined || id === null) {
+        return null;
+      }
+      return RelatedModel.get(id);
+    });
+    const set = (o2mRecordTo: Model | number) => {
+      const { relatedFieldName, RelatedModel } = fieldInfos;
+      if (typeof o2mRecordTo === "number") {
+        o2mRecordTo = RelatedModel.get(o2mRecordTo);
+      }
+      const o2mRecordIdFrom = this.reactiveData[fieldName] as number | undefined;
+      const o2mRecordFrom = o2mRecordIdFrom ? RelatedModel.get(o2mRecordIdFrom) : undefined;
+      setMany2One(fieldName, this, relatedFieldName, o2mRecordFrom, o2mRecordTo);
+    };
+    return [get, set] as const;
+  });
+}
+function getFieldInfos(target: typeof Model, fieldName: string, relatedModelId: ModelId) {
+  return {
+    get relatedFieldName() {
+      const relatedFieldName = getRelatedFieldName(target, fieldName);
+      Object.defineProperty(this, "relatedFieldName", { get: () => relatedFieldName });
+      return relatedFieldName;
+    },
+    get RelatedModel() {
+      const RelatedModel = Models[relatedModelId];
+      Object.defineProperty(this, "RelatedModel", { get: () => RelatedModel });
+      return RelatedModel;
+    },
+  };
 }
 
-// Many2One field
-function setMany2OneField(
-  target: typeof Model,
-  fieldName: string,
-  fromModelId: ModelId,
-  toModelId: ModelId
+function defineLazyProperty<T, V>(
+  object: object,
+  property: string,
+  makeGetterAndSetter: (
+    this: T
+  ) => readonly [() => V | null] | readonly [() => V | null, (this: T, value: V) => void]
 ) {
-  // const RelatedModel = modelRegistry[toModelId];
-  const setter = function (this: Model, value: Model | number) {
-    if (typeof value !== "number") {
-      value = value.id!;
-    }
-    setMany2One(
-      this.id!,
-      modelRegistry[toModelId],
-      fieldName,
-      this.reactiveData,
-
-      target,
-      fieldName,
-      this.reactiveData[fieldName],
-      value,
-      this.reactiveData
-    );
-  };
-  Object.defineProperty(target.prototype, fieldName, {
+  Object.defineProperty(object, property, {
     get() {
-      const fn = derived(() => {
-        const id = globalStore.getItemSuff(fromModelId, this.id!).reactiveData[fieldName];
-        if (id === undefined || id === null) {
-          return null;
-        }
-        return globalStore.getModelInstance(toModelId, id);
-      });
-      // (fn as any).
-      Object.defineProperty(target, fieldName, { set: setter });
-      return fn;
+      const [get, set] = makeGetterAndSetter.call(this as T);
+      // Once the getter and setter are created, redefine the property.
+      Object.defineProperty(this, property, { get, set });
+      return get();
     },
-    set: setter,
     configurable: true,
   });
+}
+
+/**
+ * Get the field of the related model that relates back to this model.
+ *
+ * @param fieldName The field name in this model.
+ */
+function getRelatedFieldName(Mod: typeof Model, fieldName: string) {
+  // Could be already set by the related model.
+  if (Mod.relatedFields[fieldName]) return Mod.relatedFields[fieldName];
+  const def = Mod.fields[fieldName] as X2ManyFieldDefinition;
+  const RelatedModel = Models[def.modelId];
+  const modelId = Mod.id;
+  switch (def.type) {
+    case "one2many":
+      const relatedFieldName =
+        def.relatedField ||
+        Object.values(RelatedModel.fields).find(
+          (d) => d.type === "many2one" && d.modelId === modelId
+        )?.fieldName;
+      if (!relatedFieldName) {
+        throw new Error(
+          `Related field not found for one2many field ${fieldName} in model ${Mod.id}`
+        );
+      }
+      Mod.relatedFields[fieldName] = relatedFieldName;
+      RelatedModel.relatedFields[relatedFieldName] = fieldName;
+      return relatedFieldName;
+    case "many2many": {
+      const { relationTableName } = def;
+      const relatedFieldName = Object.values(RelatedModel.fields).find(
+        (d) =>
+          d.type === "many2many" &&
+          d.modelId === modelId &&
+          (!relationTableName || d.relationTableName === relationTableName)
+      )?.fieldName;
+      if (!relatedFieldName) {
+        throw new Error(
+          `Related field not found for many2many field ${fieldName} in model ${Mod.id}`
+        );
+      }
+      Mod.relatedFields[fieldName] = relatedFieldName;
+      RelatedModel.relatedFields[relatedFieldName] = fieldName;
+      return relatedFieldName;
+    }
+    case "many2one": {
+      for (const fieldName of Object.keys(RelatedModel.fields)) {
+        getRelatedFieldName(RelatedModel, fieldName);
+        // The many2one is set by the one2many field.
+      }
+      const relatedFieldName = Mod.relatedFields[fieldName];
+      if (!relatedFieldName) {
+        throw new Error(
+          `Related field not found for many2one field ${fieldName} in model ${Mod.id}`
+        );
+      }
+      return relatedFieldName;
+    }
+  }
+}
+
+function setMany2One(
+  m2oFieldName: string,
+  m2oRecord: Model,
+  o2mFieldName: string,
+  o2mRecordFrom?: Model,
+  o2mRecordTo?: Model
+) {
+  if (o2mRecordFrom === o2mRecordTo) {
+    return;
+  }
+  if (o2mRecordFrom) {
+    recordArrayDelete(o2mRecordFrom, o2mFieldName, m2oRecord.id!);
+  }
+  if (o2mRecordTo) {
+    o2mRecordTo.reactiveData[o2mFieldName].push(m2oRecord.id!);
+  }
+  m2oRecord.reactiveData[m2oFieldName] = o2mRecordTo ? o2mRecordTo.id! : null;
+}
+function recordArrayDelete(record: Model, fieldName: string, value: any) {
+  const index = record.data[fieldName].indexOf(value);
+  if (index !== -1) {
+    record.reactiveData[fieldName].splice(index, 1);
+  }
 }

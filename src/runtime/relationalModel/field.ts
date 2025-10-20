@@ -4,16 +4,26 @@ export function fieldString(): FieldDefinition {
   return field("string", {});
 }
 
+export function fieldMany2Many(
+  modelId: ModelId,
+  opts: { relationTableName?: string } = {}
+): FieldDefinition {
+  return field("many2many", { modelId, ...opts });
+}
 export function fieldOne2Many(
   modelId: ModelId,
   { relatedField }: { relatedField?: string } = {}
 ): FieldDefinition {
-  return field("one2Many", { modelId, relatedField });
+  return field("one2many", { modelId, relatedField });
 }
-
 export function fieldMany2One(modelId: ModelId): FieldDefinition {
-  return field("many2One", { modelId });
+  return field("many2one", { modelId });
 }
 export function field(type: FieldTypes, opts: any = {}): FieldDefinition {
-  return { type, ...opts };
+  const def: FieldDefinition = {
+    fieldName: undefined,
+    type,
+    ...opts,
+  };
+  return def;
 }

@@ -11,8 +11,10 @@ export type Computation<T = any> = {
   isDerived?: boolean;
   value: T; // for effects, this is the cleanup function
   childrenEffect?: Computation[]; // only for effects
+} & Opts;
+export type Opts = {
+  name?: string;
 };
-
 export type customDirectives = Record<
   string,
   (node: Element, value: string, modifier: string[]) => void
@@ -21,7 +23,7 @@ export type customDirectives = Record<
 export type Atom<T = any> = {
   value: T;
   observers: Set<Computation>;
-};
+} & Opts;
 
 export interface Derived<Prev, Next = Prev> extends Atom<Next>, Computation<Next> {}
 

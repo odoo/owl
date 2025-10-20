@@ -5,6 +5,7 @@ import { OwlError } from "../common/owl_error";
 import { STATUS } from "./status";
 import { popTaskContext, pushTaskContext } from "./cancellableContext";
 import { runWithComputation } from "./signals";
+import { ComputationState } from "../common/types";
 
 export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
   let current = node.fiber;
@@ -136,6 +137,7 @@ export class Fiber {
     const root = this.root;
     if (root) {
       pushTaskContext(node.taskContext);
+      // todo: should use updateComputation somewhere else.
       runWithComputation(node.signalComputation, () => {
         try {
           (this.bdom as any) = true;
@@ -143,6 +145,7 @@ export class Fiber {
         } catch (e) {
           node.app.handleError({ node, error: e });
         }
+        node.signalComputation.state = ComputationState.EXECUTED;
       });
       popTaskContext();
       root.setCounter(root.counter - 1);
@@ -162,6 +165,7 @@ export class RootFiber extends Fiber {
   locked: boolean = false;
 
   complete() {
+    debugger;
     const node = this.node;
     this.locked = true;
     let current: Fiber | undefined = undefined;

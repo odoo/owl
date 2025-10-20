@@ -1,10 +1,10 @@
-import { Atom, Computation, ComputationState, Derived } from "../common/types";
+import { Atom, Computation, ComputationState, Derived, Opts } from "../common/types";
 import { batched } from "./utils";
 
 let Effects: Computation[];
 let CurrentComputation: Computation;
 
-export function effect<T>(fn: () => T) {
+export function effect<T>(fn: () => T, opts?: Opts) {
   const effectComputation: Computation = {
     state: ComputationState.STALE,
     value: undefined,
@@ -19,6 +19,7 @@ export function effect<T>(fn: () => T) {
     },
     sources: new Set(),
     childrenEffect: [],
+    name: opts?.name,
   };
   CurrentComputation?.childrenEffect?.push?.(effectComputation);
   updateComputation(effectComputation);
@@ -33,7 +34,7 @@ export function effect<T>(fn: () => T) {
     CurrentComputation = previousComputation!;
   };
 }
-export function derived<T>(fn: () => T): () => T {
+export function derived<T>(fn: () => T, opts?: Opts): () => T {
   let derivedComputation: Derived<any, any>;
   return () => {
     derivedComputation ??= {
@@ -46,6 +47,7 @@ export function derived<T>(fn: () => T): () => T {
       isDerived: true,
       value: undefined,
       observers: new Set<Computation>(),
+      name: opts?.name,
     };
     onDerived?.(derivedComputation);
     updateComputation(derivedComputation);
@@ -59,7 +61,32 @@ export function onReadAtom(atom: Atom) {
   atom.observers.add(CurrentComputation);
 }
 
+export type ChangeMapItem = [Atom, [PropertyKey, any][]];
+export const changesMap = new WeakMap<object, ChangeMapItem>();
+
+export function getChangeItem(target: object) {
+  if (!Array.isArray(target)) return;
+  const item = changesMap.get(target);
+  if (item) return item;
+  const atom: Atom = {
+    value: target,
+    observers: new Set(),
+  };
+  const newItem: ChangeMapItem = [atom, []];
+  changesMap.set(target, newItem);
+  return newItem;
+}
+
+export function trackChanges(key: PropertyKey, receiver: any) {
+  const item = getChangeItem(receiver);
+  if (!item) return;
+  item[1].push([key, receiver]);
+}
+
 export function onWriteAtom(atom: Atom) {
+  if ((window as any).d) {
+    debugger;
+  }
   collectEffects(() => {
     for (const ctx of atom.observers) {
       if (ctx.state === ComputationState.EXECUTED) {
@@ -82,7 +109,8 @@ function collectEffects(fn: Function) {
   }
 }
 const batchProcessEffects = batched(processEffects);
-function processEffects() {
+// todo: the export is a temporary hack remove before merge
+export function processEffects() {
   if (!Effects) return;
   for (const computation of Effects) {
     updateComputation(computation);
@@ -99,6 +127,7 @@ export function getCurrentComputation() {
 export function setComputation(computation: Computation) {
   CurrentComputation = computation;
 }
+// todo: should probably use updateComputation instead.
 export function runWithComputation<T>(computation: Computation, fn: () => T): T {
   const previousComputation = CurrentComputation;
   CurrentComputation = computation;
@@ -106,6 +135,7 @@ export function runWithComputation<T>(computation: Computation, fn: () => T): T 
   try {
     result = fn();
   } finally {
+    if (computation) computation.state = ComputationState.EXECUTED;
     CurrentComputation = previousComputation!;
   }
   return result;

@@ -129,7 +129,6 @@ describe("model", () => {
     expectSpy(effect1.spy, 1);
   });
 
-  // set partner name and check reactivity
   test("set partner name", async () => {
     const partner = Models.Partner.get(1);
     expect(partner.name).toBe("Partner 1");

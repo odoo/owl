@@ -109,7 +109,6 @@ export class Model {
 }
 
 function attachBaseField(target: typeof Model, fieldName: string) {
-  //define getter and setter
   Object.defineProperty(target.prototype, fieldName, {
     get() {
       return this.reactiveData[fieldName];
@@ -204,18 +203,18 @@ function defineLazyProperty<T, V>(
     this: T
   ) => readonly [() => V | null] | readonly [() => V | null, (this: T, value: V) => void]
 ) {
-  function makeAndRedefine(this: T) {
+  function makeAndRedefineProperty(this: T) {
     const tuple = makeGetterAndSetter.call(this);
     Object.defineProperty(this, property, { get: tuple[0], set: tuple[1] });
     return tuple;
   }
   Object.defineProperty(object, property, {
     get() {
-      const get = makeAndRedefine.call(this as T)[0];
+      const get = makeAndRedefineProperty.call(this as T)[0];
       return get();
     },
     set(value) {
-      const set = makeAndRedefine.call(this as T)[1];
+      const set = makeAndRedefineProperty.call(this as T)[1];
       set?.call(this as T, value);
     },
     configurable: true,

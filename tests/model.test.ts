@@ -14,7 +14,7 @@ export type RawStore = Record<ModelId, Record<InstanceId, any>>;
 
 let Models!: ReturnType<typeof makeModels>;
 
-function makeModels() {
+export function makeModels() {
   class Partner extends Model {
     static id = "partner";
     static fields = {

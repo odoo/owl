@@ -9,6 +9,7 @@ import {
   RecordItem,
   ManyFn,
   X2ManyFieldDefinition,
+  RelationChanges,
 } from "./types";
 
 export class Model {
@@ -78,6 +79,8 @@ export class Model {
   id?: InstanceId;
   data!: RecordItem["data"];
   reactiveData!: RecordItem["reactiveData"];
+  changes: RelationChanges = {};
+  reactiveChanges: RelationChanges = reactive(this.changes);
 
   constructor(id?: InstanceId) {
     this.id = id;
@@ -109,23 +112,20 @@ export class Model {
 }
 
 function attachBaseField(target: typeof Model, fieldName: string) {
-  Object.defineProperty(target.prototype, fieldName, {
-    get() {
-      return this.reactiveData[fieldName];
-    },
-    set(value) {
-      this.reactiveData[fieldName] = value;
-    },
+  defineLazyProperty(target.prototype, fieldName, function (this: Model) {
+    return [
+      () => this.reactiveData[fieldName],
+      (value: any) => {
+        this.reactiveData[fieldName] = value;
+      },
+    ] as const;
   });
 }
 function attachOne2ManyField(target: typeof Model, fieldName: string, relatedModelId: ModelId) {
   const fieldInfos = getFieldInfos(target, fieldName, relatedModelId);
   defineLazyProperty(target.prototype, fieldName, function (this: Model) {
     const { relatedFieldName, RelatedModel } = fieldInfos;
-    const get = derived(() => {
-      const list = this.reactiveData[fieldName];
-      return list.map((id: InstanceId) => RelatedModel.get(id));
-    }) as ManyFn<Model>;
+    const get = getRelatedList(this, fieldName, RelatedModel);
     get.add = (m2oRecord: Model) => {
       const o2MRecordIdFrom = m2oRecord.reactiveData[relatedFieldName] as number | undefined;
       const o2MRecordFrom = o2MRecordIdFrom ? target.get(o2MRecordIdFrom) : undefined;
@@ -141,11 +141,7 @@ function attachMany2ManyField(target: typeof Model, fieldName: string, relatedMo
   const fieldInfos = getFieldInfos(target, fieldName, relatedModelId);
   defineLazyProperty(target.prototype, fieldName, function (this: Model) {
     const { relatedFieldName, RelatedModel } = fieldInfos;
-    const get = derived(() => {
-      const list = this.reactiveData[fieldName];
-      return list.map((id: InstanceId) => RelatedModel.get(id));
-    }) as ManyFn<Model>;
-
+    const get = getRelatedList(this, fieldName, RelatedModel);
     get.add = (m2mRecord: Model) => {
       this.reactiveData[fieldName].push(m2mRecord.id!);
       m2mRecord.reactiveData[relatedFieldName].push(this.id!);
@@ -163,7 +159,10 @@ function attachMany2OneField(target: typeof Model, fieldName: string, relatedMod
   defineLazyProperty(target.prototype, fieldName, function (this: Model) {
     const get = derived(() => {
       const { RelatedModel } = fieldInfos;
-      const id = this.reactiveData[fieldName];
+      const id =
+        fieldName in this.reactiveChanges
+          ? this.reactiveChanges[fieldName]
+          : this.reactiveData[fieldName];
       if (id === undefined || id === null) {
         return null;
       }
@@ -294,13 +293,55 @@ function setMany2One(
     recordArrayDelete(o2mRecordFrom, o2mFieldName, m2oRecord.id!);
   }
   if (o2mRecordTo) {
-    o2mRecordTo.reactiveData[o2mFieldName].push(m2oRecord.id!);
+    recordArrayPush(o2mRecordTo, o2mFieldName, m2oRecord.id!);
   }
-  m2oRecord.reactiveData[m2oFieldName] = o2mRecordTo ? o2mRecordTo.id! : null;
+  m2oRecord.reactiveChanges[m2oFieldName] = o2mRecordTo ? o2mRecordTo.id! : null;
 }
 function recordArrayDelete(record: Model, fieldName: string, value: any) {
-  const index = record.data[fieldName].indexOf(value);
+  const changes = getChanges(record, fieldName);
+  arrayDelete(changes![1], value);
+  changes![0].push(value);
+}
+function recordArrayPush(record: Model, fieldName: string, value: any) {
+  const changes = getChanges(record, fieldName);
+  arrayDelete(changes![0], value);
+  changes![1].push(value);
+}
+
+function getRelatedList(
+  record: Model,
+  fieldName: string,
+  RelatedModel: typeof Model
+): ManyFn<Model> {
+  return derived(() => {
+    const source = record.reactiveData[fieldName];
+    const changes = record.reactiveChanges[fieldName] as [InstanceId[], InstanceId[]];
+    const list = combineLists(source, changes?.[0] || [], changes?.[1] || []);
+    return list.map(RelatedModel.get.bind(RelatedModel));
+  }) as ManyFn<Model>;
+}
+function arrayDelete(array: any[], value: any) {
+  const index = array.indexOf(value);
   if (index !== -1) {
-    record.reactiveData[fieldName].splice(index, 1);
+    array.splice(index, 1);
   }
+}
+function getChanges(record: Model, fieldName: string) {
+  const allChanges = record.reactiveChanges;
+  let changes = allChanges[fieldName] as [InstanceId[], InstanceId[]];
+  if (!changes) {
+    changes = [[], []];
+    allChanges[fieldName] = changes;
+  }
+  return changes;
+}
+function combineLists(listA: InstanceId[], deleteList: InstanceId[], addList: InstanceId[]) {
+  const set = new Set<InstanceId>(listA);
+  for (const id of deleteList) {
+    set.delete(id);
+  }
+  for (const id of addList) {
+    set.add(id);
+  }
+  return Array.from(set);
 }

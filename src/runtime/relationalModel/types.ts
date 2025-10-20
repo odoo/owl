@@ -4,12 +4,14 @@ export type FieldTypes = FieldDefinition["type"];
 export type ModelId = string;
 export type NormalizedDomain = string;
 export type InstanceId = number;
+export type FieldName = string;
 export type ItemData = Record<string, any>;
 export type RecordItem = {
   data: ItemData;
   reactiveData: ItemData;
   instance: Model;
 };
+export type RelationChanges = Record<FieldName, null | InstanceId | [InstanceId[], InstanceId[]]>;
 
 export interface FieldDefinitionBase {
   fieldName: string;

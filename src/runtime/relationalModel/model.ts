@@ -1,3 +1,4 @@
+import { MakeGetSet } from "../../common/types";
 import { reactive } from "../reactivity";
 import { derived } from "../signals";
 import { Models } from "./modelRegistry";
@@ -204,16 +205,25 @@ function getFieldInfos(target: typeof Model, fieldName: string, relatedModelId: 
     },
   };
 }
-
-function defineLazyProperty<T, V>(
-  object: object,
-  property: string,
-  makeGetterAndSetter: (
-    this: T
-  ) => readonly [() => V | null] | readonly [() => V | null, (this: T, value: V) => void]
-) {
+/**
+ * Define a lazy property on an object that computes its getter and setter on first access.
+ * Allowing to delay some computation until the property is actually used.
+ *
+ * @param object The object on which to define the property.
+ * @param property The name of the property to define.
+ * @param makeGetSet A function that returns a tuple containing the getter and optional setter.
+ * @example
+ * defineLazyProperty(MyClass.prototype, "myProperty", function() {
+ *   // Some computing that will only run once, on first access.
+ *   return [
+ *     () => this._myProperty,
+ *     (value) => { this._myProperty = value; }
+ *   ];
+ * });
+ */
+function defineLazyProperty<T, V>(object: object, property: string, makeGetSet: MakeGetSet<T, V>) {
   function makeAndRedefineProperty(this: T) {
-    const tuple = makeGetterAndSetter.call(this);
+    const tuple = makeGetSet.call(this);
     Object.defineProperty(this, property, { get: tuple[0], set: tuple[1] });
     return tuple;
   }
@@ -288,17 +298,6 @@ function getRelatedFieldName(Mod: typeof Model, fieldName: string) {
     }
   }
 }
-let lastId = 0;
-function getNextId() {
-  lastId += 1;
-  return formatId(lastId);
-}
-export function formatId(number: number) {
-  return `newRecord-${number}`;
-}
-export function resetIdCounter() {
-  lastId = 0;
-}
 
 function setMany2One(
   m2oFieldName: string,
@@ -366,4 +365,16 @@ export function combineLists(listA: InstanceId[], deleteList: InstanceId[], addL
     set.add(id);
   }
   return Array.from(set);
+}
+
+let lastId = 0;
+function getNextId() {
+  lastId += 1;
+  return formatId(lastId);
+}
+export function formatId(number: number) {
+  return `newRecord-${number}`;
+}
+export function resetIdCounter() {
+  lastId = 0;
 }

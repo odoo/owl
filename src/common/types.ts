@@ -28,3 +28,8 @@ export type Atom<T = any> = {
 export interface Derived<Prev, Next = Prev> extends Atom<Next>, Computation<Next> {}
 
 export type OldValue = any;
+
+export type Getter<V> = () => V | null;
+export type Setter<T, V> = (this: T, value: V) => void;
+export type MakeGetSetReturn<T, V> = readonly [Getter<V>] | readonly [Getter<V>, Setter<T, V>];
+export type MakeGetSet<T, V> = (this: T) => MakeGetSetReturn<T, V>;

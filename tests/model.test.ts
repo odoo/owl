@@ -167,6 +167,13 @@ describe("model", () => {
     await waitScheduler();
     expect(partner.name).toBe("New Partner 1");
     expectSpy(effect1.spy, 2);
+    expect(partner.changes).toEqual({ name: "New Partner 1" });
+    saveModels();
+    expect(onSaveModel).toHaveBeenCalledWith({
+      partner: {
+        1: { name: "New Partner 1" },
+      },
+    });
   });
 
   test("getAll partners", async () => {
@@ -196,6 +203,12 @@ describe("model", () => {
         expect(partner1.messages().length).toBe(4);
         expect(partner2.messages().length).toBe(0);
         expect(message4.partner).toBe(partner1);
+        saveModels();
+        expect(onSaveModel).toHaveBeenCalledWith({
+          message: {
+            4: { partner: 1 },
+          },
+        });
       });
       test("delete a Message from a partner", async () => {
         const partner1 = Models.Partner.get(1);

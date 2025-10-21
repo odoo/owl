@@ -16,9 +16,11 @@ export function saveModels() {
     for (const item of Object.values(Model.recordsItems)) {
       const instance = item.instance;
       if (!instance) continue;
-      dataToSave[Model.id] = dataToSave[Model.id] || {};
-      dataToSave[Model.id][instance.id!] = deepClone(instance.changes);
+      let itemChanges: Record<string, any> = {};
       for (const key of Object.keys(instance.changes)) {
+        // skip one2many fields
+        if (Model.fields[key]?.type === "one2many") continue;
+        itemChanges[key] = deepClone(instance.changes[key]);
         const change = instance.changes[key];
         if (Array.isArray(change)) {
           // many2many or one2many field
@@ -31,8 +33,13 @@ export function saveModels() {
         }
         delete instance.reactiveChanges[key];
       }
+      if (Object.keys(itemChanges).length > 0) {
+        dataToSave[Model.id] = dataToSave[Model.id] || {};
+        dataToSave[Model.id][instance.id!] = itemChanges;
+      }
     }
   }
+  debugger;
   saveHooks.onSave(dataToSave);
   // simulate what the server returning new ids for created records
   for (const Model of Object.values(Models)) {

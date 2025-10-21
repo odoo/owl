@@ -3,7 +3,7 @@ import { Model } from "./model";
 export type FieldTypes = FieldDefinition["type"];
 export type ModelId = string;
 export type NormalizedDomain = string;
-export type InstanceId = number;
+export type InstanceId = number | string;
 export type FieldName = string;
 export type ItemData = Record<string, any>;
 export type RecordItem = {

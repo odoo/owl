@@ -4,7 +4,8 @@ import {
   fieldOne2Many,
   fieldString,
 } from "../src/runtime/relationalModel/field";
-import { Model } from "../src/runtime/relationalModel/model";
+import { formatId, Model, resetIdCounter } from "../src/runtime/relationalModel/model";
+import { DataToSave, saveHooks, saveModels } from "../src/runtime/relationalModel/modelData";
 import { clearModelRegistry } from "../src/runtime/relationalModel/modelRegistry";
 import { destroyStore, setStore } from "../src/runtime/relationalModel/store";
 import { InstanceId, ModelId, ManyFn } from "../src/runtime/relationalModel/types";
@@ -74,8 +75,12 @@ export function makeModels() {
   };
 }
 
+let originalOnSaveModel: (data: DataToSave) => void;
+let onSaveModel: jest.Mock<void, [DataToSave]>;
+
 beforeEach(() => {
   Models = makeModels();
+  resetIdCounter();
 
   setStore({
     partner: {
@@ -112,10 +117,14 @@ beforeEach(() => {
       },
     },
   });
+  onSaveModel = jest.fn();
+  originalOnSaveModel = saveHooks.onSave;
+  saveHooks.onSave = onSaveModel;
 });
 afterEach(() => {
   destroyStore();
   clearModelRegistry();
+  saveHooks.onSave = originalOnSaveModel;
 });
 
 describe("model", () => {
@@ -127,6 +136,22 @@ describe("model", () => {
     });
     effect1();
     expectSpy(effect1.spy, 1);
+  });
+
+  test("create a new partner", async () => {
+    const partner = new Models.Partner();
+    expect(partner.id).toBe(formatId(1));
+    partner.name = "New Partner";
+    expect(partner.name).toBe("New Partner");
+    expect(partner.changes).toEqual({ name: "New Partner" });
+    saveModels();
+    expect(onSaveModel).toHaveBeenCalledWith({
+      partner: {
+        [formatId(1)]: { name: "New Partner" },
+      },
+    });
+    // simulate that the server assigned a new numeric id
+    expect(partner.id).toBe(1001);
   });
 
   test("set partner name", async () => {
@@ -165,12 +190,12 @@ describe("model", () => {
         const partner2 = Models.Partner.get(2);
         expect(partner1.messages().length).toBe(3);
         expect(partner2.messages().length).toBe(1);
-        const message = Models.Message.get(4);
-        expect(message.partner).toBe(partner2);
-        partner1.messages.add(message);
+        const message4 = Models.Message.get(4);
+        expect(message4.partner).toBe(partner2);
+        partner1.messages.add(message4);
         expect(partner1.messages().length).toBe(4);
         expect(partner2.messages().length).toBe(0);
-        expect(message.partner).toBe(partner1);
+        expect(message4.partner).toBe(partner1);
       });
       test("delete a Message from a partner", async () => {
         const partner1 = Models.Partner.get(1);

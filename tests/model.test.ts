@@ -261,6 +261,12 @@ describe("model", () => {
         expect(message.partner).toBe(null);
         // check that the messages list is updated
         expect(partner1.messages().find((m: any) => m.id === message.id)).toBeUndefined();
+        saveModels();
+        expect(onSaveModel).toHaveBeenCalledWith({
+          message: {
+            1: { partner: null },
+          },
+        });
       });
     });
     describe("many2many", () => {

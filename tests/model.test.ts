@@ -221,6 +221,12 @@ describe("model", () => {
         expect(partner1.messages().length).toBe(3);
         expect(partner2.messages().length).toBe(0);
         expect(message.partner).toBe(null);
+        saveModels();
+        expect(onSaveModel).toHaveBeenCalledWith({
+          message: {
+            4: { partner: null },
+          },
+        });
       });
     });
     describe("many2one", () => {

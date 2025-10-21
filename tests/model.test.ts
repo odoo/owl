@@ -289,7 +289,6 @@ describe("model", () => {
         // check inverse
         const participants = course1.participants();
         expect(participants.find((p) => p.id === partner2.id)).toBe(partner2);
-        partner2.changes;
         saveModels();
         expect(onSaveModel).toHaveBeenCalledWith({
           partner: {
@@ -314,6 +313,17 @@ describe("model", () => {
         // check inverse
         const participants = course2.participants();
         expect(participants.find((p) => p.id === partner1.id)).toBeUndefined();
+        saveModels();
+        expect(onSaveModel).toHaveBeenCalledWith({
+          partner: {
+            // prettier-ignore
+            1: { courses: [[2 /*delete*/], [ /*add*/]] },
+          },
+          course: {
+            // prettier-ignore
+            2: { participants: [[1 /*delete*/], [ /*add*/]] },
+          },
+        });
       });
     });
     describe("delete()", () => {
@@ -343,6 +353,29 @@ describe("model", () => {
 
         // check company one2many
         expect(company1.partners().find((p) => p.id === partner1.id)).toBeUndefined();
+
+        saveModels();
+        expect(onSaveModel).toHaveBeenCalledWith({
+          partner: {
+            1: {
+              company: null,
+              // prettier-ignore
+              courses: [[2, 1 /*delete*/], [ /*add*/]],
+            },
+          },
+          message: {
+            1: { partner: null },
+            2: { partner: null },
+            3: { partner: null },
+            5: { partnerPrivate: null },
+          },
+          course: {
+            // prettier-ignore
+            1: { participants: [[1 /*delete*/], [ /*add*/]] },
+            // prettier-ignore
+            2: { participants: [[1 /*delete*/], [ /*add*/]] },
+          },
+        });
       });
     });
   });

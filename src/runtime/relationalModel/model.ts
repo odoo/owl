@@ -154,8 +154,8 @@ function attachMany2ManyField(target: typeof Model, fieldName: string, relatedMo
     const { relatedFieldName, RelatedModel } = fieldInfos;
     const get = getRelatedList(this, fieldName, RelatedModel);
     get.add = (m2mRecord: Model) => {
-      this.reactiveData[fieldName].push(m2mRecord.id!);
-      m2mRecord.reactiveData[relatedFieldName].push(this.id!);
+      recordArrayPush(this, fieldName, m2mRecord.id!);
+      recordArrayPush(m2mRecord, relatedFieldName, this.id!);
     };
     get.delete = (m2mRecord: Model) => {
       recordArrayDelete(this, fieldName, m2mRecord.id!);

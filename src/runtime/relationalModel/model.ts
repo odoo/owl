@@ -306,15 +306,9 @@ function setMany2One(
   o2mRecordFrom?: Model,
   o2mRecordTo?: Model
 ) {
-  if (o2mRecordFrom === o2mRecordTo) {
-    return;
-  }
-  if (o2mRecordFrom) {
-    recordArrayDelete(o2mRecordFrom, o2mFieldName, m2oRecord.data.id!);
-  }
-  if (o2mRecordTo) {
-    recordArrayPush(o2mRecordTo, o2mFieldName, m2oRecord.data.id!);
-  }
+  if (o2mRecordFrom === o2mRecordTo) return;
+  if (o2mRecordFrom) recordArrayDelete(o2mRecordFrom, o2mFieldName, m2oRecord.data.id!);
+  if (o2mRecordTo) recordArrayPush(o2mRecordTo, o2mFieldName, m2oRecord.data.id!);
   m2oRecord.reactiveChanges[m2oFieldName] = o2mRecordTo ? o2mRecordTo.data.id! : null;
 }
 function recordArrayDelete(record: Model, fieldName: string, value: any) {

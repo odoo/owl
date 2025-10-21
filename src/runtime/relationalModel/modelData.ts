@@ -39,7 +39,6 @@ export function saveModels() {
       }
     }
   }
-  debugger;
   saveHooks.onSave(dataToSave);
   // simulate what the server returning new ids for created records
   for (const Model of Object.values(Models)) {

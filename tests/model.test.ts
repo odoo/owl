@@ -246,6 +246,12 @@ describe("model", () => {
         // check that the messages lists are updated
         expect(partner1.messages().find((m: any) => m.id === message.id)).toBeUndefined();
         expect(partner2.messages().find((m: any) => m.id === message.id)).toBe(message);
+        saveModels();
+        expect(onSaveModel).toHaveBeenCalledWith({
+          message: {
+            1: { partner: 2 },
+          },
+        });
       });
       test("set partner of a message to null", async () => {
         const message = Models.Message.get(1);

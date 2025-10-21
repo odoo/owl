@@ -289,6 +289,18 @@ describe("model", () => {
         // check inverse
         const participants = course1.participants();
         expect(participants.find((p) => p.id === partner2.id)).toBe(partner2);
+        partner2.changes;
+        saveModels();
+        expect(onSaveModel).toHaveBeenCalledWith({
+          partner: {
+            // prettier-ignore
+            2: { courses: [[/*delete*/], [1,  /*add*/]] },
+          },
+          course: {
+            // prettier-ignore
+            1: { participants: [[/*delete*/], [2,  /*add*/]] },
+          },
+        });
       });
       test("delete a course from a partner", async () => {
         const partner1 = Models.Partner.get(1);

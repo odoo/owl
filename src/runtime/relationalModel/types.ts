@@ -45,8 +45,13 @@ export type FieldDefinition = FieldDefinitionString | FieldDefinitionNumber | X2
 export type ManyFn<T extends Model> = (() => T[]) & {
   add: (m: T) => void;
   delete: (m: T) => void;
+  ids: () => InstanceId[];
 };
 
 export type SearchEntry = {
   ids: InstanceId[];
+};
+
+export type DraftContext = {
+  store: Record<ModelId, Record<InstanceId, Model>>;
 };

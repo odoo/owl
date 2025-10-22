@@ -11,6 +11,7 @@ import {
   ManyFn,
   X2ManyFieldDefinition,
   RelationChanges,
+  DraftContext,
 } from "./types";
 
 export class Model {
@@ -19,12 +20,12 @@ export class Model {
   static relatedFields: Record<string, string> = Object.create(null);
   static recordsItems: Record<InstanceId, RecordItem>;
 
-  static get<T extends typeof Model>(this: T, id: InstanceId): InstanceType<T> {
-    const recordItem = this.getRecordItem(id);
-    const instance = recordItem.instance as InstanceType<T> | undefined;
-    if (instance) return instance;
-
-    return new this(id) as InstanceType<T>;
+  static get<T extends typeof Model>(
+    this: T,
+    id: InstanceId,
+    context: DraftContext | null = CurrentDraftContext
+  ): InstanceType<T> {
+    return context ? this.getContextInstance(id, context) : this.getGlobalInstance(id);
   }
   static getAll<T extends typeof Model>(this: T): InstanceType<T>[] {
     if ((this as any)._getAll) return (this as any)._getAll();
@@ -72,6 +73,22 @@ export class Model {
     recordItem.instance = undefined!;
     return recordItem;
   }
+  static getGlobalInstance<T extends typeof Model>(this: T, id: InstanceId): InstanceType<T> {
+    const recordItem = this.getRecordItem(id);
+    const instance = recordItem.instance as InstanceType<T> | undefined;
+    return instance || (new this(id) as InstanceType<T>);
+  }
+  static getContextInstance<T extends typeof Model>(
+    this: T,
+    id: InstanceId,
+    draftContext: DraftContext
+  ): InstanceType<T> {
+    const modelStore = draftContext!.store;
+    let recordModelStore = modelStore[this.id];
+    if (!recordModelStore) recordModelStore = modelStore[this.id] = {};
+    const instance = recordModelStore[id] as InstanceType<T>;
+    return instance || new this(this.getGlobalInstance(id), { draftContext: CurrentDraftContext });
+  }
 
   // Instance properties and methods
 
@@ -80,8 +97,21 @@ export class Model {
   reactiveData!: RecordItem["reactiveData"];
   changes: RelationChanges = {};
   reactiveChanges: RelationChanges = reactive(this.changes);
+  parentRecord?: Model;
+  childRecords: Model[] = [];
+  draftContext: DraftContext | null = null;
 
-  constructor(id?: InstanceId) {
+  constructor(
+    idOrParentRecord?: InstanceId | Model,
+    params = { draftContext: CurrentDraftContext }
+  ) {
+    if (typeof idOrParentRecord === "object") {
+      this.parentRecord = idOrParentRecord;
+      this.draftContext = params.draftContext || { store: {} };
+      idOrParentRecord = idOrParentRecord.id;
+      this._setDraftItem(idOrParentRecord!);
+    }
+    const id = idOrParentRecord;
     const C = this.constructor as typeof Model;
     const recordItem = C.getRecordItem(id!);
     this.data = recordItem.data;
@@ -116,15 +146,66 @@ export class Model {
       }
     }
   }
+
+  // Draft methods
+
+  makeDraft() {
+    const Mod = this.constructor as typeof Model;
+    const newInstance = new Mod(this);
+    this.childRecords.push(newInstance);
+    return newInstance as this;
+  }
+  saveDraft() {
+    if (!this.parentRecord) {
+      throw new Error("Cannot save draft without a parent record");
+    }
+    const parent = this.parentRecord;
+    const parentReactiveChanges = parent.reactiveChanges;
+    const thisChanges = this.reactiveChanges;
+    for (const [key, value] of Object.entries(thisChanges)) {
+      if (!Array.isArray(value)) {
+        parentReactiveChanges[key] = value;
+      } else {
+        const [deleteList, addList] = value;
+        let parentChanges = parentReactiveChanges[key] as [InstanceId[], InstanceId[]] | undefined;
+        if (!parentChanges) {
+          parentChanges = parentReactiveChanges[key] = [[], []];
+        }
+        const [parentDeleteList, parentAddList] = parentChanges;
+        for (const id of deleteList) {
+          arrayDelete(parentAddList, id);
+          parentDeleteList.push(id);
+        }
+        for (const id of addList) {
+          arrayDelete(parentDeleteList, id);
+          parentAddList.push(id);
+        }
+      }
+      delete thisChanges[key];
+    }
+  }
+  withContext(fn: () => void) {
+    return withDraftContext(this.draftContext, fn);
+  }
+  _setDraftItem(id: InstanceId) {
+    if (!this.draftContext) return;
+    const modelStore = this.draftContext.store;
+    let recordModelStore = modelStore[(this.constructor as typeof Model).id];
+    if (!recordModelStore) {
+      recordModelStore = modelStore[(this.constructor as typeof Model).id] = {};
+    }
+    recordModelStore[id] = this;
+  }
 }
 
 function attachBaseField(target: typeof Model, fieldName: string) {
+  // todo: use instance instead of this
   defineLazyProperty(target.prototype, fieldName, function (this: Model) {
     return [
       () => {
         return fieldName in this.reactiveChanges
           ? this.reactiveChanges[fieldName]
-          : this.reactiveData[fieldName];
+          : getBaseFieldValue(this, fieldName);
       },
       (value: any) => {
         this.reactiveChanges[fieldName] = value;
@@ -136,13 +217,16 @@ function attachOne2ManyField(target: typeof Model, fieldName: string, relatedMod
   const fieldInfos = getFieldInfos(target, fieldName, relatedModelId);
   defineLazyProperty(target.prototype, fieldName, function (this: Model) {
     const { relatedFieldName, RelatedModel } = fieldInfos;
+    const ctx = this.draftContext;
     const get = getRelatedList(this, fieldName, RelatedModel);
     get.add = (m2oRecord: Model) => {
       const o2MRecordIdFrom = m2oRecord.reactiveData[relatedFieldName] as number | undefined;
-      const o2MRecordFrom = o2MRecordIdFrom ? target.get(o2MRecordIdFrom) : undefined;
+      const o2MRecordFrom = o2MRecordIdFrom ? target.get(o2MRecordIdFrom, ctx) : undefined;
+      m2oRecord = ensureContext(ctx, m2oRecord);
       setMany2One(relatedFieldName, m2oRecord, fieldName, o2MRecordFrom, this);
     };
     get.delete = (m2oRecord: Model) => {
+      m2oRecord = ensureContext(ctx, m2oRecord);
       setMany2One(relatedFieldName, m2oRecord, fieldName, this, undefined);
     };
     return [() => get] as const;
@@ -152,12 +236,15 @@ function attachMany2ManyField(target: typeof Model, fieldName: string, relatedMo
   const fieldInfos = getFieldInfos(target, fieldName, relatedModelId);
   defineLazyProperty(target.prototype, fieldName, function (this: Model) {
     const { relatedFieldName, RelatedModel } = fieldInfos;
+    const ctx = this.draftContext;
     const get = getRelatedList(this, fieldName, RelatedModel);
     get.add = (m2mRecord: Model) => {
-      recordArrayPush(this, fieldName, m2mRecord.id!);
-      recordArrayPush(m2mRecord, relatedFieldName, this.id!);
+      m2mRecord = ensureContext(ctx, m2mRecord);
+      recordArrayAdd(this, fieldName, m2mRecord.id!);
+      recordArrayAdd(m2mRecord, relatedFieldName, this.id!);
     };
     get.delete = (m2mRecord: Model) => {
+      m2mRecord = ensureContext(ctx, m2mRecord);
       recordArrayDelete(this, fieldName, m2mRecord.id!);
       recordArrayDelete(m2mRecord, relatedFieldName, this.id!);
     };
@@ -168,6 +255,7 @@ function attachMany2OneField(target: typeof Model, fieldName: string, relatedMod
   const fieldInfos = getFieldInfos(target, fieldName, relatedModelId);
 
   defineLazyProperty(target.prototype, fieldName, function (this: Model) {
+    const ctx = this.draftContext;
     const get = derived(() => {
       const { RelatedModel } = fieldInfos;
       const id =
@@ -177,15 +265,17 @@ function attachMany2OneField(target: typeof Model, fieldName: string, relatedMod
       if (id === undefined || id === null) {
         return null;
       }
-      return RelatedModel.get(id);
+      return RelatedModel.get(id, ctx);
     });
     const set = (o2mRecordTo: Model | number) => {
       const { relatedFieldName, RelatedModel } = fieldInfos;
       if (typeof o2mRecordTo === "number") {
-        o2mRecordTo = RelatedModel.get(o2mRecordTo);
+        o2mRecordTo = RelatedModel.get(o2mRecordTo, ctx);
+      } else {
+        o2mRecordTo = o2mRecordTo && ensureContext(ctx, o2mRecordTo);
       }
       const o2mRecordIdFrom = this.reactiveData[fieldName] as number | undefined;
-      const o2mRecordFrom = o2mRecordIdFrom ? RelatedModel.get(o2mRecordIdFrom) : undefined;
+      const o2mRecordFrom = o2mRecordIdFrom ? RelatedModel.get(o2mRecordIdFrom, ctx) : undefined;
       setMany2One(fieldName, this, relatedFieldName, o2mRecordFrom, o2mRecordTo);
     };
     return [get, set] as const;
@@ -308,7 +398,7 @@ function setMany2One(
 ) {
   if (o2mRecordFrom === o2mRecordTo) return;
   if (o2mRecordFrom) recordArrayDelete(o2mRecordFrom, o2mFieldName, m2oRecord.data.id!);
-  if (o2mRecordTo) recordArrayPush(o2mRecordTo, o2mFieldName, m2oRecord.data.id!);
+  if (o2mRecordTo) recordArrayAdd(o2mRecordTo, o2mFieldName, m2oRecord.data.id!);
   m2oRecord.reactiveChanges[m2oFieldName] = o2mRecordTo ? o2mRecordTo.data.id! : null;
 }
 function recordArrayDelete(record: Model, fieldName: string, value: any) {
@@ -316,24 +406,40 @@ function recordArrayDelete(record: Model, fieldName: string, value: any) {
   arrayDelete(addList, value);
   deleteList.push(value);
 }
-function recordArrayPush(record: Model, fieldName: string, value: any) {
+function recordArrayAdd(record: Model, fieldName: string, value: any) {
   const [deleteList, addList] = getChanges(record, fieldName);
   arrayDelete(deleteList, value);
   addList.push(value);
 }
 
+function getBaseFieldValue(record: Model, fieldName: string) {
+  return record.parentRecord
+    ? (record.parentRecord as any)[fieldName] // get the computed field
+    : record.reactiveData[fieldName];
+}
+function getBaseManyFieldValue(record: Model, fieldName: string) {
+  return record.parentRecord
+    ? (record.parentRecord as any)[fieldName].ids() // get the computed field
+    : record.reactiveData[fieldName];
+}
 function getRelatedList(
   record: Model,
   fieldName: string,
   RelatedModel: typeof Model
 ): ManyFn<Model> {
-  return derived(() => {
-    const source = record.reactiveData[fieldName];
+  const draftContext = record.draftContext;
+  const getInstance = (id: InstanceId) => RelatedModel.get(id, draftContext);
+  const getIds = derived(() => {
+    const source = getBaseManyFieldValue(record, fieldName) as InstanceId[];
     const changes = record.reactiveChanges[fieldName] as [InstanceId[], InstanceId[]];
     const [deleteList, addList] = changes || [[], []];
-    const list = combineLists(source, deleteList, addList);
-    return list.map(RelatedModel.get.bind(RelatedModel));
+    return combineLists(source, deleteList, addList);
+  });
+  const getInstances = derived(() => {
+    return getIds().map(getInstance);
   }) as ManyFn<Model>;
+  getInstances.ids = getIds;
+  return getInstances;
 }
 function arrayDelete(array: any[], value: any) {
   const index = array.indexOf(value);
@@ -360,6 +466,35 @@ export function combineLists(listA: InstanceId[], deleteList: InstanceId[], addL
   }
   return Array.from(set);
 }
+
+// Drafts helpers
+
+let CurrentDraftContext: DraftContext | null = null;
+
+export function ensureContext(context: DraftContext | null, record: Model) {
+  if (record.draftContext === context) return record;
+  if (!context) return (record.constructor as typeof Model).getGlobalInstance(record.id!);
+  return (record.constructor as typeof Model).getContextInstance(record.id!, context);
+}
+export function withDraftContext<T>(context: DraftContext | null, fn: () => T): T {
+  const previousContext = CurrentDraftContext;
+  CurrentDraftContext = context;
+  try {
+    return fn();
+  } finally {
+    CurrentDraftContext = previousContext;
+  }
+}
+export function saveDraftContext(context: DraftContext) {
+  for (const modelId of Object.keys(context.store)) {
+    const recordModelStore = context.store[modelId];
+    for (const instance of Object.values(recordModelStore)) {
+      instance.saveDraft();
+    }
+  }
+}
+
+// Id helpers
 
 let lastId = 0;
 function getNextId() {

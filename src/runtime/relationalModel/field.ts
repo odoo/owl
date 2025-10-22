@@ -3,6 +3,9 @@ import { FieldDefinition, FieldTypes, ModelId } from "./types";
 export function fieldString(): FieldDefinition {
   return field("string", {});
 }
+export function fieldNumber(): FieldDefinition {
+  return field("number", {});
+}
 
 export function fieldMany2Many(
   modelId: ModelId,

@@ -1,4 +1,13 @@
 
+- 2 worker write add/delete ?
+- clock per field?
+
+- sort in postgres
+- different sort in form view
+- notes in form vue
+
+- update of field = async
+
 
 
 # todo

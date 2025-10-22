@@ -1,10 +1,16 @@
 import {
   fieldMany2Many,
   fieldMany2One,
+  fieldNumber,
   fieldOne2Many,
   fieldString,
 } from "../src/runtime/relationalModel/field";
-import { formatId, Model, resetIdCounter } from "../src/runtime/relationalModel/model";
+import {
+  formatId,
+  Model,
+  resetIdCounter,
+  saveDraftContext,
+} from "../src/runtime/relationalModel/model";
 import { DataToSave, saveHooks, saveModels } from "../src/runtime/relationalModel/modelData";
 import { clearModelRegistry } from "../src/runtime/relationalModel/modelRegistry";
 import { destroyStore, setStore } from "../src/runtime/relationalModel/store";
@@ -20,12 +26,14 @@ export function makeModels() {
     static id = "partner";
     static fields = {
       name: fieldString(),
+      age: fieldNumber(),
       messages: fieldOne2Many("message"),
       privateMessages: fieldOne2Many("message", { relatedField: "partnerPrivate" }),
       courses: fieldMany2Many("course"),
       company: fieldMany2One("company"),
     };
     name!: string;
+    age!: number;
     messages!: ManyFn<Message>;
     privateMessages!: ManyFn<Message>;
     courses!: ManyFn<Course>;
@@ -86,6 +94,7 @@ beforeEach(() => {
     partner: {
       1: {
         name: "Partner 1",
+        age: 30,
         messages: [1, 2, 3],
         privateMessages: [5],
         courses: [1, 2],
@@ -93,6 +102,7 @@ beforeEach(() => {
       },
       2: {
         name: "Partner 2",
+        age: 35,
         messages: [4],
         privateMessages: [],
         courses: [2],
@@ -200,6 +210,7 @@ describe("model", () => {
         const message4 = Models.Message.get(4);
         expect(message4.partner).toBe(partner2);
         partner1.messages.add(message4);
+        message4.partner = partner1;
         expect(partner1.messages().length).toBe(4);
         expect(partner2.messages().length).toBe(0);
         expect(message4.partner).toBe(partner1);
@@ -380,6 +391,56 @@ describe("model", () => {
     });
   });
 
-  describe("draft records", () => {});
+  describe("draft records", () => {
+    test("should create a draft copy of the record for string field", async () => {
+      const partner1 = Models.Partner.get(1);
+      const partner1Bis = partner1.makeDraft();
+      expect(partner1.childRecords).toContain(partner1Bis);
+
+      expect(partner1Bis.id).toBe(partner1.id);
+      expect(partner1Bis.name).toBe(partner1.name);
+      partner1Bis.name = "Partner 1 Bis";
+      expect(partner1.name).toBe("Partner 1");
+      expect(partner1Bis.name).toBe("Partner 1 Bis");
+      expect(partner1Bis.changes).toEqual({ name: "Partner 1 Bis" });
+
+      expect(partner1.age).toBe(30);
+      expect(partner1Bis.age).toBe(30);
+
+      partner1Bis.saveDraft();
+      expect(partner1.data.name).toBe("Partner 1");
+      expect(partner1.changes).toEqual({ name: "Partner 1 Bis" });
+      expect(partner1Bis.changes).toEqual({});
+    });
+    test("should create a draft copy of the record for one2many field", async () => {
+      const partner1 = Models.Partner.get(1);
+      const partner2 = Models.Partner.get(2);
+      const partner1Bis = partner1.makeDraft();
+      expect(partner1.childRecords).toContain(partner1Bis);
+
+      const partner2Message = partner2.messages()[0];
+
+      partner1Bis.withContext(() => {
+        const partner2Bis = Models.Partner.get(2);
+        expect(partner2Bis).not.toBe(partner2); // should be a draft because we are in a context
+        partner1Bis.messages.add(partner2Message);
+        expect(partner1Bis.messages().length).toBe(4);
+        const lastMessage = partner1Bis.messages()[3];
+        // lastMessage should be a draft of partner2Message
+        expect(lastMessage).not.toBe(partner2Message);
+        expect(lastMessage.id).toBe(partner2Message.id);
+        expect(lastMessage.partner).toBe(partner1Bis);
+        expect(partner2Message.partner).toBe(partner2Bis);
+      });
+
+      expect(partner1.messages().length).toBe(3);
+      expect(partner1Bis.messages().length).toBe(4);
+
+      saveDraftContext(partner1Bis.draftContext!);
+
+      expect(partner1.messages().length).toBe(4);
+      expect(partner1Bis.messages().length).toBe(4);
+    });
+  });
   describe("partial record list", () => {});
 });

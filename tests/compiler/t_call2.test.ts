@@ -557,4 +557,18 @@ describe("t-call v_2 (template calling)", () => {
     context.addTemplate("main", `<t t-call="sub" v_2="1">Hello</t>`);
     expect(context.renderToString("main")).toBe("<span>1Hello</span>");
   });
+
+  test("t-call and translation contexts", () => {
+    const translateFn = jest.fn((expr: string, translationCtx: string) =>
+      translationCtx === "fr" ? "jeu" : translationCtx === "pt" ? "título" : expr
+    );
+
+    const context = new TestContext({ translateFn });
+    context.addTemplate("sub", `<span><t t-esc="title"/><t t-esc="0"/></span>`);
+    context.addTemplate("main", `<t t-call="sub" title="'title'" t-translation-context-title="pt" t-translation-context="fr">game</t>`);
+
+    expect(context.renderToString("main")).toBe(
+      "<span>títulojeu</span>"
+    );
+  });
 });

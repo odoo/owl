@@ -772,6 +772,41 @@ exports[`t-call v_2 (template calling) scoped parameters, part 2 2`] = `
 }"
 `;
 
+exports[`t-call v_2 (template calling) t-call and translation contexts 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { capture, zero } = helpers;
+  const callTemplate_1 = app.getTemplate(\`sub\`);
+  
+  function callBody1(ctx, node, key = \\"\\") {
+    return text(\`jeu\`);
+  }
+  
+  return function template(ctx, node, key = \\"\\") {
+    const ctx1 = capture(ctx);
+    const lazyBlock1 = callBody1.bind(this, Object.create(ctx1));
+    return callTemplate_1.call(this, {title: 'title', [zero]: lazyBlock1}, node, key + \`__1\`);
+  }
+}"
+`;
+
+exports[`t-call v_2 (template calling) t-call and translation contexts 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { zero } = helpers;
+  
+  let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let txt1 = ctx['title'];
+    let txt2 = ctx[zero]?.(node, key);
+    return block1([txt1, txt2]);
+  }
+}"
+`;
+
 exports[`t-call v_2 (template calling) t-call on a div with t-call-context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

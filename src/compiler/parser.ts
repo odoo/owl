@@ -259,10 +259,10 @@ function parseNode(node: Node, ctx: ParsingContext): AST | null {
     parseTForEach(node, ctx) ||
     parseTIf(node, ctx) ||
     parseTPortal(node, ctx) ||
-    parseTCall(node, ctx) ||
-    parseTCallBlock(node, ctx) ||
     parseTTranslation(node, ctx) ||
     parseTTranslationContext(node, ctx) ||
+    parseTCall(node, ctx) ||
+    parseTCallBlock(node, ctx) ||
     parseTKey(node, ctx) ||
     parseTEscNode(node, ctx) ||
     parseTOutNode(node, ctx) ||

@@ -20,6 +20,10 @@ export class Model {
   static relatedFields: Record<string, string> = Object.create(null);
   static recordsItems: Record<InstanceId, RecordItem>;
 
+  static create<T extends typeof Model>(this: T, data: Partial<InstanceType<T>>): InstanceType<T> {
+    const m = new this(undefined, { createData: data });
+    return m as InstanceType<T>;
+  }
   static get<T extends typeof Model>(
     this: T,
     id: InstanceId,
@@ -61,14 +65,15 @@ export class Model {
     }
     return this;
   }
-  static getRecordItem(id: InstanceId): RecordItem {
+  static getRecordItem(id: InstanceId, defaultData?: Record<string, any>): RecordItem {
     const modelData = this.recordsItems;
     let recordItem = modelData[id];
     if (recordItem) {
       return recordItem;
     }
-    recordItem = modelData[id] = { data: {} } as RecordItem;
-    const reactiveData = reactive(recordItem.data);
+    const data = defaultData || {};
+    recordItem = modelData[id] = { data } as RecordItem;
+    const reactiveData = reactive(data);
     recordItem.reactiveData = reactiveData;
     recordItem.instance = undefined!;
     return recordItem;
@@ -103,7 +108,12 @@ export class Model {
 
   constructor(
     idOrParentRecord?: InstanceId | Model,
-    params = { draftContext: CurrentDraftContext }
+    params: {
+      createData?: Record<string, any>;
+      draftContext?: DraftContext | null;
+    } = {
+      draftContext: CurrentDraftContext,
+    }
   ) {
     if (typeof idOrParentRecord === "object") {
       this.parentRecord = idOrParentRecord;
@@ -113,7 +123,7 @@ export class Model {
     }
     const id = idOrParentRecord;
     const C = this.constructor as typeof Model;
-    const recordItem = C.getRecordItem(id!);
+    const recordItem = C.getRecordItem(params.createData?.id || id!);
     this.data = recordItem.data;
     this.reactiveData = recordItem.reactiveData;
     recordItem.instance = this;

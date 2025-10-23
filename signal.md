@@ -1,4 +1,34 @@
 
+view
+withSearch
+
+Controller
+Layout
+
+------
+
+
+class A
+  _x: signal
+  x: compute()
+    if (this.x) this.x
+    return this.y;
+
+
+// on record created
+// on field change
+class Partner {
+
+}
+
+field.onUpdate = () =>
+
+
+parentFieldName = partner_id
+parent
+parentFileds: user.name -> user.partner_id.name
+
+
 - 2 worker write add/delete ?
 - clock per field?
 
@@ -7,6 +37,14 @@
 - notes in form vue
 
 - update of field = async
+
+- one2one
+
+- onchange
+
+-
+  - state Optimistic
+  - state 
 
 
 

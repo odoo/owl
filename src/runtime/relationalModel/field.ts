@@ -1,5 +1,8 @@
 import { FieldDefinition, FieldTypes, ModelId } from "./types";
 
+export function fieldAny(): FieldDefinition {
+  return field("any", {});
+}
 export function fieldString(): FieldDefinition {
   return field("string", {});
 }

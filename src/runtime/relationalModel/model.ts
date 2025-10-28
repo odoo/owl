@@ -50,6 +50,7 @@ export class Model {
       switch (def.type) {
         case "string":
         case "number":
+        case "any":
           attachBaseField(this, fieldName);
           break;
         case "many2many":
@@ -155,6 +156,12 @@ export class Model {
           break;
       }
     }
+  }
+  isNew() {
+    return typeof this.reactiveData.id === "string";
+  }
+  hasChanges() {
+    return Object.keys(this.reactiveChanges).length > 0;
   }
 
   // Draft methods

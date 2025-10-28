@@ -1,3 +1,10 @@
+What do we need from a reactive system?
+  Predictable Execution
+    - All updates happen synchronously
+    - Glitch-free: Never possible to observe an inconsistent state
+    - No computation runs more than once from a given update
+    - Prevent infinite loops
+
 
 view
 withSearch

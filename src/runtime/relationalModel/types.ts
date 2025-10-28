@@ -16,6 +16,9 @@ export type RelationChanges = Record<FieldName, null | InstanceId | [InstanceId[
 export interface FieldDefinitionBase {
   fieldName: string;
 }
+export interface FieldDefinitionAny extends FieldDefinitionBase {
+  type: "any";
+}
 export interface FieldDefinitionString extends FieldDefinitionBase {
   type: "string";
 }
@@ -40,7 +43,11 @@ export type X2ManyFieldDefinition =
   | FieldDefinitionOne2Many
   | FieldDefinitionMany2One
   | FieldDefinitionMany2Many;
-export type FieldDefinition = FieldDefinitionString | FieldDefinitionNumber | X2ManyFieldDefinition;
+export type FieldDefinition =
+  | FieldDefinitionAny
+  | FieldDefinitionString
+  | FieldDefinitionNumber
+  | X2ManyFieldDefinition;
 
 export type ManyFn<T extends Model> = (() => T[]) & {
   add: (m: T) => void;

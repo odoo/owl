@@ -165,7 +165,6 @@ export class RootFiber extends Fiber {
   locked: boolean = false;
 
   complete() {
-    debugger;
     const node = this.node;
     this.locked = true;
     let current: Fiber | undefined = undefined;

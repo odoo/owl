@@ -10,6 +10,10 @@ export type RecordItem = {
   data: ItemData;
   reactiveData: ItemData;
   instance: Model;
+
+  // This data is stored here in case we load data before a model or a related
+  // model is defined.
+  dataToLoad?: ItemData;
 };
 export type RelationChanges = Record<FieldName, null | InstanceId | [InstanceId[], InstanceId[]]>;
 

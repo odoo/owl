@@ -38,7 +38,6 @@ export { Component } from "./component";
 export type { ComponentConstructor } from "./component";
 export { useComponent, useState } from "./component_node";
 export { status } from "./status";
-
 export { useEffect, useEnv, useExternalListener, useRef, useChildSubEnv, useSubEnv } from "./hooks";
 export { batched, EventBus, htmlEscape, whenReady, loadFile, markup } from "./utils";
 export {
@@ -55,12 +54,12 @@ export {
 } from "./lifecycle_hooks";
 export { validate, validateType } from "./validation";
 export { OwlError } from "../common/owl_error";
-
 export { reactive, markRaw, toRaw } from "./reactivity";
 export { effect, withoutReactivity, derived, processEffects } from "./signals";
-export { loadRecordWithRelated } from "./relationalModel/store";
+export { loadRecordWithRelated, flushDataToLoad } from "./relationalModel/store";
 export { Model } from "./relationalModel/model";
-export { makeModelFromWeb } from "./relationalModel/webModel";
+export { getRecordChanges, commitRecordChanges } from "./relationalModel/modelData";
+export { getOrMakeModel, makeModelFromWeb } from "./relationalModel/webModel";
 
 export const __info__ = {
   version: App.version,

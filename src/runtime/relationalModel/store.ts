@@ -50,14 +50,20 @@ export function loadRecord(modelId: ModelId, instanceId: InstanceId, data: Recor
 }
 
 export function loadRecordWithRelated(Mod: typeof Model, instanceData: Record<string, any>) {
-  console.warn(`Model.id, instanceData:`, Mod.id, instanceData);
   const id = instanceData.id;
   if (id === undefined) {
     throw new Error("Instance data must have an id field");
   }
   const instance = Mod.get(id);
+  let item: RecordItem;
   for (const fieldName in instanceData) {
     const field = Mod.fields[fieldName];
+    if (!field) {
+      item ??= Mod.getRecordItem(id);
+      item.dataToLoad ??= {};
+      item.dataToLoad[fieldName] = instanceData[fieldName];
+      continue;
+    }
     const value = instanceData[fieldName];
     if (Array.isArray(value)) {
       const f = field as X2ManyFieldDefinition;
@@ -78,5 +84,15 @@ export function loadRecordWithRelated(Mod: typeof Model, instanceData: Record<st
     }
   }
   return instance;
+}
+export function flushDataToLoad() {
+  for (const Model of Object.values(Models)) {
+    for (const item of Object.values(Model.recordsItems)) {
+      const dataToLoad = item.dataToLoad;
+      if (!dataToLoad) continue;
+      delete item.dataToLoad;
+      loadRecordWithRelated(Model, dataToLoad);
+    }
+  }
 }
 (window as any).globalStore = globalStore;

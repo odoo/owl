@@ -1,5 +1,6 @@
-import { combineLists } from "./model";
+import { combineLists, Model } from "./model";
 import { Models } from "./modelRegistry";
+import { isMany2OneField, isX2ManyField } from "./modelUtils";
 import { InstanceId, ModelId, RelationChanges } from "./types";
 
 export type DataToSave = Record<ModelId, Record<InstanceId, RelationChanges>>;
@@ -9,6 +10,41 @@ const lastModelIds: Record<ModelId, number> = {};
 export const saveHooks = {
   onSave: (data: DataToSave) => {},
 };
+
+export function getRecordChanges(
+  record: Model,
+  dataToSave: DataToSave = {},
+  processedRecords = new Set<Model>()
+) {
+  const Mod = record.constructor as typeof Model;
+  if (processedRecords.has(record)) return dataToSave;
+
+  let itemChanges: Record<string, any> = {};
+  for (const key of Object.keys(record.data)) {
+    if (key === "id") continue; // we can't change the id field
+    const fieldDef = Mod.fields[key];
+    if (!fieldDef) continue;
+    const fieldType = fieldDef.type;
+    if (isX2ManyField(fieldType)) {
+      const relatedRecords: Model[] = (record as any)[key]();
+      relatedRecords.forEach((r) => getRecordChanges(r, dataToSave, processedRecords));
+      // todo: should encode the changes for x2many fields
+      continue;
+    }
+    if (isMany2OneField(fieldType)) {
+      const relatedRecord: Model = (record as any)[key];
+      getRecordChanges(relatedRecord, dataToSave, processedRecords);
+    }
+    const { changes } = record;
+    if (!(key in changes)) continue;
+    itemChanges[key] = deepClone(changes[key]);
+  }
+  if (Object.keys(itemChanges).length > 0) {
+    dataToSave[Mod.id] = dataToSave[Mod.id] || {};
+    dataToSave[Mod.id][record.id!] = itemChanges;
+  }
+  return dataToSave;
+}
 
 export function saveModels() {
   const dataToSave: DataToSave = {};
@@ -50,6 +86,27 @@ export function saveModels() {
       item.instance!.reactiveData.id = lastId;
     }
     lastModelIds[Model.id] = lastId;
+  }
+}
+
+export function commitRecordChanges(record: Model) {
+  const Mod = record.constructor as typeof Model;
+  for (const key of Object.keys(record.changes)) {
+    const field = Mod.fields[key];
+    if (!field) continue;
+    const change = record.changes[key];
+    const reactiveData = record.reactiveData;
+    if (Array.isArray(change)) {
+      // many2many or one2many field
+      const [deleteList, addList] = change;
+      const currentList = record.data[key] as InstanceId[];
+      reactiveData[key] = combineLists(currentList, deleteList, addList);
+      delete record.reactiveChanges[key];
+    } else {
+      // many2one or simple field
+      reactiveData[key] = change;
+      delete record.reactiveChanges[key];
+    }
   }
 }
 

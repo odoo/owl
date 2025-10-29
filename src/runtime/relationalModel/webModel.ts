@@ -4,6 +4,23 @@ import { Models } from "./modelRegistry";
 import { ModelId } from "./types";
 import { MailModelConfig } from "./webModelTypes";
 
+export function getOrMakeModel(modelId: ModelId): typeof Model {
+  let Mod = Models[modelId];
+  if (Mod) return Mod;
+  Mod = makeNewModel(modelId);
+  Mod.register();
+  return Mod;
+}
+
+function makeNewModel(modelId: ModelId): typeof Model {
+  const Mod = {
+    [modelId]: class extends Model {
+      static id = modelId;
+    },
+  }[modelId];
+  return Mod;
+}
+
 export function makeModelFromWeb(
   config: MailModelConfig,
   processedModel = new Set<string>()
@@ -11,15 +28,9 @@ export function makeModelFromWeb(
   if (processedModel.has(config.resModel!)) {
     return Models[config.resModel!];
   }
-  const modelName = config.resModel!;
-  processedModel.add(modelName);
-  let Mod = Models[modelName];
-
-  Mod ||= {
-    [modelName]: class GeneratedModel extends Model {
-      static id = modelName;
-    },
-  }[modelName];
+  const modelId = config.resModel!;
+  processedModel.add(modelId);
+  const Mod = Models[modelId] || makeNewModel(modelId);
 
   const fields = mapObject(config.fields, (fieldInfo) => {
     switch (fieldInfo.type) {

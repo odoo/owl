@@ -225,6 +225,7 @@ function attachBaseField(target: typeof Model, fieldName: string) {
           : getBaseFieldValue(this, fieldName);
       },
       (value: any) => {
+        console.warn(`value:`, value);
         this.reactiveChanges[fieldName] = value;
       },
     ] as const;
@@ -234,12 +235,16 @@ function attachOne2ManyField(target: typeof Model, fieldName: string, relatedMod
   const fieldInfos = getFieldInfos(target, fieldName, relatedModelId);
   defineLazyProperty(target.prototype, fieldName, function (this: Model) {
     const { relatedFieldName, RelatedModel } = fieldInfos;
+    if (!relatedFieldName) {
+      const get = () => [] as Model[];
+      return [() => get] as const;
+    }
     const ctx = this.draftContext;
     const get = getRelatedList(this, fieldName, RelatedModel);
     get.add = (m2oRecord: Model) => {
+      m2oRecord = ensureContext(ctx, m2oRecord);
       const o2MRecordIdFrom = m2oRecord.reactiveData[relatedFieldName] as number | undefined;
       const o2MRecordFrom = o2MRecordIdFrom ? target.get(o2MRecordIdFrom, ctx) : undefined;
-      m2oRecord = ensureContext(ctx, m2oRecord);
       setMany2One(relatedFieldName, m2oRecord, fieldName, o2MRecordFrom, this);
     };
     get.delete = (m2oRecord: Model) => {
@@ -253,6 +258,10 @@ function attachMany2ManyField(target: typeof Model, fieldName: string, relatedMo
   const fieldInfos = getFieldInfos(target, fieldName, relatedModelId);
   defineLazyProperty(target.prototype, fieldName, function (this: Model) {
     const { relatedFieldName, RelatedModel } = fieldInfos;
+    if (!relatedFieldName) {
+      const get = () => [] as Model[];
+      return [() => get] as const;
+    }
     const ctx = this.draftContext;
     const get = getRelatedList(this, fieldName, RelatedModel);
     get.add = (m2mRecord: Model) => {
@@ -286,6 +295,7 @@ function attachMany2OneField(target: typeof Model, fieldName: string, relatedMod
     });
     const set = (o2mRecordTo: Model | number) => {
       const { relatedFieldName, RelatedModel } = fieldInfos;
+      if (!relatedFieldName) throw new Error("Related field name is undefined");
       if (typeof o2mRecordTo === "number") {
         o2mRecordTo = RelatedModel.get(o2mRecordTo, ctx);
       } else {
@@ -366,9 +376,7 @@ function getRelatedFieldName(Mod: typeof Model, fieldName: string) {
           (d) => d.type === "many2one" && d.modelId === modelId
         )?.fieldName;
       if (!relatedFieldName) {
-        throw new Error(
-          `Related field not found for one2many field ${fieldName} in model ${Mod.id}`
-        );
+        return;
       }
       Mod.relatedFields[fieldName] = relatedFieldName;
       RelatedModel.relatedFields[relatedFieldName] = fieldName;
@@ -382,9 +390,7 @@ function getRelatedFieldName(Mod: typeof Model, fieldName: string) {
           (!relationTableName || d.relationTableName === relationTableName)
       )?.fieldName;
       if (!relatedFieldName) {
-        throw new Error(
-          `Related field not found for many2many field ${fieldName} in model ${Mod.id}`
-        );
+        return;
       }
       Mod.relatedFields[fieldName] = relatedFieldName;
       RelatedModel.relatedFields[relatedFieldName] = fieldName;
@@ -397,9 +403,7 @@ function getRelatedFieldName(Mod: typeof Model, fieldName: string) {
       }
       const relatedFieldName = Mod.relatedFields[fieldName];
       if (!relatedFieldName) {
-        throw new Error(
-          `Related field not found for many2one field ${fieldName} in model ${Mod.id}`
-        );
+        return;
       }
       return relatedFieldName;
     }
@@ -416,6 +420,7 @@ function setMany2One(
   if (o2mRecordFrom === o2mRecordTo) return;
   if (o2mRecordFrom) recordArrayDelete(o2mRecordFrom, o2mFieldName, m2oRecord.data.id!);
   if (o2mRecordTo) recordArrayAdd(o2mRecordTo, o2mFieldName, m2oRecord.data.id!);
+  console.warn(`value2:`, o2mRecordTo ? o2mRecordTo.data.id! : null);
   m2oRecord.reactiveChanges[m2oFieldName] = o2mRecordTo ? o2mRecordTo.data.id! : null;
 }
 function recordArrayDelete(record: Model, fieldName: string, value: any) {
@@ -435,6 +440,7 @@ function getBaseFieldValue(record: Model, fieldName: string) {
     : record.reactiveData[fieldName];
 }
 function getBaseManyFieldValue(record: Model, fieldName: string) {
+  console.warn(`getBaseManyFieldValue record, fieldName:`, record, fieldName);
   return record.parentRecord
     ? (record.parentRecord as any)[fieldName].ids() // get the computed field
     : record.reactiveData[fieldName];

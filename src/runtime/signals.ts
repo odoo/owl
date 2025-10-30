@@ -84,9 +84,6 @@ export function trackChanges(key: PropertyKey, receiver: any) {
 }
 
 export function onWriteAtom(atom: Atom) {
-  if ((window as any).d) {
-    debugger;
-  }
   collectEffects(() => {
     for (const ctx of atom.observers) {
       if (ctx.state === ComputationState.EXECUTED) {

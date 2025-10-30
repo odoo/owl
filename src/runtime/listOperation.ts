@@ -14,7 +14,6 @@ export function reactiveMap<A, B>(arr: A[], fn: (a: A, index: number) => B) {
   return derived(() => {
     onReadAtom(atom);
     const changes = item[1];
-    console.warn(`changes:`, changes);
 
     if (!mappedArray) {
       mappedArray = arr.map(fn);
@@ -24,7 +23,6 @@ export function reactiveMap<A, B>(arr: A[], fn: (a: A, index: number) => B) {
     for (const [key, receiver] of changes) {
       // console.warn(`receiver:`, receiver);
       receiver;
-      console.warn(`key:`, key);
       if (key === "length") {
         mappedArray.length = arr.length;
       } else if (typeof key === "number") {

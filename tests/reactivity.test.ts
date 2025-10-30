@@ -2398,8 +2398,7 @@ describe("reactive list operation", () => {
     expect(mapSpy).toBeCalledWith("g", 6);
     mapSpy.mockClear();
 
-    const m = changesMap;
-    console.warn(`m:`, m);
+    // const m = changesMap;
 
     // r.splice(2, 2, "C", "D");
     // r.shift();

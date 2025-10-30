@@ -32,4 +32,4 @@ export type OldValue = any;
 export type Getter<V> = () => V | null;
 export type Setter<T, V> = (this: T, value: V) => void;
 export type MakeGetSetReturn<T, V> = readonly [Getter<V>] | readonly [Getter<V>, Setter<T, V>];
-export type MakeGetSet<T, V> = (this: T) => MakeGetSetReturn<T, V>;
+export type MakeGetSet<T, V> = (obj: T) => MakeGetSetReturn<T, V>;

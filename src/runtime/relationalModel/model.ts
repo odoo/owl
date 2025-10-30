@@ -47,20 +47,22 @@ export class Model {
     Models[targetModelId] = this;
     for (const [fieldName, def] of Object.entries(this.fields)) {
       def.fieldName = fieldName;
+      const defineField = (fn: MakeGetSet<Model, any>) =>
+        defineLazyProperty(this.prototype, fieldName, fn);
       switch (def.type) {
         case "string":
         case "number":
         case "any":
-          attachBaseField(this, fieldName);
+          defineField(makeBaseField(this, fieldName));
           break;
         case "many2many":
-          attachMany2ManyField(this, fieldName, def.modelId);
+          defineField(makeMany2ManyField(this, fieldName, def.modelId));
           break;
         case "one2many":
-          attachOne2ManyField(this, fieldName, def.modelId);
+          defineField(makeOne2ManyField(this, fieldName, def.modelId));
           break;
         case "many2one":
-          attachMany2OneField(this, fieldName, def.modelId);
+          defineField(makeMany2OneField(this, fieldName, def.modelId));
           break;
       }
     }
@@ -215,79 +217,80 @@ export class Model {
   }
 }
 
-function attachBaseField(target: typeof Model, fieldName: string) {
+function makeBaseField(target: typeof Model, fieldName: string) {
   // todo: use instance instead of this
-  defineLazyProperty(target.prototype, fieldName, function (this: Model) {
+  function makeGetterAndSetter(obj: Model) {
     return [
       () => {
-        return fieldName in this.reactiveChanges
-          ? this.reactiveChanges[fieldName]
-          : getBaseFieldValue(this, fieldName);
+        return fieldName in obj.reactiveChanges
+          ? obj.reactiveChanges[fieldName]
+          : getBaseFieldValue(obj, fieldName);
       },
       (value: any) => {
-        console.warn(`value:`, value);
-        this.reactiveChanges[fieldName] = value;
+        obj.reactiveChanges[fieldName] = value;
       },
     ] as const;
-  });
+  }
+  return makeGetterAndSetter;
 }
-function attachOne2ManyField(target: typeof Model, fieldName: string, relatedModelId: ModelId) {
+function makeOne2ManyField(target: typeof Model, fieldName: string, relatedModelId: ModelId) {
   const fieldInfos = getFieldInfos(target, fieldName, relatedModelId);
-  defineLazyProperty(target.prototype, fieldName, function (this: Model) {
+  function makeGetterAndSetter(obj: Model) {
     const { relatedFieldName, RelatedModel } = fieldInfos;
     if (!relatedFieldName) {
       const get = () => [] as Model[];
       return [() => get] as const;
     }
-    const ctx = this.draftContext;
-    const get = getRelatedList(this, fieldName, RelatedModel);
+    const ctx = obj.draftContext;
+    const get = getRelatedList(obj, fieldName, RelatedModel);
     get.add = (m2oRecord: Model) => {
       m2oRecord = ensureContext(ctx, m2oRecord);
       const o2MRecordIdFrom = m2oRecord.reactiveData[relatedFieldName] as number | undefined;
       const o2MRecordFrom = o2MRecordIdFrom ? target.get(o2MRecordIdFrom, ctx) : undefined;
-      setMany2One(relatedFieldName, m2oRecord, fieldName, o2MRecordFrom, this);
+      setMany2One(relatedFieldName, m2oRecord, fieldName, o2MRecordFrom, obj);
     };
     get.delete = (m2oRecord: Model) => {
       m2oRecord = ensureContext(ctx, m2oRecord);
-      setMany2One(relatedFieldName, m2oRecord, fieldName, this, undefined);
+      setMany2One(relatedFieldName, m2oRecord, fieldName, obj, undefined);
     };
     return [() => get] as const;
-  });
+  }
+  return makeGetterAndSetter;
 }
-function attachMany2ManyField(target: typeof Model, fieldName: string, relatedModelId: ModelId) {
+function makeMany2ManyField(target: typeof Model, fieldName: string, relatedModelId: ModelId) {
   const fieldInfos = getFieldInfos(target, fieldName, relatedModelId);
-  defineLazyProperty(target.prototype, fieldName, function (this: Model) {
+  function makeGetterAndSetter(obj: Model) {
     const { relatedFieldName, RelatedModel } = fieldInfos;
     if (!relatedFieldName) {
       const get = () => [] as Model[];
       return [() => get] as const;
     }
-    const ctx = this.draftContext;
-    const get = getRelatedList(this, fieldName, RelatedModel);
+    const ctx = obj.draftContext;
+    const get = getRelatedList(obj, fieldName, RelatedModel);
     get.add = (m2mRecord: Model) => {
       m2mRecord = ensureContext(ctx, m2mRecord);
-      recordArrayAdd(this, fieldName, m2mRecord.id!);
-      recordArrayAdd(m2mRecord, relatedFieldName, this.id!);
+      recordArrayAdd(obj, fieldName, m2mRecord.id!);
+      recordArrayAdd(m2mRecord, relatedFieldName, obj.id!);
     };
     get.delete = (m2mRecord: Model) => {
       m2mRecord = ensureContext(ctx, m2mRecord);
-      recordArrayDelete(this, fieldName, m2mRecord.id!);
-      recordArrayDelete(m2mRecord, relatedFieldName, this.id!);
+      recordArrayDelete(obj, fieldName, m2mRecord.id!);
+      recordArrayDelete(m2mRecord, relatedFieldName, obj.id!);
     };
     return [() => get] as const;
-  });
+  }
+  return makeGetterAndSetter;
 }
-function attachMany2OneField(target: typeof Model, fieldName: string, relatedModelId: ModelId) {
+function makeMany2OneField(target: typeof Model, fieldName: string, relatedModelId: ModelId) {
   const fieldInfos = getFieldInfos(target, fieldName, relatedModelId);
-
-  defineLazyProperty(target.prototype, fieldName, function (this: Model) {
-    const ctx = this.draftContext;
+  function makeGetterAndSetter(obj: Model) {
+    const ctx = obj.draftContext;
     const get = derived(() => {
       const { RelatedModel } = fieldInfos;
       const id =
-        fieldName in this.reactiveChanges
-          ? this.reactiveChanges[fieldName]
-          : this.reactiveData[fieldName];
+        fieldName in obj.reactiveChanges
+          ? obj.reactiveChanges[fieldName]
+          : obj.reactiveData[fieldName];
       if (id === undefined || id === null) {
         return null;
       }
@@ -301,12 +304,13 @@ function attachMany2OneField(target: typeof Model, fieldName: string, relatedMod
       } else {
         o2mRecordTo = o2mRecordTo && ensureContext(ctx, o2mRecordTo);
       }
-      const o2mRecordIdFrom = this.reactiveData[fieldName] as number | undefined;
+      const o2mRecordIdFrom = obj.reactiveData[fieldName] as number | undefined;
       const o2mRecordFrom = o2mRecordIdFrom ? RelatedModel.get(o2mRecordIdFrom, ctx) : undefined;
-      setMany2One(fieldName, this, relatedFieldName, o2mRecordFrom, o2mRecordTo);
+      setMany2One(fieldName, obj, relatedFieldName, o2mRecordFrom, o2mRecordTo);
     };
     return [get, set] as const;
-  });
+  }
+  return makeGetterAndSetter;
 }
 function getFieldInfos(target: typeof Model, fieldName: string, relatedModelId: ModelId) {
   return {
@@ -338,19 +342,23 @@ function getFieldInfos(target: typeof Model, fieldName: string, relatedModelId: 
  *   ];
  * });
  */
-function defineLazyProperty<T, V>(object: object, property: string, makeGetSet: MakeGetSet<T, V>) {
-  function makeAndRedefineProperty(this: T) {
-    const tuple = makeGetSet.call(this);
-    Object.defineProperty(this, property, { get: tuple[0], set: tuple[1] });
+export function defineLazyProperty<T, V>(
+  object: object,
+  property: string,
+  makeGetSet: MakeGetSet<T, V>
+) {
+  function makeAndRedefineProperty(obj: T) {
+    const tuple = makeGetSet(obj);
+    Object.defineProperty(obj, property, { get: tuple[0], set: tuple[1] });
     return tuple;
   }
   Object.defineProperty(object, property, {
     get() {
-      const get = makeAndRedefineProperty.call(this as T)[0];
+      const get = makeAndRedefineProperty(this as T)[0];
       return get();
     },
     set(value) {
-      const set = makeAndRedefineProperty.call(this as T)[1];
+      const set = makeAndRedefineProperty(this as T)[1];
       set?.call(this as T, value);
     },
     configurable: true,
@@ -420,7 +428,6 @@ function setMany2One(
   if (o2mRecordFrom === o2mRecordTo) return;
   if (o2mRecordFrom) recordArrayDelete(o2mRecordFrom, o2mFieldName, m2oRecord.data.id!);
   if (o2mRecordTo) recordArrayAdd(o2mRecordTo, o2mFieldName, m2oRecord.data.id!);
-  console.warn(`value2:`, o2mRecordTo ? o2mRecordTo.data.id! : null);
   m2oRecord.reactiveChanges[m2oFieldName] = o2mRecordTo ? o2mRecordTo.data.id! : null;
 }
 function recordArrayDelete(record: Model, fieldName: string, value: any) {
@@ -440,7 +447,6 @@ function getBaseFieldValue(record: Model, fieldName: string) {
     : record.reactiveData[fieldName];
 }
 function getBaseManyFieldValue(record: Model, fieldName: string) {
-  console.warn(`getBaseManyFieldValue record, fieldName:`, record, fieldName);
   return record.parentRecord
     ? (record.parentRecord as any)[fieldName].ids() // get the computed field
     : record.reactiveData[fieldName];

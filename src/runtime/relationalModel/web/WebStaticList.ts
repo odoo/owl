@@ -1,5 +1,6 @@
 import { derived } from "../../signals";
 import { Model } from "../model";
+import { loadRecordWithRelated } from "../store.js";
 import { InstanceId, ManyFn } from "../types";
 import { DataPoint } from "./WebDataPoint";
 import { MakeWebRecord, WebRecord } from "./WebRecord";
@@ -22,6 +23,7 @@ export class StaticList extends DataPoint {
   _records!: () => WebRecord[];
   orecordList!: ManyFn<Model>;
   _webRecords: Record<InstanceId, WebRecord> = {};
+  _draftRecord: Map<InstanceId, WebRecord> = new Map();
 
   constructor(public sconfig: StaticListConfig) {
     super();
@@ -54,34 +56,36 @@ export class StaticList extends DataPoint {
   _defineRecords() {
     // const Mod = this.sconfig.orecord.constructor as typeof Model;
     // const modelId = Mod.id;
-    const getRecord = (record: Model) => {
-      const id = record.id!;
-      if (this._webRecords[id]) return this._webRecords[id];
 
-      const config = {
-        context: this.sconfig.parentRecord.context,
-        // activeFields: Object.assign({}, params.activeFields || this.activeFields),
-        activeFields: Object.assign({}, this.activeFields),
-        resModel: this.resModel,
-        // fields: params.fields || this.fields,
-        fields: this.fields,
-        relationField: this.config.relationField,
-        resId: id,
-        resIds: id ? [id] : [],
-        // mode: params.mode || "readonly",
-        mode: "readonly",
-        isMonoRecord: true,
-      };
-
-      const wrecord = this.sconfig.makeWebRecord(this.model, config, undefined, {
-        orecord: record,
-      });
-      this._webRecords[id] = wrecord;
-      return wrecord;
-      // return { config } as any;
-    };
-    this._records = derived(() => this.orecordList().map(getRecord));
+    // return { config } as any;
+    this._records = derived(() => this.orecordList().map(this._getRecord.bind(this)));
   }
+  _getRecord(record: Model) {
+    const id = record.id!;
+    if (this._webRecords[id]) return this._webRecords[id];
+
+    const config = {
+      context: this.sconfig.parentRecord.context,
+      // activeFields: Object.assign({}, params.activeFields || this.activeFields),
+      activeFields: Object.assign({}, this.activeFields),
+      resModel: this.resModel,
+      // fields: params.fields || this.fields,
+      fields: this.fields,
+      relationField: this.config.relationField,
+      resId: id,
+      resIds: id ? [id] : [],
+      // mode: params.mode || "readonly",
+      mode: "readonly",
+      isMonoRecord: true,
+    };
+
+    const wrecord = this.sconfig.makeWebRecord(this.model, config, undefined, {
+      orecord: record,
+    });
+    this._webRecords[id] = wrecord;
+    return wrecord;
+  }
+
   get count() {
     return this._records().length;
   }
@@ -206,7 +210,7 @@ export class StaticList extends DataPoint {
       const activeFields = this._getActiveFields(params);
 
       if (record) {
-        throw new Error("implement me");
+        return await this._getDraftRecord(params, record, activeFields);
       } else if (!record) {
         record = await this._makeNewRecord({
           activeFields,
@@ -217,6 +221,60 @@ export class StaticList extends DataPoint {
       }
       return record;
     });
+  }
+  async _getDraftRecord(
+    params: MakeNewRecordParams,
+    webrecord: WebRecord,
+    activeFields: Record<string, any>
+  ) {
+    const orecord = webrecord.orecord;
+    const config = {
+      ...webrecord.config,
+      ...params,
+      activeFields,
+    };
+
+    let draftWebRecord = this._draftRecord.get(orecord.id!);
+    if (draftWebRecord) {
+      this.model._updateConfig(webrecord.config, config, { reload: false });
+      return draftWebRecord;
+    }
+
+    let data = {};
+    if (!orecord.isNew()) {
+      const evalContext = Object.assign({}, webrecord.evalContext, config.context);
+      const resIds = [webrecord.resId];
+      [data] = await this.model._loadRecords({ ...config, resIds }, evalContext);
+      loadRecordWithRelated(orecord.constructor as typeof Model, { id: orecord.id, ...data });
+    }
+    this.model._updateConfig(webrecord.config, config, { reload: false });
+    // webrecord._applyDefaultValues();
+    // for (const fieldName in webrecord.activeFields) {
+    //   if (["one2many", "many2many"].includes(webrecord.fields[fieldName].type)) {
+    //     const list = webrecord.data[fieldName];
+    //     const patch = {
+    //       activeFields: activeFields[fieldName].related.activeFields,
+    //       fields: activeFields[fieldName].related.fields,
+    //     };
+    //     // todo: what is this?
+    //     // for (const subRecord of Object.values(list._cache)) {
+    //     //   this.model._updateConfig(subRecord.config, patch, {
+    //     //     reload: false,
+    //     //   });
+    //     // }
+    //     this.model._updateConfig(list.config, patch, { reload: false });
+    //   }
+    // }
+    const Mod = orecord.constructor as typeof Model;
+    const parentDraftContext = this.sconfig.parentRecord.orecord.context;
+    const orecordDraft = Mod.get(orecord.id!, parentDraftContext);
+
+    const wrecord = this.sconfig.makeWebRecord(this.model, config, undefined, {
+      orecord: orecordDraft,
+      mode: "edit",
+    });
+    this._draftRecord.set(orecord.id!, wrecord);
+    return wrecord;
   }
   validateExtendedRecord(record: WebRecord) {
     coucou("validateExtendedRecord");

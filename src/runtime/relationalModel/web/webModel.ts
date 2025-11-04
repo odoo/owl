@@ -1,8 +1,19 @@
-import { fieldAny, fieldMany2Many, fieldMany2One, fieldOne2Many } from "./field";
-import { Model } from "./model";
-import { Models } from "./modelRegistry";
-import { ModelId } from "./types";
-import { MailModelConfig } from "./webModelTypes";
+import {
+  fieldAny,
+  fieldChar,
+  fieldDate,
+  fieldDatetime,
+  fieldMany2Many,
+  fieldMany2One,
+  fieldNumber,
+  fieldOne2Many,
+  fieldProperties,
+  fieldSelection,
+} from "../field";
+import { Model } from "../model";
+import { Models } from "../modelRegistry";
+import { ModelId } from "../types";
+import { WebModelConfig } from "./webModelTypes";
 
 export function getOrMakeModel(modelId: ModelId): typeof Model {
   let Mod = Models[modelId];
@@ -22,7 +33,7 @@ function makeNewModel(modelId: ModelId): typeof Model {
 }
 
 export function makeModelFromWeb(
-  config: MailModelConfig,
+  config: WebModelConfig,
   processedModel = new Set<string>()
 ): typeof Model {
   if (processedModel.has(config.resModel!)) {
@@ -43,11 +54,19 @@ export function makeModelFromWeb(
       case "many2many":
         return fieldMany2Many(fieldInfo.relation!);
       case "integer":
+        return fieldNumber();
       case "char":
-      case "boolean":
+        return fieldChar();
+      // case "boolean":
+      //   return fieldBoolean();
       case "selection":
+        return fieldSelection(fieldInfo.selection || []);
       case "date":
+        return fieldDate();
+      case "datetime":
+        return fieldDatetime();
       case "properties":
+        return fieldProperties();
       case "binary":
       case "html":
       case "json":
@@ -65,12 +84,11 @@ export function makeModelFromWeb(
   createRelatedModelsFromWeb(config, processedModel);
   return Mod;
 }
-
 // make related models
-function createRelatedModelsFromWeb(config: MailModelConfig, processedModel: Set<string>) {
+function createRelatedModelsFromWeb(config: WebModelConfig, processedModel: Set<string>) {
   const fields = config.fields;
 
-  const relatedConfigs: Record<ModelId, MailModelConfig> = {};
+  const relatedConfigs: Record<ModelId, WebModelConfig> = {};
   for (const fieldName in fields) {
     const fieldInfo = fields[fieldName];
     if (!["many2one", "one2many", "many2many"].includes(fieldInfo.type!)) {
@@ -81,7 +99,7 @@ function createRelatedModelsFromWeb(config: MailModelConfig, processedModel: Set
     relatedConfigs[relatedModelName] ||= {
       resModel: relatedModelName,
       fields: {},
-    };
+    } as any;
     const config = relatedConfigs[relatedModelName];
     if (fieldInfo.type === "one2many") {
       // add the inverse many2one field

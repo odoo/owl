@@ -2379,7 +2379,7 @@ describe("Reactivity: useState", () => {
   });
 });
 describe("reactive list operation", () => {
-  test.only("Map over an array and only track the necessary items", async () => {
+  test("Map over an array and only track the necessary items", async () => {
     const r = reactive(["a", "b", "c", "d", "e", "f"]);
     const mapSpy = jest.fn((item) => item.toUpperCase());
     const newMap = reactiveMap(r, mapSpy);

@@ -59,7 +59,8 @@ export { effect, withoutReactivity, derived, processEffects } from "./signals";
 export { loadRecordWithRelated, flushDataToLoad } from "./relationalModel/store";
 export { Model } from "./relationalModel/model";
 export { getRecordChanges, commitRecordChanges } from "./relationalModel/modelData";
-export { getOrMakeModel, makeModelFromWeb } from "./relationalModel/webModel";
+export { getOrMakeModel, makeModelFromWeb } from "./relationalModel/web/webModel";
+export { WebRecord } from "./relationalModel/web/WebRecord";
 
 export const __info__ = {
   version: App.version,

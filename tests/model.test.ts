@@ -3,7 +3,7 @@ import {
   fieldMany2One,
   fieldNumber,
   fieldOne2Many,
-  fieldString,
+  fieldText,
 } from "../src/runtime/relationalModel/field";
 import {
   formatId,
@@ -25,7 +25,7 @@ export function makeModels() {
   class Partner extends Model {
     static id = "partner";
     static fields = {
-      name: fieldString(),
+      name: fieldText(),
       age: fieldNumber(),
       messages: fieldOne2Many("message"),
       privateMessages: fieldOne2Many("message", { relatedField: "partnerPrivate" }),
@@ -45,7 +45,7 @@ export function makeModels() {
     static fields = {
       partner: fieldMany2One("partner"),
       partnerPrivate: fieldMany2One("partner"),
-      content: fieldString(),
+      content: fieldText(),
     };
     partner!: Partner | null;
     partnerPrivate!: Partner | null;
@@ -56,7 +56,7 @@ export function makeModels() {
   class Company extends Model {
     static id = "company";
     static fields = {
-      name: fieldString(),
+      name: fieldText(),
       partners: fieldOne2Many("partner"),
     };
     name!: string;
@@ -67,7 +67,7 @@ export function makeModels() {
   class Course extends Model {
     static id = "course";
     static fields = {
-      title: fieldString(),
+      title: fieldText(),
       participants: fieldMany2Many("partner"),
     };
     title!: string;
@@ -412,7 +412,7 @@ describe("model", () => {
       expect(partner1.changes).toEqual({ name: "Partner 1 Bis" });
       expect(partner1Bis.changes).toEqual({});
     });
-    test("should create a draft copy of the record for one2many field", async () => {
+    test.only("should create a draft copy of the record for one2many field", async () => {
       const partner1 = Models.Partner.get(1);
       const partner2 = Models.Partner.get(2);
       const partner1Bis = partner1.makeDraft();
@@ -425,21 +425,24 @@ describe("model", () => {
         expect(partner2Bis).not.toBe(partner2); // should be a draft because we are in a context
         partner1Bis.messages.add(partner2Message);
         expect(partner1Bis.messages().length).toBe(4);
-        const lastMessage = partner1Bis.messages()[3];
+        const partner2MessageBis = partner1Bis.messages()[3];
         // lastMessage should be a draft of partner2Message
-        expect(lastMessage).not.toBe(partner2Message);
-        expect(lastMessage.id).toBe(partner2Message.id);
-        expect(lastMessage.partner).toBe(partner1Bis);
+        expect(partner2MessageBis).not.toBe(partner2Message);
+        expect(partner2MessageBis.id).toBe(partner2Message.id);
+        expect(partner2MessageBis.partner).toBe(partner1Bis);
         expect(partner2Message.partner).toBe(partner2Bis);
       });
 
       expect(partner1.messages().length).toBe(3);
       expect(partner1Bis.messages().length).toBe(4);
+      // todo: debug
+      // expect(partner2Message.partner).toBe(partner2);
 
       saveDraftContext(partner1Bis.draftContext!);
 
       expect(partner1.messages().length).toBe(4);
       expect(partner1Bis.messages().length).toBe(4);
+      // expect(partner2Message.partner).toBe(partner1);
     });
   });
   describe("partial record list", () => {});

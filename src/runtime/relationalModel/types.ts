@@ -17,32 +17,33 @@ export type RecordItem = {
 };
 export type RelationChanges = Record<FieldName, null | InstanceId | [InstanceId[], InstanceId[]]>;
 
-export interface FieldDefinitionBase {
-  fieldName: string;
-}
-export interface FieldDefinitionAny extends FieldDefinitionBase {
-  type: "any";
-}
-export interface FieldDefinitionString extends FieldDefinitionBase {
-  type: "string";
-}
-export interface FieldDefinitionNumber extends FieldDefinitionBase {
-  type: "number";
-}
-export interface FieldDefinitionX2Many extends FieldDefinitionBase {
-  modelId: ModelId;
-}
-export interface FieldDefinitionOne2Many extends FieldDefinitionX2Many {
+export type FieldDefinitionBase = { fieldName: string };
+export type FieldDefinitionAny = FieldDefinitionBase & { type: "any" };
+export type FieldDefinitionString = FieldDefinitionBase & { type: "string" };
+export type FieldDefinitionChar = FieldDefinitionBase & { type: "char" };
+export type FieldDefinitionText = FieldDefinitionBase & { type: "text" };
+export type FieldDefinitionHtml = FieldDefinitionBase & { type: "html" };
+export type FieldDefinitionDate = FieldDefinitionBase & { type: "date" };
+export type FieldDefinitionDatetime = FieldDefinitionBase & { type: "datetime" };
+export type FieldDefinitionSelection = FieldDefinitionBase & {
+  type: "selection";
+  selection: any;
+};
+export type FieldDefinitionReference = FieldDefinitionBase & { type: "reference" };
+export type FieldDefinitionMany2OneReference = FieldDefinitionBase & { type: "many2one_reference" };
+// Removed duplicate FieldDefinitionMany2One definition (already defined as FieldDefinitionX2Many & { type: "many2one" })
+export type FieldDefinitionProperties = FieldDefinitionBase & { type: "properties" };
+export type FieldDefinitionNumber = FieldDefinitionBase & { type: "number" };
+export type FieldDefinitionX2Many = FieldDefinitionBase & { modelId: ModelId };
+export type FieldDefinitionOne2Many = FieldDefinitionX2Many & {
   type: "one2many";
   relatedField?: string;
-}
-export interface FieldDefinitionMany2One extends FieldDefinitionX2Many {
-  type: "many2one";
-}
-export interface FieldDefinitionMany2Many extends FieldDefinitionX2Many {
+};
+export type FieldDefinitionMany2One = FieldDefinitionX2Many & { type: "many2one" };
+export type FieldDefinitionMany2Many = FieldDefinitionX2Many & {
   type: "many2many";
   relationTableName?: string;
-}
+};
 export type X2ManyFieldDefinition =
   | FieldDefinitionOne2Many
   | FieldDefinitionMany2One
@@ -50,6 +51,15 @@ export type X2ManyFieldDefinition =
 export type FieldDefinition =
   | FieldDefinitionAny
   | FieldDefinitionString
+  | FieldDefinitionChar
+  | FieldDefinitionText
+  | FieldDefinitionHtml
+  | FieldDefinitionDate
+  | FieldDefinitionDatetime
+  | FieldDefinitionSelection
+  | FieldDefinitionReference
+  | FieldDefinitionMany2OneReference
+  | FieldDefinitionProperties
   | FieldDefinitionNumber
   | X2ManyFieldDefinition;
 

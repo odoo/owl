@@ -64,8 +64,10 @@ export function loadRecordWithRelated(Mod: typeof Model, instanceData: Record<st
       item.dataToLoad[fieldName] = instanceData[fieldName];
       continue;
     }
+    const win = window as any;
+    instanceData[fieldName] = win.parseServerValue(field, instanceData[fieldName]);
     const value = instanceData[fieldName];
-    if (Array.isArray(value)) {
+    if (Array.isArray(value) && (field.type === "one2many" || field.type === "many2many")) {
       const f = field as X2ManyFieldDefinition;
       const ids = value.map((itemOrId) => {
         if (typeof itemOrId !== "object") return itemOrId;
@@ -74,7 +76,7 @@ export function loadRecordWithRelated(Mod: typeof Model, instanceData: Record<st
         return itemOrId.id;
       });
       instance.reactiveData[fieldName] = ids;
-    } else if (typeof value === "object" && value !== null) {
+    } else if (typeof value === "object" && value !== null && field.type === "many2one") {
       const f = field as X2ManyFieldDefinition;
       const RelatedModel = Models[f.modelId];
       loadRecordWithRelated(RelatedModel, value);

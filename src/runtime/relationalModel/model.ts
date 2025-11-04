@@ -524,7 +524,7 @@ function getNextId() {
   return formatId(lastId);
 }
 export function formatId(number: number) {
-  return `newRecord-${number}`;
+  return `virtual_${number}`;
 }
 export function resetIdCounter() {
   lastId = 0;

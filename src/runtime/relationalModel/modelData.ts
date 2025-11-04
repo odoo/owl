@@ -11,6 +11,23 @@ export const saveHooks = {
   onSave: (data: DataToSave) => {},
 };
 
+export const x2ManyCommands = {
+  // (0, virtualID | false, { values })
+  CREATE: 0,
+  // (1, id, { values })
+  UPDATE: 1,
+  // (2, id[, _])
+  DELETE: 2,
+  // (3, id[, _]) removes relation, but not linked record itself
+  UNLINK: 3,
+  // (4, id[, _])
+  LINK: 4,
+  // (5[, _[, _]])
+  CLEAR: 5,
+  // (6, _, ids) replaces all linked records with provided ids
+  SET: 6,
+};
+
 export function getRecordChanges(
   record: Model,
   dataToSave: DataToSave = {},
@@ -27,23 +44,42 @@ export function getRecordChanges(
     const fieldType = fieldDef.type;
     if (isX2ManyField(fieldType)) {
       const relatedRecords: Model[] = (record as any)[key]();
-      relatedRecords.forEach((r) => getRecordChanges(r, dataToSave, processedRecords));
-      // todo: should encode the changes for x2many fields
+      const relatedChanges: any[] = [];
+      for (const record of relatedRecords) {
+        const changes = getRecordChanges(record, dataToSave, processedRecords);
+        delete changes.id;
+        if (Object.keys(changes).length < 1) continue;
+        const isNew = record.isNew();
+        relatedChanges.push(
+          isNew
+            ? [x2ManyCommands.CREATE, record.id, changes]
+            : [x2ManyCommands.UPDATE, record.id, changes]
+        );
+      }
+      if (relatedChanges.length < 1) continue;
+      itemChanges[key] = relatedChanges;
       continue;
     }
     if (isMany2OneField(fieldType)) {
-      const relatedRecord: Model = (record as any)[key];
-      getRecordChanges(relatedRecord, dataToSave, processedRecords);
+      // const relatedRecord: Model = (record as any)[key];
+      // const relatedChanges = getRecordChanges(relatedRecord, dataToSave, processedRecords);
+      // if (Object.keys(relatedChanges).length > 0) {
+      //   // there are changes to save in the related record
+      //   delete relatedChanges.id;
+      //   const isNew = relatedRecord.isNew();
+      //   itemChanges[key] = isNew
+      //     ? [x2ManyCommands.CREATE, null, relatedChanges]
+      //     : [x2ManyCommands.UPDATE, relatedRecord.id, relatedChanges];
+      // }
+
+      continue;
     }
     const { changes } = record;
     if (!(key in changes)) continue;
     itemChanges[key] = deepClone(changes[key]);
   }
-  if (Object.keys(itemChanges).length > 0) {
-    dataToSave[Mod.id] = dataToSave[Mod.id] || {};
-    dataToSave[Mod.id][record.id!] = itemChanges;
-  }
-  return dataToSave;
+  if (Object.keys(itemChanges).length > 0) itemChanges.id = record.id;
+  return itemChanges;
 }
 
 export function saveModels() {

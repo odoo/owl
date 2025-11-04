@@ -247,7 +247,6 @@ export class WebRecord extends DataPoint {
     if (this.model._closeUrgentSaveNotification) {
       this.model._closeUrgentSaveNotification();
     }
-    debugger;
     if (nextId) {
       debugger;
     }
@@ -270,6 +269,7 @@ export class WebRecord extends DataPoint {
     // }
     // const changes = this._getChanges();
     const changes = this._getChanges();
+    console.warn(`changes:`, changes);
     // delete changes.id; // id never changes, and should not be written
     // if (!creation && !Object.keys(changes).length) {
     //     if (nextId) {
@@ -409,8 +409,9 @@ export class WebRecord extends DataPoint {
     return true;
   }
   _getChanges() {
-    let changes = getRecordChanges(this.orecord);
-    return changes[this.resModel]?.[this.resId as number];
+    // let changes = getRecordChanges(this.orecord);
+    // return changes[this.resModel]?.[this.resId as number];
+    return getRecordChanges(this.orecord);
     // if (!this.resId) {
     //   // Apply the initial changes when the record is new
     //   changes = { ...this._values, ...changes };

@@ -21,6 +21,7 @@ export type MakeNewRecordParams = {
 export class StaticList extends DataPoint {
   _records!: () => WebRecord[];
   orecordList!: ManyFn<Model>;
+  _webRecords: Record<InstanceId, WebRecord> = {};
 
   constructor(public sconfig: StaticListConfig) {
     super();
@@ -53,10 +54,9 @@ export class StaticList extends DataPoint {
   _defineRecords() {
     // const Mod = this.sconfig.orecord.constructor as typeof Model;
     // const modelId = Mod.id;
-    const _records: Record<InstanceId, WebRecord> = {};
     const getRecord = (record: Model) => {
       const id = record.id!;
-      if (_records[id]) return _records[id];
+      if (this._webRecords[id]) return this._webRecords[id];
 
       const config = {
         context: this.sconfig.parentRecord.context,
@@ -76,7 +76,7 @@ export class StaticList extends DataPoint {
       const wrecord = this.sconfig.makeWebRecord(this.model, config, undefined, {
         orecord: record,
       });
-      _records[id] = wrecord;
+      this._webRecords[id] = wrecord;
       return wrecord;
       // return { config } as any;
     };
@@ -168,12 +168,6 @@ export class StaticList extends DataPoint {
     coucou("unlinkFrom");
   }
 
-  // ??? ---------------------------------------------------------------------
-
-  validateExtendedRecord() {
-    coucou("validateExtendedRecord");
-  }
-
   // Mutations ---------------------------------------------------------------
 
   addNewRecord() {
@@ -223,6 +217,10 @@ export class StaticList extends DataPoint {
       }
       return record;
     });
+  }
+  validateExtendedRecord(record: WebRecord) {
+    coucou("validateExtendedRecord");
+    this.orecordList.add(record.orecord);
   }
 
   private _getActiveFields(params: MakeNewRecordParams) {
@@ -310,9 +308,12 @@ export class StaticList extends DataPoint {
     //   virtualId: params.virtualId,
     //   manuallyAdded: params.manuallyAdded,
     // };
-    return this.sconfig.makeWebRecord(this.model, config, data, {
+    const webRecord = this.sconfig.makeWebRecord(this.model, config, data, {
       parentRecord: this.sconfig.parentRecord,
     });
+    this._webRecords[webRecord.orecord.id!] = webRecord;
+
+    return webRecord;
     // this._cache[id] = record;
     // if (!params.dontApplyCommands) {
     //   const commands = this._unknownRecordCommands[id];

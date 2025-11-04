@@ -143,7 +143,7 @@ export interface OnChangeParams {
 }
 
 export interface RelationalModelHooks {
-  onWillLoadRoot: (config: RelationalModelConfig) => Promise<void>;
+  onWillLoadRoot: (config: WebModelConfig) => Promise<void>;
   onRootLoaded: (root: any) => Promise<void>; // DataPoint type
   onWillDisplayOnchangeWarning: (warning: any) => Promise<void>;
 }

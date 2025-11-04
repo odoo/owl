@@ -1,4 +1,3 @@
-import { RawStore } from "../../../tests/model.test";
 import { reactive } from "../reactivity";
 import { Model } from "./model";
 import { Models } from "./modelRegistry";
@@ -23,7 +22,8 @@ class Store {
 
 export const globalStore = new Store();
 
-export function setStore(store: RawStore) {
+// store shoulde be RawStore
+export function setStore(store: any) {
   for (const modelId of Object.keys(store)) {
     const Model = Models[modelId];
     const recordIds = Object.keys(store[modelId]).map((id) => Number(id));

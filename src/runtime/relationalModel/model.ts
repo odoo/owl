@@ -48,11 +48,6 @@ export class Model {
     for (const [fieldName, def] of Object.entries(this.fields)) {
       def.fieldName = fieldName;
       switch (def.type) {
-        case "string":
-        case "number":
-        case "any":
-          attachBaseField(this, fieldName);
-          break;
         case "many2many":
           attachMany2ManyField(this, fieldName, def.modelId);
           break;
@@ -61,6 +56,9 @@ export class Model {
           break;
         case "many2one":
           attachMany2OneField(this, fieldName, def.modelId);
+          break;
+        default:
+          attachBaseField(this, fieldName);
           break;
       }
     }

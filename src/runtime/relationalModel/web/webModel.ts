@@ -15,6 +15,8 @@ import { Models } from "../modelRegistry";
 import { ModelId } from "../types";
 import { WebModelConfig } from "./webModelTypes";
 
+// function foo(test) {}
+
 export function getOrMakeModel(modelId: ModelId): typeof Model {
   let Mod = Models[modelId];
   if (Mod) return Mod;

@@ -10,6 +10,13 @@ export type StaticListConfig = {
   fieldName: string;
   makeWebRecord: MakeWebRecord;
 };
+export type MakeNewRecordParams = {
+  activeFields: Object;
+  fields: Object;
+  context?: Object;
+  withoutParent?: boolean;
+  mode?: string;
+};
 
 export class StaticList extends DataPoint {
   _records!: () => WebRecord[];
@@ -114,7 +121,11 @@ export class StaticList extends DataPoint {
 
   // Context -----------------------------------------------------------------
   get evalContext() {
-    return coucou("evalContext");
+    coucou("evalContext");
+    const win = window as any;
+    const evalContext = win.getBasicEvalContext(this.config);
+    evalContext.parent = this.sconfig.parentRecord.evalContext;
+    return evalContext;
   }
 
   // UI state - editable list ------------------------------------------------
@@ -174,8 +185,142 @@ export class StaticList extends DataPoint {
   applyCommands() {
     coucou("applyCommands");
   }
-  extendRecord() {
+  /**
+   * This method is meant to be used in a very specific usecase: when an x2many record is viewed
+   * or edited through a form view dialog (e.g. x2many kanban or non editable list). In this case,
+   * the form typically contains different fields than the kanban or list, so we need to "extend"
+   * the fields and activeFields. If the record opened in a form view dialog already exists, we
+   * modify it's config to add the new fields. If it is a new record, we create it with the
+   * extended config.
+   *
+   * @param {Object} params
+   * @param {Object} params.activeFields
+   * @param {Object} params.fields
+   * @param {Object} [params.context]
+   * @param {boolean} [params.withoutParent]
+   * @param {string} [params.mode]
+   * @param {RelationalRecord} [record]
+   * @returns {RelationalRecord}
+   */
+
+  async extendRecord(params: MakeNewRecordParams, record: WebRecord) {
     coucou("extendRecord");
+    return this.model.mutex.exec(async () => {
+      // extend fields and activeFields of the list with those given in params
+      completeActiveFields(this.config.activeFields, params.activeFields);
+      Object.assign(this.fields, params.fields);
+      const activeFields = this._getActiveFields(params);
+
+      if (record) {
+        throw new Error("implement me");
+      } else if (!record) {
+        record = await this._makeNewRecord({
+          activeFields,
+          context: params.context,
+          withoutParent: params.withoutParent,
+          // manuallyAdded: true,
+        });
+      }
+      return record;
+    });
+  }
+
+  private _getActiveFields(params: MakeNewRecordParams) {
+    const activeFields: Record<string, any> = { ...params.activeFields };
+    for (const fieldName in this.activeFields) {
+      if (fieldName in activeFields) {
+        patchActiveFields(activeFields[fieldName], this.activeFields[fieldName]);
+      } else {
+        activeFields[fieldName] = this.activeFields[fieldName];
+      }
+    }
+    return activeFields;
+  }
+
+  async _makeNewRecord(params: any) {
+    const changes = {};
+    // if (!params.withoutParent && this.config.relationField) {
+    //   changes[this.config.relationField] = this._parent._getChanges();
+    //   if (!this._parent.isNew) {
+    //     changes[this.config.relationField].id = this._parent.resId;
+    //   }
+    // }
+    const values = await this.model._loadNewRecord(
+      {
+        resModel: this.resModel,
+        activeFields: params.activeFields || this.activeFields,
+        fields: this.fields,
+        context: Object.assign({}, this.context, params.context),
+      },
+      { changes, evalContext: this.evalContext }
+    );
+
+    return this._createRecordDatapoint(values, {
+      mode: params.mode || "edit",
+      // virtualId: getId("virtual"),
+      activeFields: params.activeFields,
+      manuallyAdded: params.manuallyAdded,
+    });
+  }
+  _createRecordDatapoint(data: any, params: any = {}) {
+    // const resId = data.id || false;
+    // if (!resId && !params.virtualId) {
+    //   throw new Error("You must provide a virtualId if the record has no id");
+    // }
+    // const id = resId || params.virtualId;
+    const config = {
+      context: this.context,
+      activeFields: Object.assign({}, params.activeFields || this.activeFields),
+      resModel: this.resModel,
+      fields: params.fields || this.fields,
+      relationField: this.config.relationField,
+      // resId,
+      // resIds: resId ? [resId] : [],
+      mode: params.mode || "readonly",
+      isMonoRecord: true,
+    };
+    // const { CREATE, UPDATE } = x2ManyCommands;
+    // const options = {
+    //   parentRecord: this._parent,
+    //   onUpdate: async ({ withoutParentUpdate }) => {
+    //     const id = record.isNew ? record._virtualId : record.resId;
+    //     if (!this.currentIds.includes(id)) {
+    //       // the record hasn't been added to the list yet (we're currently creating it
+    //       // from a dialog)
+    //       return;
+    //     }
+    //     const hasCommand = this._commands.some(
+    //       (c) => (c[0] === CREATE || c[0] === UPDATE) && c[1] === id
+    //     );
+    //     if (!hasCommand) {
+    //       this._commands.push([UPDATE, id]);
+    //     }
+    //     if (record._noUpdateParent) {
+    //       // the record is edited from a dialog, so we don't want to notify the parent
+    //       // record to be notified at each change inside the dialog (it will be notified
+    //       // at the end when the dialog is saved)
+    //       return;
+    //     }
+    //     if (!withoutParentUpdate) {
+    //       await this._onUpdate({
+    //         withoutOnchange: !record._checkValidity({ silent: true }),
+    //       });
+    //     }
+    //   },
+    //   virtualId: params.virtualId,
+    //   manuallyAdded: params.manuallyAdded,
+    // };
+    return this.sconfig.makeWebRecord(this.model, config, data, {
+      parentRecord: this.sconfig.parentRecord,
+    });
+    // this._cache[id] = record;
+    // if (!params.dontApplyCommands) {
+    //   const commands = this._unknownRecordCommands[id];
+    //   if (commands) {
+    //     delete this._unknownRecordCommands[id];
+    //     this._applyCommands(commands);
+    //   }
+    // }
   }
   forget() {
     coucou("forget");
@@ -195,6 +340,100 @@ export class StaticList extends DataPoint {
 }
 
 function coucou(s: string) {
-  console.warn(s);
+  // console.warn(s);
   return s;
+}
+
+export function completeActiveFields(
+  activeFields: Record<string, any>,
+  extraActiveFields: Record<string, any>
+) {
+  for (const fieldName in extraActiveFields) {
+    const extraActiveField = {
+      ...extraActiveFields[fieldName],
+      invisible: "True",
+    };
+    if (fieldName in activeFields) {
+      completeActiveField(activeFields[fieldName], extraActiveField);
+    } else {
+      activeFields[fieldName] = extraActiveField;
+    }
+  }
+}
+function completeActiveField(activeField: any, extra: any) {
+  if (extra.related) {
+    for (const fieldName in extra.related.activeFields) {
+      if (fieldName in activeField.related.activeFields) {
+        completeActiveField(
+          activeField.related.activeFields[fieldName],
+          extra.related.activeFields[fieldName]
+        );
+      } else {
+        activeField.related.activeFields[fieldName] = {
+          ...extra.related.activeFields[fieldName],
+        };
+      }
+    }
+    Object.assign(activeField.related.fields, extra.related.fields);
+  }
+}
+
+function combineModifiers(
+  mod1: string | undefined,
+  mod2: string | undefined,
+  operator: "AND" | "OR"
+): string | undefined {
+  if (operator === "AND") {
+    if (!mod1 || mod1 === "False" || !mod2 || mod2 === "False") {
+      return "False";
+    }
+    if (mod1 === "True") {
+      return mod2;
+    }
+    if (mod2 === "True") {
+      return mod1;
+    }
+    return "(" + mod1 + ") and (" + mod2 + ")";
+  } else if (operator === "OR") {
+    if (mod1 === "True" || mod2 === "True") {
+      return "True";
+    }
+    if (!mod1 || mod1 === "False") {
+      return mod2;
+    }
+    if (!mod2 || mod2 === "False") {
+      return mod1;
+    }
+    return "(" + mod1 + ") or (" + mod2 + ")";
+  }
+  throw new Error(
+    `Operator provided to "combineModifiers" must be "AND" or "OR", received ${operator}`
+  );
+}
+
+function patchActiveFields(activeField: any, patch: any) {
+  activeField.invisible = combineModifiers(activeField.invisible, patch.invisible, "AND");
+  activeField.readonly = combineModifiers(activeField.readonly, patch.readonly, "AND");
+  activeField.required = combineModifiers(activeField.required, patch.required, "OR");
+  activeField.onChange = activeField.onChange || patch.onChange;
+  activeField.forceSave = activeField.forceSave || patch.forceSave;
+  activeField.isHandle = activeField.isHandle || patch.isHandle;
+  // x2manys
+  if (patch.related) {
+    const related = activeField.related;
+    for (const fieldName in patch.related.activeFields) {
+      if (fieldName in related.activeFields) {
+        patchActiveFields(related.activeFields[fieldName], patch.related.activeFields[fieldName]);
+      } else {
+        related.activeFields[fieldName] = { ...patch.related.activeFields[fieldName] };
+      }
+    }
+    Object.assign(related.fields, patch.related.fields);
+  }
+  if ("limit" in patch) {
+    activeField.limit = patch.limit;
+  }
+  if (patch.defaultOrderBy) {
+    activeField.defaultOrderBy = patch.defaultOrderBy;
+  }
 }

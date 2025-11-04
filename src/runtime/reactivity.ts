@@ -119,14 +119,13 @@ function onReadTargetKey(target: Target, key: PropertyKey): void {
  *   or deleted)
  */
 function onWriteTargetKey(target: Target, key: PropertyKey, receiver?: any): void {
+  if (key === "reactiveChanges") {
+    debugger;
+  }
   const keyToAtomItem = targetToKeysToAtomItem.get(target)!;
-  if (!keyToAtomItem) {
-    return;
-  }
+  if (!keyToAtomItem) return;
   const atom = keyToAtomItem.get(key);
-  if (!atom) {
-    return;
-  }
+  if (!atom) return;
   onWriteAtom(atom);
   if (receiver) trackChanges(key, receiver);
 }

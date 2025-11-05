@@ -14,7 +14,7 @@ import {
 import { DataToSave, saveHooks, saveModels } from "../src/runtime/relationalModel/modelData";
 import { clearModelRegistry } from "../src/runtime/relationalModel/modelRegistry";
 import { destroyStore, setStore } from "../src/runtime/relationalModel/store";
-import { InstanceId, ModelId, ManyFn } from "../src/runtime/relationalModel/types";
+import { InstanceId, ModelId, ManyFn, DraftContext } from "../src/runtime/relationalModel/types";
 import { expectSpy, spyEffect, waitScheduler } from "./helpers";
 
 export type RawStore = Record<ModelId, Record<InstanceId, any>>;
@@ -417,7 +417,6 @@ describe("model", () => {
       const partner2 = Models.Partner.get(2);
       const partner1Bis = partner1.makeDraft();
       expect(partner1.childRecords).toContain(partner1Bis);
-
       const partner2Message = partner2.messages()[0];
 
       partner1Bis.withContext(() => {
@@ -438,12 +437,49 @@ describe("model", () => {
       // todo: debug
       // expect(partner2Message.partner).toBe(partner2);
 
-      saveDraftContext(partner1Bis.draftContext!);
+      partner1Bis.saveDraft();
+      saveDraftContext;
+      // saveDraftContext(partner1Bis.draftContext!);
 
       expect(partner1.messages().length).toBe(4);
       expect(partner1Bis.messages().length).toBe(4);
       // expect(partner2Message.partner).toBe(partner1);
     });
+    test("should create a draft copy of the record for many2one field", async () => {
+      const partner1 = Models.Partner.get(1);
+      const partner1Bis = partner1.makeDraft();
+      const partner1Bis2 = partner1Bis.makeDraft();
+      partner1Bis2.messages.add(Models.Message.get(4));
+      partner1Bis2.saveDraft();
+
+      expect(getStoreChanges(partner1Bis.draftContext!.store)).toEqual({
+        partner: {
+          1: {
+            // prettier-ignore
+            messages: [[/*delete*/], [4 /*add*/]],
+          },
+          2: {
+            // prettier-ignore
+            messages: [[4/*delete*/], [/*add*/]],
+          },
+        },
+        message: {
+          4: { partner: 1 },
+        },
+      });
+    });
   });
   describe("partial record list", () => {});
 });
+
+export function getStoreChanges(store: DraftContext["store"]) {
+  const changes: RawStore = {};
+  for (const modelId of Object.keys(store)) {
+    changes[modelId] = {};
+    const modelStore = store[modelId];
+    for (const instanceId of Object.keys(modelStore)) {
+      changes[modelId][instanceId] = modelStore[instanceId].changes;
+    }
+  }
+  return changes;
+}

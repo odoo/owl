@@ -114,25 +114,31 @@ export class Model {
       draftContext: CurrentDraftContext,
     }
   ) {
-    if (typeof idOrParentRecord === "object") {
-      this.parentRecord = idOrParentRecord;
+    const parentRecord: Model | null =
+      typeof idOrParentRecord === "object" ? idOrParentRecord : null;
+    const parentId: InstanceId | undefined = parentRecord?.id;
+    if (parentRecord) {
+      this.parentRecord = parentRecord;
       this.draftContext = params.draftContext || { store: {} };
-      idOrParentRecord = idOrParentRecord.id;
-      this._setDraftItem(idOrParentRecord!);
+      this._setDraftItem(parentId!);
     }
-    const id = idOrParentRecord || getNextId();
+    const id = parentId || idOrParentRecord || getNextId();
     const C = this.constructor as typeof Model;
-    const recordItem = C.getRecordItem(params.createData?.id || id!);
-    this.data = recordItem.data;
-    this.data.id ??= id;
-    this.reactiveData = recordItem.reactiveData;
-    recordItem.instance = this;
+    if (!parentRecord) {
+      const recordItem = C.getRecordItem(params.createData?.id || id!);
+      this.data = recordItem.data;
+      this.data.id ??= id;
+      this.reactiveData = recordItem.reactiveData;
+      recordItem.instance = this;
+    }
 
     // todo: this should not be store in data, change it when using proper
     // signals.
     // this.data.id = id === 0 || id ? id : getNextId();
     defineLazyProperty(this, "id", () => {
-      const get = derived(() => this.reactiveData.id as InstanceId | undefined);
+      const get = derived(() =>
+        this.parentRecord ? this.parentRecord.id : (this.reactiveData.id as InstanceId | undefined)
+      );
       return [get] as const;
     });
   }
@@ -177,17 +183,16 @@ export class Model {
       throw new Error("Cannot save draft without a parent record");
     }
     const draftContext = this.draftContext!;
-    const parentContext = this.parentRecord.draftContext || globalStore.toContext();
+    const parentContext = this.parentRecord.draftContext;
     for (const instances of Object.values(draftContext.store)) {
       for (const instance of Object.values(instances)) {
-        instance._saveDraft(parentContext);
+        instance._saveDraft(parentContext!);
       }
     }
   }
-  _saveDraft(draftContext: DraftContext) {
-    // const parent = this.parentRecord!;
+  _saveDraft(parentDraftContext: DraftContext) {
     const Mod = this.constructor as typeof Model;
-    const parent = Mod.get(this.id!, draftContext);
+    const parent = Mod.get(this.id!, parentDraftContext);
     const parentReactiveChanges = parent.reactiveChanges;
     const thisChanges = this.reactiveChanges;
     for (const [key, value] of Object.entries(thisChanges)) {
@@ -253,8 +258,7 @@ function attachOne2ManyField(target: typeof Model, fieldName: string, relatedMod
     const get = getRelatedList(obj, fieldName, RelatedModel);
     get.add = (m2oRecord: Model) => {
       m2oRecord = ensureContext(ctx, m2oRecord);
-      const o2MRecordIdFrom = m2oRecord.reactiveData[relatedFieldName] as number | undefined;
-      const o2MRecordFrom = o2MRecordIdFrom ? target.get(o2MRecordIdFrom, ctx) : undefined;
+      const o2MRecordFrom = (m2oRecord as any)[relatedFieldName] as Model;
       setMany2One(relatedFieldName, m2oRecord, fieldName, o2MRecordFrom, obj);
     };
     get.delete = (m2oRecord: Model) => {
@@ -291,17 +295,18 @@ function attachMany2OneField(target: typeof Model, fieldName: string, relatedMod
   const fieldInfos = getFieldInfos(target, fieldName, relatedModelId);
   defineLazyProperty(target.prototype, fieldName, (obj: Model) => {
     const ctx = obj.draftContext;
-    const get = derived(() => {
+    const _get = derived(() => {
       const { RelatedModel } = fieldInfos;
       const id =
         fieldName in obj.reactiveChanges
           ? obj.reactiveChanges[fieldName]
-          : obj.reactiveData[fieldName];
+          : getM2OValue(obj, fieldName);
       if (id === undefined || id === null) {
         return null;
       }
       return RelatedModel.get(id, ctx);
     });
+    const get = () => _get() && ensureContext(CurrentDraftContext, _get()!);
     const set = (o2mRecordTo: Model | number) => {
       const { relatedFieldName, RelatedModel } = fieldInfos;
       if (!relatedFieldName) throw new Error("Related field name is undefined");
@@ -431,9 +436,9 @@ function setMany2One(
   o2mRecordTo?: Model
 ) {
   if (o2mRecordFrom === o2mRecordTo) return;
-  if (o2mRecordFrom) recordArrayDelete(o2mRecordFrom, o2mFieldName, m2oRecord.data.id!);
-  if (o2mRecordTo) recordArrayAdd(o2mRecordTo, o2mFieldName, m2oRecord.data.id!);
-  m2oRecord.reactiveChanges[m2oFieldName] = o2mRecordTo ? o2mRecordTo.data.id! : null;
+  if (o2mRecordFrom) recordArrayDelete(o2mRecordFrom, o2mFieldName, m2oRecord.id);
+  if (o2mRecordTo) recordArrayAdd(o2mRecordTo, o2mFieldName, m2oRecord.id);
+  m2oRecord.reactiveChanges[m2oFieldName] = o2mRecordTo ? o2mRecordTo.id! : null;
 }
 function recordArrayDelete(record: Model, fieldName: string, value: any) {
   const [deleteList, addList] = getChanges(record, fieldName);
@@ -449,6 +454,11 @@ function recordArrayAdd(record: Model, fieldName: string, value: any) {
 function getBaseFieldValue(record: Model, fieldName: string) {
   return record.parentRecord
     ? (record.parentRecord as any)[fieldName] // get the computed field
+    : record.reactiveData[fieldName];
+}
+function getM2OValue(record: Model, fieldName: string) {
+  return record.parentRecord
+    ? (record.parentRecord as any)[fieldName].id // get the computed field
     : record.reactiveData[fieldName];
 }
 function getBaseManyFieldValue(record: Model, fieldName: string) {

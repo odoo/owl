@@ -5,12 +5,7 @@ import {
   fieldOne2Many,
   fieldText,
 } from "../src/runtime/relationalModel/field";
-import {
-  formatId,
-  Model,
-  resetIdCounter,
-  saveDraftContext,
-} from "../src/runtime/relationalModel/model";
+import { formatId, Model, resetIdCounter } from "../src/runtime/relationalModel/model";
 import { DataToSave, saveHooks, saveModels } from "../src/runtime/relationalModel/modelData";
 import { clearModelRegistry } from "../src/runtime/relationalModel/modelRegistry";
 import { destroyStore, setStore } from "../src/runtime/relationalModel/store";
@@ -412,7 +407,7 @@ describe("model", () => {
       expect(partner1.changes).toEqual({ name: "Partner 1 Bis" });
       expect(partner1Bis.changes).toEqual({});
     });
-    test.only("should create a draft copy of the record for one2many field", async () => {
+    test("should create a draft copy of the record for one2many field", async () => {
       const partner1 = Models.Partner.get(1);
       const partner2 = Models.Partner.get(2);
       const partner1Bis = partner1.makeDraft();
@@ -434,16 +429,13 @@ describe("model", () => {
 
       expect(partner1.messages().length).toBe(3);
       expect(partner1Bis.messages().length).toBe(4);
-      // todo: debug
-      // expect(partner2Message.partner).toBe(partner2);
+      expect(partner2Message.partner).toBe(partner2);
 
       partner1Bis.saveDraft();
-      saveDraftContext;
-      // saveDraftContext(partner1Bis.draftContext!);
 
       expect(partner1.messages().length).toBe(4);
       expect(partner1Bis.messages().length).toBe(4);
-      // expect(partner2Message.partner).toBe(partner1);
+      expect(partner2Message.partner).toBe(partner1);
     });
     test("should create a draft copy of the record for many2one field", async () => {
       const partner1 = Models.Partner.get(1);

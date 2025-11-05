@@ -1,7 +1,7 @@
 import { derived } from "../../signals";
 import { Model } from "../model";
-import { loadRecordWithRelated } from "../store.js";
-import { InstanceId, ManyFn } from "../types";
+import { loadRecordWithRelated } from "../store";
+import { DraftContext, InstanceId, ManyFn } from "../types";
 import { DataPoint } from "./WebDataPoint";
 import { MakeWebRecord, WebRecord } from "./WebRecord";
 
@@ -24,6 +24,10 @@ export class StaticList extends DataPoint {
   orecordList!: ManyFn<Model>;
   _webRecords: Record<InstanceId, WebRecord> = {};
   _draftRecord: Map<InstanceId, WebRecord> = new Map();
+  draftContext: DraftContext = {
+    store: {},
+  };
+  draftORecord!: Model;
 
   constructor(public sconfig: StaticListConfig) {
     super();
@@ -50,6 +54,8 @@ export class StaticList extends DataPoint {
     this.model = parent.model;
     this._config = config;
 
+    this.draftORecord = sconfig.orecord.makeDraft();
+    (this.draftORecord.draftContext as any).name = "staticlist";
     this.orecordList = (sconfig.orecord as any)[sconfig.fieldName] as ManyFn<Model>;
     this._defineRecords();
   }
@@ -93,8 +99,6 @@ export class StaticList extends DataPoint {
     return this._records();
   }
 
-  // datapoint  ----------------------------------------------------------------
-
   // List infos - basic --------------------------------------------------------
   get resIds() {
     coucou("resIds");
@@ -118,12 +122,7 @@ export class StaticList extends DataPoint {
     return [];
   }
 
-  // resequencing --------------------------------------------------------------
-  canResequence() {
-    coucou("canResequence");
-  }
-
-  // Context -----------------------------------------------------------------
+  // Context -------------------------------------------------------------------
   get evalContext() {
     coucou("evalContext");
     const win = window as any;
@@ -132,75 +131,7 @@ export class StaticList extends DataPoint {
     return evalContext;
   }
 
-  // UI state - editable list ------------------------------------------------
-  get editedRecord() {
-    coucou("editedRecord");
-    return null;
-  }
-  enterEditMode() {
-    coucou("enterEditMode");
-  }
-
-  leaveEditMode() {
-    coucou("leaveEditMode");
-  }
-
-  // UI state - selection ----------------------------------------------------
-  get selection() {
-    return [];
-  }
-  // Actions -----------------------------------------------------------------
-  duplicateRecords() {
-    coucou("duplicateRecords");
-  }
-  delete() {
-    coucou("delete");
-  }
-
-  // Server / load -----------------------------------------------------------
-
-  load() {
-    coucou("load");
-  }
-
-  // Save point --------------------------------------------------------------
-
-  linkTo() {
-    coucou("linkTo");
-  }
-  unlinkFrom() {
-    coucou("unlinkFrom");
-  }
-
-  // Mutations ---------------------------------------------------------------
-
-  addNewRecord() {
-    coucou("addNewRecord");
-  }
-  addNewRecordAtIndex() {
-    coucou("addNewRecordAtIndex");
-  }
-  applyCommands() {
-    coucou("applyCommands");
-  }
-  /**
-   * This method is meant to be used in a very specific usecase: when an x2many record is viewed
-   * or edited through a form view dialog (e.g. x2many kanban or non editable list). In this case,
-   * the form typically contains different fields than the kanban or list, so we need to "extend"
-   * the fields and activeFields. If the record opened in a form view dialog already exists, we
-   * modify it's config to add the new fields. If it is a new record, we create it with the
-   * extended config.
-   *
-   * @param {Object} params
-   * @param {Object} params.activeFields
-   * @param {Object} params.fields
-   * @param {Object} [params.context]
-   * @param {boolean} [params.withoutParent]
-   * @param {string} [params.mode]
-   * @param {RelationalRecord} [record]
-   * @returns {RelationalRecord}
-   */
-
+  // Draft ---------------------------------------------------------------------
   async extendRecord(params: MakeNewRecordParams, record: WebRecord) {
     coucou("extendRecord");
     return this.model.mutex.exec(async () => {
@@ -265,23 +196,29 @@ export class StaticList extends DataPoint {
     //     this.model._updateConfig(list.config, patch, { reload: false });
     //   }
     // }
+
     const Mod = orecord.constructor as typeof Model;
-    const parentDraftContext = this.sconfig.parentRecord.orecord.context;
-    const orecordDraft = Mod.get(orecord.id!, parentDraftContext);
+    const parentDraftContext = this.sconfig.parentRecord.orecord.draftContext;
+    console.warn(`parentDraftContext:`, parentDraftContext);
+    const orecordDraft = Mod.get(orecord.id!, this.draftORecord.draftContext);
+    console.warn(`orecordDraft.draftContext:`, orecordDraft.draftContext);
 
     const wrecord = this.sconfig.makeWebRecord(this.model, config, undefined, {
       orecord: orecordDraft,
       mode: "edit",
     });
+    console.warn(`wrecord:`, wrecord);
     this._draftRecord.set(orecord.id!, wrecord);
     return wrecord;
   }
   validateExtendedRecord(record: WebRecord) {
     coucou("validateExtendedRecord");
+    // let draftWebRecord = this._draftRecord.get(record.orecord.id!)!;
+    // draftWebRecord.orecord.saveDraft();
     this.orecordList.add(record.orecord);
+    this.draftORecord.saveDraft();
   }
-
-  private _getActiveFields(params: MakeNewRecordParams) {
+  _getActiveFields(params: MakeNewRecordParams) {
     const activeFields: Record<string, any> = { ...params.activeFields };
     for (const fieldName in this.activeFields) {
       if (fieldName in activeFields) {
@@ -292,7 +229,6 @@ export class StaticList extends DataPoint {
     }
     return activeFields;
   }
-
   async _makeNewRecord(params: any) {
     const changes = {};
     // if (!params.withoutParent && this.config.relationField) {
@@ -368,6 +304,7 @@ export class StaticList extends DataPoint {
     // };
     const webRecord = this.sconfig.makeWebRecord(this.model, config, data, {
       parentRecord: this.sconfig.parentRecord,
+      draftContext: this.draftORecord.draftContext,
     });
     this._webRecords[webRecord.orecord.id!] = webRecord;
 
@@ -381,20 +318,75 @@ export class StaticList extends DataPoint {
     //   }
     // }
   }
+
+  // UI state - editable list --------------------------------------------------
+  get editedRecord() {
+    coucou("editedRecord");
+    return null;
+  }
+  enterEditMode() {
+    coucou("enterEditMode");
+  }
+  leaveEditMode() {
+    coucou("leaveEditMode");
+  }
+
+  // UI state - selection ------------------------------------------------------
+  get selection() {
+    return [];
+  }
+
+  // resequencing --------------------------------------------------------------
+  canResequence() {
+    coucou("canResequence");
+  }
+  resequence() {
+    coucou("resequence");
+  }
+
+  // Server / load -------------------------------------------------------------
+  load() {
+    coucou("load");
+  }
+
+  // Re-sort -------------------------------------------------------------------
+  sortBy() {
+    coucou("sortBy");
+  }
+
+  // Mutations -----------------------------------------------------------------
+  addNewRecord() {
+    coucou("addNewRecord");
+  }
+  addNewRecordAtIndex() {
+    coucou("addNewRecordAtIndex");
+  }
+  applyCommands() {
+    coucou("applyCommands");
+  }
+  linkTo() {
+    coucou("linkTo");
+  }
+  unlinkFrom() {
+    coucou("unlinkFrom");
+  }
   forget() {
     coucou("forget");
   }
   moveRecord() {
     coucou("moveRecord");
   }
-  sortBy() {
-    coucou("sortBy");
-  }
+
   addAndRemove() {
     coucou("addAndRemove");
   }
-  resequence() {
-    coucou("resequence");
+
+  // Actions -------------------------------------------------------------------
+  duplicateRecords() {
+    coucou("duplicateRecords");
+  }
+  delete() {
+    coucou("delete");
   }
 }
 

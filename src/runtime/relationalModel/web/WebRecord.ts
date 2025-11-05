@@ -1,4 +1,4 @@
-import { defineLazyProperty, Model } from "../model";
+import { defineLazyProperty, ensureContext, Model } from "../model";
 import { commitRecordChanges, getRecordChanges } from "../modelData";
 import { flushDataToLoad, loadRecordWithRelated } from "../store";
 import { DataPoint } from "./WebDataPoint";
@@ -24,6 +24,7 @@ export class WebRecord extends DataPoint {
   }
 
   setup(_config: any, data: any, options: any = {}) {
+    // options.orecord is created by static list
     if (options.orecord) {
       this.orecord = options.orecord;
       this.data = makeFieldObject(this, this.orecord);
@@ -33,14 +34,18 @@ export class WebRecord extends DataPoint {
 
     const OModel = makeModelFromWeb(_config);
     this.orecord = new OModel(this.config.resId);
+    if (options.draftContext) {
+      this.orecord = ensureContext(options.draftContext, this.orecord);
+    } else if (this.config.resId) {
+      this.orecord = this.orecord.makeDraft();
+      (this.orecord.draftContext as any).name ??= "main";
+    }
     loadRecordWithRelated(OModel, { id: this.orecord.id, ...data });
     flushDataToLoad();
     this.data = makeFieldObject(this, this.orecord);
     // this.evalContext = reactive({});
     // this.evalContextWithVirtualIds = reactive({});
     this._setEvalContext();
-    const win = window as any;
-    win.r ??= this;
   }
 
   // record infos - basic ----------------------------------------------------

@@ -1,5 +1,5 @@
 import { defineLazyProperty, ensureContext, Model } from "../model";
-import { commitRecordChanges, getRecordChanges } from "../modelData";
+import { getRecordChanges } from "../modelData";
 import { flushDataToLoad, loadRecordWithRelated } from "../store";
 import { DataPoint } from "./WebDataPoint";
 import { makeModelFromWeb } from "./webModel";
@@ -35,7 +35,7 @@ export class WebRecord extends DataPoint {
     const OModel = makeModelFromWeb(_config);
     this.orecord = new OModel(this.config.resId);
     if (options.draftContext) {
-      this.orecord = ensureContext(options.draftContext, this.orecord);
+      this.orecord = ensureContext(options.draftContext, this.orecord)!;
     } else if (this.config.resId) {
       this.orecord = this.orecord.makeDraft();
       (this.orecord.draftContext as any).name ??= "main";
@@ -76,7 +76,7 @@ export class WebRecord extends DataPoint {
   // record infos - odoo specific --------------------------------------------
   // is archived
   get isActive() {
-    const data = this.orecord.reactiveData;
+    const data = this.data;
     if ("active" in data) {
       return data.active;
     } else if ("x_active" in data) {
@@ -201,7 +201,8 @@ export class WebRecord extends DataPoint {
       withVirtualIds: {},
       withoutVirtualIds: {},
     };
-    const data = { ...this.orecord.reactiveData };
+    const data = { ...this.data };
+    console.warn(`data:`, data);
     for (const fieldName in data) {
       const value = data[fieldName];
       const field = this.fields[fieldName];
@@ -225,18 +226,22 @@ export class WebRecord extends DataPoint {
       } else if (value && field.type === "reference") {
         dataContext[fieldName] = `${value.resModel},${value.resId}`;
       } else if (field.type === "properties") {
-        dataContext[fieldName] = value.filter(
-          (property: any) => !property.definition_deleted !== false
-        );
+        // dataContext[fieldName] = value.filter(
+        //   (property: any) => !property.definition_deleted !== false
+        // );
+        dataContext[fieldName] = null;
       } else {
         dataContext[fieldName] = value;
       }
     }
     dataContext.id = this.resId || false;
-    return {
+    console.warn(`dataContext:`, dataContext);
+    const r = {
       withVirtualIds: { ...dataContext, ...x2manyDataContext.withVirtualIds },
       withoutVirtualIds: { ...dataContext, ...x2manyDataContext.withoutVirtualIds },
     };
+    console.warn(`r:`, r);
+    return r;
   }
 
   // Server / save -----------------------------------------------------------
@@ -383,7 +388,8 @@ export class WebRecord extends DataPoint {
     //     const resIds = this.resIds.concat([resId]);
     //     this.model._updateConfig(this.config, { resId, resIds }, { reload: false });
     // }
-    commitRecordChanges(this.orecord);
+    // commitRecordChanges(this.orecord);
+    this.orecord.saveDraft();
     // await this.model.hooks.onRecordSaved(this, changes);
     // if (reload) {
     //     // if (this.resId) {
@@ -1361,6 +1367,15 @@ export function makeFieldObject(record: any, orecord: Model) {
         });
         break;
       case "many2one":
+        Object.defineProperty(fieldObject, fieldName, {
+          get() {
+            return (orecord as any)[fieldName];
+          },
+          set(value: any) {
+            (orecord as any)[fieldName] = value;
+          },
+          enumerable: true,
+        });
         break;
       case "many2many":
         break;
@@ -1372,6 +1387,7 @@ export function makeFieldObject(record: any, orecord: Model) {
           set(value: any) {
             (orecord as any)[fieldName] = value;
           },
+          enumerable: true,
         });
         break;
     }

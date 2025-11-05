@@ -163,7 +163,7 @@ export class Model {
     }
   }
   isNew() {
-    return typeof this.reactiveData.id === "string";
+    return typeof this.id === "string";
   }
   hasChanges() {
     return Object.keys(this.reactiveChanges).length > 0;
@@ -257,12 +257,12 @@ function attachOne2ManyField(target: typeof Model, fieldName: string, relatedMod
     const ctx = obj.draftContext;
     const get = getRelatedList(obj, fieldName, RelatedModel);
     get.add = (m2oRecord: Model) => {
-      m2oRecord = ensureContext(ctx, m2oRecord);
+      m2oRecord = ensureContext(ctx, m2oRecord)!;
       const o2MRecordFrom = ensureContext(ctx, (m2oRecord as any)[relatedFieldName] as Model);
       setMany2One(relatedFieldName, m2oRecord, fieldName, o2MRecordFrom, obj);
     };
     get.delete = (m2oRecord: Model) => {
-      m2oRecord = ensureContext(ctx, m2oRecord);
+      m2oRecord = ensureContext(ctx, m2oRecord)!;
       setMany2One(relatedFieldName, m2oRecord, fieldName, obj, undefined);
     };
     return [() => get] as const;
@@ -279,12 +279,12 @@ function attachMany2ManyField(target: typeof Model, fieldName: string, relatedMo
     const ctx = obj.draftContext;
     const get = getRelatedList(obj, fieldName, RelatedModel);
     get.add = (m2mRecord: Model) => {
-      m2mRecord = ensureContext(ctx, m2mRecord);
+      m2mRecord = ensureContext(ctx, m2mRecord)!;
       recordArrayAdd(obj, fieldName, m2mRecord.id!);
       recordArrayAdd(m2mRecord, relatedFieldName, obj.id!);
     };
     get.delete = (m2mRecord: Model) => {
-      m2mRecord = ensureContext(ctx, m2mRecord);
+      m2mRecord = ensureContext(ctx, m2mRecord)!;
       recordArrayDelete(obj, fieldName, m2mRecord.id!);
       recordArrayDelete(m2mRecord, relatedFieldName, obj.id!);
     };
@@ -306,14 +306,14 @@ function attachMany2OneField(target: typeof Model, fieldName: string, relatedMod
       }
       return RelatedModel.get(id, ctx);
     });
-    const get = () => _get() && ensureContext(CurrentDraftContext, _get()!);
+    const get = () => _get() && ensureContext(CurrentDraftContext, _get()!)!;
     const set = (o2mRecordTo: Model | number) => {
       const { relatedFieldName, RelatedModel } = fieldInfos;
       if (!relatedFieldName) throw new Error("Related field name is undefined");
       if (typeof o2mRecordTo === "number") {
         o2mRecordTo = RelatedModel.get(o2mRecordTo, ctx);
       } else {
-        o2mRecordTo = o2mRecordTo && ensureContext(ctx, o2mRecordTo);
+        o2mRecordTo = o2mRecordTo && ensureContext(ctx, o2mRecordTo)!;
       }
       const o2mRecordIdFrom = obj.reactiveData[fieldName] as number | undefined;
       const o2mRecordFrom = o2mRecordIdFrom ? RelatedModel.get(o2mRecordIdFrom, ctx) : undefined;
@@ -372,6 +372,7 @@ export function defineLazyProperty<T, V>(
       set?.call(this as T, value);
     },
     configurable: true,
+    enumerable: true,
   });
 }
 
@@ -458,7 +459,7 @@ function getBaseFieldValue(record: Model, fieldName: string) {
 }
 function getM2OValue(record: Model, fieldName: string) {
   return record.parentRecord
-    ? (record.parentRecord as any)[fieldName].id // get the computed field
+    ? (record.parentRecord as any)[fieldName]?.id // get the computed field
     : record.reactiveData[fieldName];
 }
 function getBaseManyFieldValue(record: Model, fieldName: string) {
@@ -516,6 +517,7 @@ export function combineLists(listA: InstanceId[], deleteList: InstanceId[], addL
 let CurrentDraftContext: DraftContext | null = null;
 
 export function ensureContext(context: DraftContext | null, record: Model) {
+  if (!record) return;
   if (record.draftContext === context) return record;
   if (!context) return (record.constructor as typeof Model).getGlobalInstance(record.id!);
   return (record.constructor as typeof Model).getContextInstance(record.id!, context);

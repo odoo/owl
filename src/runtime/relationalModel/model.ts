@@ -1,6 +1,6 @@
 import { MakeGetSet } from "../../common/types";
 import { reactive } from "../reactivity";
-import { derived } from "../signals.js";
+import { derived } from "../signals";
 import { Models } from "./modelRegistry";
 import { globalStore } from "./store";
 import {
@@ -85,13 +85,13 @@ export class Model {
   static getContextInstance<T extends typeof Model>(
     this: T,
     id: InstanceId,
-    draftContext: DraftContext
+    draftContext: DraftContext = CurrentDraftContext!
   ): InstanceType<T> {
     const modelStore = draftContext!.store;
     let recordModelStore = modelStore[this.id];
     if (!recordModelStore) recordModelStore = modelStore[this.id] = {};
     const instance = recordModelStore[id] as InstanceType<T>;
-    return instance || new this(this.getGlobalInstance(id), { draftContext: CurrentDraftContext });
+    return instance || new this(this.getGlobalInstance(id), { draftContext });
   }
 
   // Instance properties and methods
@@ -171,11 +171,23 @@ export class Model {
     this.childRecords.push(newInstance);
     return newInstance as this;
   }
+
   saveDraft() {
     if (!this.parentRecord) {
       throw new Error("Cannot save draft without a parent record");
     }
-    const parent = this.parentRecord;
+    const draftContext = this.draftContext!;
+    const parentContext = this.parentRecord.draftContext || globalStore.toContext();
+    for (const instances of Object.values(draftContext.store)) {
+      for (const instance of Object.values(instances)) {
+        instance._saveDraft(parentContext);
+      }
+    }
+  }
+  _saveDraft(draftContext: DraftContext) {
+    // const parent = this.parentRecord!;
+    const Mod = this.constructor as typeof Model;
+    const parent = Mod.get(this.id!, draftContext);
     const parentReactiveChanges = parent.reactiveChanges;
     const thisChanges = this.reactiveChanges;
     for (const [key, value] of Object.entries(thisChanges)) {

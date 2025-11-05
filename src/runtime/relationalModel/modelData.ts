@@ -37,6 +37,7 @@ export function getRecordChanges(
   if (processedRecords.has(record)) return dataToSave;
 
   let itemChanges: Record<string, any> = {};
+  // todo: sohuld be record.changes?
   for (const key of Object.keys(record.data)) {
     if (key === "id") continue; // we can't change the id field
     const fieldDef = Mod.fields[key];

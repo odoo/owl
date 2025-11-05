@@ -6,7 +6,7 @@ import {
   ManyParams,
   RelationParams,
 } from "./discussModelTypes";
-import { fieldMany2Many, fieldMany2One, fieldOne2Many, fieldString } from "./field";
+import { fieldAny, fieldMany2Many, fieldMany2One, fieldOne2Many } from "./field";
 import { Model } from "./model";
 import { FieldDefinition } from "./types";
 
@@ -53,8 +53,8 @@ export const fields = {
           relatedField: params.inverse,
         })
       : fieldMany2Many(modelName),
-  Attr: (defaultValue: string, params: AttrParams = {}) => fieldString(),
-  Html: (defaultValue: string, params: HtmlParams = {}) => fieldString(),
-  Date: (params: DateParams = {}) => fieldString(),
-  Datetime: (params: DatetimeParams = {}) => fieldString(),
+  Attr: (defaultValue: string, params: AttrParams = {}) => fieldAny(),
+  Html: (defaultValue: string, params: HtmlParams = {}) => fieldAny(),
+  Date: (params: DateParams = {}) => fieldAny(),
+  Datetime: (params: DatetimeParams = {}) => fieldAny(),
 };

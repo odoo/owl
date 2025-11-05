@@ -258,7 +258,7 @@ function attachOne2ManyField(target: typeof Model, fieldName: string, relatedMod
     const get = getRelatedList(obj, fieldName, RelatedModel);
     get.add = (m2oRecord: Model) => {
       m2oRecord = ensureContext(ctx, m2oRecord);
-      const o2MRecordFrom = (m2oRecord as any)[relatedFieldName] as Model;
+      const o2MRecordFrom = ensureContext(ctx, (m2oRecord as any)[relatedFieldName] as Model);
       setMany2One(relatedFieldName, m2oRecord, fieldName, o2MRecordFrom, obj);
     };
     get.delete = (m2oRecord: Model) => {

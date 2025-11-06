@@ -4,6 +4,22 @@ import { batched } from "./utils";
 let Effects: Computation[];
 let CurrentComputation: Computation;
 
+export function signal<T>(value: T, opts?: Opts) {
+  const atom: Atom = {
+    value,
+    observers: new Set(),
+  };
+  const read = () => {
+    onReadAtom(atom);
+    return atom.value;
+  };
+  const write = (newValue: T) => {
+    if (Object.is(atom.value, newValue)) return;
+    atom.value = newValue;
+    onWriteAtom(atom);
+  };
+  return [read, write] as const;
+}
 export function effect<T>(fn: () => T, opts?: Opts) {
   const effectComputation: Computation = {
     state: ComputationState.STALE,

@@ -202,7 +202,6 @@ export class WebRecord extends DataPoint {
       withoutVirtualIds: {},
     };
     const data = { ...this.data };
-    console.warn(`data:`, data);
     for (const fieldName in data) {
       const value = data[fieldName];
       const field = this.fields[fieldName];
@@ -235,13 +234,10 @@ export class WebRecord extends DataPoint {
       }
     }
     dataContext.id = this.resId || false;
-    console.warn(`dataContext:`, dataContext);
-    const r = {
+    return {
       withVirtualIds: { ...dataContext, ...x2manyDataContext.withVirtualIds },
       withoutVirtualIds: { ...dataContext, ...x2manyDataContext.withoutVirtualIds },
     };
-    console.warn(`r:`, r);
-    return r;
   }
 
   // Server / save -----------------------------------------------------------
@@ -249,7 +245,6 @@ export class WebRecord extends DataPoint {
    * @param {Parameters<Record["_save"]>[0]} options
    */
   async save(options: any) {
-    // console.warn("should save, options", options);
     await this.model._askChanges();
     return this.model.mutex.exec(() => this._save(options));
   }
@@ -357,7 +352,6 @@ export class WebRecord extends DataPoint {
       specification: fieldSpec,
       next_id: nextId,
     };
-    console.warn(`kwargs:`, kwargs);
     let records = [];
     try {
       records = await this.model.orm.webSave(
@@ -378,7 +372,6 @@ export class WebRecord extends DataPoint {
       }
       throw e;
     }
-    console.warn(`records[0]:`, records[0]);
     if (reload && !records.length) {
       const win = window as any;
       throw new win.FetchRecordError([nextId || this.resId]);

@@ -8,9 +8,9 @@ import {
   NormalizedDomain,
   SearchEntry,
   X2ManyFieldDefinition,
-  DraftContext,
+  DraftContextStore,
 } from "./types";
-import { mapEntries } from "./util";
+import { RawStore } from "../../../tests/model.test";
 
 export type StoreData = Record<ModelId, Record<InstanceId, RecordItem>>;
 class Store {
@@ -19,15 +19,6 @@ class Store {
 
   getModelData(modelId: ModelId) {
     return (this.data[modelId] ??= {});
-  }
-  // todo: should unify DraftContext and store
-  toContext() {
-    const ctx: DraftContext = {
-      store: mapEntries(this.data, ([modelId, items]) => {
-        return [modelId, mapEntries(items, ([id, item]) => [id, item.instance])];
-      }),
-    };
-    return ctx;
   }
 }
 
@@ -109,3 +100,15 @@ export function flushDataToLoad() {
   }
 }
 (window as any).globalStore = globalStore;
+
+export function getStoreChanges(store: DraftContextStore) {
+  const changes: RawStore = {};
+  for (const modelId of Object.keys(store)) {
+    changes[modelId] = {};
+    const modelStore = store[modelId];
+    for (const instanceId of Object.keys(modelStore)) {
+      changes[modelId][instanceId] = modelStore[instanceId].changes;
+    }
+  }
+  return changes;
+}

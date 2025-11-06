@@ -8,8 +8,8 @@ import {
 import { formatId, Model, resetIdCounter } from "../src/runtime/relationalModel/model";
 import { DataToSave, saveHooks, saveModels } from "../src/runtime/relationalModel/modelData";
 import { clearModelRegistry } from "../src/runtime/relationalModel/modelRegistry";
-import { destroyStore, setStore } from "../src/runtime/relationalModel/store";
-import { InstanceId, ModelId, ManyFn, DraftContext } from "../src/runtime/relationalModel/types";
+import { destroyStore, getStoreChanges, setStore } from "../src/runtime/relationalModel/store";
+import { InstanceId, ModelId, ManyFn } from "../src/runtime/relationalModel/types";
 import { expectSpy, spyEffect, waitScheduler } from "./helpers";
 
 export type RawStore = Record<ModelId, Record<InstanceId, any>>;
@@ -463,15 +463,3 @@ describe("model", () => {
   });
   describe("partial record list", () => {});
 });
-
-export function getStoreChanges(store: DraftContext["store"]) {
-  const changes: RawStore = {};
-  for (const modelId of Object.keys(store)) {
-    changes[modelId] = {};
-    const modelStore = store[modelId];
-    for (const instanceId of Object.keys(modelStore)) {
-      changes[modelId][instanceId] = modelStore[instanceId].changes;
-    }
-  }
-  return changes;
-}

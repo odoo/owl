@@ -27,7 +27,7 @@ export class Model {
   static get<T extends typeof Model>(
     this: T,
     id: InstanceId,
-    context: DraftContext | null = CurrentDraftContext
+    context: DraftContext = CurrentDraftContext
   ): InstanceType<T> {
     return context ? this.getContextInstance(id, context) : this.getGlobalInstance(id);
   }
@@ -91,7 +91,11 @@ export class Model {
     let recordModelStore = modelStore[this.id];
     if (!recordModelStore) recordModelStore = modelStore[this.id] = {};
     const instance = recordModelStore[id] as InstanceType<T>;
-    return instance || new this(this.getGlobalInstance(id), { draftContext });
+    const parentContext = draftContext.parent;
+    const parentInstance = parentContext
+      ? this.getContextInstance(id, parentContext)
+      : this.getGlobalInstance(id);
+    return instance || new this(parentInstance, { draftContext });
   }
 
   // Instance properties and methods
@@ -103,13 +107,13 @@ export class Model {
   reactiveChanges: RelationChanges = reactive(this.changes);
   parentRecord?: Model;
   childRecords: Model[] = [];
-  draftContext: DraftContext | null = null;
+  draftContext?: DraftContext;
 
   constructor(
     idOrParentRecord?: InstanceId | Model,
     params: {
       createData?: Record<string, any>;
-      draftContext?: DraftContext | null;
+      draftContext?: DraftContext;
     } = {
       draftContext: CurrentDraftContext,
     }
@@ -119,12 +123,11 @@ export class Model {
     const parentId: InstanceId | undefined = parentRecord?.id;
     if (parentRecord) {
       this.parentRecord = parentRecord;
-      this.draftContext = params.draftContext || { store: {} };
+      this.draftContext = params.draftContext || makeDraftContext(parentRecord.draftContext);
       this._setDraftItem(parentId!);
-    }
-    const id = parentId || idOrParentRecord || getNextId();
-    const C = this.constructor as typeof Model;
-    if (!parentRecord) {
+    } else {
+      const id = parentId || idOrParentRecord || getNextId();
+      const C = this.constructor as typeof Model;
       const recordItem = C.getRecordItem(params.createData?.id || id!);
       this.data = recordItem.data;
       this.data.id ??= id;
@@ -183,7 +186,7 @@ export class Model {
       throw new Error("Cannot save draft without a parent record");
     }
     const draftContext = this.draftContext!;
-    const parentContext = this.parentRecord.draftContext;
+    const parentContext = draftContext.parent;
     for (const instances of Object.values(draftContext.store)) {
       for (const instance of Object.values(instances)) {
         instance._saveDraft(parentContext!);
@@ -514,15 +517,15 @@ export function combineLists(listA: InstanceId[], deleteList: InstanceId[], addL
 
 // Drafts helpers
 
-let CurrentDraftContext: DraftContext | null = null;
+let CurrentDraftContext: DraftContext;
 
-export function ensureContext(context: DraftContext | null, record: Model) {
+export function ensureContext(context: DraftContext, record: Model) {
   if (!record) return;
   if (record.draftContext === context) return record;
   if (!context) return (record.constructor as typeof Model).getGlobalInstance(record.id!);
   return (record.constructor as typeof Model).getContextInstance(record.id!, context);
 }
-export function withDraftContext<T>(context: DraftContext | null, fn: () => T): T {
+export function withDraftContext<T>(context: DraftContext, fn: () => T): T {
   const previousContext = CurrentDraftContext;
   CurrentDraftContext = context;
   try {
@@ -532,12 +535,16 @@ export function withDraftContext<T>(context: DraftContext | null, fn: () => T): 
   }
 }
 export function saveDraftContext(context: DraftContext) {
-  for (const modelId of Object.keys(context.store)) {
-    const recordModelStore = context.store[modelId];
+  for (const modelId of Object.keys(context!.store)) {
+    const recordModelStore = context!.store[modelId];
     for (const instance of Object.values(recordModelStore)) {
       instance.saveDraft();
     }
   }
+}
+export function makeDraftContext(parent?: DraftContext): DraftContext {
+  const draftContext: DraftContext = { parent, store: {} };
+  return draftContext;
 }
 
 // Id helpers

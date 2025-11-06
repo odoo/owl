@@ -72,7 +72,10 @@ export type ManyFn<T extends Model> = (() => T[]) & {
 export type SearchEntry = {
   ids: InstanceId[];
 };
-
-export type DraftContext = {
-  store: Record<ModelId, Record<InstanceId, Model>>;
-};
+export type DraftContextStore = Record<ModelId, Record<InstanceId, Model>>;
+export type DraftContext =
+  | {
+      parent?: DraftContext;
+      store: DraftContextStore;
+    }
+  | undefined;

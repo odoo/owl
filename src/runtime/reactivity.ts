@@ -1,6 +1,6 @@
 import { OwlError } from "../common/owl_error";
 import { Atom } from "../common/types";
-import { onReadAtom, onWriteAtom, trackChanges } from "./signals";
+import { onReadAtom, onWriteAtom } from "./signals";
 
 // Special key to subscribe to, to be notified of key creation/deletion
 const KEYCHANGES = Symbol("Key changes");
@@ -127,7 +127,6 @@ function onWriteTargetKey(target: Target, key: PropertyKey, receiver?: any): voi
   const atom = keyToAtomItem.get(key);
   if (!atom) return;
   onWriteAtom(atom);
-  if (receiver) trackChanges(key, receiver);
 }
 
 // Maps reactive objects to the underlying target

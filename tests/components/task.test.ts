@@ -68,7 +68,7 @@ describe("task", () => {
     verifySteps(["b:b"]);
   });
 
-  test.only("should cancel a task properly", async () => {
+  test("should cancel a task properly", async () => {
     const ctx = taskEffect(async () => {
       let result;
       step(`a:begin`);

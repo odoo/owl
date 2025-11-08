@@ -61,6 +61,8 @@ export { Model } from "./relationalModel/model";
 export { getRecordChanges, commitRecordChanges } from "./relationalModel/modelData";
 export { getOrMakeModel, makeModelFromWeb } from "./relationalModel/web/webModel";
 export { WebRecord } from "./relationalModel/web/WebRecord";
+import { patchPromise, getCancellableTask } from "./cancellablePromise";
+export { patchPromise, getCancellableTask };
 
 export const __info__ = {
   version: App.version,

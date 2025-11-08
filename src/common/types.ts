@@ -2,7 +2,14 @@ export enum ComputationState {
   EXECUTED = 0,
   STALE = 1,
   PENDING = 2,
+  ASYNC = 3,
 }
+
+export type ComputationAsync = {
+  promise: Promise<any>;
+  promiseState: "pending" | "resolved" | "rejected";
+  subscribers: Function[];
+} & AsyncTask;
 
 export type Computation<T = any> = {
   compute?: () => T;
@@ -11,6 +18,8 @@ export type Computation<T = any> = {
   isDerived?: boolean;
   value: T; // for effects, this is the cleanup function
   childrenEffect?: Computation[]; // only for effects
+  isAsync?: boolean;
+  async?: ComputationAsync;
 } & Opts;
 export type Opts = {
   name?: string;
@@ -33,3 +42,9 @@ export type Getter<V> = () => V | null;
 export type Setter<T, V> = (this: T, value: V) => void;
 export type MakeGetSetReturn<T, V> = readonly [Getter<V>] | readonly [Getter<V>, Setter<T, V>];
 export type MakeGetSet<T, V> = (obj: T) => MakeGetSetReturn<T, V>;
+
+// Async task
+
+export type AsyncTask = {
+  cancelled: boolean;
+};

@@ -386,7 +386,7 @@ describe("basics", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>simple vnode</div>");
   });
-  jest.setTimeout(10000000);
+  // jest.setTimeout(10000000);
   test("text after a conditional component", async () => {
     class Child extends Component {
       static template = xml`<p>simple vnode</p>`;

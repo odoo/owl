@@ -1,4 +1,13 @@
-import { Atom, Computation, ComputationState, Derived, Opts } from "../common/types";
+import {
+  Atom,
+  Computation,
+  ComputationAsync,
+  ComputationState,
+  Derived,
+  Opts,
+} from "../common/types";
+import { PromiseExecContext } from "./cancellablePromise";
+import { CancellablePromise } from "./cancellablePromise";
 import { batched } from "./utils";
 
 let Effects: Computation[];
@@ -77,28 +86,6 @@ export function onReadAtom(atom: Atom) {
   atom.observers.add(CurrentComputation);
 }
 
-export type ChangeMapItem = [Atom, [PropertyKey, any][]];
-export const changesMap = new WeakMap<object, ChangeMapItem>();
-
-export function getChangeItem(target: object) {
-  if (!Array.isArray(target)) return;
-  const item = changesMap.get(target);
-  if (item) return item;
-  const atom: Atom = {
-    value: target,
-    observers: new Set(),
-  };
-  const newItem: ChangeMapItem = [atom, []];
-  changesMap.set(target, newItem);
-  return newItem;
-}
-
-export function trackChanges(key: PropertyKey, receiver: any) {
-  const item = getChangeItem(receiver);
-  if (!item) return;
-  item[1].push([key, receiver]);
-}
-
 export function onWriteAtom(atom: Atom) {
   collectEffects(() => {
     for (const ctx of atom.observers) {
@@ -106,6 +93,7 @@ export function onWriteAtom(atom: Atom) {
         if (ctx.isDerived) markDownstream(ctx as Derived<any, any>);
         else Effects.push(ctx);
       }
+      resetAsync(ctx);
       ctx.state = ComputationState.STALE;
     }
   });
@@ -126,7 +114,13 @@ const batchProcessEffects = batched(processEffects);
 export function processEffects() {
   if (!Effects) return;
   for (const computation of Effects) {
-    updateComputation(computation);
+    try {
+      updateComputation(computation);
+    } catch (e) {
+      const isAsyncAccessor = e instanceof AsyncAccessorPending;
+      if (isAsyncAccessor) return;
+      throw e;
+    }
   }
   Effects = undefined!;
 }
@@ -173,9 +167,13 @@ function updateComputation(computation: Computation) {
   removeSources(computation);
   const previousComputation = CurrentComputation;
   CurrentComputation = computation;
-  computation.value = computation.compute?.();
-  computation.state = ComputationState.EXECUTED;
-  CurrentComputation = previousComputation;
+  if (!computation.isAsync) {
+    computation.value = computation.compute?.();
+    computation.state = ComputationState.EXECUTED;
+    CurrentComputation = previousComputation;
+  } else {
+    updateAsyncComputation(computation);
+  }
 }
 function removeSources(computation: Computation) {
   const sources = computation.sources;
@@ -212,10 +210,20 @@ function cleanupEffect(computation: Computation) {
 function markDownstream<A, B>(derived: Derived<A, B>) {
   for (const observer of derived.observers) {
     // if the state has already been marked, skip it
+    // todo: check async
     if (observer.state) continue;
+    resetAsync(observer);
     observer.state = ComputationState.PENDING;
     if (observer.isDerived) markDownstream(observer as Derived<any, any>);
     else Effects.push(observer);
+  }
+}
+function resetAsync(computation: Computation) {
+  const async = computation.async;
+  if (async) {
+    async.cancelled = true;
+    async.subscribers.length = 0;
+    computation.async = undefined;
   }
 }
 function computeSources(derived: Derived<any, any>) {
@@ -223,6 +231,61 @@ function computeSources(derived: Derived<any, any>) {
     if (!("compute" in source)) continue;
     updateComputation(source as Derived<any, any>);
   }
+}
+
+export function derivedAsync<T>(fn: () => Promise<T>, opts?: Opts): () => Promise<T> {
+  let derivedComputation: Derived<any, any>;
+  return () => {
+    derivedComputation ??= {
+      state: ComputationState.STALE,
+      sources: new Set(),
+      compute: () => {
+        onWriteAtom(derivedComputation);
+        return fn();
+      },
+      isDerived: true,
+      value: undefined,
+      observers: new Set<Computation>(),
+      name: opts?.name,
+      isAsync: true,
+      async: undefined,
+    };
+    onDerived?.(derivedComputation);
+    updateComputation(derivedComputation);
+    return derivedComputation.value;
+  };
+}
+export class AsyncAccessorPending extends Error {
+  constructor(public subscribers: Function[]) {
+    super("Async accessor is still pending");
+    // this.name = "AsyncAccessorError";
+  }
+}
+function updateAsyncComputation(computation: Computation) {
+  if (computation.state === ComputationState.ASYNC) {
+    throw new AsyncAccessorPending(computation.async!.subscribers);
+  }
+  // const promise = computation.compute?.();
+  const subscribers: Function[] = [];
+  computation.async = {
+    promise: undefined!,
+    cancelled: false,
+    promiseState: "pending",
+    subscribers,
+  };
+  computation.value = undefined;
+  computation.state = ComputationState.ASYNC;
+  computation.async.promise = computation.compute().then(
+    (value: any) => {
+      computation.value = value;
+      computation.state = ComputationState.EXECUTED;
+      subscribers.forEach((fn) => fn());
+    },
+    (error: any) => {
+      computation.state = ComputationState.EXECUTED;
+    }
+  );
+  throw new AsyncAccessorPending(subscribers);
 }
 
 // For tests
@@ -235,3 +298,63 @@ export function setSignalHooks(hooks: { onDerived: (derived: Derived<any, any>) 
 export function resetSignalHooks() {
   onDerived = (void 0)!;
 }
+
+// function delay(ms = 0) {
+//   return new Promise((resolve) => setTimeout(resolve, ms));
+// }
+
+// type Deferred = { promise: Promise<any>; resolve: (value: any) => void };
+// function withResolvers<T = any>(): Deferred {
+//   let resolve: (value: T) => void;
+//   const promise = new Promise<T>((res) => {
+//     resolve = res;
+//   });
+//   // @ts-ignore
+//   return { promise, resolve };
+// }
+// const steps: string[] = [];
+// function step(message: string) {
+//   steps.push(message);
+// }
+// const deffereds: Record<string, Deferred> = {};
+// const deferred = (key: string) => {
+//   deffereds[key] ||= withResolvers();
+//   return deffereds[key].promise;
+// };
+// const resolve = async (key: string) => {
+//   deffereds[key] ||= withResolvers();
+//   deffereds[key].resolve(key);
+//   await delay();
+//   return;
+// };
+
+// function verifySteps(expectedSteps: string[]) {
+//   // expect(steps).toEqual(expectedSteps);
+//   steps.length = 0;
+// }
+
+// (async () => {
+//   patchPromise();
+//   const context = getCancellableTask(async () => {
+//     step("a before");
+//     await deferred("a value");
+//     step("a after");
+//     const asyncFunction = async () => {
+//       step("b before");
+//       await deferred("b value");
+//       step("b after");
+//     };
+//     await asyncFunction();
+//     step("gen end");
+//   });
+//   console.warn(`context:`, context);
+
+//   verifySteps(["a before"]);
+//   await resolve("a value");
+//   verifySteps(["a after", "b before"]);
+//   context.cancel();
+//   await resolve("b value");
+//   expect(context.isCancel).toBe(true);
+//   verifySteps([]);
+//   restorePromise();
+// })();

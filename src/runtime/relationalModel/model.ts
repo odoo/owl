@@ -95,7 +95,7 @@ export class Model {
     const parentInstance = parentContext
       ? this.getContextInstance(id, parentContext)
       : this.getGlobalInstance(id);
-    return instance || new this(parentInstance, { draftContext });
+    return instance || (new this(parentInstance, { draftContext }) as InstanceType<T>);
   }
 
   // Instance properties and methods

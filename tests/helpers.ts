@@ -53,12 +53,12 @@ export async function nextTick(): Promise<void> {
   await new Promise((resolve) => requestAnimationFrame(resolve));
 }
 
-interface Deferred extends Promise<any> {
-  resolve(val?: any): void;
-  reject(val?: any): void;
+interface Deferred<T = any> extends Promise<T> {
+  resolve(val?: T): void;
+  reject(val?: T): void;
 }
 
-export function makeDeferred(): Deferred {
+export function makeDeferred<T = any>(): Deferred<T> {
   let resolve, reject;
   let def = new Promise((_resolve, _reject) => {
     resolve = _resolve;
@@ -66,7 +66,7 @@ export function makeDeferred(): Deferred {
   });
   (def as any).resolve = resolve;
   (def as any).reject = reject;
-  return <Deferred>def;
+  return <Deferred<T>>def;
 }
 
 export function trim(str: string): string {

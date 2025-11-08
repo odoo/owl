@@ -4,8 +4,9 @@ import { fibersInError } from "./error_handling";
 import { OwlError } from "../common/owl_error";
 import { STATUS } from "./status";
 import { popTaskContext, pushTaskContext } from "./cancellableContext";
-import { runWithComputation } from "./signals";
+import { AsyncAccessorPending, runWithComputation } from "./signals";
 import { ComputationState } from "../common/types";
+import { nextMicroTick } from "../../tests/helpers";
 
 export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
   let current = node.fiber;
@@ -15,7 +16,7 @@ export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
   }
   return new Fiber(node, parent);
 }
-
+jest.setTimeout(100_000_000_000);
 export function makeRootFiber(node: ComponentNode): Fiber {
   let current = node.fiber;
   if (current) {
@@ -132,22 +133,44 @@ export class Fiber {
     this._render();
   }
 
-  _render() {
+  async _render() {
     const node = this.node;
     const root = this.root;
     if (root) {
-      pushTaskContext(node.taskContext);
+      // pushTaskContext(node.taskContext);
       // todo: should use updateComputation somewhere else.
-      runWithComputation(node.signalComputation, () => {
+      const computation = node.signalComputation;
+      runWithComputation(computation, () => {
         try {
+          root.setCounter(root.counter + 1);
           (this.bdom as any) = true;
-          this.bdom = node.renderFn();
+          const exec = () => {
+            try {
+              this.bdom = node.renderFn();
+              root.setCounter(root.counter - 1);
+            } catch (e) {
+              const isAsyncAccessor = e instanceof AsyncAccessorPending;
+              if (isAsyncAccessor) {
+                (this.bdom as any) = null; // todo: completely unsure what it would do, just playing here
+                e.subscribers.push(exec);
+              } else {
+                throw e;
+              }
+            }
+          };
+          exec();
+
+          // const async = computation.async;
+          // if (async) {
+          //   root.setCounter(root.counter + 1);
+          // }
         } catch (e) {
           node.app.handleError({ node, error: e });
         }
         node.signalComputation.state = ComputationState.EXECUTED;
       });
-      popTaskContext();
+      // popTaskContext();
+
       root.setCounter(root.counter - 1);
     }
   }

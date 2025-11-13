@@ -55,6 +55,11 @@ function createElementHandler(evName: string, capture: boolean = false): EventHa
 // listener per event type.
 let nextSyntheticEventId = 1;
 function createSyntheticHandler(evName: string, capture: boolean = false): EventHandlerCreator {
+  if (NON_BUBBLING_EVENT_NAMES.has(evName)) {
+    throw new Error(
+      `cannot set synthetic event handler for "${evName}" events: these events do not bubble by default`
+    );
+  }
   let eventKey = `__event__synthetic_${evName}`;
   if (capture) {
     eventKey = `${eventKey}_capture`;
@@ -88,14 +93,27 @@ function nativeToSyntheticEvent(eventKey: string, event: Event) {
   }
 }
 
-const CONFIGURED_SYNTHETIC_EVENTS: { [event: string]: boolean } = {};
+const NON_BUBBLING_EVENT_NAMES = new Set([
+  "blur",
+  "error",
+  "focus",
+  "hashchange",
+  "load",
+  "mouseenter",
+  "mouseleave",
+  "pointercancel",
+  "pointerenter",
+  "pointerleave",
+  "unload",
+]);
 
 function setupSyntheticEvent(evName: string, eventKey: string, capture: boolean = false) {
-  if (CONFIGURED_SYNTHETIC_EVENTS[eventKey]) {
+  const root = document as any;
+  if (root[eventKey]) {
     return;
   }
-  document.addEventListener(evName, (event) => nativeToSyntheticEvent(eventKey, event), {
-    capture,
-  });
-  CONFIGURED_SYNTHETIC_EVENTS[eventKey] = true;
+  const syntheticHandler = nativeToSyntheticEvent.bind(root, eventKey);
+  const options = { capture };
+  root[eventKey] = [evName, syntheticHandler, options];
+  root.addEventListener(evName, syntheticHandler, options);
 }

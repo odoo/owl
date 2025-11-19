@@ -9,7 +9,6 @@ import {
 } from "../common/types";
 import type { App, Env } from "./app";
 import { BDom, VNode } from "./blockdom";
-import { TaskContext } from "./cancellableContext";
 import { Component, ComponentConstructor, Props } from "./component";
 import { Fiber, makeChildFiber, MountOptions } from "./fibers";
 import { reactive } from "./reactivity";
@@ -103,7 +102,6 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
   willPatch: LifecycleHook[] = [];
   patched: LifecycleHook[] = [];
   willDestroy: LifecycleHook[] = [];
-  taskContext: TaskContext;
   signalComputation: Computation;
   rootSuspenseState?: Transaction;
   renderBDom: () => void;

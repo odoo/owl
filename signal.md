@@ -1,3 +1,90 @@
+- async derived
+
+  - upon re-render
+    - which suspense to grab
+    - how many time _brender()
+      - _br to check dep, _br to apply
+      - compute sources, _br, [wait], _br
+  - when to start a derived?
+    - on setup?
+    - lazily?
+  - auto SuspenseTransition
+  - Questions
+    1. how to detect async whinin a computation?
+      - re-run
+      - dependency array, function
+      - using await (can a _brender be async?)
+      - throw
+      - compilation hoisting
+    2. with sync and async write:
+      2.1 should we show intermediate async if we write on the async before the previous one resolved?
+        - See https://svelte.dev/playground/0a3bbcf95eda413a9aeb13aebb493726?version=5.42.1
+        - answer:
+          - it looks like throttling/debouncing
+          - maybe that should be configurable
+            - batch/debouncedBatch
+            - default behavior is to show intermediate values
+          - an any case, the resolution sequence should be ordered by the call order
+          - implication:
+            - multiples branches available at the same time
+        - confidence: moderate
+      2.2 should a sync write while there is an pending promise be applied?
+        - answer: yes
+        - confidence: high
+      2.2 should a async sync write while there is an pending promise be applied?
+        - answer: ideally yes, tradeoff: no
+        - confidence: moderate
+        - rational:
+          - if we make a different transaction, we should be able to isolate it and update as soon as the transaction finishes. But that might make the implementation and performances more costly.
+    3. is async write the same as an async derived
+      - example:
+        - batchAsync(async ()=> {await p; setA()})
+        - derivedAsync(async() => {await p; return a()})
+      - answer: it looks like
+      - confidence: moderate
+    4. with async write, should we eagerly re-fetch promises
+      - example:
+        - a = signal()
+        - b = signal()
+        - d = derived(() => await p1; a() + b())
+        - batchAsync(async ()=> {setA(); await p; setB()})
+      - should we eagerly restart d as soon as we setA or should we wait for the transaction to finish?
+      - answer: as we batch, we want to schedule the read until the last instruction, except if we read in the middle.
+    5. what happens if we write before the async derived tracked a signal
+      - example
+        - [a, setA] = signal(1)
+        - p = deferred()
+        - d = derived(()=> await p; a())
+        - e = effect(d)
+        - setA(2)
+        - p.resolve()
+      - solution: that should work
+      - sub-question:
+        - when accessing a(), should it return the value at the time the transaction started or the current value?
+    6. Is a suspense a kind of transaction?
+      - Tree of suspense are available through
+  - reflections
+    - there are changes we want to see despite an promise pending
+      - example:
+        - d = derivedAsync(...)
+        - value: {d()}
+    - there are changes we want to hide until a promise resolve
+      - example:
+        - d = derivedAsync(...)
+        - isPending: {d.pending}
+    - an easy implementation could be to just add the derived async
+      on onWillStart and onWillUpdateProps, the return value is the
+      derived state.
+  - rules
+    - effects run:
+      - track values
+      - apply values
+    - effects should not render until all async are executed
+      - no dom patch before all async resolve
+    - re-run effects with async
+
+------
+
 What do we need from a reactive system?
   Predictable Execution
     - All updates happen synchronously

@@ -23,8 +23,6 @@ export class Scheduler {
   }
 
   addFiber(fiber: Fiber) {
-    if ((window as any).d) debugger;
-
     this.tasks.add(fiber.root!);
   }
 

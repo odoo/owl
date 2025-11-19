@@ -1,12 +1,10 @@
+import { OwlError } from "../common/owl_error";
+import { ComputationState } from "../common/types";
 import { BDom, mount } from "./blockdom";
 import type { ComponentNode } from "./component_node";
 import { fibersInError } from "./error_handling";
-import { OwlError } from "../common/owl_error";
+import { runWithComputation } from "./signals";
 import { STATUS } from "./status";
-import { popTaskContext, pushTaskContext } from "./cancellableContext";
-import { AsyncAccessorPending, runWithComputation } from "./signals";
-import { ComputationState } from "../common/types";
-import { nextMicroTick } from "../../tests/helpers";
 
 export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
   let current = node.fiber;
@@ -145,18 +143,8 @@ export class Fiber {
           root.setCounter(root.counter + 1);
           (this.bdom as any) = true;
           const exec = () => {
-            try {
-              this.bdom = node.renderFn();
-              root.setCounter(root.counter - 1);
-            } catch (e) {
-              const isAsyncAccessor = e instanceof AsyncAccessorPending;
-              if (isAsyncAccessor) {
-                (this.bdom as any) = null; // todo: completely unsure what it would do, just playing here
-                e.subscribers.push(exec);
-              } else {
-                throw e;
-              }
-            }
+            this.bdom = node.renderFn();
+            root.setCounter(root.counter - 1);
           };
           exec();
 

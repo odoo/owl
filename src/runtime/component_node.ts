@@ -1,14 +1,27 @@
 import { OwlError } from "../common/owl_error";
-import { Atom, Computation, ComputationState } from "../common/types";
+import {
+  Atom,
+  ComponentNodeRenderTransaction,
+  Computation,
+  ComputationState,
+  MountInfos,
+  Transaction,
+} from "../common/types";
 import type { App, Env } from "./app";
 import { BDom, VNode } from "./blockdom";
-import { makeTaskContext, TaskContext } from "./cancellableContext";
+import { TaskContext } from "./cancellableContext";
 import { Component, ComponentConstructor, Props } from "./component";
-import { fibersInError } from "./error_handling";
-import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";
+import { Fiber, makeChildFiber, MountOptions } from "./fibers";
 import { reactive } from "./reactivity";
-import { getCurrentComputation, setComputation, withoutReactivity } from "./signals";
+import {
+  derivedAsync,
+  effect,
+  getCurrentComputation,
+  setComputation,
+  withoutReactivity,
+} from "./signals";
 import { STATUS } from "./status";
+import { getCurrentTransaction, makeTransaction, withTransaction } from "./suspense";
 
 let currentNode: ComponentNode | null = null;
 
@@ -92,6 +105,8 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
   willDestroy: LifecycleHook[] = [];
   taskContext: TaskContext;
   signalComputation: Computation;
+  rootSuspenseState?: Transaction;
+  renderBDom: () => void;
 
   constructor(
     C: ComponentConstructor<P, E>,
@@ -105,7 +120,6 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     this.parent = parent;
     this.props = props;
     this.parentKey = parentKey;
-    this.taskContext = makeTaskContext();
     this.signalComputation = {
       // data: this,
       value: undefined,
@@ -137,82 +151,108 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     this.component.setup();
     setComputation(currentContext);
     currentNode = null;
+
+    const component = this.component;
+    const [willStartDerived] = derivedAsync(async () =>
+      withoutReactivity(() => Promise.all(this.willStart.map((f) => f.call(component))))
+    );
+    const renderBDom = () => {
+      const transaction = getCurrentTransaction();
+      transaction.increment();
+      willStartDerived();
+      if (willStartDerived.loading) return transaction.decrement();
+      transaction;
+      transaction.data.nodeToBDomMap.set(this.renderFn());
+      transaction.decrement();
+    };
+    this.renderBDom = renderBDom;
   }
 
   mountComponent(target: any, options?: MountOptions) {
-    const fiber = new MountFiber(this, target, options);
-    this.app.scheduler.addFiber(fiber);
-    this.initiateRender(fiber);
+    // const fiber = new MountFiber(this, target, options);
+    // this.app.scheduler.addFiber(fiber);
+    this.initiateRender({ mountInfos: { target, options } });
+    // this.mountInfos = undefined;
   }
 
-  async initiateRender(fiber: Fiber | MountFiber) {
-    this.fiber = fiber;
-    if (this.mounted.length) {
-      fiber.root!.mounted.push(fiber);
-    }
-    const component = this.component;
-    try {
-      let prom: Promise<any[]>;
-      withoutReactivity(() => {
-        prom = Promise.all(this.willStart.map((f) => f.call(component)));
+  async initiateRender({ mountInfos }: { mountInfos?: MountInfos } = {}) {
+    // if (this.mounted.length) {
+    //   fiber.root!.mounted.push(fiber);
+    // }
+
+    // todo: handle error. do it in derivedAsync?
+    const renderBDom = this.renderBDom;
+
+    const renderWithTransaction = () => {
+      let transaction = getCurrentTransaction();
+      if (transaction) return withTransaction(transaction, renderBDom);
+
+      transaction = makeTransaction<ComponentNodeRenderTransaction>({
+        data: {
+          // node: this,
+          nodeToBDomMap: new Map(),
+        },
+        onComplete: (isAsync) => {
+          // re-render if any async occured.
+          if (isAsync) withTransaction(transaction, renderBDom);
+          else onTransactionComplete(this, mountInfos);
+        },
       });
-      await prom!;
-    } catch (e) {
-      this.app.handleError({ node: this, error: e });
-      return;
-    }
-    if (this.status === STATUS.NEW && this.fiber === fiber) {
-      fiber.render();
-    }
+      withTransaction(transaction, renderBDom);
+    };
+
+    effect(renderWithTransaction, { withChildren: false });
+
+    // if (this.status === STATUS.NEW && this.fiber === fiber) {
+    //   fiber.render();
+    // }
   }
 
   async render(deep: boolean) {
-    if (this.status >= STATUS.CANCELLED) {
-      return;
-    }
-    let current = this.fiber;
-    if (current && (current.root!.locked || (current as any).bdom === true)) {
-      await Promise.resolve();
-      // situation may have changed after the microtask tick
-      current = this.fiber;
-    }
-    if (current) {
-      if (!current.bdom && !fibersInError.has(current)) {
-        if (deep) {
-          // we want the render from this point on to be with deep=true
-          current.deep = deep;
-        }
-        return;
-      }
-      // if current rendering was with deep=true, we want this one to be the same
-      deep = deep || current.deep;
-    } else if (!this.bdom) {
-      return;
-    }
-
-    const fiber = makeRootFiber(this);
-    fiber.deep = deep;
-    this.fiber = fiber;
-
-    this.app.scheduler.addFiber(fiber);
-    await Promise.resolve();
-    if (this.status >= STATUS.CANCELLED) {
-      return;
-    }
-    // We only want to actually render the component if the following two
-    // conditions are true:
-    // * this.fiber: it could be null, in which case the render has been cancelled
-    // * (current || !fiber.parent): if current is not null, this means that the
-    //   render function was called when a render was already occurring. In this
-    //   case, the pending rendering was cancelled, and the fiber needs to be
-    //   rendered to complete the work.  If current is null, we check that the
-    //   fiber has no parent.  If that is the case, the fiber was downgraded from
-    //   a root fiber to a child fiber in the previous microtick, because it was
-    //   embedded in a rendering coming from above, so the fiber will be rendered
-    //   in the next microtick anyway, so we should not render it again.
-    if (this.fiber === fiber && (current || !fiber.parent)) {
-      fiber.render();
-    }
+    // if (this.status >= STATUS.CANCELLED) {
+    //   return;
+    // }
+    // let current = this.fiber;
+    // if (current && (current.root!.locked || (current as any).bdom === true)) {
+    //   await Promise.resolve();
+    //   // situation may have changed after the microtask tick
+    //   current = this.fiber;
+    // }
+    // if (current) {
+    //   if (!current.bdom && !fibersInError.has(current)) {
+    //     if (deep) {
+    //       // we want the render from this point on to be with deep=true
+    //       current.deep = deep;
+    //     }
+    //     return;
+    //   }
+    //   // if current rendering was with deep=true, we want this one to be the same
+    //   deep = deep || current.deep;
+    // } else if (!this.bdom) {
+    //   return;
+    // }
+    // const fiber = makeRootFiber(this);
+    // fiber.deep = deep;
+    // this.fiber = fiber;
+    // this.app.scheduler.addFiber(fiber);
+    // await Promise.resolve();
+    // if (this.status >= STATUS.CANCELLED) {
+    //   return;
+    // }
+    // // We only want to actually render the component if the following two
+    // // conditions are true:
+    // // * this.fiber: it could be null, in which case the render has been cancelled
+    // // * (current || !fiber.parent): if current is not null, this means that the
+    // //   render function was called when a render was already occurring. In this
+    // //   case, the pending rendering was cancelled, and the fiber needs to be
+    // //   rendered to complete the work.  If current is null, we check that the
+    // //   fiber has no parent.  If that is the case, the fiber was downgraded from
+    // //   a root fiber to a child fiber in the previous microtick, because it was
+    // //   embedded in a rendering coming from above, so the fiber will be rendered
+    // //   in the next microtick anyway, so we should not render it again.
+    // if (this.fiber === fiber && (current || !fiber.parent)) {
+    //   fiber.render();
+    // }
   }
 
   cancel() {
@@ -397,4 +437,30 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
   //   const render = batchedRenderFunctions.get(this);
   //   return render ? getSubscriptions(render) : [];
   // }
+}
+
+function onTransactionComplete(
+  node: ComponentNode,
+  mountInfos?: { target: any; options?: MountOptions }
+) {
+  console.warn(`transactionComplete`);
+  try {
+    // Step 1: calling all willPatch lifecycle hooks
+    // Step 2: patching the dom
+    node._patch();
+    // Step 4: calling all mounted lifecycle hooks
+    // Step 5: calling all patched hooks
+  } catch (e) {
+    // if mountedFibers is not empty, this means that a crash occured while
+    // calling the mounted hooks of some component. So, there may still be
+    // some component that have been mounted, but for which the mounted hooks
+    // have not been called. Here, we remove the willUnmount hooks for these
+    // specific component to prevent a worse situation (willUnmount being
+    // called even though mounted has not been called)
+    // for (let fiber of mountedFibers) {
+    //   fiber.node.willUnmount = [];
+    // }
+    // this.locked = false;
+    // node.app.handleError({ fiber: current || this, error: e });
+  }
 }

@@ -4,17 +4,21 @@ import {
   ComputationAsync,
   ComputationState,
   Derived,
+  DerivedAsyncRead,
+  DerivedAsyncReturn,
+  DerivedAsyncStates,
   Opts,
+  Transaction,
 } from "../common/types";
-import { PromiseExecContext } from "./cancellablePromise";
-import { CancellablePromise } from "./cancellablePromise";
+import { makeTask } from "./contextualPromise";
+import { getCurrentTransaction, setCurrentTransaction } from "./suspense";
 import { batched } from "./utils";
 
 let Effects: Computation[];
 let CurrentComputation: Computation;
 
 export function signal<T>(value: T, opts?: Opts) {
-  const atom: Atom = {
+  const atom: Atom<T> = {
     value,
     observers: new Set(),
   };
@@ -22,14 +26,20 @@ export function signal<T>(value: T, opts?: Opts) {
     onReadAtom(atom);
     return atom.value;
   };
-  const write = (newValue: T) => {
+  const write = (newValue: T | ((prevValue: T) => T)) => {
+    if (typeof newValue === "function") {
+      newValue = (newValue as (prevValue: T) => T)(atom.value);
+    }
     if (Object.is(atom.value, newValue)) return;
     atom.value = newValue;
     onWriteAtom(atom);
   };
   return [read, write] as const;
 }
-export function effect<T>(fn: () => T, opts?: Opts) {
+export function effect<T>(
+  fn: () => T,
+  { name, withChildren = true }: Opts & { withChildren?: boolean } = {}
+) {
   const effectComputation: Computation = {
     state: ComputationState.STALE,
     value: undefined,
@@ -43,9 +53,9 @@ export function effect<T>(fn: () => T, opts?: Opts) {
       return fn();
     },
     sources: new Set(),
-    childrenEffect: [],
-    name: opts?.name,
+    name: name,
   };
+  if (withChildren) effectComputation.childrenEffect = [];
   CurrentComputation?.childrenEffect?.push?.(effectComputation);
   updateComputation(effectComputation);
 
@@ -59,7 +69,22 @@ export function effect<T>(fn: () => T, opts?: Opts) {
     CurrentComputation = previousComputation!;
   };
 }
+export function computed<T>(fn: () => T, opts?: Opts) {
+  // todo: handle cleanup
+  let computedComputation: Computation = {
+    state: ComputationState.STALE,
+    sources: new Set(),
+    isEager: true,
+    compute: () => {
+      return fn();
+    },
+    value: undefined,
+    name: opts?.name,
+  };
+  updateComputation(computedComputation);
+}
 export function derived<T>(fn: () => T, opts?: Opts): () => T {
+  // todo: handle cleanup
   let derivedComputation: Derived<any, any>;
   return () => {
     derivedComputation ??= {
@@ -87,13 +112,17 @@ export function onReadAtom(atom: Atom) {
 }
 
 export function onWriteAtom(atom: Atom) {
+  // reset async directly
+  for (const ctx of atom.observers) {
+    resetAsync(ctx);
+  }
   collectEffects(() => {
     for (const ctx of atom.observers) {
       if (ctx.state === ComputationState.EXECUTED) {
         if (ctx.isDerived) markDownstream(ctx as Derived<any, any>);
         else Effects.push(ctx);
       }
-      resetAsync(ctx);
+      // resetAsync(ctx);
       ctx.state = ComputationState.STALE;
     }
   });
@@ -114,13 +143,7 @@ const batchProcessEffects = batched(processEffects);
 export function processEffects() {
   if (!Effects) return;
   for (const computation of Effects) {
-    try {
-      updateComputation(computation);
-    } catch (e) {
-      const isAsyncAccessor = e instanceof AsyncAccessorPending;
-      if (isAsyncAccessor) return;
-      throw e;
-    }
+    updateComputation(computation);
   }
   Effects = undefined!;
 }
@@ -172,7 +195,7 @@ function updateComputation(computation: Computation) {
     computation.state = ComputationState.EXECUTED;
     CurrentComputation = previousComputation;
   } else {
-    updateAsyncComputation(computation);
+    updateAsyncComputation(computation as Derived<any, any>);
   }
 }
 function removeSources(computation: Computation) {
@@ -189,14 +212,16 @@ function removeSources(computation: Computation) {
 function unsubscribeEffect(effectComputation: Computation) {
   removeSources(effectComputation);
   cleanupEffect(effectComputation);
-  for (const children of effectComputation.childrenEffect!) {
+  const childrenEffect = effectComputation.childrenEffect;
+  if (!childrenEffect) return;
+  for (const children of childrenEffect) {
     // Consider it executed to avoid it's re-execution
     // todo: make a test for it
     children.state = ComputationState.EXECUTED;
     removeSources(children);
     unsubscribeEffect(children);
   }
-  effectComputation.childrenEffect!.length = 0;
+  childrenEffect.length = 0;
 }
 function cleanupEffect(computation: Computation) {
   // the computation.value of an effect is a cleanup function
@@ -212,7 +237,6 @@ function markDownstream<A, B>(derived: Derived<A, B>) {
     // if the state has already been marked, skip it
     // todo: check async
     if (observer.state) continue;
-    resetAsync(observer);
     observer.state = ComputationState.PENDING;
     if (observer.isDerived) markDownstream(observer as Derived<any, any>);
     else Effects.push(observer);
@@ -221,8 +245,7 @@ function markDownstream<A, B>(derived: Derived<A, B>) {
 function resetAsync(computation: Computation) {
   const async = computation.async;
   if (async) {
-    async.cancelled = true;
-    async.subscribers.length = 0;
+    async.task.cancel();
     computation.async = undefined;
   }
 }
@@ -233,59 +256,120 @@ function computeSources(derived: Derived<any, any>) {
   }
 }
 
-export function derivedAsync<T>(fn: () => Promise<T>, opts?: Opts): () => Promise<T> {
+export function derivedAsync<T>(fn: () => Promise<T>, opts?: Opts) {
   let derivedComputation: Derived<any, any>;
-  return () => {
+  const [value, setValue] = signal<T | undefined>(undefined);
+  const [state, setState] = signal<DerivedAsyncStates>("unresolved");
+  const [error, setError] = signal<any>(undefined);
+
+  const _load = async () => {
+    setState("pending");
+    try {
+      setValue(await fn());
+    } catch (e) {
+      setError(e);
+      setState("errored");
+      return;
+    }
+    setState("ready");
+  };
+  const load = () => {
     derivedComputation ??= {
+      // get state() {
+      //   return state;
+      // },
+      // set state(value: ComputationState) {
+      //   // if (opts?.debug && (window as any).d) {
+      //   //   debugger;
+      //   // }
+      //   // state = value;
+      // },
       state: ComputationState.STALE,
       sources: new Set(),
-      compute: () => {
-        onWriteAtom(derivedComputation);
-        return fn();
-      },
+      compute: _load,
       isDerived: true,
       value: undefined,
       observers: new Set<Computation>(),
       name: opts?.name,
       isAsync: true,
       async: undefined,
+      // transaction: getCurrentTransaction(),
     };
     onDerived?.(derivedComputation);
     updateComputation(derivedComputation);
-    return derivedComputation.value;
   };
-}
-export class AsyncAccessorPending extends Error {
-  constructor(public subscribers: Function[]) {
-    super("Async accessor is still pending");
-    // this.name = "AsyncAccessorError";
-  }
-}
-function updateAsyncComputation(computation: Computation) {
-  if (computation.state === ComputationState.ASYNC) {
-    throw new AsyncAccessorPending(computation.async!.subscribers);
-  }
-  // const promise = computation.compute?.();
-  const subscribers: Function[] = [];
-  computation.async = {
-    promise: undefined!,
-    cancelled: false,
-    promiseState: "pending",
-    subscribers,
+
+  const read = () => {
+    load();
+    return value();
   };
-  computation.value = undefined;
-  computation.state = ComputationState.ASYNC;
-  computation.async.promise = computation.compute().then(
-    (value: any) => {
-      computation.value = value;
-      computation.state = ComputationState.EXECUTED;
-      subscribers.forEach((fn) => fn());
+
+  Object.defineProperties(read, {
+    state: { get: state },
+    error: { get: error },
+    loading: {
+      get() {
+        const s = state();
+        return s === "pending" || s === "refreshing";
+      },
     },
-    (error: any) => {
-      computation.state = ComputationState.EXECUTED;
-    }
-  );
-  throw new AsyncAccessorPending(subscribers);
+    // latest: {
+    //   get() {
+    //     // if (!resolved) return read();
+    //     // const err = error();
+    //     // if (err && !pr) throw err;
+    //     // return value();
+    //     return undefined;
+    //   },
+    // },
+  });
+
+  return [read as DerivedAsyncRead<T>] as const;
+}
+
+function updateAsyncComputation(computation: Derived<any, any>) {
+  if (computation.async) return;
+  const transaction = getCurrentTransaction();
+  const length = Effects?.length || 0;
+  for (let i = 0; i < length; i++) {
+    transaction.effects.add(Effects[i]);
+  }
+
+  const async: ComputationAsync = {
+    task: undefined!,
+    transaction,
+  };
+  computation.async = async;
+  computation.value = undefined;
+  // computation.state = ComputationState.ASYNC_PENDING;
+
+  let lastComputation: Computation;
+  let lastTransaction: Transaction;
+  const setContext = () => {
+    lastComputation = CurrentComputation;
+    lastTransaction = getCurrentTransaction();
+    CurrentComputation = computation;
+    setCurrentTransaction(transaction);
+  };
+  const resetContext = () => {
+    CurrentComputation = lastComputation;
+    setCurrentTransaction(lastTransaction);
+  };
+  const onSuccess = (value: any) => {
+    computation.value = value;
+    onWriteAtom(computation);
+    teardown();
+  };
+  const teardown = () => {
+    computation.async = undefined;
+    computation.state = ComputationState.EXECUTED;
+    transaction.decrement();
+  };
+  const task = makeTask(computation.compute, setContext, resetContext, teardown);
+  async.task = task;
+
+  transaction.increment();
+  task.start().then(onSuccess, teardown);
 }
 
 // For tests

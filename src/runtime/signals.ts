@@ -268,6 +268,7 @@ export function derivedAsync<T>(fn: () => Promise<T>, opts?: Opts) {
       setValue(await fn());
     } catch (e) {
       setError(e);
+      setValue(undefined);
       setState("errored");
       return;
     }
@@ -300,7 +301,7 @@ export function derivedAsync<T>(fn: () => Promise<T>, opts?: Opts) {
   };
 
   const read = () => {
-    load();
+    withoutReactivity(load);
     return value();
   };
 
@@ -364,6 +365,10 @@ function updateAsyncComputation(computation: Derived<any, any>) {
     computation.async = undefined;
     computation.state = ComputationState.EXECUTED;
     transaction.decrement();
+    let previousEffects = Effects;
+    Effects = [...transaction.effects];
+    processEffects();
+    Effects = previousEffects;
   };
   const task = makeTask(computation.compute, setContext, resetContext, teardown);
   async.task = task;

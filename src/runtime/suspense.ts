@@ -34,8 +34,8 @@ export function makeTransaction<T>({
     state,
     increment() {
       setState("pending");
-      isASync ||= count > 1;
       count++;
+      isASync ||= count > 1;
     },
     decrement() {
       count--;
@@ -56,5 +56,8 @@ export function makeTransaction<T>({
       parent.decrement();
     },
     data,
-  };
+    get count() {
+      return count;
+    },
+  } as any;
 }

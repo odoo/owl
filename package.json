@@ -88,7 +88,7 @@
       "^.+\\.ts?$": "ts-jest"
     },
     "verbose": false,
-    "testRegex": "(/tests/discussModel.(test|spec))\\.ts?$",
+    "testRegex": "(/tests/components/derivedAsync.(test|spec))\\.ts?$",
     "moduleFileExtensions": [
       "ts",
       "tsx",

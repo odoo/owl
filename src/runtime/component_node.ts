@@ -158,7 +158,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
       const transaction = getCurrentTransaction();
       transaction.increment();
       willStartDerived();
-      if (willStartDerived.loading) return transaction.decrement();
+      if (willStartDerived.loading) return;
       transaction;
       transaction.data.nodeToBDomMap.set(this.renderFn());
       transaction.decrement();
@@ -167,10 +167,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
   }
 
   mountComponent(target: any, options?: MountOptions) {
-    // const fiber = new MountFiber(this, target, options);
-    // this.app.scheduler.addFiber(fiber);
     this.initiateRender({ mountInfos: { target, options } });
-    // this.mountInfos = undefined;
   }
 
   async initiateRender({ mountInfos }: { mountInfos?: MountInfos } = {}) {
@@ -192,8 +189,8 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
         },
         onComplete: (isAsync) => {
           // re-render if any async occured.
-          if (isAsync) withTransaction(transaction, renderBDom);
-          else onTransactionComplete(this, mountInfos);
+          // if (isAsync) withTransaction(transaction, renderBDom);
+          onTransactionComplete(this, mountInfos);
         },
       });
       withTransaction(transaction, renderBDom);

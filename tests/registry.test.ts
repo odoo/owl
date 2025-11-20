@@ -1,0 +1,76 @@
+import { effect } from "../src";
+import { Registry } from "../src/runtime/registry";
+import { nextMicroTick } from "./helpers";
+
+async function waitScheduler() {
+  await nextMicroTick();
+  await nextMicroTick();
+}
+
+describe("registry", () => {
+  test("can set and get values", () => {
+    const registry = new Registry();
+
+    registry.set("key", "some value");
+    expect(registry.get("key")).toBe("some value");
+  });
+
+  test("get default values", () => {
+    const registry = new Registry();
+
+    expect(registry.get("key", 1)).toBe(1);
+    registry.set("key", "some value");
+    expect(registry.get("key", 1)).toBe("some value");
+  });
+
+  test("items", async () => {
+    const registry = new Registry();
+
+    registry.set("key", "some value");
+    const items = registry.items;
+    expect(items()).toEqual(["some value"]);
+    registry.set("other_key", "other value");
+    expect(items()).toEqual(["some value", "other value"]);
+    expect(registry.get("key")).toBe("some value");
+  });
+
+  test("items and effects", async () => {
+    const registry: Registry<string> = new Registry();
+
+    registry.set("key", "a");
+    const items = registry.items;
+    const steps: string[] = [];
+
+    effect(() => {
+      steps.push(...items());
+    });
+    expect(steps).toEqual(["a"]);
+    registry.set("b", "b");
+    expect(steps).toEqual(["a"]);
+    await waitScheduler();
+    expect(steps).toEqual(["a", "a", "b"]);
+  });
+
+  test("sequence", async () => {
+    const registry = new Registry();
+
+    registry.set("a", "a", 10);
+    registry.set("b", "b");
+    registry.set("c", "c", 14);
+    registry.set("d", "d", 100);
+
+    const items = registry.items;
+    expect(items()).toEqual(["a", "c", "b", "d"]);
+  });
+
+  test("validation schema", async () => {
+    const registry = new Registry("test", {
+      blip: String,
+    });
+
+    registry.set("a", { blip: "asdf" });
+    expect(() => {
+      registry.set("a", { blip: 1 });
+    }).toThrow();
+  });
+});

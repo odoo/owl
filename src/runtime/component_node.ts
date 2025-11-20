@@ -5,6 +5,7 @@ import { BDom, VNode } from "./blockdom";
 import { Component, ComponentConstructor, Props } from "./component";
 import { fibersInError } from "./error_handling";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";
+import { PluginManager } from "./plugins";
 import { reactive } from "./reactivity";
 import { getCurrentComputation, setComputation, withoutReactivity } from "./signals";
 import { STATUS } from "./status";
@@ -64,11 +65,13 @@ export function useState<T extends object>(state: T): T {
 
 type LifecycleHook = Function;
 
-export class ComponentNode<P extends Props = any, E = any> implements VNode<ComponentNode<P, E>> {
+export class ComponentNode<P extends Props = any, Plugins = any, E = any>
+  implements VNode<ComponentNode<P, E>>
+{
   el?: HTMLElement | Text | undefined;
   app: App;
   fiber: Fiber | null = null;
-  component: Component<P, E>;
+  component: Component<P, Plugins, E>;
   bdom: BDom | null = null;
   status: STATUS = STATUS.NEW;
   forceNextRender: boolean = false;
@@ -91,8 +94,10 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
   willDestroy: LifecycleHook[] = [];
   signalComputation: Computation;
 
+  pluginManager: PluginManager;
+
   constructor(
-    C: ComponentConstructor<P, E>,
+    C: ComponentConstructor<P, Plugins, E>,
     props: P,
     app: App,
     parent: ComponentNode | null,
@@ -103,6 +108,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     this.parent = parent;
     this.props = props;
     this.parentKey = parentKey;
+    this.pluginManager = parent ? parent.pluginManager : app.pluginManager;
     this.signalComputation = {
       value: undefined,
       compute: () => this.render(false),
@@ -118,7 +124,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     this.childEnv = env;
     const previousComputation = getCurrentComputation();
     setComputation(this.signalComputation);
-    this.component = new C(props, env, this);
+    this.component = new C(props, env, this.pluginManager.plugins as any, this);
     const ctx = Object.assign(Object.create(this.component), { this: this.component });
     this.renderFn = app.getTemplate(C.template).bind(this.component, ctx, this);
     this.component.setup();

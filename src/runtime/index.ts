@@ -13,6 +13,7 @@ import {
   comment,
 } from "./blockdom";
 import { mainEventHandler } from "./event_handling";
+export { Registry } from "./registry";
 
 config.shouldNormalizeDom = false;
 config.mainEventHandler = mainEventHandler;
@@ -39,7 +40,7 @@ export type { ComponentConstructor } from "./component";
 export { useComponent, useState } from "./component_node";
 export { status } from "./status";
 export { reactive, markRaw, toRaw } from "./reactivity";
-export { effect, withoutReactivity, derived } from "./signals";
+export { effect, withoutReactivity, derived, signal } from "./signals";
 export { useEffect, useEnv, useExternalListener, useRef, useChildSubEnv, useSubEnv } from "./hooks";
 export { batched, EventBus, htmlEscape, whenReady, loadFile, markup } from "./utils";
 export {
@@ -60,3 +61,5 @@ export { OwlError } from "../common/owl_error";
 export const __info__ = {
   version: App.version,
 };
+
+export { Plugin, PluginManager, usePlugins } from "./plugins";

@@ -22,7 +22,10 @@ export function signal<T>(value: T, opts?: Opts) {
     atom.value = newValue;
     onWriteAtom(atom);
   };
-  return [read, write] as const;
+  return {
+    get: read,
+    set: write,
+  } as const;
 }
 export function effect<T>(fn: () => T, opts?: Opts) {
   const effectComputation: Computation = {

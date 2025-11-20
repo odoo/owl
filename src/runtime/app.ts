@@ -9,6 +9,7 @@ import { validateProps } from "./template_helpers";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
 import { validateTarget } from "./utils";
 import { toRaw, reactive } from "./reactivity";
+import { PluginCtor, PluginManager } from "./plugins";
 
 // reimplement dev mode stuff see last change in 0f7a8289a6fb8387c3c1af41c6664b2a8448758f
 
@@ -19,6 +20,7 @@ export interface Env {
 export interface RootConfig<P, E> {
   props?: P;
   env?: E;
+  Plugins?: PluginCtor[];
 }
 
 export interface AppConfig<P, E> extends TemplateSetConfig, RootConfig<P, E> {
@@ -68,12 +70,14 @@ export class App<
   subRoots: Set<ComponentNode> = new Set();
   root: ComponentNode<P, E> | null = null;
   warnIfNoStaticProps: boolean;
+  pluginManager: PluginManager;
 
   constructor(Root: ComponentConstructor<P, E>, config: AppConfig<P, E> = {}) {
     super(config);
     this.name = config.name || "";
     this.Root = Root;
     apps.add(this);
+    this.pluginManager = new PluginManager(null, config.Plugins || []);
     if (config.test) {
       this.dev = true;
     }

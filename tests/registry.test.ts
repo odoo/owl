@@ -65,12 +65,27 @@ describe("registry", () => {
 
   test("validation schema", async () => {
     const registry = new Registry("test", {
-      blip: String,
+      type: Object,
+      shape: {
+        blip: String,
+      },
     });
 
     registry.set("a", { blip: "asdf" });
     expect(() => {
       registry.set("a", { blip: 1 });
+    }).toThrow();
+  });
+
+  test("validation schema, with a class", async () => {
+    class A {}
+    class B {}
+
+    const registry = new Registry("test", { type: A });
+
+    registry.set("a", new A());
+    expect(() => {
+      registry.set("a", new B());
     }).toThrow();
   });
 });

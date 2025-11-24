@@ -1,6 +1,6 @@
 import { reactive } from "./reactivity";
 import { derived } from "./signals";
-import { Schema, validate } from "./validation";
+import { TypeDescription, validateType } from "./validation";
 // to discuss with nby: how to make the registry reactive (with items/entries
 // derived value, but without forcing the items themselves to be reactive,
 // which is the case right now with this implementation)
@@ -10,13 +10,13 @@ type Fn<T> = () => T;
 export class Registry<T> {
   _map: { [key: string]: [number, T] } = reactive(Object.create(null));
   _name: string;
-  _schema?: Schema;
+  _type?: TypeDescription;
   items!: Fn<T[]>;
   entries!: Fn<[string, T][]>;
 
-  constructor(name?: string, schema?: Schema) {
+  constructor(name?: string, type?: TypeDescription) {
     this._name = name || "registry";
-    this._schema = schema;
+    this._type = type;
 
     const entries = derived(() => {
       return Object.entries(this._map)
@@ -38,8 +38,12 @@ export class Registry<T> {
   }
 
   set(key: string, value: T, sequence: number = 50) {
-    if (this._schema) {
-      validate(value as any, this._schema as any);
+    if (this._type) {
+      const error = validateType(key, value as any, this._type as any);
+      // todo: move error handling in validation.js
+      if (error) {
+        throw new Error("Invalid type: " + error);
+      }
     }
     this._map[key] = [sequence, value];
   }

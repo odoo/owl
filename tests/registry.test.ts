@@ -15,6 +15,13 @@ describe("registry", () => {
     expect(registry.get("key")).toBe("some value");
   });
 
+  test("can add element from id and get values", () => {
+    const registry = new Registry();
+    const obj = { id: "key", value: 3 };
+    registry.addById(obj);
+    expect(registry.get("key")).toBe(obj);
+  });
+
   test("get default values", () => {
     const registry = new Registry();
 

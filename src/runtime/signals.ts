@@ -4,7 +4,12 @@ import { batched } from "./utils";
 let Effects: Computation[];
 let CurrentComputation: Computation | undefined;
 
-export function signal<T>(value: T, opts?: Opts) {
+export type Signal<T> = {
+  get(): T;
+  set(value: T): void;
+};
+
+export function signal<T>(value: T, opts?: Opts): Signal<T> {
   const atom: Atom<T> = {
     value,
     observers: new Set(),

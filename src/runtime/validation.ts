@@ -14,7 +14,7 @@ interface TypeInfo {
 
 type ValueType = { value: any };
 
-type TypeDescription = BaseType | TypeInfo | ValueType | TypeDescription[];
+export type TypeDescription = BaseType | TypeInfo | ValueType | TypeDescription[];
 type SimplifiedSchema = string[];
 type NormalizedSchema = { [key: string]: TypeDescription };
 export type Schema = SimplifiedSchema | NormalizedSchema;

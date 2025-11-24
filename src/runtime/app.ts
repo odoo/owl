@@ -55,6 +55,7 @@ window.__OWL_DEVTOOLS__ ||= { apps, Fiber, RootFiber, toRaw, reactive };
 
 export class App<
   T extends abstract new (...args: any) => any = any,
+  Plugins = any,
   P extends object = any,
   E = any
 > extends TemplateSet {
@@ -63,7 +64,7 @@ export class App<
   static version = version;
 
   name: string;
-  Root: ComponentConstructor<P, E>;
+  Root: ComponentConstructor<P, Plugins, E>;
   props: P;
   env: E;
   scheduler = new Scheduler();
@@ -72,7 +73,7 @@ export class App<
   warnIfNoStaticProps: boolean;
   pluginManager: PluginManager;
 
-  constructor(Root: ComponentConstructor<P, E>, config: AppConfig<P, E> = {}) {
+  constructor(Root: ComponentConstructor<P, Plugins, E>, config: AppConfig<P, E> = {}) {
     super(config);
     this.name = config.name || "";
     this.Root = Root;
@@ -102,8 +103,8 @@ export class App<
     return root.mount(target, options) as any;
   }
 
-  createRoot<Props extends object, SubEnv = any>(
-    Root: ComponentConstructor<Props, E>,
+  createRoot<Props extends object, Plugins = any, SubEnv = any>(
+    Root: ComponentConstructor<Props, Plugins, E>,
     config: RootConfig<Props, SubEnv> = {}
   ): Root<Props, SubEnv> {
     const props = config.props || ({} as Props);
@@ -266,12 +267,13 @@ export class App<
 
 export async function mount<
   T extends abstract new (...args: any) => any = any,
+  Plugins = any,
   P extends object = any,
   E = any
 >(
-  C: T & ComponentConstructor<P, E>,
+  C: T & ComponentConstructor<P, Plugins, E>,
   target: HTMLElement,
   config: AppConfig<P, E> & MountOptions = {}
-): Promise<Component<P, E> & InstanceType<T>> {
+): Promise<Component<P, Plugins, E> & InstanceType<T>> {
   return new App(C, config).mount(target, config);
 }

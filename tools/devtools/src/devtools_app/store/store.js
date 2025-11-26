@@ -608,8 +608,9 @@ export const store = reactive({
   },
 
   // Center the view around the currently selected component
-  focusSelectedComponent() {
+  onActiveComponentClick() {
     this.selectedElement.scrollIntoView({ block: "center", behavior: "smooth" });
+    copyToClipboard(this.activeComponent.name);
   },
 
   // Toggle the recording of events in the page
@@ -1054,4 +1055,22 @@ async function evalInWindow(code, frameUrl = "top") {
       });
     }
   });
+}
+
+function copyToClipboard(text) {
+  // This is crappy but it seems like document.execCommand is the only remaining way to
+  // copy text to clipboard in a devtools extension (even though it is marked as deprecated)
+  // since navigator.clipboard.writeText has permission issues inside iframes (and the devtools
+  // panel is mounted inside an iframe)
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.style.opacity = "0";
+  document.body.appendChild(textarea);
+  textarea.select();
+  try {
+    document.execCommand("copy");
+  } catch (err) {
+    console.error("Copy failed", err);
+  }
+  document.body.removeChild(textarea);
 }

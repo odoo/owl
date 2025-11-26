@@ -4,7 +4,13 @@
     <div class="panel-top d-flex align-items-center">
       <div class="ms-1 p-1 text-truncate" style="width: 100%;">
         <span t-if="store.activeComponent.path.length > 1">&lt;</span>
-        <b style="color: var(--component-color); cursor: pointer;" t-on-mouseover.stop="() => this.store.highlightComponent(this.store.activeComponent.path)" t-on-click.stop="() => this.store.focusSelectedComponent()" t-on-contextmenu.prevent="openMenu" t-esc="store.activeComponent.name"/>
+        <b 
+          style="color: var(--component-color); cursor: pointer;"
+          t-on-mouseover.stop="() => this.store.highlightComponent(this.store.activeComponent.path)"
+          t-on-click.stop="() => this.store.onActiveComponentClick()"
+          t-on-contextmenu.prevent="openMenu"
+          t-esc="store.activeComponent.name"
+        />
         <span t-if="store.activeComponent.path.length > 1">&gt;</span>
         <span class="version" t-else="">owl=<t t-esc="store.activeComponent.version"/></span>
       </div>

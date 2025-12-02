@@ -1,0 +1,138 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`basic use (setup) 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return safeOutput(ctx['this'].a.value);
+  }
+}"
+`;
+
+exports[`basic use 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return safeOutput(ctx['this'].a.value);
+  }
+}"
+`;
+
+exports[`components can start plugins 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = safeOutput(ctx['this'].a.value);
+    const b3 = text(\` - \`);
+    const b4 = safeOutput(ctx['this'].b.value);
+    return multi([b2, b3, b4]);
+  }
+}"
+`;
+
+exports[`components start plugins at their level 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Level2\`, true, false, false, []);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`1 | \`);
+    const b3 = comp1({}, key + \`__1\`, node, this, null);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`components start plugins at their level 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  const comp1 = app.createComponent(\`Level3\`, true, false, false, []);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`2: \`);
+    const b3 = safeOutput(ctx['this'].a.value);
+    const b4 = text(\` | \`);
+    const b5 = comp1({}, key + \`__1\`, node, this, null);
+    return multi([b2, b3, b4, b5]);
+  }
+}"
+`;
+
+exports[`components start plugins at their level 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(\`3: \`);
+    const b3 = safeOutput(ctx['this'].a.value);
+    const b4 = text(\` - \`);
+    const b5 = safeOutput(ctx['this'].b.value);
+    return multi([b2, b3, b4, b5]);
+  }
+}"
+`;
+
+exports[`get plugin which is not started 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return text(\`\`);
+  }
+}"
+`;
+
+exports[`shadow plugin 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  const comp1 = app.createComponent(\`Level2\`, true, false, false, []);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = safeOutput(ctx['this'].a.value);
+    const b3 = text(\` | \`);
+    const b4 = comp1({}, key + \`__1\`, node, this, null);
+    return multi([b2, b3, b4]);
+  }
+}"
+`;
+
+exports[`shadow plugin 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Level3\`, true, false, false, []);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return comp1({}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`shadow plugin 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = \\"\\") {
+    return safeOutput(ctx['this'].a.value);
+  }
+}"
+`;

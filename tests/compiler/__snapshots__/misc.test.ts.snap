@@ -5,19 +5,19 @@ exports[`misc complex template 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
-  const comp1 = app.createComponent(\`SlotButton\`, true, false, false, [\\"class\\",\\"slot\\"]);
+  const comp1 = app.createComponent(\`SlotButton\`, true, false, false, ["class","slot"]);
   
-  let block1 = createBlock(\`<div block-attribute-0=\\"class\\"><div block-attribute-1=\\"class\\"><div class=\\"batch_header\\"><a block-attribute-2=\\"href\\" block-attribute-3=\\"class\\" title=\\"View Batch\\"><block-text-4/><block-child-0/><i class=\\"arrow fa fa-window-maximize\\"/></a></div><block-child-1/><div class=\\"batch_slots\\"><block-child-2/><block-child-3/></div><div class=\\"batch_commits\\"><block-child-4/></div></div></div>\`);
-  let block2 = createBlock(\`<i class=\\"fa fa-exclamation-triangle\\"/>\`);
-  let block3 = createBlock(\`<span><i class=\\"fa fa-cog fa-spin fa-fw\\"/> preparing</span>\`);
-  let block7 = createBlock(\`<div class=\\"slot_filler\\"/>\`);
-  let block9 = createBlock(\`<div class=\\"one_line\\"><a block-attribute-0=\\"href\\" block-attribute-1=\\"class\\"><block-child-0/><block-child-1/><block-child-2/><block-child-3/><block-text-2/></a><a block-attribute-3=\\"href\\" class=\\"badge badge-light\\" title=\\"View Commit on Github\\"><i class=\\"fa fa-github\\"/></a><span><block-text-4/></span></div>\`);
-  let block10 = createBlock(\`<i class=\\"fa fa-fw fa-hashtag\\" title=\\"This commit is a new head\\"/>\`);
-  let block11 = createBlock(\`<i class=\\"fa fa-fw fa-link\\" title=\\"This commit is an existing head from bundle branches\\"/>\`);
-  let block12 = createBlock(\`<i class=\\"fa fa-fw fa-code-fork\\" title=\\"This commit is matched from a base batch with matching merge_base\\"/>\`);
-  let block13 = createBlock(\`<i class=\\"fa fa-fw fa-clock-o\\" title=\\"This commit is the head of a base branch\\"/>\`);
+  let block1 = createBlock(\`<div block-attribute-0="class"><div block-attribute-1="class"><div class="batch_header"><a block-attribute-2="href" block-attribute-3="class" title="View Batch"><block-text-4/><block-child-0/><i class="arrow fa fa-window-maximize"/></a></div><block-child-1/><div class="batch_slots"><block-child-2/><block-child-3/></div><div class="batch_commits"><block-child-4/></div></div></div>\`);
+  let block2 = createBlock(\`<i class="fa fa-exclamation-triangle"/>\`);
+  let block3 = createBlock(\`<span><i class="fa fa-cog fa-spin fa-fw"/> preparing</span>\`);
+  let block7 = createBlock(\`<div class="slot_filler"/>\`);
+  let block9 = createBlock(\`<div class="one_line"><a block-attribute-0="href" block-attribute-1="class"><block-child-0/><block-child-1/><block-child-2/><block-child-3/><block-text-2/></a><a block-attribute-3="href" class="badge badge-light" title="View Commit on Github"><i class="fa fa-github"/></a><span><block-text-4/></span></div>\`);
+  let block10 = createBlock(\`<i class="fa fa-fw fa-hashtag" title="This commit is a new head"/>\`);
+  let block11 = createBlock(\`<i class="fa fa-fw fa-link" title="This commit is an existing head from bundle branches"/>\`);
+  let block12 = createBlock(\`<i class="fa fa-fw fa-code-fork" title="This commit is matched from a base batch with matching merge_base"/>\`);
+  let block13 = createBlock(\`<i class="fa fa-fw fa-clock-o" title="This commit is the head of a base branch"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2, b3, b4, b6, b8;
     let attr1 = \`batch_tile \${ctx['options'].more?'more':'nomore'}\`;
     let attr2 = \`card bg-\${ctx['klass']}-light\`;
@@ -93,7 +93,7 @@ exports[`misc global 1`] = `
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   let block4 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     ctx = Object.create(ctx);
@@ -111,11 +111,11 @@ exports[`misc global 1`] = `
       ctx[isBoundary] = 1;
       ctx = Object.create(ctx);
       ctx[isBoundary] = 1;
-      setContextValue(ctx, \\"foo\\", 'aaa');
+      setContextValue(ctx, "foo", 'aaa');
       const b7 = callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}\`);
       ctx = ctx.__proto__;
       const b8 = callTemplate_2.call(this, ctx, node, key + \`__2__\${key1}\`);
-      setContextValue(ctx, \\"foo\\", 'bbb');
+      setContextValue(ctx, "foo", 'bbb');
       const b9 = callTemplate_3.call(this, ctx, node, key + \`__3__\${key1}\`);
       const b6 = multi([b7, b8, b9]);
       ctx[zero] = b6;
@@ -139,7 +139,7 @@ exports[`misc global 2`] = `
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let txt1 = withDefault(ctx['foo'], \`foo default\`);
     return block1([txt1]);
   }
@@ -152,9 +152,9 @@ exports[`misc global 3`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { zero } = helpers;
   
-  let block1 = createBlock(\`<año block-attribute-0=\\"falló\\"><block-child-0/></año>\`);
+  let block1 = createBlock(\`<año block-attribute-0="falló"><block-child-0/></año>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let attr1 = 'agüero';
     const b2 = ctx[zero];
     return block1([attr1], [b2]);
@@ -170,7 +170,7 @@ exports[`misc global 4`] = `
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b3 = text(\`toto default\`);
     const b2 = safeOutput(ctx['toto'], b3);
     return block1([], [b2]);
@@ -184,39 +184,39 @@ exports[`misc other complex template 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   const callTemplate_1 = app.getTemplate(\`LOAD_INFOS_TEMPLATE\`);
-  const comp1 = app.createComponent(\`BundlesList\`, true, false, false, [\\"bundles\\",\\"category_custom_views\\",\\"search\\"]);
-  const comp2 = app.createComponent(\`BundlesList\`, true, false, false, [\\"bundles\\",\\"search\\"]);
+  const comp1 = app.createComponent(\`BundlesList\`, true, false, false, ["bundles","category_custom_views","search"]);
+  const comp2 = app.createComponent(\`BundlesList\`, true, false, false, ["bundles","search"]);
   
-  let block1 = createBlock(\`<div><header><nav class=\\"navbar navbar-expand-md navbar-light bg-light\\"><a block-attribute-0=\\"href\\"><b style=\\"color:#777;\\"><block-text-1/></b></a><button type=\\"button\\" class=\\"navbar-toggler\\" data-toggle=\\"collapse\\" data-target=\\"#top_menu_collapse\\"><span class=\\"navbar-toggler-icon\\"/></button><div class=\\"collapse navbar-collapse\\" id=\\"top_menu_collapse\\" aria-expanded=\\"false\\"><ul class=\\"nav navbar-nav ml-auto text-right\\" id=\\"top_menu\\"><block-child-0/><li class=\\"nav-item divider\\"/><block-child-1/></ul><div><div class=\\"input-group input-group-sm\\"><div class=\\"input-group-prepend input-group-sm\\"><button class=\\"btn btn-default fa fa-cog\\" title=\\"Settings\\" block-handler-2=\\"click\\"/><button class=\\"btn btn-default\\" block-handler-3=\\"click\\"> More </button><block-child-2/></div><input class=\\"form-control\\" type=\\"text\\" placeholder=\\"Search\\" aria-label=\\"Search\\" name=\\"search\\" block-property-4=\\"value\\" block-handler-5=\\"keyup\\" block-handler-6=\\"change\\" block-ref=\\"7\\"/><div class=\\"input-group-append\\"><button class=\\"btn btn-default fa fa-eraser\\" block-handler-8=\\"click\\"/></div></div></div></div></nav></header><div class=\\"container-fluid\\" block-ref=\\"9\\"><div class=\\"row\\"><!--div class=\\"form-group col-md-6\\">
+  let block1 = createBlock(\`<div><header><nav class="navbar navbar-expand-md navbar-light bg-light"><a block-attribute-0="href"><b style="color:#777;"><block-text-1/></b></a><button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#top_menu_collapse"><span class="navbar-toggler-icon"/></button><div class="collapse navbar-collapse" id="top_menu_collapse" aria-expanded="false"><ul class="nav navbar-nav ml-auto text-right" id="top_menu"><block-child-0/><li class="nav-item divider"/><block-child-1/></ul><div><div class="input-group input-group-sm"><div class="input-group-prepend input-group-sm"><button class="btn btn-default fa fa-cog" title="Settings" block-handler-2="click"/><button class="btn btn-default" block-handler-3="click"> More </button><block-child-2/></div><input class="form-control" type="text" placeholder="Search" aria-label="Search" name="search" block-property-4="value" block-handler-5="keyup" block-handler-6="change" block-ref="7"/><div class="input-group-append"><button class="btn btn-default fa fa-eraser" block-handler-8="click"/></div></div></div></div></nav></header><div class="container-fluid" block-ref="9"><div class="row"><!--div class="form-group col-md-6">
                       <h5>Search options</h5>
-                      <input class=\\"form-control\\" type=\\"text\\" name=\\"default_search\\" id=\\"default_search\\" t-att-checked=\\"default_search\\" placeholder=\\"Default search\\"/>
+                      <input class="form-control" type="text" name="default_search" id="default_search" t-att-checked="default_search" placeholder="Default search"/>
       
                       <h5>Display options</h5>
-                      <div class=\\"form-check\\">
-                          <input class=\\"form-check-input\\" type=\\"checkbox\\" name=\\"display_sticky\\"/>
-                          <label class=\\"form-check-label\\" for=\\"display_sticky\\">Display sticky</label>
+                      <div class="form-check">
+                          <input class="form-check-input" type="checkbox" name="display_sticky"/>
+                          <label class="form-check-label" for="display_sticky">Display sticky</label>
                       </div>
-                      <div class=\\"form-check\\">
-                          <input class=\\"form-check-input\\" type=\\"checkbox\\" name=\\"display_dev\\"/>
-                          <label class=\\"form-check-label\\" for=\\"display_dev\\">Display dev</label>
+                      <div class="form-check">
+                          <input class="form-check-input" type="checkbox" name="display_dev"/>
+                          <label class="form-check-label" for="display_dev">Display dev</label>
                       </div>
-                  </div--><div class=\\"form-group col-md-6\\"><h5>Triggers</h5><block-child-3/></div></div></div><div class=\\"container-fluid frontend\\"><div class=\\"row\\"><div class=\\"col-md-12\\"><block-child-4/></div><div class=\\"col-md-12\\"><block-child-5/><block-child-6/><block-child-7/></div></div></div></div>\`);
-  let block3 = createBlock(\`<li class=\\"nav-item\\"><a class=\\"nav-link\\" href=\\"#\\" block-handler-0=\\"click\\"><block-text-1/></a></li>\`);
-  let block5 = createBlock(\`<li class=\\"nav-item dropdown\\"><b><a class=\\"nav-link\\" block-attribute-0=\\"href\\">Login</a></b></li>\`);
-  let block8 = createBlock(\`<li class=\\"nav-item\\"><a href=\\"/runbot/errors\\" class=\\"nav-link text-danger\\" block-attribute-0=\\"title\\"><i class=\\"fa fa-bug\\"/><block-text-1/></a></li>\`);
-  let block9 = createBlock(\`<li class=\\"nav-item divider\\"/>\`);
-  let block11 = createBlock(\`<li class=\\"nav-item\\"><a href=\\"/runbot/errors\\" class=\\"nav-link\\" title=\\"Random Bugs\\"><i class=\\"fa fa-bug\\"/></a></li>\`);
-  let block12 = createBlock(\`<li class=\\"nav-item divider\\"/>\`);
-  let block13 = createBlock(\`<li class=\\"nav-item dropdown\\"><a href=\\"#\\" class=\\"nav-link dropdown-toggle\\" data-toggle=\\"dropdown\\"><b><span><block-text-0/></span></b></a><div class=\\"dropdown-menu js_usermenu\\" role=\\"menu\\"><a class=\\"dropdown-item\\" id=\\"o_logout\\" role=\\"menuitem\\" block-attribute-1=\\"href\\">Logout</a><a class=\\"dropdown-item\\" role=\\"menuitem\\" block-attribute-2=\\"href\\">Web</a></div></li>\`);
-  let block14 = createBlock(\`<select class=\\"custom-select\\" name=\\"category\\" id=\\"category\\"><block-child-0/></select>\`);
-  let block16 = createBlock(\`<option block-attribute-0=\\"value\\" block-property-1=\\"selected\\"><block-text-2/></option>\`);
-  let block20 = createBlock(\`<div class=\\"form-check\\"><input class=\\"form-check-input\\" type=\\"checkbox\\" block-attribute-0=\\"name\\" block-attribute-1=\\"id\\" block-property-2=\\"checked\\" block-attribute-3=\\"data-trigger_id\\" block-handler-4=\\"change\\"/><label class=\\"form-check-label\\" block-attribute-5=\\"for\\"><block-text-6/></label></div>\`);
-  let block21 = createBlock(\`<div><button class=\\"btn btn-sm btn-default\\" block-handler-0=\\"click\\">All</button><button class=\\"btn btn-sm btn-default\\" block-handler-1=\\"click\\">None</button><button class=\\"btn btn-sm btn-info\\" block-handler-2=\\"click\\">Default</button><button class=\\"btn btn-sm btn-default\\" block-handler-3=\\"click\\">Close</button></div>\`);
-  let block23 = createBlock(\`<div class=\\"alert alert-warning\\" role=\\"alert\\"><block-text-0/> <!-- todo fixme--></div>\`);
-  let block24 = createBlock(\`<div class=\\"mb32\\"><h1>No project</h1></div>\`);
+                  </div--><div class="form-group col-md-6"><h5>Triggers</h5><block-child-3/></div></div></div><div class="container-fluid frontend"><div class="row"><div class="col-md-12"><block-child-4/></div><div class="col-md-12"><block-child-5/><block-child-6/><block-child-7/></div></div></div></div>\`);
+  let block3 = createBlock(\`<li class="nav-item"><a class="nav-link" href="#" block-handler-0="click"><block-text-1/></a></li>\`);
+  let block5 = createBlock(\`<li class="nav-item dropdown"><b><a class="nav-link" block-attribute-0="href">Login</a></b></li>\`);
+  let block8 = createBlock(\`<li class="nav-item"><a href="/runbot/errors" class="nav-link text-danger" block-attribute-0="title"><i class="fa fa-bug"/><block-text-1/></a></li>\`);
+  let block9 = createBlock(\`<li class="nav-item divider"/>\`);
+  let block11 = createBlock(\`<li class="nav-item"><a href="/runbot/errors" class="nav-link" title="Random Bugs"><i class="fa fa-bug"/></a></li>\`);
+  let block12 = createBlock(\`<li class="nav-item divider"/>\`);
+  let block13 = createBlock(\`<li class="nav-item dropdown"><a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"><b><span><block-text-0/></span></b></a><div class="dropdown-menu js_usermenu" role="menu"><a class="dropdown-item" id="o_logout" role="menuitem" block-attribute-1="href">Logout</a><a class="dropdown-item" role="menuitem" block-attribute-2="href">Web</a></div></li>\`);
+  let block14 = createBlock(\`<select class="custom-select" name="category" id="category"><block-child-0/></select>\`);
+  let block16 = createBlock(\`<option block-attribute-0="value" block-property-1="selected"><block-text-2/></option>\`);
+  let block20 = createBlock(\`<div class="form-check"><input class="form-check-input" type="checkbox" block-attribute-0="name" block-attribute-1="id" block-property-2="checked" block-attribute-3="data-trigger_id" block-handler-4="change"/><label class="form-check-label" block-attribute-5="for"><block-text-6/></label></div>\`);
+  let block21 = createBlock(\`<div><button class="btn btn-sm btn-default" block-handler-0="click">All</button><button class="btn btn-sm btn-default" block-handler-1="click">None</button><button class="btn btn-sm btn-info" block-handler-2="click">Default</button><button class="btn btn-sm btn-default" block-handler-3="click">Close</button></div>\`);
+  let block23 = createBlock(\`<div class="alert alert-warning" role="alert"><block-text-0/> <!-- todo fixme--></div>\`);
+  let block24 = createBlock(\`<div class="mb32"><h1>No project</h1></div>\`);
   let block25 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2, b4, b14, b17, b22, b23, b24, b25;
     let attr1 = \`/runbot/\${ctx['project'].slug}\`;
     let txt1 = ctx['project'].name;
@@ -274,7 +274,7 @@ exports[`misc other complex template 1`] = `
       const b15 = list(c_block15);
       b14 = block14([], [b15]);
     }
-    let prop2 = new String((ctx['search'].value) === 0 ? 0 : ((ctx['search'].value) || \\"\\"));
+    let prop2 = new String((ctx['search'].value) === 0 ? 0 : ((ctx['search'].value) || ""));
     let hdlr4 = [ctx['updateFilter'], ctx];
     let hdlr5 = [ctx['updateFilter'], ctx];
     let ref1 = (el) => this.__owl__.setRef((\`search_input\`), el);

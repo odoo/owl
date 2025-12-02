@@ -273,7 +273,7 @@ test("bound functions are considered 'alike'", async () => {
   const parent = await mount(Parent, fixture);
   expect(fixture.innerHTML).toBe("1child");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
-    Array [
+    [
       "Parent:setup",
       "Parent:willStart",
       "Parent:willRender",
@@ -289,7 +289,7 @@ test("bound functions are considered 'alike'", async () => {
   parent.state.val = 3;
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
-    Array [
+    [
       "Parent:willRender",
       "Parent:rendered",
       "Parent:willPatch",
@@ -363,7 +363,7 @@ test(".alike suffix in a simple case", async () => {
 
   const parent = await mount(Parent, fixture);
   expect(steps.splice(0)).toMatchInlineSnapshot(`
-    Array [
+    [
       "Parent:setup",
       "Parent:willStart",
       "Parent:willRender",
@@ -382,7 +382,7 @@ test(".alike suffix in a simple case", async () => {
   await nextTick();
   expect(fixture.innerHTML).toBe("11");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
-    Array [
+    [
       "Parent:willRender",
       "Parent:rendered",
       "Parent:willPatch",
@@ -425,7 +425,7 @@ test(".alike suffix in a list", async () => {
 
   await mount(Parent, fixture);
   expect(steps.splice(0)).toMatchInlineSnapshot(`
-    Array [
+    [
       "Parent:setup",
       "Parent:willStart",
       "Parent:willRender",
@@ -449,7 +449,7 @@ test(".alike suffix in a list", async () => {
   await nextTick();
   expect(fixture.innerHTML).toBe("<button>1V</button><button>2V</button>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
-    Array [
+    [
       "Todo:willRender",
       "Todo:rendered",
       "Todo:willPatch",

@@ -6,8 +6,8 @@ exports[`t-esc default with backslash at top level 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { withDefault } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
-    return text(withDefault(undefined, \`\\\\\\\\\`));
+  return function template(ctx, node, key = "") {
+    return text(withDefault(undefined, \`\\\\\`));
   }
 }"
 `;
@@ -18,8 +18,8 @@ exports[`t-esc default with backtick at top-level 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { withDefault } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
-    return text(withDefault(undefined, \`\\\\\`\`));
+  return function template(ctx, node, key = "") {
+    return text(withDefault(undefined, \`\\\`\`));
   }
 }"
 `;
@@ -30,8 +30,8 @@ exports[`t-esc default with interpolation sigil at top level 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { withDefault } = helpers;
   
-  return function template(ctx, node, key = \\"\\") {
-    return text(withDefault(undefined, \`\\\\\${very cool}\`));
+  return function template(ctx, node, key = "") {
+    return text(withDefault(undefined, \`\\\${very cool}\`));
   }
 }"
 `;
@@ -43,7 +43,7 @@ exports[`t-esc div with falsy values 1`] = `
   
   let block1 = createBlock(\`<div><p><block-text-0/></p><p><block-text-1/></p><p><block-text-2/></p><p><block-text-3/></p><p><block-text-4/></p></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let txt1 = ctx['v1'];
     let txt2 = ctx['v2'];
     let txt3 = ctx['v3'];
@@ -61,7 +61,7 @@ exports[`t-esc escaping 1`] = `
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let txt1 = ctx['var'];
     return block1([txt1]);
   }
@@ -75,7 +75,7 @@ exports[`t-esc escaping on a node 1`] = `
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let txt1 = 'ok';
     return block1([txt1]);
   }
@@ -90,7 +90,7 @@ exports[`t-esc escaping on a node with a body 1`] = `
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let txt1 = withDefault('ok', \`nope\`);
     return block1([txt1]);
   }
@@ -105,7 +105,7 @@ exports[`t-esc escaping on a node with a body, as a default 1`] = `
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let txt1 = withDefault(ctx['var'], \`nope\`);
     return block1([txt1]);
   }
@@ -117,7 +117,7 @@ exports[`t-esc falsy values in text nodes 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = text(ctx['v1']);
     const b3 = text(\`:\`);
     const b4 = text(ctx['v2']);
@@ -139,7 +139,7 @@ exports[`t-esc literal 1`] = `
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let txt1 = 'ok';
     return block1([txt1]);
   }
@@ -155,11 +155,11 @@ exports[`t-esc t-esc is escaped 1`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   let block2 = createBlock(\`<p>escaped</p>\`);
   
-  function value1(ctx, node, key = \\"\\") {
+  function value1(ctx, node, key = "") {
     return block2();
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     ctx[\`var\`] = new LazyValue(value1, ctx, this, node, key);
@@ -174,7 +174,7 @@ exports[`t-esc t-esc with the 0 number 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return text(ctx['var']);
   }
 }"
@@ -187,7 +187,7 @@ exports[`t-esc t-esc with the 0 number, in a p 1`] = `
   
   let block1 = createBlock(\`<p><block-text-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let txt1 = ctx['var'];
     return block1([txt1]);
   }
@@ -201,7 +201,7 @@ exports[`t-esc t-esc work with spread operator 1`] = `
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let txt1 = [...ctx['state'].list];
     return block1([txt1]);
   }
@@ -218,7 +218,7 @@ exports[`t-esc t-esc=0 is escaped 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<p>escaped</p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
     const b3 = block3();
@@ -237,7 +237,7 @@ exports[`t-esc t-esc=0 is escaped 2`] = `
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let txt1 = ctx[zero];
     return block1([txt1]);
   }
@@ -249,7 +249,7 @@ exports[`t-esc top level t-esc with undefined 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return text(ctx['var']);
   }
 }"
@@ -262,7 +262,7 @@ exports[`t-esc variable 1`] = `
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let txt1 = ctx['var'];
     return block1([txt1]);
   }

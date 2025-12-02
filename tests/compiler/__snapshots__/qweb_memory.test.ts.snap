@@ -8,7 +8,7 @@ exports[`memory t-foreach does not leak stuff in global scope 1`] = `
   
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList([3,2,1]);;
     for (let i1 = 0; i1 < l_block2; i1++) {

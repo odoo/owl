@@ -125,7 +125,7 @@ describe("app", () => {
     const app = new App(A);
     const comp = await app.mount(fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "A:setup",
         "A:willStart",
         "A:willRender",
@@ -137,7 +137,7 @@ describe("app", () => {
     comp.state.value = true;
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "A:willRender",
         "B:setup",
         "B:willStart",
@@ -149,7 +149,7 @@ describe("app", () => {
     comp.render();
     await nextMicroTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "A:willRender",
         "B:setup",
         "B:willStart",
@@ -159,7 +159,7 @@ describe("app", () => {
 
     app.destroy();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "A:willUnmount",
         "B:willDestroy",
         "A:willDestroy",

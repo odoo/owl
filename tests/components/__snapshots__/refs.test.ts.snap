@@ -5,9 +5,9 @@ exports[`refs basic use 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div block-ref=\\"0\\"/>\`);
+  let block1 = createBlock(\`<div block-ref="0"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let ref1 = (el) => this.__owl__.setRef((\`div\`), el);
     return block1([ref1]);
   }
@@ -19,10 +19,10 @@ exports[`refs can use 2 refs with same name in a t-if/t-else situation 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block2 = createBlock(\`<div block-ref=\\"0\\"/>\`);
-  let block3 = createBlock(\`<span block-ref=\\"0\\"/>\`);
+  let block2 = createBlock(\`<div block-ref="0"/>\`);
+  let block3 = createBlock(\`<span block-ref="0"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2, b3;
     if (ctx['state'].value) {
       let ref1 = (el) => this.__owl__.setRef((\`coucou\`), el);
@@ -41,9 +41,9 @@ exports[`refs ref is unset when t-if goes to false after unrelated render 1`] = 
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block2 = createBlock(\`<div block-attribute-0=\\"class\\" block-ref=\\"1\\"/>\`);
+  let block2 = createBlock(\`<div block-attribute-0="class" block-ref="1"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2;
     if (ctx['state'].show) {
       let attr1 = ctx['state'].class;
@@ -59,11 +59,11 @@ exports[`refs refs and recursive templates 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Test\`, true, false, false, [\\"tree\\"]);
+  const comp1 = app.createComponent(\`Test\`, true, false, false, ["tree"]);
   
-  let block1 = createBlock(\`<p block-ref=\\"0\\"><block-text-1/><block-child-0/></p>\`);
+  let block1 = createBlock(\`<p block-ref="0"><block-text-1/><block-child-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2;
     let ref1 = (el) => this.__owl__.setRef((\`root\`), el);
     let txt1 = ctx['props'].tree.value;
@@ -80,10 +80,10 @@ exports[`refs refs and t-key 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block2 = createBlock(\`<button block-handler-0=\\"click\\"/>\`);
-  let block3 = createBlock(\`<p block-ref=\\"0\\"/>\`);
+  let block2 = createBlock(\`<button block-handler-0="click"/>\`);
+  let block3 = createBlock(\`<p block-ref="0"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const v1 = ctx['state'];
     let hdlr1 = [()=>v1.renderId++, ctx];
     const b2 = block2([hdlr1]);
@@ -102,16 +102,16 @@ exports[`refs refs are properly bound in slots 1`] = `
   let { capture, markRaw } = helpers;
   const comp1 = app.createComponent(\`Dialog\`, true, true, false, []);
   
-  let block1 = createBlock(\`<div><span class=\\"counter\\"><block-text-0/></span><block-child-0/></div>\`);
-  let block2 = createBlock(\`<button block-handler-0=\\"click\\" block-ref=\\"1\\">do something</button>\`);
+  let block1 = createBlock(\`<div><span class="counter"><block-text-0/></span><block-child-0/></div>\`);
+  let block2 = createBlock(\`<button block-handler-0="click" block-ref="1">do something</button>\`);
   
-  function slot1(ctx, node, key = \\"\\") {
+  function slot1(ctx, node, key = "") {
     let hdlr1 = [ctx['doSomething'], ctx];
     let ref1 = (el) => this.__owl__.setRef((\`myButton\`), el);
     return block2([hdlr1, ref1]);
   }
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let txt1 = ctx['state'].val;
     const ctx1 = capture(ctx);
     const b3 = comp1({slots: markRaw({'footer': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__1\`, node, this, null);
@@ -128,7 +128,7 @@ exports[`refs refs are properly bound in slots 2`] = `
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = callSlot(ctx, node, key, 'footer', false, {});
     return block1([], [b2]);
   }
@@ -141,10 +141,10 @@ exports[`refs throws if there are 2 same refs at the same time 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { makeRefWrapper } = helpers;
   
-  let block2 = createBlock(\`<div block-ref=\\"0\\"/>\`);
-  let block3 = createBlock(\`<span block-ref=\\"0\\"/>\`);
+  let block2 = createBlock(\`<div block-ref="0"/>\`);
+  let block3 = createBlock(\`<span block-ref="0"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let refWrapper = makeRefWrapper(this.__owl__);
     let ref1 = refWrapper(\`coucou\`, (el) => this.__owl__.setRef((\`coucou\`), el));
     const b2 = block2([ref1]);

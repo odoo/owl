@@ -5,9 +5,9 @@ exports[`t-ref can get a dynamic ref on a node 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><span block-ref=\\"0\\"/></div>\`);
+  let block1 = createBlock(\`<div><span block-ref="0"/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const v1 = ctx['id'];
     let ref1 = (el) => this.__owl__.setRef((\`myspan\${v1}\`), el);
     return block1([ref1]);
@@ -20,9 +20,9 @@ exports[`t-ref can get a dynamic ref on a node, alternate syntax 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><span block-ref=\\"0\\"/></div>\`);
+  let block1 = createBlock(\`<div><span block-ref="0"/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const v1 = ctx['id'];
     let ref1 = (el) => this.__owl__.setRef((\`myspan\${v1}\`), el);
     return block1([ref1]);
@@ -35,9 +35,9 @@ exports[`t-ref can get a ref on a node 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><span block-ref=\\"0\\"/></div>\`);
+  let block1 = createBlock(\`<div><span block-ref="0"/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let ref1 = (el) => this.__owl__.setRef((\`myspan\`), el);
     return block1([ref1]);
   }
@@ -52,7 +52,7 @@ exports[`t-ref ref in a t-call 1`] = `
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
@@ -64,9 +64,9 @@ exports[`t-ref ref in a t-call 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div>1<span block-ref=\\"0\\"/>2</div>\`);
+  let block1 = createBlock(\`<div>1<span block-ref="0"/>2</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let ref1 = (el) => this.__owl__.setRef((\`name\`), el);
     return block1([ref1]);
   }
@@ -79,9 +79,9 @@ exports[`t-ref ref in a t-if 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block2 = createBlock(\`<span block-ref=\\"0\\"/>\`);
+  let block2 = createBlock(\`<span block-ref="0"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2;
     if (ctx['condition']) {
       let ref1 = (el) => this.__owl__.setRef((\`name\`), el);
@@ -99,9 +99,9 @@ exports[`t-ref refs in a loop 1`] = `
   let { prepareList, withKey } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<div block-ref=\\"0\\"><block-text-1/></div>\`);
+  let block3 = createBlock(\`<div block-ref="0"><block-text-1/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['items']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -124,10 +124,10 @@ exports[`t-ref two refs, one in a t-if 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><block-child-0/><p block-ref=\\"0\\"/></div>\`);
-  let block2 = createBlock(\`<span block-ref=\\"0\\"/>\`);
+  let block1 = createBlock(\`<div><block-child-0/><p block-ref="0"/></div>\`);
+  let block2 = createBlock(\`<span block-ref="0"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2;
     if (ctx['condition']) {
       let ref1 = (el) => this.__owl__.setRef((\`name\`), el);

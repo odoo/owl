@@ -43,7 +43,7 @@ describe("rendering semantics", () => {
 
     expect(fixture.innerHTML).toBe("Achild");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
         "Parent:willRender",
@@ -61,7 +61,7 @@ describe("rendering semantics", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("Bchild");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willRender",
         "Parent:rendered",
         "Parent:willPatch",
@@ -173,7 +173,7 @@ describe("rendering semantics", () => {
 
     expect(fixture.innerHTML).toBe("parentAchild3");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
         "Parent:willRender",
@@ -195,7 +195,7 @@ describe("rendering semantics", () => {
     await nextMicroTick();
     await nextMicroTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willRender",
         "Child:willUpdateProps",
         "Parent:rendered",
@@ -210,7 +210,7 @@ describe("rendering semantics", () => {
 
     expect(fixture.innerHTML).toBe("parentBchild4");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willRender",
         "Child:willUpdateProps",
         "Parent:rendered",
@@ -247,7 +247,7 @@ describe("rendering semantics", () => {
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("1");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
         "Parent:willRender",
@@ -265,7 +265,7 @@ describe("rendering semantics", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("3");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Child:willRender",
         "Child:rendered",
         "Child:willPatch",
@@ -299,7 +299,7 @@ describe("rendering semantics", () => {
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("1");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
         "Parent:willRender",
@@ -317,7 +317,7 @@ describe("rendering semantics", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("3");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Child:willRender",
         "Child:rendered",
         "Child:willPatch",
@@ -329,7 +329,7 @@ describe("rendering semantics", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("444");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Child:willRender",
         "Child:rendered",
         "Child:willPatch",
@@ -394,7 +394,7 @@ describe("rendering semantics", () => {
     const parent = await mount(A, fixture);
     expect(fixture.innerHTML).toBe("11");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "A:setup",
         "A:willStart",
         "A:willRender",
@@ -417,7 +417,7 @@ describe("rendering semantics", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("33");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "A:willRender",
         "A:rendered",
         "C:willRender",
@@ -431,7 +431,7 @@ describe("rendering semantics", () => {
 
     def.resolve();
     await nextTick();
-    expect(steps.splice(0)).toMatchInlineSnapshot(`Array []`);
+    expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
   });
 });
 
@@ -463,7 +463,7 @@ test("force render in case of existing render", async () => {
   const parent = await mount(A, fixture);
   expect(fixture.innerHTML).toBe("C1");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
-    Array [
+    [
       "A:setup",
       "A:willStart",
       "A:willRender",
@@ -486,7 +486,7 @@ test("force render in case of existing render", async () => {
   parent.state.val = 2;
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
-    Array [
+    [
       "A:willRender",
       "B:willUpdateProps",
       "A:rendered",
@@ -498,7 +498,7 @@ test("force render in case of existing render", async () => {
   parent.render(true);
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
-    Array [
+    [
       "A:willRender",
       "B:willUpdateProps",
       "A:rendered",
@@ -509,7 +509,7 @@ test("force render in case of existing render", async () => {
   await nextTick();
   // we check here that the render reaches C (so, that it was properly forced)
   expect(steps.splice(0)).toMatchInlineSnapshot(`
-    Array [
+    [
       "B:willRender",
       "C:willUpdateProps",
       "B:rendered",
@@ -551,7 +551,7 @@ test("children, default props and renderings", async () => {
 
   expect(fixture.innerHTML).toBe("Achild");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
-    Array [
+    [
       "Parent:setup",
       "Parent:willStart",
       "Parent:willRender",
@@ -569,7 +569,7 @@ test("children, default props and renderings", async () => {
   await nextTick();
   expect(fixture.innerHTML).toBe("Bchild");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
-    Array [
+    [
       "Parent:willRender",
       "Parent:rendered",
       "Parent:willPatch",

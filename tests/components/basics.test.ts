@@ -871,7 +871,7 @@ describe("basics", () => {
     const parent = await mount(Parent, fixture);
     expect(Object.keys(parent.__owl__.children).length).toStrictEqual(1);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Child:setup",
         "Child:willStart",
         "Child:willRender",
@@ -885,7 +885,7 @@ describe("basics", () => {
     await nextTick();
     expect(Object.keys(parent.__owl__.children).length).toStrictEqual(0);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Child:willUnmount",
         "Child:willDestroy",
       ]
@@ -909,7 +909,7 @@ describe("basics", () => {
     const parent = await mount(Parent, fixture);
     expect(Object.keys(parent.__owl__.children).length).toStrictEqual(1);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Child:setup",
         "Child:willStart",
         "Child:willRender",
@@ -923,7 +923,7 @@ describe("basics", () => {
     await nextTick();
     expect(Object.keys(parent.__owl__.children).length).toStrictEqual(1);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Child:setup",
         "Child:willStart",
         "Child:willRender",
@@ -957,7 +957,7 @@ describe("basics", () => {
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div></div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "GrandChild:setup",
         "GrandChild:willStart",
         "GrandChild:willRender",
@@ -972,7 +972,7 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("");
 
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "GrandChild:willUnmount",
         "GrandChild:willDestroy",
       ]

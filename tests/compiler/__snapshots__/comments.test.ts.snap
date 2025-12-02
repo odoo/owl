@@ -5,8 +5,8 @@ exports[`comments comment node with backslash at top level 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
-    return comment(\` \\\\\\\\ \`);
+  return function template(ctx, node, key = "") {
+    return comment(\` \\\\ \`);
   }
 }"
 `;
@@ -16,8 +16,8 @@ exports[`comments comment node with backtick at top-level 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
-    return comment(\` \\\\\` \`);
+  return function template(ctx, node, key = "") {
+    return comment(\` \\\` \`);
   }
 }"
 `;
@@ -27,8 +27,8 @@ exports[`comments comment node with interpolation sigil at top level 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
-    return comment(\` \\\\\${very cool} \`);
+  return function template(ctx, node, key = "") {
+    return comment(\` \\\${very cool} \`);
   }
 }"
 `;
@@ -38,7 +38,7 @@ exports[`comments only a comment 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return comment(\` comment\`);
   }
 }"
@@ -51,7 +51,7 @@ exports[`comments properly handle comments 1`] = `
   
   let block1 = createBlock(\`<div>hello <!-- comment-->owl</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return block1();
   }
 }"
@@ -66,7 +66,7 @@ exports[`comments properly handle comments between t-if/t-else 1`] = `
   let block2 = createBlock(\`<span>true</span>\`);
   let block3 = createBlock(\`<span>owl</span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2, b3;
     if (true) {
       b2 = block2();

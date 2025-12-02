@@ -2,7 +2,7 @@ import { BDom, multi, text, toggler, createCatcher } from "./blockdom";
 import { Markup } from "./utils";
 import { html } from "./blockdom/index";
 import { isOptional, validateSchema } from "./validation";
-import type { ComponentConstructor } from "./component";
+import type { ComponentConstructor, Props } from "./component";
 import { markRaw } from "./reactivity";
 import { OwlError } from "../common/owl_error";
 import type { ComponentNode } from "./component_node";
@@ -179,7 +179,7 @@ export function safeOutput(value: any, defaultValue?: any): ReturnType<typeof to
  * visit recursively the props and all the children to check if they are valid.
  * This is why it is only done in 'dev' mode.
  */
-export function validateProps<P>(name: string | ComponentConstructor<P>, props: P, comp?: any) {
+export function validateProps<P extends Props>(name: string | ComponentConstructor<P>, props: P, comp?: any) {
   const ComponentClass =
     typeof name !== "string"
       ? name

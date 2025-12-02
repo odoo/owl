@@ -1,4 +1,4 @@
-import { App, Component, xml } from "../../src";
+import { App, Component, mount, xml } from "../../src";
 import { makeTestFixture, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
@@ -18,14 +18,13 @@ describe("t-custom", () => {
         steps.push("clicked");
       }
     }
-    const app = new App(SomeComponent, {
+    await mount(SomeComponent, fixture, {
       customDirectives: {
         plop: (node, value) => {
           node.setAttribute("t-on-click", value);
         },
       },
     });
-    await app.mount(fixture);
     expect(fixture.innerHTML).toBe(`<div class="my-div"></div>`);
     fixture.querySelector("div")!.click();
     expect(steps).toEqual(["clicked"]);
@@ -39,7 +38,7 @@ describe("t-custom", () => {
         steps.push("clicked");
       }
     }
-    const app = new App(SomeComponent, {
+    await mount(SomeComponent, fixture, {
       customDirectives: {
         plop: (node, value, modifiers) => {
           node.setAttribute("t-on-click", value);
@@ -49,7 +48,6 @@ describe("t-custom", () => {
         },
       },
     });
-    await app.mount(fixture);
     expect(fixture.innerHTML).toBe(`<div class="my-div"></div>`);
     fixture.querySelector("div")!.click();
     expect(steps).toEqual(["mouse", "stop", "clicked"]);

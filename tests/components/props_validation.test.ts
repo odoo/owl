@@ -49,9 +49,12 @@ describe("props validation", () => {
       static template = xml`<div><SubComp /></div>`;
     }
 
-    const app = new App(Parent, { test: true });
+    const app = new App({ test: true });
     let error: OwlError | undefined;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const mountProm = app
+      .createRoot(Parent)
+      .mount(fixture)
+      .catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow(
       "Invalid props for component 'SubComp': 'message' is missing"
     );
@@ -78,9 +81,12 @@ describe("props validation", () => {
       static template = xml`<div><SubComp /></div>`;
     }
 
-    const app = new App(Parent, { test: true });
+    const app = new App({ test: true });
     let error: OwlError | undefined;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const mountProm = app
+      .createRoot(Parent)
+      .mount(fixture)
+      .catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow(
       "Invalid props for component 'SubComp': 'message' is missing"
     );
@@ -129,9 +135,12 @@ describe("props validation", () => {
       (Parent as any).components = { SubComp };
 
       props = {};
-      let app = new App(Parent, { test: true });
+      let app = new App({ test: true });
       let error: OwlError | undefined;
-      let mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+      let mountProm = app
+        .createRoot(Parent)
+        .mount(fixture)
+        .catch((e: Error) => (error = e));
       await expect(nextAppError(app)).resolves.toThrow("Invalid props for component '_a'");
       await mountProm;
       expect(error!).toBeDefined();
@@ -147,8 +156,11 @@ describe("props validation", () => {
       }
       expect(error!).toBeUndefined();
       props = { p: test.ko };
-      app = new App(Parent, { test: true });
-      mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+      app = new App({ test: true });
+      mountProm = app
+        .createRoot(Parent)
+        .mount(fixture)
+        .catch((e: Error) => (error = e));
       await expect(nextAppError(app)).resolves.toThrow("Invalid props for component '_a'");
       await mountProm;
       expect(error!).toBeDefined();
@@ -181,9 +193,12 @@ describe("props validation", () => {
       };
       (Parent as any).components = { SubComp };
       props = {};
-      let app = new App(Parent, { test: true });
+      let app = new App({ test: true });
       let error: OwlError | undefined;
-      let mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+      let mountProm = app
+        .createRoot(Parent)
+        .mount(fixture)
+        .catch((e: Error) => (error = e));
       await expect(nextAppError(app)).resolves.toThrow("Invalid props for component '_a'");
       await mountProm;
       expect(error!).toBeDefined();
@@ -199,8 +214,11 @@ describe("props validation", () => {
       }
       expect(error!).toBeUndefined();
       props = { p: test.ko };
-      app = new App(Parent, { test: true });
-      mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+      app = new App({ test: true });
+      mountProm = app
+        .createRoot(Parent)
+        .mount(fixture)
+        .catch((e: Error) => (error = e));
       await expect(nextAppError(app)).resolves.toThrow("Invalid props for component '_a'");
       await mountProm;
       expect(error!).toBeDefined();
@@ -239,8 +257,11 @@ describe("props validation", () => {
     }
     expect(error!).toBeUndefined();
     props = { p: 1 };
-    const app = new App(Parent, { test: true });
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const app = new App({ test: true });
+    const mountProm = app
+      .createRoot(Parent)
+      .mount(fixture)
+      .catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("Invalid props for component 'SubComp'");
     await mountProm;
     expect(error!).toBeDefined();
@@ -278,8 +299,11 @@ describe("props validation", () => {
     }
     expect(error!).toBeUndefined();
     props = { p: 1 };
-    const app = new App(Parent, { test: true });
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const app = new App({ test: true });
+    const mountProm = app
+      .createRoot(Parent)
+      .mount(fixture)
+      .catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("Invalid props for component 'SubComp'");
     await mountProm;
     expect(error!).toBeDefined();
@@ -315,14 +339,20 @@ describe("props validation", () => {
     }
     expect(error!).toBeUndefined();
     props = { p: [1] };
-    let app = new App(Parent, { test: true });
-    let mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    let app = new App({ test: true });
+    let mountProm = app
+      .createRoot(Parent)
+      .mount(fixture)
+      .catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("Invalid props for component 'SubComp'");
     await mountProm;
     expect(error!).toBeDefined();
     error = undefined;
-    app = new App(Parent, { test: true });
-    mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    app = new App({ test: true });
+    mountProm = app
+      .createRoot(Parent)
+      .mount(fixture)
+      .catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("Invalid props for component 'SubComp'");
     await mountProm;
     expect(error!).toBeDefined();
@@ -364,8 +394,11 @@ describe("props validation", () => {
     }
     expect(error!).toBeUndefined();
     props = { p: [true, 1] };
-    const app = new App(Parent, { test: true });
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const app = new App({ test: true });
+    const mountProm = app
+      .createRoot(Parent)
+      .mount(fixture)
+      .catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("Invalid props for component 'SubComp'");
     await mountProm;
     expect(error!).toBeDefined();
@@ -398,8 +431,11 @@ describe("props validation", () => {
     }
     expect(error!).toBeUndefined();
     props = { p: { id: 1, url: "url", extra: true } };
-    let app = new App(Parent, { test: true });
-    let mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    let app = new App({ test: true });
+    let mountProm = app
+      .createRoot(Parent)
+      .mount(fixture)
+      .catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("Invalid props for component 'SubComp'");
     await mountProm;
     expect(error!).toBeDefined();
@@ -407,8 +443,11 @@ describe("props validation", () => {
       "Invalid props for component 'SubComp': 'p' doesn't have the correct shape (unknown key 'extra')"
     );
     props = { p: { id: "1", url: "url" } };
-    app = new App(Parent, { test: true });
-    mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    app = new App({ test: true });
+    mountProm = app
+      .createRoot(Parent)
+      .mount(fixture)
+      .catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("Invalid props for component 'SubComp'");
     await mountProm;
     expect(error!).toBeDefined();
@@ -417,8 +456,11 @@ describe("props validation", () => {
     );
     error = undefined;
     props = { p: { id: 1 } };
-    app = new App(Parent, { test: true });
-    mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    app = new App({ test: true });
+    mountProm = app
+      .createRoot(Parent)
+      .mount(fixture)
+      .catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("Invalid props for component 'SubComp'");
     await mountProm;
     expect(error!).toBeDefined();
@@ -464,8 +506,11 @@ describe("props validation", () => {
     }
     expect(error!).toBeUndefined();
     props = { p: { id: 1, url: [12, true] } };
-    const app = new App(Parent, { test: true });
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const app = new App({ test: true });
+    const mountProm = app
+      .createRoot(Parent)
+      .mount(fixture)
+      .catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("Invalid props for component 'SubComp'");
     await mountProm;
     expect(error!).toBeDefined();
@@ -674,8 +719,11 @@ describe("props validation", () => {
       static components = { SubComp };
     }
     let error: Error;
-    const app = new App(Parent, { test: true });
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const app = new App({ test: true });
+    const mountProm = app
+      .createRoot(Parent)
+      .mount(fixture)
+      .catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("Invalid props for component 'SubComp'");
     await mountProm;
     expect(error!).toBeDefined();
@@ -741,8 +789,11 @@ describe("props validation", () => {
       static template = xml`<div><Child/></div>`;
     }
     let error: Error;
-    const app = new App(Parent, { test: true });
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const app = new App({ test: true });
+    const mountProm = app
+      .createRoot(Parent)
+      .mount(fixture)
+      .catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("Invalid props for component 'Child'");
     await mountProm;
     expect(error!).toBeDefined();
@@ -796,9 +847,12 @@ describe("props validation", () => {
       static template = xml`<Wrapper><Child /></Wrapper>`;
     }
 
-    const app = new App(Parent, { test: true });
+    const app = new App({ test: true });
     let error: OwlError | undefined;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const mountProm = app
+      .createRoot(Parent)
+      .mount(fixture)
+      .catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow(
       "Invalid props for component 'Child': 'message' is missing"
     );
@@ -822,8 +876,7 @@ describe("props validation", () => {
       customObj = new CustomClass();
     }
 
-    const app = new App(Parent, { test: true });
-    await app.mount(fixture);
+    await mount(Parent, fixture, { test: true });
     expect(fixture.innerHTML).toBe("hey");
   });
 
@@ -840,9 +893,12 @@ describe("props validation", () => {
       customObj = {};
     }
 
-    const app = new App(Parent, { test: true });
+    const app = new App({ test: true });
     let error: OwlError | undefined;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const mountProm = app
+      .createRoot(Parent)
+      .mount(fixture)
+      .catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow(
       "Invalid props for component 'Child': 'customObj' is not a customclass"
     );
@@ -917,8 +973,11 @@ describe("default props", () => {
       static template = xml`<Child/>`;
     }
     let error: Error;
-    const app = new App(Parent, { test: true });
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const app = new App({ test: true });
+    const mountProm = app
+      .createRoot(Parent)
+      .mount(fixture)
+      .catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow(
       "default value cannot be defined for a mandatory prop"
     );

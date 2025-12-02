@@ -47,10 +47,10 @@ describe("t-call", () => {
       static components = { Child };
       state = proxy({ val: 1 });
     }
-    const app = new App(Parent);
+    const app = new App();
     app.addTemplate("sub", `<Child val="state.val"/>`);
 
-    const parent = await app.mount(fixture);
+    const parent = await app.createRoot(Parent).mount(fixture);
     expect(fixture.innerHTML).toBe("<span>1</span>");
     parent.state.val = 2;
     await nextTick();
@@ -225,7 +225,7 @@ describe("t-call", () => {
       `;
     }
 
-    const app = new App(Parent);
+    const app = new App();
     app.addTemplate(
       "recursive",
       `
@@ -238,7 +238,7 @@ describe("t-call", () => {
     `
     );
 
-    await app.mount(fixture);
+    await app.createRoot(Parent).mount(fixture);
     for (const div of fixture.querySelectorAll("div")) {
       div.click();
     }

@@ -325,8 +325,8 @@ describe("list of components", () => {
       static components = { Child };
     }
 
-    const app = new App(Parent, { test: true });
-    const mountProm = expect(app.mount(fixture)).rejects.toThrow(
+    const app = new App({ test: true });
+    const mountProm = expect(app.createRoot(Parent).mount(fixture)).rejects.toThrow(
       "Got duplicate key in t-foreach: child"
     );
     await expect(nextAppError(app)).resolves.toThrow("Got duplicate key in t-foreach: child");
@@ -351,8 +351,8 @@ describe("list of components", () => {
       static components = { Child };
     }
 
-    const app = new App(Parent, { test: true });
-    const mountProm = expect(app.mount(fixture)).rejects.toThrow(
+    const app = new App({ test: true });
+    const mountProm = expect(app.createRoot(Parent).mount(fixture)).rejects.toThrow(
       "Got duplicate key in t-foreach: [object Object]"
     );
     await expect(nextAppError(app)).resolves.toThrow(

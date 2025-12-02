@@ -96,14 +96,6 @@ export function whenReady(fn?: any): Promise<void> {
   }).then(fn || function () {});
 }
 
-export async function loadFile(url: string): Promise<string> {
-  const result = await fetch(url);
-  if (!result.ok) {
-    throw new OwlError("Error while fetching xml templates");
-  }
-  return await result.text();
-}
-
 /*
  * This class just transports the fact that a string is safe
  * to be injected as HTML. Overriding a JS primitive is quite painful though

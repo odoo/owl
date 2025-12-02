@@ -42,7 +42,6 @@ Other hooks:
 Utility/helpers:
 
 - [`EventBus`](reference/utils.md#eventbus): a simple event bus
-- [`loadFile`](reference/utils.md#loadfile): an helper to load a file from the server
 - [`markup`](reference/templates.md#outputting-data): utility function to define strings that represent html (should not be escaped)
 - [`status`](reference/component.md#status-helper): utility function to get the status of a component (new, mounted or destroyed)
 - [`validate`](reference/utils.md#validate): validates if an object satisfies a specified schema

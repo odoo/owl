@@ -348,8 +348,8 @@ describe("style and class handling", () => {
       static components = { Child };
     }
     let error: OwlError;
-    const app = new App(Parent);
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const app = new App();
+    const mountProm = app.createRoot(Parent).mount(fixture).catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
     await mountProm;
     expect(error!).toBeDefined();

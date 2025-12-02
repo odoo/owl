@@ -25,8 +25,8 @@ describe("app", () => {
       static template = xml`<div/>`;
     }
 
-    const app = new App(SomeComponent);
-    const comp = await app.mount(fixture);
+    const app = new App();
+    const comp = await app.createRoot(SomeComponent).mount(fixture);
     const el = elem(comp);
     expect(document.contains(el)).toBe(true);
     app.destroy();
@@ -49,8 +49,8 @@ describe("app", () => {
       static template = xml`<div><t t-esc="env.someVal" /> <t t-esc="Object.keys(env.services)" /></div>`;
     }
 
-    const app = new App(SomeComponent, { env });
-    const comp = await app.mount(fixture);
+    const app = new App({ env });
+    const comp = await app.createRoot(SomeComponent).mount(fixture);
     expect(fixture.innerHTML).toBe("<div>maggot serv1</div>");
     someVal = "brain";
     services.serv2 = "";
@@ -64,8 +64,8 @@ describe("app", () => {
       static template = xml`<div t-esc="props.value"/>`;
     }
 
-    const app = new App(SomeComponent, { props: { value: 333 } });
-    await app.mount(fixture);
+    const app = new App();
+    await app.createRoot(SomeComponent, { props: { value: 333 } }).mount(fixture);
     expect(fixture.innerHTML).toBe("<div>333</div>");
   });
 
@@ -93,9 +93,9 @@ describe("app", () => {
 
     const iframe = document.createElement("iframe");
     fixture.appendChild(iframe);
-    const app = new App(SomeComponent);
+    const app = new App();
     const iframeDoc = iframe.contentDocument!;
-    const comp = await app.mount(iframeDoc.body);
+    const comp = await app.createRoot(SomeComponent).mount(iframeDoc.body);
     const div = iframeDoc.querySelector(".my-div");
     expect(div).not.toBe(null);
     expect(iframeDoc.contains(div)).toBe(true);
@@ -122,8 +122,8 @@ describe("app", () => {
       }
     }
 
-    const app = new App(A);
-    const comp = await app.mount(fixture);
+    const app = new App();
+    const comp = await app.createRoot(A).mount(fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "A:setup",
@@ -177,8 +177,8 @@ describe("app", () => {
       static template = "hello";
     }
 
-    const app = new App(SomeComponent, { templates });
-    await app.mount(fixture);
+    const app = new App({ templates });
+    await app.createRoot(SomeComponent).mount(fixture);
     expect(fixture.querySelector(".hello")).toBeDefined();
     // Only the "hello" template is used, so the "world" template is not yet loaded
     expect(Object.keys(app.templates)).toEqual(["hello"]);
@@ -197,8 +197,8 @@ describe("app", () => {
       static components = { Child };
     }
 
-    const app = new App(SomeComponent);
-    await app.mount(fixture);
+    const app = new App();
+    await app.createRoot(SomeComponent).mount(fixture);
     expect(fixture.innerHTML).toBe("parent<div></div>");
   });
 
@@ -207,14 +207,14 @@ describe("app", () => {
     class SomeComponent extends Component {
       static template = xml`<div t-on-click="() => __globals__.plop('click')" class="my-div"/>`;
     }
-    const app = new App(SomeComponent, {
+    const app = new App({
       globalValues: {
         plop: (string: any) => {
           steps.push(string);
         },
       },
     });
-    await app.mount(fixture);
+    await app.createRoot(SomeComponent).mount(fixture);
     expect(fixture.innerHTML).toBe(`<div class="my-div"></div>`);
     fixture.querySelector("div")!.click();
     expect(steps).toEqual(["click"]);

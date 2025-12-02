@@ -49,8 +49,7 @@ describe("basics", () => {
       static template = xml`<span><t t-esc="props.value"/></span>`;
     }
 
-    const app = new App(Test, { props: { value: 3 } });
-    const component = await app.mount(fixture);
+    const component = await mount(Test, fixture, { props: { value: 3 } });
 
     expect(fixture.innerHTML).toBe("<span>3</span>");
     expect(elem(component)).toEqual(fixture.querySelector("span"));
@@ -133,8 +132,8 @@ describe("basics", () => {
       }
     }
 
-    const app = new App(Test, { props: p });
-    await app.mount(fixture);
+    const app = new App();
+    await app.createRoot(Test, { props: p }).mount(fixture);
   });
 
   test("props value are own property of props object", async () => {
@@ -147,8 +146,7 @@ describe("basics", () => {
       }
     }
 
-    const app = new App(Test, { props: p });
-    await app.mount(fixture);
+    await mount(Test, fixture, { props: p });
   });
 
   test("props value are own property of props object, even with default values", async () => {
@@ -163,8 +161,7 @@ describe("basics", () => {
       }
     }
 
-    const app = new App(Test, { props: p });
-    await app.mount(fixture);
+    await mount(Test, fixture, { props: p });
   });
 
   test("some simple sanity checks (el/status)", async () => {
@@ -216,8 +213,8 @@ describe("basics", () => {
       static template = xml`<div/>`;
     }
     let error: Error;
-    const app = new App(Test);
-    const prom = app.mount(fixture);
+    const app = new App();
+    const prom = app.createRoot(Test).mount(fixture);
     await Promise.resolve();
     fixture.remove();
     prom.catch((e: Error) => (error = e));
@@ -987,8 +984,7 @@ describe("mount targets", () => {
     }
     const span = document.createElement("span");
     fixture.appendChild(span);
-    const app = new App(Root);
-    await app.mount(fixture, { position: "first-child" });
+    await mount(Root, fixture, { position: "first-child" });
     expect(fixture.innerHTML).toBe("<div>app</div><span></span>");
   });
 
@@ -998,8 +994,7 @@ describe("mount targets", () => {
     }
     const span = document.createElement("span");
     fixture.appendChild(span);
-    const app = new App(Root);
-    await app.mount(fixture, { position: "last-child" });
+    await mount(Root, fixture, { position: "last-child" });
     expect(fixture.innerHTML).toBe("<span></span><div>app</div>");
   });
 
@@ -1019,8 +1014,7 @@ describe("mount targets", () => {
     }
     const span = document.createElement("span");
     fixture.appendChild(span);
-    const app = new App(Root);
-    await app.mount(fixture);
+    await mount(Root, fixture);
     expect(fixture.innerHTML).toBe("<span></span><div>app</div>");
   });
 });

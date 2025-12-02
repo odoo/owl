@@ -9,7 +9,7 @@
   - [`useState`](#usestate)
   - [`useRef`](#useref)
   - [`useSubEnv` and `useChildSubEnv`](#usesubenv-and-usechildsubenv)
-  - [`useExternalListener`](#useexternallistener)
+  - [`useListener`](#uselistener)
   - [`useComponent`](#usecomponent)
   - [`useEnv`](#useenv)
   - [`useEffect`](#useeffect)
@@ -187,16 +187,16 @@ frozen, to prevent unwanted modifications.
 Note that both these hooks can be called an arbitrary number of times. The `env`
 will then be updated accordingly.
 
-### `useExternalListener`
+### `useListener`
 
-The `useExternalListener` hook helps solve a very common problem: adding and removing
+The `useListener` hook helps solve a very common problem: adding and removing
 a listener on some target whenever a component is mounted/unmounted. It takes a target
 as its first argument, forwards the other arguments to `addEventListener`. For example,
 a dropdown menu (or its parent) may need to listen to a `click` event on `window`
 to be closed:
 
 ```js
-useExternalListener(window, "click", this.closeMenu, { capture: true });
+useListener(window, "click", this.closeMenu, { capture: true });
 ```
 
 ### `useComponent`

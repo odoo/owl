@@ -41,7 +41,7 @@ export { useComponent, useState } from "./component_node";
 export { status } from "./status";
 export { reactive, markRaw, toRaw } from "./reactivity";
 export { effect, withoutReactivity, derived, signal } from "./signals";
-export { useEffect, useEnv, useExternalListener, useRef, useChildSubEnv, useSubEnv } from "./hooks";
+export { useEffect, useEnv, useListener, useRef, useChildSubEnv, useSubEnv } from "./hooks";
 export { batched, EventBus, htmlEscape, whenReady, markup } from "./utils";
 export {
   onWillStart,

@@ -20,8 +20,8 @@ class SubComponent extends Component {
 
 describe("subroot", () => {
   test("can mount subroot", async () => {
-    const app = new App(SomeComponent);
-    const comp = await app.mount(fixture);
+    const app = new App();
+    const comp = await app.createRoot(SomeComponent).mount(fixture);
     expect(fixture.innerHTML).toBe("<div>main app</div>");
     const subRoot = app.createRoot(SubComponent);
     const subcomp = await subRoot.mount(fixture);
@@ -34,8 +34,8 @@ describe("subroot", () => {
   });
 
   test("can mount subroot inside own dom", async () => {
-    const app = new App(SomeComponent);
-    const comp = await app.mount(fixture);
+    const app = new App();
+    const comp = await app.createRoot(SomeComponent).mount(fixture);
     expect(fixture.innerHTML).toBe("<div>main app</div>");
     const subRoot = app.createRoot(SubComponent);
     const subcomp = await subRoot.mount(fixture.querySelector("div")!);
@@ -60,8 +60,8 @@ describe("subroot", () => {
       }
     }
 
-    const app = new App(SC);
-    await app.mount(fixture);
+    const app = new App();
+    await app.createRoot(SC).mount(fixture);
     const subRoot = app.createRoot(Sub);
     await subRoot.mount(fixture);
 
@@ -85,8 +85,8 @@ describe("subroot", () => {
       }
     }
 
-    const app = new App(SC, { env: env1 });
-    await app.mount(fixture);
+    const app = new App({ env: env1 });
+    await app.createRoot(SC).mount(fixture);
     const subRoot = app.createRoot(Sub, { env: env2 });
     await subRoot.mount(fixture);
 
@@ -100,8 +100,8 @@ describe("subroot", () => {
   });
 
   test("subcomponents can be destroyed, and it properly cleanup the subroots", async () => {
-    const app = new App(SomeComponent);
-    const comp = await app.mount(fixture);
+    const app = new App();
+    const comp = await app.createRoot(SomeComponent).mount(fixture);
     expect(fixture.innerHTML).toBe("<div>main app</div>");
     const root = app.createRoot(SubComponent);
     const subcomp = await root.mount(fixture.querySelector("div")!);
@@ -127,8 +127,8 @@ describe("subroot", () => {
       }
     }
 
-    const app = new App(A);
-    await app.mount(fixture);
+    const app = new App();
+    await app.createRoot(A).mount(fixture);
     expect(fixture.innerHTML).toBe("a");
   });
 });
@@ -165,8 +165,8 @@ test("destroy a subroot while another component is mounted in main app", async (
     state = proxy({ flag: false });
   }
 
-  const app = new App(SomeComponent);
-  const comp = await app.mount(fixture);
+  const app = new App();
+  const comp = await app.createRoot(SomeComponent).mount(fixture);
   expect(fixture.innerHTML).toBe("a<div></div>");
   await nextTick();
   expect(fixture.innerHTML).toBe("a<div>c</div>");

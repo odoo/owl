@@ -62,8 +62,8 @@ describe("async rendering", () => {
         onWillStart(() => def);
       }
     }
-    const app = new App(W);
-    app.mount(fixture);
+    const app = new App();
+    app.createRoot(W).mount(fixture);
     expect(status(w)).toBe("new");
     app.destroy();
     expect(status(w)).toBe("destroyed");
@@ -2368,8 +2368,8 @@ test("concurrent renderings scenario 15", async () => {
       useLogLifecycle();
     }
   }
-  const app = new App(A);
-  const a = await app.mount(fixture);
+  const app = new App();
+  const a = await app.createRoot(A).mount(fixture);
   expect(fixture.innerHTML).toBe("<p><p><p><span>1</span><span>2</span><span>3</span></p></p></p>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
@@ -2632,8 +2632,7 @@ test("calling render in destroy", async () => {
     }
   }
 
-  const app = new App(A);
-  await app.mount(fixture);
+  await mount(A, fixture);
   expect(fixture.innerHTML).toBe("<div>a</div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [

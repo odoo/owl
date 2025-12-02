@@ -1,4 +1,4 @@
-import { App, Component, useRef, xml } from "../../src";
+import { App, Component, mount, useRef, xml } from "../../src";
 import { status } from "../../src/runtime/status";
 import { makeTestFixture, snapshotEverything } from "../helpers";
 
@@ -19,8 +19,8 @@ describe("shadow_dom", () => {
     const container = document.createElement("div");
     fixture.appendChild(container);
     const shadow = container.attachShadow({ mode: "open" });
-    const app = new App(SomeComponent);
-    const comp = await app.mount(shadow);
+    const app = new App();
+    const comp = await app.createRoot(SomeComponent).mount(shadow);
     const div = shadow.querySelector(".my-div");
     expect(div).not.toBe(null);
     expect(shadow.contains(div)).toBe(true);
@@ -37,8 +37,8 @@ describe("shadow_dom", () => {
     const container = document.createElement("div");
     fixture.appendChild(container);
     const shadow = container.attachShadow({ mode: "closed" });
-    const app = new App(SomeComponent);
-    const comp = await app.mount(shadow);
+    const app = new App();
+    const comp = await app.createRoot(SomeComponent).mount(shadow);
     const div = shadow.querySelector(".my-div");
     expect(div).not.toBe(null);
     expect(shadow.contains(div)).toBe(true);
@@ -59,7 +59,7 @@ describe("shadow_dom", () => {
     const container = document.createElement("div");
     fixture.appendChild(container);
     const shadow = container.attachShadow({ mode: "open" });
-    await new App(SomeComponent).mount(shadow);
+    await mount(SomeComponent, shadow);
     expect(a).toBe(1);
     shadow.querySelector("button")!.click();
     expect(a).toBe(3);
@@ -77,7 +77,7 @@ describe("shadow_dom", () => {
     const container = document.createElement("div");
     fixture.appendChild(container);
     const shadow = container.attachShadow({ mode: "open" });
-    const mountedProm = new App(SomeComponent).mount(shadow);
+    const mountedProm = mount(SomeComponent, shadow);
     expect(comp!.div.el).toBe(null);
     await mountedProm;
     expect(comp!.div.el).toBe(shadow.querySelector(".my-div"));
@@ -90,8 +90,8 @@ describe("shadow_dom", () => {
     const shadow = fixture.attachShadow({ mode: "open" });
     const shadowDiv = document.createElement("div");
     shadow.append(shadowDiv);
-    const app = new App(SomeComponent);
-    const comp = await app.mount(shadowDiv);
+    const app = new App();
+    const comp = await app.createRoot(SomeComponent).mount(shadowDiv);
     const div = shadow.querySelector(".my-div");
     expect(div).not.toBe(null);
     expect(shadow.contains(div)).toBe(true);
@@ -109,10 +109,10 @@ describe("shadow_dom", () => {
     const container = separateDoc.createElement("div");
     separateDoc.body.appendChild(container);
 
-    const app = new App(SomeComponent);
+    const app = new App();
     let error: Error;
     try {
-      await app.mount(container);
+      await app.createRoot(SomeComponent).mount(container);
     } catch (e) {
       error = e as Error;
     }
@@ -139,8 +139,8 @@ describe("shadow_dom", () => {
     const shadowTarget = iframeDoc.createElement("div");
     shadow.appendChild(shadowTarget);
 
-    const app = new App(SomeComponent);
-    const comp = await app.mount(shadowTarget);
+    const app = new App();
+    const comp = await app.createRoot(SomeComponent).mount(shadowTarget);
 
     const div = shadow.querySelector(".my-div");
     expect(div).not.toBe(null);

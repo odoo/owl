@@ -124,8 +124,8 @@ describe("event handling", () => {
       }
     }
 
-    const app = new App(Parent);
-    await app.mount(fixture);
+    const app = new App();
+    await app.createRoot(Parent).mount(fixture);
     const span = fixture.querySelector("span")!;
 
     span.click();

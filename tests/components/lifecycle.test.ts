@@ -45,9 +45,9 @@ describe("lifecycle hooks", () => {
       }
     }
 
-    const app = new App(Test);
+    const app = new App();
 
-    const component = await app.mount(fixture);
+    const component = await app.createRoot(Test).mount(fixture);
 
     expect(fixture.innerHTML).toBe("<span>test</span>");
     expect(status(component)).toBe("mounted");
@@ -163,8 +163,8 @@ describe("lifecycle hooks", () => {
           onWillStart(() => new Promise(() => {}));
         }
       }
-      const app = new App(Test, { test: true });
-      app.mount(fixture);
+      const app = new App({ test: true });
+      app.createRoot(Test).mount(fixture);
       app.destroy();
       for (const id in timeoutCbs) {
         timeoutCbs[id]();
@@ -312,8 +312,8 @@ describe("lifecycle hooks", () => {
       }
     }
 
-    const app = new App(Parent);
-    const widget = await app.mount(fixture);
+    const app = new App();
+    const widget = await app.createRoot(Parent).mount(fixture);
     expect(steps).toEqual(["parent:mounted"]);
     widget.state.flag = true;
     await nextTick();
@@ -381,8 +381,8 @@ describe("lifecycle hooks", () => {
       }
     }
 
-    const app = new App(Parent);
-    const parent = await app.mount(fixture);
+    const app = new App();
+    const parent = await app.createRoot(Parent).mount(fixture);
     expect(steps).toEqual([]);
     parent.state.n = 2;
     await nextTick();
@@ -564,8 +564,8 @@ describe("lifecycle hooks", () => {
       }
     }
 
-    const app = new App(Parent);
-    await app.mount(fixture);
+    const app = new App();
+    await app.createRoot(Parent).mount(fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "Parent:setup",
@@ -686,8 +686,8 @@ describe("lifecycle hooks", () => {
       }
     }
 
-    const app = new App(Parent);
-    await app.mount(fixture);
+    const app = new App();
+    await app.createRoot(Parent).mount(fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "Parent:setup",
@@ -738,8 +738,8 @@ describe("lifecycle hooks", () => {
       }
     }
 
-    const app = new App(Parent);
-    const parent = await app.mount(fixture);
+    const app = new App();
+    const parent = await app.createRoot(Parent).mount(fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "Parent:setup",
@@ -808,8 +808,8 @@ describe("lifecycle hooks", () => {
       }
     }
 
-    const app = new App(Parent);
-    const parent = await app.mount(fixture);
+    const app = new App();
+    const parent = await app.createRoot(Parent).mount(fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "Parent:setup",
@@ -859,8 +859,8 @@ describe("lifecycle hooks", () => {
       }
     }
 
-    const app = new App(Parent);
-    const parent = await app.mount(fixture);
+    const app = new App();
+    const parent = await app.createRoot(Parent).mount(fixture);
 
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
@@ -1440,8 +1440,8 @@ describe("lifecycle hooks", () => {
       rev = 0;
     }
 
-    const app = new App(Parent);
-    const comp = await app.mount(fixture);
+    const app = new App();
+    const comp = await app.createRoot(Parent).mount(fixture);
     comp.rev++;
     comp.render();
     await nextTick();
@@ -1490,8 +1490,8 @@ describe("lifecycle hooks", () => {
       }
     }
 
-    const app = new App(Parent);
-    const parent = await app.mount(fixture);
+    const app = new App();
+    const parent = await app.createRoot(Parent).mount(fixture);
     expect(fixture.innerHTML).toBe("beforeafter");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Reactivity: useState destroyed component before being mounted is inactive 1`] = `
+exports[`Reactivity: proxy destroyed component before being mounted is inactive 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -18,7 +18,7 @@ exports[`Reactivity: useState destroyed component before being mounted is inacti
 }"
 `;
 
-exports[`Reactivity: useState destroyed component before being mounted is inactive 2`] = `
+exports[`Reactivity: proxy destroyed component before being mounted is inactive 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -32,7 +32,7 @@ exports[`Reactivity: useState destroyed component before being mounted is inacti
 }"
 `;
 
-exports[`Reactivity: useState destroyed component is inactive 1`] = `
+exports[`Reactivity: proxy destroyed component is inactive 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -50,7 +50,7 @@ exports[`Reactivity: useState destroyed component is inactive 1`] = `
 }"
 `;
 
-exports[`Reactivity: useState destroyed component is inactive 2`] = `
+exports[`Reactivity: proxy destroyed component is inactive 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -64,7 +64,7 @@ exports[`Reactivity: useState destroyed component is inactive 2`] = `
 }"
 `;
 
-exports[`Reactivity: useState one components can subscribe twice to same context 1`] = `
+exports[`Reactivity: proxy one components can subscribe twice to same context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -79,7 +79,7 @@ exports[`Reactivity: useState one components can subscribe twice to same context
 }"
 `;
 
-exports[`Reactivity: useState parent and children subscribed to same context 1`] = `
+exports[`Reactivity: proxy parent and children subscribed to same context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -95,7 +95,7 @@ exports[`Reactivity: useState parent and children subscribed to same context 1`]
 }"
 `;
 
-exports[`Reactivity: useState parent and children subscribed to same context 2`] = `
+exports[`Reactivity: proxy parent and children subscribed to same context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -109,7 +109,7 @@ exports[`Reactivity: useState parent and children subscribed to same context 2`]
 }"
 `;
 
-exports[`Reactivity: useState two components are updated in parallel 1`] = `
+exports[`Reactivity: proxy two components are updated in parallel 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -126,7 +126,7 @@ exports[`Reactivity: useState two components are updated in parallel 1`] = `
 }"
 `;
 
-exports[`Reactivity: useState two components are updated in parallel 2`] = `
+exports[`Reactivity: proxy two components are updated in parallel 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -140,7 +140,7 @@ exports[`Reactivity: useState two components are updated in parallel 2`] = `
 }"
 `;
 
-exports[`Reactivity: useState two components can subscribe to same context 1`] = `
+exports[`Reactivity: proxy two components can subscribe to same context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -157,7 +157,7 @@ exports[`Reactivity: useState two components can subscribe to same context 1`] =
 }"
 `;
 
-exports[`Reactivity: useState two components can subscribe to same context 2`] = `
+exports[`Reactivity: proxy two components can subscribe to same context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -171,7 +171,7 @@ exports[`Reactivity: useState two components can subscribe to same context 2`] =
 }"
 `;
 
-exports[`Reactivity: useState two independent components on different levels are updated in parallel 1`] = `
+exports[`Reactivity: proxy two independent components on different levels are updated in parallel 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -188,7 +188,7 @@ exports[`Reactivity: useState two independent components on different levels are
 }"
 `;
 
-exports[`Reactivity: useState two independent components on different levels are updated in parallel 2`] = `
+exports[`Reactivity: proxy two independent components on different levels are updated in parallel 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -202,7 +202,7 @@ exports[`Reactivity: useState two independent components on different levels are
 }"
 `;
 
-exports[`Reactivity: useState two independent components on different levels are updated in parallel 3`] = `
+exports[`Reactivity: proxy two independent components on different levels are updated in parallel 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -217,7 +217,7 @@ exports[`Reactivity: useState two independent components on different levels are
 }"
 `;
 
-exports[`Reactivity: useState useContext=useState hook is reactive, for one component 1`] = `
+exports[`Reactivity: proxy useContext=proxy hook is proxy, for one component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -231,7 +231,7 @@ exports[`Reactivity: useState useContext=useState hook is reactive, for one comp
 }"
 `;
 
-exports[`Reactivity: useState useless atoms should be deleted 1`] = `
+exports[`Reactivity: proxy useless atoms should be deleted 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -257,7 +257,7 @@ exports[`Reactivity: useState useless atoms should be deleted 1`] = `
 }"
 `;
 
-exports[`Reactivity: useState useless atoms should be deleted 2`] = `
+exports[`Reactivity: proxy useless atoms should be deleted 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -271,7 +271,7 @@ exports[`Reactivity: useState useless atoms should be deleted 2`] = `
 }"
 `;
 
-exports[`Reactivity: useState very simple use, with initial value 1`] = `
+exports[`Reactivity: proxy very simple use, with initial value 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

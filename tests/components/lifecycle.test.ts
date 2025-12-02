@@ -2,7 +2,7 @@ import {
   App,
   Component,
   mount,
-  useState,
+  proxy,
   xml,
   onWillPatch,
   onWillUnmount,
@@ -189,7 +189,7 @@ describe("lifecycle hooks", () => {
     class Parent extends Component {
       static template = xml`<Child prop="state.prop"/>`;
       static components = { Child };
-      state = useState({ prop: 1 });
+      state = proxy({ prop: 1 });
     }
     const parent = await mount(Parent, fixture, { test: true });
 
@@ -301,7 +301,7 @@ describe("lifecycle hooks", () => {
     class Parent extends Component {
       static template = xml`<div><t t-if="state.flag"><Child/></t></div>`;
       static components = { Child };
-      state = useState({ flag: false });
+      state = proxy({ flag: false });
       setup() {
         onMounted(() => {
           steps.push("parent:mounted");
@@ -369,7 +369,7 @@ describe("lifecycle hooks", () => {
       `;
       static components = { Child };
 
-      state = useState({ n: 1 });
+      state = proxy({ n: 1 });
 
       setup() {
         onWillPatch(() => {
@@ -429,7 +429,7 @@ describe("lifecycle hooks", () => {
         </div>`;
 
       static components = { Child };
-      state = useState({ ok: false });
+      state = proxy({ ok: false });
     }
     const parent = await mount(Parent, fixture);
     expect(steps).toEqual([]);
@@ -461,7 +461,7 @@ describe("lifecycle hooks", () => {
     class Parent extends Component {
       static template = xml`<t t-if="state.ok"><Child /></t>`;
       static components = { Child };
-      state = useState({ ok: true });
+      state = proxy({ ok: true });
     }
 
     const parent = await mount(Parent, fixture);
@@ -490,7 +490,7 @@ describe("lifecycle hooks", () => {
       setup() {
         useLogLifecycle();
       }
-      state = useState({ n: 0, flag: true });
+      state = proxy({ n: 0, flag: true });
       increment() {
         this.state.n += 1;
       }
@@ -609,7 +609,7 @@ describe("lifecycle hooks", () => {
     class Parent extends Component {
       static template = xml`<Child n="state.n"/>`;
       static components = { Child };
-      state = useState({ n: 1 });
+      state = proxy({ n: 1 });
     }
     const parent = await mount(Parent, fixture);
 
@@ -627,7 +627,7 @@ describe("lifecycle hooks", () => {
 
     class Test extends Component {
       static template = xml`<div><t t-esc="state.a"/></div>`;
-      state = useState({ a: 1 });
+      state = proxy({ a: 1 });
 
       setup() {
         onPatched(() => n++);
@@ -658,7 +658,7 @@ describe("lifecycle hooks", () => {
     }
     class Parent extends Component {
       static template = xml`<div><Child a="state.a"/></div>`;
-      state = useState({ a: 1 });
+      state = proxy({ a: 1 });
       static components = { Child };
     }
 
@@ -680,7 +680,7 @@ describe("lifecycle hooks", () => {
     class Parent extends Component {
       static template = xml`<div><Child a="state.a"/></div>`;
       static components = { Child };
-      state = useState({ a: 1 });
+      state = proxy({ a: 1 });
       setup() {
         useLogLifecycle();
       }
@@ -732,7 +732,7 @@ describe("lifecycle hooks", () => {
     class Parent extends Component {
       static template = xml`<Child t-if="state.hasChild"/>`;
       static components = { Child };
-      state = useState({ hasChild: false });
+      state = proxy({ hasChild: false });
       setup() {
         useLogLifecycle();
       }
@@ -802,7 +802,7 @@ describe("lifecycle hooks", () => {
     class Parent extends Component {
       static template = xml`<Child t-if="state.hasChild"/>`;
       static components = { Child };
-      state = useState({ hasChild: false });
+      state = proxy({ hasChild: false });
       setup() {
         useLogLifecycle();
       }
@@ -853,7 +853,7 @@ describe("lifecycle hooks", () => {
     class Parent extends Component {
       static template = xml`<Child t-if="state.hasChild"/>`;
       static components = { Child };
-      state = useState({ hasChild: false });
+      state = proxy({ hasChild: false });
       setup() {
         useLogLifecycle();
       }
@@ -909,7 +909,7 @@ describe("lifecycle hooks", () => {
     class Parent extends Component {
       static template = xml`<Child t-if="state.hasChild"/>`;
       static components = { Child };
-      state = useState({ hasChild: true });
+      state = proxy({ hasChild: true });
       setup() {
         useLogLifecycle();
       }
@@ -956,7 +956,7 @@ describe("lifecycle hooks", () => {
     class Parent extends Component {
       static template = xml`<Child value="state.value" />`;
       static components = { Child };
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
       setup() {
         useLogLifecycle();
       }
@@ -1000,7 +1000,7 @@ describe("lifecycle hooks", () => {
 
     class Child extends Component {
       static template = xml`<button t-on-click="increment"><t t-esc="state.value"/></button>`;
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
       visibleState = this.state.value;
       setup() {
         useLogLifecycle();
@@ -1016,7 +1016,7 @@ describe("lifecycle hooks", () => {
       static template = xml`
         <Child someValue="state.value" />`;
       static components = { Child };
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
       setup() {
         useLogLifecycle();
       }
@@ -1092,7 +1092,7 @@ describe("lifecycle hooks", () => {
     class Parent extends Component {
       static template = xml`<Child t-if="state.flag"/>`;
       static components = { Child };
-      state = useState({ flag: false });
+      state = proxy({ flag: false });
     }
     const parent = await mount(Parent, fixture);
     expect(created).toBe(false);
@@ -1138,7 +1138,7 @@ describe("lifecycle hooks", () => {
         </div>`;
       static components = { D, E, F };
       name = "C";
-      state = useState({ flag: true });
+      state = proxy({ flag: true });
 
       setup() {
         c = this;
@@ -1214,7 +1214,7 @@ describe("lifecycle hooks", () => {
     class Parent extends Component {
       static template = xml`<Child t-if="state.hasChild"/>`;
       static components = { Child };
-      state = useState({ hasChild: true });
+      state = proxy({ hasChild: true });
       setup() {
         useLogLifecycle();
       }
@@ -1476,7 +1476,7 @@ describe("lifecycle hooks", () => {
       static template = xml`before<Child t-if="state.flag"/>after`;
       static components = { Child };
 
-      state = useState({ flag: false });
+      state = proxy({ flag: false });
       setup() {
         useLogLifecycle();
         onRendered(async () => {

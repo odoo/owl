@@ -725,7 +725,7 @@ exports[`basics simple component with a dynamic text 1`] = `
 }"
 `;
 
-exports[`basics simple component, useState 1`] = `
+exports[`basics simple component, proxy 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

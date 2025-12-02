@@ -1,4 +1,4 @@
-import { Component, mount, onWillUpdateProps, useState, xml } from "../../src";
+import { Component, mount, onWillUpdateProps, proxy, xml } from "../../src";
 import { makeTestFixture, nextTick, snapshotEverything, steps, useLogLifecycle } from "../helpers";
 
 let fixture: HTMLElement;
@@ -15,14 +15,14 @@ describe("basics", () => {
       static template = xml`<span><t t-esc="state.someval"/></span>`;
       state: any;
       setup() {
-        this.state = useState({ someval: this.props.value });
+        this.state = proxy({ someval: this.props.value });
       }
     }
 
     class Parent extends Component {
       static template = xml`<div><Child value="state.val"/></div>`;
       static components = { Child };
-      state = useState({ val: 42 });
+      state = proxy({ val: 42 });
     }
 
     await mount(Parent, fixture);
@@ -239,7 +239,7 @@ test("bound functions is not referentially equal after update", async () => {
   class Parent extends Component {
     static template = xml`<Child val="state.val" fn.bind="someFunction"/>`;
     static components = { Child };
-    state = useState({ val: 1 });
+    state = proxy({ val: 1 });
     someFunction() {}
   }
 
@@ -263,7 +263,7 @@ test("bound functions are considered 'alike'", async () => {
       <t t-esc="state.val"/>
       <Child fn.bind="someFunction"/>`;
     static components = { Child };
-    state = useState({ val: 1 });
+    state = proxy({ val: 1 });
     setup() {
       useLogLifecycle();
     }
@@ -355,7 +355,7 @@ test(".alike suffix in a simple case", async () => {
       <t t-esc="state.counter"/>
       <Child fn.alike="() => 1"/>`;
     static components = { Child };
-    state = useState({ counter: 0 });
+    state = proxy({ counter: 0 });
     setup() {
       useLogLifecycle();
     }
@@ -408,7 +408,7 @@ test(".alike suffix in a list", async () => {
         <Todo todo="elem" toggle.alike="() => this.toggle(elem.id)"/>
       </t>`;
     static components = { Todo };
-    state = useState({
+    state = proxy({
       elems: [
         { id: 1, isChecked: false },
         { id: 2, isChecked: true },

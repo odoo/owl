@@ -1,4 +1,4 @@
-import { App, Component, mount, onWillPatch, onWillStart, useState, xml } from "../../src";
+import { App, Component, mount, onWillPatch, onWillStart, proxy, xml } from "../../src";
 import { status } from "../../src/runtime/status";
 import {
   makeTestFixture,
@@ -116,7 +116,7 @@ describe("app", () => {
     class A extends Component {
       static template = xml`A<t t-if="state.value"><B/></t>`;
       static components = { B };
-      state = useState({ value: false });
+      state = proxy({ value: false });
       setup() {
         useLogLifecycle();
       }

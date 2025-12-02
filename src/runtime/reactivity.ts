@@ -6,7 +6,7 @@ import { onReadAtom, onWriteAtom } from "./signals";
 const KEYCHANGES = Symbol("Key changes");
 
 // The following types only exist to signify places where objects are expected
-// to be reactive or not, they provide no type checking benefit over "object"
+// to be proxy or not, they provide no type checking benefit over "object"
 type Target = object;
 type Reactive<T extends Target> = T;
 
@@ -33,10 +33,10 @@ function rawType(obj: any) {
   return objectToString.call(toRaw(obj)).slice(8, -1);
 }
 /**
- * Checks whether a given value can be made into a reactive object.
+ * Checks whether a given value can be made into a proxy object.
  *
  * @param value the value to check
- * @returns whether the value can be made reactive
+ * @returns whether the value can be made proxy
  */
 function canBeMadeReactive(value: any): boolean {
   if (typeof value !== "object") {
@@ -45,14 +45,14 @@ function canBeMadeReactive(value: any): boolean {
   return SUPPORTED_RAW_TYPES.includes(rawType(value));
 }
 /**
- * Creates a reactive from the given object/callback if possible and returns it,
+ * Creates a proxy from the given object/callback if possible and returns it,
  * returns the original object otherwise.
  *
- * @param value the value make reactive
- * @returns a reactive for the given object when possible, the original otherwise
+ * @param value the value make proxy
+ * @returns a proxy for the given object when possible, the original otherwise
  */
 function possiblyReactive(val: any) {
-  return canBeMadeReactive(val) ? reactive(val) : val;
+  return canBeMadeReactive(val) ? proxy(val) : val;
 }
 
 const skipped = new WeakSet<Target>();
@@ -68,9 +68,9 @@ export function markRaw<T extends Target>(value: T): T {
 }
 
 /**
- * Given a reactive objet, return the raw (non reactive) underlying object
+ * Given a proxy objet, return the raw (non proxy) underlying object
  *
- * @param value a reactive value
+ * @param value a proxy value
  * @returns the underlying value
  */
 export function toRaw<T extends Target, U extends Reactive<T>>(value: U | T): T {
@@ -130,11 +130,11 @@ function onWriteTargetKey(target: Target, key: PropertyKey): void {
   onWriteAtom(atom);
 }
 
-// Maps reactive objects to the underlying target
+// Maps proxy objects to the underlying target
 export const targets = new WeakMap<Reactive<Target>, Target>();
-const reactiveCache = new WeakMap<Target, Reactive<Target>>();
+const proxyCache = new WeakMap<Target, Reactive<Target>>();
 /**
- * Creates a reactive proxy for an object. Reading data on the reactive object
+ * Creates a reactive proxy for an object. Reading data on the proxy object
  * subscribes to changes to the data. Writing data on the object will cause the
  * notify callback to be called if there are suscriptions to that data. Nested
  * objects and arrays are automatically made reactive as well.
@@ -155,12 +155,12 @@ const reactiveCache = new WeakMap<Target, Reactive<Target>>();
  *    this trap and we do not want to subscribe by writes. This also means that
  *    Object.hasOwnProperty doesn't subscribe as it goes through this trap.
  *
- * @param target the object for which to create a reactive proxy
+ * @param target the object for which to create a proxy proxy
  * @param callback the function to call when an observed property of the
- *  reactive has changed
+ *  proxy has changed
  * @returns a proxy that tracks changes to it
  */
-export function reactive<T extends Target>(target: T): T {
+export function proxy<T extends Target>(target: T): T {
   if (!canBeMadeReactive(target)) {
     throw new OwlError(`Cannot make the given value reactive`);
   }
@@ -171,7 +171,7 @@ export function reactive<T extends Target>(target: T): T {
     // target is reactive, create a reactive on the underlying object instead
     return target;
   }
-  const reactive = reactiveCache.get(target)!;
+  const reactive = proxyCache.get(target)!;
   if (reactive) return reactive as T;
 
   const targetRawType = rawType(target);
@@ -180,7 +180,7 @@ export function reactive<T extends Target>(target: T): T {
     : basicProxyHandler<T>();
   const proxy = new Proxy(target, handler as ProxyHandler<T>) as Reactive<T>;
 
-  reactiveCache.set(target, proxy);
+  proxyCache.set(target, proxy);
   targets.set(proxy, target);
 
   return proxy;
@@ -189,13 +189,13 @@ export function reactive<T extends Target>(target: T): T {
 /**
  * Creates a basic proxy handler for regular objects and arrays.
  *
- * @param callback @see reactive
+ * @param callback @see proxy
  * @returns a proxy handler object
  */
 function basicProxyHandler<T extends Target>(): ProxyHandler<T> {
   return {
     get(target, key, receiver) {
-      // non-writable non-configurable properties cannot be made reactive
+      // non-writable non-configurable properties cannot be made proxy
       const desc = Object.getOwnPropertyDescriptor(target, key);
       if (desc && !desc.writable && !desc.configurable) {
         return Reflect.get(target, key, receiver);
@@ -246,8 +246,8 @@ function basicProxyHandler<T extends Target>(): ProxyHandler<T> {
  * and delegates to the underlying method.
  *
  * @param methodName name of the method to delegate to
- * @param target @see reactive
- * @param callback @see reactive
+ * @param target @see proxy
+ * @param callback @see proxy
  */
 function makeKeyObserver(methodName: "has" | "get", target: any) {
   return (key: any) => {
@@ -261,8 +261,8 @@ function makeKeyObserver(methodName: "has" | "get", target: any) {
  * observe keys as necessary.
  *
  * @param methodName name of the method to delegate to
- * @param target @see reactive
- * @param callback @see reactive
+ * @param target @see proxy
+ * @param callback @see proxy
  */
 function makeIteratorObserver(
   methodName: "keys" | "values" | "entries" | typeof Symbol.iterator,
@@ -281,10 +281,10 @@ function makeIteratorObserver(
 /**
  * Creates a forEach function that will delegate to forEach on the underlying
  * collection while observing key changes, and keys as they're iterated over,
- * and making the passed keys/values reactive.
+ * and making the passed keys/values proxy.
  *
- * @param target @see reactive
- * @param callback @see reactive
+ * @param target @see proxy
+ * @param callback @see proxy
  */
 function makeForEachObserver(target: any) {
   return function forEach(forEachCb: (val: any, key: any, target: any) => void, thisArg: any) {
@@ -303,12 +303,12 @@ function makeForEachObserver(target: any) {
 /**
  * Creates a function that will delegate to an underlying method, and check if
  * that method has modified the presence or value of a key, and notify the
- * reactives appropriately.
+ * proxys appropriately.
  *
  * @param setterName name of the method to delegate to
  * @param getterName name of the method which should be used to retrieve the
  *  value before calling the delegate method for comparison purposes
- * @param target @see reactive
+ * @param target @see proxy
  */
 function delegateAndNotify(
   setterName: "set" | "add" | "delete",
@@ -334,7 +334,7 @@ function delegateAndNotify(
  * Creates a function that will clear the underlying collection and notify that
  * the keys of the collection have changed.
  *
- * @param target @see reactive
+ * @param target @see proxy
  */
 function makeClearNotifier(target: Map<any, any> | Set<any>) {
   return () => {
@@ -349,9 +349,9 @@ function makeClearNotifier(target: Map<any, any> | Set<any>) {
 /**
  * Maps raw type of an object to an object containing functions that can be used
  * to build an appropritate proxy handler for that raw type. Eg: when making a
- * reactive set, calling the has method should mark the key that is being
+ * proxy set, calling the has method should mark the key that is being
  * retrieved as observed, and calling the add or delete method should notify the
- * reactives that the key which is being added or deleted has been modified.
+ * proxys that the key which is being added or deleted has been modified.
  */
 const rawTypeToFuncHandlers = {
   Set: (target: any) => ({
@@ -395,8 +395,8 @@ const rawTypeToFuncHandlers = {
 /**
  * Creates a proxy handler for collections (Set/Map/WeakMap)
  *
- * @param callback @see reactive
- * @param target @see reactive
+ * @param callback @see proxy
+ * @param target @see proxy
  * @returns a proxy handler object
  */
 function collectionsProxyHandler<T extends Collection>(

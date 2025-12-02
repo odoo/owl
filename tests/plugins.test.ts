@@ -214,7 +214,9 @@ describe("basic features", () => {
     class A extends Plugin {
       static id = "a";
     }
-    expect(() => plugin(A)).toThrowError(`No active component (a hook function should only be called in 'setup')`);
+    expect(() => plugin(A)).toThrowError(
+      `No active component (a hook function should only be called in 'setup')`
+    );
   });
 });
 

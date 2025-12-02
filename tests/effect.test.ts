@@ -1,4 +1,4 @@
-import { reactive } from "../src/runtime/reactivity";
+import { proxy } from "../src/runtime/reactivity";
 import { effect } from "../src/runtime/signals";
 import { expectSpy, nextMicroTick } from "./helpers";
 
@@ -15,8 +15,8 @@ describe("effect", () => {
     });
     expect(spy).toHaveBeenCalledTimes(1);
   });
-  it("effect tracks reactive properties", async () => {
-    const state = reactive({ a: 1 });
+  it("effect tracks proxy properties", async () => {
+    const state = proxy({ a: 1 });
     const spy = jest.fn();
     effect(() => spy(state.a));
     expectSpy(spy, 1, { args: [1] });
@@ -25,7 +25,7 @@ describe("effect", () => {
     expectSpy(spy, 2, { args: [2] });
   });
   it("effect should unsubscribe previous dependencies", async () => {
-    const state = reactive({ a: 1, b: 10, c: 100 });
+    const state = proxy({ a: 1, b: 10, c: 100 });
     const spy = jest.fn();
     effect(() => {
       if (state.a === 1) {
@@ -49,7 +49,7 @@ describe("effect", () => {
     expectSpy(spy, 4, { args: [200] });
   });
   it("effect should not run if dependencies do not change", async () => {
-    const state = reactive({ a: 1 });
+    const state = proxy({ a: 1 });
     const spy = jest.fn();
     effect(() => {
       spy(state.a);
@@ -64,7 +64,7 @@ describe("effect", () => {
   });
   describe("nested effects", () => {
     it("should track correctly", async () => {
-      const state = reactive({ a: 1, b: 10 });
+      const state = proxy({ a: 1, b: 10 });
       const spy1 = jest.fn();
       const spy2 = jest.fn();
       effect(() => {
@@ -93,7 +93,7 @@ describe("effect", () => {
   });
   describe("unsubscribe", () => {
     it("should be able to unsubscribe", async () => {
-      const state = reactive({ a: 1 });
+      const state = proxy({ a: 1 });
       const spy = jest.fn();
       const unsubscribe = effect(() => {
         spy(state.a);
@@ -108,7 +108,7 @@ describe("effect", () => {
       expectSpy(spy, 2, { args: [2] });
     });
     it("effect should call cleanup function", async () => {
-      const state = reactive({ a: 1 });
+      const state = proxy({ a: 1 });
       const spy = jest.fn();
       const cleanup = jest.fn();
       effect(() => {
@@ -127,7 +127,7 @@ describe("effect", () => {
       expect(cleanup).toHaveBeenCalledTimes(2);
     });
     it("should call cleanup when unsubscribing nested effects", async () => {
-      const state = reactive({ a: 1, b: 10, c: 100 });
+      const state = proxy({ a: 1, b: 10, c: 100 });
       const spy1 = jest.fn();
       const spy2 = jest.fn();
       const spy3 = jest.fn();

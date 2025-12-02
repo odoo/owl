@@ -27,32 +27,7 @@ exports[`reactivity in lifecycle Child component doesn't render when state they 
 }"
 `;
 
-exports[`reactivity in lifecycle Component is automatically subscribed to reactive object received as prop 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"obj\\",\\"reactiveObj\\"]);
-  
-  return function template(ctx, node, key = \\"\\") {
-    return comp1({obj: ctx['obj'],reactiveObj: ctx['reactiveObj']}, key + \`__1\`, node, this, null);
-  }
-}"
-`;
-
-exports[`reactivity in lifecycle Component is automatically subscribed to reactive object received as prop 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = text(ctx['props'].obj.a);
-    const b3 = text(ctx['props'].reactiveObj.b);
-    return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`reactivity in lifecycle an external reactive object should be tracked 1`] = `
+exports[`reactivity in lifecycle an external proxy object should be tracked 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -68,7 +43,7 @@ exports[`reactivity in lifecycle an external reactive object should be tracked 1
 }"
 `;
 
-exports[`reactivity in lifecycle an external reactive object should be tracked 2`] = `
+exports[`reactivity in lifecycle an external proxy object should be tracked 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

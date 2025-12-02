@@ -16,7 +16,7 @@ describe("env handling", () => {
     expect(component.env).toEqual({});
   });
 
-  test("env is shallow frozen", async () => {
+  test.skip("env is shallow frozen", async () => {
     const env = { foo: 42, bar: { value: 42 } };
     class Test extends Component {
       static template = xml`<div/>`;

@@ -179,7 +179,11 @@ export function safeOutput(value: any, defaultValue?: any): ReturnType<typeof to
  * visit recursively the props and all the children to check if they are valid.
  * This is why it is only done in 'dev' mode.
  */
-export function validateProps<P extends Props>(name: string | ComponentConstructor<P>, props: P, comp?: any) {
+export function validateProps<P extends Props>(
+  name: string | ComponentConstructor<P>,
+  props: P,
+  comp?: any
+) {
   const ComponentClass =
     typeof name !== "string"
       ? name

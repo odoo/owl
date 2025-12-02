@@ -47,9 +47,11 @@ declare global {
   }
 }
 
-interface Root<P extends Props, E> {
+type MountTarget = HTMLElement | ShadowRoot;
+
+interface Root<P extends Props, E, T extends abstract new (...args: any) => any = any> {
   node: ComponentNode<P, E>;
-  mount(target: HTMLElement | ShadowRoot, options?: MountOptions): Promise<Component<P, E>>;
+  mount(target: MountTarget, options?: MountOptions): Promise<Component<P, E> & InstanceType<T>>;
   destroy(): void;
 }
 
@@ -250,7 +252,7 @@ export async function mount<
   E = any
 >(
   C: T & ComponentConstructor<P, E>,
-  target: HTMLElement,
+  target: MountTarget,
   config: AppConfig<E> & RootConfig<P, E> & MountOptions = {}
 ): Promise<Component<P, E> & InstanceType<T>> {
   const app = new App(config);

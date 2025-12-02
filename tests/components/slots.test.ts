@@ -250,8 +250,11 @@ describe("slots", () => {
     }
 
     let error: Error;
-    const app = new App(Parent);
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const app = new App();
+    const mountProm = app
+      .createRoot(Parent)
+      .mount(fixture)
+      .catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
     await mountProm;
     expect(error!).not.toBeNull();
@@ -997,10 +1000,10 @@ describe("slots", () => {
                 </t>
             </t>
         </Wrapper>`;
-    const app = new App(Parent);
+    const app = new App();
     app.addTemplate("_test_recursive_template", recursiveTemplate);
 
-    await app.mount(fixture);
+    await app.createRoot(Parent).mount(fixture);
 
     expect(fixture.innerHTML).toBe(
       "<wrapper>foo<wrapper>foo-0foo-00<wrapper>foo-01foo-010foo-011<wrapper>foo-012foo-0120foo-0121foo-0122</wrapper></wrapper>foo-02</wrapper>foo-1foo-2</wrapper>"

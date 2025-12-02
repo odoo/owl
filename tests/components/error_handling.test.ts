@@ -75,9 +75,9 @@ describe("basics", () => {
       static template = xml`<SomeMispelledComponent />`;
       static components = { SomeComponent };
     }
-    const app = new App(Parent);
+    const app = new App();
     let error: Error;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const mountProm = app.createRoot(Parent).mount(fixture).catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow(
       'Cannot find the definition of component "SomeMispelledComponent"'
     );
@@ -95,9 +95,9 @@ describe("basics", () => {
       static template = xml`<SomeMispelledComponent />`;
       static components = { SomeComponent };
     }
-    const app = new App(Parent, { test: true });
+    const app = new App({ test: true });
     let error: Error;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const mountProm = app.createRoot(Parent).mount(fixture).catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow(
       'Cannot find the definition of component "SomeMispelledComponent"'
     );
@@ -115,9 +115,9 @@ describe("basics", () => {
       static template = xml`<SomeComponent />`;
       static components = { SomeComponent: notAComponentConstructor };
     }
-    const app = new App(Parent as typeof Component);
+    const app = new App();
     let error: Error;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const mountProm = app.createRoot(Parent as typeof Component).mount(fixture).catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow(
       '"SomeComponent" is not a Component. It must inherit from the Component class'
     );
@@ -132,9 +132,9 @@ describe("basics", () => {
     class Parent extends Component {
       static template = xml`<div><MissingChild /></div>`;
     }
-    const app = new App(Parent as typeof Component);
+    const app = new App();
     let error: Error;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const mountProm = app.createRoot(Parent).mount(fixture).catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow(
       'Cannot find the definition of component "MissingChild", missing static components key in parent'
     );
@@ -151,10 +151,9 @@ describe("basics", () => {
     class Comp extends Component {
       static template = xml`<div t-att-class="a b">test</div>`;
     }
-    const app = new App(Comp);
     let error: Error;
     try {
-      await app.mount(fixture);
+      await mount(Comp, fixture);
     } catch (e) {
       error = e as Error;
     }
@@ -163,9 +162,9 @@ describe("basics", () => {
 generated code:
 function(app, bdom, helpers) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
+
   let block1 = createBlock(\`<div block-attribute-0="class">test</div>\`);
-  
+
   return function template(ctx, node, key = "") {
     let attr1 = ctx['a']ctx['b'];
     return block1([attr1]);
@@ -188,17 +187,17 @@ function(app, bdom, helpers) {
 generated code:
 function(app, bdom, helpers) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
+
   let block1 = createBlock(\`<div block-attribute-0="class">test</div>\`);
-  
+
   return function template(ctx, node, key = "") {
     let attr1 = ctx['a']ctx['b'];
     return block1([attr1]);
   }
 }`;
-    const app = new App(Parent as typeof Component);
+    const app = new App();
     let error: Error;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const mountProm = app.createRoot(Parent).mount(fixture).catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow(expectedErrorMessage);
     await mountProm;
     expect(error!).toBeDefined();
@@ -281,9 +280,9 @@ describe("errors and promises", () => {
       static template = xml`<div><t t-esc="this.will.crash"/></div>`;
     }
 
-    const app = new App(Root);
+    const app = new App();
     let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const mountProm = app.createRoot(Root).mount(fixture).catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
     await mountProm;
     expect(error!).toBeDefined();
@@ -305,9 +304,9 @@ describe("errors and promises", () => {
       }
     }
 
-    const app = new App(Root);
+    const app = new App();
     let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const mountProm = app.createRoot(Root).mount(fixture).catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
     await mountProm;
     expect(error!).toBeDefined();
@@ -328,9 +327,9 @@ describe("errors and promises", () => {
       }
     }
 
-    const app = new App(Root, { test: true });
+    const app = new App({ test: true });
     let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const mountProm = app.createRoot(Root).mount(fixture).catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("error occurred in onMounted");
     await mountProm;
     expect(error!).toBeDefined();
@@ -354,9 +353,9 @@ describe("errors and promises", () => {
       }
     }
 
-    const app = new App(Root, { test: true });
+    const app = new App({ test: true });
     let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const mountProm = app.createRoot(Root).mount(fixture).catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("error occurred in onWillRender");
     await mountProm;
     expect(error!).toBeDefined();
@@ -395,9 +394,9 @@ describe("errors and promises", () => {
       }
     }
 
-    const app = new App(Root, { test: true });
+    const app = new App({ test: true });
     let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const mountProm = app.createRoot(Root).mount(fixture).catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("error occurred in onWillStart");
     await mountProm;
     expect(error!).toBeDefined();
@@ -463,9 +462,9 @@ describe("errors and promises", () => {
       static components = { Child };
     }
 
-    const app = new App(Parent);
+    const app = new App();
     let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const mountProm = app.createRoot(Parent).mount(fixture).catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
     await mountProm;
     expect(error!).toBeDefined();
@@ -509,9 +508,9 @@ describe("errors and promises", () => {
       static components = { Child };
     }
 
-    const app = new App(Parent);
+    const app = new App();
     let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const mountProm = app.createRoot(Parent).mount(fixture).catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
     await mountProm;
     expect(error!).toBeDefined();
@@ -539,9 +538,9 @@ describe("errors and promises", () => {
       }
     }
 
-    const app = new App(Example, { test: true });
+    const app = new App({ test: true });
     let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const mountProm = app.createRoot(Example).mount(fixture).catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("error occurred in onMounted");
     await mountProm;
     expect(error!.message).toBe(`The following error occurred in onMounted: "Error in mounted"`);
@@ -690,10 +689,10 @@ describe("can catch errors", () => {
         });
       }
     }
-    const app = new App(Root, { test: true });
+    const app = new App({ test: true });
     let error: OwlError;
     const crashProm = expect(nextAppError(app)).resolves.toThrow("error occurred in onWillStart");
-    await app.mount(fixture).catch((e: Error) => (error = e));
+    await app.createRoot(Root).mount(fixture).catch((e: Error) => (error = e));
     await crashProm;
     expect(error!.message).toBe(
       `The following error occurred in onWillStart: "No active component (a hook function should only be called in 'setup')"`
@@ -712,9 +711,9 @@ describe("can catch errors", () => {
         });
       }
     }
-    const app = new App(Root, { test: true });
+    const app = new App({ test: true });
     let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const mountProm = app.createRoot(Root).mount(fixture).catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("error occurred in onMounted");
     await mountProm;
     expect(error!.message).toBe(`The following error occurred in onMounted: "test error"`);
@@ -734,9 +733,9 @@ describe("can catch errors", () => {
         });
       }
     }
-    const app = new App(Root, { test: true });
+    const app = new App({ test: true });
     let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const mountProm = app.createRoot(Root).mount(fixture).catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("error occurred in onWillStart");
     await mountProm;
     expect(error!.message).toBe(`The following error occurred in onWillStart: "test error"`);
@@ -755,9 +754,9 @@ describe("can catch errors", () => {
         });
       }
     }
-    const app = new App(Root);
+    const app = new App();
     let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const mountProm = app.createRoot(Root).mount(fixture).catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
     await mountProm;
     expect(error!.message).toBe(
@@ -779,9 +778,9 @@ describe("can catch errors", () => {
         });
       }
     }
-    const app = new App(Root);
+    const app = new App();
     let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const mountProm = app.createRoot(Root).mount(fixture).catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
     await mountProm;
     expect(error!.message).toBe(
@@ -801,9 +800,9 @@ describe("can catch errors", () => {
         });
       }
     }
-    const app = new App(Root, { test: true });
+    const app = new App({ test: true });
     let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const mountProm = app.createRoot(Root).mount(fixture).catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("not an Error was thrown in onMounted");
     await mountProm;
     expect(error!.message).toBe(
@@ -823,9 +822,9 @@ describe("can catch errors", () => {
         });
       }
     }
-    const app = new App(Root);
+    const app = new App();
     let error: OwlError;
-    const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+    const mountProm = app.createRoot(Root).mount(fixture).catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
     await mountProm;
     expect(error!.message).toBe(

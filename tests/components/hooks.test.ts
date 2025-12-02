@@ -105,8 +105,8 @@ describe("hooks", () => {
         useMyHook(2);
       }
     }
-    const app = new App(Test);
-    await app.mount(fixture);
+    const app = new App();
+    await app.createRoot(Test).mount(fixture);
     app.destroy();
     expect(steps).toEqual([
       "hook:mounted1",
@@ -709,8 +709,8 @@ describe("hooks", () => {
       }
 
       let error: OwlError;
-      const app = new App(MyComponent);
-      const mountProm = app.mount(fixture).catch((e: Error) => (error = e));
+      const app = new App();
+      const mountProm = app.createRoot(MyComponent).mount(fixture).catch((e: Error) => (error = e));
       await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
       await mountProm;
       expect(error!.cause.message).toBe("Intentional error");

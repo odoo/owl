@@ -17,14 +17,16 @@ export interface Env {
   [key: string]: any;
 }
 
-export interface RootConfig<P, E> {
-  props?: P;
+interface RootConfig<P, E> {
   env?: E;
   pluginManager?: PluginManager;
+  props?: P;
 }
 
-export interface AppConfig<P, E> extends TemplateSetConfig, RootConfig<P, E> {
+export interface AppConfig<E> extends TemplateSetConfig {
+  env?: E;
   name?: string;
+  pluginManager?: PluginManager;
   test?: boolean;
   warnIfNoStaticProps?: boolean;
 }
@@ -53,29 +55,21 @@ interface Root<P extends Props, E> {
 
 window.__OWL_DEVTOOLS__ ||= { apps, Fiber, RootFiber, toRaw, proxy };
 
-export class App<
-  T extends abstract new (...args: any) => any = any,
-  P extends object = any,
-  E = any
-> extends TemplateSet {
+export class App<E = any> extends TemplateSet {
   static validateTarget = validateTarget;
   static apps = apps;
   static version = version;
 
   name: string;
-  Root: ComponentConstructor<P, E>;
-  props: P;
   env: E;
   scheduler = new Scheduler();
-  subRoots: Set<ComponentNode> = new Set();
-  root: ComponentNode<P, E> | null = null;
+  roots: Set<ComponentNode> = new Set();
   warnIfNoStaticProps: boolean;
   pluginManager: PluginManager;
 
-  constructor(Root: ComponentConstructor<P, E>, config: AppConfig<P, E> = {}) {
+  constructor(config: AppConfig<E> = {}) {
     super(config);
     this.name = config.name || "";
-    this.Root = Root;
     apps.add(this);
     this.pluginManager = config.pluginManager || new PluginManager(null);
     if (config.test) {
@@ -89,17 +83,6 @@ export class App<
     const env = config.env || {};
     const descrs = Object.getOwnPropertyDescriptors(env);
     this.env = Object.freeze(Object.create(Object.getPrototypeOf(env), descrs));
-    this.props = config.props || ({} as P);
-  }
-
-  mount(
-    target: HTMLElement | ShadowRoot,
-    options?: MountOptions
-  ): Promise<Component<P, E> & InstanceType<T>> {
-    const root = this.createRoot(this.Root, { props: this.props });
-    this.root = root.node;
-    this.subRoots.delete(root.node);
-    return root.mount(target, options) as any;
   }
 
   createRoot<Props extends object, SubEnv = any>(
@@ -122,7 +105,7 @@ export class App<
     if (config.env) {
       this.env = env;
     }
-    this.subRoots.add(node);
+    this.roots.add(node);
     return {
       node,
       mount: (target: HTMLElement | ShadowRoot, options?: MountOptions) => {
@@ -134,7 +117,7 @@ export class App<
         return prom;
       },
       destroy: () => {
-        this.subRoots.delete(node);
+        this.roots.delete(node);
         node.destroy();
         this.scheduler.processTasks();
       },
@@ -173,13 +156,10 @@ export class App<
   }
 
   destroy() {
-    if (this.root) {
-      for (let subroot of this.subRoots) {
-        subroot.destroy();
-      }
-      this.root.destroy();
-      this.scheduler.processTasks();
+    for (let root of this.roots) {
+      root.destroy();
     }
+    this.scheduler.processTasks();
     apps.delete(this);
   }
 
@@ -271,7 +251,9 @@ export async function mount<
 >(
   C: T & ComponentConstructor<P, E>,
   target: HTMLElement,
-  config: AppConfig<P, E> & MountOptions = {}
+  config: AppConfig<E> & RootConfig<P, E> & MountOptions = {}
 ): Promise<Component<P, E> & InstanceType<T>> {
-  return new App(C, config).mount(target, config);
+  const app = new App(config);
+  const root = app.createRoot(C, config);
+  return root.mount(target, config) as any;
 }

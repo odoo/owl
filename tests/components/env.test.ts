@@ -1,4 +1,4 @@
-import { App, Component, mount, xml } from "../../src";
+import { Component, mount, xml } from "../../src";
 import { makeTestFixture } from "../helpers";
 
 let fixture: HTMLElement;
@@ -21,7 +21,7 @@ describe("env handling", () => {
     class Test extends Component {
       static template = xml`<div/>`;
     }
-    const component = await new App(Test, { env }).mount(fixture);
+    const component = await mount(Test, fixture, { env });
     expect(Object.isFrozen(component.env)).toBeTruthy();
     expect(component.env).toEqual({ foo: 42, bar: { value: 42 } });
     expect(() => {
@@ -47,7 +47,7 @@ describe("env handling", () => {
       static components = { Child };
     }
 
-    await new App(Test, { env }).mount(fixture);
+    await mount(Test, fixture, { env });
     expect(child.env).toEqual(env);
     // we check that the frozen env maintain the same prototype chain
     expect(Object.getPrototypeOf(child.env)).toBe(Object.getPrototypeOf(env));

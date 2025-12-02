@@ -1,4 +1,4 @@
-import { App, Component, mount, status, toRaw, useState, xml } from "../../src";
+import { App, Component, mount, status, toRaw, proxy, xml } from "../../src";
 import {
   elem,
   makeTestFixture,
@@ -309,10 +309,10 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("<div>5</div>");
   });
 
-  test("simple component, useState", async () => {
+  test("simple component, proxy", async () => {
     class Test extends Component {
       static template = xml`<div><t t-esc="state.value" /></div>`;
-      state = useState({ value: 3 });
+      state = proxy({ value: 3 });
     }
 
     const test = await mount(Test, fixture);
@@ -377,7 +377,7 @@ describe("basics", () => {
     class Parent extends Component {
       static template = xml`<Child t-if="state.hasChild"/>`;
       static components = { Child };
-      state = useState({ hasChild: false });
+      state = proxy({ hasChild: false });
     }
 
     const parent = await mount(Parent, fixture);
@@ -399,7 +399,7 @@ describe("basics", () => {
           <span t-esc="state.text"/>
         </div>`;
       static components = { Child };
-      state = useState({ hasChild: false, text: "1" });
+      state = proxy({ hasChild: false, text: "1" });
     }
 
     const parent = await mount(Parent, fixture);
@@ -420,7 +420,7 @@ describe("basics", () => {
     class Counter extends Component {
       static template = xml`
       <div><t t-esc="state.counter"/><button t-on-click="() => state.counter++">Inc</button></div>`;
-      state = useState({
+      state = proxy({
         counter: 0,
       });
     }
@@ -438,7 +438,7 @@ describe("basics", () => {
     class Counter extends Component {
       static template = xml`
       <div><t t-esc="state.counter"/><button t-on-click="() => state.counter++">Inc</button></div>`;
-      state = useState({
+      state = proxy({
         counter: 0,
       });
     }
@@ -476,7 +476,7 @@ describe("basics", () => {
     class Parent extends Component {
       static template = xml`<Child value="state.counter"/>`;
       static components = { Child };
-      state = useState({
+      state = proxy({
         counter: 0,
       });
     }
@@ -505,7 +505,7 @@ describe("basics", () => {
       static template = xml`<Child child="state.child" />`;
       static components = { Child };
 
-      state = useState({ child: "a" });
+      state = proxy({ child: "a" });
     }
 
     const parent = await mount(Parent, fixture);
@@ -548,7 +548,7 @@ describe("basics", () => {
   test("do not remove previously rendered dom if not necessary, variation", async () => {
     class SomeComponent extends Component {
       static template = xml`<div><h1>h1</h1><span><t t-esc="state.value"/></span></div>`;
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
     }
     const comp = await mount(SomeComponent, fixture);
     expect(fixture.innerHTML).toBe(`<div><h1>h1</h1><span>1</span></div>`);
@@ -638,7 +638,7 @@ describe("basics", () => {
     class Parent extends Component {
       static template = xml`<div><Child t-if="state.flag"/></div>`;
       static components = { Child };
-      state = useState({ flag: true });
+      state = proxy({ flag: true });
     }
 
     const parent = await mount(Parent, fixture);
@@ -666,7 +666,7 @@ describe("basics", () => {
           <Child t-else=""/>
         </div>`;
       static components = { Child };
-      state = useState({ flag: true });
+      state = proxy({ flag: true });
     }
 
     const parent = await mount(Parent, fixture);
@@ -690,7 +690,7 @@ describe("basics", () => {
           <Child t-elif="!state.flag" />
         </div>`;
       static components = { Child };
-      state = useState({ flag: true });
+      state = proxy({ flag: true });
     }
 
     const parent = await mount(Parent, fixture);
@@ -714,7 +714,7 @@ describe("basics", () => {
           <Child t-else="" />
         </div>`;
       static components = { Child };
-      state = useState({ flag: true });
+      state = proxy({ flag: true });
     }
 
     const parent = await mount(Parent, fixture);
@@ -741,7 +741,7 @@ describe("basics", () => {
           <t t-if="state.flag"><span>test</span></t>
         </div>`;
       static components = { Child };
-      state = useState({ flag: false });
+      state = proxy({ flag: false });
     }
     const parent = await mount(Parent, fixture);
     const child = Object.values(parent.__owl__.children)[0].component;
@@ -769,7 +769,7 @@ describe("basics", () => {
           </div>
       </div>`;
       static components = { SubWidget };
-      state = useState({ blips: [{ a: "a", id: 1 }] });
+      state = proxy({ blips: [{ a: "a", id: 1 }] });
     }
     await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div><div><span>asdf</span><span>asdf</span></div></div>");
@@ -785,7 +785,7 @@ describe("basics", () => {
     class Parent extends Component {
       static template = xml`<Child flag="state.flag"/>`;
       static components = { Child };
-      state = useState({ flag: false });
+      state = proxy({ flag: false });
     }
 
     const parent = await mount(Parent, fixture);
@@ -799,7 +799,7 @@ describe("basics", () => {
     const SUBTEMPLATE = xml`<span><t t-esc="state.n"/></span>`;
     class Parent extends Component {
       static template = xml`<t t-call="${SUBTEMPLATE}"/>`;
-      state = useState({ n: 42 });
+      state = proxy({ n: 42 });
     }
 
     await mount(Parent, fixture);
@@ -1053,7 +1053,7 @@ describe("t-out in components", () => {
   test("update properly on state changes", async () => {
     class Test extends Component {
       static template = xml`<div><t t-out="state.value"/></div>`;
-      state = useState({ value: markup("<b>content</b>") });
+      state = proxy({ value: markup("<b>content</b>") });
     }
     const component = await mount(Test, fixture);
 
@@ -1074,7 +1074,7 @@ describe("t-out in components", () => {
             <t t-out="item"/>
             </t>
         </div>`;
-      state = useState({
+      state = proxy({
         items: [markup("<b>one</b>"), markup("<b>two</b>"), markup("<b>tree</b>")],
       });
     }
@@ -1091,7 +1091,7 @@ describe("t-out in components", () => {
         <t t-out="state.a"/>
         <t t-out="state.b"/>
       `;
-      state = useState({
+      state = proxy({
         a: markup("<div>1</div>"),
         b: markup("<div>2</div>"),
       });
@@ -1115,7 +1115,7 @@ describe("t-out in components", () => {
   test("t-out and updating falsy values, ", async () => {
     class Test extends Component {
       static template = xml`<t t-out="state.a"/>`;
-      state: any = useState({ a: 0 });
+      state: any = proxy({ a: 0 });
     }
 
     const comp = await mount(Test, fixture);

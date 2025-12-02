@@ -6,7 +6,6 @@ import { Component, ComponentConstructor, Props } from "./component";
 import { fibersInError } from "./error_handling";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";
 import { PluginManager } from "./plugins";
-import { reactive } from "./reactivity";
 import { getCurrentComputation, setComputation, withoutReactivity } from "./signals";
 import { STATUS } from "./status";
 
@@ -39,23 +38,6 @@ function applyDefaultProps<P extends object>(props: P, defaultProps: Partial<P>)
       (props as any)[propName] = defaultProps[propName];
     }
   }
-}
-// -----------------------------------------------------------------------------
-// Integration with reactivity system (useState)
-// -----------------------------------------------------------------------------
-
-/**
- * Creates a reactive object that will be observed by the current component.
- * Reading data from the returned object (eg during rendering) will cause the
- * component to subscribe to that data and be rerendered when it changes.
- *
- * @param state the state to observe
- * @returns a reactive object that will cause the component to re-render on
- *  relevant changes
- * @see reactive
- */
-export function useState<T extends object>(state: T): T {
-  return reactive(state);
 }
 
 // -----------------------------------------------------------------------------

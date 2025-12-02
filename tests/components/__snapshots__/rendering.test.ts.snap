@@ -112,7 +112,7 @@ exports[`rendering semantics can render a parent without rendering child 2`] = `
 }"
 `;
 
-exports[`rendering semantics props are reactive (nested prop) 1`] = `
+exports[`rendering semantics props are proxy (nested prop) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -124,7 +124,7 @@ exports[`rendering semantics props are reactive (nested prop) 1`] = `
 }"
 `;
 
-exports[`rendering semantics props are reactive (nested prop) 2`] = `
+exports[`rendering semantics props are proxy (nested prop) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -135,7 +135,7 @@ exports[`rendering semantics props are reactive (nested prop) 2`] = `
 }"
 `;
 
-exports[`rendering semantics props are reactive 1`] = `
+exports[`rendering semantics props are proxy 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -147,7 +147,7 @@ exports[`rendering semantics props are reactive 1`] = `
 }"
 `;
 
-exports[`rendering semantics props are reactive 2`] = `
+exports[`rendering semantics props are proxy 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

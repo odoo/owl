@@ -5,7 +5,7 @@ import { ComponentNode, saveCurrent } from "./component_node";
 import { handleError, nodeErrorHandlers } from "./error_handling";
 import { Fiber, MountOptions, RootFiber } from "./fibers";
 import { PluginManager } from "./plugins";
-import { reactive, toRaw } from "./reactivity";
+import { proxy, toRaw } from "./reactivity";
 import { Scheduler } from "./scheduler";
 import { validateProps } from "./template_helpers";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
@@ -40,7 +40,7 @@ declare global {
       Fiber: typeof Fiber;
       RootFiber: typeof RootFiber;
       toRaw: typeof toRaw;
-      reactive: typeof reactive;
+      proxy: typeof proxy;
     };
   }
 }
@@ -51,7 +51,7 @@ interface Root<P extends Props, E> {
   destroy(): void;
 }
 
-window.__OWL_DEVTOOLS__ ||= { apps, Fiber, RootFiber, toRaw, reactive };
+window.__OWL_DEVTOOLS__ ||= { apps, Fiber, RootFiber, toRaw, proxy };
 
 export class App<
   T extends abstract new (...args: any) => any = any,

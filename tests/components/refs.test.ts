@@ -1,13 +1,4 @@
-import {
-  App,
-  Component,
-  mount,
-  onMounted,
-  onPatched,
-  useRef,
-  useState,
-  xml,
-} from "../../src/index";
+import { App, Component, mount, onMounted, onPatched, useRef, proxy, xml } from "../../src/index";
 import { logStep, makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -42,7 +33,7 @@ describe("refs", () => {
             </div>
           `;
       static components = { Dialog };
-      state = useState({ val: 0 });
+      state = proxy({ val: 0 });
       button = useRef("myButton");
       doSomething() {
         this.state.val++;
@@ -72,7 +63,7 @@ describe("refs", () => {
           <span t-ref="coucou"/>
         </t>`;
 
-      state = useState({ value: true });
+      state = proxy({ value: true });
       ref = useRef("coucou");
     }
     const test = await mount(Test, fixture);
@@ -93,7 +84,7 @@ describe("refs", () => {
   test("ref is unset when t-if goes to false after unrelated render", async () => {
     class Comp extends Component {
       static template = xml`<div t-if="state.show" t-att-class="state.class" t-ref="coucou"/>`;
-      state = useState({ show: true, class: "test" });
+      state = proxy({ show: true, class: "test" });
       ref = useRef("coucou");
     }
 
@@ -120,7 +111,7 @@ describe("refs", () => {
         <div t-ref="coucou"/>
         <span t-ref="coucou"/>`;
 
-      state = useState({ value: true });
+      state = proxy({ value: true });
       ref = useRef("coucou");
     }
 
@@ -167,7 +158,7 @@ describe("refs", () => {
         <button t-on-click="() => state.renderId++" />
         <p t-ref="root" t-key="state.renderId"/>`;
       root = useRef("root");
-      state = useState({ renderId: 1 });
+      state = proxy({ renderId: 1 });
 
       setup() {
         onMounted(() => {

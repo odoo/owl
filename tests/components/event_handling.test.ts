@@ -1,5 +1,5 @@
 import { makeTestFixture, snapshotEverything, nextTick, logStep, nextMicroTick } from "../helpers";
-import { mount, Component, useState, xml, App } from "../../src/index";
+import { mount, Component, proxy, xml, App } from "../../src/index";
 
 snapshotEverything();
 
@@ -18,7 +18,7 @@ describe("event handling", () => {
     class Parent extends Component {
       static template = xml`<span t-on-click="inc"><Child/><t t-esc="state.value"/></span>`;
       static components = { Child };
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
       inc(ev: any) {
         this.state.value++;
         expect(ev.type).toBe("click");
@@ -59,7 +59,7 @@ describe("event handling", () => {
     class Counter extends Component {
       static template = xml`
       <div><t t-esc="state.value"/><input type="text" t-on-input="obj.onInput"/></div>`;
-      state = useState({ value: "" });
+      state = proxy({ value: "" });
       obj = { onInput: (ev: any) => (this.state.value = ev.target.value) };
     }
 
@@ -154,7 +154,7 @@ describe("event handling", () => {
       </div>`;
       static components = { Child };
 
-      state = useState({ cond: true });
+      state = proxy({ cond: true });
     }
 
     const parent = await mount(Parent, fixture);

@@ -1,4 +1,4 @@
-import { reactive } from "../src";
+import { proxy } from "../src";
 import { Derived } from "../src/common/types";
 import { derived, resetSignalHooks, setSignalHooks } from "../src/runtime/signals";
 import { expectSpy, nextMicroTick, spyDerived, spyEffect } from "./helpers";
@@ -10,13 +10,13 @@ async function waitScheduler() {
 
 describe("derived", () => {
   test("derived returns correct initial value", () => {
-    const state = reactive({ a: 1, b: 2 });
+    const state = proxy({ a: 1, b: 2 });
     const d = derived(() => state.a + state.b);
     expect(d()).toBe(3);
   });
 
   test("derived should not run until being called", () => {
-    const state = reactive({ a: 1 });
+    const state = proxy({ a: 1 });
     const d = spyDerived(() => state.a + 100);
     expect(d.spy).not.toHaveBeenCalled();
     expect(d()).toBe(101);
@@ -24,7 +24,7 @@ describe("derived", () => {
   });
 
   test("derived updates when dependencies change", async () => {
-    const state = reactive({ a: 1, b: 2 });
+    const state = proxy({ a: 1, b: 2 });
 
     const d = spyDerived(() => state.a * state.b);
     const e = spyEffect(() => d());
@@ -43,7 +43,7 @@ describe("derived", () => {
   });
 
   test("derived should not update even if the effect updates", async () => {
-    const state = reactive({ a: 1, b: 2 });
+    const state = proxy({ a: 1, b: 2 });
     const d = spyDerived(() => state.a);
     const e = spyEffect(() => state.b + d());
     e();
@@ -57,7 +57,7 @@ describe("derived", () => {
   });
 
   test("derived does not update when unrelated property changes, but updates when dependencies change", async () => {
-    const state = reactive({ a: 1, b: 2, c: 3 });
+    const state = proxy({ a: 1, b: 2, c: 3 });
     const d = spyDerived(() => state.a + state.b);
     const e = spyEffect(() => d());
     e();
@@ -72,7 +72,7 @@ describe("derived", () => {
   });
 
   test("derived does not notify when value is unchanged", async () => {
-    const state = reactive({ a: 1, b: 2 });
+    const state = proxy({ a: 1, b: 2 });
     const d = spyDerived(() => state.a + state.b);
     const e = spyEffect(() => d());
     e();
@@ -86,7 +86,7 @@ describe("derived", () => {
   });
 
   test("multiple deriveds can depend on same state", async () => {
-    const state = reactive({ a: 1, b: 2 });
+    const state = proxy({ a: 1, b: 2 });
     const d1 = spyDerived(() => state.a + state.b);
     const d2 = spyDerived(() => state.a * state.b);
     const e1 = spyEffect(() => d1());
@@ -106,7 +106,7 @@ describe("derived", () => {
   });
 
   test("derived can depend on arrays", async () => {
-    const state = reactive({ arr: [1, 2, 3] });
+    const state = proxy({ arr: [1, 2, 3] });
     const d = spyDerived(() => state.arr.reduce((a, b) => a + b, 0));
     const e = spyEffect(() => d());
     e();
@@ -122,8 +122,8 @@ describe("derived", () => {
     expectSpy(d.spy, 3, { result: 19 });
   });
 
-  test("derived can depend on nested reactives", async () => {
-    const state = reactive({ nested: { a: 1 } });
+  test("derived can depend on nested proxys", async () => {
+    const state = proxy({ nested: { a: 1 } });
     const d = spyDerived(() => state.nested.a * 2);
     const e = spyEffect(() => d());
     e();
@@ -136,7 +136,7 @@ describe("derived", () => {
   });
 
   test("derived can be called multiple times and returns same value if unchanged", async () => {
-    const state = reactive({ a: 1, b: 2 });
+    const state = proxy({ a: 1, b: 2 });
 
     const d = spyDerived(() => state.a + state.b);
     expect(d.spy).not.toHaveBeenCalled();
@@ -154,7 +154,7 @@ describe("derived", () => {
   });
 
   test("derived should not subscribe to change if no effect is using it", async () => {
-    const state = reactive({ a: 1, b: 10 });
+    const state = proxy({ a: 1, b: 10 });
     const d = spyDerived(() => state.a);
     expect(d.spy).not.toHaveBeenCalled();
     const e = spyEffect(() => {
@@ -175,7 +175,7 @@ describe("derived", () => {
   });
 
   test("derived should not be recomputed when called from effect if none of its source changed", async () => {
-    const state = reactive({ a: 1 });
+    const state = proxy({ a: 1 });
     const d = spyDerived(() => state.a * 0);
     expect(d.spy).not.toHaveBeenCalled();
     const e = spyEffect(() => {
@@ -203,7 +203,7 @@ describe("unsubscription", () => {
   });
 
   test("derived shoud unsubscribes from dependencies when effect is unsubscribed", async () => {
-    const state = reactive({ a: 1, b: 2 });
+    const state = proxy({ a: 1, b: 2 });
     const d = spyDerived(() => state.a + state.b);
     const e = spyEffect(() => d());
     d();
@@ -216,7 +216,7 @@ describe("unsubscription", () => {
 });
 describe("nested derived", () => {
   test("derived can depend on another derived", async () => {
-    const state = reactive({ a: 1, b: 2 });
+    const state = proxy({ a: 1, b: 2 });
     const d1 = spyDerived(() => state.a + state.b);
     const d2 = spyDerived(() => d1() * 2);
     const e = spyEffect(() => d2());
@@ -243,7 +243,7 @@ describe("nested derived", () => {
      * change s1
      * -> d1 should recomputes but d2 should not
      */
-    const state = reactive({ a: 1 });
+    const state = proxy({ a: 1 });
     const d1 = spyDerived(() => state.a);
     const d2 = spyDerived(() => d1() * 0);
     const e = spyEffect(() => d2());
@@ -283,7 +283,7 @@ describe("nested derived", () => {
      * change s1
      * -> d1, d2, d3, d4, e1 should recomputes
      */
-    const state = reactive({ a: 1 });
+    const state = proxy({ a: 1 });
     const d1 = spyDerived(() => state.a);
     const d2 = spyDerived(() => d1() + 1); // 1 + 1 = 2
     const d3 = spyDerived(() => d1() + 2); // 1 + 2 = 3

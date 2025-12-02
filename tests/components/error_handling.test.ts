@@ -9,7 +9,7 @@ import {
   onWillRender,
   onWillStart,
   onWillUnmount,
-  useState,
+  proxy,
   xml,
 } from "../../src/index";
 import { getCurrent } from "../../src/runtime/component_node";
@@ -542,7 +542,7 @@ describe("can catch errors", () => {
             <t t-if="state.error">Error handled</t>
             <t t-else=""><t t-slot="default" /></t>
           </div>`;
-      state = useState({ error: false });
+      state = proxy({ error: false });
 
       setup() {
         onError(() => (this.state.error = true));
@@ -553,7 +553,7 @@ describe("can catch errors", () => {
           <div>
             <ErrorBoundary><ErrorComponent flag="state.flag"/></ErrorBoundary>
           </div>`;
-      state = useState({ flag: false });
+      state = proxy({ flag: false });
       static components = { ErrorBoundary, ErrorComponent };
     }
     const app = await mount(App, fixture);
@@ -586,7 +586,7 @@ describe("can catch errors", () => {
       component: any;
       state: any;
       setup() {
-        this.state = useState({ ok: false });
+        this.state = proxy({ ok: false });
         useLogLifecycle();
         this.component = ErrorComponent;
         onError(() => {
@@ -644,7 +644,7 @@ describe("can catch errors", () => {
   test("calling a hook outside setup should crash", async () => {
     class Root extends Component {
       static template = xml`<t t-esc="state.value"/>`;
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
 
       setup() {
         onWillStart(() => {
@@ -666,7 +666,7 @@ describe("can catch errors", () => {
     const err = new Error("test error");
     class Root extends Component {
       static template = xml`<t t-esc="state.value"/>`;
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
 
       setup() {
         onMounted(() => {
@@ -687,7 +687,7 @@ describe("can catch errors", () => {
     const err = new Error("test error");
     class Root extends Component {
       static template = xml`<t t-esc="state.value"/>`;
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
 
       setup() {
         onWillStart(async () => {
@@ -709,7 +709,7 @@ describe("can catch errors", () => {
     const err = new Error("test error");
     class Root extends Component {
       static template = xml`<t t-esc="state.value"/>`;
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
 
       setup() {
         onMounted(() => {
@@ -732,7 +732,7 @@ describe("can catch errors", () => {
     const err = new Error("test error");
     class Root extends Component {
       static template = xml`<t t-esc="state.value"/>`;
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
 
       setup() {
         onWillStart(async () => {
@@ -755,7 +755,7 @@ describe("can catch errors", () => {
   test("Thrown values that are not errors are wrapped in dev mode", async () => {
     class Root extends Component {
       static template = xml`<t t-esc="state.value"/>`;
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
 
       setup() {
         onMounted(() => {
@@ -777,7 +777,7 @@ describe("can catch errors", () => {
   test("Thrown values that are not errors are wrapped outside dev mode", async () => {
     class Root extends Component {
       static template = xml`<t t-esc="state.value"/>`;
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
 
       setup() {
         onMounted(() => {
@@ -806,7 +806,7 @@ describe("can catch errors", () => {
             <t t-if="state.error">Error handled</t>
             <t t-else=""><t t-slot="default" /></t>
           </div>`;
-      state = useState({ error: false });
+      state = proxy({ error: false });
 
       setup() {
         onError(() => {
@@ -837,7 +837,7 @@ describe("can catch errors", () => {
             <t t-if="state.error">Error handled</t>
             <t t-else=""><t t-slot="default" /></t>
           </div>`;
-      state = useState({ error: false });
+      state = proxy({ error: false });
 
       setup() {
         onError(() => (this.state.error = true));
@@ -848,7 +848,7 @@ describe("can catch errors", () => {
           <div>
               <ErrorBoundary t-if="state.flag"><ErrorComponent /></ErrorBoundary>
           </div>`;
-      state = useState({ flag: false });
+      state = proxy({ flag: false });
       static components = { ErrorBoundary, ErrorComponent };
     }
     const app = await mount(App, fixture);
@@ -871,7 +871,7 @@ describe("can catch errors", () => {
               <t t-if="state.error">Error handled</t>
               <t t-else=""><t t-slot="default" /></t>
           </div>`;
-      state = useState({ error: false });
+      state = proxy({ error: false });
 
       setup() {
         onError(() => (this.state.error = true));
@@ -905,7 +905,7 @@ describe("can catch errors", () => {
               <t t-if="state.error">Error handled</t>
               <t t-else=""><t t-slot="default" /></t>
           </div>`;
-      state = useState({ error: false });
+      state = proxy({ error: false });
 
       setup() {
         onError(() => (this.state.error = true));
@@ -940,7 +940,7 @@ describe("can catch errors", () => {
             <t t-if="state.error">Error handled</t>
             <t t-else=""><t t-slot="default" /></t>
           </div>`;
-      state = useState({ error: false });
+      state = proxy({ error: false });
 
       setup() {
         onError(() => (this.state.error = true));
@@ -974,7 +974,7 @@ describe("can catch errors", () => {
               <t t-if="state.error">Error handled</t>
               <t t-else=""><t t-slot="default" /></t>
           </div>`;
-      state = useState({ error: false });
+      state = proxy({ error: false });
 
       setup() {
         onError(() => (this.state.error = true));
@@ -1008,7 +1008,7 @@ describe("can catch errors", () => {
        <t t-if="state.error">Error handled</t>
        <t t-else=""><t t-slot="default" /></t>
       </div>`;
-      state = useState({ error: false });
+      state = proxy({ error: false });
 
       setup() {
         useLogLifecycle();
@@ -1069,7 +1069,7 @@ describe("can catch errors", () => {
        <t t-else=""><ErrorComponent /></t>
       </div>`;
       static components = { ErrorComponent };
-      state = useState({ error: false });
+      state = proxy({ error: false });
 
       setup() {
         useLogLifecycle();
@@ -1117,7 +1117,7 @@ describe("can catch errors", () => {
        <t t-else=""><Boom/></t>
       </div>`;
       static components = { Boom };
-      state = useState({ error: false });
+      state = proxy({ error: false });
 
       setup() {
         useLogLifecycle();
@@ -1188,7 +1188,7 @@ describe("can catch errors", () => {
        <t t-if="state.error">Error handled</t>
        <t t-else=""><t t-slot="default" /></t>
       </div>`;
-      state = useState({ error: false });
+      state = proxy({ error: false });
 
       setup() {
         useLogLifecycle();
@@ -1260,7 +1260,7 @@ describe("can catch errors", () => {
             <t t-if="state.error">Error handled</t>
             <t t-else=""><t t-slot="default" /></t>
           </div>`;
-      state = useState({ error: false });
+      state = proxy({ error: false });
 
       setup() {
         onError(() => (this.state.error = true));
@@ -1272,7 +1272,7 @@ describe("can catch errors", () => {
               <span><t t-esc="state.message"/></span>
             <ErrorBoundary><ErrorComponent message="state.message" /></ErrorBoundary>
           </div>`;
-      state = useState({ message: "abc" });
+      state = proxy({ message: "abc" });
       static components = { ErrorBoundary, ErrorComponent };
     }
     const app = await mount(App, fixture);
@@ -1343,7 +1343,7 @@ describe("can catch errors", () => {
         </div>`;
       state: any;
       setup() {
-        this.state = useState({});
+        this.state = proxy({});
         onError(() => {
           steps.push("Abstract onError");
           this.state.error = "Abstract";
@@ -1387,7 +1387,7 @@ describe("can catch errors", () => {
         </div>`;
       state: any;
       setup() {
-        this.state = useState({});
+        this.state = proxy({});
         onError(() => {
           steps.push("Abstract onError");
           this.state.error = "Abstract";
@@ -1466,7 +1466,7 @@ describe("can catch errors", () => {
         </t>`;
 
       static components = { ErrorHandler };
-      state: any = useState({
+      state: any = proxy({
         cps: {},
       });
 
@@ -1556,7 +1556,7 @@ describe("can catch errors", () => {
         <t t-if="state.hasChild"><Child/></t>`;
       static components = { Child };
 
-      state = useState({ value: 1, hasChild: true });
+      state = proxy({ value: 1, hasChild: true });
       setup() {
         useLogLifecycle();
         onError(() => {
@@ -1620,7 +1620,7 @@ describe("can catch errors", () => {
         <t t-if="state.hasChild"><Child/></t>`;
       static components = { Child };
 
-      state = useState({ value: 1, hasChild: false });
+      state = proxy({ value: 1, hasChild: false });
       setup() {
         useLogLifecycle();
         onError(() => {
@@ -1799,7 +1799,7 @@ describe("can catch errors", () => {
       static template = xml`R<t t-if="state.gogogo" t-component="component"/>`;
 
       component: any = Parent;
-      state = useState({ gogogo: false });
+      state = proxy({ gogogo: false });
 
       setup() {
         useLogLifecycle();

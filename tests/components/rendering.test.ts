@@ -1,4 +1,4 @@
-import { Component, mount, onRendered, onWillUpdateProps, useState, xml } from "../../src";
+import { Component, mount, onRendered, onWillUpdateProps, proxy, xml } from "../../src";
 import {
   makeTestFixture,
   snapshotEverything,
@@ -33,7 +33,7 @@ describe("rendering semantics", () => {
       `;
       static components = { Child };
 
-      state = useState({ value: "A" });
+      state = proxy({ value: "A" });
       setup() {
         useLogLifecycle();
       }
@@ -156,7 +156,7 @@ describe("rendering semantics", () => {
       static template = xml`parent<t t-esc="state.value"/><Child/>`;
       static components = { Child };
 
-      state = useState({ value: "A" });
+      state = proxy({ value: "A" });
 
       setup() {
         useLogLifecycle();
@@ -224,7 +224,7 @@ describe("rendering semantics", () => {
     `);
   });
 
-  test("props are reactive", async () => {
+  test("props are proxy", async () => {
     class Child extends Component {
       static template = xml`<t t-esc="props.a.b"/>`;
       setup() {
@@ -238,7 +238,7 @@ describe("rendering semantics", () => {
       `;
       static components = { Child };
 
-      state = useState({ b: 1 });
+      state = proxy({ b: 1 });
       setup() {
         useLogLifecycle();
       }
@@ -274,7 +274,7 @@ describe("rendering semantics", () => {
     `);
   });
 
-  test("props are reactive (nested prop)", async () => {
+  test("props are proxy (nested prop)", async () => {
     class Child extends Component {
       static template = xml`<t t-esc="props.a.b.c"/>`;
 
@@ -289,7 +289,7 @@ describe("rendering semantics", () => {
       `;
       static components = { Child };
 
-      state = useState({ b: { c: 1 } });
+      state = proxy({ b: { c: 1 } });
 
       setup() {
         useLogLifecycle();
@@ -349,7 +349,7 @@ describe("rendering semantics", () => {
       `;
       static components = { Child };
 
-      state: any = useState({ b: 1 });
+      state: any = proxy({ b: 1 });
     }
 
     const parent = await mount(Parent, fixture);
@@ -384,7 +384,7 @@ describe("rendering semantics", () => {
       static template = xml`<t t-esc="state.obj.val"/><B obj="state.obj"/>`;
       static components = { B };
 
-      state = useState({ obj: { val: 1 } });
+      state = proxy({ obj: { val: 1 } });
 
       setup() {
         useLogLifecycle();
@@ -455,7 +455,7 @@ test("force render in case of existing render", async () => {
   class A extends Component {
     static template = xml`<B val="state.val"/>`;
     static components = { B };
-    state = useState({ val: 1 });
+    state = proxy({ val: 1 });
     setup() {
       useLogLifecycle();
     }
@@ -541,7 +541,7 @@ test("children, default props and renderings", async () => {
     `;
     static components = { Child };
 
-    state = useState({ value: "A" });
+    state = proxy({ value: "A" });
     setup() {
       useLogLifecycle();
     }

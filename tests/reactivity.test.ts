@@ -1,13 +1,5 @@
-import {
-  Component,
-  mount,
-  onWillRender,
-  onWillStart,
-  onWillUpdateProps,
-  useState,
-  xml,
-} from "../src";
-import { markRaw, reactive, toRaw } from "../src/runtime/reactivity";
+import { Component, mount, onWillRender, onWillStart, onWillUpdateProps, xml } from "../src";
+import { markRaw, proxy, toRaw } from "../src/runtime/reactivity";
 import { effect } from "../src/runtime/signals";
 
 import {
@@ -21,7 +13,7 @@ import {
 } from "./helpers";
 
 function createReactive(value: any) {
-  return reactive(value);
+  return proxy(value);
 }
 
 async function waitScheduler() {
@@ -107,7 +99,7 @@ describe("Reactivity", () => {
     expectSpy(spy, 3, [106]);
   });
 
-  test("reactive from object with a getter 1", async () => {
+  test("proxy from object with a getter 1", async () => {
     const spy = jest.fn();
     let value = 1;
     const state = createReactive({
@@ -126,7 +118,7 @@ describe("Reactivity", () => {
     expectSpy(spy, 2, [101]);
   });
 
-  test("reactive from object with a getter 2", async () => {
+  test("proxy from object with a getter 2", async () => {
     const spy = jest.fn();
     let value = { b: 1 };
     const state = createReactive({
@@ -262,7 +254,7 @@ describe("Reactivity", () => {
     expectSpy(spy2, 2, [100]);
   });
 
-  test("create reactive from another", async () => {
+  test("create proxy from another", async () => {
     const spy1 = jest.fn();
     const spy2 = jest.fn();
     const state = createReactive({ a: 1 });
@@ -568,7 +560,7 @@ describe("Reactivity", () => {
     expectSpy(spy, 2, [3]);
   });
 
-  test("Observing the same object through the same reactive preserves referential equality", async () => {
+  test("Observing the same object through the same proxy preserves referential equality", async () => {
     const o = {} as any;
     o.o = o;
     const state = createReactive(o);
@@ -764,7 +756,7 @@ describe("Reactivity", () => {
     expectSpy(spy, 3, [1, arrDict]);
   });
 
-  test("properly handle assigning object containing array to reactive", async () => {
+  test("properly handle assigning object containing array to proxy", async () => {
     const spy = jest.fn();
     const state = createReactive({ a: { arr: [], val: "test" } }) as any;
     effect(() => spy(state.a, [...state.a.arr]));
@@ -795,7 +787,7 @@ describe("Reactivity", () => {
     expectSpy(spy, 2, [3]);
   });
 
-  test("call callback when reactive is changed", async () => {
+  test("call callback when proxy is changed", async () => {
     const spy = jest.fn();
     const state: any = createReactive({ a: 1, b: { c: 2 }, d: [{ e: 3 }], f: 4 });
     effect(() => spy(state.a, state.b.c, state.d[0].e, state.f));
@@ -819,7 +811,7 @@ describe("Reactivity", () => {
     expectSpy(spy, 5, [111, 5, 8, 222]);
   });
 
-  test("reactive inside other reactive", async () => {
+  test("proxy inside other proxy", async () => {
     const spy1 = jest.fn();
     const spy2 = jest.fn();
     const inner = createReactive({ a: 1 });
@@ -837,7 +829,7 @@ describe("Reactivity", () => {
     expectSpy(spy2, 2, [3]);
   });
 
-  test("reactive inside other reactive, variant", async () => {
+  test("proxy inside other proxy, variant", async () => {
     const spy1 = jest.fn();
     const spy2 = jest.fn();
     const inner = createReactive({ a: 1 });
@@ -858,7 +850,7 @@ describe("Reactivity", () => {
     expectSpy(spy2, 2, [3]);
   });
 
-  test("reactive inside other reactive, variant 2", async () => {
+  test("proxy inside other proxy, variant 2", async () => {
     const spy1 = jest.fn();
     const spy2 = jest.fn();
     const spy3 = jest.fn();
@@ -1007,14 +999,14 @@ describe("Reactivity", () => {
     expect(state.k).toEqual({ n: 2 });
   });
 
-  test("can access properties on reactive of frozen objects", async () => {
+  test("can access properties on proxy of frozen objects", async () => {
     const obj = Object.freeze({ a: {} });
     const state = createReactive(obj);
     expect(() => state.a).not.toThrow();
     expect(state.a).toBe(obj.a);
   });
 
-  test("writing on object with reactive in prototype chain doesn't notify", async () => {
+  test("writing on object with proxy in prototype chain doesn't notify", async () => {
     const spy = jest.fn();
     const state = createReactive({ val: 0 });
     effect(() => spy(state.val));
@@ -1030,7 +1022,7 @@ describe("Reactivity", () => {
     expect(toRaw(nonReactive)).toEqual({ val: 1 });
   });
 
-  test("creating key on object with reactive in prototype chain doesn't notify", async () => {
+  test("creating key on object with proxy in prototype chain doesn't notify", async () => {
     const spy = jest.fn();
     const parent = createReactive({});
     const child = Object.create(parent);
@@ -1040,7 +1032,7 @@ describe("Reactivity", () => {
     expectSpy(spy, 1, [[]]);
   });
 
-  test("reactive of object with reactive in prototype chain is not the object from the prototype chain", async () => {
+  test("proxy of object with proxy in prototype chain is not the object from the prototype chain", async () => {
     const spy = jest.fn();
     const parent = createReactive({ val: 0 });
     const child = createReactive(Object.create(parent));
@@ -1054,7 +1046,7 @@ describe("Reactivity", () => {
     expect(child.val).toBe(1);
   });
 
-  test("can create reactive of object with non-reactive in prototype chain", async () => {
+  test("can create proxy of object with non-proxy in prototype chain", async () => {
     const spy = jest.fn();
     const parent = markRaw({ val: 0 });
     const child = createReactive(Object.create(parent));
@@ -1069,39 +1061,39 @@ describe("Reactivity", () => {
 
 describe("Collections", () => {
   describe("Set", () => {
-    test("can make reactive Set", () => {
+    test("can make proxy Set", () => {
       const set = new Set<number>();
-      const obj = reactive(set);
+      const obj = proxy(set);
       expect(obj).not.toBe(set);
     });
 
     test("can read", async () => {
-      const state = reactive(new Set([1]));
+      const state = proxy(new Set([1]));
       expect(state.has(1)).toBe(true);
       expect(state.has(0)).toBe(false);
     });
 
     test("can add entries", () => {
-      const state = reactive(new Set());
+      const state = proxy(new Set());
       state.add(1);
       expect(state.has(1)).toBe(true);
     });
 
     test("can remove entries", () => {
-      const state = reactive(new Set([1]));
+      const state = proxy(new Set([1]));
       state.delete(1);
       expect(state.has(1)).toBe(false);
     });
 
     test("can clear entries", () => {
-      const state = reactive(new Set([1]));
+      const state = proxy(new Set([1]));
       expect(state.size).toBe(1);
       state.clear();
       expect(state.size).toBe(0);
     });
 
     test("act like a Set", () => {
-      const state = reactive(new Set([1]));
+      const state = proxy(new Set([1]));
       expect([...state.entries()]).toEqual([[1, 1]]);
       expect([...state.values()]).toEqual([1]);
       expect([...state.keys()]).toEqual([1]);
@@ -1111,26 +1103,26 @@ describe("Collections", () => {
       expect(state).toBeInstanceOf(Set);
     });
 
-    test("reactive Set contains its keys", () => {
-      const state = reactive(new Set([{}]));
-      expect(state.has(state.keys().next().value)).toBe(true);
+    test("proxy Set contains its keys", () => {
+      const state = proxy(new Set([{}]));
+      expect(state.has(state.keys().next().value!)).toBe(true);
     });
 
-    test("reactive Set contains its values", () => {
-      const state = reactive(new Set([{}]));
-      expect(state.has(state.values().next().value)).toBe(true);
+    test("proxy Set contains its values", () => {
+      const state = proxy(new Set([{}]));
+      expect(state.has(state.values().next().value!)).toBe(true);
     });
 
-    test("reactive Set contains its entries' keys and values", () => {
-      const state = reactive(new Set([{}]));
-      const [key, val] = state.entries().next().value;
+    test("proxy Set contains its entries' keys and values", () => {
+      const state = proxy(new Set([{}]));
+      const [key, val] = state.entries().next().value!;
       expect(state.has(key)).toBe(true);
       expect(state.has(val)).toBe(true);
     });
 
     test("checking for a key subscribes the callback to changes to that key", async () => {
       const spy = jest.fn();
-      const state = reactive(new Set([1]));
+      const state = proxy(new Set([1]));
       effect(() => spy(state.has(2)));
 
       expectSpy(spy, 1, [false]);
@@ -1163,149 +1155,149 @@ describe("Collections", () => {
       expectSpy(spy, 5, [false]);
     });
 
-    test("iterating on keys returns reactives", async () => {
+    test("iterating on keys returns proxys", async () => {
       const obj = { a: 2 };
       const spy = jest.fn();
-      const state = reactive(new Set([obj]));
-      const reactiveObj = state.keys().next().value!;
-      effect(() => spy(reactiveObj.a));
-      expect(reactiveObj).not.toBe(obj);
-      expect(toRaw(reactiveObj as any)).toBe(obj);
+      const state = proxy(new Set([obj]));
+      const proxyObj = state.keys().next().value!;
+      effect(() => spy(proxyObj.a));
+      expect(proxyObj).not.toBe(obj);
+      expect(toRaw(proxyObj as any)).toBe(obj);
       expectSpy(spy, 1, [2]);
-      reactiveObj.a = 0;
+      proxyObj.a = 0;
       await waitScheduler();
       expectSpy(spy, 2, [0]);
-      reactiveObj.a; // observe key "a" in sub-reactive;
-      reactiveObj.a = 1;
+      proxyObj.a; // observe key "a" in sub-proxy;
+      proxyObj.a = 1;
       await waitScheduler();
       expectSpy(spy, 3, [1]);
-      reactiveObj.a = 1; // setting same value again shouldn't notify
+      proxyObj.a = 1; // setting same value again shouldn't notify
       await waitScheduler();
       expectSpy(spy, 3, [1]);
     });
 
-    test("iterating on values returns reactives", async () => {
+    test("iterating on values returns proxys", async () => {
       const obj = { a: 2 };
       const spy = jest.fn();
-      const state = reactive(new Set([obj]));
-      const reactiveObj = state.values().next().value!;
-      effect(() => spy(reactiveObj.a));
-      expect(reactiveObj).not.toBe(obj);
-      expect(toRaw(reactiveObj as any)).toBe(obj);
+      const state = proxy(new Set([obj]));
+      const proxyObj = state.values().next().value!;
+      effect(() => spy(proxyObj.a));
+      expect(proxyObj).not.toBe(obj);
+      expect(toRaw(proxyObj as any)).toBe(obj);
       expectSpy(spy, 1, [2]);
-      reactiveObj.a = 0;
+      proxyObj.a = 0;
       await waitScheduler();
       expectSpy(spy, 2, [0]);
-      reactiveObj.a; // observe key "a" in sub-reactive;
-      reactiveObj.a = 1;
+      proxyObj.a; // observe key "a" in sub-proxy;
+      proxyObj.a = 1;
       await waitScheduler();
       expectSpy(spy, 3, [1]);
-      reactiveObj.a = 1; // setting same value again shouldn't notify
+      proxyObj.a = 1; // setting same value again shouldn't notify
       await waitScheduler();
       expectSpy(spy, 3, [1]);
     });
 
-    test("iterating on entries returns reactives", async () => {
+    test("iterating on entries returns proxys", async () => {
       const obj = { a: 2 };
       const spy = jest.fn();
-      const state = reactive(new Set([obj]));
-      const [reactiveObj, reactiveObj2] = state.entries().next().value!;
-      expect(reactiveObj2).toBe(reactiveObj);
-      expect(reactiveObj).not.toBe(obj);
-      expect(toRaw(reactiveObj as any)).toBe(obj);
-      effect(() => spy(reactiveObj.a));
+      const state = proxy(new Set([obj]));
+      const [proxyObj, proxyObj2] = state.entries().next().value!;
+      expect(proxyObj2).toBe(proxyObj);
+      expect(proxyObj).not.toBe(obj);
+      expect(toRaw(proxyObj as any)).toBe(obj);
+      effect(() => spy(proxyObj.a));
       expectSpy(spy, 1, [2]);
-      reactiveObj.a = 0;
+      proxyObj.a = 0;
       await waitScheduler();
       expectSpy(spy, 2, [0]);
-      reactiveObj.a; // observe key "a" in sub-reactive;
-      reactiveObj.a = 1;
+      proxyObj.a; // observe key "a" in sub-proxy;
+      proxyObj.a = 1;
       await waitScheduler();
       expectSpy(spy, 3, [1]);
-      reactiveObj.a = 1; // setting same value again shouldn't notify
+      proxyObj.a = 1; // setting same value again shouldn't notify
       await waitScheduler();
       expectSpy(spy, 3, [1]);
     });
 
-    test("iterating on reactive Set returns reactives", async () => {
+    test("iterating on proxy Set returns proxys", async () => {
       const obj = { a: 2 };
       const spy = jest.fn();
-      const state = reactive(new Set([obj]));
-      const reactiveObj = state[Symbol.iterator]().next().value!;
-      effect(() => spy(reactiveObj.a));
-      expect(reactiveObj).not.toBe(obj);
-      expect(toRaw(reactiveObj as any)).toBe(obj);
+      const state = proxy(new Set([obj]));
+      const proxyObj = state[Symbol.iterator]().next().value!;
+      effect(() => spy(proxyObj.a));
+      expect(proxyObj).not.toBe(obj);
+      expect(toRaw(proxyObj as any)).toBe(obj);
       expectSpy(spy, 1, [2]);
-      reactiveObj.a = 0;
+      proxyObj.a = 0;
       await waitScheduler();
       expectSpy(spy, 2, [0]);
-      reactiveObj.a; // observe key "a" in sub-reactive;
-      reactiveObj.a = 1;
+      proxyObj.a; // observe key "a" in sub-proxy;
+      proxyObj.a = 1;
       await waitScheduler();
       expectSpy(spy, 3, [1]);
-      reactiveObj.a = 1; // setting same value again shouldn't notify
+      proxyObj.a = 1; // setting same value again shouldn't notify
       await waitScheduler();
       expectSpy(spy, 3, [1]);
     });
 
-    test("iterating with forEach returns reactives", async () => {
+    test("iterating with forEach returns proxys", async () => {
       const keyObj = { a: 2 };
       const spy = jest.fn();
-      const state = reactive(new Set([keyObj]));
-      let reactiveKeyObj: any, reactiveValObj: any, thisObj: any, mapObj: any;
+      const state = proxy(new Set([keyObj]));
+      let proxyKeyObj: any, proxyValObj: any, thisObj: any, mapObj: any;
       const thisArg = {};
       state.forEach(function (this: any, val, key, map) {
-        [reactiveValObj, reactiveKeyObj, mapObj, thisObj] = [val, key, map, this];
+        [proxyValObj, proxyKeyObj, mapObj, thisObj] = [val, key, map, this];
       }, thisArg);
-      expect(reactiveKeyObj).not.toBe(keyObj);
-      expect(reactiveValObj).not.toBe(keyObj);
-      expect(mapObj).toBe(state); // third argument should be the reactive
-      expect(thisObj).toBe(thisArg); // thisArg should not be made reactive
-      expect(toRaw(reactiveKeyObj as any)).toBe(keyObj);
-      expect(toRaw(reactiveValObj as any)).toBe(keyObj);
-      expect(reactiveKeyObj).toBe(reactiveValObj); // reactiveKeyObj and reactiveValObj should be the same object
+      expect(proxyKeyObj).not.toBe(keyObj);
+      expect(proxyValObj).not.toBe(keyObj);
+      expect(mapObj).toBe(state); // third argument should be the proxy
+      expect(thisObj).toBe(thisArg); // thisArg should not be made proxy
+      expect(toRaw(proxyKeyObj as any)).toBe(keyObj);
+      expect(toRaw(proxyValObj as any)).toBe(keyObj);
+      expect(proxyKeyObj).toBe(proxyValObj); // proxyKeyObj and proxyValObj should be the same object
 
-      effect(() => spy(reactiveKeyObj.a));
+      effect(() => spy(proxyKeyObj.a));
       expectSpy(spy, 1, [2]);
 
-      reactiveKeyObj!.a = 0;
+      proxyKeyObj!.a = 0;
       await waitScheduler();
       expectSpy(spy, 2, [0]);
 
-      reactiveKeyObj!.a; // observe key "a" in key sub-reactive;
-      reactiveKeyObj!.a = 1;
+      proxyKeyObj!.a; // observe key "a" in key sub-proxy;
+      proxyKeyObj!.a = 1;
       await waitScheduler();
       expectSpy(spy, 3, [1]);
 
-      reactiveKeyObj!.a = 1; // setting same value again shouldn't notify
-      reactiveValObj!.a = 1;
+      proxyKeyObj!.a = 1; // setting same value again shouldn't notify
+      proxyValObj!.a = 1;
       await waitScheduler();
       expectSpy(spy, 3, [1]);
     });
   });
 
   describe("WeakSet", () => {
-    test("cannot make reactive WeakSet", () => {
+    test("cannot make proxy WeakSet", () => {
       const set = new WeakSet();
-      expect(() => reactive(set)).toThrowError("Cannot make the given value reactive");
+      expect(() => proxy(set)).toThrowError("Cannot make the given value reactive");
     });
 
-    test("WeakSet in reactive is original WeakSet", () => {
+    test("WeakSet in proxy is original WeakSet", () => {
       const obj = { set: new WeakSet() };
-      const state = reactive(obj);
+      const state = proxy(obj);
       expect(state.set).toBe(obj.set);
     });
   });
 
   describe("Map", () => {
-    test("can make reactive Map", () => {
+    test("can make proxy Map", () => {
       const map = new Map();
-      const obj = reactive(map);
+      const obj = proxy(map);
       expect(obj).not.toBe(map);
     });
 
     test("can read", async () => {
-      const state = reactive(new Map([[1, 0]]));
+      const state = proxy(new Map([[1, 0]]));
       expect(state.has(1)).toBe(true);
       expect(state.has(0)).toBe(false);
       expect(state.get(1)).toBe(0);
@@ -1313,28 +1305,28 @@ describe("Collections", () => {
     });
 
     test("can add entries", () => {
-      const state = reactive(new Map());
+      const state = proxy(new Map());
       state.set(1, 2);
       expect(state.has(1)).toBe(true);
       expect(state.get(1)).toBe(2);
     });
 
     test("can remove entries", () => {
-      const state = reactive(new Map([[1, 2]]));
+      const state = proxy(new Map([[1, 2]]));
       state.delete(1);
       expect(state.has(1)).toBe(false);
       expect(state.get(1)).toBeUndefined();
     });
 
     test("can clear entries", () => {
-      const state = reactive(new Map([[1, 2]]));
+      const state = proxy(new Map([[1, 2]]));
       expect(state.size).toBe(1);
       state.clear();
       expect(state.size).toBe(0);
     });
 
     test("act like a Map", () => {
-      const state = reactive(new Map([[1, 2]]));
+      const state = proxy(new Map([[1, 2]]));
       expect([...state.entries()]).toEqual([[1, 2]]);
       expect([...state.values()]).toEqual([2]);
       expect([...state.keys()]).toEqual([1]);
@@ -1344,26 +1336,26 @@ describe("Collections", () => {
       expect(state).toBeInstanceOf(Map);
     });
 
-    test("reactive Map contains its keys", () => {
-      const state = reactive(new Map([[{}, 1]]));
-      expect(state.has(state.keys().next().value)).toBe(true);
+    test("proxy Map contains its keys", () => {
+      const state = proxy(new Map([[{}, 1]]));
+      expect(state.has(state.keys().next().value!)).toBe(true);
     });
 
-    test("reactive Map values are equal to doing a get on the appropriate key", () => {
-      const state = reactive(new Map([[1, {}]]));
+    test("proxy Map values are equal to doing a get on the appropriate key", () => {
+      const state = proxy(new Map([[1, {}]]));
       expect(state.get(1)).toBe(state.values().next().value);
     });
 
-    test("reactive Map contains its entries' keys, and the associated value is the same as doing get", () => {
-      const state = reactive(new Map([[{}, {}]]));
-      const [key, val] = state.entries().next().value;
+    test("proxy Map contains its entries' keys, and the associated value is the same as doing get", () => {
+      const state = proxy(new Map([[{}, {}]]));
+      const [key, val] = state.entries().next().value!;
       expect(state.has(key)).toBe(true);
       expect(val).toBe(state.get(key));
     });
 
     test("checking for a key with 'has' subscribes the callback to changes to that key", async () => {
       const spy = jest.fn();
-      const state = reactive(new Map([[1, 2]]));
+      const state = proxy(new Map([[1, 2]]));
       effect(() => spy(state.has(2)));
 
       expectSpy(spy, 1, [false]);
@@ -1398,7 +1390,7 @@ describe("Collections", () => {
 
     test("checking for a key with 'get' subscribes the callback to changes to that key", async () => {
       const spy = jest.fn();
-      const state = reactive(new Map([[1, 2]]));
+      const state = proxy(new Map([[1, 2]]));
       effect(() => spy(state.get(2)));
 
       expectSpy(spy, 1, [undefined]);
@@ -1437,173 +1429,173 @@ describe("Collections", () => {
       expectSpy(spy, 5, [undefined]);
     });
 
-    test("getting values returns a reactive", async () => {
+    test("getting values returns a proxy", async () => {
       const obj = { a: 2 };
       const spy = jest.fn();
-      const state = reactive(new Map([[1, obj]]));
-      const reactiveObj = state.get(1)!;
-      expect(reactiveObj).not.toBe(obj);
-      expect(toRaw(reactiveObj as any)).toBe(obj);
-      effect(() => spy(reactiveObj.a));
+      const state = proxy(new Map([[1, obj]]));
+      const proxyObj = state.get(1)!;
+      expect(proxyObj).not.toBe(obj);
+      expect(toRaw(proxyObj as any)).toBe(obj);
+      effect(() => spy(proxyObj.a));
       expectSpy(spy, 1, [2]);
-      reactiveObj.a = 0;
+      proxyObj.a = 0;
       await waitScheduler();
       expectSpy(spy, 2, [0]);
-      reactiveObj.a = 1;
+      proxyObj.a = 1;
       await waitScheduler();
       expectSpy(spy, 3, [1]);
-      reactiveObj.a = 1; // setting same value again shouldn't notify
+      proxyObj.a = 1; // setting same value again shouldn't notify
       await waitScheduler();
       expectSpy(spy, 3, [1]);
     });
 
-    test("iterating on values returns reactives", async () => {
+    test("iterating on values returns proxys", async () => {
       const obj = { a: 2 };
       const spy = jest.fn();
-      const state = reactive(new Map([[1, obj]]));
-      const reactiveObj = state.values().next().value!;
-      effect(() => spy(reactiveObj.a));
-      expect(reactiveObj).not.toBe(obj);
-      expect(toRaw(reactiveObj as any)).toBe(obj);
+      const state = proxy(new Map([[1, obj]]));
+      const proxyObj = state.values().next().value!;
+      effect(() => spy(proxyObj.a));
+      expect(proxyObj).not.toBe(obj);
+      expect(toRaw(proxyObj as any)).toBe(obj);
       expectSpy(spy, 1, [2]);
-      reactiveObj.a = 0;
+      proxyObj.a = 0;
       await waitScheduler();
       expectSpy(spy, 2, [0]);
-      reactiveObj.a = 1;
+      proxyObj.a = 1;
       await waitScheduler();
       expectSpy(spy, 3, [1]);
-      reactiveObj.a = 1; // setting same value again shouldn't notify
+      proxyObj.a = 1; // setting same value again shouldn't notify
       await waitScheduler();
       expectSpy(spy, 3, [1]);
     });
 
-    test("iterating on keys returns reactives", async () => {
+    test("iterating on keys returns proxys", async () => {
       const obj = { a: 2 };
       const spy = jest.fn();
-      const state = reactive(new Map([[obj, 1]]));
-      const reactiveObj = state.keys().next().value!;
-      expect(reactiveObj).not.toBe(obj);
-      expect(toRaw(reactiveObj as any)).toBe(obj);
-      effect(() => spy(reactiveObj.a));
+      const state = proxy(new Map([[obj, 1]]));
+      const proxyObj = state.keys().next().value!;
+      expect(proxyObj).not.toBe(obj);
+      expect(toRaw(proxyObj as any)).toBe(obj);
+      effect(() => spy(proxyObj.a));
       expectSpy(spy, 1, [2]);
-      reactiveObj.a = 0;
+      proxyObj.a = 0;
       await waitScheduler();
       expectSpy(spy, 2, [0]);
-      reactiveObj.a = 1;
+      proxyObj.a = 1;
       await waitScheduler();
       expectSpy(spy, 3, [1]);
-      reactiveObj.a = 1; // setting same value again shouldn't notify
+      proxyObj.a = 1; // setting same value again shouldn't notify
       await waitScheduler();
       expectSpy(spy, 3, [1]);
     });
 
-    test("iterating on reactive map returns reactives", async () => {
+    test("iterating on proxy map returns proxys", async () => {
       const keyObj = { a: 2 };
       const valObj = { a: 2 };
       const spy = jest.fn();
-      const state = reactive(new Map([[keyObj, valObj]]));
-      const [reactiveKeyObj, reactiveValObj] = state[Symbol.iterator]().next().value!;
-      effect(() => spy(reactiveKeyObj.a, reactiveValObj.a));
-      expect(reactiveKeyObj).not.toBe(keyObj);
-      expect(reactiveValObj).not.toBe(valObj);
-      expect(toRaw(reactiveKeyObj as any)).toBe(keyObj);
-      expect(toRaw(reactiveValObj as any)).toBe(valObj);
+      const state = proxy(new Map([[keyObj, valObj]]));
+      const [proxyKeyObj, proxyValObj] = state[Symbol.iterator]().next().value!;
+      effect(() => spy(proxyKeyObj.a, proxyValObj.a));
+      expect(proxyKeyObj).not.toBe(keyObj);
+      expect(proxyValObj).not.toBe(valObj);
+      expect(toRaw(proxyKeyObj as any)).toBe(keyObj);
+      expect(toRaw(proxyValObj as any)).toBe(valObj);
       expectSpy(spy, 1, [2, 2]);
-      reactiveKeyObj.a = 0;
-      reactiveValObj.a = 0;
+      proxyKeyObj.a = 0;
+      proxyValObj.a = 0;
       await waitScheduler();
       expectSpy(spy, 2, [0, 0]);
-      reactiveKeyObj.a = 1;
+      proxyKeyObj.a = 1;
       await waitScheduler();
       expectSpy(spy, 3, [1, 0]);
-      reactiveValObj.a = 1;
+      proxyValObj.a = 1;
       await waitScheduler();
       expectSpy(spy, 4, [1, 1]);
-      reactiveKeyObj.a = 1; // setting same value again shouldn't notify
-      reactiveValObj.a = 1;
+      proxyKeyObj.a = 1; // setting same value again shouldn't notify
+      proxyValObj.a = 1;
       await waitScheduler();
       expectSpy(spy, 4, [1, 1]);
     });
 
-    test("iterating on entries returns reactives", async () => {
+    test("iterating on entries returns proxys", async () => {
       const keyObj = { a: 2 };
       const valObj = { a: 2 };
       const spy = jest.fn();
-      const state = reactive(new Map([[keyObj, valObj]]));
-      const [reactiveKeyObj, reactiveValObj] = state.entries().next().value!;
-      effect(() => spy(reactiveKeyObj.a, reactiveValObj.a));
-      expect(reactiveKeyObj).not.toBe(keyObj);
-      expect(reactiveValObj).not.toBe(valObj);
-      expect(toRaw(reactiveKeyObj as any)).toBe(keyObj);
-      expect(toRaw(reactiveValObj as any)).toBe(valObj);
+      const state = proxy(new Map([[keyObj, valObj]]));
+      const [proxyKeyObj, proxyValObj] = state.entries().next().value!;
+      effect(() => spy(proxyKeyObj.a, proxyValObj.a));
+      expect(proxyKeyObj).not.toBe(keyObj);
+      expect(proxyValObj).not.toBe(valObj);
+      expect(toRaw(proxyKeyObj as any)).toBe(keyObj);
+      expect(toRaw(proxyValObj as any)).toBe(valObj);
       expectSpy(spy, 1, [2, 2]);
-      reactiveKeyObj.a = 0;
-      reactiveValObj.a = 0;
+      proxyKeyObj.a = 0;
+      proxyValObj.a = 0;
       await waitScheduler();
       expectSpy(spy, 2, [0, 0]);
-      reactiveKeyObj.a = 1;
+      proxyKeyObj.a = 1;
       await waitScheduler();
       expectSpy(spy, 3, [1, 0]);
-      reactiveValObj.a = 1;
+      proxyValObj.a = 1;
       await waitScheduler();
       expectSpy(spy, 4, [1, 1]);
-      reactiveKeyObj.a = 1; // setting same value again shouldn't notify
-      reactiveValObj.a = 1;
+      proxyKeyObj.a = 1; // setting same value again shouldn't notify
+      proxyValObj.a = 1;
       await waitScheduler();
       expectSpy(spy, 4, [1, 1]);
     });
 
-    test("iterating with forEach returns reactives", async () => {
+    test("iterating with forEach returns proxys", async () => {
       const keyObj = { a: 2 };
       const valObj = { a: 2 };
       const thisArg = {};
       const spy = jest.fn();
-      const state = reactive(new Map([[keyObj, valObj]]));
-      let reactiveKeyObj: any, reactiveValObj: any, thisObj: any, mapObj: any;
+      const state = proxy(new Map([[keyObj, valObj]]));
+      let proxyKeyObj: any, proxyValObj: any, thisObj: any, mapObj: any;
       state.forEach(function (this: any, val, key, map) {
-        [reactiveValObj, reactiveKeyObj, mapObj, thisObj] = [val, key, map, this];
+        [proxyValObj, proxyKeyObj, mapObj, thisObj] = [val, key, map, this];
       }, thisArg);
-      expect(reactiveKeyObj).not.toBe(keyObj);
-      expect(reactiveValObj).not.toBe(valObj);
-      expect(mapObj).toBe(state); // third argument should be the reactive
-      expect(thisObj).toBe(thisArg); // thisArg should not be made reactive
-      expect(toRaw(reactiveKeyObj as any)).toBe(keyObj);
-      expect(toRaw(reactiveValObj as any)).toBe(valObj);
+      expect(proxyKeyObj).not.toBe(keyObj);
+      expect(proxyValObj).not.toBe(valObj);
+      expect(mapObj).toBe(state); // third argument should be the proxy
+      expect(thisObj).toBe(thisArg); // thisArg should not be made proxy
+      expect(toRaw(proxyKeyObj as any)).toBe(keyObj);
+      expect(toRaw(proxyValObj as any)).toBe(valObj);
 
-      effect(() => spy(reactiveKeyObj.a, reactiveValObj.a));
+      effect(() => spy(proxyKeyObj.a, proxyValObj.a));
       expectSpy(spy, 1, [2, 2]);
 
-      reactiveKeyObj!.a = 0;
-      reactiveValObj!.a = 0;
+      proxyKeyObj!.a = 0;
+      proxyValObj!.a = 0;
       await waitScheduler();
       expectSpy(spy, 2, [0, 0]);
 
-      reactiveKeyObj!.a = 1;
+      proxyKeyObj!.a = 1;
       await waitScheduler();
       expectSpy(spy, 3, [1, 0]);
 
-      reactiveValObj!.a = 1;
+      proxyValObj!.a = 1;
       await waitScheduler();
       expectSpy(spy, 4, [1, 1]);
 
-      reactiveKeyObj!.a = 1; // setting same value again shouldn't notify
-      reactiveValObj!.a = 1;
+      proxyKeyObj!.a = 1; // setting same value again shouldn't notify
+      proxyValObj!.a = 1;
       await waitScheduler();
       expectSpy(spy, 4, [1, 1]);
     });
   });
 
   describe("WeakMap", () => {
-    test("can make reactive WeakMap", () => {
+    test("can make proxy WeakMap", () => {
       const map = new WeakMap();
-      const obj = reactive(map);
+      const obj = proxy(map);
       expect(obj).not.toBe(map);
     });
 
     test("can read", async () => {
       const obj = {};
       const obj2 = {};
-      const state = reactive(new WeakMap([[obj, 0]]));
+      const state = proxy(new WeakMap([[obj, 0]]));
       expect(state.has(obj)).toBe(true);
       expect(state.has(obj2)).toBe(false);
       expect(state.get(obj)).toBe(0);
@@ -1612,7 +1604,7 @@ describe("Collections", () => {
 
     test("can add entries", () => {
       const obj = {};
-      const state = reactive(new WeakMap());
+      const state = proxy(new WeakMap());
       state.set(obj, 2);
       expect(state.has(obj)).toBe(true);
       expect(state.get(obj)).toBe(2);
@@ -1620,7 +1612,7 @@ describe("Collections", () => {
 
     test("can remove entries", () => {
       const obj = {};
-      const state = reactive(new WeakMap([[obj, 2]]));
+      const state = proxy(new WeakMap([[obj, 2]]));
       state.delete(obj);
       expect(state.has(obj)).toBe(false);
       expect(state.get(obj)).toBeUndefined();
@@ -1628,7 +1620,7 @@ describe("Collections", () => {
 
     test("act like a WeakMap", () => {
       const obj = {};
-      const state = reactive(new WeakMap([[obj, 2]]));
+      const state = proxy(new WeakMap([[obj, 2]]));
       expect(typeof state).toBe("object");
       expect(state).toBeInstanceOf(WeakMap);
     });
@@ -1638,7 +1630,7 @@ describe("Collections", () => {
       const obj = {};
       const obj2 = {};
       const obj3 = {};
-      const state = reactive(new WeakMap([[obj2, 2]]));
+      const state = proxy(new WeakMap([[obj2, 2]]));
 
       effect(() => spy(state.has(obj)));
 
@@ -1667,7 +1659,7 @@ describe("Collections", () => {
       const obj = {};
       const obj2 = {};
       const obj3 = {};
-      const state = reactive(new WeakMap([[obj2, 2]]));
+      const state = proxy(new WeakMap([[obj2, 2]]));
 
       effect(() => spy(state.get(obj)));
 
@@ -1690,23 +1682,23 @@ describe("Collections", () => {
       expectSpy(spy, 4, [undefined]);
     });
 
-    test("getting values returns a reactive", async () => {
+    test("getting values returns a proxy", async () => {
       const keyObj = {};
       const valObj = { a: 2 };
       const spy = jest.fn();
-      const state = reactive(new WeakMap([[keyObj, valObj]]));
-      const reactiveObj = state.get(keyObj)!;
-      expect(reactiveObj).not.toBe(valObj);
-      expect(toRaw(reactiveObj as any)).toBe(valObj);
-      effect(() => spy(reactiveObj.a));
+      const state = proxy(new WeakMap([[keyObj, valObj]]));
+      const proxyObj = state.get(keyObj)!;
+      expect(proxyObj).not.toBe(valObj);
+      expect(toRaw(proxyObj as any)).toBe(valObj);
+      effect(() => spy(proxyObj.a));
       expectSpy(spy, 1, [2]);
-      reactiveObj.a = 0;
+      proxyObj.a = 0;
       await waitScheduler();
       expectSpy(spy, 2, [0]);
-      reactiveObj.a = 1;
+      proxyObj.a = 1;
       await waitScheduler();
       expectSpy(spy, 3, [1]);
-      reactiveObj.a = 1; // setting same value again shouldn't notify
+      proxyObj.a = 1; // setting same value again shouldn't notify
       await waitScheduler();
       expectSpy(spy, 3, [1]);
     });
@@ -1718,7 +1710,7 @@ describe("markRaw", () => {
     const obj1: any = markRaw({ value: 1 });
     const obj2 = { value: 1 };
     const spy = jest.fn();
-    const r = reactive({ obj1, obj2 });
+    const r = proxy({ obj1, obj2 });
     effect(() => spy(r.obj2.value));
     expectSpy(spy, 1, [1]);
     r.obj1.value = r.obj1.value + 1;
@@ -1735,18 +1727,18 @@ describe("markRaw", () => {
 describe("toRaw", () => {
   test("toRaw works as expected", () => {
     const obj = { value: 1 };
-    const reactiveObj = reactive(obj);
-    expect(reactiveObj).not.toBe(obj);
-    expect(toRaw(reactiveObj)).toBe(obj);
+    const proxyObj = proxy(obj);
+    expect(proxyObj).not.toBe(obj);
+    expect(toRaw(proxyObj)).toBe(obj);
   });
 
-  test("giving a non reactive to toRaw return the object itself", () => {
+  test("giving a non proxy to toRaw return the object itself", () => {
     const obj = { value: 1 };
     expect(toRaw(obj)).toBe(obj);
   });
 });
 
-describe("Reactivity: useState", () => {
+describe("Reactivity: proxy", () => {
   let fixture: HTMLElement;
 
   snapshotEverything();
@@ -1756,9 +1748,9 @@ describe("Reactivity: useState", () => {
   });
 
   /**
-   * A context can be defined as a reactive with a default observer.
+   * A context can be defined as a proxy with a default observer.
    * It can be exposed and share by multiple components or other objects
-   * (via useState for instance)
+   * (via proxy for instance)
    */
 
   test("very simple use, with initial value", async () => {
@@ -1766,18 +1758,18 @@ describe("Reactivity: useState", () => {
 
     class Comp extends Component {
       static template = xml`<div><t t-esc="contextObj.value"/></div>`;
-      contextObj = useState(testContext);
+      contextObj = proxy(testContext);
     }
     await mount(Comp, fixture);
     expect(fixture.innerHTML).toBe("<div>123</div>");
   });
 
-  test("useContext=useState hook is reactive, for one component", async () => {
+  test("useContext=proxy hook is proxy, for one component", async () => {
     const testContext = createReactive({ value: 123 });
 
     class Comp extends Component {
       static template = xml`<div><t t-esc="contextObj.value"/></div>`;
-      contextObj = useState(testContext);
+      contextObj = proxy(testContext);
     }
     const comp = await mount(Comp, fixture);
     expect(fixture.innerHTML).toBe("<div>123</div>");
@@ -1791,7 +1783,7 @@ describe("Reactivity: useState", () => {
 
     class Child extends Component {
       static template = xml`<span><t t-esc="contextObj.value"/></span>`;
-      contextObj = useState(testContext);
+      contextObj = proxy(testContext);
       setup() {
         useLogLifecycle();
       }
@@ -1847,7 +1839,7 @@ describe("Reactivity: useState", () => {
 
     class Child extends Component {
       static template = xml`<span><t t-esc="contextObj.value"/></span>`;
-      contextObj = useState(testContext);
+      contextObj = proxy(testContext);
       setup() {
         useLogLifecycle();
       }
@@ -1914,7 +1906,7 @@ describe("Reactivity: useState", () => {
     class Child extends Component {
       static template = xml`<span><t t-esc="contextObj.value"/></span>`;
       static components = {};
-      contextObj = useState(testContext);
+      contextObj = proxy(testContext);
       setup() {
         useLogLifecycle();
       }
@@ -1994,8 +1986,8 @@ describe("Reactivity: useState", () => {
 
     class Comp extends Component {
       static template = xml`<div><t t-esc="contextObj1.a"/><t t-esc="contextObj2.b"/></div>`;
-      contextObj1 = useState(testContext);
-      contextObj2 = useState(testContext);
+      contextObj1 = proxy(testContext);
+      contextObj2 = proxy(testContext);
       setup() {
         onWillRender(() => {
           steps.push("comp");
@@ -2017,7 +2009,7 @@ describe("Reactivity: useState", () => {
 
     class Child extends Component {
       static template = xml`<span><t t-esc="contextObj.a"/></span>`;
-      contextObj = useState(testContext);
+      contextObj = proxy(testContext);
       setup() {
         onWillRender(() => {
           steps.push("child");
@@ -2027,7 +2019,7 @@ describe("Reactivity: useState", () => {
     class Parent extends Component {
       static template = xml`<div><Child /><t t-esc="contextObj.b"/></div>`;
       static components = { Child };
-      contextObj = useState(testContext);
+      contextObj = proxy(testContext);
       setup() {
         onWillRender(() => {
           steps.push("parent");
@@ -2060,7 +2052,7 @@ describe("Reactivity: useState", () => {
 
     class L3A extends Component {
       static template = xml`<div><t t-esc="contextObj.a"/> <t t-esc="contextObj.b"/></div>`;
-      contextObj = useState(testContext);
+      contextObj = proxy(testContext);
       setup() {
         onWillRender(() => {
           steps.add("L3A");
@@ -2070,7 +2062,7 @@ describe("Reactivity: useState", () => {
 
     class L2B extends Component {
       static template = xml`<div><t t-esc="contextObj.b"/></div>`;
-      contextObj = useState(testContext);
+      contextObj = proxy(testContext);
       setup() {
         onWillRender(() => {
           steps.add("L2B");
@@ -2081,7 +2073,7 @@ describe("Reactivity: useState", () => {
     class L2A extends Component {
       static template = xml`<div><t t-esc="contextObj.a"/><L3A /></div>`;
       static components = { L3A };
-      contextObj = useState(testContext);
+      contextObj = proxy(testContext);
       setup() {
         onWillRender(() => {
           steps.add("L2A");
@@ -2092,7 +2084,7 @@ describe("Reactivity: useState", () => {
     class L1A extends Component {
       static template = xml`<div><L2A /><L2B /></div>`;
       static components = { L2A, L2B };
-      contextObj = useState(testContext);
+      contextObj = proxy(testContext);
       setup() {
         onWillRender(() => {
           steps.add("L1A");
@@ -2146,7 +2138,7 @@ describe("Reactivity: useState", () => {
 
     class Child extends Component {
       static template = xml`<span><t t-esc="contextObj.a"/></span>`;
-      contextObj = useState(testContext);
+      contextObj = proxy(testContext);
       setup() {
         useLogLifecycle();
       }
@@ -2154,7 +2146,7 @@ describe("Reactivity: useState", () => {
     class Parent extends Component {
       static template = xml`<div><Child t-if="state.flag"/></div>`;
       static components = { Child };
-      state = useState({ flag: true });
+      state = proxy({ flag: true });
       setup() {
         useLogLifecycle();
       }
@@ -2211,7 +2203,7 @@ describe("Reactivity: useState", () => {
     const steps: string[] = [];
     class Child extends Component {
       static template = xml`<span><t t-esc="contextObj.a"/></span>`;
-      contextObj = useState(testContext);
+      contextObj = proxy(testContext);
       setup() {
         onWillStart(() => {
           return makeDeferred();
@@ -2225,7 +2217,7 @@ describe("Reactivity: useState", () => {
     class Parent extends Component {
       static template = xml`<div><Child t-if="state.flag"/></div>`;
       static components = { Child };
-      state = useState({ flag: true });
+      state = proxy({ flag: true });
       setup() {
         parent = this;
       }
@@ -2255,7 +2247,7 @@ describe("Reactivity: useState", () => {
 
     class Quantity extends Component {
       static template = xml`<div><t t-esc="state.quantity"/></div>`;
-      state = useState(testContext[this.props.id]);
+      state = proxy(testContext[this.props.id]);
 
       setup() {
         onWillRender(() => {
@@ -2274,7 +2266,7 @@ describe("Reactivity: useState", () => {
             Count: <t t-esc="Object.keys(state).length"/>
           </div>`;
       static components = { Quantity };
-      state = useState(testContext);
+      state = proxy(testContext);
 
       setup() {
         onWillRender(() => {
@@ -2338,8 +2330,8 @@ describe("Reactivity: useState", () => {
     let stateC: any;
     class ComponentC extends Component {
       static template = xml`<span><t t-esc="context[props.key].n"/><t t-esc="state.x"/></span>`;
-      context = useState(testContext);
-      state = useState({ x: "a" });
+      context = proxy(testContext);
+      state = proxy({ x: "a" });
       setup() {
         stateC = this.state;
       }
@@ -2354,7 +2346,7 @@ describe("Reactivity: useState", () => {
     class ComponentA extends Component {
       static components = { ComponentB };
       static template = xml`<div><ComponentB key="context.key"/></div>`;
-      context = useState(testContext);
+      context = proxy(testContext);
     }
 
     await mount(ComponentA, fixture);

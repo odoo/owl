@@ -1,4 +1,4 @@
-import { App, Component, mount, onMounted, useState, xml } from "../../src/index";
+import { App, Component, mount, onMounted, proxy, xml } from "../../src/index";
 import { children, makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -66,7 +66,7 @@ describe("slots", () => {
     let child: any;
     class Child extends Component {
       static template = xml`<span><t t-slot="slotName" bool="state.bool"/></span>`;
-      state = useState({ bool: true });
+      state = proxy({ bool: true });
       setup() {
         child = this;
       }
@@ -117,7 +117,7 @@ describe("slots", () => {
     let child: any;
     class Child extends Component {
       static template = xml`<span><t t-slot="{{ 'slotName' }}" bool="state.bool"/></span>`;
-      state = useState({ bool: true });
+      state = proxy({ bool: true });
       setup() {
         child = this;
       }
@@ -211,7 +211,7 @@ describe("slots", () => {
     let child: any;
     class Child extends Component {
       static template = xml`<span><t t-slot="default" bool="state.bool"/></span>`;
-      state = useState({ bool: true });
+      state = proxy({ bool: true });
       setup() {
         child = this;
       }
@@ -237,7 +237,7 @@ describe("slots", () => {
   test("simple default slot with params", async () => {
     class Child extends Component {
       static template = xml`<span><t t-slot="default" bool="state.bool"/></span>`;
-      state = useState({ bool: true });
+      state = proxy({ bool: true });
     }
 
     class Parent extends Component {
@@ -261,7 +261,7 @@ describe("slots", () => {
   test("simple default slot with params and bound function", async () => {
     class Child extends Component {
       static template = xml`<t t-slot="default" fn.bind="getValue"/>`;
-      state = useState({ value: 123 });
+      state = proxy({ value: 123 });
       getValue() {
         return this.state.value;
       }
@@ -280,7 +280,7 @@ describe("slots", () => {
   test("default slot with params with - in it", async () => {
     class Child extends Component {
       static template = xml`<t t-slot="default" some-value="state.value"/>`;
-      state = useState({ value: 123 });
+      state = proxy({ value: 123 });
     }
 
     class Parent extends Component {
@@ -315,7 +315,7 @@ describe("slots", () => {
     class Parent extends Component {
       static template = xml`<Child><button t-on-click="inc">some text</button></Child>`;
       static components = { Child };
-      state = useState({ value: 0 });
+      state = proxy({ value: 0 });
       inc() {
         this.state.value++;
       }
@@ -341,7 +341,7 @@ describe("slots", () => {
           <button t-on-click="() => this.inc()">some text</button>
         </Child>`;
       static components = { Child };
-      state = useState({ value: 0 });
+      state = proxy({ value: 0 });
       inc() {
         expect(this).toBe(parent);
         this.state.value++;
@@ -422,7 +422,7 @@ describe("slots", () => {
           <Child>
             <t t-set-slot="abc" getValue.bind="getValue">abc</t>
           </Child>`;
-      state = useState({ value: 444 });
+      state = proxy({ value: 444 });
       getValue() {
         return this.state.value;
       }
@@ -523,7 +523,7 @@ describe("slots", () => {
           </button>
         </t>`;
 
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
       setup() {
         child = this;
       }
@@ -562,7 +562,7 @@ describe("slots", () => {
             </Dialog>
           </div>`;
       static components = { Dialog };
-      state = useState({ val: 0 });
+      state = proxy({ val: 0 });
       doSomething() {
         this.state.val++;
       }
@@ -598,7 +598,7 @@ describe("slots", () => {
             </li></u>
           </div>`;
 
-      state = useState({
+      state = proxy({
         users: [
           { id: 1, name: "Aaron" },
           { id: 2, name: "David" },
@@ -637,7 +637,7 @@ describe("slots", () => {
                 <Link to="'/user/' + user.id"><t t-esc="userdescr"/></Link>
             </li></u>
           </div>`;
-      state = useState({
+      state = proxy({
         users: [
           { id: 1, name: "Aaron" },
           { id: 2, name: "David" },
@@ -675,7 +675,7 @@ describe("slots", () => {
             <Link to="'/user/' + state.user.id"><t t-esc="userdescr"/></Link>
           </div>`;
       static components = { Link };
-      state = useState({ user: { id: 1, name: "Aaron" } });
+      state = proxy({ user: { id: 1, name: "Aaron" } });
     }
 
     const app = await mount(App, fixture);
@@ -1156,7 +1156,7 @@ describe("slots", () => {
   test("dynamic t-slot call", async () => {
     class Toggler extends Component {
       static template = xml`<button t-on-click="toggle"><t t-slot="{{current.slot}}"/></button>`;
-      current = useState({ slot: "slot1" });
+      current = proxy({ slot: "slot1" });
       toggle() {
         this.current.slot = this.current.slot === "slot1" ? "slot2" : "slot1";
       }
@@ -1192,7 +1192,7 @@ describe("slots", () => {
             owl
           </t>
         </button>`;
-      current = useState({ slot: "slot1" });
+      current = proxy({ slot: "slot1" });
       toggle() {
         this.current.slot = this.current.slot === "slot1" ? "slot2" : "slot1";
       }
@@ -1236,7 +1236,7 @@ describe("slots", () => {
           </GenericComponent>
         </div>`;
       static components = { GenericComponent, SomeComponent };
-      state = useState({ val: 4 });
+      state = proxy({ val: 4 });
 
       inc() {
         this.state.val++;
@@ -1282,7 +1282,7 @@ describe("slots", () => {
               <SlotComponent><Child value="state.value"/></SlotComponent>
           </div>`;
       static components = { SlotComponent, Child };
-      state = useState({ value: 3 });
+      state = proxy({ value: 3 });
     }
 
     const parent = await mount(Parent, fixture);
@@ -1317,7 +1317,7 @@ describe("slots", () => {
   test("slots in t-foreach and re-rendering", async () => {
     class Child extends Component {
       static template = xml`<span><t t-esc="state.val"/><t t-slot="default"/></span>`;
-      state = useState({ val: "A" });
+      state = proxy({ val: "A" });
       setup() {
         onMounted(() => {
           this.state.val = "B";
@@ -1347,7 +1347,7 @@ describe("slots", () => {
             <t t-esc="state.val"/>
             <t t-slot="default"/>
           </span>`;
-      state = useState({ val: "A" });
+      state = proxy({ val: "A" });
       setup() {
         onMounted(() => {
           this.state.val = "B";
@@ -1597,7 +1597,7 @@ describe("slots", () => {
     class Parent extends Component {
       static components = { Child, Slot };
       static template = xml`<Child><Slot val="state.val"/></Child>`;
-      state = useState({ val: 3 });
+      state = proxy({ val: 3 });
     }
 
     await mount(Parent, fixture);
@@ -1870,7 +1870,7 @@ describe("slots", () => {
       static components = { A };
       static template = xml`<button t-on-click="inc">inc</button><A number="state.number"/>`;
 
-      state = useState({ number: 333 });
+      state = proxy({ number: 333 });
       inc() {
         this.state.number++;
       }
@@ -1912,7 +1912,7 @@ describe("slots", () => {
          <Slotter location="state.location">
           hello <Child/>
          </Slotter>`;
-      state = useState({ location: 1 });
+      state = proxy({ location: 1 });
     }
 
     const parent = await mount(Parent, fixture);
@@ -1945,7 +1945,7 @@ describe("slots", () => {
          <Slotter location="state.location">
           <t t-set-slot="coffee">hello <Child/></t>
          </Slotter>`;
-      state = useState({ location: 1 });
+      state = proxy({ location: 1 });
     }
 
     const parent = await mount(Parent, fixture);
@@ -1975,7 +1975,7 @@ describe("slots", () => {
          <Slotter list="state.list">
           hello <Child/>
          </Slotter>`;
-      state = useState({ list: [1] });
+      state = proxy({ list: [1] });
     }
 
     const parent = await mount(Parent, fixture);

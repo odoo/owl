@@ -119,12 +119,12 @@ export function useEffect<T extends unknown[]>(
 }
 
 // -----------------------------------------------------------------------------
-// useExternalListener
+// useListener
 // -----------------------------------------------------------------------------
 
 /**
  * When a component needs to listen to DOM Events on element(s) that are not
- * part of his hierarchy, we can use the `useExternalListener` hook.
+ * part of his hierarchy, we can use the `useListener` hook.
  * It will correctly add and remove the event listener, whenever the
  * component is mounted and unmounted.
  *
@@ -133,9 +133,9 @@ export function useEffect<T extends unknown[]>(
  *
  * Usage:
  *  in the constructor of the OWL component that needs to be notified,
- *  `useExternalListener(window, 'click', this._doSomething);`
+ *  `useListener(window, 'click', this._doSomething);`
  * */
-export function useExternalListener(
+export function useListener(
   target: EventTarget,
   eventName: string,
   handler: EventListener,

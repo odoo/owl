@@ -11,7 +11,7 @@ import {
   useComponent,
   useEffect,
   useEnv,
-  useExternalListener,
+  useListener,
   useRef,
   useState,
   useChildSubEnv,
@@ -414,13 +414,13 @@ describe("hooks", () => {
     ]);
   });
 
-  test("useExternalListener", async () => {
+  test("useListener", async () => {
     let n = 0;
 
     class MyComponent extends Component {
       static template = xml`<span><t t-esc="props.value"/></span>`;
       setup() {
-        useExternalListener(window, "click", this.increment);
+        useListener(window, "click", this.increment);
       }
       increment() {
         n++;

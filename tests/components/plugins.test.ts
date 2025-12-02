@@ -153,7 +153,6 @@ test("components start plugins at their level", async () => {
   expect(fixture.innerHTML).toBe("1 | 2: pA | 3: pA - pB");
 });
 
-
 test("shadow plugin", async () => {
   class PluginA extends Plugin {
     static id = "a";

@@ -1,4 +1,4 @@
-import { App, Component, mount, onMounted, useState, xml } from "../../src/index";
+import { App, Component, mount, onMounted, proxy, xml } from "../../src/index";
 import {
   makeTestFixture,
   nextAppError,
@@ -38,7 +38,7 @@ describe("list of components", () => {
             </t>`;
       static components = { Child };
 
-      state = useState({
+      state = proxy({
         elems: [
           { id: 1, value: "a" },
           { id: 2, value: "b" },
@@ -150,7 +150,7 @@ describe("list of components", () => {
             </p>
         </div>`;
       static components = { Child };
-      state = useState({ rows: [1, 2], cols: ["a", "b"] });
+      state = proxy({ rows: [1, 2], cols: ["a", "b"] });
     }
 
     const parent = await mount(Parent, fixture);
@@ -178,7 +178,7 @@ describe("list of components", () => {
         </div>`;
       static components = { Child };
 
-      state = useState({ numbers: [1, 2, 3] });
+      state = proxy({ numbers: [1, 2, 3] });
     }
     await mount(Parent, fixture);
 
@@ -192,7 +192,7 @@ describe("list of components", () => {
       static template = xml`<p><t t-esc="state.n"/></p>`;
       state: any;
       setup() {
-        this.state = useState({ n });
+        this.state = proxy({ n });
         n++;
       }
     }
@@ -206,7 +206,7 @@ describe("list of components", () => {
         </div>`;
       static components = { Child };
 
-      state = useState({
+      state = proxy({
         numbers: [1, 2, 3],
       });
     }
@@ -230,7 +230,7 @@ describe("list of components", () => {
           </div>
       </div>`;
       static components = { SubComponent };
-      state = useState({
+      state = proxy({
         blips: [
           { a: "a", id: 1 },
           { b: "b", id: 2 },
@@ -256,7 +256,7 @@ describe("list of components", () => {
             <t t-esc="state.val"/>
             <t t-esc="props.val"/>
           </span>`;
-      state = useState({ val: "A" });
+      state = proxy({ val: "A" });
       setup() {
         onMounted(() => {
           this.state.val = "B";
@@ -384,7 +384,7 @@ describe("list of components", () => {
         </Child>
       `;
       static components = { Child };
-      state = useState({ active: false });
+      state = proxy({ active: false });
     }
 
     const parent = await mount(Parent, fixture);

@@ -1,4 +1,4 @@
-import { Component, mount, useState, xml } from "../../src";
+import { Component, mount, proxy, xml } from "../../src";
 import { makeTestFixture, nextTick, snapshotEverything, steps, useLogLifecycle } from "../helpers";
 
 let fixture: HTMLElement;
@@ -120,7 +120,7 @@ describe("t-component", () => {
         </div>`;
       static components = { A, B };
 
-      state = useState({ child: "A" });
+      state = proxy({ child: "A" });
     }
     const app = await mount(App, fixture);
     expect(fixture.innerHTML).toBe("<div><span>child a</span></div>");
@@ -138,7 +138,7 @@ describe("t-component", () => {
     }
     class Parent extends Component {
       static template = xml`<t t-component="myComponent" t-key="state.child"/>`;
-      state = useState({
+      state = proxy({
         child: "a",
       });
       get myComponent() {
@@ -161,7 +161,7 @@ describe("t-component", () => {
     }
     class Parent extends Component {
       static template = xml`<t t-component="myComponent" t-key="state.child"/>`;
-      state = useState({
+      state = proxy({
         child: "a",
       });
       get myComponent() {
@@ -179,7 +179,7 @@ describe("t-component", () => {
     class Counter extends Component {
       static template = xml`
       <div><t t-esc="state.counter"/><button t-on-click="() => state.counter++">Inc</button></div>`;
-      state = useState({
+      state = proxy({
         counter: 0,
       });
     }

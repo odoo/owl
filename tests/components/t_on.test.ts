@@ -1,4 +1,4 @@
-import { Component, mount, onMounted, useState, xml } from "../../src/index";
+import { Component, mount, onMounted, proxy, xml } from "../../src/index";
 import { elem, logStep, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 import { status } from "../../src/runtime/status";
 
@@ -28,7 +28,7 @@ describe("t-on", () => {
     class Parent extends Component {
       static template = xml`<div><Child t-if="state.flag"/></div>`;
       static components = { Child };
-      state = useState({ flag: true });
+      state = proxy({ flag: true });
     }
     const parent = await mount(Parent, fixture);
     let el = elem(child!);
@@ -52,7 +52,7 @@ describe("t-on", () => {
         <div t-on-click="push"><Child list="list" t-on-click="() => {}"/></div>
       `;
       static components = { Child };
-      list = useState([] as string[]);
+      list = proxy([] as string[]);
       push() {
         this.list.push("foo");
       }
@@ -75,7 +75,7 @@ describe("t-on", () => {
             </div>
           </div>
         `;
-      state = useState({ values: ["a", "b"] });
+      state = proxy({ values: ["a", "b"] });
       otherState = { vals: [] };
     }
     const comp = await mount(Comp, fixture);
@@ -101,7 +101,7 @@ describe("t-on", () => {
             </div>
           </div>
         `;
-      state = useState({ values: ["a", "b"] });
+      state = proxy({ values: ["a", "b"] });
       otherState = { vals: [] };
     }
     const comp = await mount(Comp, fixture);
@@ -125,7 +125,7 @@ describe("t-on", () => {
             </div>
           </div>
         `;
-      state = useState({ values: ["a", "b"] });
+      state = proxy({ values: ["a", "b"] });
       otherState = { vals: new Array<string>() };
       addVal(val: string) {
         this.otherState.vals.push(val);
@@ -175,7 +175,7 @@ describe("t-on", () => {
     class Parent extends Component {
       static template = xml`<Child t-on-click="increment" value="state.value"/>`;
       static components = { Child };
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
       increment() {
         this.state.value++;
       }
@@ -200,7 +200,7 @@ describe("t-on", () => {
           <p/>
         </div>`;
       static components = { Child };
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
       increment() {
         this.state.value++;
       }
@@ -233,7 +233,7 @@ describe("t-on", () => {
           <p t-on-click="decrement">dec</p>
         </div>`;
       static components = { Child };
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
       increment() {
         this.state.value++;
       }
@@ -257,7 +257,7 @@ describe("t-on", () => {
         [<t t-esc="state.count"/>]
         <t t-slot="default" t-on-click="() => this.state.count++"/>`;
 
-      state = useState({ count: 0 });
+      state = proxy({ count: 0 });
     }
 
     class Parent extends Component {
@@ -290,7 +290,7 @@ describe("t-on", () => {
           </t>
         </Child>`;
       static components = { Child };
-      state = useState({ count: 0 });
+      state = proxy({ count: 0 });
     }
 
     await mount(Parent, fixture);
@@ -309,7 +309,7 @@ describe("t-on", () => {
     class Parent extends Component {
       static template = xml`<Child t-on-click.prevent="increment" value="state.value"/>`;
       static components = { Child };
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
       increment(ev: MouseEvent) {
         expect(ev.defaultPrevented).toBe(true);
         this.state.value++;
@@ -386,7 +386,7 @@ describe("t-on", () => {
           <Child value="name" t-on-click="() => this.log(name)"
         />`;
       static components = { Child };
-      state = useState({ name: "aaron" });
+      state = proxy({ name: "aaron" });
       log(name: string) {
         logStep(name);
       }

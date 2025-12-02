@@ -1,4 +1,4 @@
-import { Component, mount, useState, xml } from "../../src";
+import { Component, mount, proxy, xml } from "../../src";
 import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -17,7 +17,7 @@ describe("t-props", () => {
     class Parent extends Component {
       static components = { Comp };
       static template = xml`<div><div><Comp t-props="state"/></div></div>`;
-      state = useState({
+      state = proxy({
         a: "first",
       });
     }
@@ -38,7 +38,7 @@ describe("t-props", () => {
     class Parent extends Component {
       static components = { Comp };
       static template = xml`<div><div><Comp t-props="state1" a="a"/></div></div>`;
-      state1 = useState({
+      state1 = proxy({
         a: "first",
         b: "second",
       });

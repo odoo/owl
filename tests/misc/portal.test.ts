@@ -8,7 +8,7 @@ import {
   onPatched,
   onWillPatch,
   onWillUnmount,
-  useState,
+  proxy,
 } from "../../src";
 import { xml } from "../../src/";
 import { elem, makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
@@ -165,7 +165,7 @@ describe("Portal", () => {
               <p>2</p>
             </t>`;
 
-      state = useState({ hasPortal: false });
+      state = proxy({ hasPortal: false });
     }
 
     addOutsideDiv(fixture);
@@ -196,7 +196,7 @@ describe("Portal", () => {
               <t t-portal="'#outside'" t-if="state.hasPortal">
                 <Child val="state.val"/>
               </t>`;
-      state = useState({ hasPortal: false, val: 1 });
+      state = proxy({ hasPortal: false, val: 1 });
     }
 
     addOutsideDiv(fixture);
@@ -305,7 +305,7 @@ describe("Portal", () => {
                 <Child val="state.val"/>
               </t>
             </div>`;
-      state = useState({ val: 1 });
+      state = proxy({ val: 1 });
     }
 
     const parent = await mount(Parent, fixture);
@@ -373,7 +373,7 @@ describe("Portal", () => {
                 <div t-else=""/>
               </t>
             </div>`;
-      state = useState({ val: "ab" });
+      state = proxy({ val: "ab" });
     }
 
     const outside = addOutsideDiv(fixture);
@@ -394,7 +394,7 @@ describe("Portal", () => {
                 <span t-if="state.val" t-esc="state.val"/>
               </t>
             </div>`;
-      state = useState({ val: "ab" });
+      state = proxy({ val: "ab" });
     }
     const outside = addOutsideDiv(fixture);
     const parent = await mount(Parent, fixture);
@@ -427,7 +427,7 @@ describe("Portal", () => {
                 <Child val="state.val"/>
               </t>
             </div>`;
-      state = useState({ hasChild: false, val: 1 });
+      state = proxy({ hasChild: false, val: 1 });
       setup() {
         onMounted(() => steps.push("parent:mounted"));
         onWillPatch(() => steps.push("parent:willPatch"));
@@ -576,7 +576,7 @@ describe("Portal", () => {
           <t t-portal="'#outside'" t-foreach="portalIds" t-as="portalId" t-key="portalId">
             Portal<t t-esc="portalId"/>
           </t>`;
-      portalIds = useState([] as any);
+      portalIds = proxy([] as any);
     }
 
     addOutsideDiv(fixture);
@@ -607,7 +607,7 @@ describe("Portal", () => {
           <div t-portal="'#outside'" t-foreach="portalIds" t-as="portalId" t-key="portalId">
             Portal<t t-esc="portalId"/>
           </div>`;
-      portalIds = useState([] as any);
+      portalIds = proxy([] as any);
     }
 
     addOutsideDiv(fixture);
@@ -645,7 +645,7 @@ describe("Portal", () => {
               </t>
             </div>
           </t>`;
-      portalIds = useState([] as any);
+      portalIds = proxy([] as any);
     }
 
     addOutsideDiv(fixture);
@@ -683,7 +683,7 @@ describe("Portal", () => {
               </t>
             </div>
           </t>`;
-      portalIds = useState([] as any);
+      portalIds = proxy([] as any);
     }
 
     addOutsideDiv(fixture);
@@ -719,7 +719,7 @@ describe("Portal", () => {
                 </div>
               </t>`;
 
-      state = useState({ hasPortal: false });
+      state = proxy({ hasPortal: false });
     }
 
     addOutsideDiv(fixture);
@@ -763,7 +763,7 @@ describe("Portal", () => {
 
       static components = { Child };
 
-      state = useState({ hasPortal: false });
+      state = proxy({ hasPortal: false });
     }
 
     addOutsideDiv(fixture);
@@ -807,7 +807,7 @@ describe("Portal", () => {
 
       static components = { Child };
 
-      state = useState({ hasPortal: false });
+      state = proxy({ hasPortal: false });
     }
 
     addOutsideDiv(fixture);
@@ -843,7 +843,7 @@ describe("Portal", () => {
             </div>
           </t>
         </div>`;
-      portalIds = useState([] as any);
+      portalIds = proxy([] as any);
     }
 
     addOutsideDiv(fixture);
@@ -927,7 +927,7 @@ describe("Portal: UI/UX", () => {
                 <Child val="state.val"/>
               </t>
             </div>`;
-      state = useState({ val: "ab" });
+      state = proxy({ val: "ab" });
     }
     addOutsideDiv(fixture);
     const parent = await mount(Parent, fixture);

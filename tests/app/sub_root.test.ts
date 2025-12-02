@@ -1,4 +1,4 @@
-import { App, Component, onMounted, onWillDestroy, useRef, useState, xml } from "../../src";
+import { App, Component, onMounted, onWillDestroy, useRef, proxy, xml } from "../../src";
 import { status } from "../../src/runtime/status";
 import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
@@ -123,7 +123,7 @@ describe("subroot", () => {
       state: any;
       setup() {
         app.createRoot(C);
-        this.state = useState({ value: 1 });
+        this.state = proxy({ value: 1 });
       }
     }
 
@@ -162,7 +162,7 @@ test("destroy a subroot while another component is mounted in main app", async (
         <t t-else=""><ChildA/></t>
         `;
     static components = { ChildA, ChildB };
-    state = useState({ flag: false });
+    state = proxy({ flag: false });
   }
 
   const app = new App(SomeComponent);

@@ -1,5 +1,5 @@
 import { OwlError } from "../../src/common/owl_error";
-import { App, Component, mount, onMounted, useState, xml } from "../../src";
+import { App, Component, mount, onMounted, proxy, xml } from "../../src";
 import { makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -152,7 +152,7 @@ describe("style and class handling", () => {
       static template = xml`<Child class="'someclass'" child="state.child" />`;
       static components = { Child };
 
-      state = useState({ child: "a" });
+      state = proxy({ child: "a" });
     }
 
     const parent = await mount(Parent, fixture);
@@ -169,7 +169,7 @@ describe("style and class handling", () => {
   //   class Parent extends Component {
   //     static template = xml`<div><Child t-att-class="{a:state.a, b:state.b}"/></div>`;
   //     static components = { Child };
-  //     state = useState({ a: true, b: false });
+  //     state = proxy({ a: true, b: false });
   //   }
   //   const widget = await mount(Parent, fixture);
   //   expect(fixture.innerHTML).toBe(`<div><div class="c a"></div></div>`);
@@ -209,7 +209,7 @@ describe("style and class handling", () => {
     let child: Child;
     class Child extends Component {
       static template = xml`<span class="c" t-att-class="{ d: state.d, ...props.class }"/>`;
-      state = useState({ d: true });
+      state = proxy({ d: true });
       setup() {
         child = this;
       }
@@ -221,7 +221,7 @@ describe("style and class handling", () => {
           <Child class="{ b: state.b }" />
         </div>`;
       static components = { Child };
-      state = useState({ b: true });
+      state = proxy({ b: true });
     }
     const widget = await mount(Parent, fixture);
 
@@ -250,7 +250,7 @@ describe("style and class handling", () => {
     let child: Child;
     class Child extends Component {
       static template = xml`<span class="c" t-att-class="{ d: state.d, ...props.class }"/>`;
-      state = useState({ d: true });
+      state = proxy({ d: true });
       setup() {
         child = this;
       }
@@ -258,7 +258,7 @@ describe("style and class handling", () => {
     class Parent extends Component {
       static template = xml`<Child class="{ a: true, b: state.b }"/>`;
       static components = { Child };
-      state = useState({ b: true });
+      state = proxy({ b: true });
     }
     const widget = await mount(Parent, fixture);
 
@@ -285,7 +285,7 @@ describe("style and class handling", () => {
   test("class on components do not interfere with user defined classes", async () => {
     class App extends Component {
       static template = xml`<div t-att-class="{ c: state.c }" />`;
-      state = useState({ c: true });
+      state = proxy({ c: true });
       setup() {
         onMounted(() => {
           fixture.querySelector("div")!.classList.add("user");
@@ -326,7 +326,7 @@ describe("style and class handling", () => {
     class ParentWidget extends Component {
       static template = xml`<Child style="state.style"/>`;
       static components = { Child: SomeComponent };
-      state = useState({ style: { "font-size": "20px" } });
+      state = proxy({ style: { "font-size": "20px" } });
     }
     const widget = await mount(ParentWidget, fixture);
 

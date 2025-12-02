@@ -64,9 +64,7 @@ export function useState<T extends object>(state: T): T {
 
 type LifecycleHook = Function;
 
-export class ComponentNode<P extends Props = any, E = any>
-  implements VNode<ComponentNode<P, E>>
-{
+export class ComponentNode<P extends Props = any, E = any> implements VNode<ComponentNode<P, E>> {
   el?: HTMLElement | Text | undefined;
   app: App;
   fiber: Fiber | null = null;

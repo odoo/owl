@@ -1,4 +1,4 @@
-import { App, Component, mount, useState, xml } from "../../src/index";
+import { App, Component, mount, proxy, xml } from "../../src/index";
 import { isDirectChildOf, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -16,7 +16,7 @@ describe("t-call", () => {
           <t t-call="{{current.template}}">
             owl
           </t>`;
-      current = useState({ template: "foo" });
+      current = proxy({ template: "foo" });
     }
 
     const root = await mount(Root, fixture, {
@@ -45,7 +45,7 @@ describe("t-call", () => {
           </t>
           <div t-else=""><t t-call="sub"/></div>`;
       static components = { Child };
-      state = useState({ val: 1 });
+      state = proxy({ val: 1 });
     }
     const app = new App(Parent);
     app.addTemplate("sub", `<Child val="state.val"/>`);
@@ -409,7 +409,7 @@ describe("t-call", () => {
         <t t-esc="current.template"/>
         <t t-call="{{current.template}}"/>`;
       static components = { Child };
-      current = useState({ template: "A" });
+      current = proxy({ template: "A" });
     }
 
     const root = await mount(Root, fixture, {

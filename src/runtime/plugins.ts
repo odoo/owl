@@ -1,7 +1,7 @@
 import { OwlError } from "../common/owl_error";
 import { getCurrent } from "./component_node";
 import { onWillDestroy } from "./lifecycle_hooks";
-import { reactive } from "./reactivity";
+import { proxy } from "./reactivity";
 import { derived } from "./signals";
 
 let currentPluginManager: PluginManager | null = null;
@@ -113,7 +113,7 @@ export class PluginManager {
       }
 
       for (let r in pluginType.resources) {
-        const sources: { [key: string]: Plugin } = reactive({});
+        const sources: { [key: string]: Plugin } = proxy({});
         const fn = derived(() => {
           const result = [];
           for (let name in sources) {

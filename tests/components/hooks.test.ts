@@ -13,7 +13,7 @@ import {
   useEnv,
   useListener,
   useRef,
-  useState,
+  proxy,
   useChildSubEnv,
   useSubEnv,
   xml,
@@ -72,7 +72,7 @@ describe("hooks", () => {
     }
     class Test extends Component {
       static template = xml`<div>hey<t t-esc="state.value"/></div>`;
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
       setup() {
         useMyHook(1);
         useMyHook(2);
@@ -99,7 +99,7 @@ describe("hooks", () => {
     }
     class Test extends Component {
       static template = xml`<div>hey<t t-esc="state.value"/></div>`;
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
       setup() {
         useMyHook(1);
         useMyHook(2);
@@ -159,7 +159,7 @@ describe("hooks", () => {
                 <t t-if="state.flag"><input t-ref="input2"/></t>
             </div>`;
 
-        state = useState({ flag: false });
+        state = proxy({ flag: false });
         setup() {
           useAutofocus("input2");
         }
@@ -387,7 +387,7 @@ describe("hooks", () => {
     class App extends Component {
       static template = xml`<MyComponent value="state.value"/>`;
       static components = { MyComponent };
-      state = useState({ value: 1 });
+      state = proxy({ value: 1 });
     }
 
     const app = await mount(App, fixture);
@@ -429,7 +429,7 @@ describe("hooks", () => {
     class App extends Component {
       static template = xml`<MyComponent t-if="state.flag"/>`;
       static components = { MyComponent };
-      state = useState({ flag: false });
+      state = proxy({ flag: false });
     }
 
     const app = await mount(App, fixture);
@@ -452,7 +452,7 @@ describe("hooks", () => {
       let cleanupRun = 0;
       let steps = [];
       class MyComponent extends Component {
-        state = useState({
+        state = proxy({
           value: 0,
         });
         setup() {
@@ -494,7 +494,7 @@ describe("hooks", () => {
           <t t-if="state.value">
             <div t-ref="div"/>
           </t>`;
-        state = useState({
+        state = proxy({
           value: false,
         });
         setup() {
@@ -520,7 +520,7 @@ describe("hooks", () => {
     test("dependencies prevent effects from rerunning when unchanged", async () => {
       let steps = [];
       class MyComponent extends Component {
-        state = useState({
+        state = proxy({
           a: 0,
           b: 0,
         });
@@ -605,7 +605,7 @@ describe("hooks", () => {
     test("effect with empty dependency list never reruns", async () => {
       let steps = [];
       class MyComponent extends Component {
-        state = useState({
+        state = proxy({
           value: 0,
         });
         setup() {

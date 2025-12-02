@@ -1,5 +1,5 @@
 import { Component } from "../../src/runtime/component";
-import { mount, useState, xml } from "../../src/index";
+import { mount, proxy, xml } from "../../src/index";
 import { editInput, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -18,7 +18,7 @@ describe("t-model directive", () => {
           <input t-model="state.text"/>
           <span><t t-esc="state.text"/></span>
         </div>`;
-      state = useState({ text: "" });
+      state = proxy({ text: "" });
     }
     const comp = await mount(SomeComponent, fixture);
 
@@ -33,7 +33,7 @@ describe("t-model directive", () => {
   test("t-model on an input with an undefined value", async () => {
     class SomeComponent extends Component {
       static template = xml`<input t-model="state.text"/>`;
-      state = useState({ text: undefined });
+      state = proxy({ text: undefined });
     }
     await mount(SomeComponent, fixture);
 
@@ -50,7 +50,7 @@ describe("t-model directive", () => {
           <input t-model="state['text']"/>
           <span><t t-esc="state.text"/></span>
         </div>`;
-      state = useState({ text: "" });
+      state = proxy({ text: "" });
     }
 
     const comp = await mount(SomeComponent, fixture);
@@ -68,7 +68,7 @@ describe("t-model directive", () => {
         <div>
           <input t-model="state"/>
         </div>`;
-      state = useState({ text: "" });
+      state = proxy({ text: "" });
     }
     let error: Error;
     try {
@@ -86,7 +86,7 @@ describe("t-model directive", () => {
             <input t-model="some.text"/>
             <span><t t-esc="some.text"/></span>
         </div>`;
-      some = useState({ text: "" });
+      some = proxy({ text: "" });
     }
     const comp = await mount(SomeComponent, fixture);
 
@@ -107,7 +107,7 @@ describe("t-model directive", () => {
                 <t t-else="">no</t>
             </span>
         </div>`;
-      state = useState({ flag: false });
+      state = proxy({ flag: false });
     }
 
     const comp = await mount(SomeComponent, fixture);
@@ -130,7 +130,7 @@ describe("t-model directive", () => {
             <textarea t-model="state.text"/>
             <span><t t-esc="state.text"/></span>
         </div>`;
-      state = useState({ text: "" });
+      state = proxy({ text: "" });
     }
     const comp = await mount(SomeComponent, fixture);
 
@@ -149,7 +149,7 @@ describe("t-model directive", () => {
             <input type="radio" id="two" value="Two" t-model="state.choice"/>
             <span>Choice: <t t-esc="state.choice"/></span>
         </div>`;
-      state = useState({ choice: "" });
+      state = proxy({ choice: "" });
     }
     const comp = await mount(SomeComponent, fixture);
 
@@ -180,7 +180,7 @@ describe("t-model directive", () => {
             <input type="radio" id="one" value="One" t-model="state.choice"/>
             <input type="radio" id="two" value="Two" t-model="state.choice"/>
         </div>`;
-      state = useState({ choice: "Two" });
+      state = proxy({ choice: "Two" });
     }
     await mount(SomeComponent, fixture);
 
@@ -202,7 +202,7 @@ describe("t-model directive", () => {
             </select>
             <span>Choice: <t t-esc="state.color"/></span>
         </div>`;
-      state = useState({ color: "" });
+      state = proxy({ color: "" });
     }
     const comp = await mount(SomeComponent, fixture);
 
@@ -232,7 +232,7 @@ describe("t-model directive", () => {
           </select>
         </div>
       `;
-      state = useState({ color: "red" });
+      state = proxy({ color: "red" });
     }
     await mount(SomeComponent, fixture);
     const select = fixture.querySelector("select")!;
@@ -247,7 +247,7 @@ describe("t-model directive", () => {
           <span><t t-esc="state.something.text"/></span>
         </div>
       `;
-      state = useState({ something: { text: "" } });
+      state = proxy({ something: { text: "" } });
     }
     const comp = await mount(SomeComponent, fixture);
 
@@ -267,8 +267,8 @@ describe("t-model directive", () => {
           <span><t t-esc="state.something[text.key]"/></span>
         </div>
       `;
-      state: { something: { [key: string]: string } } = useState({ something: {} });
-      text = useState({ key: "foo" });
+      state: { something: { [key: string]: string } } = proxy({ something: {} });
+      text = proxy({ key: "foo" });
     }
     const comp = await mount(SomeComponent, fixture);
 
@@ -295,7 +295,7 @@ describe("t-model directive", () => {
             <span><t t-esc="state.text"/></span>
         </div>
       `;
-      state = useState({ text: "" });
+      state = proxy({ text: "" });
     }
     const comp = await mount(SomeComponent, fixture);
 
@@ -321,7 +321,7 @@ describe("t-model directive", () => {
           <span><t t-esc="state.text"/></span>
         </div>
       `;
-      state = useState({ text: "" });
+      state = proxy({ text: "" });
     }
     const comp = await mount(SomeComponent, fixture);
 
@@ -339,7 +339,7 @@ describe("t-model directive", () => {
             <span><t t-esc="state.text"/></span>
         </div>
       `;
-      state = useState({ text: "" });
+      state = proxy({ text: "" });
     }
     const comp = await mount(SomeComponent, fixture);
 
@@ -365,7 +365,7 @@ describe("t-model directive", () => {
           <span><t t-esc="state.number"/></span>
         </div>
       `;
-      state = useState({ number: 0 });
+      state = proxy({ number: 0 });
     }
     const comp = await mount(SomeComponent, fixture);
     expect(fixture.innerHTML).toBe("<div><input><span>0</span></div>");
@@ -389,7 +389,7 @@ describe("t-model directive", () => {
           </t>
         </div>
       `;
-      state = useState([
+      state = proxy([
         { f: false, id: 1 },
         { f: false, id: 2 },
         { f: false, id: 3 },
@@ -417,7 +417,7 @@ describe("t-model directive", () => {
           </t>
         </div>
       `;
-      state = useState(["zuko", "iroh"]);
+      state = proxy(["zuko", "iroh"]);
     }
     const comp = await mount(SomeComponent, fixture);
     expect(comp.state).toEqual(["zuko", "iroh"]);
@@ -437,7 +437,7 @@ describe("t-model directive", () => {
         </div>
       `;
       names = ["Crusher", "Data", "Riker", "Worf"];
-      state = useState({ values: {} });
+      state = proxy({ values: {} });
     }
     const comp = await mount(SomeComponent, fixture);
     expect(comp.state).toEqual({ values: {} });
@@ -455,7 +455,7 @@ describe("t-model directive", () => {
           <input class="b" t-if="!state.flag" t-model="state.text2"/>
         </div>
       `;
-      state = useState({ flag: true, text1: "", text2: "" });
+      state = proxy({ flag: true, text1: "", text2: "" });
     }
     const comp = await mount(SomeComponent, fixture);
 
@@ -483,7 +483,7 @@ describe("t-model directive", () => {
           <input t-model="state['text']"/>
         </div>
       `;
-      state = useState({ text: "Jean-Luc Picard" });
+      state = proxy({ text: "Jean-Luc Picard" });
     }
     const comp = await mount(SomeComponent, fixture);
     expect(fixture.innerHTML).toBe("<div><input></div>");
@@ -500,7 +500,7 @@ describe("t-model directive", () => {
           <input t-model="state['text']" t-on-input="onInput"/>
         </div>
       `;
-      state = useState({ text: "", other: "" });
+      state = proxy({ text: "", other: "" });
       onInput(ev: InputEvent) {
         this.state.other = (ev.target as HTMLInputElement).value;
       }
@@ -523,7 +523,7 @@ describe("t-model directive", () => {
           <input type="radio" id="three" value="Three" t-model="state.choice" t-on-click="onClick"/>
         </div>
       `;
-      state = useState({ choice: "", lastClicked: "" });
+      state = proxy({ choice: "", lastClicked: "" });
       onClick(ev: MouseEvent) {
         this.state.lastClicked = (ev.target as HTMLInputElement).value;
       }
@@ -554,7 +554,7 @@ describe("t-model directive", () => {
       state: any;
       options: any;
       setup() {
-        this.state = useState({ model: "b" });
+        this.state = proxy({ model: "b" });
         this.options = ["a", "b", "c"];
       }
     }
@@ -576,7 +576,7 @@ describe("t-model directive", () => {
       state: any;
       options: any;
       setup() {
-        this.state = useState({ model: "b" });
+        this.state = proxy({ model: "b" });
         this.options = ["a", "b"];
       }
     }
@@ -598,7 +598,7 @@ describe("t-model directive", () => {
       state: any;
       options: any;
       setup() {
-        this.state = useState({ model: "b" });
+        this.state = proxy({ model: "b" });
         this.options = ["a", "b"];
       }
     }
@@ -620,7 +620,7 @@ describe("t-model directive", () => {
       state: any;
       options: any;
       setup() {
-        this.state = useState({ model: "b" });
+        this.state = proxy({ model: "b" });
         this.options = ["a", "b"];
       }
     }
@@ -643,7 +643,7 @@ describe("t-model directive", () => {
       state: any;
       options: any;
       setup() {
-        this.state = useState({ model: "b" });
+        this.state = proxy({ model: "b" });
         this.options = ["a", "b", "c"];
       }
     }
@@ -663,7 +663,7 @@ describe("t-model directive", () => {
       `;
       state: any;
       setup() {
-        this.state = useState({
+        this.state = proxy({
           value: 2,
           options: [{ value: 1 }, { value: 2 }, { value: 3 }],
         });
@@ -693,7 +693,7 @@ describe("t-model directive", () => {
           <input t-model="state['text']" t-on-input="onInput"/>
         </div>
       `;
-      state = useState({ text: "", other: "" });
+      state = proxy({ text: "", other: "" });
       onInput(ev: InputEvent) {
         expect(this.state.text).toBe("Beam me up, Scotty");
         expect((ev.target as HTMLInputElement).value).toBe("Beam me up, Scotty");
@@ -715,7 +715,7 @@ describe("t-model directive", () => {
           </t>
         </div>
       `;
-      state = useState({ group: "scotty" });
+      state = proxy({ group: "scotty" });
       options = ["beam", "scotty"];
 
       getData() {

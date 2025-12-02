@@ -1,4 +1,4 @@
-import { Component, mount, useState, xml } from "../../src";
+import { Component, mount, proxy, xml } from "../../src";
 import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
@@ -30,7 +30,7 @@ describe("basics", () => {
             <span>
                 <button t-on-click="inc">click</button>child<t t-esc="state.val"/>
             </span>`;
-      state = useState({ val: 1 });
+      state = proxy({ val: 1 });
       inc() {
         this.state.val++;
       }
@@ -87,7 +87,7 @@ describe("basics", () => {
               <t t-if="!state.flag"><OtherChild /></t>
             </t>
           `;
-      state = useState({ flag: true });
+      state = proxy({ flag: true });
       static components = { Child, OtherChild };
     }
     let parent = await mount(Parent, fixture);

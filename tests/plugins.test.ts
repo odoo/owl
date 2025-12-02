@@ -1,5 +1,5 @@
 import { effect } from "../src";
-import { Plugin, PluginManager } from "../src/runtime/plugins";
+import { plugin, Plugin, PluginManager } from "../src/runtime/plugins";
 import { waitScheduler } from "./helpers";
 
 describe("basic features", () => {
@@ -15,25 +15,33 @@ describe("basic features", () => {
         steps.push("destroy");
       }
     }
-    expect(steps).toEqual([]);
-    const manager = new PluginManager(null, [A]);
-    expect(steps).toEqual(["setup"]);
+
+    const manager = new PluginManager(null);
+    expect(steps.splice(0)).toEqual([]);
+
+    manager.startPlugins([A]);
+    expect(steps.splice(0)).toEqual(["setup"]);
+
     manager.destroy();
-    expect(steps).toEqual(["setup", "destroy"]);
+    expect(steps.splice(0)).toEqual(["destroy"]);
   });
 
   test("can get a plugin", () => {
     let a;
+
     class A extends Plugin {
       static id = "a";
       setup() {
         a = this;
       }
     }
-    const manager = new PluginManager(null, [A]);
+
+    const manager = new PluginManager(null);
+    manager.startPlugins([A]);
     const plugin = manager.getPlugin("a");
     expect(plugin).toBe(a);
     expect(plugin!.isDestroyed).toBe(false);
+
     manager.destroy();
     expect(plugin!.isDestroyed).toBe(true);
   });
@@ -60,132 +68,148 @@ describe("basic features", () => {
       }
     }
 
-    expect(steps).toEqual([]);
-    const manager = new PluginManager(null, [A, B]);
-    expect(steps).toEqual(["setup A", "setup B"]);
-    steps.splice(0);
+    const manager = new PluginManager(null);
+    expect(steps.splice(0)).toEqual([]);
+
+    manager.startPlugins([A, B]);
+    expect(steps.splice(0)).toEqual(["setup A", "setup B"]);
+
     manager.destroy();
-    expect(steps).toEqual(["destroy B", "destroy A"]);
+    expect(steps.splice(0)).toEqual(["destroy B", "destroy A"]);
   });
 
   test("fails if plugins has no id", () => {
     class A extends Plugin {}
-
-    expect(() => new PluginManager(null, [A])).toThrowError("Plugin A has no id");
+    expect(() => new PluginManager(null).startPlugins([A])).toThrowError(`Plugin "A" has no id`);
   });
 
-  test("fails if same plugin is registered twice", () => {
-    class A extends Plugin {
-      static id = "a";
-    }
-
-    expect(() => new PluginManager(null, [A, A])).toThrowError(
-      "A plugin with the same ID is already defined"
-    );
-  });
-
-  test("plugins are instantiated by respecting the dependency order", () => {
-    const steps: string[] = [];
-
-    class A extends Plugin {
-      static id = "a";
-      setup() {
-        steps.push("setup A");
-      }
-      destroy() {
-        steps.push("destroy A");
-      }
-    }
-    class B extends Plugin {
-      static id = "b";
-      static dependencies = ["a"];
-      setup() {
-        steps.push("setup B");
-      }
-      destroy() {
-        steps.push("destroy B");
-      }
-    }
-
-    expect(steps).toEqual([]);
-    const manager = new PluginManager(null, [B, A]);
-    expect(steps).toEqual(["setup A", "setup B"]);
-    steps.splice(0);
-    manager.destroy();
-    expect(steps).toEqual(["destroy B", "destroy A"]);
-  });
-
-  test("can access the dependency in the deps object", () => {
+  test("plugins do not start twice", () => {
     const steps: string[] = [];
 
     class A extends Plugin {
       static id = "a";
 
       setup() {
-        steps.push("setup A");
+        steps.push("setup");
       }
+    }
 
-      doSomething() {
-        steps.push("dosomething");
-        return 1;
+    const manager = new PluginManager(null);
+    expect(steps.splice(0)).toEqual([]);
+
+    manager.startPlugins([A, A]);
+    expect(steps.splice(0)).toEqual(["setup"]);
+  });
+
+  test("plugin can have dependencies", () => {
+    const steps: string[] = [];
+    let a = null;
+    let b = null;
+
+    class A extends Plugin {
+      static id = "a";
+      setup() {
+        a = this;
+        steps.push("setup A");
       }
     }
 
     class B extends Plugin {
       static id = "b";
-      static dependencies = ["a"];
 
-      declare plugins: { a: A };
-
+      a = plugin(A);
       setup() {
+        b = this;
         steps.push("setup B");
-        const value = this.plugins.a.doSomething();
-        steps.push("value " + value);
-      }
-      destroy() {
-        steps.push("destroy B");
       }
     }
 
-    new PluginManager(null, [B, A]);
-    expect(steps).toEqual(["setup A", "setup B", "dosomething", "value 1"]);
+    class C extends Plugin {
+      static id = "c";
+
+      a = plugin(A);
+      b = plugin(B);
+      setup() {
+        steps.push("setup C");
+      }
+    }
+
+    const manager = new PluginManager(null);
+    expect(steps.splice(0)).toEqual([]);
+
+    manager.startPlugins([A, B, C]);
+    expect(steps.splice(0)).toEqual(["setup A", "setup B", "setup C"]);
+    expect(manager.getPlugin<B>("b")!.a).toBe(a);
+    expect(manager.getPlugin<C>("c")!.a).toBe(a);
+    expect(manager.getPlugin<C>("c")!.b).toBe(b);
   });
 
-  // test("pluginManager can be given a dynamic list of plugins", () => {
-  //   const steps: string[] = [];
+  test("plugin auto start dependencies", () => {
+    const steps: string[] = [];
+    let a = null;
+    let b = null;
 
-  //   class A extends Plugin {
-  //     static id = "a";
-  //     setup() {
-  //       steps.push("setup A");
-  //     }
-  //     destroy() {
-  //       steps.push("destroy A");
-  //     }
-  //   }
-  //   class B extends Plugin {
-  //     static id = "b";
-  //     static dependencies = ["a"];
-  //     setup() {
-  //       steps.push("setup B");
-  //     }
-  //     destroy() {
-  //       steps.push("destroy B");
-  //     }
-  //   }
+    class A extends Plugin {
+      static id = "a";
+      setup() {
+        a = this;
+        steps.push("setup A");
+      }
+    }
 
-  //   expect(steps).toEqual([]);
+    class B extends Plugin {
+      static id = "b";
 
-  //   const list = reactive([]);
-  //   const fn = derived(() => {
-  //     return list;
-  //   })
-  //   const manager = new PluginManager(null, [B, A]);
-  //   expect(steps).toEqual(["setup A", "setup B"]);
-  //   steps.splice(0);
-  //   manager.destroy();
-  //   expect(steps).toEqual(["destroy B", "destroy A"]);
-  // });
+      a = plugin(A);
+      setup() {
+        b = this;
+        steps.push("setup B");
+      }
+    }
+
+    class C extends Plugin {
+      static id = "c";
+
+      b = plugin(B);
+      a = plugin(A);
+      setup() {
+        steps.push("setup C");
+      }
+    }
+
+    const manager = new PluginManager(null);
+    expect(steps.splice(0)).toEqual([]);
+
+    manager.startPlugins([C]); // note that we only start plugin C
+    expect(steps.splice(0)).toEqual(["setup A", "setup B", "setup C"]);
+    expect(manager.getPlugin<B>("b")!.a).toBe(a);
+    expect(manager.getPlugin<C>("c")!.a).toBe(a);
+    expect(manager.getPlugin<C>("c")!.b).toBe(b);
+  });
+
+  test("dependency can be set in setup", () => {
+    let a = null;
+
+    class A extends Plugin {
+      static id = "a";
+      setup() {
+        a = this;
+      }
+    }
+
+    class B extends Plugin {
+      static id = "b";
+
+      declare a: A;
+      setup() {
+        this.a = plugin(A);
+      }
+    }
+
+    const manager = new PluginManager(null);
+    manager.startPlugins([B]);
+    expect(manager.getPlugin<B>("b")!.a).toBe(a);
+  });
 });
 
 describe("sub plugin managers", () => {
@@ -212,21 +236,19 @@ describe("sub plugin managers", () => {
       }
     }
 
-    expect(steps).toEqual([]);
-    const manager = new PluginManager(null, [A]);
-    expect(steps).toEqual(["setup A"]);
-    steps.splice(0);
+    const manager = new PluginManager(null);
+    manager.startPlugins([A]);
+    expect(steps.splice(0)).toEqual(["setup A"]);
 
-    const subManager = new PluginManager(manager, [B]);
-    expect(steps).toEqual(["setup B"]);
-    steps.splice(0);
+    const subManager = new PluginManager(manager);
+    subManager.startPlugins([B]);
+    expect(steps.splice(0)).toEqual(["setup B"]);
 
     subManager.destroy();
-    expect(steps).toEqual(["destroy B"]);
-    steps.splice(0);
+    expect(steps.splice(0)).toEqual(["destroy B"]);
 
     manager.destroy();
-    expect(steps).toEqual(["destroy A"]);
+    expect(steps.splice(0)).toEqual(["destroy A"]);
   });
 
   test("destroying parent plugin manager destroys everything", () => {
@@ -252,12 +274,13 @@ describe("sub plugin managers", () => {
       }
     }
 
-    const manager = new PluginManager(null, [A]);
-    new PluginManager(manager, [B]);
-    steps.splice(0);
+    const manager = new PluginManager(null);
+    manager.startPlugins([A]);
+    new PluginManager(manager).startPlugins([B]);
+    expect(steps.splice(0)).toEqual(["setup A", "setup B"]);
 
     manager.destroy();
-    expect(steps).toEqual(["destroy B", "destroy A"]);
+    expect(steps.splice(0)).toEqual(["destroy B", "destroy A"]);
   });
 
   test("can access plugin in parent manager", () => {
@@ -268,9 +291,6 @@ describe("sub plugin managers", () => {
       setup() {
         steps.push("setup A");
       }
-      destroy() {
-        steps.push("destroy A");
-      }
       someFunction() {
         return 1;
       }
@@ -278,24 +298,46 @@ describe("sub plugin managers", () => {
 
     class B extends Plugin {
       static id = "b";
-      static dependencies = ["a"];
-      declare plugins: { a: A };
 
+      a = plugin(A);
       setup() {
         steps.push("setup B");
-        steps.push("value " + this.plugins.a.someFunction());
-      }
-
-      destroy() {
-        steps.push("destroy B");
+        steps.push("value " + this.a.someFunction());
       }
     }
 
-    const manager = new PluginManager(null, [A]);
-    steps.splice(0);
+    const manager = new PluginManager(null);
+    manager.startPlugins([A]);
+    expect(steps.splice(0)).toEqual(["setup A"]);
 
-    new PluginManager(manager, [B]);
+    new PluginManager(manager).startPlugins([B]);
     expect(steps).toEqual(["setup B", "value 1"]);
+  });
+
+  test("plugin can be shadowed", () => {
+    class A extends Plugin {
+      static id = "a";
+
+      someFunction() {
+        return 1;
+      }
+    }
+
+    class ShadowA extends Plugin {
+      static id = "a";
+
+      someFunction() {
+        return 123;
+      }
+    }
+
+    const manager = new PluginManager(null);
+    manager.startPlugins([A]);
+    expect(manager.getPlugin<A>("a")!.someFunction()).toBe(1);
+
+    const subManager = new PluginManager(manager);
+    subManager.startPlugins([ShadowA]);
+    expect(subManager.getPlugin<A>("a")!.someFunction()).toBe(123);
   });
 });
 
@@ -319,7 +361,9 @@ describe("resource system", () => {
         colors: ["green", "blue"],
       };
     }
-    const manager = new PluginManager(null, [A, B, C]);
+
+    const manager = new PluginManager(null);
+    manager.startPlugins([A, B, C]);
     expect(manager.getResource("colors")).toEqual(["red", "green", "blue"]);
   });
 
@@ -342,11 +386,16 @@ describe("resource system", () => {
         colors: ["green", "blue"],
       };
     }
-    const manager = new PluginManager(null, [A, B]);
+
+    const manager = new PluginManager(null);
+    manager.startPlugins([A, B]);
     expect(manager.getResource("colors")).toEqual(["red"]);
-    const subManager = new PluginManager(manager, [C]);
+
+    const subManager = new PluginManager(manager);
+    manager.startPlugins([C]);
     expect(manager.getResource("colors")).toEqual(["red", "green", "blue"]);
     expect(subManager.getResource("colors")).toEqual(["red", "green", "blue"]);
+
     subManager.destroy();
     expect(manager.getResource("colors")).toEqual(["red"]);
     expect(subManager.getResource("colors")).toEqual(["red"]);
@@ -371,126 +420,27 @@ describe("resource system", () => {
         colors: ["green", "blue"],
       };
     }
-    const manager = new PluginManager(null, [A, B]);
+
+    const manager = new PluginManager(null);
+    manager.startPlugins([A, B]);
+
     const steps: string[] = [];
     effect(() => {
       steps.push(manager.getResource("colors").join(","));
     });
-    expect(steps).toEqual(["red"]);
-    const subManager = new PluginManager(manager, [C]);
-    expect(steps).toEqual(["red"]);
+    expect(steps.splice(0)).toEqual(["red"]);
+
+    const subManager = new PluginManager(manager);
+    manager.startPlugins([C]);
+    expect(steps.splice(0)).toEqual([]);
+
     await waitScheduler();
-    expect(steps).toEqual(["red", "red,green,blue"]);
+    expect(steps.splice(0)).toEqual(["red,green,blue"]);
+
     subManager.destroy();
-    expect(steps).toEqual(["red", "red,green,blue"]);
+    expect(steps.splice(0)).toEqual([]);
+
     await waitScheduler();
-    expect(steps).toEqual(["red", "red,green,blue", "red"]);
+    expect(steps.splice(0)).toEqual(["red"]);
   });
 });
-
-// const registry = new Registry();
-
-// const globalPlugins = registry.get("services");
-// const manager = new PluginManager(null, []);
-
-// const newPlugins = derived(() => {
-//   return globalPlugins.items().filter(P => !manager.hasPlugin(P.id));
-// });
-// effect(() => {
-//   for (const P of newPlugins() {
-//       manager.addPlugin(P);
-//   }
-// });
-
-// const env = {
-//   plugins: new PluginManager(null, Plugins) ;
-// };
-
-// function usePlugin(name) {
-//   const env = useEnv();
-//   return env.plugins.getPlugin(name);
-// }
-
-// function providePlugins(Plugins) {
-//     const env = useEnv();
-//     usesubEnv({
-//       plugins: new PluginManager(env.plugins, ASDF.Plugins)
-//     })
-// }
-
-// class ADSF extends Component {
-//   static Plugins = [A,B,C]
-
-// }
-
-// mount(Root, document.body, {
-//   env,
-//   props,
-//   Plugins,
-//   staticProcessor: {
-//     Plugins: (instance, env) => {
-
-//     }
-//   }
-// });
-
-// class PieChartComponent extends Component {
-//   static props = { someNumbers: ...};
-//   static template = xml`<canvas t-ref="canvas"/>`;
-
-//   setup() {
-//     this.canvasRef = useRef("canvas");
-//     onWillStart(() => loadJS("chart.js"));
-//     onMounted(() => {
-//       this.chartJS = new Chart({
-//         target: this.canvasRef.el,
-//         data: this.getPieChartDefinition(this.props);
-//       })
-//     });
-//     onWillUnmount(() => {
-//       this.chartJS.destroy();
-//     });
-
-//     onPatched(( => {
-//       this.chartJs.destroy();
-//       this.chartJS = new Chart({
-//         target: this.canvasRef.el,
-//         data: this.getPieChartDefinition(this.props);
-//       })
-//     })
-//   }
-
-//   getPieChartDefinition(props) {
-//     return something(props);
-//   }
-// }
-
-// class PieChartComponent extends Component {
-//   static props = { someNumbers: ...};
-//   static template = xml`<canvas t-ref="canvas"/>`;
-
-//   setup() {
-//     this.canvasRef = useRef("canvas");
-//     const chartJS = asyncDerived(() => loadJS("char.js"));
-//     effect()
-//     this.chart = asyncDerived(async () => {
-//       await chartJS();
-//       if (this.chart) {
-//         this.chart.destroy();
-//       }
-//       return new Chart({
-//         target: this.canvasRef.el,
-//         data: this.getPieChartDefinition()
-//       });
-//     })
-//     onWillUnmount(() => {
-//       this.chart.destroy();
-//     });
-
-//   }
-
-//   getPieChartDefinition() {
-//     return something(this.props);
-//   }
-
-// }

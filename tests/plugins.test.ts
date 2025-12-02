@@ -1,5 +1,4 @@
-import { effect } from "../src";
-import { plugin, Plugin, PluginManager } from "../src/runtime/plugins";
+import { effect, plugin, Plugin, PluginManager } from "../src";
 import { waitScheduler } from "./helpers";
 
 describe("basic features", () => {
@@ -209,6 +208,13 @@ describe("basic features", () => {
     const manager = new PluginManager(null);
     manager.startPlugins([B]);
     expect(manager.getPlugin<B>("b")!.a).toBe(a);
+  });
+
+  test("plugin fn cannot be called outside Plugin and Component", () => {
+    class A extends Plugin {
+      static id = "a";
+    }
+    expect(() => plugin(A)).toThrowError(`No active component (a hook function should only be called in 'setup')`);
   });
 });
 

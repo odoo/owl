@@ -14,7 +14,7 @@ export class Registry<T> {
   }
 
   entries: Fn<[string, T][]> = derived(() => {
-    return Object.entries(this._map.get())
+    return Object.entries(this._map())
       .sort((el1, el2) => el1[1][0] - el2[1][0])
       .map(([str, elem]) => [str, elem[1]]);
   });
@@ -35,14 +35,14 @@ export class Registry<T> {
         throw new Error("Invalid type: " + error);
       }
     }
-    this._map.set({ ...this._map.get(), [key]: [sequence, value] });
+    this._map.set({ ...this._map(), [key]: [sequence, value] });
   }
 
   get(key: string, defaultValue?: T): T {
-    const hasKey = key in this._map.get();
+    const hasKey = key in this._map();
     if (!hasKey && arguments.length < 2) {
       throw new Error(`KeyNotFoundError: Cannot find key "${key}" in this registry`);
     }
-    return hasKey ? this._map.get()[key][1] : defaultValue!;
+    return hasKey ? this._map()[key][1] : defaultValue!;
   }
 }

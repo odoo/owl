@@ -6,7 +6,6 @@ functions are all available in the `owl.utils` namespace.
 ## Content
 
 - [`whenReady`](#whenready): executing code when DOM is ready
-- [`loadFile`](#loadfile): loading a file (useful for templates)
 - [`EventBus`](#eventbus): a simple EventBus
 - [`validate`](#validate): a validation function
 - [`batched`](#batched): batch function calls
@@ -30,21 +29,6 @@ or alternatively:
 whenReady(function () {
   // do something
 });
-```
-
-## `loadFile`
-
-`loadFile` is a helper function to fetch a file. It simply
-performs a `GET` request and returns the resulting string in a promise. The
-initial usecase for this function is to load a template file. For example:
-
-```js
-const { loadFile } = owl;
-
-async function makeEnv() {
-  const templates = await loadFile("templates.xml");
-  // do something
-}
 ```
 
 ## `EventBus`

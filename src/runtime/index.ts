@@ -62,4 +62,5 @@ export const __info__ = {
   version: App.version,
 };
 
-export { Plugin, PluginManager, usePlugins } from "./plugins";
+export { Plugin, PluginManager, plugin, usePlugins } from "./plugins";
+export type { PluginConstructor } from "./plugins";

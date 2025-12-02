@@ -34,7 +34,7 @@ Other hooks:
 - [`useComponent`](reference/hooks.md#usecomponent): return a reference to the current component (useful to create derived hooks)
 - [`useEffect`](reference/hooks.md#useeffect): define an effect with its dependencies
 - [`useEnv`](reference/hooks.md#useenv): return a reference to the current env
-- [`useExternalListener`](reference/hooks.md#useexternallistener): add a listener outside of a component DOM
+- [`useListener`](reference/hooks.md#uselistener): add a listener outside of a component DOM
 - [`useRef`](reference/hooks.md#useref): get an object representing a reference (`t-ref`)
 - [`useChildSubEnv`](reference/hooks.md#usesubenv-and-usechildsubenv): extend the current env with additional information (for child components)
 - [`useSubEnv`](reference/hooks.md#usesubenv-and-usechildsubenv): extend the current env with additional information (for current component and child components)

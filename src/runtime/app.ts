@@ -21,7 +21,6 @@ export interface RootConfig<P, E> {
   props?: P;
   env?: E;
   pluginManager?: PluginManager;
-
 }
 
 export interface AppConfig<P, E> extends TemplateSetConfig, RootConfig<P, E> {

@@ -90,7 +90,7 @@ export class PluginManager {
   }
 
   getPlugin<T extends Plugin>(name: string): T | null {
-    return this.plugins[name] as T || null;
+    return (this.plugins[name] as T) || null;
   }
 
   getResource(name: string): any[] {

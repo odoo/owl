@@ -4,10 +4,10 @@ import { batched } from "./utils";
 let Effects: Computation[];
 let CurrentComputation: Computation | undefined;
 
-export type Signal<T> = {
-  get(): T;
+type SignalFunction<T> = () => T;
+export interface Signal<T> extends SignalFunction<T> {
   set(value: T): void;
-};
+}
 
 export function signal<T>(value: T, opts?: Opts): Signal<T> {
   const atom: Atom<T> = {
@@ -27,10 +27,8 @@ export function signal<T>(value: T, opts?: Opts): Signal<T> {
     atom.value = newValue;
     onWriteAtom(atom);
   };
-  return {
-    get: read,
-    set: write,
-  } as const;
+  read.set = write;
+  return read;
 }
 export function effect<T>(fn: () => T, opts?: Opts) {
   const effectComputation: Computation = {

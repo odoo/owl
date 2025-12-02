@@ -398,7 +398,7 @@ describe("resource system", () => {
     expect(manager.getResource("colors")).toEqual(["red"]);
 
     const subManager = new PluginManager(manager);
-    manager.startPlugins([C]);
+    subManager.startPlugins([C]);
     expect(manager.getResource("colors")).toEqual(["red", "green", "blue"]);
     expect(subManager.getResource("colors")).toEqual(["red", "green", "blue"]);
 
@@ -437,7 +437,7 @@ describe("resource system", () => {
     expect(steps.splice(0)).toEqual(["red"]);
 
     const subManager = new PluginManager(manager);
-    manager.startPlugins([C]);
+    subManager.startPlugins([C]);
     expect(steps.splice(0)).toEqual([]);
 
     await waitScheduler();

@@ -105,6 +105,7 @@ export class PluginManager {
     // instantiate plugins
     for (const pluginType of pluginTypes) {
       if (!pluginType.id) {
+        currentPluginManager = previousManager;
         throw new OwlError(`Plugin "${pluginType.name}" has no id`);
       }
       if (this.plugins.hasOwnProperty(pluginType.id)) {
@@ -159,10 +160,8 @@ export class PluginManager {
 }
 
 export function plugin<T extends PluginConstructor>(pluginType: T): InstanceType<T> {
+  // getCurrent will throw if we're not in a component
   const manager = currentPluginManager || getCurrent().pluginManager;
-  if (!manager) {
-    throw new OwlError("No active plugin manager");
-  }
 
   let plugin = manager.getPlugin<InstanceType<T>>(pluginType.id);
   if (!plugin) {
@@ -170,7 +169,7 @@ export function plugin<T extends PluginConstructor>(pluginType: T): InstanceType
       manager.startPlugins([pluginType]);
       plugin = manager.getPlugin<InstanceType<T>>(pluginType.id)!;
     } else {
-      throw new Error(`Unknown plugin "${pluginType.id}"`);
+      throw new OwlError(`Unknown plugin "${pluginType.id}"`);
     }
   }
 

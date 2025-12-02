@@ -93,7 +93,7 @@ describe("list of components", () => {
       "<div><ul><li><div>1</div></li><li><div>2</div></li></ul></div>"
     );
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
         "Parent:willRender",

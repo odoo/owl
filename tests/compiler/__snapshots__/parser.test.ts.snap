@@ -1,3 +1,3 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`qweb parser simple t-foreach expression, t-key mandatory 1`] = `"\\"Directive t-foreach should always be used with a t-key!\\" (expression: t-foreach=\\"list\\" t-as=\\"item\\")"`;
+exports[`qweb parser simple t-foreach expression, t-key mandatory 1`] = `""Directive t-foreach should always be used with a t-key!" (expression: t-foreach="list" t-as="item")"`;

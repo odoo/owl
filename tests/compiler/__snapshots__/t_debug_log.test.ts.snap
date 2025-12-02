@@ -8,7 +8,7 @@ exports[`debugging t-debug 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<span>hey</span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     debugger;
     let b2;
     if (true) {
@@ -27,7 +27,7 @@ exports[`debugging t-debug on sub template 1`] = `
   
   let block1 = createBlock(\`<p>coucou</p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     debugger;
     return block1();
   }
@@ -42,7 +42,7 @@ exports[`debugging t-debug on sub template 2`] = `
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
@@ -57,13 +57,13 @@ exports[`debugging t-debug: interaction with t-set 1`] = `
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     debugger;
-    setContextValue(ctx, \\"foo\\", 42);
+    setContextValue(ctx, "foo", 42);
     debugger;
-    setContextValue(ctx, \\"bar\\", 49);
+    setContextValue(ctx, "bar", 49);
     let txt1 = ctx['foo']+ctx['bar'];
     return block1([txt1]);
   }
@@ -78,10 +78,10 @@ exports[`debugging t-log 1`] = `
   
   let block1 = createBlock(\`<div/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    setContextValue(ctx, \\"foo\\", 42);
+    setContextValue(ctx, "foo", 42);
     console.log(ctx['foo']+3);
     return block1();
   }
@@ -96,13 +96,13 @@ exports[`debugging t-log: interaction with t-set 1`] = `
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     console.log(ctx['foo']);
-    setContextValue(ctx, \\"foo\\", 42);
+    setContextValue(ctx, "foo", 42);
     console.log(ctx['bar']);
-    setContextValue(ctx, \\"bar\\", 49);
+    setContextValue(ctx, "bar", 49);
     let txt1 = ctx['foo']+ctx['bar'];
     return block1([txt1]);
   }

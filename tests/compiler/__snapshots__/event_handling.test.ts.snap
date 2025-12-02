@@ -5,9 +5,9 @@ exports[`t-on can bind event handler 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
+  let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let hdlr1 = [ctx['add'], ctx];
     return block1([hdlr1]);
   }
@@ -19,9 +19,9 @@ exports[`t-on can bind handlers with arguments 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
+  let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const v1 = ctx['add'];
     let hdlr1 = [()=>v1(5), ctx];
     return block1([hdlr1]);
@@ -34,9 +34,9 @@ exports[`t-on can bind handlers with empty  object 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
+  let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const v1 = ctx['doSomething'];
     let hdlr1 = [()=>v1({}), ctx];
     return block1([hdlr1]);
@@ -49,9 +49,9 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
+  let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const v1 = ctx['doSomething'];
     let hdlr1 = [()=>v1({}), ctx];
     return block1([hdlr1]);
@@ -66,9 +66,9 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
   let { prepareList, withKey } = helpers;
   
   let block1 = createBlock(\`<ul><block-child-0/></ul>\`);
-  let block3 = createBlock(\`<li><a block-handler-0=\\"click\\">link</a></li>\`);
+  let block3 = createBlock(\`<li><a block-handler-0="click">link</a></li>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(['someval']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -91,9 +91,9 @@ exports[`t-on can bind handlers with object arguments 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
+  let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const v1 = ctx['add'];
     let hdlr1 = [()=>v1({val:5}), ctx];
     return block1([hdlr1]);
@@ -106,9 +106,9 @@ exports[`t-on can bind two event handlers 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<button block-handler-0=\\"click\\" block-handler-1=\\"dblclick\\">Click</button>\`);
+  let block1 = createBlock(\`<button block-handler-0="click" block-handler-1="dblclick">Click</button>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let hdlr1 = [ctx['handleClick'], ctx];
     let hdlr2 = [ctx['handleDblClick'], ctx];
     return block1([hdlr1, hdlr2]);
@@ -121,9 +121,9 @@ exports[`t-on handler is bound to proper owner 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
+  let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let hdlr1 = [ctx['add'], ctx];
     return block1([hdlr1]);
   }
@@ -136,9 +136,9 @@ exports[`t-on handler is bound to proper owner, part 2 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { prepareList, withKey } = helpers;
   
-  let block2 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
+  let block2 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     const [k_block1, v_block1, l_block1, c_block1] = prepareList([1]);;
     for (let i1 = 0; i1 < l_block1; i1++) {
@@ -158,7 +158,7 @@ exports[`t-on handler is bound to proper owner, part 3 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return callTemplate_1.call(this, ctx, node, key + \`__1\`);
   }
 }"
@@ -169,9 +169,9 @@ exports[`t-on handler is bound to proper owner, part 3 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
+  let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let hdlr1 = [ctx['add'], ctx];
     return block1([hdlr1]);
   }
@@ -185,7 +185,7 @@ exports[`t-on handler is bound to proper owner, part 4 1`] = `
   let { prepareList, withKey } = helpers;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     const [k_block1, v_block1, l_block1, c_block1] = prepareList([1]);;
     for (let i1 = 0; i1 < l_block1; i1++) {
@@ -207,9 +207,9 @@ exports[`t-on handler is bound to proper owner, part 4 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
+  let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let hdlr1 = [ctx['add'], ctx];
     return block1([hdlr1]);
   }
@@ -221,9 +221,9 @@ exports[`t-on receive event in first argument 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
+  let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let hdlr1 = [ctx['add'], ctx];
     return block1([hdlr1]);
   }
@@ -235,9 +235,9 @@ exports[`t-on t-on modifiers (native listener) basic support for native listener
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div class=\\"myClass\\" block-handler-0=\\"click\\"><button block-handler-1=\\"click\\">Button</button></div>\`);
+  let block1 = createBlock(\`<div class="myClass" block-handler-0="click"><button block-handler-1="click">Button</button></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let hdlr1 = [ctx['divClicked'], ctx];
     let hdlr2 = [ctx['btnClicked'], ctx];
     return block1([hdlr1, hdlr2]);
@@ -250,9 +250,9 @@ exports[`t-on t-on modifiers (native listener) t-on combined with t-esc 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><button block-handler-0=\\"click\\"><block-text-1/></button></div>\`);
+  let block1 = createBlock(\`<div><button block-handler-0="click"><block-text-1/></button></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let hdlr1 = [ctx['onClick'], ctx];
     let txt1 = ctx['text'];
     return block1([hdlr1, txt1]);
@@ -266,9 +266,9 @@ exports[`t-on t-on modifiers (native listener) t-on combined with t-out 1`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><button block-handler-0=\\"click\\"><block-child-0/></button></div>\`);
+  let block1 = createBlock(\`<div><button block-handler-0="click"><block-child-0/></button></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let hdlr1 = [ctx['onClick'], ctx];
     const b2 = safeOutput(ctx['html']);
     return block1([hdlr1], [b2]);
@@ -281,10 +281,10 @@ exports[`t-on t-on modifiers (native listener) t-on with .capture modifier 1`] =
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div block-handler-0=\\"click.capture\\"><button block-handler-1=\\"click\\">Button</button></div>\`);
+  let block1 = createBlock(\`<div block-handler-0="click.capture"><button block-handler-1="click">Button</button></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [\\"capture\\", ctx['onCapture'], ctx];
+  return function template(ctx, node, key = "") {
+    let hdlr1 = ["capture", ctx['onCapture'], ctx];
     let hdlr2 = [ctx['doSomething'], ctx];
     return block1([hdlr1, hdlr2]);
   }
@@ -296,10 +296,10 @@ exports[`t-on t-on modifiers (native listener) t-on with empty handler (only mod
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><button block-handler-0=\\"click.prevent\\">Button</button></div>\`);
+  let block1 = createBlock(\`<div><button block-handler-0="click.prevent">Button</button></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [\\"prevent\\", , ctx];
+  return function template(ctx, node, key = "") {
+    let hdlr1 = ["prevent", , ctx];
     return block1([hdlr1]);
   }
 }"
@@ -310,10 +310,10 @@ exports[`t-on t-on modifiers (native listener) t-on with prevent and self modifi
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><button block-handler-0=\\"click.prevent.self\\"><span>Button</span></button></div>\`);
+  let block1 = createBlock(\`<div><button block-handler-0="click.prevent.self"><span>Button</span></button></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [\\"prevent\\",\\"self\\", ctx['onClick'], ctx];
+  return function template(ctx, node, key = "") {
+    let hdlr1 = ["prevent","self", ctx['onClick'], ctx];
     return block1([hdlr1]);
   }
 }"
@@ -324,12 +324,12 @@ exports[`t-on t-on modifiers (native listener) t-on with prevent and/or stop mod
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><button block-handler-0=\\"click.prevent\\">Button 1</button><button block-handler-1=\\"click.stop\\">Button 2</button><button block-handler-2=\\"click.prevent.stop\\">Button 3</button></div>\`);
+  let block1 = createBlock(\`<div><button block-handler-0="click.prevent">Button 1</button><button block-handler-1="click.stop">Button 2</button><button block-handler-2="click.prevent.stop">Button 3</button></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [\\"prevent\\", ctx['onClickPrevented'], ctx];
-    let hdlr2 = [\\"stop\\", ctx['onClickStopped'], ctx];
-    let hdlr3 = [\\"prevent\\",\\"stop\\", ctx['onClickPreventedAndStopped'], ctx];
+  return function template(ctx, node, key = "") {
+    let hdlr1 = ["prevent", ctx['onClickPrevented'], ctx];
+    let hdlr2 = ["stop", ctx['onClickStopped'], ctx];
+    let hdlr3 = ["prevent","stop", ctx['onClickPreventedAndStopped'], ctx];
     return block1([hdlr1, hdlr2, hdlr3]);
   }
 }"
@@ -342,9 +342,9 @@ exports[`t-on t-on modifiers (native listener) t-on with prevent modifier in t-f
   let { prepareList, withKey } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<a href=\\"#\\" block-handler-0=\\"click.prevent\\"> Edit <block-text-1/></a>\`);
+  let block3 = createBlock(\`<a href="#" block-handler-0="click.prevent"> Edit <block-text-1/></a>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['projects']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -352,7 +352,7 @@ exports[`t-on t-on modifiers (native listener) t-on with prevent modifier in t-f
       const key1 = ctx['project'];
       const v1 = ctx['onEdit'];
       const v2 = ctx['project'];
-      let hdlr1 = [\\"prevent\\", _ev=>v1(v2.id,_ev), ctx];
+      let hdlr1 = ["prevent", _ev=>v1(v2.id,_ev), ctx];
       let txt1 = ctx['project'].name;
       c_block2[i1] = withKey(block3([hdlr1, txt1]), key1);
     }
@@ -367,10 +367,10 @@ exports[`t-on t-on modifiers (native listener) t-on with self and prevent modifi
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><button block-handler-0=\\"click.self.prevent\\"><span>Button</span></button></div>\`);
+  let block1 = createBlock(\`<div><button block-handler-0="click.self.prevent"><span>Button</span></button></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [\\"self\\",\\"prevent\\", ctx['onClick'], ctx];
+  return function template(ctx, node, key = "") {
+    let hdlr1 = ["self","prevent", ctx['onClick'], ctx];
     return block1([hdlr1]);
   }
 }"
@@ -381,11 +381,11 @@ exports[`t-on t-on modifiers (native listener) t-on with self modifier 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><button block-handler-0=\\"click\\"><span>Button</span></button><button block-handler-1=\\"click.self\\"><span>Button</span></button></div>\`);
+  let block1 = createBlock(\`<div><button block-handler-0="click"><span>Button</span></button><button block-handler-1="click.self"><span>Button</span></button></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let hdlr1 = [ctx['onClick'], ctx];
-    let hdlr2 = [\\"self\\", ctx['onClickSelf'], ctx];
+    let hdlr2 = ["self", ctx['onClickSelf'], ctx];
     return block1([hdlr1, hdlr2]);
   }
 }"
@@ -396,11 +396,11 @@ exports[`t-on t-on modifiers (synthetic listener) basic support for synthetic 1`
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div block-handler-0=\\"click.synthetic\\"><button block-handler-1=\\"click.synthetic\\">Button</button></div>\`);
+  let block1 = createBlock(\`<div block-handler-0="click.synthetic"><button block-handler-1="click.synthetic">Button</button></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
-    let hdlr1 = [\\"synthetic\\", ctx['divClicked'], ctx];
-    let hdlr2 = [\\"synthetic\\", ctx['btnClicked'], ctx];
+  return function template(ctx, node, key = "") {
+    let hdlr1 = ["synthetic", ctx['divClicked'], ctx];
+    let hdlr2 = ["synthetic", ctx['btnClicked'], ctx];
     return block1([hdlr1, hdlr2]);
   }
 }"
@@ -411,9 +411,9 @@ exports[`t-on t-on with inline statement (function call) 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
+  let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const v1 = ctx['state'];
     let hdlr1 = [()=>v1.incrementCounter(2), ctx];
     return block1([hdlr1]);
@@ -426,9 +426,9 @@ exports[`t-on t-on with inline statement 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Click</button>\`);
+  let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const v1 = ctx['state'];
     let hdlr1 = [()=>v1.counter++, ctx];
     return block1([hdlr1]);
@@ -441,9 +441,9 @@ exports[`t-on t-on with inline statement, part 2 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Toggle</button>\`);
+  let block1 = createBlock(\`<button block-handler-0="click">Toggle</button>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const v1 = ctx['state'];
     let hdlr1 = [()=>v1.flag=!v1.flag, ctx];
     return block1([hdlr1]);
@@ -456,9 +456,9 @@ exports[`t-on t-on with inline statement, part 3 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<button block-handler-0=\\"click\\">Toggle</button>\`);
+  let block1 = createBlock(\`<button block-handler-0="click">Toggle</button>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const v1 = ctx['state'];
     const v2 = ctx['someFunction'];
     let hdlr1 = [()=>v1.n=v2(3), ctx];
@@ -475,7 +475,7 @@ exports[`t-on t-on with t-call 1`] = `
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
@@ -487,9 +487,9 @@ exports[`t-on t-on with t-call 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<p block-handler-0=\\"click\\">lucas</p>\`);
+  let block1 = createBlock(\`<p block-handler-0="click">lucas</p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let hdlr1 = [ctx['update'], ctx];
     return block1([hdlr1]);
   }
@@ -504,7 +504,7 @@ exports[`t-on t-on, with arguments and t-call 1`] = `
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
@@ -516,9 +516,9 @@ exports[`t-on t-on, with arguments and t-call 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<p block-handler-0=\\"click\\">lucas</p>\`);
+  let block1 = createBlock(\`<p block-handler-0="click">lucas</p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const v1 = ctx['this'];
     const v2 = ctx['value'];
     let hdlr1 = [()=>v1.update(v2), ctx];

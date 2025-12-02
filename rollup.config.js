@@ -1,7 +1,7 @@
 import pkg from "./package.json";
 import git from "git-rev-sync";
 import typescript from "rollup-plugin-typescript2";
-import { terser } from "rollup-plugin-terser";
+import terser from '@rollup/plugin-terser';
 import dts from "rollup-plugin-dts";
 
 let input, output;

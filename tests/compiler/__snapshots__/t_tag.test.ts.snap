@@ -7,7 +7,7 @@ exports[`qweb t-tag can fallback if falsy tag 1`] = `
   
   let block1 = tag => createBlock(\`<\${tag || 'fallback'}/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const tag1 = ctx['tag'];
     return toggler(tag1, block1(tag1)());
   }
@@ -21,7 +21,7 @@ exports[`qweb t-tag can update 1`] = `
   
   let block1 = tag => createBlock(\`<\${tag || 't'}/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const tag1 = ctx['tag'];
     return toggler(tag1, block1(tag1)());
   }
@@ -35,7 +35,7 @@ exports[`qweb t-tag simple usecases 1`] = `
   
   let block1 = tag => createBlock(\`<\${tag || 't'}/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const tag1 = 'div';
     return toggler(tag1, block1(tag1)());
   }
@@ -49,7 +49,7 @@ exports[`qweb t-tag simple usecases 2`] = `
   
   let block1 = tag => createBlock(\`<\${tag || 't'}>text</\${tag || 't'}>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const tag1 = ctx['tag'];
     return toggler(tag1, block1(tag1)());
   }
@@ -61,9 +61,9 @@ exports[`qweb t-tag with multiple attributes 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = tag => createBlock(\`<\${tag || 't'} class=\\"blueberry\\" taste=\\"raspberry\\">gooseberry</\${tag || 't'}>\`);
+  let block1 = tag => createBlock(\`<\${tag || 't'} class="blueberry" taste="raspberry">gooseberry</\${tag || 't'}>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const tag1 = ctx['tag'];
     return toggler(tag1, block1(tag1)());
   }
@@ -77,7 +77,7 @@ exports[`qweb t-tag with multiple child nodes 1`] = `
   
   let block1 = tag => createBlock(\`<\${tag || 't'}> pear <span>apple</span> strawberry </\${tag || 't'}>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const tag1 = ctx['tag'];
     return toggler(tag1, block1(tag1)());
   }
@@ -92,7 +92,7 @@ exports[`qweb t-tag with multiple t-tag in same template 1`] = `
   let block1 = tag => createBlock(\`<\${tag || 't'}><block-child-0/></\${tag || 't'}>\`);
   let block2 = tag => createBlock(\`<\${tag || 't'}>baz</\${tag || 't'}>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const tag1 = ctx['outer'];
     const tag2 = ctx['inner'];
     const b2 = toggler(tag2, block2(tag2)());
@@ -109,7 +109,7 @@ exports[`qweb t-tag with multiple t-tag in same template, part 2 1`] = `
   let block2 = tag => createBlock(\`<\${tag || 't'}>bar</\${tag || 't'}>\`);
   let block3 = tag => createBlock(\`<\${tag || 't'}>baz</\${tag || 't'}>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const tag1 = ctx['brother'];
     const b2 = toggler(tag1, block2(tag1)());
     const tag2 = ctx['brother'];

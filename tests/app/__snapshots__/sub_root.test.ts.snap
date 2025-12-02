@@ -7,7 +7,7 @@ exports[`destroy a subroot while another component is mounted in main app 1`] = 
   const comp1 = app.createComponent(\`ChildB\`, true, false, false, []);
   const comp2 = app.createComponent(\`ChildA\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2, b3;
     if (ctx['state'].flag) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
@@ -24,9 +24,9 @@ exports[`destroy a subroot while another component is mounted in main app 2`] = 
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block3 = createBlock(\`<div block-ref=\\"0\\"/>\`);
+  let block3 = createBlock(\`<div block-ref="0"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = text(\`a\`);
     let ref1 = (el) => this.__owl__.setRef((\`elem\`), el);
     const b3 = block3([ref1]);
@@ -40,7 +40,7 @@ exports[`destroy a subroot while another component is mounted in main app 3`] = 
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return text(\`c\`);
   }
 }"
@@ -51,7 +51,7 @@ exports[`destroy a subroot while another component is mounted in main app 4`] = 
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return text(\`b\`);
   }
 }"
@@ -64,7 +64,7 @@ exports[`subroot by default, env is the same in sub root 1`] = `
   
   let block1 = createBlock(\`<div>main app</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return block1();
   }
 }"
@@ -77,7 +77,7 @@ exports[`subroot by default, env is the same in sub root 2`] = `
   
   let block1 = createBlock(\`<div>sub root</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return block1();
   }
 }"
@@ -88,7 +88,7 @@ exports[`subroot can create a root in a setup function, then use a hook 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return text(\`a\`);
   }
 }"
@@ -99,7 +99,7 @@ exports[`subroot can create a root in a setup function, then use a hook 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return text(\`c\`);
   }
 }"
@@ -112,7 +112,7 @@ exports[`subroot can mount subroot 1`] = `
   
   let block1 = createBlock(\`<div>main app</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return block1();
   }
 }"
@@ -125,7 +125,7 @@ exports[`subroot can mount subroot 2`] = `
   
   let block1 = createBlock(\`<div>sub root</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return block1();
   }
 }"
@@ -138,7 +138,7 @@ exports[`subroot can mount subroot inside own dom 1`] = `
   
   let block1 = createBlock(\`<div>main app</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return block1();
   }
 }"
@@ -151,7 +151,7 @@ exports[`subroot can mount subroot inside own dom 2`] = `
   
   let block1 = createBlock(\`<div>sub root</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return block1();
   }
 }"
@@ -164,7 +164,7 @@ exports[`subroot env can be specified for sub roots 1`] = `
   
   let block1 = createBlock(\`<div>main app</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return block1();
   }
 }"
@@ -177,7 +177,7 @@ exports[`subroot env can be specified for sub roots 2`] = `
   
   let block1 = createBlock(\`<div>sub root</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return block1();
   }
 }"
@@ -190,7 +190,7 @@ exports[`subroot subcomponents can be destroyed, and it properly cleanup the sub
   
   let block1 = createBlock(\`<div>main app</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return block1();
   }
 }"
@@ -203,7 +203,7 @@ exports[`subroot subcomponents can be destroyed, and it properly cleanup the sub
   
   let block1 = createBlock(\`<div>sub root</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return block1();
   }
 }"

@@ -1,15 +1,15 @@
+import { OwlError } from "../common/owl_error";
 import { version } from "../version";
 import { Component, ComponentConstructor, Props } from "./component";
 import { ComponentNode, saveCurrent } from "./component_node";
-import { nodeErrorHandlers, handleError } from "./error_handling";
-import { OwlError } from "../common/owl_error";
-import { Fiber, RootFiber, MountOptions } from "./fibers";
+import { handleError, nodeErrorHandlers } from "./error_handling";
+import { Fiber, MountOptions, RootFiber } from "./fibers";
+import { PluginManager } from "./plugins";
+import { reactive, toRaw } from "./reactivity";
 import { Scheduler } from "./scheduler";
 import { validateProps } from "./template_helpers";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
 import { validateTarget } from "./utils";
-import { toRaw, reactive } from "./reactivity";
-import { PluginCtor, PluginManager } from "./plugins";
 
 // reimplement dev mode stuff see last change in 0f7a8289a6fb8387c3c1af41c6664b2a8448758f
 
@@ -20,7 +20,8 @@ export interface Env {
 export interface RootConfig<P, E> {
   props?: P;
   env?: E;
-  Plugins?: PluginCtor[];
+  pluginManager?: PluginManager;
+
 }
 
 export interface AppConfig<P, E> extends TemplateSetConfig, RootConfig<P, E> {
@@ -55,7 +56,6 @@ window.__OWL_DEVTOOLS__ ||= { apps, Fiber, RootFiber, toRaw, reactive };
 
 export class App<
   T extends abstract new (...args: any) => any = any,
-  Plugins = any,
   P extends object = any,
   E = any
 > extends TemplateSet {
@@ -64,7 +64,7 @@ export class App<
   static version = version;
 
   name: string;
-  Root: ComponentConstructor<P, Plugins, E>;
+  Root: ComponentConstructor<P, E>;
   props: P;
   env: E;
   scheduler = new Scheduler();
@@ -73,12 +73,12 @@ export class App<
   warnIfNoStaticProps: boolean;
   pluginManager: PluginManager;
 
-  constructor(Root: ComponentConstructor<P, Plugins, E>, config: AppConfig<P, E> = {}) {
+  constructor(Root: ComponentConstructor<P, E>, config: AppConfig<P, E> = {}) {
     super(config);
     this.name = config.name || "";
     this.Root = Root;
     apps.add(this);
-    this.pluginManager = new PluginManager(null, config.Plugins || []);
+    this.pluginManager = config.pluginManager || new PluginManager(null);
     if (config.test) {
       this.dev = true;
     }
@@ -103,8 +103,8 @@ export class App<
     return root.mount(target, options) as any;
   }
 
-  createRoot<Props extends object, Plugins = any, SubEnv = any>(
-    Root: ComponentConstructor<Props, Plugins, E>,
+  createRoot<Props extends object, SubEnv = any>(
+    Root: ComponentConstructor<Props, E>,
     config: RootConfig<Props, SubEnv> = {}
   ): Root<Props, SubEnv> {
     const props = config.props || ({} as Props);
@@ -267,13 +267,12 @@ export class App<
 
 export async function mount<
   T extends abstract new (...args: any) => any = any,
-  Plugins = any,
   P extends object = any,
   E = any
 >(
-  C: T & ComponentConstructor<P, Plugins, E>,
+  C: T & ComponentConstructor<P, E>,
   target: HTMLElement,
   config: AppConfig<P, E> & MountOptions = {}
-): Promise<Component<P, Plugins, E> & InstanceType<T>> {
+): Promise<Component<P, E> & InstanceType<T>> {
   return new App(C, config).mount(target, config);
 }

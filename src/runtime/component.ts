@@ -1,6 +1,5 @@
 import { Schema } from "./validation";
 import type { ComponentNode } from "./component_node";
-import type { PluginManager } from "./plugins";
 
 // -----------------------------------------------------------------------------
 //  Component Class
@@ -15,28 +14,25 @@ interface StaticComponentProperties {
   components?: { [componentName: string]: ComponentConstructor };
 }
 
-export type ComponentConstructor<P extends Props = any, Plugins = any, E = any> = (new (
+export type ComponentConstructor<P extends Props = any, E = any> = (new (
   props: P,
   env: E,
-  plugins: Plugins,
   node: ComponentNode
-) => Component<P, Plugins, E>) &
+) => Component<P, E>) &
   StaticComponentProperties;
 
-export class Component<Props = any, Plugins = PluginManager["plugins"], Env = any> {
+export class Component<Props = any, Env = any> {
   static template: string = "";
   static props?: Schema;
   static defaultProps?: any;
 
   props: Props;
   env: Env;
-  plugins: Plugins;
   __owl__: ComponentNode;
 
-  constructor(props: Props, env: Env, plugins: Plugins, node: ComponentNode) {
+  constructor(props: Props, env: Env, node: ComponentNode) {
     this.props = props;
     this.env = env;
-    this.plugins = plugins;
     this.__owl__ = node;
   }
 

@@ -65,13 +65,13 @@ export function useState<T extends object>(state: T): T {
 
 type LifecycleHook = Function;
 
-export class ComponentNode<P extends Props = any, Plugins = any, E = any>
+export class ComponentNode<P extends Props = any, E = any>
   implements VNode<ComponentNode<P, E>>
 {
   el?: HTMLElement | Text | undefined;
   app: App;
   fiber: Fiber | null = null;
-  component: Component<P, Plugins, E>;
+  component: Component<P, E>;
   bdom: BDom | null = null;
   status: STATUS = STATUS.NEW;
   forceNextRender: boolean = false;
@@ -97,7 +97,7 @@ export class ComponentNode<P extends Props = any, Plugins = any, E = any>
   pluginManager: PluginManager;
 
   constructor(
-    C: ComponentConstructor<P, Plugins, E>,
+    C: ComponentConstructor<P, E>,
     props: P,
     app: App,
     parent: ComponentNode | null,
@@ -124,7 +124,7 @@ export class ComponentNode<P extends Props = any, Plugins = any, E = any>
     this.childEnv = env;
     const previousComputation = getCurrentComputation();
     setComputation(this.signalComputation);
-    this.component = new C(props, env, this.pluginManager.plugins as any, this);
+    this.component = new C(props, env, this);
     const ctx = Object.assign(Object.create(this.component), { this: this.component });
     this.renderFn = app.getTemplate(C.template).bind(this.component, ctx, this);
     this.component.setup();

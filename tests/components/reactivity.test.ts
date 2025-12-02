@@ -201,7 +201,7 @@ describe("reactivity in lifecycle", () => {
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("2");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
         "Parent:willRender",
@@ -219,7 +219,7 @@ describe("reactivity in lifecycle", () => {
     parent.state.renderChild = false;
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willRender",
         "Parent:rendered",
         "Parent:willPatch",

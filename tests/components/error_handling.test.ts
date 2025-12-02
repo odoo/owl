@@ -636,7 +636,7 @@ describe("can catch errors", () => {
 
     const app = await mount(Main, fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Main:setup",
         "Main:willStart",
         "Main:willRender",
@@ -649,7 +649,7 @@ describe("can catch errors", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("Main<div>Error!!!</div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Main:willRender",
         "ErrorComponent:setup",
         "ErrorComponent:willStart",
@@ -666,7 +666,7 @@ describe("can catch errors", () => {
     `);
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "PerfectComponent:willRender",
         "PerfectComponent:rendered",
         "Main:willPatch",
@@ -1065,7 +1065,7 @@ describe("can catch errors", () => {
     await mount(Root, fixture);
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Root:setup",
         "Root:willStart",
         "Root:willRender",
@@ -1117,7 +1117,7 @@ describe("can catch errors", () => {
     await mount(Root, fixture);
     expect(fixture.innerHTML).toBe("<div>Error handled</div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Root:setup",
         "Root:willStart",
         "Root:willRender",
@@ -1180,7 +1180,7 @@ describe("can catch errors", () => {
     await mount(A, fixture);
     expect(fixture.innerHTML).toBe("<div><div>Error handled</div></div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "A:setup",
         "A:willStart",
         "A:willRender",
@@ -1253,7 +1253,7 @@ describe("can catch errors", () => {
     await mount(Root, fixture);
     expect(fixture.innerHTML).toBe("<div>OK<div>Error handled</div></div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Root:setup",
         "Root:willStart",
         "Root:willRender",
@@ -1606,7 +1606,7 @@ describe("can catch errors", () => {
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("1<div>abc</div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
         "Parent:willRender",
@@ -1625,7 +1625,7 @@ describe("can catch errors", () => {
     await nextTick();
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willRender",
         "Parent:rendered",
         "Parent:willPatch",
@@ -1671,7 +1671,7 @@ describe("can catch errors", () => {
     expect(fixture.innerHTML).toBe("1");
 
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
         "Parent:willRender",
@@ -1687,7 +1687,7 @@ describe("can catch errors", () => {
     await nextMicroTick();
     await nextMicroTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willRender",
         "Child:setup",
         "Child:willStart",
@@ -1699,7 +1699,7 @@ describe("can catch errors", () => {
     parent.state.hasChild = false;
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willRender",
         "Parent:rendered",
         "Child:willDestroy",
@@ -1710,7 +1710,7 @@ describe("can catch errors", () => {
     expect(fixture.innerHTML).toBe("1");
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willPatch",
         "Parent:patched",
       ]
@@ -1769,7 +1769,7 @@ describe("can catch errors", () => {
     expect(fixture.innerHTML).toBe("def");
 
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Root:setup",
         "Root:willStart",
         "Root:willRender",
@@ -1854,7 +1854,7 @@ describe("can catch errors", () => {
 
     // standard mounting process
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Root:setup",
         "Root:willStart",
         "Root:willRender",
@@ -1869,7 +1869,7 @@ describe("can catch errors", () => {
     expect(fixture.innerHTML).toBe("Rparentabcboom");
     // rerender, root creates sub components, it crashes, tries to recover
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Root:willRender",
         "Parent:setup",
         "Parent:willStart",
@@ -1898,7 +1898,7 @@ describe("can catch errors", () => {
     expect(fixture.innerHTML).toBe("Rdef");
 
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "OtherChild:willRender",
         "OtherChild:rendered",
         "Root:willPatch",

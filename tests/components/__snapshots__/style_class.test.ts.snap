@@ -4,9 +4,9 @@ exports[`style and class handling can set class on multi root component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"class\\"]);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, ["class"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return comp1({class: 'fromparent'}, key + \`__1\`, node, this, null);
   }
 }"
@@ -18,9 +18,9 @@ exports[`style and class handling can set class on multi root component 2`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   let block2 = createBlock(\`<div>a</div>\`);
-  let block3 = createBlock(\`<span block-attribute-0=\\"class\\">b</span>\`);
+  let block3 = createBlock(\`<span block-attribute-0="class">b</span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = block2();
     let attr1 = ctx['props'].class;
     const b3 = block3([attr1]);
@@ -33,9 +33,9 @@ exports[`style and class handling can set class on sub component, as prop 1`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"class\\"]);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, ["class"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return comp1({class: 'some-class'}, key + \`__1\`, node, this, null);
   }
 }"
@@ -46,9 +46,9 @@ exports[`style and class handling can set class on sub component, as prop 2`] = 
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div block-attribute-0=\\"class\\">child</div>\`);
+  let block1 = createBlock(\`<div block-attribute-0="class">child</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let attr1 = ctx['props'].class;
     return block1([attr1]);
   }
@@ -59,9 +59,9 @@ exports[`style and class handling can set class on sub sub component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"class\\"]);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, ["class"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return comp1({class: 'fromparent'}, key + \`__1\`, node, this, null);
   }
 }"
@@ -71,9 +71,9 @@ exports[`style and class handling can set class on sub sub component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ChildChild\`, true, false, false, [\\"class\\"]);
+  const comp1 = app.createComponent(\`ChildChild\`, true, false, false, ["class"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return comp1({class: (ctx['props'].class||'')+' fromchild'}, key + \`__1\`, node, this, null);
   }
 }"
@@ -84,9 +84,9 @@ exports[`style and class handling can set class on sub sub component 3`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div block-attribute-0=\\"class\\">childchild</div>\`);
+  let block1 = createBlock(\`<div block-attribute-0="class">childchild</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let attr1 = ctx['props'].class;
     return block1([attr1]);
   }
@@ -97,9 +97,9 @@ exports[`style and class handling can set more than one class on sub component 1
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"class\\"]);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, ["class"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return comp1({class: 'a  b'}, key + \`__1\`, node, this, null);
   }
 }"
@@ -110,9 +110,9 @@ exports[`style and class handling can set more than one class on sub component 2
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div block-attribute-0=\\"class\\">child</div>\`);
+  let block1 = createBlock(\`<div block-attribute-0="class">child</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let attr1 = ctx['props'].class;
     return block1([attr1]);
   }
@@ -124,9 +124,9 @@ exports[`style and class handling can set style and class inside component 1`] =
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div style=\\"font-weight:bold;\\" class=\\"some-class\\">world</div>\`);
+  let block1 = createBlock(\`<div style="font-weight:bold;" class="some-class">world</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return block1();
   }
 }"
@@ -137,9 +137,9 @@ exports[`style and class handling class on components do not interfere with user
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
+  let block1 = createBlock(\`<div block-attribute-0="class"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let attr1 = {c:ctx['state'].c};
     return block1([attr1]);
   }
@@ -150,9 +150,9 @@ exports[`style and class handling class on sub component, which is switched to a
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"class\\",\\"child\\"]);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, ["class","child"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return comp1({class: 'someclass',child: ctx['state'].child}, key + \`__1\`, node, this, null);
   }
 }"
@@ -162,10 +162,10 @@ exports[`style and class handling class on sub component, which is switched to a
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ChildA\`, true, false, false, [\\"class\\"]);
-  const comp2 = app.createComponent(\`ChildB\`, true, false, false, [\\"class\\"]);
+  const comp1 = app.createComponent(\`ChildA\`, true, false, false, ["class"]);
+  const comp2 = app.createComponent(\`ChildB\`, true, false, false, ["class"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let b2, b3;
     if (ctx['props'].child==='a') {
       b2 = comp1({class: ctx['props'].class}, key + \`__1\`, node, this, null);
@@ -182,9 +182,9 @@ exports[`style and class handling class on sub component, which is switched to a
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div block-attribute-0=\\"class\\">a</div>\`);
+  let block1 = createBlock(\`<div block-attribute-0="class">a</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let attr1 = ctx['props'].class;
     return block1([attr1]);
   }
@@ -196,9 +196,9 @@ exports[`style and class handling class on sub component, which is switched to a
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<span block-attribute-0=\\"class\\">b</span>\`);
+  let block1 = createBlock(\`<span block-attribute-0="class">b</span>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let attr1 = ctx['props'].class;
     return block1([attr1]);
   }
@@ -209,11 +209,11 @@ exports[`style and class handling class with extra whitespaces (variation) 1`] =
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"class\\"]);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, ["class"]);
   
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = comp1({class: 'a  b c   d'}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
@@ -225,9 +225,9 @@ exports[`style and class handling class with extra whitespaces (variation) 2`] =
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
+  let block1 = createBlock(\`<div block-attribute-0="class"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let attr1 = ctx['props'].class;
     return block1([attr1]);
   }
@@ -238,9 +238,9 @@ exports[`style and class handling class with extra whitespaces 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"class\\"]);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, ["class"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return comp1({class: 'a  b c   d'}, key + \`__1\`, node, this, null);
   }
 }"
@@ -251,9 +251,9 @@ exports[`style and class handling class with extra whitespaces 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div block-attribute-0=\\"class\\"/>\`);
+  let block1 = createBlock(\`<div block-attribute-0="class"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let attr1 = ctx['props'].class;
     return block1([attr1]);
   }
@@ -264,9 +264,9 @@ exports[`style and class handling component class and parent class combine toget
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"class\\"]);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, ["class"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return comp1({class: 'from parent'}, key + \`__1\`, node, this, null);
   }
 }"
@@ -277,9 +277,9 @@ exports[`style and class handling component class and parent class combine toget
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div class=\\"child\\" block-attribute-0=\\"class\\">child</div>\`);
+  let block1 = createBlock(\`<div class="child" block-attribute-0="class">child</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let attr1 = ctx['props'].class;
     return block1([attr1]);
   }
@@ -317,11 +317,11 @@ exports[`style and class handling empty class attribute is not added on widget r
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"class\\"]);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, ["class"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = comp1({class: undefined}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
@@ -333,9 +333,9 @@ exports[`style and class handling empty class attribute is not added on widget r
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<span block-attribute-0=\\"class\\"/>\`);
+  let block1 = createBlock(\`<span block-attribute-0="class"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let attr1 = ctx['props'].class;
     return block1([attr1]);
   }
@@ -346,9 +346,9 @@ exports[`style and class handling error in subcomponent with class 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"class\\"]);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, ["class"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return comp1({class: 'a'}, key + \`__1\`, node, this, null);
   }
 }"
@@ -359,9 +359,9 @@ exports[`style and class handling error in subcomponent with class 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div block-attribute-0=\\"class\\"><block-text-1/></div>\`);
+  let block1 = createBlock(\`<div block-attribute-0="class"><block-text-1/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let attr1 = ctx['props'].class;
     let txt1 = ctx['this'].will.crash;
     return block1([attr1, txt1]);
@@ -373,9 +373,9 @@ exports[`style and class handling no class is set is child ignores it 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"class\\"]);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, ["class"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return comp1({class: 'hey'}, key + \`__1\`, node, this, null);
   }
 }"
@@ -388,7 +388,7 @@ exports[`style and class handling no class is set is child ignores it 2`] = `
   
   let block1 = createBlock(\`<div>child</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return block1();
   }
 }"
@@ -400,7 +400,7 @@ exports[`style and class handling no class is set is parent does not give it as 
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return comp1({}, key + \`__1\`, node, this, null);
   }
 }"
@@ -411,9 +411,9 @@ exports[`style and class handling no class is set is parent does not give it as 
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div block-attribute-0=\\"class\\">child</div>\`);
+  let block1 = createBlock(\`<div block-attribute-0="class">child</div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let attr1 = ctx['props'].class;
     return block1([attr1]);
   }
@@ -424,9 +424,9 @@ exports[`style and class handling style is properly added on widget root el 1`] 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"style\\"]);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, ["style"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return comp1({style: 'font-weight: bold;'}, key + \`__1\`, node, this, null);
   }
 }"
@@ -437,9 +437,9 @@ exports[`style and class handling style is properly added on widget root el 2`] 
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div block-attribute-0=\\"style\\"/>\`);
+  let block1 = createBlock(\`<div block-attribute-0="style"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let attr1 = ctx['props'].style;
     return block1([attr1]);
   }
@@ -450,11 +450,11 @@ exports[`style and class handling t-att-class is properly added/removed on widge
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"class\\"]);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, ["class"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     const b2 = comp1({class: {b:ctx['state'].b}}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
@@ -466,9 +466,9 @@ exports[`style and class handling t-att-class is properly added/removed on widge
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<span class=\\"c\\" block-attribute-0=\\"class\\"/>\`);
+  let block1 = createBlock(\`<span class="c" block-attribute-0="class"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let attr1 = {d:ctx['state'].d,...ctx['props'].class};
     return block1([attr1]);
   }
@@ -479,9 +479,9 @@ exports[`style and class handling t-att-class is properly added/removed on widge
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"class\\"]);
+  const comp1 = app.createComponent(\`Child\`, true, false, false, ["class"]);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     return comp1({class: {a:true,b:ctx['state'].b}}, key + \`__1\`, node, this, null);
   }
 }"
@@ -492,9 +492,9 @@ exports[`style and class handling t-att-class is properly added/removed on widge
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<span class=\\"c\\" block-attribute-0=\\"class\\"/>\`);
+  let block1 = createBlock(\`<span class="c" block-attribute-0="class"/>\`);
   
-  return function template(ctx, node, key = \\"\\") {
+  return function template(ctx, node, key = "") {
     let attr1 = {d:ctx['state'].d,...ctx['props'].class};
     return block1([attr1]);
   }

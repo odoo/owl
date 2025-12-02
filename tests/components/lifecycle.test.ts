@@ -502,7 +502,7 @@ describe("lifecycle hooks", () => {
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div><span>0</span></div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
         "Parent:willRender",
@@ -520,7 +520,7 @@ describe("lifecycle hooks", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willRender",
         "Child:willUpdateProps",
         "Parent:rendered",
@@ -537,7 +537,7 @@ describe("lifecycle hooks", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willRender",
         "Parent:rendered",
         "Parent:willPatch",
@@ -567,7 +567,7 @@ describe("lifecycle hooks", () => {
     const app = new App(Parent);
     await app.mount(fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
         "Parent:willRender",
@@ -583,7 +583,7 @@ describe("lifecycle hooks", () => {
 
     app.destroy();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willUnmount",
         "Child:willUnmount",
         "Child:willDestroy",
@@ -689,7 +689,7 @@ describe("lifecycle hooks", () => {
     const app = new App(Parent);
     await app.mount(fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
         "Parent:willRender",
@@ -705,7 +705,7 @@ describe("lifecycle hooks", () => {
 
     app.destroy();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willUnmount",
         "Child:willUnmount",
         "Child:willDestroy",
@@ -741,7 +741,7 @@ describe("lifecycle hooks", () => {
     const app = new App(Parent);
     const parent = await app.mount(fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
         "Parent:willRender",
@@ -753,7 +753,7 @@ describe("lifecycle hooks", () => {
     parent.state.hasChild = true;
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willRender",
         "Child:setup",
         "Child:willStart",
@@ -773,7 +773,7 @@ describe("lifecycle hooks", () => {
 
     app.destroy();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willUnmount",
         "Child:willUnmount",
         "GrandChild:willUnmount",
@@ -811,7 +811,7 @@ describe("lifecycle hooks", () => {
     const app = new App(Parent);
     const parent = await app.mount(fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
         "Parent:willRender",
@@ -825,7 +825,7 @@ describe("lifecycle hooks", () => {
     app.destroy();
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willUnmount",
         "Parent:willDestroy",
       ]
@@ -863,7 +863,7 @@ describe("lifecycle hooks", () => {
     const parent = await app.mount(fixture);
 
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
         "Parent:willRender",
@@ -875,7 +875,7 @@ describe("lifecycle hooks", () => {
     parent.state.hasChild = true;
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willRender",
         "Child:setup",
         "Child:willStart",
@@ -889,7 +889,7 @@ describe("lifecycle hooks", () => {
 
     app.destroy();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willUnmount",
         "GrandChild:willDestroy",
         "Child:willDestroy",
@@ -917,7 +917,7 @@ describe("lifecycle hooks", () => {
 
     const parent = await mount(Parent, fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
         "Parent:willRender",
@@ -934,7 +934,7 @@ describe("lifecycle hooks", () => {
     parent.state.hasChild = false;
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willRender",
         "Parent:rendered",
         "Parent:willPatch",
@@ -964,7 +964,7 @@ describe("lifecycle hooks", () => {
 
     const parent = await mount(Parent, fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
         "Parent:willRender",
@@ -981,7 +981,7 @@ describe("lifecycle hooks", () => {
     parent.state.value = 2;
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willRender",
         "Child:willUpdateProps",
         "Parent:rendered",
@@ -1025,7 +1025,7 @@ describe("lifecycle hooks", () => {
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<button>1</button>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
         "Parent:willRender",
@@ -1042,7 +1042,7 @@ describe("lifecycle hooks", () => {
     parent.state.value++; // to block child render
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willRender",
         "Child:willUpdateProps",
         "Parent:rendered",
@@ -1053,18 +1053,18 @@ describe("lifecycle hooks", () => {
     await nextTick();
     await nextTick();
     await nextTick();
-    expect(steps.splice(0)).toMatchInlineSnapshot(`Array []`);
+    expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
 
     fixture.querySelector("button")!.click();
     await nextTick();
-    expect(steps.splice(0)).toMatchInlineSnapshot(`Array []`);
+    expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
     expect(fixture.innerHTML).toBe("<button>1</button>");
 
     def.resolve();
     await nextTick();
     expect(fixture.innerHTML).toBe("<button>3</button>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Child:willRender",
         "Child:rendered",
         "Parent:willPatch",
@@ -1154,7 +1154,7 @@ describe("lifecycle hooks", () => {
     await mount(A, fixture);
     expect(fixture.innerHTML).toBe(`<div>A<div>B</div><div>C<div>D</div><div>E</div></div></div>`);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "A:setup",
         "A:willStart",
         "A:willRender",
@@ -1187,7 +1187,7 @@ describe("lifecycle hooks", () => {
     c!.state.flag = false;
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "C:willRender",
         "F:setup",
         "F:willStart",
@@ -1222,7 +1222,7 @@ describe("lifecycle hooks", () => {
 
     const parent = await mount(Parent, fixture);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
         "Parent:willRender",
@@ -1239,7 +1239,7 @@ describe("lifecycle hooks", () => {
     parent.state.hasChild = false;
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willRender",
         "Parent:rendered",
         "Parent:willPatch",
@@ -1252,7 +1252,7 @@ describe("lifecycle hooks", () => {
     parent.state.hasChild = true;
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willRender",
         "Child:setup",
         "Child:willStart",
@@ -1282,7 +1282,7 @@ describe("lifecycle hooks", () => {
     await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<span></span>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
         "Parent:willRender",
@@ -1296,7 +1296,7 @@ describe("lifecycle hooks", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<span>Patched</span>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willPatch",
         "Parent:patched",
       ]
@@ -1322,7 +1322,7 @@ describe("lifecycle hooks", () => {
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<span></span>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
         "Parent:willRender",
@@ -1335,7 +1335,7 @@ describe("lifecycle hooks", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<span></span>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willRender",
         "Parent:rendered",
         "Parent:willPatch",
@@ -1348,7 +1348,7 @@ describe("lifecycle hooks", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("<span>Patched</span>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willPatch",
         "Parent:patched",
       ]
@@ -1374,7 +1374,7 @@ describe("lifecycle hooks", () => {
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<span></span>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
         "Parent:willRender",
@@ -1388,7 +1388,7 @@ describe("lifecycle hooks", () => {
     expect(fixture.innerHTML).toBe("<span></span>");
 
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willRender",
         "Parent:rendered",
         "Parent:willPatch",
@@ -1400,7 +1400,7 @@ describe("lifecycle hooks", () => {
 
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willPatch",
         "Parent:patched",
       ]
@@ -1448,7 +1448,7 @@ describe("lifecycle hooks", () => {
     app.destroy();
 
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "onWillStart",
         "onWillRender",
         "onRendered",
@@ -1494,7 +1494,7 @@ describe("lifecycle hooks", () => {
     const parent = await app.mount(fixture);
     expect(fixture.innerHTML).toBe("beforeafter");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
         "Parent:willRender",
@@ -1508,7 +1508,7 @@ describe("lifecycle hooks", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willRender",
         "Child:setup",
         "Child:willStart",

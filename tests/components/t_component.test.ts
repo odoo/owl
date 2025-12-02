@@ -30,7 +30,7 @@ describe("t-component", () => {
 
     expect(fixture.innerHTML).toBe("<div>child</div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
         "Parent:willRender",
@@ -71,7 +71,7 @@ describe("t-component", () => {
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<div>child a</div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:setup",
         "Parent:willStart",
         "Parent:willRender",
@@ -90,7 +90,7 @@ describe("t-component", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("child b");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
-      Array [
+      [
         "Parent:willRender",
         "ChildB:setup",
         "ChildB:willStart",

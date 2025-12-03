@@ -690,14 +690,12 @@ describe("can catch errors", () => {
         });
       }
     }
-    const app = new App({ test: true });
     let error: OwlError;
-    const crashProm = expect(nextAppError(app)).resolves.toThrow("error occurred in onWillStart");
-    await app
-      .createRoot(Root)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await crashProm;
+    try {
+      await mount(Root, fixture, { test: true });
+    } catch (e: any) {
+      error = e;
+    }
     expect(error!.message).toBe(
       `The following error occurred in onWillStart: "No active component (a hook function should only be called in 'setup')"`
     );

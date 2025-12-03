@@ -1,10 +1,20 @@
 import { OwlError } from "../common/owl_error";
+import type { App } from "./app";
 import type { ComponentNode } from "./component_node";
 import type { Fiber } from "./fibers";
 
 // Maps fibers to thrown errors
 export const fibersInError: WeakMap<Fiber, any> = new WeakMap();
 export const nodeErrorHandlers: WeakMap<ComponentNode, ((error: any) => void)[]> = new WeakMap();
+
+function destroyApp(app: App) {
+  console.warn(`[Owl] Unhandled error. Destroying the root component`);
+  try {
+    app.destroy();
+  } catch (e) {
+    console.error(e);
+  }
+}
 
 function _handleError(node: ComponentNode | null, error: any): boolean {
   if (!node) {
@@ -21,7 +31,10 @@ function _handleError(node: ComponentNode | null, error: any): boolean {
     // execute in the opposite order
     for (let i = errorHandlers.length - 1; i >= 0; i--) {
       try {
-        errorHandlers[i](error);
+        const result = errorHandlers[i](error);
+        if ((result as any) === "destroy") {
+          destroyApp(node.app);
+        }
         handled = true;
         break;
       } catch (e) {
@@ -63,12 +76,7 @@ export function handleError(params: ErrorParams) {
 
   const handled = _handleError(node, error);
   if (!handled) {
-    console.warn(`[Owl] Unhandled error. Destroying the root component`);
-    try {
-      node.app.destroy();
-    } catch (e) {
-      console.error(e);
-    }
+    destroyApp(node.app);
     throw error;
   }
 }

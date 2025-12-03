@@ -280,16 +280,33 @@ expect.extend({
 
 export function nextAppError(app: any) {
   const { handleError } = app;
-  return new Promise((resolve) => {
-    app.handleError = (...args: Parameters<typeof handleError>) => {
-      try {
-        handleError.call(app, ...args);
-      } catch (e: any) {
-        app.handleError = handleError;
-        resolve(e);
-      }
-    };
-  });
+  const rootPromises = [...app.roots].map((r) => r.promise);
+
+  let settled = false;
+
+  const done = (error: any, restore = true) => {
+    if (settled) return;
+    settled = true;
+    if (restore) app.handleError = handleError;
+    resolve(error);
+  };
+
+  let resolve: (value: any) => void;
+  const result = new Promise((res) => (resolve = res));
+
+  app.handleError = (...args: Parameters<typeof handleError>) => {
+    try {
+      handleError.call(app, ...args);
+    } catch (e) {
+      done(e);
+    }
+  };
+
+  for (const p of rootPromises) {
+    p.catch((err: any) => done(err));
+  }
+
+  return result;
 }
 
 declare global {

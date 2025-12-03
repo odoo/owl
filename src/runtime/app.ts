@@ -51,6 +51,7 @@ type MountTarget = HTMLElement | ShadowRoot;
 
 interface Root<P extends Props, E, T extends abstract new (...args: any) => any = any> {
   node: ComponentNode<P, E>;
+  promise: Promise<any>;
   mount(target: MountTarget, options?: MountOptions): Promise<Component<P, E> & InstanceType<T>>;
   destroy(): void;
 }
@@ -65,7 +66,7 @@ export class App<E = any> extends TemplateSet {
   name: string;
   env: E;
   scheduler = new Scheduler();
-  roots: Set<ComponentNode> = new Set();
+  roots: Set<Root<any, any>> = new Set();
   warnIfNoStaticProps: boolean;
   pluginManager: PluginManager;
 
@@ -107,54 +108,64 @@ export class App<E = any> extends TemplateSet {
     if (config.env) {
       this.env = env;
     }
-    this.roots.add(node);
-    return {
+    let resolve!: (value: any) => void;
+    let reject!: (reason?: any) => void;
+    const promise = new Promise<any>((res, rej) => {
+      resolve = res;
+      reject = rej;
+    });
+    const root = {
       node,
+      promise,
       mount: (target: HTMLElement | ShadowRoot, options?: MountOptions) => {
         App.validateTarget(target);
         if (this.dev) {
           validateProps(Root, props, { __owl__: { app: this } });
         }
-        const prom = this.mountNode(node, target, options);
-        return prom;
+        this.mountNode(node, target, resolve, reject, options);
+        return promise;
       },
       destroy: () => {
-        this.roots.delete(node);
+        this.roots.delete(root);
         node.destroy();
         this.scheduler.processTasks();
       },
     };
+    this.roots.add(root);
+    return root;
   }
 
   makeNode(Component: ComponentConstructor, props: any): ComponentNode {
     return new ComponentNode(Component, props, this, null, null);
   }
 
-  mountNode(node: ComponentNode, target: HTMLElement | ShadowRoot, options?: MountOptions) {
-    const promise: any = new Promise((resolve, reject) => {
-      let isResolved = false;
-      // manually set a onMounted callback.
-      // that way, we are independant from the current node.
-      node.mounted.push(() => {
-        resolve(node.component);
-        isResolved = true;
-      });
+  mountNode(
+    node: ComponentNode,
+    target: HTMLElement | ShadowRoot,
+    resolve: (c: any) => void,
+    reject: (e: any) => void,
+    options?: MountOptions
+  ) {
+    // Manually add the last resort error handler on the node
+    let handlers = nodeErrorHandlers.get(node);
+    if (!handlers) {
+      handlers = [];
+      nodeErrorHandlers.set(node, handlers);
+    }
 
-      // Manually add the last resort error handler on the node
-      let handlers = nodeErrorHandlers.get(node);
-      if (!handlers) {
-        handlers = [];
-        nodeErrorHandlers.set(node, handlers);
-      }
-      handlers.unshift((e) => {
-        if (!isResolved) {
-          reject(e);
-        }
-        throw e;
-      });
+    handlers.unshift((e) => {
+      reject(e);
+      return "destroy";
     });
+
+    // manually set a onMounted callback.
+    // that way, we are independant from the current node.
+    node.mounted.push(() => {
+      resolve(node.component);
+      handlers!.shift();
+    });
+
     node.mountComponent(target, options);
-    return promise;
   }
 
   destroy() {

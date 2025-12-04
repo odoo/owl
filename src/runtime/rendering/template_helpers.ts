@@ -1,11 +1,11 @@
-import { BDom, multi, text, toggler, createCatcher } from "./blockdom";
-import { Markup } from "./utils";
-import { html } from "./blockdom/index";
-import { isOptional, validateSchema } from "./validation";
-import type { ComponentConstructor, Props } from "./component";
-import { markRaw } from "./reactivity";
-import { OwlError } from "../common/owl_error";
-import type { ComponentNode } from "./component_node";
+import { BDom, multi, text, toggler, createCatcher } from "../blockdom";
+import { Markup } from "../utils";
+import { html } from "../blockdom/index";
+import { isOptional, validateSchema } from "../validation";
+import type { ComponentConstructor, Props } from "../component";
+import { markRaw } from "../reactivity/reactivity";
+import { OwlError } from "../../common/owl_error";
+import type { ComponentNode } from "../component_node";
 
 const ObjectCreate = Object.create;
 /**

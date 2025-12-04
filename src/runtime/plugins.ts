@@ -1,8 +1,8 @@
 import { OwlError } from "../common/owl_error";
 import { getCurrent } from "./component_node";
 import { onWillDestroy } from "./lifecycle_hooks";
-import { proxy } from "./reactivity";
-import { derived } from "./signals";
+import { proxy } from "./reactivity/reactivity";
+import { derived } from "./reactivity/signals";
 
 let currentPluginManager: PluginManager | null = null;
 
@@ -14,7 +14,6 @@ export interface PluginConstructor {
 
 interface PluginMetaData {
   isDestroyed: boolean;
-  //   manager: PluginManager;
 }
 
 export class Plugin {

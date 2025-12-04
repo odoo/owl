@@ -1,4 +1,4 @@
-import { derived, Signal, signal } from "./signals";
+import { derived, Signal, signal } from "./reactivity/signals";
 import { TypeDescription, validateType } from "./validation";
 
 type Fn<T> = () => T;

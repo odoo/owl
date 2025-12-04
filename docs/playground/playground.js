@@ -1,18 +1,18 @@
 import { debounce, loadJS } from "./utils.js";
 import {
-  App,
   Component,
-  useState,
+  proxy,
   useRef,
   onMounted,
   onWillUnmount,
   onPatched,
   onWillUpdateProps,
-  loadFile as _loadFile,
   whenReady,
   __info__,
   useEffect,
   onWillStart,
+  OwlError,
+  mount,
 } from "../owl.js";
 
 //------------------------------------------------------------------------------
@@ -32,7 +32,12 @@ const DEFAULT_XML = `<templates>
 const fileCache = {};
 const loadFile = (path) => {
   if (!(path in fileCache)) {
-    fileCache[path] = _loadFile(path);
+    fileCache[path] = fetch(path).then((result) => {
+      if (!result.ok) {
+        throw new OwlError("Error while fetching xml templates");
+      }
+      return result.text();
+    });
   }
   return fileCache[path];
 }
@@ -147,7 +152,7 @@ function loadSamples() {
 class TabbedEditor extends Component {
   setup() {
     const props = this.props;
-    this.state = useState({
+    this.state = proxy({
       currentTab: props.js !== false ? "js" : props.xml ? "xml" : "css"
     });
     this.setTab = debounce(this.setTab.bind(this), 250, true);
@@ -252,7 +257,7 @@ class Playground extends Component {
     this.version = __info__.version;
 
     this.isDirty = false;
-    this.state = useState({
+    this.state = proxy({
       js: "",
       css: "",
       xml: DEFAULT_XML,
@@ -394,10 +399,10 @@ async function start() {
     loadFile("templates.xml"),
     whenReady()
   ]);
-  const rootApp = new App(Playground, { name: "Owl Playground" });
-  rootApp.addTemplates(templates);
-
-  await  rootApp.mount(document.body);
+  await mount(Playground, document.body, {
+    name: "Owl Playground",
+    templates,
+  });
 }
 
 start();

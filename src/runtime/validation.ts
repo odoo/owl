@@ -1,5 +1,5 @@
 import { OwlError } from "../common/owl_error";
-import { toRaw } from "./reactivity";
+import { toRaw } from "./reactivity/reactivity";
 
 type BaseType = { new (...args: any[]): any } | true | "*";
 

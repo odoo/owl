@@ -1,9 +1,9 @@
-import { BDom, mount } from "./blockdom";
-import type { ComponentNode } from "./component_node";
+import { BDom, mount } from "../blockdom";
+import type { ComponentNode } from "../component_node";
 import { fibersInError } from "./error_handling";
-import { OwlError } from "../common/owl_error";
-import { STATUS } from "./status";
-import { runWithComputation } from "./signals";
+import { OwlError } from "../../common/owl_error";
+import { STATUS } from "../status";
+import { runWithComputation } from "../reactivity/signals";
 
 export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
   let current = node.fiber;

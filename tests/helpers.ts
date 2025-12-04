@@ -15,12 +15,12 @@ import {
   useComponent,
   xml,
 } from "../src";
-import { helpers } from "../src/runtime/template_helpers";
+import { helpers } from "../src/runtime/rendering/template_helpers";
 import { TemplateSet, globalTemplates } from "../src/runtime/template_set";
 import { BDom } from "../src/runtime/blockdom";
 import { compile } from "../src/compiler";
 import { OwlError } from "../src/common/owl_error";
-import { derived, effect } from "../src/runtime/signals";
+import { derived, effect } from "../src/runtime/reactivity/signals";
 
 const mount = blockDom.mount;
 

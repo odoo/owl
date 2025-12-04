@@ -12,8 +12,8 @@ import {
   proxy,
   xml,
 } from "../../src";
-import { Fiber } from "../../src/runtime/fibers";
-import { Scheduler } from "../../src/runtime/scheduler";
+import { Fiber } from "../../src/runtime/rendering/fibers";
+import { Scheduler } from "../../src/runtime/rendering/scheduler";
 import { status } from "../../src/runtime/status";
 import {
   makeDeferred,

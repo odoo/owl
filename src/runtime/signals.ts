@@ -6,7 +6,18 @@ let CurrentComputation: Computation | undefined;
 
 type SignalFunction<T> = () => T;
 export interface Signal<T> extends SignalFunction<T> {
+  /**
+   * Update the value of the signal with a new value. If the new value is different
+   * from the previous values, all computations that depends on this signal will
+   * be invalidated, and effects will rerun.
+   */
   set(value: T): void;
+  /**
+   * Call the updater function (if given) to update the signal value.
+   * If the updater value is not given, then all computations that depends on
+   * this signal will be invalidated and effects will rerun.
+   */
+  update(updater?: (value: T) => T): void;
 }
 
 export function signal<T>(value: T, opts?: Opts): Signal<T> {
@@ -28,6 +39,13 @@ export function signal<T>(value: T, opts?: Opts): Signal<T> {
     onWriteAtom(atom);
   };
   read.set = write;
+  read.update = (updater?: (value: T) => T) => {
+    if (updater) {
+      write(updater(atom.value));
+    } else {
+      onWriteAtom(atom);
+    }
+  };
   return read;
 }
 export function effect<T>(fn: () => T, opts?: Opts) {

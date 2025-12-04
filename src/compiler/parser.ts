@@ -1,5 +1,5 @@
+import { CustomDirectives } from ".";
 import { OwlError } from "../common/owl_error";
-import type { customDirectives } from "../common/types";
 import { parseXML } from "../common/utils";
 
 // -----------------------------------------------------------------------------
@@ -217,7 +217,7 @@ export type AST =
 // -----------------------------------------------------------------------------
 const cache: WeakMap<Element, AST> = new WeakMap();
 
-export function parse(xml: string | Element, customDir?: customDirectives): AST {
+export function parse(xml: string | Element, customDir?: CustomDirectives): AST {
   const ctx = {
     inPreTag: false,
     customDirectives: customDir,
@@ -244,7 +244,7 @@ interface ParsingContext {
   tModelInfo?: TModelInfo | null;
   nameSpace?: string;
   inPreTag: boolean;
-  customDirectives?: customDirectives;
+  customDirectives?: CustomDirectives;
 }
 
 function parseNode(node: Node, ctx: ParsingContext): AST | null {

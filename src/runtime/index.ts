@@ -40,7 +40,7 @@ export type { ComponentConstructor } from "./component";
 export { useComponent } from "./component_node";
 export { status } from "./status";
 export { proxy, markRaw, toRaw } from "./reactivity/proxy";
-export { withoutReactivity } from "./reactivity/computations";
+export { untrack } from "./reactivity/computations";
 export { signal } from "./reactivity/signal";
 export { derived } from "./reactivity/derived";
 export { effect } from "./reactivity/effect";

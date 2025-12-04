@@ -3,10 +3,10 @@ import { Atom, Computation, ComputationState } from "../common/types";
 import type { App, Env } from "./app";
 import { BDom, VNode } from "./blockdom";
 import { Component, ComponentConstructor, Props } from "./component";
-import { fibersInError } from "./error_handling";
-import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";
+import { fibersInError } from "./rendering/error_handling";
+import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./rendering/fibers";
 import { PluginManager } from "./plugins";
-import { getCurrentComputation, setComputation, withoutReactivity } from "./signals";
+import { getCurrentComputation, setComputation, withoutReactivity } from "./reactivity/signals";
 import { STATUS } from "./status";
 
 let currentNode: ComponentNode | null = null;

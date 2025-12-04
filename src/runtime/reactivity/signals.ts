@@ -1,5 +1,5 @@
-import { Atom, Computation, ComputationState, Derived, Opts } from "../common/types";
-import { batched } from "./utils";
+import { Atom, Computation, ComputationState, Derived, Opts } from "../../common/types";
+import { batched } from "../utils";
 
 let Effects: Computation[];
 let CurrentComputation: Computation | undefined;

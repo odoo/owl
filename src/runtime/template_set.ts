@@ -1,11 +1,11 @@
-import { compile, Template, TemplateFunction } from "../compiler";
+import { compile, CustomDirectives, Template, TemplateFunction } from "../compiler";
 import { comment, createBlock, html, list, multi, text, toggler } from "./blockdom";
 import { getCurrent } from "./component_node";
 import { Portal, portalTemplate } from "./portal";
 import { helpers } from "./rendering/template_helpers";
 import { OwlError } from "../common/owl_error";
 import { parseXML } from "../common/utils";
-import type { customDirectives } from "../common/types";
+
 
 const bdom = { text, createBlock, list, multi, html, toggler, comment };
 
@@ -15,7 +15,7 @@ export interface TemplateSetConfig {
   translateFn?: (s: string, translationCtx: string) => string;
   templates?: string | Document | Record<string, string>;
   getTemplate?: (s: string) => Element | Function | string | void;
-  customDirectives?: customDirectives;
+  customDirectives?: CustomDirectives;
   globalValues?: object;
 }
 
@@ -30,7 +30,7 @@ export class TemplateSet {
   translateFn?: (s: string, translationCtx: string) => string;
   translatableAttributes?: string[];
   Portal = Portal;
-  customDirectives: customDirectives;
+  customDirectives: CustomDirectives;
   runtimeUtils: object;
   hasGlobalValues: boolean;
 

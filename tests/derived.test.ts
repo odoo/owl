@@ -1,6 +1,6 @@
 import { proxy } from "../src";
 import { Derived } from "../src/common/types";
-import { derived, resetSignalHooks, setSignalHooks } from "../src/runtime/signals";
+import { derived, resetSignalHooks, setSignalHooks } from "../src/runtime/reactivity/signals";
 import { expectSpy, nextMicroTick, spyDerived, spyEffect } from "./helpers";
 
 async function waitScheduler() {

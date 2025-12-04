@@ -2,7 +2,7 @@ import { compile, Template, TemplateFunction } from "../compiler";
 import { comment, createBlock, html, list, multi, text, toggler } from "./blockdom";
 import { getCurrent } from "./component_node";
 import { Portal, portalTemplate } from "./portal";
-import { helpers } from "./template_helpers";
+import { helpers } from "./rendering/template_helpers";
 import { OwlError } from "../common/owl_error";
 import { parseXML } from "../common/utils";
 import type { customDirectives } from "../common/types";

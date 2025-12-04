@@ -2,12 +2,12 @@ import { OwlError } from "../common/owl_error";
 import { version } from "../version";
 import { Component, ComponentConstructor, Props } from "./component";
 import { ComponentNode, saveCurrent } from "./component_node";
-import { handleError, nodeErrorHandlers } from "./error_handling";
-import { Fiber, MountOptions, RootFiber } from "./fibers";
+import { handleError, nodeErrorHandlers } from "./rendering/error_handling";
+import { Fiber, MountOptions, RootFiber } from "./rendering/fibers";
 import { PluginManager } from "./plugins";
-import { proxy, toRaw } from "./reactivity";
-import { Scheduler } from "./scheduler";
-import { validateProps } from "./template_helpers";
+import { proxy, toRaw } from "./reactivity/reactivity";
+import { Scheduler } from "./rendering/scheduler";
+import { validateProps } from "./rendering/template_helpers";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
 import { validateTarget } from "./utils";
 

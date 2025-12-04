@@ -1,7 +1,7 @@
 import type { Env } from "./app";
 import { getCurrent } from "./component_node";
 import { onMounted, onPatched, onWillUnmount } from "./lifecycle_hooks";
-import { runWithComputation } from "./signals";
+import { runWithComputation } from "./reactivity/signals";
 import { inOwnerDocument } from "./utils";
 
 // -----------------------------------------------------------------------------

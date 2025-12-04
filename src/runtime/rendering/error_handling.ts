@@ -1,6 +1,6 @@
-import { OwlError } from "../common/owl_error";
-import type { App } from "./app";
-import type { ComponentNode } from "./component_node";
+import { OwlError } from "../../common/owl_error";
+import type { App } from "../app";
+import type { ComponentNode } from "../component_node";
 import type { Fiber } from "./fibers";
 
 // Maps fibers to thrown errors

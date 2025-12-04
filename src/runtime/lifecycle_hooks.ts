@@ -1,5 +1,5 @@
 import { getCurrent } from "./component_node";
-import { nodeErrorHandlers } from "./error_handling";
+import { nodeErrorHandlers } from "./rendering/error_handling";
 import { OwlError } from "../common/owl_error";
 
 const TIMEOUT = Symbol("timeout");

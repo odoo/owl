@@ -1,7 +1,7 @@
 import { makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
 import { Component, onError, xml, mount, OwlError } from "../../src";
 import { App } from "../../src/runtime/app";
-import { validateProps } from "../../src/runtime/template_helpers";
+import { validateProps } from "../../src/runtime/rendering/template_helpers";
 import { Schema } from "../../src/runtime/validation";
 
 let fixture: HTMLElement;
@@ -127,7 +127,7 @@ describe("props validation", () => {
         return props.p;
       }
     }
-    for (let test of Tests) {
+    for (const test of Tests) {
       const SubComp = class extends Component {
         static template = xml`<div>hey</div>`;
         static props = { p: test.type };
@@ -186,7 +186,7 @@ describe("props validation", () => {
         return props.p;
       }
     }
-    for (let test of Tests) {
+    for (const test of Tests) {
       const SubComp = class extends Component {
         static props = { p: { type: test.type } };
         static template = xml`<div>hey</div>`;

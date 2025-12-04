@@ -1,7 +1,7 @@
-import { proxy, derived } from "../src";
-import { resetSignalHooks, setSignalHooks } from "../src/runtime/reactivity/derived";
-import { Derived } from "../src/runtime/reactivity/computations";
-import { expectSpy, nextMicroTick, spyDerived, spyEffect } from "./helpers";
+import { proxy, derived } from "../../src";
+import { resetSignalHooks, setSignalHooks } from "../../src/runtime/reactivity/derived";
+import { Derived } from "../../src/runtime/reactivity/computations";
+import { expectSpy, nextMicroTick, spyDerived, spyEffect } from "../helpers";
 
 async function waitScheduler() {
   await nextMicroTick();

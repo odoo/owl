@@ -1,5 +1,5 @@
-import { signal } from "../src";
-import { expectSpy, spyEffect, waitScheduler } from "./helpers";
+import { signal } from "../../src";
+import { expectSpy, spyEffect, waitScheduler } from "../helpers";
 
 describe("signals", () => {
   test("signal can be created and read", () => {

@@ -3,7 +3,7 @@ import { Markup } from "../utils";
 import { html } from "../blockdom/index";
 import { isOptional, validateSchema } from "../validation";
 import type { ComponentConstructor, Props } from "../component";
-import { markRaw } from "../reactivity/reactivity";
+import { markRaw } from "../reactivity/proxy";
 import { OwlError } from "../../common/owl_error";
 import type { ComponentNode } from "../component_node";
 

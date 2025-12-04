@@ -9,7 +9,7 @@ import {
   ComputationState,
   getCurrentComputation,
   setComputation,
-  withoutReactivity,
+  untrack,
 } from "./reactivity/computations";
 import { fibersInError } from "./rendering/error_handling";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./rendering/fibers";
@@ -132,7 +132,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     const component = this.component;
     try {
       let prom: Promise<any[]>;
-      withoutReactivity(() => {
+      untrack(() => {
         prom = Promise.all(this.willStart.map((f) => f.call(component)));
       });
       await prom!;
@@ -251,7 +251,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     }
 
     let prom: Promise<any[]>;
-    withoutReactivity(() => {
+    untrack(() => {
       prom = Promise.all(this.willUpdateProps.map((f) => f.call(component, props)));
     });
     await prom!;

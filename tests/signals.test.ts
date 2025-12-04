@@ -1,4 +1,4 @@
-import { signal } from "../src/runtime/reactivity/signals";
+import { signal } from "../src";
 import { expectSpy, spyEffect, waitScheduler } from "./helpers";
 
 describe("signals", () => {

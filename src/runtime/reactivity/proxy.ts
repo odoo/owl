@@ -1,6 +1,5 @@
 import { OwlError } from "../../common/owl_error";
-import { Atom } from "../../common/types";
-import { onReadAtom, onWriteAtom } from "./signals";
+import { onReadAtom, onWriteAtom, Atom } from "./computations";
 
 // Special key to subscribe to, to be notified of key creation/deletion
 const KEYCHANGES = Symbol("Key changes");

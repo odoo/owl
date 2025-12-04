@@ -35,7 +35,8 @@ export class Registry<T> {
         throw new Error("Invalid type: " + error);
       }
     }
-    this._map.set({ ...this._map(), [key]: [sequence, value] });
+    this._map()[key] = [sequence, value];
+    this._map.update();
   }
 
   get(key: string, defaultValue?: T): T {

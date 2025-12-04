@@ -39,8 +39,11 @@ export { Component } from "./component";
 export type { ComponentConstructor } from "./component";
 export { useComponent } from "./component_node";
 export { status } from "./status";
-export { proxy, markRaw, toRaw } from "./reactivity/reactivity";
-export { effect, withoutReactivity, derived, signal } from "./reactivity/signals";
+export { proxy, markRaw, toRaw } from "./reactivity/proxy";
+export { withoutReactivity } from "./reactivity/computations";
+export { signal } from "./reactivity/signal";
+export { derived } from "./reactivity/derived";
+export { effect } from "./reactivity/effect";
 export { useEffect, useEnv, useListener, useRef, useChildSubEnv, useSubEnv } from "./hooks";
 export { batched, EventBus, htmlEscape, whenReady, markup } from "./utils";
 export {

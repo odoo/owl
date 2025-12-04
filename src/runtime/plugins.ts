@@ -1,8 +1,8 @@
 import { OwlError } from "../common/owl_error";
 import { getCurrent } from "./component_node";
 import { onWillDestroy } from "./lifecycle_hooks";
-import { proxy } from "./reactivity/reactivity";
-import { derived } from "./reactivity/signals";
+import { proxy } from "./reactivity/proxy";
+import { derived } from "./reactivity/derived";
 
 let currentPluginManager: PluginManager | null = null;
 

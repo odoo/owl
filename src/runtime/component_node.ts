@@ -1,12 +1,18 @@
 import { OwlError } from "../common/owl_error";
-import { Atom, Computation, ComputationState } from "../common/types";
 import type { App, Env } from "./app";
 import { BDom, VNode } from "./blockdom";
 import { Component, ComponentConstructor, Props } from "./component";
+import { PluginManager } from "./plugins";
+import {
+  Atom,
+  Computation,
+  ComputationState,
+  getCurrentComputation,
+  setComputation,
+  withoutReactivity,
+} from "./reactivity/computations";
 import { fibersInError } from "./rendering/error_handling";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./rendering/fibers";
-import { PluginManager } from "./plugins";
-import { getCurrentComputation, setComputation, withoutReactivity } from "./reactivity/signals";
 import { STATUS } from "./status";
 
 let currentNode: ComponentNode | null = null;

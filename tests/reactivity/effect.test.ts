@@ -1,6 +1,6 @@
-import { proxy } from "../src/runtime";
-import { effect } from "../src/runtime";
-import { expectSpy, nextMicroTick } from "./helpers";
+import { proxy } from "../../src/runtime";
+import { effect } from "../../src/runtime";
+import { expectSpy, nextMicroTick } from "../helpers";
 
 async function waitScheduler() {
   await nextMicroTick();

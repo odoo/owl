@@ -1,5 +1,5 @@
-import { Component, mount, onWillRender, onWillStart, onWillUpdateProps, xml } from "../src";
-import { effect, markRaw, proxy, toRaw } from "../src/runtime";
+import { Component, mount, onWillRender, onWillStart, onWillUpdateProps, xml } from "../../src";
+import { effect, markRaw, proxy, toRaw } from "../../src/runtime";
 
 import {
   makeDeferred,
@@ -9,9 +9,9 @@ import {
   snapshotEverything,
   steps,
   useLogLifecycle,
-} from "./helpers";
+} from "../helpers";
 
-function createReactive(value: any) {
+function createProxy(value: any) {
   return proxy(value);
 }
 
@@ -27,37 +27,37 @@ function expectSpy(spy: jest.Mock, callTime: number, args: any[]): void {
 
 describe("Reactivity", () => {
   test("can read", async () => {
-    const state = createReactive({ a: 1 });
+    const state = proxy({ a: 1 });
     expect(state.a).toBe(1);
   });
 
   test("can create new keys", () => {
-    const state = createReactive({});
+    const state = createProxy({});
     state.a = 1;
     expect(state.a).toBe(1);
   });
 
   test("can update", () => {
-    const state = createReactive({ a: 1 });
+    const state = createProxy({ a: 1 });
     state.a = 2;
     expect(state.a).toBe(2);
   });
 
   test("can delete existing keys", () => {
-    const state = createReactive({ a: 1 });
+    const state = createProxy({ a: 1 });
     delete state.a;
     expect(state).not.toHaveProperty("a");
   });
 
   test("act like an object", () => {
-    const state = createReactive({ a: 1 });
+    const state = createProxy({ a: 1 });
     expect(Object.keys(state)).toEqual(["a"]);
     expect(Object.values(state)).toEqual([1]);
     expect(typeof state).toBe("object");
   });
 
   test("act like an array", () => {
-    const state = createReactive(["a", "b"]);
+    const state = createProxy(["a", "b"]);
     expect(state.length).toBe(2);
     expect(state).toEqual(["a", "b"]);
     expect(typeof state).toBe("object");
@@ -65,12 +65,12 @@ describe("Reactivity", () => {
   });
 
   test("Throw error if value is not proxifiable", () => {
-    expect(() => createReactive(1)).toThrow("Cannot make the given value reactive");
+    expect(() => createProxy(1)).toThrow("Cannot make the given value reactive");
   });
 
   test("effect is called when changing an observed property 1", async () => {
     const spy = jest.fn();
-    const state = createReactive({ a: 1 });
+    const state = createProxy({ a: 1 });
     effect(() => spy(state.a));
     expectSpy(spy, 1, [1]);
     state.a = 100;
@@ -85,7 +85,7 @@ describe("Reactivity", () => {
 
   test("effect is called when changing an observed property 2", async () => {
     const spy = jest.fn();
-    const state = createReactive({ a: { k: 1 } });
+    const state = createProxy({ a: { k: 1 } });
     effect(() => spy(state.a.k));
     expectSpy(spy, 1, [1]);
     state.a.k = state.a.k + 100;
@@ -101,7 +101,7 @@ describe("Reactivity", () => {
   test("proxy from object with a getter 1", async () => {
     const spy = jest.fn();
     let value = 1;
-    const state = createReactive({
+    const state = createProxy({
       get a() {
         return value;
       },
@@ -120,7 +120,7 @@ describe("Reactivity", () => {
   test("proxy from object with a getter 2", async () => {
     const spy = jest.fn();
     let value = { b: 1 };
-    const state = createReactive({
+    const state = createProxy({
       get a() {
         return value;
       },
@@ -135,7 +135,7 @@ describe("Reactivity", () => {
 
   test("Operator 'in' causes key's presence to be observed", async () => {
     const spy = jest.fn();
-    const state = createReactive({});
+    const state = createProxy({});
     effect(() => spy("a" in state));
     expectSpy(spy, 1, [false]);
     state.a = 100;
@@ -175,7 +175,7 @@ describe("Reactivity", () => {
 
   test("setting property to same value does not trigger callback", async () => {
     const spy = jest.fn();
-    const state = createReactive({ a: 1 });
+    const state = createProxy({ a: 1 });
     effect(() => spy(state.a));
     expectSpy(spy, 1, [1]);
     state.a = 1; // same value
@@ -196,7 +196,7 @@ describe("Reactivity", () => {
     const a = { a: {} };
     a.a = a;
 
-    const state = createReactive(a);
+    const state = createProxy(a);
     effect(() => spy(state.a));
     expectSpy(spy, 1, [state.a]);
 
@@ -227,7 +227,7 @@ describe("Reactivity", () => {
     const spy = jest.fn();
     const a = { a: {}, b: 1 };
     a.a = a;
-    const state = createReactive(a);
+    const state = createProxy(a);
     effect(() => spy(state.a, state.b));
 
     expect(state).toBe(state.a);
@@ -242,8 +242,8 @@ describe("Reactivity", () => {
     const spy2 = jest.fn();
 
     const obj = { a: 1 } as any;
-    const state = createReactive(obj);
-    const state2 = createReactive(obj);
+    const state = createProxy(obj);
+    const state2 = createProxy(obj);
     effect(() => spy1(state.a));
     effect(() => spy2(state2.a));
 
@@ -256,8 +256,8 @@ describe("Reactivity", () => {
   test("create proxy from another", async () => {
     const spy1 = jest.fn();
     const spy2 = jest.fn();
-    const state = createReactive({ a: 1 });
-    const state2 = createReactive(state);
+    const state = createProxy({ a: 1 });
+    const state2 = createProxy(state);
     effect(() => spy1(state.a));
     effect(() => spy2(state2.a));
 
@@ -268,21 +268,21 @@ describe("Reactivity", () => {
   });
 
   test("throws on primitive values", () => {
-    expect(() => createReactive(1)).toThrowError();
-    expect(() => createReactive("asf")).toThrowError();
-    expect(() => createReactive(true)).toThrowError();
-    expect(() => createReactive(null)).toThrowError();
-    expect(() => createReactive(undefined)).toThrowError();
+    expect(() => createProxy(1)).toThrowError();
+    expect(() => createProxy("asf")).toThrowError();
+    expect(() => createProxy(true)).toThrowError();
+    expect(() => createProxy(null)).toThrowError();
+    expect(() => createProxy(undefined)).toThrowError();
   });
 
   test("throws on dates", () => {
     const date = new Date();
-    expect(() => createReactive(date)).toThrow("Cannot make the given value reactive");
+    expect(() => createProxy(date)).toThrow("Cannot make the given value reactive");
   });
 
   test("can observe object with some key set to null", async () => {
     const spy = jest.fn();
-    const state = createReactive({ a: { b: null } } as any);
+    const state = createProxy({ a: { b: null } } as any);
     effect(() => spy(state.a.b));
     state.a.b = Boolean(state.a.b);
     await waitScheduler();
@@ -290,7 +290,7 @@ describe("Reactivity", () => {
   });
 
   test("contains initial values", () => {
-    const state = createReactive({ a: 1, b: 2 });
+    const state = createProxy({ a: 1, b: 2 });
     expect(state.a).toBe(1);
     expect(state.b).toBe(2);
     expect((state as any).c).toBeUndefined();
@@ -299,7 +299,7 @@ describe("Reactivity", () => {
   test("properly handle dates", async () => {
     const spy = jest.fn();
     const date = new Date();
-    const state = createReactive({ date });
+    const state = createProxy({ date });
     effect(() => spy(state.date));
 
     expect(typeof state.date.getFullYear()).toBe("number");
@@ -313,7 +313,7 @@ describe("Reactivity", () => {
 
   test("properly handle promise", async () => {
     let resolved = false;
-    const state = createReactive({ prom: Promise.resolve() });
+    const state = createProxy({ prom: Promise.resolve() });
 
     expect(state.prom).toBeInstanceOf(Promise);
     state.prom.then(() => (resolved = true));
@@ -324,7 +324,7 @@ describe("Reactivity", () => {
 
   test("can observe value change in array in an object", async () => {
     const spy = jest.fn();
-    const state = createReactive({ arr: [1, 2] }) as any;
+    const state = createProxy({ arr: [1, 2] }) as any;
     effect(() => spy(state.arr[0]));
 
     expect(Array.isArray(state.arr)).toBe(true);
@@ -339,7 +339,7 @@ describe("Reactivity", () => {
 
   test("can observe: changing array in object to another array", async () => {
     const spy = jest.fn();
-    const state = createReactive({ arr: [1, 2] }) as any;
+    const state = createProxy({ arr: [1, 2] }) as any;
     effect(() => spy(state.arr[0]));
 
     expect(Array.isArray(state.arr)).toBe(true);
@@ -353,7 +353,7 @@ describe("Reactivity", () => {
   });
 
   test("getting the same property twice returns the same object", () => {
-    const state = createReactive({ a: { b: 1 } });
+    const state = createProxy({ a: { b: 1 } });
     const a1 = state.a;
     const a2 = state.a;
     expect(a1).toBe(a2);
@@ -361,7 +361,7 @@ describe("Reactivity", () => {
 
   test("various object property changes", async () => {
     const spy = jest.fn();
-    const state = createReactive({ a: 1 });
+    const state = createProxy({ a: 1 });
     effect(() => spy(state.a));
     expectSpy(spy, 1, [1]);
 
@@ -382,7 +382,7 @@ describe("Reactivity", () => {
 
   test("properly observe arrays", async () => {
     const spy = jest.fn();
-    const state = createReactive([]);
+    const state = createProxy([]);
     effect(() => spy([...state]));
 
     expect(Array.isArray(state)).toBe(true);
@@ -438,7 +438,7 @@ describe("Reactivity", () => {
   });
   test("object pushed into arrays are observed", async () => {
     const spy = jest.fn();
-    const arr: any = createReactive([]);
+    const arr: any = createProxy([]);
     effect(() => spy(arr[0]?.kriek));
 
     arr.push({ kriek: 5 });
@@ -456,7 +456,7 @@ describe("Reactivity", () => {
 
   test("set new property on observed object", async () => {
     const spy = jest.fn();
-    const state = createReactive({});
+    const state = createProxy({});
     effect(() => spy(Object.keys(state)));
     expectSpy(spy, 1, [[]]);
 
@@ -469,7 +469,7 @@ describe("Reactivity", () => {
 
   test("set new property object when key changes are not observed", async () => {
     const spy = jest.fn();
-    const state = createReactive({ a: 1 });
+    const state = createProxy({ a: 1 });
     effect(() => spy(state.a));
     expectSpy(spy, 1, [1]);
 
@@ -482,7 +482,7 @@ describe("Reactivity", () => {
 
   test("delete property from observed object", async () => {
     const spy = jest.fn();
-    const state = createReactive({ a: 1, b: 8 });
+    const state = createProxy({ a: 1, b: 8 });
     effect(() => spy(Object.keys(state)));
     expectSpy(spy, 1, [["a", "b"]]);
 
@@ -496,8 +496,8 @@ describe("Reactivity", () => {
   test.skip("delete property from observed object 2", async () => {
     const spy = jest.fn();
     const obj = { a: { b: 1 } };
-    const state = createReactive(obj.a);
-    const state2 = createReactive(obj);
+    const state = createProxy(obj.a);
+    const state2 = createProxy(obj);
     effect(() => spy(Object.keys(state2)));
     expect(state2.a).toBe(state);
     expectSpy(spy, 1, [["a"]]);
@@ -514,7 +514,7 @@ describe("Reactivity", () => {
 
   test("set element in observed array", async () => {
     const spy = jest.fn();
-    const arr = createReactive(["a"]);
+    const arr = createProxy(["a"]);
     effect(() => spy(arr[1]));
     arr[1] = "b";
     await waitScheduler();
@@ -524,7 +524,7 @@ describe("Reactivity", () => {
 
   test("properly observe arrays in object", async () => {
     const spy = jest.fn();
-    const state = createReactive({ arr: [] }) as any;
+    const state = createProxy({ arr: [] }) as any;
     effect(() => spy(state.arr.length));
 
     expect(state.arr.length).toBe(0);
@@ -538,7 +538,7 @@ describe("Reactivity", () => {
 
   test("properly observe objects in array", async () => {
     const spy = jest.fn();
-    const state = createReactive({ arr: [{ something: 1 }] }) as any;
+    const state = createProxy({ arr: [{ something: 1 }] }) as any;
     effect(() => spy(state.arr[0].something));
     expectSpy(spy, 1, [1]);
 
@@ -550,7 +550,7 @@ describe("Reactivity", () => {
 
   test("properly observe objects in object", async () => {
     const spy = jest.fn();
-    const state = createReactive({ a: { b: 1 } }) as any;
+    const state = createProxy({ a: { b: 1 } }) as any;
     effect(() => spy(state.a.b));
     expectSpy(spy, 1, [1]);
 
@@ -562,14 +562,14 @@ describe("Reactivity", () => {
   test("Observing the same object through the same proxy preserves referential equality", async () => {
     const o = {} as any;
     o.o = o;
-    const state = createReactive(o);
+    const state = createProxy(o);
     expect(state.o).toBe(state);
     expect(state.o.o).toBe(state);
   });
 
   test("reobserve new object values", async () => {
     const spy = jest.fn();
-    const state = createReactive({ a: 1 });
+    const state = createProxy({ a: 1 });
     effect(() => spy(state.a?.b || state.a));
     expectSpy(spy, 1, [1]);
 
@@ -588,7 +588,7 @@ describe("Reactivity", () => {
 
   test("deep observe misc changes", async () => {
     const spy = jest.fn();
-    const state = createReactive({ o: { a: 1 }, arr: [1], n: 13 }) as any;
+    const state = createProxy({ o: { a: 1 }, arr: [1], n: 13 }) as any;
     effect(() => spy(state.o.a, state.arr.length, state.n));
     expectSpy(spy, 1, [1, 1, 13]);
 
@@ -613,8 +613,8 @@ describe("Reactivity", () => {
     const spy1 = jest.fn();
     const spy2 = jest.fn();
 
-    const obj1 = createReactive({ a: 1 });
-    const obj2 = createReactive({ b: 1 });
+    const obj1 = createProxy({ a: 1 });
+    const obj2 = createProxy({ b: 1 });
 
     effect(() => spy1(obj1.a));
     effect(() => spy2(obj2.b));
@@ -645,8 +645,8 @@ describe("Reactivity", () => {
   test("properly handle already observed object in observed object", async () => {
     const spy1 = jest.fn();
     const spy2 = jest.fn();
-    const obj1 = createReactive({ a: { c: 2 } });
-    const obj2 = createReactive({ b: 1 });
+    const obj1 = createProxy({ a: { c: 2 } });
+    const obj2 = createProxy({ b: 1 });
 
     effect(() => spy1(obj1.a.c));
     effect(() => spy2(obj2.c?.a?.c));
@@ -670,9 +670,9 @@ describe("Reactivity", () => {
   test("can reobserve nested properties in object", async () => {
     const spy1 = jest.fn();
     const spy2 = jest.fn();
-    const state = createReactive({ a: [{ b: 1 }] }) as any;
+    const state = createProxy({ a: [{ b: 1 }] }) as any;
 
-    const state2 = createReactive(state) as any;
+    const state2 = createProxy(state) as any;
 
     effect(() => spy1(state.a[0].b));
     effect(() => spy2(state2.c));
@@ -689,7 +689,7 @@ describe("Reactivity", () => {
   });
 
   test("rereading some property again give exactly same result", () => {
-    const state = createReactive({ a: { b: 1 } });
+    const state = createProxy({ a: { b: 1 } });
     const obj1 = state.a;
     const obj2 = state.a;
     expect(obj1).toBe(obj2);
@@ -698,7 +698,7 @@ describe("Reactivity", () => {
   test("can reobserve new properties in object", async () => {
     const spy1 = jest.fn();
     const spy2 = jest.fn();
-    const state = createReactive({ a: [{ b: 1 }] }) as any;
+    const state = createProxy({ a: [{ b: 1 }] }) as any;
 
     effect(() => spy1(state.a[0].b.c));
     effect(() => spy2(state.a[0].b));
@@ -716,7 +716,7 @@ describe("Reactivity", () => {
 
   test("can set a property more than once", async () => {
     const spy = jest.fn();
-    const state = createReactive({}) as any;
+    const state = createProxy({}) as any;
     effect(() => spy(state.aku));
 
     state.aky = state.aku;
@@ -734,7 +734,7 @@ describe("Reactivity", () => {
   test("properly handle swapping elements", async () => {
     const spy = jest.fn();
     const arrDict = { arr: [] };
-    const state = createReactive({ a: arrDict, b: 1 }) as any;
+    const state = createProxy({ a: arrDict, b: 1 }) as any;
     effect(() => {
       Array.isArray(state.b?.arr) && [...state.b.arr];
       return spy(state.a, state.b);
@@ -757,7 +757,7 @@ describe("Reactivity", () => {
 
   test("properly handle assigning object containing array to proxy", async () => {
     const spy = jest.fn();
-    const state = createReactive({ a: { arr: [], val: "test" } }) as any;
+    const state = createProxy({ a: { arr: [], val: "test" } }) as any;
     effect(() => spy(state.a, [...state.a.arr]));
     expectSpy(spy, 1, [state.a, []]);
 
@@ -776,7 +776,7 @@ describe("Reactivity", () => {
     let obj1: any = {};
     let obj2: any = { b: obj1, key: 1 };
     obj1.a = obj2;
-    obj1 = createReactive(obj1) as any;
+    obj1 = createProxy(obj1) as any;
     obj2 = obj1.a;
     effect(() => spy(obj1.key));
     expectSpy(spy, 1, [undefined]);
@@ -788,7 +788,7 @@ describe("Reactivity", () => {
 
   test("call callback when proxy is changed", async () => {
     const spy = jest.fn();
-    const state: any = createReactive({ a: 1, b: { c: 2 }, d: [{ e: 3 }], f: 4 });
+    const state: any = createProxy({ a: 1, b: { c: 2 }, d: [{ e: 3 }], f: 4 });
     effect(() => spy(state.a, state.b.c, state.d[0].e, state.f));
     expectSpy(spy, 1, [1, 2, 3, 4]);
 
@@ -813,8 +813,8 @@ describe("Reactivity", () => {
   test("proxy inside other proxy", async () => {
     const spy1 = jest.fn();
     const spy2 = jest.fn();
-    const inner = createReactive({ a: 1 });
-    const outer = createReactive({ b: inner });
+    const inner = createProxy({ a: 1 });
+    const outer = createProxy({ b: inner });
 
     effect(() => spy1(inner.a));
     effect(() => spy2(outer.b.a));
@@ -831,8 +831,8 @@ describe("Reactivity", () => {
   test("proxy inside other proxy, variant", async () => {
     const spy1 = jest.fn();
     const spy2 = jest.fn();
-    const inner = createReactive({ a: 1 });
-    const outer = createReactive({ b: inner, c: 0 });
+    const inner = createProxy({ a: 1 });
+    const outer = createProxy({ b: inner, c: 0 });
     effect(() => spy1(inner.a));
     effect(() => spy2(outer.c));
     expectSpy(spy1, 1, [1]);
@@ -853,9 +853,9 @@ describe("Reactivity", () => {
     const spy1 = jest.fn();
     const spy2 = jest.fn();
     const spy3 = jest.fn();
-    const obj1 = createReactive({ a: 1 });
-    const obj2 = createReactive({ b: {} });
-    const obj3 = createReactive({ c: {} });
+    const obj1 = createProxy({ a: 1 });
+    const obj2 = createProxy({ b: {} });
+    const obj3 = createProxy({ c: {} });
 
     effect(() => spy1(obj1.a));
     effect(() => spy2(obj2.b));
@@ -913,7 +913,7 @@ describe("Reactivity", () => {
   test("don't react to changes in subobject that has been deleted", async () => {
     const spy = jest.fn();
     const a = { k: {} } as any;
-    const state = createReactive(a);
+    const state = createProxy(a);
 
     effect(() => spy(state.k?.l));
 
@@ -936,8 +936,8 @@ describe("Reactivity", () => {
     const spy = jest.fn();
     const b = {} as any;
     const a = { k: b } as any;
-    const state2 = createReactive(b);
-    const state = createReactive(a);
+    const state2 = createProxy(b);
+    const state = createProxy(a);
 
     effect(() => spy(state.k?.d));
 
@@ -959,8 +959,8 @@ describe("Reactivity", () => {
     const spy = jest.fn();
     const b = {} as any;
     const a = { k: b } as any;
-    const state = createReactive(a);
-    const state2 = createReactive(b);
+    const state = createProxy(a);
+    const state2 = createProxy(b);
 
     effect(() => spy(state.k?.d));
 
@@ -981,7 +981,7 @@ describe("Reactivity", () => {
   test("don't react to changes in subobject that has been replaced", async () => {
     const spy = jest.fn();
     const a = { k: { n: 1 } } as any;
-    const state = createReactive(a);
+    const state = createProxy(a);
     const kVal = state.k; // read k
 
     effect(() => spy(state.k.n));
@@ -1000,14 +1000,14 @@ describe("Reactivity", () => {
 
   test("can access properties on proxy of frozen objects", async () => {
     const obj = Object.freeze({ a: {} });
-    const state = createReactive(obj);
+    const state = createProxy(obj);
     expect(() => state.a).not.toThrow();
     expect(state.a).toBe(obj.a);
   });
 
   test("writing on object with proxy in prototype chain doesn't notify", async () => {
     const spy = jest.fn();
-    const state = createReactive({ val: 0 });
+    const state = createProxy({ val: 0 });
     effect(() => spy(state.val));
     const nonReactive = Object.create(state);
     nonReactive.val++;
@@ -1023,7 +1023,7 @@ describe("Reactivity", () => {
 
   test("creating key on object with proxy in prototype chain doesn't notify", async () => {
     const spy = jest.fn();
-    const parent = createReactive({});
+    const parent = createProxy({});
     const child = Object.create(parent);
     effect(() => spy(Object.keys(parent)));
     child.val = 0;
@@ -1033,8 +1033,8 @@ describe("Reactivity", () => {
 
   test("proxy of object with proxy in prototype chain is not the object from the prototype chain", async () => {
     const spy = jest.fn();
-    const parent = createReactive({ val: 0 });
-    const child = createReactive(Object.create(parent));
+    const parent = createProxy({ val: 0 });
+    const child = createProxy(Object.create(parent));
     effect(() => spy(child.val));
     expect(child).not.toBe(parent);
 
@@ -1048,7 +1048,7 @@ describe("Reactivity", () => {
   test("can create proxy of object with non-proxy in prototype chain", async () => {
     const spy = jest.fn();
     const parent = markRaw({ val: 0 });
-    const child = createReactive(Object.create(parent));
+    const child = createProxy(Object.create(parent));
     effect(() => spy(child.val));
     child.val++;
     await waitScheduler();
@@ -1753,7 +1753,7 @@ describe("Reactivity: proxy", () => {
    */
 
   test("very simple use, with initial value", async () => {
-    const testContext = createReactive({ value: 123 });
+    const testContext = createProxy({ value: 123 });
 
     class Comp extends Component {
       static template = xml`<div><t t-esc="contextObj.value"/></div>`;
@@ -1764,7 +1764,7 @@ describe("Reactivity: proxy", () => {
   });
 
   test("useContext=proxy hook is proxy, for one component", async () => {
-    const testContext = createReactive({ value: 123 });
+    const testContext = createProxy({ value: 123 });
 
     class Comp extends Component {
       static template = xml`<div><t t-esc="contextObj.value"/></div>`;
@@ -1778,7 +1778,7 @@ describe("Reactivity: proxy", () => {
   });
 
   test("two components can subscribe to same context", async () => {
-    const testContext = createReactive({ value: 123 });
+    const testContext = createProxy({ value: 123 });
 
     class Child extends Component {
       static template = xml`<span><t t-esc="contextObj.value"/></span>`;
@@ -1834,7 +1834,7 @@ describe("Reactivity: proxy", () => {
   });
 
   test("two components are updated in parallel", async () => {
-    const testContext = createReactive({ value: 123 });
+    const testContext = createProxy({ value: 123 });
 
     class Child extends Component {
       static template = xml`<span><t t-esc="contextObj.value"/></span>`;
@@ -1900,7 +1900,7 @@ describe("Reactivity: proxy", () => {
   });
 
   test("two independent components on different levels are updated in parallel", async () => {
-    const testContext = createReactive({ value: 123 });
+    const testContext = createProxy({ value: 123 });
 
     class Child extends Component {
       static template = xml`<span><t t-esc="contextObj.value"/></span>`;
@@ -1980,7 +1980,7 @@ describe("Reactivity: proxy", () => {
   });
 
   test("one components can subscribe twice to same context", async () => {
-    const testContext = createReactive({ a: 1, b: 2 });
+    const testContext = createProxy({ a: 1, b: 2 });
     const steps: string[] = [];
 
     class Comp extends Component {
@@ -2003,7 +2003,7 @@ describe("Reactivity: proxy", () => {
   });
 
   test("parent and children subscribed to same context", async () => {
-    const testContext = createReactive({ a: 123, b: 321 });
+    const testContext = createProxy({ a: 123, b: 321 });
     const steps: string[] = [];
 
     class Child extends Component {
@@ -2037,7 +2037,7 @@ describe("Reactivity: proxy", () => {
   });
 
   test.skip("several nodes on different level use same context", async () => {
-    const testContext = createReactive({ a: 123, b: 456 });
+    const testContext = createProxy({ a: 123, b: 456 });
     const steps: Set<string> = new Set();
 
     /**
@@ -2133,7 +2133,7 @@ describe("Reactivity: proxy", () => {
   });
 
   test("destroyed component is inactive", async () => {
-    const testContext = createReactive({ a: 123 });
+    const testContext = createProxy({ a: 123 });
 
     class Child extends Component {
       static template = xml`<span><t t-esc="contextObj.a"/></span>`;
@@ -2198,7 +2198,7 @@ describe("Reactivity: proxy", () => {
   });
 
   test("destroyed component before being mounted is inactive", async () => {
-    const testContext = createReactive({ a: 123 });
+    const testContext = createProxy({ a: 123 });
     const steps: string[] = [];
     class Child extends Component {
       static template = xml`<span><t t-esc="contextObj.a"/></span>`;
@@ -2235,7 +2235,7 @@ describe("Reactivity: proxy", () => {
   });
 
   test("useless atoms should be deleted", async () => {
-    const testContext = createReactive({
+    const testContext = createProxy({
       1: { id: 1, quantity: 3, description: "First quantity" },
       2: { id: 2, quantity: 5, description: "Second quantity" },
     });
@@ -2324,7 +2324,7 @@ describe("Reactivity: proxy", () => {
      * more advanced API, to let components determine if they should be updated
      * or not (so, something slightly more advanced that the useStore hook).
      */
-    const testContext = createReactive({ x: { n: 1 }, key: "x" });
+    const testContext = createProxy({ x: { n: 1 }, key: "x" });
     const def = makeDeferred();
     let stateC: any;
     class ComponentC extends Component {

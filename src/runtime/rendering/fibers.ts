@@ -3,7 +3,7 @@ import type { ComponentNode } from "../component_node";
 import { fibersInError } from "./error_handling";
 import { OwlError } from "../../common/owl_error";
 import { STATUS } from "../status";
-import { runWithComputation } from "../reactivity/signals";
+import { runWithComputation } from "../reactivity/computations";
 
 export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
   let current = node.fiber;

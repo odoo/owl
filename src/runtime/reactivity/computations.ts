@@ -82,7 +82,7 @@ function processEffects() {
   Effects = undefined!;
 }
 
-export function withoutReactivity<T extends (...args: any[]) => any>(fn: T): ReturnType<T> {
+export function untrack<T extends (...args: any[]) => any>(fn: T): ReturnType<T> {
   return runWithComputation(undefined!, fn);
 }
 export function getCurrentComputation() {

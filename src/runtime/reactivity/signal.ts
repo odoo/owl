@@ -1,8 +1,8 @@
 import { onReadAtom, onWriteAtom, Atom, Opts } from "./computations";
 
-type SignalFunction<T> = () => T;
+export type ReactiveValue<T> = () => T;
 
-export interface Signal<T> extends SignalFunction<T> {
+export interface Signal<T> extends ReactiveValue<T> {
   /**
    * Update the value of the signal with a new value. If the new value is different
    * from the previous values, all computations that depends on this signal will

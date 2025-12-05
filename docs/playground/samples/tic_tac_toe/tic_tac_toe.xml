@@ -1,0 +1,43 @@
+<templates>
+    <button t-name="Square" class="square" t-on-click="props.onSquareClick">
+        <t t-esc="props.value"/>
+    </button>
+
+    <t t-name="Board">
+        <div class="status">
+            <t t-esc="status"/>
+        </div>
+        <div class="board-row">
+            <Square value="props.squares[0]" onSquareClick="() => this.handleClick(0)" />
+            <Square value="props.squares[1]" onSquareClick="() => this.handleClick(1)" />
+            <Square value="props.squares[2]" onSquareClick="() => this.handleClick(2)" />
+        </div>
+        <div class="board-row">
+            <Square value="props.squares[3]" onSquareClick="() => this.handleClick(3)" />
+            <Square value="props.squares[4]" onSquareClick="() => this.handleClick(4)" />
+            <Square value="props.squares[5]" onSquareClick="() => this.handleClick(5)" />
+        </div>
+        <div class="board-row">
+            <Square value="props.squares[6]" onSquareClick="() => this.handleClick(6)" />
+            <Square value="props.squares[7]" onSquareClick="() => this.handleClick(7)" />
+            <Square value="props.squares[8]" onSquareClick="() => this.handleClick(8)" />
+        </div>
+    </t>
+
+    <div t-name="Game" class="game">
+        <div class="game-board">
+            <Board xIsNext="xIsNext" squares="currentSquares" onPlay.bind="handlePlay" />
+        </div>
+        <div class="game-info">
+            <ol>
+                <t t-foreach="moves" t-as="move" t-key="move.id">
+                    <li>
+                        <button t-on-click="() => this.jumpTo(move.id)">
+                            <t t-esc="move.description"/>
+                        </button>
+                    </li>
+                </t>
+            </ol>
+        </div>
+    </div>
+</templates>

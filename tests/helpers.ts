@@ -20,11 +20,18 @@ import { TemplateSet, globalTemplates } from "../src/runtime/template_set";
 import { BDom } from "../src/runtime/blockdom";
 import { compile } from "../src/compiler";
 import { OwlError } from "../src/common/owl_error";
+import { derived, effect } from "../src/runtime/signals";
 
 const mount = blockDom.mount;
 
 export function nextMicroTick(): Promise<void> {
   return Promise.resolve();
+}
+
+// todo: investigate why two ticks are needed
+export async function waitScheduler() {
+  await nextMicroTick();
+  await nextMicroTick();
 }
 
 let lastFixture: any = null;
@@ -47,12 +54,12 @@ export async function nextTick(): Promise<void> {
   await new Promise((resolve) => requestAnimationFrame(resolve));
 }
 
-interface Deferred extends Promise<any> {
-  resolve(val?: any): void;
-  reject(val?: any): void;
+interface Deferred<T = any> extends Promise<T> {
+  resolve(val?: T): void;
+  reject(val?: T): void;
 }
 
-export function makeDeferred(): Deferred {
+export function makeDeferred<T = any>(): Deferred<T> {
   let resolve, reject;
   let def = new Promise((_resolve, _reject) => {
     resolve = _resolve;
@@ -60,7 +67,7 @@ export function makeDeferred(): Deferred {
   });
   (def as any).resolve = resolve;
   (def as any).reject = reject;
-  return <Deferred>def;
+  return <Deferred<T>>def;
 }
 
 export function trim(str: string): string {
@@ -219,6 +226,16 @@ export async function editInput(input: HTMLInputElement | HTMLTextAreaElement, v
   return nextTick();
 }
 
+export function expectSpy(
+  spy: jest.Mock,
+  count: number,
+  opt: { args?: any[]; result?: any } = {}
+): void {
+  expect(spy).toHaveBeenCalledTimes(count);
+  if ("args" in opt) expect(spy).lastCalledWith(...opt.args!);
+  if ("result" in opt) expect(spy).toHaveReturnedWith(opt.result);
+}
+
 afterEach(() => {
   if (steps.length) {
     steps.splice(0);
@@ -281,4 +298,20 @@ declare global {
       toBeLogged(): R;
     }
   }
+}
+
+export type SpyDerived<T> = (() => T) & { spy: jest.Mock<any, T[]> };
+export function spyDerived<T>(fn: () => T): SpyDerived<T> {
+  const spy = jest.fn(fn);
+  const d = derived(spy) as SpyDerived<T>;
+  d.spy = spy;
+  return d;
+}
+
+export type SpyEffect<T> = (() => () => void) & { spy: jest.Mock<any, T[]> };
+export function spyEffect<T>(fn: () => T): SpyEffect<T> {
+  const spy = jest.fn(fn);
+  const unsubscribeWrapper = () => effect(spy);
+  const wrapped = Object.assign(unsubscribeWrapper, { spy }) as SpyEffect<T>;
+  return wrapped;
 }

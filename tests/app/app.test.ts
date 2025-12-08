@@ -69,7 +69,7 @@ describe("app", () => {
     expect(fixture.innerHTML).toBe("<div>333</div>");
   });
 
-  test("warnIfNoStaticProps works as expected", async () => {
+  test.skip("warnIfNoStaticProps works as expected", async () => {
     let originalconsoleWarn = console.warn;
     let mockConsoleWarn = jest.fn(() => {});
     console.warn = mockConsoleWarn;
@@ -78,7 +78,7 @@ describe("app", () => {
       static template = xml`<div t-esc="message"/>`;
     }
 
-    await mount(Root, fixture, { test: true, props: { messge: "hey" }, warnIfNoStaticProps: true });
+    await mount(Root, fixture, { test: true, props: { messge: "hey" }, warnIfNoStaticProps: true } as any);
 
     console.warn = originalconsoleWarn;
     expect(mockConsoleWarn).toBeCalledWith(

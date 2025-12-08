@@ -28,7 +28,6 @@ export interface AppConfig<E> extends TemplateSetConfig {
   name?: string;
   pluginManager?: PluginManager;
   test?: boolean;
-  warnIfNoStaticProps?: boolean;
 }
 
 let hasBeenLogged = false;
@@ -67,7 +66,6 @@ export class App<E = any> extends TemplateSet {
   env: E;
   scheduler = new Scheduler();
   roots: Set<Root<any, any>> = new Set();
-  warnIfNoStaticProps: boolean;
   pluginManager: PluginManager;
 
   constructor(config: AppConfig<E> = {}) {
@@ -78,7 +76,6 @@ export class App<E = any> extends TemplateSet {
     if (config.test) {
       this.dev = true;
     }
-    this.warnIfNoStaticProps = config.warnIfNoStaticProps || false;
     if (this.dev && !config.test && !hasBeenLogged) {
       console.info(`Owl is running in 'dev' mode.`);
       hasBeenLogged = true;

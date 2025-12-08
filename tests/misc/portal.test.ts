@@ -502,7 +502,7 @@ describe("Portal", () => {
         </div>`;
       state = { error: false };
       setup() {
-        onError(({ cause }) => (error = cause));
+        onError((_error) => (error = _error));
       }
     }
     addOutsideDiv(fixture);

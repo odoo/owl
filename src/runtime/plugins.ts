@@ -1,19 +1,16 @@
 import { OwlError } from "../common/owl_error";
 import { getCurrent } from "./component_node";
-import { onWillDestroy } from "./lifecycle_hooks";
-import { proxy } from "./reactivity/proxy";
 import { derived } from "./reactivity/derived";
+import { proxy } from "./reactivity/proxy";
 
 let currentPluginManager: PluginManager | null = null;
+
+export const _getCurrentPluginManager = () => currentPluginManager;
 
 export interface PluginConstructor {
   new (): Plugin;
   id: string;
   resources: Record<string, any>;
-}
-
-interface PluginMetaData {
-  isDestroyed: boolean;
 }
 
 export class Plugin {
@@ -25,28 +22,7 @@ export class Plugin {
 
   resources: Record<string, any> = {};
 
-  __meta__: PluginMetaData = { isDestroyed: false };
-
   setup() {}
-
-  destroy() {}
-
-  get isDestroyed(): boolean {
-    return this.__meta__.isDestroyed;
-  }
-  // getResource(name: string) {
-  //   // todo
-  // }
-
-  // dispatchTo(resourceName, ...args) {
-  //   for (let handler of this.getResource(name)) {
-  //     if (typeof handler === "function") {
-  //       handler(...args);
-  //     } else {
-  //       throw new Error("resource value should be a function")
-  //     }
-  //   }
-  // }
 }
 
 export class PluginManager {
@@ -54,6 +30,8 @@ export class PluginManager {
   private parent: PluginManager | null;
   private plugins: Record<string, Plugin>;
   private resources: Record<string, any>;
+
+  onDestroyCb: Function[] = [];
 
   constructor(parent: PluginManager | null) {
     this.parent = parent;
@@ -81,10 +59,9 @@ export class PluginManager {
       }
     }
 
-    while (plugins.length) {
-      const plugin = plugins.pop()!;
-      plugin.destroy();
-      plugin.__meta__.isDestroyed = true;
+    const cbs = this.onDestroyCb;
+    while (cbs.length) {
+      cbs.pop()!();
     }
   }
 
@@ -173,14 +150,4 @@ export function plugin<T extends PluginConstructor>(pluginType: T): InstanceType
   }
 
   return plugin;
-}
-
-export function usePlugins(Plugins: PluginConstructor[]) {
-  const node = getCurrent();
-
-  const manager = new PluginManager(node.pluginManager);
-  node.pluginManager = manager;
-  onWillDestroy(() => manager.destroy());
-
-  return manager.startPlugins(Plugins);
 }

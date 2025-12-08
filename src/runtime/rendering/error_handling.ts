@@ -1,4 +1,3 @@
-import { OwlError } from "../../common/owl_error";
 import type { App } from "../app";
 import type { ComponentNode } from "../component_node";
 import type { Fiber } from "./fibers";
@@ -52,13 +51,6 @@ function _handleError(node: ComponentNode | null, error: any): boolean {
 type ErrorParams = { error: any } & ({ node: ComponentNode } | { fiber: Fiber });
 export function handleError(params: ErrorParams) {
   let { error } = params;
-  // Wrap error if it wasn't wrapped by wrapError (ie when not in dev mode)
-  if (!(error instanceof OwlError)) {
-    error = Object.assign(
-      new OwlError(`An error occured in the owl lifecycle (see this Error's "cause" property)`),
-      { cause: error }
-    );
-  }
   const node = "node" in params ? params.node : params.fiber.node;
   const fiber = "fiber" in params ? params.fiber : node.fiber;
 

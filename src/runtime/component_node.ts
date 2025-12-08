@@ -8,6 +8,7 @@ import {
   Computation,
   ComputationState,
   getCurrentComputation,
+  runWithComputation,
   setComputation,
   untrack,
 } from "./reactivity/computations";
@@ -131,11 +132,11 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     }
     const component = this.component;
     try {
-      let prom: Promise<any[]>;
-      untrack(() => {
-        prom = Promise.all(this.willStart.map((f) => f.call(component)));
+      let promises: Promise<any[]>[];
+      runWithComputation(undefined!, () => {
+        promises = this.willStart.map((f) => f.call(component));
       });
-      await prom!;
+      await Promise.all(promises!);
     } catch (e) {
       this.app.handleError({ node: this, error: e });
       return;

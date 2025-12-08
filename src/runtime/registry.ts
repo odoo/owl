@@ -21,14 +21,14 @@ export class Registry<T> {
   });
   items: Fn<T[]> = derived(() => this.entries().map((e) => e[1]));
 
-  addById<U extends { id: string } & T>(item: U, sequence: number = 50) {
+  addById<U extends { id: string } & T>(item: U, sequence: number = 50): Registry<T> {
     if (!item.id) {
       throw new Error(`Item should have an id key`);
     }
     return this.set(item.id, item, sequence);
   }
 
-  set(key: string, value: T, sequence: number = 50) {
+  set(key: string, value: T, sequence: number = 50): Registry<T> {
     if (this._type) {
       const error = validateType(key, value as any, this._type as any);
       // todo: move error handling in validation.js
@@ -38,6 +38,7 @@ export class Registry<T> {
     }
     this._map()[key] = [sequence, value];
     this._map.update();
+    return this;
   }
 
   get(key: string, defaultValue?: T): T {

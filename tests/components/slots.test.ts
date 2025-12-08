@@ -269,7 +269,9 @@ describe("slots", () => {
       .createRoot(Parent)
       .mount(fixture)
       .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
+    await expect(nextAppError(app)).resolves.toThrow(
+      "Cannot read properties of undefined (reading 'bool')"
+    );
     await mountProm;
     expect(error!).not.toBeNull();
     expect(mockConsoleWarn).toBeCalledTimes(1);

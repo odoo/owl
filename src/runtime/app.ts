@@ -254,15 +254,18 @@ export class App<E = any> extends TemplateSet {
   }
 }
 
+type ComponentInstance<C extends ComponentConstructor<any, any>> =
+  C extends new (...args: any) => infer T ? T : never;
+
 export async function mount<
-  T extends abstract new (...args: any) => any = any,
+  T extends ComponentConstructor<any, any>,
   P extends object = any,
   E = any
 >(
   C: T & ComponentConstructor<P, E>,
   target: MountTarget,
   config: AppConfig<E> & RootConfig<P, E> & MountOptions = {}
-): Promise<Component<P, E> & InstanceType<T>> {
+): Promise<ComponentInstance<T>> {
   const app = new App(config);
   const root = app.createRoot(C, config);
   return root.mount(target, config) as any;

@@ -396,7 +396,7 @@ exports[`t-call sub components in two t-calls 3`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].val;
+    let txt1 = ctx['this'].props.val;
     return block1([txt1]);
   }
 }"
@@ -449,7 +449,7 @@ exports[`t-call t-call in t-foreach and children component 3`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].val;
+    let txt1 = ctx['this'].props.val;
     return block1([txt1]);
   }
 }"
@@ -490,7 +490,7 @@ exports[`t-call t-call with t-call-context and subcomponent 3`] = `
   
   return function template(ctx, node, key = "") {
     const b2 = text(\`child\`);
-    const b3 = text(ctx['props'].name);
+    const b3 = text(ctx['this'].props.name);
     return multi([b2, b3]);
   }
 }"
@@ -518,10 +518,8 @@ exports[`t-call t-call with t-call-context and subcomponent, in dev mode 2`] = `
   
   return function template(ctx, node, key = "") {
     const props1 = {name: ctx['aab']};
-    helpers.validateProps(\`Child\`, props1, this);
     const b2 = comp1(props1, key + \`__1\`, node, this, null);
     const props2 = {name: ctx['lpe']};
-    helpers.validateProps(\`Child\`, props2, this);
     const b3 = comp2(props2, key + \`__2\`, node, this, null);
     return multi([b2, b3]);
   }
@@ -535,7 +533,7 @@ exports[`t-call t-call with t-call-context and subcomponent, in dev mode 3`] = `
   
   return function template(ctx, node, key = "") {
     const b2 = text(\`child\`);
-    const b3 = text(ctx['props'].name);
+    const b3 = text(ctx['this'].props.name);
     return multi([b2, b3]);
   }
 }"
@@ -654,7 +652,6 @@ exports[`t-call t-call-context: slots don't make component available again when 
     setContextValue(ctx, "dummy", 0);
     const ctx1 = capture(ctx);
     const props1 = {slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})};
-    helpers.validateProps(\`Child\`, props1, this);
     return comp1(props1, key + \`__1\`, node, this, null);
   }
 }"

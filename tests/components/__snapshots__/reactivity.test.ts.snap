@@ -22,7 +22,7 @@ exports[`reactivity in lifecycle Child component doesn't render when state they 
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['props'].state.content.a);
+    return text(ctx['this'].props.state.content.a);
   }
 }"
 `;
@@ -139,7 +139,7 @@ exports[`reactivity in lifecycle state changes in willUnmount do not trigger rer
   let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].val;
+    let txt1 = ctx['this'].props.val;
     let txt2 = ctx['state'].n;
     return block1([txt1, txt2]);
   }

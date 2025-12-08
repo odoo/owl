@@ -13,6 +13,7 @@ import {
   onRendered,
   onMounted,
   onWillStart,
+  props,
 } from "../../src";
 import { status } from "../../src/runtime/status";
 import {
@@ -334,8 +335,9 @@ describe("lifecycle hooks", () => {
 
     class ChildChild extends Component {
       static template = xml`
-        <div><t t-esc="props.n"/></div>
+        <div><t t-esc="this.props.n"/></div>
       `;
+      props = props();
 
       setup() {
         onWillPatch(() => {
@@ -349,9 +351,10 @@ describe("lifecycle hooks", () => {
 
     class Child extends Component {
       static template = xml`
-        <div><ChildChild n="props.n"/></div>
+        <div><ChildChild n="this.props.n"/></div>
       `;
       static components = { ChildChild };
+      props = props();
 
       setup() {
         onWillPatch(() => {
@@ -474,7 +477,8 @@ describe("lifecycle hooks", () => {
 
   test("components are unmounted and destroyed if no longer in DOM, even after updateprops", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="props.n"/></span>`;
+      static template = xml`<span><t t-esc="this.props.n"/></span>`;
+      props = props();
       setup() {
         useLogLifecycle();
       }
@@ -596,7 +600,8 @@ describe("lifecycle hooks", () => {
     let def = makeDeferred();
 
     class Child extends Component {
-      static template = xml`<span><t t-esc="props.n"/></span>`;
+      static template = xml`<span><t t-esc="this.props.n"/></span>`;
+      props = props();
 
       setup() {
         onWillUpdateProps((nextProps) => {
@@ -1413,7 +1418,8 @@ describe("lifecycle hooks", () => {
     let instance: any;
 
     class Test extends Component {
-      static template = xml`<t t-esc="props.rev" />`;
+      static template = xml`<t t-esc="this.props.rev" />`;
+      props = props();
       setup() {
         instance = this;
         onWillStart(this.logger("onWillStart"));

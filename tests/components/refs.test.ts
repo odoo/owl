@@ -1,4 +1,14 @@
-import { App, Component, mount, onMounted, onPatched, useRef, proxy, xml } from "../../src/index";
+import {
+  App,
+  Component,
+  mount,
+  onMounted,
+  onPatched,
+  useRef,
+  proxy,
+  xml,
+  props,
+} from "../../src/index";
 import { logStep, makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -21,6 +31,7 @@ describe("refs", () => {
   test("refs are properly bound in slots", async () => {
     class Dialog extends Component {
       static template = xml`<span><t t-slot="footer"/></span>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -132,9 +143,10 @@ describe("refs", () => {
       static components = {};
       static template = xml`
         <p t-ref="root">
-          <t t-esc="props.tree.value"/>
-          <t t-if="props.tree.child"><Test tree="props.tree.child"/></t>
+          <t t-esc="this.props.tree.value"/>
+          <t t-if="this.props.tree.child"><Test tree="this.props.tree.child"/></t>
         </p>`;
+      props = props();
       root = useRef("root");
 
       setup() {

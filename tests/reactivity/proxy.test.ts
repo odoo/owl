@@ -1,5 +1,5 @@
 import { Component, mount, onWillRender, onWillStart, onWillUpdateProps, xml } from "../../src";
-import { effect, markRaw, proxy, toRaw } from "../../src/runtime";
+import { effect, markRaw, props, proxy, toRaw } from "../../src/runtime";
 
 import {
   makeDeferred,
@@ -402,7 +402,6 @@ describe("Reactivity", () => {
     expect(state.length).toBe(2);
 
     // clear all observations caused by previous expects
-    debugger;
     state[0] = 2;
     await waitScheduler();
     expectSpy(spy, 4, [[2, "hey"]]);
@@ -2246,6 +2245,7 @@ describe("Reactivity: proxy", () => {
 
     class Quantity extends Component {
       static template = xml`<div><t t-esc="state.quantity"/></div>`;
+      props = props();
       state = proxy(testContext[this.props.id]);
 
       setup() {
@@ -2328,7 +2328,8 @@ describe("Reactivity: proxy", () => {
     const def = makeDeferred();
     let stateC: any;
     class ComponentC extends Component {
-      static template = xml`<span><t t-esc="context[props.key].n"/><t t-esc="state.x"/></span>`;
+      static template = xml`<span><t t-esc="context[this.props.key].n"/><t t-esc="state.x"/></span>`;
+      props = props();
       context = proxy(testContext);
       state = proxy({ x: "a" });
       setup() {
@@ -2337,7 +2338,8 @@ describe("Reactivity: proxy", () => {
     }
     class ComponentB extends Component {
       static components = { ComponentC };
-      static template = xml`<p><ComponentC key="props.key"/></p>`;
+      static template = xml`<p><ComponentC key="this.props.key"/></p>`;
+      props = props();
       setup() {
         onWillUpdateProps(() => def);
       }

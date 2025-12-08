@@ -18,6 +18,7 @@ import {
   useSubEnv,
   xml,
   OwlError,
+  props,
 } from "../../src/index";
 import {
   elem,
@@ -378,7 +379,8 @@ describe("hooks", () => {
       });
     }
     class MyComponent extends Component {
-      static template = xml`<span><t t-esc="props.value"/></span>`;
+      static template = xml`<span><t t-esc="this.props.value"/></span>`;
+      props = props();
       setup() {
         useMyHook();
         use2ndHook();
@@ -418,7 +420,8 @@ describe("hooks", () => {
     let n = 0;
 
     class MyComponent extends Component {
-      static template = xml`<span><t t-esc="props.value"/></span>`;
+      static template = xml`<span><t t-esc="this.props.value"/></span>`;
+      props = props();
       setup() {
         useListener(window, "click", this.increment);
       }

@@ -23,7 +23,7 @@ exports[`t-props basic use 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].a+ctx['props'].b;
+    let txt1 = ctx['this'].props.a+ctx['this'].props.b;
     return block1([txt1]);
   }
 }"
@@ -77,8 +77,8 @@ exports[`t-props t-props and other props 2`] = `
   let block1 = createBlock(\`<div><block-text-0/><block-text-1/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].a;
-    let txt2 = ctx['props'].b;
+    let txt1 = ctx['this'].props.a;
+    let txt2 = ctx['this'].props.b;
     return block1([txt1, txt2]);
   }
 }"
@@ -107,7 +107,7 @@ exports[`t-props t-props only 2`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].a;
+    let txt1 = ctx['this'].props.a;
     return block1([txt1]);
   }
 }"

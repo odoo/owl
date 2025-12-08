@@ -1277,10 +1277,6 @@ export class CodeGenerator {
       expr = `\`${ast.name}\``;
     }
 
-    if (this.dev) {
-      this.addLine(`helpers.validateProps(${expr}, ${propVar!}, this);`);
-    }
-
     if (block && (ctx.forceNewBlock === false || ctx.tKeyExpr)) {
       // todo: check the forcenewblock condition
       this.insertAnchor(block);

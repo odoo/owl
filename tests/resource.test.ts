@@ -14,7 +14,6 @@ test("can add multiple values (chainable)", () => {
   expect(resource.items()).toEqual(["value", "other"]);
 });
 
-
 test("can remove values", () => {
   const resource = new Resource();
   resource.add("a").add("b").add("c").add("d");

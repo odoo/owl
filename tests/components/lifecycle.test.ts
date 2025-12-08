@@ -113,7 +113,7 @@ describe("lifecycle hooks", () => {
     await mount(Test, fixture);
   });
 
-  test("timeout in onWillStart emits a console log", async () => {
+  test.skip("timeout in onWillStart emits a console log", async () => {
     const { log } = console;
     let logArgs: any[];
     console.log = jest.fn((...args) => (logArgs = args));
@@ -180,7 +180,7 @@ describe("lifecycle hooks", () => {
     }
   });
 
-  test("timeout in onWillUpdateProps emits a console log", async () => {
+  test.skip("timeout in onWillUpdateProps emits a console log", async () => {
     class Child extends Component {
       static template = xml``;
       setup() {

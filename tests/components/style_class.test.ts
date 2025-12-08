@@ -371,13 +371,14 @@ describe("style and class handling", () => {
       .createRoot(Parent)
       .mount(fixture)
       .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
+    await expect(nextAppError(app)).resolves.toThrow(
+      "Cannot read properties of undefined (reading 'crash')"
+    );
     await mountProm;
     expect(error!).toBeDefined();
-    expect(error!.cause).toBeDefined();
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
-    expect(error!.cause.message).toMatch(regexp);
+    expect(error!.message).toMatch(regexp);
     expect(fixture.innerHTML).toBe("");
     expect(mockConsoleWarn).toBeCalledTimes(1);
   });

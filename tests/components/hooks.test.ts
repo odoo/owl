@@ -717,9 +717,9 @@ describe("hooks", () => {
         .createRoot(MyComponent)
         .mount(fixture)
         .catch((e: Error) => (error = e));
-      await expect(nextAppError(app)).resolves.toThrow("error occured in the owl lifecycle");
+      await expect(nextAppError(app)).resolves.toThrow("Intentional error");
       await mountProm;
-      expect(error!.cause.message).toBe("Intentional error");
+      expect(error!.message).toBe("Intentional error");
       // no console.error because the error has been caught in this test
       expect(console.error).toHaveBeenCalledTimes(0);
       console.error = originalconsoleError;

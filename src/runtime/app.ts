@@ -250,8 +250,11 @@ export class App<E = any> extends TemplateSet {
   }
 }
 
-type ComponentInstance<C extends ComponentConstructor<any, any>> =
-  C extends new (...args: any) => infer T ? T : never;
+type ComponentInstance<C extends ComponentConstructor<any, any>> = C extends new (
+  ...args: any
+) => infer T
+  ? T
+  : never;
 
 export async function mount<
   T extends ComponentConstructor<any, any>,

@@ -12,7 +12,8 @@ interface StaticComponentProperties {
   components?: { [componentName: string]: ComponentConstructor };
 }
 
-export interface ComponentConstructor<P extends Props = any, E = any> extends StaticComponentProperties {
+export interface ComponentConstructor<P extends Props = any, E = any>
+  extends StaticComponentProperties {
   new (env: E, node: ComponentNode): Component<P, E>;
 }
 

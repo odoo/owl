@@ -11,7 +11,7 @@ import {
   onWillUpdateProps,
   props,
   proxy,
-  xml
+  xml,
 } from "../../src";
 import { Fiber } from "../../src/runtime/rendering/fibers";
 import { Scheduler } from "../../src/runtime/rendering/scheduler";

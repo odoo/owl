@@ -1,8 +1,6 @@
 import { BDom, multi, text, toggler, createCatcher } from "../blockdom";
 import { Markup } from "../utils";
 import { html } from "../blockdom/index";
-import { isOptional, validateSchema } from "../validation";
-import type { ComponentConstructor, Props } from "../component";
 import { markRaw } from "../reactivity/proxy";
 import { OwlError } from "../../common/owl_error";
 import type { ComponentNode } from "../component_node";
@@ -173,55 +171,6 @@ export function safeOutput(value: any, defaultValue?: any): ReturnType<typeof to
   return toggler(safeKey, block);
 }
 
-/**
- * Validate the component props (or next props) against the (static) props
- * description.  This is potentially an expensive operation: it may needs to
- * visit recursively the props and all the children to check if they are valid.
- * This is why it is only done in 'dev' mode.
- */
-export function validateProps<P extends Props>(
-  name: string | ComponentConstructor<P>,
-  props: P,
-  comp?: any
-) {
-  const ComponentClass =
-    typeof name !== "string"
-      ? name
-      : (comp.constructor.components[name] as ComponentConstructor<P> | undefined);
-
-  if (!ComponentClass) {
-    // this is an error, wrong component. We silently return here instead so the
-    // error is triggered by the usual path ('component' function)
-    return;
-  }
-
-  const schema = ComponentClass.props;
-  if (!schema) {
-    return;
-  }
-  const defaultProps = ComponentClass.defaultProps;
-  if (defaultProps) {
-    let isMandatory = (name: string) =>
-      Array.isArray(schema)
-        ? schema.includes(name)
-        : name in schema && !("*" in schema) && !isOptional(schema[name]);
-    for (let p in defaultProps) {
-      if (isMandatory(p)) {
-        throw new OwlError(
-          `A default value cannot be defined for a mandatory prop (name: '${p}', component: ${ComponentClass.name})`
-        );
-      }
-    }
-  }
-
-  const errors = validateSchema(props, schema);
-  if (errors.length) {
-    throw new OwlError(
-      `Invalid props for component '${ComponentClass.name}': ` + errors.join(", ")
-    );
-  }
-}
-
 function makeRefWrapper(node: ComponentNode) {
   let refNames: Set<String> = new Set();
   return (name: string, fn: Function) => {
@@ -246,7 +195,6 @@ export const helpers = {
   setContextValue,
   shallowEqual,
   toNumber,
-  validateProps,
   LazyValue,
   safeOutput,
   createCatcher,

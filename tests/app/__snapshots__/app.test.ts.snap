@@ -93,7 +93,7 @@ exports[`app can configure an app with props 1`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].value;
+    let txt1 = ctx['this'].props.value;
     return block1([txt1]);
   }
 }"

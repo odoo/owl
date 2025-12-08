@@ -1,4 +1,4 @@
-import { App, Component, mount, status, toRaw, proxy, xml } from "../../src";
+import { App, Component, mount, status, toRaw, proxy, xml, props } from "../../src";
 import {
   elem,
   makeTestFixture,
@@ -46,7 +46,8 @@ describe("basics", () => {
 
   test("can mount a simple component with props", async () => {
     class Test extends Component {
-      static template = xml`<span><t t-esc="props.value"/></span>`;
+      static template = xml`<span><t t-esc="this.props.value"/></span>`;
+      props = props();
     }
 
     const component = await mount(Test, fixture, { props: { value: 3 } });
@@ -127,6 +128,7 @@ describe("basics", () => {
     const p = {};
     class Test extends Component {
       static template = xml`<span>simple vnode</span>`;
+      props = props();
       setup() {
         expect(toRaw(this.props)).not.toBe(p);
       }
@@ -141,6 +143,7 @@ describe("basics", () => {
     const p = { a: 1 };
     class Test extends Component {
       static template = xml`<span>simple vnode</span>`;
+      props = props();
       setup() {
         expect(Object.prototype.hasOwnProperty.call(this.props, "a")).toBe(true);
       }
@@ -155,6 +158,7 @@ describe("basics", () => {
     class Test extends Component {
       static template = xml`<span>simple vnode</span>`;
       static defaultProps = { b: 1 };
+      props = props();
       setup() {
         expect(Object.prototype.hasOwnProperty.call(this.props, "a")).toBe(true);
         expect(Object.prototype.hasOwnProperty.call(this.props, "b")).toBe(true);
@@ -335,7 +339,8 @@ describe("basics", () => {
 
   test("class parent, class child component with props", async () => {
     class Child extends Component {
-      static template = xml`<div><t t-esc="props.value" /></div>`;
+      static template = xml`<div><t t-esc="this.props.value" /></div>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -407,7 +412,6 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("<div><p>simple vnode</p><span>1</span></div>");
 
     parent.state.hasChild = false;
-    debugger;
     parent.state.text = "2";
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>2</span></div>");
@@ -454,7 +458,8 @@ describe("basics", () => {
 
   test("can handle empty props", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="props.val"/></span>`;
+      static template = xml`<span><t t-esc="this.props.val"/></span>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`<div><Child val=""/></div>`;
@@ -467,7 +472,8 @@ describe("basics", () => {
 
   test("child can be updated", async () => {
     class Child extends Component {
-      static template = xml`<t t-esc="props.value"/>`;
+      static template = xml`<t t-esc="this.props.value"/>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -494,8 +500,9 @@ describe("basics", () => {
       static template = xml`<span>b</span>`;
     }
     class Child extends Component {
-      static template = xml`<ChildA t-if="props.child==='a'"/><ChildB t-else=""/>`;
+      static template = xml`<ChildA t-if="this.props.child==='a'"/><ChildB t-else=""/>`;
       static components = { ChildA, ChildB };
+      props = props();
     }
 
     class Parent extends Component {
@@ -580,7 +587,8 @@ describe("basics", () => {
 
   test("same t-keys in two different places", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="props.blip"/></span>`;
+      static template = xml`<span><t t-esc="this.props.blip"/></span>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -777,7 +785,8 @@ describe("basics", () => {
     // interplay between components and vnodes, a sub widget vnode was patched
     // twice.
     class Child extends Component {
-      static template = xml`<span>abc<t t-if="props.flag">def</t></span>`;
+      static template = xml`<span>abc<t t-if="this.props.flag">def</t></span>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`<Child flag="state.flag"/>`;
@@ -808,16 +817,18 @@ describe("basics", () => {
     class Custom extends Component {
       static template = xml`
         <div class="widget-subkey">
-          <t t-esc="props.key"/>__<t t-esc="props.subKey"/>
+          <t t-esc="this.props.key"/>__<t t-esc="this.props.subKey"/>
         </div>`;
+      props = props();
     }
     class Child extends Component {
       static components = { Custom };
       static template = xml`
         <Custom
-          t-key="props.subKey"
-          key="props.key"
-          subKey="props.subKey"/>`;
+          t-key="this.props.subKey"
+          key="this.props.key"
+          subKey="this.props.subKey"/>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -942,7 +953,8 @@ describe("basics", () => {
 
     class Child extends Component {
       static components = { GrandChild };
-      static template = xml`<GrandChild t-if="props.displayGrandChild" />`;
+      static template = xml`<GrandChild t-if="this.props.displayGrandChild" />`;
+      props = props();
     }
 
     class Parent extends Component {

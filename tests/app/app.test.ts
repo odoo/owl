@@ -1,4 +1,4 @@
-import { App, Component, mount, onWillPatch, onWillStart, proxy, xml } from "../../src";
+import { App, Component, mount, onWillPatch, onWillStart, props, proxy, xml } from "../../src";
 import { status } from "../../src/runtime/status";
 import {
   makeTestFixture,
@@ -61,7 +61,8 @@ describe("app", () => {
 
   test("can configure an app with props", async () => {
     class SomeComponent extends Component {
-      static template = xml`<div t-esc="props.value"/>`;
+      static template = xml`<div t-esc="this.props.value"/>`;
+      props = props();
     }
 
     const app = new App();
@@ -76,6 +77,7 @@ describe("app", () => {
 
     class Root extends Component {
       static template = xml`<div t-esc="message"/>`;
+      props = props();
     }
 
     await mount(Root, fixture, { test: true, props: { messge: "hey" }, warnIfNoStaticProps: true } as any);

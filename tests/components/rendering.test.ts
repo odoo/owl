@@ -1,4 +1,4 @@
-import { Component, mount, onRendered, onWillUpdateProps, proxy, xml } from "../../src";
+import { Component, mount, onRendered, onWillUpdateProps, props, proxy, xml } from "../../src";
 import {
   makeTestFixture,
   snapshotEverything,
@@ -226,7 +226,8 @@ describe("rendering semantics", () => {
 
   test("props are proxy", async () => {
     class Child extends Component {
-      static template = xml`<t t-esc="props.a.b"/>`;
+      static template = xml`<t t-esc="this.props.a.b"/>`;
+      props = props();
       setup() {
         useLogLifecycle();
       }
@@ -276,7 +277,8 @@ describe("rendering semantics", () => {
 
   test("props are proxy (nested prop)", async () => {
     class Child extends Component {
-      static template = xml`<t t-esc="props.a.b.c"/>`;
+      static template = xml`<t t-esc="this.props.a.b.c"/>`;
+      props = props();
 
       setup() {
         useLogLifecycle();
@@ -340,7 +342,8 @@ describe("rendering semantics", () => {
 
   test("works as expected for dynamic number of props", async () => {
     class Child extends Component {
-      static template = xml`<t t-esc="Object.keys(props).length"/>`;
+      static template = xml`<t t-esc="Object.keys(this.props).length"/>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -363,7 +366,8 @@ describe("rendering semantics", () => {
     const def = makeDeferred();
 
     class C extends Component {
-      static template = xml`<t t-esc="props.obj.val"/>`;
+      static template = xml`<t t-esc="this.props.obj.val"/>`;
+      props = props();
 
       setup() {
         useLogLifecycle();
@@ -371,8 +375,9 @@ describe("rendering semantics", () => {
     }
 
     class B extends Component {
-      static template = xml`<C obj="props.obj"/>`;
+      static template = xml`<C obj="this.props.obj"/>`;
       static components = { C };
+      props = props();
 
       setup() {
         useLogLifecycle();
@@ -445,8 +450,9 @@ test("force render in case of existing render", async () => {
     }
   }
   class B extends Component {
-    static template = xml`<C/><t t-esc="props.val"/>`;
+    static template = xml`<C/><t t-esc="this.props.val"/>`;
     static components = { C };
+    props = props();
     setup() {
       useLogLifecycle();
       onWillUpdateProps(() => def);

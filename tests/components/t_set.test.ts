@@ -1,4 +1,4 @@
-import { Component, mount, xml } from "../../src";
+import { Component, mount, props, xml } from "../../src";
 import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -197,6 +197,7 @@ describe("t-set", () => {
   test("slots with an unused t-set with a component in body", async () => {
     class Child extends Component {
       static template = xml`Child <t t-slot="default"/>`;
+      props = props();
     }
 
     class Comp extends Component {
@@ -221,6 +222,7 @@ describe("t-set", () => {
     }
     class Child extends Component {
       static template = xml`Child <t t-slot="default"/>`;
+      props = props();
     }
 
     class Comp extends Component {
@@ -246,6 +248,7 @@ describe("t-set", () => {
     }
     class Blorg extends Component {
       static template = xml`Blorg <t t-slot="default"/>`;
+      props = props();
     }
 
     class Comp extends Component {

@@ -1,4 +1,4 @@
-import { App, Component, mount, proxy, xml } from "../../src/index";
+import { App, Component, mount, props, proxy, xml } from "../../src/index";
 import { isDirectChildOf, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -35,7 +35,8 @@ describe("t-call", () => {
 
   test("sub components in two t-calls", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="props.val"/></span>`;
+      static template = xml`<span><t t-esc="this.props.val"/></span>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -126,7 +127,8 @@ describe("t-call", () => {
     const sub = xml`<Child val="val"/>`;
 
     class Child extends Component {
-      static template = xml`<span><t t-esc="props.val"/></span>`;
+      static template = xml`<span><t t-esc="this.props.val"/></span>`;
+      props = props();
     }
     class Parent extends Component {
       static components = { Child };
@@ -264,7 +266,8 @@ describe("t-call", () => {
 
   test("t-call with t-call-context and subcomponent", async () => {
     class Child extends Component {
-      static template = xml`child<t t-esc="props.name"/>`;
+      static template = xml`child<t t-esc="this.props.name"/>`;
+      props = props();
     }
 
     class Root extends Component {
@@ -290,8 +293,8 @@ describe("t-call", () => {
 
   test("t-call with t-call-context and subcomponent, in dev mode", async () => {
     class Child extends Component {
-      static template = xml`child<t t-esc="props.name"/>`;
-      static props = ["name"];
+      static template = xml`child<t t-esc="this.props.name"/>`;
+      props = props(["name"]);
     }
 
     class Root extends Component {
@@ -320,7 +323,7 @@ describe("t-call", () => {
     let child: any;
     class Child extends Component {
       static template = xml`<t t-slot="default"/>`;
-      static props = ["name"];
+      props = props();
       setup() {
         child = this;
       }
@@ -360,6 +363,7 @@ describe("t-call", () => {
   test("t-call-context: slots don't make component available again when context is captured", async () => {
     class Child extends Component {
       static template = xml`<t t-slot="default"/>`;
+      props = props();
     }
 
     class Root extends Component {

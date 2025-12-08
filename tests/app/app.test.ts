@@ -80,7 +80,11 @@ describe("app", () => {
       props = props();
     }
 
-    await mount(Root, fixture, { test: true, props: { messge: "hey" }, warnIfNoStaticProps: true } as any);
+    await mount(Root, fixture, {
+      test: true,
+      props: { messge: "hey" },
+      warnIfNoStaticProps: true,
+    } as any);
 
     console.warn = originalconsoleWarn;
     expect(mockConsoleWarn).toBeCalledWith(

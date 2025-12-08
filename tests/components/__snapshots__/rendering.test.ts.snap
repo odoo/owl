@@ -45,7 +45,7 @@ exports[`force render in case of existing render 2`] = `
   
   return function template(ctx, node, key = "") {
     const b2 = comp1({}, key + \`__1\`, node, this, null);
-    const b3 = text(ctx['props'].val);
+    const b3 = text(ctx['this'].props.val);
     return multi([b2, b3]);
   }
 }"
@@ -130,7 +130,7 @@ exports[`rendering semantics props are proxy (nested prop) 2`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['props'].a.b.c);
+    return text(ctx['this'].props.a.b.c);
   }
 }"
 `;
@@ -153,7 +153,7 @@ exports[`rendering semantics props are proxy 2`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['props'].a.b);
+    return text(ctx['this'].props.a.b);
   }
 }"
 `;
@@ -232,7 +232,7 @@ exports[`rendering semantics rendering is atomic (for one subtree) 2`] = `
   const comp1 = app.createComponent(\`C\`, true, false, false, ["obj"]);
   
   return function template(ctx, node, key = "") {
-    return comp1({obj: ctx['props'].obj}, key + \`__1\`, node, this, null);
+    return comp1({obj: ctx['this'].props.obj}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -243,7 +243,7 @@ exports[`rendering semantics rendering is atomic (for one subtree) 3`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['props'].obj.val);
+    return text(ctx['this'].props.obj.val);
   }
 }"
 `;
@@ -266,7 +266,7 @@ exports[`rendering semantics works as expected for dynamic number of props 2`] =
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = "") {
-    return text(Object.keys(ctx['props']).length);
+    return text(Object.keys(ctx['this'].props).length);
   }
 }"
 `;

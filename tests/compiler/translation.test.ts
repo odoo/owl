@@ -1,4 +1,4 @@
-import { Component, mount, xml } from "../../src";
+import { Component, mount, props, xml } from "../../src";
 import { makeTestFixture, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
@@ -254,8 +254,8 @@ describe("translation context", () => {
   });
   test("props with modifier .translate are translated in context", async () => {
     class ChildComponent extends Component {
-      static props = ["text"];
-      static template = xml`<span t-esc="props.text"/>`;
+      static template = xml`<span t-esc="this.props.text"/>`;
+      props = props(["text"]);
     }
 
     class SomeComponent extends Component {
@@ -278,6 +278,7 @@ describe("translation context", () => {
         <div t-translation-context="ja">
           <t t-slot="a"/>
         </div>`;
+      props = props();
     }
 
     class SomeComponent extends Component {
@@ -312,6 +313,7 @@ describe("translation context", () => {
             foo
           </t>
         </div>`;
+      props = props();
     }
 
     const translateFn = jest.fn((expr: string, translationCtx: string) =>

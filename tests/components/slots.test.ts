@@ -1,4 +1,4 @@
-import { App, Component, mount, onMounted, proxy, xml } from "../../src/index";
+import { App, Component, mount, onMounted, props, proxy, xml } from "../../src/index";
 import { children, makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -20,6 +20,7 @@ describe("slots", () => {
   test("simple default slot", async () => {
     class Child extends Component {
       static template = xml`<span><t t-slot="default"/></span>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -34,6 +35,7 @@ describe("slots", () => {
   test("simple default slot, variation", async () => {
     class Child extends Component {
       static template = xml`<t t-slot="default"/>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -48,6 +50,7 @@ describe("slots", () => {
   test("t-set-slot=default has priority over rest of the content", async () => {
     class Child extends Component {
       static template = xml`<t t-slot="default"/>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -56,6 +59,7 @@ describe("slots", () => {
         <t t-set-slot="default">some other text</t>
       </Child>`;
       static components = { Child };
+      props = props();
     }
     await mount(Parent, fixture);
 
@@ -66,6 +70,7 @@ describe("slots", () => {
     let child: any;
     class Child extends Component {
       static template = xml`<span><t t-slot="slotName" bool="state.bool"/></span>`;
+      props = props();
       state = proxy({ bool: true });
       setup() {
         child = this;
@@ -95,6 +100,7 @@ describe("slots", () => {
     class Child extends Component {
       static template = xml`
         <t t-slot="slotName" t-props="info"/>`;
+      props = props();
       info = { a: 1, b: 2 };
     }
 
@@ -107,6 +113,7 @@ describe("slots", () => {
           </t>
         </Child>`;
       static components = { Child };
+      props = props();
     }
 
     await mount(Parent, fixture);
@@ -117,6 +124,7 @@ describe("slots", () => {
     let child: any;
     class Child extends Component {
       static template = xml`<span><t t-slot="{{ 'slotName' }}" bool="state.bool"/></span>`;
+      props = props();
       state = proxy({ bool: true });
       setup() {
         child = this;
@@ -145,6 +153,7 @@ describe("slots", () => {
   test("simple named and empty slot", async () => {
     class Child extends Component {
       static template = xml`<span><t t-slot="default" /><t t-slot="myEmptySlot"/></span>`;
+      props = props();
 
       setup() {
         expect(this.props.slots["myEmptySlot"]).toBeTruthy();
@@ -163,6 +172,7 @@ describe("slots", () => {
   test("simple named and empty slot -- 2", async () => {
     class Child extends Component {
       static template = xml`<span><t t-slot="myEmptySlot">default empty</t></span>`;
+      props = props();
 
       setup() {
         expect(this.props.slots["myEmptySlot"]).toBeTruthy();
@@ -181,7 +191,8 @@ describe("slots", () => {
 
   test("can use .translate suffix on slot props", async () => {
     class Child extends Component {
-      static template = xml`<t t-esc="props.slots.default.message"/>`;
+      static template = xml`<t t-esc="this.props.slots.default.message"/>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -195,7 +206,8 @@ describe("slots", () => {
 
   test(".translate slot props are translated", async () => {
     class Child extends Component {
-      static template = xml`<t t-esc="props.slots.default.message"/>`;
+      static template = xml`<t t-esc="this.props.slots.default.message"/>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -211,6 +223,7 @@ describe("slots", () => {
     let child: any;
     class Child extends Component {
       static template = xml`<span><t t-slot="default" bool="state.bool"/></span>`;
+      props = props();
       state = proxy({ bool: true });
       setup() {
         child = this;
@@ -237,6 +250,7 @@ describe("slots", () => {
   test("simple default slot with params", async () => {
     class Child extends Component {
       static template = xml`<span><t t-slot="default" bool="state.bool"/></span>`;
+      props = props();
       state = proxy({ bool: true });
     }
 
@@ -264,6 +278,7 @@ describe("slots", () => {
   test("simple default slot with params and bound function", async () => {
     class Child extends Component {
       static template = xml`<t t-slot="default" fn.bind="getValue"/>`;
+      props = props();
       state = proxy({ value: 123 });
       getValue() {
         return this.state.value;
@@ -283,6 +298,7 @@ describe("slots", () => {
   test("default slot with params with - in it", async () => {
     class Child extends Component {
       static template = xml`<t t-slot="default" some-value="state.value"/>`;
+      props = props();
       state = proxy({ value: 123 });
     }
 
@@ -299,6 +315,7 @@ describe("slots", () => {
   test("fun: two calls to the same slot", async () => {
     class Child extends Component {
       static template = xml`<t t-slot="default"/><t t-slot="default"/>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -313,6 +330,7 @@ describe("slots", () => {
   test("slot content is bound to caller", async () => {
     class Child extends Component {
       static template = xml`<span><t t-slot="default"/></span>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -333,6 +351,7 @@ describe("slots", () => {
   test("slot content is bound to caller (variation)", async () => {
     class Child extends Component {
       static template = xml`<span><t t-slot="default"/></span>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -364,6 +383,7 @@ describe("slots", () => {
           <div><t t-slot="header"/></div>
           <div><t t-slot="footer"/></div>
         </div>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -387,11 +407,12 @@ describe("slots", () => {
     class Dialog extends Component {
       static template = xml`
         <div>
-          <t t-esc="props.slots['header'].param"/>
+          <t t-esc="this.props.slots['header'].param"/>
           <div><t t-slot="header"/></div>
-          <t t-esc="props.slots['footer'].param"/>
+          <t t-esc="this.props.slots['footer'].param"/>
           <div><t t-slot="footer"/></div>
         </div>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -416,7 +437,8 @@ describe("slots", () => {
     class Child extends Component {
       static template = xml`
         <t t-slot="abc"/>
-        <t t-esc="props.slots['abc'].getValue()"/>`;
+        <t t-esc="this.props.slots['abc'].getValue()"/>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -439,6 +461,7 @@ describe("slots", () => {
   test("no named slot content => just no children", async () => {
     class Dialog extends Component {
       static template = xml`<span><t t-slot="header"/></span>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`<Dialog/>`;
@@ -455,6 +478,7 @@ describe("slots", () => {
             <span>
               <t t-slot="header">default content</t>
             </span>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`<div><Dialog/></div>`;
@@ -471,6 +495,7 @@ describe("slots", () => {
           <span>
             <t t-slot="default">default content</t>
           </span>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`<div><Dialog/></div>`;
@@ -487,6 +512,7 @@ describe("slots", () => {
             <span>
               <t t-slot="default">default content</t>
             </span>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`<div><Dialog>hey</Dialog></div>`;
@@ -503,6 +529,7 @@ describe("slots", () => {
             <span>
               <t t-slot="header">default content</t>
             </span>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`<div><Dialog><t t-set-slot="header">hey</t></Dialog></div>`;
@@ -526,6 +553,7 @@ describe("slots", () => {
           </button>
         </t>`;
 
+      props = props();
       state = proxy({ value: 1 });
       setup() {
         child = this;
@@ -552,6 +580,7 @@ describe("slots", () => {
   test("slots are rendered with proper context", async () => {
     class Dialog extends Component {
       static template = xml`<span><t t-slot="footer"/></span>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -588,9 +617,10 @@ describe("slots", () => {
   test("slots are rendered with proper context, part 2", async () => {
     class Link extends Component {
       static template = xml`
-            <a t-att-href="props.to">
+            <a t-att-href="this.props.to">
               <t t-slot="default"/>
             </a>`;
+      props = props();
     }
 
     class App extends Component {
@@ -627,9 +657,10 @@ describe("slots", () => {
   test("slots are rendered with proper context, part 3", async () => {
     class Link extends Component {
       static template = xml`
-            <a t-att-href="props.to">
+            <a t-att-href="this.props.to">
               <t t-slot="default"/>
             </a>`;
+      props = props();
     }
 
     class App extends Component {
@@ -666,9 +697,10 @@ describe("slots", () => {
   test("slots are rendered with proper context, part 4", async () => {
     class Link extends Component {
       static template = xml`
-            <a t-att-href="props.to">
+            <a t-att-href="this.props.to">
               <t t-slot="default"/>
             </a>`;
+      props = props();
     }
 
     class App extends Component {
@@ -694,6 +726,7 @@ describe("slots", () => {
   test("content is the default slot", async () => {
     class Dialog extends Component {
       static template = xml`<div><t t-slot="default"/></div>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`
@@ -712,6 +745,7 @@ describe("slots", () => {
   test("content is the default slot (variation)", async () => {
     class Dialog extends Component {
       static template = xml`<t t-slot="default"/>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`
@@ -728,6 +762,7 @@ describe("slots", () => {
   test("default slot work with text nodes", async () => {
     class Dialog extends Component {
       static template = xml`<div><t t-slot="default"/></div>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`
@@ -744,6 +779,7 @@ describe("slots", () => {
   test("default slot work with text nodes (variation)", async () => {
     class Dialog extends Component {
       static template = xml`<t t-slot="default"/>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`<Dialog>sts rocks</Dialog>`;
@@ -757,6 +793,7 @@ describe("slots", () => {
   test("multiple roots are allowed in a named slot", async () => {
     class Dialog extends Component {
       static template = xml`<div><t t-slot="content"/></div>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`
@@ -778,6 +815,7 @@ describe("slots", () => {
   test("multiple roots are allowed in a default slot", async () => {
     class Dialog extends Component {
       static template = xml`<div><t t-slot="default"/></div>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`
@@ -802,6 +840,7 @@ describe("slots", () => {
             <span>some content</span>
             <t t-slot="footer"/>
           </span>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`<div><Dialog /></div>`;
@@ -819,6 +858,7 @@ describe("slots", () => {
 
     class Dialog extends Component {
       static template = xml`<span><t t-slot="content"/></span>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`
@@ -836,6 +876,7 @@ describe("slots", () => {
   test("slot preserves properly parented relationship", async () => {
     class Child extends Component {
       static template = xml`<t t-slot="default"/>`;
+      props = props();
     }
     class GrandChild extends Component {
       static template = xml`Grand Child`;
@@ -866,6 +907,7 @@ describe("slots", () => {
   test("slot preserves properly parented relationship, even through t-call", async () => {
     class Child extends Component {
       static template = xml`<t t-slot="default"/>`;
+      props = props();
     }
 
     class GrandChild extends Component {
@@ -906,6 +948,7 @@ describe("slots", () => {
 
     class Wrapper extends Component {
       static template = xml`<t t-slot="default"/>`;
+      props = props();
     }
 
     let dialog: any;
@@ -921,6 +964,7 @@ describe("slots", () => {
 
       static components = { Wrapper };
 
+      props = props();
       setup() {
         dialog = this;
       }
@@ -953,6 +997,7 @@ describe("slots", () => {
           <wrapper>
             <t t-slot="default"/>
           </wrapper>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -1017,6 +1062,7 @@ describe("slots", () => {
 
     class Slotted extends Component {
       static template = xml`<div class="slotted"><t t-slot="default" /></div>`;
+      props = props();
     }
 
     class UsingTcallInSlotted extends Component {
@@ -1057,6 +1103,7 @@ describe("slots", () => {
       static template = xml`
         <div><t t-slot="default" /></div>
       `;
+      props = props();
     }
 
     class App extends Component {
@@ -1133,6 +1180,7 @@ describe("slots", () => {
           </div>
         </div>
       `;
+      props = props();
     }
 
     class App extends Component {
@@ -1159,6 +1207,7 @@ describe("slots", () => {
   test("dynamic t-slot call", async () => {
     class Toggler extends Component {
       static template = xml`<button t-on-click="toggle"><t t-slot="{{current.slot}}"/></button>`;
+      props = props();
       current = proxy({ slot: "slot1" });
       toggle() {
         this.current.slot = this.current.slot === "slot1" ? "slot2" : "slot1";
@@ -1195,6 +1244,7 @@ describe("slots", () => {
             owl
           </t>
         </button>`;
+      props = props();
       current = proxy({ slot: "slot1" });
       toggle() {
         this.current.slot = this.current.slot === "slot1" ? "slot2" : "slot1";
@@ -1223,11 +1273,13 @@ describe("slots", () => {
     class SomeComponent extends Component {
       static template = xml`
         <div>
-          SC:<t t-esc="props.val"/>
+          SC:<t t-esc="this.props.val"/>
         </div>`;
+      props = props();
     }
     class GenericComponent extends Component {
       static template = xml`<div><t t-slot="default"/></div>`;
+      props = props();
     }
 
     class App extends Component {
@@ -1259,6 +1311,7 @@ describe("slots", () => {
           <a href="abc">
               <t t-slot="default"/>
           </a>`;
+      props = props();
     }
 
     class A extends Component {
@@ -1273,10 +1326,12 @@ describe("slots", () => {
 
   test("template can just return a slot", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="props.value"/></span>`;
+      static template = xml`<span><t t-esc="this.props.value"/></span>`;
+      props = props();
     }
     class SlotComponent extends Component {
       static template = xml`<t t-slot="default"/>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -1298,10 +1353,12 @@ describe("slots", () => {
 
   test("multiple slots containing components", async () => {
     class C extends Component {
-      static template = xml`<span><t t-esc="props.val"/></span>`;
+      static template = xml`<span><t t-esc="this.props.val"/></span>`;
+      props = props();
     }
     class B extends Component {
       static template = xml`<div><t t-slot="s1"/><t t-slot="s2"/></div>`;
+      props = props();
     }
     class A extends Component {
       static template = xml`
@@ -1320,6 +1377,7 @@ describe("slots", () => {
   test("slots in t-foreach and re-rendering", async () => {
     class Child extends Component {
       static template = xml`<span><t t-esc="state.val"/><t t-slot="default"/></span>`;
+      props = props();
       state = proxy({ val: "A" });
       setup() {
         onMounted(() => {
@@ -1350,6 +1408,7 @@ describe("slots", () => {
             <t t-esc="state.val"/>
             <t t-slot="default"/>
           </span>`;
+      props = props();
       state = proxy({ val: "A" });
       setup() {
         onMounted(() => {
@@ -1387,6 +1446,7 @@ describe("slots", () => {
               <t t-slot="default"/>
             </div>
           </span>`;
+      props = props();
       setup() {
         child = this;
       }
@@ -1396,6 +1456,7 @@ describe("slots", () => {
           <span id="c2">
             <t t-slot="default"/>
           </span>`;
+      props = props();
       setup() {
         child2 = this;
       }
@@ -1442,12 +1503,14 @@ describe("slots", () => {
     }
     class Modal extends Component {
       static template = xml`<span id="modal"><t t-slot="default"/></span>`;
+      props = props();
       setup() {
         modal = this;
       }
     }
     class Portal extends Component {
       static template = xml`<span id="portal"><t t-slot="default"/></span>`;
+      props = props();
       setup() {
         portal = this;
       }
@@ -1462,6 +1525,7 @@ describe("slots", () => {
               </Portal>
              </Modal>
           </span>`;
+      props = props();
     }
     class Parent extends Component {
       static components = { Child3, Dialog };
@@ -1485,6 +1549,7 @@ describe("slots", () => {
   test("slots in slots, with vars", async () => {
     class B extends Component {
       static template = xml`<span><t t-slot="default"/></span>`;
+      props = props();
     }
     class A extends Component {
       static template = xml`
@@ -1493,6 +1558,7 @@ describe("slots", () => {
               <t t-slot="default"/>
             </B>
           </div>`;
+      props = props();
       static components = { B };
     }
     class Parent extends Component {
@@ -1517,6 +1583,7 @@ describe("slots", () => {
           <span>
             <t t-slot="default"/>
           </span>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`
@@ -1536,6 +1603,7 @@ describe("slots", () => {
   test("slot and t-esc", async () => {
     class Dialog extends Component {
       static template = xml`<span><t t-slot="default"/></span>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`<div><Dialog><t t-esc="'toph'"/></Dialog></div>`;
@@ -1550,6 +1618,7 @@ describe("slots", () => {
     let sokka = xml`<p>sokka</p>`;
     class Dialog extends Component {
       static template = xml`<span><t t-slot="default"/></span>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`<div><Dialog><t t-call="${sokka}"/></Dialog></div>`;
@@ -1564,6 +1633,7 @@ describe("slots", () => {
     let sokka = xml`<p>sokka</p>`;
     class Dialog extends Component {
       static template = xml`<span><t t-slot="default"/></span>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`<div><Dialog t-call="${sokka}"/></div>`;
@@ -1579,13 +1649,15 @@ describe("slots", () => {
     let grandChild: any = null;
 
     class Slot extends Component {
-      static template = xml`<span t-esc="props.val"/>`;
+      static template = xml`<span t-esc="this.props.val"/>`;
+      props = props();
       setup() {
         slot = this;
       }
     }
     class GrandChild extends Component {
       static template = xml`<div><t t-slot="default"/></div>`;
+      props = props();
       setup() {
         grandChild = this;
       }
@@ -1596,6 +1668,7 @@ describe("slots", () => {
           <GrandChild>
             <t t-slot="default"/>
           </GrandChild>`;
+      props = props();
     }
     class Parent extends Component {
       static components = { Child, Slot };
@@ -1616,6 +1689,7 @@ describe("slots", () => {
           <t t-slot="brol"/>
           <t t-slot="default"/>
         </div>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`
@@ -1647,6 +1721,7 @@ describe("slots", () => {
           <t t-slot="brol2">default2</t>
           <t t-slot="default"/>
         </child>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`
@@ -1679,6 +1754,7 @@ describe("slots", () => {
           <t t-slot="brol"/>
           <t t-slot="default"/>
         </div>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`
@@ -1707,6 +1783,7 @@ describe("slots", () => {
   test("named slot inside named slot in t-component", async () => {
     class Child extends Component {
       static template = xml`<t t-slot="brol"/>`;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`
@@ -1732,6 +1809,7 @@ describe("slots", () => {
   test("can render only empty slot", async () => {
     class Parent extends Component {
       static template = xml`<t t-slot="default"/>`;
+      props = props();
     }
 
     let error = null;
@@ -1747,6 +1825,7 @@ describe("slots", () => {
   test("can render node with t-ref and Component in same slot", async () => {
     class Child extends Component {
       static template = xml`<t t-slot="default"/>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -1766,6 +1845,7 @@ describe("slots", () => {
     const template = xml``;
     class Child extends Component {
       static template = xml`<t t-slot="default"><t t-call="${template}"/></t>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -1781,6 +1861,7 @@ describe("slots", () => {
     }
     class Child extends Component {
       static template = xml`<t t-slot="default"><GrandChild/></t>`;
+      props = props();
       static components = { GrandChild };
     }
 
@@ -1793,12 +1874,14 @@ describe("slots", () => {
 
   test("slot content has different key from other content -- static slot", async () => {
     class Child extends Component {
-      static template = xml`<div t-esc="props.parent" />`;
+      static template = xml`<div t-esc="this.props.parent" />`;
+      props = props();
     }
 
     class SlotDisplay extends Component {
       static components = { Child };
       static template = xml`<Child parent="'SlotDisplay'" /><t t-slot="default" />`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -1815,13 +1898,15 @@ describe("slots", () => {
 
   test("slot content has different key from other content -- dynamic slot", async () => {
     class Child extends Component {
-      static template = xml`<div t-esc="props.parent" />`;
+      static template = xml`<div t-esc="this.props.parent" />`;
+      props = props();
     }
 
     class SlotDisplay extends Component {
       static components = { Child };
-      slotName = "default";
       static template = xml`<Child parent="'SlotDisplay'" /><t t-slot="{{ slotName }}" />`;
+      slotName = "default";
+      props = props();
     }
 
     class Parent extends Component {
@@ -1841,23 +1926,26 @@ describe("slots", () => {
 
     class C extends Component {
       static template = xml`[C]<t t-slot="default" />`;
+      props = props();
     }
     class B extends Component {
-      static template = xml`[B]<C slots="props.slots" />`;
+      static template = xml`[B]<C slots="this.props.slots" />`;
       static components = { C };
+      props = props();
     }
 
     const subTemplate2 = xml`[sub2<t t-esc="v"/>]`;
     const subTemplate1 = xml`[sub1]
       <t t-set="dummy" t-value="validate"/>
       <t t-call="${subTemplate2}">
-        <t t-set="v" t-value="props.number"/>
+        <t t-set="v" t-value="this.props.number"/>
       </t>`;
 
     let a: any;
     class A extends Component {
       static components = { B };
       static template = xml`<B>[A]<t t-call="${subTemplate1}"/></B>`;
+      props = props();
       setup() {
         a = this;
       }
@@ -1900,13 +1988,14 @@ describe("slots", () => {
     class Slotter extends Component {
       static components = { Child };
       static template = xml`
-          <t t-if="props.location === 1">
+          <t t-if="this.props.location === 1">
             <p><t t-slot="default"/></p>
           </t>
-          <t t-if="props.location === 2">
+          <t t-if="this.props.location === 2">
             <t t-slot="default"/>
           </t>
       `;
+      props = props();
     }
 
     class Parent extends Component {
@@ -1933,13 +2022,14 @@ describe("slots", () => {
     class Slotter extends Component {
       static components = { Child };
       static template = xml`
-          <t t-if="props.location === 1">
+          <t t-if="this.props.location === 1">
             <p><t t-slot="{{'coffee'}}"/></p>
           </t>
-          <t t-if="props.location === 2">
+          <t t-if="this.props.location === 2">
             <t t-slot="{{'coffee'}}"/>
           </t>
       `;
+      props = props();
     }
 
     class Parent extends Component {
@@ -1966,10 +2056,11 @@ describe("slots", () => {
     class Slotter extends Component {
       static components = { Child };
       static template = xml`
-          <t t-foreach="props.list" t-as="elem" t-key="elem_index">
+          <t t-foreach="this.props.list" t-as="elem" t-key="elem_index">
             <p><t t-esc="elem"/><t t-slot="default"/></p>
           </t>
       `;
+      props = props();
     }
 
     class Parent extends Component {

@@ -2,6 +2,7 @@ import { onMounted, onWillUnmount } from "./lifecycle_hooks";
 import { BDom, text, VNode } from "./blockdom";
 import { Component } from "./component";
 import { OwlError } from "../common/owl_error";
+import { props } from "./props";
 
 const VText: any = text("").constructor;
 
@@ -60,12 +61,11 @@ export function portalTemplate(app: any, bdom: any, helpers: any) {
 
 export class Portal extends Component {
   static template = "__portal__";
-  static props = {
-    target: {
-      type: String,
-    },
+
+  props = props({
+    target: String,
     slots: true,
-  } as const;
+  });
 
   setup() {
     const node: any = this.__owl__;
@@ -73,7 +73,7 @@ export class Portal extends Component {
     onMounted(() => {
       const portal: VPortal = node.bdom;
       if (!portal.target) {
-        const target: HTMLElement = document.querySelector(this.props.target);
+        const target: HTMLElement = document.querySelector(node.props.target);
         if (target) {
           portal.content!.moveBeforeDOMNode(target.firstChild, target);
         } else {

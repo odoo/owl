@@ -1,4 +1,4 @@
-import { Component, mount, onWillUpdateProps, proxy, xml } from "../../src";
+import { Component, mount, onWillUpdateProps, props, proxy, xml } from "../../src";
 import { makeTestFixture, nextTick, snapshotEverything, steps, useLogLifecycle } from "../helpers";
 
 let fixture: HTMLElement;
@@ -13,6 +13,7 @@ describe("basics", () => {
   test("explicit object prop", async () => {
     class Child extends Component {
       static template = xml`<span><t t-esc="state.someval"/></span>`;
+      props = props();
       state: any;
       setup() {
         this.state = proxy({ someval: this.props.value });
@@ -31,7 +32,8 @@ describe("basics", () => {
 
   test("prop names can contain -", async () => {
     class Child extends Component {
-      static template = xml`<div><t t-esc="props['prop-name']"/></div>`;
+      static template = xml`<div><t t-esc="this.props['prop-name']"/></div>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -45,7 +47,8 @@ describe("basics", () => {
 
   test("accept ES6-like syntax for props (with getters)", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="props.greetings"/></span>`;
+      static template = xml`<span><t t-esc="this.props.greetings"/></span>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -63,7 +66,8 @@ describe("basics", () => {
 
   test("t-set works ", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="props.val"/></span>`;
+      static template = xml`<span><t t-esc="this.props.val"/></span>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -80,7 +84,8 @@ describe("basics", () => {
 
   test("t-set with a body expression can be used as textual prop", async () => {
     class Child extends Component {
-      static template = xml`<span t-esc="props.val"/>`;
+      static template = xml`<span t-esc="this.props.val"/>`;
+      props = props();
     }
     class Parent extends Component {
       static components = { Child };
@@ -99,9 +104,10 @@ describe("basics", () => {
     class Child extends Component {
       static template = xml`
         <span>
-          <t t-esc="props.val"/>
-          <t t-out="props.val"/>
+          <t t-esc="this.props.val"/>
+          <t t-out="this.props.val"/>
         </span>`;
+      props = props();
     }
     class Parent extends Component {
       static components = { Child };
@@ -118,7 +124,8 @@ describe("basics", () => {
 
   test("arrow functions as prop correctly capture their scope", async () => {
     class Child extends Component {
-      static template = xml`<button t-on-click="props.onClick"/>`;
+      static template = xml`<button t-on-click="this.props.onClick"/>`;
+      props = props();
     }
 
     let onClickArgs: [number, MouseEvent] | null = null;
@@ -144,7 +151,8 @@ describe("basics", () => {
   test("support prop names that aren't valid bare object property names", async () => {
     expect.assertions(3);
     class Child extends Component {
-      static template = xml`<button t-on-click="props.onClick"/>`;
+      static template = xml`<button t-on-click="this.props.onClick"/>`;
+      props = props();
       setup() {
         expect(this.props["some-dashed-prop"]).toBe(5);
       }
@@ -161,6 +169,7 @@ describe("basics", () => {
     expect.assertions(3);
     class Child extends Component {
       static template = xml``;
+      props = props();
       setup() {
         expect(this.props.propName).toBe("123");
       }
@@ -178,6 +187,7 @@ describe("basics", () => {
 test("can bind function prop with bind suffix", async () => {
   class Child extends Component {
     static template = xml`child`;
+    props = props();
     setup() {
       this.props.doSomething(123);
     }
@@ -203,6 +213,7 @@ test("can bind function prop with bind suffix", async () => {
 test("do not crash when binding anonymous function prop with bind suffix", async () => {
   class Child extends Component {
     static template = xml`child`;
+    props = props();
     setup() {
       this.props.doSomething(123);
     }
@@ -228,7 +239,8 @@ test("do not crash when binding anonymous function prop with bind suffix", async
 test("bound functions is not referentially equal after update", async () => {
   let isEqual = false;
   class Child extends Component {
-    static template = xml`<t t-esc="props.val"/>`;
+    static template = xml`<t t-esc="this.props.val"/>`;
+    props = props();
     setup() {
       onWillUpdateProps((nextProps: any) => {
         isEqual = nextProps.fn === this.props.fn;
@@ -301,7 +313,8 @@ test("bound functions are considered 'alike'", async () => {
 
 test("can use .translate suffix", async () => {
   class Child extends Component {
-    static template = xml`<t t-esc="props.message"/>`;
+    static template = xml`<t t-esc="this.props.message"/>`;
+    props = props();
   }
 
   class Parent extends Component {
@@ -315,7 +328,8 @@ test("can use .translate suffix", async () => {
 
 test(".translate props are translated", async () => {
   class Child extends Component {
-    static template = xml`<t t-esc="props.message"/>`;
+    static template = xml`<t t-esc="this.props.message"/>`;
+    props = props();
   }
 
   class Parent extends Component {
@@ -329,7 +343,8 @@ test(".translate props are translated", async () => {
 
 test("throw if prop uses an unknown suffix", async () => {
   class Child extends Component {
-    static template = xml`<t t-esc="props.val"/>`;
+    static template = xml`<t t-esc="this.props.val"/>`;
+    props = props();
   }
 
   class Parent extends Component {
@@ -344,7 +359,8 @@ test("throw if prop uses an unknown suffix", async () => {
 
 test(".alike suffix in a simple case", async () => {
   class Child extends Component {
-    static template = xml`<t t-esc="props.fn()"/>`;
+    static template = xml`<t t-esc="this.props.fn()"/>`;
+    props = props();
     setup() {
       useLogLifecycle();
     }
@@ -394,9 +410,10 @@ test(".alike suffix in a simple case", async () => {
 test(".alike suffix in a list", async () => {
   class Todo extends Component {
     static template = xml`
-      <button t-on-click="props.toggle">
-        <t t-esc="props.todo.id"/><t t-if="props.todo.isChecked">V</t>
+      <button t-on-click="this.props.toggle">
+        <t t-esc="this.props.todo.id"/><t t-if="this.props.todo.isChecked">V</t>
       </button>`;
+    props = props();
     setup() {
       useLogLifecycle();
     }

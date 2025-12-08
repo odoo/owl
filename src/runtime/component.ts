@@ -1,4 +1,3 @@
-import { Schema } from "./validation";
 import type { ComponentNode } from "./component_node";
 
 // -----------------------------------------------------------------------------
@@ -10,28 +9,22 @@ export type Props = { [key: string]: any };
 interface StaticComponentProperties {
   template: string;
   defaultProps?: any;
-  props?: Schema;
   components?: { [componentName: string]: ComponentConstructor };
 }
 
-export type ComponentConstructor<P extends Props = any, E = any> = (new (
-  props: P,
-  env: E,
-  node: ComponentNode
-) => Component<P, E>) &
-  StaticComponentProperties;
+export interface ComponentConstructor<P extends Props = any, E = any> extends StaticComponentProperties {
+  new (env: E, node: ComponentNode): Component<P, E>;
+}
 
 export class Component<Props = any, Env = any> {
   static template: string = "";
-  static props?: Schema;
   static defaultProps?: any;
 
-  props: Props;
+  __props: Props = {} as any; // TODO: remove. it's just to keep types for now
   env: Env;
   __owl__: ComponentNode;
 
-  constructor(props: Props, env: Env, node: ComponentNode) {
-    this.props = props;
+  constructor(env: Env, node: ComponentNode) {
     this.env = env;
     this.__owl__ = node;
   }

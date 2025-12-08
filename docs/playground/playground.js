@@ -2,6 +2,7 @@ import { debounce, loadJS } from "./utils.js";
 import {
   Component,
   proxy,
+  props,
   useRef,
   onMounted,
   onWillUnmount,
@@ -150,6 +151,8 @@ function loadSamples() {
 // Tabbed editor
 //------------------------------------------------------------------------------
 class TabbedEditor extends Component {
+  props = props();
+
   setup() {
     const props = this.props;
     this.state = proxy({

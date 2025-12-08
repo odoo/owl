@@ -8,6 +8,7 @@ import {
   onPatched,
   onWillPatch,
   onWillUnmount,
+  props,
   proxy,
 } from "../../src";
 import { xml } from "../../src/";
@@ -187,7 +188,8 @@ describe("Portal", () => {
 
   test("conditional use of Portal (with sub Component)", async () => {
     class Child extends Component {
-      static template = xml`<p><t t-esc="props.val"/></p>`;
+      static template = xml`<p><t t-esc="this.props.val"/></p>`;
+      props = props();
     }
     class Parent extends Component {
       static components = { Child };
@@ -287,7 +289,8 @@ describe("Portal", () => {
     const outside = addOutsideDiv(fixture);
 
     class Child extends Component {
-      static template = xml`<span><t t-esc="props.val"/></span>`;
+      static template = xml`<span><t t-esc="this.props.val"/></span>`;
+      props = props();
 
       setup() {
         onMounted(() => {
@@ -413,7 +416,8 @@ describe("Portal", () => {
     const steps: any[] = [];
 
     class Child extends Component {
-      static template = xml`<span t-esc="props.val"/>`;
+      static template = xml`<span t-esc="this.props.val"/>`;
+      props = props();
       setup() {
         onMounted(() => steps.push("child:mounted"));
         onWillPatch(() => steps.push("child:willPatch"));
@@ -484,7 +488,8 @@ describe("Portal", () => {
 
   test("portal destroys on crash", async () => {
     class Child extends Component {
-      static template = xml`<span t-esc="props.error and this.will.crash" />`;
+      static template = xml`<span t-esc="this.props.error and this.will.crash" />`;
+      props = props();
       state = {};
     }
     class Parent extends Component {
@@ -538,6 +543,7 @@ describe("Portal", () => {
     let childInst: Component | null = null;
     class Child2 extends Component {
       static template = xml`<div t-on-custom="onCustom"><span id="childSpan">child2</span></div>`;
+      props = props();
       setup() {
         childInst = this;
       }
@@ -551,6 +557,7 @@ describe("Portal", () => {
             <t t-portal="'#outside'">
               <t t-slot="default"/>
             </t>`;
+      props = props();
     }
     class Parent extends Component {
       static components = { Child, Child2 };
@@ -920,7 +927,8 @@ describe("Portal: UI/UX", () => {
   test("focus is kept across re-renders", async () => {
     class Child extends Component {
       static template = xml`
-            <input id="target-me" t-att-placeholder="props.val"/>`;
+            <input id="target-me" t-att-placeholder="this.props.val"/>`;
+      props = props();
     }
     class Parent extends Component {
       static components = { Child };

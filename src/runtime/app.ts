@@ -7,7 +7,6 @@ import { Fiber, MountOptions, RootFiber } from "./rendering/fibers";
 import { PluginManager } from "./plugins";
 import { proxy, toRaw } from "./reactivity/proxy";
 import { Scheduler } from "./rendering/scheduler";
-import { validateProps } from "./rendering/template_helpers";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
 import { validateTarget } from "./utils";
 
@@ -116,9 +115,6 @@ export class App<E = any> extends TemplateSet {
       promise,
       mount: (target: HTMLElement | ShadowRoot, options?: MountOptions) => {
         App.validateTarget(target);
-        if (this.dev) {
-          validateProps(Root, props, { __owl__: { app: this } });
-        }
         this.mountNode(node, target, resolve, reject, options);
         return promise;
       },

@@ -54,7 +54,7 @@ exports[`translation context props with modifier .translate are translated in co
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].text;
+    let txt1 = ctx['this'].props.text;
     return block1([txt1]);
   }
 }"

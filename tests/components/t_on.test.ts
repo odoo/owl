@@ -1,4 +1,4 @@
-import { Component, mount, onMounted, proxy, xml } from "../../src/index";
+import { Component, mount, onMounted, props, proxy, xml } from "../../src/index";
 import { elem, logStep, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 import { status } from "../../src/runtime/status";
 
@@ -44,8 +44,9 @@ describe("t-on", () => {
   test("t-on when first component child is an empty component", async () => {
     class Child extends Component {
       static template = xml`
-        <span t-foreach="props.list" t-as="c" t-key="c_index" t-esc="c"/>
+        <span t-foreach="this.props.list" t-as="c" t-key="c_index" t-esc="c"/>
       `;
+      props = props();
     }
     class Parent extends Component {
       static template = xml`
@@ -169,7 +170,8 @@ describe("t-on", () => {
 
   test("t-on on components", async () => {
     class Child extends Component {
-      static template = xml`<button t-esc="props.value"/>`;
+      static template = xml`<button t-esc="this.props.value"/>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -189,7 +191,8 @@ describe("t-on", () => {
 
   test("t-on on components, variation", async () => {
     class Child extends Component {
-      static template = xml`<button t-esc="props.value"/>`;
+      static template = xml`<button t-esc="this.props.value"/>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -223,7 +226,8 @@ describe("t-on", () => {
 
   test("t-on on component next to t-on on div", async () => {
     class Child extends Component {
-      static template = xml`<button t-esc="props.value"/>`;
+      static template = xml`<button t-esc="this.props.value"/>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -256,7 +260,7 @@ describe("t-on", () => {
       static template = xml`
         [<t t-esc="state.count"/>]
         <t t-slot="default" t-on-click="() => this.state.count++"/>`;
-
+      props = props();
       state = proxy({ count: 0 });
     }
 
@@ -278,6 +282,7 @@ describe("t-on", () => {
   test("t-on on t-set-slots", async () => {
     class Child extends Component {
       static template = xml`<t t-slot="myslot"/>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -303,7 +308,8 @@ describe("t-on", () => {
   test("t-on on components, with 'prevent' modifier", async () => {
     expect.assertions(4); // 2 snaps and 2 expects
     class Child extends Component {
-      static template = xml`<button t-esc="props.value"/>`;
+      static template = xml`<button t-esc="this.props.value"/>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -324,6 +330,7 @@ describe("t-on", () => {
   test("t-on on slot, with 'prevent' modifier", async () => {
     class Child extends Component {
       static template = xml`<t t-slot="default" t-on-click.prevent="doSomething"/>`;
+      props = props();
       doSomething(ev: MouseEvent) {
         expect(ev.defaultPrevented).toBe(true);
         logStep("hey");
@@ -346,7 +353,8 @@ describe("t-on", () => {
 
   test("t-on on components and t-foreach", async () => {
     class Child extends Component {
-      static template = xml`<div t-esc="props.value"/>`;
+      static template = xml`<div t-esc="this.props.value"/>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -377,7 +385,8 @@ describe("t-on", () => {
 
   test("t-on on components, with a handler update", async () => {
     class Child extends Component {
-      static template = xml`<div t-esc="props.value"/>`;
+      static template = xml`<div t-esc="this.props.value"/>`;
+      props = props();
     }
 
     class Parent extends Component {

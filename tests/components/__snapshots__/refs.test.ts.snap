@@ -66,9 +66,9 @@ exports[`refs refs and recursive templates 1`] = `
   return function template(ctx, node, key = "") {
     let b2;
     let ref1 = (el) => this.__owl__.setRef((\`root\`), el);
-    let txt1 = ctx['props'].tree.value;
-    if (ctx['props'].tree.child) {
-      b2 = comp1({tree: ctx['props'].tree.child}, key + \`__1\`, node, this, null);
+    let txt1 = ctx['this'].props.tree.value;
+    if (ctx['this'].props.tree.child) {
+      b2 = comp1({tree: ctx['this'].props.tree.child}, key + \`__1\`, node, this, null);
     }
     return block1([ref1, txt1], [b2]);
   }

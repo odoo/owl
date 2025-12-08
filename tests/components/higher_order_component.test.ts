@@ -1,4 +1,4 @@
-import { Component, mount, proxy, xml } from "../../src";
+import { Component, mount, props, proxy, xml } from "../../src";
 import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
@@ -12,7 +12,8 @@ beforeEach(() => {
 describe("basics", () => {
   test("basic use", async () => {
     class Child extends Component {
-      static template = xml`<span>child<t t-esc="props.p"/></span>`;
+      static template = xml`<span>child<t t-esc="this.props.p"/></span>`;
+      props = props();
     }
 
     class Parent extends Component {

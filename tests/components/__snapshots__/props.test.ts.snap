@@ -31,9 +31,9 @@ exports[`.alike suffix in a list 2`] = `
   
   return function template(ctx, node, key = "") {
     let b2;
-    let hdlr1 = [ctx['props'].toggle, ctx];
-    let txt1 = ctx['props'].todo.id;
-    if (ctx['props'].todo.isChecked) {
+    let hdlr1 = [ctx['this'].props.toggle, ctx];
+    let txt1 = ctx['this'].props.todo.id;
+    if (ctx['this'].props.todo.isChecked) {
       b2 = text(\`V\`);
     }
     return block1([hdlr1, txt1], [b2]);
@@ -61,7 +61,7 @@ exports[`.alike suffix in a simple case 2`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['props'].fn());
+    return text(ctx['this'].props.fn());
   }
 }"
 `;
@@ -84,7 +84,7 @@ exports[`.translate props are translated 2`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['props'].message);
+    return text(ctx['this'].props.message);
   }
 }"
 `;
@@ -112,7 +112,7 @@ exports[`basics accept ES6-like syntax for props (with getters) 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].greetings;
+    let txt1 = ctx['this'].props.greetings;
     return block1([txt1]);
   }
 }"
@@ -148,7 +148,7 @@ exports[`basics arrow functions as prop correctly capture their scope 2`] = `
   let block1 = createBlock(\`<button block-handler-0="click"/>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['props'].onClick, ctx];
+    let hdlr1 = [ctx['this'].props.onClick, ctx];
     return block1([hdlr1]);
   }
 }"
@@ -203,7 +203,7 @@ exports[`basics prop names can contain - 2`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props']['prop-name'];
+    let txt1 = ctx['this'].props['prop-name'];
     return block1([txt1]);
   }
 }"
@@ -229,7 +229,7 @@ exports[`basics support prop names that aren't valid bare object property names 
   let block1 = createBlock(\`<button block-handler-0="click"/>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['props'].onClick, ctx];
+    let hdlr1 = [ctx['this'].props.onClick, ctx];
     return block1([hdlr1]);
   }
 }"
@@ -268,8 +268,8 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
   let block1 = createBlock(\`<span><block-text-0/><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].val;
-    const b2 = safeOutput(ctx['props'].val);
+    let txt1 = ctx['this'].props.val;
+    const b2 = safeOutput(ctx['this'].props.val);
     return block1([txt1], [b2]);
   }
 }"
@@ -302,7 +302,7 @@ exports[`basics t-set with a body expression can be used as textual prop 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].val;
+    let txt1 = ctx['this'].props.val;
     return block1([txt1]);
   }
 }"
@@ -335,7 +335,7 @@ exports[`basics t-set works  2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].val;
+    let txt1 = ctx['this'].props.val;
     return block1([txt1]);
   }
 }"
@@ -407,7 +407,7 @@ exports[`bound functions is not referentially equal after update 2`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['props'].val);
+    return text(ctx['this'].props.val);
   }
 }"
 `;
@@ -453,7 +453,7 @@ exports[`can use .translate suffix 2`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['props'].message);
+    return text(ctx['this'].props.message);
   }
 }"
 `;

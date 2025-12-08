@@ -1,4 +1,4 @@
-import { App, Component, mount, onWillDestroy } from "../../src";
+import { App, Component, mount, onWillDestroy, props } from "../../src";
 import { OwlError } from "../../src/common/owl_error";
 import {
   onError,
@@ -49,7 +49,8 @@ afterEach(() => {
 describe("basics", () => {
   test("no component catching error lead to full app destruction", async () => {
     class ErrorComponent extends Component {
-      static template = xml`<div>hey<t t-esc="props.flag and state.this.will.crash"/></div>`;
+      static template = xml`<div>hey<t t-esc="this.props.flag and state.this.will.crash"/></div>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -572,7 +573,8 @@ describe("errors and promises", () => {
 describe("can catch errors", () => {
   test("can catch an error in a component render function", async () => {
     class ErrorComponent extends Component {
-      static template = xml`<div>hey<t t-esc="props.flag and state.this.will.crash"/></div>`;
+      static template = xml`<div>hey<t t-esc="this.props.flag and state.this.will.crash"/></div>`;
+      props = props();
     }
     class ErrorBoundary extends Component {
       static template = xml`
@@ -580,6 +582,7 @@ describe("can catch errors", () => {
             <t t-if="state.error">Error handled</t>
             <t t-else=""><t t-slot="default" /></t>
           </div>`;
+      props = props();
       state = proxy({ error: false });
 
       setup() {
@@ -863,6 +866,7 @@ describe("can catch errors", () => {
             <t t-if="state.error">Error handled</t>
             <t t-else=""><t t-slot="default" /></t>
           </div>`;
+      props = props();
       state = proxy({ error: false });
 
       setup() {
@@ -894,6 +898,7 @@ describe("can catch errors", () => {
             <t t-if="state.error">Error handled</t>
             <t t-else=""><t t-slot="default" /></t>
           </div>`;
+      props = props();
       state = proxy({ error: false });
 
       setup() {
@@ -928,6 +933,7 @@ describe("can catch errors", () => {
               <t t-if="state.error">Error handled</t>
               <t t-else=""><t t-slot="default" /></t>
           </div>`;
+      props = props();
       state = proxy({ error: false });
 
       setup() {
@@ -962,6 +968,7 @@ describe("can catch errors", () => {
               <t t-if="state.error">Error handled</t>
               <t t-else=""><t t-slot="default" /></t>
           </div>`;
+      props = props();
       state = proxy({ error: false });
 
       setup() {
@@ -997,6 +1004,7 @@ describe("can catch errors", () => {
             <t t-if="state.error">Error handled</t>
             <t t-else=""><t t-slot="default" /></t>
           </div>`;
+      props = props();
       state = proxy({ error: false });
 
       setup() {
@@ -1031,6 +1039,7 @@ describe("can catch errors", () => {
               <t t-if="state.error">Error handled</t>
               <t t-else=""><t t-slot="default" /></t>
           </div>`;
+      props = props();
       state = proxy({ error: false });
 
       setup() {
@@ -1065,6 +1074,7 @@ describe("can catch errors", () => {
        <t t-if="state.error">Error handled</t>
        <t t-else=""><t t-slot="default" /></t>
       </div>`;
+      props = props();
       state = proxy({ error: false });
 
       setup() {
@@ -1245,6 +1255,7 @@ describe("can catch errors", () => {
        <t t-if="state.error">Error handled</t>
        <t t-else=""><t t-slot="default" /></t>
       </div>`;
+      props = props();
       state = proxy({ error: false });
 
       setup() {
@@ -1304,7 +1315,8 @@ describe("can catch errors", () => {
 
   test("can catch an error in the willPatch call", async () => {
     class ErrorComponent extends Component {
-      static template = xml`<div><t t-esc="props.message"/></div>`;
+      static template = xml`<div><t t-esc="this.props.message"/></div>`;
+      props = props();
       setup() {
         onWillPatch(() => {
           throw new Error("NOOOOO");
@@ -1317,6 +1329,7 @@ describe("can catch errors", () => {
             <t t-if="state.error">Error handled</t>
             <t t-else=""><t t-slot="default" /></t>
           </div>`;
+      props = props();
       state = proxy({ error: false });
 
       setup() {
@@ -1501,6 +1514,7 @@ describe("can catch errors", () => {
 
     class ErrorHandler extends Component {
       static template = xml`<t t-slot="default" />`;
+      props = props();
       setup() {
         onError(() => {
           this.props.onError();
@@ -1546,7 +1560,8 @@ describe("can catch errors", () => {
 
   test("catching in child makes parent render", async () => {
     class Child extends Component {
-      static template = xml`<div t-esc="'Child ' + props.id" />`;
+      static template = xml`<div t-esc="'Child ' + this.props.id" />`;
+      props = props();
     }
 
     class ErrorComp extends Component {
@@ -1558,6 +1573,7 @@ describe("can catch errors", () => {
 
     class Catch extends Component {
       static template = xml`<t t-slot="default" />`;
+      props = props();
       setup() {
         onError(({ cause }) => {
           this.props.onError(cause);

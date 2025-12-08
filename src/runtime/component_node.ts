@@ -61,8 +61,8 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
   status: STATUS = STATUS.NEW;
   forceNextRender: boolean = false;
   parentKey: string | null;
+  name: string; // TODO: remove
   props: P;
-  nextProps: P | null = null;
 
   renderFn: Function;
   parent: ComponentNode | null;
@@ -88,10 +88,10 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     parent: ComponentNode | null,
     parentKey: string | null
   ) {
+    this.name = C.name;
     currentNode = this;
     this.app = app;
     this.parent = parent;
-    this.props = props;
     this.parentKey = parentKey;
     this.pluginManager = parent ? parent.pluginManager : app.pluginManager;
     this.signalComputation = {
@@ -105,11 +105,12 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     if (defaultProps) {
       applyDefaultProps(props, defaultProps);
     }
+    this.props = props;
     const env = (parent && parent.childEnv) || app.env;
     this.childEnv = env;
     const previousComputation = getCurrentComputation();
     setComputation(this.signalComputation);
-    this.component = new C(props, env, this);
+    this.component = new C(env, this);
     const ctx = Object.assign(Object.create(this.component), { this: this.component });
     this.renderFn = app.getTemplate(C.template).bind(this.component, ctx, this);
     this.component.setup();
@@ -238,7 +239,6 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
   }
 
   async updateAndRender(props: P, parentFiber: Fiber) {
-    this.nextProps = props;
     props = Object.assign({}, props);
     // update
     const fiber = makeChildFiber(this, parentFiber);
@@ -257,7 +257,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     if (fiber !== this.fiber) {
       return;
     }
-    component.props = props;
+    this.props = props;
     fiber.render();
     const parentRoot = parentFiber.root!;
     if (this.willPatch.length) {
@@ -339,7 +339,6 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
       // by the component will be patched independently in the appropriate
       // fiber.complete
       this._patch();
-      this.props = this.nextProps!;
     }
   }
   _patch() {
@@ -362,12 +361,5 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
 
   remove() {
     this.bdom!.remove();
-  }
-
-  // ---------------------------------------------------------------------------
-  // Some debug helpers
-  // ---------------------------------------------------------------------------
-  get name(): string {
-    return this.component.constructor.name;
   }
 }

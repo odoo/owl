@@ -1,4 +1,4 @@
-import { App, Component, mount, onMounted, proxy, xml } from "../../src/index";
+import { App, Component, mount, onMounted, props, proxy, xml } from "../../src/index";
 import {
   makeTestFixture,
   nextAppError,
@@ -28,7 +28,8 @@ afterEach(() => {
 describe("list of components", () => {
   test("simple list", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="props.value"/></span>`;
+      static template = xml`<span><t t-esc="this.props.value"/></span>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -60,7 +61,8 @@ describe("list of components", () => {
 
   test("components in a node in a t-foreach ", async () => {
     class Child extends Component {
-      static template = xml`<div><t t-esc="props.item"/></div>`;
+      static template = xml`<div><t t-esc="this.props.item"/></div>`;
+      props = props();
       setup() {
         useLogLifecycle();
       }
@@ -115,7 +117,8 @@ describe("list of components", () => {
 
   test("reconciliation alg works for t-foreach in t-foreach", async () => {
     class Child extends Component {
-      static template = xml`<div><t t-esc="props.blip"/></div>`;
+      static template = xml`<div><t t-esc="this.props.blip"/></div>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -137,7 +140,8 @@ describe("list of components", () => {
 
   test("reconciliation alg works for t-foreach in t-foreach, 2", async () => {
     class Child extends Component {
-      static template = xml`<div><t t-esc="props.row + '_' + props.col"/></div>`;
+      static template = xml`<div><t t-esc="this.props.row + '_' + this.props.col"/></div>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -166,7 +170,8 @@ describe("list of components", () => {
 
   test("sub components rendered in a loop", async () => {
     class Child extends Component {
-      static template = xml`<p><t t-esc="props.n"/></p>`;
+      static template = xml`<p><t t-esc="this.props.n"/></p>`;
+      props = props();
     }
 
     class Parent extends Component {
@@ -254,8 +259,9 @@ describe("list of components", () => {
       static template = xml`
           <span>
             <t t-esc="state.val"/>
-            <t t-esc="props.val"/>
+            <t t-esc="this.props.val"/>
           </span>`;
+      props = props();
       state = proxy({ val: "A" });
       setup() {
         onMounted(() => {
@@ -283,7 +289,8 @@ describe("list of components", () => {
   test("switch component position", async () => {
     const childInstances = [];
     class Child extends Component {
-      static template = xml`<div t-esc="props.key"></div>`;
+      static template = xml`<div t-esc="this.props.key"></div>`;
+      props = props();
       setup() {
         childInstances.push(this);
       }
@@ -368,6 +375,7 @@ describe("list of components", () => {
       static template = xml`
           <t t-slot="{{ slotName }}" t-foreach="slotNames" t-as="slotName" t-key="slotName"/>
       `;
+      props = props();
       get slotNames() {
         return Object.entries(this.props.slots)
           .filter((entry: any) => entry[1].active)

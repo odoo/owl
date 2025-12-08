@@ -33,7 +33,7 @@ exports[`list of components components in a node in a t-foreach  2`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].item;
+    let txt1 = ctx['this'].props.item;
     return block1([txt1]);
   }
 }"
@@ -56,7 +56,6 @@ exports[`list of components crash on duplicate key in dev mode 1`] = `
       if (keys1.has(String(key1))) { throw new OwlError(\`Got duplicate key in t-foreach: \${key1}\`)}
       keys1.add(String(key1));
       const props1 = {};
-      helpers.validateProps(\`Child\`, props1, this);
       c_block1[i1] = withKey(comp1(props1, key + \`__1__\${key1}\`, node, this, null), key1);
     }
     return list(c_block1);
@@ -92,7 +91,6 @@ exports[`list of components crash when using object as keys that serialize to th
       if (keys1.has(String(key1))) { throw new OwlError(\`Got duplicate key in t-foreach: \${key1}\`)}
       keys1.add(String(key1));
       const props1 = {};
-      helpers.validateProps(\`Child\`, props1, this);
       c_block1[i1] = withKey(comp1(props1, key + \`__1__\${key1}\`, node, this, null), key1);
     }
     return list(c_block1);
@@ -242,7 +240,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].blip;
+    let txt1 = ctx['this'].props.blip;
     return block1([txt1]);
   }
 }"
@@ -291,7 +289,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].row+'_'+ctx['props'].col;
+    let txt1 = ctx['this'].props.row+'_'+ctx['this'].props.col;
     return block1([txt1]);
   }
 }"
@@ -325,7 +323,7 @@ exports[`list of components simple list 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].value;
+    let txt1 = ctx['this'].props.value;
     return block1([txt1]);
   }
 }"
@@ -362,7 +360,7 @@ exports[`list of components sub components rendered in a loop 2`] = `
   let block1 = createBlock(\`<p><block-text-0/></p>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].n;
+    let txt1 = ctx['this'].props.n;
     return block1([txt1]);
   }
 }"
@@ -436,7 +434,7 @@ exports[`list of components switch component position 2`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].key;
+    let txt1 = ctx['this'].props.key;
     return block1([txt1]);
   }
 }"
@@ -475,7 +473,7 @@ exports[`list of components t-foreach with t-component, and update 2`] = `
   
   return function template(ctx, node, key = "") {
     let txt1 = ctx['state'].val;
-    let txt2 = ctx['props'].val;
+    let txt2 = ctx['this'].props.val;
     return block1([txt1, txt2]);
   }
 }"

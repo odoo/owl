@@ -149,7 +149,7 @@ exports[`t-on t-on on component next to t-on on div 2`] = `
   let block1 = createBlock(\`<button><block-text-0/></button>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].value;
+    let txt1 = ctx['this'].props.value;
     return block1([txt1]);
   }
 }"
@@ -178,7 +178,7 @@ exports[`t-on t-on on components 2`] = `
   let block1 = createBlock(\`<button><block-text-0/></button>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].value;
+    let txt1 = ctx['this'].props.value;
     return block1([txt1]);
   }
 }"
@@ -216,7 +216,7 @@ exports[`t-on t-on on components and t-foreach 2`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].value;
+    let txt1 = ctx['this'].props.value;
     return block1([txt1]);
   }
 }"
@@ -248,7 +248,7 @@ exports[`t-on t-on on components, variation 2`] = `
   let block1 = createBlock(\`<button><block-text-0/></button>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].value;
+    let txt1 = ctx['this'].props.value;
     return block1([txt1]);
   }
 }"
@@ -277,7 +277,7 @@ exports[`t-on t-on on components, with 'prevent' modifier 2`] = `
   let block1 = createBlock(\`<button><block-text-0/></button>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].value;
+    let txt1 = ctx['this'].props.value;
     return block1([txt1]);
   }
 }"
@@ -311,7 +311,7 @@ exports[`t-on t-on on components, with a handler update 2`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].value;
+    let txt1 = ctx['this'].props.value;
     return block1([txt1]);
   }
 }"
@@ -491,7 +491,7 @@ exports[`t-on t-on when first component child is an empty component 2`] = `
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['props'].list);;
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].props.list);;
     for (let i1 = 0; i1 < l_block1; i1++) {
       ctx[\`c\`] = k_block1[i1];
       ctx[\`c_index\`] = i1;

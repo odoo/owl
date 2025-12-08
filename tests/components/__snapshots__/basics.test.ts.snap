@@ -21,7 +21,7 @@ exports[`basics GrandChild display is controlled by its GrandParent 2`] = `
   
   return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['props'].displayGrandChild) {
+    if (ctx['this'].props.displayGrandChild) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return multi([b2]);
@@ -177,7 +177,7 @@ exports[`basics can handle empty props 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].val;
+    let txt1 = ctx['this'].props.val;
     return block1([txt1]);
   }
 }"
@@ -268,7 +268,7 @@ exports[`basics can mount a simple component with props 1`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].value;
+    let txt1 = ctx['this'].props.value;
     return block1([txt1]);
   }
 }"
@@ -305,7 +305,7 @@ exports[`basics child can be updated 2`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['props'].value);
+    return text(ctx['this'].props.value);
   }
 }"
 `;
@@ -344,7 +344,7 @@ exports[`basics class parent, class child component with props 2`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].value;
+    let txt1 = ctx['this'].props.value;
     return block1([txt1]);
   }
 }"
@@ -467,7 +467,7 @@ exports[`basics higher order components parent and child 2`] = `
   
   return function template(ctx, node, key = "") {
     let b2, b3;
-    if (ctx['props'].child==='a') {
+    if (ctx['this'].props.child==='a') {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     } else {
       b3 = comp2({}, key + \`__2\`, node, this, null);
@@ -705,7 +705,7 @@ exports[`basics same t-keys in two different places 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].blip;
+    let txt1 = ctx['this'].props.blip;
     return block1([txt1]);
   }
 }"
@@ -1092,8 +1092,8 @@ exports[`basics update props of component without concrete own node 2`] = `
   const comp1 = app.createComponent(\`Custom\`, true, false, false, ["key","subKey"]);
   
   return function template(ctx, node, key = "") {
-    const tKey_1 = ctx['props'].subKey;
-    return toggler(tKey_1, comp1({key: ctx['props'].key,subKey: ctx['props'].subKey}, tKey_1 + key + \`__1\`, node, this, null));
+    const tKey_1 = ctx['this'].props.subKey;
+    return toggler(tKey_1, comp1({key: ctx['this'].props.key,subKey: ctx['this'].props.subKey}, tKey_1 + key + \`__1\`, node, this, null));
   }
 }"
 `;
@@ -1106,8 +1106,8 @@ exports[`basics update props of component without concrete own node 3`] = `
   let block1 = createBlock(\`<div class="widget-subkey"><block-text-0/>__<block-text-1/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].key;
-    let txt2 = ctx['props'].subKey;
+    let txt1 = ctx['this'].props.key;
+    let txt2 = ctx['this'].props.subKey;
     return block1([txt1, txt2]);
   }
 }"
@@ -1153,7 +1153,7 @@ exports[`basics updating widget immediately 2`] = `
   
   return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['props'].flag) {
+    if (ctx['this'].props.flag) {
       b2 = text(\`def\`);
     }
     return block1([], [b2]);

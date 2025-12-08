@@ -32,7 +32,6 @@ exports[`basics display a nice error if it cannot find component (in dev mode) 1
   
   return function template(ctx, node, key = "") {
     const props1 = {};
-    helpers.validateProps(\`SomeMispelledComponent\`, props1, this);
     return comp1(props1, key + \`__1\`, node, this, null);
   }
 }"
@@ -88,7 +87,7 @@ exports[`basics no component catching error lead to full app destruction 2`] = `
   let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].flag&&ctx['state'].this.will.crash;
+    let txt1 = ctx['this'].props.flag&&ctx['state'].this.will.crash;
     return block1([txt1]);
   }
 }"
@@ -314,7 +313,7 @@ exports[`can catch errors can catch an error in a component render function 3`] 
   let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].flag&&ctx['state'].this.will.crash;
+    let txt1 = ctx['this'].props.flag&&ctx['state'].this.will.crash;
     return block1([txt1]);
   }
 }"
@@ -798,7 +797,7 @@ exports[`can catch errors can catch an error in the willPatch call 3`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].message;
+    let txt1 = ctx['this'].props.message;
     return block1([txt1]);
   }
 }"
@@ -1118,7 +1117,7 @@ exports[`can catch errors catching in child makes parent render 4`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = 'Child '+ctx['props'].id;
+    let txt1 = 'Child '+ctx['this'].props.id;
     return block1([txt1]);
   }
 }"

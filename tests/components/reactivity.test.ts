@@ -5,6 +5,7 @@ import {
   onWillPatch,
   onWillRender,
   onWillUnmount,
+  props,
   proxy,
   xml,
 } from "../../src";
@@ -95,8 +96,9 @@ describe("reactivity in lifecycle", () => {
     const steps: string[] = [];
     class Child extends Component {
       static template = xml`
-          <span><t t-esc="props.val"/><t t-esc="state.n"/></span>
+          <span><t t-esc="this.props.val"/><t t-esc="state.n"/></span>
         `;
+      props = props();
       state = proxy({ n: 2 });
       setup() {
         onWillRender(() => {
@@ -184,7 +186,8 @@ describe("reactivity in lifecycle", () => {
 
   test("Child component doesn't render when state they depend on changes but their parent is about to unmount them", async () => {
     class Child extends Component {
-      static template = xml`<t t-esc="props.state.content.a"/>`;
+      static template = xml`<t t-esc="this.props.state.content.a"/>`;
+      props = props();
       setup() {
         useLogLifecycle();
       }
@@ -235,7 +238,8 @@ describe("reactivity in lifecycle", () => {
     let childRenderCount = 0;
     let parentRenderCount = 0;
     class Child extends Component {
-      static template = xml`<t t-esc="props.obj.a"/><t t-esc="props.proxyObj.b"/>`;
+      static template = xml`<t t-esc="this.props.obj.a"/><t t-esc="this.props.proxyObj.b"/>`;
+      props = props();
       setup() {
         onWillRender(() => childRenderCount++);
       }

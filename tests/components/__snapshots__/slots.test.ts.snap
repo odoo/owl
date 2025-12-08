@@ -20,7 +20,7 @@ exports[`slots .translate slot props are translated 2`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['props'].slots.default.message);
+    return text(ctx['this'].props.slots.default.message);
   }
 }"
 `;
@@ -128,7 +128,7 @@ exports[`slots can define and call slots with bound params 2`] = `
   
   return function template(ctx, node, key = "") {
     const b2 = callSlot(ctx, node, key, 'abc', false, {});
-    const b3 = text(ctx['props'].slots['abc'].getValue());
+    const b3 = text(ctx['this'].props.slots['abc'].getValue());
     return multi([b2, b3]);
   }
 }"
@@ -170,9 +170,9 @@ exports[`slots can define and call slots with params 2`] = `
   let block1 = createBlock(\`<div><block-text-0/><div><block-child-0/></div><block-text-1/><div><block-child-1/></div></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].slots['header'].param;
+    let txt1 = ctx['this'].props.slots['header'].param;
     const b2 = callSlot(ctx, node, key, 'header', false, {});
-    let txt2 = ctx['props'].slots['footer'].param;
+    let txt2 = ctx['this'].props.slots['footer'].param;
     const b3 = callSlot(ctx, node, key, 'footer', false, {});
     return block1([txt1, txt2], [b2, b3]);
   }
@@ -246,7 +246,7 @@ exports[`slots can use .translate suffix on slot props 2`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['props'].slots.default.message);
+    return text(ctx['this'].props.slots.default.message);
   }
 }"
 `;
@@ -684,12 +684,12 @@ exports[`slots dynamic slot in multiple locations 2`] = `
   
   return function template(ctx, node, key = "") {
     let b2, b4;
-    if (ctx['props'].location===1) {
+    if (ctx['this'].props.location===1) {
       const slot1 = ('coffee');
       const b3 = toggler(slot1, callSlot(ctx, node, key + \`__1\`, slot1, true, {}));
       b2 = block2([], [b3]);
     }
-    if (ctx['props'].location===2) {
+    if (ctx['this'].props.location===2) {
       const slot2 = ('coffee');
       b4 = toggler(slot2, callSlot(ctx, node, key + \`__2\`, slot2, true, {}));
     }
@@ -934,7 +934,7 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
     setContextValue(ctx, "dummy", ctx['validate']);
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
-    setContextValue(ctx, "v", ctx['props'].number);
+    setContextValue(ctx, "v", ctx['this'].props.number);
     const b3 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return multi([b2, b3]);
   }
@@ -963,7 +963,7 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
   
   return function template(ctx, node, key = "") {
     const b2 = text(\`[B]\`);
-    const b3 = comp1({slots: ctx['props'].slots}, key + \`__1\`, node, this, null);
+    const b3 = comp1({slots: ctx['this'].props.slots}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
   }
 }"
@@ -1110,7 +1110,7 @@ exports[`slots multiple slots containing components 3`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].val;
+    let txt1 = ctx['this'].props.val;
     return block1([txt1]);
   }
 }"
@@ -1478,7 +1478,7 @@ exports[`slots nested slots: evaluation context and parented relationship 4`] = 
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].val;
+    let txt1 = ctx['this'].props.val;
     return block1([txt1]);
   }
 }"
@@ -1966,7 +1966,7 @@ exports[`slots slot are properly rendered if inner props are changed 3`] = `
   let block1 = createBlock(\`<div> SC:<block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].val;
+    let txt1 = ctx['this'].props.val;
     return block1([txt1]);
   }
 }"
@@ -2014,7 +2014,7 @@ exports[`slots slot content has different key from other content -- dynamic slot
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].parent;
+    let txt1 = ctx['this'].props.parent;
     return block1([txt1]);
   }
 }"
@@ -2061,7 +2061,7 @@ exports[`slots slot content has different key from other content -- static slot 
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].parent;
+    let txt1 = ctx['this'].props.parent;
     return block1([txt1]);
   }
 }"
@@ -2172,11 +2172,11 @@ exports[`slots slot in multiple locations 2`] = `
   
   return function template(ctx, node, key = "") {
     let b2, b4;
-    if (ctx['props'].location===1) {
+    if (ctx['this'].props.location===1) {
       const b3 = callSlot(ctx, node, key, 'default', false, {});
       b2 = block2([], [b3]);
     }
-    if (ctx['props'].location===2) {
+    if (ctx['this'].props.location===2) {
       b4 = callSlot(ctx, node, key + \`__1\`, 'default', false, {});
     }
     return multi([b2, b4]);
@@ -2227,7 +2227,7 @@ exports[`slots slot in t-foreach locations 2`] = `
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['props'].list);;
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].props.list);;
     for (let i1 = 0; i1 < l_block1; i1++) {
       ctx[\`elem\`] = k_block1[i1];
       ctx[\`elem_index\`] = i1;
@@ -2540,7 +2540,7 @@ exports[`slots slots are rendered with proper context, part 2 2`] = `
   let block1 = createBlock(\`<a block-attribute-0="href"><block-child-0/></a>\`);
   
   return function template(ctx, node, key = "") {
-    let attr1 = ctx['props'].to;
+    let attr1 = ctx['this'].props.to;
     const b2 = callSlot(ctx, node, key, 'default', false, {});
     return block1([attr1], [b2]);
   }
@@ -2589,7 +2589,7 @@ exports[`slots slots are rendered with proper context, part 3 2`] = `
   let block1 = createBlock(\`<a block-attribute-0="href"><block-child-0/></a>\`);
   
   return function template(ctx, node, key = "") {
-    let attr1 = ctx['props'].to;
+    let attr1 = ctx['this'].props.to;
     const b2 = callSlot(ctx, node, key, 'default', false, {});
     return block1([attr1], [b2]);
   }
@@ -2629,7 +2629,7 @@ exports[`slots slots are rendered with proper context, part 4 2`] = `
   let block1 = createBlock(\`<a block-attribute-0="href"><block-child-0/></a>\`);
   
   return function template(ctx, node, key = "") {
-    let attr1 = ctx['props'].to;
+    let attr1 = ctx['this'].props.to;
     const b2 = callSlot(ctx, node, key, 'default', false, {});
     return block1([attr1], [b2]);
   }
@@ -3264,7 +3264,7 @@ exports[`slots template can just return a slot 3`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['props'].value;
+    let txt1 = ctx['this'].props.value;
     return block1([txt1]);
   }
 }"

@@ -1,4 +1,4 @@
-import { effect, plugin, Plugin, PluginManager } from "../src";
+import { effect, onWillDestroy, plugin, Plugin, PluginManager } from "../src";
 import { waitScheduler } from "./helpers";
 
 describe("basic features", () => {
@@ -9,9 +9,9 @@ describe("basic features", () => {
       static id = "a";
       setup() {
         steps.push("setup");
-      }
-      destroy() {
-        steps.push("destroy");
+        onWillDestroy(() => {
+          steps.push("destroy");
+        });
       }
     }
 
@@ -27,11 +27,13 @@ describe("basic features", () => {
 
   test("can get a plugin", () => {
     let a;
+    let isDestroyed = false;
 
     class A extends Plugin {
       static id = "a";
       setup() {
         a = this;
+        onWillDestroy(() => (isDestroyed = true));
       }
     }
 
@@ -39,10 +41,10 @@ describe("basic features", () => {
     manager.startPlugins([A]);
     const plugin = manager.getPlugin("a");
     expect(plugin).toBe(a);
-    expect(plugin!.isDestroyed).toBe(false);
+    expect(isDestroyed).toBe(false);
 
     manager.destroy();
-    expect(plugin!.isDestroyed).toBe(true);
+    expect(isDestroyed).toBe(true);
   });
 
   test("destroy order is reverse of setup order", () => {
@@ -52,18 +54,18 @@ describe("basic features", () => {
       static id = "a";
       setup() {
         steps.push("setup A");
-      }
-      destroy() {
-        steps.push("destroy A");
+        onWillDestroy(() => {
+          steps.push("destroy A");
+        });
       }
     }
     class B extends Plugin {
       static id = "b";
       setup() {
         steps.push("setup B");
-      }
-      destroy() {
-        steps.push("destroy B");
+        onWillDestroy(() => {
+          steps.push("destroy B");
+        });
       }
     }
 
@@ -228,9 +230,9 @@ describe("sub plugin managers", () => {
       static id = "a";
       setup() {
         steps.push("setup A");
-      }
-      destroy() {
-        steps.push("destroy A");
+        onWillDestroy(() => {
+          steps.push("destroy A");
+        });
       }
     }
 
@@ -238,9 +240,9 @@ describe("sub plugin managers", () => {
       static id = "b";
       setup() {
         steps.push("setup B");
-      }
-      destroy() {
-        steps.push("destroy B");
+        onWillDestroy(() => {
+          steps.push("destroy B");
+        });
       }
     }
 
@@ -266,9 +268,9 @@ describe("sub plugin managers", () => {
       static id = "a";
       setup() {
         steps.push("setup A");
-      }
-      destroy() {
-        steps.push("destroy A");
+        onWillDestroy(() => {
+          steps.push("destroy A");
+        });
       }
     }
 
@@ -276,9 +278,9 @@ describe("sub plugin managers", () => {
       static id = "b";
       setup() {
         steps.push("setup B");
-      }
-      destroy() {
-        steps.push("destroy B");
+        onWillDestroy(() => {
+          steps.push("destroy B");
+        });
       }
     }
 

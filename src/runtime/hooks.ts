@@ -1,6 +1,7 @@
 import type { Env } from "./app";
 import { getCurrent } from "./component_node";
-import { onMounted, onPatched, onWillUnmount } from "./lifecycle_hooks";
+import { onMounted, onPatched, onWillDestroy, onWillUnmount } from "./lifecycle_hooks";
+import { PluginConstructor, PluginManager } from "./plugins";
 import { runWithComputation } from "./reactivity/computations";
 import { inOwnerDocument } from "./utils";
 
@@ -145,4 +146,14 @@ export function useListener(
   const boundHandler = handler.bind(node.component);
   onMounted(() => target.addEventListener(eventName, boundHandler, eventParams));
   onWillUnmount(() => target.removeEventListener(eventName, boundHandler, eventParams));
+}
+
+export function usePlugins(Plugins: PluginConstructor[]) {
+  const node = getCurrent();
+
+  const manager = new PluginManager(node.pluginManager);
+  node.pluginManager = manager;
+  onWillDestroy(() => manager.destroy());
+
+  return manager.startPlugins(Plugins);
 }

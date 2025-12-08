@@ -11,14 +11,22 @@ describe("registry", () => {
   test("can set and get values", () => {
     const registry = new Registry();
 
-    registry.set("key", "some value");
+    registry.add("key", "some value");
     expect(registry.get("key")).toBe("some value");
+  });
+
+  test("can set and remove values", () => {
+    const registry = new Registry();
+
+    registry.add("key", "some value");
+    expect(registry.get("key")).toBe("some value");
+    registry.remove("key");
   });
 
   test("set method returns the registry, so it is chainable", () => {
     const registry = new Registry();
 
-    registry.set("key", "some value").set("other", "value");
+    registry.add("key", "some value").add("other", "value");
     expect(registry.get("key")).toBe("some value");
     expect(registry.get("other")).toBe("value");
   });
@@ -34,17 +42,17 @@ describe("registry", () => {
     const registry = new Registry();
 
     expect(registry.get("key", 1)).toBe(1);
-    registry.set("key", "some value");
+    registry.add("key", "some value");
     expect(registry.get("key", 1)).toBe("some value");
   });
 
   test("items", async () => {
     const registry = new Registry();
 
-    registry.set("key", "some value");
+    registry.add("key", "some value");
     const items = registry.items;
     expect(items()).toEqual(["some value"]);
-    registry.set("other_key", "other value");
+    registry.add("other_key", "other value");
     expect(items()).toEqual(["some value", "other value"]);
     expect(registry.get("key")).toBe("some value");
   });
@@ -52,7 +60,7 @@ describe("registry", () => {
   test("items and effects", async () => {
     const registry: Registry<string> = new Registry();
 
-    registry.set("key", "a");
+    registry.add("key", "a");
     const items = registry.items;
     const steps: string[] = [];
 
@@ -60,7 +68,7 @@ describe("registry", () => {
       steps.push(...items());
     });
     expect(steps).toEqual(["a"]);
-    registry.set("b", "b");
+    registry.add("b", "b");
     expect(steps).toEqual(["a"]);
     await waitScheduler();
     expect(steps).toEqual(["a", "a", "b"]);
@@ -69,10 +77,10 @@ describe("registry", () => {
   test("sequence", async () => {
     const registry = new Registry();
 
-    registry.set("a", "a", 10);
-    registry.set("b", "b");
-    registry.set("c", "c", 14);
-    registry.set("d", "d", 100);
+    registry.add("a", "a", 10);
+    registry.add("b", "b");
+    registry.add("c", "c", 14);
+    registry.add("d", "d", 100);
 
     const items = registry.items;
     expect(items()).toEqual(["a", "c", "b", "d"]);
@@ -86,9 +94,9 @@ describe("registry", () => {
       },
     });
 
-    registry.set("a", { blip: "asdf" });
+    registry.add("a", { blip: "asdf" });
     expect(() => {
-      registry.set("a", { blip: 1 });
+      registry.add("a", { blip: 1 });
     }).toThrow();
   });
 
@@ -98,9 +106,9 @@ describe("registry", () => {
 
     const registry = new Registry("test", { type: A });
 
-    registry.set("a", new A());
+    registry.add("a", new A());
     expect(() => {
-      registry.set("a", new B());
+      registry.add("a", new B());
     }).toThrow();
   });
 });

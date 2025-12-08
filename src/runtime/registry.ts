@@ -2,8 +2,6 @@ import { derived } from "./reactivity/derived";
 import { signal, Signal } from "./reactivity/signal";
 import { TypeDescription, validateType } from "./validation";
 
-type Fn<T> = () => T;
-
 export class Registry<T> {
   _map: Signal<{ [key: string]: [number, T] }> = signal(Object.create(null));
   _name: string;
@@ -14,21 +12,23 @@ export class Registry<T> {
     this._type = type;
   }
 
-  entries: Fn<[string, T][]> = derived(() => {
-    return Object.entries(this._map())
+  entries = derived(() => {
+    const entries: [string, T][] = Object.entries(this._map())
       .sort((el1, el2) => el1[1][0] - el2[1][0])
       .map(([str, elem]) => [str, elem[1]]);
+    return entries;
   });
-  items: Fn<T[]> = derived(() => this.entries().map((e) => e[1]));
+
+  items = derived(() => this.entries().map((e) => e[1]));
 
   addById<U extends { id: string } & T>(item: U, sequence: number = 50): Registry<T> {
     if (!item.id) {
       throw new Error(`Item should have an id key`);
     }
-    return this.set(item.id, item, sequence);
+    return this.add(item.id, item, sequence);
   }
 
-  set(key: string, value: T, sequence: number = 50): Registry<T> {
+  add(key: string, value: T, sequence: number = 50): Registry<T> {
     if (this._type) {
       const error = validateType(key, value as any, this._type as any);
       // todo: move error handling in validation.js
@@ -47,5 +47,10 @@ export class Registry<T> {
       throw new Error(`KeyNotFoundError: Cannot find key "${key}" in this registry`);
     }
     return hasKey ? this._map()[key][1] : defaultValue!;
+  }
+
+  remove(key: string) {
+    delete this._map()[key];
+    this._map.update();
   }
 }

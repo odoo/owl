@@ -28,7 +28,6 @@ export interface Derived<Prev, Next = Prev> extends Atom<Next>, Computation<Next
 let Effects: Computation[];
 let CurrentComputation: Computation | undefined;
 
-
 // export function computed<T>(fn: () => T, opts?: Opts) {
 //   // todo: handle cleanup
 //   let computedComputation: Computation = {
@@ -137,8 +136,6 @@ export function removeSources(computation: Computation) {
   }
   sources.clear();
 }
-
-
 
 function markDownstream<A, B>(derived: Derived<A, B>) {
   for (const observer of derived.observers) {

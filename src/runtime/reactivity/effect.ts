@@ -1,4 +1,12 @@
-import { Computation, ComputationState, getCurrentComputation, Opts, removeSources, setComputation, updateComputation } from "./computations";
+import {
+  Computation,
+  ComputationState,
+  getCurrentComputation,
+  Opts,
+  removeSources,
+  setComputation,
+  updateComputation,
+} from "./computations";
 
 export function effect<T>(fn: () => T, opts?: Opts) {
   const effectComputation: Computation = {
@@ -8,11 +16,11 @@ export function effect<T>(fn: () => T, opts?: Opts) {
       // In case the cleanup read an atom.
       // todo: test it
       setComputation(undefined);
-    //   CurrentComputation = undefined!;
+      //   CurrentComputation = undefined!;
       // `removeSources` is made by `runComputation`.
       unsubscribeEffect(effectComputation);
       setComputation(effectComputation);
-    //   CurrentComputation = effectComputation;
+      //   CurrentComputation = effectComputation;
       return fn();
     },
     sources: new Set(),

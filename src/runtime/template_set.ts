@@ -6,7 +6,6 @@ import { helpers } from "./rendering/template_helpers";
 import { OwlError } from "../common/owl_error";
 import { parseXML } from "../common/utils";
 
-
 const bdom = { text, createBlock, list, multi, html, toggler, comment };
 
 export interface TemplateSetConfig {

@@ -15,6 +15,14 @@ describe("registry", () => {
     expect(registry.get("key")).toBe("some value");
   });
 
+  test("set method returns the registry, so it is chainable", () => {
+    const registry = new Registry();
+
+    registry.set("key", "some value").set("other", "value");
+    expect(registry.get("key")).toBe("some value");
+    expect(registry.get("other")).toBe("value");
+  });
+
   test("can add element from id and get values", () => {
     const registry = new Registry();
     const obj = { id: "key", value: 3 };

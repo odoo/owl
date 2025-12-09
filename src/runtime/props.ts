@@ -1,35 +1,47 @@
 import { OwlError } from "../common/owl_error";
+import type { Component } from "./component";
 import { getCurrent } from "./component_node";
 import { validateSchema } from "./validation";
 
-type ConstructorTypedPropsValidation<T = any> = new (...args: any[]) => T;
+type ConstructorTypedPropsValidation<T = any> = new (...args: any) => T;
 
 type UnionTypedPropsValidation = ReadonlyArray<TypedPropsValidation>;
 
-interface SchemaTypedPropsValidation<O extends boolean = boolean> {
-  optional?: O;
-  validate?(value: any): boolean;
-}
+type OptionalSchemaTypedPropsValidation<O extends boolean> = {
+  optional: O;
+};
 
-interface TypeSchemaTypedPropsValidation<T = any, O extends boolean = boolean>
-  extends SchemaTypedPropsValidation<O> {
-  type: new (...args: any[]) => T;
-}
+type ValidableSchemaTypedPropsValidation = {
+  validate(value: any): boolean;
+};
 
-interface MapSchemaTypedPropsValidation<O extends boolean = boolean>
-  extends TypeSchemaTypedPropsValidation<ObjectConstructor, O> {
+type TypeSchemaTypedPropsValidation<T> = {
+  type: new (...args: any) => T;
+};
+
+type MapSchemaTypedPropsValidation = {
+  type: ObjectConstructor;
   shape: PropsValidation;
-}
+};
 
-interface RecordSchemaTypedPropsValidation<O extends boolean = boolean>
-  extends TypeSchemaTypedPropsValidation<ObjectConstructor, O> {
+type RecordSchemaTypedPropsValidation = {
+  type: ObjectConstructor;
   values: TypedPropsValidation;
-}
+};
 
-interface ArraySchemaTypedPropsValidation<O extends boolean = boolean>
-  extends TypeSchemaTypedPropsValidation<ArrayConstructor, O> {
+type ArraySchemaTypedPropsValidation = {
+  type: ArrayConstructor;
   element: TypedPropsValidation;
-}
+};
+
+type SchemaTypedPropsValidation<T, O extends boolean> = {
+  type?: new (...args: any) => T;
+  optional?: O;
+  validate?(value: T): boolean;
+  shape?: PropsValidation;
+  values?: TypedPropsValidation;
+  element?: TypedPropsValidation;
+};
 
 type ValueTypedPropsValidation<T = any> = {
   value: T;
@@ -39,90 +51,68 @@ type TypedPropsValidation =
   | true
   | ConstructorTypedPropsValidation
   | UnionTypedPropsValidation
-  | SchemaTypedPropsValidation
-  | TypeSchemaTypedPropsValidation
-  | MapSchemaTypedPropsValidation
-  | RecordSchemaTypedPropsValidation
-  | ArraySchemaTypedPropsValidation
+  | SchemaTypedPropsValidation<any, boolean>
   | ValueTypedPropsValidation;
 
 export type RecordPropsValidation = Record<string, TypedPropsValidation>;
-
 export type KeysPropsValidation = readonly string[];
 
 export type PropsValidation = RecordPropsValidation | KeysPropsValidation;
 
 //-----------------------------------------------------------------------------
 
-type Optional<T, O> = O extends true ? T | undefined : T;
-
-type ConvertConstructorTypedPropsValidation<V extends ConstructorTypedPropsValidation> =
-  V extends ConstructorTypedPropsValidation<infer I> ? I : never;
-
-type ConvertUnionTypedPropsValidation<V extends UnionTypedPropsValidation> = V[number];
-
-type ConvertMapSchemaTypedPropsValidation<V extends MapSchemaTypedPropsValidation> =
-  V extends MapSchemaTypedPropsValidation<infer O>
-    ? Optional<ConvertPropsValidation<V["shape"]>, O>
-    : never;
-
-type ConvertRecordSchemaTypedPropsValidation<V extends RecordSchemaTypedPropsValidation> =
-  V extends RecordSchemaTypedPropsValidation<infer O>
-    ? Optional<{ [K: string]: ConvertTypedPropsValidation<V["values"]> }, O>
-    : never;
-
-type ConvertArraySchemaTypedPropsValidation<V extends ArraySchemaTypedPropsValidation> =
-  V extends ArraySchemaTypedPropsValidation<infer O>
-    ? Optional<ConvertTypedPropsValidation<V["element"]>[], O>
-    : never;
-
-type ConvertTypeSchemaTypedPropsValidation<V extends TypeSchemaTypedPropsValidation> =
-  V extends TypeSchemaTypedPropsValidation<infer I, infer O> ? Optional<I, O> : never;
-
-type ConvertSchemaTypedPropsValidation<V extends SchemaTypedPropsValidation> =
-  V extends SchemaTypedPropsValidation ? any : never;
-
-type ConvertValueTypedPropsValidation<V extends ValueTypedPropsValidation> =
-  V extends ValueTypedPropsValidation<infer T> ? T : never;
-
 type ConvertTypedPropsValidation<V extends TypedPropsValidation> = V extends true
   ? any
-  : V extends ConstructorTypedPropsValidation
-  ? ConvertConstructorTypedPropsValidation<V>
+  : V extends ConstructorTypedPropsValidation<infer I>
+  ? I
   : V extends UnionTypedPropsValidation
-  ? ConvertUnionTypedPropsValidation<V>
+  ? V[number]
   : V extends MapSchemaTypedPropsValidation
-  ? ConvertMapSchemaTypedPropsValidation<V>
+  ? ConvertPropsValidation<V["shape"]>
   : V extends RecordSchemaTypedPropsValidation
-  ? ConvertRecordSchemaTypedPropsValidation<V>
+  ? Record<string, ConvertTypedPropsValidation<V["values"]>>
   : V extends ArraySchemaTypedPropsValidation
-  ? ConvertArraySchemaTypedPropsValidation<V>
-  : V extends TypeSchemaTypedPropsValidation
-  ? ConvertTypeSchemaTypedPropsValidation<V>
-  : V extends SchemaTypedPropsValidation
-  ? ConvertSchemaTypedPropsValidation<V>
-  : V extends ValueTypedPropsValidation
-  ? ConvertValueTypedPropsValidation<V>
+  ? ConvertTypedPropsValidation<V["element"]>[]
+  : V extends TypeSchemaTypedPropsValidation<infer I>
+  ? I
+  : V extends ValueTypedPropsValidation<infer T>
+  ? T
+  : V extends OptionalSchemaTypedPropsValidation<boolean>
+  ? any
+  : V extends ValidableSchemaTypedPropsValidation
+  ? any
   : never;
 
-type ConvertRecordPropsValidation<V extends RecordPropsValidation> = {
-  [K in keyof V]: ConvertTypedPropsValidation<V[K]>;
-};
-
-type ConvertKeysPropsValidation<V extends KeysPropsValidation> = { [K in V[number]]: any };
-
 type ConvertPropsValidation<V extends PropsValidation> = V extends KeysPropsValidation
-  ? ConvertKeysPropsValidation<V>
+  ? { [K in V[number] as K extends `${infer N}?` ? N : never]?: any } & {
+      [K in V[number] as K extends `${string}?` ? never : K]: any;
+    }
   : V extends RecordPropsValidation
-  ? ConvertRecordPropsValidation<V>
+  ? {
+      [K in keyof V as V[K] extends OptionalSchemaTypedPropsValidation<true>
+        ? K
+        : never]?: ConvertTypedPropsValidation<V[K]>;
+    } & {
+      [K in keyof V as V[K] extends OptionalSchemaTypedPropsValidation<true>
+        ? never
+        : K]: ConvertTypedPropsValidation<V[K]>;
+    }
   : never;
 
 //-----------------------------------------------------------------------------
 
-type Props<T extends Record<string, any>, V extends PropsValidation> = T &
-  ConvertPropsValidation<V>;
+declare const isProps: unique symbol;
+type IsPropsObj = { [isProps]: true };
+export type Props<T, V extends PropsValidation> = IsPropsObj &
+  (unknown extends T ? ConvertPropsValidation<V> : T);
 
-export function props<T extends Record<string, any>, V extends PropsValidation = PropsValidation>(
+export type GetProps<T extends Component> = {
+  [K in keyof T]: T[K] extends IsPropsObj ? (x: Omit<T[K], typeof isProps>) => void : never;
+}[keyof T] extends (x: infer I) => void
+  ? { [K in keyof I]: I[K] }
+  : never;
+
+export function props<T = unknown, V extends PropsValidation = PropsValidation>(
   validation?: V
 ): Props<T, V> {
   const node = getCurrent();

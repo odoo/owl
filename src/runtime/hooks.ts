@@ -1,4 +1,3 @@
-import type { Env } from "./app";
 import { getCurrent } from "./component_node";
 import { onMounted, onPatched, onWillDestroy, onWillUnmount } from "./lifecycle_hooks";
 import { PluginConstructor, PluginManager } from "./plugins";
@@ -24,39 +23,6 @@ export function useRef<T extends HTMLElement = HTMLElement>(name: string): { el:
   };
 }
 
-// -----------------------------------------------------------------------------
-// useEnv and useSubEnv
-// -----------------------------------------------------------------------------
-
-/**
- * This hook is useful as a building block for some customized hooks, that may
- * need a reference to the env of the component calling them.
- */
-export function useEnv<E extends Env>(): E {
-  return getCurrent().component.env as any;
-}
-
-function extendEnv(currentEnv: Object, extension: Object): Object {
-  const env = Object.create(currentEnv);
-  const descrs = Object.getOwnPropertyDescriptors(extension);
-  return Object.freeze(Object.defineProperties(env, descrs));
-}
-
-/**
- * This hook is a simple way to let components use a sub environment.  Note that
- * like for all hooks, it is important that this is only called in the
- * constructor method.
- */
-export function useSubEnv(envExtension: Env) {
-  const node = getCurrent();
-  node.component.env = extendEnv(node.component.env as any, envExtension);
-  useChildSubEnv(envExtension);
-}
-
-export function useChildSubEnv(envExtension: Env) {
-  const node = getCurrent();
-  node.childEnv = extendEnv(node.childEnv, envExtension);
-}
 // -----------------------------------------------------------------------------
 // useEffect
 // -----------------------------------------------------------------------------

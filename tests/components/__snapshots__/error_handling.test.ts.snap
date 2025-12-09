@@ -1537,19 +1537,6 @@ exports[`errors and promises errors in mounted and in willUnmount 1`] = `
 }"
 `;
 
-exports[`errors and promises errors in onWillRender/onRender aren't wrapped more than once 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div>abc</div>\`);
-  
-  return function template(ctx, node, key = "") {
-    return block1();
-  }
-}"
-`;
-
 exports[`errors and promises errors in rerender 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

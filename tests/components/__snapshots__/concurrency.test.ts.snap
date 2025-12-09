@@ -58,14 +58,18 @@ exports[`another scenario with delayed rendering 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue } = helpers;
   const comp1 = app.createComponent(\`B\`, true, false, false, ["value"]);
   
   return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
     let b2, b3;
     b2 = text(\`A\`);
     if (ctx['state'].value<15) {
       b3 = comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null);
     }
+    setContextValue(ctx, "noop", ctx['this'].notify());
     return multi([b2, b3]);
   }
 }"
@@ -1482,11 +1486,15 @@ exports[`delayed rendering, reusing fiber and stuff 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue } = helpers;
   const comp1 = app.createComponent(\`C\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
     const b2 = text(ctx['this'].props.value);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
+    setContextValue(ctx, "noop", ctx['this'].notify());
     return multi([b2, b3]);
   }
 }"
@@ -1621,8 +1629,12 @@ exports[`destroyed component causes other soon to be destroyed component to rere
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue } = helpers;
   
   return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    setContextValue(ctx, "noop", ctx['this'].notify());
     return text(ctx['this'].props.value);
   }
 }"

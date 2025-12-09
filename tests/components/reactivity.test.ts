@@ -3,7 +3,6 @@ import {
   mount,
   onPatched,
   onWillPatch,
-  onWillRender,
   onWillUnmount,
   props,
   proxy,
@@ -61,10 +60,10 @@ describe("reactivity in lifecycle", () => {
   test("can use a state hook 2", async () => {
     let n = 0;
     class Comp extends Component {
-      static template = xml`<div><t t-esc="state.a"/></div>`;
+      static template = xml`<t t-set="noop" t-value="this.notify()"/><div><t t-esc="state.a"/></div>`;
       state = proxy({ a: 5, b: 7 });
-      setup() {
-        onWillRender(() => n++);
+      notify() {
+        n++;
       }
     }
     const comp = await mount(Comp, fixture);
@@ -96,14 +95,12 @@ describe("reactivity in lifecycle", () => {
     const steps: string[] = [];
     class Child extends Component {
       static template = xml`
+          <t t-set="noop" t-value="this.notify()"/>
           <span><t t-esc="this.props.val"/><t t-esc="state.n"/></span>
         `;
       props = props();
       state = proxy({ n: 2 });
       setup() {
-        onWillRender(() => {
-          steps.push("render");
-        });
         onWillPatch(() => {
           steps.push("willPatch");
         });
@@ -114,6 +111,10 @@ describe("reactivity in lifecycle", () => {
           steps.push("willUnmount");
           this.state.n = 3;
         });
+      }
+
+      notify() {
+        steps.push("render");
       }
     }
     class Parent extends Component {
@@ -167,14 +168,15 @@ describe("reactivity in lifecycle", () => {
     let STATE;
     class Comp extends Component {
       static template = xml`
+          <t t-set="noop" t-value="this.notify()"/>
           <div><t t-esc="state.val"/></div>
         `;
       state = proxy({ val: 1 });
       setup() {
         STATE = this.state;
-        onWillRender(() => {
-          steps.push(this.state.val);
-        });
+      }
+      notify() {
+        steps.push(this.state.val);
       }
     }
     const prom = mount(Comp, fixture);
@@ -207,12 +209,8 @@ describe("reactivity in lifecycle", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Parent:mounted",
       ]
@@ -223,8 +221,6 @@ describe("reactivity in lifecycle", () => {
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:willPatch",
         "Child:willUnmount",
         "Child:willDestroy",
@@ -238,19 +234,21 @@ describe("reactivity in lifecycle", () => {
     let childRenderCount = 0;
     let parentRenderCount = 0;
     class Child extends Component {
-      static template = xml`<t t-esc="this.props.obj.a"/><t t-esc="this.props.proxyObj.b"/>`;
+      static template = xml`
+          <t t-set="noop" t-value="this.notify()"/>
+          <t t-esc="this.props.obj.a"/><t t-esc="this.props.proxyObj.b"/>`;
       props = props();
-      setup() {
-        onWillRender(() => childRenderCount++);
+      notify() {
+        childRenderCount++;
       }
     }
     class Parent extends Component {
-      static template = xml`<Child obj="obj" proxyObj="proxyObj"/>`;
+      static template = xml`<t t-set="noop" t-value="this.notify()"/><Child obj="obj" proxyObj="proxyObj"/>`;
       static components = { Child };
       obj = { a: 1 };
       proxyObj = proxy({ b: 2 });
-      setup() {
-        onWillRender(() => parentRenderCount++);
+      notify() {
+        parentRenderCount++;
       }
     }
     const comp = await mount(Parent, fixture);

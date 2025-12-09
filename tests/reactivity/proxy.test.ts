@@ -1,4 +1,4 @@
-import { Component, mount, onWillRender, onWillStart, onWillUpdateProps, xml } from "../../src";
+import { Component, mount, onWillStart, onWillUpdateProps, xml } from "../../src";
 import { effect, markRaw, props, proxy, toRaw } from "../../src/runtime";
 
 import {
@@ -1798,16 +1798,10 @@ describe("Reactivity: proxy", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Child:mounted",
         "Parent:mounted",
@@ -1819,10 +1813,6 @@ describe("Reactivity: proxy", () => {
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Child:willRender",
-        "Child:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:willPatch",
         "Child:patched",
         "Child:willPatch",
@@ -1856,16 +1846,10 @@ describe("Reactivity: proxy", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Child:mounted",
         "Parent:mounted",
@@ -1876,14 +1860,7 @@ describe("Reactivity: proxy", () => {
     testContext.value = 321;
     await nextMicroTick();
     await nextMicroTick();
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      [
-        "Child:willRender",
-        "Child:rendered",
-        "Child:willRender",
-        "Child:rendered",
-      ]
-    `);
+    expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
     expect(fixture.innerHTML).toBe("<div><span>123</span><span>123</span></div>");
 
     await nextTick();
@@ -1932,20 +1909,12 @@ describe("Reactivity: proxy", () => {
       [
         "GrandFather:setup",
         "GrandFather:willStart",
-        "GrandFather:willRender",
         "Child:setup",
         "Child:willStart",
         "Parent:setup",
         "Parent:willStart",
-        "GrandFather:rendered",
-        "Child:willRender",
-        "Child:rendered",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Parent:mounted",
         "Child:mounted",
@@ -1957,14 +1926,7 @@ describe("Reactivity: proxy", () => {
     await nextMicroTick();
     await nextMicroTick();
     expect(fixture.innerHTML).toBe("<div><span>123</span><div><span>123</span></div></div>");
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      [
-        "Child:willRender",
-        "Child:rendered",
-        "Child:willRender",
-        "Child:rendered",
-      ]
-    `);
+    expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
 
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><span>321</span><div><span>321</span></div></div>");
@@ -1983,13 +1945,12 @@ describe("Reactivity: proxy", () => {
     const steps: string[] = [];
 
     class Comp extends Component {
-      static template = xml`<div><t t-esc="contextObj1.a"/><t t-esc="contextObj2.b"/></div>`;
+      static template = xml`<div><t t-set="noop" t-value="this.notify()"/><t t-esc="contextObj1.a"/><t t-esc="contextObj2.b"/></div>`;
       contextObj1 = proxy(testContext);
       contextObj2 = proxy(testContext);
-      setup() {
-        onWillRender(() => {
-          steps.push("comp");
-        });
+
+      notify() {
+        steps.push("comp");
       }
     }
     await mount(Comp, fixture);
@@ -2006,22 +1967,18 @@ describe("Reactivity: proxy", () => {
     const steps: string[] = [];
 
     class Child extends Component {
-      static template = xml`<span><t t-esc="contextObj.a"/></span>`;
+      static template = xml`<span><t t-set="noop" t-value="this.notify()"/><t t-esc="contextObj.a"/></span>`;
       contextObj = proxy(testContext);
-      setup() {
-        onWillRender(() => {
-          steps.push("child");
-        });
+      notify() {
+        steps.push("child");
       }
     }
     class Parent extends Component {
-      static template = xml`<div><Child /><t t-esc="contextObj.b"/></div>`;
+      static template = xml`<t t-set="noop" t-value="this.notify()"/><div><Child /><t t-esc="contextObj.b"/></div>`;
       static components = { Child };
       contextObj = proxy(testContext);
-      setup() {
-        onWillRender(() => {
-          steps.push("parent");
-        });
+      notify() {
+        steps.push("parent");
       }
     }
     const parent = await mount(Parent, fixture);
@@ -2049,44 +2006,36 @@ describe("Reactivity: proxy", () => {
      */
 
     class L3A extends Component {
-      static template = xml`<div><t t-esc="contextObj.a"/> <t t-esc="contextObj.b"/></div>`;
+      static template = xml`<t t-set="noop" t-value="this.notify()"/><div><t t-esc="contextObj.a"/> <t t-esc="contextObj.b"/></div>`;
       contextObj = proxy(testContext);
-      setup() {
-        onWillRender(() => {
-          steps.add("L3A");
-        });
+      notify() {
+        steps.add("L3A");
       }
     }
 
     class L2B extends Component {
-      static template = xml`<div><t t-esc="contextObj.b"/></div>`;
+      static template = xml`<t t-set="noop" t-value="this.notify()"/><div><t t-esc="contextObj.b"/></div>`;
       contextObj = proxy(testContext);
-      setup() {
-        onWillRender(() => {
-          steps.add("L2B");
-        });
+      notify() {
+        steps.add("L2B");
       }
     }
 
     class L2A extends Component {
-      static template = xml`<div><t t-esc="contextObj.a"/><L3A /></div>`;
+      static template = xml`<t t-set="noop" t-value="this.notify()"/><div><t t-esc="contextObj.a"/><L3A /></div>`;
       static components = { L3A };
       contextObj = proxy(testContext);
-      setup() {
-        onWillRender(() => {
-          steps.add("L2A");
-        });
+      notify() {
+        steps.add("L2A");
       }
     }
 
     class L1A extends Component {
-      static template = xml`<div><L2A /><L2B /></div>`;
+      static template = xml`<t t-set="noop" t-value="this.notify()"/><div><L2A /><L2B /></div>`;
       static components = { L2A, L2B };
       contextObj = proxy(testContext);
-      setup() {
-        onWillRender(() => {
-          steps.add("L1A");
-        });
+      notify() {
+        steps.add("L1A");
       }
     }
 
@@ -2155,12 +2104,8 @@ describe("Reactivity: proxy", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Parent:mounted",
       ]
@@ -2170,8 +2115,6 @@ describe("Reactivity: proxy", () => {
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Child:willRender",
-        "Child:rendered",
         "Child:willPatch",
         "Child:patched",
       ]
@@ -2182,8 +2125,6 @@ describe("Reactivity: proxy", () => {
     expect(fixture.innerHTML).toBe("<div></div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:willPatch",
         "Child:willUnmount",
         "Child:willDestroy",
@@ -2200,15 +2141,15 @@ describe("Reactivity: proxy", () => {
     const testContext = createProxy({ a: 123 });
     const steps: string[] = [];
     class Child extends Component {
-      static template = xml`<span><t t-esc="contextObj.a"/></span>`;
+      static template = xml`<t t-set="noop" t-value="this.notify()"/><span><t t-esc="contextObj.a"/></span>`;
       contextObj = proxy(testContext);
       setup() {
         onWillStart(() => {
           return makeDeferred();
         });
-        onWillRender(() => {
-          steps.push("child");
-        });
+      }
+      notify() {
+        steps.push("child");
       }
     }
     let parent: any;
@@ -2244,20 +2185,19 @@ describe("Reactivity: proxy", () => {
     const steps: Set<string> = new Set();
 
     class Quantity extends Component {
-      static template = xml`<div><t t-esc="state.quantity"/></div>`;
+      static template = xml`<t t-set="noop" t-value="this.notify()"/><div><t t-esc="state.quantity"/></div>`;
       props = props();
       state = proxy(testContext[this.props.id]);
 
-      setup() {
-        onWillRender(() => {
-          steps.add(`quantity${this.props.id}`);
-        });
+      notify() {
+        steps.add(`quantity${this.props.id}`);
       }
     }
 
     class ListOfQuantities extends Component {
       static template = xml`
           <div>
+            <t t-set="noop" t-value="this.notify()"/>
             <t t-foreach="Object.keys(state)" t-as="id" t-key="id">
               <Quantity id="id"/>
             </t>
@@ -2267,10 +2207,8 @@ describe("Reactivity: proxy", () => {
       static components = { Quantity };
       state = proxy(testContext);
 
-      setup() {
-        onWillRender(() => {
-          steps.add("list");
-        });
+      notify() {
+        steps.add("list");
       }
 
       get total() {

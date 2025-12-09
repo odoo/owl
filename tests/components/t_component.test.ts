@@ -33,12 +33,8 @@ describe("t-component", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Parent:mounted",
       ]
@@ -74,12 +70,8 @@ describe("t-component", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "ChildA:setup",
         "ChildA:willStart",
-        "Parent:rendered",
-        "ChildA:willRender",
-        "ChildA:rendered",
         "ChildA:mounted",
         "Parent:mounted",
       ]
@@ -91,12 +83,8 @@ describe("t-component", () => {
     expect(fixture.innerHTML).toBe("child b");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Parent:willRender",
         "ChildB:setup",
         "ChildB:willStart",
-        "Parent:rendered",
-        "ChildB:willRender",
-        "ChildB:rendered",
         "Parent:willPatch",
         "ChildA:willUnmount",
         "ChildA:willDestroy",

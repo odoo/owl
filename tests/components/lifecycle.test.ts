@@ -8,9 +8,7 @@ import {
   onWillUnmount,
   onPatched,
   onWillUpdateProps,
-  onWillRender,
   onWillDestroy,
-  onRendered,
   onMounted,
   onWillStart,
   props,
@@ -509,12 +507,8 @@ describe("lifecycle hooks", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Parent:mounted",
       ]
@@ -525,11 +519,7 @@ describe("lifecycle hooks", () => {
     expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Parent:willRender",
         "Child:willUpdateProps",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Parent:willPatch",
         "Child:willPatch",
         "Child:patched",
@@ -542,8 +532,6 @@ describe("lifecycle hooks", () => {
     expect(fixture.innerHTML).toBe("");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:willPatch",
         "Child:willUnmount",
         "Child:willDestroy",
@@ -574,12 +562,8 @@ describe("lifecycle hooks", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Parent:mounted",
       ]
@@ -697,12 +681,8 @@ describe("lifecycle hooks", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Parent:mounted",
       ]
@@ -749,8 +729,6 @@ describe("lifecycle hooks", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:mounted",
       ]
     `);
@@ -759,16 +737,10 @@ describe("lifecycle hooks", () => {
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
         "GrandChild:setup",
         "GrandChild:willStart",
-        "Child:rendered",
-        "GrandChild:willRender",
-        "GrandChild:rendered",
         "Parent:willPatch",
         "GrandChild:mounted",
         "Child:mounted",
@@ -819,8 +791,6 @@ describe("lifecycle hooks", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:mounted",
       ]
     `);
@@ -871,8 +841,6 @@ describe("lifecycle hooks", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:mounted",
       ]
     `);
@@ -881,14 +849,10 @@ describe("lifecycle hooks", () => {
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
         "GrandChild:setup",
         "GrandChild:willStart",
-        "Child:rendered",
       ]
     `);
 
@@ -925,12 +889,8 @@ describe("lifecycle hooks", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Parent:mounted",
       ]
@@ -940,8 +900,6 @@ describe("lifecycle hooks", () => {
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:willPatch",
         "Child:willUnmount",
         "Child:willDestroy",
@@ -972,12 +930,8 @@ describe("lifecycle hooks", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Parent:mounted",
       ]
@@ -987,91 +941,7 @@ describe("lifecycle hooks", () => {
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Parent:willRender",
         "Child:willUpdateProps",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
-        "Parent:willPatch",
-        "Child:willPatch",
-        "Child:patched",
-        "Parent:patched",
-      ]
-    `);
-  });
-
-  test("onWillRender", async () => {
-    const def = makeDeferred();
-
-    class Child extends Component {
-      static template = xml`<button t-on-click="increment"><t t-esc="state.value"/></button>`;
-      state = proxy({ value: 1 });
-      visibleState = this.state.value;
-      setup() {
-        useLogLifecycle();
-        onWillUpdateProps(() => def);
-        onWillRender(() => (this.visibleState = this.state.value));
-      }
-      increment() {
-        this.state.value++;
-      }
-    }
-
-    class Parent extends Component {
-      static template = xml`
-        <Child someValue="state.value" />`;
-      static components = { Child };
-      state = proxy({ value: 1 });
-      setup() {
-        useLogLifecycle();
-      }
-    }
-
-    const parent = await mount(Parent, fixture);
-    expect(fixture.innerHTML).toBe("<button>1</button>");
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      [
-        "Parent:setup",
-        "Parent:willStart",
-        "Parent:willRender",
-        "Child:setup",
-        "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
-        "Child:mounted",
-        "Parent:mounted",
-      ]
-    `);
-
-    parent.state.value++; // to block child render
-    await nextTick();
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      [
-        "Parent:willRender",
-        "Child:willUpdateProps",
-        "Parent:rendered",
-      ]
-    `);
-
-    fixture.querySelector("button")!.click();
-    await nextTick();
-    await nextTick();
-    await nextTick();
-    expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
-
-    fixture.querySelector("button")!.click();
-    await nextTick();
-    expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
-    expect(fixture.innerHTML).toBe("<button>1</button>");
-
-    def.resolve();
-    await nextTick();
-    expect(fixture.innerHTML).toBe("<button>3</button>");
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      [
-        "Child:willRender",
-        "Child:rendered",
         "Parent:willPatch",
         "Child:willPatch",
         "Child:patched",
@@ -1162,24 +1032,14 @@ describe("lifecycle hooks", () => {
       [
         "A:setup",
         "A:willStart",
-        "A:willRender",
         "B:setup",
         "B:willStart",
         "C:setup",
         "C:willStart",
-        "A:rendered",
-        "B:willRender",
-        "B:rendered",
-        "C:willRender",
         "D:setup",
         "D:willStart",
         "E:setup",
         "E:willStart",
-        "C:rendered",
-        "D:willRender",
-        "D:rendered",
-        "E:willRender",
-        "E:rendered",
         "E:mounted",
         "D:mounted",
         "C:mounted",
@@ -1193,12 +1053,8 @@ describe("lifecycle hooks", () => {
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "C:willRender",
         "F:setup",
         "F:willStart",
-        "C:rendered",
-        "F:willRender",
-        "F:rendered",
         "C:willPatch",
         "E:willUnmount",
         "E:willDestroy",
@@ -1230,12 +1086,8 @@ describe("lifecycle hooks", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Parent:mounted",
       ]
@@ -1245,8 +1097,6 @@ describe("lifecycle hooks", () => {
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:willPatch",
         "Child:willUnmount",
         "Child:willDestroy",
@@ -1258,12 +1108,8 @@ describe("lifecycle hooks", () => {
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Parent:willPatch",
         "Child:mounted",
         "Parent:patched",
@@ -1290,11 +1136,7 @@ describe("lifecycle hooks", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:mounted",
-        "Parent:willRender",
-        "Parent:rendered",
       ]
     `);
 
@@ -1330,8 +1172,6 @@ describe("lifecycle hooks", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:mounted",
       ]
     `);
@@ -1341,12 +1181,8 @@ describe("lifecycle hooks", () => {
     expect(fixture.innerHTML).toBe("<span></span>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:willPatch",
         "Parent:patched",
-        "Parent:willRender",
-        "Parent:rendered",
       ]
     `);
 
@@ -1382,8 +1218,6 @@ describe("lifecycle hooks", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:mounted",
       ]
     `);
@@ -1394,12 +1228,8 @@ describe("lifecycle hooks", () => {
 
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:willPatch",
         "Parent:patched",
-        "Parent:willRender",
-        "Parent:rendered",
       ]
     `);
 
@@ -1414,7 +1244,7 @@ describe("lifecycle hooks", () => {
   });
 
   test("lifecycle callbacks are bound to component", async () => {
-    expect.assertions(14);
+    expect.assertions(10);
     let instance: any;
 
     class Test extends Component {
@@ -1429,8 +1259,6 @@ describe("lifecycle hooks", () => {
         onPatched(this.logger("onPatched"));
         onWillUnmount(this.logger("onWillUnmount"));
         onWillDestroy(this.logger("onWillDestroy"));
-        onWillRender(this.logger("onWillRender"));
-        onRendered(this.logger("onRendered"));
       }
       logger(hookName: string) {
         return function (this: Test) {
@@ -1456,12 +1284,8 @@ describe("lifecycle hooks", () => {
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "onWillStart",
-        "onWillRender",
-        "onRendered",
         "onMounted",
         "onWillUpdateProps",
-        "onWillRender",
-        "onRendered",
         "onWillPatch",
         "onPatched",
         "onWillUnmount",
@@ -1479,20 +1303,20 @@ describe("lifecycle hooks", () => {
     }
 
     class Parent extends Component {
-      static template = xml`before<Child t-if="state.flag"/>after`;
+      static template = xml`before<Child t-if="state.flag"/>after<t t-set="noop" t-value="this.notify()"/>`;
       static components = { Child };
 
       state = proxy({ flag: false });
       setup() {
         useLogLifecycle();
-        onRendered(async () => {
-          // we destroy here the app after the new child component has been
-          // created, but before this rendering has been patched to the DOM
-          if (this.state.flag) {
-            await Promise.resolve();
-            app.destroy();
-          }
-        });
+      }
+      async notify() {
+        // we destroy here the app after the new child component has been
+        // created, but before this rendering has been patched to the DOM
+        if (this.state.flag) {
+          await Promise.resolve();
+          app.destroy();
+        }
       }
     }
 
@@ -1503,8 +1327,6 @@ describe("lifecycle hooks", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:mounted",
       ]
     `);
@@ -1515,10 +1337,8 @@ describe("lifecycle hooks", () => {
     expect(fixture.innerHTML).toBe("");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
         "Parent:willUnmount",
         "Child:willDestroy",
         "Parent:willDestroy",

@@ -884,8 +884,6 @@ describe("basics", () => {
       [
         "Child:setup",
         "Child:willStart",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
       ]
     `);
@@ -922,8 +920,6 @@ describe("basics", () => {
       [
         "Child:setup",
         "Child:willStart",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
       ]
     `);
@@ -936,8 +932,6 @@ describe("basics", () => {
       [
         "Child:setup",
         "Child:willStart",
-        "Child:willRender",
-        "Child:rendered",
         "Child:willUnmount",
         "Child:willDestroy",
         "Child:mounted",
@@ -971,8 +965,6 @@ describe("basics", () => {
       [
         "GrandChild:setup",
         "GrandChild:willStart",
-        "GrandChild:willRender",
-        "GrandChild:rendered",
         "GrandChild:mounted",
       ]
     `);

@@ -4,10 +4,8 @@ import {
   Component,
   onMounted,
   onPatched,
-  onRendered,
   onWillDestroy,
   onWillPatch,
-  onWillRender,
   onWillStart,
   onWillUnmount,
   onWillUpdateProps,
@@ -177,14 +175,6 @@ export function useLogLifecycle(key?: string, skipAsyncHooks: boolean = false) {
       logStep(`${name}:willUpdateProps`);
     });
   }
-
-  onWillRender(() => {
-    logStep(`${name}:willRender`);
-  });
-
-  onRendered(() => {
-    logStep(`${name}:rendered`);
-  });
 
   onWillPatch(() => {
     expect(name + ": " + status(component)).toBe(name + ": " + "mounted");

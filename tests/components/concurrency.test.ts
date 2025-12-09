@@ -4,7 +4,6 @@ import {
   ComponentConstructor,
   mount,
   onMounted,
-  onRendered,
   onWillDestroy,
   onWillStart,
   onWillUnmount,
@@ -112,8 +111,6 @@ test("destroying/recreating a subwidget with different props (if start is not ov
     [
       "W:setup",
       "W:willStart",
-      "W:willRender",
-      "W:rendered",
       "W:mounted",
     ]
   `);
@@ -127,10 +124,8 @@ test("destroying/recreating a subwidget with different props (if start is not ov
 
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "W:willRender",
       "Child:setup",
       "Child:willStart",
-      "W:rendered",
     ]
   `);
 
@@ -141,10 +136,8 @@ test("destroying/recreating a subwidget with different props (if start is not ov
 
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "W:willRender",
       "Child:setup",
       "Child:willStart",
-      "W:rendered",
     ]
   `);
 
@@ -154,8 +147,6 @@ test("destroying/recreating a subwidget with different props (if start is not ov
   expect(Object.values(w.__owl__.children).length).toBe(1);
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Child:willRender",
-      "Child:rendered",
       "Child:willDestroy",
       "W:willPatch",
       "Child:mounted",
@@ -193,8 +184,6 @@ test("destroying/recreating a subcomponent, other scenario", async () => {
     [
       "Parent:setup",
       "Parent:willStart",
-      "Parent:willRender",
-      "Parent:rendered",
       "Parent:mounted",
     ]
   `);
@@ -205,16 +194,10 @@ test("destroying/recreating a subcomponent, other scenario", async () => {
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
-      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
       "Child:willDestroy",
       "Parent:willPatch",
       "Child:mounted",
@@ -269,8 +252,6 @@ test("creating two async components, scenario 1", async () => {
     [
       "Parent:setup",
       "Parent:willStart",
-      "Parent:willRender",
-      "Parent:rendered",
       "Parent:mounted",
     ]
   `);
@@ -280,10 +261,8 @@ test("creating two async components, scenario 1", async () => {
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "ChildA:setup",
       "ChildA:willStart",
-      "Parent:rendered",
     ]
   `);
   expect(fixture.innerHTML).toBe("");
@@ -293,12 +272,10 @@ test("creating two async components, scenario 1", async () => {
   expect(fixture.innerHTML).toBe("");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "ChildA:setup",
       "ChildA:willStart",
       "ChildB:setup",
       "ChildB:willStart",
-      "Parent:rendered",
       "ChildA:willDestroy",
     ]
   `);
@@ -307,12 +284,7 @@ test("creating two async components, scenario 1", async () => {
   await nextTick();
   expect(fixture.innerHTML).toBe("");
   expect(nbRenderings).toBe(0);
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
-      "ChildB:willRender",
-      "ChildB:rendered",
-    ]
-  `);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
 
   defA.resolve();
   await nextTick();
@@ -320,8 +292,6 @@ test("creating two async components, scenario 1", async () => {
   expect(nbRenderings).toBe(1);
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ChildA:willRender",
-      "ChildA:rendered",
       "Parent:willPatch",
       "ChildB:mounted",
       "ChildA:mounted",
@@ -369,12 +339,8 @@ test("creating two async components, scenario 2", async () => {
     [
       "Parent:setup",
       "Parent:willStart",
-      "Parent:willRender",
       "ChildA:setup",
       "ChildA:willStart",
-      "Parent:rendered",
-      "ChildA:willRender",
-      "ChildA:rendered",
       "ChildA:mounted",
       "Parent:mounted",
     ]
@@ -385,9 +351,7 @@ test("creating two async components, scenario 2", async () => {
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "ChildA:willUpdateProps",
-      "Parent:rendered",
     ]
   `);
   expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
@@ -397,31 +361,22 @@ test("creating two async components, scenario 2", async () => {
   expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "ChildA:willUpdateProps",
       "ChildB:setup",
       "ChildB:willStart",
-      "Parent:rendered",
     ]
   `);
 
   defB.resolve();
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
-      "ChildB:willRender",
-      "ChildB:rendered",
-    ]
-  `);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
 
   defA.resolve();
   await nextTick();
   expect(fixture.innerHTML).toBe("<div><span>a2</span><span>b2</span></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ChildA:willRender",
-      "ChildA:rendered",
       "Parent:willPatch",
       "ChildA:willPatch",
       "ChildB:mounted",
@@ -469,12 +424,8 @@ test("creating two async components, scenario 3 (patching in the same frame)", a
     [
       "Parent:setup",
       "Parent:willStart",
-      "Parent:willRender",
       "ChildA:setup",
       "ChildA:willStart",
-      "Parent:rendered",
-      "ChildA:willRender",
-      "ChildA:rendered",
       "ChildA:mounted",
       "Parent:mounted",
     ]
@@ -486,9 +437,7 @@ test("creating two async components, scenario 3 (patching in the same frame)", a
   expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "ChildA:willUpdateProps",
-      "Parent:rendered",
     ]
   `);
 
@@ -497,11 +446,9 @@ test("creating two async components, scenario 3 (patching in the same frame)", a
   expect(fixture.innerHTML).toBe("<div><span>a1</span></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "ChildA:willUpdateProps",
       "ChildB:setup",
       "ChildB:willStart",
-      "Parent:rendered",
     ]
   `);
 
@@ -514,10 +461,6 @@ test("creating two async components, scenario 3 (patching in the same frame)", a
   expect(fixture.innerHTML).toBe("<div><span>a2</span><span>b2</span></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ChildB:willRender",
-      "ChildB:rendered",
-      "ChildA:willRender",
-      "ChildA:rendered",
       "Parent:willPatch",
       "ChildA:willPatch",
       "ChildB:mounted",
@@ -553,12 +496,8 @@ test("update a sub-component twice in the same frame", async () => {
     [
       "Parent:setup",
       "Parent:willStart",
-      "Parent:willRender",
       "ChildA:setup",
       "ChildA:willStart",
-      "Parent:rendered",
-      "ChildA:willRender",
-      "ChildA:rendered",
       "ChildA:mounted",
       "Parent:mounted",
     ]
@@ -569,9 +508,7 @@ test("update a sub-component twice in the same frame", async () => {
   expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "ChildA:willUpdateProps",
-      "Parent:rendered",
     ]
   `);
 
@@ -580,9 +517,7 @@ test("update a sub-component twice in the same frame", async () => {
   expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "ChildA:willUpdateProps",
-      "Parent:rendered",
     ]
   `);
 
@@ -593,8 +528,6 @@ test("update a sub-component twice in the same frame", async () => {
   expect(fixture.innerHTML).toBe("<div><span>3</span></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ChildA:willRender",
-      "ChildA:rendered",
       "Parent:willPatch",
       "ChildA:willPatch",
       "ChildA:patched",
@@ -630,12 +563,8 @@ test("update a sub-component twice in the same frame, 2", async () => {
     [
       "Parent:setup",
       "Parent:willStart",
-      "Parent:willRender",
       "ChildA:setup",
       "ChildA:willStart",
-      "Parent:rendered",
-      "ChildA:willRender",
-      "ChildA:rendered",
       "ChildA:mounted",
       "Parent:mounted",
     ]
@@ -647,9 +576,7 @@ test("update a sub-component twice in the same frame, 2", async () => {
   await nextMicroTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "ChildA:willUpdateProps",
-      "Parent:rendered",
     ]
   `);
   await nextMicroTick();
@@ -658,33 +585,21 @@ test("update a sub-component twice in the same frame, 2", async () => {
   // I do not see anything harmful in waiting an extra tick. But it is annoying to not
   // know what is different.
   await nextMicroTick();
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
-      "ChildA:willRender",
-      "ChildA:rendered",
-    ]
-  `);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
   expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
   parent.state.valA = 3;
   await nextMicroTick();
   await nextMicroTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "ChildA:willUpdateProps",
-      "Parent:rendered",
     ]
   `);
 
   await nextMicroTick();
   // same as above
   await nextMicroTick();
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
-      "ChildA:willRender",
-      "ChildA:rendered",
-    ]
-  `);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
   expect(fixture.innerHTML).toBe("<div><span>1</span></div>");
 
   await nextTick();
@@ -738,16 +653,10 @@ test("properly behave when destroyed/unmounted while rendering ", async () => {
     [
       "Parent:setup",
       "Parent:willStart",
-      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
       "SubChild:setup",
       "SubChild:willStart",
-      "Child:rendered",
-      "SubChild:willRender",
-      "SubChild:rendered",
       "SubChild:mounted",
       "Child:mounted",
       "Parent:mounted",
@@ -761,12 +670,8 @@ test("properly behave when destroyed/unmounted while rendering ", async () => {
   expect(fixture.innerHTML).toBe("<div><div><div></div></div></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "Child:willUpdateProps",
-      "Parent:rendered",
-      "Child:willRender",
       "SubChild:willUpdateProps",
-      "Child:rendered",
     ]
   `);
 
@@ -777,8 +682,6 @@ test("properly behave when destroyed/unmounted while rendering ", async () => {
   expect(fixture.innerHTML).toBe("<div></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
-      "Parent:rendered",
       "Parent:willPatch",
       "Child:willUnmount",
       "SubChild:willUnmount",
@@ -830,8 +733,6 @@ test("rendering component again in next microtick", async () => {
     [
       "Parent:setup",
       "Parent:willStart",
-      "Parent:willRender",
-      "Parent:rendered",
       "Parent:mounted",
     ]
   `);
@@ -841,16 +742,10 @@ test("rendering component again in next microtick", async () => {
   expect(fixture.innerHTML).toBe("<div><button>Click</button><div>Child</div></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
-      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
       "Child:willDestroy",
       "Parent:willPatch",
       "Child:mounted",
@@ -903,16 +798,10 @@ test("concurrent renderings scenario 1", async () => {
     [
       "ComponentA:setup",
       "ComponentA:willStart",
-      "ComponentA:willRender",
       "ComponentB:setup",
       "ComponentB:willStart",
-      "ComponentA:rendered",
-      "ComponentB:willRender",
       "ComponentC:setup",
       "ComponentC:willStart",
-      "ComponentB:rendered",
-      "ComponentC:willRender",
-      "ComponentC:rendered",
       "ComponentC:mounted",
       "ComponentB:mounted",
       "ComponentA:mounted",
@@ -924,9 +813,7 @@ test("concurrent renderings scenario 1", async () => {
   expect(fixture.innerHTML).toBe("<div><p><span>1b</span></p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentB:willRender",
       "ComponentC:willUpdateProps",
-      "ComponentB:rendered",
     ]
   `);
 
@@ -935,12 +822,8 @@ test("concurrent renderings scenario 1", async () => {
   expect(fixture.innerHTML).toBe("<div><p><span>1b</span></p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentA:willRender",
       "ComponentB:willUpdateProps",
-      "ComponentA:rendered",
-      "ComponentB:willRender",
       "ComponentC:willUpdateProps",
-      "ComponentB:rendered",
     ]
   `);
   expect(ComponentC.prototype.someValue).toBeCalledTimes(1);
@@ -951,8 +834,6 @@ test("concurrent renderings scenario 1", async () => {
   expect(ComponentC.prototype.someValue).toBeCalledTimes(2);
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentC:willRender",
-      "ComponentC:rendered",
       "ComponentA:willPatch",
       "ComponentB:willPatch",
       "ComponentC:willPatch",
@@ -1006,16 +887,10 @@ test("concurrent renderings scenario 2", async () => {
     [
       "ComponentA:setup",
       "ComponentA:willStart",
-      "ComponentA:willRender",
       "ComponentB:setup",
       "ComponentB:willStart",
-      "ComponentA:rendered",
-      "ComponentB:willRender",
       "ComponentC:setup",
       "ComponentC:willStart",
-      "ComponentB:rendered",
-      "ComponentC:willRender",
-      "ComponentC:rendered",
       "ComponentC:mounted",
       "ComponentB:mounted",
       "ComponentA:mounted",
@@ -1027,12 +902,8 @@ test("concurrent renderings scenario 2", async () => {
   expect(fixture.innerHTML).toBe("<div>1<p><span>1b</span></p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentA:willRender",
       "ComponentB:willUpdateProps",
-      "ComponentA:rendered",
-      "ComponentB:willRender",
       "ComponentC:willUpdateProps",
-      "ComponentB:rendered",
     ]
   `);
 
@@ -1041,9 +912,7 @@ test("concurrent renderings scenario 2", async () => {
   expect(fixture.innerHTML).toBe("<div>1<p><span>1b</span></p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentB:willRender",
       "ComponentC:willUpdateProps",
-      "ComponentB:rendered",
     ]
   `);
 
@@ -1052,8 +921,6 @@ test("concurrent renderings scenario 2", async () => {
   expect(fixture.innerHTML).toBe("<div>2<p><span>2c</span></p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentC:willRender",
-      "ComponentC:rendered",
       "ComponentA:willPatch",
       "ComponentB:willPatch",
       "ComponentC:willPatch",
@@ -1111,16 +978,10 @@ test("concurrent renderings scenario 2bis", async () => {
     [
       "ComponentA:setup",
       "ComponentA:willStart",
-      "ComponentA:willRender",
       "ComponentB:setup",
       "ComponentB:willStart",
-      "ComponentA:rendered",
-      "ComponentB:willRender",
       "ComponentC:setup",
       "ComponentC:willStart",
-      "ComponentB:rendered",
-      "ComponentC:willRender",
-      "ComponentC:rendered",
       "ComponentC:mounted",
       "ComponentB:mounted",
       "ComponentA:mounted",
@@ -1132,12 +993,8 @@ test("concurrent renderings scenario 2bis", async () => {
   expect(fixture.innerHTML).toBe("<div><p><span>1b</span></p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentA:willRender",
       "ComponentB:willUpdateProps",
-      "ComponentA:rendered",
-      "ComponentB:willRender",
       "ComponentC:willUpdateProps",
-      "ComponentB:rendered",
     ]
   `);
 
@@ -1146,9 +1003,7 @@ test("concurrent renderings scenario 2bis", async () => {
   expect(fixture.innerHTML).toBe("<div><p><span>1b</span></p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentB:willRender",
       "ComponentC:willUpdateProps",
-      "ComponentB:rendered",
     ]
   `);
 
@@ -1162,8 +1017,6 @@ test("concurrent renderings scenario 2bis", async () => {
   expect(fixture.innerHTML).toBe("<div><p><span>2c</span></p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentC:willRender",
-      "ComponentC:rendered",
       "ComponentA:willPatch",
       "ComponentB:willPatch",
       "ComponentC:willPatch",
@@ -1233,20 +1086,12 @@ test("concurrent renderings scenario 3", async () => {
     [
       "ComponentA:setup",
       "ComponentA:willStart",
-      "ComponentA:willRender",
       "ComponentB:setup",
       "ComponentB:willStart",
-      "ComponentA:rendered",
-      "ComponentB:willRender",
       "ComponentC:setup",
       "ComponentC:willStart",
-      "ComponentB:rendered",
-      "ComponentC:willRender",
       "ComponentD:setup",
       "ComponentD:willStart",
-      "ComponentC:rendered",
-      "ComponentD:willRender",
-      "ComponentD:rendered",
       "ComponentD:mounted",
       "ComponentC:mounted",
       "ComponentB:mounted",
@@ -1259,9 +1104,7 @@ test("concurrent renderings scenario 3", async () => {
   expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentA:willRender",
       "ComponentB:willUpdateProps",
-      "ComponentA:rendered",
     ]
   `);
 
@@ -1275,12 +1118,8 @@ test("concurrent renderings scenario 3", async () => {
   expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentB:willRender",
       "ComponentC:willUpdateProps",
-      "ComponentB:rendered",
-      "ComponentC:willRender",
       "ComponentD:willUpdateProps",
-      "ComponentC:rendered",
     ]
   `);
 
@@ -1289,8 +1128,6 @@ test("concurrent renderings scenario 3", async () => {
   expect(fixture.innerHTML).toBe("<div><p><span><i>2d</i></span></p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentD:willRender",
-      "ComponentD:rendered",
       "ComponentA:willPatch",
       "ComponentB:willPatch",
       "ComponentC:willPatch",
@@ -1362,20 +1199,12 @@ test("concurrent renderings scenario 4", async () => {
     [
       "ComponentA:setup",
       "ComponentA:willStart",
-      "ComponentA:willRender",
       "ComponentB:setup",
       "ComponentB:willStart",
-      "ComponentA:rendered",
-      "ComponentB:willRender",
       "ComponentC:setup",
       "ComponentC:willStart",
-      "ComponentB:rendered",
-      "ComponentC:willRender",
       "ComponentD:setup",
       "ComponentD:willStart",
-      "ComponentC:rendered",
-      "ComponentD:willRender",
-      "ComponentD:rendered",
       "ComponentD:mounted",
       "ComponentC:mounted",
       "ComponentB:mounted",
@@ -1388,9 +1217,7 @@ test("concurrent renderings scenario 4", async () => {
   expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentA:willRender",
       "ComponentB:willUpdateProps",
-      "ComponentA:rendered",
     ]
   `);
 
@@ -1404,12 +1231,8 @@ test("concurrent renderings scenario 4", async () => {
   expect(fixture.innerHTML).toBe("<div><p><span><i>1c</i></span></p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentB:willRender",
       "ComponentC:willUpdateProps",
-      "ComponentB:rendered",
-      "ComponentC:willRender",
       "ComponentD:willUpdateProps",
-      "ComponentC:rendered",
     ]
   `);
 
@@ -1425,8 +1248,6 @@ test("concurrent renderings scenario 4", async () => {
   expect(ComponentD.prototype.someValue).toBeCalledTimes(2);
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentD:willRender",
-      "ComponentD:rendered",
       "ComponentA:willPatch",
       "ComponentB:willPatch",
       "ComponentC:willPatch",
@@ -1472,12 +1293,8 @@ test("concurrent renderings scenario 5", async () => {
     [
       "ComponentA:setup",
       "ComponentA:willStart",
-      "ComponentA:willRender",
       "ComponentB:setup",
       "ComponentB:willStart",
-      "ComponentA:rendered",
-      "ComponentB:willRender",
-      "ComponentB:rendered",
       "ComponentB:mounted",
       "ComponentA:mounted",
     ]
@@ -1488,9 +1305,7 @@ test("concurrent renderings scenario 5", async () => {
   expect(fixture.innerHTML).toBe("<div><p>1</p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentA:willRender",
       "ComponentB:willUpdateProps",
-      "ComponentA:rendered",
     ]
   `);
 
@@ -1499,9 +1314,7 @@ test("concurrent renderings scenario 5", async () => {
   expect(fixture.innerHTML).toBe("<div><p>1</p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentA:willRender",
       "ComponentB:willUpdateProps",
-      "ComponentA:rendered",
     ]
   `);
 
@@ -1517,8 +1330,6 @@ test("concurrent renderings scenario 5", async () => {
   expect(ComponentB.prototype.someValue).toBeCalledTimes(2);
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentB:willRender",
-      "ComponentB:rendered",
       "ComponentA:willPatch",
       "ComponentB:willPatch",
       "ComponentB:patched",
@@ -1561,12 +1372,8 @@ test("concurrent renderings scenario 6", async () => {
     [
       "ComponentA:setup",
       "ComponentA:willStart",
-      "ComponentA:willRender",
       "ComponentB:setup",
       "ComponentB:willStart",
-      "ComponentA:rendered",
-      "ComponentB:willRender",
-      "ComponentB:rendered",
       "ComponentB:mounted",
       "ComponentA:mounted",
     ]
@@ -1577,9 +1384,7 @@ test("concurrent renderings scenario 6", async () => {
   expect(fixture.innerHTML).toBe("<div><p>1</p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentA:willRender",
       "ComponentB:willUpdateProps",
-      "ComponentA:rendered",
     ]
   `);
 
@@ -1588,9 +1393,7 @@ test("concurrent renderings scenario 6", async () => {
   expect(fixture.innerHTML).toBe("<div><p>1</p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentA:willRender",
       "ComponentB:willUpdateProps",
-      "ComponentA:rendered",
     ]
   `);
 
@@ -1600,8 +1403,6 @@ test("concurrent renderings scenario 6", async () => {
   expect(ComponentB.prototype.someValue).toBeCalledTimes(2);
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentB:willRender",
-      "ComponentB:rendered",
       "ComponentA:willPatch",
       "ComponentB:willPatch",
       "ComponentB:patched",
@@ -1650,12 +1451,8 @@ test("concurrent renderings scenario 7", async () => {
     [
       "ComponentA:setup",
       "ComponentA:willStart",
-      "ComponentA:willRender",
       "ComponentB:setup",
       "ComponentB:willStart",
-      "ComponentA:rendered",
-      "ComponentB:willRender",
-      "ComponentB:rendered",
       "ComponentB:mounted",
       "ComponentA:mounted",
     ]
@@ -1667,11 +1464,7 @@ test("concurrent renderings scenario 7", async () => {
   expect(ComponentB.prototype.someValue).toBeCalledTimes(2);
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentA:willRender",
       "ComponentB:willUpdateProps",
-      "ComponentA:rendered",
-      "ComponentB:willRender",
-      "ComponentB:rendered",
       "ComponentA:willPatch",
       "ComponentB:willPatch",
       "ComponentB:patched",
@@ -1709,12 +1502,8 @@ test("concurrent renderings scenario 8", async () => {
     [
       "ComponentA:setup",
       "ComponentA:willStart",
-      "ComponentA:willRender",
       "ComponentB:setup",
       "ComponentB:willStart",
-      "ComponentA:rendered",
-      "ComponentB:willRender",
-      "ComponentB:rendered",
       "ComponentB:mounted",
       "ComponentA:mounted",
     ]
@@ -1725,9 +1514,7 @@ test("concurrent renderings scenario 8", async () => {
   expect(fixture.innerHTML).toBe("<div><p>1b</p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentA:willRender",
       "ComponentB:willUpdateProps",
-      "ComponentA:rendered",
     ]
   `);
 
@@ -1741,8 +1528,6 @@ test("concurrent renderings scenario 8", async () => {
   expect(fixture.innerHTML).toBe("<div><p>2c</p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentB:willRender",
-      "ComponentB:rendered",
       "ComponentA:willPatch",
       "ComponentB:willPatch",
       "ComponentB:patched",
@@ -1815,20 +1600,12 @@ test("concurrent renderings scenario 9", async () => {
     [
       "ComponentA:setup",
       "ComponentA:willStart",
-      "ComponentA:willRender",
       "ComponentB:setup",
       "ComponentB:willStart",
       "ComponentC:setup",
       "ComponentC:willStart",
-      "ComponentA:rendered",
-      "ComponentB:willRender",
-      "ComponentB:rendered",
-      "ComponentC:willRender",
       "ComponentD:setup",
       "ComponentD:willStart",
-      "ComponentC:rendered",
-      "ComponentD:willRender",
-      "ComponentD:rendered",
       "ComponentD:mounted",
       "ComponentC:mounted",
       "ComponentB:mounted",
@@ -1841,15 +1618,9 @@ test("concurrent renderings scenario 9", async () => {
   expect(fixture.innerHTML).toBe("<div>a1<b>a1</b><p><span>a1b1</span></p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentA:willRender",
       "ComponentB:willUpdateProps",
       "ComponentC:willUpdateProps",
-      "ComponentA:rendered",
-      "ComponentC:willRender",
       "ComponentD:willUpdateProps",
-      "ComponentC:rendered",
-      "ComponentD:willRender",
-      "ComponentD:rendered",
     ]
   `);
 
@@ -1858,11 +1629,7 @@ test("concurrent renderings scenario 9", async () => {
   expect(fixture.innerHTML).toBe("<div>a1<b>a1</b><p><span>a1b1</span></p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentC:willRender",
       "ComponentD:willUpdateProps",
-      "ComponentC:rendered",
-      "ComponentD:willRender",
-      "ComponentD:rendered",
     ]
   `);
 
@@ -1871,8 +1638,6 @@ test("concurrent renderings scenario 9", async () => {
   expect(fixture.innerHTML).toBe("<div>a2<b>a2</b><p><span>a2b2</span></p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentB:willRender",
-      "ComponentB:rendered",
       "ComponentA:willPatch",
       "ComponentC:willPatch",
       "ComponentD:willPatch",
@@ -1946,12 +1711,8 @@ test("concurrent renderings scenario 10", async () => {
     [
       "ComponentA:setup",
       "ComponentA:willStart",
-      "ComponentA:willRender",
       "ComponentB:setup",
       "ComponentB:willStart",
-      "ComponentA:rendered",
-      "ComponentB:willRender",
-      "ComponentB:rendered",
       "ComponentB:mounted",
       "ComponentA:mounted",
     ]
@@ -1962,10 +1723,8 @@ test("concurrent renderings scenario 10", async () => {
   expect(fixture.innerHTML).toBe("<div><p></p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentB:willRender",
       "ComponentC:setup",
       "ComponentC:willStart",
-      "ComponentB:rendered",
     ]
   `);
 
@@ -1975,9 +1734,7 @@ test("concurrent renderings scenario 10", async () => {
   expect(fixture.innerHTML).toBe("<div><p></p></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentA:willRender",
       "ComponentB:willUpdateProps",
-      "ComponentA:rendered",
       "ComponentC:willDestroy",
     ]
   `);
@@ -1988,12 +1745,8 @@ test("concurrent renderings scenario 10", async () => {
   expect(rendered).toBe(1);
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "ComponentB:willRender",
       "ComponentC:setup",
       "ComponentC:willStart",
-      "ComponentB:rendered",
-      "ComponentC:willRender",
-      "ComponentC:rendered",
       "ComponentA:willPatch",
       "ComponentB:willPatch",
       "ComponentC:mounted",
@@ -2039,12 +1792,8 @@ test("concurrent renderings scenario 11", async () => {
     [
       "Parent:setup",
       "Parent:willStart",
-      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]
@@ -2062,11 +1811,7 @@ test("concurrent renderings scenario 11", async () => {
   expect(fixture.innerHTML).toBe("<div><span>2|5</span></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "Child:willUpdateProps",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
       "Parent:willPatch",
       "Child:willPatch",
       "Child:patched",
@@ -2116,12 +1861,8 @@ test("concurrent renderings scenario 12", async () => {
     [
       "Parent:setup",
       "Parent:willStart",
-      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]
@@ -2133,9 +1874,7 @@ test("concurrent renderings scenario 12", async () => {
   expect(rendered).toBe(2);
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "Child:willUpdateProps",
-      "Parent:rendered",
     ]
   `);
 
@@ -2146,9 +1885,7 @@ test("concurrent renderings scenario 12", async () => {
   expect(rendered).toBe(3);
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "Child:willUpdateProps",
-      "Parent:rendered",
     ]
   `);
 
@@ -2158,8 +1895,6 @@ test("concurrent renderings scenario 12", async () => {
   expect(rendered).toBe(3);
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Child:willRender",
-      "Child:rendered",
       "Parent:willPatch",
       "Child:willPatch",
       "Child:patched",
@@ -2205,16 +1940,10 @@ test("concurrent renderings scenario 13", async () => {
     [
       "Parent:setup",
       "Parent:willStart",
-      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
-      "Child:willRender",
-      "Child:rendered",
     ]
   `);
 
@@ -2231,19 +1960,11 @@ test("concurrent renderings scenario 13", async () => {
   await nextTick(); // wait for this change to be applied
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
       "Parent:willPatch",
       "Child:mounted",
       "Parent:patched",
-      "Child:willRender",
-      "Child:rendered",
-      "Child:willRender",
-      "Child:rendered",
     ]
   `);
 
@@ -2303,16 +2024,10 @@ test("concurrent renderings scenario 14", async () => {
     [
       "A:setup",
       "A:willStart",
-      "A:willRender",
       "B:setup",
       "B:willStart",
-      "A:rendered",
-      "B:willRender",
       "C:setup",
       "C:willStart",
-      "B:rendered",
-      "C:willRender",
-      "C:rendered",
       "C:mounted",
       "B:mounted",
       "A:mounted",
@@ -2330,12 +2045,8 @@ test("concurrent renderings scenario 14", async () => {
   expect(fixture.innerHTML).toBe("<p><p><p><span>1</span><span>2</span><span>3</span></p></p></p>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "A:willRender",
       "B:willUpdateProps",
-      "A:rendered",
-      "B:willRender",
       "C:willUpdateProps",
-      "B:rendered",
     ]
   `);
 
@@ -2352,13 +2063,7 @@ test("concurrent renderings scenario 14", async () => {
   );
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "C:willRender",
-      "C:rendered",
-      "B:willRender",
       "C:willUpdateProps",
-      "B:rendered",
-      "C:willRender",
-      "C:rendered",
       "A:willPatch",
       "B:willPatch",
       "C:willPatch",
@@ -2412,16 +2117,10 @@ test("concurrent renderings scenario 15", async () => {
     [
       "A:setup",
       "A:willStart",
-      "A:willRender",
       "B:setup",
       "B:willStart",
-      "A:rendered",
-      "B:willRender",
       "C:setup",
       "C:willStart",
-      "B:rendered",
-      "C:willRender",
-      "C:rendered",
       "C:mounted",
       "B:mounted",
       "A:mounted",
@@ -2439,12 +2138,8 @@ test("concurrent renderings scenario 15", async () => {
   expect(fixture.innerHTML).toBe("<p><p><p><span>1</span><span>2</span><span>3</span></p></p></p>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "A:willRender",
       "B:willUpdateProps",
-      "A:rendered",
-      "B:willRender",
       "C:willUpdateProps",
-      "B:rendered",
     ]
   `);
 
@@ -2463,12 +2158,7 @@ test("concurrent renderings scenario 15", async () => {
   await nextMicroTick();
   app.scheduler.flush();
   expect(fixture.innerHTML).toBe("<p><p><p><span>1</span><span>2</span><span>3</span></p></p></p>");
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
-      "C:willRender",
-      "C:rendered",
-    ]
-  `);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
 
   await nextTick();
   expect(fixture.innerHTML).toBe(
@@ -2476,11 +2166,7 @@ test("concurrent renderings scenario 15", async () => {
   );
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "B:willRender",
       "C:willUpdateProps",
-      "B:rendered",
-      "C:willRender",
-      "C:rendered",
       "A:willPatch",
       "B:willPatch",
       "C:willPatch",
@@ -2542,16 +2228,10 @@ test("concurrent renderings scenario 16", async () => {
     [
       "A:setup",
       "A:willStart",
-      "A:willRender",
       "B:setup",
       "B:willStart",
-      "A:rendered",
-      "B:willRender",
       "C:setup",
       "C:willStart",
-      "B:rendered",
-      "C:willRender",
-      "C:rendered",
       "C:mounted",
       "B:mounted",
       "A:mounted",
@@ -2570,14 +2250,8 @@ test("concurrent renderings scenario 16", async () => {
   expect(fixture.innerHTML).toBe("1:2:3: ");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "A:willRender",
       "B:willUpdateProps",
-      "A:rendered",
-      "B:willRender",
       "C:willUpdateProps",
-      "B:rendered",
-      "C:willRender",
-      "C:rendered",
     ]
   `);
 
@@ -2591,17 +2265,11 @@ test("concurrent renderings scenario 16", async () => {
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "C:willRender",
       "D:setup",
       "D:willStart",
-      "C:rendered",
-      "B:willRender",
       "C:willUpdateProps",
-      "B:rendered",
-      "C:willRender",
       "D:setup",
       "D:willStart",
-      "C:rendered",
       "D:willDestroy",
     ]
   `);
@@ -2614,8 +2282,6 @@ test("concurrent renderings scenario 16", async () => {
   expect(fixture.innerHTML).toBe("11:12:13: D");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "D:willRender",
-      "D:rendered",
       "A:willPatch",
       "B:willPatch",
       "C:willPatch",
@@ -2679,8 +2345,6 @@ test("calling render in destroy", async () => {
     [
       "B:setup",
       "B:willStart",
-      "B:willRender",
-      "B:rendered",
       "B:mounted",
     ]
   `);
@@ -2695,13 +2359,9 @@ test("calling render in destroy", async () => {
     [
       "B:setup",
       "B:willStart",
-      "B:willRender",
-      "B:rendered",
       "B:willUnmount",
       "B:willDestroy",
       "B:mounted",
-      "B:willRender",
-      "B:rendered",
       "B:willPatch",
       "B:patched",
     ]
@@ -2730,8 +2390,6 @@ test("change state and call manually render: no unnecessary rendering", async ()
     [
       "Test:setup",
       "Test:willStart",
-      "Test:willRender",
-      "Test:rendered",
       "Test:mounted",
     ]
   `);
@@ -2745,8 +2403,6 @@ test("change state and call manually render: no unnecessary rendering", async ()
   expect(numberOfRender).toBe(2);
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Test:willRender",
-      "Test:rendered",
       "Test:willPatch",
       "Test:patched",
     ]
@@ -2776,8 +2432,6 @@ test("changing state before first render does not trigger a render", async () =>
     [
       "TestW:setup",
       "TestW:willStart",
-      "TestW:willRender",
-      "TestW:rendered",
       "TestW:mounted",
     ]
   `);
@@ -2822,8 +2476,6 @@ test("changing state before first render does not trigger a render (with parent)
     [
       "Parent:setup",
       "Parent:willStart",
-      "Parent:willRender",
-      "Parent:rendered",
       "Parent:mounted",
     ]
   `);
@@ -2834,12 +2486,8 @@ test("changing state before first render does not trigger a render (with parent)
   expect(renders).toBe(1);
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "TestW:setup",
       "TestW:willStart",
-      "Parent:rendered",
-      "TestW:willRender",
-      "TestW:rendered",
       "Parent:willPatch",
       "TestW:mounted",
       "Parent:patched",
@@ -2881,27 +2529,16 @@ test("two renderings initiated between willPatch and patched", async () => {
     [
       "Parent:setup",
       "Parent:willStart",
-      "Parent:willRender",
       "Panel:setup",
       "Panel:willStart",
-      "Parent:rendered",
-      "Panel:willRender",
-      "Panel:rendered",
       "Panel:mounted",
       "Parent:mounted",
-      "Parent:willRender",
       "Panel:willUpdateProps",
-      "Parent:rendered",
     ]
   `);
 
   await nextMicroTick();
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
-      "Panel:willRender",
-      "Panel:rendered",
-    ]
-  `);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
 
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
@@ -2919,20 +2556,14 @@ test("two renderings initiated between willPatch and patched", async () => {
   expect(fixture.innerHTML).toBe("<div><abc>Panel2</abc></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "Panel:setup",
       "Panel:willStart",
-      "Parent:rendered",
-      "Panel:willRender",
-      "Panel:rendered",
       "Parent:willPatch",
       "Panel:willUnmount",
       "Panel:willDestroy",
       "Panel:mounted",
       "Parent:patched",
-      "Parent:willRender",
       "Panel:willUpdateProps",
-      "Parent:rendered",
     ]
   `);
 
@@ -2940,8 +2571,6 @@ test("two renderings initiated between willPatch and patched", async () => {
   expect(fixture.innerHTML).toBe("<div><abc>Panel2Mounted</abc></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Panel:willRender",
-      "Panel:rendered",
       "Parent:willPatch",
       "Panel:willPatch",
       "Panel:patched",
@@ -2954,14 +2583,10 @@ test("two renderings initiated between willPatch and patched", async () => {
   expect(fixture.innerHTML).toBe("<div></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
-      "Parent:rendered",
       "Parent:willPatch",
       "Panel:willUnmount",
       "Panel:willDestroy",
       "Parent:patched",
-      "Parent:willRender",
-      "Parent:rendered",
     ]
   `);
 
@@ -3002,12 +2627,8 @@ test("parent and child rendered at exact same time", async () => {
     [
       "Parent:setup",
       "Parent:willStart",
-      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]
@@ -3020,11 +2641,7 @@ test("parent and child rendered at exact same time", async () => {
   expect(fixture.innerHTML).toBe("1");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "Child:willUpdateProps",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
       "Parent:willPatch",
       "Child:willPatch",
       "Child:patched",
@@ -3066,12 +2683,8 @@ test("delay willUpdateProps", async () => {
     [
       "Parent:setup",
       "Parent:willStart",
-      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]
@@ -3086,9 +2699,7 @@ test("delay willUpdateProps", async () => {
   expect(fixture.innerHTML).toBe("0_0");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "Child:willUpdateProps",
-      "Parent:rendered",
     ]
   `);
 
@@ -3105,11 +2716,7 @@ test("delay willUpdateProps", async () => {
 
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "Child:willUpdateProps",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
       "Parent:willPatch",
       "Child:willPatch",
       "Child:patched",
@@ -3123,8 +2730,6 @@ test("delay willUpdateProps", async () => {
 
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Child:willRender",
-      "Child:rendered",
       "Child:willPatch",
       "Child:patched",
     ]
@@ -3190,20 +2795,12 @@ test("delay willUpdateProps with rendering grandchild", async () => {
     [
       "GrandParent:setup",
       "GrandParent:willStart",
-      "GrandParent:willRender",
       "Parent:setup",
       "Parent:willStart",
-      "GrandParent:rendered",
-      "Parent:willRender",
       "DelayedChild:setup",
       "DelayedChild:willStart",
       "ReactiveChild:setup",
       "ReactiveChild:willStart",
-      "Parent:rendered",
-      "DelayedChild:willRender",
-      "DelayedChild:rendered",
-      "ReactiveChild:willRender",
-      "ReactiveChild:rendered",
       "ReactiveChild:mounted",
       "DelayedChild:mounted",
       "Parent:mounted",
@@ -3221,15 +2818,9 @@ test("delay willUpdateProps with rendering grandchild", async () => {
   expect(fixture.innerHTML).toBe("0_0<div></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "GrandParent:willRender",
       "Parent:willUpdateProps",
-      "GrandParent:rendered",
-      "Parent:willRender",
       "DelayedChild:willUpdateProps",
       "ReactiveChild:willUpdateProps",
-      "Parent:rendered",
-      "ReactiveChild:willRender",
-      "ReactiveChild:rendered",
     ]
   `);
 
@@ -3243,15 +2834,9 @@ test("delay willUpdateProps with rendering grandchild", async () => {
   expect(fixture.innerHTML).toBe("0_0<div></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "GrandParent:willRender",
       "Parent:willUpdateProps",
-      "GrandParent:rendered",
-      "Parent:willRender",
       "DelayedChild:willUpdateProps",
       "ReactiveChild:willUpdateProps",
-      "Parent:rendered",
-      "ReactiveChild:willRender",
-      "ReactiveChild:rendered",
     ]
   `);
 
@@ -3260,8 +2845,6 @@ test("delay willUpdateProps with rendering grandchild", async () => {
   expect(fixture.innerHTML).toBe("2_1<div></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "DelayedChild:willRender",
-      "DelayedChild:rendered",
       "GrandParent:willPatch",
       "Parent:willPatch",
       "ReactiveChild:willPatch",
@@ -3278,8 +2861,6 @@ test("delay willUpdateProps with rendering grandchild", async () => {
   expect(fixture.innerHTML).toBe("2_2<div></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "DelayedChild:willRender",
-      "DelayedChild:rendered",
       "DelayedChild:willPatch",
       "DelayedChild:patched",
     ]
@@ -3309,12 +2890,8 @@ test("two sequential renderings before an animation frame", async () => {
     [
       "Parent:setup",
       "Parent:willStart",
-      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]
@@ -3329,11 +2906,7 @@ test("two sequential renderings before an animation frame", async () => {
   expect(fixture.innerHTML).toBe("0");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "Child:willUpdateProps",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
     ]
   `);
 
@@ -3347,11 +2920,7 @@ test("two sequential renderings before an animation frame", async () => {
   expect(fixture.innerHTML).toBe("0");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "Child:willUpdateProps",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
     ]
   `);
 
@@ -3396,8 +2965,6 @@ test("t-key on dom node having a component", async () => {
     [
       "Child (1):setup",
       "Child (1):willStart",
-      "Child (1):willRender",
-      "Child (1):rendered",
       "Child (1):mounted",
       "Child (2):setup",
       "Child (2):willStart",
@@ -3420,8 +2987,6 @@ test("t-key on dom node having a component", async () => {
     [
       "Child (3):setup",
       "Child (3):willStart",
-      "Child (3):willRender",
-      "Child (3):rendered",
       "Child (2):willDestroy",
       "Child (1):willUnmount",
       "Child (1):willDestroy",
@@ -3459,8 +3024,6 @@ test("t-key on dynamic async component (toggler is never patched)", async () => 
     [
       "Child (1):setup",
       "Child (1):willStart",
-      "Child (1):willRender",
-      "Child (1):rendered",
       "Child (1):mounted",
       "Child (2):setup",
       "Child (2):willStart",
@@ -3483,8 +3046,6 @@ test("t-key on dynamic async component (toggler is never patched)", async () => 
     [
       "Child (3):setup",
       "Child (3):willStart",
-      "Child (3):willRender",
-      "Child (3):rendered",
       "Child (2):willDestroy",
       "Child (1):willUnmount",
       "Child (1):willDestroy",
@@ -3524,8 +3085,6 @@ test("t-foreach with dynamic async component", async () => {
     [
       "Child (1):setup",
       "Child (1):willStart",
-      "Child (1):willRender",
-      "Child (1):rendered",
       "Child (1):mounted",
       "Child (2):setup",
       "Child (2):willStart",
@@ -3547,8 +3106,6 @@ test("t-foreach with dynamic async component", async () => {
     [
       "Child (3):setup",
       "Child (3):willStart",
-      "Child (3):willRender",
-      "Child (3):rendered",
       "Child (2):willDestroy",
       "Child (1):willUnmount",
       "Child (1):willDestroy",
@@ -3629,12 +3186,8 @@ test("rendering parent twice, with different props on child and stuff", async ()
     [
       "Parent:setup",
       "Parent:willStart",
-      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]
@@ -3648,11 +3201,7 @@ test("rendering parent twice, with different props on child and stuff", async ()
   await nextMicroTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "Child:willUpdateProps",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
     ]
   `);
   expect(fixture.innerHTML).toBe("1");
@@ -3663,11 +3212,7 @@ test("rendering parent twice, with different props on child and stuff", async ()
   expect(fixture.innerHTML).toBe("2");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
       "Child:willUpdateProps",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
       "Parent:willPatch",
       "Child:willPatch",
       "Child:patched",
@@ -3727,20 +3272,12 @@ test("delayed rendering, but then initial rendering is cancelled by yet another 
     [
       "A:setup",
       "A:willStart",
-      "A:willRender",
       "B:setup",
       "B:willStart",
-      "A:rendered",
-      "B:willRender",
       "C:setup",
       "C:willStart",
-      "B:rendered",
-      "C:willRender",
       "D:setup",
       "D:willStart",
-      "C:rendered",
-      "D:willRender",
-      "D:rendered",
       "D:mounted",
       "C:mounted",
       "B:mounted",
@@ -3753,9 +3290,7 @@ test("delayed rendering, but then initial rendering is cancelled by yet another 
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "B:willRender",
       "C:willUpdateProps",
-      "B:rendered",
     ]
   `);
 
@@ -3769,12 +3304,8 @@ test("delayed rendering, but then initial rendering is cancelled by yet another 
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "A:willRender",
       "B:willUpdateProps",
-      "A:rendered",
-      "B:willRender",
       "C:willUpdateProps",
-      "B:rendered",
     ]
   `);
 
@@ -3782,10 +3313,6 @@ test("delayed rendering, but then initial rendering is cancelled by yet another 
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "C:willRender",
-      "C:rendered",
-      "D:willRender",
-      "D:rendered",
       "D:willPatch",
       "D:patched",
       "A:willPatch",
@@ -3815,9 +3342,11 @@ test("delayed rendering, reusing fiber and stuff", async () => {
   }
 
   class B extends Component {
-    static template = xml`<t t-esc="this.props.value"/><C />`;
+    static template = xml`<t t-esc="this.props.value"/><C /><t t-set="noop" t-value="this.notify()"/>`;
     static components = { C };
     props = props();
+    notify: any;
+
     setup() {
       useLogLifecycle();
       let flag = false;
@@ -3825,12 +3354,12 @@ test("delayed rendering, reusing fiber and stuff", async () => {
         flag = true;
         return prom1;
       });
-      onRendered(async () => {
+      this.notify = async () => {
         if (flag) {
           await nextMicroTick();
           prom2.resolve();
         }
-      });
+      };
     }
   }
 
@@ -3849,16 +3378,10 @@ test("delayed rendering, reusing fiber and stuff", async () => {
     [
       "A:setup",
       "A:willStart",
-      "A:willRender",
       "B:setup",
       "B:willStart",
-      "A:rendered",
-      "B:willRender",
       "C:setup",
       "C:willStart",
-      "B:rendered",
-      "C:willRender",
-      "C:rendered",
       "C:mounted",
       "B:mounted",
       "A:mounted",
@@ -3870,9 +3393,7 @@ test("delayed rendering, reusing fiber and stuff", async () => {
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "A:willRender",
       "B:willUpdateProps",
-      "A:rendered",
     ]
   `);
 
@@ -3884,14 +3405,7 @@ test("delayed rendering, reusing fiber and stuff", async () => {
   // wait for render in A to be completed
   prom1.resolve();
   await prom2;
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
-      "B:willRender",
-      "B:rendered",
-      "C:willRender",
-      "C:rendered",
-    ]
-  `);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
 
   // initiate a new render in A => fiber will be reused
   parent.state.value = 355;
@@ -3899,11 +3413,7 @@ test("delayed rendering, reusing fiber and stuff", async () => {
   expect(fixture.innerHTML).toBe("355<button>2</button>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "A:willRender",
       "B:willUpdateProps",
-      "A:rendered",
-      "B:willRender",
-      "B:rendered",
       "A:willPatch",
       "B:willPatch",
       "B:patched",
@@ -3953,16 +3463,10 @@ test("delayed rendering, then component is destroyed and  stuff", async () => {
     [
       "A:setup",
       "A:willStart",
-      "A:willRender",
       "B:setup",
       "B:willStart",
-      "A:rendered",
-      "B:willRender",
       "C:setup",
       "C:willStart",
-      "B:rendered",
-      "C:willRender",
-      "C:rendered",
       "C:mounted",
       "B:mounted",
       "A:mounted",
@@ -3977,9 +3481,7 @@ test("delayed rendering, then component is destroyed and  stuff", async () => {
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "A:willRender",
       "B:willUpdateProps",
-      "A:rendered",
     ]
   `);
 
@@ -3989,8 +3491,6 @@ test("delayed rendering, then component is destroyed and  stuff", async () => {
   expect(fixture.innerHTML).toBe("34");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "B:willRender",
-      "B:rendered",
       "A:willPatch",
       "B:willPatch",
       "C:willUnmount",
@@ -4042,16 +3542,10 @@ test("delayed rendering, reusing fiber then component is destroyed and  stuff", 
     [
       "A:setup",
       "A:willStart",
-      "A:willRender",
       "B:setup",
       "B:willStart",
-      "A:rendered",
-      "B:willRender",
       "C:setup",
       "C:willStart",
-      "B:rendered",
-      "C:willRender",
-      "C:rendered",
       "C:mounted",
       "B:mounted",
       "A:mounted",
@@ -4063,9 +3557,7 @@ test("delayed rendering, reusing fiber then component is destroyed and  stuff", 
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "A:willRender",
       "B:willUpdateProps",
-      "A:rendered",
     ]
   `);
 
@@ -4080,8 +3572,6 @@ test("delayed rendering, reusing fiber then component is destroyed and  stuff", 
   expect(fixture.innerHTML).toBe("A");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "A:willRender",
-      "A:rendered",
       "A:willPatch",
       "B:willUnmount",
       "C:willUnmount",
@@ -4118,18 +3608,19 @@ test("another scenario with delayed rendering", async () => {
   }
 
   class A extends Component {
-    static template = xml`A<t t-if="state.value lt 15"><B value="state.value"/></t>`;
+    static template = xml`A<t t-if="state.value lt 15"><B value="state.value"/></t><t t-set="noop" t-value="this.notify()"/>`;
     static components = { B };
     state = proxy({ value: 3 });
+    notify: any;
     setup() {
       useLogLifecycle();
       let n = 0;
-      onRendered(() => {
+      this.notify = () => {
         n++;
         if (n === 2) {
           onSecondRenderA.resolve();
         }
-      });
+      };
     }
   }
 
@@ -4139,16 +3630,10 @@ test("another scenario with delayed rendering", async () => {
     [
       "A:setup",
       "A:willStart",
-      "A:willRender",
       "B:setup",
       "B:willStart",
-      "A:rendered",
-      "B:willRender",
       "C:setup",
       "C:willStart",
-      "B:rendered",
-      "C:willRender",
-      "C:rendered",
       "C:mounted",
       "B:mounted",
       "A:mounted",
@@ -4160,9 +3645,7 @@ test("another scenario with delayed rendering", async () => {
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "A:willRender",
       "B:willUpdateProps",
-      "A:rendered",
     ]
   `);
 
@@ -4175,21 +3658,14 @@ test("another scenario with delayed rendering", async () => {
   parent.state.value = 23;
   await onSecondRenderA;
   await nextMicroTick();
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
-      "A:willRender",
-      "A:rendered",
-    ]
-  `);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
 
   // rerender A, but without destroying B
   parent.state.value = 7;
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "A:willRender",
       "B:willUpdateProps",
-      "A:rendered",
     ]
   `);
 
@@ -4199,10 +3675,6 @@ test("another scenario with delayed rendering", async () => {
 
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "B:willRender",
-      "B:rendered",
-      "C:willRender",
-      "C:rendered",
       "A:willPatch",
       "B:willPatch",
       "B:patched",
@@ -4252,17 +3724,9 @@ test("delayed fiber does not get rendered if it was cancelled", async () => {
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
       "A:setup",
-      "A:willRender",
       "B:setup",
-      "A:rendered",
-      "B:willRender",
       "C:setup",
-      "B:rendered",
-      "C:willRender",
       "D:setup",
-      "C:rendered",
-      "D:willRender",
-      "D:rendered",
       "D:mounted",
       "C:mounted",
       "B:mounted",
@@ -4272,12 +3736,7 @@ test("delayed fiber does not get rendered if it was cancelled", async () => {
   // Start a render in C
   c!.render(true);
   await nextMicroTick();
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
-      "C:willRender",
-      "C:rendered",
-    ]
-  `);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`[]`);
   // Start a render in A such that C is already rendered, but D will be delayed
   // (because A is rendering) then cancelled (when the render from A reaches C)
   a.render(true);
@@ -4285,14 +3744,6 @@ test("delayed fiber does not get rendered if it was cancelled", async () => {
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "A:willRender",
-      "A:rendered",
-      "B:willRender",
-      "B:rendered",
-      "C:willRender",
-      "C:rendered",
-      "D:willRender",
-      "D:rendered",
       "A:willPatch",
       "B:willPatch",
       "C:willPatch",
@@ -4310,17 +3761,17 @@ test("destroyed component causes other soon to be destroyed component to rerende
   let c: any = null;
 
   class B extends Component {
-    static template = xml`<t t-esc="this.props.value"/>`;
+    static template = xml`<t t-set="noop" t-value="this.notify()"/><t t-esc="this.props.value"/>`;
     props = props();
     setup() {
       useLogLifecycle();
-      onRendered(() => {
-        def.resolve();
-      });
       onWillDestroy(() => {
         c.state.val++;
         c.render();
       });
+    }
+    notify() {
+      def.resolve();
     }
   }
   class C extends Component {
@@ -4353,8 +3804,6 @@ test("destroyed component causes other soon to be destroyed component to rerende
     [
       "A:setup",
       "A:willStart",
-      "A:willRender",
-      "A:rendered",
       "A:mounted",
     ]
   `);
@@ -4366,16 +3815,10 @@ test("destroyed component causes other soon to be destroyed component to rerende
   await nextMicroTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "A:willRender",
       "B:setup",
       "B:willStart",
       "C:setup",
       "C:willStart",
-      "A:rendered",
-      "B:willRender",
-      "B:rendered",
-      "C:willRender",
-      "C:rendered",
     ]
   `);
 
@@ -4384,16 +3827,10 @@ test("destroyed component causes other soon to be destroyed component to rerende
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "A:willRender",
       "B:setup",
       "B:willStart",
       "C:setup",
       "C:willStart",
-      "A:rendered",
-      "B:willRender",
-      "B:rendered",
-      "C:willRender",
-      "C:rendered",
       "B:willDestroy",
       "C:willDestroy",
       "A:willPatch",
@@ -4457,20 +3894,12 @@ test("delayed rendering, destruction, stuff happens", async () => {
     [
       "A:setup",
       "A:willStart",
-      "A:willRender",
       "B:setup",
       "B:willStart",
-      "A:rendered",
-      "B:willRender",
       "C:setup",
       "C:willStart",
-      "B:rendered",
-      "C:willRender",
       "D:setup",
       "D:willStart",
-      "C:rendered",
-      "D:willRender",
-      "D:rendered",
       "D:mounted",
       "C:mounted",
       "B:mounted",
@@ -4483,12 +3912,8 @@ test("delayed rendering, destruction, stuff happens", async () => {
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "A:willRender",
       "B:willUpdateProps",
-      "A:rendered",
-      "B:willRender",
       "C:willUpdateProps",
-      "B:rendered",
     ]
   `);
 
@@ -4499,8 +3924,6 @@ test("delayed rendering, destruction, stuff happens", async () => {
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "B:willRender",
-      "B:rendered",
       "A:willPatch",
       "B:willPatch",
       "C:willUnmount",
@@ -4565,20 +3988,12 @@ test("renderings, destruction, patch, stuff, ... yet another variation", async (
     [
       "A:setup",
       "A:willStart",
-      "A:willRender",
       "B:setup",
       "B:willStart",
       "D:setup",
       "D:willStart",
-      "A:rendered",
-      "B:willRender",
       "C:setup",
       "C:willStart",
-      "B:rendered",
-      "D:willRender",
-      "D:rendered",
-      "C:willRender",
-      "C:rendered",
       "C:mounted",
       "D:mounted",
       "B:mounted",
@@ -4591,9 +4006,7 @@ test("renderings, destruction, patch, stuff, ... yet another variation", async (
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "A:willRender",
       "B:willUpdateProps",
-      "A:rendered",
     ]
   `);
 
@@ -4607,8 +4020,6 @@ test("renderings, destruction, patch, stuff, ... yet another variation", async (
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "B:willRender",
-      "B:rendered",
       "A:willPatch",
       "B:willPatch",
       "C:willUnmount",
@@ -4624,8 +4035,6 @@ test("renderings, destruction, patch, stuff, ... yet another variation", async (
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "D:willRender",
-      "D:rendered",
       "D:willPatch",
       "D:patched",
     ]
@@ -4664,11 +4073,7 @@ test("delayed render does not go through when t-component value changed", async 
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
       "A:setup",
-      "A:willRender",
       "B:setup",
-      "A:rendered",
-      "B:willRender",
-      "B:rendered",
       "B:mounted",
       "A:mounted",
     ]
@@ -4681,11 +4086,7 @@ test("delayed render does not go through when t-component value changed", async 
   expect(fixture.innerHTML).toBe("AC");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "A:willRender",
       "C:setup",
-      "A:rendered",
-      "C:willRender",
-      "C:rendered",
       "A:willPatch",
       "B:willUnmount",
       "B:willDestroy",
@@ -4810,8 +4211,6 @@ test("components are not destroyed between animation frame", async () => {
     [
       "A:setup",
       "A:willStart",
-      "A:willRender",
-      "A:rendered",
       "A:mounted",
     ]
   `);
@@ -4821,10 +4220,8 @@ test("components are not destroyed between animation frame", async () => {
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "A:willRender",
       "B:setup",
       "B:willStart",
-      "A:rendered",
     ]
   `);
 
@@ -4835,10 +4232,8 @@ test("components are not destroyed between animation frame", async () => {
   await nextMicroTick();
   expect([
     // note that B is not destroyed here. It is cancelled instead
-    "A:willRender",
     "B:setup",
     "B:willStart",
-    "A:rendered",
   ]).toBeLogged();
 
   // resolve def, so B render is unblocked
@@ -4846,12 +4241,8 @@ test("components are not destroyed between animation frame", async () => {
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "B:willRender",
       "C:setup",
       "C:willStart",
-      "B:rendered",
-      "C:willRender",
-      "C:rendered",
       "B:willDestroy",
       "A:willPatch",
       "C:mounted",
@@ -4885,12 +4276,8 @@ test("component destroyed just after render", async () => {
     [
       "A:setup",
       "A:willStart",
-      "A:willRender",
       "B:setup",
       "B:willStart",
-      "A:rendered",
-      "B:willRender",
-      "B:rendered",
       "B:mounted",
       "A:mounted",
     ]

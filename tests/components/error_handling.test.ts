@@ -4,9 +4,7 @@ import {
   onError,
   onMounted,
   onPatched,
-  onRendered,
   onWillPatch,
-  onWillRender,
   onWillStart,
   onWillUnmount,
   proxy,
@@ -325,50 +323,6 @@ describe("errors and promises", () => {
     expect(mockConsoleWarn).toBeCalledTimes(1);
   });
 
-  test("errors in onWillRender/onRender aren't wrapped more than once", async () => {
-    class Root extends Component {
-      static template = xml`<div>abc</div>`;
-      setup() {
-        onWillRender(() => {
-          throw new Error("boom in onWillRender");
-        });
-        onRendered(() => {
-          throw new Error("boom in onRendered");
-        });
-      }
-    }
-
-    const app = new App({ test: true });
-    let error: OwlError;
-    const mountProm = app
-      .createRoot(Root)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("boom in onWillRender");
-    await mountProm;
-    expect(error!).toBeDefined();
-    expect(error!.message).toBe(`boom in onWillRender`);
-  });
-
-  test("error while rendering component isn't wrapped by onWillRender/onRendered", async () => {
-    class App extends Component {
-      static template = xml`<div t-att-class="{ 'invalid: 5 }">abc</div>`;
-      setup() {
-        onWillRender(() => {});
-        onRendered(() => {});
-      }
-    }
-
-    let error: Error;
-    try {
-      await mount(App, fixture, { test: true });
-    } catch (e) {
-      error = e as Error;
-    }
-    expect(error!).toBeDefined();
-    expect(error!.message).toBe("Tokenizer error: could not tokenize `{ 'invalid: 5 }`");
-  });
-
   test("wrapped errors in async code are correctly caught", async () => {
     class Root extends Component {
       static template = xml`<div>abc</div>`;
@@ -631,8 +585,6 @@ describe("can catch errors", () => {
       [
         "Main:setup",
         "Main:willStart",
-        "Main:willRender",
-        "Main:rendered",
         "Main:mounted",
       ]
     `);
@@ -642,25 +594,17 @@ describe("can catch errors", () => {
     expect(fixture.innerHTML).toBe("Main<div>Error!!!</div>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Main:willRender",
         "ErrorComponent:setup",
         "ErrorComponent:willStart",
-        "Main:rendered",
-        "ErrorComponent:willRender",
-        "ErrorComponent:rendered",
         "Main:willPatch",
         "ErrorComponent:mounted",
-        "Main:willRender",
         "PerfectComponent:setup",
         "PerfectComponent:willStart",
-        "Main:rendered",
       ]
     `);
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "PerfectComponent:willRender",
-        "PerfectComponent:rendered",
         "Main:willPatch",
         "ErrorComponent:willUnmount",
         "ErrorComponent:willDestroy",
@@ -1066,20 +1010,12 @@ describe("can catch errors", () => {
       [
         "Root:setup",
         "Root:willStart",
-        "Root:willRender",
         "ErrorBoundary:setup",
         "ErrorBoundary:willStart",
-        "Root:rendered",
-        "ErrorBoundary:willRender",
         "ErrorComponent:setup",
         "ErrorComponent:willStart",
-        "ErrorBoundary:rendered",
-        "ErrorComponent:willRender",
-        "ErrorComponent:rendered",
         "ErrorComponent:mounted",
         "boom",
-        "ErrorBoundary:willRender",
-        "ErrorBoundary:rendered",
         "ErrorBoundary:mounted",
         "Root:mounted",
       ]
@@ -1118,16 +1054,10 @@ describe("can catch errors", () => {
       [
         "Root:setup",
         "Root:willStart",
-        "Root:willRender",
         "ErrorComponent:setup",
         "ErrorComponent:willStart",
-        "Root:rendered",
-        "ErrorComponent:willRender",
-        "ErrorComponent:rendered",
         "ErrorComponent:mounted",
         "boom",
-        "Root:willRender",
-        "Root:rendered",
         "Root:mounted",
       ]
     `);
@@ -1181,24 +1111,14 @@ describe("can catch errors", () => {
       [
         "A:setup",
         "A:willStart",
-        "A:willRender",
         "B:setup",
         "B:willStart",
-        "A:rendered",
-        "B:willRender",
         "C:setup",
         "C:willStart",
-        "B:rendered",
-        "C:willRender",
         "Boom:setup",
         "Boom:willStart",
-        "C:rendered",
-        "Boom:willRender",
-        "Boom:rendered",
         "Boom:mounted",
         "boom",
-        "C:willRender",
-        "C:rendered",
         "C:mounted",
         "B:mounted",
         "A:mounted",
@@ -1255,24 +1175,14 @@ describe("can catch errors", () => {
       [
         "Root:setup",
         "Root:willStart",
-        "Root:willRender",
         "OK:setup",
         "OK:willStart",
         "ErrorBoundary:setup",
         "ErrorBoundary:willStart",
-        "Root:rendered",
-        "OK:willRender",
-        "OK:rendered",
-        "ErrorBoundary:willRender",
         "ErrorComponent:setup",
         "ErrorComponent:willStart",
-        "ErrorBoundary:rendered",
-        "ErrorComponent:willRender",
-        "ErrorComponent:rendered",
         "ErrorComponent:mounted",
         "boom",
-        "ErrorBoundary:willRender",
-        "ErrorBoundary:rendered",
         "ErrorBoundary:mounted",
         "OK:mounted",
         "Root:mounted",
@@ -1613,12 +1523,8 @@ describe("can catch errors", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Parent:mounted",
       ]
@@ -1630,14 +1536,10 @@ describe("can catch errors", () => {
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:willPatch",
         "Child:willUnmount",
         "Child:willDestroy",
         "Parent:patched",
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:willPatch",
         "Parent:patched",
       ]
@@ -1678,8 +1580,6 @@ describe("can catch errors", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:mounted",
       ]
     `);
@@ -1692,23 +1592,15 @@ describe("can catch errors", () => {
     await nextMicroTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
       ]
     `);
     parent.state.hasChild = false;
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Parent:willRender",
-        "Parent:rendered",
         "Child:willDestroy",
-        "Parent:willRender",
-        "Parent:rendered",
       ]
     `);
     expect(fixture.innerHTML).toBe("1");
@@ -1776,28 +1668,16 @@ describe("can catch errors", () => {
       [
         "Root:setup",
         "Root:willStart",
-        "Root:willRender",
         "Parent:setup",
         "Parent:willStart",
-        "Root:rendered",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
         "Boom:setup",
         "Boom:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
-        "Boom:willRender",
-        "Boom:rendered",
         "Boom:mounted",
         "error",
-        "Root:willRender",
         "OtherChild:setup",
         "OtherChild:willStart",
-        "Root:rendered",
-        "OtherChild:willRender",
-        "OtherChild:rendered",
         "OtherChild:mounted",
         "Root:mounted",
       ]
@@ -1861,8 +1741,6 @@ describe("can catch errors", () => {
       [
         "Root:setup",
         "Root:willStart",
-        "Root:willRender",
-        "Root:rendered",
         "Root:mounted",
       ]
     `);
@@ -1874,27 +1752,17 @@ describe("can catch errors", () => {
     // rerender, root creates sub components, it crashes, tries to recover
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Root:willRender",
         "Parent:setup",
         "Parent:willStart",
-        "Root:rendered",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
         "Boom:setup",
         "Boom:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
-        "Boom:willRender",
-        "Boom:rendered",
         "Root:willPatch",
         "Boom:mounted",
         "error",
-        "Root:willRender",
         "OtherChild:setup",
         "OtherChild:willStart",
-        "Root:rendered",
       ]
     `);
 
@@ -1903,8 +1771,6 @@ describe("can catch errors", () => {
 
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "OtherChild:willRender",
-        "OtherChild:rendered",
         "Root:willPatch",
         "Child:willDestroy",
         "Boom:willUnmount",

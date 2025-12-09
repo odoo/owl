@@ -535,7 +535,9 @@ test("force render in case of existing render", async () => {
 test("children, default props and renderings", async () => {
   class Child extends Component {
     static template = xml`child`;
-    static defaultProps = { value: 1 };
+    props = props({
+      value: { optional: true, defaultValue: 1 },
+    });
     setup() {
       useLogLifecycle();
     }

@@ -6,7 +6,6 @@ import type { ComponentNode } from "./component_node";
 
 interface StaticComponentProperties {
   template: string;
-  defaultProps?: any;
   components?: { [componentName: string]: ComponentConstructor };
 }
 
@@ -16,7 +15,6 @@ export interface ComponentConstructor extends StaticComponentProperties {
 
 export class Component {
   static template: string = "";
-  static defaultProps?: any;
 
   __owl__: ComponentNode;
 

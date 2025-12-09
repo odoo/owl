@@ -24,6 +24,35 @@ exports[`basic use 1`] = `
 }"
 `;
 
+exports[`components can register resources 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Level2\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = text(\`1 | \`);
+    const b3 = comp1({}, key + \`__1\`, node, this, null);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`components can register resources 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    const b2 = text(\`2: \`);
+    const b3 = safeOutput(ctx['this'].a.value());
+    const b4 = text(\` \`);
+    return multi([b2, b3, b4]);
+  }
+}"
+`;
+
 exports[`components can start plugins 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

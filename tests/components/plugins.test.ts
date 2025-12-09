@@ -1,4 +1,14 @@
-import { Component, mount, plugin, Plugin, PluginManager, usePlugins, xml } from "../../src";
+import {
+  Component,
+  derived,
+  mount,
+  plugin,
+  Plugin,
+  PluginManager,
+  usePlugins,
+  xml,
+} from "../../src";
+import { Resource, useResource } from "../../src/runtime/resource";
 import { makeTestFixture, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
@@ -148,8 +158,8 @@ test("components start plugins at their level", async () => {
   const pluginManager = new PluginManager(null);
 
   await mount(Level1, fixture, { pluginManager });
-  expect(pluginManager.getPlugin("a")).toBe(null);
-  expect(pluginManager.getPlugin("b")).toBe(null);
+  expect(pluginManager.getPluginById("a")).toBe(null);
+  expect(pluginManager.getPluginById("b")).toBe(null);
   expect(fixture.innerHTML).toBe("1 | 2: pA | 3: pA - pB");
 });
 
@@ -190,4 +200,45 @@ test("shadow plugin", async () => {
 
   await mount(Level1, fixture, { pluginManager });
   expect(fixture.innerHTML).toBe("a | shadow");
+});
+
+test("components can register resources", async () => {
+  class PluginA extends Plugin {
+    static id = "a";
+    colors = new Resource<string>("colors", String);
+
+    value = derived(() => {
+      return this.colors.items().join("|");
+    });
+  }
+
+  class Level2 extends Component {
+    static template = xml`2: <t t-out="this.a.value()"/> `;
+
+    a = plugin(PluginA);
+    setup() {
+      useResource(this.a.colors, ["from lvl 2"]);
+      expect(this.a.colors.items()).toEqual(["from lvl 1", "from lvl 2"]);
+    }
+  }
+
+  class Level1 extends Component {
+    static template = xml`1 | <Level2/>`;
+    static components = { Level2 };
+
+    setup() {
+      const a = plugin(PluginA);
+      useResource(a.colors, ["from lvl 1"]);
+      expect(a.colors.items()).toEqual(["from lvl 1"]);
+    }
+  }
+
+  const pluginManager = new PluginManager(null);
+  pluginManager.startPlugins([PluginA]);
+  const a = pluginManager.getPlugin(PluginA)!;
+  expect(a.colors.items()).toEqual([]);
+
+  await mount(Level1, fixture, { pluginManager });
+  expect(a.colors.items()).toEqual(["from lvl 1", "from lvl 2"]);
+  expect(fixture.innerHTML).toBe("1 | 2: from lvl 1|from lvl 2 ");
 });

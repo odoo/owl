@@ -13,6 +13,7 @@ import {
   comment,
 } from "./blockdom";
 import { mainEventHandler } from "./event_handling";
+export { Resource, useResource } from "./resource";
 export { Registry } from "./registry";
 
 config.shouldNormalizeDom = false;

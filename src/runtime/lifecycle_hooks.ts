@@ -50,7 +50,7 @@ export function onWillUnmount(fn: () => void | any) {
 export function onWillDestroy(fn: () => void | any) {
   const pm = _getCurrentPluginManager();
   if (pm) {
-    pm.onDestroyCb.push(fn);
+    (pm as any).onDestroyCb.push(fn);
   } else {
     const node = getCurrent();
     node.willDestroy.push(decorate(node, fn, "onWillDestroy"));

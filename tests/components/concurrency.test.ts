@@ -97,7 +97,7 @@ test("destroying/recreating a subwidget with different props (if start is not ov
   class W extends Component {
     static template = xml`
         <div>
-            <t t-if="state.val > 1"><Child val="state.val"/></t>
+            <t t-if="this.state.val > 1"><Child val="this.state.val"/></t>
         </div>`;
     static components = { Child };
     state = proxy({ val: 1 });
@@ -171,7 +171,7 @@ test("destroying/recreating a subcomponent, other scenario", async () => {
   }
 
   class Parent extends Component {
-    static template = xml`parent<Child t-if="state.hasChild"/>`;
+    static template = xml`parent<Child t-if="this.state.hasChild"/>`;
     static components = { Child };
     state = proxy({ hasChild: false });
     setup() {
@@ -215,7 +215,7 @@ test("creating two async components, scenario 1", async () => {
   let nbRenderings: number = 0;
 
   class ChildA extends Component {
-    static template = xml`<span><t t-esc="getValue()"/></span>`;
+    static template = xml`<span><t t-esc="this.getValue()"/></span>`;
 
     setup() {
       useLogLifecycle();
@@ -238,8 +238,8 @@ test("creating two async components, scenario 1", async () => {
 
   class Parent extends Component {
     static template = xml`
-        <t t-if="state.flagA"><ChildA /></t>
-        <t t-if="state.flagB"><ChildB /></t>`;
+        <t t-if="this.state.flagA"><ChildA /></t>
+        <t t-if="this.state.flagB"><ChildB /></t>`;
 
     static components = { ChildA, ChildB };
     state = proxy({ flagA: false, flagB: false });
@@ -326,8 +326,8 @@ test("creating two async components, scenario 2", async () => {
   class Parent extends Component {
     static template = xml`
           <div>
-            <ChildA val="state.valA"/>
-            <t t-if="state.flagB"><ChildB val="state.valB"/></t>
+            <ChildA val="this.state.valA"/>
+            <t t-if="this.state.flagB"><ChildB val="this.state.valB"/></t>
           </div>`;
     static components = { ChildA, ChildB };
     state = proxy({ valA: 1, valB: 2, flagB: false });
@@ -411,8 +411,8 @@ test("creating two async components, scenario 3 (patching in the same frame)", a
   class Parent extends Component {
     static template = xml`
           <div>
-            <ChildA val="state.valA"/>
-            <t t-if="state.flagB"><ChildB val="state.valB"/></t>
+            <ChildA val="this.state.valA"/>
+            <t t-if="this.state.flagB"><ChildB val="this.state.valB"/></t>
           </div>`;
     static components = { ChildA, ChildB };
     state = proxy({ valA: 1, valB: 2, flagB: false });
@@ -484,7 +484,7 @@ test("update a sub-component twice in the same frame", async () => {
   }
 
   class Parent extends Component {
-    static template = xml`<div><ChildA val="state.valA"/></div>`;
+    static template = xml`<div><ChildA val="this.state.valA"/></div>`;
     static components = { ChildA };
     state = proxy({ valA: 1 });
     setup() {
@@ -539,7 +539,7 @@ test("update a sub-component twice in the same frame", async () => {
 
 test("update a sub-component twice in the same frame, 2", async () => {
   class ChildA extends Component {
-    static template = xml`<span><t t-esc="val()"/></span>`;
+    static template = xml`<span><t t-esc="this.val()"/></span>`;
     props = props();
 
     setup() {
@@ -552,7 +552,7 @@ test("update a sub-component twice in the same frame, 2", async () => {
   }
 
   class Parent extends Component {
-    static template = xml`<div><ChildA val="state.valA"/></div>`;
+    static template = xml`<div><ChildA val="this.state.valA"/></div>`;
     static components = { ChildA };
     state = proxy({ valA: 1 });
     setup() {
@@ -640,7 +640,7 @@ test("properly behave when destroyed/unmounted while rendering ", async () => {
 
   class Parent extends Component {
     static template = xml`
-        <div><t t-if="state.flag"><Child val="state.val"/></t></div>`;
+        <div><t t-if="this.state.flag"><Child val="this.state.val"/></t></div>`;
     static components = { Child };
     state = proxy({ flag: true, val: "Framboise Lindemans" });
     setup() {
@@ -710,7 +710,7 @@ test("rendering component again in next microtick", async () => {
   class Parent extends Component {
     static template = xml`
           <div>
-            <button t-on-click="onClick">Click</button>
+            <button t-on-click="this.onClick">Click</button>
             <t t-if="this.state.config.flag"><Child/></t>
           </div>`;
     static components = { Child };
@@ -760,7 +760,7 @@ test("concurrent renderings scenario 1", async () => {
   let stateB: any = null;
 
   class ComponentC extends Component {
-    static template = xml`<span><t t-esc="this.props.fromA"/><t t-esc="someValue()"/></span>`;
+    static template = xml`<span><t t-esc="this.props.fromA"/><t t-esc="this.someValue()"/></span>`;
     props = props();
     setup() {
       useLogLifecycle();
@@ -773,7 +773,7 @@ test("concurrent renderings scenario 1", async () => {
   ComponentC.prototype.someValue = jest.fn(ComponentC.prototype.someValue);
 
   class ComponentB extends Component {
-    static template = xml`<p><ComponentC fromA="this.props.fromA" fromB="state.fromB" /></p>`;
+    static template = xml`<p><ComponentC fromA="this.props.fromA" fromB="this.state.fromB" /></p>`;
     static components = { ComponentC };
     props = props();
     state = proxy({ fromB: "b" });
@@ -785,7 +785,7 @@ test("concurrent renderings scenario 1", async () => {
   }
 
   class ComponentA extends Component {
-    static template = xml`<div><ComponentB fromA="state.fromA"/></div>`;
+    static template = xml`<div><ComponentB fromA="this.state.fromA"/></div>`;
     static components = { ComponentB };
     state = proxy({ fromA: 1 });
     setup() {
@@ -862,7 +862,7 @@ test("concurrent renderings scenario 2", async () => {
   }
 
   class ComponentB extends Component {
-    static template = xml`<p><ComponentC fromA="this.props.fromA" fromB="state.fromB" /></p>`;
+    static template = xml`<p><ComponentC fromA="this.props.fromA" fromB="this.state.fromB" /></p>`;
     static components = { ComponentC };
     props = props();
     state = proxy({ fromB: "b" });
@@ -874,7 +874,7 @@ test("concurrent renderings scenario 2", async () => {
   }
 
   class ComponentA extends Component {
-    static template = xml`<div><t t-esc="state.fromA"/><ComponentB fromA="state.fromA"/></div>`;
+    static template = xml`<div><t t-esc="this.state.fromA"/><ComponentB fromA="this.state.fromA"/></div>`;
     static components = { ComponentB };
     state = proxy({ fromA: 1 });
     setup() {
@@ -952,7 +952,7 @@ test("concurrent renderings scenario 2bis", async () => {
   }
 
   class ComponentB extends Component {
-    static template = xml`<p><ComponentC fromA="this.props.fromA" fromB="state.fromB" /></p>`;
+    static template = xml`<p><ComponentC fromA="this.props.fromA" fromB="this.state.fromB" /></p>`;
     static components = { ComponentC };
     props = props();
     state = proxy({ fromB: "b" });
@@ -964,7 +964,7 @@ test("concurrent renderings scenario 2bis", async () => {
   }
 
   class ComponentA extends Component {
-    static template = xml`<div><ComponentB fromA="state.fromA"/></div>`;
+    static template = xml`<div><ComponentB fromA="this.state.fromA"/></div>`;
     static components = { ComponentB };
     state = proxy({ fromA: 1 });
 
@@ -1035,7 +1035,7 @@ test("concurrent renderings scenario 3", async () => {
   let stateC: any = null;
 
   class ComponentD extends Component {
-    static template = xml`<i><t t-esc="this.props.fromA"/><t t-esc="someValue()"/></i>`;
+    static template = xml`<i><t t-esc="this.props.fromA"/><t t-esc="this.someValue()"/></i>`;
     props = props();
 
     setup() {
@@ -1049,7 +1049,7 @@ test("concurrent renderings scenario 3", async () => {
   ComponentD.prototype.someValue = jest.fn(ComponentD.prototype.someValue);
 
   class ComponentC extends Component {
-    static template = xml`<span><ComponentD fromA="this.props.fromA" fromC="state.fromC" /></span>`;
+    static template = xml`<span><ComponentD fromA="this.props.fromA" fromC="this.state.fromC" /></span>`;
     static components = { ComponentD };
     props = props();
     state = proxy({ fromC: "c" });
@@ -1072,7 +1072,7 @@ test("concurrent renderings scenario 3", async () => {
 
   class ComponentA extends Component {
     static components = { ComponentB };
-    static template = xml`<div><ComponentB fromA="state.fromA"/></div>`;
+    static template = xml`<div><ComponentB fromA="this.state.fromA"/></div>`;
     props = props();
     state = proxy({ fromA: 1 });
 
@@ -1149,7 +1149,7 @@ test("concurrent renderings scenario 4", async () => {
   let stateC: any = null;
 
   class ComponentD extends Component {
-    static template = xml`<i><t t-esc="this.props.fromA"/><t t-esc="someValue()"/></i>`;
+    static template = xml`<i><t t-esc="this.props.fromA"/><t t-esc="this.someValue()"/></i>`;
     props = props();
 
     setup() {
@@ -1163,7 +1163,7 @@ test("concurrent renderings scenario 4", async () => {
   ComponentD.prototype.someValue = jest.fn(ComponentD.prototype.someValue);
 
   class ComponentC extends Component {
-    static template = xml`<span><ComponentD fromA="this.props.fromA" fromC="state.fromC" /></span>`;
+    static template = xml`<span><ComponentD fromA="this.props.fromA" fromC="this.state.fromC" /></span>`;
     static components = { ComponentD };
     props = props();
     state = proxy({ fromC: "c" });
@@ -1186,7 +1186,7 @@ test("concurrent renderings scenario 4", async () => {
 
   class ComponentA extends Component {
     static components = { ComponentB };
-    static template = xml`<div><ComponentB fromA="state.fromA"/></div>`;
+    static template = xml`<div><ComponentB fromA="this.state.fromA"/></div>`;
     state = proxy({ fromA: 1 });
 
     setup() {
@@ -1266,7 +1266,7 @@ test("concurrent renderings scenario 5", async () => {
   let index = 0;
 
   class ComponentB extends Component {
-    static template = xml`<p><t t-esc="someValue()" /></p>`;
+    static template = xml`<p><t t-esc="this.someValue()" /></p>`;
     props = props();
 
     setup() {
@@ -1281,7 +1281,7 @@ test("concurrent renderings scenario 5", async () => {
 
   class ComponentA extends Component {
     static components = { ComponentB };
-    static template = xml`<div><ComponentB fromA="state.fromA"/></div>`;
+    static template = xml`<div><ComponentB fromA="this.state.fromA"/></div>`;
     state = proxy({ fromA: 1 });
     setup() {
       useLogLifecycle();
@@ -1344,7 +1344,7 @@ test("concurrent renderings scenario 6", async () => {
   let index = 0;
 
   class ComponentB extends Component {
-    static template = xml`<p><t t-esc="someValue()" /></p>`;
+    static template = xml`<p><t t-esc="this.someValue()" /></p>`;
     props = props();
 
     setup() {
@@ -1359,7 +1359,7 @@ test("concurrent renderings scenario 6", async () => {
 
   class ComponentA extends Component {
     static components = { ComponentB };
-    static template = xml`<div><ComponentB fromA="state.fromA"/></div>`;
+    static template = xml`<div><ComponentB fromA="this.state.fromA"/></div>`;
     state = proxy({ fromA: 1 });
 
     setup() {
@@ -1420,7 +1420,7 @@ test("concurrent renderings scenario 6", async () => {
 
 test("concurrent renderings scenario 7", async () => {
   class ComponentB extends Component {
-    static template = xml`<p><t t-esc="this.props.fromA" /><t t-esc="someValue()" /></p>`;
+    static template = xml`<p><t t-esc="this.props.fromA" /><t t-esc="this.someValue()" /></p>`;
     props = props();
     state = proxy({ fromB: "b" });
 
@@ -1438,7 +1438,7 @@ test("concurrent renderings scenario 7", async () => {
 
   class ComponentA extends Component {
     static components = { ComponentB };
-    static template = xml`<div><ComponentB fromA="state.fromA"/></div>`;
+    static template = xml`<div><ComponentB fromA="this.state.fromA"/></div>`;
     state = proxy({ fromA: 1 });
     setup() {
       useLogLifecycle();
@@ -1478,7 +1478,7 @@ test("concurrent renderings scenario 8", async () => {
   const def = makeDeferred();
   let stateB: any = null;
   class ComponentB extends Component {
-    static template = xml`<p><t t-esc="this.props.fromA" /><t t-esc="state.fromB" /></p>`;
+    static template = xml`<p><t t-esc="this.props.fromA" /><t t-esc="this.state.fromB" /></p>`;
     props = props();
     state = proxy({ fromB: "b" });
     setup() {
@@ -1490,7 +1490,7 @@ test("concurrent renderings scenario 8", async () => {
 
   class ComponentA extends Component {
     static components = { ComponentB };
-    static template = xml`<div><ComponentB fromA="state.fromA"/></div>`;
+    static template = xml`<div><ComponentB fromA="this.state.fromA"/></div>`;
     state = proxy({ fromA: 1 });
     setup() {
       useLogLifecycle();
@@ -1562,7 +1562,7 @@ test("concurrent renderings scenario 9", async () => {
   }
 
   class ComponentC extends Component {
-    static template = xml`<p><ComponentD fromA="this.props.fromA" fromC="state.fromC" /></p>`;
+    static template = xml`<p><ComponentD fromA="this.props.fromA" fromC="this.state.fromC" /></p>`;
     static components = { ComponentD };
     props = props();
     state = proxy({ fromC: "b1" });
@@ -1584,9 +1584,9 @@ test("concurrent renderings scenario 9", async () => {
   class ComponentA extends Component {
     static template = xml`
           <div>
-            <t t-esc="state.fromA"/>
-            <ComponentB fromA="state.fromA"/>
-            <ComponentC fromA="state.fromA"/>
+            <t t-esc="this.state.fromA"/>
+            <ComponentB fromA="this.state.fromA"/>
+            <ComponentC fromA="this.state.fromA"/>
           </div>`;
     static components = { ComponentB, ComponentC };
     state = proxy({ fromA: "a1" });
@@ -1672,7 +1672,7 @@ test("concurrent renderings scenario 10", async () => {
   let stateB: any = null;
   let rendered = 0;
   class ComponentC extends Component {
-    static template = xml`<span><t t-esc="value"/></span>`;
+    static template = xml`<span><t t-esc="this.value"/></span>`;
     props = props();
     setup() {
       useLogLifecycle();
@@ -1685,7 +1685,7 @@ test("concurrent renderings scenario 10", async () => {
   }
 
   class ComponentB extends Component {
-    static template = xml`<p><ComponentC t-if="state.hasChild" value="this.props.value"/></p>`;
+    static template = xml`<p><ComponentC t-if="this.state.hasChild" value="this.props.value"/></p>`;
     static components = { ComponentC };
     props = props();
     state = proxy({ hasChild: false });
@@ -1697,7 +1697,7 @@ test("concurrent renderings scenario 10", async () => {
   }
 
   class ComponentA extends Component {
-    static template = xml`<div><ComponentB value="state.value"/></div>`;
+    static template = xml`<div><ComponentB value="this.state.value"/></div>`;
     static components = { ComponentB };
     state = proxy({ value: 1 });
 
@@ -1766,7 +1766,7 @@ test("concurrent renderings scenario 11", async () => {
   const def = makeDeferred();
   let child: any = null;
   class Child extends Component {
-    static template = xml`<span><t t-esc="this.props.val"/>|<t t-esc="val"/></span>`;
+    static template = xml`<span><t t-esc="this.props.val"/>|<t t-esc="this.val"/></span>`;
     props = props();
     val = 3;
 
@@ -1780,7 +1780,7 @@ test("concurrent renderings scenario 11", async () => {
   }
 
   class Parent extends Component {
-    static template = xml`<div><Child val="state.valA"/></div>`;
+    static template = xml`<div><Child val="this.state.valA"/></div>`;
     static components = { Child };
     state = proxy({ valA: 1 });
     setup() {
@@ -1842,7 +1842,7 @@ test("concurrent renderings scenario 12", async () => {
   let rendered = 0;
 
   class Parent extends Component {
-    static template = xml`<div><Child val="val"/></div>`;
+    static template = xml`<div><Child val="this.val"/></div>`;
     static components = { Child };
     state = proxy({ val: 1 });
     setup() {
@@ -1908,7 +1908,7 @@ test("concurrent renderings scenario 13", async () => {
   let lastChild: any = null;
 
   class Child extends Component {
-    static template = xml`<span><t t-esc="state.val"/></span>`;
+    static template = xml`<span><t t-esc="this.state.val"/></span>`;
     state = proxy({ val: 0 });
     setup() {
       useLogLifecycle();
@@ -1926,7 +1926,7 @@ test("concurrent renderings scenario 13", async () => {
     static template = xml`
           <div>
             <Child/>
-            <Child t-if="state.bool"/>
+            <Child t-if="this.state.bool"/>
           </div>`;
     static components = { Child };
     state = proxy({ bool: false });
@@ -1989,7 +1989,7 @@ test("concurrent renderings scenario 14", async () => {
        <p>
         <span t-esc="this.props.fromA"/>
         <span t-esc="this.props.fromB"/>
-        <span t-esc="state.fromC"/>
+        <span t-esc="this.state.fromC"/>
        </p>`;
 
     props = props();
@@ -2000,7 +2000,7 @@ test("concurrent renderings scenario 14", async () => {
     }
   }
   class B extends Component {
-    static template = xml`<p><C fromB="state.fromB" fromA="this.props.fromA"/></p>`;
+    static template = xml`<p><C fromB="this.state.fromB" fromA="this.props.fromA"/></p>`;
     static components = { C };
     setup() {
       useLogLifecycle();
@@ -2011,7 +2011,7 @@ test("concurrent renderings scenario 14", async () => {
   }
 
   class A extends Component {
-    static template = xml`<p><B fromA="state.fromA"/></p>`;
+    static template = xml`<p><B fromA="this.state.fromA"/></p>`;
     static components = { B };
     state = proxy({ fromA: 1 });
 
@@ -2083,7 +2083,7 @@ test("concurrent renderings scenario 15", async () => {
        <p>
         <span t-esc="this.props.fromA"/>
         <span t-esc="this.props.fromB"/>
-        <span t-esc="state.fromC"/>
+        <span t-esc="this.state.fromC"/>
        </p>`;
 
     props = props();
@@ -2094,7 +2094,7 @@ test("concurrent renderings scenario 15", async () => {
     }
   }
   class B extends Component {
-    static template = xml`<p><C fromB="state.fromB" fromA="this.props.fromA"/></p>`;
+    static template = xml`<p><C fromB="this.state.fromB" fromA="this.props.fromA"/></p>`;
     static components = { C };
     setup() {
       useLogLifecycle();
@@ -2104,7 +2104,7 @@ test("concurrent renderings scenario 15", async () => {
     state = proxy({ fromB: 2 });
   }
   class A extends Component {
-    static template = xml`<p><B fromA="state.fromA"/></p>`;
+    static template = xml`<p><B fromA="this.state.fromA"/></p>`;
     static components = { B };
     state = proxy({ fromA: 1 });
     setup() {
@@ -2194,8 +2194,8 @@ test("concurrent renderings scenario 16", async () => {
   }
   class C extends Component {
     static template = xml`
-        <t t-esc="this.props.fromA"/>:<t t-esc="this.props.fromB"/>:<t t-esc="state.fromC"/>:
-        <D t-if="state.fromC === 13"/>`;
+        <t t-esc="this.props.fromA"/>:<t t-esc="this.props.fromB"/>:<t t-esc="this.state.fromC"/>:
+        <D t-if="this.state.fromC === 13"/>`;
     static components = { D };
     props = props();
     state = { fromC: 3 }; // not proxy
@@ -2205,7 +2205,7 @@ test("concurrent renderings scenario 16", async () => {
     }
   }
   class B extends Component {
-    static template = xml`<C fromB="state.fromB" fromA="this.props.fromA"/>`;
+    static template = xml`<C fromB="this.state.fromB" fromA="this.props.fromA"/>`;
     static components = { C };
     setup() {
       useLogLifecycle();
@@ -2215,7 +2215,7 @@ test("concurrent renderings scenario 16", async () => {
     state = { fromB: 2 };
   }
   class A extends Component {
-    static template = xml`<B fromA="state.fromA"/>`;
+    static template = xml`<B fromA="this.state.fromA"/>`;
     static components = { B };
     state = proxy({ fromA: 1 });
 
@@ -2330,7 +2330,7 @@ test("calling render in destroy", async () => {
   }
 
   class A extends Component {
-    static template = xml`<B t-key="key" fromA="state"/>`;
+    static template = xml`<B t-key="key" fromA="this.state"/>`;
     static components = { B };
     state = "a";
     key = 1;
@@ -2358,11 +2358,7 @@ test("calling render in destroy", async () => {
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "B:setup",
-      "B:willStart",
-      "B:willUnmount",
-      "B:willDestroy",
-      "B:mounted",
+      "B:willUpdateProps",
       "B:willPatch",
       "B:patched",
     ]
@@ -2374,7 +2370,7 @@ test("change state and call manually render: no unnecessary rendering", async ()
   let numberOfRender = 0;
 
   class Test extends Component {
-    static template = xml`<div><t t-esc="value"/></div>`;
+    static template = xml`<div><t t-esc="this.value"/></div>`;
     state = proxy({ val: 1 });
 
     setup() {
@@ -2414,7 +2410,7 @@ test("changing state before first render does not trigger a render", async () =>
   let renders = 0;
 
   class TestW extends Component {
-    static template = xml`<div t-esc="value"/>`;
+    static template = xml`<div t-esc="this.value"/>`;
     state = proxy({ drinks: 1 });
     setup() {
       useLogLifecycle();
@@ -2447,7 +2443,7 @@ test("changing state before first render does not trigger a render (with parent)
   let renders = 0;
 
   class TestW extends Component {
-    static template = xml`<div t-esc="value"/>`;
+    static template = xml`<div t-esc="this.value"/>`;
     state = proxy({ drinks: 1 });
     setup() {
       useLogLifecycle();
@@ -2464,7 +2460,7 @@ test("changing state before first render does not trigger a render (with parent)
 
   class Parent extends Component {
     static components = { TestW };
-    static template = xml`<div><TestW t-if="state.flag"/></div>`;
+    static template = xml`<div><TestW t-if="this.state.flag"/></div>`;
     setup() {
       useLogLifecycle();
     }
@@ -2500,7 +2496,7 @@ test("two renderings initiated between willPatch and patched", async () => {
   let parent: any = null;
 
   class Panel extends Component {
-    static template = xml`<abc><t t-esc="this.props.val"/><t t-esc="mounted" /></abc>`;
+    static template = xml`<abc><t t-esc="this.props.val"/><t t-esc="this.mounted" /></abc>`;
     props = props();
     mounted: any;
     setup() {
@@ -2515,7 +2511,7 @@ test("two renderings initiated between willPatch and patched", async () => {
 
   // Main root component
   class Parent extends Component {
-    static template = xml`<div><Panel t-key="'panel_' + state.panel" val="state.panel" t-if="state.flag"/></div>`;
+    static template = xml`<div><Panel t-key="'panel_' + this.state.panel" val="this.state.panel" t-if="this.state.flag"/></div>`;
     static components = { Panel };
     state = proxy({ panel: "Panel1", flag: true });
     setup() {
@@ -2614,7 +2610,7 @@ test("parent and child rendered at exact same time", async () => {
   }
 
   class Parent extends Component {
-    static template = xml`<Child value="state.value"/>`;
+    static template = xml`<Child value="this.state.value"/>`;
     static components = { Child };
     state = { value: 0 };
     setup() {
@@ -2656,7 +2652,7 @@ test("delay willUpdateProps", async () => {
   let child: any;
 
   class Child extends Component {
-    static template = xml`<t t-esc="this.props.value"/>_<t t-esc="state.int" />`;
+    static template = xml`<t t-esc="this.props.value"/>_<t t-esc="this.state.int" />`;
     props = props();
     state: any;
     setup() {
@@ -2671,7 +2667,7 @@ test("delay willUpdateProps", async () => {
   }
 
   class Parent extends Component {
-    static template = xml`<Child value="state.value"/>`;
+    static template = xml`<Child value="this.state.value"/>`;
     static components = { Child };
     state = { value: 0 };
     setup() {
@@ -2748,7 +2744,7 @@ test("delay willUpdateProps with rendering grandchild", async () => {
 
   // Delayed willUpdateProps
   class DelayedChild extends Component {
-    static template = xml`<t t-esc="this.props.value"/>_<t t-esc="state.int" />`;
+    static template = xml`<t t-esc="this.props.value"/>_<t t-esc="this.state.int" />`;
     props = props();
     state: any;
     setup() {
@@ -2782,7 +2778,7 @@ test("delay willUpdateProps with rendering grandchild", async () => {
   }
 
   class GrandParent extends Component {
-    static template = xml`<Parent state="state"/>`;
+    static template = xml`<Parent state="this.state"/>`;
     static components = { Parent };
     state = { value: 0 };
     setup() {
@@ -2878,7 +2874,7 @@ test("two sequential renderings before an animation frame", async () => {
   }
 
   class Parent extends Component {
-    static template = xml`<Child value="state.value"/>`;
+    static template = xml`<Child value="this.state.value"/>`;
     static components = { Child };
     state = proxy({ value: 0 });
     setup() {
@@ -2951,7 +2947,7 @@ test("t-key on dom node having a component", async () => {
   class Parent extends Component {
     key = 1;
     myComp = Child;
-    static template = xml`<div t-key="key"><t t-component="myComp" key="key" /></div>`;
+    static template = xml`<div t-key="this.key"><t t-component="this.myComp" key="this.key" /></div>`;
   }
 
   const parent = await mount(Parent, fixture);
@@ -3010,7 +3006,7 @@ test("t-key on dynamic async component (toggler is never patched)", async () => 
   class Parent extends Component {
     key = 1;
     myComp = Child;
-    static template = xml`<t t-component="myComp" t-key="key" key="key" />`;
+    static template = xml`<t t-component="this.myComp" t-key="this.key" key="this.key" />`;
   }
 
   const parent = await mount(Parent, fixture);
@@ -3069,8 +3065,8 @@ test("t-foreach with dynamic async component", async () => {
   class Parent extends Component {
     list: any = [[1]];
     myComp = Child;
-    static template = xml`<t t-foreach="list" t-as="arr" t-key="arr_index">
-        <t t-if="arr" t-component="myComp" key="arr[0]" />
+    static template = xml`<t t-foreach="this.list" t-as="arr" t-key="arr_index">
+        <t t-if="arr" t-component="this.myComp" key="arr[0]" />
       </t>`;
   }
 
@@ -3128,7 +3124,7 @@ test("Cascading renders after microtaskTick", async () => {
   class Child extends Component {
     static components = { Element };
     static template = xml`
-      <t t-foreach="state" t-as="elem" t-key="elem.id">
+      <t t-foreach="this.state" t-as="elem" t-key="elem.id">
         <Element id="elem.id"/>
       </t>`;
     state = state;
@@ -3139,7 +3135,7 @@ test("Cascading renders after microtaskTick", async () => {
 
   class Parent extends Component {
     static components = { Child };
-    static template = xml`<Child /> _ <t t-foreach="state" t-as="elem" t-key="elem.id" t-esc="elem.id"/>`;
+    static template = xml`<Child /> _ <t t-foreach="this.state" t-as="elem" t-key="elem.id" t-esc="elem.id"/>`;
     state = state;
     setup() {
       parent = this;
@@ -3173,7 +3169,7 @@ test("rendering parent twice, with different props on child and stuff", async ()
   }
 
   class Parent extends Component {
-    static template = xml`<Child value="state.value"/>`;
+    static template = xml`<Child value="this.state.value"/>`;
     static components = { Child };
     state = proxy({ value: 1 });
     setup() {
@@ -3227,7 +3223,7 @@ test("delayed rendering, but then initial rendering is cancelled by yet another 
   let stateB: any = null;
 
   class D extends Component {
-    static template = xml`<button t-on-click="increment"><t t-esc="state.val"/></button>`;
+    static template = xml`<button t-on-click="this.increment"><t t-esc="this.state.val"/></button>`;
     state = proxy({ val: 1 });
     setup() {
       useLogLifecycle();
@@ -3248,7 +3244,7 @@ test("delayed rendering, but then initial rendering is cancelled by yet another 
   }
 
   class B extends Component {
-    static template = xml`<C value="state.someValue + this.props.value"/>`;
+    static template = xml`<C value="this.state.someValue + this.props.value"/>`;
     static components = { C };
     props = props();
     state = proxy({ someValue: 3 });
@@ -3259,7 +3255,7 @@ test("delayed rendering, but then initial rendering is cancelled by yet another 
   }
 
   class A extends Component {
-    static template = xml`<B value="state.value"/>`;
+    static template = xml`<B value="this.state.value"/>`;
     static components = { B };
     state = proxy({ value: 33 });
     setup() {
@@ -3332,7 +3328,7 @@ test("delayed rendering, reusing fiber and stuff", async () => {
   let prom2 = makeDeferred();
 
   class C extends Component {
-    static template = xml`<button t-on-click="increment"><t t-esc="state.val"/></button>`;
+    static template = xml`<button t-on-click="this.increment"><t t-esc="this.state.val"/></button>`;
     state = proxy({ val: 1 });
     setup() {
       useLogLifecycle();
@@ -3365,7 +3361,7 @@ test("delayed rendering, reusing fiber and stuff", async () => {
   }
 
   class A extends Component {
-    static template = xml`<B value="state.value"/>`;
+    static template = xml`<B value="this.state.value"/>`;
     static components = { B };
     state = proxy({ value: 33 });
     setup() {
@@ -3429,7 +3425,7 @@ test("delayed rendering, then component is destroyed and  stuff", async () => {
   let prom1 = makeDeferred();
 
   class C extends Component {
-    static template = xml`<button t-on-click="increment"><t t-esc="state.val"/></button>`;
+    static template = xml`<button t-on-click="this.increment"><t t-esc="this.state.val"/></button>`;
     state = proxy({ val: 1 });
     setup() {
       useLogLifecycle();
@@ -3450,7 +3446,7 @@ test("delayed rendering, then component is destroyed and  stuff", async () => {
   }
 
   class A extends Component {
-    static template = xml`<B value="state.value"/>`;
+    static template = xml`<B value="this.state.value"/>`;
     static components = { B };
     state = proxy({ value: 3 });
     setup() {
@@ -3508,7 +3504,7 @@ test("delayed rendering, reusing fiber then component is destroyed and  stuff", 
   let prom1 = makeDeferred();
 
   class C extends Component {
-    static template = xml`<button t-on-click="increment"><t t-esc="state.val"/></button>`;
+    static template = xml`<button t-on-click="this.increment"><t t-esc="this.state.val"/></button>`;
     state = proxy({ val: 1 });
     setup() {
       useLogLifecycle();
@@ -3529,7 +3525,7 @@ test("delayed rendering, reusing fiber then component is destroyed and  stuff", 
   }
 
   class A extends Component {
-    static template = xml`A<t t-if="state.value lt 15"><B value="state.value"/></t>`;
+    static template = xml`A<t t-if="this.state.value lt 15"><B value="this.state.value"/></t>`;
     static components = { B };
     state = proxy({ value: 3 });
     setup() {
@@ -3588,7 +3584,7 @@ test("another scenario with delayed rendering", async () => {
   let onSecondRenderA = makeDeferred();
 
   class C extends Component {
-    static template = xml`<button t-on-click="increment"><t t-esc="state.val"/></button>`;
+    static template = xml`<button t-on-click="this.increment"><t t-esc="this.state.val"/></button>`;
     state = proxy({ val: 1 });
     setup() {
       useLogLifecycle();
@@ -3609,7 +3605,7 @@ test("another scenario with delayed rendering", async () => {
   }
 
   class A extends Component {
-    static template = xml`A<t t-if="state.value lt 15"><B value="state.value"/></t><t t-set="noop" t-value="this.notify()"/>`;
+    static template = xml`A<t t-if="this.state.value lt 15"><B value="this.state.value"/></t><t t-set="noop" t-value="this.notify()"/>`;
     static components = { B };
     state = proxy({ value: 3 });
     notify: any;
@@ -3776,7 +3772,7 @@ test("destroyed component causes other soon to be destroyed component to rerende
     }
   }
   class C extends Component {
-    static template = xml`<t t-esc="state.val + this.props.value"/>`;
+    static template = xml`<t t-esc="this.state.val + this.props.value"/>`;
     props = props();
     state = proxy({ val: 0 });
     setup() {
@@ -3788,9 +3784,9 @@ test("destroyed component causes other soon to be destroyed component to rerende
   class A extends Component {
     static template = xml`
       A
-      <t t-if="state.flag">
-        <B value="state.valueB"/>
-        <C value="state.valueC"/>
+      <t t-if="this.state.flag">
+        <B value="this.state.valueB"/>
+        <C value="this.state.valueC"/>
       </t>`;
     static components = { B, C };
     state = proxy({ flag: false, valueB: 1, valueC: 2 });
@@ -3849,7 +3845,7 @@ test("delayed rendering, destruction, stuff happens", async () => {
   let stateB: any = null;
 
   class D extends Component {
-    static template = xml`D<button t-on-click="increment"><t t-esc="state.val"/></button>`;
+    static template = xml`D<button t-on-click="this.increment"><t t-esc="this.state.val"/></button>`;
     state = proxy({ val: 1 });
     setup() {
       useLogLifecycle();
@@ -3870,7 +3866,7 @@ test("delayed rendering, destruction, stuff happens", async () => {
   }
 
   class B extends Component {
-    static template = xml`B<t t-if="state.hasChild"><C value="state.someValue + this.props.value"/></t>`;
+    static template = xml`B<t t-if="this.state.hasChild"><C value="this.state.someValue + this.props.value"/></t>`;
     static components = { C };
     props = props();
     state = proxy({ someValue: 3, hasChild: true });
@@ -3881,7 +3877,7 @@ test("delayed rendering, destruction, stuff happens", async () => {
   }
 
   class A extends Component {
-    static template = xml`A<B value="state.value"/>`;
+    static template = xml`A<B value="this.state.value"/>`;
     static components = { B };
     state = proxy({ value: 33 });
     setup() {
@@ -3942,7 +3938,7 @@ test("renderings, destruction, patch, stuff, ... yet another variation", async (
   const promB = makeDeferred();
 
   class D extends Component {
-    static template = xml`D<p t-on-click="increment"><t t-esc="state.val"/></p>`;
+    static template = xml`D<p t-on-click="this.increment"><t t-esc="this.state.val"/></p>`;
     state = proxy({ val: 1 });
     setup() {
       useLogLifecycle();
@@ -3954,7 +3950,7 @@ test("renderings, destruction, patch, stuff, ... yet another variation", async (
 
   // almost the same as D
   class C extends Component {
-    static template = xml`C<span t-on-click="increment"><t t-esc="state.val"/></span>`;
+    static template = xml`C<span t-on-click="this.increment"><t t-esc="this.state.val"/></span>`;
     state = proxy({ val: 1 });
     setup() {
       useLogLifecycle();
@@ -3975,7 +3971,7 @@ test("renderings, destruction, patch, stuff, ... yet another variation", async (
   }
 
   class A extends Component {
-    static template = xml`A<B value="state.value"/><D/>`;
+    static template = xml`A<B value="this.state.value"/><D/>`;
     static components = { B, D };
     state = proxy({ value: 33 });
     setup() {
@@ -4052,7 +4048,7 @@ test("delayed render does not go through when t-component value changed", async 
   }
 
   class B extends Component {
-    static template = xml`B<t t-esc="state.val"/>`;
+    static template = xml`B<t t-esc="this.state.val"/>`;
     state = proxy({ val: 1 });
     setup() {
       useLogLifecycle("", true);
@@ -4062,7 +4058,7 @@ test("delayed render does not go through when t-component value changed", async 
   let b: B;
 
   class A extends Component {
-    static template = xml`A<t t-component="state.component"/>`;
+    static template = xml`A<t t-component="this.state.component"/>`;
     state: { component: ComponentConstructor } = proxy({ component: B });
     setup() {
       useLogLifecycle("", true);
@@ -4115,7 +4111,7 @@ test.skip("delayed render is not cancelled by upcoming render", async () => {
 
   class A extends Component {
     static components = { B };
-    static template = xml`<B state="state" isEmpty="state.groups.length === 0"/>`;
+    static template = xml`<B state="this.state" isEmpty="this.state.groups.length === 0"/>`;
 
     state = proxy({ groups: [], config: { test: "initial" } });
     setup() {
@@ -4198,7 +4194,7 @@ test("components are not destroyed between animation frame", async () => {
     }
   }
   class A extends Component {
-    static template = xml`A<B t-if="state.flag"/>`;
+    static template = xml`A<B t-if="this.state.flag"/>`;
     static components = { B };
 
     state = proxy({ flag: false });
@@ -4257,7 +4253,7 @@ test("component destroyed just after render", async () => {
   let stateB: any;
 
   class B extends Component {
-    static template = xml`B<t t-esc="state.value"/>`;
+    static template = xml`B<t t-esc="this.state.value"/>`;
     state = proxy({ value: 1 });
     setup() {
       stateB = this.state;
@@ -4306,7 +4302,7 @@ test("component destroyed just after render", async () => {
 //     class ChildChild extends Component {
 //       static template = xml`
 //         <div>
-//           child child: <t t-esc="state.cc"/>
+//           child child: <t t-esc="this.state.cc"/>
 //         </div>`;
 //       state = state;
 //       shouldUpdate() {
@@ -4332,7 +4328,7 @@ test("component destroyed just after render", async () => {
 //       static components = { Child };
 //       static template = xml`
 //         <div>
-//           parent: <t t-esc="state.p"/>
+//           parent: <t t-esc="this.state.p"/>
 //           <Child/>
 //         </div>`;
 
@@ -4384,7 +4380,7 @@ test("component destroyed just after render", async () => {
 //     class ChildChild extends Component {
 //       static template = xml`
 //         <div>
-//           child child: <t t-esc="state.cc"/>
+//           child child: <t t-esc="this.state.cc"/>
 //         </div>`;
 //       state = state;
 //       shouldUpdate() {
@@ -4410,7 +4406,7 @@ test("component destroyed just after render", async () => {
 //       static components = { Child };
 //       static template = xml`
 //         <div>
-//           parent: <t t-esc="state.p"/>
+//           parent: <t t-esc="this.state.p"/>
 //           <Child/>
 //         </div>`;
 

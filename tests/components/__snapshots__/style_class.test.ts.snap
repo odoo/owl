@@ -140,7 +140,7 @@ exports[`style and class handling class on components do not interfere with user
   let block1 = createBlock(\`<div block-attribute-0="class"/>\`);
   
   return function template(ctx, node, key = "") {
-    let attr1 = {c:ctx['state'].c};
+    let attr1 = {c:ctx['this'].state.c};
     return block1([attr1]);
   }
 }"
@@ -153,7 +153,7 @@ exports[`style and class handling class on sub component, which is switched to a
   const comp1 = app.createComponent(\`Child\`, true, false, false, ["class","child"]);
   
   return function template(ctx, node, key = "") {
-    return comp1({class: 'someclass',child: ctx['state'].child}, key + \`__1\`, node, this, null);
+    return comp1({class: 'someclass',child: ctx['this'].state.child}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -455,7 +455,7 @@ exports[`style and class handling t-att-class is properly added/removed on widge
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    const b2 = comp1({class: {b:ctx['state'].b}}, key + \`__1\`, node, this, null);
+    const b2 = comp1({class: {b:ctx['this'].state.b}}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -469,7 +469,7 @@ exports[`style and class handling t-att-class is properly added/removed on widge
   let block1 = createBlock(\`<span class="c" block-attribute-0="class"/>\`);
   
   return function template(ctx, node, key = "") {
-    let attr1 = {d:ctx['state'].d,...ctx['this'].props.class};
+    let attr1 = {d:ctx['this'].state.d,...ctx['this'].props.class};
     return block1([attr1]);
   }
 }"
@@ -482,7 +482,7 @@ exports[`style and class handling t-att-class is properly added/removed on widge
   const comp1 = app.createComponent(\`Child\`, true, false, false, ["class"]);
   
   return function template(ctx, node, key = "") {
-    return comp1({class: {a:true,b:ctx['state'].b}}, key + \`__1\`, node, this, null);
+    return comp1({class: {a:true,b:ctx['this'].state.b}}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -495,7 +495,7 @@ exports[`style and class handling t-att-class is properly added/removed on widge
   let block1 = createBlock(\`<span class="c" block-attribute-0="class"/>\`);
   
   return function template(ctx, node, key = "") {
-    let attr1 = {d:ctx['state'].d,...ctx['this'].props.class};
+    let attr1 = {d:ctx['this'].state.d,...ctx['this'].props.class};
     return block1([attr1]);
   }
 }"

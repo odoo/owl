@@ -8,8 +8,8 @@ exports[`reactivity in lifecycle Child component doesn't render when state they 
   
   return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].renderChild) {
-      b2 = comp1({state: ctx['state']}, key + \`__1\`, node, this, null);
+    if (ctx['this'].state.renderChild) {
+      b2 = comp1({state: ctx['this'].state}, key + \`__1\`, node, this, null);
     }
     return multi([b2]);
   }
@@ -36,7 +36,7 @@ exports[`reactivity in lifecycle an external proxy object should be tracked 1`] 
   let block1 = createBlock(\`<div><block-text-0/><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['obj1'].value;
+    let txt1 = ctx['this'].obj1.value;
     const b2 = comp1({}, key + \`__1\`, node, this, null);
     return block1([txt1], [b2]);
   }
@@ -51,7 +51,7 @@ exports[`reactivity in lifecycle an external proxy object should be tracked 2`] 
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['obj2'].value;
+    let txt1 = ctx['this'].obj2.value;
     return block1([txt1]);
   }
 }"
@@ -65,7 +65,7 @@ exports[`reactivity in lifecycle can use a state hook 1`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['counter'].value;
+    let txt1 = ctx['this'].counter.value;
     return block1([txt1]);
   }
 }"
@@ -83,7 +83,7 @@ exports[`reactivity in lifecycle can use a state hook 2 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "noop", ctx['this'].notify());
-    let txt1 = ctx['state'].a;
+    let txt1 = ctx['this'].state.a;
     return block1([txt1]);
   }
 }"
@@ -97,7 +97,7 @@ exports[`reactivity in lifecycle can use a state hook on Map 1`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['counter'].get('value');
+    let txt1 = ctx['this'].counter.get('value');
     return block1([txt1]);
   }
 }"
@@ -115,7 +115,7 @@ exports[`reactivity in lifecycle change state while mounting component 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "noop", ctx['this'].notify());
-    let txt1 = ctx['state'].val;
+    let txt1 = ctx['this'].state.val;
     return block1([txt1]);
   }
 }"
@@ -131,8 +131,8 @@ exports[`reactivity in lifecycle state changes in willUnmount do not trigger rer
   
   return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].flag) {
-      b2 = comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
+    if (ctx['this'].state.flag) {
+      b2 = comp1({val: ctx['this'].state.val}, key + \`__1\`, node, this, null);
     }
     return block1([], [b2]);
   }
@@ -152,7 +152,7 @@ exports[`reactivity in lifecycle state changes in willUnmount do not trigger rer
     ctx[isBoundary] = 1
     setContextValue(ctx, "noop", ctx['this'].notify());
     let txt1 = ctx['this'].props.val;
-    let txt2 = ctx['state'].n;
+    let txt2 = ctx['this'].state.n;
     return block1([txt1, txt2]);
   }
 }"

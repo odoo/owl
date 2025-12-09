@@ -1,4 +1,6 @@
+import { effect } from "../src";
 import { Resource } from "../src/runtime/resource";
+import { waitScheduler } from "./helpers";
 
 test("can add and get values", () => {
   const resource = new Resource();
@@ -22,4 +24,59 @@ test("can remove values", () => {
   expect(resource.items()).toEqual(["a", "c", "d"]);
   resource.remove("a").remove("d");
   expect(resource.items()).toEqual(["c"]);
+});
+
+test("sequence", async () => {
+  const resource = new Resource("r", String);
+
+  resource.add("a", 10);
+  resource.add("b"); // default = 50
+  resource.add("c", 14);
+  resource.add("d", 100);
+
+  const items = resource.items;
+  expect(items()).toEqual(["a", "c", "b", "d"]);
+});
+
+test("items and effects", async () => {
+  const resource: Resource<string> = new Resource();
+
+  resource.add("a");
+  const items = resource.items;
+  const steps: string[] = [];
+
+  effect(() => {
+    steps.push(...items());
+  });
+  expect(steps).toEqual(["a"]);
+  resource.add("b");
+  expect(steps).toEqual(["a"]);
+  await waitScheduler();
+  expect(steps).toEqual(["a", "a", "b"]);
+});
+
+test("validation schema", async () => {
+  const resource = new Resource("test", {
+    type: Object,
+    shape: {
+      blip: String,
+    },
+  });
+
+  resource.add({ blip: "asdf" });
+  expect(() => {
+    resource.add({ blip: 1 });
+  }).toThrow();
+});
+
+test("validation schema, with a class", async () => {
+  class A {}
+  class B {}
+
+  const resource = new Resource("test", { type: A });
+
+  resource.add(new A());
+  expect(() => {
+    resource.add(new B());
+  }).toThrow();
 });

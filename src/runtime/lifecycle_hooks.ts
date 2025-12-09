@@ -57,27 +57,6 @@ export function onWillDestroy(fn: () => void | any) {
   }
 }
 
-export function onWillRender(fn: () => void | any) {
-  const node = getCurrent();
-  const renderFn = node.renderFn;
-  fn = decorate(node, fn, "onWillRender");
-  node.renderFn = () => {
-    fn();
-    return renderFn();
-  };
-}
-
-export function onRendered(fn: () => void | any) {
-  const node = getCurrent();
-  const renderFn = node.renderFn;
-  fn = decorate(node, fn, "onRendered");
-  node.renderFn = () => {
-    const result = renderFn();
-    fn();
-    return result;
-  };
-}
-
 type OnErrorCallback = (error: any) => void | any;
 export function onError(callback: OnErrorCallback) {
   const node = getCurrent();

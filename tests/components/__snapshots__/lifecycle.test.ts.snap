@@ -171,15 +171,19 @@ exports[`lifecycle hooks destroy new children before being mountged 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
     let b2, b3, b4;
     b2 = text(\`before\`);
     if (ctx['state'].flag) {
       b3 = comp1({}, key + \`__1\`, node, this, null);
     }
     b4 = text(\`after\`);
+    setContextValue(ctx, "noop", ctx['this'].notify());
     return multi([b2, b3, b4]);
   }
 }"
@@ -539,33 +543,6 @@ exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper o
   
   return function template(ctx, node, key = "") {
     return block1();
-  }
-}"
-`;
-
-exports[`lifecycle hooks onWillRender 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["someValue"]);
-  
-  return function template(ctx, node, key = "") {
-    return comp1({someValue: ctx['state'].value}, key + \`__1\`, node, this, null);
-  }
-}"
-`;
-
-exports[`lifecycle hooks onWillRender 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<button block-handler-0="click"><block-text-1/></button>\`);
-  
-  return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['increment'], ctx];
-    let txt1 = ctx['state'].value;
-    return block1([hdlr1, txt1]);
   }
 }"
 `;

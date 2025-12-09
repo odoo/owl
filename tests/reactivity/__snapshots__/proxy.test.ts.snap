@@ -22,10 +22,14 @@ exports[`Reactivity: proxy destroyed component before being mounted is inactive 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    setContextValue(ctx, "noop", ctx['this'].notify());
     let txt1 = ctx['contextObj'].a;
     return block1([txt1]);
   }
@@ -68,10 +72,14 @@ exports[`Reactivity: proxy one components can subscribe twice to same context 1`
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue } = helpers;
   
   let block1 = createBlock(\`<div><block-text-0/><block-text-1/></div>\`);
   
   return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    setContextValue(ctx, "noop", ctx['this'].notify());
     let txt1 = ctx['contextObj1'].a;
     let txt2 = ctx['contextObj2'].b;
     return block1([txt1, txt2]);
@@ -83,11 +91,15 @@ exports[`Reactivity: proxy parent and children subscribed to same context 1`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    setContextValue(ctx, "noop", ctx['this'].notify());
     const b2 = comp1({}, key + \`__1\`, node, this, null);
     let txt1 = ctx['contextObj'].b;
     return block1([txt1], [b2]);
@@ -99,10 +111,14 @@ exports[`Reactivity: proxy parent and children subscribed to same context 2`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue } = helpers;
   
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    setContextValue(ctx, "noop", ctx['this'].notify());
     let txt1 = ctx['contextObj'].a;
     return block1([txt1]);
   }
@@ -235,12 +251,15 @@ exports[`Reactivity: proxy useless atoms should be deleted 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, withKey } = helpers;
+  let { isBoundary, withDefault, setContextValue, prepareList, withKey } = helpers;
   const comp1 = app.createComponent(\`Quantity\`, true, false, false, ["id"]);
   
   let block1 = createBlock(\`<div><block-child-0/> Total: <block-text-0/> Count: <block-text-1/></div>\`);
   
   return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    setContextValue(ctx, "noop", ctx['this'].notify());
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(Object.keys(ctx['state']));;
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -261,10 +280,14 @@ exports[`Reactivity: proxy useless atoms should be deleted 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue } = helpers;
   
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    setContextValue(ctx, "noop", ctx['this'].notify());
     let txt1 = ctx['state'].quantity;
     return block1([txt1]);
   }

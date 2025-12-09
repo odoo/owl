@@ -109,8 +109,6 @@ describe("app", () => {
       [
         "A:setup",
         "A:willStart",
-        "A:willRender",
-        "A:rendered",
         "A:mounted",
       ]
     `);
@@ -119,10 +117,8 @@ describe("app", () => {
     await nextTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "A:willRender",
         "B:setup",
         "B:willStart",
-        "A:rendered",
       ]
     `);
 
@@ -131,10 +127,8 @@ describe("app", () => {
     await nextMicroTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "A:willRender",
         "B:setup",
         "B:willStart",
-        "A:rendered",
       ]
     `);
 

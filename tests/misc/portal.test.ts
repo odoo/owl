@@ -535,7 +535,7 @@ describe("Portal", () => {
       static components = { Child2 };
       static template = xml`
             <t t-portal="'#outside'">
-              <t t-slot="default"/>
+              <t t-call-slot="default"/>
             </t>`;
       props = props();
     }

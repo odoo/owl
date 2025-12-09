@@ -30,7 +30,7 @@ describe("refs", () => {
 
   test("refs are properly bound in slots", async () => {
     class Dialog extends Component {
-      static template = xml`<span><t t-slot="footer"/></span>`;
+      static template = xml`<span><t t-call-slot="footer"/></span>`;
       props = props();
     }
 

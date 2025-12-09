@@ -922,7 +922,7 @@ describe("props validation", () => {
     }
 
     class Wrapper extends Component {
-      static template = xml`<t t-slot="default"/>`;
+      static template = xml`<t t-call-slot="default"/>`;
       props = props(["slots"]);
     }
 

@@ -24,7 +24,7 @@ export const enum ASTType {
   TComponent,
   TDebug,
   TLog,
-  TSlot,
+  TCallSlot,
   TCallBlock,
   TTranslation,
   TTranslationContext,
@@ -149,8 +149,8 @@ export interface ASTComponent extends BaseAST {
   slots: { [name: string]: SlotDefinition } | null;
 }
 
-export interface ASTSlot extends BaseAST {
-  type: ASTType.TSlot;
+export interface ASTTCallSlot extends BaseAST {
+  type: ASTType.TCallSlot;
   name: string;
   attrs: Attrs | null;
   attrsTranslationCtx: Attrs | null;
@@ -204,7 +204,7 @@ export type AST =
   | ASTTForEach
   | ASTTKey
   | ASTComponent
-  | ASTSlot
+  | ASTTCallSlot
   | ASTTCallBlock
   | ASTLog
   | ASTDebug
@@ -264,7 +264,7 @@ function parseNode(node: Node, ctx: ParsingContext): AST | null {
     parseTKey(node, ctx) ||
     parseTEscNode(node, ctx) ||
     parseTOutNode(node, ctx) ||
-    parseTSlot(node, ctx) ||
+    parseTCallSlot(node, ctx) ||
     parseComponent(node, ctx) ||
     parseDOMNode(node, ctx) ||
     parseTSetNode(node, ctx) ||
@@ -903,12 +903,12 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
 // Slots
 // -----------------------------------------------------------------------------
 
-function parseTSlot(node: Element, ctx: ParsingContext): AST | null {
-  if (!node.hasAttribute("t-slot")) {
+function parseTCallSlot(node: Element, ctx: ParsingContext): AST | null {
+  if (!node.hasAttribute("t-call-slot")) {
     return null;
   }
-  const name = node.getAttribute("t-slot")!;
-  node.removeAttribute("t-slot");
+  const name = node.getAttribute("t-call-slot")!;
+  node.removeAttribute("t-call-slot");
   let attrs: Attrs | null = null;
   let attrsTranslationCtx: Attrs | null = null;
   let on: ASTComponent["on"] = null;
@@ -927,7 +927,7 @@ function parseTSlot(node: Element, ctx: ParsingContext): AST | null {
     }
   }
   return {
-    type: ASTType.TSlot,
+    type: ASTType.TCallSlot,
     name,
     attrs,
     attrsTranslationCtx,

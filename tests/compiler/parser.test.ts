@@ -1798,12 +1798,12 @@ describe("qweb parser", () => {
   });
 
   // ---------------------------------------------------------------------------
-  // t-slot
+  // t-call-slot
   // ---------------------------------------------------------------------------
 
-  test("a simple t-slot", async () => {
-    expect(parse(`<t t-slot="default"/>`)).toEqual({
-      type: ASTType.TSlot,
+  test("a simple t-call-slot", async () => {
+    expect(parse(`<t t-call-slot="default"/>`)).toEqual({
+      type: ASTType.TCallSlot,
       name: "default",
       attrs: null,
       attrsTranslationCtx: null,
@@ -1812,9 +1812,9 @@ describe("qweb parser", () => {
     });
   });
 
-  test("a t-slot with default content", async () => {
-    expect(parse(`<t t-slot="header">default content</t>`)).toEqual({
-      type: ASTType.TSlot,
+  test("a t-call-slot with default content", async () => {
+    expect(parse(`<t t-call-slot="header">default content</t>`)).toEqual({
+      type: ASTType.TCallSlot,
       name: "header",
       attrs: null,
       attrsTranslationCtx: null,
@@ -1823,9 +1823,9 @@ describe("qweb parser", () => {
     });
   });
 
-  test("t-slot with t-on-", async () => {
-    expect(parse(`<t t-slot="default" t-on-click.prevent="doSomething"/>`)).toEqual({
-      type: ASTType.TSlot,
+  test("t-call-slot with t-on-", async () => {
+    expect(parse(`<t t-call-slot="default" t-on-click.prevent="doSomething"/>`)).toEqual({
+      type: ASTType.TCallSlot,
       name: "default",
       attrs: null,
       attrsTranslationCtx: null,

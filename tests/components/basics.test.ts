@@ -91,7 +91,7 @@ describe("basics", () => {
 
   test("component with dynamic content can be updated", async () => {
     class Test extends Component {
-      static template = xml`<span><t t-esc="value"/></span>`;
+      static template = xml`<span><t t-esc="this.value"/></span>`;
       value = 1;
     }
 
@@ -108,7 +108,7 @@ describe("basics", () => {
   test("updating a component with t-foreach as root", async () => {
     class Test extends Component {
       static template = xml`
-        <t t-foreach="items" t-as="item" t-key="item">
+        <t t-foreach="this.items" t-as="item" t-key="item">
           <t t-esc="item"/>
         </t>`;
       items = ["one", "two", "three"];
@@ -250,7 +250,7 @@ describe("basics", () => {
 
   test("class component with dynamic text", async () => {
     class Test extends Component {
-      static template = xml`<span>My value: <t t-esc="value"/></span>`;
+      static template = xml`<span>My value: <t t-esc="this.value"/></span>`;
 
       value = 42;
     }
@@ -300,7 +300,7 @@ describe("basics", () => {
 
   test("simple component with a dynamic text", async () => {
     class Test extends Component {
-      static template = xml`<div><t t-esc="value" /></div>`;
+      static template = xml`<div><t t-esc="this.value" /></div>`;
       value = 3;
     }
 
@@ -314,7 +314,7 @@ describe("basics", () => {
 
   test("simple component, proxy", async () => {
     class Test extends Component {
-      static template = xml`<div><t t-esc="state.value" /></div>`;
+      static template = xml`<div><t t-esc="this.state.value" /></div>`;
       state = proxy({ value: 3 });
     }
 
@@ -379,7 +379,7 @@ describe("basics", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<Child t-if="state.hasChild"/>`;
+      static template = xml`<Child t-if="this.state.hasChild"/>`;
       static components = { Child };
       state = proxy({ hasChild: false });
     }
@@ -399,8 +399,8 @@ describe("basics", () => {
     class Parent extends Component {
       static template = xml`
         <div>
-          <Child t-if="state.hasChild"/>
-          <span t-esc="state.text"/>
+          <Child t-if="this.state.hasChild"/>
+          <span t-esc="this.state.text"/>
         </div>`;
       static components = { Child };
       state = proxy({ hasChild: false, text: "1" });
@@ -422,7 +422,7 @@ describe("basics", () => {
   test("can be clicked on and updated", async () => {
     class Counter extends Component {
       static template = xml`
-      <div><t t-esc="state.counter"/><button t-on-click="() => state.counter++">Inc</button></div>`;
+      <div><t t-esc="this.state.counter"/><button t-on-click="() => this.state.counter++">Inc</button></div>`;
       state = proxy({
         counter: 0,
       });
@@ -440,7 +440,7 @@ describe("basics", () => {
   test("rerendering a widget with a sub widget", async () => {
     class Counter extends Component {
       static template = xml`
-      <div><t t-esc="state.counter"/><button t-on-click="() => state.counter++">Inc</button></div>`;
+      <div><t t-esc="this.state.counter"/><button t-on-click="() => this.state.counter++">Inc</button></div>`;
       state = proxy({
         counter: 0,
       });
@@ -479,7 +479,7 @@ describe("basics", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<Child value="state.counter"/>`;
+      static template = xml`<Child value="this.state.counter"/>`;
       static components = { Child };
       state = proxy({
         counter: 0,
@@ -508,7 +508,7 @@ describe("basics", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<Child child="state.child" />`;
+      static template = xml`<Child child="this.state.child" />`;
       static components = { Child };
 
       state = proxy({ child: "a" });
@@ -553,7 +553,7 @@ describe("basics", () => {
 
   test("do not remove previously rendered dom if not necessary, variation", async () => {
     class SomeComponent extends Component {
-      static template = xml`<div><h1>h1</h1><span><t t-esc="state.value"/></span></div>`;
+      static template = xml`<div><h1>h1</h1><span><t t-esc="this.state.value"/></span></div>`;
       state = proxy({ value: 1 });
     }
     const comp = await mount(SomeComponent, fixture);
@@ -643,7 +643,7 @@ describe("basics", () => {
       static template = xml`<span>hey</span>`;
     }
     class Parent extends Component {
-      static template = xml`<div><Child t-if="state.flag"/></div>`;
+      static template = xml`<div><Child t-if="this.state.flag"/></div>`;
       static components = { Child };
       state = proxy({ flag: true });
     }
@@ -669,7 +669,7 @@ describe("basics", () => {
     class Parent extends Component {
       static template = xml`
         <div>
-          <div t-if="state.flag">somediv</div>
+          <div t-if="this.state.flag">somediv</div>
           <Child t-else=""/>
         </div>`;
       static components = { Child };
@@ -693,8 +693,8 @@ describe("basics", () => {
     class Parent extends Component {
       static template = xml`
         <div>
-          <div t-if="state.flag">somediv</div>
-          <Child t-elif="!state.flag" />
+          <div t-if="this.state.flag">somediv</div>
+          <Child t-elif="!this.state.flag" />
         </div>`;
       static components = { Child };
       state = proxy({ flag: true });
@@ -717,7 +717,7 @@ describe("basics", () => {
     class Parent extends Component {
       static template = xml`
         <div>
-          <div t-if="state.flag">somediv</div>
+          <div t-if="this.state.flag">somediv</div>
           <Child t-else="" />
         </div>`;
       static components = { Child };
@@ -742,10 +742,10 @@ describe("basics", () => {
     class Parent extends Component {
       static template = xml`
         <div>
-          <h1 t-if="state.flag">hey</h1>
+          <h1 t-if="this.state.flag">hey</h1>
           <h2 t-else="">noo</h2>
           <span><Child/></span>
-          <t t-if="state.flag"><span>test</span></t>
+          <t t-if="this.state.flag"><span>test</span></t>
         </div>`;
       static components = { Child };
       state = proxy({ flag: false });
@@ -770,7 +770,7 @@ describe("basics", () => {
     class Parent extends Component {
       static template = xml`
       <div>
-          <div t-foreach="state.blips" t-as="blip" t-key="blip.id">
+          <div t-foreach="this.state.blips" t-as="blip" t-key="blip.id">
               <SubWidget />
               <SubWidget />
           </div>
@@ -791,7 +791,7 @@ describe("basics", () => {
       props = props();
     }
     class Parent extends Component {
-      static template = xml`<Child flag="state.flag"/>`;
+      static template = xml`<Child flag="this.state.flag"/>`;
       static components = { Child };
       state = proxy({ flag: false });
     }
@@ -804,7 +804,7 @@ describe("basics", () => {
   });
 
   test("can inject values in tagged templates", async () => {
-    const SUBTEMPLATE = xml`<span><t t-esc="state.n"/></span>`;
+    const SUBTEMPLATE = xml`<span><t t-esc="this.state.n"/></span>`;
     class Parent extends Component {
       static template = xml`<t t-call="${SUBTEMPLATE}"/>`;
       state = proxy({ n: 42 });
@@ -837,7 +837,7 @@ describe("basics", () => {
       static components = { Child };
       static template = xml`
         <div>
-          <Child t-key="childProps.key" t-props="childProps"/>
+          <Child t-key="this.childProps.key" t-props="this.childProps"/>
         </div>`;
       childProps = {
         key: 1,
@@ -874,7 +874,7 @@ describe("basics", () => {
     }
     class Parent extends Component {
       static components = { Child };
-      static template = xml`<Child t-if="ifVar" />`;
+      static template = xml`<Child t-if="this.ifVar" />`;
       ifVar = true;
     }
 
@@ -910,7 +910,7 @@ describe("basics", () => {
     }
     class Parent extends Component {
       static components = { Child };
-      static template = xml`<Child t-key="keyVar" />`;
+      static template = xml`<Child t-key="this.keyVar" />`;
       keyVar = 1;
     }
 
@@ -954,7 +954,7 @@ describe("basics", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<t t-component="myComp" displayGrandChild="displayGrandChild"/>`;
+      static template = xml`<t t-component="this.myComp" displayGrandChild="this.displayGrandChild"/>`;
       myComp = Child;
       displayGrandChild = true;
     }
@@ -1052,7 +1052,7 @@ describe("support svg components", () => {
 describe("t-out in components", () => {
   test("update properly on state changes", async () => {
     class Test extends Component {
-      static template = xml`<div><t t-out="state.value"/></div>`;
+      static template = xml`<div><t t-out="this.state.value"/></div>`;
       state = proxy({ value: markup("<b>content</b>") });
     }
     const component = await mount(Test, fixture);
@@ -1069,7 +1069,7 @@ describe("t-out in components", () => {
     class Test extends Component {
       static template = xml`
         <div>
-            <t t-foreach="state.items" t-as="item" t-key="item">
+            <t t-foreach="this.state.items" t-as="item" t-key="item">
             <t t-esc="item"/>
             <t t-out="item"/>
             </t>
@@ -1088,8 +1088,8 @@ describe("t-out in components", () => {
   test("can switch the contents of two t-out repeatedly", async () => {
     class Test extends Component {
       static template = xml`
-        <t t-out="state.a"/>
-        <t t-out="state.b"/>
+        <t t-out="this.state.a"/>
+        <t t-out="this.state.b"/>
       `;
       state = proxy({
         a: markup("<div>1</div>"),
@@ -1114,7 +1114,7 @@ describe("t-out in components", () => {
 
   test("t-out and updating falsy values, ", async () => {
     class Test extends Component {
-      static template = xml`<t t-out="state.a"/>`;
+      static template = xml`<t t-out="this.state.a"/>`;
       state: any = proxy({ a: 0 });
     }
 

@@ -322,7 +322,7 @@ describe("t-call", () => {
   test("t-call-context: ComponentNode is not looked up in the context", async () => {
     let child: any;
     class Child extends Component {
-      static template = xml`<t t-slot="default"/>`;
+      static template = xml`<t t-call-slot="default"/>`;
       props = props();
       setup() {
         child = this;
@@ -362,7 +362,7 @@ describe("t-call", () => {
 
   test("t-call-context: slots don't make component available again when context is captured", async () => {
     class Child extends Component {
-      static template = xml`<t t-slot="default"/>`;
+      static template = xml`<t t-call-slot="default"/>`;
       props = props();
     }
 

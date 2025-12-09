@@ -64,7 +64,7 @@ exports[`translation context slot attrs and text contents are translated in cont
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { capture, markRaw } = helpers;
+  let { markRaw } = helpers;
   const comp1 = app.createComponent(\`ChildComponent\`, true, true, false, []);
   
   function slot1(ctx, node, key = "") {
@@ -72,8 +72,7 @@ exports[`translation context slot attrs and text contents are translated in cont
   }
   
   return function template(ctx, node, key = "") {
-    const ctx1 = capture(ctx);
-    return comp1({slots: markRaw({'a': {__render: slot1.bind(this), __ctx: ctx1, title: \`título\`}})}, key + \`__1\`, node, this, null);
+    return comp1({slots: markRaw({'a': {__render: slot1.bind(this), __ctx: ctx, title: \`título\`}})}, key + \`__1\`, node, this, null);
   }
 }"
 `;

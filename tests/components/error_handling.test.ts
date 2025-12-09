@@ -607,7 +607,7 @@ describe("can catch errors", () => {
       static template = xml`
           <div>
             <t t-if="state.error">Error handled</t>
-            <t t-else=""><t t-slot="default" /></t>
+            <t t-else=""><t t-call-slot="default" /></t>
           </div>`;
       props = props();
       state = proxy({ error: false });
@@ -871,7 +871,7 @@ describe("can catch errors", () => {
       static template = xml`
           <div>
             <t t-if="state.error">Error handled</t>
-            <t t-else=""><t t-slot="default" /></t>
+            <t t-else=""><t t-call-slot="default" /></t>
           </div>`;
       props = props();
       state = proxy({ error: false });
@@ -903,7 +903,7 @@ describe("can catch errors", () => {
       static template = xml`
           <div>
             <t t-if="state.error">Error handled</t>
-            <t t-else=""><t t-slot="default" /></t>
+            <t t-else=""><t t-call-slot="default" /></t>
           </div>`;
       props = props();
       state = proxy({ error: false });
@@ -938,7 +938,7 @@ describe("can catch errors", () => {
     class ErrorBoundary extends Component {
       static template = xml`<div>
               <t t-if="state.error">Error handled</t>
-              <t t-else=""><t t-slot="default" /></t>
+              <t t-else=""><t t-call-slot="default" /></t>
           </div>`;
       props = props();
       state = proxy({ error: false });
@@ -973,7 +973,7 @@ describe("can catch errors", () => {
     class ErrorBoundary extends Component {
       static template = xml`<div>
               <t t-if="state.error">Error handled</t>
-              <t t-else=""><t t-slot="default" /></t>
+              <t t-else=""><t t-call-slot="default" /></t>
           </div>`;
       props = props();
       state = proxy({ error: false });
@@ -1009,7 +1009,7 @@ describe("can catch errors", () => {
       static template = xml`
           <div>
             <t t-if="state.error">Error handled</t>
-            <t t-else=""><t t-slot="default" /></t>
+            <t t-else=""><t t-call-slot="default" /></t>
           </div>`;
       props = props();
       state = proxy({ error: false });
@@ -1044,7 +1044,7 @@ describe("can catch errors", () => {
     class ErrorBoundary extends Component {
       static template = xml`<div>
               <t t-if="state.error">Error handled</t>
-              <t t-else=""><t t-slot="default" /></t>
+              <t t-else=""><t t-call-slot="default" /></t>
           </div>`;
       props = props();
       state = proxy({ error: false });
@@ -1079,7 +1079,7 @@ describe("can catch errors", () => {
     class ErrorBoundary extends Component {
       static template = xml`<div>
        <t t-if="state.error">Error handled</t>
-       <t t-else=""><t t-slot="default" /></t>
+       <t t-else=""><t t-call-slot="default" /></t>
       </div>`;
       props = props();
       state = proxy({ error: false });
@@ -1260,7 +1260,7 @@ describe("can catch errors", () => {
     class ErrorBoundary extends Component {
       static template = xml`<div>
        <t t-if="state.error">Error handled</t>
-       <t t-else=""><t t-slot="default" /></t>
+       <t t-else=""><t t-call-slot="default" /></t>
       </div>`;
       props = props();
       state = proxy({ error: false });
@@ -1334,7 +1334,7 @@ describe("can catch errors", () => {
       static template = xml`
           <div>
             <t t-if="state.error">Error handled</t>
-            <t t-else=""><t t-slot="default" /></t>
+            <t t-else=""><t t-call-slot="default" /></t>
           </div>`;
       props = props();
       state = proxy({ error: false });
@@ -1520,7 +1520,7 @@ describe("can catch errors", () => {
     }
 
     class ErrorHandler extends Component {
-      static template = xml`<t t-slot="default" />`;
+      static template = xml`<t t-call-slot="default" />`;
       props = props();
       setup() {
         onError(() => {
@@ -1579,7 +1579,7 @@ describe("can catch errors", () => {
     }
 
     class Catch extends Component {
-      static template = xml`<t t-slot="default" />`;
+      static template = xml`<t t-call-slot="default" />`;
       props = props();
       setup() {
         onError((e) => {

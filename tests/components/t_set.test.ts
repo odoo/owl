@@ -196,7 +196,7 @@ describe("t-set", () => {
 
   test("slots with an unused t-set with a component in body", async () => {
     class Child extends Component {
-      static template = xml`Child <t t-slot="default"/>`;
+      static template = xml`Child <t t-call-slot="default"/>`;
       props = props();
     }
 
@@ -221,7 +221,7 @@ describe("t-set", () => {
       static template = xml`C`;
     }
     class Child extends Component {
-      static template = xml`Child <t t-slot="default"/>`;
+      static template = xml`Child <t t-call-slot="default"/>`;
       props = props();
     }
 
@@ -247,7 +247,7 @@ describe("t-set", () => {
       static template = xml`Child`;
     }
     class Blorg extends Component {
-      static template = xml`Blorg <t t-slot="default"/>`;
+      static template = xml`Blorg <t t-call-slot="default"/>`;
       props = props();
     }
 

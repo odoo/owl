@@ -373,7 +373,7 @@ describe("list of components", () => {
   test("order is correct when slots are not of same type", async () => {
     class Child extends Component {
       static template = xml`
-          <t t-slot="{{ slotName }}" t-foreach="slotNames" t-as="slotName" t-key="slotName"/>
+          <t t-call-slot="{{ slotName }}" t-foreach="slotNames" t-as="slotName" t-key="slotName"/>
       `;
       props = props();
       get slotNames() {

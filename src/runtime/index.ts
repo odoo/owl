@@ -40,7 +40,7 @@ export { Component } from "./component";
 export type { ComponentConstructor } from "./component";
 export { useComponent } from "./component_node";
 export { props } from "./props";
-export type { PropsValidation } from "./props";
+export type { GetProps, PropsValidation } from "./props";
 export { status } from "./status";
 export { proxy, markRaw, toRaw } from "./reactivity/proxy";
 export { untrack } from "./reactivity/computations";

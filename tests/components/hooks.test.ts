@@ -39,7 +39,7 @@ describe("hooks", () => {
       });
     }
     class Test extends Component {
-      static template = xml`<div>hey<t t-esc="state.value"/></div>`;
+      static template = xml`<div>hey<t t-esc="this.state.value"/></div>`;
       state = proxy({ value: 1 });
       setup() {
         useMyHook(1);
@@ -66,7 +66,7 @@ describe("hooks", () => {
       });
     }
     class Test extends Component {
-      static template = xml`<div>hey<t t-esc="state.value"/></div>`;
+      static template = xml`<div>hey<t t-esc="this.state.value"/></div>`;
       state = proxy({ value: 1 });
       setup() {
         useMyHook(1);
@@ -193,7 +193,7 @@ describe("hooks", () => {
       }
     }
     class App extends Component {
-      static template = xml`<MyComponent value="state.value"/>`;
+      static template = xml`<MyComponent value="this.state.value"/>`;
       static components = { MyComponent };
       state = proxy({ value: 1 });
     }
@@ -236,7 +236,7 @@ describe("hooks", () => {
       }
     }
     class App extends Component {
-      static template = xml`<MyComponent t-if="state.flag"/>`;
+      static template = xml`<MyComponent t-if="this.state.flag"/>`;
       static components = { MyComponent };
       state = proxy({ flag: false });
     }
@@ -300,7 +300,7 @@ describe("hooks", () => {
     test("effect can depend on stuff in dom", async () => {
       class MyComponent extends Component {
         static template = xml`
-          <t t-if="state.value">
+          <t t-if="this.state.value">
             <div t-ref="this.ref"/>
           </t>`;
         state = proxy({
@@ -428,7 +428,7 @@ describe("hooks", () => {
           );
         }
       }
-      MyComponent.template = xml`<div t-esc="state.value"/>`;
+      MyComponent.template = xml`<div t-esc="this.state.value"/>`;
 
       const component = await mount(MyComponent, fixture);
 

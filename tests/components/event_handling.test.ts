@@ -16,7 +16,7 @@ describe("event handling", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<span t-on-click="inc"><Child/><t t-esc="state.value"/></span>`;
+      static template = xml`<span t-on-click="this.inc"><Child/><t t-esc="this.state.value"/></span>`;
       static components = { Child };
       state = proxy({ value: 1 });
       inc(ev: any) {
@@ -44,7 +44,7 @@ describe("event handling", () => {
     );
 
     class Parent extends Component {
-      static template = xml`<button t-on-click="dosomething">click</button>`;
+      static template = xml`<button t-on-click="this.dosomething">click</button>`;
 
       doSomething() {}
     }
@@ -58,7 +58,7 @@ describe("event handling", () => {
   test("support for callable expression in event handler", async () => {
     class Counter extends Component {
       static template = xml`
-      <div><t t-esc="state.value"/><input type="text" t-on-input="obj.onInput"/></div>`;
+      <div><t t-esc="this.state.value"/><input type="text" t-on-input="this.obj.onInput"/></div>`;
       state = proxy({ value: "" });
       obj = { onInput: (ev: any) => (this.state.value = ev.target.value) };
     }
@@ -78,8 +78,8 @@ describe("event handling", () => {
     class Parent extends Component {
       static template = xml`
         <div>
-          <t t-foreach="items" t-as="item" t-key="item">
-            <div class="item" t-on-click="ev => onClick(item, ev)"/>
+          <t t-foreach="this.items" t-as="item" t-key="item">
+            <div class="item" t-on-click="ev => this.onClick(item, ev)"/>
           </t>
         </div>`;
       items = [1, 2, 3, 4];
@@ -100,8 +100,8 @@ describe("event handling", () => {
     class Parent extends Component {
       static template = xml`
         <div>
-          <t t-foreach="items" t-as="item" t-key="item">
-            <div class="item" t-on-click="ev => onClick(item.val, ev)"/>
+          <t t-foreach="this.items" t-as="item" t-key="item">
+            <div class="item" t-on-click="ev => this.onClick(item.val, ev)"/>
           </t>
         </div>`;
       items = [{ val: 1 }, { val: 2 }, { val: 3 }, { val: 4 }];
@@ -118,7 +118,7 @@ describe("event handling", () => {
 
   test("handler is not called if component is destroyed", async () => {
     class Parent extends Component {
-      static template = xml`<span t-on-click="click"/>`;
+      static template = xml`<span t-on-click="this.click"/>`;
       click() {
         logStep("click");
       }
@@ -140,7 +140,7 @@ describe("event handling", () => {
 
   test("input blur event is not called if component is destroyed", async () => {
     class Child extends Component {
-      static template = xml`<input t-on-blur="blur"/>`;
+      static template = xml`<input t-on-blur="this.blur"/>`;
 
       blur() {
         logStep("blur");
@@ -149,7 +149,7 @@ describe("event handling", () => {
     class Parent extends Component {
       static template = xml`
       <div>
-        <t t-if="state.cond"><Child/></t>
+        <t t-if="this.state.cond"><Child/></t>
         <textarea/>
       </div>`;
       static components = { Child };
@@ -176,7 +176,7 @@ describe("event handling", () => {
     let clickCount = 0;
 
     class Parent extends Component {
-      static template = xml`<span t-on-click="inc">click me</span>`;
+      static template = xml`<span t-on-click="this.inc">click me</span>`;
       inc() {
         clickCount++;
       }

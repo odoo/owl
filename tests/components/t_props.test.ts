@@ -17,7 +17,7 @@ describe("t-props", () => {
     }
     class Parent extends Component {
       static components = { Comp };
-      static template = xml`<div><div><Comp t-props="state"/></div></div>`;
+      static template = xml`<div><div><Comp t-props="this.state"/></div></div>`;
       state = proxy({
         a: "first",
       });
@@ -39,7 +39,7 @@ describe("t-props", () => {
     }
     class Parent extends Component {
       static components = { Comp };
-      static template = xml`<div><div><Comp t-props="state1" a="a"/></div></div>`;
+      static template = xml`<div><div><Comp t-props="this.state1" a="this.a"/></div></div>`;
       state1 = proxy({
         a: "first",
         b: "second",
@@ -74,7 +74,7 @@ describe("t-props", () => {
     class Parent extends Component {
       static template = xml`
           <div>
-              <Child t-props="some.obj"/>
+              <Child t-props="this.some.obj"/>
           </div>
         `;
       static components = { Child };
@@ -99,7 +99,7 @@ describe("t-props", () => {
     class Parent extends Component {
       static template = xml`
           <div>
-              <Child t-props="childProps" a="1" b="2" />
+              <Child t-props="this.childProps" a="1" b="2" />
           </div>
         `;
       static components = { Child };
@@ -120,7 +120,7 @@ describe("t-props", () => {
       }
     }
     class Parent extends Component {
-      static template = xml`<Child t-props="childProps"/>`;
+      static template = xml`<Child t-props="this.childProps"/>`;
       static components = { Child };
 
       childProps = { a: 1, b: 2 };

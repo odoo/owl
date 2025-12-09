@@ -187,7 +187,7 @@ describe("lifecycle hooks", () => {
       }
     }
     class Parent extends Component {
-      static template = xml`<Child prop="state.prop"/>`;
+      static template = xml`<Child prop="this.state.prop"/>`;
       static components = { Child };
       state = proxy({ prop: 1 });
     }
@@ -299,7 +299,7 @@ describe("lifecycle hooks", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<div><t t-if="state.flag"><Child/></t></div>`;
+      static template = xml`<div><t t-if="this.state.flag"><Child/></t></div>`;
       static components = { Child };
       state = proxy({ flag: false });
       setup() {
@@ -367,7 +367,7 @@ describe("lifecycle hooks", () => {
 
     class Parent extends Component {
       static template = xml`
-        <div><Child n="state.n"/></div>
+        <div><Child n="this.state.n"/></div>
       `;
       static components = { Child };
 
@@ -422,7 +422,7 @@ describe("lifecycle hooks", () => {
       // patching algorithm
       static template = xml`
         <div>
-          <t t-if="state.ok">
+          <t t-if="this.state.ok">
             <Child />
           </t>
           <t t-else="">
@@ -461,7 +461,7 @@ describe("lifecycle hooks", () => {
       }
     }
     class Parent extends Component {
-      static template = xml`<t t-if="state.ok"><Child /></t>`;
+      static template = xml`<t t-if="this.state.ok"><Child /></t>`;
       static components = { Child };
       state = proxy({ ok: true });
     }
@@ -485,8 +485,8 @@ describe("lifecycle hooks", () => {
 
     class Parent extends Component {
       static template = xml`
-          <div t-if="state.flag">
-            <Child n="state.n"/>
+          <div t-if="this.state.flag">
+            <Child n="this.state.n"/>
           </div>
       `;
       static components = { Child };
@@ -597,7 +597,7 @@ describe("lifecycle hooks", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<Child n="state.n"/>`;
+      static template = xml`<Child n="this.state.n"/>`;
       static components = { Child };
       state = proxy({ n: 1 });
     }
@@ -616,7 +616,7 @@ describe("lifecycle hooks", () => {
     let n = 0;
 
     class Test extends Component {
-      static template = xml`<div><t t-esc="state.a"/></div>`;
+      static template = xml`<div><t t-esc="this.state.a"/></div>`;
       state = proxy({ a: 1 });
 
       setup() {
@@ -647,7 +647,7 @@ describe("lifecycle hooks", () => {
       }
     }
     class Parent extends Component {
-      static template = xml`<div><Child a="state.a"/></div>`;
+      static template = xml`<div><Child a="this.state.a"/></div>`;
       state = proxy({ a: 1 });
       static components = { Child };
     }
@@ -668,7 +668,7 @@ describe("lifecycle hooks", () => {
       }
     }
     class Parent extends Component {
-      static template = xml`<div><Child a="state.a"/></div>`;
+      static template = xml`<div><Child a="this.state.a"/></div>`;
       static components = { Child };
       state = proxy({ a: 1 });
       setup() {
@@ -716,7 +716,7 @@ describe("lifecycle hooks", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<Child t-if="state.hasChild"/>`;
+      static template = xml`<Child t-if="this.state.hasChild"/>`;
       static components = { Child };
       state = proxy({ hasChild: false });
       setup() {
@@ -778,7 +778,7 @@ describe("lifecycle hooks", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<Child t-if="state.hasChild"/>`;
+      static template = xml`<Child t-if="this.state.hasChild"/>`;
       static components = { Child };
       state = proxy({ hasChild: false });
       setup() {
@@ -827,7 +827,7 @@ describe("lifecycle hooks", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<Child t-if="state.hasChild"/>`;
+      static template = xml`<Child t-if="this.state.hasChild"/>`;
       static components = { Child };
       state = proxy({ hasChild: false });
       setup() {
@@ -877,7 +877,7 @@ describe("lifecycle hooks", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<Child t-if="state.hasChild"/>`;
+      static template = xml`<Child t-if="this.state.hasChild"/>`;
       static components = { Child };
       state = proxy({ hasChild: true });
       setup() {
@@ -918,7 +918,7 @@ describe("lifecycle hooks", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<Child value="state.value" />`;
+      static template = xml`<Child value="this.state.value" />`;
       static components = { Child };
       state = proxy({ value: 1 });
       setup() {
@@ -966,7 +966,7 @@ describe("lifecycle hooks", () => {
       }
     }
     class Parent extends Component {
-      static template = xml`<Child t-if="state.flag"/>`;
+      static template = xml`<Child t-if="this.state.flag"/>`;
       static components = { Child };
       state = proxy({ flag: false });
     }
@@ -1009,8 +1009,8 @@ describe("lifecycle hooks", () => {
     class C extends TestWidget {
       static template = xml`
         <div>C<D />
-          <E t-if="state.flag" />
-          <F t-else="!state.flag" />
+          <E t-if="this.state.flag" />
+          <F t-else="!this.state.flag" />
         </div>`;
       static components = { D, E, F };
       name = "C";
@@ -1074,7 +1074,7 @@ describe("lifecycle hooks", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<Child t-if="state.hasChild"/>`;
+      static template = xml`<Child t-if="this.state.hasChild"/>`;
       static components = { Child };
       state = proxy({ hasChild: true });
       setup() {
@@ -1120,7 +1120,7 @@ describe("lifecycle hooks", () => {
 
   test("render in mounted", async () => {
     class Parent extends Component {
-      static template = xml`<span t-esc="patched"/>`;
+      static template = xml`<span t-esc="this.patched"/>`;
       patched: any;
       setup() {
         useLogLifecycle();
@@ -1153,7 +1153,7 @@ describe("lifecycle hooks", () => {
 
   test("render in patched", async () => {
     class Parent extends Component {
-      static template = xml`<span t-esc="patched"/>`;
+      static template = xml`<span t-esc="this.patched"/>`;
       patched: any;
       setup() {
         useLogLifecycle();
@@ -1199,7 +1199,7 @@ describe("lifecycle hooks", () => {
 
   test("render in willPatch", async () => {
     class Parent extends Component {
-      static template = xml`<span t-esc="patched"/>`;
+      static template = xml`<span t-esc="this.patched"/>`;
       patched: any;
       setup() {
         useLogLifecycle();
@@ -1270,7 +1270,7 @@ describe("lifecycle hooks", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<Test rev="rev" />`;
+      static template = xml`<Test rev="this.rev" />`;
       static components = { Test };
       rev = 0;
     }
@@ -1304,7 +1304,7 @@ describe("lifecycle hooks", () => {
     }
 
     class Parent extends Component {
-      static template = xml`before<Child t-if="state.flag"/>after<t t-set="noop" t-value="this.notify()"/>`;
+      static template = xml`before<Child t-if="this.state.flag"/>after<t t-set="noop" t-value="this.notify()"/>`;
       static components = { Child };
 
       state = proxy({ flag: false });

@@ -10,7 +10,7 @@ exports[`Reactivity: proxy destroyed component before being mounted is inactive 
   
   return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].flag) {
+    if (ctx['this'].state.flag) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return block1([], [b2]);
@@ -30,7 +30,7 @@ exports[`Reactivity: proxy destroyed component before being mounted is inactive 
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "noop", ctx['this'].notify());
-    let txt1 = ctx['contextObj'].a;
+    let txt1 = ctx['this'].contextObj.a;
     return block1([txt1]);
   }
 }"
@@ -46,7 +46,7 @@ exports[`Reactivity: proxy destroyed component is inactive 1`] = `
   
   return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].flag) {
+    if (ctx['this'].state.flag) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return block1([], [b2]);
@@ -62,7 +62,7 @@ exports[`Reactivity: proxy destroyed component is inactive 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['contextObj'].a;
+    let txt1 = ctx['this'].contextObj.a;
     return block1([txt1]);
   }
 }"
@@ -80,8 +80,8 @@ exports[`Reactivity: proxy one components can subscribe twice to same context 1`
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "noop", ctx['this'].notify());
-    let txt1 = ctx['contextObj1'].a;
-    let txt2 = ctx['contextObj2'].b;
+    let txt1 = ctx['this'].contextObj1.a;
+    let txt2 = ctx['this'].contextObj2.b;
     return block1([txt1, txt2]);
   }
 }"
@@ -101,7 +101,7 @@ exports[`Reactivity: proxy parent and children subscribed to same context 1`] = 
     ctx[isBoundary] = 1
     setContextValue(ctx, "noop", ctx['this'].notify());
     const b2 = comp1({}, key + \`__1\`, node, this, null);
-    let txt1 = ctx['contextObj'].b;
+    let txt1 = ctx['this'].contextObj.b;
     return block1([txt1], [b2]);
   }
 }"
@@ -119,7 +119,7 @@ exports[`Reactivity: proxy parent and children subscribed to same context 2`] = 
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "noop", ctx['this'].notify());
-    let txt1 = ctx['contextObj'].a;
+    let txt1 = ctx['this'].contextObj.a;
     return block1([txt1]);
   }
 }"
@@ -150,7 +150,7 @@ exports[`Reactivity: proxy two components are updated in parallel 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['contextObj'].value;
+    let txt1 = ctx['this'].contextObj.value;
     return block1([txt1]);
   }
 }"
@@ -181,7 +181,7 @@ exports[`Reactivity: proxy two components can subscribe to same context 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['contextObj'].value;
+    let txt1 = ctx['this'].contextObj.value;
     return block1([txt1]);
   }
 }"
@@ -212,7 +212,7 @@ exports[`Reactivity: proxy two independent components on different levels are up
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['contextObj'].value;
+    let txt1 = ctx['this'].contextObj.value;
     return block1([txt1]);
   }
 }"
@@ -241,7 +241,7 @@ exports[`Reactivity: proxy useContext=proxy hook is proxy, for one component 1`]
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['contextObj'].value;
+    let txt1 = ctx['this'].contextObj.value;
     return block1([txt1]);
   }
 }"
@@ -261,7 +261,7 @@ exports[`Reactivity: proxy useless atoms should be deleted 1`] = `
     ctx[isBoundary] = 1
     setContextValue(ctx, "noop", ctx['this'].notify());
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(Object.keys(ctx['state']));;
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(Object.keys(ctx['this'].state));;
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`id\`] = k_block2[i1];
       const key1 = ctx['id'];
@@ -269,8 +269,8 @@ exports[`Reactivity: proxy useless atoms should be deleted 1`] = `
     }
     ctx = ctx.__proto__;
     const b2 = list(c_block2);
-    let txt1 = ctx['total'];
-    let txt2 = Object.keys(ctx['state']).length;
+    let txt1 = ctx['this'].total;
+    let txt2 = Object.keys(ctx['this'].state).length;
     return block1([txt1, txt2], [b2]);
   }
 }"
@@ -288,7 +288,7 @@ exports[`Reactivity: proxy useless atoms should be deleted 2`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "noop", ctx['this'].notify());
-    let txt1 = ctx['state'].quantity;
+    let txt1 = ctx['this'].state.quantity;
     return block1([txt1]);
   }
 }"
@@ -302,7 +302,7 @@ exports[`Reactivity: proxy very simple use, with initial value 1`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['contextObj'].value;
+    let txt1 = ctx['this'].contextObj.value;
     return block1([txt1]);
   }
 }"

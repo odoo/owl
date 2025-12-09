@@ -518,26 +518,6 @@ describe("Portal", () => {
     expect(error!.message).toMatch(regexp);
   });
 
-  test("portal's parent's env is not polluted", async () => {
-    class Child extends Component {
-      static template = xml`
-            <button>child</button>`;
-    }
-    class Parent extends Component {
-      static components = { Child };
-      static template = xml`
-            <div>
-              <t t-portal="'#outside'">
-                <Child />
-              </t>
-            </div>`;
-    }
-    const env = {};
-    addOutsideDiv(fixture);
-    const parent = await mount(Parent, fixture, { env });
-    expect(parent.env).toStrictEqual({});
-  });
-
   test("Portal composed with t-slot", async () => {
     const steps: Array<string> = [];
     let childInst: Component | null = null;

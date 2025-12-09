@@ -146,7 +146,8 @@ describe("rendering semantics", () => {
 
   test("render with deep=true followed by render with deep=false work as expected", async () => {
     class Child extends Component {
-      static template = xml`child<t t-esc="env.getValue()"/>`;
+      static template = xml`child<t t-esc="this.state.getValue()"/>`;
+      state = state;
       setup() {
         useLogLifecycle();
       }
@@ -163,13 +164,13 @@ describe("rendering semantics", () => {
       }
     }
     let value = 3;
-    const env = {
+    const state = {
       getValue() {
         return value;
       },
     };
 
-    const parent = await mount(Parent, fixture, { env });
+    const parent = await mount(Parent, fixture);
 
     expect(fixture.innerHTML).toBe("parentAchild3");
     expect(steps.splice(0)).toMatchInlineSnapshot(`

@@ -1,7 +1,7 @@
 import { OwlError } from "../common/owl_error";
-import type { App, Env } from "./app";
+import type { App } from "./app";
 import { BDom, VNode } from "./blockdom";
-import { Component, ComponentConstructor, Props } from "./component";
+import { Component, ComponentConstructor } from "./component";
 import { PluginManager } from "./plugins";
 import {
   Atom,
@@ -53,21 +53,20 @@ function applyDefaultProps<P extends object>(props: P, defaultProps: Partial<P>)
 
 type LifecycleHook = Function;
 
-export class ComponentNode<P extends Props = any, E = any> implements VNode<ComponentNode<P, E>> {
+export class ComponentNode implements VNode<ComponentNode> {
   el?: HTMLElement | Text | undefined;
   app: App;
   fiber: Fiber | null = null;
-  component: Component<P, E>;
+  component: Component;
   bdom: BDom | null = null;
   status: STATUS = STATUS.NEW;
   forceNextRender: boolean = false;
   parentKey: string | null;
   name: string; // TODO: remove
-  props: P;
+  props: Record<string, any>;
 
   renderFn: Function;
   parent: ComponentNode | null;
-  childEnv: Env;
   children: { [key: string]: ComponentNode } = Object.create(null);
   refs: any = {};
 
@@ -83,8 +82,8 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
   pluginManager: PluginManager;
 
   constructor(
-    C: ComponentConstructor<P, E>,
-    props: P,
+    C: ComponentConstructor,
+    props: Record<string, any>,
     app: App,
     parent: ComponentNode | null,
     parentKey: string | null
@@ -107,11 +106,9 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
       applyDefaultProps(props, defaultProps);
     }
     this.props = props;
-    const env = (parent && parent.childEnv) || app.env;
-    this.childEnv = env;
     const previousComputation = getCurrentComputation();
     setComputation(this.signalComputation);
-    this.component = new C(env, this);
+    this.component = new C(this);
     const ctx = Object.assign(Object.create(this.component), { this: this.component });
     this.renderFn = app.getTemplate(C.template).bind(this.component, ctx, this);
     this.component.setup();
@@ -239,7 +236,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     this.status = STATUS.DESTROYED;
   }
 
-  async updateAndRender(props: P, parentFiber: Fiber) {
+  async updateAndRender(props: Record<string, any>, parentFiber: Fiber) {
     props = Object.assign({}, props);
     // update
     const fiber = makeChildFiber(this, parentFiber);
@@ -330,7 +327,7 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     this.bdom!.moveBeforeDOMNode(node, parent);
   }
 
-  moveBeforeVNode(other: ComponentNode<P, E> | null, afterNode: Node | null) {
+  moveBeforeVNode(other: ComponentNode | null, afterNode: Node | null) {
     this.bdom!.moveBeforeVNode(other ? other.bdom : null, afterNode);
   }
 

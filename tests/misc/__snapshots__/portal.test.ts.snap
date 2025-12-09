@@ -805,40 +805,6 @@ exports[`Portal portal with target not in dom 1`] = `
 }"
 `;
 
-exports[`Portal portal's parent's env is not polluted 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const Portal = app.Portal;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
-  const comp2 = app.createComponent(null, false, true, false, false);
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  function slot1(ctx, node, key = "") {
-    return comp1({}, key + \`__1\`, node, this, null);
-  }
-  
-  return function template(ctx, node, key = "") {
-    const b3 = comp2({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
-    return block1([], [b3]);
-  }
-}"
-`;
-
-exports[`Portal portal's parent's env is not polluted 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<button>child</button>\`);
-  
-  return function template(ctx, node, key = "") {
-    return block1();
-  }
-}"
-`;
-
 exports[`Portal simple catchError with portal 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

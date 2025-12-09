@@ -57,32 +57,6 @@ exports[`destroy a subroot while another component is mounted in main app 4`] = 
 }"
 `;
 
-exports[`subroot by default, env is the same in sub root 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div>main app</div>\`);
-  
-  return function template(ctx, node, key = "") {
-    return block1();
-  }
-}"
-`;
-
-exports[`subroot by default, env is the same in sub root 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div>sub root</div>\`);
-  
-  return function template(ctx, node, key = "") {
-    return block1();
-  }
-}"
-`;
-
 exports[`subroot can create a root in a setup function, then use a hook 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -145,32 +119,6 @@ exports[`subroot can mount subroot inside own dom 1`] = `
 `;
 
 exports[`subroot can mount subroot inside own dom 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div>sub root</div>\`);
-  
-  return function template(ctx, node, key = "") {
-    return block1();
-  }
-}"
-`;
-
-exports[`subroot env can be specified for sub roots 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div>main app</div>\`);
-  
-  return function template(ctx, node, key = "") {
-    return block1();
-  }
-}"
-`;
-
-exports[`subroot env can be specified for sub roots 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

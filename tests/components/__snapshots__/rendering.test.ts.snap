@@ -205,7 +205,7 @@ exports[`rendering semantics render with deep=true followed by render with deep=
   
   return function template(ctx, node, key = "") {
     const b2 = text(\`child\`);
-    const b3 = text(ctx['env'].getValue());
+    const b3 = text(ctx['this'].state.getValue());
     return multi([b2, b3]);
   }
 }"

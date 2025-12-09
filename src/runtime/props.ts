@@ -11,6 +11,10 @@ type OptionalSchemaTypedPropsValidation<O extends boolean> = {
   optional: O;
 };
 
+type DefaultValuedSchemaTypedPropsValidation<T> = {
+  defaultValue: T;
+};
+
 type ValidableSchemaTypedPropsValidation = {
   validate(value: any): boolean;
 };
@@ -37,6 +41,7 @@ type ArraySchemaTypedPropsValidation = {
 type SchemaTypedPropsValidation<T, O extends boolean> = {
   type?: new (...args: any) => T;
   optional?: O;
+  defaultValue?: T;
   validate?(value: T): boolean;
   shape?: PropsValidation;
   values?: TypedPropsValidation;
@@ -77,6 +82,8 @@ type ConvertTypedPropsValidation<V extends TypedPropsValidation> = V extends tru
   ? I
   : V extends ValueTypedPropsValidation<infer T>
   ? T
+  : V extends DefaultValuedSchemaTypedPropsValidation<infer T>
+  ? T
   : V extends OptionalSchemaTypedPropsValidation<boolean>
   ? any
   : V extends ValidableSchemaTypedPropsValidation
@@ -112,58 +119,84 @@ export type GetProps<T extends Component> = {
   ? { [K in keyof I]: I[K] }
   : never;
 
+function validateProps(
+  componentName: string,
+  props: Record<string, any>,
+  validation: PropsValidation,
+  keys: string[]
+) {
+  const propsToValidate = Object.create(null);
+  const errors: string[] = [];
+  for (const key of keys) {
+    if (key in props) {
+      propsToValidate[key] = props[key];
+    }
+    if (
+      propsToValidate[key] === undefined &&
+      !Array.isArray(validation) &&
+      (validation as any)[key].defaultValue !== undefined
+    ) {
+      if (!(validation as any)[key].optional) {
+        errors.push(`A default value cannot be defined for the mandatory prop '${key}'`);
+        continue;
+      }
+      propsToValidate[key] = (validation as any)[key].defaultValue;
+    }
+  }
+  errors.push(...validateSchema(propsToValidate, validation as any));
+  if (errors.length) {
+    throw new OwlError(`Invalid props for component '${componentName}': ` + errors.join(", "));
+    // node.app.handleError({
+    //   error: new OwlError(`Invalid props for component '${componentName}': ` + errors.join(", ")),
+    //   node,
+    // });
+  }
+}
+
 export function props<T = unknown, V extends PropsValidation = PropsValidation>(
   validation?: V
 ): Props<T, V> {
   const node = getCurrent();
+  const isSchemaValidated = validation && !Array.isArray(validation);
+
+  function getProp(key: string) {
+    if (isSchemaValidated && node.props[key] === undefined) {
+      return (validation as any)[key].defaultValue;
+    }
+    return node.props[key];
+  }
 
   const result = Object.create(null);
-  const definePropGetters = (keys: string[]) => {
-    for (let key in result) {
-      Reflect.deleteProperty(result, key);
-    }
+  function applyPropGetters(keys: string[]) {
     for (const key of keys) {
       Reflect.defineProperty(result, key, {
         enumerable: true,
-        get() {
-          return node.props[key];
-        },
+        get: getProp.bind(null, key),
       });
     }
-  };
+  }
 
   if (validation) {
-    const keys = Array.isArray(validation) ? validation : Object.keys(validation);
-    definePropGetters(keys.map((key) => key.replace(/(.+)\?/, "$1")));
+    const keys: string[] = (isSchemaValidated ? Object.keys(validation) : validation).map((key) =>
+      key.endsWith("?") ? key.slice(0, -1) : key
+    );
+    applyPropGetters(keys);
 
     if (node.app.dev) {
-      const validate = (props: Record<string, any>) => {
-        const propsToValidate = Object.create(null);
-        for (const key of keys) {
-          if (key in props) {
-            propsToValidate[key] = props[key];
-          }
-        }
-        const errors = validateSchema(propsToValidate, validation as any);
-        if (errors.length) {
-          throw new OwlError(`Invalid props for component '${node.name}': ` + errors.join(", "));
-          // node.app.handleError({
-          //   error: new OwlError(`Invalid props for component '${node.name}': ` + errors.join(", ")),
-          //   node,
-          // });
-        }
-      };
-      validate(node.props);
+      validateProps(node.name, node.props, validation, keys);
       node.willUpdateProps.push((np: Record<string, any>) => {
-        validate(np);
+        validateProps(node.name, np, validation, keys);
       });
     }
   } else {
-    definePropGetters(Object.keys(node.props));
+    applyPropGetters(Object.keys(node.props));
     node.willUpdateProps.push((np: Record<string, any>) => {
-      definePropGetters(Object.keys(np));
+      for (let key in result) {
+        Reflect.deleteProperty(result, key);
+      }
+      applyPropGetters(Object.keys(np));
     });
   }
 
-  return result as any;
+  return result;
 }

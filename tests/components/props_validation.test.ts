@@ -837,8 +837,13 @@ describe("props validation", () => {
     // need to do something about errors catched in render
     class SubComp extends Component {
       static template = xml`<div><t t-esc="this.props.p"/></div>`;
-      static defaultProps = { p: 4 };
-      props = props({ p: { type: Number, optional: true } });
+      props = props({
+        p: {
+          type: Number,
+          optional: true,
+          defaultValue: 4,
+        },
+      });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.state.p"/></div>`;
@@ -996,9 +1001,13 @@ describe("props validation", () => {
 describe("default props", () => {
   test("can set default values", async () => {
     class SubComp extends Component {
-      static defaultProps = { p: 4 };
       static template = xml`<div><t t-esc="this.props.p"/></div>`;
-      props = props();
+      props = props({
+        p: {
+          optional: true,
+          defaultValue: 4,
+        },
+      });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp /></div>`;
@@ -1011,8 +1020,12 @@ describe("default props", () => {
   test("default values are also set whenever component is updated", async () => {
     class SubComp extends Component {
       static template = xml`<div><t t-esc="this.props.p"/></div>`;
-      static defaultProps = { p: 4 };
-      props = props();
+      props = props({
+        p: {
+          optional: true,
+          defaultValue: 4,
+        },
+      });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="state.p"/></div>`;
@@ -1030,8 +1043,16 @@ describe("default props", () => {
   test("can set default boolean values", async () => {
     class SubComp extends Component {
       static template = xml`<span><t t-if="this.props.p">hey</t><t t-if="!this.props.q">hey</t></span>`;
-      static defaultProps = { p: true, q: false };
-      props = props(["p?", "q?"]);
+      props = props({
+        p: {
+          optional: true,
+          defaultValue: true,
+        },
+        q: {
+          optional: true,
+          defaultValue: false,
+        },
+      });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp/></div>`;
@@ -1041,13 +1062,14 @@ describe("default props", () => {
     expect(fixture.innerHTML).toBe("<div><span>heyhey</span></div>");
   });
 
-  test.skip("a default prop cannot be defined on a mandatory prop", async () => {
-    // TODO: move `static defaultProps` in `props()` and unskip this test
+  test("a default prop cannot be defined on a mandatory prop", async () => {
     class Child extends Component {
       static template = xml` <div><t t-esc="this.props.mandatory"/></div>`;
-      static defaultProps = { mandatory: 3 };
       props = props({
-        mandatory: Number,
+        mandatory: {
+          type: Number,
+          defaultValue: 3,
+        },
       });
     }
     class Parent extends Component {
@@ -1061,12 +1083,12 @@ describe("default props", () => {
       .mount(fixture)
       .catch((e: Error) => (error = e));
     await expect(nextAppError(app)).resolves.toThrow(
-      "default value cannot be defined for a mandatory prop"
+      "default value cannot be defined for the mandatory prop"
     );
     await mountProm;
     expect(error!).toBeDefined();
     expect(error!.message).toBe(
-      "A default value cannot be defined for a mandatory prop (name: 'mandatory', component: Child)"
+      "Invalid props for component 'Child': A default value cannot be defined for the mandatory prop 'mandatory', 'mandatory' is missing (should be a number)"
     );
   });
 });

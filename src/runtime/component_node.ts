@@ -36,17 +36,6 @@ export function useComponent(): Component {
   return currentNode!.component;
 }
 
-/**
- * Apply default props (only top level).
- */
-function applyDefaultProps<P extends object>(props: P, defaultProps: Partial<P>) {
-  for (let propName in defaultProps) {
-    if (props[propName] === undefined) {
-      (props as any)[propName] = defaultProps[propName];
-    }
-  }
-}
-
 // -----------------------------------------------------------------------------
 //  Component VNode class
 // -----------------------------------------------------------------------------
@@ -100,12 +89,7 @@ export class ComponentNode implements VNode<ComponentNode> {
       sources: new Set<Atom>(),
       state: ComputationState.EXECUTED,
     };
-    const defaultProps = C.defaultProps;
-    props = Object.assign({}, props);
-    if (defaultProps) {
-      applyDefaultProps(props, defaultProps);
-    }
-    this.props = props;
+    this.props = Object.assign({}, props);
     const previousComputation = getCurrentComputation();
     setComputation(this.signalComputation);
     this.component = new C(this);
@@ -242,10 +226,6 @@ export class ComponentNode implements VNode<ComponentNode> {
     const fiber = makeChildFiber(this, parentFiber);
     this.fiber = fiber;
     const component = this.component;
-    const defaultProps = (component.constructor as any).defaultProps;
-    if (defaultProps) {
-      applyDefaultProps(props, defaultProps);
-    }
 
     let prom: Promise<any[]>;
     untrack(() => {

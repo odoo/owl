@@ -56,7 +56,7 @@ exports[`lifecycle hooks component semantics 3`] = `
   return function template(ctx, node, key = "") {
     let b2, b3, b4;
     b2 = comp1({}, key + \`__1\`, node, this, null);
-    if (ctx['state'].flag) {
+    if (ctx['this'].state.flag) {
       b3 = comp2({}, key + \`__2\`, node, this, null);
     } else {
       b4 = comp3({}, key + \`__3\`, node, this, null);
@@ -115,8 +115,8 @@ exports[`lifecycle hooks components are unmounted and destroyed if no longer in 
   
   return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].flag) {
-      const b3 = comp1({n: ctx['state'].n}, key + \`__1\`, node, this, null);
+    if (ctx['this'].state.flag) {
+      const b3 = comp1({n: ctx['this'].state.n}, key + \`__1\`, node, this, null);
       b2 = block2([], [b3]);
     }
     return multi([b2]);
@@ -146,7 +146,7 @@ exports[`lifecycle hooks components are unmounted destroyed if no longer in DOM 
   
   return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].ok) {
+    if (ctx['this'].state.ok) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return multi([b2]);
@@ -179,7 +179,7 @@ exports[`lifecycle hooks destroy new children before being mountged 1`] = `
     ctx[isBoundary] = 1
     let b2, b3, b4;
     b2 = text(\`before\`);
-    if (ctx['state'].flag) {
+    if (ctx['this'].state.flag) {
       b3 = comp1({}, key + \`__1\`, node, this, null);
     }
     b4 = text(\`after\`);
@@ -235,7 +235,7 @@ exports[`lifecycle hooks lifecycle callbacks are bound to component 1`] = `
   const comp1 = app.createComponent(\`Test\`, true, false, false, ["rev"]);
   
   return function template(ctx, node, key = "") {
-    return comp1({rev: ctx['rev']}, key + \`__1\`, node, this, null);
+    return comp1({rev: ctx['this'].rev}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -260,7 +260,7 @@ exports[`lifecycle hooks lifecycle semantics 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    const b2 = comp1({a: ctx['state'].a}, key + \`__1\`, node, this, null);
+    const b2 = comp1({a: ctx['this'].state.a}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -287,7 +287,7 @@ exports[`lifecycle hooks lifecycle semantics, part 2 1`] = `
   
   return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].hasChild) {
+    if (ctx['this'].state.hasChild) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return multi([b2]);
@@ -328,7 +328,7 @@ exports[`lifecycle hooks lifecycle semantics, part 3 1`] = `
   
   return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].hasChild) {
+    if (ctx['this'].state.hasChild) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return multi([b2]);
@@ -344,7 +344,7 @@ exports[`lifecycle hooks lifecycle semantics, part 4 1`] = `
   
   return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].hasChild) {
+    if (ctx['this'].state.hasChild) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return multi([b2]);
@@ -385,7 +385,7 @@ exports[`lifecycle hooks lifecycle semantics, part 5 1`] = `
   
   return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].hasChild) {
+    if (ctx['this'].state.hasChild) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return multi([b2]);
@@ -413,7 +413,7 @@ exports[`lifecycle hooks lifecycle semantics, part 6 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, ["value"]);
   
   return function template(ctx, node, key = "") {
-    return comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null);
+    return comp1({value: ctx['this'].state.value}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -452,7 +452,7 @@ exports[`lifecycle hooks mounted hook is called on every mount, not just the fir
   
   return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].hasChild) {
+    if (ctx['this'].state.hasChild) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return multi([b2]);
@@ -511,7 +511,7 @@ exports[`lifecycle hooks mounted hook is called on subsubcomponents, in proper o
   
   return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].flag) {
+    if (ctx['this'].state.flag) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return block1([], [b2]);
@@ -556,7 +556,7 @@ exports[`lifecycle hooks patched hook is called after updateProps 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    const b2 = comp1({a: ctx['state'].a}, key + \`__1\`, node, this, null);
+    const b2 = comp1({a: ctx['this'].state.a}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -583,7 +583,7 @@ exports[`lifecycle hooks patched hook is called after updating State 1`] = `
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['state'].a;
+    let txt1 = ctx['this'].state.a;
     return block1([txt1]);
   }
 }"
@@ -597,7 +597,7 @@ exports[`lifecycle hooks render in mounted 1`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['patched'];
+    let txt1 = ctx['this'].patched;
     return block1([txt1]);
   }
 }"
@@ -611,7 +611,7 @@ exports[`lifecycle hooks render in patched 1`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['patched'];
+    let txt1 = ctx['this'].patched;
     return block1([txt1]);
   }
 }"
@@ -625,7 +625,7 @@ exports[`lifecycle hooks render in willPatch 1`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['patched'];
+    let txt1 = ctx['this'].patched;
     return block1([txt1]);
   }
 }"
@@ -639,7 +639,7 @@ exports[`lifecycle hooks sub widget (inside sub node): hooks are correctly calle
   
   return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].flag) {
+    if (ctx['this'].state.flag) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return multi([b2]);
@@ -719,7 +719,7 @@ exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents,
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    const b2 = comp1({n: ctx['state'].n}, key + \`__1\`, node, this, null);
+    const b2 = comp1({n: ctx['this'].state.n}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -816,7 +816,7 @@ exports[`lifecycle hooks willStart, mounted on subwidget rendered after main is 
   
   return function template(ctx, node, key = "") {
     let b2, b3;
-    if (ctx['state'].ok) {
+    if (ctx['this'].state.ok) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     } else {
       b3 = block3();
@@ -846,7 +846,7 @@ exports[`lifecycle hooks willUpdateProps hook is called 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, ["n"]);
   
   return function template(ctx, node, key = "") {
-    return comp1({n: ctx['state'].n}, key + \`__1\`, node, this, null);
+    return comp1({n: ctx['this'].state.n}, key + \`__1\`, node, this, null);
   }
 }"
 `;

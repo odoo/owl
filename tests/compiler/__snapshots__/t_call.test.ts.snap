@@ -805,7 +805,7 @@ exports[`t-call (template calling) t-call on a div with t-call-context 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let ctx1 = ctx['obj'];
+    let ctx1 = {this: ctx['obj'], __owl__: this.__owl__};
     const b2 = callTemplate_1.call(this, ctx1, node, key + \`__1\`);
     return block1([], [b2]);
   }
@@ -820,7 +820,7 @@ exports[`t-call (template calling) t-call on a div with t-call-context 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['value'];
+    let txt1 = ctx['this'].value;
     return block1([txt1]);
   }
 }"
@@ -1106,7 +1106,7 @@ exports[`t-call (template calling) t-call-context 1`] = `
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
   return function template(ctx, node, key = "") {
-    let ctx1 = ctx['obj'];
+    let ctx1 = {this: ctx['obj'], __owl__: this.__owl__};
     return callTemplate_1.call(this, ctx1, node, key + \`__1\`);
   }
 }"
@@ -1120,7 +1120,7 @@ exports[`t-call (template calling) t-call-context 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['value'];
+    let txt1 = ctx['this'].value;
     return block1([txt1]);
   }
 }"
@@ -1136,7 +1136,7 @@ exports[`t-call (template calling) t-call-context and value in body 1`] = `
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    let ctx1 = ctx['obj'];
+    let ctx1 = {this: ctx['obj'], __owl__: this.__owl__};
     ctx1 = Object.create(ctx1);
     ctx1[isBoundary] = 1;
     setContextValue(ctx1, "value2", ctx['aaron']);
@@ -1153,7 +1153,7 @@ exports[`t-call (template calling) t-call-context and value in body 2`] = `
   let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['value1'];
+    let txt1 = ctx['this'].value1;
     let txt2 = ctx['value2'];
     return block1([txt1, txt2]);
   }

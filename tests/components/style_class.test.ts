@@ -159,7 +159,7 @@ describe("style and class handling", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<Child class="'someclass'" child="state.child" />`;
+      static template = xml`<Child class="'someclass'" child="this.state.child" />`;
       static components = { Child };
 
       state = proxy({ child: "a" });
@@ -220,7 +220,7 @@ describe("style and class handling", () => {
   test("t-att-class is properly added/removed on widget root el (v2)", async () => {
     let child: Child;
     class Child extends Component {
-      static template = xml`<span class="c" t-att-class="{ d: state.d, ...this.props.class }"/>`;
+      static template = xml`<span class="c" t-att-class="{ d: this.state.d, ...this.props.class }"/>`;
       props = props();
       state = proxy({ d: true });
       setup() {
@@ -231,7 +231,7 @@ describe("style and class handling", () => {
     class Parent extends Component {
       static template = xml`
         <div>
-          <Child class="{ b: state.b }" />
+          <Child class="{ b: this.state.b }" />
         </div>`;
       static components = { Child };
       state = proxy({ b: true });
@@ -262,7 +262,7 @@ describe("style and class handling", () => {
   test("t-att-class is properly added/removed on widget root el (v3)", async () => {
     let child: Child;
     class Child extends Component {
-      static template = xml`<span class="c" t-att-class="{ d: state.d, ...this.props.class }"/>`;
+      static template = xml`<span class="c" t-att-class="{ d: this.state.d, ...this.props.class }"/>`;
       props = props();
       state = proxy({ d: true });
       setup() {
@@ -270,7 +270,7 @@ describe("style and class handling", () => {
       }
     }
     class Parent extends Component {
-      static template = xml`<Child class="{ a: true, b: state.b }"/>`;
+      static template = xml`<Child class="{ a: true, b: this.state.b }"/>`;
       static components = { Child };
       state = proxy({ b: true });
     }
@@ -298,7 +298,7 @@ describe("style and class handling", () => {
 
   test("class on components do not interfere with user defined classes", async () => {
     class App extends Component {
-      static template = xml`<div t-att-class="{ c: state.c }" />`;
+      static template = xml`<div t-att-class="{ c: this.state.c }" />`;
       state = proxy({ c: true });
       setup() {
         onMounted(() => {
@@ -340,7 +340,7 @@ describe("style and class handling", () => {
     }
 
     class ParentWidget extends Component {
-      static template = xml`<Child style="state.style"/>`;
+      static template = xml`<Child style="this.state.style"/>`;
       static components = { Child: SomeComponent };
       state = proxy({ style: { "font-size": "20px" } });
     }

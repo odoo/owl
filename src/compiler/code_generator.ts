@@ -1021,7 +1021,7 @@ export class CodeGenerator {
     let ctxVar = ctx.ctxVar || "ctx";
     if (ast.context) {
       ctxVar = generateId("ctx");
-      this.addLine(`let ${ctxVar} = ${compileExpr(ast.context)};`);
+      this.addLine(`let ${ctxVar} = {this: ${compileExpr(ast.context)}, __owl__: this.__owl__};`);
     }
     const isDynamic = INTERP_REGEXP.test(ast.name);
     const subTemplate = isDynamic ? interpolate(ast.name) : "`" + ast.name + "`";

@@ -42,7 +42,7 @@ exports[`hooks can use onWillStart, onWillUpdateProps 1`] = `
   const comp1 = app.createComponent(\`MyComponent\`, true, false, false, ["value"]);
   
   return function template(ctx, node, key = "") {
-    return comp1({value: ctx['state'].value}, key + \`__1\`, node, this, null);
+    return comp1({value: ctx['this'].state.value}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -82,7 +82,7 @@ exports[`hooks mounted callbacks should be called in reverse order from willUnmo
   let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['state'].value;
+    let txt1 = ctx['this'].state.value;
     return block1([txt1]);
   }
 }"
@@ -96,7 +96,7 @@ exports[`hooks two different call to willPatch/patched should work 1`] = `
   let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['state'].value;
+    let txt1 = ctx['this'].state.value;
     return block1([txt1]);
   }
 }"
@@ -125,7 +125,7 @@ exports[`hooks useEffect hook effect can depend on stuff in dom 1`] = `
   
   return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].value) {
+    if (ctx['this'].state.value) {
       let ref1 = createRef(ctx['this'].ref);
       b2 = block2([ref1]);
     }
@@ -155,7 +155,7 @@ exports[`hooks useEffect hook effect with empty dependency list never reruns 1`]
   let block1 = createBlock(\`<div><block-text-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['state'].value;
+    let txt1 = ctx['this'].state.value;
     return block1([txt1]);
   }
 }"
@@ -182,7 +182,7 @@ exports[`hooks useListener 1`] = `
   
   return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].flag) {
+    if (ctx['this'].state.flag) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return multi([b2]);

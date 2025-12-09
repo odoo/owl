@@ -545,7 +545,7 @@ describe("props validation", () => {
     try {
       await mount(TestComponent, fixture, {
         dev: true,
-        props: { myprop: [{ a: 1 }] },
+        props: { myprop: [{ a: 1 }] } as any,
       });
     } catch (e) {
       error = e as Error;
@@ -612,7 +612,7 @@ describe("props validation", () => {
     try {
       await mount(TestComponent, fixture, {
         dev: true,
-        props: { n: "str" },
+        props: { n: "str" } as any,
       });
     } catch (e) {
       error = e as Error;
@@ -697,7 +697,7 @@ describe("props validation", () => {
     await expect(
       mount(SubComp, fixture, {
         dev: true,
-        props: { myprop: 1 },
+        props: { myprop: 1 } as any,
       })
     ).rejects.toThrow("Invalid props for component 'SubComp': 'myprop' is not a array");
   });
@@ -746,7 +746,7 @@ describe("props validation", () => {
     await expect(
       mount(SubComp, fixture, {
         dev: true,
-        props: { message: 1, flag: true },
+        props: { message: 1, flag: true } as any,
       })
     ).rejects.toThrow(expect.anything());
   });
@@ -781,7 +781,7 @@ describe("props validation", () => {
     await expect(
       mount(SubComp, fixture, {
         dev: true,
-        props: { message: null },
+        props: { message: null } as any,
       })
     ).rejects.toThrow(expect.anything());
   });

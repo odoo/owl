@@ -26,13 +26,13 @@ describe("reactivity in lifecycle", () => {
       obj2 = obj2;
 
       static template = xml`<div>
-        <t t-esc="obj2.value"/>
+        <t t-esc="this.obj2.value"/>
       </div>`;
     }
     class TestComponent extends Component {
       obj1 = obj1;
       static template = xml`<div>
-        <t t-esc="obj1.value"/>
+        <t t-esc="this.obj1.value"/>
         <TestSubComponent/>
       </div>`;
       static components = { TestSubComponent };
@@ -47,7 +47,7 @@ describe("reactivity in lifecycle", () => {
   });
   test("can use a state hook", async () => {
     class Counter extends Component {
-      static template = xml`<div><t t-esc="counter.value"/></div>`;
+      static template = xml`<div><t t-esc="this.counter.value"/></div>`;
       counter = proxy({ value: 42 });
     }
     const counter = await mount(Counter, fixture);
@@ -60,7 +60,7 @@ describe("reactivity in lifecycle", () => {
   test("can use a state hook 2", async () => {
     let n = 0;
     class Comp extends Component {
-      static template = xml`<t t-set="noop" t-value="this.notify()"/><div><t t-esc="state.a"/></div>`;
+      static template = xml`<t t-set="noop" t-value="this.notify()"/><div><t t-esc="this.state.a"/></div>`;
       state = proxy({ a: 5, b: 7 });
       notify() {
         n++;
@@ -81,7 +81,7 @@ describe("reactivity in lifecycle", () => {
 
   test("can use a state hook on Map", async () => {
     class Counter extends Component {
-      static template = xml`<div><t t-esc="counter.get('value')"/></div>`;
+      static template = xml`<div><t t-esc="this.counter.get('value')"/></div>`;
       counter = proxy(new Map([["value", 42]]));
     }
     const counter = await mount(Counter, fixture);
@@ -96,7 +96,7 @@ describe("reactivity in lifecycle", () => {
     class Child extends Component {
       static template = xml`
           <t t-set="noop" t-value="this.notify()"/>
-          <span><t t-esc="this.props.val"/><t t-esc="state.n"/></span>
+          <span><t t-esc="this.props.val"/><t t-esc="this.state.n"/></span>
         `;
       props = props();
       state = proxy({ n: 2 });
@@ -120,7 +120,7 @@ describe("reactivity in lifecycle", () => {
     class Parent extends Component {
       static template = xml`
           <div>
-            <Child t-if="state.flag" val="state.val"/>
+            <Child t-if="this.state.flag" val="this.state.val"/>
           </div>
         `;
       static components = { Child };
@@ -169,7 +169,7 @@ describe("reactivity in lifecycle", () => {
     class Comp extends Component {
       static template = xml`
           <t t-set="noop" t-value="this.notify()"/>
-          <div><t t-esc="state.val"/></div>
+          <div><t t-esc="this.state.val"/></div>
         `;
       state = proxy({ val: 1 });
       setup() {
@@ -195,7 +195,7 @@ describe("reactivity in lifecycle", () => {
       }
     }
     class Parent extends Component {
-      static template = xml`<Child t-if="state.renderChild" state="state"/>`;
+      static template = xml`<Child t-if="this.state.renderChild" state="this.state"/>`;
       static components = { Child };
       state: any = proxy({ renderChild: true, content: { a: 2 } });
       setup() {
@@ -243,7 +243,7 @@ describe("reactivity in lifecycle", () => {
       }
     }
     class Parent extends Component {
-      static template = xml`<t t-set="noop" t-value="this.notify()"/><Child obj="obj" proxyObj="proxyObj"/>`;
+      static template = xml`<t t-set="noop" t-value="this.notify()"/><Child obj="this.obj" proxyObj="this.proxyObj"/>`;
       static components = { Child };
       obj = { a: 1 };
       proxyObj = proxy({ b: 2 });

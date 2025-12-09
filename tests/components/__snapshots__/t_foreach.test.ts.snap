@@ -12,7 +12,7 @@ exports[`list of components components in a node in a t-foreach  1`] = `
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['items']);;
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].items);;
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`item\`] = k_block2[i1];
       const key1 = 'li_'+ctx['item'];
@@ -121,7 +121,7 @@ exports[`list of components list of sub components inside other nodes 1`] = `
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].blips);;
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].state.blips);;
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`blip\`] = k_block2[i1];
       const key1 = ctx['blip'].id;
@@ -158,7 +158,7 @@ exports[`list of components order is correct when slots are not of same type 1`]
   
   function slot1(ctx, node, key = "") {
     let b2;
-    if (!ctx['state'].active) {
+    if (!ctx['this'].state.active) {
       b2 = block2();
     }
     return multi([b2]);
@@ -173,7 +173,7 @@ exports[`list of components order is correct when slots are not of same type 1`]
   }
   
   return function template(ctx, node, key = "") {
-    return comp1({slots: markRaw({'a': {__render: slot1.bind(this), __ctx: ctx, active: !ctx['state'].active}, 'b': {__render: slot2.bind(this), __ctx: ctx, active: true}, 'c': {__render: slot3.bind(this), __ctx: ctx, active: ctx['state'].active}})}, key + \`__1\`, node, this, null);
+    return comp1({slots: markRaw({'a': {__render: slot1.bind(this), __ctx: ctx, active: !ctx['this'].state.active}, 'b': {__render: slot2.bind(this), __ctx: ctx, active: true}, 'c': {__render: slot3.bind(this), __ctx: ctx, active: ctx['this'].state.active}})}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -186,7 +186,7 @@ exports[`list of components order is correct when slots are not of same type 2`]
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['slotNames']);;
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].slotNames);;
     for (let i1 = 0; i1 < l_block1; i1++) {
       ctx[\`slotName\`] = k_block1[i1];
       ctx[\`slotName_first\`] = i1 === 0;
@@ -194,7 +194,7 @@ exports[`list of components order is correct when slots are not of same type 2`]
       ctx[\`slotName_index\`] = i1;
       ctx[\`slotName_value\`] = v_block1[i1];
       const key1 = ctx['slotName'];
-      const slot1 = (ctx['slotName']);
+      const slot1 = (ctx['this'].slotName);
       c_block1[i1] = withKey(toggler(slot1, callSlot(ctx, node, key1 + \`__1__\${key1}\`, slot1, true, {})), key1);
     }
     return list(c_block1);
@@ -213,7 +213,7 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach 
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].s);;
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].state.s);;
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`section\`] = k_block2[i1];
       ctx[\`section_index\`] = i1;
@@ -262,12 +262,12 @@ exports[`list of components reconciliation alg works for t-foreach in t-foreach,
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].rows);;
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].state.rows);;
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`row\`] = k_block2[i1];
       const key1 = ctx['row'];
       ctx = Object.create(ctx);
-      const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['state'].cols);;
+      const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['this'].state.cols);;
       for (let i2 = 0; i2 < l_block4; i2++) {
         ctx[\`col\`] = k_block4[i2];
         const key2 = ctx['col'];
@@ -307,7 +307,7 @@ exports[`list of components simple list 1`] = `
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['state'].elems);;
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].state.elems);;
     for (let i1 = 0; i1 < l_block1; i1++) {
       ctx[\`elem\`] = k_block1[i1];
       const key1 = ctx['elem'].id;
@@ -343,7 +343,7 @@ exports[`list of components sub components rendered in a loop 1`] = `
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].numbers);;
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].state.numbers);;
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`number\`] = k_block2[i1];
       const key1 = ctx['number'];
@@ -380,7 +380,7 @@ exports[`list of components sub components with some state rendered in a loop 1`
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['state'].numbers);;
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].state.numbers);;
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`number\`] = k_block2[i1];
       const key1 = ctx['number'];
@@ -475,7 +475,7 @@ exports[`list of components t-foreach with t-component, and update 2`] = `
   let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['state'].val;
+    let txt1 = ctx['this'].state.val;
     let txt2 = ctx['this'].props.val;
     return block1([txt1, txt2]);
   }

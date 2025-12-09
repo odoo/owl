@@ -8,7 +8,7 @@ exports[`event handling Invalid handler throws an error 1`] = `
   let block1 = createBlock(\`<button block-handler-0="click">click</button>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['dosomething'], ctx];
+    let hdlr1 = [ctx['this'].dosomething, ctx];
     return block1([hdlr1]);
   }
 }"
@@ -22,7 +22,7 @@ exports[`event handling handler is not called if component is destroyed 1`] = `
   let block1 = createBlock(\`<span block-handler-0="click"/>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['click'], ctx];
+    let hdlr1 = [ctx['this'].click, ctx];
     return block1([hdlr1]);
   }
 }"
@@ -37,9 +37,9 @@ exports[`event handling handler receive the event as argument 1`] = `
   let block1 = createBlock(\`<span block-handler-0="click"><block-child-0/><block-text-1/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['inc'], ctx];
+    let hdlr1 = [ctx['this'].inc, ctx];
     const b2 = comp1({}, key + \`__1\`, node, this, null);
-    let txt1 = ctx['state'].value;
+    let txt1 = ctx['this'].state.value;
     return block1([hdlr1, txt1], [b2]);
   }
 }"
@@ -66,7 +66,7 @@ exports[`event handling handler works when app is mounted in an iframe 1`] = `
   let block1 = createBlock(\`<span block-handler-0="click">click me</span>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['inc'], ctx];
+    let hdlr1 = [ctx['this'].inc, ctx];
     return block1([hdlr1]);
   }
 }"
@@ -82,7 +82,7 @@ exports[`event handling input blur event is not called if component is destroyed
   
   return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].cond) {
+    if (ctx['this'].state.cond) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return block1([], [b2]);
@@ -98,7 +98,7 @@ exports[`event handling input blur event is not called if component is destroyed
   let block1 = createBlock(\`<input block-handler-0="blur"/>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['blur'], ctx];
+    let hdlr1 = [ctx['this'].blur, ctx];
     return block1([hdlr1]);
   }
 }"
@@ -115,13 +115,13 @@ exports[`event handling objects from scope are properly captured by t-on 1`] = `
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['items']);;
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].items);;
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`item\`] = k_block2[i1];
       const key1 = ctx['item'];
-      const v1 = ctx['onClick'];
+      const v1 = ctx['this'];
       const v2 = ctx['item'];
-      let hdlr1 = [_ev=>v1(v2.val,_ev), ctx];
+      let hdlr1 = [_ev=>v1.onClick(v2.val,_ev), ctx];
       c_block2[i1] = withKey(block3([hdlr1]), key1);
     }
     const b2 = list(c_block2);
@@ -138,8 +138,8 @@ exports[`event handling support for callable expression in event handler 1`] = `
   let block1 = createBlock(\`<div><block-text-0/><input type="text" block-handler-1="input"/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['state'].value;
-    let hdlr1 = [ctx['obj'].onInput, ctx];
+    let txt1 = ctx['this'].state.value;
+    let hdlr1 = [ctx['this'].obj.onInput, ctx];
     return block1([txt1, hdlr1]);
   }
 }"
@@ -156,13 +156,13 @@ exports[`event handling t-on with handler bound to dynamic argument on a t-forea
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['items']);;
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].items);;
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`item\`] = k_block2[i1];
       const key1 = ctx['item'];
-      const v1 = ctx['onClick'];
+      const v1 = ctx['this'];
       const v2 = ctx['item'];
-      let hdlr1 = [_ev=>v1(v2,_ev), ctx];
+      let hdlr1 = [_ev=>v1.onClick(v2,_ev), ctx];
       c_block2[i1] = withKey(block3([hdlr1]), key1);
     }
     const b2 = list(c_block2);

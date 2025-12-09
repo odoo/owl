@@ -99,7 +99,7 @@ describe("props validation", () => {
 
   test("validate props for root component", async () => {
     class Root extends Component {
-      static template = xml`<div t-esc="message"/>`;
+      static template = xml`<div t-esc="this.props.message"/>`;
       props = props(["message"]);
     }
 
@@ -124,7 +124,7 @@ describe("props validation", () => {
     ];
     let state: { p?: any };
     class Parent extends Component {
-      static template = xml`<div><SubComp p="p"/></div>`;
+      static template = xml`<div><SubComp p="this.p"/></div>`;
       get p() {
         return state.p;
       }
@@ -187,7 +187,7 @@ describe("props validation", () => {
     ];
     let state: { p?: any };
     class Parent extends Component {
-      static template = xml`<div><SubComp p="p"/></div>`;
+      static template = xml`<div><SubComp p="this.p"/></div>`;
       get p() {
         return state.p;
       }
@@ -244,7 +244,7 @@ describe("props validation", () => {
       props = props({ p: [String, Boolean] });
     }
     class Parent extends Component {
-      static template = xml`<div><SubComp p="p"/></div>`;
+      static template = xml`<div><SubComp p="this.p"/></div>`;
       static components = { SubComp };
       get p() {
         return state.p;
@@ -288,7 +288,7 @@ describe("props validation", () => {
       props = props({ p: { type: String, optional: true } });
     }
     class Parent extends Component {
-      static template = xml`<div><SubComp p="p"/></div>`;
+      static template = xml`<div><SubComp p="this.p"/></div>`;
       static components = { SubComp };
       get p() {
         return state.p;
@@ -330,7 +330,7 @@ describe("props validation", () => {
       props = props({ p: { type: Array, element: String } });
     }
     class Parent extends Component {
-      static template = xml`<div><SubComp p="p"/></div>`;
+      static template = xml`<div><SubComp p="this.p"/></div>`;
       static components = { SubComp };
       get p() {
         return state.p;
@@ -376,7 +376,7 @@ describe("props validation", () => {
       props = props({ p: { type: Array, element: [String, Boolean] } });
     }
     class Parent extends Component {
-      static template = xml`<div><SubComp p="p"/></div>`;
+      static template = xml`<div><SubComp p="this.p"/></div>`;
       static components = { SubComp };
       get p() {
         return state.p;
@@ -429,7 +429,7 @@ describe("props validation", () => {
       });
     }
     class Parent extends Component {
-      static template = xml`<div><SubComp p="p"/></div>`;
+      static template = xml`<div><SubComp p="this.p"/></div>`;
       static components = { SubComp };
       get p() {
         return state.p;
@@ -488,7 +488,7 @@ describe("props validation", () => {
       });
     }
     class Parent extends Component {
-      static template = xml`<div><SubComp p="p"/></div>`;
+      static template = xml`<div><SubComp p="this.p"/></div>`;
       static components = { SubComp };
       get p() {
         return state.p;
@@ -949,7 +949,7 @@ describe("props validation", () => {
 
     class Parent extends Component {
       static components = { Child };
-      static template = xml`<Child customObj="customObj" />`;
+      static template = xml`<Child customObj="this.customObj" />`;
       customObj = new CustomClass();
     }
 
@@ -966,7 +966,7 @@ describe("props validation", () => {
 
     class Parent extends Component {
       static components = { Child };
-      static template = xml`<Child customObj="customObj" />`;
+      static template = xml`<Child customObj="this.customObj" />`;
       customObj = {};
     }
 
@@ -1016,7 +1016,7 @@ describe("default props", () => {
       });
     }
     class Parent extends Component {
-      static template = xml`<div><SubComp p="state.p"/></div>`;
+      static template = xml`<div><SubComp p="this.state.p"/></div>`;
       static components = { SubComp };
       state: any = { p: 1 };
     }

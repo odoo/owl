@@ -27,7 +27,7 @@ describe("list of components", () => {
 
     class Parent extends Component {
       static template = xml`
-            <t t-foreach="state.elems" t-as="elem" t-key="elem.id">
+            <t t-foreach="this.state.elems" t-as="elem" t-key="elem.id">
                 <Child value="elem.value"/>
             </t>`;
       static components = { Child };
@@ -65,7 +65,7 @@ describe("list of components", () => {
       static template = xml`
               <div>
                   <ul>
-                      <t t-foreach="items" t-as="item" t-key="'li_'+item">
+                      <t t-foreach="this.items" t-as="item" t-key="'li_'+item">
                           <li>
                               <Child item="item"/>
                           </li>
@@ -111,7 +111,7 @@ describe("list of components", () => {
     class Parent extends Component {
       static template = xml`
         <div>
-            <t t-foreach="state.s" t-as="section" t-key="section_index">
+            <t t-foreach="this.state.s" t-as="section" t-key="section_index">
                 <t t-foreach="section.blips" t-as="blip" t-key="blip_index">
                   <Child blip="blip"/>
                 </t>
@@ -134,8 +134,8 @@ describe("list of components", () => {
     class Parent extends Component {
       static template = xml`
         <div>
-          <p t-foreach="state.rows" t-as="row" t-key="row">
-            <p t-foreach="state.cols" t-as="col" t-key="col">
+          <p t-foreach="this.state.rows" t-as="row" t-key="row">
+            <p t-foreach="this.state.cols" t-as="col" t-key="col">
                 <Child row="row" col="col"/>
               </p>
             </p>
@@ -164,7 +164,7 @@ describe("list of components", () => {
     class Parent extends Component {
       static template = xml`
         <div>
-          <t t-foreach="state.numbers" t-as="number" t-key="number" >
+          <t t-foreach="this.state.numbers" t-as="number" t-key="number" >
             <Child n="number"/>
           </t>
         </div>`;
@@ -192,7 +192,7 @@ describe("list of components", () => {
     class Parent extends Component {
       static template = xml`
         <div>
-          <t t-foreach="state.numbers" t-as="number" t-key="number">
+          <t t-foreach="this.state.numbers" t-as="number" t-key="number">
             <Child/>
           </t>
         </div>`;
@@ -217,7 +217,7 @@ describe("list of components", () => {
     class Parent extends Component {
       static template = xml`
       <div>
-          <div t-foreach="state.blips" t-as="blip" t-key="blip.id">
+          <div t-foreach="this.state.blips" t-as="blip" t-key="blip.id">
               <SubComponent />
           </div>
       </div>`;
@@ -245,7 +245,7 @@ describe("list of components", () => {
     class Child extends Component {
       static template = xml`
           <span>
-            <t t-esc="state.val"/>
+            <t t-esc="this.state.val"/>
             <t t-esc="this.props.val"/>
           </span>`;
       props = props();
@@ -359,7 +359,7 @@ describe("list of components", () => {
   test("order is correct when slots are not of same type", async () => {
     class Child extends Component {
       static template = xml`
-          <t t-call-slot="{{ slotName }}" t-foreach="slotNames" t-as="slotName" t-key="slotName"/>
+          <t t-call-slot="{{ this.slotName }}" t-foreach="this.slotNames" t-as="slotName" t-key="slotName"/>
       `;
       props = props();
       get slotNames() {
@@ -372,9 +372,9 @@ describe("list of components", () => {
     class Parent extends Component {
       static template = xml`
         <Child>
-          <t t-set-slot="a" active="!state.active"><div t-if="!state.active">A</div></t>
+          <t t-set-slot="a" active="!this.state.active"><div t-if="!this.state.active">A</div></t>
           <t t-set-slot="b" active="true">B</t>
-          <t t-set-slot="c" active="state.active">C</t>
+          <t t-set-slot="c" active="this.state.active">C</t>
         </Child>
       `;
       static components = { Child };

@@ -1,14 +1,15 @@
+import { onWillDestroy } from "./lifecycle_hooks";
 import { derived } from "./reactivity/derived";
 import { signal, Signal } from "./reactivity/signal";
 import { TypeDescription, validateType } from "./validation";
 
 export class Resource<T> {
-  _items: Signal<[number, T][]> = signal([]);
-  _name: string;
-  _type?: TypeDescription;
+  private _items: Signal<[number, T][]> = signal([]);
+  private _name: string;
+  private _type?: TypeDescription;
 
   constructor(name?: string, type?: TypeDescription) {
-    this._name = name || "registry";
+    this._name = name || "resource";
     this._type = type;
   }
 
@@ -22,7 +23,7 @@ export class Resource<T> {
     if (this._type) {
       const error = validateType("item", item as any, this._type as any);
       if (error) {
-        throw new Error("Invalid type: " + error);
+        throw new Error(`Invalid type: ${error} (resource '${this._name}')`);
       }
     }
     this._items().push([sequence, item]);
@@ -35,4 +36,15 @@ export class Resource<T> {
     this._items.set(items);
     return this;
   }
+}
+
+export function useResource<T>(r: Resource<T>, elements: T[]) {
+  for (let elem of elements) {
+    r.add(elem);
+  }
+  onWillDestroy(() => {
+    for (let elem of elements) {
+      r.remove(elem);
+    }
+  });
 }

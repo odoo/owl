@@ -1,4 +1,5 @@
 import { effect, onWillDestroy, plugin, Plugin, PluginManager } from "../src";
+import { Resource, useResource } from "../src/runtime/resource";
 import { waitScheduler } from "./helpers";
 
 describe("basic features", () => {
@@ -39,7 +40,7 @@ describe("basic features", () => {
 
     const manager = new PluginManager(null);
     manager.startPlugins([A]);
-    const plugin = manager.getPlugin("a");
+    const plugin = manager.getPluginById("a");
     expect(plugin).toBe(a);
     expect(isDestroyed).toBe(false);
 
@@ -140,9 +141,26 @@ describe("basic features", () => {
 
     manager.startPlugins([A, B, C]);
     expect(steps.splice(0)).toEqual(["setup A", "setup B", "setup C"]);
-    expect(manager.getPlugin<B>("b")!.a).toBe(a);
-    expect(manager.getPlugin<C>("c")!.a).toBe(a);
-    expect(manager.getPlugin<C>("c")!.b).toBe(b);
+    expect(manager.getPluginById<B>("b")!.a).toBe(a);
+    expect(manager.getPluginById<C>("c")!.a).toBe(a);
+    expect(manager.getPluginById<C>("c")!.b).toBe(b);
+  });
+
+  test("can get plugins from pluginmanager", () => {
+    let a = null;
+
+    class A extends Plugin {
+      static id = "a";
+      setup() {
+        a = this;
+      }
+    }
+
+    const manager = new PluginManager(null);
+    manager.startPlugins([A]);
+    expect(manager.getPluginById<A>("a")).toBe(a);
+    expect(manager.getPluginById<A>("b")).toBe(null);
+    expect(manager.getPlugin(A)).toBe(a);
   });
 
   test("plugin auto start dependencies", () => {
@@ -183,9 +201,9 @@ describe("basic features", () => {
 
     manager.startPlugins([C]); // note that we only start plugin C
     expect(steps.splice(0)).toEqual(["setup A", "setup B", "setup C"]);
-    expect(manager.getPlugin<B>("b")!.a).toBe(a);
-    expect(manager.getPlugin<C>("c")!.a).toBe(a);
-    expect(manager.getPlugin<C>("c")!.b).toBe(b);
+    expect(manager.getPluginById<B>("b")!.a).toBe(a);
+    expect(manager.getPluginById<C>("c")!.a).toBe(a);
+    expect(manager.getPluginById<C>("c")!.b).toBe(b);
   });
 
   test("dependency can be set in setup", () => {
@@ -209,7 +227,7 @@ describe("basic features", () => {
 
     const manager = new PluginManager(null);
     manager.startPlugins([B]);
-    expect(manager.getPlugin<B>("b")!.a).toBe(a);
+    expect(manager.getPluginById<B>("b")!.a).toBe(a);
   });
 
   test("plugin fn cannot be called outside Plugin and Component", () => {
@@ -343,100 +361,103 @@ describe("sub plugin managers", () => {
 
     const manager = new PluginManager(null);
     manager.startPlugins([A]);
-    expect(manager.getPlugin<A>("a")!.someFunction()).toBe(1);
+    expect(manager.getPluginById<A>("a")!.someFunction()).toBe(1);
 
     const subManager = new PluginManager(manager);
     subManager.startPlugins([ShadowA]);
-    expect(subManager.getPlugin<A>("a")!.someFunction()).toBe(123);
+    expect(subManager.getPluginById<A>("a")!.someFunction()).toBe(123);
   });
 });
 
-describe("resource system", () => {
+describe("plugins and resources", () => {
   test("can define a resource type", () => {
     class A extends Plugin {
       static id = "a";
-      static resources = {
-        colors: String,
-      };
+      colors = new Resource("colors", String);
     }
     class B extends Plugin {
       static id = "b";
-      resources = {
-        colors: "red",
-      };
+
+      a = plugin(A);
+
+      setup() {
+        this.a.colors.add("red");
+      }
     }
     class C extends Plugin {
       static id = "c";
-      resources = {
-        colors: ["green", "blue"],
-      };
+
+      setup() {
+        useResource(plugin(A).colors, ["green", "blue"]);
+      }
     }
 
     const manager = new PluginManager(null);
     manager.startPlugins([A, B, C]);
-    expect(manager.getResource("colors")).toEqual(["red", "green", "blue"]);
+    const a = manager.getPluginById("a") as A;
+    expect(a.colors.items()).toEqual(["red", "green", "blue"]);
   });
 
   test("resources from child plugins are available in parent plugins", () => {
     class A extends Plugin {
       static id = "a";
-      static resources = {
-        colors: String,
-      };
+      colors = new Resource("colors", String);
     }
     class B extends Plugin {
       static id = "b";
-      resources = {
-        colors: "red",
-      };
+
+      setup() {
+        useResource(plugin(A).colors, ["red"]);
+      }
     }
     class C extends Plugin {
       static id = "c";
-      resources = {
-        colors: ["green", "blue"],
-      };
+      setup() {
+        useResource(plugin(A).colors, ["green", "blue"]);
+      }
     }
 
     const manager = new PluginManager(null);
     manager.startPlugins([A, B]);
-    expect(manager.getResource("colors")).toEqual(["red"]);
+    const a = manager.getPlugin(A)!;
+    expect(a.colors.items()).toEqual(["red"]);
 
     const subManager = new PluginManager(manager);
     subManager.startPlugins([C]);
-    expect(manager.getResource("colors")).toEqual(["red", "green", "blue"]);
-    expect(subManager.getResource("colors")).toEqual(["red", "green", "blue"]);
+    expect(a.colors.items()).toEqual(["red", "green", "blue"]);
 
     subManager.destroy();
-    expect(manager.getResource("colors")).toEqual(["red"]);
-    expect(subManager.getResource("colors")).toEqual(["red"]);
+    expect(a.colors.items()).toEqual(["red"]);
   });
 
   test("resources are derived values, can be seen from effect", async () => {
     class A extends Plugin {
       static id = "a";
-      static resources = {
-        colors: String,
-      };
+      colors = new Resource<string>("colors", String);
     }
+
     class B extends Plugin {
       static id = "b";
-      resources = {
-        colors: "red",
-      };
+
+      setup() {
+        useResource(plugin(A).colors, ["red"]);
+      }
     }
     class C extends Plugin {
       static id = "c";
-      resources = {
-        colors: ["green", "blue"],
-      };
+
+      setup() {
+        useResource(plugin(A).colors, ["green", "blue"]);
+      }
     }
 
     const manager = new PluginManager(null);
     manager.startPlugins([A, B]);
+    const a = manager.getPlugin(A)!;
 
     const steps: string[] = [];
     effect(() => {
-      steps.push(manager.getResource("colors").join(","));
+      steps.push(a.colors.items().join(","));
     });
     expect(steps.splice(0)).toEqual(["red"]);
 

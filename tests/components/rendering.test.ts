@@ -1,4 +1,4 @@
-import { Component, mount, onRendered, onWillUpdateProps, props, proxy, xml } from "../../src";
+import { Component, mount, onWillUpdateProps, props, proxy, xml } from "../../src";
 import {
   makeTestFixture,
   snapshotEverything,
@@ -46,12 +46,8 @@ describe("rendering semantics", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Parent:mounted",
       ]
@@ -62,8 +58,6 @@ describe("rendering semantics", () => {
     expect(fixture.innerHTML).toBe("Bchild");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Parent:willRender",
-        "Parent:rendered",
         "Parent:willPatch",
         "Parent:patched",
       ]
@@ -74,9 +68,9 @@ describe("rendering semantics", () => {
     let childN = 0;
     let parentN = 0;
     class Child extends Component {
-      static template = xml`child`;
-      setup() {
-        onRendered(() => childN++);
+      static template = xml`<t t-set="noop" t-value="this.notify()"/>child`;
+      notify() {
+        childN++;
       }
     }
 
@@ -84,12 +78,13 @@ describe("rendering semantics", () => {
       static template = xml`
         <t t-esc="state.value"/>
         <Child/>
+        <t t-set="noop" t-value="this.notify()"/>
       `;
       static components = { Child };
 
       state = { value: "A" };
-      setup() {
-        onRendered(() => parentN++);
+      notify() {
+        parentN++;
       }
     }
 
@@ -111,9 +106,9 @@ describe("rendering semantics", () => {
     let childN = 0;
     let parentN = 0;
     class Child extends Component {
-      static template = xml`child`;
-      setup() {
-        onRendered(() => childN++);
+      static template = xml`<t t-set="noop" t-value="this.notify()"/>child`;
+      notify() {
+        childN++;
       }
     }
 
@@ -121,12 +116,13 @@ describe("rendering semantics", () => {
       static template = xml`
         <t t-esc="state.value"/>
         <Child/>
+        <t t-set="noop" t-value="this.notify()"/>
       `;
       static components = { Child };
 
       state = { value: "A" };
-      setup() {
-        onRendered(() => parentN++);
+      notify() {
+        parentN++;
       }
     }
 
@@ -177,12 +173,8 @@ describe("rendering semantics", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Parent:mounted",
       ]
@@ -197,11 +189,7 @@ describe("rendering semantics", () => {
     await nextMicroTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Parent:willRender",
         "Child:willUpdateProps",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
       ]
     `);
 
@@ -212,11 +200,7 @@ describe("rendering semantics", () => {
     expect(fixture.innerHTML).toBe("parentBchild4");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Parent:willRender",
         "Child:willUpdateProps",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Parent:willPatch",
         "Child:willPatch",
         "Child:patched",
@@ -252,12 +236,8 @@ describe("rendering semantics", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Parent:mounted",
       ]
@@ -268,8 +248,6 @@ describe("rendering semantics", () => {
     expect(fixture.innerHTML).toBe("3");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Child:willRender",
-        "Child:rendered",
         "Child:willPatch",
         "Child:patched",
       ]
@@ -305,12 +283,8 @@ describe("rendering semantics", () => {
       [
         "Parent:setup",
         "Parent:willStart",
-        "Parent:willRender",
         "Child:setup",
         "Child:willStart",
-        "Parent:rendered",
-        "Child:willRender",
-        "Child:rendered",
         "Child:mounted",
         "Parent:mounted",
       ]
@@ -321,8 +295,6 @@ describe("rendering semantics", () => {
     expect(fixture.innerHTML).toBe("3");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Child:willRender",
-        "Child:rendered",
         "Child:willPatch",
         "Child:patched",
       ]
@@ -333,8 +305,6 @@ describe("rendering semantics", () => {
     expect(fixture.innerHTML).toBe("444");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "Child:willRender",
-        "Child:rendered",
         "Child:willPatch",
         "Child:patched",
       ]
@@ -403,16 +373,10 @@ describe("rendering semantics", () => {
       [
         "A:setup",
         "A:willStart",
-        "A:willRender",
         "B:setup",
         "B:willStart",
-        "A:rendered",
-        "B:willRender",
         "C:setup",
         "C:willStart",
-        "B:rendered",
-        "C:willRender",
-        "C:rendered",
         "C:mounted",
         "B:mounted",
         "A:mounted",
@@ -424,10 +388,6 @@ describe("rendering semantics", () => {
     expect(fixture.innerHTML).toBe("33");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
-        "A:willRender",
-        "A:rendered",
-        "C:willRender",
-        "C:rendered",
         "A:willPatch",
         "A:patched",
         "C:willPatch",
@@ -473,16 +433,10 @@ test("force render in case of existing render", async () => {
     [
       "A:setup",
       "A:willStart",
-      "A:willRender",
       "B:setup",
       "B:willStart",
-      "A:rendered",
-      "B:willRender",
       "C:setup",
       "C:willStart",
-      "B:rendered",
-      "C:willRender",
-      "C:rendered",
       "C:mounted",
       "B:mounted",
       "A:mounted",
@@ -494,9 +448,7 @@ test("force render in case of existing render", async () => {
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "A:willRender",
       "B:willUpdateProps",
-      "A:rendered",
     ]
   `);
 
@@ -506,9 +458,7 @@ test("force render in case of existing render", async () => {
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "A:willRender",
       "B:willUpdateProps",
-      "A:rendered",
     ]
   `);
 
@@ -517,11 +467,7 @@ test("force render in case of existing render", async () => {
   // we check here that the render reaches C (so, that it was properly forced)
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "B:willRender",
       "C:willUpdateProps",
-      "B:rendered",
-      "C:willRender",
-      "C:rendered",
       "A:willPatch",
       "B:willPatch",
       "C:willPatch",
@@ -563,12 +509,8 @@ test("children, default props and renderings", async () => {
     [
       "Parent:setup",
       "Parent:willStart",
-      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]
@@ -579,8 +521,6 @@ test("children, default props and renderings", async () => {
   expect(fixture.innerHTML).toBe("Bchild");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
-      "Parent:rendered",
       "Parent:willPatch",
       "Parent:patched",
     ]

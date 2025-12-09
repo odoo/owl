@@ -288,12 +288,8 @@ test("bound functions are considered 'alike'", async () => {
     [
       "Parent:setup",
       "Parent:willStart",
-      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]
@@ -302,8 +298,6 @@ test("bound functions are considered 'alike'", async () => {
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
-      "Parent:rendered",
       "Parent:willPatch",
       "Parent:patched",
     ]
@@ -382,12 +376,8 @@ test(".alike suffix in a simple case", async () => {
     [
       "Parent:setup",
       "Parent:willStart",
-      "Parent:willRender",
       "Child:setup",
       "Child:willStart",
-      "Parent:rendered",
-      "Child:willRender",
-      "Child:rendered",
       "Child:mounted",
       "Parent:mounted",
     ]
@@ -399,8 +389,6 @@ test(".alike suffix in a simple case", async () => {
   expect(fixture.innerHTML).toBe("11");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Parent:willRender",
-      "Parent:rendered",
       "Parent:willPatch",
       "Parent:patched",
     ]
@@ -445,16 +433,10 @@ test(".alike suffix in a list", async () => {
     [
       "Parent:setup",
       "Parent:willStart",
-      "Parent:willRender",
       "Todo:setup",
       "Todo:willStart",
       "Todo:setup",
       "Todo:willStart",
-      "Parent:rendered",
-      "Todo:willRender",
-      "Todo:rendered",
-      "Todo:willRender",
-      "Todo:rendered",
       "Todo:mounted",
       "Todo:mounted",
       "Parent:mounted",
@@ -467,8 +449,6 @@ test(".alike suffix in a list", async () => {
   expect(fixture.innerHTML).toBe("<button>1V</button><button>2V</button>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "Todo:willRender",
-      "Todo:rendered",
       "Todo:willPatch",
       "Todo:patched",
     ]

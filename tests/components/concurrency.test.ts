@@ -807,23 +807,24 @@ test("rendering component again in next microtick", async () => {
     static template = xml`
           <div>
             <button t-on-click="onClick">Click</button>
-            <t t-if="env.config.flag"><Child/></t>
+            <t t-if="this.state.config.flag"><Child/></t>
           </div>`;
     static components = { Child };
+    state = state;
 
     setup() {
       useLogLifecycle();
     }
     async onClick() {
-      this.env.config.flag = true;
+      this.state.config.flag = true;
       this.render();
       await Promise.resolve();
       this.render();
     }
   }
 
-  const env = { config: { flag: false } };
-  await mount(Parent, fixture, { env });
+  const state = { config: { flag: false } };
+  await mount(Parent, fixture);
   expect(fixture.innerHTML).toBe("<div><button>Click</button></div>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [

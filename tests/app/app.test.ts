@@ -34,31 +34,6 @@ describe("app", () => {
     expect(status(comp)).toBe("destroyed");
   });
 
-  test("App supports env with getters/setters", async () => {
-    let someVal = "maggot";
-
-    const services: any = { serv1: "" };
-    const env = {
-      get someVal() {
-        return someVal;
-      },
-      services,
-    };
-
-    class SomeComponent extends Component {
-      static template = xml`<div><t t-esc="env.someVal" /> <t t-esc="Object.keys(env.services)" /></div>`;
-    }
-
-    const app = new App({ env });
-    const comp = await app.createRoot(SomeComponent).mount(fixture);
-    expect(fixture.innerHTML).toBe("<div>maggot serv1</div>");
-    someVal = "brain";
-    services.serv2 = "";
-    comp.render();
-    await nextTick();
-    expect(fixture.innerHTML).toBe("<div>brain serv1,serv2</div>");
-  });
-
   test("can configure an app with props", async () => {
     class SomeComponent extends Component {
       static template = xml`<div t-esc="this.props.value"/>`;

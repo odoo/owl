@@ -276,7 +276,7 @@ describe("translation context", () => {
     class ChildComponent extends Component {
       static template = xml`
         <div t-translation-context="ja">
-          <t t-slot="a"/>
+          <t t-call-slot="a"/>
         </div>`;
       props = props();
     }
@@ -304,7 +304,7 @@ describe("translation context", () => {
       static template = xml`
         <div>
           <t
-            t-slot="default"
+            t-call-slot="default"
             t-translation-context="fr"
             param.translate="param"
             title.translate="title"

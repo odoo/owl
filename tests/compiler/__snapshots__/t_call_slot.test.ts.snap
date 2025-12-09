@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`t-call-slot compile t-props correctly multiple time 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { callSlot } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return callSlot(ctx, node, key, 'default', false, Object.assign({}, {a:1}));
+  }
+}"
+`;

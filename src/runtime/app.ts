@@ -1,6 +1,6 @@
 import { OwlError } from "../common/owl_error";
 import { version } from "../version";
-import { Component, ComponentConstructor, Props } from "./component";
+import { Component, ComponentConstructor } from "./component";
 import { ComponentNode, saveCurrent } from "./component_node";
 import { handleError, nodeErrorHandlers } from "./rendering/error_handling";
 import { Fiber, MountOptions, RootFiber } from "./rendering/fibers";
@@ -9,21 +9,20 @@ import { proxy, toRaw } from "./reactivity/proxy";
 import { Scheduler } from "./rendering/scheduler";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
 import { validateTarget } from "./utils";
+import { GetProps } from "./props";
 
 // reimplement dev mode stuff see last change in 0f7a8289a6fb8387c3c1af41c6664b2a8448758f
 
-export interface Env {
-  [key: string]: any;
-}
+type ComponentInstance<C extends ComponentConstructor> = C extends new (...args: any) => infer T
+  ? T
+  : never;
 
-interface RootConfig<P, E> {
-  env?: E;
+interface RootConfig<P> {
   pluginManager?: PluginManager;
   props?: P;
 }
 
-export interface AppConfig<E> extends TemplateSetConfig {
-  env?: E;
+export interface AppConfig extends TemplateSetConfig {
   name?: string;
   pluginManager?: PluginManager;
   test?: boolean;
@@ -47,27 +46,26 @@ declare global {
 
 type MountTarget = HTMLElement | ShadowRoot;
 
-interface Root<P extends Props, E, T extends abstract new (...args: any) => any = any> {
-  node: ComponentNode<P, E>;
-  promise: Promise<any>;
-  mount(target: MountTarget, options?: MountOptions): Promise<Component<P, E> & InstanceType<T>>;
+interface Root<T extends ComponentConstructor> {
+  node: ComponentNode;
+  promise: Promise<ComponentInstance<T>>;
+  mount(target: MountTarget, options?: MountOptions): Promise<ComponentInstance<T>>;
   destroy(): void;
 }
 
 window.__OWL_DEVTOOLS__ ||= { apps, Fiber, RootFiber, toRaw, proxy };
 
-export class App<E = any> extends TemplateSet {
+export class App extends TemplateSet {
   static validateTarget = validateTarget;
   static apps = apps;
   static version = version;
 
   name: string;
-  env: E;
   scheduler = new Scheduler();
-  roots: Set<Root<any, any>> = new Set();
+  roots: Set<Root<any>> = new Set();
   pluginManager: PluginManager;
 
-  constructor(config: AppConfig<E> = {}) {
+  constructor(config: AppConfig = {}) {
     super(config);
     this.name = config.name || "";
     apps.add(this);
@@ -79,31 +77,18 @@ export class App<E = any> extends TemplateSet {
       console.info(`Owl is running in 'dev' mode.`);
       hasBeenLogged = true;
     }
-    const env = config.env || {};
-    const descrs = Object.getOwnPropertyDescriptors(env);
-    this.env = Object.freeze(Object.create(Object.getPrototypeOf(env), descrs));
   }
 
-  createRoot<Props extends object, SubEnv = any>(
-    Root: ComponentConstructor<Props, E>,
-    config: RootConfig<Props, SubEnv> = {}
-  ): Root<Props, SubEnv> {
-    const props = config.props || ({} as Props);
-    // hack to make sure the sub root get the sub env if necessary. for owl 3,
-    // would be nice to rethink the initialization process to make sure that
-    // we can create a ComponentNode and give it explicitely the env, instead
-    // of looking it up in the app
-    const env = this.env;
-    if (config.env) {
-      this.env = config.env as any;
-    }
+  createRoot<T extends ComponentConstructor>(
+    Root: T,
+    config: RootConfig<GetProps<ComponentInstance<T>>> = {}
+  ): Root<T> {
+    const props = config.props || ({} as any);
 
     const restore = saveCurrent();
     const node = this.makeNode(Root, props);
     restore();
-    if (config.env) {
-      this.env = env;
-    }
+
     let resolve!: (value: any) => void;
     let reject!: (reason?: any) => void;
     const promise = new Promise<any>((res, rej) => {
@@ -128,7 +113,10 @@ export class App<E = any> extends TemplateSet {
     return root;
   }
 
-  makeNode(Component: ComponentConstructor, props: any): ComponentNode {
+  makeNode<T extends ComponentConstructor>(
+    Component: T,
+    props: GetProps<ComponentInstance<T>>
+  ): ComponentNode {
     return new ComponentNode(Component, props, this, null, null);
   }
 
@@ -169,7 +157,7 @@ export class App<E = any> extends TemplateSet {
     apps.delete(this);
   }
 
-  createComponent<P extends Props>(
+  createComponent<P extends Record<string, any>>(
     name: string | null,
     isStatic: boolean,
     hasSlotsProp: boolean,
@@ -177,12 +165,12 @@ export class App<E = any> extends TemplateSet {
     propList: string[]
   ) {
     const isDynamic = !isStatic;
-    let arePropsDifferent: (p1: Object, p2: Object) => boolean;
+    let arePropsDifferent: (p1: P, p2: P) => boolean;
     const hasNoProp = propList.length === 0;
     if (hasSlotsProp) {
       arePropsDifferent = (_1, _2) => true;
     } else if (hasDynamicPropList) {
-      arePropsDifferent = function (props1: Props, props2: Props) {
+      arePropsDifferent = function (props1: P, props2: P) {
         for (let k in props1) {
           if (props1[k] !== props2[k]) {
             return true;
@@ -193,7 +181,7 @@ export class App<E = any> extends TemplateSet {
     } else if (hasNoProp) {
       arePropsDifferent = (_1: any, _2: any) => false;
     } else {
-      arePropsDifferent = function (props1: Props, props2: Props) {
+      arePropsDifferent = function (props1: P, props2: P) {
         for (let p of propList) {
           if (props1[p] !== props2[p]) {
             return true;
@@ -250,20 +238,10 @@ export class App<E = any> extends TemplateSet {
   }
 }
 
-type ComponentInstance<C extends ComponentConstructor<any, any>> = C extends new (
-  ...args: any
-) => infer T
-  ? T
-  : never;
-
-export async function mount<
-  T extends ComponentConstructor<any, any>,
-  P extends object = any,
-  E = any
->(
-  C: T & ComponentConstructor<P, E>,
+export async function mount<T extends ComponentConstructor>(
+  C: T,
   target: MountTarget,
-  config: AppConfig<E> & RootConfig<P, E> & MountOptions = {}
+  config: AppConfig & RootConfig<GetProps<ComponentInstance<T>>> & MountOptions = {}
 ): Promise<ComponentInstance<T>> {
   const app = new App(config);
   const root = app.createRoot(C, config);

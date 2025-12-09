@@ -74,20 +74,6 @@ exports[`hooks can use useComponent 1`] = `
 }"
 `;
 
-exports[`hooks can use useEnv 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    let txt1 = ctx['env'].val;
-    return block1([txt1]);
-  }
-}"
-`;
-
 exports[`hooks mounted callbacks should be called in reverse order from willUnmount callbacks 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -97,94 +83,6 @@ exports[`hooks mounted callbacks should be called in reverse order from willUnmo
   
   return function template(ctx, node, key = "") {
     let txt1 = ctx['state'].value;
-    return block1([txt1]);
-  }
-}"
-`;
-
-exports[`hooks parent and child env (with useChildSubEnv then useSubEnv) 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
-  
-  return function template(ctx, node, key = "") {
-    const b2 = text(ctx['env'].val);
-    const b3 = comp1({}, key + \`__1\`, node, this, null);
-    return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`hooks parent and child env (with useChildSubEnv then useSubEnv) 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block2 = createBlock(\`<div><block-text-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    let b2;
-    if (ctx['env'].hasParent) {
-      let txt1 = ctx['env'].val;
-      b2 = block2([txt1]);
-    }
-    return multi([b2]);
-  }
-}"
-`;
-
-exports[`hooks parent and child env (with useChildSubEnv) 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
-  
-  return function template(ctx, node, key = "") {
-    const b2 = text(ctx['env'].val);
-    const b3 = comp1({}, key + \`__1\`, node, this, null);
-    return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`hooks parent and child env (with useChildSubEnv) 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    let txt1 = ctx['env'].val;
-    return block1([txt1]);
-  }
-}"
-`;
-
-exports[`hooks parent and child env (with useSubEnv) 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
-  
-  return function template(ctx, node, key = "") {
-    const b2 = text(ctx['env'].val);
-    const b3 = comp1({}, key + \`__1\`, node, this, null);
-    return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`hooks parent and child env (with useSubEnv) 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    let txt1 = ctx['env'].val;
     return block1([txt1]);
   }
 }"
@@ -200,47 +98,6 @@ exports[`hooks two different call to willPatch/patched should work 1`] = `
   return function template(ctx, node, key = "") {
     let txt1 = ctx['state'].value;
     return block1([txt1]);
-  }
-}"
-`;
-
-exports[`hooks useChildSubEnv does not pollute user env 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    let txt1 = ctx['env'].val;
-    return block1([txt1]);
-  }
-}"
-`;
-
-exports[`hooks useChildSubEnv supports arbitrary descriptor 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
-  
-  return function template(ctx, node, key = "") {
-    return comp1({}, key + \`__1\`, node, this, null);
-  }
-}"
-`;
-
-exports[`hooks useChildSubEnv supports arbitrary descriptor 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div><block-text-0/> <block-text-1/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    let txt1 = ctx['env'].someVal;
-    let txt2 = ctx['env'].someVal2;
-    return block1([txt1, txt2]);
   }
 }"
 `;
@@ -357,47 +214,6 @@ exports[`hooks useRef hook: basic use 1`] = `
     let ref1 = (el) => this.__owl__.setRef((\`button\`), el);
     let txt1 = ctx['value'];
     return block1([ref1, txt1]);
-  }
-}"
-`;
-
-exports[`hooks useSubEnv modifies user env 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    let txt1 = ctx['env'].val;
-    return block1([txt1]);
-  }
-}"
-`;
-
-exports[`hooks useSubEnv supports arbitrary descriptor 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
-  
-  return function template(ctx, node, key = "") {
-    return comp1({}, key + \`__1\`, node, this, null);
-  }
-}"
-`;
-
-exports[`hooks useSubEnv supports arbitrary descriptor 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div><block-text-0/> <block-text-1/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    let txt1 = ctx['env'].someVal;
-    let txt2 = ctx['env'].someVal2;
-    return block1([txt1, txt2]);
   }
 }"
 `;

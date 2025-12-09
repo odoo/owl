@@ -58,17 +58,18 @@ describe("basics", () => {
     class Parent extends Component {
       static template = xml`
             <t>
-              <t t-if="env.options.flag"><Child /></t>
-              <t t-if="!env.options.flag"><OtherChild /></t>
+              <t t-if="this.state.options.flag"><Child /></t>
+              <t t-if="!this.state.options.flag"><OtherChild /></t>
             </t>
           `;
       static components = { Child, OtherChild };
+      state = state;
     }
-    const env = { options: { flag: true } };
-    const parent = await mount(Parent, fixture, { env });
+    const state = { options: { flag: true } };
+    const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<span>CHILD 1</span>");
 
-    env.options.flag = false;
+    state.options.flag = false;
     parent.render();
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>CHILD 2</div>");

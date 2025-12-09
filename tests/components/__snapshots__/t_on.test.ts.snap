@@ -382,49 +382,7 @@ exports[`t-on t-on on slot, with 'prevent' modifier 2`] = `
 }"
 `;
 
-exports[`t-on t-on on t-set-slots 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { capture, createCatcher, markRaw } = helpers;
-  const catcher1 = createCatcher({"click":0});
-  const comp1 = app.createComponent(\`Child\`, true, true, false, []);
-  
-  let block6 = createBlock(\`<p>something</p>\`);
-  let block7 = createBlock(\`<p>paragraph</p>\`);
-  
-  function slot1(ctx, node, key = "") {
-    const b6 = block6();
-    const b7 = block7();
-    const v1 = ctx['this'];
-    const hdlr1 = [()=>v1.state.count++, ctx];
-    return catcher1(multi([b6, b7]), [hdlr1]);
-  }
-  
-  return function template(ctx, node, key = "") {
-    const b2 = text(\` [\`);
-    const b3 = text(ctx['state'].count);
-    const b4 = text(\`] \`);
-    const ctx1 = capture(ctx);
-    const b8 = comp1({slots: markRaw({'myslot': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__1\`, node, this, null);
-    return multi([b2, b3, b4, b8]);
-  }
-}"
-`;
-
-exports[`t-on t-on on t-set-slots 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { callSlot } = helpers;
-  
-  return function template(ctx, node, key = "") {
-    return callSlot(ctx, node, key, 'myslot', false, {});
-  }
-}"
-`;
-
-exports[`t-on t-on on t-slots 1`] = `
+exports[`t-on t-on on t-call-slots 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -443,7 +401,7 @@ exports[`t-on t-on on t-slots 1`] = `
 }"
 `;
 
-exports[`t-on t-on on t-slots 2`] = `
+exports[`t-on t-on on t-call-slots 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -458,6 +416,47 @@ exports[`t-on t-on on t-slots 2`] = `
     const hdlr1 = [()=>v1.state.count++, ctx];
     const b5 = catcher1(callSlot(ctx, node, key, 'default', false, {}), [hdlr1]);
     return multi([b2, b3, b4, b5]);
+  }
+}"
+`;
+
+exports[`t-on t-on on t-set-slots 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createCatcher, markRaw } = helpers;
+  const catcher1 = createCatcher({"click":0});
+  const comp1 = app.createComponent(\`Child\`, true, true, false, []);
+  
+  let block6 = createBlock(\`<p>something</p>\`);
+  let block7 = createBlock(\`<p>paragraph</p>\`);
+  
+  function slot1(ctx, node, key = "") {
+    const b6 = block6();
+    const b7 = block7();
+    const v1 = ctx['this'];
+    const hdlr1 = [()=>v1.state.count++, ctx];
+    return catcher1(multi([b6, b7]), [hdlr1]);
+  }
+  
+  return function template(ctx, node, key = "") {
+    const b2 = text(\` [\`);
+    const b3 = text(ctx['state'].count);
+    const b4 = text(\`] \`);
+    const b8 = comp1({slots: markRaw({'myslot': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__1\`, node, this, null);
+    return multi([b2, b3, b4, b8]);
+  }
+}"
+`;
+
+exports[`t-on t-on on t-set-slots 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { callSlot } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return callSlot(ctx, node, key, 'myslot', false, {});
   }
 }"
 `;

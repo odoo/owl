@@ -151,7 +151,7 @@ exports[`list of components order is correct when slots are not of same type 1`]
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { capture, markRaw } = helpers;
+  let { markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, []);
   
   let block2 = createBlock(\`<div>A</div>\`);
@@ -173,8 +173,7 @@ exports[`list of components order is correct when slots are not of same type 1`]
   }
   
   return function template(ctx, node, key = "") {
-    const ctx1 = capture(ctx);
-    return comp1({slots: markRaw({'a': {__render: slot1.bind(this), __ctx: ctx1, active: !ctx['state'].active}, 'b': {__render: slot2.bind(this), __ctx: ctx1, active: true}, 'c': {__render: slot3.bind(this), __ctx: ctx1, active: ctx['state'].active}})}, key + \`__1\`, node, this, null);
+    return comp1({slots: markRaw({'a': {__render: slot1.bind(this), __ctx: ctx, active: !ctx['state'].active}, 'b': {__render: slot2.bind(this), __ctx: ctx, active: true}, 'c': {__render: slot3.bind(this), __ctx: ctx, active: ctx['state'].active}})}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -190,6 +189,10 @@ exports[`list of components order is correct when slots are not of same type 2`]
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['slotNames']);;
     for (let i1 = 0; i1 < l_block1; i1++) {
       ctx[\`slotName\`] = k_block1[i1];
+      ctx[\`slotName_first\`] = i1 === 0;
+      ctx[\`slotName_last\`] = i1 === k_block1.length - 1;
+      ctx[\`slotName_index\`] = i1;
+      ctx[\`slotName_value\`] = v_block1[i1];
       const key1 = ctx['slotName'];
       const slot1 = (ctx['slotName']);
       c_block1[i1] = withKey(toggler(slot1, callSlot(ctx, node, key1 + \`__1__\${key1}\`, slot1, true, {})), key1);

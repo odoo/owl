@@ -255,11 +255,11 @@ describe("t-on", () => {
     expect(fixture.innerHTML).toBe("<div><button>1</button><p>dec</p></div>");
   });
 
-  test("t-on on t-slots", async () => {
+  test("t-on on t-call-slots", async () => {
     class Child extends Component {
       static template = xml`
         [<t t-esc="state.count"/>]
-        <t t-slot="default" t-on-click="() => this.state.count++"/>`;
+        <t t-call-slot="default" t-on-click="() => this.state.count++"/>`;
       props = props();
       state = proxy({ count: 0 });
     }
@@ -281,7 +281,7 @@ describe("t-on", () => {
 
   test("t-on on t-set-slots", async () => {
     class Child extends Component {
-      static template = xml`<t t-slot="myslot"/>`;
+      static template = xml`<t t-call-slot="myslot"/>`;
       props = props();
     }
 
@@ -329,7 +329,7 @@ describe("t-on", () => {
 
   test("t-on on slot, with 'prevent' modifier", async () => {
     class Child extends Component {
-      static template = xml`<t t-slot="default" t-on-click.prevent="doSomething"/>`;
+      static template = xml`<t t-call-slot="default" t-on-click.prevent="doSomething"/>`;
       props = props();
       doSomething(ev: MouseEvent) {
         expect(ev.defaultPrevented).toBe(true);

@@ -31,7 +31,7 @@ export function compile(
   const hasSafeContext =
     template instanceof Node
       ? !(template instanceof Element) || template.querySelector("[t-set], [t-call]") === null
-      : !template.includes("t-set") && !template.includes("t-call");
+      : !template.includes("t-set=") && !template.includes("t-call=");
 
   // code generation
   const codeGenerator = new CodeGenerator(ast, { ...options, hasSafeContext });

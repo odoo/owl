@@ -13,7 +13,7 @@ import {
   ASTDomNode,
   ASTLog,
   ASTMulti,
-  ASTSlot,
+  ASTTCallSlot,
   ASTTCall,
   ASTTCallBlock,
   ASTTEsc,
@@ -510,8 +510,8 @@ export class CodeGenerator {
         return this.compileDebug(ast, ctx);
       case ASTType.TLog:
         return this.compileLog(ast, ctx);
-      case ASTType.TSlot:
-        return this.compileTSlot(ast, ctx);
+      case ASTType.TCallSlot:
+        return this.compileTCallSlot(ast, ctx);
       case ASTType.TTranslation:
         return this.compileTTranslation(ast, ctx);
       case ASTType.TTranslationContext:
@@ -1339,7 +1339,7 @@ export class CodeGenerator {
     return `${name}(${expr}, [${handlers.join(",")}])`;
   }
 
-  compileTSlot(ast: ASTSlot, ctx: Context): string {
+  compileTCallSlot(ast: ASTTCallSlot, ctx: Context): string {
     this.helpers.add("callSlot");
     let { block } = ctx;
     let blockString: string;

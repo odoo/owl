@@ -1,9 +1,9 @@
 import { parseXML } from "../../src/common/utils";
 import { compile } from "../../src/compiler";
 
-describe("t-slot", () => {
+describe("t-call-slot", () => {
   test("compile t-props correctly multiple time", () => {
-    const template = `<t t-slot="default" t-props="{ a: 1 }"/>`;
+    const template = `<t t-call-slot="default" t-props="{ a: 1 }"/>`;
     const parsedTemplate = parseXML(template).firstChild as Element;
 
     const fn1 = compile(parsedTemplate);

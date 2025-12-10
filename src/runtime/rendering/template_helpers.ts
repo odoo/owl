@@ -25,7 +25,7 @@ function callSlot(
   defaultContent?: (ctx: any, node: any, key: string) => BDom
 ): BDom {
   key = key + "__slot_" + name;
-  const slots = ctx.props.slots || {};
+  const slots = ctx.__owl__.props.slots || {};
   const { __render, __ctx, __scope } = slots[name] || {};
   const slotScope = ObjectCreate(__ctx || {});
   if (__scope) {

@@ -3,7 +3,6 @@ import { Markup } from "../utils";
 import { html } from "../blockdom/index";
 import { markRaw } from "../reactivity/proxy";
 import { OwlError } from "../../common/owl_error";
-import type { ComponentNode } from "../component_node";
 
 const ObjectCreate = Object.create;
 /**
@@ -171,19 +170,6 @@ export function safeOutput(value: any, defaultValue?: any): ReturnType<typeof to
   return toggler(safeKey, block);
 }
 
-function makeRefWrapper(node: ComponentNode) {
-  let refNames: Set<String> = new Set();
-  return (name: string, fn: Function) => {
-    if (refNames.has(name)) {
-      throw new OwlError(
-        `Cannot set the same ref more than once in the same component, ref "${name}" was set multiple times in ${node.name}`
-      );
-    }
-    refNames.add(name);
-    return fn;
-  };
-}
-
 export const helpers = {
   withDefault,
   zero: Symbol("zero"),
@@ -200,5 +186,4 @@ export const helpers = {
   createCatcher,
   markRaw,
   OwlError,
-  makeRefWrapper,
 };

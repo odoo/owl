@@ -572,7 +572,7 @@ exports[`t-call t-call-context: ComponentNode is not looked up in the context 1`
   const callTemplate_1 = app.getTemplate(\`someTemplate\`);
   
   return function template(ctx, node, key = "") {
-    let ctx1 = {method:function(){}};
+    let ctx1 = {method:function(){},myRef:ctx['this'].myRef,myRef2:ctx['this'].myRef2};
     return callTemplate_1.call(this, ctx1, node, key + \`__1\`);
   }
 }"
@@ -592,7 +592,7 @@ exports[`t-call t-call-context: ComponentNode is not looked up in the context 2`
   function slot1(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    let ref2 = (el) => this.__owl__.setRef((\`myRef2\`), el);
+    let ref2 = (ctx['myRef2']).set;
     const b4 = block4([ref2]);
     setContextValue(ctx, "test", 3);
     let txt1 = ctx['test'];
@@ -601,7 +601,7 @@ exports[`t-call t-call-context: ComponentNode is not looked up in the context 2`
   }
   
   return function template(ctx, node, key = "") {
-    let ref1 = (el) => this.__owl__.setRef((\`myRef\`), el);
+    let ref1 = (ctx['myRef']).set;
     const b2 = block2([ref1]);
     const ctx1 = capture(ctx);
     const b6 = comp1({prop: (ctx['method']).bind(this),slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__1\`, node, this, null);

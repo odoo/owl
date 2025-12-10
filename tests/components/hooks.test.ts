@@ -11,11 +11,11 @@ import {
   useComponent,
   useEffect,
   useListener,
-  useRef,
   proxy,
   xml,
   OwlError,
   props,
+  signal,
 } from "../../src/index";
 import {
   elem,
@@ -34,29 +34,6 @@ beforeEach(() => {
 });
 
 describe("hooks", () => {
-  test("useRef hook: basic use", async () => {
-    let counter: Counter;
-    class Counter extends Component {
-      static template = xml`<div><button t-ref="button"><t t-esc="value"/></button></div>`;
-      button = useRef("button");
-      value = 0;
-      setup() {
-        counter = this;
-      }
-      increment() {
-        this.value++;
-        this.button.el!.innerHTML = String(this.value);
-      }
-    }
-    const mounted = mount(Counter, fixture);
-    expect(counter!.button.el).toBe(null);
-    await mounted;
-    expect(fixture.innerHTML).toBe("<div><button>0</button></div>");
-    expect(counter!.button.el).not.toBe(null);
-    expect(counter!.button.el).toBe(fixture.querySelector("button"));
-    counter!.increment();
-    expect(fixture.innerHTML).toBe("<div><button>1</button></div>");
-  });
   // TODO: rename like next test (ensures willPatch/patched calls are symmetrical)
   test("two different call to willPatch/patched should work", async () => {
     const steps: string[] = [];
@@ -115,32 +92,34 @@ describe("hooks", () => {
   });
 
   describe("autofocus hook", () => {
-    function useAutofocus(name: string) {
-      let ref = useRef(name);
+    function useAutofocus() {
+      let ref = signal<HTMLElement | null>(null);
       let isInDom = false;
       function updateFocus() {
-        if (!isInDom && ref.el) {
+        const el = ref();
+        if (!isInDom && el) {
           isInDom = true;
-          ref.el.focus();
-        } else if (isInDom && !ref.el) {
+          el.focus();
+        } else if (isInDom && !el) {
           isInDom = false;
         }
       }
+      // could be an effect
       onPatched(updateFocus);
       onMounted(updateFocus);
+
+      return ref;
     }
 
     test("simple input", async () => {
       class Test extends Component {
         static template = xml`
             <div>
-                <input t-ref="input1"/>
-                <input t-ref="input2"/>
+                <input/>
+                <input t-ref="this.input"/>
             </div>`;
 
-        setup() {
-          useAutofocus("input2");
-        }
+        input = useAutofocus();
       }
 
       await mount(Test, fixture);
@@ -153,14 +132,12 @@ describe("hooks", () => {
       class Test extends Component {
         static template = xml`
             <div>
-                <input t-ref="input1"/>
-                <t t-if="state.flag"><input t-ref="input2"/></t>
+                <input/>
+                <t t-if="this.state.flag"><input t-ref="this.input"/></t>
             </div>`;
 
         state = proxy({ flag: false });
-        setup() {
-          useAutofocus("input2");
-        }
+        input = useAutofocus();
       }
 
       const component = await mount(Test, fixture);
@@ -331,19 +308,20 @@ describe("hooks", () => {
       class MyComponent extends Component {
         static template = xml`
           <t t-if="state.value">
-            <div t-ref="div"/>
+            <div t-ref="this.ref"/>
           </t>`;
         state = proxy({
           value: false,
         });
+        ref = signal<HTMLElement | null>(null);
         setup() {
-          const ref = useRef("div");
+          // could be effect()
           useEffect(
             (el) => {
               logStep("effect started:" + (el ? "EL" : "NULL"));
               return () => logStep("cleaning up effect:" + (el ? "EL" : "NULL"));
             },
-            () => [ref.el]
+            () => [this.ref()]
           );
         }
       }

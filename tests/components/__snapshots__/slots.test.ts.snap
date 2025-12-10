@@ -186,7 +186,7 @@ exports[`slots can render node with t-ref and Component in same slot 1`] = `
   let block2 = createBlock(\`<div block-ref="0"/>\`);
   
   function slot1(ctx, node, key = "") {
-    let ref1 = (el) => this.__owl__.setRef((\`div\`), el);
+    let ref1 = (ctx['this'].ref).set;
     const b2 = block2([ref1]);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);

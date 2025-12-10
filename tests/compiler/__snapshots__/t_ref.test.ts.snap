@@ -1,35 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`t-ref can get a dynamic ref on a node 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div><span block-ref="0"/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    const v1 = ctx['id'];
-    let ref1 = (el) => this.__owl__.setRef((\`myspan\${v1}\`), el);
-    return block1([ref1]);
-  }
-}"
-`;
-
-exports[`t-ref can get a dynamic ref on a node, alternate syntax 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div><span block-ref="0"/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    const v1 = ctx['id'];
-    let ref1 = (el) => this.__owl__.setRef((\`myspan\${v1}\`), el);
-    return block1([ref1]);
-  }
-}"
-`;
-
 exports[`t-ref can get a ref on a node 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -38,7 +8,7 @@ exports[`t-ref can get a ref on a node 1`] = `
   let block1 = createBlock(\`<div><span block-ref="0"/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let ref1 = (el) => this.__owl__.setRef((\`myspan\`), el);
+    let ref1 = (ctx['myspan']).set;
     return block1([ref1]);
   }
 }"
@@ -67,7 +37,7 @@ exports[`t-ref ref in a t-call 2`] = `
   let block1 = createBlock(\`<div>1<span block-ref="0"/>2</div>\`);
   
   return function template(ctx, node, key = "") {
-    let ref1 = (el) => this.__owl__.setRef((\`name\`), el);
+    let ref1 = (ctx['name']).set;
     return block1([ref1]);
   }
 }"
@@ -84,7 +54,7 @@ exports[`t-ref ref in a t-if 1`] = `
   return function template(ctx, node, key = "") {
     let b2;
     if (ctx['condition']) {
-      let ref1 = (el) => this.__owl__.setRef((\`name\`), el);
+      let ref1 = (ctx['name']).set;
       b2 = block2([ref1]);
     }
     return block1([], [b2]);
@@ -106,11 +76,10 @@ exports[`t-ref refs in a loop 1`] = `
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['items']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`item\`] = k_block2[i1];
-      const key1 = ctx['item'];
-      const tKey_1 = ctx['item'];
-      const v1 = ctx['item'];
-      let ref1 = (el) => this.__owl__.setRef(((v1)), el);
-      let txt1 = ctx['item'];
+      const key1 = ctx['item'].id;
+      const tKey_1 = ctx['item'].id;
+      let ref1 = (ctx['item'].ref).set;
+      let txt1 = ctx['item'].id;
       c_block2[i1] = withKey(block3([ref1, txt1]), tKey_1 + key1);
     }
     const b2 = list(c_block2);
@@ -130,10 +99,10 @@ exports[`t-ref two refs, one in a t-if 1`] = `
   return function template(ctx, node, key = "") {
     let b2;
     if (ctx['condition']) {
-      let ref1 = (el) => this.__owl__.setRef((\`name\`), el);
+      let ref1 = (ctx['refs'].name).set;
       b2 = block2([ref1]);
     }
-    let ref2 = (el) => this.__owl__.setRef((\`p\`), el);
+    let ref2 = (ctx['refs'].p).set;
     return block1([ref2], [b2]);
   }
 }"

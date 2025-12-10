@@ -1,4 +1,4 @@
-import { App, Component, mount, onMounted, props, proxy, xml } from "../../src/index";
+import { App, Component, mount, onMounted, props, proxy, signal, xml } from "../../src/index";
 import { children, makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -1764,8 +1764,9 @@ describe("slots", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<Child><div t-ref="div"/><Child/></Child>`;
+      static template = xml`<Child><div t-ref="this.ref"/><Child/></Child>`;
       static components = { Child };
+      ref = signal<any>(null);
     }
     let error = null;
     try {

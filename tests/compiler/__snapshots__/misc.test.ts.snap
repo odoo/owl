@@ -277,9 +277,9 @@ exports[`misc other complex template 1`] = `
     let prop2 = new String((ctx['search'].value) === 0 ? 0 : ((ctx['search'].value) || ""));
     let hdlr4 = [ctx['updateFilter'], ctx];
     let hdlr5 = [ctx['updateFilter'], ctx];
-    let ref1 = (el) => this.__owl__.setRef((\`search_input\`), el);
+    let ref1 = (ctx['search_input']).set;
     let hdlr6 = [ctx['clearSearch'], ctx];
-    let ref2 = (el) => this.__owl__.setRef((\`settings_menu\`), el);
+    let ref2 = (ctx['settings_menu']).set;
     if (ctx['triggers']) {
       ctx = Object.create(ctx);
       const [k_block18, v_block18, l_block18, c_block18] = prepareList(ctx['triggers']);;

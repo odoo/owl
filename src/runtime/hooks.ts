@@ -2,26 +2,6 @@ import { getCurrent } from "./component_node";
 import { onMounted, onPatched, onWillDestroy, onWillUnmount } from "./lifecycle_hooks";
 import { PluginConstructor, PluginManager } from "./plugins";
 import { runWithComputation } from "./reactivity/computations";
-import { inOwnerDocument } from "./utils";
-
-// -----------------------------------------------------------------------------
-// useRef
-// -----------------------------------------------------------------------------
-
-/**
- * The purpose of this hook is to allow components to get a reference to a sub
- * html node or component.
- */
-export function useRef<T extends HTMLElement = HTMLElement>(name: string): { el: T | null } {
-  const node = getCurrent();
-  const refs = node.refs;
-  return {
-    get el(): T | null {
-      const el = refs[name];
-      return inOwnerDocument(el) ? el : null;
-    },
-  };
-}
 
 // -----------------------------------------------------------------------------
 // useEffect

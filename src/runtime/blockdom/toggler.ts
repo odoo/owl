@@ -4,6 +4,8 @@ import type { VNode } from "./index";
 // Toggler node
 // -----------------------------------------------------------------------------
 
+const txt = document.createTextNode("");
+
 class VToggler {
   key: string;
   child: VNode;
@@ -37,11 +39,13 @@ class VToggler {
     if (this.key === other.key) {
       child1.patch(child2, withBeforeRemove);
     } else {
-      child2.mount(this.parentEl!, child1.firstNode()!);
+      const firstNode = child1.firstNode()!;
+      firstNode.parentElement!.insertBefore(txt, firstNode);
       if (withBeforeRemove) {
         child1.beforeRemove();
       }
       child1.remove();
+      child2.mount(this.parentEl!, txt);
       this.child = child2;
       this.key = other.key;
     }

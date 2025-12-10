@@ -1,4 +1,4 @@
-import { App, Component, onMounted, onWillDestroy, useRef, proxy, xml } from "../../src";
+import { App, Component, onMounted, onWillDestroy, proxy, signal, xml } from "../../src";
 import { status } from "../../src/runtime/status";
 import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
@@ -87,13 +87,12 @@ test("destroy a subroot while another component is mounted in main app", async (
   }
 
   class ChildA extends Component {
-    static template = xml`a<div t-ref="elem"></div>`;
-    ref: any;
+    static template = xml`a<div t-ref="this.ref"></div>`;
+    ref = signal<any>(null);
     setup() {
-      this.ref = useRef("elem");
       let root = app.createRoot(C);
       onMounted(() => {
-        root.mount(this.ref.el);
+        root.mount(this.ref());
       });
       onWillDestroy(() => {
         root.destroy();

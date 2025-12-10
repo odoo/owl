@@ -1,4 +1,4 @@
-import { App, Component, mount, props, proxy, xml } from "../../src/index";
+import { App, Component, mount, props, proxy, signal, xml } from "../../src/index";
 import { isDirectChildOf, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -324,6 +324,8 @@ describe("t-call", () => {
     class Child extends Component {
       static template = xml`<t t-call-slot="default"/>`;
       props = props();
+      myRef = signal<any>(null);
+      myRef2 = signal<any>(null);
       setup() {
         child = this;
       }
@@ -331,8 +333,10 @@ describe("t-call", () => {
 
     class Root extends Component {
       static template = xml`
-          <t t-call="someTemplate" t-call-context="{method: function(){}}"/>`;
+          <t t-call="someTemplate" t-call-context="{method: function(){}, myRef: this.myRef, myRef2: this.myRef2}"/>`;
       static components = { Child };
+      myRef = signal<any>(null);
+      myRef2 = signal<any>(null);
     }
 
     // The following things need a reference to the ComponentNode, historically
@@ -356,8 +360,8 @@ describe("t-call", () => {
     expect(fixture.innerHTML).toBe(
       "<div>outside slot</div><div>I'm the default slot</div><div>3</div>"
     );
-    expect(Object.keys(child.__owl__.refs)).toEqual([]);
-    expect(Object.keys(root.__owl__.refs)).toEqual(["myRef", "myRef2"]);
+    expect([child.myRef(), child.myRef2()]).toEqual([null, null]);
+    expect([root.myRef(), root.myRef2()]).toEqual([expect.anything(), expect.anything()]);
   });
 
   test("t-call-context: slots don't make component available again when context is captured", async () => {

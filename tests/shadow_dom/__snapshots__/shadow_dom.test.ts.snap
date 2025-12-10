@@ -79,7 +79,7 @@ exports[`shadow_dom can mount app inside an element in a shadow root inside an i
 }"
 `;
 
-exports[`shadow_dom useRef hook 1`] = `
+exports[`shadow_dom ref 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -87,7 +87,7 @@ exports[`shadow_dom useRef hook 1`] = `
   let block1 = createBlock(\`<div class="my-div" block-ref="0"/>\`);
   
   return function template(ctx, node, key = "") {
-    let ref1 = (el) => this.__owl__.setRef((\`refName\`), el);
+    let ref1 = (ctx['this'].div).set;
     return block1([ref1]);
   }
 }"

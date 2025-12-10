@@ -47,7 +47,7 @@ export { untrack } from "./reactivity/computations";
 export { signal } from "./reactivity/signal";
 export { derived } from "./reactivity/derived";
 export { effect } from "./reactivity/effect";
-export { useEffect, useListener, useRef, usePlugins } from "./hooks";
+export { useEffect, useListener, usePlugins } from "./hooks";
 export { batched, EventBus, htmlEscape, whenReady, markup } from "./utils";
 export {
   onWillStart,

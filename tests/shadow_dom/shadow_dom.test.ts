@@ -1,4 +1,4 @@
-import { App, Component, mount, useRef, xml } from "../../src";
+import { App, Component, mount, signal, xml } from "../../src";
 import { status } from "../../src/runtime/status";
 import { makeTestFixture, snapshotEverything } from "../helpers";
 
@@ -65,11 +65,11 @@ describe("shadow_dom", () => {
     expect(a).toBe(3);
   });
 
-  test("useRef hook", async () => {
+  test("ref", async () => {
     let comp: SomeComponent;
     class SomeComponent extends Component {
-      static template = xml`<div t-ref="refName" class="my-div"/>`;
-      div = useRef("refName");
+      static template = xml`<div t-ref="this.div" class="my-div"/>`;
+      div = signal<any>(null);
       setup() {
         comp = this;
       }
@@ -78,9 +78,9 @@ describe("shadow_dom", () => {
     fixture.appendChild(container);
     const shadow = container.attachShadow({ mode: "open" });
     const mountedProm = mount(SomeComponent, shadow);
-    expect(comp!.div.el).toBe(null);
+    expect(comp!.div()).toBe(null);
     await mountedProm;
-    expect(comp!.div.el).toBe(shadow.querySelector(".my-div"));
+    expect(comp!.div()).toBe(shadow.querySelector(".my-div"));
   });
 
   test("can mount app inside a shadow child element", async () => {

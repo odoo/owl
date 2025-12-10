@@ -5,17 +5,16 @@ exports[`hooks autofocus hook input in a t-if 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><input block-ref="0"/><block-child-0/></div>\`);
+  let block1 = createBlock(\`<div><input/><block-child-0/></div>\`);
   let block2 = createBlock(\`<input block-ref="0"/>\`);
   
   return function template(ctx, node, key = "") {
     let b2;
-    let ref1 = (el) => this.__owl__.setRef((\`input1\`), el);
-    if (ctx['state'].flag) {
-      let ref2 = (el) => this.__owl__.setRef((\`input2\`), el);
-      b2 = block2([ref2]);
+    if (ctx['this'].state.flag) {
+      let ref1 = (ctx['this'].input).set;
+      b2 = block2([ref1]);
     }
-    return block1([ref1], [b2]);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -25,12 +24,11 @@ exports[`hooks autofocus hook simple input 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   
-  let block1 = createBlock(\`<div><input block-ref="0"/><input block-ref="1"/></div>\`);
+  let block1 = createBlock(\`<div><input/><input block-ref="0"/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let ref1 = (el) => this.__owl__.setRef((\`input1\`), el);
-    let ref2 = (el) => this.__owl__.setRef((\`input2\`), el);
-    return block1([ref1, ref2]);
+    let ref1 = (ctx['this'].input).set;
+    return block1([ref1]);
   }
 }"
 `;
@@ -125,7 +123,7 @@ exports[`hooks useEffect hook effect can depend on stuff in dom 1`] = `
   return function template(ctx, node, key = "") {
     let b2;
     if (ctx['state'].value) {
-      let ref1 = (el) => this.__owl__.setRef((\`div\`), el);
+      let ref1 = (ctx['this'].ref).set;
       b2 = block2([ref1]);
     }
     return multi([b2]);
@@ -199,21 +197,6 @@ exports[`hooks useListener 2`] = `
   return function template(ctx, node, key = "") {
     let txt1 = ctx['this'].props.value;
     return block1([txt1]);
-  }
-}"
-`;
-
-exports[`hooks useRef hook: basic use 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div><button block-ref="0"><block-text-1/></button></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    let ref1 = (el) => this.__owl__.setRef((\`button\`), el);
-    let txt1 = ctx['value'];
-    return block1([ref1, txt1]);
   }
 }"
 `;

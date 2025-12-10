@@ -28,7 +28,7 @@ exports[`destroy a subroot while another component is mounted in main app 2`] = 
   
   return function template(ctx, node, key = "") {
     const b2 = text(\`a\`);
-    let ref1 = (el) => this.__owl__.setRef((\`elem\`), el);
+    let ref1 = (ctx['this'].ref).set;
     const b3 = block3([ref1]);
     return multi([b2, b3]);
   }

@@ -245,7 +245,7 @@ describe("basic features", () => {
       status = status();
     }
     const manager = new PluginManager(null);
-    expect(manager.status).toBe(0) // new;
+    expect(manager.status).toBe(0); // new;
 
     const [a] = manager.startPlugins([A]) as [A];
     expect(manager.status).toBe(1); // started

@@ -70,14 +70,14 @@ describe("t-model directive", () => {
         </div>`;
       state = { text: "" };
     }
-    let error: Error;
+    let error: any;
     try {
       await mount(SomeComponent, fixture);
     } catch (e) {
       error = e as Error;
     }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe(
+    expect(error!.cause.message).toBe(
       `Invalid t-model expression: expression should evaluate to a function with a 'set' method defined on it`
     );
   });

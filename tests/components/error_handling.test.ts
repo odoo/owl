@@ -62,10 +62,10 @@ describe("basics", () => {
 
     parent.render();
     await expect(nextAppError(parent.__owl__.app)).resolves.toThrow(
-      "Cannot read properties of undefined (reading 'this')"
+      "[Owl] Unhandled error. Destroying the root component"
     );
     expect(fixture.innerHTML).toBe("");
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("display a nice error if it cannot find component", async () => {
@@ -75,20 +75,20 @@ describe("basics", () => {
       static components = { SomeComponent };
     }
     const app = new App();
-    let error: Error;
+    let error: any;
     const mountProm = app
       .createRoot(Parent)
       .mount(fixture)
       .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
-      'Cannot find the definition of component "SomeMispelledComponent"'
-    );
     await mountProm;
     expect(error!).toBeDefined();
-    expect(error!.message).toBe('Cannot find the definition of component "SomeMispelledComponent"');
+    expect(error!.message).toBe("[Owl] Unhandled error. Destroying the root component");
+    expect(error!.cause!.message).toBe(
+      'Cannot find the definition of component "SomeMispelledComponent"'
+    );
     expect(console.error).toBeCalledTimes(0);
     expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("display a nice error if it cannot find component (in dev mode)", async () => {
@@ -97,21 +97,19 @@ describe("basics", () => {
       static template = xml`<SomeMispelledComponent />`;
       static components = { SomeComponent };
     }
-    const app = new App({ test: true });
-    let error: Error;
-    const mountProm = app
-      .createRoot(Parent)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
+    let error: any;
+    try {
+      await mount(Parent, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error!.message).toBe("[Owl] Unhandled error. Destroying the root component");
+    expect(error!.cause.message).toBe(
       'Cannot find the definition of component "SomeMispelledComponent"'
     );
-    await mountProm;
-    expect(error!).toBeDefined();
-    expect(error!.message).toBe('Cannot find the definition of component "SomeMispelledComponent"');
     expect(console.error).toBeCalledTimes(0);
     expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("display a nice error if a component is not a component", async () => {
@@ -120,18 +118,14 @@ describe("basics", () => {
       static template = xml`<SomeComponent />`;
       static components = { SomeComponent: notAComponentConstructor };
     }
-    const app = new App();
-    let error: Error;
-    const mountProm = app
-      .createRoot(Parent as typeof Component)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
-      '"SomeComponent" is not a Component. It must inherit from the Component class'
-    );
-    await mountProm;
-    expect(error!).toBeDefined();
-    expect(error!.message).toBe(
+    let error: any;
+    try {
+      await mount(Parent as any, fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error!.message).toBe("[Owl] Unhandled error. Destroying the root component");
+    expect(error!.cause.message).toBe(
       '"SomeComponent" is not a Component. It must inherit from the Component class'
     );
   });
@@ -140,18 +134,14 @@ describe("basics", () => {
     class Parent extends Component {
       static template = xml`<div><MissingChild /></div>`;
     }
-    const app = new App();
-    let error: Error;
-    const mountProm = app
-      .createRoot(Parent)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
-      'Cannot find the definition of component "MissingChild", missing static components key in parent'
-    );
-    await mountProm;
-    expect(error!).toBeDefined();
-    expect(error!.message).toBe(
+    let error: any;
+    try {
+      await mount(Parent as any, fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error!.message).toBe("[Owl] Unhandled error. Destroying the root component");
+    expect(error!.cause.message).toBe(
       'Cannot find the definition of component "MissingChild", missing static components key in parent'
     );
   });
@@ -182,7 +172,7 @@ function(app, bdom, helpers) {
   }
 }`;
     expect(error!).toBeDefined();
-    expect(error!.message).toBe(expectedErrorMessage);
+    expect((error! as any).message).toBe(expectedErrorMessage);
   });
 
   test("display a nice error if a non-root component template fails to compile", async () => {
@@ -206,16 +196,14 @@ function(app, bdom, helpers) {
     return block1([attr1]);
   }
 }`;
-    const app = new App();
-    let error: Error;
-    const mountProm = app
-      .createRoot(Parent)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(expectedErrorMessage);
-    await mountProm;
+    let error: any;
+    try {
+      await mount(Parent, fixture);
+    } catch (e) {
+      error = e as Error;
+    }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe(expectedErrorMessage);
+    expect(error!.cause.message).toBe(expectedErrorMessage);
   });
 
   test("simple catchError", async () => {
@@ -256,20 +244,27 @@ describe("errors and promises", () => {
       static template = xml`<div><t t-esc="this.will.crash"/></div>`;
     }
 
-    const app = new App();
-    let error: OwlError;
-    const mountProm = app
-      .createRoot(Root)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
-      "Cannot read properties of undefined (reading 'crash')"
-    );
-    await mountProm;
+    let error: any;
+    try {
+      await mount(Root, fixture);
+    } catch (e) {
+      error = e as Error;
+    }
+
+    // const app = new App();
+    // let error: OwlError;
+    // const mountProm = app
+    //   .createRoot(Root)
+    //   .mount(fixture)
+    //   .catch((e: Error) => (error = e));
+    // await expect(nextAppError(app)).resolves.toThrow(
+    //   "[Owl] Unhandled error. Destroying the root component"
+    // );
+    // await mountProm;
     expect(error!).toBeDefined();
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
-    expect(error!.message).toMatch(regexp);
+    expect(error!.cause!.message).toMatch(regexp);
     expect(mockConsoleError).toBeCalledTimes(0);
     expect(mockConsoleError).toBeCalledTimes(0);
   });
@@ -290,12 +285,14 @@ describe("errors and promises", () => {
       .createRoot(Root)
       .mount(fixture)
       .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("boom");
+    await expect(nextAppError(app)).resolves.toThrow(
+      "[Owl] Unhandled error. Destroying the root component"
+    );
     await mountProm;
     expect(error!).toBeDefined();
     expect(fixture.innerHTML).toBe("");
     expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("an error in onMounted callback will have the component's setup in its stack trace", async () => {
@@ -314,13 +311,15 @@ describe("errors and promises", () => {
       .createRoot(Root)
       .mount(fixture)
       .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("boom");
+    await expect(nextAppError(app)).resolves.toThrow(
+      "[Owl] Unhandled error. Destroying the root component"
+    );
     await mountProm;
     expect(error!).toBeDefined();
-    expect(error!.stack).toContain("error_handling.test.ts");
+    expect(error!.cause.stack).toContain("error_handling.test.ts");
     expect(fixture.innerHTML).toBe("");
     expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("wrapped errors in async code are correctly caught", async () => {
@@ -340,10 +339,12 @@ describe("errors and promises", () => {
       .createRoot(Root)
       .mount(fixture)
       .catch((e: Error) => (error = e));
+    await expect(nextAppError(app)).resolves.toThrow(
+      "[Owl] Unhandled error. Destroying the root component"
+    );
     await mountProm;
     expect(error!).toBeDefined();
-    expect(error!.message).toBe(`boom in onWillStart`);
-    await new Promise((r) => setTimeout(r, 0)); // wait for the rejection event to bubble
+    expect(error!.cause.message).toBe(`boom in onWillStart`);
   });
 
   test("an error in willPatch call will reject the render promise", async () => {
@@ -402,19 +403,17 @@ describe("errors and promises", () => {
       static components = { Child };
     }
 
-    const app = new App();
-    let error: OwlError;
-    const mountProm = app
-      .createRoot(Parent)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await mountProm;
-    expect(error!).toBeDefined();
+    let error: any;
+    try {
+      await mount(Parent, fixture);
+    } catch (e) {
+      error = e;
+    }
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
-    expect(error!.message).toMatch(regexp);
+    expect(error!.cause.message).toMatch(regexp);
     expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("a rendering error will reject the render promise", async () => {
@@ -449,20 +448,18 @@ describe("errors and promises", () => {
       static components = { Child };
     }
 
-    const app = new App();
-    let error: OwlError;
-    const mountProm = app
-      .createRoot(Parent)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    // await expect(nextAppError(app)).resolves.toThrow("Cannot read properties of undefined (reading 'y')");
-    await mountProm;
-    expect(error!).toBeDefined();
+    let error: any;
+    try {
+      await mount(Parent, fixture);
+    } catch (e) {
+      error = e;
+    }
+
     const regexp =
       /Cannot read properties of undefined \(reading 'y'\)|Cannot read property 'y' of undefined/g;
-    expect(error!.message).toMatch(regexp);
+    expect(error!.cause.message).toMatch(regexp);
     expect(mockConsoleError).toBeCalledTimes(0);
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("errors in mounted and in willUnmount", async () => {
@@ -480,19 +477,15 @@ describe("errors and promises", () => {
         });
       }
     }
-
-    const app = new App({ test: true });
-    let error: OwlError;
-    const mountProm = app
-      .createRoot(Example)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await mountProm;
-    expect(error!.message).toBe(`Error in mounted`);
-    // 1 additional error is logged because the destruction of the app causes
-    // the onWillUnmount hook to be called and to fail
-    expect(mockConsoleError).toBeCalledTimes(1);
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    let error: any;
+    try {
+      await mount(Example, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error!.cause.message).toBe(`Error in mounted`);
+    expect(mockConsoleError).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("errors in rerender", async () => {
@@ -505,11 +498,10 @@ describe("errors and promises", () => {
 
     root.state = "boom";
     root.render();
-    await expect(nextAppError(root.__owl__.app)).resolves.toThrow(
-      "Cannot read properties of undefined (reading 'b')"
-    );
+    const error: any = await nextAppError(root.__owl__.app)!;
+    expect(error.cause.message).toBe("Cannot read properties of undefined (reading 'b')");
     expect(fixture.innerHTML).toBe("");
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 });
 
@@ -632,7 +624,7 @@ describe("can catch errors", () => {
     } catch (e: any) {
       error = e;
     }
-    expect(error!.message).toBe(
+    expect(error!.cause.message).toBe(
       `No active component (a hook function should only be called in 'setup')`
     );
   });
@@ -649,14 +641,13 @@ describe("can catch errors", () => {
         });
       }
     }
-    const app = new App({ test: true });
     let error: any;
-    const mountProm = app
-      .createRoot(Root)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await mountProm;
-    expect(error).toBe(err);
+    try {
+      await mount(Root, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error.cause).toBe(err);
   });
 
   test("Errors in owl lifecycle are wrapped in dev mode: async hook", async () => {
@@ -672,14 +663,13 @@ describe("can catch errors", () => {
         });
       }
     }
-    const app = new App({ test: true });
     let error: any;
-    const mountProm = app
-      .createRoot(Root)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await mountProm;
-    expect(error).toBe(err);
+    try {
+      await mount(Root, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error.cause).toBe(err);
   });
 
   test("Errors in owl lifecycle are wrapped outside dev mode: sync hook", async () => {
@@ -694,14 +684,14 @@ describe("can catch errors", () => {
         });
       }
     }
-    const app = new App();
     let error: any;
-    const mountProm = app
-      .createRoot(Root)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await mountProm;
-    expect(error).toBe(err);
+    try {
+      await mount(Root, fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error!.cause.message).toBe(`test error`);
+    expect(error.cause).toBe(err);
   });
 
   test("Errors in owl lifecycle are wrapped out of dev mode: async hook", async () => {
@@ -717,14 +707,13 @@ describe("can catch errors", () => {
         });
       }
     }
-    const app = new App();
-    let error: OwlError;
-    const mountProm = app
-      .createRoot(Root)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await mountProm;
-    expect(error!.message).toBe(`test error`);
+    let error: any;
+    try {
+      await mount(Root, fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error!.cause.message).toBe(`test error`);
   });
 
   test("Thrown values that are not errors are wrapped in dev mode", async () => {
@@ -738,14 +727,13 @@ describe("can catch errors", () => {
         });
       }
     }
-    const app = new App({ test: true });
-    let error: OwlError;
-    const mountProm = app
-      .createRoot(Root)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await mountProm;
-    expect(error!).toBe(`This is not an error`);
+    let error: any;
+    try {
+      await mount(Root, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error!.cause).toBe(`This is not an error`);
   });
 
   test("Thrown values that are not errors are wrapped outside dev mode", async () => {
@@ -759,14 +747,13 @@ describe("can catch errors", () => {
         });
       }
     }
-    const app = new App();
-    let error: OwlError;
-    const mountProm = app
-      .createRoot(Root)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await mountProm;
-    expect(error!).toBe(`This is not an error`);
+    let error: any;
+    try {
+      await mount(Root, fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error!.cause).toBe(`This is not an error`);
   });
 
   test("can catch an error in the initial call of a component render function (parent mounted)", async () => {

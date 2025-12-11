@@ -8,23 +8,16 @@ import {
   onWillStart,
   onWillUnmount,
   onWillUpdateProps,
+  OwlError,
+  props,
+  proxy,
+  signal,
   useComponent,
   useEffect,
   useListener,
-  proxy,
   xml,
-  OwlError,
-  props,
-  signal,
 } from "../../src/index";
-import {
-  elem,
-  logStep,
-  makeTestFixture,
-  nextAppError,
-  nextTick,
-  snapshotEverything,
-} from "../helpers";
+import { elem, logStep, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -526,19 +519,15 @@ describe("hooks", () => {
       }
 
       let error: OwlError;
-      const app = new App();
-      const mountProm = app
-        .createRoot(MyComponent)
-        .mount(fixture)
-        .catch((e: Error) => (error = e));
-      await expect(nextAppError(app)).resolves.toThrow("Intentional error");
-      await mountProm;
-      expect(error!.message).toBe("Intentional error");
-      // no console.error because the error has been caught in this test
+      try {
+        await mount(MyComponent, fixture);
+      } catch (e: any) {
+        error = e;
+      }
+      expect(error!.cause.message).toBe("Intentional error");
       expect(console.error).toHaveBeenCalledTimes(0);
       console.error = originalconsoleError;
-      // 1 console.warn because app is destroyed
-      expect(console.warn).toHaveBeenCalledTimes(1);
+      expect(console.warn).toHaveBeenCalledTimes(0);
       console.warn = originalconsoleWarn;
     });
   });

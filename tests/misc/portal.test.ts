@@ -269,19 +269,16 @@ describe("Portal", () => {
             </div>`;
     }
 
-    let error: Error;
-    const app = new App();
-    const mountProm = app
-      .createRoot(Parent)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("invalid portal target");
-    await mountProm;
-
+    let error: any;
+    try {
+      await mount(Parent, fixture);
+    } catch (e) {
+      error = e;
+    }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe("invalid portal target");
+    expect(error!.cause.message).toBe("invalid portal target");
     expect(fixture.innerHTML).toBe(``);
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("portal with child and props", async () => {
@@ -1009,15 +1006,12 @@ describe("Portal: Props validation", () => {
           </t>
         </div>`;
     }
-    let error: Error;
-    const app = new App();
-    const mountProm = app
-      .createRoot(Parent)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow("invalid portal target");
-    await mountProm;
-    expect(error!).toBeDefined();
-    expect(error!.message).toBe(`invalid portal target`);
+    let error: any;
+    try {
+      await mount(Parent, fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error!.cause.message).toBe(`invalid portal target`);
   });
 });

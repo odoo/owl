@@ -2,12 +2,12 @@
   <div t-name="TabbedEditor" class="tabbed-editor" t-att-style="props.style">
     <div class="tabBar" t-att-class="{resizeable: props.resizeable}" t-on-mousedown="onMouseDown">
         <t t-foreach="['js', 'xml', 'css']" t-as="tab" t-key="tab">
-            <a t-ref="{{tab}}" t-if="props[tab] !== false" t-key="tab" class="tab flash" t-att-class="{active: state.currentTab===tab}" t-on-click="() => setTab(tab)">
+            <a t-if="props[tab] !== false" t-key="tab" class="tab flash" t-att-class="{active: state.currentTab===tab}" t-on-click="() => setTab(tab)">
                 <t t-esc="tab"/>
             </a>
         </t>
     </div>
-    <div class="code-editor" t-ref="editor"></div>
+    <div class="code-editor" t-ref="editorNode"></div>
   </div>
 
   <div t-name="Playground" class="playground">

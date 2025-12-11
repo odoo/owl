@@ -1245,8 +1245,7 @@ describe("qweb parser", () => {
         },
       ],
       model: {
-        baseExpr: "state",
-        expr: "'model'",
+        expr: "state.model",
         targetAttr: "value",
         hasDynamicChildren: false,
         specialInitTargetAttr: null,
@@ -1284,8 +1283,7 @@ describe("qweb parser", () => {
         },
       ],
       model: {
-        baseExpr: "state",
-        expr: "'model'",
+        expr: "state.model",
         targetAttr: "value",
         specialInitTargetAttr: null,
         eventType: "change",
@@ -2182,8 +2180,7 @@ describe("qweb parser", () => {
       dynamicTag: null,
       ns: null,
       model: {
-        baseExpr: "state",
-        expr: "'stuff'",
+        expr: "state.stuff",
         eventType: "input",
         shouldNumberize: false,
         shouldTrim: false,
@@ -2203,8 +2200,7 @@ describe("qweb parser", () => {
       dynamicTag: null,
       ns: null,
       model: {
-        baseExpr: "state",
-        expr: "'stuff'",
+        expr: "state['stuff']",
         eventType: "input",
         shouldNumberize: false,
         shouldTrim: false,
@@ -2224,8 +2220,7 @@ describe("qweb parser", () => {
       dynamicTag: null,
       ns: null,
       model: {
-        baseExpr: "state",
-        expr: "'stuff'",
+        expr: "state.stuff",
         eventType: "change",
         shouldNumberize: true,
         shouldTrim: true,
@@ -2246,8 +2241,7 @@ describe("qweb parser", () => {
     dynamicTag: null,
     ns: null,
     model: {
-      baseExpr: "state",
-      expr: "'stuff'",
+      expr: "state.stuff",
       eventType: "input",
       shouldNumberize: false,
       shouldTrim: false,
@@ -2267,8 +2261,7 @@ describe("qweb parser", () => {
     dynamicTag: null,
     ns: null,
     model: {
-      baseExpr: "state",
-      expr: "'stuff'",
+      expr: "state.stuff",
       eventType: "input",
       shouldNumberize: false,
       shouldTrim: false,
@@ -2288,8 +2281,7 @@ describe("qweb parser", () => {
     dynamicTag: null,
     ns: null,
     model: {
-      baseExpr: "state",
-      expr: "'stuff'",
+      expr: "state.stuff",
       eventType: "click",
       shouldNumberize: false,
       shouldTrim: false,
@@ -2309,8 +2301,7 @@ describe("qweb parser", () => {
     dynamicTag: null,
     ns: null,
     model: {
-      baseExpr: "state",
-      expr: "'stuff'",
+      expr: "state.stuff",
       eventType: "click",
       shouldNumberize: true,
       shouldTrim: true,

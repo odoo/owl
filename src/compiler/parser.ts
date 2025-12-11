@@ -47,7 +47,6 @@ export interface ASTComment extends BaseAST {
 }
 
 interface TModelInfo {
-  baseExpr: string;
   expr: string;
   targetAttr: string;
   eventType: "change" | "click" | "input";
@@ -371,9 +370,6 @@ function parseTDebugLog(node: Element, ctx: ParsingContext): AST | null {
 // -----------------------------------------------------------------------------
 // Regular dom node
 // -----------------------------------------------------------------------------
-const hasDotAtTheEnd = /\.[\w_]+\s*$/;
-const hasBracketsAtTheEnd = /\[[^\[]+\]\s*$/;
-
 const ROOT_SVG_TAGS = new Set(["svg", "g", "path"]);
 
 function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
@@ -415,20 +411,6 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
           "The t-model directive only works with <input>, <textarea> and <select>"
         );
       }
-
-      let baseExpr, expr;
-      if (hasDotAtTheEnd.test(value)) {
-        const index = value.lastIndexOf(".");
-        baseExpr = value.slice(0, index);
-        expr = `'${value.slice(index + 1)}'`;
-      } else if (hasBracketsAtTheEnd.test(value)) {
-        const index = value.lastIndexOf("[");
-        baseExpr = value.slice(0, index);
-        expr = value.slice(index + 1, -1);
-      } else {
-        throw new OwlError(`Invalid t-model expression: "${value}" (it should be assignable)`);
-      }
-
       const typeAttr = node.getAttribute("type");
       const isInput = tagName === "input";
       const isSelect = tagName === "select";
@@ -440,8 +422,7 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
       const eventType = isRadioInput ? "click" : isSelect || hasLazyMod ? "change" : "input";
 
       model = {
-        baseExpr,
-        expr,
+        expr: value,
         targetAttr: isCheckboxInput ? "checked" : "value",
         specialInitTargetAttr: isRadioInput ? "checked" : null,
         eventType,

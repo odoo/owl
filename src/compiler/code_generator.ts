@@ -655,7 +655,6 @@ export class CodeGenerator {
     if (ast.model) {
       const {
         hasDynamicChildren,
-        baseExpr,
         expr,
         eventType,
         shouldNumberize,
@@ -664,15 +663,10 @@ export class CodeGenerator {
         specialInitTargetAttr,
       } = ast.model;
 
-      const baseExpression = compileExpr(baseExpr);
-      const bExprId = generateId("bExpr");
-      this.define(bExprId, baseExpression);
-
       const expression = compileExpr(expr);
       const exprId = generateId("expr");
-      this.define(exprId, expression);
-
-      const fullExpression = `${bExprId}[${exprId}]`;
+      this.helpers.add("modelExpr");
+      this.define(exprId, `modelExpr(${expression})`);
 
       let idx: number;
       if (specialInitTargetAttr) {
@@ -684,14 +678,14 @@ export class CodeGenerator {
             targetExpr = compileExpr(dynamicTgExpr);
           }
         }
-        idx = block!.insertData(`${fullExpression} === ${targetExpr}`, "prop");
+        idx = block!.insertData(`${exprId}() === ${targetExpr}`, "prop");
         attrs[`block-property-${idx}`] = specialInitTargetAttr;
       } else if (hasDynamicChildren) {
         const bValueId = generateId("bValue");
         tModelSelectedExpr = `${bValueId}`;
-        this.define(tModelSelectedExpr, fullExpression);
+        this.define(tModelSelectedExpr, `${exprId}()`);
       } else {
-        idx = block!.insertData(`${fullExpression}`, "prop");
+        idx = block!.insertData(`${exprId}()`, "prop");
         attrs[`block-property-${idx}`] = targetAttr;
       }
       this.helpers.add("toNumber");
@@ -699,7 +693,7 @@ export class CodeGenerator {
       valueCode = shouldTrim ? `${valueCode}.trim()` : valueCode;
       valueCode = shouldNumberize ? `toNumber(${valueCode})` : valueCode;
 
-      const handler = `[(ev) => { ${fullExpression} = ${valueCode}; }]`;
+      const handler = `[(ev) => { ${exprId}.set(${valueCode}); }]`;
       idx = block!.insertData(handler, "hdlr");
       attrs[`block-handler-${idx}`] = eventType;
     }

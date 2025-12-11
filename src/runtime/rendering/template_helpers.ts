@@ -200,6 +200,15 @@ function createRef(ref: any) {
   };
 }
 
+function modelExpr(value: any) {
+  if (!value.set || typeof value !== "function") {
+    throw new OwlError(
+      `Invalid t-model expression: expression should evaluate to a function with a 'set' method defined on it`
+    );
+  }
+  return value;
+}
+
 export const helpers = {
   withDefault,
   zero: Symbol("zero"),
@@ -217,4 +226,5 @@ export const helpers = {
   markRaw,
   OwlError,
   createRef,
+  modelExpr,
 };

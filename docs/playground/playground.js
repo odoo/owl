@@ -1,20 +1,20 @@
-import { debounce, loadJS } from "./utils.js";
 import {
-  Component,
-  proxy,
-  props,
-  useRef,
-  onMounted,
-  onWillUnmount,
-  onPatched,
-  onWillUpdateProps,
-  whenReady,
   __info__,
-  useEffect,
-  onWillStart,
-  OwlError,
+  Component,
   mount,
+  onMounted,
+  onPatched,
+  onWillStart,
+  onWillUnmount,
+  onWillUpdateProps,
+  OwlError,
+  props,
+  proxy,
+  signal,
+  useEffect,
+  whenReady,
 } from "../owl.js";
+import { debounce, loadJS } from "./utils.js";
 
 //------------------------------------------------------------------------------
 // Constants, helpers, utils
@@ -162,11 +162,11 @@ class TabbedEditor extends Component {
 
     this.sessions = {};
     this._setupSessions(props);
-    this.editorNode = useRef("editor");
+    this.editorNode = signal(null);
     this._updateCode = this._updateCode.bind(this);
 
     onMounted(() => {
-      this.editor = this.editor || ace.edit(this.editorNode.el);
+      this.editor = this.editor || ace.edit(this.editorNode());
 
       this.editor.setValue(this.props[this.state.currentTab], -1);
       this.editor.setFontSize("12px");
@@ -298,17 +298,17 @@ class Playground extends Component {
     this.toggleLayout = debounce(this.toggleLayout, 250, true);
     this.runCode = debounce(this.runCode, 250, true);
     this.exportStandaloneApp = debounce(this.exportStandaloneApp, 250, true);
-    this.content = useRef("content");
+    this.content = signal(null);
     this.updateCode = this.updateCode.bind(this);
   }
 
   runCode() {
-    this.content.el.innerHTML = "";
+    this.content().innerHTML = "";
     this.state.displayWelcome = false;
 
     const { js, css, xml } = this.state;
     const subiframe = makeCodeIframe(js, css, xml);
-    this.content.el.appendChild(subiframe);
+    this.content().appendChild(subiframe);
   }
 
   shareCode() {

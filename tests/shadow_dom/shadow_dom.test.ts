@@ -14,6 +14,7 @@ describe("shadow_dom", () => {
   test("can mount app", async () => {
     class SomeComponent extends Component {
       static template = xml`<div class="my-div"/>`;
+      status = status();
     }
 
     const container = document.createElement("div");
@@ -26,12 +27,13 @@ describe("shadow_dom", () => {
     expect(shadow.contains(div)).toBe(true);
     app.destroy();
     expect(shadow.contains(div)).toBe(false);
-    expect(status(comp)).toBe("destroyed");
+    expect(comp.status()).toBe("destroyed");
   });
 
   test("can mount app in closed shadow dom", async () => {
     class SomeComponent extends Component {
       static template = xml`<div class="my-div"/>`;
+      status = status();
     }
 
     const container = document.createElement("div");
@@ -44,7 +46,7 @@ describe("shadow_dom", () => {
     expect(shadow.contains(div)).toBe(true);
     app.destroy();
     expect(shadow.contains(div)).toBe(false);
-    expect(status(comp)).toBe("destroyed");
+    expect(comp.status()).toBe("destroyed");
   });
 
   test("can bind event handler", async () => {
@@ -86,6 +88,7 @@ describe("shadow_dom", () => {
   test("can mount app inside a shadow child element", async () => {
     class SomeComponent extends Component {
       static template = xml`<div class="my-div"/>`;
+      status = status();
     }
     const shadow = fixture.attachShadow({ mode: "open" });
     const shadowDiv = document.createElement("div");
@@ -97,7 +100,7 @@ describe("shadow_dom", () => {
     expect(shadow.contains(div)).toBe(true);
     app.destroy();
     expect(shadow.contains(div)).toBe(false);
-    expect(status(comp)).toBe("destroyed");
+    expect(comp.status()).toBe("destroyed");
   });
 
   test("can mount app inside a separate HTML document", async () => {
@@ -125,6 +128,7 @@ describe("shadow_dom", () => {
   test("can mount app inside an element in a shadow root inside an iframe", async () => {
     class SomeComponent extends Component {
       static template = xml`<div class="my-div"/>`;
+      status = status();
     }
 
     const iframe = document.createElement("iframe");
@@ -149,6 +153,6 @@ describe("shadow_dom", () => {
 
     app.destroy();
     expect(shadow.contains(div)).toBe(false);
-    expect(status(comp)).toBe("destroyed");
+    expect(comp.status()).toBe("destroyed");
   });
 });

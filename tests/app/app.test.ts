@@ -23,6 +23,7 @@ describe("app", () => {
   test("destroy remove the widget from the DOM", async () => {
     class SomeComponent extends Component {
       static template = xml`<div/>`;
+      status = status();
     }
 
     const app = new App();
@@ -31,7 +32,7 @@ describe("app", () => {
     expect(document.contains(el)).toBe(true);
     app.destroy();
     expect(document.contains(el)).toBe(false);
-    expect(status(comp)).toBe("destroyed");
+    expect(comp.status()).toBe("destroyed");
   });
 
   test("can configure an app with props", async () => {
@@ -70,6 +71,7 @@ describe("app", () => {
   test("can mount app in an iframe", async () => {
     class SomeComponent extends Component {
       static template = xml`<div class="my-div"/>`;
+      status = status();
     }
 
     const iframe = document.createElement("iframe");
@@ -82,7 +84,7 @@ describe("app", () => {
     expect(iframeDoc.contains(div)).toBe(true);
     app.destroy();
     expect(iframeDoc.contains(div)).toBe(false);
-    expect(status(comp)).toBe("destroyed");
+    expect(comp.status()).toBe("destroyed");
   });
 
   test("app: clear scheduler tasks and destroy cancelled nodes immediately on destroy", async () => {

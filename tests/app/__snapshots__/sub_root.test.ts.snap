@@ -23,12 +23,13 @@ exports[`destroy a subroot while another component is mounted in main app 2`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createRef } = helpers;
   
   let block3 = createBlock(\`<div block-ref="0"/>\`);
   
   return function template(ctx, node, key = "") {
     const b2 = text(\`a\`);
-    let ref1 = (ctx['this'].ref).set;
+    let ref1 = createRef(ctx['this'].ref);
     const b3 = block3([ref1]);
     return multi([b2, b3]);
   }

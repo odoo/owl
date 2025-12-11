@@ -150,49 +150,50 @@ export function logStep(step: string) {
 }
 export function useLogLifecycle(key?: string, skipAsyncHooks: boolean = false) {
   const component = useComponent();
+  const componentStatus = status();
   let name = component.constructor.name;
   if (key) {
     name = `${name} (${key})`;
   }
   logStep(`${name}:setup`);
-  expect(name + ": " + status(component)).toBe(name + ": " + "new");
+  expect(name + ": " + componentStatus()).toBe(name + ": " + "new");
 
   if (!skipAsyncHooks) {
     onWillStart(() => {
-      expect(name + ": " + status(component)).toBe(name + ": " + "new");
+      expect(name + ": " + componentStatus()).toBe(name + ": " + "new");
       logStep(`${name}:willStart`);
     });
   }
 
   onMounted(() => {
-    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+    expect(name + ": " + componentStatus()).toBe(name + ": " + "mounted");
     logStep(`${name}:mounted`);
   });
 
   if (!skipAsyncHooks) {
     onWillUpdateProps(() => {
-      expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+      expect(name + ": " + componentStatus()).toBe(name + ": " + "mounted");
       logStep(`${name}:willUpdateProps`);
     });
   }
 
   onWillPatch(() => {
-    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+    expect(name + ": " + componentStatus()).toBe(name + ": " + "mounted");
     logStep(`${name}:willPatch`);
   });
 
   onPatched(() => {
-    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+    expect(name + ": " + componentStatus()).toBe(name + ": " + "mounted");
     logStep(`${name}:patched`);
   });
 
   onWillUnmount(() => {
-    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
+    expect(name + ": " + componentStatus()).toBe(name + ": " + "mounted");
     logStep(`${name}:willUnmount`);
   });
 
   onWillDestroy(() => {
-    expect(status(component)).not.toBe("destroyed");
+    expect(componentStatus()).not.toBe("destroyed");
     logStep(`${name}:willDestroy`);
   });
 }

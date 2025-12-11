@@ -1,4 +1,4 @@
-import type { Component } from "./component";
+import { getCurrent } from "./component_node";
 
 // -----------------------------------------------------------------------------
 //  Status
@@ -15,15 +15,18 @@ export const enum STATUS {
 
 type STATUS_DESCR = "new" | "mounted" | "cancelled" | "destroyed";
 
-export function status(component: Component): STATUS_DESCR {
-  switch (component.__owl__.status) {
-    case STATUS.NEW:
-      return "new";
-    case STATUS.CANCELLED:
-      return "cancelled";
-    case STATUS.MOUNTED:
-      return "mounted";
-    case STATUS.DESTROYED:
-      return "destroyed";
-  }
+export function status(): () => STATUS_DESCR {
+  const node = getCurrent();
+  return () => {
+    switch (node.status) {
+      case STATUS.NEW:
+        return "new";
+      case STATUS.CANCELLED:
+        return "cancelled";
+      case STATUS.MOUNTED:
+        return "mounted";
+      case STATUS.DESTROYED:
+        return "destroyed";
+    }
+  };
 }

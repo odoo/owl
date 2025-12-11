@@ -1,12 +1,5 @@
-import { App, Component, mount, onMounted, props, proxy, xml } from "../../src/index";
-import {
-  makeTestFixture,
-  nextAppError,
-  nextTick,
-  snapshotEverything,
-  steps,
-  useLogLifecycle,
-} from "../helpers";
+import { Component, mount, onMounted, props, proxy, xml } from "../../src/index";
+import { makeTestFixture, nextTick, snapshotEverything, steps, useLogLifecycle } from "../helpers";
 
 snapshotEverything();
 
@@ -325,15 +318,15 @@ describe("list of components", () => {
       `;
       static components = { Child };
     }
-
-    const app = new App({ test: true });
-    const mountProm = expect(app.createRoot(Parent).mount(fixture)).rejects.toThrow(
-      "Got duplicate key in t-foreach: child"
-    );
-    await expect(nextAppError(app)).resolves.toThrow("Got duplicate key in t-foreach: child");
-    await mountProm;
+    let error: any;
+    try {
+      await mount(Parent, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error.cause.message).toBe("Got duplicate key in t-foreach: child");
     console.info = consoleInfo;
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("crash when using object as keys that serialize to the same string", async () => {
@@ -352,16 +345,15 @@ describe("list of components", () => {
       static components = { Child };
     }
 
-    const app = new App({ test: true });
-    const mountProm = expect(app.createRoot(Parent).mount(fixture)).rejects.toThrow(
-      "Got duplicate key in t-foreach: [object Object]"
-    );
-    await expect(nextAppError(app)).resolves.toThrow(
-      "Got duplicate key in t-foreach: [object Object]"
-    );
-    await mountProm;
+    let error: any;
+    try {
+      await mount(Parent, fixture, { test: true });
+    } catch (e) {
+      error = e;
+    }
+    expect(error.cause.message).toBe("Got duplicate key in t-foreach: [object Object]");
     console.info = consoleInfo;
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("order is correct when slots are not of same type", async () => {

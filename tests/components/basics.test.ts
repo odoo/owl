@@ -1,14 +1,13 @@
-import { App, Component, mount, status, toRaw, proxy, xml, props } from "../../src";
+import { App, Component, mount, props, proxy, status, toRaw, xml } from "../../src";
+import { markup } from "../../src/runtime/utils";
 import {
   elem,
   makeTestFixture,
-  nextAppError,
   nextTick,
   snapshotEverything,
   steps,
   useLogLifecycle,
 } from "../helpers";
-import { markup } from "../../src/runtime/utils";
 
 let fixture: HTMLElement;
 
@@ -219,18 +218,19 @@ describe("basics", () => {
     class Test extends Component {
       static template = xml`<div/>`;
     }
-    let error: Error;
+    let error: any;
     const app = new App();
     const prom = app.createRoot(Test).mount(fixture);
     await Promise.resolve();
     fixture.remove();
-    prom.catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
-      "Cannot mount a component on a detached dom node"
-    );
+    try {
+      await prom;
+    } catch (e) {
+      error = e;
+    }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe("Cannot mount a component on a detached dom node");
-    expect(console.warn).toBeCalledTimes(1);
+    expect(error!.cause.message).toBe("Cannot mount a component on a detached dom node");
+    expect(console.warn).toBeCalledTimes(0);
     console.warn = warn;
   });
 

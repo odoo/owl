@@ -1,5 +1,6 @@
 import { OwlError } from "../common/owl_error";
 import { getCurrent } from "./component_node";
+import { STATUS } from "./status";
 
 let currentPluginManager: PluginManager | null = null;
 
@@ -22,6 +23,8 @@ export class PluginManager {
   private plugins: Record<string, Plugin>;
   private onDestroyCb: Function[] = [];
 
+  status: STATUS = STATUS.NEW;
+
   constructor(parent: PluginManager | null) {
     this.parent = parent;
     this.parent?.children.push(this);
@@ -37,6 +40,8 @@ export class PluginManager {
     while (cbs.length) {
       cbs.pop()!();
     }
+
+    this.status = STATUS.DESTROYED;
   }
 
   getPluginById<T extends Plugin>(id: string): T | null {
@@ -73,6 +78,9 @@ export class PluginManager {
     }
 
     currentPluginManager = previousManager;
+    if (!currentPluginManager) {
+      this.status = STATUS.MOUNTED;
+    }
     return plugins;
   }
 }

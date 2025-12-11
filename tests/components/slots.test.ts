@@ -1,5 +1,5 @@
 import { App, Component, mount, onMounted, props, proxy, signal, xml } from "../../src/index";
-import { children, makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
+import { children, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
 let originalconsoleWarn = console.warn;
@@ -252,18 +252,14 @@ describe("slots", () => {
       static components = { Child };
     }
 
-    let error: Error;
-    const app = new App();
-    const mountProm = app
-      .createRoot(Parent)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
-      "Cannot read properties of undefined (reading 'bool')"
-    );
-    await mountProm;
-    expect(error!).not.toBeNull();
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    let error: any;
+    try {
+      await mount(Parent, fixture);
+    } catch (e) {
+      error = e;
+    }
+    expect(error.cause.message).toBe("Cannot read properties of undefined (reading 'bool')");
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 
   test("simple default slot with params and bound function", async () => {

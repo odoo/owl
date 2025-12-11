@@ -289,7 +289,7 @@ export function compileExprToArray(expr: string): Token[] {
     }
 
     let isVar = token.type === "SYMBOL" && !RESERVED_WORDS.includes(token.value);
-    if (token.type === "SYMBOL" && !RESERVED_WORDS.includes(token.value)) {
+    if (isVar) {
       if (prevToken) {
         // normalize missing tokens: {a} should be equivalent to {a:a}
         if (

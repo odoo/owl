@@ -84,21 +84,31 @@ export class App extends TemplateSet {
     config: RootConfig<GetProps<ComponentInstance<T>>> = {}
   ): Root<T> {
     const props = config.props || ({} as any);
-
-    const restore = saveCurrent();
-    const node = this.makeNode(Root, props);
-    restore();
-
     let resolve!: (value: any) => void;
     let reject!: (reason?: any) => void;
     const promise = new Promise<any>((res, rej) => {
       resolve = res;
       reject = rej;
     });
+    const restore = saveCurrent();
+    let node: ComponentNode;
+    let error: any = null;
+    try {
+      node = this.makeNode(Root, props);
+    } catch (e) {
+      error = e;
+      reject(e);
+    } finally {
+      restore();
+    }
+
     const root = {
-      node,
+      node: node!,
       promise,
       mount: (target: HTMLElement | ShadowRoot, options?: MountOptions) => {
+        if (error) {
+          return promise;
+        }
         App.validateTarget(target);
         this.mountNode(node, target, resolve, reject, options);
         return promise;
@@ -134,9 +144,9 @@ export class App extends TemplateSet {
       nodeErrorHandlers.set(node, handlers);
     }
 
-    handlers.unshift((e) => {
-      reject(e);
-      return "destroy";
+    handlers.unshift((e, finalize) => {
+      const finalError = finalize();
+      reject(finalError);
     });
 
     // manually set a onMounted callback.

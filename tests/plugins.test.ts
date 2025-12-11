@@ -1,4 +1,4 @@
-import { effect, onWillDestroy, plugin, Plugin, PluginManager } from "../src";
+import { effect, onWillDestroy, plugin, Plugin, PluginManager, status } from "../src";
 import { Resource, useResource } from "../src/runtime/resource";
 import { waitScheduler } from "./helpers";
 
@@ -237,6 +237,23 @@ describe("basic features", () => {
     expect(() => plugin(A)).toThrowError(
       `No active component (a hook function should only be called in 'setup')`
     );
+  });
+
+  test("plugin lifecycle", () => {
+    class A extends Plugin {
+      static id = "a";
+      status = status();
+    }
+    const manager = new PluginManager(null);
+    expect(manager.status).toBe(0) // new;
+
+    const [a] = manager.startPlugins([A]) as [A];
+    expect(manager.status).toBe(1); // started
+    expect(a.status()).toBe("started");
+
+    manager.destroy();
+    expect(manager.status).toBe(3); // destroyed
+    expect(a.status()).toBe("destroyed");
   });
 });
 

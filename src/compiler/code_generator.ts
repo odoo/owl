@@ -714,8 +714,8 @@ export class CodeGenerator {
     // t-ref
     if (ast.ref) {
       const refExpr = compileExpr(ast.ref);
-
-      const setRefStr = `(${refExpr}).set`;
+      this.helpers.add("createRef");
+      const setRefStr = `createRef(${refExpr})`;
       const idx = block!.insertData(setRefStr, "ref");
       attrs["block-ref"] = String(idx);
     }

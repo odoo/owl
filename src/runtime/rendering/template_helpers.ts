@@ -170,6 +170,36 @@ export function safeOutput(value: any, defaultValue?: any): ReturnType<typeof to
   return toggler(safeKey, block);
 }
 
+function createRef(ref: any) {
+  if (!ref) {
+    throw new OwlError(`Ref is undefined or null`);
+  }
+
+  let add: (el: HTMLElement) => void;
+  let remove: (el: HTMLElement) => void;
+
+  if (ref.add && ref.remove) {
+    add = ref.add.bind(ref);
+    remove = ref.remove.bind(ref);
+  } else if (ref.set) {
+    add = ref.set.bind(ref);
+    remove = () => ref.set(null);
+  } else {
+    throw new OwlError(
+      `Ref should implement either a 'set' function or 'add' and 'remove' functions`
+    );
+  }
+
+  return (el: HTMLElement | null, previousEl: HTMLElement | null) => {
+    if (previousEl) {
+      remove(previousEl);
+    }
+    if (el) {
+      add(el);
+    }
+  };
+}
+
 export const helpers = {
   withDefault,
   zero: Symbol("zero"),
@@ -186,4 +216,5 @@ export const helpers = {
   createCatcher,
   markRaw,
   OwlError,
+  createRef,
 };

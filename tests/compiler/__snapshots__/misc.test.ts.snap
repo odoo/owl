@@ -182,7 +182,7 @@ exports[`misc other complex template 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, withKey } = helpers;
+  let { prepareList, withKey, createRef } = helpers;
   const callTemplate_1 = app.getTemplate(\`LOAD_INFOS_TEMPLATE\`);
   const comp1 = app.createComponent(\`BundlesList\`, true, false, false, ["bundles","category_custom_views","search"]);
   const comp2 = app.createComponent(\`BundlesList\`, true, false, false, ["bundles","search"]);
@@ -277,9 +277,9 @@ exports[`misc other complex template 1`] = `
     let prop2 = new String((ctx['search'].value) === 0 ? 0 : ((ctx['search'].value) || ""));
     let hdlr4 = [ctx['updateFilter'], ctx];
     let hdlr5 = [ctx['updateFilter'], ctx];
-    let ref1 = (ctx['search_input']).set;
+    let ref1 = createRef(ctx['search_input']);
     let hdlr6 = [ctx['clearSearch'], ctx];
-    let ref2 = (ctx['settings_menu']).set;
+    let ref2 = createRef(ctx['settings_menu']);
     if (ctx['triggers']) {
       ctx = Object.create(ctx);
       const [k_block18, v_block18, l_block18, c_block18] = prepareList(ctx['triggers']);;

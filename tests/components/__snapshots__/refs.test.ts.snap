@@ -4,57 +4,13 @@ exports[`refs basic use 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createRef } = helpers;
   
   let block1 = createBlock(\`<div block-ref="0"/>\`);
   
   return function template(ctx, node, key = "") {
-    let ref1 = (ctx['this'].button).set;
+    let ref1 = createRef(ctx['this'].button);
     return block1([ref1]);
-  }
-}"
-`;
-
-exports[`refs can use 2 refs with same name in a t-if/t-else situation 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block2 = createBlock(\`<div block-ref="0"/>\`);
-  let block3 = createBlock(\`<span block-ref="0"/>\`);
-  
-  return function template(ctx, node, key = "") {
-    let b2, b3;
-    if (ctx['state'].value) {
-      let ref1 = (ctx['this'].ref1).set;
-      b2 = block2([ref1]);
-    } else {
-      let ref2 = (ctx['this'].ref2).set;
-      b3 = block3([ref2]);
-    }
-    return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`refs multi ref 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, withKey } = helpers;
-  
-  let block2 = createBlock(\`<p block-attribute-0="id" block-ref="1"/>\`);
-  
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].items());;
-    for (let i1 = 0; i1 < l_block1; i1++) {
-      ctx[\`item\`] = k_block1[i1];
-      const key1 = ctx['item'];
-      let attr1 = \`item-\${ctx['item']}\`;
-      let ref1 = (ctx['refs']).set;
-      c_block1[i1] = withKey(block2([attr1, ref1]), key1);
-    }
-    return list(c_block1);
   }
 }"
 `;
@@ -75,11 +31,12 @@ exports[`refs ref is set by child component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createRef } = helpers;
   
   let block1 = createBlock(\`<div id="ref" block-ref="0"/>\`);
   
   return function template(ctx, node, key = "") {
-    let ref1 = (ctx['this'].props.ref).set;
+    let ref1 = createRef(ctx['this'].props.ref);
     return block1([ref1]);
   }
 }"
@@ -89,6 +46,7 @@ exports[`refs ref is unset when t-if goes to false after unrelated render 1`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createRef } = helpers;
   
   let block2 = createBlock(\`<div block-attribute-0="class" block-ref="1"/>\`);
   
@@ -96,7 +54,7 @@ exports[`refs ref is unset when t-if goes to false after unrelated render 1`] = 
     let b2;
     if (ctx['state'].show) {
       let attr1 = ctx['state'].class;
-      let ref1 = (ctx['this'].ref).set;
+      let ref1 = createRef(ctx['this'].ref);
       b2 = block2([attr1, ref1]);
     }
     return multi([b2]);
@@ -108,13 +66,14 @@ exports[`refs refs and recursive templates 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createRef } = helpers;
   const comp1 = app.createComponent(\`Test\`, true, false, false, ["tree"]);
   
   let block1 = createBlock(\`<p block-ref="0"><block-text-1/><block-child-0/></p>\`);
   
   return function template(ctx, node, key = "") {
     let b2;
-    let ref1 = (ctx['this'].root).set;
+    let ref1 = createRef(ctx['this'].root);
     let txt1 = ctx['this'].props.tree.value;
     if (ctx['this'].props.tree.child) {
       b2 = comp1({tree: ctx['this'].props.tree.child}, key + \`__1\`, node, this, null);
@@ -128,6 +87,7 @@ exports[`refs refs and t-key 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createRef } = helpers;
   
   let block2 = createBlock(\`<button block-handler-0="click"/>\`);
   let block3 = createBlock(\`<p block-ref="0"/>\`);
@@ -137,7 +97,7 @@ exports[`refs refs and t-key 1`] = `
     let hdlr1 = [()=>v1.renderId++, ctx];
     const b2 = block2([hdlr1]);
     const tKey_1 = ctx['state'].renderId;
-    let ref1 = (ctx['this'].root).set;
+    let ref1 = createRef(ctx['this'].root);
     const b3 = toggler(tKey_1, block3([ref1]));
     return multi([b2, b3]);
   }
@@ -148,7 +108,7 @@ exports[`refs refs are properly bound in slots 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { markRaw } = helpers;
+  let { createRef, markRaw } = helpers;
   const comp1 = app.createComponent(\`Dialog\`, true, true, false, []);
   
   let block1 = createBlock(\`<div><span class="counter"><block-text-0/></span><block-child-0/></div>\`);
@@ -156,7 +116,7 @@ exports[`refs refs are properly bound in slots 1`] = `
   
   function slot1(ctx, node, key = "") {
     let hdlr1 = [ctx['doSomething'], ctx];
-    let ref1 = (ctx['this'].button).set;
+    let ref1 = createRef(ctx['this'].button);
     return block2([hdlr1, ref1]);
   }
   
@@ -183,6 +143,29 @@ exports[`refs refs are properly bound in slots 2`] = `
 }"
 `;
 
+exports[`refs resource can be used for multi ref 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { prepareList, createRef, withKey } = helpers;
+  
+  let block2 = createBlock(\`<p block-attribute-0="id" block-ref="1"/>\`);
+  
+  return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].items());;
+    for (let i1 = 0; i1 < l_block1; i1++) {
+      ctx[\`item\`] = k_block1[i1];
+      const key1 = ctx['item'];
+      let attr1 = \`item-\${ctx['item']}\`;
+      let ref1 = createRef(ctx['refs']);
+      c_block1[i1] = withKey(block2([attr1, ref1]), key1);
+    }
+    return list(c_block1);
+  }
+}"
+`;
+
 exports[`refs throws if there are 2 same refs at the same time 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -198,6 +181,29 @@ exports[`refs throws if there are 2 same refs at the same time 1`] = `
     const b2 = block2([ref1]);
     let ref2 = refWrapper(\`coucou\`, (el) => this.__owl__.setRef((\`coucou\`), el));
     const b3 = block3([ref2]);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`refs use 2 refs in a t-if/t-else situation 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createRef } = helpers;
+  
+  let block2 = createBlock(\`<div block-ref="0"/>\`);
+  let block3 = createBlock(\`<span block-ref="0"/>\`);
+  
+  return function template(ctx, node, key = "") {
+    let b2, b3;
+    if (ctx['state'].value) {
+      let ref1 = createRef(ctx['this'].ref1);
+      b2 = block2([ref1]);
+    } else {
+      let ref2 = createRef(ctx['this'].ref2);
+      b3 = block3([ref2]);
+    }
     return multi([b2, b3]);
   }
 }"

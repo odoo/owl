@@ -428,13 +428,13 @@ function updateCtx(ctx: BlockCtx, tree: IntermediateTree) {
         break;
       }
       case "ref": {
-        const length = ctx.locations.push({
+        ctx.locations.push({
           idx: info.idx,
           refIdx: info.refIdx!,
           setData: NO_OP,
           updateData: NO_OP,
         });
-        ctx.cbRefs.push(length - 1);
+        ctx.cbRefs.push(info.idx);
         break;
       }
     }

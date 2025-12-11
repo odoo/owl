@@ -1,4 +1,5 @@
 import { getCurrent } from "./component_node";
+import { _getCurrentPluginManager } from "./plugins";
 
 // -----------------------------------------------------------------------------
 //  Status
@@ -13,10 +14,11 @@ export const enum STATUS {
   DESTROYED,
 }
 
-type STATUS_DESCR = "new" | "mounted" | "cancelled" | "destroyed";
+type STATUS_DESCR = "new" | "started" | "mounted" | "cancelled" | "destroyed";
 
 export function status(): () => STATUS_DESCR {
-  const node = getCurrent();
+  const pm = _getCurrentPluginManager();
+  const node = pm || getCurrent();
   return () => {
     switch (node.status) {
       case STATUS.NEW:
@@ -24,7 +26,7 @@ export function status(): () => STATUS_DESCR {
       case STATUS.CANCELLED:
         return "cancelled";
       case STATUS.MOUNTED:
-        return "mounted";
+        return pm ? "started" : "mounted";
       case STATUS.DESTROYED:
         return "destroyed";
     }

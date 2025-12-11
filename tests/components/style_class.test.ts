@@ -1,6 +1,5 @@
-import { OwlError } from "../../src/common/owl_error";
-import { App, Component, mount, onMounted, props, proxy, xml } from "../../src";
-import { makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
+import { Component, mount, onMounted, props, proxy, xml } from "../../src";
+import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
 let fixture: HTMLElement;
@@ -365,21 +364,16 @@ describe("style and class handling", () => {
       static template = xml`<Child class="'a'"/>`;
       static components = { Child };
     }
-    let error: OwlError;
-    const app = new App();
-    const mountProm = app
-      .createRoot(Parent)
-      .mount(fixture)
-      .catch((e: Error) => (error = e));
-    await expect(nextAppError(app)).resolves.toThrow(
-      "Cannot read properties of undefined (reading 'crash')"
-    );
-    await mountProm;
-    expect(error!).toBeDefined();
+    let error: any;
+    try {
+      await mount(Parent, fixture);
+    } catch (e) {
+      error = e;
+    }
     const regexp =
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
-    expect(error!.message).toMatch(regexp);
+    expect(error!.cause.message).toMatch(regexp);
     expect(fixture.innerHTML).toBe("");
-    expect(mockConsoleWarn).toBeCalledTimes(1);
+    expect(mockConsoleWarn).toBeCalledTimes(0);
   });
 });

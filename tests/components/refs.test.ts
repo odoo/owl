@@ -9,8 +9,8 @@ import {
   props,
   signal,
   derived,
+  Resource,
 } from "../../src/index";
-import { inOwnerDocument } from "../../src/runtime/utils";
 import { logStep, makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -211,30 +211,7 @@ describe("refs", () => {
     expect(comp.ref()).toBe(fixture.querySelector("#ref"));
   });
 
-  test("multi ref", async () => {
-    function refs() {
-      let elements: HTMLElement[] = [];
-      let rev = 0;
-      const currentRev = signal(0);
-
-      const reader = () => {
-        if (rev !== currentRev()) {
-          rev = currentRev();
-          elements = elements.filter((el) => inOwnerDocument(el));
-        }
-        return elements;
-      };
-
-      reader.set = (el: HTMLElement | null) => {
-        if (el) {
-          elements.push(el);
-          currentRev.update((rev) => rev + 1);
-        }
-      };
-
-      return reader;
-    }
-
+  test("resource can be used for multi ref", async () => {
     class Test extends Component {
       static template = xml`
         <t t-foreach="this.items()" t-as="item" t-key="item">
@@ -242,11 +219,11 @@ describe("refs", () => {
         </t>
       `;
       items = signal([0, 1, 2]);
-      refs = refs();
+      refs = new Resource<HTMLElement>("elements");
     }
 
     const comp = await mount(Test, fixture);
-    const ids = derived(() => comp.refs().map((el) => el.getAttribute("id")));
+    const ids = derived(() => comp.refs.items().map((el) => el.getAttribute("id")));
     expect(ids()).toEqual(["item-0", "item-1", "item-2"]);
 
     comp.items.update(() => [0, 2, 4]);

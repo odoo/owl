@@ -179,14 +179,14 @@ exports[`slots can render node with t-ref and Component in same slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { markRaw } = helpers;
+  let { createRef, markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   const comp2 = app.createComponent(\`Child\`, true, true, false, []);
   
   let block2 = createBlock(\`<div block-ref="0"/>\`);
   
   function slot1(ctx, node, key = "") {
-    let ref1 = (ctx['this'].ref).set;
+    let ref1 = createRef(ctx['this'].ref);
     const b2 = block2([ref1]);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);

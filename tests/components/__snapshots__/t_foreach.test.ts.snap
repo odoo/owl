@@ -194,7 +194,7 @@ exports[`list of components order is correct when slots are not of same type 2`]
       ctx[\`slotName_index\`] = i1;
       ctx[\`slotName_value\`] = v_block1[i1];
       const key1 = ctx['slotName'];
-      const slot1 = (ctx['this'].slotName);
+      const slot1 = (ctx['slotName']);
       c_block1[i1] = withKey(toggler(slot1, callSlot(ctx, node, key1 + \`__1__\${key1}\`, slot1, true, {})), key1);
     }
     return list(c_block1);
@@ -400,7 +400,7 @@ exports[`list of components sub components with some state rendered in a loop 2`
   let block1 = createBlock(\`<p><block-text-0/></p>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['state'].n;
+    let txt1 = ctx['this'].state.n;
     return block1([txt1]);
   }
 }"
@@ -417,7 +417,7 @@ exports[`list of components switch component position 1`] = `
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['clist']);;
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].clist);;
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`c\`] = k_block2[i1];
       const key1 = ctx['c'];

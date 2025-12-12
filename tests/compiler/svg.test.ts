@@ -105,7 +105,7 @@ describe("properly support svg", () => {
         <div>
           <svg>
             <polygon fill="#000000" points="0 0 4 4 8 0" transform="translate(5 7)"/>
-            <path t-if="hasPath" />
+            <path t-if="this.hasPath" />
           </svg>
         </div>
       `;

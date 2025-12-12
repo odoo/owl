@@ -99,10 +99,10 @@ exports[`t-model directive basic use, on an input with bracket expression 1`] = 
   let block1 = createBlock(\`<div><input block-property-0="value" block-handler-1="input"/><span><block-text-2/></span></div>\`);
   
   return function template(ctx, node, key = "") {
-    const expr1 = modelExpr(ctx['state']['text']);
+    const expr1 = modelExpr(ctx['this'].state['text']);
     let prop1 = expr1();
     let hdlr1 = [(ev) => { expr1.set(ev.target.value); }];
-    let txt1 = ctx['state'].text();
+    let txt1 = ctx['this'].state.text();
     return block1([prop1, hdlr1, txt1]);
   }
 }"
@@ -138,7 +138,7 @@ exports[`t-model directive can also define t-on directive on same event, part 1 
     const expr1 = modelExpr(ctx['this'].text);
     let prop1 = expr1();
     let hdlr1 = [(ev) => { expr1.set(ev.target.value); }];
-    let hdlr2 = [ctx['onInput'], ctx];
+    let hdlr2 = [ctx['this'].onInput, ctx];
     return block1([prop1, hdlr1, hdlr2]);
   }
 }"
@@ -156,15 +156,15 @@ exports[`t-model directive can also define t-on directive on same event, part 2 
     const expr1 = modelExpr(ctx['this'].choice);
     let prop1 = expr1() === 'One';
     let hdlr1 = [(ev) => { expr1.set(ev.target.value); }];
-    let hdlr2 = [ctx['onClick'], ctx];
+    let hdlr2 = [ctx['this'].onClick, ctx];
     const expr2 = modelExpr(ctx['this'].choice);
     let prop2 = expr2() === 'Two';
     let hdlr3 = [(ev) => { expr2.set(ev.target.value); }];
-    let hdlr4 = [ctx['onClick'], ctx];
+    let hdlr4 = [ctx['this'].onClick, ctx];
     const expr3 = modelExpr(ctx['this'].choice);
     let prop3 = expr3() === 'Three';
     let hdlr5 = [(ev) => { expr3.set(ev.target.value); }];
-    let hdlr6 = [ctx['onClick'], ctx];
+    let hdlr6 = [ctx['this'].onClick, ctx];
     return block1([prop1, hdlr1, hdlr2, prop2, hdlr3, hdlr4, prop3, hdlr5, hdlr6]);
   }
 }"
@@ -417,7 +417,7 @@ exports[`t-model directive t-model is applied before t-on-input 1`] = `
     const expr1 = modelExpr(ctx['this'].state['text']);
     let prop1 = expr1();
     let hdlr1 = [(ev) => { expr1.set(ev.target.value); }];
-    let hdlr2 = [ctx['onInput'], ctx];
+    let hdlr2 = [ctx['this'].onInput, ctx];
     return block1([prop1, hdlr1, hdlr2]);
   }
 }"
@@ -596,7 +596,7 @@ exports[`t-model directive t-model with radio button group in t-foreach 1`] = `
   let block3 = createBlock(\`<input type="radio" name="radio_group" block-property-0="value" block-attribute-1="id" block-property-2="checked" block-handler-3="click"/>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['getData'], ctx];
+    let hdlr1 = [ctx['this'].getData, ctx];
     ctx = Object.create(ctx);
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].options);;
     for (let i1 = 0; i1 < l_block2; i1++) {
@@ -624,7 +624,7 @@ exports[`t-model directive throws if invalid expression 1`] = `
   let block1 = createBlock(\`<div><input block-property-0="value" block-handler-1="input"/></div>\`);
   
   return function template(ctx, node, key = "") {
-    const expr1 = modelExpr(ctx['state']);
+    const expr1 = modelExpr(ctx['this'].state);
     let prop1 = expr1();
     let hdlr1 = [(ev) => { expr1.set(ev.target.value); }];
     return block1([prop1, hdlr1]);

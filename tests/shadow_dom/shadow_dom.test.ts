@@ -52,7 +52,7 @@ describe("shadow_dom", () => {
   test("can bind event handler", async () => {
     let a = 1;
     class SomeComponent extends Component {
-      static template = xml`<button t-on-click="add">Click</button>`;
+      static template = xml`<button t-on-click="this.add">Click</button>`;
 
       add() {
         a = 3;

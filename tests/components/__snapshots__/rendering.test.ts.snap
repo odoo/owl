@@ -7,7 +7,7 @@ exports[`children, default props and renderings 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
-    const b2 = text(ctx['state'].value);
+    const b2 = text(ctx['this'].state.value);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
   }
@@ -32,7 +32,7 @@ exports[`force render in case of existing render 1`] = `
   const comp1 = app.createComponent(\`B\`, true, false, false, ["val"]);
   
   return function template(ctx, node, key = "") {
-    return comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
+    return comp1({val: ctx['this'].state.val}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -72,7 +72,7 @@ exports[`rendering semantics can force a render to update sub tree 1`] = `
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    const b2 = text(ctx['state'].value);
+    const b2 = text(ctx['this'].state.value);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
     setContextValue(ctx, "noop", ctx['this'].notify());
     return multi([b2, b3]);
@@ -102,7 +102,7 @@ exports[`rendering semantics can render a parent without rendering child 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
-    const b2 = text(ctx['state'].value);
+    const b2 = text(ctx['this'].state.value);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
   }
@@ -127,7 +127,7 @@ exports[`rendering semantics props are proxy (nested prop) 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, ["a"]);
   
   return function template(ctx, node, key = "") {
-    return comp1({a: ctx['state']}, key + \`__1\`, node, this, null);
+    return comp1({a: ctx['this'].state}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -150,7 +150,7 @@ exports[`rendering semantics props are proxy 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, ["a"]);
   
   return function template(ctx, node, key = "") {
-    return comp1({a: ctx['state']}, key + \`__1\`, node, this, null);
+    return comp1({a: ctx['this'].state}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -176,7 +176,7 @@ exports[`rendering semantics render need a boolean = true to be 'deep' 1`] = `
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    const b2 = text(ctx['state'].value);
+    const b2 = text(ctx['this'].state.value);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
     setContextValue(ctx, "noop", ctx['this'].notify());
     return multi([b2, b3]);
@@ -207,7 +207,7 @@ exports[`rendering semantics render with deep=true followed by render with deep=
   
   return function template(ctx, node, key = "") {
     const b2 = text(\`parent\`);
-    const b3 = text(ctx['state'].value);
+    const b3 = text(ctx['this'].state.value);
     const b4 = comp1({}, key + \`__1\`, node, this, null);
     return multi([b2, b3, b4]);
   }
@@ -234,8 +234,8 @@ exports[`rendering semantics rendering is atomic (for one subtree) 1`] = `
   const comp1 = app.createComponent(\`B\`, true, false, false, ["obj"]);
   
   return function template(ctx, node, key = "") {
-    const b2 = text(ctx['state'].obj.val);
-    const b3 = comp1({obj: ctx['state'].obj}, key + \`__1\`, node, this, null);
+    const b2 = text(ctx['this'].state.obj.val);
+    const b3 = comp1({obj: ctx['this'].state.obj}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
   }
 }"
@@ -271,7 +271,7 @@ exports[`rendering semantics works as expected for dynamic number of props 1`] =
   const comp1 = app.createComponent(\`Child\`, true, false, true, []);
   
   return function template(ctx, node, key = "") {
-    return comp1(Object.assign({}, ctx['state']), key + \`__1\`, node, this, null);
+    return comp1(Object.assign({}, ctx['this'].state), key + \`__1\`, node, this, null);
   }
 }"
 `;

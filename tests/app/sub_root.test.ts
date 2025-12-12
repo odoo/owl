@@ -107,7 +107,7 @@ test("destroy a subroot while another component is mounted in main app", async (
 
   class SomeComponent extends Component {
     static template = xml`
-        <t t-if="state.flag"><ChildB/></t>
+        <t t-if="this.state.flag"><ChildB/></t>
         <t t-else=""><ChildA/></t>
         `;
     static components = { ChildA, ChildB };

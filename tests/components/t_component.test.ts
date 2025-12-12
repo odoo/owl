@@ -19,7 +19,7 @@ describe("t-component", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<t t-component="Child"/>`;
+      static template = xml`<t t-component="this.Child"/>`;
       Child = Child;
       setup() {
         useLogLifecycle();
@@ -57,7 +57,7 @@ describe("t-component", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<t t-component="Child"/>`;
+      static template = xml`<t t-component="this.Child"/>`;
       Child = ChildA;
       setup() {
         useLogLifecycle();
@@ -104,7 +104,7 @@ describe("t-component", () => {
     class App extends Component {
       static template = xml`
         <div>
-            <t t-component="constructor.components[state.child]"/>
+            <t t-component="this.constructor.components[this.state.child]"/>
         </div>`;
       static components = { A, B };
 
@@ -125,7 +125,7 @@ describe("t-component", () => {
       static template = xml`<span>child b</span>`;
     }
     class Parent extends Component {
-      static template = xml`<t t-component="myComponent" t-key="state.child"/>`;
+      static template = xml`<t t-component="this.myComponent" t-key="this.state.child"/>`;
       state = proxy({
         child: "a",
       });
@@ -148,7 +148,7 @@ describe("t-component", () => {
       static template = xml`<div>child b</div>`;
     }
     class Parent extends Component {
-      static template = xml`<t t-component="myComponent" t-key="state.child"/>`;
+      static template = xml`<t t-component="this.myComponent" t-key="this.state.child"/>`;
       state = proxy({
         child: "a",
       });
@@ -166,14 +166,14 @@ describe("t-component", () => {
   test("modifying a sub widget", async () => {
     class Counter extends Component {
       static template = xml`
-      <div><t t-esc="state.counter"/><button t-on-click="() => state.counter++">Inc</button></div>`;
+      <div><t t-esc="this.state.counter"/><button t-on-click="() => this.state.counter++">Inc</button></div>`;
       state = proxy({
         counter: 0,
       });
     }
 
     class ParentWidget extends Component {
-      static template = xml`<div><t t-component="Counter"/></div>`;
+      static template = xml`<div><t t-component="this.Counter"/></div>`;
 
       get Counter() {
         return Counter;
@@ -193,7 +193,7 @@ describe("t-component", () => {
     }
     class Parent extends Component {
       static components = { Child };
-      static template = xml`<div><div t-component="Child"/></div>`;
+      static template = xml`<div><div t-component="this.uChild"/></div>`;
     }
     let error: Error;
     try {

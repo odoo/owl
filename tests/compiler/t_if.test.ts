@@ -148,13 +148,13 @@ describe("t-if", () => {
     expect(renderToString(template, context)).toBe("<div>andormgtnlt</div>");
   });
 
-  test("t-esc with t-if", () => {
-    const template = `<div><t t-if="true" t-esc="'x'"/></div>`;
+  test("t-out with t-if", () => {
+    const template = `<div><t t-if="true" t-out="'x'"/></div>`;
     expect(renderToString(template)).toBe("<div>x</div>");
   });
 
-  test("t-esc with t-elif", () => {
-    const template = `<div><t t-if="false">abc</t><t t-else="" t-esc="'x'"/></div>`;
+  test("t-out with t-elif", () => {
+    const template = `<div><t t-if="false">abc</t><t t-else="" t-out="'x'"/></div>`;
     expect(renderToString(template)).toBe("<div>x</div>");
   });
 

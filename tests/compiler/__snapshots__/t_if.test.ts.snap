@@ -270,42 +270,6 @@ exports[`t-if simple t-if/t-else in a div 1`] = `
 }"
 `;
 
-exports[`t-if t-esc with t-elif 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    let b2, b3;
-    if (false) {
-      b2 = text(\`abc\`);
-    } else {
-      b3 = text('x');
-    }
-    return block1([], [b2, b3]);
-  }
-}"
-`;
-
-exports[`t-if t-esc with t-if 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    let b2;
-    if (true) {
-      b2 = text('x');
-    }
-    return block1([], [b2]);
-  }
-}"
-`;
-
 exports[`t-if t-if and t-else with two nodes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

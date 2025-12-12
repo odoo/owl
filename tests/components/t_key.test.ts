@@ -23,7 +23,7 @@ describe("t-key", () => {
 
     class Parent extends Component {
       static components = { Child };
-      static template = xml`<Child t-key="key" key="key" />`;
+      static template = xml`<Child t-key="this.key" key="this.key" />`;
 
       key = 1;
     }
@@ -54,7 +54,7 @@ describe("t-key", () => {
     let __key = 1;
     class Parent extends Component {
       static components = { Child };
-      static template = xml`<span><Child t-key="key" key="key" /></span>`;
+      static template = xml`<span><Child t-key="this.key" key="this.key" /></span>`;
 
       get key() {
         keyCalls++;
@@ -89,8 +89,8 @@ describe("t-key", () => {
     class Parent extends Component {
       static components = { Child };
       static template = xml`<span>
-        <Child t-key="key1" key="key1" />
-        <Child t-key="key2" key="key2" />
+        <Child t-key="this.key1" key="this.key1" />
+        <Child t-key="this.key2" key="this.key2" />
       </span>`;
 
       key1 = 1;
@@ -122,8 +122,8 @@ describe("t-key", () => {
     class Parent extends Component {
       static components = { Child };
       static template = xml`<span>
-        <t t-call="calledTemplate"><t t-set="key" t-value="key1" /></t>
-        <t t-call="calledTemplate"><t t-set="key" t-value="key2" /></t>
+        <t t-call="calledTemplate"><t t-set="key" t-value="this.key1" /></t>
+        <t t-call="calledTemplate"><t t-set="key" t-value="this.key2" /></t>
       </span>`;
 
       key1 = 1;
@@ -162,7 +162,10 @@ describe("t-key", () => {
     class Parent extends Component {
       static components = { Child };
       static template = xml`<span>
-        <t t-call="calledTemplate" />
+        <t t-call="calledTemplate">
+          <t t-set="key1" t-value="this.key1"/>
+          <t t-set="key2" t-value="this.key2"/>
+        </t>
       </span>`;
 
       key1 = 1;
@@ -200,8 +203,8 @@ describe("t-key", () => {
     class Parent extends Component {
       static components = { Child };
       static template = xml`<span>
-        <t t-foreach="clist" t-as="c" t-key="c">
-          <Child key="c + key1" t-key="key1"/>
+        <t t-foreach="this.clist" t-as="c" t-key="c">
+          <Child key="c + this.key1" t-key="this.key1"/>
         </t>
       </span>`;
 

@@ -63,7 +63,7 @@ exports[`properly support svg svg creates new block if it is within html -- 2 1`
   
   return function template(ctx, node, key = "") {
     let b3;
-    if (ctx['hasPath']) {
+    if (ctx['this'].hasPath) {
       b3 = block3();
     }
     const b2 = block2([], [b3]);

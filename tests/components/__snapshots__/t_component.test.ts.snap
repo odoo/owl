@@ -9,7 +9,7 @@ exports[`t-component can switch between dynamic components without the need for 
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    const Comp1 = ctx['constructor'].components[ctx['state'].child];
+    const Comp1 = ctx['this'].constructor.components[ctx['this'].state.child];
     const b2 = toggler(Comp1, comp1({}, (Comp1).name + key + \`__1\`, node, this, Comp1));
     return block1([], [b2]);
   }
@@ -49,8 +49,8 @@ exports[`t-component can use dynamic components (the class) if given (with diffe
   const comp1 = app.createComponent(null, false, false, false, []);
   
   return function template(ctx, node, key = "") {
-    const tKey_1 = ctx['state'].child;
-    const Comp1 = ctx['myComponent'];
+    const tKey_1 = ctx['this'].state.child;
+    const Comp1 = ctx['this'].myComponent;
     return toggler(tKey_1, toggler(Comp1, comp1({}, (Comp1).name + tKey_1 + key + \`__1\`, node, this, Comp1)));
   }
 }"
@@ -89,8 +89,8 @@ exports[`t-component can use dynamic components (the class) if given 1`] = `
   const comp1 = app.createComponent(null, false, false, false, []);
   
   return function template(ctx, node, key = "") {
-    const tKey_1 = ctx['state'].child;
-    const Comp1 = ctx['myComponent'];
+    const tKey_1 = ctx['this'].state.child;
+    const Comp1 = ctx['this'].myComponent;
     return toggler(tKey_1, toggler(Comp1, comp1({}, (Comp1).name + tKey_1 + key + \`__1\`, node, this, Comp1)));
   }
 }"
@@ -131,7 +131,7 @@ exports[`t-component modifying a sub widget 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    const Comp1 = ctx['Counter'];
+    const Comp1 = ctx['this'].Counter;
     const b2 = toggler(Comp1, comp1({}, (Comp1).name + key + \`__1\`, node, this, Comp1));
     return block1([], [b2]);
   }
@@ -146,9 +146,9 @@ exports[`t-component modifying a sub widget 2`] = `
   let block1 = createBlock(\`<div><block-text-0/><button block-handler-1="click">Inc</button></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['state'].counter;
-    const v1 = ctx['state'];
-    let hdlr1 = [()=>v1.counter++, ctx];
+    let txt1 = ctx['this'].state.counter;
+    const v1 = ctx['this'];
+    let hdlr1 = [()=>v1.state.counter++, ctx];
     return block1([txt1, hdlr1]);
   }
 }"
@@ -161,7 +161,7 @@ exports[`t-component switching dynamic component 1`] = `
   const comp1 = app.createComponent(null, false, false, false, []);
   
   return function template(ctx, node, key = "") {
-    const Comp1 = ctx['Child'];
+    const Comp1 = ctx['this'].Child;
     return toggler(Comp1, comp1({}, (Comp1).name + key + \`__1\`, node, this, Comp1));
   }
 }"
@@ -198,7 +198,7 @@ exports[`t-component t-component works in simple case 1`] = `
   const comp1 = app.createComponent(null, false, false, false, []);
   
   return function template(ctx, node, key = "") {
-    const Comp1 = ctx['Child'];
+    const Comp1 = ctx['this'].Child;
     return toggler(Comp1, comp1({}, (Comp1).name + key + \`__1\`, node, this, Comp1));
   }
 }"

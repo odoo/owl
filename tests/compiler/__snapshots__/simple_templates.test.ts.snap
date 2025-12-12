@@ -91,34 +91,6 @@ exports[`simple templates, mostly static div with content 1`] = `
 }"
 `;
 
-exports[`simple templates, mostly static dom node with t-esc 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    let txt1 = ctx['text'];
-    return block1([txt1]);
-  }
-}"
-`;
-
-exports[`simple templates, mostly static dom node with t-esc 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    let txt1 = ctx['text'];
-    return block1([txt1]);
-  }
-}"
-`;
-
 exports[`simple templates, mostly static dom node with t-out 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -196,17 +168,6 @@ exports[`simple templates, mostly static empty string in a template set 1`] = `
 }"
 `;
 
-exports[`simple templates, mostly static inline template string in t-esc 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  return function template(ctx, node, key = "") {
-    return text(\`text\`);
-  }
-}"
-`;
-
 exports[`simple templates, mostly static inline template string in t-out 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -215,21 +176,6 @@ exports[`simple templates, mostly static inline template string in t-out 1`] = `
   
   return function template(ctx, node, key = "") {
     return safeOutput(\`text\`);
-  }
-}"
-`;
-
-exports[`simple templates, mostly static inline template string with content in t-esc 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
-  
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    setContextValue(ctx, "v", 1);
-    return text(\`text\${ctx['v']}\`);
   }
 }"
 `;
@@ -323,48 +269,6 @@ exports[`simple templates, mostly static static text and dynamic text 1`] = `
     const b2 = text(\`hello \`);
     const b3 = safeOutput(ctx['text']);
     return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`simple templates, mostly static t-esc in dom node 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    let txt1 = ctx['text'];
-    return block1([txt1]);
-  }
-}"
-`;
-
-exports[`simple templates, mostly static t-esc in dom node, variations 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div>hello <block-text-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    let txt1 = ctx['text'];
-    return block1([txt1]);
-  }
-}"
-`;
-
-exports[`simple templates, mostly static t-esc in dom node, variations 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div>hello <block-text-0/> world</div>\`);
-  
-  return function template(ctx, node, key = "") {
-    let txt1 = ctx['text'];
-    return block1([txt1]);
   }
 }"
 `;
@@ -477,47 +381,6 @@ exports[`simple templates, mostly static text node with interpolation sigil at t
   
   return function template(ctx, node, key = "") {
     return text(\`\\\${very cool}\`);
-  }
-}"
-`;
-
-exports[`simple templates, mostly static two t-escs next to each other 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  return function template(ctx, node, key = "") {
-    const b2 = text(ctx['text1']);
-    const b3 = text(ctx['text2']);
-    return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`simple templates, mostly static two t-escs next to each other 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  return function template(ctx, node, key = "") {
-    const b2 = text(ctx['text1']);
-    const b3 = text(ctx['text2']);
-    return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`simple templates, mostly static two t-escs next to each other, in a div 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div><block-text-0/><block-text-1/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    let txt1 = ctx['text1'];
-    let txt2 = ctx['text2'];
-    return block1([txt1, txt2]);
   }
 }"
 `;

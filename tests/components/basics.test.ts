@@ -1072,7 +1072,6 @@ describe("t-out in components", () => {
       static template = xml`
         <div>
             <t t-foreach="this.state.items" t-as="item" t-key="item">
-            <t t-esc="item"/>
             <t t-out="item"/>
             </t>
         </div>`;
@@ -1083,7 +1082,7 @@ describe("t-out in components", () => {
     await mount(Test, fixture);
 
     expect(fixture.innerHTML).toBe(
-      "<div>&lt;b&gt;one&lt;/b&gt;<b>one</b>&lt;b&gt;two&lt;/b&gt;<b>two</b>&lt;b&gt;tree&lt;/b&gt;<b>tree</b></div>"
+      "<div><b>one</b><b>two</b><b>tree</b></div>"
     );
   });
 

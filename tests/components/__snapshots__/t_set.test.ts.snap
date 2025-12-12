@@ -48,6 +48,54 @@ exports[`t-set slot setted value (with t-set) not accessible with t-esc 2`] = `
 }"
 `;
 
+exports[`t-set slot setted value (with t-set) not accessible with t-out 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue, safeOutput, capture, markRaw } = helpers;
+  const comp1 = app.createComponent(\`Childcomp\`, true, true, false, []);
+  
+  let block1 = createBlock(\`<div><p><block-child-0/></p><block-child-1/><p><block-child-2/></p></div>\`);
+  
+  function slot1(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    setContextValue(ctx, "iter", 'inCall');
+  return text('');
+  }
+  
+  return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    setContextValue(ctx, "iter", 'source');
+    const b2 = safeOutput(ctx['iter']);
+    const ctx1 = capture(ctx);
+    const b3 = comp1({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__1\`, node, this, null);
+    const b4 = safeOutput(ctx['iter']);
+    return block1([], [b2, b3, b4]);
+  }
+}"
+`;
+
+exports[`t-set slot setted value (with t-set) not accessible with t-out 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput, isBoundary, withDefault, setContextValue } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    const b2 = safeOutput(ctx['iter']);
+    setContextValue(ctx, "iter", 'called');
+    const b3 = safeOutput(ctx['iter']);
+    return block1([], [b2, b3]);
+  }
+}"
+`;
+
 exports[`t-set slots with a t-set with a component in body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -202,18 +250,18 @@ exports[`t-set t-set can't alter component even if key in component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { safeOutput, isBoundary, withDefault, setContextValue } = helpers;
   
-  let block1 = createBlock(\`<div><p><block-text-0/></p><p><block-text-1/></p><p><block-text-2/></p></div>\`);
+  let block1 = createBlock(\`<div><p><block-child-0/></p><p><block-child-1/></p><p><block-child-2/></p></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    let txt1 = ctx['this'].iter;
+    const b2 = safeOutput(ctx['this'].iter);
     setContextValue(ctx, "iter", 5);
-    let txt2 = ctx['this'].iter;
-    let txt3 = ctx['iter'];
-    return block1([txt1, txt2, txt3]);
+    const b3 = safeOutput(ctx['this'].iter);
+    const b4 = safeOutput(ctx['iter']);
+    return block1([], [b2, b3, b4]);
   }
 }"
 `;
@@ -222,18 +270,18 @@ exports[`t-set t-set can't alter component if key not in component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { safeOutput, isBoundary, withDefault, setContextValue } = helpers;
   
-  let block1 = createBlock(\`<div><p><block-text-0/></p><p><block-text-1/></p><p><block-text-2/></p></div>\`);
+  let block1 = createBlock(\`<div><p><block-child-0/></p><p><block-child-1/></p><p><block-child-2/></p></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    let txt1 = ctx['this'].iter;
+    const b2 = safeOutput(ctx['this'].iter);
     setContextValue(ctx, "iter", 5);
-    let txt2 = ctx['this'].iter;
-    let txt3 = ctx['iter'];
-    return block1([txt1, txt2, txt3]);
+    const b3 = safeOutput(ctx['this'].iter);
+    const b4 = safeOutput(ctx['iter']);
+    return block1([], [b2, b3, b4]);
   }
 }"
 `;
@@ -242,13 +290,14 @@ exports[`t-set t-set in t-if 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><p><block-text-0/></p></div>\`);
+  let block1 = createBlock(\`<div><p><block-child-0/></p></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
+    let b2;
     setContextValue(ctx, "flag", ctx['this'].state.flag);
     if (ctx['flag']==='if') {
       setContextValue(ctx, "iter", 2);
@@ -257,8 +306,8 @@ exports[`t-set t-set in t-if 1`] = `
     } else {
       setContextValue(ctx, "iter", 4);
     }
-    let txt1 = ctx['iter'];
-    return block1([txt1]);
+    b2 = safeOutput(ctx['iter']);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -267,19 +316,19 @@ exports[`t-set t-set not altered by child comp 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   const comp1 = app.createComponent(\`Childcomp\`, true, false, false, []);
   
-  let block1 = createBlock(\`<div><p><block-text-0/></p><block-child-0/><p><block-text-1/></p></div>\`);
+  let block1 = createBlock(\`<div><p><block-child-0/></p><block-child-1/><p><block-child-2/></p></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "iter", 'source');
-    let txt1 = ctx['iter'];
-    const b2 = comp1({}, key + \`__1\`, node, this, null);
-    let txt2 = ctx['iter'];
-    return block1([txt1, txt2], [b2]);
+    const b2 = safeOutput(ctx['iter']);
+    const b3 = comp1({}, key + \`__1\`, node, this, null);
+    const b4 = safeOutput(ctx['iter']);
+    return block1([], [b2, b3, b4]);
   }
 }"
 `;
@@ -288,18 +337,18 @@ exports[`t-set t-set not altered by child comp 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { safeOutput, isBoundary, withDefault, setContextValue } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/><block-text-1/><block-text-2/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-2/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    let txt1 = ctx['this'].iter;
+    const b2 = safeOutput(ctx['this'].iter);
     setContextValue(ctx, "iter", 'called');
-    let txt2 = ctx['this'].iter;
-    let txt3 = ctx['iter'];
-    return block1([txt1, txt2, txt3]);
+    const b3 = safeOutput(ctx['this'].iter);
+    const b4 = safeOutput(ctx['iter']);
+    return block1([], [b2, b3, b4]);
   }
 }"
 `;
@@ -308,13 +357,14 @@ exports[`t-set t-set outside modified in t-if 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><p><block-text-0/></p></div>\`);
+  let block1 = createBlock(\`<div><p><block-child-0/></p></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
+    let b2;
     setContextValue(ctx, "iter", 0);
     setContextValue(ctx, "flag", ctx['this'].state.flag);
     if (ctx['flag']==='if') {
@@ -324,8 +374,8 @@ exports[`t-set t-set outside modified in t-if 1`] = `
     } else {
       setContextValue(ctx, "iter", 4);
     }
-    let txt1 = ctx['iter'];
-    return block1([txt1]);
+    b2 = safeOutput(ctx['iter']);
+    return block1([], [b2]);
   }
 }"
 `;

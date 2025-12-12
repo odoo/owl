@@ -69,10 +69,10 @@ exports[`t-ref refs in a loop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, createRef, withKey } = helpers;
+  let { prepareList, createRef, safeOutput, withKey } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<div block-ref="0"><block-text-1/></div>\`);
+  let block3 = createBlock(\`<div block-ref="0"><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
@@ -82,8 +82,8 @@ exports[`t-ref refs in a loop 1`] = `
       const key1 = ctx['item'].id;
       const tKey_1 = ctx['item'].id;
       let ref1 = createRef(ctx['item'].ref);
-      let txt1 = ctx['item'].id;
-      c_block2[i1] = withKey(block3([ref1, txt1]), tKey_1 + key1);
+      const b4 = toggler(tKey_1, safeOutput(ctx['item'].id));
+      c_block2[i1] = withKey(block3([ref1], [b4]), tKey_1 + key1);
     }
     const b2 = list(c_block2);
     return block1([], [b2]);

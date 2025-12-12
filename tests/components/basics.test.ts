@@ -45,7 +45,7 @@ describe("basics", () => {
 
   test("can mount a simple component with props", async () => {
     class Test extends Component {
-      static template = xml`<span><t t-esc="this.props.value"/></span>`;
+      static template = xml`<span><t t-out="this.props.value"/></span>`;
       props = props();
     }
 
@@ -90,7 +90,7 @@ describe("basics", () => {
 
   test("component with dynamic content can be updated", async () => {
     class Test extends Component {
-      static template = xml`<span><t t-esc="this.value"/></span>`;
+      static template = xml`<span><t t-out="this.value"/></span>`;
       value = 1;
     }
 
@@ -108,7 +108,7 @@ describe("basics", () => {
     class Test extends Component {
       static template = xml`
         <t t-foreach="this.items" t-as="item" t-key="item">
-          <t t-esc="item"/>
+          <t t-out="item"/>
         </t>`;
       items = ["one", "two", "three"];
     }
@@ -251,7 +251,7 @@ describe("basics", () => {
 
   test("class component with dynamic text", async () => {
     class Test extends Component {
-      static template = xml`<span>My value: <t t-esc="this.value"/></span>`;
+      static template = xml`<span>My value: <t t-out="this.value"/></span>`;
 
       value = 42;
     }
@@ -301,7 +301,7 @@ describe("basics", () => {
 
   test("simple component with a dynamic text", async () => {
     class Test extends Component {
-      static template = xml`<div><t t-esc="this.value" /></div>`;
+      static template = xml`<div><t t-out="this.value" /></div>`;
       value = 3;
     }
 
@@ -315,7 +315,7 @@ describe("basics", () => {
 
   test("simple component, proxy", async () => {
     class Test extends Component {
-      static template = xml`<div><t t-esc="this.state.value" /></div>`;
+      static template = xml`<div><t t-out="this.state.value" /></div>`;
       state = proxy({ value: 3 });
     }
 
@@ -342,7 +342,7 @@ describe("basics", () => {
 
   test("class parent, class child component with props", async () => {
     class Child extends Component {
-      static template = xml`<div><t t-esc="this.props.value" /></div>`;
+      static template = xml`<div><t t-out="this.props.value" /></div>`;
       props = props();
     }
 
@@ -401,7 +401,7 @@ describe("basics", () => {
       static template = xml`
         <div>
           <Child t-if="this.state.hasChild"/>
-          <span t-esc="this.state.text"/>
+          <span t-out="this.state.text"/>
         </div>`;
       static components = { Child };
       state = proxy({ hasChild: false, text: "1" });
@@ -423,7 +423,7 @@ describe("basics", () => {
   test("can be clicked on and updated", async () => {
     class Counter extends Component {
       static template = xml`
-      <div><t t-esc="this.state.counter"/><button t-on-click="() => this.state.counter++">Inc</button></div>`;
+      <div><t t-out="this.state.counter"/><button t-on-click="() => this.state.counter++">Inc</button></div>`;
       state = proxy({
         counter: 0,
       });
@@ -441,7 +441,7 @@ describe("basics", () => {
   test("rerendering a widget with a sub widget", async () => {
     class Counter extends Component {
       static template = xml`
-      <div><t t-esc="this.state.counter"/><button t-on-click="() => this.state.counter++">Inc</button></div>`;
+      <div><t t-out="this.state.counter"/><button t-on-click="() => this.state.counter++">Inc</button></div>`;
       state = proxy({
         counter: 0,
       });
@@ -461,7 +461,7 @@ describe("basics", () => {
 
   test("can handle empty props", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="this.props.val"/></span>`;
+      static template = xml`<span><t t-out="this.props.val"/></span>`;
       props = props();
     }
     class Parent extends Component {
@@ -475,7 +475,7 @@ describe("basics", () => {
 
   test("child can be updated", async () => {
     class Child extends Component {
-      static template = xml`<t t-esc="this.props.value"/>`;
+      static template = xml`<t t-out="this.props.value"/>`;
       props = props();
     }
 
@@ -554,7 +554,7 @@ describe("basics", () => {
 
   test("do not remove previously rendered dom if not necessary, variation", async () => {
     class SomeComponent extends Component {
-      static template = xml`<div><h1>h1</h1><span><t t-esc="this.state.value"/></span></div>`;
+      static template = xml`<div><h1>h1</h1><span><t t-out="this.state.value"/></span></div>`;
       state = proxy({ value: 1 });
     }
     const comp = await mount(SomeComponent, fixture);
@@ -590,7 +590,7 @@ describe("basics", () => {
 
   test("same t-keys in two different places", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="this.props.blip"/></span>`;
+      static template = xml`<span><t t-out="this.props.blip"/></span>`;
       props = props();
     }
 
@@ -806,7 +806,7 @@ describe("basics", () => {
   });
 
   test("can inject values in tagged templates", async () => {
-    const SUBTEMPLATE = xml`<span><t t-esc="this.state.n"/></span>`;
+    const SUBTEMPLATE = xml`<span><t t-out="this.state.n"/></span>`;
     class Parent extends Component {
       static template = xml`<t t-call="${SUBTEMPLATE}"/>`;
       state = proxy({ n: 42 });
@@ -821,7 +821,7 @@ describe("basics", () => {
     class Custom extends Component {
       static template = xml`
         <div class="widget-subkey">
-          <t t-esc="this.props.key"/>__<t t-esc="this.props.subKey"/>
+          <t t-out="this.props.key"/>__<t t-out="this.props.subKey"/>
         </div>`;
       props = props();
     }

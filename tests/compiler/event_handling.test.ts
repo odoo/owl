@@ -439,7 +439,7 @@ describe("t-on", () => {
       const template = `<div>
         <t t-foreach="projects" t-as="project" t-key="project">
           <a href="#" t-on-click.prevent="ev => onEdit(project.id, ev)">
-            Edit <t t-esc="project.name"/>
+            Edit <t t-out="project.name"/>
           </a>
         </t>
       </div>`;

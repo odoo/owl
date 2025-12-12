@@ -12,7 +12,7 @@ beforeEach(() => {
 describe("basics", () => {
   test("basic use", async () => {
     class Child extends Component {
-      static template = xml`<span>child<t t-esc="this.props.p"/></span>`;
+      static template = xml`<span>child<t t-out="this.props.p"/></span>`;
       props = props();
     }
 
@@ -29,7 +29,7 @@ describe("basics", () => {
     class Child extends Component {
       static template = xml`
             <span>
-                <button t-on-click="this.inc">click</button>child<t t-esc="this.state.val"/>
+                <button t-on-click="this.inc">click</button>child<t t-out="this.state.val"/>
             </span>`;
       state = proxy({ val: 1 });
       inc() {

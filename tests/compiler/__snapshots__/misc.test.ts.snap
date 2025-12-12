@@ -4,77 +4,77 @@ exports[`misc complex template 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, withKey } = helpers;
+  let { safeOutput, prepareList, withKey } = helpers;
   const comp1 = app.createComponent(\`SlotButton\`, true, false, false, ["class","slot"]);
   
-  let block1 = createBlock(\`<div block-attribute-0="class"><div block-attribute-1="class"><div class="batch_header"><a block-attribute-2="href" block-attribute-3="class" title="View Batch"><block-text-4/><block-child-0/><i class="arrow fa fa-window-maximize"/></a></div><block-child-1/><div class="batch_slots"><block-child-2/><block-child-3/></div><div class="batch_commits"><block-child-4/></div></div></div>\`);
-  let block2 = createBlock(\`<i class="fa fa-exclamation-triangle"/>\`);
-  let block3 = createBlock(\`<span><i class="fa fa-cog fa-spin fa-fw"/> preparing</span>\`);
-  let block7 = createBlock(\`<div class="slot_filler"/>\`);
-  let block9 = createBlock(\`<div class="one_line"><a block-attribute-0="href" block-attribute-1="class"><block-child-0/><block-child-1/><block-child-2/><block-child-3/><block-text-2/></a><a block-attribute-3="href" class="badge badge-light" title="View Commit on Github"><i class="fa fa-github"/></a><span><block-text-4/></span></div>\`);
-  let block10 = createBlock(\`<i class="fa fa-fw fa-hashtag" title="This commit is a new head"/>\`);
-  let block11 = createBlock(\`<i class="fa fa-fw fa-link" title="This commit is an existing head from bundle branches"/>\`);
-  let block12 = createBlock(\`<i class="fa fa-fw fa-code-fork" title="This commit is matched from a base batch with matching merge_base"/>\`);
-  let block13 = createBlock(\`<i class="fa fa-fw fa-clock-o" title="This commit is the head of a base branch"/>\`);
+  let block1 = createBlock(\`<div block-attribute-0="class"><div block-attribute-1="class"><div class="batch_header"><a block-attribute-2="href" block-attribute-3="class" title="View Batch"><block-child-0/><block-child-1/><i class="arrow fa fa-window-maximize"/></a></div><block-child-2/><div class="batch_slots"><block-child-3/><block-child-4/></div><div class="batch_commits"><block-child-5/></div></div></div>\`);
+  let block3 = createBlock(\`<i class="fa fa-exclamation-triangle"/>\`);
+  let block4 = createBlock(\`<span><i class="fa fa-cog fa-spin fa-fw"/> preparing</span>\`);
+  let block8 = createBlock(\`<div class="slot_filler"/>\`);
+  let block10 = createBlock(\`<div class="one_line"><a block-attribute-0="href" block-attribute-1="class"><block-child-0/><block-child-1/><block-child-2/><block-child-3/><block-child-4/></a><a block-attribute-2="href" class="badge badge-light" title="View Commit on Github"><i class="fa fa-github"/></a><span><block-child-5/></span></div>\`);
+  let block11 = createBlock(\`<i class="fa fa-fw fa-hashtag" title="This commit is a new head"/>\`);
+  let block12 = createBlock(\`<i class="fa fa-fw fa-link" title="This commit is an existing head from bundle branches"/>\`);
+  let block13 = createBlock(\`<i class="fa fa-fw fa-code-fork" title="This commit is matched from a base batch with matching merge_base"/>\`);
+  let block14 = createBlock(\`<i class="fa fa-fw fa-clock-o" title="This commit is the head of a base branch"/>\`);
   
   return function template(ctx, node, key = "") {
-    let b2, b3, b4, b6, b8;
+    let b2, b3, b4, b5, b7, b9;
     let attr1 = \`batch_tile \${ctx['options'].more?'more':'nomore'}\`;
     let attr2 = \`card bg-\${ctx['klass']}-light\`;
     let attr3 = \`/runbot/batch/\${ctx['batch'].id}\`;
     let attr4 = \`badge badge-\${ctx['batch'].has_warning?'warning':'light'}\`;
-    let txt1 = ctx['batch'].formated_age;
+    b2 = safeOutput(ctx['batch'].formated_age);
     if (ctx['batch'].has_warning) {
-      b2 = block2();
-    }
-    if (ctx['batch'].state=='preparing') {
       b3 = block3();
     }
+    if (ctx['batch'].state=='preparing') {
+      b4 = block4();
+    }
     ctx = Object.create(ctx);
-    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['batch'].slot_ids.filter(_slot=>_slot.build_id.id&&!_slot.trigger_id.manual&&(ctx['options'].trigger_display[_slot.trigger_id.id])));;
-    for (let i1 = 0; i1 < l_block4; i1++) {
-      ctx[\`slot\`] = k_block4[i1];
+    const [k_block5, v_block5, l_block5, c_block5] = prepareList(ctx['batch'].slot_ids.filter(_slot=>_slot.build_id.id&&!_slot.trigger_id.manual&&(ctx['options'].trigger_display[_slot.trigger_id.id])));;
+    for (let i1 = 0; i1 < l_block5; i1++) {
+      ctx[\`slot\`] = k_block5[i1];
       const key1 = ctx['slot'].id;
-      c_block4[i1] = withKey(comp1({class: ctx['slot_container'],slot: ctx['slot']}, key + \`__1__\${key1}\`, node, this, null), key1);
+      c_block5[i1] = withKey(comp1({class: ctx['slot_container'],slot: ctx['slot']}, key + \`__1__\${key1}\`, node, this, null), key1);
     }
     ctx = ctx.__proto__;
-    b4 = list(c_block4);
+    b5 = list(c_block5);
     ctx = Object.create(ctx);
-    const [k_block6, v_block6, l_block6, c_block6] = prepareList([1,2,3,4]);;
-    for (let i1 = 0; i1 < l_block6; i1++) {
-      ctx[\`x\`] = k_block6[i1];
+    const [k_block7, v_block7, l_block7, c_block7] = prepareList([1,2,3,4]);;
+    for (let i1 = 0; i1 < l_block7; i1++) {
+      ctx[\`x\`] = k_block7[i1];
       const key1 = ctx['x'];
-      c_block6[i1] = withKey(block7(), key1);
+      c_block7[i1] = withKey(block8(), key1);
     }
     ctx = ctx.__proto__;
-    b6 = list(c_block6);
+    b7 = list(c_block7);
     ctx = Object.create(ctx);
-    const [k_block8, v_block8, l_block8, c_block8] = prepareList(ctx['commit_links']);;
-    for (let i1 = 0; i1 < l_block8; i1++) {
-      ctx[\`commit_link\`] = k_block8[i1];
+    const [k_block9, v_block9, l_block9, c_block9] = prepareList(ctx['commit_links']);;
+    for (let i1 = 0; i1 < l_block9; i1++) {
+      ctx[\`commit_link\`] = k_block9[i1];
       const key1 = ctx['commit_link'].id;
-      let b10, b11, b12, b13;
+      let b11, b12, b13, b14, b15, b16;
       let attr5 = \`/runbot/commit/\${ctx['commit_link'].commit_id}\`;
       let attr6 = \`badge badge-light batch_commit match_type_\${ctx['commit_link'].match_type}\`;
       if (ctx['commit_link'].match_type=='new') {
-        b10 = block10();
-      }
-      if (ctx['commit_link'].match_type=='head') {
         b11 = block11();
       }
-      if (ctx['commit_link'].match_type=='base_match') {
+      if (ctx['commit_link'].match_type=='head') {
         b12 = block12();
       }
-      if (ctx['commit_link'].match_type=='base_head') {
+      if (ctx['commit_link'].match_type=='base_match') {
         b13 = block13();
       }
-      let txt2 = ctx['commit_link'].commit_dname;
+      if (ctx['commit_link'].match_type=='base_head') {
+        b14 = block14();
+      }
+      b15 = safeOutput(ctx['commit_link'].commit_dname);
       let attr7 = 'https://%s/commit/%s'%(ctx['commit_link'].commit_remote_url,ctx['commit_link'].commit_name);
-      let txt3 = ctx['commit_link'].commit_subject;
-      c_block8[i1] = withKey(block9([attr5, attr6, txt2, attr7, txt3], [b10, b11, b12, b13]), key1);
+      b16 = safeOutput(ctx['commit_link'].commit_subject);
+      c_block9[i1] = withKey(block10([attr5, attr6, attr7], [b11, b12, b13, b14, b15, b16]), key1);
     }
-    b8 = list(c_block8);
-    return block1([attr1, attr2, attr3, attr4, txt1], [b2, b3, b4, b6, b8]);
+    b9 = list(c_block9);
+    return block1([attr1, attr2, attr3, attr4], [b2, b3, b4, b5, b7, b9]);
   }
 }"
 `;
@@ -83,7 +83,7 @@ exports[`misc global 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, isBoundary, withDefault, setContextValue, zero, withKey } = helpers;
+  let { prepareList, safeOutput, isBoundary, withDefault, setContextValue, zero, withKey } = helpers;
   const callTemplate_1 = app.getTemplate(\`_callee-uses-foo\`);
   const callTemplate_2 = app.getTemplate(\`_callee-uses-foo\`);
   const callTemplate_3 = app.getTemplate(\`_callee-uses-foo\`);
@@ -91,7 +91,7 @@ exports[`misc global 1`] = `
   const callTemplate_5 = app.getTemplate(\`_callee-asc-toto\`);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
-  let block4 = createBlock(\`<span><block-text-0/></span>\`);
+  let block4 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
@@ -105,28 +105,28 @@ exports[`misc global 1`] = `
       ctx[\`value_index\`] = i1;
       ctx[\`value_value\`] = v_block2[i1];
       const key1 = ctx['value'];
-      let txt1 = ctx['value'];
-      const b4 = block4([txt1]);
+      const b5 = safeOutput(ctx['value']);
+      const b4 = block4([], [b5]);
       ctx = Object.create(ctx);
       ctx[isBoundary] = 1;
       ctx = Object.create(ctx);
       ctx[isBoundary] = 1;
       setContextValue(ctx, "foo", 'aaa');
-      const b7 = callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}\`);
+      const b8 = callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}\`);
       ctx = ctx.__proto__;
-      const b8 = callTemplate_2.call(this, ctx, node, key + \`__2__\${key1}\`);
+      const b9 = callTemplate_2.call(this, ctx, node, key + \`__2__\${key1}\`);
       setContextValue(ctx, "foo", 'bbb');
-      const b9 = callTemplate_3.call(this, ctx, node, key + \`__3__\${key1}\`);
-      const b6 = multi([b7, b8, b9]);
-      ctx[zero] = b6;
-      const b5 = callTemplate_4.call(this, ctx, node, key + \`__4__\${key1}\`);
+      const b10 = callTemplate_3.call(this, ctx, node, key + \`__3__\${key1}\`);
+      const b7 = multi([b8, b9, b10]);
+      ctx[zero] = b7;
+      const b6 = callTemplate_4.call(this, ctx, node, key + \`__4__\${key1}\`);
       ctx = ctx.__proto__;
-      c_block2[i1] = withKey(multi([b4, b5]), key1);
+      c_block2[i1] = withKey(multi([b4, b6]), key1);
     }
     ctx = ctx.__proto__;
     const b2 = list(c_block2);
-    const b10 = callTemplate_5.call(this, ctx, node, key + \`__5\`);
-    return block1([], [b2, b10]);
+    const b11 = callTemplate_5.call(this, ctx, node, key + \`__5\`);
+    return block1([], [b2, b11]);
   }
 }"
 `;
@@ -135,13 +135,14 @@ exports[`misc global 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { withDefault } = helpers;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = withDefault(ctx['foo'], \`foo default\`);
-    return block1([txt1]);
+    const b3 = text(\`foo default\`);
+    const b2 = safeOutput(ctx['foo'], b3);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -182,12 +183,12 @@ exports[`misc other complex template 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, withKey, createRef } = helpers;
+  let { safeOutput, prepareList, withKey, createRef } = helpers;
   const callTemplate_1 = app.getTemplate(\`LOAD_INFOS_TEMPLATE\`);
   const comp1 = app.createComponent(\`BundlesList\`, true, false, false, ["bundles","category_custom_views","search"]);
   const comp2 = app.createComponent(\`BundlesList\`, true, false, false, ["bundles","search"]);
   
-  let block1 = createBlock(\`<div><header><nav class="navbar navbar-expand-md navbar-light bg-light"><a block-attribute-0="href"><b style="color:#777;"><block-text-1/></b></a><button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#top_menu_collapse"><span class="navbar-toggler-icon"/></button><div class="collapse navbar-collapse" id="top_menu_collapse" aria-expanded="false"><ul class="nav navbar-nav ml-auto text-right" id="top_menu"><block-child-0/><li class="nav-item divider"/><block-child-1/></ul><div><div class="input-group input-group-sm"><div class="input-group-prepend input-group-sm"><button class="btn btn-default fa fa-cog" title="Settings" block-handler-2="click"/><button class="btn btn-default" block-handler-3="click"> More </button><block-child-2/></div><input class="form-control" type="text" placeholder="Search" aria-label="Search" name="search" block-property-4="value" block-handler-5="keyup" block-handler-6="change" block-ref="7"/><div class="input-group-append"><button class="btn btn-default fa fa-eraser" block-handler-8="click"/></div></div></div></div></nav></header><div class="container-fluid" block-ref="9"><div class="row"><!--div class="form-group col-md-6">
+  let block1 = createBlock(\`<div><header><nav class="navbar navbar-expand-md navbar-light bg-light"><a block-attribute-0="href"><b style="color:#777;"><block-child-0/></b></a><button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#top_menu_collapse"><span class="navbar-toggler-icon"/></button><div class="collapse navbar-collapse" id="top_menu_collapse" aria-expanded="false"><ul class="nav navbar-nav ml-auto text-right" id="top_menu"><block-child-1/><li class="nav-item divider"/><block-child-2/></ul><div><div class="input-group input-group-sm"><div class="input-group-prepend input-group-sm"><button class="btn btn-default fa fa-cog" title="Settings" block-handler-1="click"/><button class="btn btn-default" block-handler-2="click"> More </button><block-child-3/></div><input class="form-control" type="text" placeholder="Search" aria-label="Search" name="search" block-property-3="value" block-handler-4="keyup" block-handler-5="change" block-ref="6"/><div class="input-group-append"><button class="btn btn-default fa fa-eraser" block-handler-7="click"/></div></div></div></div></nav></header><div class="container-fluid" block-ref="8"><div class="row"><!--div class="form-group col-md-6">
                       <h5>Search options</h5>
                       <input class="form-control" type="text" name="default_search" id="default_search" t-att-checked="default_search" placeholder="Default search"/>
       
@@ -200,79 +201,79 @@ exports[`misc other complex template 1`] = `
                           <input class="form-check-input" type="checkbox" name="display_dev"/>
                           <label class="form-check-label" for="display_dev">Display dev</label>
                       </div>
-                  </div--><div class="form-group col-md-6"><h5>Triggers</h5><block-child-3/></div></div></div><div class="container-fluid frontend"><div class="row"><div class="col-md-12"><block-child-4/></div><div class="col-md-12"><block-child-5/><block-child-6/><block-child-7/></div></div></div></div>\`);
-  let block3 = createBlock(\`<li class="nav-item"><a class="nav-link" href="#" block-handler-0="click"><block-text-1/></a></li>\`);
-  let block5 = createBlock(\`<li class="nav-item dropdown"><b><a class="nav-link" block-attribute-0="href">Login</a></b></li>\`);
-  let block8 = createBlock(\`<li class="nav-item"><a href="/runbot/errors" class="nav-link text-danger" block-attribute-0="title"><i class="fa fa-bug"/><block-text-1/></a></li>\`);
-  let block9 = createBlock(\`<li class="nav-item divider"/>\`);
-  let block11 = createBlock(\`<li class="nav-item"><a href="/runbot/errors" class="nav-link" title="Random Bugs"><i class="fa fa-bug"/></a></li>\`);
+                  </div--><div class="form-group col-md-6"><h5>Triggers</h5><block-child-4/></div></div></div><div class="container-fluid frontend"><div class="row"><div class="col-md-12"><block-child-5/></div><div class="col-md-12"><block-child-6/><block-child-7/><block-child-8/></div></div></div></div>\`);
+  let block4 = createBlock(\`<li class="nav-item"><a class="nav-link" href="#" block-handler-0="click"><block-child-0/></a></li>\`);
+  let block7 = createBlock(\`<li class="nav-item dropdown"><b><a class="nav-link" block-attribute-0="href">Login</a></b></li>\`);
+  let block10 = createBlock(\`<li class="nav-item"><a href="/runbot/errors" class="nav-link text-danger" block-attribute-0="title"><i class="fa fa-bug"/><block-child-0/></a></li>\`);
   let block12 = createBlock(\`<li class="nav-item divider"/>\`);
-  let block13 = createBlock(\`<li class="nav-item dropdown"><a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"><b><span><block-text-0/></span></b></a><div class="dropdown-menu js_usermenu" role="menu"><a class="dropdown-item" id="o_logout" role="menuitem" block-attribute-1="href">Logout</a><a class="dropdown-item" role="menuitem" block-attribute-2="href">Web</a></div></li>\`);
-  let block14 = createBlock(\`<select class="custom-select" name="category" id="category"><block-child-0/></select>\`);
-  let block16 = createBlock(\`<option block-attribute-0="value" block-property-1="selected"><block-text-2/></option>\`);
-  let block20 = createBlock(\`<div class="form-check"><input class="form-check-input" type="checkbox" block-attribute-0="name" block-attribute-1="id" block-property-2="checked" block-attribute-3="data-trigger_id" block-handler-4="change"/><label class="form-check-label" block-attribute-5="for"><block-text-6/></label></div>\`);
-  let block21 = createBlock(\`<div><button class="btn btn-sm btn-default" block-handler-0="click">All</button><button class="btn btn-sm btn-default" block-handler-1="click">None</button><button class="btn btn-sm btn-info" block-handler-2="click">Default</button><button class="btn btn-sm btn-default" block-handler-3="click">Close</button></div>\`);
-  let block23 = createBlock(\`<div class="alert alert-warning" role="alert"><block-text-0/> <!-- todo fixme--></div>\`);
-  let block24 = createBlock(\`<div class="mb32"><h1>No project</h1></div>\`);
-  let block25 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
+  let block14 = createBlock(\`<li class="nav-item"><a href="/runbot/errors" class="nav-link" title="Random Bugs"><i class="fa fa-bug"/></a></li>\`);
+  let block15 = createBlock(\`<li class="nav-item divider"/>\`);
+  let block16 = createBlock(\`<li class="nav-item dropdown"><a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown"><b><span><block-child-0/></span></b></a><div class="dropdown-menu js_usermenu" role="menu"><a class="dropdown-item" id="o_logout" role="menuitem" block-attribute-0="href">Logout</a><a class="dropdown-item" role="menuitem" block-attribute-1="href">Web</a></div></li>\`);
+  let block18 = createBlock(\`<select class="custom-select" name="category" id="category"><block-child-0/></select>\`);
+  let block20 = createBlock(\`<option block-attribute-0="value" block-property-1="selected"><block-child-0/></option>\`);
+  let block25 = createBlock(\`<div class="form-check"><input class="form-check-input" type="checkbox" block-attribute-0="name" block-attribute-1="id" block-property-2="checked" block-attribute-3="data-trigger_id" block-handler-4="change"/><label class="form-check-label" block-attribute-5="for"><block-child-0/></label></div>\`);
+  let block27 = createBlock(\`<div><button class="btn btn-sm btn-default" block-handler-0="click">All</button><button class="btn btn-sm btn-default" block-handler-1="click">None</button><button class="btn btn-sm btn-info" block-handler-2="click">Default</button><button class="btn btn-sm btn-default" block-handler-3="click">Close</button></div>\`);
+  let block29 = createBlock(\`<div class="alert alert-warning" role="alert"><block-child-0/> <!-- todo fixme--></div>\`);
+  let block31 = createBlock(\`<div class="mb32"><h1>No project</h1></div>\`);
+  let block32 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let b2, b4, b14, b17, b22, b23, b24, b25;
+    let b2, b3, b6, b18, b22, b28, b29, b31, b32;
     let attr1 = \`/runbot/\${ctx['project'].slug}\`;
-    let txt1 = ctx['project'].name;
+    b2 = safeOutput(ctx['project'].name);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['projects']);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`project\`] = k_block2[i1];
+    const [k_block3, v_block3, l_block3, c_block3] = prepareList(ctx['projects']);;
+    for (let i1 = 0; i1 < l_block3; i1++) {
+      ctx[\`project\`] = k_block3[i1];
       const key1 = ctx['project'].id;
       let hdlr1 = [ctx['selectProject'](ctx['project']), ctx];
-      let txt2 = ctx['project'].name;
-      c_block2[i1] = withKey(block3([hdlr1, txt2]), key1);
+      const b5 = safeOutput(ctx['project'].name);
+      c_block3[i1] = withKey(block4([hdlr1], [b5]), key1);
     }
     ctx = ctx.__proto__;
-    b2 = list(c_block2);
+    b3 = list(c_block3);
     if (ctx['user']) {
-      let b5, b6;
+      let b7, b8;
       if (ctx['user'].public) {
         let attr2 = \`/web/login?redirect=/\`;
-        b5 = block5([attr2]);
+        b7 = block7([attr2]);
       } else {
-        let b7, b10, b13;
+        let b9, b13, b16;
         if (ctx['nb_assigned_errors']&&ctx['nb_assigned_errors']>0) {
           let attr3 = \`You have \${ctx['nb_assigned_errors']} random bug assigned\`;
-          let txt3 = ctx['nb_assigned_errors'];
-          const b8 = block8([attr3, txt3]);
-          const b9 = block9();
-          b7 = multi([b8, b9]);
-        } else if (ctx['nb_build_errors']&&ctx['nb_build_errors']>0) {
-          const b11 = block11();
+          const b11 = safeOutput(ctx['nb_assigned_errors']);
+          const b10 = block10([attr3], [b11]);
           const b12 = block12();
-          b10 = multi([b11, b12]);
+          b9 = multi([b10, b12]);
+        } else if (ctx['nb_build_errors']&&ctx['nb_build_errors']>0) {
+          const b14 = block14();
+          const b15 = block15();
+          b13 = multi([b14, b15]);
         }
-        let txt4 = ctx['user'].name.length>25?ctx['user'].namesubstring(0,23)+'...':ctx['user'].name;
+        const b17 = safeOutput(ctx['user'].name.length>25?ctx['user'].namesubstring(0,23)+'...':ctx['user'].name);
         let attr4 = \`/web/session/logout?redirect=/\`;
         let attr5 = \`/web\`;
-        b13 = block13([txt4, attr4, attr5]);
-        b6 = multi([b7, b10, b13]);
+        b16 = block16([attr4, attr5], [b17]);
+        b8 = multi([b9, b13, b16]);
       }
-      b4 = multi([b5, b6]);
+      b6 = multi([b7, b8]);
     }
     let hdlr2 = [ctx['toggleSettingsMenu'], ctx];
     let hdlr3 = [ctx['toggleMore'], ctx];
     if (ctx['categories']&&ctx['categories'].length>1) {
       ctx = Object.create(ctx);
-      const [k_block15, v_block15, l_block15, c_block15] = prepareList(ctx['categories']);;
-      for (let i1 = 0; i1 < l_block15; i1++) {
-        ctx[\`category\`] = k_block15[i1];
+      const [k_block19, v_block19, l_block19, c_block19] = prepareList(ctx['categories']);;
+      for (let i1 = 0; i1 < l_block19; i1++) {
+        ctx[\`category\`] = k_block19[i1];
         const key1 = ctx['category'].id;
         let attr6 = ctx['category'].id;
         let prop1 = new Boolean(ctx['category'].id==ctx['options'].active_category_id);
-        let txt5 = ctx['category'].name;
-        c_block15[i1] = withKey(block16([attr6, prop1, txt5]), key1);
+        const b21 = safeOutput(ctx['category'].name);
+        c_block19[i1] = withKey(block20([attr6, prop1], [b21]), key1);
       }
       ctx = ctx.__proto__;
-      const b15 = list(c_block15);
-      b14 = block14([], [b15]);
+      const b19 = list(c_block19);
+      b18 = block18([], [b19]);
     }
     let prop2 = new String((ctx['search'].value) === 0 ? 0 : ((ctx['search'].value) || ""));
     let hdlr4 = [ctx['updateFilter'], ctx];
@@ -282,11 +283,11 @@ exports[`misc other complex template 1`] = `
     let ref2 = createRef(ctx['settings_menu']);
     if (ctx['triggers']) {
       ctx = Object.create(ctx);
-      const [k_block18, v_block18, l_block18, c_block18] = prepareList(ctx['triggers']);;
-      for (let i1 = 0; i1 < l_block18; i1++) {
-        ctx[\`trigger\`] = k_block18[i1];
+      const [k_block23, v_block23, l_block23, c_block23] = prepareList(ctx['triggers']);;
+      for (let i1 = 0; i1 < l_block23; i1++) {
+        ctx[\`trigger\`] = k_block23[i1];
         const key1 = ctx['trigger'].id;
-        let b20;
+        let b25;
         if (!ctx['trigger'].manual&&ctx['trigger'].project_id===ctx['project'].id&&ctx['trigger'].category_id===ctx['options'].active_category_id) {
           let attr7 = \`trigger_\${ctx['trigger'].id}\`;
           let attr8 = \`trigger_\${ctx['trigger'].id}\`;
@@ -294,35 +295,35 @@ exports[`misc other complex template 1`] = `
           let attr9 = ctx['trigger'].id;
           let hdlr7 = [ctx['updateTriggerDisplay'], ctx];
           let attr10 = \`trigger_\${ctx['trigger'].id}\`;
-          let txt6 = ctx['trigger'].name;
-          b20 = block20([attr7, attr8, prop3, attr9, hdlr7, attr10, txt6]);
+          const b26 = safeOutput(ctx['trigger'].name);
+          b25 = block25([attr7, attr8, prop3, attr9, hdlr7, attr10], [b26]);
         }
-        c_block18[i1] = withKey(multi([b20]), key1);
+        c_block23[i1] = withKey(multi([b25]), key1);
       }
       ctx = ctx.__proto__;
-      const b18 = list(c_block18);
+      const b23 = list(c_block23);
       let hdlr8 = [ctx['triggerAll'], ctx];
       let hdlr9 = [ctx['triggerNone'], ctx];
       let hdlr10 = [ctx['triggerDefault'], ctx];
       let hdlr11 = [ctx['toggleSettingsMenu'], ctx];
-      const b21 = block21([hdlr8, hdlr9, hdlr10, hdlr11]);
-      b17 = multi([b18, b21]);
+      const b27 = block27([hdlr8, hdlr9, hdlr10, hdlr11]);
+      b22 = multi([b23, b27]);
     }
     if (ctx['load_infos']) {
-      b22 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+      b28 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     }
     if (ctx['message']) {
-      let txt7 = ctx['message'];
-      b23 = block23([txt7]);
+      const b30 = safeOutput(ctx['message']);
+      b29 = block29([], [b30]);
     }
     if (!ctx['project']) {
-      b24 = block24();
+      b31 = block31();
     } else {
-      const b26 = comp1({bundles: ctx['bundles'].sticky,category_custom_views: ctx['category_custom_views'],search: ctx['search']}, key + \`__2\`, node, this, null);
-      const b27 = comp2({bundles: ctx['bundles'].dev,search: ctx['search']}, key + \`__3\`, node, this, null);
-      b25 = block25([], [b26, b27]);
+      const b33 = comp1({bundles: ctx['bundles'].sticky,category_custom_views: ctx['category_custom_views'],search: ctx['search']}, key + \`__2\`, node, this, null);
+      const b34 = comp2({bundles: ctx['bundles'].dev,search: ctx['search']}, key + \`__3\`, node, this, null);
+      b32 = block32([], [b33, b34]);
     }
-    return block1([attr1, txt1, hdlr2, hdlr3, prop2, hdlr4, hdlr5, ref1, hdlr6, ref2], [b2, b4, b14, b17, b22, b23, b24, b25]);
+    return block1([attr1, hdlr2, hdlr3, prop2, hdlr4, hdlr5, ref1, hdlr6, ref2], [b2, b3, b6, b18, b22, b28, b29, b31, b32]);
   }
 }"
 `;

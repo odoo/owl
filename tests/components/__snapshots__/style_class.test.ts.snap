@@ -358,13 +358,14 @@ exports[`style and class handling error in subcomponent with class 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div block-attribute-0="class"><block-text-1/></div>\`);
+  let block1 = createBlock(\`<div block-attribute-0="class"><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
     let attr1 = ctx['this'].props.class;
-    let txt1 = ctx['this'].will.crash;
-    return block1([attr1, txt1]);
+    const b2 = safeOutput(ctx['this'].will.crash);
+    return block1([attr1], [b2]);
   }
 }"
 `;

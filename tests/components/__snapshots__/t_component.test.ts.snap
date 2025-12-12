@@ -142,14 +142,15 @@ exports[`t-component modifying a sub widget 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/><button block-handler-1="click">Inc</button></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><button block-handler-0="click">Inc</button></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].state.counter;
+    const b2 = safeOutput(ctx['this'].state.counter);
     const v1 = ctx['this'];
     let hdlr1 = [()=>v1.state.counter++, ctx];
-    return block1([txt1, hdlr1]);
+    return block1([hdlr1], [b2]);
   }
 }"
 `;

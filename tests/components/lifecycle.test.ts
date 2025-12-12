@@ -334,7 +334,7 @@ describe("lifecycle hooks", () => {
 
     class ChildChild extends Component {
       static template = xml`
-        <div><t t-esc="this.props.n"/></div>
+        <div><t t-out="this.props.n"/></div>
       `;
       props = props();
 
@@ -476,7 +476,7 @@ describe("lifecycle hooks", () => {
 
   test("components are unmounted and destroyed if no longer in DOM, even after updateprops", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="this.props.n"/></span>`;
+      static template = xml`<span><t t-out="this.props.n"/></span>`;
       props = props();
       setup() {
         useLogLifecycle();
@@ -585,7 +585,7 @@ describe("lifecycle hooks", () => {
     let def = makeDeferred();
 
     class Child extends Component {
-      static template = xml`<span><t t-esc="this.props.n"/></span>`;
+      static template = xml`<span><t t-out="this.props.n"/></span>`;
       props = props();
 
       setup() {
@@ -616,7 +616,7 @@ describe("lifecycle hooks", () => {
     let n = 0;
 
     class Test extends Component {
-      static template = xml`<div><t t-esc="this.state.a"/></div>`;
+      static template = xml`<div><t t-out="this.state.a"/></div>`;
       state = proxy({ a: 1 });
 
       setup() {
@@ -1120,7 +1120,7 @@ describe("lifecycle hooks", () => {
 
   test("render in mounted", async () => {
     class Parent extends Component {
-      static template = xml`<span t-esc="this.patched"/>`;
+      static template = xml`<span t-out="this.patched"/>`;
       patched: any;
       setup() {
         useLogLifecycle();
@@ -1153,7 +1153,7 @@ describe("lifecycle hooks", () => {
 
   test("render in patched", async () => {
     class Parent extends Component {
-      static template = xml`<span t-esc="this.patched"/>`;
+      static template = xml`<span t-out="this.patched"/>`;
       patched: any;
       setup() {
         useLogLifecycle();
@@ -1199,7 +1199,7 @@ describe("lifecycle hooks", () => {
 
   test("render in willPatch", async () => {
     class Parent extends Component {
-      static template = xml`<span t-esc="this.patched"/>`;
+      static template = xml`<span t-out="this.patched"/>`;
       patched: any;
       setup() {
         useLogLifecycle();
@@ -1249,7 +1249,7 @@ describe("lifecycle hooks", () => {
     let instance: any;
 
     class Test extends Component {
-      static template = xml`<t t-esc="this.props.rev" />`;
+      static template = xml`<t t-out="this.props.rev" />`;
       props = props();
       setup() {
         instance = this;

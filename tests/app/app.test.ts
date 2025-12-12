@@ -37,7 +37,7 @@ describe("app", () => {
 
   test("can configure an app with props", async () => {
     class SomeComponent extends Component {
-      static template = xml`<div t-esc="this.props.value"/>`;
+      static template = xml`<div t-out="this.props.value"/>`;
       props = props();
     }
 
@@ -52,7 +52,7 @@ describe("app", () => {
     console.warn = mockConsoleWarn;
 
     class Root extends Component {
-      static template = xml`<div t-esc="message"/>`;
+      static template = xml`<div t-out="message"/>`;
       props = props();
     }
 

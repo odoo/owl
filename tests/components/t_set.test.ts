@@ -29,7 +29,7 @@ describe("t-set", () => {
           <t t-else="">
             <t t-set="iter" t-value="4"/>
           </t>
-          <p><t t-esc="iter"/></p>
+          <p><t t-out="iter"/></p>
         </div>`;
       state = { flag: "if" };
     }
@@ -62,7 +62,7 @@ describe("t-set", () => {
           <t t-else="">
             <t t-set="iter" t-value="4"/>
           </t>
-          <p><t t-esc="iter"/></p>
+          <p><t t-out="iter"/></p>
         </div>`;
       state = { flag: "if" };
     }
@@ -83,10 +83,10 @@ describe("t-set", () => {
     class Comp extends Component {
       static template = xml`
         <div>
-          <p><t t-esc="this.iter"/></p>
+          <p><t t-out="this.iter"/></p>
           <t t-set="iter" t-value="5"/>
-          <p><t t-esc="this.iter"/></p>
-          <p><t t-esc="iter"/></p>
+          <p><t t-out="this.iter"/></p>
+          <p><t t-out="iter"/></p>
         </div>`;
       iter = 1;
     }
@@ -100,10 +100,10 @@ describe("t-set", () => {
     class Comp extends Component {
       static template = xml`
         <div>
-          <p><t t-esc="this.iter"/></p>
+          <p><t t-out="this.iter"/></p>
           <t t-set="iter" t-value="5"/>
-          <p><t t-esc="this.iter"/></p>
-          <p><t t-esc="iter"/></p>
+          <p><t t-out="this.iter"/></p>
+          <p><t t-out="iter"/></p>
         </div>`;
     }
     const comp = await mount(Comp, fixture);
@@ -138,10 +138,10 @@ describe("t-set", () => {
     class Childcomp extends Component {
       static template = xml`
         <div>
-          <t t-esc="this.iter"/>
+          <t t-out="this.iter"/>
           <t t-set="iter" t-value="'called'"/>
-          <t t-esc="this.iter"/>
-          <t t-esc="iter"/>
+          <t t-out="this.iter"/>
+          <t t-out="iter"/>
         </div>`;
       iter = "child";
       setup() {
@@ -154,9 +154,9 @@ describe("t-set", () => {
       static template = xml`
         <div>
           <t t-set="iter" t-value="'source'"/>
-          <p><t t-esc="iter"/></p>
+          <p><t t-out="iter"/></p>
           <Childcomp/>
-          <p><t t-esc="iter"/></p>
+          <p><t t-out="iter"/></p>
         </div>`;
     }
     await mount(Comp, fixture);

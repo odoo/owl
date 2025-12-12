@@ -22,7 +22,7 @@ describe("t-ref", () => {
   test("refs in a loop", () => {
     const template = `<div>
         <t t-foreach="items" t-as="item" t-key="item.id">
-          <div t-ref="item.ref" t-key="item.id"><t t-esc="item.id"/></div>
+          <div t-ref="item.ref" t-key="item.id"><t t-out="item.id"/></div>
         </t>
       </div>`;
     const items = [

@@ -270,6 +270,22 @@ exports[`t-on t-on modifiers (native listener) t-on combined with t-out 1`] = `
   
   return function template(ctx, node, key = "") {
     let hdlr1 = [ctx['onClick'], ctx];
+    const b2 = safeOutput(ctx['text']);
+    return block1([hdlr1], [b2]);
+  }
+}"
+`;
+
+exports[`t-on t-on modifiers (native listener) t-on combined with t-out 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div><button block-handler-0="click"><block-child-0/></button></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    let hdlr1 = [ctx['onClick'], ctx];
     const b2 = safeOutput(ctx['html']);
     return block1([hdlr1], [b2]);
   }
@@ -339,10 +355,10 @@ exports[`t-on t-on modifiers (native listener) t-on with prevent modifier in t-f
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, withKey } = helpers;
+  let { prepareList, safeOutput, withKey } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<a href="#" block-handler-0="click.prevent"> Edit <block-text-1/></a>\`);
+  let block3 = createBlock(\`<a href="#" block-handler-0="click.prevent"> Edit <block-child-0/></a>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
@@ -353,8 +369,8 @@ exports[`t-on t-on modifiers (native listener) t-on with prevent modifier in t-f
       const v1 = ctx['onEdit'];
       const v2 = ctx['project'];
       let hdlr1 = ["prevent", _ev=>v1(v2.id,_ev), ctx];
-      let txt1 = ctx['project'].name;
-      c_block2[i1] = withKey(block3([hdlr1, txt1]), key1);
+      const b4 = safeOutput(ctx['project'].name);
+      c_block2[i1] = withKey(block3([hdlr1], [b4]), key1);
     }
     const b2 = list(c_block2);
     return block1([], [b2]);

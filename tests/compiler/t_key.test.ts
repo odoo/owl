@@ -5,14 +5,14 @@ snapshotEverything();
 
 describe("t-key", () => {
   test("can use t-key directive on a node", () => {
-    const template = `<div t-key="beer.id"><t t-esc="beer.name"/></div>`;
+    const template = `<div t-key="beer.id"><t t-out="beer.name"/></div>`;
     expect(renderToString(template, { beer: { id: 12, name: "Chimay Rouge" } })).toBe(
       "<div>Chimay Rouge</div>"
     );
   });
 
   test("can use t-key directive on a node as a function", () => {
-    const template = `<div t-key="getKey(beer)"><t t-esc="beer.name"/></div>`;
+    const template = `<div t-key="getKey(beer)"><t t-out="beer.name"/></div>`;
     const getKey = (arg: any) => arg.id;
     expect(renderToString(template, { getKey, beer: { id: 12, name: "Chimay Rouge" } })).toBe(
       "<div>Chimay Rouge</div>"
@@ -20,7 +20,7 @@ describe("t-key", () => {
   });
 
   test("can use t-key directive on a node 2", async () => {
-    const template = `<div t-key="beer.id"><t t-esc="beer.name"/></div>`;
+    const template = `<div t-key="beer.id"><t t-out="beer.name"/></div>`;
     const bd = renderToBdom(template, { beer: { id: 12, name: "Chimay Rouge" } });
     const fixture = makeTestFixture();
     await mount(bd, fixture);
@@ -35,7 +35,7 @@ describe("t-key", () => {
 
   test("t-key directive in a list", () => {
     const template = `<ul>
-        <li t-foreach="beers" t-as="beer" t-key="beer.id"><t t-esc="beer.name"/></li>
+        <li t-foreach="beers" t-as="beer" t-key="beer.id"><t t-out="beer.name"/></li>
        </ul>`;
     expect(
       renderToString(template, {

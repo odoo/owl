@@ -12,7 +12,7 @@ beforeEach(() => {
 describe("t-props", () => {
   test("t-props only", async () => {
     class Comp extends Component {
-      static template = xml`<div><t t-esc="this.props.a"/></div>`;
+      static template = xml`<div><t t-out="this.props.a"/></div>`;
       props = props();
     }
     class Parent extends Component {
@@ -34,7 +34,7 @@ describe("t-props", () => {
 
   test("t-props and other props", async () => {
     class Comp extends Component {
-      static template = xml`<div><t t-esc="this.props.a"/><t t-esc="this.props.b"/></div>`;
+      static template = xml`<div><t t-out="this.props.a"/><t t-out="this.props.b"/></div>`;
       props = props();
     }
     class Parent extends Component {
@@ -62,7 +62,7 @@ describe("t-props", () => {
     class Child extends Component {
       static template = xml`
           <span>
-              <t t-esc="this.props.a + this.props.b"/>
+              <t t-out="this.props.a + this.props.b"/>
           </span>
         `;
       props = props();

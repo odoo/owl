@@ -111,7 +111,7 @@ describe("Portal", () => {
           <div>
             <span>1</span>
             <t t-portal="'#outside'">
-              <p><t t-esc="a.b.c"/></p>
+              <p><t t-out="a.b.c"/></p>
             </t>
           </div>`;
     }
@@ -188,7 +188,7 @@ describe("Portal", () => {
 
   test("conditional use of Portal (with sub Component)", async () => {
     class Child extends Component {
-      static template = xml`<p><t t-esc="this.props.val"/></p>`;
+      static template = xml`<p><t t-out="this.props.val"/></p>`;
       props = props();
     }
     class Parent extends Component {
@@ -286,7 +286,7 @@ describe("Portal", () => {
     const outside = addOutsideDiv(fixture);
 
     class Child extends Component {
-      static template = xml`<span><t t-esc="this.props.val"/></span>`;
+      static template = xml`<span><t t-out="this.props.val"/></span>`;
       props = props();
 
       setup() {
@@ -327,7 +327,7 @@ describe("Portal", () => {
       static template = xml`
             <div>
               <t t-portal="'#outside'">
-                <t t-esc="'only text'"/>
+                <t t-out="'only text'"/>
               </t>
             </div>`;
     }
@@ -342,7 +342,7 @@ describe("Portal", () => {
       static template = xml`
             <div>
               <t t-portal="'#outside'">
-                <t t-if="false" t-esc="'ABC'"/>
+                <t t-if="false" t-out="'ABC'"/>
               </t>
             </div>`;
     }
@@ -372,7 +372,7 @@ describe("Portal", () => {
       static template = xml`
             <div>
               <t t-portal="'#outside'">
-                <span t-if="this.state.val" t-esc="this.state.val"/>
+                <span t-if="this.state.val" t-out="this.state.val"/>
                 <div t-else=""/>
               </t>
             </div>`;
@@ -394,7 +394,7 @@ describe("Portal", () => {
       static template = xml`
             <div>
               <t t-portal="'#outside'">
-                <span t-if="this.state.val" t-esc="this.state.val"/>
+                <span t-if="this.state.val" t-out="this.state.val"/>
               </t>
             </div>`;
       state = proxy({ val: "ab" });
@@ -413,7 +413,7 @@ describe("Portal", () => {
     const steps: any[] = [];
 
     class Child extends Component {
-      static template = xml`<span t-esc="this.props.val"/>`;
+      static template = xml`<span t-out="this.props.val"/>`;
       props = props();
       setup() {
         onMounted(() => steps.push("child:mounted"));
@@ -485,7 +485,7 @@ describe("Portal", () => {
 
   test("portal destroys on crash", async () => {
     class Child extends Component {
-      static template = xml`<span t-esc="this.props.error and this.will.crash" />`;
+      static template = xml`<span t-out="this.props.error and this.will.crash" />`;
       props = props();
       state = {};
     }
@@ -561,7 +561,7 @@ describe("Portal", () => {
     class Parent extends Component {
       static template = xml`
           <t t-portal="'#outside'" t-foreach="this.portalIds" t-as="portalId" t-key="portalId">
-            Portal<t t-esc="portalId"/>
+            Portal<t t-out="portalId"/>
           </t>`;
       portalIds = proxy([] as any);
     }
@@ -592,7 +592,7 @@ describe("Portal", () => {
     class Parent extends Component {
       static template = xml`
           <div t-portal="'#outside'" t-foreach="this.portalIds" t-as="portalId" t-key="portalId">
-            Portal<t t-esc="portalId"/>
+            Portal<t t-out="portalId"/>
           </div>`;
       portalIds = proxy([] as any);
     }
@@ -626,9 +626,9 @@ describe("Portal", () => {
       static template = xml`
           <t t-foreach="this.portalIds" t-as="portalId" t-key="portalId">
             <div>
-              <t t-esc="portalId"/>
+              <t t-out="portalId"/>
               <t t-portal="'#outside'">
-                Portal<t t-esc="portalId"/>
+                Portal<t t-out="portalId"/>
               </t>
             </div>
           </t>`;
@@ -664,9 +664,9 @@ describe("Portal", () => {
       static template = xml`
           <t t-foreach="this.portalIds" t-as="portalId" t-key="portalId">
             <div>
-              <t t-esc="portalId"/>
+              <t t-out="portalId"/>
               <t t-portal="'#outside'">
-                Portal<t t-esc="portalId"/>
+                Portal<t t-out="portalId"/>
               </t>
             </div>
           </t>`;
@@ -823,9 +823,9 @@ describe("Portal", () => {
         <div>
           <t t-foreach="this.portalIds" t-as="portalId" t-key="portalId">
             <div>
-              <t t-esc="portalId"/>
+              <t t-out="portalId"/>
               <t t-portal="'#outside'">
-                Portal<t t-esc="portalId"/>
+                Portal<t t-out="portalId"/>
               </t>
             </div>
           </t>

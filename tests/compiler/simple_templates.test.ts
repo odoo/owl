@@ -45,7 +45,7 @@ describe("simple templates, mostly static", () => {
   });
 
   test("dynamic text value", () => {
-    const template = `<t><t t-esc="text"/></t>`;
+    const template = `<t><t t-out="text"/></t>`;
     expect(renderToString(template, { text: "owl" })).toBe("owl");
   });
 
@@ -65,12 +65,12 @@ describe("simple templates, mostly static", () => {
   });
 
   test("static text and dynamic text", () => {
-    const template = `<t>hello <t t-esc="text"/></t>`;
+    const template = `<t>hello <t t-out="text"/></t>`;
     expect(renderToString(template, { text: "owl" })).toBe("hello owl");
   });
 
   test("static text and dynamic text (no t tag)", () => {
-    const template = `hello <t t-esc="text"/>`;
+    const template = `hello <t t-out="text"/>`;
     expect(renderToString(template, { text: "owl" })).toBe("hello owl");
   });
 
@@ -134,7 +134,7 @@ describe("simple templates, mostly static", () => {
   });
 
   test("inline template string with variable in context", () => {
-    const template = '<t><t t-esc="`text ${v}`"/></t>';
+    const template = '<t><t t-out="`text ${v}`"/></t>';
     expect(renderToString(template, { v: "from context" })).toBe("text from context");
   });
 
@@ -146,10 +146,10 @@ describe("simple templates, mostly static", () => {
   test("template with multiple t tag with multiple content", () => {
     const template = `
       <div>
-        <t t-esc="a"/>
+        <t t-out="a"/>
         <t>
-          <t t-esc="b"/>
-          <t>Loading<t t-esc="c"/></t>
+          <t t-out="b"/>
+          <t>Loading<t t-out="c"/></t>
         </t>
       </div>`;
     expect(renderToString(template, { a: "a", b: "b", c: "c" })).toBe("<div>abLoadingc</div>");

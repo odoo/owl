@@ -280,12 +280,13 @@ exports[`t-call (template calling) dynamic t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<foo><block-text-0/></foo>\`);
+  let block1 = createBlock(\`<foo><block-child-0/></foo>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['val'];
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['val']);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -294,12 +295,13 @@ exports[`t-call (template calling) dynamic t-call 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<bar><block-text-0/></bar>\`);
+  let block1 = createBlock(\`<bar><block-child-0/></bar>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['val'];
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['val']);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -327,9 +329,10 @@ exports[`t-call (template calling) inherit context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['foo']);
+    return safeOutput(ctx['foo']);
   }
 }"
 `;
@@ -428,32 +431,32 @@ exports[`t-call (template calling) recursive template, part 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, isBoundary, withDefault, setContextValue, withKey } = helpers;
+  let { safeOutput, prepareList, isBoundary, withDefault, setContextValue, withKey } = helpers;
   const callTemplate_1 = app.getTemplate(\`nodeTemplate\`);
   
-  let block1 = createBlock(\`<div><p><block-text-0/></p><block-child-0/></div>\`);
+  let block1 = createBlock(\`<div><p><block-child-0/></p><block-child-1/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    let txt1 = ctx['node'].val;
+    const b2 = safeOutput(ctx['node'].val);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['node'].children||[]);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`subtree\`] = k_block2[i1];
+    const [k_block3, v_block3, l_block3, c_block3] = prepareList(ctx['node'].children||[]);;
+    for (let i1 = 0; i1 < l_block3; i1++) {
+      ctx[\`subtree\`] = k_block3[i1];
       ctx[\`subtree_first\`] = i1 === 0;
-      ctx[\`subtree_last\`] = i1 === k_block2.length - 1;
+      ctx[\`subtree_last\`] = i1 === k_block3.length - 1;
       ctx[\`subtree_index\`] = i1;
-      ctx[\`subtree_value\`] = v_block2[i1];
+      ctx[\`subtree_value\`] = v_block3[i1];
       const key1 = ctx['subtree_index'];
       ctx = Object.create(ctx);
       ctx[isBoundary] = 1;
       setContextValue(ctx, "node", ctx['subtree']);
-      c_block2[i1] = withKey(callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}\`), key1);
+      c_block3[i1] = withKey(callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}\`), key1);
       ctx = ctx.__proto__;
     }
-    const b2 = list(c_block2);
-    return block1([txt1], [b2]);
+    const b3 = list(c_block3);
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -483,32 +486,32 @@ exports[`t-call (template calling) recursive template, part 3 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, isBoundary, withDefault, setContextValue, withKey } = helpers;
+  let { safeOutput, prepareList, isBoundary, withDefault, setContextValue, withKey } = helpers;
   const callTemplate_1 = app.getTemplate(\`nodeTemplate\`);
   
-  let block1 = createBlock(\`<div><p><block-text-0/></p><block-child-0/></div>\`);
+  let block1 = createBlock(\`<div><p><block-child-0/></p><block-child-1/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    let txt1 = ctx['node'].val;
+    const b2 = safeOutput(ctx['node'].val);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['node'].children||[]);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`subtree\`] = k_block2[i1];
+    const [k_block3, v_block3, l_block3, c_block3] = prepareList(ctx['node'].children||[]);;
+    for (let i1 = 0; i1 < l_block3; i1++) {
+      ctx[\`subtree\`] = k_block3[i1];
       ctx[\`subtree_first\`] = i1 === 0;
-      ctx[\`subtree_last\`] = i1 === k_block2.length - 1;
+      ctx[\`subtree_last\`] = i1 === k_block3.length - 1;
       ctx[\`subtree_index\`] = i1;
-      ctx[\`subtree_value\`] = v_block2[i1];
+      ctx[\`subtree_value\`] = v_block3[i1];
       const key1 = ctx['subtree_index'];
       ctx = Object.create(ctx);
       ctx[isBoundary] = 1;
       setContextValue(ctx, "node", ctx['subtree']);
-      c_block2[i1] = withKey(callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}\`), key1);
+      c_block3[i1] = withKey(callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}\`), key1);
       ctx = ctx.__proto__;
     }
-    const b2 = list(c_block2);
-    return block1([txt1], [b2]);
+    const b3 = list(c_block3);
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -539,34 +542,34 @@ exports[`t-call (template calling) recursive template, part 4: with t-set recurs
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, prepareList, withKey } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput, prepareList, withKey } = helpers;
   const callTemplate_1 = app.getTemplate(\`nodeTemplate\`);
   
-  let block1 = createBlock(\`<div><p><block-text-0/> <block-text-1/></p><block-child-0/></div>\`);
+  let block1 = createBlock(\`<div><p><block-child-0/> <block-child-1/></p><block-child-2/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "recursive_idx", ctx['recursive_idx']+1);
-    let txt1 = ctx['node'].val;
-    let txt2 = ctx['recursive_idx'];
+    const b2 = safeOutput(ctx['node'].val);
+    const b3 = safeOutput(ctx['recursive_idx']);
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['node'].children||[]);;
-    for (let i1 = 0; i1 < l_block2; i1++) {
-      ctx[\`subtree\`] = k_block2[i1];
+    const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['node'].children||[]);;
+    for (let i1 = 0; i1 < l_block4; i1++) {
+      ctx[\`subtree\`] = k_block4[i1];
       ctx[\`subtree_first\`] = i1 === 0;
-      ctx[\`subtree_last\`] = i1 === k_block2.length - 1;
+      ctx[\`subtree_last\`] = i1 === k_block4.length - 1;
       ctx[\`subtree_index\`] = i1;
-      ctx[\`subtree_value\`] = v_block2[i1];
+      ctx[\`subtree_value\`] = v_block4[i1];
       const key1 = ctx['subtree_index'];
       ctx = Object.create(ctx);
       ctx[isBoundary] = 1;
       setContextValue(ctx, "node", ctx['subtree']);
-      c_block2[i1] = withKey(callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}\`), key1);
+      c_block4[i1] = withKey(callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}\`), key1);
       ctx = ctx.__proto__;
     }
-    const b2 = list(c_block2);
-    return block1([txt1, txt2], [b2]);
+    const b4 = list(c_block4);
+    return block1([], [b2, b3, b4]);
   }
 }"
 `;
@@ -703,10 +706,10 @@ exports[`t-call (template calling) scoped parameters 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
-  let block1 = createBlock(\`<div><block-child-0/><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
@@ -716,8 +719,8 @@ exports[`t-call (template calling) scoped parameters 1`] = `
     setContextValue(ctx, "foo", 42);
     const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     ctx = ctx.__proto__;
-    let txt1 = ctx['foo'];
-    return block1([txt1], [b2]);
+    const b3 = safeOutput(ctx['foo']);
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -737,10 +740,10 @@ exports[`t-call (template calling) scoped parameters, part 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
-  let block1 = createBlock(\`<div><block-child-0/><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
@@ -751,8 +754,8 @@ exports[`t-call (template calling) scoped parameters, part 2 1`] = `
     setContextValue(ctx, "foo", 42);
     const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     ctx = ctx.__proto__;
-    let txt1 = ctx['foo'];
-    return block1([txt1], [b2]);
+    const b3 = safeOutput(ctx['foo']);
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -761,9 +764,10 @@ exports[`t-call (template calling) scoped parameters, part 2 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['foo']);
+    return safeOutput(ctx['foo']);
   }
 }"
 `;
@@ -816,12 +820,13 @@ exports[`t-call (template calling) t-call on a div with t-call-context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].value;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].value);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -916,12 +921,13 @@ exports[`t-call (template calling) t-call with t-set inside and body text conten
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<p><block-text-0/></p>\`);
+  let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['val'];
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['val']);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -964,12 +970,13 @@ exports[`t-call (template calling) t-call with t-set inside and outside 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['val3'];
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['val3']);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -1031,14 +1038,15 @@ exports[`t-call (template calling) t-call with t-set inside and outside. 2 3`] =
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block2 = createBlock(\`<span><block-text-0/></span>\`);
+  let block2 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['val3'];
-    const b2 = block2([txt1]);
-    const b3 = text(ctx['w']);
-    return multi([b2, b3]);
+    const b3 = safeOutput(ctx['val3']);
+    const b2 = block2([], [b3]);
+    const b4 = safeOutput(ctx['w']);
+    return multi([b2, b4]);
   }
 }"
 `;
@@ -1089,12 +1097,13 @@ exports[`t-call (template calling) t-call, conditional and t-set in t-call body 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div>callee2 <block-text-0/></div>\`);
+  let block1 = createBlock(\`<div>callee2 <block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['v'];
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['v']);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -1116,12 +1125,13 @@ exports[`t-call (template calling) t-call-context 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].value;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].value);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -1149,13 +1159,14 @@ exports[`t-call (template calling) t-call-context and value in body 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/><block-child-1/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].value1;
-    let txt2 = ctx['value2'];
-    return block1([txt1, txt2]);
+    const b2 = safeOutput(ctx['this'].value1);
+    const b3 = safeOutput(ctx['value2']);
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -1189,6 +1200,40 @@ exports[`t-call (template calling) t-esc inside t-call, with t-set outside 2`] =
   return function template(ctx, node, key = "") {
     let txt1 = ctx['v'];
     return block1([txt1]);
+  }
+}"
+`;
+
+exports[`t-call (template calling) t-out inside t-call, with t-set outside 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue } = helpers;
+  const callTemplate_1 = app.getTemplate(\`sub\`);
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    setContextValue(ctx, "v", \`Hi\`);
+    const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`t-call (template calling) t-out inside t-call, with t-set outside 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['v']);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -1277,11 +1322,11 @@ exports[`t-call (template calling) with used body 2`] = `
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { zero } = helpers;
   
-  let block1 = createBlock(\`<h1><block-text-0/></h1>\`);
+  let block1 = createBlock(\`<h1><block-child-0/></h1>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx[zero];
-    return block1([txt1]);
+    const b2 = ctx[zero];
+    return block1([], [b2]);
   }
 }"
 `;
@@ -1311,9 +1356,10 @@ exports[`t-call (template calling) with used setbody 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['foo']);
+    return safeOutput(ctx['foo']);
   }
 }"
 `;

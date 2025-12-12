@@ -20,9 +20,10 @@ exports[`reactivity in lifecycle Child component doesn't render when state they 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['this'].props.state.content.a);
+    return safeOutput(ctx['this'].props.state.content.a);
   }
 }"
 `;
@@ -31,14 +32,15 @@ exports[`reactivity in lifecycle an external proxy object should be tracked 1`] 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   const comp1 = app.createComponent(\`TestSubComponent\`, true, false, false, []);
   
-  let block1 = createBlock(\`<div><block-text-0/><block-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].obj1.value;
-    const b2 = comp1({}, key + \`__1\`, node, this, null);
-    return block1([txt1], [b2]);
+    const b2 = safeOutput(ctx['this'].obj1.value);
+    const b3 = comp1({}, key + \`__1\`, node, this, null);
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -47,12 +49,13 @@ exports[`reactivity in lifecycle an external proxy object should be tracked 2`] 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].obj2.value;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].obj2.value);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -61,12 +64,13 @@ exports[`reactivity in lifecycle can use a state hook 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].counter.value;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].counter.value);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -75,16 +79,16 @@ exports[`reactivity in lifecycle can use a state hook 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "noop", ctx['this'].notify());
-    let txt1 = ctx['this'].state.a;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].state.a);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -93,12 +97,13 @@ exports[`reactivity in lifecycle can use a state hook on Map 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].counter.get('value');
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].counter.get('value'));
+    return block1([], [b2]);
   }
 }"
 `;
@@ -107,16 +112,16 @@ exports[`reactivity in lifecycle change state while mounting component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "noop", ctx['this'].notify());
-    let txt1 = ctx['this'].state.val;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].state.val);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -143,17 +148,17 @@ exports[`reactivity in lifecycle state changes in willUnmount do not trigger rer
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/><block-text-1/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/><block-child-1/></span>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "noop", ctx['this'].notify());
-    let txt1 = ctx['this'].props.val;
-    let txt2 = ctx['this'].state.n;
-    return block1([txt1, txt2]);
+    const b2 = safeOutput(ctx['this'].props.val);
+    const b3 = safeOutput(ctx['this'].state.n);
+    return block1([], [b2, b3]);
   }
 }"
 `;

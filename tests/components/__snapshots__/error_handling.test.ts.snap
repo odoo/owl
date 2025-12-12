@@ -83,12 +83,13 @@ exports[`basics no component catching error lead to full app destruction 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
+  let block1 = createBlock(\`<div>hey<block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].props.flag&&ctx['this'].state.this.will.crash;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].props.flag&&ctx['this'].state.this.will.crash);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -117,12 +118,13 @@ exports[`basics simple catchError 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['a'].b.c;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['a'].b.c);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -131,9 +133,10 @@ exports[`can catch errors Errors have the right cause 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['this'].state.value);
+    return safeOutput(ctx['this'].state.value);
   }
 }"
 `;
@@ -142,9 +145,10 @@ exports[`can catch errors Errors in owl lifecycle are wrapped in dev mode: async
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['this'].state.value);
+    return safeOutput(ctx['this'].state.value);
   }
 }"
 `;
@@ -153,9 +157,10 @@ exports[`can catch errors Errors in owl lifecycle are wrapped out of dev mode: a
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['this'].state.value);
+    return safeOutput(ctx['this'].state.value);
   }
 }"
 `;
@@ -164,9 +169,10 @@ exports[`can catch errors Errors in owl lifecycle are wrapped outside dev mode: 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['this'].state.value);
+    return safeOutput(ctx['this'].state.value);
   }
 }"
 `;
@@ -175,9 +181,10 @@ exports[`can catch errors Thrown values that are not errors are wrapped in dev m
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['this'].state.value);
+    return safeOutput(ctx['this'].state.value);
   }
 }"
 `;
@@ -186,9 +193,10 @@ exports[`can catch errors Thrown values that are not errors are wrapped outside 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['this'].state.value);
+    return safeOutput(ctx['this'].state.value);
   }
 }"
 `;
@@ -197,11 +205,12 @@ exports[`can catch errors an error in onWillDestroy 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2, b3;
-    b2 = text(ctx['this'].state.value);
+    b2 = safeOutput(ctx['this'].state.value);
     if (ctx['this'].state.hasChild) {
       b3 = comp1({}, key + \`__1\`, node, this, null);
     }
@@ -227,11 +236,12 @@ exports[`can catch errors an error in onWillDestroy, variation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2, b3;
-    b2 = text(ctx['this'].state.value);
+    b2 = safeOutput(ctx['this'].state.value);
     if (ctx['this'].state.hasChild) {
       b3 = comp1({}, key + \`__1\`, node, this, null);
     }
@@ -257,9 +267,10 @@ exports[`can catch errors calling a hook outside setup should crash 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['this'].state.value);
+    return safeOutput(ctx['this'].state.value);
   }
 }"
 `;
@@ -309,12 +320,13 @@ exports[`can catch errors can catch an error in a component render function 3`] 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
+  let block1 = createBlock(\`<div>hey<block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].props.flag&&ctx['this'].state.this.will.crash;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].props.flag&&ctx['this'].state.this.will.crash);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -532,12 +544,13 @@ exports[`can catch errors can catch an error in the initial call of a component 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
+  let block1 = createBlock(\`<div>hey<block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].state.this.will.crash;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].state.this.will.crash);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -590,12 +603,13 @@ exports[`can catch errors can catch an error in the initial call of a component 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div>hey<block-text-0/></div>\`);
+  let block1 = createBlock(\`<div>hey<block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].state.this.will.crash;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].state.this.will.crash);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -751,20 +765,20 @@ exports[`can catch errors can catch an error in the willPatch call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { markRaw } = helpers;
+  let { safeOutput, markRaw } = helpers;
   const comp1 = app.createComponent(\`ErrorComponent\`, true, false, false, ["message"]);
   const comp2 = app.createComponent(\`ErrorBoundary\`, true, true, false, []);
   
-  let block1 = createBlock(\`<div><span><block-text-0/></span><block-child-0/></div>\`);
+  let block1 = createBlock(\`<div><span><block-child-0/></span><block-child-1/></div>\`);
   
   function slot1(ctx, node, key = "") {
     return comp1({message: ctx['this'].state.message}, key + \`__1\`, node, this, null);
   }
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].state.message;
-    const b3 = comp2({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__2\`, node, this, null);
-    return block1([txt1], [b3]);
+    const b2 = safeOutput(ctx['this'].state.message);
+    const b4 = comp2({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__2\`, node, this, null);
+    return block1([], [b2, b4]);
   }
 }"
 `;
@@ -793,12 +807,13 @@ exports[`can catch errors can catch an error in the willPatch call 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].props.message;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].props.message);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -966,12 +981,13 @@ exports[`can catch errors catchError in catchError 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['a'].b.c;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['a'].b.c);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -1113,12 +1129,13 @@ exports[`can catch errors catching in child makes parent render 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = 'Child '+ctx['this'].props.id;
-    return block1([txt1]);
+    const b2 = safeOutput('Child '+ctx['this'].props.id);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -1335,15 +1352,16 @@ exports[`can catch errors onError in class inheritance is called if rethrown 2`]
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-0/><block-child-1/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = "") {
     let b2, b3;
     if (!ctx['this'].state.error) {
-      b2 = text(ctx['this'].will.crash);
+      b2 = safeOutput(ctx['this'].will.crash);
     } else {
-      b3 = text(ctx['this'].state.error);
+      b3 = safeOutput(ctx['this'].state.error);
     }
     return block1([], [b2, b3]);
   }
@@ -1366,15 +1384,16 @@ exports[`can catch errors onError in class inheritance is not called if no rethr
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-0/><block-child-1/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = "") {
     let b2, b3;
     if (!ctx['this'].state.error) {
-      b2 = text(ctx['this'].will.crash);
+      b2 = safeOutput(ctx['this'].will.crash);
     } else {
-      b3 = text(ctx['this'].state.error);
+      b3 = safeOutput(ctx['this'].state.error);
     }
     return block1([], [b2, b3]);
   }
@@ -1400,12 +1419,13 @@ exports[`errors and promises a rendering error in a sub component will reject th
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].will.crash;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].will.crash);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -1414,12 +1434,13 @@ exports[`errors and promises a rendering error will reject the mount promise 1`]
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].will.crash;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].will.crash);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -1428,14 +1449,15 @@ exports[`errors and promises a rendering error will reject the render promise (w
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
-  let block1 = createBlock(\`<div><block-child-0/><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = "") {
     const b2 = comp1({}, key + \`__1\`, node, this, null);
-    let txt1 = ctx['x'].y;
-    return block1([txt1], [b2]);
+    const b3 = safeOutput(ctx['x'].y);
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -1457,13 +1479,14 @@ exports[`errors and promises a rendering error will reject the render promise 1`
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
     let b2;
     if (ctx['this'].flag) {
-      b2 = text(ctx['this'].will.crash);
+      b2 = safeOutput(ctx['this'].will.crash);
     }
     return block1([], [b2]);
   }
@@ -1500,12 +1523,13 @@ exports[`errors and promises an error in patched call will reject the render pro
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].val;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].val);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -1514,12 +1538,13 @@ exports[`errors and promises an error in willPatch call will reject the render p
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].val;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].val);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -1541,12 +1566,13 @@ exports[`errors and promises errors in rerender 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].state.a.b;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].state.a.b);
+    return block1([], [b2]);
   }
 }"
 `;

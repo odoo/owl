@@ -16,12 +16,12 @@ describe("misc", () => {
   test("global", () => {
     const context = new TestContext();
     const _calleeAsc = `<año t-att-falló="'agüero'" t-out="0"/>`;
-    const _calleeUsesFoo = `<span t-esc="foo">foo default</span>`;
+    const _calleeUsesFoo = `<span t-out="foo">foo default</span>`;
     const _calleeAscToto = `<div t-out="toto">toto default</div>`;
     const caller = `
         <div>
           <t t-foreach="[4,5,6]" t-as="value" t-key="value">
-            <span t-esc="value"/>
+            <span t-out="value"/>
             <t t-call="_callee-asc">
               <t t-call="_callee-uses-foo">
                   <t t-set="foo" t-value="'aaa'"/>
@@ -74,7 +74,7 @@ describe("misc", () => {
         <div t-attf-class="card bg-{{klass}}-light">
           <div class="batch_header">
               <a t-attf-href="/runbot/batch/{{batch.id}}" t-attf-class="badge badge-{{batch.has_warning ? 'warning' : 'light'}}" title="View Batch">
-                  <t t-esc="batch.formated_age"/>
+                  <t t-out="batch.formated_age"/>
                   <i class="fa fa-exclamation-triangle" t-if="batch.has_warning"/>
                   <i class="arrow fa fa-window-maximize"/>
               </a>
@@ -95,10 +95,10 @@ describe("misc", () => {
                   <i class="fa fa-fw fa-link" t-if="commit_link.match_type == 'head'" title="This commit is an existing head from bundle branches"/>
                   <i class="fa fa-fw fa-code-fork" t-if="commit_link.match_type == 'base_match'" title="This commit is matched from a base batch with matching merge_base"/>
                   <i class="fa fa-fw fa-clock-o" t-if="commit_link.match_type == 'base_head'" title="This commit is the head of a base branch"/>
-                  <t t-esc="commit_link.commit_dname"/>
+                  <t t-out="commit_link.commit_dname"/>
                   </a>
                   <a t-att-href="'https://%s/commit/%s' % (commit_link.commit_remote_url, commit_link.commit_name)" class="badge badge-light" title="View Commit on Github"><i class="fa fa-github"/></a>
-                  <span t-esc="commit_link.commit_subject"/>
+                  <span t-out="commit_link.commit_subject"/>
               </div>
           </div>
         </div>
@@ -127,7 +127,7 @@ describe("misc", () => {
               <nav class="navbar navbar-expand-md navbar-light bg-light">
                   <a t-attf-href="/runbot/{{project.slug}}">
                       <b style="color:#777;">
-                          <t t-esc="project.name"/>
+                          <t t-out="project.name"/>
                       </b>
                   </a>
                   <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#top_menu_collapse">
@@ -137,7 +137,7 @@ describe("misc", () => {
                       <ul class="nav navbar-nav ml-auto text-right" id="top_menu">
                           <li class="nav-item" t-foreach="projects" t-as="project" t-key="project.id">
                               <a class="nav-link" href="#" t-on-click="selectProject(project)">
-                                  <t t-esc="project.name"/>
+                                  <t t-out="project.name"/>
                               </a>
                           </li>
                               
@@ -154,7 +154,7 @@ describe("misc", () => {
                                   <t t-if="nb_assigned_errors and nb_assigned_errors > 0">
                                       <li class="nav-item">
                                           <a href="/runbot/errors" class="nav-link text-danger" t-attf-title="You have {{nb_assigned_errors}} random bug assigned">
-                                              <i class="fa fa-bug"/><t t-esc="nb_assigned_errors"/>
+                                              <i class="fa fa-bug"/><t t-out="nb_assigned_errors"/>
                                           </a>
                                       </li>
                                       <li class="nav-item divider"/>
@@ -168,7 +168,7 @@ describe("misc", () => {
                                   <li class="nav-item dropdown">
                                       <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
                                           <b>
-                                              <span t-esc=" user.name.length &gt; 25 ? user.namesubstring(0, 23) + '...' : user.name"/>
+                                              <span t-out=" user.name.length &gt; 25 ? user.namesubstring(0, 23) + '...' : user.name"/>
                                           </b>
                                       </a>
                                       <div class="dropdown-menu js_usermenu" role="menu">
@@ -188,7 +188,7 @@ describe("misc", () => {
                                       More
                                   </button>
                                   <select t-if="categories and categories.length > 1" class="custom-select" name="category" id="category">
-                                      <option t-foreach="categories" t-as="category" t-key="category.id" t-att-value="category.id" t-esc="category.name" t-att-selected="category.id==options.active_category_id"/>
+                                      <option t-foreach="categories" t-as="category" t-key="category.id" t-att-value="category.id" t-out="category.name" t-att-selected="category.id==options.active_category_id"/>
                                   </select>
                               </div>
                               
@@ -229,7 +229,7 @@ describe("misc", () => {
                                   t-att-checked="options.trigger_display[trigger.id]"
                                   t-att-data-trigger_id="trigger.id"
                                   t-on-change="updateTriggerDisplay"/>
-                                  <label class="form-check-label" t-attf-for="trigger_{{trigger.id}}" t-esc="trigger.name"/>
+                                  <label class="form-check-label" t-attf-for="trigger_{{trigger.id}}" t-out="trigger.name"/>
                               </div>
                           </t>
                           <div>
@@ -250,7 +250,7 @@ describe("misc", () => {
                   </div>
                   <div class='col-md-12'>
                       <div t-if="message" class="alert alert-warning" role="alert">
-                          <t t-esc="message" /> <!-- todo fixme-->
+                          <t t-out="message" /> <!-- todo fixme-->
                       </div>
                       <div t-if="! project" class="mb32">
                           <h1>No project</h1>

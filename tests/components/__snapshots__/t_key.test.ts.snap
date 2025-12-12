@@ -28,12 +28,13 @@ exports[`t-key t-foreach with t-key switch component position 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].props.key;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].props.key);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -55,12 +56,13 @@ exports[`t-key t-key on Component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].props.key;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].props.key);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -85,12 +87,13 @@ exports[`t-key t-key on Component as a function 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].props.key;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].props.key);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -118,12 +121,13 @@ exports[`t-key t-key on multiple Components 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].props.key;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].props.key);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -172,12 +176,13 @@ exports[`t-key t-key on multiple Components with t-call 1 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].props.key;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].props.key);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -225,12 +230,13 @@ exports[`t-key t-key on multiple Components with t-call 2 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].props.key;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].props.key);
+    return block1([], [b2]);
   }
 }"
 `;

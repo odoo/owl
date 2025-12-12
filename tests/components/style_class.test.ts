@@ -357,7 +357,7 @@ describe("style and class handling", () => {
   // TODO: does this test need to be moved? (class now a standard prop)
   test("error in subcomponent with class", async () => {
     class Child extends Component {
-      static template = xml`<div t-att-class="this.props.class" t-esc="this.will.crash"/>`;
+      static template = xml`<div t-att-class="this.props.class" t-out="this.will.crash"/>`;
       props = props();
     }
     class Parent extends Component {

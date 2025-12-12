@@ -47,7 +47,7 @@ afterEach(() => {
 describe("basics", () => {
   test("no component catching error lead to full app destruction", async () => {
     class ErrorComponent extends Component {
-      static template = xml`<div>hey<t t-esc="this.props.flag and this.state.this.will.crash"/></div>`;
+      static template = xml`<div>hey<t t-out="this.props.flag and this.state.this.will.crash"/></div>`;
       props = props();
     }
 
@@ -208,7 +208,7 @@ function(app, bdom, helpers) {
 
   test("simple catchError", async () => {
     class Boom extends Component {
-      static template = xml`<div t-esc="a.b.c"/>`;
+      static template = xml`<div t-out="a.b.c"/>`;
     }
 
     class Parent extends Component {
@@ -241,7 +241,7 @@ describe("errors and promises", () => {
   test("a rendering error will reject the mount promise", async () => {
     // we do not catch error in willPatch anymore
     class Root extends Component {
-      static template = xml`<div><t t-esc="this.will.crash"/></div>`;
+      static template = xml`<div><t t-out="this.will.crash"/></div>`;
     }
 
     let error: any;
@@ -349,7 +349,7 @@ describe("errors and promises", () => {
 
   test("an error in willPatch call will reject the render promise", async () => {
     class Root extends Component {
-      static template = xml`<div><t t-esc="this.val"/></div>`;
+      static template = xml`<div><t t-out="this.val"/></div>`;
       val = 3;
       setup() {
         onWillPatch(() => {
@@ -372,7 +372,7 @@ describe("errors and promises", () => {
 
   test("an error in patched call will reject the render promise", async () => {
     class Root extends Component {
-      static template = xml`<div><t t-esc="this.val"/></div>`;
+      static template = xml`<div><t t-out="this.val"/></div>`;
       val = 3;
       setup() {
         onPatched(() => {
@@ -396,7 +396,7 @@ describe("errors and promises", () => {
   test("a rendering error in a sub component will reject the mount promise", async () => {
     // we do not catch error in willPatch anymore
     class Child extends Component {
-      static template = xml`<div><t t-esc="this.will.crash"/></div>`;
+      static template = xml`<div><t t-out="this.will.crash"/></div>`;
     }
     class Parent extends Component {
       static template = xml`<div><Child/></div>`;
@@ -418,7 +418,7 @@ describe("errors and promises", () => {
 
   test("a rendering error will reject the render promise", async () => {
     class Root extends Component {
-      static template = xml`<div><t t-if="this.flag" t-esc="this.will.crash"/></div>`;
+      static template = xml`<div><t t-if="this.flag" t-out="this.will.crash"/></div>`;
       flag = false;
       setup() {
         onError((cause) => (error = cause));
@@ -444,7 +444,7 @@ describe("errors and promises", () => {
       static template = xml`<span></span>`;
     }
     class Parent extends Component {
-      static template = xml`<div><Child/><t t-esc="x.y"/></div>`;
+      static template = xml`<div><Child/><t t-out="x.y"/></div>`;
       static components = { Child };
     }
 
@@ -490,7 +490,7 @@ describe("errors and promises", () => {
 
   test("errors in rerender", async () => {
     class Example extends Component {
-      static template = xml`<div t-esc="this.state.a.b"/>`;
+      static template = xml`<div t-out="this.state.a.b"/>`;
       state: any = { a: { b: 1 } };
     }
     const root = await mount(Example, fixture);
@@ -508,7 +508,7 @@ describe("errors and promises", () => {
 describe("can catch errors", () => {
   test("can catch an error in a component render function", async () => {
     class ErrorComponent extends Component {
-      static template = xml`<div>hey<t t-esc="this.props.flag and this.state.this.will.crash"/></div>`;
+      static template = xml`<div>hey<t t-out="this.props.flag and this.state.this.will.crash"/></div>`;
       props = props();
     }
     class ErrorBoundary extends Component {
@@ -609,7 +609,7 @@ describe("can catch errors", () => {
 
   test("calling a hook outside setup should crash", async () => {
     class Root extends Component {
-      static template = xml`<t t-esc="this.state.value"/>`;
+      static template = xml`<t t-out="this.state.value"/>`;
       state = proxy({ value: 1 });
 
       setup() {
@@ -632,7 +632,7 @@ describe("can catch errors", () => {
   test("Errors have the right cause", async () => {
     const err = new Error("test error");
     class Root extends Component {
-      static template = xml`<t t-esc="this.state.value"/>`;
+      static template = xml`<t t-out="this.state.value"/>`;
       state = proxy({ value: 1 });
 
       setup() {
@@ -653,7 +653,7 @@ describe("can catch errors", () => {
   test("Errors in owl lifecycle are wrapped in dev mode: async hook", async () => {
     const err = new Error("test error");
     class Root extends Component {
-      static template = xml`<t t-esc="this.state.value"/>`;
+      static template = xml`<t t-out="this.state.value"/>`;
       state = proxy({ value: 1 });
 
       setup() {
@@ -675,7 +675,7 @@ describe("can catch errors", () => {
   test("Errors in owl lifecycle are wrapped outside dev mode: sync hook", async () => {
     const err = new Error("test error");
     class Root extends Component {
-      static template = xml`<t t-esc="this.state.value"/>`;
+      static template = xml`<t t-out="this.state.value"/>`;
       state = proxy({ value: 1 });
 
       setup() {
@@ -697,7 +697,7 @@ describe("can catch errors", () => {
   test("Errors in owl lifecycle are wrapped out of dev mode: async hook", async () => {
     const err = new Error("test error");
     class Root extends Component {
-      static template = xml`<t t-esc="this.state.value"/>`;
+      static template = xml`<t t-out="this.state.value"/>`;
       state = proxy({ value: 1 });
 
       setup() {
@@ -718,7 +718,7 @@ describe("can catch errors", () => {
 
   test("Thrown values that are not errors are wrapped in dev mode", async () => {
     class Root extends Component {
-      static template = xml`<t t-esc="this.state.value"/>`;
+      static template = xml`<t t-out="this.state.value"/>`;
       state = proxy({ value: 1 });
 
       setup() {
@@ -738,7 +738,7 @@ describe("can catch errors", () => {
 
   test("Thrown values that are not errors are wrapped outside dev mode", async () => {
     class Root extends Component {
-      static template = xml`<t t-esc="this.state.value"/>`;
+      static template = xml`<t t-out="this.state.value"/>`;
       state = proxy({ value: 1 });
 
       setup() {
@@ -758,7 +758,7 @@ describe("can catch errors", () => {
 
   test("can catch an error in the initial call of a component render function (parent mounted)", async () => {
     class ErrorComponent extends Component {
-      static template = xml`<div>hey<t t-esc="this.state.this.will.crash"/></div>`;
+      static template = xml`<div>hey<t t-out="this.state.this.will.crash"/></div>`;
     }
     class ErrorBoundary extends Component {
       static template = xml`
@@ -790,7 +790,7 @@ describe("can catch errors", () => {
 
   test("can catch an error in the initial call of a component render function (parent updated)", async () => {
     class ErrorComponent extends Component {
-      static template = xml`<div>hey<t t-esc="this.state.this.will.crash"/></div>`;
+      static template = xml`<div>hey<t t-out="this.state.this.will.crash"/></div>`;
     }
     class ErrorBoundary extends Component {
       static template = xml`
@@ -1181,7 +1181,7 @@ describe("can catch errors", () => {
 
   test("can catch an error in the willPatch call", async () => {
     class ErrorComponent extends Component {
-      static template = xml`<div><t t-esc="this.props.message"/></div>`;
+      static template = xml`<div><t t-out="this.props.message"/></div>`;
       props = props();
       setup() {
         onWillPatch(() => {
@@ -1205,7 +1205,7 @@ describe("can catch errors", () => {
     class App extends Component {
       static template = xml`
           <div>
-              <span><t t-esc="this.state.message"/></span>
+              <span><t t-out="this.state.message"/></span>
             <ErrorBoundary><ErrorComponent message="this.state.message" /></ErrorBoundary>
           </div>`;
       state = proxy({ message: "abc" });
@@ -1223,7 +1223,7 @@ describe("can catch errors", () => {
 
   test("catchError in catchError", async () => {
     class Boom extends Component {
-      static template = xml`<div t-esc="a.b.c"/>`;
+      static template = xml`<div t-out="a.b.c"/>`;
     }
 
     class Child extends Component {
@@ -1271,10 +1271,10 @@ describe("can catch errors", () => {
     class Abstract extends Component {
       static template = xml`<div>
           <t t-if="!this.state.error">
-            <t t-esc="this.will.crash" />
+            <t t-out="this.will.crash" />
           </t>
           <t t-else="">
-            <t t-esc="this.state.error"/>
+            <t t-out="this.state.error"/>
           </t>
         </div>`;
       state: any;
@@ -1315,10 +1315,10 @@ describe("can catch errors", () => {
     class Abstract extends Component {
       static template = xml`<div>
           <t t-if="!this.state.error">
-            <t t-esc="this.will.crash" />
+            <t t-out="this.will.crash" />
           </t>
           <t t-else="">
-            <t t-esc="this.state.error"/>
+            <t t-out="this.state.error"/>
           </t>
         </div>`;
       state: any;
@@ -1426,7 +1426,7 @@ describe("can catch errors", () => {
 
   test("catching in child makes parent render", async () => {
     class Child extends Component {
-      static template = xml`<div t-esc="'Child ' + this.props.id" />`;
+      static template = xml`<div t-out="'Child ' + this.props.id" />`;
       props = props();
     }
 
@@ -1491,7 +1491,7 @@ describe("can catch errors", () => {
 
     class Parent extends Component {
       static template = xml`
-        <t t-esc="this.state.value"/>
+        <t t-out="this.state.value"/>
         <t t-if="this.state.hasChild"><Child/></t>`;
       static components = { Child };
 
@@ -1547,7 +1547,7 @@ describe("can catch errors", () => {
 
     class Parent extends Component {
       static template = xml`
-        <t t-esc="this.state.value"/>
+        <t t-out="this.state.value"/>
         <t t-if="this.state.hasChild"><Child/></t>`;
       static components = { Child };
 

@@ -39,7 +39,7 @@ describe("hooks", () => {
       });
     }
     class Test extends Component {
-      static template = xml`<div>hey<t t-esc="this.state.value"/></div>`;
+      static template = xml`<div>hey<t t-out="this.state.value"/></div>`;
       state = proxy({ value: 1 });
       setup() {
         useMyHook(1);
@@ -66,7 +66,7 @@ describe("hooks", () => {
       });
     }
     class Test extends Component {
-      static template = xml`<div>hey<t t-esc="this.state.value"/></div>`;
+      static template = xml`<div>hey<t t-out="this.state.value"/></div>`;
       state = proxy({ value: 1 });
       setup() {
         useMyHook(1);
@@ -185,7 +185,7 @@ describe("hooks", () => {
       });
     }
     class MyComponent extends Component {
-      static template = xml`<span><t t-esc="this.props.value"/></span>`;
+      static template = xml`<span><t t-out="this.props.value"/></span>`;
       props = props();
       setup() {
         useMyHook();
@@ -226,7 +226,7 @@ describe("hooks", () => {
     let n = 0;
 
     class MyComponent extends Component {
-      static template = xml`<span><t t-esc="this.props.value"/></span>`;
+      static template = xml`<span><t t-out="this.props.value"/></span>`;
       props = props();
       setup() {
         useListener(window, "click", this.increment);
@@ -428,7 +428,7 @@ describe("hooks", () => {
           );
         }
       }
-      MyComponent.template = xml`<div t-esc="this.state.value"/>`;
+      MyComponent.template = xml`<div t-out="this.state.value"/>`;
 
       const component = await mount(MyComponent, fixture);
 

@@ -166,7 +166,7 @@ describe("t-component", () => {
   test("modifying a sub widget", async () => {
     class Counter extends Component {
       static template = xml`
-      <div><t t-esc="this.state.counter"/><button t-on-click="() => this.state.counter++">Inc</button></div>`;
+      <div><t t-out="this.state.counter"/><button t-on-click="() => this.state.counter++">Inc</button></div>`;
       state = proxy({
         counter: 0,
       });

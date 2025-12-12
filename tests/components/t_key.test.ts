@@ -13,7 +13,7 @@ describe("t-key", () => {
   test("t-key on Component", async () => {
     let childInstance = null;
     class Child extends Component {
-      static template = xml`<div t-esc="this.props.key"></div>`;
+      static template = xml`<div t-out="this.props.key"></div>`;
       props = props();
 
       setup() {
@@ -42,7 +42,7 @@ describe("t-key", () => {
   test("t-key on Component as a function", async () => {
     let childInstance = null;
     class Child extends Component {
-      static template = xml`<div t-esc="this.props.key"></div>`;
+      static template = xml`<div t-out="this.props.key"></div>`;
       props = props();
 
       setup() {
@@ -78,7 +78,7 @@ describe("t-key", () => {
   test("t-key on multiple Components", async () => {
     const childInstances = [];
     class Child extends Component {
-      static template = xml`<div t-esc="this.props.key"></div>`;
+      static template = xml`<div t-out="this.props.key"></div>`;
       props = props();
 
       setup() {
@@ -111,7 +111,7 @@ describe("t-key", () => {
   test("t-key on multiple Components with t-call 1", async () => {
     const childInstances = [];
     class Child extends Component {
-      static template = xml`<div t-esc="this.props.key"></div>`;
+      static template = xml`<div t-out="this.props.key"></div>`;
       props = props();
 
       setup() {
@@ -151,7 +151,7 @@ describe("t-key", () => {
   test("t-key on multiple Components with t-call 2", async () => {
     const childInstances = [];
     class Child extends Component {
-      static template = xml`<div t-esc="this.props.key"></div>`;
+      static template = xml`<div t-out="this.props.key"></div>`;
       props = props();
 
       setup() {
@@ -193,7 +193,7 @@ describe("t-key", () => {
   test("t-foreach with t-key switch component position", async () => {
     const childInstances = [];
     class Child extends Component {
-      static template = xml`<div t-esc="this.props.key"></div>`;
+      static template = xml`<div t-out="this.props.key"></div>`;
       props = props();
       setup() {
         childInstances.push(this);

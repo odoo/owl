@@ -491,25 +491,6 @@ describe("t-on", () => {
       expect(() => mountToFixture(template, owner)).toThrowError("Unknown event modifier");
     });
 
-    test("t-on combined with t-esc", async () => {
-      expect.assertions(3);
-      const template = `<div><button t-on-click="onClick" t-esc="text"/></div>`;
-      const steps: string[] = [];
-      const owner = {
-        text: "Click here",
-        onClick() {
-          steps.push("onClick");
-        },
-      };
-
-      const node = mountToFixture(template, owner);
-      expect(node.innerHTML).toBe(`<div><button>Click here</button></div>`);
-
-      node.querySelector("button")!.click();
-
-      expect(steps).toEqual(["onClick"]);
-    });
-
     test("t-on combined with t-out", async () => {
       expect.assertions(3);
       const template = `<div><button t-on-click="onClick" t-out="html"/></div>`;

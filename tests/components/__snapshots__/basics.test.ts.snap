@@ -1338,9 +1338,7 @@ exports[`t-out in components can render list of t-out  1`] = `
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`item\`] = k_block2[i1];
       const key1 = ctx['item'];
-      const b4 = text(ctx['item']);
-      const b5 = safeOutput(ctx['item']);
-      c_block2[i1] = withKey(multi([b4, b5]), key1);
+      c_block2[i1] = withKey(safeOutput(ctx['item']), key1);
     }
     const b2 = list(c_block2);
     return block1([], [b2]);

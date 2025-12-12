@@ -137,11 +137,11 @@ describe("t-set", () => {
     expect(renderToString(template, { list: ["a", "b"] })).toBe(expected);
   });
 
-  test("t-set with content and sub t-esc", () => {
+  test("t-set with content and sub t-out", () => {
     const template = `
         <div>
-          <t t-set="setvar"><t t-esc="beep"/> boop</t>
-          <t t-esc="setvar"/>
+          <t t-set="setvar"><t t-out="beep"/> boop</t>
+          <t t-out="setvar"/>
         </div>`;
     expect(renderToString(template, { beep: "beep" })).toBe("<div>beep boop</div>");
   });

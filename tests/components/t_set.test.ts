@@ -112,20 +112,20 @@ describe("t-set", () => {
     expect((comp as any).iter).toBeUndefined();
   });
 
-  test("slot setted value (with t-set) not accessible with t-esc", async () => {
+  test("slot setted value (with t-set) not accessible with t-out", async () => {
     class Childcomp extends Component {
-      static template = xml`<div><t t-esc="iter"/><t t-set="iter" t-value="'called'"/><t t-esc="iter"/></div>`;
+      static template = xml`<div><t t-out="iter"/><t t-set="iter" t-value="'called'"/><t t-out="iter"/></div>`;
     }
     class Comp extends Component {
       static components = { Childcomp };
       static template = xml`
         <div>
           <t t-set="iter" t-value="'source'"/>
-          <p><t t-esc="iter"/></p>
+          <p><t t-out="iter"/></p>
           <Childcomp>
             <t t-set="iter" t-value="'inCall'"/>
           </Childcomp>
-          <p><t t-esc="iter"/></p>
+          <p><t t-out="iter"/></p>
         </div>`;
     }
     await mount(Comp, fixture);

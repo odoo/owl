@@ -383,7 +383,7 @@ describe("t-call", () => {
           <t t-name="template">
             <t t-set="dummy" t-value="0"/>
             <Child>
-              <t t-esc="Object.keys(this)"/>
+              <t t-out="Object.keys(this)"/>
             </Child>
           </t>
         </templates>`,
@@ -400,7 +400,7 @@ describe("t-call", () => {
       templates: `
         <templates>
           <t t-name="someTemplate">
-            <t t-esc="Object.keys(this)"/>
+            <t t-out="Object.keys(this)"/>
           </t>
         </templates>`,
     });

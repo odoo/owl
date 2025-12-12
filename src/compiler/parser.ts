@@ -14,7 +14,6 @@ export const enum ASTType {
   Comment,
   DomNode,
   Multi,
-  TEsc,
   TIf,
   TSet,
   TCall,
@@ -72,12 +71,6 @@ export interface ASTDomNode extends BaseAST {
 export interface ASTMulti extends BaseAST {
   type: ASTType.Multi;
   content: AST[];
-}
-
-export interface ASTTEsc extends BaseAST {
-  type: ASTType.TEsc;
-  expr: string;
-  defaultValue: string;
 }
 
 export interface ASTTOut extends BaseAST {
@@ -195,7 +188,6 @@ export type AST =
   | ASTComment
   | ASTDomNode
   | ASTMulti
-  | ASTTEsc
   | ASTTif
   | ASTTSet
   | ASTTCall
@@ -261,7 +253,6 @@ function parseNode(node: Node, ctx: ParsingContext): AST | null {
     parseTTranslation(node, ctx) ||
     parseTTranslationContext(node, ctx) ||
     parseTKey(node, ctx) ||
-    parseTEscNode(node, ctx) ||
     parseTOutNode(node, ctx) ||
     parseTCallSlot(node, ctx) ||
     parseComponent(node, ctx) ||
@@ -472,37 +463,6 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
     model,
     ns,
   };
-}
-
-// -----------------------------------------------------------------------------
-// t-esc
-// -----------------------------------------------------------------------------
-
-function parseTEscNode(node: Element, ctx: ParsingContext): AST | null {
-  if (!node.hasAttribute("t-esc")) {
-    return null;
-  }
-  const escValue = node.getAttribute("t-esc")!;
-  node.removeAttribute("t-esc");
-  const tesc: AST = {
-    type: ASTType.TEsc,
-    expr: escValue,
-    defaultValue: node.textContent || "",
-  };
-  let ref = node.getAttribute("t-ref");
-  node.removeAttribute("t-ref");
-  const ast = parseNode(node, ctx);
-  if (!ast) {
-    return tesc;
-  }
-  if (ast.type === ASTType.DomNode) {
-    return {
-      ...ast,
-      ref,
-      content: [tesc],
-    };
-  }
-  return tesc;
 }
 
 // -----------------------------------------------------------------------------
@@ -1088,30 +1048,28 @@ function normalizeTIf(el: Element) {
 }
 
 /**
- * Normalizes the content of an Element so that t-esc directives on components
- * are removed and instead places a <t t-esc=""> as the default slot of the
+ * Normalizes the content of an Element so that t-out directives on components
+ * are removed and instead places a <t t-out=""> as the default slot of the
  * component. Also throws if the component already has content. This function
  * modifies the Element in place.
  *
  * @param el the element containing the tree that should be normalized
  */
-function normalizeTEscTOut(el: Element) {
-  for (const d of ["t-esc", "t-out"]) {
-    const elements = [...el.querySelectorAll(`[${d}]`)].filter(
-      (el) => el.tagName[0] === el.tagName[0].toUpperCase() || el.hasAttribute("t-component")
-    );
-    for (const el of elements) {
-      if (el.childNodes.length) {
-        throw new OwlError(`Cannot have ${d} on a component that already has content`);
-      }
-      const value = el.getAttribute(d);
-      el.removeAttribute(d);
-      const t = el.ownerDocument.createElement("t");
-      if (value != null) {
-        t.setAttribute(d, value);
-      }
-      el.appendChild(t);
+function normalizeTOut(el: Element) {
+  const elements = [...el.querySelectorAll(`[t-out]`)].filter(
+    (el) => el.tagName[0] === el.tagName[0].toUpperCase() || el.hasAttribute("t-component")
+  );
+  for (const el of elements) {
+    if (el.childNodes.length) {
+      throw new OwlError(`Cannot have t-out on a component that already has content`);
     }
+    const value = el.getAttribute("t-out");
+    el.removeAttribute("t-out");
+    const t = el.ownerDocument.createElement("t");
+    if (value != null) {
+      t.setAttribute("t-out", value);
+    }
+    el.appendChild(t);
   }
 }
 
@@ -1123,5 +1081,5 @@ function normalizeTEscTOut(el: Element) {
  */
 function normalizeXML(el: Element) {
   normalizeTIf(el);
-  normalizeTEscTOut(el);
+  normalizeTOut(el);
 }

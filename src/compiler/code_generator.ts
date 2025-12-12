@@ -10,7 +10,6 @@ import {
   ASTTCallSlot,
   ASTTCall,
   ASTTCallBlock,
-  ASTTEsc,
   ASTText,
   ASTTForEach,
   ASTTif,
@@ -476,8 +475,6 @@ export class CodeGenerator {
         return this.compileText(ast, ctx);
       case ASTType.DomNode:
         return this.compileTDomNode(ast, ctx);
-      case ASTType.TEsc:
-        return this.compileTEsc(ast, ctx);
       case ASTType.TOut:
         return this.compileTOut(ast, ctx);
       case ASTType.TIf:
@@ -763,31 +760,6 @@ export class CodeGenerator {
       }
     }
     return block!.varName;
-  }
-
-  compileTEsc(ast: ASTTEsc, ctx: Context): string {
-    let { block, forceNewBlock } = ctx;
-    let expr: string;
-    if (ast.expr === "0") {
-      this.helpers.add("zero");
-      expr = `ctx[zero]`;
-    } else {
-      expr = compileExpr(ast.expr);
-      if (ast.defaultValue) {
-        this.helpers.add("withDefault");
-        // FIXME: defaultValue is not translated
-        expr = `withDefault(${expr}, ${toStringExpression(ast.defaultValue)})`;
-      }
-    }
-    if (!block || forceNewBlock) {
-      block = this.createBlock(block, "text", ctx);
-      this.insertBlock(`text(${expr})`, block, { ...ctx, forceNewBlock: forceNewBlock && !block });
-    } else {
-      const idx = block.insertData(expr, "txt");
-      const text = xmlDoc.createElement(`block-text-${idx}`);
-      block.insert(text);
-    }
-    return block.varName;
   }
 
   compileTOut(ast: ASTTOut, ctx: Context): string {

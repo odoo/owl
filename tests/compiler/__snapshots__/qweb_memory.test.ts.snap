@@ -4,7 +4,7 @@ exports[`memory t-foreach does not leak stuff in global scope 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, withKey } = helpers;
+  let { prepareList, safeOutput, withKey } = helpers;
   
   let block1 = createBlock(\`<p><block-child-0/></p>\`);
   
@@ -15,7 +15,7 @@ exports[`memory t-foreach does not leak stuff in global scope 1`] = `
       ctx[\`item\`] = k_block2[i1];
       ctx[\`item_index\`] = i1;
       const key1 = ctx['item_index'];
-      c_block2[i1] = withKey(text(ctx['item']), key1);
+      c_block2[i1] = withKey(safeOutput(ctx['item']), key1);
     }
     const b2 = list(c_block2);
     return block1([], [b2]);

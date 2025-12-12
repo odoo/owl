@@ -162,7 +162,7 @@ describe("t-if", () => {
     const template = `
         <div>
           <t t-set="title" t-value="'test'"/>
-          <t t-if="title"><t t-esc="title"/></t>
+          <t t-if="title"><t t-out="title"/></t>
         </div>`;
     expect(renderToString(template)).toBe("<div>test</div>");
   });
@@ -207,7 +207,7 @@ describe("t-if", () => {
   });
 
   test("dynamic content after t-if with two children nodes", () => {
-    const template = `<div><t t-if="condition"><p>1</p><p>2</p></t><t t-esc="text"/></div>`;
+    const template = `<div><t t-if="condition"><p>1</p><p>2</p></t><t t-out="text"/></div>`;
 
     // need to do it with bdom to go through the update path
     const bdom = renderToBdom(template, { condition: true, text: "owl" });
@@ -220,7 +220,7 @@ describe("t-if", () => {
   });
 
   test("two t-ifs next to each other", () => {
-    const template = `<div><span t-if="condition"><t t-esc="text"/></span><t t-if="condition"><p>1</p><p>2</p></t></div>`;
+    const template = `<div><span t-if="condition"><t t-out="text"/></span><t t-if="condition"><p>1</p><p>2</p></t></div>`;
 
     // need to do it with bdom to go through the update path
     const bdom = renderToBdom(template, { condition: true, text: "owl" });

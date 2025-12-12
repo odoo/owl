@@ -39,7 +39,7 @@ describe("refs", () => {
     class Parent extends Component {
       static template = xml`
             <div>
-              <span class="counter"><t t-esc="this.state.val"/></span>
+              <span class="counter"><t t-out="this.state.val"/></span>
               <Dialog>
                 <t t-set-slot="footer"><button t-ref="this.button" t-on-click="this.doSomething">do something</button></t>
               </Dialog>
@@ -147,7 +147,7 @@ describe("refs", () => {
       static components = {};
       static template = xml`
         <p t-ref="this.root">
-          <t t-esc="this.props.tree.value"/>
+          <t t-out="this.props.tree.value"/>
           <t t-if="this.props.tree.child"><Test tree="this.props.tree.child"/></t>
         </p>`;
       props = props();

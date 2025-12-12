@@ -12,7 +12,7 @@ beforeEach(() => {
 describe("basics", () => {
   test("explicit object prop", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="this.state.someval"/></span>`;
+      static template = xml`<span><t t-out="this.state.someval"/></span>`;
       props = props();
       state: any;
       setup() {
@@ -32,7 +32,7 @@ describe("basics", () => {
 
   test("prop names can contain -", async () => {
     class Child extends Component {
-      static template = xml`<div><t t-esc="this.props['prop-name']"/></div>`;
+      static template = xml`<div><t t-out="this.props['prop-name']"/></div>`;
       props = props();
     }
 
@@ -47,7 +47,7 @@ describe("basics", () => {
 
   test("accept ES6-like syntax for props (with getters)", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="this.props.greetings"/></span>`;
+      static template = xml`<span><t t-out="this.props.greetings"/></span>`;
       props = props();
     }
 
@@ -66,7 +66,7 @@ describe("basics", () => {
 
   test("t-set works ", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="this.props.val"/></span>`;
+      static template = xml`<span><t t-out="this.props.val"/></span>`;
       props = props();
     }
 
@@ -84,7 +84,7 @@ describe("basics", () => {
 
   test("t-set with a body expression can be used as textual prop", async () => {
     class Child extends Component {
-      static template = xml`<span t-esc="this.props.val"/>`;
+      static template = xml`<span t-out="this.props.val"/>`;
       props = props();
     }
     class Parent extends Component {
@@ -239,7 +239,7 @@ test("do not crash when binding anonymous function prop with bind suffix", async
 test("bound functions is not referentially equal after update", async () => {
   let isEqual = false;
   class Child extends Component {
-    static template = xml`<t t-esc="this.props.val"/>`;
+    static template = xml`<t t-out="this.props.val"/>`;
     props = props();
     setup() {
       onWillUpdateProps((nextProps: any) => {
@@ -272,7 +272,7 @@ test("bound functions are considered 'alike'", async () => {
 
   class Parent extends Component {
     static template = xml`
-      <t t-esc="this.state.val"/>
+      <t t-out="this.state.val"/>
       <Child fn.bind="this.someFunction"/>`;
     static components = { Child };
     state = proxy({ val: 1 });
@@ -307,7 +307,7 @@ test("bound functions are considered 'alike'", async () => {
 
 test("can use .translate suffix", async () => {
   class Child extends Component {
-    static template = xml`<t t-esc="this.props.message"/>`;
+    static template = xml`<t t-out="this.props.message"/>`;
     props = props();
   }
 
@@ -322,7 +322,7 @@ test("can use .translate suffix", async () => {
 
 test(".translate props are translated", async () => {
   class Child extends Component {
-    static template = xml`<t t-esc="this.props.message"/>`;
+    static template = xml`<t t-out="this.props.message"/>`;
     props = props();
   }
 
@@ -337,7 +337,7 @@ test(".translate props are translated", async () => {
 
 test("throw if prop uses an unknown suffix", async () => {
   class Child extends Component {
-    static template = xml`<t t-esc="this.props.val"/>`;
+    static template = xml`<t t-out="this.props.val"/>`;
     props = props();
   }
 
@@ -353,7 +353,7 @@ test("throw if prop uses an unknown suffix", async () => {
 
 test(".alike suffix in a simple case", async () => {
   class Child extends Component {
-    static template = xml`<t t-esc="this.props.fn()"/>`;
+    static template = xml`<t t-out="this.props.fn()"/>`;
     props = props();
     setup() {
       useLogLifecycle();
@@ -362,7 +362,7 @@ test(".alike suffix in a simple case", async () => {
 
   class Parent extends Component {
     static template = xml`
-      <t t-esc="this.state.counter"/>
+      <t t-out="this.state.counter"/>
       <Child fn.alike="() => 1"/>`;
     static components = { Child };
     state = proxy({ counter: 0 });
@@ -399,7 +399,7 @@ test(".alike suffix in a list", async () => {
   class Todo extends Component {
     static template = xml`
       <button t-on-click="this.props.toggle">
-        <t t-esc="this.props.todo.id"/><t t-if="this.props.todo.isChecked">V</t>
+        <t t-out="this.props.todo.id"/><t t-if="this.props.todo.isChecked">V</t>
       </button>`;
     props = props();
     setup() {

@@ -72,7 +72,7 @@ describe("t-call (template calling)", () => {
 
   test("with used body", () => {
     const context = new TestContext();
-    const sub = '<h1><t t-esc="0"/></h1>';
+    const sub = '<h1><t t-out="0"/></h1>';
     const main = '<t t-call="sub">ok</t>';
     context.addTemplate("sub", sub);
     context.addTemplate("main", main);
@@ -82,7 +82,7 @@ describe("t-call (template calling)", () => {
 
   test("with used setbody", () => {
     const context = new TestContext();
-    const sub = '<t t-esc="foo"/>';
+    const sub = '<t t-out="foo"/>';
     const main = `<span><t t-call="sub"><t t-set="foo" t-value="'ok'"/></t></span>`;
     context.addTemplate("sub", sub);
     context.addTemplate("main", main);
@@ -92,7 +92,7 @@ describe("t-call (template calling)", () => {
 
   test("inherit context", () => {
     const context = new TestContext();
-    const sub = '<t t-esc="foo"/>';
+    const sub = '<t t-out="foo"/>';
     const main = `<div><t t-set="foo" t-value="1"/><t t-call="sub"/></div>`;
     context.addTemplate("sub", sub);
     context.addTemplate("main", main);
@@ -108,7 +108,7 @@ describe("t-call (template calling)", () => {
           <t t-call="sub">
             <t t-set="foo" t-value="42"/>
           </t>
-          <t t-esc="foo"/>
+          <t t-out="foo"/>
         </div>`;
     context.addTemplate("sub", sub);
     context.addTemplate("main", main);
@@ -118,14 +118,14 @@ describe("t-call (template calling)", () => {
 
   test("scoped parameters, part 2", () => {
     const context = new TestContext();
-    const sub = '<t t-esc="foo"/>';
+    const sub = '<t t-out="foo"/>';
     const main = `
         <div>
           <t t-set="foo" t-value="11"/>
           <t t-call="sub">
             <t t-set="foo" t-value="42"/>
           </t>
-          <t t-esc="foo"/>
+          <t t-out="foo"/>
         </div>`;
     context.addTemplate("sub", sub);
     context.addTemplate("main", main);
@@ -253,7 +253,7 @@ describe("t-call (template calling)", () => {
 
     const nodeTemplate = `
         <div>
-          <p><t t-esc="node.val"/></p>
+          <p><t t-out="node.val"/></p>
           <t t-foreach="node.children or []" t-as="subtree" t-key="subtree_index">
               <t t-call="nodeTemplate">
                   <t t-set="node" t-value="subtree"/>
@@ -280,7 +280,7 @@ describe("t-call (template calling)", () => {
 
     const nodeTemplate = `
         <div>
-          <p><t t-esc="node.val"/></p>
+          <p><t t-out="node.val"/></p>
           <t t-foreach="node.children or []" t-as="subtree" t-key="subtree_index">
             <t t-call="nodeTemplate">
               <t t-set="node" t-value="subtree"/>
@@ -310,7 +310,7 @@ describe("t-call (template calling)", () => {
     const nodeTemplate = `
         <div>
           <t t-set="recursive_idx" t-value="recursive_idx + 1"/>
-          <p><t t-esc="node.val"/> <t t-esc="recursive_idx"/></p>
+          <p><t t-out="node.val"/> <t t-out="recursive_idx"/></p>
           <t t-foreach="node.children or []" t-as="subtree" t-key="subtree_index">
             <t t-call="nodeTemplate">
               <t t-set="node" t-value="subtree"/>
@@ -333,7 +333,7 @@ describe("t-call (template calling)", () => {
   test("t-call, conditional and t-set in t-call body", () => {
     const context = new TestContext();
     const callee1 = `<div>callee1</div>`;
-    const callee2 = `<div>callee2 <t t-esc="v"/></div>`;
+    const callee2 = `<div>callee2 <t t-out="v"/></div>`;
     const caller = `
         <div>
           <t t-set="v1" t-value="'elif'"/>
@@ -364,7 +364,7 @@ describe("t-call (template calling)", () => {
         </div>`;
     const sub = `
         <t>
-          <span t-esc="val3"/>
+          <span t-out="val3"/>
         </t>`;
 
     context.addTemplate("main", main);
@@ -388,8 +388,8 @@ describe("t-call (template calling)", () => {
         </div>`;
     const sub = `
         <t>
-          <span t-esc="val3"/>
-          <t t-esc="w"/>
+          <span t-out="val3"/>
+          <t t-out="w"/>
         </t>`;
     const wrapper = `<p><t t-set="w" t-value="'fromwrapper'"/><t t-call="main"/></p>`;
 
@@ -411,7 +411,7 @@ describe("t-call (template calling)", () => {
             <t t-set="val">yip yip</t>
           </t>
         </div>`;
-    const sub = `<p><t t-esc="val"/></p>`;
+    const sub = `<p><t t-out="val"/></p>`;
 
     context.addTemplate("main", main);
     context.addTemplate("sub", sub);
@@ -474,8 +474,8 @@ describe("t-call (template calling)", () => {
 
   test("dynamic t-call", () => {
     const context = new TestContext();
-    const foo = `<foo><t t-esc="val"/></foo>`;
-    const bar = `<bar><t t-esc="val"/></bar>`;
+    const foo = `<foo><t t-out="val"/></foo>`;
+    const bar = `<bar><t t-out="val"/></bar>`;
     const main = `<div><t t-call="{{template}}"/></div>`;
 
     context.addTemplate("foo", foo);
@@ -490,7 +490,7 @@ describe("t-call (template calling)", () => {
 
   test("t-call-context", () => {
     const context = new TestContext();
-    context.addTemplate("sub", `<span><t t-esc="this.value"/></span>`);
+    context.addTemplate("sub", `<span><t t-out="this.value"/></span>`);
     context.addTemplate("main", `<t t-call="sub" t-call-context="obj"/>`);
 
     expect(context.renderToString("main", { obj: { value: 123 } })).toBe("<span>123</span>");
@@ -498,7 +498,7 @@ describe("t-call (template calling)", () => {
 
   test("t-call on a div with t-call-context", () => {
     const context = new TestContext();
-    context.addTemplate("sub", `<span><t t-esc="this.value"/></span>`);
+    context.addTemplate("sub", `<span><t t-out="this.value"/></span>`);
     context.addTemplate("main", `<div t-call="sub" t-call-context="obj"/>`);
 
     expect(context.renderToString("main", { obj: { value: 123 } })).toBe(
@@ -508,7 +508,7 @@ describe("t-call (template calling)", () => {
 
   test("t-call-context and value in body", () => {
     const context = new TestContext();
-    context.addTemplate("sub", `<span><t t-esc="this.value1"/><t t-esc="value2"/></span>`);
+    context.addTemplate("sub", `<span><t t-out="this.value1"/><t t-out="value2"/></span>`);
     context.addTemplate(
       "main",
       `

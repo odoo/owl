@@ -35,7 +35,7 @@ describe("t-call", () => {
 
   test("sub components in two t-calls", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="this.props.val"/></span>`;
+      static template = xml`<span><t t-out="this.props.val"/></span>`;
       props = props();
     }
 
@@ -64,7 +64,7 @@ describe("t-call", () => {
     const subTemplate = xml`<p t-on-click="this.update">lucas</p>`;
     class Parent extends Component {
       static template = xml`
-        <div><t t-call="${subTemplate}"/><t t-esc="this.counter"/></div>`;
+        <div><t t-call="${subTemplate}"/><t t-out="this.counter"/></div>`;
       counter = 0;
 
       update() {
@@ -87,7 +87,7 @@ describe("t-call", () => {
     const subTemplate = xml`<p t-on-click="() => this.update()">lucas</p>`;
     class Parent extends Component {
       static template = xml`
-        <div><t t-call="{{'${subTemplate}'}}"/><t t-esc="this.counter"/></div>`;
+        <div><t t-call="{{'${subTemplate}'}}"/><t t-out="this.counter"/></div>`;
       counter = 0;
 
       update() {
@@ -127,7 +127,7 @@ describe("t-call", () => {
     const sub = xml`<Child val="val"/>`;
 
     class Child extends Component {
-      static template = xml`<span><t t-esc="this.props.val"/></span>`;
+      static template = xml`<span><t t-out="this.props.val"/></span>`;
       props = props();
     }
     class Parent extends Component {
@@ -232,7 +232,7 @@ describe("t-call", () => {
       "recursive",
       `
         <t t-if="level &lt; 2" >
-          <div t-on-click.stop="this.onClicked.bind(this)" t-esc="level" />
+          <div t-on-click.stop="this.onClicked.bind(this)" t-out="level" />
           <t t-call="recursive">
             <t t-set="level" t-value="level + 1" />
           </t>
@@ -258,7 +258,7 @@ describe("t-call", () => {
     await mount(Root, fixture, {
       templates: `
         <templates>
-          <t t-name="someTemplate"><t t-esc="this.aab"/><t t-esc="this.lpe"/></t>
+          <t t-name="someTemplate"><t t-out="this.aab"/><t t-out="this.lpe"/></t>
         </templates>`,
     });
     expect(fixture.innerHTML).toBe("aaronlucas");
@@ -266,7 +266,7 @@ describe("t-call", () => {
 
   test("t-call with t-call-context and subcomponent", async () => {
     class Child extends Component {
-      static template = xml`child<t t-esc="this.props.name"/>`;
+      static template = xml`child<t t-out="this.props.name"/>`;
       props = props();
     }
 
@@ -293,7 +293,7 @@ describe("t-call", () => {
 
   test("t-call with t-call-context and subcomponent, in dev mode", async () => {
     class Child extends Component {
-      static template = xml`child<t t-esc="this.props.name"/>`;
+      static template = xml`child<t t-out="this.props.name"/>`;
       props = props(["name"]);
     }
 
@@ -352,7 +352,7 @@ describe("t-call", () => {
             <Child prop.bind="this.method">
               <div t-ref="this.myRef2">I'm the default slot</div>
               <t t-set="test" t-value="3"/>
-              <div t-esc="test"/>
+              <div t-out="test"/>
             </Child>
           </t>
         </templates>`,
@@ -414,7 +414,7 @@ describe("t-call", () => {
 
     class Root extends Component {
       static template = xml`
-        <t t-esc="this.current.template"/>
+        <t t-out="this.current.template"/>
         <t t-call="{{this.current.template}}"/>`;
       static components = { Child };
       current = proxy({ template: "A" });

@@ -26,13 +26,13 @@ describe("reactivity in lifecycle", () => {
       obj2 = obj2;
 
       static template = xml`<div>
-        <t t-esc="this.obj2.value"/>
+        <t t-out="this.obj2.value"/>
       </div>`;
     }
     class TestComponent extends Component {
       obj1 = obj1;
       static template = xml`<div>
-        <t t-esc="this.obj1.value"/>
+        <t t-out="this.obj1.value"/>
         <TestSubComponent/>
       </div>`;
       static components = { TestSubComponent };
@@ -47,7 +47,7 @@ describe("reactivity in lifecycle", () => {
   });
   test("can use a state hook", async () => {
     class Counter extends Component {
-      static template = xml`<div><t t-esc="this.counter.value"/></div>`;
+      static template = xml`<div><t t-out="this.counter.value"/></div>`;
       counter = proxy({ value: 42 });
     }
     const counter = await mount(Counter, fixture);
@@ -60,7 +60,7 @@ describe("reactivity in lifecycle", () => {
   test("can use a state hook 2", async () => {
     let n = 0;
     class Comp extends Component {
-      static template = xml`<t t-set="noop" t-value="this.notify()"/><div><t t-esc="this.state.a"/></div>`;
+      static template = xml`<t t-set="noop" t-value="this.notify()"/><div><t t-out="this.state.a"/></div>`;
       state = proxy({ a: 5, b: 7 });
       notify() {
         n++;
@@ -81,7 +81,7 @@ describe("reactivity in lifecycle", () => {
 
   test("can use a state hook on Map", async () => {
     class Counter extends Component {
-      static template = xml`<div><t t-esc="this.counter.get('value')"/></div>`;
+      static template = xml`<div><t t-out="this.counter.get('value')"/></div>`;
       counter = proxy(new Map([["value", 42]]));
     }
     const counter = await mount(Counter, fixture);
@@ -96,7 +96,7 @@ describe("reactivity in lifecycle", () => {
     class Child extends Component {
       static template = xml`
           <t t-set="noop" t-value="this.notify()"/>
-          <span><t t-esc="this.props.val"/><t t-esc="this.state.n"/></span>
+          <span><t t-out="this.props.val"/><t t-out="this.state.n"/></span>
         `;
       props = props();
       state = proxy({ n: 2 });
@@ -139,7 +139,7 @@ describe("reactivity in lifecycle", () => {
     // const steps: number[] = [];
     // class TestWidget extends Component {
     //   static template = xml`
-    //       <div><t t-esc="state.val"/></div>
+    //       <div><t t-out="state.val"/></div>
     //     `;
     //   state = proxy({ val: 1 });
     //   __render(f) {
@@ -169,7 +169,7 @@ describe("reactivity in lifecycle", () => {
     class Comp extends Component {
       static template = xml`
           <t t-set="noop" t-value="this.notify()"/>
-          <div><t t-esc="this.state.val"/></div>
+          <div><t t-out="this.state.val"/></div>
         `;
       state = proxy({ val: 1 });
       setup() {
@@ -188,7 +188,7 @@ describe("reactivity in lifecycle", () => {
 
   test("Child component doesn't render when state they depend on changes but their parent is about to unmount them", async () => {
     class Child extends Component {
-      static template = xml`<t t-esc="this.props.state.content.a"/>`;
+      static template = xml`<t t-out="this.props.state.content.a"/>`;
       props = props();
       setup() {
         useLogLifecycle();
@@ -236,7 +236,7 @@ describe("reactivity in lifecycle", () => {
     class Child extends Component {
       static template = xml`
           <t t-set="noop" t-value="this.notify()"/>
-          <t t-esc="this.props.obj.a"/><t t-esc="this.props.proxyObj.b"/>`;
+          <t t-out="this.props.obj.a"/><t t-out="this.props.proxyObj.b"/>`;
       props = props();
       notify() {
         childRenderCount++;

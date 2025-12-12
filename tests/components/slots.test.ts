@@ -102,8 +102,8 @@ describe("slots", () => {
       static template = xml`
         <Child>
           <t t-set-slot="slotName" t-slot-scope="info">
-            <p t-esc="info.a"/>
-            <p t-esc="info.b"/>
+            <p t-out="info.a"/>
+            <p t-out="info.b"/>
           </t>
         </Child>`;
       static components = { Child };
@@ -182,7 +182,7 @@ describe("slots", () => {
 
   test("can use .translate suffix on slot props", async () => {
     class Child extends Component {
-      static template = xml`<t t-esc="this.props.slots.default.message"/>`;
+      static template = xml`<t t-out="this.props.slots.default.message"/>`;
       props = props();
     }
 
@@ -197,7 +197,7 @@ describe("slots", () => {
 
   test(".translate slot props are translated", async () => {
     class Child extends Component {
-      static template = xml`<t t-esc="this.props.slots.default.message"/>`;
+      static template = xml`<t t-out="this.props.slots.default.message"/>`;
       props = props();
     }
 
@@ -273,7 +273,7 @@ describe("slots", () => {
 
     class Parent extends Component {
       static template = xml`
-        <Child t-slot-scope="slotScope"><t t-esc="slotScope.fn()"/></Child>`;
+        <Child t-slot-scope="slotScope"><t t-out="slotScope.fn()"/></Child>`;
       static components = { Child };
     }
 
@@ -289,7 +289,7 @@ describe("slots", () => {
 
     class Parent extends Component {
       static template = xml`
-        <Child t-slot-scope="slotScope"><t t-esc="slotScope['some-value']"/></Child>`;
+        <Child t-slot-scope="slotScope"><t t-out="slotScope['some-value']"/></Child>`;
       static components = { Child };
     }
 
@@ -388,9 +388,9 @@ describe("slots", () => {
     class Dialog extends Component {
       static template = xml`
         <div>
-          <t t-esc="this.props.slots['header'].param"/>
+          <t t-out="this.props.slots['header'].param"/>
           <div><t t-call-slot="header"/></div>
-          <t t-esc="this.props.slots['footer'].param"/>
+          <t t-out="this.props.slots['footer'].param"/>
           <div><t t-call-slot="footer"/></div>
         </div>`;
       props = props();
@@ -418,7 +418,7 @@ describe("slots", () => {
     class Child extends Component {
       static template = xml`
         <t t-call-slot="abc"/>
-        <t t-esc="this.props.slots['abc'].getValue()"/>`;
+        <t t-out="this.props.slots['abc'].getValue()"/>`;
       props = props();
     }
 
@@ -525,7 +525,7 @@ describe("slots", () => {
         <t t-call-slot="default">
           <t t-set="var" t-value="1"/>
           <button t-on-click="() => this.increment()">
-            <t t-esc="this.state.value"/>
+            <t t-out="this.state.value"/>
           </button>
         </t>`;
 
@@ -560,7 +560,7 @@ describe("slots", () => {
     class Parent extends Component {
       static template = xml`
           <div>
-            <span class="counter"><t t-esc="this.state.val"/></span>
+            <span class="counter"><t t-out="this.state.val"/></span>
             <Dialog>
               <t t-set-slot="footer">
                 <button t-on-click="this.doSomething">do something</button>
@@ -601,7 +601,7 @@ describe("slots", () => {
       static template = xml`
           <div>
             <u><li t-foreach="this.state.users" t-as="user" t-key="user.id">
-                <Link to="'/user/' + user.id">User <t t-esc="user.name"/></Link>
+                <Link to="'/user/' + user.id">User <t t-out="user.name"/></Link>
             </li></u>
           </div>`;
 
@@ -642,7 +642,7 @@ describe("slots", () => {
           <div>
             <u><li t-foreach="this.state.users" t-as="user" t-key="user.id" >
                 <t t-set="userdescr" t-value="'User ' + user.name"/>
-                <Link to="'/user/' + user.id"><t t-esc="userdescr"/></Link>
+                <Link to="'/user/' + user.id"><t t-out="userdescr"/></Link>
             </li></u>
           </div>`;
       state = proxy({
@@ -681,7 +681,7 @@ describe("slots", () => {
       static template = xml`
           <div>
             <t t-set="userdescr" t-value="'User ' + this.state.user.name"/>
-            <Link to="'/user/' + this.state.user.id"><t t-esc="userdescr"/></Link>
+            <Link to="'/user/' + this.state.user.id"><t t-out="userdescr"/></Link>
           </div>`;
       static components = { Link };
       state = proxy({ user: { id: 1, name: "Aaron" } });
@@ -995,10 +995,10 @@ describe("slots", () => {
 
     const recursiveTemplate = `
           <Wrapper>
-            <t t-esc="name or this.name" />
+            <t t-out="name or this.name" />
             <t t-foreach="items or this.items" t-as="item" t-key="item.name">
                 <t t-if="!item.children.length">
-                <t t-esc="item.name" />
+                <t t-out="item.name" />
                 </t>
                 <t t-else="" t-call="_test_recursive_template">
                 <t t-set="name" t-value="item.name" />
@@ -1069,11 +1069,11 @@ describe("slots", () => {
       static template = xml`
         <div>
           <t t-foreach="this.tree" t-as="node1" t-key="node1.key">
-            <div t-esc="node1.value" />
+            <div t-out="node1.value" />
             <ul>
               <t t-foreach="node1.nodes" t-as="node2" t-key="node2.key">
                 <Child>
-                  <li t-esc="node1.value" />
+                  <li t-out="node1.value" />
                 </Child>
               </t>
             </ul>
@@ -1229,7 +1229,7 @@ describe("slots", () => {
     class SomeComponent extends Component {
       static template = xml`
         <div>
-          SC:<t t-esc="this.props.val"/>
+          SC:<t t-out="this.props.val"/>
         </div>`;
       props = props();
     }
@@ -1240,7 +1240,7 @@ describe("slots", () => {
     class App extends Component {
       static template = xml`
         <div>
-          <button t-on-click="this.inc">Inc[<t t-esc="this.state.val"/>]</button>
+          <button t-on-click="this.inc">Inc[<t t-out="this.state.val"/>]</button>
           <GenericComponent>
             <SomeComponent val="this.state.val"/>
           </GenericComponent>
@@ -1280,7 +1280,7 @@ describe("slots", () => {
 
   test("template can just return a slot", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="this.props.value"/></span>`;
+      static template = xml`<span><t t-out="this.props.value"/></span>`;
       props = props();
     }
     class SlotComponent extends Component {
@@ -1306,7 +1306,7 @@ describe("slots", () => {
 
   test("multiple slots containing components", async () => {
     class C extends Component {
-      static template = xml`<span><t t-esc="this.props.val"/></span>`;
+      static template = xml`<span><t t-out="this.props.val"/></span>`;
       props = props();
     }
     class B extends Component {
@@ -1328,7 +1328,7 @@ describe("slots", () => {
 
   test("slots in t-foreach and re-rendering", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="this.state.val"/><t t-call-slot="default"/></span>`;
+      static template = xml`<span><t t-out="this.state.val"/><t t-call-slot="default"/></span>`;
       state = proxy({ val: "A" });
       setup() {
         onMounted(() => {
@@ -1341,7 +1341,7 @@ describe("slots", () => {
       static template = xml`
           <div>
             <t t-foreach="Array(2)" t-as="n" t-key="n_index">
-              <Child><t t-esc="n_index"/></Child>
+              <Child><t t-out="n_index"/></Child>
             </t>
           </div>`;
     }
@@ -1356,7 +1356,7 @@ describe("slots", () => {
     class Child extends Component {
       static template = xml`
           <span>
-            <t t-esc="this.state.val"/>
+            <t t-out="this.state.val"/>
             <t t-call-slot="default"/>
           </span>`;
       state = proxy({ val: "A" });
@@ -1372,7 +1372,7 @@ describe("slots", () => {
           <div>
             <t t-foreach="Array(2)" t-as="n" t-key="n_index">
               <t t-set="dummy" t-value="n_index"/>
-              <Child><t t-esc="dummy"/></Child>
+              <Child><t t-out="dummy"/></Child>
             </t>
           </div>`;
     }
@@ -1509,7 +1509,7 @@ describe("slots", () => {
           <div>
             <t t-set="test" t-value="this.state.name"/>
             <A>
-              <p>hey<t t-esc="test"/></p>
+              <p>hey<t t-out="test"/></p>
             </A>
           </div>`;
       static components = { A };
@@ -1532,7 +1532,7 @@ describe("slots", () => {
         <div>
           <Dialog>
             <t t-set="rainbow" t-value="'dash'"/>
-            <t t-esc="rainbow"/>
+            <t t-out="rainbow"/>
           </Dialog>
         </div>`;
       static components = { Dialog };
@@ -1542,12 +1542,12 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><span>dash</span></div>");
   });
 
-  test("slot and t-esc", async () => {
+  test("slot and t-out", async () => {
     class Dialog extends Component {
       static template = xml`<span><t t-call-slot="default"/></span>`;
     }
     class Parent extends Component {
-      static template = xml`<div><Dialog><t t-esc="'toph'"/></Dialog></div>`;
+      static template = xml`<div><Dialog><t t-out="'toph'"/></Dialog></div>`;
       static components = { Dialog };
     }
     await mount(Parent, fixture);
@@ -1588,7 +1588,7 @@ describe("slots", () => {
     let grandChild: any = null;
 
     class Slot extends Component {
-      static template = xml`<span t-esc="this.props.val"/>`;
+      static template = xml`<span t-out="this.props.val"/>`;
       props = props();
       setup() {
         slot = this;
@@ -1632,11 +1632,11 @@ describe("slots", () => {
         <div>
           <Child>
             <t t-set-slot="brol">
-              <p>A<t t-esc="this.value"/></p>
+              <p>A<t t-out="this.value"/></p>
             </t>
             <Child>
               <t t-set-slot="brol">
-                <p>B<t t-esc="this.value"/></p>
+                <p>B<t t-out="this.value"/></p>
               </t>
             </Child>
           </Child>
@@ -1663,11 +1663,11 @@ describe("slots", () => {
         <div>
           <Child>
             <t t-set-slot="brol1">
-              <p>A<t t-esc="this.value"/></p>
+              <p>A<t t-out="this.value"/></p>
             </t>
             <Child>
               <t t-set-slot="brol2">
-                <p>B<t t-esc="this.value"/></p>
+                <p>B<t t-out="this.value"/></p>
               </t>
             </Child>
           </Child>
@@ -1695,12 +1695,12 @@ describe("slots", () => {
         <div>
           <Child>
             <t t-set-slot="brol">
-              <p>A<t t-esc="this.value"/></p>
+              <p>A<t t-out="this.value"/></p>
             </t>
             <Child>
               <t>
                 <t t-set-slot="brol">
-                  <p>B<t t-esc="this.value"/></p>
+                  <p>B<t t-out="this.value"/></p>
                 </t>
               </t>
             </Child>
@@ -1725,7 +1725,7 @@ describe("slots", () => {
             outer
             <t t-component="this.Child">
               <t t-set-slot="brol">
-                <t t-esc="this.value"/>
+                <t t-out="this.value"/>
               </t>
             </t>
           </t>
@@ -1804,7 +1804,7 @@ describe("slots", () => {
 
   test("slot content has different key from other content -- static slot", async () => {
     class Child extends Component {
-      static template = xml`<div t-esc="this.props.parent" />`;
+      static template = xml`<div t-out="this.props.parent" />`;
       props = props();
     }
 
@@ -1827,7 +1827,7 @@ describe("slots", () => {
 
   test("slot content has different key from other content -- dynamic slot", async () => {
     class Child extends Component {
-      static template = xml`<div t-esc="this.props.parent" />`;
+      static template = xml`<div t-out="this.props.parent" />`;
       props = props();
     }
 
@@ -1861,7 +1861,7 @@ describe("slots", () => {
       props = props();
     }
 
-    const subTemplate2 = xml`[sub2<t t-esc="v"/>]`;
+    const subTemplate2 = xml`[sub2<t t-out="v"/>]`;
     const subTemplate1 = xml`[sub1]
       <t t-set="dummy" t-value="this.validate"/>
       <t t-call="${subTemplate2}">
@@ -1984,7 +1984,7 @@ describe("slots", () => {
       static components = { Child };
       static template = xml`
           <t t-foreach="this.props.list" t-as="elem" t-key="elem_index">
-            <p><t t-esc="elem"/><t t-call-slot="default"/></p>
+            <p><t t-out="elem"/><t t-call-slot="default"/></p>
           </t>
       `;
       props = props();

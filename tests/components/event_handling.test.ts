@@ -16,7 +16,7 @@ describe("event handling", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<span t-on-click="this.inc"><Child/><t t-esc="this.state.value"/></span>`;
+      static template = xml`<span t-on-click="this.inc"><Child/><t t-out="this.state.value"/></span>`;
       static components = { Child };
       state = proxy({ value: 1 });
       inc(ev: any) {
@@ -58,7 +58,7 @@ describe("event handling", () => {
   test("support for callable expression in event handler", async () => {
     class Counter extends Component {
       static template = xml`
-      <div><t t-esc="this.state.value"/><input type="text" t-on-input="this.obj.onInput"/></div>`;
+      <div><t t-out="this.state.value"/><input type="text" t-on-input="this.obj.onInput"/></div>`;
       state = proxy({ value: "" });
       obj = { onInput: (ev: any) => (this.state.value = ev.target.value) };
     }

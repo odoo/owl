@@ -128,12 +128,13 @@ exports[`lifecycle hooks components are unmounted and destroyed if no longer in 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].props.n;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].props.n);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -244,9 +245,10 @@ exports[`lifecycle hooks lifecycle callbacks are bound to component 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['this'].props.rev);
+    return safeOutput(ctx['this'].props.rev);
   }
 }"
 `;
@@ -579,12 +581,13 @@ exports[`lifecycle hooks patched hook is called after updating State 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].state.a;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].state.a);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -593,12 +596,13 @@ exports[`lifecycle hooks render in mounted 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].patched;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].patched);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -607,12 +611,13 @@ exports[`lifecycle hooks render in patched 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].patched;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].patched);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -621,12 +626,13 @@ exports[`lifecycle hooks render in willPatch 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].patched;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].patched);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -744,12 +750,13 @@ exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents,
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].props.n;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].props.n);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -855,12 +862,13 @@ exports[`lifecycle hooks willUpdateProps hook is called 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].props.n;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].props.n);
+    return block1([], [b2]);
   }
 }"
 `;

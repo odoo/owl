@@ -105,7 +105,7 @@ describe("translation support", () => {
     class SomeComponent extends Component {
       static template = xml`
         <t t-set="label">untranslated</t>
-        <t t-esc="label"/>`;
+        <t t-out="label"/>`;
     }
 
     const translateFn = () => "translated";
@@ -119,7 +119,7 @@ describe("translation support", () => {
       static template = xml`
         <t t-translation="off">
           <t t-set="label">untranslated</t>
-          <t t-esc="label"/>
+          <t t-out="label"/>
         </t>`;
     }
 
@@ -134,7 +134,7 @@ describe("translation support", () => {
       static template = xml`
         <t>
           <t t-translation="off" t-set="label">untranslated</t>
-          <t t-esc="label"/>
+          <t t-out="label"/>
         </t>`;
     }
 
@@ -177,7 +177,7 @@ describe("translation support", () => {
     class SomeComponent extends Component {
       static template = xml`
           <t t-set="label" t-value="false">untranslated</t>
-          <t t-esc="label"/>`;
+          <t t-out="label"/>`;
     }
 
     const translateFn = () => "translated";
@@ -241,7 +241,7 @@ describe("translation context", () => {
     class SomeComponent extends Component {
       static template = xml`
         <t t-set="label" t-translation-context="fr">untranslated</t>
-        <t t-esc="label"/>`;
+        <t t-out="label"/>`;
     }
 
     const translateFn = jest.fn((expr: string, translationCtx: string) =>
@@ -254,7 +254,7 @@ describe("translation context", () => {
   });
   test("props with modifier .translate are translated in context", async () => {
     class ChildComponent extends Component {
-      static template = xml`<span t-esc="this.props.text"/>`;
+      static template = xml`<span t-out="this.props.text"/>`;
       props = props(["text"]);
     }
 

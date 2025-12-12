@@ -28,7 +28,7 @@ describe("rendering semantics", () => {
 
     class Parent extends Component {
       static template = xml`
-        <t t-esc="this.state.value"/>
+        <t t-out="this.state.value"/>
         <Child/>
       `;
       static components = { Child };
@@ -76,7 +76,7 @@ describe("rendering semantics", () => {
 
     class Parent extends Component {
       static template = xml`
-        <t t-esc="this.state.value"/>
+        <t t-out="this.state.value"/>
         <Child/>
         <t t-set="noop" t-value="this.notify()"/>
       `;
@@ -114,7 +114,7 @@ describe("rendering semantics", () => {
 
     class Parent extends Component {
       static template = xml`
-        <t t-esc="this.state.value"/>
+        <t t-out="this.state.value"/>
         <Child/>
         <t t-set="noop" t-value="this.notify()"/>
       `;
@@ -142,7 +142,7 @@ describe("rendering semantics", () => {
 
   test("render with deep=true followed by render with deep=false work as expected", async () => {
     class Child extends Component {
-      static template = xml`child<t t-esc="this.state.getValue()"/>`;
+      static template = xml`child<t t-out="this.state.getValue()"/>`;
       state = state;
       setup() {
         useLogLifecycle();
@@ -150,7 +150,7 @@ describe("rendering semantics", () => {
     }
 
     class Parent extends Component {
-      static template = xml`parent<t t-esc="this.state.value"/><Child/>`;
+      static template = xml`parent<t t-out="this.state.value"/><Child/>`;
       static components = { Child };
 
       state = proxy({ value: "A" });
@@ -211,7 +211,7 @@ describe("rendering semantics", () => {
 
   test("props are proxy", async () => {
     class Child extends Component {
-      static template = xml`<t t-esc="this.props.a.b"/>`;
+      static template = xml`<t t-out="this.props.a.b"/>`;
       props = props();
       setup() {
         useLogLifecycle();
@@ -256,7 +256,7 @@ describe("rendering semantics", () => {
 
   test("props are proxy (nested prop)", async () => {
     class Child extends Component {
-      static template = xml`<t t-esc="this.props.a.b.c"/>`;
+      static template = xml`<t t-out="this.props.a.b.c"/>`;
       props = props();
 
       setup() {
@@ -313,7 +313,7 @@ describe("rendering semantics", () => {
 
   test("works as expected for dynamic number of props", async () => {
     class Child extends Component {
-      static template = xml`<t t-esc="Object.keys(this.props).length"/>`;
+      static template = xml`<t t-out="Object.keys(this.props).length"/>`;
       props = props();
     }
 
@@ -337,7 +337,7 @@ describe("rendering semantics", () => {
     const def = makeDeferred();
 
     class C extends Component {
-      static template = xml`<t t-esc="this.props.obj.val"/>`;
+      static template = xml`<t t-out="this.props.obj.val"/>`;
       props = props();
 
       setup() {
@@ -357,7 +357,7 @@ describe("rendering semantics", () => {
     }
 
     class A extends Component {
-      static template = xml`<t t-esc="this.state.obj.val"/><B obj="this.state.obj"/>`;
+      static template = xml`<t t-out="this.state.obj.val"/><B obj="this.state.obj"/>`;
       static components = { B };
 
       state = proxy({ obj: { val: 1 } });
@@ -411,7 +411,7 @@ test("force render in case of existing render", async () => {
     }
   }
   class B extends Component {
-    static template = xml`<C/><t t-esc="this.props.val"/>`;
+    static template = xml`<C/><t t-out="this.props.val"/>`;
     static components = { C };
     props = props();
     setup() {
@@ -491,7 +491,7 @@ test("children, default props and renderings", async () => {
 
   class Parent extends Component {
     static template = xml`
-      <t t-esc="this.state.value"/>
+      <t t-out="this.state.value"/>
       <Child />
     `;
     static components = { Child };

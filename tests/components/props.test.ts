@@ -104,7 +104,6 @@ describe("basics", () => {
     class Child extends Component {
       static template = xml`
         <span>
-          <t t-esc="this.props.val"/>
           <t t-out="this.props.val"/>
         </span>`;
       props = props();
@@ -119,7 +118,7 @@ describe("basics", () => {
     }
 
     await mount(Parent, fixture);
-    expect(fixture.innerHTML).toBe("<div><span>&lt;p&gt;43&lt;/p&gt;<p>43</p></span></div>");
+    expect(fixture.innerHTML).toBe("<div><span><p>43</p></span></div>");
   });
 
   test("arrow functions as prop correctly capture their scope", async () => {

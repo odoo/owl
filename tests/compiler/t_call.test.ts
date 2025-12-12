@@ -23,11 +23,11 @@ describe("t-call (template calling)", () => {
     expect(context.renderToString("caller")).toBe("<span>ok</span>");
   });
 
-  test("t-esc inside t-call, with t-set outside", () => {
+  test("t-out inside t-call, with t-set outside", () => {
     const context = new TestContext();
     const main = `<div><t t-set="v">Hi</t><t t-call="sub"/></div>`;
     context.addTemplate("main", main);
-    context.addTemplate("sub", `<span t-esc="v"/>`);
+    context.addTemplate("sub", `<span t-out="v"/>`);
 
     expect(context.renderToString("main")).toBe("<div><span>Hi</span></div>");
   });

@@ -646,11 +646,11 @@ exports[`t-call t-call-context: slots don't make component available again when 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, capture, markRaw } = helpers;
+  let { isBoundary, withDefault, setContextValue, capture, safeOutput, markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, []);
   
   function slot1(ctx, node, key = "") {
-    return text(Object.keys(ctx['this']));
+    return safeOutput(Object.keys(ctx['this']));
   }
   
   return function template(ctx, node, key = "") {
@@ -693,9 +693,10 @@ exports[`t-call t-call-context: this is not available inside t-call-context 2`] 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
-    return text(Object.keys(ctx['this']));
+    return safeOutput(Object.keys(ctx['this']));
   }
 }"
 `;

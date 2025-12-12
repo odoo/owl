@@ -49,18 +49,18 @@ describe("simple templates, mostly static", () => {
     expect(renderToString(template, { text: "owl" })).toBe("owl");
   });
 
-  test("two t-escs next to each other", () => {
-    const template = `<t><t t-esc="text1"/><t t-esc="text2"/></t>`;
+  test("two t-outs next to each other", () => {
+    const template = `<t><t t-out="text1"/><t t-out="text2"/></t>`;
     expect(renderToString(template, { text1: "hello", text2: "owl" })).toBe("helloowl");
   });
 
-  test("two t-escs next to each other", () => {
-    const template = `<t t-esc="text1"/><t t-esc="text2"/>`;
+  test("two t-outs next to each other", () => {
+    const template = `<t t-out="text1"/><t t-out="text2"/>`;
     expect(renderToString(template, { text1: "hello", text2: "owl" })).toBe("helloowl");
   });
 
-  test("two t-escs next to each other, in a div", () => {
-    const template = `<div><t t-esc="text1"/><t t-esc="text2"/></div>`;
+  test("two t-outs next to each other, in a div", () => {
+    const template = `<div><t t-out="text1"/><t t-out="text2"/></div>`;
     expect(renderToString(template, { text1: "hello", text2: "owl" })).toBe("<div>helloowl</div>");
   });
 
@@ -74,22 +74,22 @@ describe("simple templates, mostly static", () => {
     expect(renderToString(template, { text: "owl" })).toBe("hello owl");
   });
 
-  test("t-esc in dom node", () => {
-    const template = `<div><t t-esc="text"/></div>`;
+  test("t-out in dom node", () => {
+    const template = `<div><t t-out="text"/></div>`;
     expect(renderToString(template, { text: "hello owl" })).toBe("<div>hello owl</div>");
   });
 
-  test("dom node with t-esc", () => {
-    const template1 = `<div t-esc="text" />`;
+  test("dom node with t-out", () => {
+    const template1 = `<div t-out="text" />`;
     expect(renderToString(template1, { text: "hello owl" })).toBe("<div>hello owl</div>");
-    const template2 = `<div t-esc="text"></div>`;
+    const template2 = `<div t-out="text"></div>`;
     expect(renderToString(template2, { text: "hello owl" })).toBe("<div>hello owl</div>");
   });
 
-  test("t-esc in dom node, variations", () => {
-    const template1 = `<div>hello <t t-esc="text"/></div>`;
+  test("t-out in dom node, variations", () => {
+    const template1 = `<div>hello <t t-out="text"/></div>`;
     expect(renderToString(template1, { text: "owl" })).toBe("<div>hello owl</div>");
-    const template2 = `<div>hello <t t-esc="text"/> world</div>`;
+    const template2 = `<div>hello <t t-out="text"/> world</div>`;
     expect(renderToString(template2, { text: "owl" })).toBe("<div>hello owl world</div>");
   });
 
@@ -123,13 +123,13 @@ describe("simple templates, mostly static", () => {
     expect(renderToString(template)).toBe(template);
   });
 
-  test("inline template string in t-esc", () => {
-    const template = '<t><t t-esc="`text`"/></t>';
+  test("inline template string in t-out", () => {
+    const template = '<t><t t-out="`text`"/></t>';
     expect(renderToString(template)).toBe("text");
   });
 
-  test("inline template string with content in t-esc", () => {
-    const template = '<t><t t-set="v" t-value="1"/><t t-esc="`text${v}`"/></t>';
+  test("inline template string with content in t-out", () => {
+    const template = '<t><t t-set="v" t-value="1"/><t t-out="`text${v}`"/></t>';
     expect(renderToString(template)).toBe("text1");
   });
 

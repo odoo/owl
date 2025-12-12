@@ -1,53 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`t-set slot setted value (with t-set) not accessible with t-esc 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, capture, markRaw } = helpers;
-  const comp1 = app.createComponent(\`Childcomp\`, true, true, false, []);
-  
-  let block1 = createBlock(\`<div><p><block-text-0/></p><block-child-0/><p><block-text-1/></p></div>\`);
-  
-  function slot1(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    setContextValue(ctx, "iter", 'inCall');
-  return text('');
-  }
-  
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    setContextValue(ctx, "iter", 'source');
-    let txt1 = ctx['iter'];
-    const ctx1 = capture(ctx);
-    const b2 = comp1({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__1\`, node, this, null);
-    let txt2 = ctx['iter'];
-    return block1([txt1, txt2], [b2]);
-  }
-}"
-`;
-
-exports[`t-set slot setted value (with t-set) not accessible with t-esc 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
-  
-  let block1 = createBlock(\`<div><block-text-0/><block-text-1/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    let txt1 = ctx['iter'];
-    setContextValue(ctx, "iter", 'called');
-    let txt2 = ctx['iter'];
-    return block1([txt1, txt2]);
-  }
-}"
-`;
-
 exports[`t-set slot setted value (with t-set) not accessible with t-out 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

@@ -8,7 +8,7 @@ exports[`shadow_dom can bind event handler 1`] = `
   let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['add'], ctx];
+    let hdlr1 = [ctx['this'].add, ctx];
     return block1([hdlr1]);
   }
 }"

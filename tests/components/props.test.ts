@@ -12,7 +12,7 @@ beforeEach(() => {
 describe("basics", () => {
   test("explicit object prop", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="state.someval"/></span>`;
+      static template = xml`<span><t t-esc="this.state.someval"/></span>`;
       props = props();
       state: any;
       setup() {
@@ -21,7 +21,7 @@ describe("basics", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<div><Child value="state.val"/></div>`;
+      static template = xml`<div><Child value="this.state.val"/></div>`;
       static components = { Child };
       state = proxy({ val: 42 });
     }
@@ -52,7 +52,7 @@ describe("basics", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<div><Child greetings="greetings"/></div>`;
+      static template = xml`<div><Child greetings="this.greetings"/></div>`;
       static components = { Child };
       get greetings() {
         const name = "aaron";
@@ -131,8 +131,8 @@ describe("basics", () => {
     let onClickArgs: [number, MouseEvent] | null = null;
     class Parent extends Component {
       static template = xml`
-        <t t-foreach="items" t-as="item" t-key="item.val">
-          <Child onClick="ev => onClick(item.val, ev)"/>
+        <t t-foreach="this.items" t-as="item" t-key="item.val">
+          <Child onClick="(ev) => this.onClick(item.val, ev)"/>
         </t>
       `;
       static components = { Child };
@@ -176,7 +176,7 @@ describe("basics", () => {
     }
 
     class Parent extends Component {
-      static template = xml({ raw: ['<Child propName="`1${someVal}3`"/>'] });
+      static template = xml({ raw: ['<Child propName="`1${this.someVal}3`"/>'] });
       static components = { Child };
       someVal = 2;
     }
@@ -196,7 +196,7 @@ test("can bind function prop with bind suffix", async () => {
   let boundedThing: any = null;
 
   class Parent extends Component {
-    static template = xml`<Child doSomething.bind="doSomething"/>`;
+    static template = xml`<Child doSomething.bind="this.doSomething"/>`;
     static components = { Child };
 
     doSomething(val: number) {
@@ -249,7 +249,7 @@ test("bound functions is not referentially equal after update", async () => {
   }
 
   class Parent extends Component {
-    static template = xml`<Child val="state.val" fn.bind="someFunction"/>`;
+    static template = xml`<Child val="this.state.val" fn.bind="this.someFunction"/>`;
     static components = { Child };
     state = proxy({ val: 1 });
     someFunction() {}
@@ -272,8 +272,8 @@ test("bound functions are considered 'alike'", async () => {
 
   class Parent extends Component {
     static template = xml`
-      <t t-esc="state.val"/>
-      <Child fn.bind="someFunction"/>`;
+      <t t-esc="this.state.val"/>
+      <Child fn.bind="this.someFunction"/>`;
     static components = { Child };
     state = proxy({ val: 1 });
     setup() {
@@ -342,7 +342,7 @@ test("throw if prop uses an unknown suffix", async () => {
   }
 
   class Parent extends Component {
-    static template = xml`<Child val.somesuffix="state.val"/>`;
+    static template = xml`<Child val.somesuffix="this.state.val"/>`;
     static components = { Child };
   }
 
@@ -362,7 +362,7 @@ test(".alike suffix in a simple case", async () => {
 
   class Parent extends Component {
     static template = xml`
-      <t t-esc="state.counter"/>
+      <t t-esc="this.state.counter"/>
       <Child fn.alike="() => 1"/>`;
     static components = { Child };
     state = proxy({ counter: 0 });
@@ -409,7 +409,7 @@ test(".alike suffix in a list", async () => {
 
   class Parent extends Component {
     static template = xml`
-      <t t-foreach="state.elems" t-as="elem" t-key="elem.id">
+      <t t-foreach="this.state.elems" t-as="elem" t-key="elem.id">
         <Todo todo="elem" toggle.alike="() => this.toggle(elem.id)"/>
       </t>`;
     static components = { Todo };

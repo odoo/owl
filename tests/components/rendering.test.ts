@@ -28,7 +28,7 @@ describe("rendering semantics", () => {
 
     class Parent extends Component {
       static template = xml`
-        <t t-esc="state.value"/>
+        <t t-esc="this.state.value"/>
         <Child/>
       `;
       static components = { Child };
@@ -76,7 +76,7 @@ describe("rendering semantics", () => {
 
     class Parent extends Component {
       static template = xml`
-        <t t-esc="state.value"/>
+        <t t-esc="this.state.value"/>
         <Child/>
         <t t-set="noop" t-value="this.notify()"/>
       `;
@@ -114,7 +114,7 @@ describe("rendering semantics", () => {
 
     class Parent extends Component {
       static template = xml`
-        <t t-esc="state.value"/>
+        <t t-esc="this.state.value"/>
         <Child/>
         <t t-set="noop" t-value="this.notify()"/>
       `;
@@ -150,7 +150,7 @@ describe("rendering semantics", () => {
     }
 
     class Parent extends Component {
-      static template = xml`parent<t t-esc="state.value"/><Child/>`;
+      static template = xml`parent<t t-esc="this.state.value"/><Child/>`;
       static components = { Child };
 
       state = proxy({ value: "A" });
@@ -220,7 +220,7 @@ describe("rendering semantics", () => {
 
     class Parent extends Component {
       static template = xml`
-        <Child a="state"/>
+        <Child a="this.state"/>
       `;
       static components = { Child };
 
@@ -266,7 +266,7 @@ describe("rendering semantics", () => {
 
     class Parent extends Component {
       static template = xml`
-        <Child a="state"/>
+        <Child a="this.state"/>
       `;
       static components = { Child };
 
@@ -319,7 +319,7 @@ describe("rendering semantics", () => {
 
     class Parent extends Component {
       static template = xml`
-        <Child t-props="state"/>
+        <Child t-props="this.state"/>
       `;
       static components = { Child };
 
@@ -357,7 +357,7 @@ describe("rendering semantics", () => {
     }
 
     class A extends Component {
-      static template = xml`<t t-esc="state.obj.val"/><B obj="state.obj"/>`;
+      static template = xml`<t t-esc="this.state.obj.val"/><B obj="this.state.obj"/>`;
       static components = { B };
 
       state = proxy({ obj: { val: 1 } });
@@ -420,7 +420,7 @@ test("force render in case of existing render", async () => {
     }
   }
   class A extends Component {
-    static template = xml`<B val="state.val"/>`;
+    static template = xml`<B val="this.state.val"/>`;
     static components = { B };
     state = proxy({ val: 1 });
     setup() {
@@ -491,7 +491,7 @@ test("children, default props and renderings", async () => {
 
   class Parent extends Component {
     static template = xml`
-      <t t-esc="state.value"/>
+      <t t-esc="this.state.value"/>
       <Child />
     `;
     static components = { Child };

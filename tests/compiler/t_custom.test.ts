@@ -13,7 +13,7 @@ describe("t-custom", () => {
   test("can use t-custom directive on a node", async () => {
     const steps: string[] = [];
     class SomeComponent extends Component {
-      static template = xml`<div t-custom-plop="click" class="my-div"/>`;
+      static template = xml`<div t-custom-plop="this.click" class="my-div"/>`;
       click() {
         steps.push("clicked");
       }
@@ -33,7 +33,7 @@ describe("t-custom", () => {
   test("can use t-custom directive with modifiers on a node", async () => {
     const steps: string[] = [];
     class SomeComponent extends Component {
-      static template = xml`<div t-custom-plop.mouse.stop="click" class="my-div"/>`;
+      static template = xml`<div t-custom-plop.mouse.stop="this.click" class="my-div"/>`;
       click() {
         steps.push("clicked");
       }

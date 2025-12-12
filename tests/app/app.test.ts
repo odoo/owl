@@ -97,7 +97,7 @@ describe("app", () => {
       }
     }
     class A extends Component {
-      static template = xml`A<t t-if="state.value"><B/></t>`;
+      static template = xml`A<t t-if="this.state.value"><B/></t>`;
       static components = { B };
       state = proxy({ value: false });
       setup() {

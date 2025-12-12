@@ -19,7 +19,7 @@ describe("t-set", () => {
       static template = xml`
         <div>
           <t t-set="iter" t-value="0"/>
-          <t t-set="flag" t-value="state.flag" />
+          <t t-set="flag" t-value="this.state.flag" />
           <t t-if="flag === 'if'">
             <t t-set="iter" t-value="2"/>
           </t>
@@ -52,7 +52,7 @@ describe("t-set", () => {
     class Comp extends Component {
       static template = xml`
         <div>
-          <t t-set="flag" t-value="state.flag" />
+          <t t-set="flag" t-value="this.state.flag" />
           <t t-if="flag === 'if'">
             <t t-set="iter" t-value="2"/>
           </t>
@@ -83,15 +83,16 @@ describe("t-set", () => {
     class Comp extends Component {
       static template = xml`
         <div>
-          <p><t t-esc="iter"/></p>
+          <p><t t-esc="this.iter"/></p>
           <t t-set="iter" t-value="5"/>
+          <p><t t-esc="this.iter"/></p>
           <p><t t-esc="iter"/></p>
         </div>`;
       iter = 1;
     }
     const comp = await mount(Comp, fixture);
 
-    expect(fixture.innerHTML).toBe("<div><p>1</p><p>5</p></div>");
+    expect(fixture.innerHTML).toBe("<div><p>1</p><p>1</p><p>5</p></div>");
     expect(comp.iter).toBe(1);
   });
 
@@ -99,14 +100,15 @@ describe("t-set", () => {
     class Comp extends Component {
       static template = xml`
         <div>
-          <p><t t-esc="iter"/></p>
+          <p><t t-esc="this.iter"/></p>
           <t t-set="iter" t-value="5"/>
+          <p><t t-esc="this.iter"/></p>
           <p><t t-esc="iter"/></p>
         </div>`;
     }
     const comp = await mount(Comp, fixture);
 
-    expect(fixture.innerHTML).toBe("<div><p></p><p>5</p></div>");
+    expect(fixture.innerHTML).toBe("<div><p></p><p></p><p>5</p></div>");
     expect((comp as any).iter).toBeUndefined();
   });
 
@@ -134,7 +136,13 @@ describe("t-set", () => {
   test("t-set not altered by child comp", async () => {
     let child;
     class Childcomp extends Component {
-      static template = xml`<div><t t-esc="iter"/><t t-set="iter" t-value="'called'"/><t t-esc="iter"/></div>`;
+      static template = xml`
+        <div>
+          <t t-esc="this.iter"/>
+          <t t-set="iter" t-value="'called'"/>
+          <t t-esc="this.iter"/>
+          <t t-esc="iter"/>
+        </div>`;
       iter = "child";
       setup() {
         super.setup();
@@ -153,7 +161,9 @@ describe("t-set", () => {
     }
     await mount(Comp, fixture);
 
-    expect(fixture.innerHTML).toBe("<div><p>source</p><div>childcalled</div><p>source</p></div>");
+    expect(fixture.innerHTML).toBe(
+      "<div><p>source</p><div>childchildcalled</div><p>source</p></div>"
+    );
     expect((child as any).iter).toBe("child");
   });
 

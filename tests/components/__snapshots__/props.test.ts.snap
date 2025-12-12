@@ -9,7 +9,7 @@ exports[`.alike suffix in a list 1`] = `
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['state'].elems);;
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].state.elems);;
     for (let i1 = 0; i1 < l_block1; i1++) {
       ctx[\`elem\`] = k_block1[i1];
       const key1 = ctx['elem'].id;
@@ -48,7 +48,7 @@ exports[`.alike suffix in a simple case 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
-    const b2 = text(ctx['state'].counter);
+    const b2 = text(ctx['this'].state.counter);
     const b3 = comp1({fn: ()=>1}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
   }
@@ -98,7 +98,7 @@ exports[`basics accept ES6-like syntax for props (with getters) 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    const b2 = comp1({greetings: ctx['greetings']}, key + \`__1\`, node, this, null);
+    const b2 = comp1({greetings: ctx['this'].greetings}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -127,13 +127,13 @@ exports[`basics arrow functions as prop correctly capture their scope 1`] = `
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['items']);;
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].items);;
     for (let i1 = 0; i1 < l_block1; i1++) {
       ctx[\`item\`] = k_block1[i1];
       const key1 = ctx['item'].val;
-      const v1 = ctx['onClick'];
+      const v1 = ctx['this'];
       const v2 = ctx['item'];
-      c_block1[i1] = withKey(comp1({onClick: _ev=>v1(v2.val,_ev)}, key + \`__1__\${key1}\`, node, this, null), key1);
+      c_block1[i1] = withKey(comp1({onClick: (_ev)=>v1.onClick(v2.val,_ev)}, key + \`__1__\${key1}\`, node, this, null), key1);
     }
     return list(c_block1);
   }
@@ -163,7 +163,7 @@ exports[`basics explicit object prop 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    const b2 = comp1({value: ctx['state'].val}, key + \`__1\`, node, this, null);
+    const b2 = comp1({value: ctx['this'].state.val}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
 }"
@@ -177,7 +177,7 @@ exports[`basics explicit object prop 2`] = `
   let block1 = createBlock(\`<span><block-text-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['state'].someval;
+    let txt1 = ctx['this'].state.someval;
     return block1([txt1]);
   }
 }"
@@ -348,7 +348,7 @@ exports[`basics template string in prop 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, ["propName"]);
   
   return function template(ctx, node, key = "") {
-    return comp1({propName: \`1\${ctx['someVal']}3\`}, key + \`__1\`, node, this, null);
+    return comp1({propName: \`1\${ctx['this'].someVal}3\`}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -371,8 +371,8 @@ exports[`bound functions are considered 'alike' 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
-    const b2 = text(ctx['state'].val);
-    const b3 = comp1({fn: (ctx['someFunction']).bind(this)}, key + \`__1\`, node, this, null);
+    const b2 = text(ctx['this'].state.val);
+    const b3 = comp1({fn: (ctx['this'].someFunction).bind(this)}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
   }
 }"
@@ -396,7 +396,7 @@ exports[`bound functions is not referentially equal after update 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, ["val"]);
   
   return function template(ctx, node, key = "") {
-    return comp1({val: ctx['state'].val,fn: (ctx['someFunction']).bind(this)}, key + \`__1\`, node, this, null);
+    return comp1({val: ctx['this'].state.val,fn: (ctx['this'].someFunction).bind(this)}, key + \`__1\`, node, this, null);
   }
 }"
 `;
@@ -419,7 +419,7 @@ exports[`can bind function prop with bind suffix 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
-    return comp1({doSomething: (ctx['doSomething']).bind(this)}, key + \`__1\`, node, this, null);
+    return comp1({doSomething: (ctx['this'].doSomething).bind(this)}, key + \`__1\`, node, this, null);
   }
 }"
 `;

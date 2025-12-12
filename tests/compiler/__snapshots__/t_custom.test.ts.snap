@@ -8,7 +8,7 @@ exports[`t-custom can use t-custom directive on a node 1`] = `
   let block1 = createBlock(\`<div class="my-div" block-handler-0="click"/>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['click'], ctx];
+    let hdlr1 = [ctx['this'].click, ctx];
     return block1([hdlr1]);
   }
 }"
@@ -22,7 +22,7 @@ exports[`t-custom can use t-custom directive with modifiers on a node 1`] = `
   let block1 = createBlock(\`<div class="my-div" block-handler-0="click"/>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['click'], ctx];
+    let hdlr1 = [ctx['this'].click, ctx];
     return block1([hdlr1]);
   }
 }"

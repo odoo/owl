@@ -47,8 +47,8 @@ describe("t-model directive", () => {
     class SomeComponent extends Component {
       static template = xml`
         <div>
-          <input t-model="state['text']"/>
-          <span><t t-esc="state.text()"/></span>
+          <input t-model="this.state['text']"/>
+          <span><t t-esc="this.state.text()"/></span>
         </div>`;
       state = { text: signal("") };
     }
@@ -66,7 +66,7 @@ describe("t-model directive", () => {
     class SomeComponent extends Component {
       static template = xml`
         <div>
-          <input t-model="state"/>
+          <input t-model="this.state"/>
         </div>`;
       state = { text: "" };
     }
@@ -527,7 +527,7 @@ describe("t-model directive", () => {
     class SomeComponent extends Component {
       static template = xml`
         <div>
-          <input t-model="this.text" t-on-input="onInput"/>
+          <input t-model="this.text" t-on-input="this.onInput"/>
         </div>
       `;
       text = signal("");
@@ -549,9 +549,9 @@ describe("t-model directive", () => {
     class SomeComponent extends Component {
       static template = xml`
         <div>
-          <input type="radio" id="one" value="One" t-model="this.choice" t-on-click="onClick"/>
-          <input type="radio" id="two" value="Two" t-model="this.choice" t-on-click="onClick"/>
-          <input type="radio" id="three" value="Three" t-model="this.choice" t-on-click="onClick"/>
+          <input type="radio" id="one" value="One" t-model="this.choice" t-on-click="this.onClick"/>
+          <input type="radio" id="two" value="Two" t-model="this.choice" t-on-click="this.onClick"/>
+          <input type="radio" id="three" value="Three" t-model="this.choice" t-on-click="this.onClick"/>
         </div>
       `;
       choice = signal("");
@@ -696,7 +696,7 @@ describe("t-model directive", () => {
     class SomeComponent extends Component {
       static template = xml`
         <div>
-          <input t-model="this.state['text']" t-on-input="onInput"/>
+          <input t-model="this.state['text']" t-on-input="this.onInput"/>
         </div>
       `;
       state = { text: signal("") };
@@ -715,7 +715,7 @@ describe("t-model directive", () => {
     const steps: string[] = [];
     class SomeComponent extends Component {
       static template = xml`
-        <div t-on-click="getData" id="get_data">
+        <div t-on-click="this.getData" id="get_data">
           <t t-foreach="this.options" t-as="opt" t-key="opt">
             <input type="radio" name="radio_group" t-model="this.group" t-att-value="opt" t-att-id="opt"/>
           </t>

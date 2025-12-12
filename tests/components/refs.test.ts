@@ -39,9 +39,9 @@ describe("refs", () => {
     class Parent extends Component {
       static template = xml`
             <div>
-              <span class="counter"><t t-esc="state.val"/></span>
+              <span class="counter"><t t-esc="this.state.val"/></span>
               <Dialog>
-                <t t-set-slot="footer"><button t-ref="this.button" t-on-click="doSomething">do something</button></t>
+                <t t-set-slot="footer"><button t-ref="this.button" t-on-click="this.doSomething">do something</button></t>
               </Dialog>
             </div>
           `;
@@ -69,7 +69,7 @@ describe("refs", () => {
   test("use 2 refs in a t-if/t-else situation", async () => {
     class Test extends Component {
       static template = xml`
-        <t t-if="state.value">
+        <t t-if="this.state.value">
           <div t-ref="this.ref1"/>
         </t>
         <t t-else="">
@@ -98,7 +98,7 @@ describe("refs", () => {
 
   test("ref is unset when t-if goes to false after unrelated render", async () => {
     class Comp extends Component {
-      static template = xml`<div t-if="state.show" t-att-class="state.class" t-ref="this.ref"/>`;
+      static template = xml`<div t-if="this.state.show" t-att-class="this.state.class" t-ref="this.ref"/>`;
       state = proxy({ show: true, class: "test" });
       ref = signal<HTMLDivElement | null>(null);
     }
@@ -171,8 +171,8 @@ describe("refs", () => {
     class Test extends Component {
       static components = {};
       static template = xml`
-        <button t-on-click="() => state.renderId++" />
-        <p t-ref="this.root" t-key="state.renderId"/>`;
+        <button t-on-click="() => this.state.renderId++" />
+        <p t-ref="this.root" t-key="this.state.renderId"/>`;
       root = signal<HTMLElement | null>(null);
       state = proxy({ renderId: 1 });
 
@@ -215,7 +215,7 @@ describe("refs", () => {
     class Test extends Component {
       static template = xml`
         <t t-foreach="this.items()" t-as="item" t-key="item">
-          <p t-ref="refs" t-attf-id="item-{{item}}"/>
+          <p t-ref="this.refs" t-attf-id="item-{{item}}"/>
         </t>
       `;
       items = signal([0, 1, 2]);

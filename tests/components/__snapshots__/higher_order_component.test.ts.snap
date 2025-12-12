@@ -81,10 +81,10 @@ exports[`basics can select a sub widget, part 2 1`] = `
   
   return function template(ctx, node, key = "") {
     let b2, b3;
-    if (ctx['state'].flag) {
+    if (ctx['this'].state.flag) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     }
-    if (!ctx['state'].flag) {
+    if (!ctx['this'].state.flag) {
       b3 = comp2({}, key + \`__2\`, node, this, null);
     }
     return multi([b2, b3]);
@@ -138,8 +138,8 @@ exports[`basics sub widget is interactive 2`] = `
   let block1 = createBlock(\`<span><button block-handler-0="click">click</button>child<block-text-1/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['inc'], ctx];
-    let txt1 = ctx['state'].val;
+    let hdlr1 = [ctx['this'].inc, ctx];
+    let txt1 = ctx['this'].state.val;
     return block1([hdlr1, txt1]);
   }
 }"

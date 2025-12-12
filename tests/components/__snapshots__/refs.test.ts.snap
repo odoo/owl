@@ -52,8 +52,8 @@ exports[`refs ref is unset when t-if goes to false after unrelated render 1`] = 
   
   return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].show) {
-      let attr1 = ctx['state'].class;
+    if (ctx['this'].state.show) {
+      let attr1 = ctx['this'].state.class;
       let ref1 = createRef(ctx['this'].ref);
       b2 = block2([attr1, ref1]);
     }
@@ -93,10 +93,10 @@ exports[`refs refs and t-key 1`] = `
   let block3 = createBlock(\`<p block-ref="0"/>\`);
   
   return function template(ctx, node, key = "") {
-    const v1 = ctx['state'];
-    let hdlr1 = [()=>v1.renderId++, ctx];
+    const v1 = ctx['this'];
+    let hdlr1 = [()=>v1.state.renderId++, ctx];
     const b2 = block2([hdlr1]);
-    const tKey_1 = ctx['state'].renderId;
+    const tKey_1 = ctx['this'].state.renderId;
     let ref1 = createRef(ctx['this'].root);
     const b3 = toggler(tKey_1, block3([ref1]));
     return multi([b2, b3]);
@@ -115,13 +115,13 @@ exports[`refs refs are properly bound in slots 1`] = `
   let block2 = createBlock(\`<button block-handler-0="click" block-ref="1">do something</button>\`);
   
   function slot1(ctx, node, key = "") {
-    let hdlr1 = [ctx['doSomething'], ctx];
+    let hdlr1 = [ctx['this'].doSomething, ctx];
     let ref1 = createRef(ctx['this'].button);
     return block2([hdlr1, ref1]);
   }
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['state'].val;
+    let txt1 = ctx['this'].state.val;
     const b3 = comp1({slots: markRaw({'footer': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__1\`, node, this, null);
     return block1([txt1], [b3]);
   }
@@ -158,7 +158,7 @@ exports[`refs resource can be used for multi ref 1`] = `
       ctx[\`item\`] = k_block1[i1];
       const key1 = ctx['item'];
       let attr1 = \`item-\${ctx['item']}\`;
-      let ref1 = createRef(ctx['refs']);
+      let ref1 = createRef(ctx['this'].refs);
       c_block1[i1] = withKey(block2([attr1, ref1]), key1);
     }
     return list(c_block1);
@@ -197,7 +197,7 @@ exports[`refs use 2 refs in a t-if/t-else situation 1`] = `
   
   return function template(ctx, node, key = "") {
     let b2, b3;
-    if (ctx['state'].value) {
+    if (ctx['this'].state.value) {
       let ref1 = createRef(ctx['this'].ref1);
       b2 = block2([ref1]);
     } else {

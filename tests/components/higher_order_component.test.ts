@@ -29,7 +29,7 @@ describe("basics", () => {
     class Child extends Component {
       static template = xml`
             <span>
-                <button t-on-click="inc">click</button>child<t t-esc="state.val"/>
+                <button t-on-click="this.inc">click</button>child<t t-esc="this.state.val"/>
             </span>`;
       state = proxy({ val: 1 });
       inc() {
@@ -85,8 +85,8 @@ describe("basics", () => {
     class Parent extends Component {
       static template = xml`
             <t>
-              <t t-if="state.flag"><Child /></t>
-              <t t-if="!state.flag"><OtherChild /></t>
+              <t t-if="this.state.flag"><Child /></t>
+              <t t-if="!this.state.flag"><OtherChild /></t>
             </t>
           `;
       state = proxy({ flag: true });

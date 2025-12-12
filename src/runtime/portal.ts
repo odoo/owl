@@ -55,7 +55,7 @@ class VPortal extends VText implements Partial<VNode<VPortal>> {
 export function portalTemplate(app: any, bdom: any, helpers: any) {
   let { callSlot } = helpers;
   return function template(ctx: any, node: any, key = ""): any {
-    return new VPortal(ctx.props.target, callSlot(ctx, node, key, "default", false, null));
+    return new VPortal(ctx.this.props.target, callSlot(ctx, node, key, "default", false, null));
   };
 }
 

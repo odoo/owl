@@ -15,7 +15,7 @@ describe("t-on", () => {
     const steps: string[] = [];
     let child: any;
     class Child extends Component {
-      static template = xml`<div t-on-click="onClick"/>`;
+      static template = xml`<div t-on-click="this.onClick"/>`;
       status = status();
       setup() {
         onMounted(() => {
@@ -27,7 +27,7 @@ describe("t-on", () => {
       }
     }
     class Parent extends Component {
-      static template = xml`<div><Child t-if="state.flag"/></div>`;
+      static template = xml`<div><Child t-if="this.state.flag"/></div>`;
       static components = { Child };
       state = proxy({ flag: true });
     }
@@ -51,7 +51,7 @@ describe("t-on", () => {
     }
     class Parent extends Component {
       static template = xml`
-        <div t-on-click="push"><Child list="list" t-on-click="() => {}"/></div>
+        <div t-on-click="this.push"><Child list="this.list" t-on-click="() => {}"/></div>
       `;
       static components = { Child };
       list = proxy([] as string[]);
@@ -71,9 +71,9 @@ describe("t-on", () => {
     class Comp extends Component {
       static template = xml`
           <div>
-            <div t-foreach="state.values" t-as="val" t-key="val">
+            <div t-foreach="this.state.values" t-as="val" t-key="val">
               <t t-esc="val_index"/>: <t t-esc="val + ''"/>
-              <button t-on-click="() => otherState.vals.push(val)">Expr</button>
+              <button t-on-click="() => this.otherState.vals.push(val)">Expr</button>
             </div>
           </div>
         `;
@@ -96,10 +96,10 @@ describe("t-on", () => {
       static template = xml`
           <div>
             <t t-set="bossa" t-value="'nova'"/>
-            <div t-foreach="state.values" t-as="val" t-key="val">
+            <div t-foreach="this.state.values" t-as="val" t-key="val">
               <t t-set="bossa" t-value="bossa + '_' + val_index" />
               <t t-esc="val_index"/>: <t t-esc="val + ''"/>
-              <button t-on-click="() => otherState.vals.push(val + '_' + bossa)">Expr</button>
+              <button t-on-click="() => this.otherState.vals.push(val + '_' + bossa)">Expr</button>
             </div>
           </div>
         `;
@@ -121,7 +121,7 @@ describe("t-on", () => {
     class Comp extends Component {
       static template = xml`
           <div>
-            <div t-foreach="state.values" t-as="val" t-key="val">
+            <div t-foreach="this.state.values" t-as="val" t-key="val">
               <t t-esc="val_index"/>: <t t-esc="val + ''"/>
               <button t-on-click="() => this.addVal(val)">meth call</button>
             </div>
@@ -149,8 +149,8 @@ describe("t-on", () => {
       static template = xml`
           <div>
             <t t-set="iter" t-value="0" />
-            <div t-foreach="arr" t-as="val" t-key="val">
-              <button t-on-click="() => otherState.vals.push(iter + '_' + iter)">expr</button>
+            <div t-foreach="this.arr" t-as="val" t-key="val">
+              <button t-on-click="() => this.otherState.vals.push(iter + '_' + iter)">expr</button>
               <t t-set="iter" t-value="iter + 1" />
             </div>
           </div>
@@ -176,7 +176,7 @@ describe("t-on", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<Child t-on-click="increment" value="state.value"/>`;
+      static template = xml`<Child t-on-click="this.increment" value="this.state.value"/>`;
       static components = { Child };
       state = proxy({ value: 1 });
       increment() {
@@ -200,7 +200,7 @@ describe("t-on", () => {
       static template = xml`
         <div>
           <span/>
-          <Child t-on-click="increment" value="state.value"/>
+          <Child t-on-click="this.increment" value="this.state.value"/>
           <p/>
         </div>`;
       static components = { Child };
@@ -234,8 +234,8 @@ describe("t-on", () => {
     class Parent extends Component {
       static template = xml`
         <div>
-          <Child t-on-click="increment" value="state.value"/>
-          <p t-on-click="decrement">dec</p>
+          <Child t-on-click="this.increment" value="this.state.value"/>
+          <p t-on-click="this.decrement">dec</p>
         </div>`;
       static components = { Child };
       state = proxy({ value: 1 });
@@ -259,7 +259,7 @@ describe("t-on", () => {
   test("t-on on t-call-slots", async () => {
     class Child extends Component {
       static template = xml`
-        [<t t-esc="state.count"/>]
+        [<t t-esc="this.state.count"/>]
         <t t-call-slot="default" t-on-click="() => this.state.count++"/>`;
       props = props();
       state = proxy({ count: 0 });
@@ -288,7 +288,7 @@ describe("t-on", () => {
 
     class Parent extends Component {
       static template = xml`
-        [<t t-esc="state.count"/>]
+        [<t t-esc="this.state.count"/>]
         <Child>
           <t t-set-slot="myslot" t-on-click="() => this.state.count++">
             <p>something</p>
@@ -314,7 +314,7 @@ describe("t-on", () => {
     }
 
     class Parent extends Component {
-      static template = xml`<Child t-on-click.prevent="increment" value="state.value"/>`;
+      static template = xml`<Child t-on-click.prevent="this.increment" value="this.state.value"/>`;
       static components = { Child };
       state = proxy({ value: 1 });
       increment(ev: MouseEvent) {
@@ -330,7 +330,7 @@ describe("t-on", () => {
 
   test("t-on on slot, with 'prevent' modifier", async () => {
     class Child extends Component {
-      static template = xml`<t t-call-slot="default" t-on-click.prevent="doSomething"/>`;
+      static template = xml`<t t-call-slot="default" t-on-click.prevent="this.doSomething"/>`;
       props = props();
       doSomething(ev: MouseEvent) {
         expect(ev.defaultPrevented).toBe(true);
@@ -392,7 +392,7 @@ describe("t-on", () => {
 
     class Parent extends Component {
       static template = xml`
-          <t t-set="name" t-value="state.name"/>
+          <t t-set="name" t-value="this.state.name"/>
           <Child value="name" t-on-click="() => this.log(name)"
         />`;
       static components = { Child };

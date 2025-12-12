@@ -181,7 +181,7 @@ describe("list of components", () => {
     let n = 1;
 
     class Child extends Component {
-      static template = xml`<p><t t-esc="state.n"/></p>`;
+      static template = xml`<p><t t-esc="this.state.n"/></p>`;
       state: any;
       setup() {
         this.state = proxy({ n });
@@ -286,7 +286,7 @@ describe("list of components", () => {
     class Parent extends Component {
       static components = { Child };
       static template = xml`<span>
-        <t t-foreach="clist" t-as="c" t-key="c">
+        <t t-foreach="this.clist" t-as="c" t-key="c">
           <Child key="c"/>
         </t>
       </span>`;
@@ -359,7 +359,7 @@ describe("list of components", () => {
   test("order is correct when slots are not of same type", async () => {
     class Child extends Component {
       static template = xml`
-          <t t-call-slot="{{ this.slotName }}" t-foreach="this.slotNames" t-as="slotName" t-key="slotName"/>
+          <t t-foreach="this.slotNames" t-as="slotName" t-key="slotName" t-call-slot="{{ slotName }}"/>
       `;
       props = props();
       get slotNames() {

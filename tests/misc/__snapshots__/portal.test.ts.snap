@@ -16,7 +16,7 @@ exports[`Portal Add and remove portals 1`] = `
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['portalIds']);;
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].portalIds);;
     for (let i1 = 0; i1 < l_block1; i1++) {
       ctx[\`portalId\`] = k_block1[i1];
       const key1 = ctx['portalId'];
@@ -45,7 +45,7 @@ exports[`Portal Add and remove portals on div 1`] = `
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['portalIds']);;
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].portalIds);;
     for (let i1 = 0; i1 < l_block1; i1++) {
       ctx[\`portalId\`] = k_block1[i1];
       const key1 = ctx['portalId'];
@@ -75,7 +75,7 @@ exports[`Portal Add and remove portals with t-foreach 1`] = `
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['portalIds']);;
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].portalIds);;
     for (let i1 = 0; i1 < l_block1; i1++) {
       ctx[\`portalId\`] = k_block1[i1];
       const key1 = ctx['portalId'];
@@ -107,7 +107,7 @@ exports[`Portal Add and remove portals with t-foreach and destroy 1`] = `
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['portalIds']);;
+    const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].portalIds);;
     for (let i1 = 0; i1 < l_block1; i1++) {
       ctx[\`portalId\`] = k_block1[i1];
       const key1 = ctx['portalId'];
@@ -140,7 +140,7 @@ exports[`Portal Add and remove portals with t-foreach inside div 1`] = `
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['portalIds']);;
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].portalIds);;
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`portalId\`] = k_block2[i1];
       const key1 = ctx['portalId'];
@@ -204,7 +204,7 @@ exports[`Portal Portal composed with t-slot 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = "") {
-    return comp1({customHandler: ctx['_handled']}, key + \`__1\`, node, this, null);
+    return comp1({customHandler: ctx['this']._handled}, key + \`__1\`, node, this, null);
   }
   
   return function template(ctx, node, key = "") {
@@ -240,7 +240,7 @@ exports[`Portal Portal composed with t-slot 3`] = `
   let block1 = createBlock(\`<div block-handler-0="custom"><span id="childSpan">child2</span></div>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['onCustom'], ctx];
+    let hdlr1 = [ctx['this'].onCustom, ctx];
     return block1([hdlr1]);
   }
 }"
@@ -324,7 +324,7 @@ exports[`Portal basic use of portal, variation 1`] = `
   }
   
   return function template(ctx, node, key = "") {
-    const b3 = comp1({target: ctx['target'],slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
+    const b3 = comp1({target: ctx['this'].target,slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     return block1([], [b3]);
   }
 }"
@@ -341,13 +341,13 @@ exports[`Portal conditional use of Portal (with sub Component) 1`] = `
   let block2 = createBlock(\`<span>1</span>\`);
   
   function slot1(ctx, node, key = "") {
-    return comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
+    return comp1({val: ctx['this'].state.val}, key + \`__1\`, node, this, null);
   }
   
   return function template(ctx, node, key = "") {
     let b2, b4;
     b2 = block2();
-    if (ctx['state'].hasPortal) {
+    if (ctx['this'].state.hasPortal) {
       b4 = comp2({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
     }
     return multi([b2, b4]);
@@ -386,7 +386,7 @@ exports[`Portal conditional use of Portal 1`] = `
   return function template(ctx, node, key = "") {
     let b2, b4;
     b2 = block2();
-    if (ctx['state'].hasPortal) {
+    if (ctx['this'].state.hasPortal) {
       b4 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
     }
     return multi([b2, b4]);
@@ -402,7 +402,7 @@ exports[`Portal conditional use of Portal with child and div 1`] = `
   
   return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].hasPortal) {
+    if (ctx['this'].state.hasPortal) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     }
     return multi([b2]);
@@ -450,7 +450,7 @@ exports[`Portal conditional use of Portal with child and div, variation 1`] = `
   
   return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].hasPortal) {
+    if (ctx['this'].state.hasPortal) {
       const b3 = comp1({}, key + \`__1\`, node, this, null);
       b2 = block2([], [b3]);
     }
@@ -506,7 +506,7 @@ exports[`Portal conditional use of Portal with div 1`] = `
   
   return function template(ctx, node, key = "") {
     let b2;
-    if (ctx['state'].hasPortal) {
+    if (ctx['this'].state.hasPortal) {
       const b4 = comp1({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__1\`, node, ctx, Portal);
       b2 = block2([], [b4]);
     }
@@ -526,12 +526,12 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 1`] 
   let block1 = createBlock(\`<div><block-child-0/><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = "") {
-    return comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
+    return comp1({val: ctx['this'].state.val}, key + \`__1\`, node, this, null);
   }
   
   return function template(ctx, node, key = "") {
     let b3;
-    if (ctx['state'].hasChild) {
+    if (ctx['this'].state.hasChild) {
       b3 = comp2({target: '#outside',slots: {'default': {__render: slot1.bind(this), __ctx: ctx}}}, key + \`__2\`, node, ctx, Portal);
     }
     return block1([], [b3]);
@@ -603,8 +603,8 @@ exports[`Portal portal could have dynamically no content 1`] = `
   
   function slot1(ctx, node, key = "") {
     let b3;
-    if (ctx['state'].val) {
-      let txt1 = ctx['state'].val;
+    if (ctx['this'].state.val) {
+      let txt1 = ctx['this'].state.val;
       b3 = block3([txt1]);
     }
     return multi([b3]);
@@ -628,7 +628,7 @@ exports[`Portal portal destroys on crash 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = "") {
-    return comp1({error: ctx['state'].error}, key + \`__1\`, node, this, null);
+    return comp1({error: ctx['this'].state.error}, key + \`__1\`, node, this, null);
   }
   
   return function template(ctx, node, key = "") {
@@ -663,7 +663,7 @@ exports[`Portal portal with child and props 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = "") {
-    return comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
+    return comp1({val: ctx['this'].state.val}, key + \`__1\`, node, this, null);
   }
   
   return function template(ctx, node, key = "") {
@@ -700,8 +700,8 @@ exports[`Portal portal with dynamic body 1`] = `
   
   function slot1(ctx, node, key = "") {
     let b3, b4;
-    if (ctx['state'].val) {
-      let txt1 = ctx['state'].val;
+    if (ctx['this'].state.val) {
+      let txt1 = ctx['this'].state.val;
       b3 = block3([txt1]);
     } else {
       b4 = block4();
@@ -815,7 +815,7 @@ exports[`Portal simple catchError with portal 1`] = `
   
   return function template(ctx, node, key = "") {
     let b2, b3;
-    if (ctx['error']) {
+    if (ctx['this'].error) {
       b2 = text(\`Error\`);
     } else {
       b3 = comp1({}, key + \`__1\`, node, this, null);
@@ -942,7 +942,7 @@ exports[`Portal: UI/UX focus is kept across re-renders 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = "") {
-    return comp1({val: ctx['state'].val}, key + \`__1\`, node, this, null);
+    return comp1({val: ctx['this'].state.val}, key + \`__1\`, node, this, null);
   }
   
   return function template(ctx, node, key = "") {

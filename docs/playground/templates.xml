@@ -3,7 +3,7 @@
     <div class="tabBar" t-att-class="{resizeable: props.resizeable}" t-on-mousedown="onMouseDown">
         <t t-foreach="['js', 'xml', 'css']" t-as="tab" t-key="tab">
             <a t-if="props[tab] !== false" t-key="tab" class="tab flash" t-att-class="{active: state.currentTab===tab}" t-on-click="() => setTab(tab)">
-                <t t-esc="tab"/>
+                <t t-out="tab"/>
             </a>
         </t>
     </div>
@@ -17,7 +17,7 @@
           <a class="btn run-code flash" t-on-click="runCode" title="Execute this Code">▶ Run</a>
           <select t-on-change="onSampleChange">
             <option t-foreach="samples" t-as="sample" t-key="sample_index">
-              <t t-esc="sample.description"/>
+              <t t-out="sample.description"/>
             </option>
           </select>
           <a class="btn flash" t-on-click="exportStandaloneApp" title="Download zip that bundles this app with a tiny python web server"><i class="fas fa-download"></i></a>
@@ -45,7 +45,7 @@
       <div class="right-pane">
         <div class="welcome" t-if="state.displayWelcome">
           <div>🦉 Odoo Web Library 🦉</div>
-          <div>v<t t-esc="version"/></div>
+          <div>v<t t-out="version"/></div>
           <div class="url"><a href="https://github.com/odoo/owl">https://github.com/odoo/owl</a></div>
           <div class="note">
             <p>

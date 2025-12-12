@@ -45,7 +45,7 @@ describe("t-on", () => {
   test("t-on when first component child is an empty component", async () => {
     class Child extends Component {
       static template = xml`
-        <span t-foreach="this.props.list" t-as="c" t-key="c_index" t-esc="c"/>
+        <span t-foreach="this.props.list" t-as="c" t-key="c_index" t-out="c"/>
       `;
       props = props();
     }
@@ -72,7 +72,7 @@ describe("t-on", () => {
       static template = xml`
           <div>
             <div t-foreach="this.state.values" t-as="val" t-key="val">
-              <t t-esc="val_index"/>: <t t-esc="val + ''"/>
+              <t t-out="val_index"/>: <t t-out="val + ''"/>
               <button t-on-click="() => this.otherState.vals.push(val)">Expr</button>
             </div>
           </div>
@@ -98,7 +98,7 @@ describe("t-on", () => {
             <t t-set="bossa" t-value="'nova'"/>
             <div t-foreach="this.state.values" t-as="val" t-key="val">
               <t t-set="bossa" t-value="bossa + '_' + val_index" />
-              <t t-esc="val_index"/>: <t t-esc="val + ''"/>
+              <t t-out="val_index"/>: <t t-out="val + ''"/>
               <button t-on-click="() => this.otherState.vals.push(val + '_' + bossa)">Expr</button>
             </div>
           </div>
@@ -122,7 +122,7 @@ describe("t-on", () => {
       static template = xml`
           <div>
             <div t-foreach="this.state.values" t-as="val" t-key="val">
-              <t t-esc="val_index"/>: <t t-esc="val + ''"/>
+              <t t-out="val_index"/>: <t t-out="val + ''"/>
               <button t-on-click="() => this.addVal(val)">meth call</button>
             </div>
           </div>
@@ -171,7 +171,7 @@ describe("t-on", () => {
 
   test("t-on on components", async () => {
     class Child extends Component {
-      static template = xml`<button t-esc="this.props.value"/>`;
+      static template = xml`<button t-out="this.props.value"/>`;
       props = props();
     }
 
@@ -192,7 +192,7 @@ describe("t-on", () => {
 
   test("t-on on components, variation", async () => {
     class Child extends Component {
-      static template = xml`<button t-esc="this.props.value"/>`;
+      static template = xml`<button t-out="this.props.value"/>`;
       props = props();
     }
 
@@ -227,7 +227,7 @@ describe("t-on", () => {
 
   test("t-on on component next to t-on on div", async () => {
     class Child extends Component {
-      static template = xml`<button t-esc="this.props.value"/>`;
+      static template = xml`<button t-out="this.props.value"/>`;
       props = props();
     }
 
@@ -259,7 +259,7 @@ describe("t-on", () => {
   test("t-on on t-call-slots", async () => {
     class Child extends Component {
       static template = xml`
-        [<t t-esc="this.state.count"/>]
+        [<t t-out="this.state.count"/>]
         <t t-call-slot="default" t-on-click="() => this.state.count++"/>`;
       props = props();
       state = proxy({ count: 0 });
@@ -288,7 +288,7 @@ describe("t-on", () => {
 
     class Parent extends Component {
       static template = xml`
-        [<t t-esc="this.state.count"/>]
+        [<t t-out="this.state.count"/>]
         <Child>
           <t t-set-slot="myslot" t-on-click="() => this.state.count++">
             <p>something</p>
@@ -309,7 +309,7 @@ describe("t-on", () => {
   test("t-on on components, with 'prevent' modifier", async () => {
     expect.assertions(4); // 2 snaps and 2 expects
     class Child extends Component {
-      static template = xml`<button t-esc="this.props.value"/>`;
+      static template = xml`<button t-out="this.props.value"/>`;
       props = props();
     }
 
@@ -354,7 +354,7 @@ describe("t-on", () => {
 
   test("t-on on components and t-foreach", async () => {
     class Child extends Component {
-      static template = xml`<div t-esc="this.props.value"/>`;
+      static template = xml`<div t-out="this.props.value"/>`;
       props = props();
     }
 
@@ -386,7 +386,7 @@ describe("t-on", () => {
 
   test("t-on on components, with a handler update", async () => {
     class Child extends Component {
-      static template = xml`<div t-esc="this.props.value"/>`;
+      static template = xml`<div t-out="this.props.value"/>`;
       props = props();
     }
 

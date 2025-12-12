@@ -69,12 +69,13 @@ exports[`default props can set default values 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].props.p;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].props.p);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -99,12 +100,13 @@ exports[`default props default values are also set whenever component is updated
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].props.p;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].props.p);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -178,9 +180,10 @@ exports[`props validation can use custom class as type 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['this'].props.customObj.val);
+    return safeOutput(ctx['this'].props.customObj.val);
   }
 }"
 `;
@@ -775,12 +778,13 @@ exports[`props validation default values are applied before validating props at 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].props.p;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].props.p);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -848,12 +852,13 @@ exports[`props validation props are validated in dev mode (code snapshot) 2`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].props.message;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].props.message);
+    return block1([], [b2]);
   }
 }"
 `;

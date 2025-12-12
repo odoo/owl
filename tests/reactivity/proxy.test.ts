@@ -1755,7 +1755,7 @@ describe("Reactivity: proxy", () => {
     const testContext = createProxy({ value: 123 });
 
     class Comp extends Component {
-      static template = xml`<div><t t-esc="this.contextObj.value"/></div>`;
+      static template = xml`<div><t t-out="this.contextObj.value"/></div>`;
       contextObj = proxy(testContext);
     }
     await mount(Comp, fixture);
@@ -1766,7 +1766,7 @@ describe("Reactivity: proxy", () => {
     const testContext = createProxy({ value: 123 });
 
     class Comp extends Component {
-      static template = xml`<div><t t-esc="this.contextObj.value"/></div>`;
+      static template = xml`<div><t t-out="this.contextObj.value"/></div>`;
       contextObj = proxy(testContext);
     }
     const comp = await mount(Comp, fixture);
@@ -1780,7 +1780,7 @@ describe("Reactivity: proxy", () => {
     const testContext = createProxy({ value: 123 });
 
     class Child extends Component {
-      static template = xml`<span><t t-esc="this.contextObj.value"/></span>`;
+      static template = xml`<span><t t-out="this.contextObj.value"/></span>`;
       contextObj = proxy(testContext);
       setup() {
         useLogLifecycle();
@@ -1826,7 +1826,7 @@ describe("Reactivity: proxy", () => {
     const testContext = createProxy({ value: 123 });
 
     class Child extends Component {
-      static template = xml`<span><t t-esc="this.contextObj.value"/></span>`;
+      static template = xml`<span><t t-out="this.contextObj.value"/></span>`;
       contextObj = proxy(testContext);
       setup() {
         useLogLifecycle();
@@ -1879,7 +1879,7 @@ describe("Reactivity: proxy", () => {
     const testContext = createProxy({ value: 123 });
 
     class Child extends Component {
-      static template = xml`<span><t t-esc="this.contextObj.value"/></span>`;
+      static template = xml`<span><t t-out="this.contextObj.value"/></span>`;
       static components = {};
       contextObj = proxy(testContext);
       setup() {
@@ -1945,7 +1945,7 @@ describe("Reactivity: proxy", () => {
     const steps: string[] = [];
 
     class Comp extends Component {
-      static template = xml`<div><t t-set="noop" t-value="this.notify()"/><t t-esc="this.contextObj1.a"/><t t-esc="this.contextObj2.b"/></div>`;
+      static template = xml`<div><t t-set="noop" t-value="this.notify()"/><t t-out="this.contextObj1.a"/><t t-out="this.contextObj2.b"/></div>`;
       contextObj1 = proxy(testContext);
       contextObj2 = proxy(testContext);
 
@@ -1967,14 +1967,14 @@ describe("Reactivity: proxy", () => {
     const steps: string[] = [];
 
     class Child extends Component {
-      static template = xml`<span><t t-set="noop" t-value="this.notify()"/><t t-esc="this.contextObj.a"/></span>`;
+      static template = xml`<span><t t-set="noop" t-value="this.notify()"/><t t-out="this.contextObj.a"/></span>`;
       contextObj = proxy(testContext);
       notify() {
         steps.push("child");
       }
     }
     class Parent extends Component {
-      static template = xml`<t t-set="noop" t-value="this.notify()"/><div><Child /><t t-esc="this.contextObj.b"/></div>`;
+      static template = xml`<t t-set="noop" t-value="this.notify()"/><div><Child /><t t-out="this.contextObj.b"/></div>`;
       static components = { Child };
       contextObj = proxy(testContext);
       notify() {
@@ -2006,7 +2006,7 @@ describe("Reactivity: proxy", () => {
      */
 
     class L3A extends Component {
-      static template = xml`<t t-set="noop" t-value="this.notify()"/><div><t t-esc="contextObj.a"/> <t t-esc="contextObj.b"/></div>`;
+      static template = xml`<t t-set="noop" t-value="this.notify()"/><div><t t-out="contextObj.a"/> <t t-out="contextObj.b"/></div>`;
       contextObj = proxy(testContext);
       notify() {
         steps.add("L3A");
@@ -2014,7 +2014,7 @@ describe("Reactivity: proxy", () => {
     }
 
     class L2B extends Component {
-      static template = xml`<t t-set="noop" t-value="this.notify()"/><div><t t-esc="contextObj.b"/></div>`;
+      static template = xml`<t t-set="noop" t-value="this.notify()"/><div><t t-out="contextObj.b"/></div>`;
       contextObj = proxy(testContext);
       notify() {
         steps.add("L2B");
@@ -2022,7 +2022,7 @@ describe("Reactivity: proxy", () => {
     }
 
     class L2A extends Component {
-      static template = xml`<t t-set="noop" t-value="this.notify()"/><div><t t-esc="contextObj.a"/><L3A /></div>`;
+      static template = xml`<t t-set="noop" t-value="this.notify()"/><div><t t-out="contextObj.a"/><L3A /></div>`;
       static components = { L3A };
       contextObj = proxy(testContext);
       notify() {
@@ -2084,7 +2084,7 @@ describe("Reactivity: proxy", () => {
     const testContext = createProxy({ a: 123 });
 
     class Child extends Component {
-      static template = xml`<span><t t-esc="this.contextObj.a"/></span>`;
+      static template = xml`<span><t t-out="this.contextObj.a"/></span>`;
       contextObj = proxy(testContext);
       setup() {
         useLogLifecycle();
@@ -2141,7 +2141,7 @@ describe("Reactivity: proxy", () => {
     const testContext = createProxy({ a: 123 });
     const steps: string[] = [];
     class Child extends Component {
-      static template = xml`<t t-set="noop" t-value="this.notify()"/><span><t t-esc="this.contextObj.a"/></span>`;
+      static template = xml`<t t-set="noop" t-value="this.notify()"/><span><t t-out="this.contextObj.a"/></span>`;
       contextObj = proxy(testContext);
       setup() {
         onWillStart(() => {
@@ -2185,7 +2185,7 @@ describe("Reactivity: proxy", () => {
     const steps: Set<string> = new Set();
 
     class Quantity extends Component {
-      static template = xml`<t t-set="noop" t-value="this.notify()"/><div><t t-esc="this.state.quantity"/></div>`;
+      static template = xml`<t t-set="noop" t-value="this.notify()"/><div><t t-out="this.state.quantity"/></div>`;
       props = props();
       state = proxy(testContext[this.props.id]);
 
@@ -2201,8 +2201,8 @@ describe("Reactivity: proxy", () => {
             <t t-foreach="Object.keys(this.state)" t-as="id" t-key="id">
               <Quantity id="id"/>
             </t>
-            Total: <t t-esc="this.total"/>
-            Count: <t t-esc="Object.keys(this.state).length"/>
+            Total: <t t-out="this.total"/>
+            Count: <t t-out="Object.keys(this.state).length"/>
           </div>`;
       static components = { Quantity };
       state = proxy(testContext);
@@ -2266,7 +2266,7 @@ describe("Reactivity: proxy", () => {
     const def = makeDeferred();
     let stateC: any;
     class ComponentC extends Component {
-      static template = xml`<span><t t-esc="context[this.props.key].n"/><t t-esc="state.x"/></span>`;
+      static template = xml`<span><t t-out="context[this.props.key].n"/><t t-out="state.x"/></span>`;
       props = props();
       context = proxy(testContext);
       state = proxy({ x: "a" });

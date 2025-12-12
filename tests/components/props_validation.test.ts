@@ -99,7 +99,7 @@ describe("props validation", () => {
 
   test("validate props for root component", async () => {
     class Root extends Component {
-      static template = xml`<div t-esc="this.props.message"/>`;
+      static template = xml`<div t-out="this.props.message"/>`;
       props = props(["message"]);
     }
 
@@ -640,7 +640,7 @@ describe("props validation", () => {
 
   test("props are validated in dev mode (code snapshot)", async () => {
     class Child extends Component {
-      static template = xml`<div><t t-esc="this.props.message"/></div>`;
+      static template = xml`<div><t t-out="this.props.message"/></div>`;
       props = props(["message"]);
     }
     class Parent extends Component {
@@ -812,7 +812,7 @@ describe("props validation", () => {
     // fixme
     let error: Error;
     class SubComp extends Component {
-      static template = xml`<div><t t-esc="this.props.p"/></div>`;
+      static template = xml`<div><t t-out="this.props.p"/></div>`;
       props = props({ p: { type: Number } });
     }
     class Parent extends Component {
@@ -837,7 +837,7 @@ describe("props validation", () => {
   test("default values are applied before validating props at update", async () => {
     // need to do something about errors catched in render
     class SubComp extends Component {
-      static template = xml`<div><t t-esc="this.props.p"/></div>`;
+      static template = xml`<div><t t-out="this.props.p"/></div>`;
       props = props({
         p: {
           type: Number,
@@ -862,7 +862,7 @@ describe("props validation", () => {
 
   test("mix of optional and mandatory", async () => {
     class Child extends Component {
-      static template = xml` <div><t t-esc="this.props.mandatory"/></div>`;
+      static template = xml` <div><t t-out="this.props.mandatory"/></div>`;
       props = props({
         optional: { type: String, optional: true },
         mandatory: Number,
@@ -943,7 +943,7 @@ describe("props validation", () => {
       val = "hey";
     }
     class Child extends Component {
-      static template = xml`<t t-esc="this.props.customObj.val"/>`;
+      static template = xml`<t t-out="this.props.customObj.val"/>`;
       props = props({ customObj: CustomClass });
     }
 
@@ -989,7 +989,7 @@ describe("props validation", () => {
 describe("default props", () => {
   test("can set default values", async () => {
     class SubComp extends Component {
-      static template = xml`<div><t t-esc="this.props.p"/></div>`;
+      static template = xml`<div><t t-out="this.props.p"/></div>`;
       props = props({
         p: {
           optional: true,
@@ -1007,7 +1007,7 @@ describe("default props", () => {
 
   test("default values are also set whenever component is updated", async () => {
     class SubComp extends Component {
-      static template = xml`<div><t t-esc="this.props.p"/></div>`;
+      static template = xml`<div><t t-out="this.props.p"/></div>`;
       props = props({
         p: {
           optional: true,
@@ -1052,7 +1052,7 @@ describe("default props", () => {
 
   test("a default prop cannot be defined on a mandatory prop", async () => {
     class Child extends Component {
-      static template = xml` <div><t t-esc="this.props.mandatory"/></div>`;
+      static template = xml` <div><t t-out="this.props.mandatory"/></div>`;
       props = props({
         mandatory: {
           type: Number,

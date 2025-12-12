@@ -142,14 +142,15 @@ exports[`basics can be clicked on and updated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/><button block-handler-1="click">Inc</button></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><button block-handler-0="click">Inc</button></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].state.counter;
+    const b2 = safeOutput(ctx['this'].state.counter);
     const v1 = ctx['this'];
     let hdlr1 = [()=>v1.state.counter++, ctx];
-    return block1([txt1, hdlr1]);
+    return block1([hdlr1], [b2]);
   }
 }"
 `;
@@ -173,12 +174,13 @@ exports[`basics can handle empty props 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].props.val;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].props.val);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -199,12 +201,13 @@ exports[`basics can inject values in tagged templates 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].state.n;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].state.n);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -264,12 +267,13 @@ exports[`basics can mount a simple component with props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].props.value;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].props.value);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -303,9 +307,10 @@ exports[`basics child can be updated 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
-    return text(ctx['this'].props.value);
+    return safeOutput(ctx['this'].props.value);
   }
 }"
 `;
@@ -314,12 +319,13 @@ exports[`basics class component with dynamic text 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span>My value: <block-text-0/></span>\`);
+  let block1 = createBlock(\`<span>My value: <block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].value;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].value);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -340,12 +346,13 @@ exports[`basics class parent, class child component with props 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].props.value;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].props.value);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -409,12 +416,13 @@ exports[`basics component with dynamic content can be updated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].value;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].value);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -436,12 +444,13 @@ exports[`basics do not remove previously rendered dom if not necessary, variatio
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><h1>h1</h1><span><block-text-0/></span></div>\`);
+  let block1 = createBlock(\`<div><h1>h1</h1><span><block-child-0/></span></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].state.value;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].state.value);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -666,14 +675,15 @@ exports[`basics rerendering a widget with a sub widget 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/><button block-handler-1="click">Inc</button></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><button block-handler-0="click">Inc</button></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].state.counter;
+    const b2 = safeOutput(ctx['this'].state.counter);
     const v1 = ctx['this'];
     let hdlr1 = [()=>v1.state.counter++, ctx];
-    return block1([txt1, hdlr1]);
+    return block1([hdlr1], [b2]);
   }
 }"
 `;
@@ -701,12 +711,13 @@ exports[`basics same t-keys in two different places 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<span><block-text-0/></span>\`);
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].props.blip;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].props.blip);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -715,12 +726,13 @@ exports[`basics simple component with a dynamic text 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].value;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].value);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -729,12 +741,13 @@ exports[`basics simple component, proxy 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].state.value;
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['this'].state.value);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -963,17 +976,18 @@ exports[`basics text after a conditional component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
-  let block1 = createBlock(\`<div><block-child-0/><span><block-text-0/></span></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><span><block-child-1/></span></div>\`);
   
   return function template(ctx, node, key = "") {
-    let b2;
+    let b2, b3;
     if (ctx['this'].state.hasChild) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     }
-    let txt1 = ctx['this'].state.text;
-    return block1([txt1], [b2]);
+    b3 = safeOutput(ctx['this'].state.text);
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -1102,13 +1116,14 @@ exports[`basics update props of component without concrete own node 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div class="widget-subkey"><block-text-0/>__<block-text-1/></div>\`);
+  let block1 = createBlock(\`<div class="widget-subkey"><block-child-0/>__<block-child-1/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].props.key;
-    let txt2 = ctx['this'].props.subKey;
-    return block1([txt1, txt2]);
+    const b2 = safeOutput(ctx['this'].props.key);
+    const b3 = safeOutput(ctx['this'].props.subKey);
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -1117,7 +1132,7 @@ exports[`basics updating a component with t-foreach as root 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, withKey } = helpers;
+  let { prepareList, safeOutput, withKey } = helpers;
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
@@ -1125,7 +1140,7 @@ exports[`basics updating a component with t-foreach as root 1`] = `
     for (let i1 = 0; i1 < l_block1; i1++) {
       ctx[\`item\`] = k_block1[i1];
       const key1 = ctx['item'];
-      c_block1[i1] = withKey(text(ctx['item']), key1);
+      c_block1[i1] = withKey(safeOutput(ctx['item']), key1);
     }
     return list(c_block1);
   }

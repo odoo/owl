@@ -4,13 +4,13 @@ exports[`t-set body with backslash at top level 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "value", \`\\\\\`);
-    return text(ctx['value']);
+    return safeOutput(ctx['value']);
   }
 }"
 `;
@@ -19,13 +19,13 @@ exports[`t-set body with backtick at top-level 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "value", \`\\\`\`);
-    return text(ctx['value']);
+    return safeOutput(ctx['value']);
   }
 }"
 `;
@@ -34,13 +34,13 @@ exports[`t-set body with interpolation sigil at top level 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "value", \`\\\${very cool}\`);
-    return text(ctx['value']);
+    return safeOutput(ctx['value']);
   }
 }"
 `;
@@ -49,16 +49,16 @@ exports[`t-set evaluate value expression 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "value", 1+2);
-    let txt1 = ctx['value'];
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['value']);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -67,16 +67,16 @@ exports[`t-set evaluate value expression, part 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "value", ctx['somevariable']+2);
-    let txt1 = ctx['value'];
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['value']);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -85,13 +85,13 @@ exports[`t-set set from attribute literal (no outside div) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "value", 'ok');
-    return text(ctx['value']);
+    return safeOutput(ctx['value']);
   }
 }"
 `;
@@ -100,16 +100,16 @@ exports[`t-set set from attribute literal 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "value", 'ok');
-    let txt1 = ctx['value'];
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['value']);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -118,16 +118,16 @@ exports[`t-set set from attribute lookup 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "stuff", ctx['value']);
-    let txt1 = ctx['stuff'];
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['stuff']);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -136,7 +136,7 @@ exports[`t-set set from body literal (with t-if/t-else 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, LazyValue } = helpers;
+  let { isBoundary, withDefault, LazyValue, safeOutput } = helpers;
   
   function value1(ctx, node, key = "") {
     let b2, b3;
@@ -152,7 +152,7 @@ exports[`t-set set from body literal (with t-if/t-else 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     ctx[\`value\`] = new LazyValue(value1, ctx, this, node, key);
-    return text(ctx['value']);
+    return safeOutput(ctx['value']);
   }
 }"
 `;
@@ -161,13 +161,13 @@ exports[`t-set set from body literal 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "value", \`ok\`);
-    return text(ctx['value']);
+    return safeOutput(ctx['value']);
   }
 }"
 `;
@@ -176,20 +176,20 @@ exports[`t-set set from body lookup 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, LazyValue } = helpers;
+  let { isBoundary, withDefault, LazyValue, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function value1(ctx, node, key = "") {
-    return text(ctx['value']);
+    return safeOutput(ctx['value']);
   }
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     ctx[\`stuff\`] = new LazyValue(value1, ctx, this, node, key);
-    let txt1 = ctx['stuff'];
-    return block1([txt1]);
+    const b3 = safeOutput(ctx['stuff']);
+    return block1([], [b3]);
   }
 }"
 `;
@@ -198,16 +198,16 @@ exports[`t-set set from empty body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "stuff", null);
-    let txt1 = ctx['stuff'];
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['stuff']);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -240,11 +240,11 @@ exports[`t-set t-set body is evaluated immediately 1`] = `
   let { isBoundary, withDefault, setContextValue, LazyValue, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block2 = createBlock(\`<span><block-text-0/></span>\`);
+  let block2 = createBlock(\`<span><block-child-0/></span>\`);
   
   function value1(ctx, node, key = "") {
-    let txt1 = ctx['v1'];
-    return block2([txt1]);
+    const b3 = safeOutput(ctx['v1']);
+    return block2([], [b3]);
   }
   
   return function template(ctx, node, key = "") {
@@ -253,8 +253,8 @@ exports[`t-set t-set body is evaluated immediately 1`] = `
     setContextValue(ctx, "v1", 'before');
     ctx[\`v2\`] = new LazyValue(value1, ctx, this, node, key);
     setContextValue(ctx, "v1", 'after');
-    const b3 = safeOutput(ctx['v2']);
-    return block1([], [b3]);
+    const b4 = safeOutput(ctx['v2']);
+    return block1([], [b4]);
   }
 }"
 `;
@@ -263,19 +263,19 @@ exports[`t-set t-set can't alter from within callee 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
-  let block1 = createBlock(\`<div><p><block-text-0/></p><block-child-0/><p><block-text-1/></p></div>\`);
+  let block1 = createBlock(\`<div><p><block-child-0/></p><block-child-1/><p><block-child-2/></p></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "iter", 'source');
-    let txt1 = ctx['iter'];
-    const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
-    let txt2 = ctx['iter'];
-    return block1([txt1, txt2], [b2]);
+    const b2 = safeOutput(ctx['iter']);
+    const b3 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    const b4 = safeOutput(ctx['iter']);
+    return block1([], [b2, b3, b4]);
   }
 }"
 `;
@@ -284,17 +284,17 @@ exports[`t-set t-set can't alter from within callee 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { safeOutput, isBoundary, withDefault, setContextValue } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/><block-text-1/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    let txt1 = ctx['iter'];
+    const b2 = safeOutput(ctx['iter']);
     setContextValue(ctx, "iter", 'called');
-    let txt2 = ctx['iter'];
-    return block1([txt1, txt2]);
+    const b3 = safeOutput(ctx['iter']);
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -303,23 +303,23 @@ exports[`t-set t-set can't alter in t-call body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
-  let block1 = createBlock(\`<div><p><block-text-0/></p><block-child-0/><p><block-text-1/></p></div>\`);
+  let block1 = createBlock(\`<div><p><block-child-0/></p><block-child-1/><p><block-child-2/></p></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "iter", 'source');
-    let txt1 = ctx['iter'];
+    const b2 = safeOutput(ctx['iter']);
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
     setContextValue(ctx, "iter", 'inCall');
-    const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    const b3 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     ctx = ctx.__proto__;
-    let txt2 = ctx['iter'];
-    return block1([txt1, txt2], [b2]);
+    const b4 = safeOutput(ctx['iter']);
+    return block1([], [b2, b3, b4]);
   }
 }"
 `;
@@ -328,17 +328,17 @@ exports[`t-set t-set can't alter in t-call body 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { safeOutput, isBoundary, withDefault, setContextValue } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/><block-text-1/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    let txt1 = ctx['iter'];
+    const b2 = safeOutput(ctx['iter']);
     setContextValue(ctx, "iter", 'called');
-    let txt2 = ctx['iter'];
-    return block1([txt1, txt2]);
+    const b3 = safeOutput(ctx['iter']);
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -347,16 +347,16 @@ exports[`t-set t-set does not modify render context existing key values 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "value", 35);
-    let txt1 = ctx['value'];
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['value']);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -365,17 +365,17 @@ exports[`t-set t-set evaluates an expression only once 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/><block-text-1/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "v", ctx['value']+' artois');
-    let txt1 = ctx['v'];
-    let txt2 = ctx['v'];
-    return block1([txt1, txt2]);
+    const b2 = safeOutput(ctx['v']);
+    const b3 = safeOutput(ctx['v']);
+    return block1([], [b2, b3]);
   }
 }"
 `;
@@ -384,10 +384,10 @@ exports[`t-set t-set outside modified in t-foreach 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, prepareList, withKey } = helpers;
+  let { isBoundary, withDefault, setContextValue, prepareList, safeOutput, withKey } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/><p>EndLoop: <block-text-0/></p></div>\`);
-  let block3 = createBlock(\`<p>InLoop: <block-text-0/></p>\`);
+  let block1 = createBlock(\`<div><block-child-0/><p>EndLoop: <block-child-1/></p></div>\`);
+  let block3 = createBlock(\`<p>InLoop: <block-child-0/></p>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
@@ -398,14 +398,14 @@ exports[`t-set t-set outside modified in t-foreach 1`] = `
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`val\`] = k_block2[i1];
       const key1 = ctx['val'];
-      let txt1 = ctx['iter'];
-      c_block2[i1] = withKey(block3([txt1]), key1);
+      const b4 = safeOutput(ctx['iter']);
+      c_block2[i1] = withKey(block3([], [b4]), key1);
       setContextValue(ctx, "iter", ctx['iter']+1);
     }
     ctx = ctx.__proto__;
     const b2 = list(c_block2);
-    let txt2 = ctx['iter'];
-    return block1([txt2], [b2]);
+    const b5 = safeOutput(ctx['iter']);
+    return block1([], [b2, b5]);
   }
 }"
 `;
@@ -414,10 +414,10 @@ exports[`t-set t-set outside modified in t-foreach increment-after operator 1`] 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, prepareList, withKey } = helpers;
+  let { isBoundary, withDefault, setContextValue, prepareList, safeOutput, withKey } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/><p>EndLoop: <block-text-0/></p></div>\`);
-  let block3 = createBlock(\`<p>InLoop: <block-text-0/></p>\`);
+  let block1 = createBlock(\`<div><block-child-0/><p>EndLoop: <block-child-1/></p></div>\`);
+  let block3 = createBlock(\`<p>InLoop: <block-child-0/></p>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
@@ -428,14 +428,14 @@ exports[`t-set t-set outside modified in t-foreach increment-after operator 1`] 
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`val\`] = k_block2[i1];
       const key1 = ctx['val'];
-      let txt1 = ctx['iter'];
-      c_block2[i1] = withKey(block3([txt1]), key1);
+      const b4 = safeOutput(ctx['iter']);
+      c_block2[i1] = withKey(block3([], [b4]), key1);
       setContextValue(ctx, "iter", ctx['iter']++);
     }
     ctx = ctx.__proto__;
     const b2 = list(c_block2);
-    let txt2 = ctx['iter'];
-    return block1([txt2], [b2]);
+    const b5 = safeOutput(ctx['iter']);
+    return block1([], [b2, b5]);
   }
 }"
 `;
@@ -444,10 +444,10 @@ exports[`t-set t-set outside modified in t-foreach increment-before operator 1`]
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, prepareList, withKey } = helpers;
+  let { isBoundary, withDefault, setContextValue, prepareList, safeOutput, withKey } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/><p>EndLoop: <block-text-0/></p></div>\`);
-  let block3 = createBlock(\`<p>InLoop: <block-text-0/></p>\`);
+  let block1 = createBlock(\`<div><block-child-0/><p>EndLoop: <block-child-1/></p></div>\`);
+  let block3 = createBlock(\`<p>InLoop: <block-child-0/></p>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
@@ -458,14 +458,14 @@ exports[`t-set t-set outside modified in t-foreach increment-before operator 1`]
     for (let i1 = 0; i1 < l_block2; i1++) {
       ctx[\`val\`] = k_block2[i1];
       const key1 = ctx['val'];
-      let txt1 = ctx['iter'];
-      c_block2[i1] = withKey(block3([txt1]), key1);
+      const b4 = safeOutput(ctx['iter']);
+      c_block2[i1] = withKey(block3([], [b4]), key1);
       setContextValue(ctx, "iter", ++ctx['iter']);
     }
     ctx = ctx.__proto__;
     const b2 = list(c_block2);
-    let txt2 = ctx['iter'];
-    return block1([txt2], [b2]);
+    const b5 = safeOutput(ctx['iter']);
+    return block1([], [b2, b5]);
   }
 }"
 `;
@@ -474,10 +474,10 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, prepareList, withKey } = helpers;
+  let { isBoundary, withDefault, setContextValue, prepareList, safeOutput, withKey } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block3 = createBlock(\`<div><span>v<block-text-0/></span></div>\`);
+  let block3 = createBlock(\`<div><span>v<block-child-0/></span></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
@@ -489,9 +489,9 @@ exports[`t-set t-set should reuse variable if possible 1`] = `
       ctx[\`elem\`] = k_block2[i1];
       ctx[\`elem_index\`] = i1;
       const key1 = ctx['elem_index'];
-      let txt1 = ctx['v'];
+      const b4 = safeOutput(ctx['v']);
       setContextValue(ctx, "v", ctx['elem']);
-      c_block2[i1] = withKey(block3([txt1]), key1);
+      c_block2[i1] = withKey(block3([], [b4]), key1);
     }
     const b2 = list(c_block2);
     return block1([], [b2]);
@@ -523,6 +523,30 @@ exports[`t-set t-set with content and sub t-esc 1`] = `
 }"
 `;
 
+exports[`t-set t-set with content and sub t-out 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, LazyValue, safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  function value1(ctx, node, key = "") {
+    const b3 = safeOutput(ctx['beep']);
+    const b4 = text(\` boop\`);
+    return multi([b3, b4]);
+  }
+  
+  return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    ctx[\`setvar\`] = new LazyValue(value1, ctx, this, node, key);
+    const b5 = safeOutput(ctx['setvar']);
+    return block1([], [b5]);
+  }
+}"
+`;
+
 exports[`t-set t-set with t-value (falsy) and body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -530,11 +554,11 @@ exports[`t-set t-set with t-value (falsy) and body 1`] = `
   let { isBoundary, withDefault, setContextValue, LazyValue, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block2 = createBlock(\`<span><block-text-0/></span>\`);
+  let block2 = createBlock(\`<span><block-child-0/></span>\`);
   
   function value1(ctx, node, key = "") {
-    let txt1 = ctx['v1'];
-    return block2([txt1]);
+    const b3 = safeOutput(ctx['v1']);
+    return block2([], [b3]);
   }
   
   return function template(ctx, node, key = "") {
@@ -545,8 +569,8 @@ exports[`t-set t-set with t-value (falsy) and body 1`] = `
     ctx[\`v2\`] = withDefault(ctx['v3'], new LazyValue(value1, ctx, this, node, key));
     setContextValue(ctx, "v1", 'after');
     setContextValue(ctx, "v3", true);
-    const b3 = safeOutput(ctx['v2']);
-    return block1([], [b3]);
+    const b4 = safeOutput(ctx['v2']);
+    return block1([], [b4]);
   }
 }"
 `;
@@ -558,11 +582,11 @@ exports[`t-set t-set with t-value (truthy) and body 1`] = `
   let { isBoundary, withDefault, setContextValue, LazyValue, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  let block2 = createBlock(\`<span><block-text-0/></span>\`);
+  let block2 = createBlock(\`<span><block-child-0/></span>\`);
   
   function value1(ctx, node, key = "") {
-    let txt1 = ctx['v1'];
-    return block2([txt1]);
+    const b3 = safeOutput(ctx['v1']);
+    return block2([], [b3]);
   }
   
   return function template(ctx, node, key = "") {
@@ -573,8 +597,8 @@ exports[`t-set t-set with t-value (truthy) and body 1`] = `
     ctx[\`v2\`] = withDefault(ctx['v3'], new LazyValue(value1, ctx, this, node, key));
     setContextValue(ctx, "v1", 'after');
     setContextValue(ctx, "v3", false);
-    const b3 = safeOutput(ctx['v2']);
-    return block1([], [b3]);
+    const b4 = safeOutput(ctx['v2']);
+    return block1([], [b4]);
   }
 }"
 `;
@@ -606,20 +630,21 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 1 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
+    let b2;
     if (ctx['flag']) {
       setContextValue(ctx, "ourvar", \`1\`);
     } else {
       setContextValue(ctx, "ourvar", 0);
     }
-    let txt1 = ctx['ourvar'];
-    return block1([txt1]);
+    b2 = safeOutput(ctx['ourvar']);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -628,29 +653,9 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    if (ctx['flag']) {
-      setContextValue(ctx, "ourvar", 1);
-    } else {
-      setContextValue(ctx, "ourvar", \`0\`);
-    }
-    let txt1 = ctx['ourvar'];
-    return block1([txt1]);
-  }
-}"
-`;
-
-exports[`t-set t-set, t-if, and mix of expression/body lookup, 3 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
@@ -661,7 +666,28 @@ exports[`t-set t-set, t-if, and mix of expression/body lookup, 3 1`] = `
     } else {
       setContextValue(ctx, "ourvar", \`0\`);
     }
-    b2 = text(ctx['ourvar']);
+    b2 = safeOutput(ctx['ourvar']);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`t-set t-set, t-if, and mix of expression/body lookup, 3 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    ctx[isBoundary] = 1
+    let b2;
+    if (ctx['flag']) {
+      setContextValue(ctx, "ourvar", 1);
+    } else {
+      setContextValue(ctx, "ourvar", \`0\`);
+    }
+    b2 = safeOutput(ctx['ourvar']);
     return multi([b2]);
   }
 }"
@@ -671,9 +697,9 @@ exports[`t-set value priority (with non text body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, LazyValue } = helpers;
+  let { isBoundary, withDefault, LazyValue, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<span>2</span>\`);
   
   function value1(ctx, node, key = "") {
@@ -684,8 +710,8 @@ exports[`t-set value priority (with non text body 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     ctx[\`value\`] = withDefault(1, new LazyValue(value1, ctx, this, node, key));
-    let txt1 = ctx['value'];
-    return block1([txt1]);
+    const b3 = safeOutput(ctx['value']);
+    return block1([], [b3]);
   }
 }"
 `;
@@ -694,16 +720,16 @@ exports[`t-set value priority 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "value", withDefault(1, \`2\`));
-    let txt1 = ctx['value'];
-    return block1([txt1]);
+    const b2 = safeOutput(ctx['value']);
+    return block1([], [b2]);
   }
 }"
 `;

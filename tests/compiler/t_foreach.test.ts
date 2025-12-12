@@ -15,15 +15,15 @@ snapshotEverything();
 
 describe("t-foreach", () => {
   test("simple iteration", () => {
-    const template = `<t t-foreach="[3, 2, 1]" t-as="item" t-key="item"><t t-esc="item"/></t>`;
+    const template = `<t t-foreach="[3, 2, 1]" t-as="item" t-key="item"><t t-out="item"/></t>`;
     expect(renderToString(template)).toBe("321");
   });
 
   test("simple iteration with two nodes inside", () => {
     const template = `
       <t t-foreach="[3, 2, 1]" t-as="item" t-key="item">
-        <span>a<t t-esc="item"/></span>
-        <span>b<t t-esc="item"/></span>
+        <span>a<t t-out="item"/></span>
+        <span>b<t t-out="item"/></span>
       </t>`;
     const expected =
       "<span>a3</span><span>b3</span><span>a2</span><span>b2</span><span>a1</span><span>b1</span>";
@@ -58,7 +58,7 @@ describe("t-foreach", () => {
   test("simple iteration (in a node)", () => {
     const template = `
         <div>
-          <t t-foreach="[3, 2, 1]" t-as="item" t-key="item"><t t-esc="item"/></t>
+          <t t-foreach="[3, 2, 1]" t-as="item" t-key="item"><t t-out="item"/></t>
         </div>`;
     expect(renderToString(template)).toBe("<div>321</div>");
   });
@@ -67,7 +67,7 @@ describe("t-foreach", () => {
     const template = `
         <div>
           <t t-foreach="[3, 2, 1]" t-as="item" t-key="item">
-            [<t t-esc="item_index"/>: <t t-esc="item"/> <t t-esc="item_value"/>]
+            [<t t-out="item_index"/>: <t t-out="item"/> <t t-out="item_value"/>]
           </t>
         </div>`;
     expect(renderToString(template)).toBe("<div> [0: 3 3]  [1: 2 2]  [2: 1 1] </div>");
@@ -76,7 +76,7 @@ describe("t-foreach", () => {
   test("iterate on items (on a element node)", () => {
     const template = `
         <div>
-          <span t-foreach="[1, 2]" t-as="item" t-key="item"><t t-esc="item"/></span>
+          <span t-foreach="[1, 2]" t-as="item" t-key="item"><t t-out="item"/></span>
         </div>`;
     const expected = `<div><span>1</span><span>2</span></div>`;
     expect(renderToString(template)).toBe(expected);
@@ -86,7 +86,7 @@ describe("t-foreach", () => {
     const template = `
         <div>
           <t t-foreach="Array(5)" t-as="elem" t-key="elem">
-            -<t t-if="elem_first"> first</t><t t-if="elem_last"> last</t> (<t t-esc="elem_index"/>)
+            -<t t-if="elem_first"> first</t><t t-if="elem_last"> last</t> (<t t-out="elem_index"/>)
           </t>
         </div>`;
     const expected = `<div> - first (0)  - (1)  - (2)  - (3)  - last (4) </div>`;
@@ -97,7 +97,7 @@ describe("t-foreach", () => {
     const template = `
         <div>
           <t t-foreach="value" t-as="item" t-key="item_index">
-            [<t t-esc="item_index"/>: <t t-esc="item"/> <t t-esc="item_value"/>]
+            [<t t-out="item_index"/>: <t t-out="item"/> <t t-out="item_value"/>]
           </t>
         </div>`;
     const expected = `<div> [0: a 1]  [1: b 2]  [2: c 3] </div>`;
@@ -108,7 +108,7 @@ describe("t-foreach", () => {
   test("iterate, Map param", () => {
     const template = `
       <t t-foreach="value" t-as="item" t-key="item_index">
-        [<t t-esc="item_index"/>: <t t-esc="item"/> <t t-esc="item_value"/>]
+        [<t t-out="item_index"/>: <t t-out="item"/> <t t-out="item_value"/>]
       </t>`;
     const expected = ` [0: a 1]  [1: b 2]  [2: c 3] `;
     const context = {
@@ -124,7 +124,7 @@ describe("t-foreach", () => {
   test("iterate, Set param", () => {
     const template = `
       <t t-foreach="value" t-as="item" t-key="item_index">
-        [<t t-esc="item_index"/>: <t t-esc="item"/> <t t-esc="item_value"/>]
+        [<t t-out="item_index"/>: <t t-out="item"/> <t t-out="item_value"/>]
       </t>`;
     const expected = ` [0: 1 1]  [1: 2 2]  [2: 3 3] `;
     const context = { value: new Set([1, 2, 3]) };
@@ -134,7 +134,7 @@ describe("t-foreach", () => {
   test("iterate, string param", () => {
     const template = `
       <t t-foreach="'abc'" t-as="item" t-key="item_index">
-        [<t t-esc="item_index"/>: <t t-esc="item"/> <t t-esc="item_value"/>]
+        [<t t-out="item_index"/>: <t t-out="item"/> <t t-out="item_value"/>]
       </t>`;
     const expected = ` [0: a a]  [1: b b]  [2: c c] `;
     expect(renderToString(template)).toBe(expected);
@@ -143,7 +143,7 @@ describe("t-foreach", () => {
   test("iterate, iterable param", () => {
     const template = `
       <t t-foreach="map.values()" t-as="item" t-key="item_index">
-        [<t t-esc="item_index"/>: <t t-esc="item"/> <t t-esc="item_value"/>]
+        [<t t-out="item_index"/>: <t t-out="item"/> <t t-out="item_value"/>]
       </t>`;
     const expected = ` [0: 1 1]  [1: 2 2]  [2: 3 3] `;
     const context = {
@@ -159,7 +159,7 @@ describe("t-foreach", () => {
   test("iterate, generator param", () => {
     const template = `
       <t t-foreach="gen()" t-as="item" t-key="item_index">
-        [<t t-esc="item_index"/>: <t t-esc="item"/> <t t-esc="item_value"/>]
+        [<t t-out="item_index"/>: <t t-out="item"/> <t t-out="item_value"/>]
       </t>`;
     const expected = ` [0: 1 1]  [1: 2 2]  [2: 3 3] `;
     const context = {
@@ -175,7 +175,7 @@ describe("t-foreach", () => {
   test("does not pollute the rendering context", () => {
     const template = `
         <div>
-          <t t-foreach="[1]" t-as="item" t-key="item"><t t-esc="item"/></t>
+          <t t-foreach="[1]" t-as="item" t-key="item"><t t-out="item"/></t>
         </div>`;
     const context = { __owl__: {} };
     renderToString(template, context);
@@ -187,7 +187,7 @@ describe("t-foreach", () => {
         <div>
           <t t-foreach="numbers" t-as="number" t-key="number">
             <t t-foreach="letters" t-as="letter" t-key="letter">
-              [<t t-esc="number"/><t t-esc="letter"/>]
+              [<t t-out="number"/><t t-out="letter"/>]
             </t>
           </t>
         </div>`;
@@ -202,9 +202,9 @@ describe("t-foreach", () => {
     const sub = `
         <t>
           <t t-set="c" t-value="'x' + '_' + a + '_'+ b" />
-          [<t t-esc="a" />]
-          [<t t-esc="b" />]
-          [<t t-esc="c" />]
+          [<t t-out="a" />]
+          [<t t-out="b" />]
+          [<t t-out="c" />]
         </t>`;
 
     const main = `
@@ -213,9 +213,9 @@ describe("t-foreach", () => {
             <t t-foreach="letters" t-as="b" t-key="b">
               <t t-call="sub" />
             </t>
-            <span t-esc="c"/>
+            <span t-out="c"/>
           </t>
-          <span>[<t t-esc="a" />][<t t-esc="b" />][<t t-esc="c" />]</span>
+          <span>[<t t-out="a" />][<t t-out="b" />][<t t-out="c" />]</span>
         </div>`;
 
     context.addTemplate("sub", sub);
@@ -231,9 +231,9 @@ describe("t-foreach", () => {
     const context = new TestContext();
     const sub = `
         <t>
-          [<t t-esc="a" />]
-          [<t t-esc="b" />]
-          [<t t-esc="c" />]
+          [<t t-out="a" />]
+          [<t t-out="b" />]
+          [<t t-out="c" />]
         </t>`;
 
     const main = `
@@ -244,9 +244,9 @@ describe("t-foreach", () => {
                 <t t-set="c" t-value="'x' + '_' + a + '_'+ b" />
               </t>
             </t>
-            <span t-esc="c"/>
+            <span t-out="c"/>
           </t>
-          <span>[<t t-esc="a" />][<t t-esc="b" />][<t t-esc="c" />]</span>
+          <span>[<t t-out="a" />][<t t-out="b" />][<t t-out="c" />]</span>
         </div>`;
 
     context.addTemplate("sub", sub);
@@ -269,7 +269,7 @@ describe("t-foreach", () => {
     const template = `
         <div>
           <t t-foreach="elems" t-as="elem" t-key="elem.id">
-            <span t-if="elem.id &lt; 3"><t t-esc="elem.text"/></span>
+            <span t-if="elem.id &lt; 3"><t t-out="elem.text"/></span>
           </t>
         </div>`;
     const ctx = {
@@ -285,7 +285,7 @@ describe("t-foreach", () => {
   test("t-foreach with t-if inside (no external node)", () => {
     const template = `
           <t t-foreach="elems" t-as="elem" t-key="elem.id">
-            <span t-if="elem.id &lt; 3"><t t-esc="elem.text"/></span>
+            <span t-if="elem.id &lt; 3"><t t-out="elem.text"/></span>
           </t>`;
     const ctx = {
       elems: [
@@ -305,8 +305,8 @@ describe("t-foreach", () => {
     const template = `
         <div>
           <p t-foreach="items" t-as="item" t-key="item.id" t-memo="[item.x]">
-            <t t-esc="item.x"/>
-            <t t-esc="item.y"/>
+            <t t-out="item.x"/>
+            <t t-out="item.y"/>
           </p>
         </div>`;
     const expected = `<div><p>11</p><p>11</p></div>`;

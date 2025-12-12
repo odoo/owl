@@ -21,7 +21,7 @@ afterEach(() => {
 describe("list of components", () => {
   test("simple list", async () => {
     class Child extends Component {
-      static template = xml`<span><t t-esc="this.props.value"/></span>`;
+      static template = xml`<span><t t-out="this.props.value"/></span>`;
       props = props();
     }
 
@@ -54,7 +54,7 @@ describe("list of components", () => {
 
   test("components in a node in a t-foreach ", async () => {
     class Child extends Component {
-      static template = xml`<div><t t-esc="this.props.item"/></div>`;
+      static template = xml`<div><t t-out="this.props.item"/></div>`;
       props = props();
       setup() {
         useLogLifecycle();
@@ -104,7 +104,7 @@ describe("list of components", () => {
 
   test("reconciliation alg works for t-foreach in t-foreach", async () => {
     class Child extends Component {
-      static template = xml`<div><t t-esc="this.props.blip"/></div>`;
+      static template = xml`<div><t t-out="this.props.blip"/></div>`;
       props = props();
     }
 
@@ -127,7 +127,7 @@ describe("list of components", () => {
 
   test("reconciliation alg works for t-foreach in t-foreach, 2", async () => {
     class Child extends Component {
-      static template = xml`<div><t t-esc="this.props.row + '_' + this.props.col"/></div>`;
+      static template = xml`<div><t t-out="this.props.row + '_' + this.props.col"/></div>`;
       props = props();
     }
 
@@ -157,7 +157,7 @@ describe("list of components", () => {
 
   test("sub components rendered in a loop", async () => {
     class Child extends Component {
-      static template = xml`<p><t t-esc="this.props.n"/></p>`;
+      static template = xml`<p><t t-out="this.props.n"/></p>`;
       props = props();
     }
 
@@ -181,7 +181,7 @@ describe("list of components", () => {
     let n = 1;
 
     class Child extends Component {
-      static template = xml`<p><t t-esc="this.state.n"/></p>`;
+      static template = xml`<p><t t-out="this.state.n"/></p>`;
       state: any;
       setup() {
         this.state = proxy({ n });
@@ -245,8 +245,8 @@ describe("list of components", () => {
     class Child extends Component {
       static template = xml`
           <span>
-            <t t-esc="this.state.val"/>
-            <t t-esc="this.props.val"/>
+            <t t-out="this.state.val"/>
+            <t t-out="this.props.val"/>
           </span>`;
       props = props();
       state = proxy({ val: "A" });
@@ -276,7 +276,7 @@ describe("list of components", () => {
   test("switch component position", async () => {
     const childInstances = [];
     class Child extends Component {
-      static template = xml`<div t-esc="this.props.key"></div>`;
+      static template = xml`<div t-out="this.props.key"></div>`;
       props = props();
       setup() {
         childInstances.push(this);

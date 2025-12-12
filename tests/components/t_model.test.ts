@@ -16,7 +16,7 @@ describe("t-model directive", () => {
       static template = xml`
         <div>
           <input t-model="this.text"/>
-          <span><t t-esc="this.text()"/></span>
+          <span><t t-out="this.text()"/></span>
         </div>`;
       text = signal("");
     }
@@ -48,7 +48,7 @@ describe("t-model directive", () => {
       static template = xml`
         <div>
           <input t-model="this.state['text']"/>
-          <span><t t-esc="this.state.text()"/></span>
+          <span><t t-out="this.state.text()"/></span>
         </div>`;
       state = { text: signal("") };
     }
@@ -86,7 +86,7 @@ describe("t-model directive", () => {
     class SomeComponent extends Component {
       static template = xml`<div>
             <input t-model="this.some.text"/>
-            <span><t t-esc="this.some.text()"/></span>
+            <span><t t-out="this.some.text()"/></span>
         </div>`;
       some = { text: signal("") };
     }
@@ -130,7 +130,7 @@ describe("t-model directive", () => {
     class SomeComponent extends Component {
       static template = xml`<div>
             <textarea t-model="this.text"/>
-            <span><t t-esc="this.text()"/></span>
+            <span><t t-out="this.text()"/></span>
         </div>`;
       text = signal("");
     }
@@ -149,7 +149,7 @@ describe("t-model directive", () => {
       static template = xml`<div>
             <input type="radio" id="one" value="One" t-model="this.choice"/>
             <input type="radio" id="two" value="Two" t-model="this.choice"/>
-            <span>Choice: <t t-esc="this.choice()"/></span>
+            <span>Choice: <t t-out="this.choice()"/></span>
         </div>`;
       choice = signal("");
     }
@@ -202,7 +202,7 @@ describe("t-model directive", () => {
                 <option value="red">Red</option>
                 <option value="blue">Blue</option>
             </select>
-            <span>Choice: <t t-esc="this.color()"/></span>
+            <span>Choice: <t t-out="this.color()"/></span>
         </div>`;
       color = signal("");
     }
@@ -246,7 +246,7 @@ describe("t-model directive", () => {
       static template = xml`
         <div>
           <input t-model="this.state.something.text"/>
-          <span><t t-esc="this.state.something.text()"/></span>
+          <span><t t-out="this.state.something.text()"/></span>
         </div>
       `;
       state = { something: { text: signal("") } };
@@ -266,7 +266,7 @@ describe("t-model directive", () => {
       static template = xml`
         <div>
           <input t-model="this.state.something[this.key()]"/>
-          <span><t t-esc="this.state.something[this.key()]()"/></span>
+          <span><t t-out="this.state.something[this.key()]()"/></span>
         </div>
       `;
       state = {
@@ -299,7 +299,7 @@ describe("t-model directive", () => {
       static template = xml`
         <div>
             <input t-model.lazy="this.text"/>
-            <span><t t-esc="this.text()"/></span>
+            <span><t t-out="this.text()"/></span>
         </div>
       `;
       text = signal("");
@@ -325,7 +325,7 @@ describe("t-model directive", () => {
       static template = xml`
         <div>
           <input t-model.trim="this.text"/>
-          <span><t t-esc="this.text()"/></span>
+          <span><t t-out="this.text()"/></span>
         </div>
       `;
       text = signal("");
@@ -343,7 +343,7 @@ describe("t-model directive", () => {
       static template = xml`
         <div>
             <input t-model.trim="this.text"/>
-            <span><t t-esc="this.text()"/></span>
+            <span><t t-out="this.text()"/></span>
         </div>
       `;
       text = signal("");
@@ -369,7 +369,7 @@ describe("t-model directive", () => {
       static template = xml`
         <div>
           <input t-model.number="this.number"/>
-          <span><t t-esc="this.number()"/></span>
+          <span><t t-out="this.number()"/></span>
         </div>
       `;
       number = signal(0);
@@ -577,9 +577,9 @@ describe("t-model directive", () => {
       static template = xml`
         <div>
           <select t-model="this.model">
-             <option value="a" t-esc="'a'"/>
-             <option value="b" t-esc="'b'"/>
-             <option value="c" t-esc="'c'"/>
+             <option value="a" t-out="'a'"/>
+             <option value="b" t-out="'b'"/>
+             <option value="c" t-out="'c'"/>
           </select>
         </div>
       `;
@@ -595,8 +595,8 @@ describe("t-model directive", () => {
       static template = xml`
         <div>
           <select t-model="this.model">
-             <option t-att-value="this.options[0]" t-esc="this.options[0]"/>
-             <option t-att-value="this.options[1]" t-esc="this.options[1]"/>
+             <option t-att-value="this.options[0]" t-out="this.options[0]"/>
+             <option t-att-value="this.options[1]" t-out="this.options[1]"/>
           </select>
         </div>
       `;
@@ -613,8 +613,8 @@ describe("t-model directive", () => {
       static template = xml`
         <div>
           <select t-model="this.model">
-             <option t-att-value="this.options[0]" t-esc="this.options[0]"/>
-             <option t-attf-value="{{ this.options[1] }}" t-esc="this.options[1]"/>
+             <option t-att-value="this.options[0]" t-out="this.options[0]"/>
+             <option t-attf-value="{{ this.options[1] }}" t-out="this.options[1]"/>
           </select>
         </div>
       `;
@@ -631,8 +631,8 @@ describe("t-model directive", () => {
       static template = xml`
         <div>
           <select t-model="this.model">
-             <option t-att-value="this.options[0]" t-esc="this.options[0]"/>
-             <option value="b" t-esc="this.options[1]"/>
+             <option t-att-value="this.options[0]" t-out="this.options[0]"/>
+             <option value="b" t-out="this.options[1]"/>
           </select>
         </div>
       `;
@@ -650,7 +650,7 @@ describe("t-model directive", () => {
         <div>
           <select t-model="this.model">
             <t t-foreach="this.options" t-as="v" t-key="v">
-                <option t-att-value="v" t-esc="v"/>
+                <option t-att-value="v" t-out="v"/>
             </t>
           </select>
         </div>
@@ -668,7 +668,7 @@ describe("t-model directive", () => {
       static template = xml`
           <select t-model.number="this.value">
             <t t-foreach="this.options" t-as="o" t-key="o.value">
-                <option t-att-value="o.value" t-esc="o.value"/>
+                <option t-att-value="o.value" t-out="o.value"/>
             </t>
           </select>
       `;

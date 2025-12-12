@@ -32,15 +32,16 @@ exports[`event handling handler receive the event as argument 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
-  let block1 = createBlock(\`<span block-handler-0="click"><block-child-0/><block-text-1/></span>\`);
+  let block1 = createBlock(\`<span block-handler-0="click"><block-child-0/><block-child-1/></span>\`);
   
   return function template(ctx, node, key = "") {
     let hdlr1 = [ctx['this'].inc, ctx];
     const b2 = comp1({}, key + \`__1\`, node, this, null);
-    let txt1 = ctx['this'].state.value;
-    return block1([hdlr1, txt1], [b2]);
+    const b3 = safeOutput(ctx['this'].state.value);
+    return block1([hdlr1], [b2, b3]);
   }
 }"
 `;
@@ -134,13 +135,14 @@ exports[`event handling support for callable expression in event handler 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-text-0/><input type="text" block-handler-1="input"/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><input type="text" block-handler-0="input"/></div>\`);
   
   return function template(ctx, node, key = "") {
-    let txt1 = ctx['this'].state.value;
+    const b2 = safeOutput(ctx['this'].state.value);
     let hdlr1 = [ctx['this'].obj.onInput, ctx];
-    return block1([txt1, hdlr1]);
+    return block1([hdlr1], [b2]);
   }
 }"
 `;

@@ -200,20 +200,21 @@ exports[`t-if dynamic content after t-if with two children nodes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/><block-text-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   let block3 = createBlock(\`<p>1</p>\`);
   let block4 = createBlock(\`<p>2</p>\`);
   
   return function template(ctx, node, key = "") {
-    let b2;
+    let b2, b5;
     if (ctx['condition']) {
       const b3 = block3();
       const b4 = block4();
       b2 = multi([b3, b4]);
     }
-    let txt1 = ctx['text'];
-    return block1([txt1], [b2]);
+    b5 = safeOutput(ctx['text']);
+    return block1([], [b2, b5]);
   }
 }"
 `;
@@ -401,13 +402,51 @@ exports[`t-if t-if/t-else with more content 1`] = `
 }"
 `;
 
+exports[`t-if t-out with t-elif 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/><block-child-1/><block-child-1/></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    let b2, b3;
+    if (false) {
+      b2 = text(\`abc\`);
+    } else {
+      b3 = safeOutput('x');
+    }
+    return block1([], [b2, b3]);
+  }
+}"
+`;
+
+exports[`t-if t-out with t-if 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    let b2;
+    if (true) {
+      b2 = safeOutput('x');
+    }
+    return block1([], [b2]);
+  }
+}"
+`;
+
 exports[`t-if t-set, then t-if 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
   
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  let block1 = createBlock(\`<div><block-child-0/><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
@@ -415,7 +454,7 @@ exports[`t-if t-set, then t-if 1`] = `
     let b2;
     setContextValue(ctx, "title", 'test');
     if (ctx['title']) {
-      b2 = text(ctx['title']);
+      b2 = safeOutput(ctx['title']);
     }
     return block1([], [b2]);
   }
@@ -513,24 +552,25 @@ exports[`t-if two t-ifs next to each other 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
-  let block2 = createBlock(\`<span><block-text-0/></span>\`);
-  let block4 = createBlock(\`<p>1</p>\`);
-  let block5 = createBlock(\`<p>2</p>\`);
+  let block2 = createBlock(\`<span><block-child-0/></span>\`);
+  let block5 = createBlock(\`<p>1</p>\`);
+  let block6 = createBlock(\`<p>2</p>\`);
   
   return function template(ctx, node, key = "") {
-    let b2, b3;
+    let b2, b4;
     if (ctx['condition']) {
-      let txt1 = ctx['text'];
-      b2 = block2([txt1]);
+      const b3 = safeOutput(ctx['text']);
+      b2 = block2([], [b3]);
     }
     if (ctx['condition']) {
-      const b4 = block4();
       const b5 = block5();
-      b3 = multi([b4, b5]);
+      const b6 = block6();
+      b4 = multi([b5, b6]);
     }
-    return block1([], [b2, b3]);
+    return block1([], [b2, b4]);
   }
 }"
 `;

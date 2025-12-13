@@ -2,20 +2,16 @@
 // data between html inputs (and select/textareas) and the state of a component.
 // Note that there are two controls with t-model="color": they are totally
 // synchronized.
-import { Component, useState, mount } from "@odoo/owl";
+import { Component, signal, mount } from "@odoo/owl";
 
 class Form extends Component {
   static template = "Form";
 
-  setup() {
-    this.state = useState({
-      text: "",
-      othertext: "",
-      number: 11,
-      color: "",
-      bool: false
-    });
-  }
+  text = signal("");
+  othertext = signal("");
+  number = signal(11);
+  color = signal("");
+  bool = signal(false);
 }
 
 // Application setup

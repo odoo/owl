@@ -1,121 +1,161 @@
 // This example is an implementation of the TodoList application, from the
 // www.todomvc.com project.  This is a non trivial application with some
 // interesting user interactions. It uses the local storage for persistence.
-//
-// In this implementation, we use the owl reactivity mechanism.
-import { Component, useState, mount, useRef, reactive, useEnv, useEffect } from "@odoo/owl";
+import {
+    Component,
+    derived,
+    effect,
+    mount,
+    plugin,
+    Plugin,
+    PluginManager,
+    props,
+    signal,
+    useEffect,
+    onWillDestroy,
+} from "@odoo/owl";
 
-//------------------------------------------------------------------------------
-// Constants, helpers
-//------------------------------------------------------------------------------
 const ENTER_KEY = 13;
 const ESC_KEY = 27;
 
-function useAutofocus(name) {
-    let ref = useRef(name);
-    useEffect(el => el && el.focus(), () => [ref.el]);
-}
+class TodoItem {
+    #list;
 
-function useStore() {
-    const env = useEnv();
-    return useState(env.store);
-}
-
-//------------------------------------------------------------------------------
-// Task store
-//------------------------------------------------------------------------------
-class TaskList {
-    constructor(tasks) {
-        this.tasks = tasks || [];
-        const taskIds = this.tasks.map((t) => t.id);
-        this.nextId = taskIds.length ? Math.max(...taskIds) + 1 : 1;
+    constructor(list, { id, text, isCompleted }) {
+        this.#list = list;
+        this.id = id;
+        this.text = signal(text);
+        this.isCompleted = signal(isCompleted);
     }
 
-    addTask(text) {
+    delete() {
+        this.#list.delete(this);
+    }
+
+    toggle() {
+        this.isCompleted.update((value) => !value);
+    }
+}
+
+class LocalStoragePlugin extends Plugin {
+    static id = "local_storage";
+
+    cleanups = [];
+
+    setup() {
+        onWillDestroy(() => {
+            for (let cleanup of cleanups) {
+                cleanup();
+            }
+        });
+    }
+
+    open({ key, encode, decode }) {
+        const str = localStorage.getItem(key);
+        const result = signal(decode(str));
+        this.cleanups.push(
+            effect(() => {
+                const str = encode(result());
+                localStorage.setItem(key, str);
+            })
+        );
+        return result;
+    }
+}
+
+class TodoListPlugin extends Plugin {
+    static id = "todo_list";
+    todos = signal([]);
+
+    localStorage = plugin(LocalStoragePlugin);
+    todos = this.localStorage.open({
+        key: "todoapp",
+        encode: (data) => {
+            const json = data.map((todo) => ({
+                id: todo.id,
+                text: todo.text(),
+                isCompleted: todo.isCompleted(),
+            }));
+            return JSON.stringify(json);
+        },
+        decode: (str) => {
+            const data = JSON.parse(str || "[]");
+            return data.map((todo) => new TodoItem(this, todo));
+        },
+    });
+
+    generateId() {
+        return Math.random().toString(36).substring(2, 10);
+    }
+
+    isEmpty = derived(() => !this.todos().length);
+
+    add(text) {
         text = text.trim();
         if (text) {
-            const task = {
-                id: this.nextId++,
-                text: text,
-                isCompleted: false,
-            };
-            this.tasks.push(task);
+            const data = { id: this.generateId(), text, isComplete: false };
+            const todo = new TodoItem(this, data);
+            this.todos().push(todo);
+            this.todos.update();
         }
     }
 
-    toggleTask(id) {
-        const task = this.tasks.find(t => t.id === id);
-        task.isCompleted = !task.isCompleted;
+    delete(todo) {
+        const result = this.todos().filter((t) => t !== todo);
+        this.todos.set(result);
     }
 
     toggleAll(value) {
-        for (let task of this.tasks) {
-            task.isCompleted = value;
+        for (let todo of this.todos()) {
+            todo.isCompleted.set(value);
         }
     }
-    
+
     clearCompleted() {
-        const tasks = this.tasks.filter(t => t.isCompleted);
-        for (let task of tasks) {
-            this.deleteTask(task.id);
-        }
-    }
-    
-    deleteTask(id) {
-        const index = this.tasks.findIndex((t) => t.id === id);
-        this.tasks.splice(index, 1);
-    }
-    
-    updateTask(id, text) {
-        const value = text.trim();
-        if (!value) {
-            this.deleteTask(id);
-        } else {
-            const task = this.tasks.find(t => t.id === id);
-            task.text = value;
+        const todos = this.todos().filter((t) => t.isCompleted());
+        for (let todo of todos) {
+            this.delete(todo);
         }
     }
 }
 
-function createTaskStore() {
-    const saveTasks = () => localStorage.setItem("todoapp", JSON.stringify(taskStore.tasks));
-    const initialTasks = JSON.parse(localStorage.getItem("todoapp") || "[]");
-    const taskStore = reactive(new TaskList(initialTasks), saveTasks);
-    saveTasks();
-    return taskStore;
-}
-  
 //------------------------------------------------------------------------------
 // Todo
 //------------------------------------------------------------------------------
 class Todo extends Component {
     static template = "Todo";
-    
+
+    props = props({ todo: TodoItem });
+    todo = this.props.todo;
+    isEditing = signal(false);
+    input = signal(null);
+    text = signal(this.todo.text());
+
     setup() {
-        useAutofocus("input");
-        this.store = useStore();
-        this.state = useState({
-            isEditing: false
-        });
+        useEffect(
+            (el) => el && el.focus(),
+            () => [this.input()]
+        );
+    }
+
+    stopEditing() {
+        this.isEditing.set(false);
     }
 
     handleKeyup(ev) {
         if (ev.keyCode === ENTER_KEY) {
-            this.updateText(ev.target.value);
+            this.todo.text.set(this.text());
+            this.stopEditing();
         }
         if (ev.keyCode === ESC_KEY) {
-            ev.target.value = this.props.text;
-            this.state.isEditing = false;
+            this.text.set(this.todo.text());
+            this.stopEditing();
         }
     }
 
     handleBlur(ev) {
-        this.updateText(ev.target.value);
-    }
-
-    updateText(text) {
-        this.store.updateTask(this.props.id, text);
-        this.state.isEditing = false;
+        this.todo.text.set(this.text());
+        this.stopEditing();
     }
 }
 
@@ -125,54 +165,48 @@ class Todo extends Component {
 class TodoList extends Component {
     static template = "TodoList";
     static components = { Todo };
-    
-    setup() {
-        this.store = useStore();
-        this.state = useState({ filter: "all" });
-    }
 
-    get displayedTasks() {
-      const tasks = this.store.tasks;
-      switch (this.state.filter) {
-        case "active":
-          return tasks.filter((t) => !t.isCompleted);
-        case "completed":
-          return tasks.filter((t) => t.isCompleted);
-        case "all":
-          return tasks;
-      }
-    }
-    
-    get allChecked() {
-        return this.store.tasks.every(todo => todo.isCompleted);
-    }
+    todoList = plugin(TodoListPlugin);
+    filter = signal("all");
 
-    get remaining() {
-        return this.store.tasks.filter(todo => !todo.isCompleted).length;
-    }
+    visibleTodos = derived(() => {
+        const todos = this.todoList.todos();
+        switch (this.filter()) {
+            case "active":
+                return todos.filter((t) => !t.isCompleted());
+            case "completed":
+                return todos.filter((t) => t.isCompleted());
+            case "all":
+                return todos;
+        }
+    });
 
-    get remainingText() {
-        const items = this.remaining < 2 ? "item" : "items";
-        return ` ${items} left`;
-    }
+    remaining = derived(() => {
+        const todos = this.todoList.todos();
+        return todos.filter((todo) => !todo.isCompleted()).length;
+    });
+
+    remainingText = derived(() => {
+        return ` ${this.remaining() < 2 ? "item" : "items"} left`;
+    });
+
+    allChecked = derived(() => this.remaining() === 0);
 
     addTodo(ev) {
         if (ev.keyCode === ENTER_KEY) {
             const text = ev.target.value;
             if (text.trim()) {
-                this.store.addTask(text);
+                this.todoList.add(text);
             }
             ev.target.value = "";
         }
-    }
-
-    setFilter(filter) {
-        this.state.filter = filter;
     }
 }
 
 //------------------------------------------------------------------------------
 // App Initialization
 //------------------------------------------------------------------------------
-const env = { store: createTaskStore() };
-mount(TodoList, document.body, { env, templates: TEMPLATES, dev: true });
+const pluginManager = new PluginManager();
+pluginManager.startPlugins([TodoListPlugin]);
+
+mount(TodoList, document.body, { templates: TEMPLATES, pluginManager, dev: true });

@@ -2,49 +2,49 @@
   <section t-name="TodoList" class="todoapp">
     <header class="header">
       <h1>todos</h1>
-      <input class="new-todo" autofocus="true" autocomplete="off" placeholder="What needs to be done?" t-on-keyup="addTodo"/>
+      <input class="new-todo" autofocus="true" autocomplete="off" placeholder="What needs to be done?" t-on-keyup="this.addTodo"/>
     </header>
-    <section class="main" t-if="store.tasks.length">
-      <input class="toggle-all" id="toggle-all" type="checkbox" t-att-checked="allChecked" t-on-click="() => store.toggleAll(!allChecked)"/>
+    <section class="main" t-if="!this.todoList.isEmpty()">
+      <input class="toggle-all" id="toggle-all" type="checkbox" t-att-checked="this.allChecked()" t-on-click="() => this.todoList.toggleAll(!this.allChecked())"/>
       <label for="toggle-all"></label>
       <ul class="todo-list">
-        <t t-foreach="displayedTasks" t-as="todo" t-key="todo.id">
-          <Todo id="todo.id" isCompleted="todo.isCompleted" text="todo.text"/>
+        <t t-foreach="this.visibleTodos()" t-as="todo" t-key="todo.id">
+          <Todo todo="todo"/>
         </t>
       </ul>
     </section>
-    <footer class="footer" t-if="store.tasks.length">
+    <footer class="footer" t-if="!this.todoList.isEmpty()">
       <span class="todo-count">
         <strong>
-            <t t-esc="remaining"/>
+            <t t-out="this.remaining()"/>
         </strong>
-        <t t-esc="remainingText"/>
+        <t t-out="this.remainingText()"/>
       </span>
       <ul class="filters">
         <li>
-          <a t-on-click="() => this.setFilter('all')" t-att-class="{selected: state.filter === 'all'}">All</a>
+          <a t-on-click="() => this.filter.set('all')" t-att-class="{selected: this.filter() === 'all'}">All</a>
         </li>
         <li>
-          <a t-on-click="() => this.setFilter('active')" t-att-class="{selected: state.filter === 'active'}">Active</a>
+          <a t-on-click="() => this.filter.set('active')" t-att-class="{selected: this.filter() === 'active'}">Active</a>
         </li>
         <li>
-          <a t-on-click="() => this.setFilter('completed')" t-att-class="{selected: state.filter === 'completed'}">Completed</a>
+          <a t-on-click="() => this.filter.set('completed')" t-att-class="{selected: this.filter() === 'completed'}">Completed</a>
         </li>
       </ul>
-      <button class="clear-completed" t-if="store.tasks.length gt remaining" t-on-click="() => store.clearCompleted()">
+      <button class="clear-completed" t-if="this.todoList.todos().length gt this.remaining()" t-on-click="() => this.todoList.clearCompleted()">
         Clear completed
       </button>
     </footer>
   </section>
 
-  <li t-name="Todo" class="todo" t-att-class="{completed: props.isCompleted, editing: state.isEditing}">
+  <li t-name="Todo" class="todo" t-att-class="{completed: this.todo.isCompleted(), editing: this.isEditing()}">
     <div class="view">
-      <input class="toggle" type="checkbox" t-on-change="() => store.toggleTask(props.id)" t-att-checked="props.completed"/>
-      <label t-on-dblclick="() => state.isEditing = true">
-        <t t-esc="props.text"/>
+      <input class="toggle" type="checkbox" t-on-change="() => this.todo.toggle()" t-att-checked="this.props.todo.isCompleted()"/>
+      <label t-on-dblclick="() => this.isEditing.set(true)">
+        <t t-out="this.todo.text()"/>
       </label>
-      <button class="destroy" t-on-click="() => store.deleteTask(props.id)"></button>
+      <button class="destroy" t-on-click="() => this.todo.delete()"></button>
     </div>
-    <input class="edit" t-ref="input" t-if="state.isEditing" t-att-value="props.text" t-on-keyup="handleKeyup" t-on-blur="handleBlur"/>
+    <input class="edit" t-ref="this.input" t-if="this.isEditing()" t-model="this.text" t-on-keyup="this.handleKeyup" t-on-blur="this.handleBlur"/>
   </li>
 </templates>

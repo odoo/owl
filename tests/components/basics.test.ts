@@ -1081,9 +1081,7 @@ describe("t-out in components", () => {
     }
     await mount(Test, fixture);
 
-    expect(fixture.innerHTML).toBe(
-      "<div><b>one</b><b>two</b><b>tree</b></div>"
-    );
+    expect(fixture.innerHTML).toBe("<div><b>one</b><b>two</b><b>tree</b></div>");
   });
 
   test("can switch the contents of two t-out repeatedly", async () => {

@@ -1,49 +1,49 @@
 <templates>
-  <div t-name="TabbedEditor" class="tabbed-editor" t-att-style="props.style">
-    <div class="tabBar" t-att-class="{resizeable: props.resizeable}" t-on-mousedown="onMouseDown">
+  <div t-name="TabbedEditor" class="tabbed-editor" t-att-style="this.props.style">
+    <div class="tabBar" t-att-class="{resizeable: this.props.resizeable}" t-on-mousedown="this.onMouseDown">
         <t t-foreach="['js', 'xml', 'css']" t-as="tab" t-key="tab">
-            <a t-if="props[tab] !== false" t-key="tab" class="tab flash" t-att-class="{active: state.currentTab===tab}" t-on-click="() => setTab(tab)">
+            <a t-if="this.props[tab] !== false" t-key="tab" class="tab flash" t-att-class="{active: this.state.currentTab===tab}" t-on-click="() => this.setTab(tab)">
                 <t t-out="tab"/>
             </a>
         </t>
     </div>
-    <div class="code-editor" t-ref="editorNode"></div>
+    <div class="code-editor" t-ref="this.editorNode"></div>
   </div>
 
   <div t-name="Playground" class="playground">
-      <div class="left-bar" t-att-class="{split: state.splitLayout}"
-           t-att-style="leftPaneStyle">
+      <div class="left-bar" t-att-class="{split: this.state.splitLayout}"
+           t-att-style="this.leftPaneStyle">
         <div class="menubar">
-          <a class="btn run-code flash" t-on-click="runCode" title="Execute this Code">▶ Run</a>
-          <select t-on-change="onSampleChange">
-            <option t-foreach="samples" t-as="sample" t-key="sample_index">
+          <a class="btn run-code flash" t-on-click="this.runCode" title="Execute this Code">▶ Run</a>
+          <select t-on-change="this.onSampleChange">
+            <option t-foreach="this.samples" t-as="sample" t-key="sample_index">
               <t t-out="sample.description"/>
             </option>
           </select>
-          <a class="btn flash" t-on-click="exportStandaloneApp" title="Download zip that bundles this app with a tiny python web server"><i class="fas fa-download"></i></a>
-          <a class="layout-selector flash" t-on-click="toggleLayout" title="Toggle Layout"><i class="fas"  t-att-class="state.splitLayout ?  'fa-toggle-on' : 'fa-toggle-off'"></i></a>
-          <a class="btn flash share-code" t-on-click="shareCode" title="Copy a link to this playground"><span>Share</span><span class="copied-notification" t-if="state.copied">Copied link to clipboard!</span></a>
+          <a class="btn flash" t-on-click="this.exportStandaloneApp" title="Download zip that bundles this app with a tiny python web server"><i class="fas fa-download"></i></a>
+          <a class="layout-selector flash" t-on-click="this.toggleLayout" title="Toggle Layout"><i class="fas"  t-att-class="this.state.splitLayout ?  'fa-toggle-on' : 'fa-toggle-off'"></i></a>
+          <a class="btn flash share-code" t-on-click="this.shareCode" title="Copy a link to this playground"><span>Share</span><span class="copied-notification" t-if="this.state.copied">Copied link to clipboard!</span></a>
         </div>
         <TabbedEditor
-            js="state.js"
-            css="!state.splitLayout and state.css"
-            xml="!state.splitLayout and state.xml"
-            style="topEditorStyle"
-            updateCode="updateCode"/>
-        <t t-if="state.splitLayout">
+            js="this.state.js"
+            css="!this.state.splitLayout and this.state.css"
+            xml="!this.state.splitLayout and this.state.xml"
+            style="this.topEditorStyle"
+            updateCode="this.updateCode"/>
+        <t t-if="this.state.splitLayout">
           <div class="separator horizontal"/>
           <TabbedEditor
              js="false"
-             css="state.css"
-             xml="state.xml"
+             css="this.state.css"
+             xml="this.state.xml"
              resizeable="true"
-             updatePanelHeight.bind="updatePanelHeight"
-             updateCode="updateCode"/>
+             updatePanelHeight.bind="this.updatePanelHeight"
+             updateCode="this.updateCode"/>
         </t>
       </div>
-      <div class="separator vertical" t-on-mousedown="onMouseDown"/>
+      <div class="separator vertical" t-on-mousedown="this.onMouseDown"/>
       <div class="right-pane">
-        <div class="welcome" t-if="state.displayWelcome">
+        <div class="welcome" t-if="this.state.displayWelcome">
           <div>🦉 Odoo Web Library 🦉</div>
           <div>v<t t-out="version"/></div>
           <div class="url"><a href="https://github.com/odoo/owl">https://github.com/odoo/owl</a></div>
@@ -53,7 +53,7 @@
             </p>
           </div>
         </div>
-        <div class="content" t-ref="content"/>
+        <div class="content" t-ref="this.content"/>
       </div>
   </div>
 </templates>

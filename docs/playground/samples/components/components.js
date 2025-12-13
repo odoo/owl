@@ -1,26 +1,19 @@
 // In this example, we show how components can be defined and created.
-import { Component, useState, mount } from "@odoo/owl";
+import { Component, signal, mount } from "@odoo/owl";
 
-class Greeter extends Component {
-    static template = "Greeter";
+class Counter extends Component {
+    static template = "Counter";
     
-    setup() {
-        this.state = useState({ word: 'Hello' });
-    }
-
-    toggle() {
-        this.state.word = this.state.word === 'Hi' ? 'Hello' : 'Hi';
+    count = signal(0);
+    
+    increment() {
+        this.count.update(val => val + 1);
     }
 }
 
-// Main root component
 class Root extends Component {
-    static components = { Greeter };
+    static components = { Counter };
     static template = "Root"
-
-    setup() {
-        this.state = useState({ name: 'World'});
-    }
 }
 
 mount(Root, document.body, { templates: TEMPLATES, dev: true });

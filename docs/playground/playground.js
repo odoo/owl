@@ -81,7 +81,7 @@ const SAMPLES = [
     code: ["js", "xml", "css"],
   },
   {
-    description: "Form Input Bindings",
+    description: "t-model",
     folder: "form",
     code: ["js", "xml"],
   },
@@ -169,7 +169,7 @@ class TabbedEditor extends Component {
       this.editor = this.editor || ace.edit(this.editorNode());
 
       this.editor.setValue(this.props[this.state.currentTab], -1);
-      this.editor.setFontSize("12px");
+      this.editor.setFontSize("14px");
       this.editor.setTheme("ace/theme/monokai");
       this.editor.setSession(this.sessions[this.state.currentTab]);
       const tabSize = this.state.currentTab === "xml" ? 2 : 4;

@@ -1,5 +1,5 @@
 import { Component } from "../../src/runtime/component";
-import { derived, mount, signal, xml } from "../../src/index";
+import { computed, mount, signal, xml } from "../../src/index";
 import { editInput, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();
@@ -452,7 +452,7 @@ describe("t-model directive", () => {
       };
     }
     const comp = await mount(SomeComponent, fixture);
-    const values = derived(() => ({
+    const values = computed(() => ({
       Crusher: comp.values.Crusher(),
       Data: comp.values.Data(),
       Riker: comp.values.Riker(),

@@ -3,7 +3,7 @@
 // interesting user interactions. It uses the local storage for persistence.
 import {
     Component,
-    derived,
+    computed,
     effect,
     mount,
     plugin,
@@ -88,7 +88,7 @@ class TodoListPlugin extends Plugin {
         return Math.random().toString(36).substring(2, 10);
     }
 
-    isEmpty = derived(() => !this.todos().length);
+    isEmpty = computed(() => !this.todos().length);
 
     add(text) {
         text = text.trim();
@@ -169,7 +169,7 @@ class TodoList extends Component {
     todoList = plugin(TodoListPlugin);
     filter = signal("all");
 
-    visibleTodos = derived(() => {
+    visibleTodos = computed(() => {
         const todos = this.todoList.todos();
         switch (this.filter()) {
             case "active":
@@ -181,16 +181,16 @@ class TodoList extends Component {
         }
     });
 
-    remaining = derived(() => {
+    remaining = computed(() => {
         const todos = this.todoList.todos();
         return todos.filter((todo) => !todo.isCompleted()).length;
     });
 
-    remainingText = derived(() => {
+    remainingText = computed(() => {
         return ` ${this.remaining() < 2 ? "item" : "items"} left`;
     });
 
-    allChecked = derived(() => this.remaining() === 0);
+    allChecked = computed(() => this.remaining() === 0);
 
     addTodo(ev) {
         if (ev.keyCode === ENTER_KEY) {

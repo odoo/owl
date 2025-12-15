@@ -1,5 +1,5 @@
 import { onWillDestroy } from "./lifecycle_hooks";
-import { derived } from "./reactivity/derived";
+import { computed } from "./reactivity/computed";
 import { signal, Signal } from "./reactivity/signal";
 import { TypeDescription, validateType } from "./validation";
 
@@ -13,7 +13,7 @@ export class Resource<T> {
     this._type = type;
   }
 
-  items = derived(() => {
+  items = computed(() => {
     return this._items()
       .sort((el1, el2) => el1[0] - el2[0])
       .map((elem) => elem[1]);

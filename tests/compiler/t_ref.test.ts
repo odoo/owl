@@ -1,7 +1,7 @@
 import { TemplateSet } from "../../src/runtime/template_set";
 import { mount } from "../../src/runtime/blockdom";
 import { renderToBdom, snapshotEverything } from "../helpers";
-import { derived, signal } from "../../src";
+import { computed, signal } from "../../src";
 
 snapshotEverything();
 
@@ -30,7 +30,7 @@ describe("t-ref", () => {
       { id: 2, ref: signal<any>(null) },
       { id: 3, ref: signal<any>(null) },
     ];
-    const refs = derived(() => items.map((item) => item.ref()));
+    const refs = computed(() => items.map((item) => item.ref()));
     const bdom = renderToBdom(template, { items });
     expect(refs()).toEqual([null, null, null]);
     mount(bdom, document.createElement("div"));
@@ -77,7 +77,7 @@ describe("t-ref", () => {
       name: signal<any>(null),
       p: signal<any>(null),
     };
-    const refValues = derived(() => [refs.name(), refs.p()]);
+    const refValues = computed(() => [refs.name(), refs.p()]);
 
     // false
     const bdom = renderToBdom(template, { condition: false, refs });

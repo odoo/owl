@@ -45,7 +45,7 @@ export { status } from "./status";
 export { proxy, markRaw, toRaw } from "./reactivity/proxy";
 export { untrack } from "./reactivity/computations";
 export { signal } from "./reactivity/signal";
-export { derived } from "./reactivity/derived";
+export { computed } from "./reactivity/computed";
 export { effect } from "./reactivity/effect";
 export { useEffect, useListener, usePlugins } from "./hooks";
 export { batched, EventBus, htmlEscape, whenReady, markup } from "./utils";

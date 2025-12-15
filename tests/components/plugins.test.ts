@@ -1,6 +1,6 @@
 import {
   Component,
-  derived,
+  computed,
   mount,
   plugin,
   Plugin,
@@ -207,7 +207,7 @@ test("components can register resources", async () => {
     static id = "a";
     colors = new Resource<string>("colors", String);
 
-    value = derived(() => {
+    value = computed(() => {
       return this.colors.items().join("|");
     });
   }

@@ -1,5 +1,35 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`t-esc is deprecated should warn 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['var']);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`t-esc is deprecated t-out is actually called in t-esc's place 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['var']);
+    return block1([], [b2]);
+  }
+}"
+`;
+
 exports[`t-out literal 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -495,36 +525,6 @@ exports[`t-out with an extended String class 1`] = `
   let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
-  
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['var']);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`t-raw is deprecated should warn 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['var']);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`t-raw is deprecated t-out is actually called in t-raw's place 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['var']);

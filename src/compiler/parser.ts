@@ -470,17 +470,17 @@ function parseDOMNode(node: Element, ctx: ParsingContext): AST | null {
 // -----------------------------------------------------------------------------
 
 function parseTOutNode(node: Element, ctx: ParsingContext): AST | null {
-  if (!node.hasAttribute("t-out") && !node.hasAttribute("t-raw")) {
+  if (!node.hasAttribute("t-out") && !node.hasAttribute("t-esc")) {
     return null;
   }
-  if (node.hasAttribute("t-raw")) {
+  if (node.hasAttribute("t-esc")) {
     console.warn(
-      `t-raw has been deprecated in favor of t-out. If the value to render is not wrapped by the "markup" function, it will be escaped`
+      `t-esc has been deprecated in favor of t-out. If the value to render is not wrapped by the "markup" function, it will be escaped`
     );
   }
-  const expr = (node.getAttribute("t-out") || node.getAttribute("t-raw"))!;
+  const expr = (node.getAttribute("t-out") || node.getAttribute("t-esc"))!;
   node.removeAttribute("t-out");
-  node.removeAttribute("t-raw");
+  node.removeAttribute("t-esc");
 
   const tOut: AST = { type: ASTType.TOut, expr, body: null };
   const ref = node.getAttribute("t-ref");

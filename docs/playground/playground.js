@@ -81,6 +81,11 @@ const SAMPLES = [
     code: ["js", "xml", "css"],
   },
   {
+    description: "List of Counters",
+    folder: "counters",
+    code: ["js", "xml", "css"],
+  },
+  {
     description: "t-model",
     folder: "form",
     code: ["js", "xml"],

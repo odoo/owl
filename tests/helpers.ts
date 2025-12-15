@@ -12,7 +12,7 @@ import {
   status,
   useComponent,
   xml,
-  derived,
+  computed,
   effect,
 } from "../src";
 import { helpers } from "../src/runtime/rendering/template_helpers";
@@ -312,7 +312,7 @@ declare global {
 export type SpyDerived<T> = (() => T) & { spy: jest.Mock<any, T[]> };
 export function spyDerived<T>(fn: () => T): SpyDerived<T> {
   const spy = jest.fn(fn);
-  const d = derived(spy) as SpyDerived<T>;
+  const d = computed(spy) as SpyDerived<T>;
   d.spy = spy;
   return d;
 }

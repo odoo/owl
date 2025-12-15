@@ -1,4 +1,4 @@
-import { derived } from "./reactivity/derived";
+import { computed } from "./reactivity/computed";
 import { signal, Signal } from "./reactivity/signal";
 import { TypeDescription, validateType } from "./validation";
 
@@ -12,14 +12,14 @@ export class Registry<T> {
     this._type = type;
   }
 
-  entries = derived(() => {
+  entries = computed(() => {
     const entries: [string, T][] = Object.entries(this._map())
       .sort((el1, el2) => el1[1][0] - el2[1][0])
       .map(([str, elem]) => [str, elem[1]]);
     return entries;
   });
 
-  items = derived(() => this.entries().map((e) => e[1]));
+  items = computed(() => this.entries().map((e) => e[1]));
 
   addById<U extends { id: string } & T>(item: U, sequence: number = 50): Registry<T> {
     if (!item.id) {

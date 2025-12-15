@@ -8,7 +8,7 @@ import {
   xml,
   props,
   signal,
-  derived,
+  computed,
   Resource,
 } from "../../src/index";
 import { logStep, makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
@@ -79,7 +79,7 @@ describe("refs", () => {
       state = proxy({ value: true });
       ref1 = signal<HTMLElement | null>(null);
       ref2 = signal<HTMLElement | null>(null);
-      ref = derived(() => this.ref1() || this.ref2());
+      ref = computed(() => this.ref1() || this.ref2());
     }
     const test = await mount(Test, fixture);
     expect(fixture.innerHTML).toBe("<div></div>");
@@ -223,7 +223,7 @@ describe("refs", () => {
     }
 
     const comp = await mount(Test, fixture);
-    const ids = derived(() => comp.refs.items().map((el) => el.getAttribute("id")));
+    const ids = computed(() => comp.refs.items().map((el) => el.getAttribute("id")));
     expect(ids()).toEqual(["item-0", "item-1", "item-2"]);
 
     comp.items.update(() => [0, 2, 4]);

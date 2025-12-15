@@ -8,7 +8,7 @@ import {
 } from "./computations";
 import { ReactiveValue } from "./signal";
 
-export function derived<T>(fn: () => T, opts?: Opts): ReactiveValue<T> {
+export function computed<T>(fn: () => T, opts?: Opts): ReactiveValue<T> {
   // todo: handle cleanup
   let derivedComputation: Derived<any, any>;
   return () => {

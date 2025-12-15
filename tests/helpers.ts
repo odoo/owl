@@ -309,10 +309,10 @@ declare global {
   }
 }
 
-export type SpyDerived<T> = (() => T) & { spy: jest.Mock<any, T[]> };
-export function spyDerived<T>(fn: () => T): SpyDerived<T> {
+export type SpyComputed<T> = (() => T) & { spy: jest.Mock<any, T[]> };
+export function spyComputed<T>(fn: () => T): SpyComputed<T> {
   const spy = jest.fn(fn);
-  const d = computed(spy) as SpyDerived<T>;
+  const d = computed(spy) as SpyComputed<T>;
   d.spy = spy;
   return d;
 }

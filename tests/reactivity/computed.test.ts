@@ -1,7 +1,7 @@
 import { proxy, computed } from "../../src";
 import { resetSignalHooks, setSignalHooks } from "../../src/runtime/reactivity/computed";
 import { Derived } from "../../src/runtime/reactivity/computations";
-import { expectSpy, nextMicroTick, spyDerived, spyEffect } from "../helpers";
+import { expectSpy, nextMicroTick, spyComputed, spyEffect } from "../helpers";
 
 async function waitScheduler() {
   await nextMicroTick();
@@ -17,7 +17,7 @@ describe("computed", () => {
 
   test("computed should not run until being called", () => {
     const state = proxy({ a: 1 });
-    const d = spyDerived(() => state.a + 100);
+    const d = spyComputed(() => state.a + 100);
     expect(d.spy).not.toHaveBeenCalled();
     expect(d()).toBe(101);
     expect(d.spy).toHaveBeenCalledTimes(1);
@@ -26,7 +26,7 @@ describe("computed", () => {
   test("computed updates when dependencies change", async () => {
     const state = proxy({ a: 1, b: 2 });
 
-    const d = spyDerived(() => state.a * state.b);
+    const d = spyComputed(() => state.a * state.b);
     const e = spyEffect(() => d());
     e();
 
@@ -44,7 +44,7 @@ describe("computed", () => {
 
   test("computed should not update even if the effect updates", async () => {
     const state = proxy({ a: 1, b: 2 });
-    const d = spyDerived(() => state.a);
+    const d = spyComputed(() => state.a);
     const e = spyEffect(() => state.b + d());
     e();
     expectSpy(e.spy, 1);
@@ -58,7 +58,7 @@ describe("computed", () => {
 
   test("computed does not update when unrelated property changes, but updates when dependencies change", async () => {
     const state = proxy({ a: 1, b: 2, c: 3 });
-    const d = spyDerived(() => state.a + state.b);
+    const d = spyComputed(() => state.a + state.b);
     const e = spyEffect(() => d());
     e();
 
@@ -73,7 +73,7 @@ describe("computed", () => {
 
   test("computed does not notify when value is unchanged", async () => {
     const state = proxy({ a: 1, b: 2 });
-    const d = spyDerived(() => state.a + state.b);
+    const d = spyComputed(() => state.a + state.b);
     const e = spyEffect(() => d());
     e();
     expectSpy(e.spy, 1);
@@ -87,8 +87,8 @@ describe("computed", () => {
 
   test("multiple deriveds can depend on same state", async () => {
     const state = proxy({ a: 1, b: 2 });
-    const d1 = spyDerived(() => state.a + state.b);
-    const d2 = spyDerived(() => state.a * state.b);
+    const d1 = spyComputed(() => state.a + state.b);
+    const d2 = spyComputed(() => state.a * state.b);
     const e1 = spyEffect(() => d1());
     const e2 = spyEffect(() => d2());
     e1();
@@ -107,7 +107,7 @@ describe("computed", () => {
 
   test("computed can depend on arrays", async () => {
     const state = proxy({ arr: [1, 2, 3] });
-    const d = spyDerived(() => state.arr.reduce((a, b) => a + b, 0));
+    const d = spyComputed(() => state.arr.reduce((a, b) => a + b, 0));
     const e = spyEffect(() => d());
     e();
     expectSpy(e.spy, 1);
@@ -124,7 +124,7 @@ describe("computed", () => {
 
   test("computed can depend on nested proxys", async () => {
     const state = proxy({ nested: { a: 1 } });
-    const d = spyDerived(() => state.nested.a * 2);
+    const d = spyComputed(() => state.nested.a * 2);
     const e = spyEffect(() => d());
     e();
     expectSpy(e.spy, 1);
@@ -138,7 +138,7 @@ describe("computed", () => {
   test("computed can be called multiple times and returns same value if unchanged", async () => {
     const state = proxy({ a: 1, b: 2 });
 
-    const d = spyDerived(() => state.a + state.b);
+    const d = spyComputed(() => state.a + state.b);
     expect(d.spy).not.toHaveBeenCalled();
     expect(d()).toBe(3);
     expectSpy(d.spy, 1, { result: 3 });
@@ -155,7 +155,7 @@ describe("computed", () => {
 
   test("computed should not subscribe to change if no effect is using it", async () => {
     const state = proxy({ a: 1, b: 10 });
-    const d = spyDerived(() => state.a);
+    const d = spyComputed(() => state.a);
     expect(d.spy).not.toHaveBeenCalled();
     const e = spyEffect(() => {
       d();
@@ -176,7 +176,7 @@ describe("computed", () => {
 
   test("computed should not be recomputed when called from effect if none of its source changed", async () => {
     const state = proxy({ a: 1 });
-    const d = spyDerived(() => state.a * 0);
+    const d = spyComputed(() => state.a * 0);
     expect(d.spy).not.toHaveBeenCalled();
     const e = spyEffect(() => {
       d();
@@ -204,7 +204,7 @@ describe("unsubscription", () => {
 
   test("computed shoud unsubscribes from dependencies when effect is unsubscribed", async () => {
     const state = proxy({ a: 1, b: 2 });
-    const d = spyDerived(() => state.a + state.b);
+    const d = spyComputed(() => state.a + state.b);
     const e = spyEffect(() => d());
     d();
     expect(deriveds[0]!.observers.size).toBe(0);
@@ -217,8 +217,8 @@ describe("unsubscription", () => {
 describe("nested computed", () => {
   test("computed can depend on another computed", async () => {
     const state = proxy({ a: 1, b: 2 });
-    const d1 = spyDerived(() => state.a + state.b);
-    const d2 = spyDerived(() => d1() * 2);
+    const d1 = spyComputed(() => state.a + state.b);
+    const d2 = spyComputed(() => d1() * 2);
     const e = spyEffect(() => d2());
     e();
     expectSpy(e.spy, 1);
@@ -244,8 +244,8 @@ describe("nested computed", () => {
      * -> d1 should recomputes but d2 should not
      */
     const state = proxy({ a: 1 });
-    const d1 = spyDerived(() => state.a);
-    const d2 = spyDerived(() => d1() * 0);
+    const d1 = spyComputed(() => state.a);
+    const d2 = spyComputed(() => d1() * 0);
     const e = spyEffect(() => d2());
     e();
     expectSpy(e.spy, 1);
@@ -284,10 +284,10 @@ describe("nested computed", () => {
      * -> d1, d2, d3, d4, e1 should recomputes
      */
     const state = proxy({ a: 1 });
-    const d1 = spyDerived(() => state.a);
-    const d2 = spyDerived(() => d1() + 1); // 1 + 1 = 2
-    const d3 = spyDerived(() => d1() + 2); // 1 + 2 = 3
-    const d4 = spyDerived(() => d2() + d3()); // 2 + 3 = 5
+    const d1 = spyComputed(() => state.a);
+    const d2 = spyComputed(() => d1() + 1); // 1 + 1 = 2
+    const d3 = spyComputed(() => d1() + 2); // 1 + 2 = 3
+    const d4 = spyComputed(() => d2() + d3()); // 2 + 3 = 5
     const e = spyEffect(() => d4());
     e();
     expectSpy(e.spy, 1);

@@ -391,18 +391,18 @@ describe("qweb parser", () => {
   // t-out
   // ---------------------------------------------------------------------------
 
-  test("t-raw node (deprecated)", async () => {
+  test("t-esc node (deprecated)", async () => {
     const warn = console.warn;
     const steps: string[] = [];
     console.warn = (msg: any) => steps.push(msg);
-    expect(parse(`<t t-raw="text"/>`)).toEqual({
+    expect(parse(`<t t-esc="text"/>`)).toEqual({
       type: ASTType.TOut,
       expr: "text",
       body: null,
     });
 
     expect(steps).toEqual([
-      't-raw has been deprecated in favor of t-out. If the value to render is not wrapped by the "markup" function, it will be escaped',
+      't-esc has been deprecated in favor of t-out. If the value to render is not wrapped by the "markup" function, it will be escaped',
     ]);
     console.warn = warn;
   });

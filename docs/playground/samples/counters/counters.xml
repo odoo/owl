@@ -1,0 +1,15 @@
+<templates>
+  <div t-name="Counter" class="counter" t-on-click="this.increment">
+    Count: <t t-out="this.props.count()"/>
+  </div>
+
+  <t t-name="Root">
+    <div>
+      <p>Current sum: <t t-out="this.sum()"/></p>
+      <button t-on-click="this.addCounter">Add a counter</button>
+    </div>
+    <t t-foreach="this.counters" t-as="counter" t-key="counter_index">
+      <Counter count="counter"/>
+    </t>
+  </t>
+</templates>

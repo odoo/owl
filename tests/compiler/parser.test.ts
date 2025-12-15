@@ -1082,6 +1082,8 @@ describe("qweb parser", () => {
       body: {
         type: ASTType.TCall,
         name: "blap",
+        attrs: null,
+        attrsTranslationCtx: null,
         body: null,
         context: null,
       },
@@ -1120,6 +1122,8 @@ describe("qweb parser", () => {
     expect(parse(`<t t-call="blabla" />`)).toEqual({
       type: ASTType.TCall,
       name: "blabla",
+      attrs: null,
+      attrsTranslationCtx: null,
       body: null,
       context: null,
     });
@@ -1129,8 +1133,10 @@ describe("qweb parser", () => {
     expect(parse(`<t t-call="sub">ok</t>`)).toEqual({
       type: ASTType.TCall,
       name: "sub",
+      attrs: null,
+      attrsTranslationCtx: null,
       context: null,
-      body: [{ type: ASTType.Text, value: "ok" }],
+      body: { type: ASTType.Text, value: "ok" },
     });
   });
 
@@ -1138,6 +1144,8 @@ describe("qweb parser", () => {
     expect(parse(`<t t-call="blabla" t-call-context="someContext"/>`)).toEqual({
       type: ASTType.TCall,
       name: "blabla",
+      attrs: null,
+      attrsTranslationCtx: null,
       body: null,
       context: "someContext",
     });
@@ -1158,6 +1166,8 @@ describe("qweb parser", () => {
         {
           type: ASTType.TCall,
           name: "blabla",
+          attrs: null,
+          attrsTranslationCtx: null,
           body: null,
           context: null,
         },
@@ -1174,6 +1184,8 @@ describe("qweb parser", () => {
       content: {
         type: ASTType.TCall,
         name: "blabla",
+        attrs: null,
+        attrsTranslationCtx: null,
         body: null,
         context: null,
       },
@@ -1493,7 +1505,7 @@ describe("qweb parser", () => {
           scope: null,
         },
       },
-      type: 11,
+      type: ASTType.TComponent,
     });
   });
 
@@ -1697,7 +1709,14 @@ describe("qweb parser", () => {
       on: null,
       slots: {
         default: {
-          content: { body: null, name: "subTemplate", type: ASTType.TCall, context: null },
+          content: {
+            body: null,
+            name: "subTemplate",
+            type: ASTType.TCall,
+            attrs: null,
+            attrsTranslationCtx: null,
+            context: null,
+          },
           attrs: null,
           attrsTranslationCtx: null,
           scope: null,

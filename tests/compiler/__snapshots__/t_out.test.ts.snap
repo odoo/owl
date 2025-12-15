@@ -41,7 +41,7 @@ exports[`t-out multiple calls to t-out 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
     const b3 = block3();
-    ctx[zero] = b3;
+    ctx[zero] = () => b3;
     const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
@@ -57,8 +57,8 @@ exports[`t-out multiple calls to t-out 2`] = `
   let block1 = createBlock(\`<div><block-child-0/><div>Greeter</div><block-child-1/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = ctx[zero];
-    const b3 = ctx[zero];
+    const b2 = ctx[zero]?.(node, key);
+    const b3 = ctx[zero]?.(node, key + \`__1\`);
     return block1([], [b2, b3]);
   }
 }"
@@ -108,7 +108,7 @@ exports[`t-out t-out 0 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
     const b3 = block3();
-    ctx[zero] = b3;
+    ctx[zero] = () => b3;
     const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
@@ -124,7 +124,7 @@ exports[`t-out t-out 0 2`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = \\"\\") {
-    const b2 = ctx[zero];
+    const b2 = ctx[zero]?.(node, key);
     return block1([], [b2]);
   }
 }"

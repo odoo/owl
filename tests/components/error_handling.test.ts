@@ -1482,10 +1482,10 @@ describe("can catch errors", () => {
     class Child extends Component {
       static template = xml`<div>abc</div>`;
       setup() {
-        useLogLifecycle();
         onWillDestroy(() => {
           throw new Error("boom");
         });
+        useLogLifecycle();
       }
     }
 
@@ -1538,10 +1538,10 @@ describe("can catch errors", () => {
     class Child extends Component {
       static template = xml`<div>abc</div>`;
       setup() {
-        useLogLifecycle();
         onWillDestroy(() => {
           throw new Error("boom");
         });
+        useLogLifecycle();
       }
     }
 

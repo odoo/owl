@@ -150,7 +150,7 @@ exports[`hooks useEffect hook effect runs on mount, is reapplied on patch, and i
 }"
 `;
 
-exports[`hooks useEffect hook effect with empty dependency list never reruns 1`] = `
+exports[`hooks useEffect hook effect that depends on a value is rerun if value changes 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

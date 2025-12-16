@@ -309,13 +309,11 @@ describe("hooks", () => {
         ref = signal<HTMLElement | null>(null);
         setup() {
           // could be effect()
-          useEffect(
-            (el) => {
-              logStep("effect started:" + (el ? "EL" : "NULL"));
-              return () => logStep("cleaning up effect:" + (el ? "EL" : "NULL"));
-            },
-            () => [this.ref()]
-          );
+          useEffect(() => {
+            const el = this.ref();
+            logStep("effect started:" + (el ? "EL" : "NULL"));
+            return () => logStep("cleaning up effect:" + (el ? "EL" : "NULL"));
+          });
         }
       }
       const component = await mount(MyComponent, fixture);
@@ -335,27 +333,22 @@ describe("hooks", () => {
           b: 0,
         });
         setup() {
-          useEffect(
-            (a) => {
-              steps.push(`Effect a: ${a}`);
-              return () => steps.push(`cleaning up for a: ${a}`);
-            },
-            () => [this.state.a]
-          );
-          useEffect(
-            (b) => {
-              steps.push(`Effect b: ${b}`);
-              return () => steps.push(`cleaning up for b: ${b}`);
-            },
-            () => [this.state.b]
-          );
-          useEffect(
-            (a, b) => {
-              steps.push(`Effect ab: {a: ${a}, b: ${b}}`);
-              return () => steps.push(`cleaning up for ab: {a: ${a}, b: ${b}}`);
-            },
-            () => [this.state.a, this.state.b]
-          );
+          useEffect(() => {
+            let a = this.state.a;
+            steps.push(`Effect a: ${a}`);
+            return () => steps.push(`cleaning up for a: ${a}`);
+          });
+          useEffect(() => {
+            let b = this.state.b;
+            steps.push(`Effect b: ${b}`);
+            return () => steps.push(`cleaning up for b: ${b}`);
+          });
+          useEffect(() => {
+            let a = this.state.a;
+            let b = this.state.b;
+            steps.push(`Effect ab: {a: ${a}, b: ${b}}`);
+            return () => steps.push(`cleaning up for ab: {a: ${a}, b: ${b}}`);
+          });
         }
       }
       MyComponent.template = xml`<div/>`;
@@ -412,20 +405,18 @@ describe("hooks", () => {
       ]);
     });
 
-    test("effect with empty dependency list never reruns", async () => {
+    test("effect that depends on a value is rerun if value changes", async () => {
       let steps = [];
       class MyComponent extends Component {
         state = proxy({
           value: 0,
         });
         setup() {
-          useEffect(
-            () => {
-              steps.push(`value is ${this.state.value}`);
-              return () => steps.push(`cleaning up for ${this.state.value}`);
-            },
-            () => []
-          );
+          useEffect(() => {
+            let value = this.state.value;
+            steps.push(`value is ${value}`);
+            return () => steps.push(`cleaning up for ${value}`);
+          });
         }
       }
       MyComponent.template = xml`<div t-out="this.state.value"/>`;
@@ -444,61 +435,11 @@ describe("hooks", () => {
       expect(steps).toEqual([
         "value is 0",
         "before state mutation",
-        // no cleanup or effect caused by mutation
+        "cleaning up for 0",
+        "value is 1",
         "after state mutation",
-        // Value being clean
         "cleaning up for 1",
       ]);
-    });
-
-    test("effect types are inferred from dependencies", async () => {
-      // @ts-ignore (declared but never used)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      class MyComponent extends Component {
-        static template = xml`<div/>`;
-
-        setup() {
-          useEffect(
-            (a, b) => {
-              expectType<number>(a);
-              expectType<string>(b);
-            },
-            () => [3, "hello"]
-          );
-        }
-      }
-    });
-
-    test("effect type allows an effect with partial dependencies parameters", async () => {
-      // @ts-ignore (declared but never used)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      class MyComponent extends Component {
-        static template = xml`<div/>`;
-
-        setup() {
-          useEffect(
-            (a) => {
-              expectType<number>(a);
-            },
-            () => [3, "hello"]
-          );
-        }
-      }
-    });
-
-    test("effect type allows an effect with no dependency parameter", async () => {
-      // @ts-ignore (declared but never used)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      class MyComponent extends Component {
-        static template = xml`<div/>`;
-
-        setup() {
-          useEffect(
-            () => {},
-            () => [3, "hello"]
-          );
-        }
-      }
     });
 
     test("properly behaves when the effect function throws", async () => {
@@ -509,12 +450,9 @@ describe("hooks", () => {
       class MyComponent extends Component {
         static template = xml`<div/>`;
         setup() {
-          useEffect(
-            () => {
-              throw new Error("Intentional error");
-            },
-            () => []
-          );
+          useEffect(() => {
+            throw new Error("Intentional error");
+          });
         }
       }
 
@@ -524,7 +462,7 @@ describe("hooks", () => {
       } catch (e: any) {
         error = e;
       }
-      expect(error!.cause.message).toBe("Intentional error");
+      expect(error!.message).toBe("Intentional error");
       expect(console.error).toHaveBeenCalledTimes(0);
       console.error = originalconsoleError;
       expect(console.warn).toHaveBeenCalledTimes(0);
@@ -533,4 +471,4 @@ describe("hooks", () => {
   });
 });
 
-function expectType<T>(t: T) {}
+// function expectType<T>(t: T) {}

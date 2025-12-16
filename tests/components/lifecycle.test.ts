@@ -270,7 +270,48 @@ describe("lifecycle hooks", () => {
     Object.freeze(steps);
   });
 
-  test("mounted hook is called on subsubcomponents, in proper order", async () => {
+  test("mounted, willunmount, willdestroy hook, same component, in proper order", async () => {
+    let steps: any[] = [];
+
+    class Parent extends Component {
+      static template = xml`<div></div>`;
+      setup() {
+        onMounted(() => {
+          steps.push("parent:mounted1");
+        });
+        onMounted(() => {
+          steps.push("parent:mounted2");
+        });
+        onWillUnmount(() => {
+          steps.push("parent:willunmount1");
+        });
+        onWillUnmount(() => {
+          steps.push("parent:willunmount2");
+        });
+        onWillDestroy(() => {
+          steps.push("parent:willDestroy1");
+        });
+        onWillDestroy(() => {
+          steps.push("parent:willDestroy2");
+        });
+      }
+    }
+
+    const app = new App();
+    await app.createRoot(Parent).mount(fixture);
+    expect(steps).toEqual(["parent:mounted1", "parent:mounted2"]);
+    steps.length = 0;
+    app.destroy();
+    expect(steps).toEqual([
+      "parent:willunmount2",
+      "parent:willunmount1",
+      "parent:willDestroy2",
+      "parent:willDestroy1",
+    ]);
+    Object.freeze(steps);
+  });
+
+  test("various hooks are called on subsubcomponents, in proper order", async () => {
     const steps: any[] = [];
 
     class ChildChild extends Component {
@@ -281,6 +322,9 @@ describe("lifecycle hooks", () => {
         });
         onWillUnmount(() => {
           steps.push("childchild:willUnmount");
+        });
+        onWillDestroy(() => {
+          steps.push("childchild:willDestroy");
         });
       }
     }
@@ -295,6 +339,9 @@ describe("lifecycle hooks", () => {
         onWillUnmount(() => {
           steps.push("child:willUnmount");
         });
+        onWillDestroy(() => {
+          steps.push("child:willDestroy");
+        });
       }
     }
 
@@ -308,6 +355,9 @@ describe("lifecycle hooks", () => {
         });
         onWillUnmount(() => {
           steps.push("parent:willUnmount");
+        });
+        onWillDestroy(() => {
+          steps.push("parent:willDestroy");
         });
       }
     }
@@ -325,6 +375,9 @@ describe("lifecycle hooks", () => {
       "parent:willUnmount",
       "child:willUnmount",
       "childchild:willUnmount",
+      "childchild:willDestroy",
+      "child:willDestroy",
+      "parent:willDestroy",
     ]);
     Object.freeze(steps);
   });

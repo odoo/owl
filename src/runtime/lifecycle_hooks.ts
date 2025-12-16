@@ -53,7 +53,7 @@ export function onWillDestroy(fn: () => void | any) {
     (pm as any).onDestroyCb.push(fn);
   } else {
     const node = getCurrent();
-    node.willDestroy.push(decorate(node, fn, "onWillDestroy"));
+    node.willDestroy.unshift(decorate(node, fn, "onWillDestroy"));
   }
 }
 

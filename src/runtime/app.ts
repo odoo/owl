@@ -74,9 +74,7 @@ export class App<
     this.name = config.name || "";
     this.Root = Root;
     apps.add(this);
-    if (config.test) {
-      this.dev = true;
-    }
+    this.dev = config.dev ?? !!config.test;
     this.warnIfNoStaticProps = config.warnIfNoStaticProps || false;
     if (this.dev && !config.test && !hasBeenLogged) {
       console.info(`Owl is running in 'dev' mode.`);

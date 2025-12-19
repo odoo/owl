@@ -36,6 +36,10 @@ export class Resource<T> {
     this._items.set(items);
     return this;
   }
+
+  has(item: T): boolean {
+    return this._items().some(([s, value]) => value === item);
+  }
 }
 
 export function useResource<T>(r: Resource<T>, elements: T[]) {

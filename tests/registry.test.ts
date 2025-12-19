@@ -15,6 +15,16 @@ describe("registry", () => {
     expect(registry.get("key")).toBe("some value");
   });
 
+  test("can check if it has a key/value set", () => {
+    const registry = new Registry();
+
+    expect(registry.has("key")).toBe(false);
+    expect(registry.has("otherkey")).toBe(false);
+    registry.add("key", "some value");
+    expect(registry.has("key")).toBe(true);
+    expect(registry.has("otherkey")).toBe(false);
+  });
+
   test("can set and remove values", () => {
     const registry = new Registry();
 

@@ -53,4 +53,8 @@ export class Registry<T> {
     delete this._map()[key];
     this._map.update();
   }
+
+  has(key: string): boolean {
+    return key in this._map();
+  }
 }

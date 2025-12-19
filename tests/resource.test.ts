@@ -9,6 +9,14 @@ test("can add and get values", () => {
   expect(resource.items()).toEqual(["value"]);
 });
 
+test("can check if it contains values", () => {
+  const resource = new Resource();
+
+  expect(resource.has("value")).toBe(false);
+  resource.add("value");
+  expect(resource.has("value")).toBe(true);
+});
+
 test("can add multiple values (chainable)", () => {
   const resource = new Resource();
   expect(resource.items()).toEqual([]);

@@ -4,7 +4,7 @@ import { Component, ComponentConstructor } from "./component";
 import { ComponentNode, saveCurrent } from "./component_node";
 import { handleError, nodeErrorHandlers } from "./rendering/error_handling";
 import { Fiber, MountOptions, RootFiber } from "./rendering/fibers";
-import { PluginManager } from "./plugins";
+import { Plugin, PluginManager } from "./plugins";
 import { proxy, toRaw } from "./reactivity/proxy";
 import { Scheduler } from "./rendering/scheduler";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
@@ -24,6 +24,7 @@ interface RootConfig<P> {
 
 export interface AppConfig extends TemplateSetConfig {
   name?: string;
+  plugins?: (typeof Plugin)[];
   pluginManager?: PluginManager;
   test?: boolean;
 }
@@ -70,6 +71,9 @@ export class App extends TemplateSet {
     this.name = config.name || "";
     apps.add(this);
     this.pluginManager = config.pluginManager || new PluginManager(null);
+    if (config.plugins) {
+      this.pluginManager.startPlugins(config.plugins);
+    }
     if (config.test) {
       this.dev = true;
     }

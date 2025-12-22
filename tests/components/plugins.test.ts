@@ -36,6 +36,22 @@ test("basic use", async () => {
   expect(fixture.innerHTML).toBe("value from plugin");
 });
 
+test("can be started with plugin list", async () => {
+  class PluginA extends Plugin {
+    static id = "a";
+    value = "value from plugin";
+  }
+
+  class Test extends Component {
+    static template = xml`<t t-out="this.a.value"/>`;
+    a = plugin(PluginA);
+  }
+
+  await mount(Test, fixture, { plugins: [PluginA] });
+  expect(fixture.innerHTML).toBe("value from plugin");
+});
+
+
 test("basic use (setup)", async () => {
   class PluginA extends Plugin {
     static id = "a";

@@ -450,14 +450,10 @@ test(".alike suffix in a list", async () => {
   expect(fixture.innerHTML).toBe("<button>1V</button><button>2V</button>");
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     Array [
-      "Parent:willRender",
-      "Parent:rendered",
       "Todo:willRender",
       "Todo:rendered",
       "Todo:willPatch",
       "Todo:patched",
-      "Parent:willPatch",
-      "Parent:patched",
     ]
   `);
 });

@@ -17,6 +17,9 @@ class VToggler {
 
   mount(parent: HTMLElement, afterNode: Node | null) {
     this.parentEl = parent;
+    if (!(typeof this.child.mount === "function")) {
+      debugger;
+    }
     this.child.mount(parent, afterNode);
   }
 

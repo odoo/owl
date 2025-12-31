@@ -1,7 +1,9 @@
+import { OwlError } from "../common/owl_error";
+import { ComputationState } from "../common/types";
 import { BDom, mount } from "./blockdom";
 import type { ComponentNode } from "./component_node";
 import { fibersInError } from "./error_handling";
-import { OwlError } from "../common/owl_error";
+import { runWithComputation } from "./signals";
 import { STATUS } from "./status";
 
 export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
@@ -12,7 +14,7 @@ export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
   }
   return new Fiber(node, parent);
 }
-
+jest.setTimeout(100_000_000_000);
 export function makeRootFiber(node: ComponentNode): Fiber {
   let current = node.fiber;
   if (current) {
@@ -129,16 +131,34 @@ export class Fiber {
     this._render();
   }
 
-  _render() {
+  async _render() {
     const node = this.node;
     const root = this.root;
     if (root) {
-      try {
-        (this.bdom as any) = true;
-        this.bdom = node.renderFn();
-      } catch (e) {
-        node.app.handleError({ node, error: e });
-      }
+      // pushTaskContext(node.taskContext);
+      // todo: should use updateComputation somewhere else.
+      const computation = node.signalComputation;
+      runWithComputation(computation, () => {
+        try {
+          root.setCounter(root.counter + 1);
+          (this.bdom as any) = true;
+          const exec = () => {
+            this.bdom = node.renderFn();
+            root.setCounter(root.counter - 1);
+          };
+          exec();
+
+          // const async = computation.async;
+          // if (async) {
+          //   root.setCounter(root.counter + 1);
+          // }
+        } catch (e) {
+          node.app.handleError({ node, error: e });
+        }
+        node.signalComputation.state = ComputationState.EXECUTED;
+      });
+      // popTaskContext();
+
       root.setCounter(root.counter - 1);
     }
   }

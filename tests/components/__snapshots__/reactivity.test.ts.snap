@@ -52,6 +52,36 @@ exports[`reactivity in lifecycle Component is automatically subscribed to reacti
 }"
 `;
 
+exports[`reactivity in lifecycle an external reactive object should be tracked 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`TestSubComponent\`, true, false, false, []);
+  
+  let block1 = createBlock(\`<div><block-text-0/><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let txt1 = ctx['obj1'].value;
+    const b2 = comp1({}, key + \`__1\`, node, this, null);
+    return block1([txt1], [b2]);
+  }
+}"
+`;
+
+exports[`reactivity in lifecycle an external reactive object should be tracked 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let txt1 = ctx['obj2'].value;
+    return block1([txt1]);
+  }
+}"
+`;
+
 exports[`reactivity in lifecycle can use a state hook 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -137,42 +167,6 @@ exports[`reactivity in lifecycle state changes in willUnmount do not trigger rer
     let txt1 = ctx['props'].val;
     let txt2 = ctx['state'].n;
     return block1([txt1, txt2]);
-  }
-}"
-`;
-
-exports[`subscriptions subscriptions returns the keys and targets observed by the component 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  return function template(ctx, node, key = \\"\\") {
-    return text(ctx['state'].a);
-  }
-}"
-`;
-
-exports[`subscriptions subscriptions returns the keys observed by the component 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, [\\"state\\"]);
-  
-  return function template(ctx, node, key = \\"\\") {
-    const b2 = text(ctx['state'].a);
-    const b3 = comp1({state: ctx['state']}, key + \`__1\`, node, this, null);
-    return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`subscriptions subscriptions returns the keys observed by the component 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  return function template(ctx, node, key = \\"\\") {
-    return text(ctx['props'].state.b);
   }
 }"
 `;

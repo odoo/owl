@@ -1,5 +1,5 @@
 import { getCurrent } from "./component_node";
-import { _getCurrentPluginManager } from "./plugins";
+import { PluginManager } from "./plugins";
 
 // -----------------------------------------------------------------------------
 //  Status
@@ -17,7 +17,7 @@ export const enum STATUS {
 type STATUS_DESCR = "new" | "started" | "mounted" | "cancelled" | "destroyed";
 
 export function status(): () => STATUS_DESCR {
-  const pm = _getCurrentPluginManager();
+  const pm = PluginManager.current;
   const node = pm || getCurrent();
   return () => {
     switch (node.status) {

@@ -1,5 +1,5 @@
 import { ComponentNode, getCurrent } from "./component_node";
-import { _getCurrentPluginManager } from "./plugins";
+import { PluginManager } from "./plugins";
 import { nodeErrorHandlers } from "./rendering/error_handling";
 
 // -----------------------------------------------------------------------------
@@ -48,7 +48,7 @@ export function onWillUnmount(fn: () => void | any) {
 }
 
 export function onWillDestroy(fn: () => void | any) {
-  const pm = _getCurrentPluginManager();
+  const pm = PluginManager.current;
   if (pm) {
     (pm as any).onDestroyCb.push(fn);
   } else {

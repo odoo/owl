@@ -2,9 +2,6 @@ import { OwlError } from "../common/owl_error";
 import { getCurrent } from "./component_node";
 import { STATUS } from "./status";
 
-let currentPluginManager: PluginManager | null = null;
-
-export const _getCurrentPluginManager = () => currentPluginManager;
 
 export interface PluginConstructor {
   new (): Plugin;
@@ -18,6 +15,8 @@ export class Plugin {
 }
 
 export class PluginManager {
+  // kind of public to make it possible to manipulate from the outside
+  static current: PluginManager | null = null;
   private children: PluginManager[] = [];
   private parent: PluginManager | null;
   private plugins: Record<string, Plugin>;
@@ -53,14 +52,14 @@ export class PluginManager {
   }
 
   startPlugins(pluginTypes: PluginConstructor[]): Plugin[] {
-    const previousManager = currentPluginManager;
-    currentPluginManager = this;
+    const previousManager = PluginManager.current;
+    PluginManager.current = this;
     const plugins: Plugin[] = [];
 
     // instantiate plugins
     for (const pluginType of pluginTypes) {
       if (!pluginType.id) {
-        currentPluginManager = previousManager;
+        PluginManager.current = previousManager;
         throw new OwlError(`Plugin "${pluginType.name}" has no id`);
       }
       if (this.plugins.hasOwnProperty(pluginType.id)) {
@@ -77,8 +76,8 @@ export class PluginManager {
       p.setup();
     }
 
-    currentPluginManager = previousManager;
-    if (!currentPluginManager) {
+    PluginManager.current = previousManager;
+    if (!PluginManager.current) {
       this.status = STATUS.MOUNTED;
     }
     return plugins;
@@ -87,11 +86,11 @@ export class PluginManager {
 
 export function plugin<T extends PluginConstructor>(pluginType: T): InstanceType<T> {
   // getCurrent will throw if we're not in a component
-  const manager = currentPluginManager || getCurrent().pluginManager;
+  const manager = PluginManager.current || getCurrent().pluginManager;
 
   let plugin = manager.getPluginById<InstanceType<T>>(pluginType.id);
   if (!plugin) {
-    if (manager === currentPluginManager) {
+    if (manager === PluginManager.current) {
       manager.startPlugins([pluginType]);
       plugin = manager.getPluginById<InstanceType<T>>(pluginType.id)!;
     } else {

@@ -1,5 +1,6 @@
 import {
   Component,
+  computed,
   mount,
   onPatched,
   onWillPatch,
@@ -263,5 +264,46 @@ describe("reactivity in lifecycle", () => {
     // Only child should be rendered: the parent never read the b key in proxyObj
     expect([parentRenderCount, childRenderCount]).toEqual([1, 2]);
     expect(fixture.innerHTML).toBe("34");
+  });
+});
+
+describe("components and computed", () => {
+  test("Child is not rerender when reactive is computed", async () => {
+    const steps: string[] = [];
+
+    class Child extends Component {
+      static template = xml``;
+
+      setup() {
+        steps.push("Child created");
+      }
+    }
+    class Parent extends Component {
+      static template = xml`<t t-out="this.c()"/><Child/>`;
+      static components = { Child };
+
+      c = computed(() => 1);
+
+      setup() {
+        steps.push("Parent created");
+      }
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.textContent).toBe("1");
+    expect(steps.splice(0)).toEqual(["Parent created", "Child created"]);
+  });
+
+  test("simple component and computed value", async () => {
+    class Parent extends Component {
+      static template = xml`
+            <t t-out="this.value++"/>
+            <t t-out="this.c()"/>
+        `;
+      value = 1;
+      c = computed(() => 1);
+    }
+    await mount(Parent, fixture);
+    expect(fixture.textContent).toBe("11");
   });
 });

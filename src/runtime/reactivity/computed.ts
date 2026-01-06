@@ -1,9 +1,10 @@
 import {
-  Opts,
-  Derived,
-  ComputationState,
-  onWriteAtom,
   Computation,
+  ComputationState,
+  Derived,
+  onReadAtom,
+  onWriteAtom,
+  Opts,
   updateComputation,
 } from "./computations";
 import { ReactiveValue } from "./signal";
@@ -26,6 +27,7 @@ export function computed<T>(fn: () => T, opts?: Opts): ReactiveValue<T> {
     };
     onDerived?.(derivedComputation);
     updateComputation(derivedComputation);
+    onReadAtom(derivedComputation);
     return derivedComputation.value;
   };
 }

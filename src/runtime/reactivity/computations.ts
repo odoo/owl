@@ -105,7 +105,6 @@ export function runWithComputation<T>(computation: Computation, fn: () => T): T 
 
 export function updateComputation(computation: Computation) {
   const state = computation.state;
-  if (computation.isDerived) onReadAtom(computation as Derived<any, any>);
   if (state === ComputationState.EXECUTED) return;
   if (state === ComputationState.PENDING) {
     computeSources(computation as Derived<any, any>);

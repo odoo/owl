@@ -1,5 +1,45 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`components and computed Child is not rerender when reactive is computed 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].c());
+    const b3 = comp1({}, key + \`__1\`, node, this, null);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`components and computed Child is not rerender when reactive is computed 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = "") {
+    return text(\`\`);
+  }
+}"
+`;
+
+exports[`components and computed simple component and computed value 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].value++);
+    const b3 = safeOutput(ctx['this'].c());
+    return multi([b2, b3]);
+  }
+}"
+`;
+
 exports[`reactivity in lifecycle Child component doesn't render when state they depend on changes but their parent is about to unmount them 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

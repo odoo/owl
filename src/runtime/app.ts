@@ -24,7 +24,7 @@ interface RootConfig<P> {
 
 export interface AppConfig extends TemplateSetConfig {
   name?: string;
-  plugins?: (typeof Plugin)[];
+  plugins?: typeof Plugin[];
   pluginManager?: PluginManager;
   test?: boolean;
 }

@@ -2,7 +2,6 @@ import { OwlError } from "../common/owl_error";
 import { getCurrent } from "./component_node";
 import { STATUS } from "./status";
 
-
 export interface PluginConstructor {
   new (): Plugin;
   id: string;

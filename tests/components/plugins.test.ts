@@ -51,7 +51,6 @@ test("can be started with plugin list", async () => {
   expect(fixture.innerHTML).toBe("value from plugin");
 });
 
-
 test("basic use (setup)", async () => {
   class PluginA extends Plugin {
     static id = "a";

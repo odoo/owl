@@ -150,7 +150,7 @@ let tokenizeSymbol: Tokenizer = function (expr) {
   let s = expr[0];
   if (s && s.match(/[a-zA-Z_\$]/)) {
     let i = 1;
-    while (expr[i] && expr[i].match(/\w/)) {
+    while (expr[i] && expr[i].match(/[\w\$]/)) {
       s += expr[i];
       i++;
     }

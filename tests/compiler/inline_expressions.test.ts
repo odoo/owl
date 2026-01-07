@@ -18,6 +18,7 @@ describe("tokenizer", () => {
     expect(tokenize("abcde")).toEqual([{ type: "SYMBOL", value: "abcde" }]);
     expect(tokenize("_ab2")).toEqual([{ type: "SYMBOL", value: "_ab2" }]);
     expect(tokenize("$ab2")).toEqual([{ type: "SYMBOL", value: "$ab2" }]);
+    expect(tokenize("ab2$")).toEqual([{ type: "SYMBOL", value: "ab2$" }]);
     expect(tokenize("ABC")).toEqual([{ type: "SYMBOL", value: "ABC" }]);
 
     expect(tokenize("{a: 2}")).toEqual([

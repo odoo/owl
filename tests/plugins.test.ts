@@ -48,6 +48,21 @@ describe("basic features", () => {
     expect(isDestroyed).toBe(true);
   });
 
+  test("can get a plugin with no setup and no id", () => {
+    class P extends Plugin {
+      value = 1;
+    }
+
+    class A extends Plugin {
+      p = plugin(P);
+    }
+
+    const manager = new PluginManager(null);
+    manager.startPlugins([A]);
+    const a = manager.getPlugin(A)!;
+    expect(a.p.value).toBe(1);
+  });
+
   test("destroy order is reverse of setup order", () => {
     const steps: string[] = [];
 
@@ -80,8 +95,10 @@ describe("basic features", () => {
     expect(steps.splice(0)).toEqual(["destroy B", "destroy A"]);
   });
 
-  test("fails if plugins has no id", () => {
-    class A extends Plugin {}
+  test("fails if plugins has falsy id", () => {
+    class A extends Plugin {
+      static id = "";
+    }
     expect(() => new PluginManager(null).startPlugins([A])).toThrowError(`Plugin "A" has no id`);
   });
 

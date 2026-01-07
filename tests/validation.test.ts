@@ -308,4 +308,53 @@ describe("validateSchema", () => {
     ]);
     expect(validateSchema({ a: "string" }, { a: [String, { value: false }] })).toEqual([]);
   });
+
+  test("schema with extends", () => {
+    class A {}
+    class B extends A {}
+    class C extends B {}
+    class D extends A {}
+    expect(validateSchema({ a: A }, { a: { extends: A } })).toEqual([]);
+    expect(validateSchema({ a: B }, { a: { extends: A } })).toEqual([]);
+    expect(validateSchema({ a: C }, { a: { extends: A } })).toEqual([]);
+    expect(validateSchema({ a: A }, { a: { extends: B } })).toEqual([
+      "'a' is not class 'B' or a subclass",
+    ]);
+    expect(validateSchema({ a: B }, { a: { extends: B } })).toEqual([]);
+    expect(validateSchema({ a: C }, { a: { extends: B } })).toEqual([]);
+    expect(validateSchema({ a: A }, { a: { extends: C } })).toEqual([
+      "'a' is not class 'C' or a subclass",
+    ]);
+    expect(validateSchema({ a: B }, { a: { extends: C } })).toEqual([
+      "'a' is not class 'C' or a subclass",
+    ]);
+    expect(validateSchema({ a: C }, { a: { extends: C } })).toEqual([]);
+    expect(validateSchema({ a: D }, { a: { extends: A } })).toEqual([]);
+    expect(validateSchema({ a: D }, { a: { extends: B } })).toEqual([
+      "'a' is not class 'B' or a subclass",
+    ]);
+    expect(validateSchema({ a: C }, { a: { extends: D } })).toEqual([
+      "'a' is not class 'D' or a subclass",
+    ]);
+
+    expect(validateSchema({ a: new A() }, { a: { extends: A } })).toEqual([
+      "'a' is not class 'A' or a subclass",
+    ]);
+    expect(validateSchema({ a: new B() }, { a: { extends: A } })).toEqual([
+      "'a' is not class 'A' or a subclass",
+    ]);
+
+    expect(validateSchema({ a: true }, { a: { extends: A } })).toEqual([
+      "'a' is not class 'A' or a subclass",
+    ]);
+    expect(validateSchema({ a: "A" }, { a: { extends: A } })).toEqual([
+      "'a' is not class 'A' or a subclass",
+    ]);
+    expect(validateSchema({ a: {} }, { a: { extends: A } })).toEqual([
+      "'a' is not class 'A' or a subclass",
+    ]);
+    expect(validateSchema({ a: () => {} }, { a: { extends: A } })).toEqual([
+      "'a' is not class 'A' or a subclass",
+    ]);
+  });
 });

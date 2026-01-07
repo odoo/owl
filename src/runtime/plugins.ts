@@ -8,7 +8,11 @@ export interface PluginConstructor {
 }
 
 export class Plugin {
-  static id: string = "";
+  static id: string = {
+    get() {
+      return this.constructor.name;
+    },
+  } as any;
 
   setup() {}
 }

@@ -27,8 +27,8 @@ export class PluginManager {
 
   status: STATUS = STATUS.NEW;
 
-  constructor(parent: PluginManager | null) {
-    this.parent = parent;
+  constructor(parent?: PluginManager | null) {
+    this.parent = parent || null;
     this.parent?.children.push(this);
     this.plugins = this.parent ? Object.create(this.parent.plugins) : {};
   }

@@ -219,7 +219,7 @@ describe("refs", () => {
         </t>
       `;
       items = signal([0, 1, 2]);
-      refs = new Resource<HTMLElement>("elements");
+      refs = new Resource<HTMLElement>({ name: "elements" });
     }
 
     const comp = await mount(Test, fixture);

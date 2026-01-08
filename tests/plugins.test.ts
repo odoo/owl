@@ -407,7 +407,7 @@ describe("plugins and resources", () => {
   test("can define a resource type", () => {
     class A extends Plugin {
       static id = "a";
-      colors = new Resource("colors", String);
+      colors = new Resource({ name: "colors", validation: String });
     }
     class B extends Plugin {
       static id = "b";
@@ -435,7 +435,7 @@ describe("plugins and resources", () => {
   test("resources from child plugins are available in parent plugins", () => {
     class A extends Plugin {
       static id = "a";
-      colors = new Resource("colors", String);
+      colors = new Resource({ name: "colors", validation: String });
     }
     class B extends Plugin {
       static id = "b";
@@ -467,7 +467,7 @@ describe("plugins and resources", () => {
   test("resources are derived values, can be seen from effect", async () => {
     class A extends Plugin {
       static id = "a";
-      colors = new Resource<string>("colors", String);
+      colors = new Resource<string>({ name: "colors", validation: String });
     }
 
     class B extends Plugin {

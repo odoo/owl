@@ -35,7 +35,7 @@ test("can remove values", () => {
 });
 
 test("sequence", async () => {
-  const resource = new Resource("r", String);
+  const resource = new Resource({ name: "r", validation: String });
 
   resource.add("a", 10);
   resource.add("b"); // default = 50
@@ -64,27 +64,33 @@ test("items and effects", async () => {
 });
 
 test("validation schema", async () => {
-  const resource = new Resource("test", {
-    type: Object,
-    shape: {
-      blip: String,
+  const resource = new Resource({
+    name: "test",
+    validation: {
+      type: Object,
+      shape: {
+        blip: String,
+      },
     },
   });
 
   resource.add({ blip: "asdf" });
   expect(() => {
     resource.add({ blip: 1 });
-  }).toThrow();
+  }).toThrow("'item' doesn't have the correct shape ('blip' is not a string)");
 });
 
 test("validation schema, with a class", async () => {
   class A {}
   class B {}
 
-  const resource = new Resource("test", { type: A });
+  const resource = new Resource({
+    name: "test",
+    validation: { type: A },
+  });
 
   resource.add(new A());
   expect(() => {
     resource.add(new B());
-  }).toThrow();
+  }).toThrow("'item' is not a a"); // message is weird
 });

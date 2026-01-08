@@ -1,15 +1,21 @@
+import { OwlError } from "../common/owl_error";
 import { computed } from "./reactivity/computed";
 import { signal, Signal } from "./reactivity/signal";
 import { TypeDescription, validateType } from "./validation";
 
-export class Registry<T> {
-  _map: Signal<{ [key: string]: [number, T] }> = signal(Object.create(null));
-  _name: string;
-  _type?: TypeDescription;
+interface RegistryOptions {
+  name?: string;
+  validation?: TypeDescription;
+}
 
-  constructor(name?: string, type?: TypeDescription) {
-    this._name = name || "registry";
-    this._type = type;
+export class Registry<T> {
+  private _map: Signal<{ [key: string]: [number, T] }> = signal(Object.create(null));
+  private _name: string;
+  private _validation?: TypeDescription;
+
+  constructor(options: RegistryOptions = {}) {
+    this._name = options.name || "registry";
+    this._validation = options.validation;
   }
 
   entries = computed(() => {
@@ -23,14 +29,14 @@ export class Registry<T> {
 
   addById<U extends { id: string } & T>(item: U, sequence: number = 50): Registry<T> {
     if (!item.id) {
-      throw new Error(`Item should have an id key`);
+      throw new OwlError(`Item should have an id key (registry '${this._name}')`);
     }
     return this.add(item.id, item, sequence);
   }
 
   add(key: string, value: T, sequence: number = 50): Registry<T> {
-    if (this._type) {
-      const error = validateType(key, value as any, this._type as any);
+    if (this._validation) {
+      const error = validateType(key, value, this._validation);
       // todo: move error handling in validation.js
       if (error) {
         throw new Error("Invalid type: " + error);
@@ -44,7 +50,7 @@ export class Registry<T> {
   get(key: string, defaultValue?: T): T {
     const hasKey = key in this._map();
     if (!hasKey && arguments.length < 2) {
-      throw new Error(`KeyNotFoundError: Cannot find key "${key}" in this registry`);
+      throw new Error(`KeyNotFoundError: Cannot find key "${key}" (registry '${this._name}')`);
     }
     return hasKey ? this._map()[key][1] : defaultValue!;
   }

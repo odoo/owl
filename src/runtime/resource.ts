@@ -1,16 +1,22 @@
+import { OwlError } from "../common/owl_error";
 import { onWillDestroy } from "./lifecycle_hooks";
 import { computed } from "./reactivity/computed";
 import { signal, Signal } from "./reactivity/signal";
 import { TypeDescription, validateType } from "./validation";
 
+interface ResourceOptions {
+  name?: string;
+  validation?: TypeDescription;
+}
+
 export class Resource<T> {
   private _items: Signal<[number, T][]> = signal([]);
   private _name: string;
-  private _type?: TypeDescription;
+  private _validation?: TypeDescription;
 
-  constructor(name?: string, type?: TypeDescription) {
-    this._name = name || "resource";
-    this._type = type;
+  constructor(options: ResourceOptions = {}) {
+    this._name = options.name || "resource";
+    this._validation = options.validation;
   }
 
   items = computed(() => {
@@ -20,10 +26,11 @@ export class Resource<T> {
   });
 
   add(item: T, sequence: number = 50): Resource<T> {
-    if (this._type) {
-      const error = validateType("item", item as any, this._type as any);
+    if (this._validation) {
+      const error = validateType("item", item, this._validation);
+      // todo: move error handling in validation.js
       if (error) {
-        throw new Error(`Invalid type: ${error} (resource '${this._name}')`);
+        throw new OwlError(`Invalid type: ${error} (resource '${this._name}')`);
       }
     }
     this._items().push([sequence, item]);

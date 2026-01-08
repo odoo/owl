@@ -1,4 +1,5 @@
 import { OwlError } from "../common/owl_error";
+import { ComponentNode, getCurrent } from "./component_node";
 export type Callback = () => void;
 
 /**
@@ -81,8 +82,50 @@ export function validateTarget(target: HTMLElement | ShadowRoot) {
 }
 
 export class EventBus extends EventTarget {
+  constructor(events?: string[]) {
+    if (events) {
+      let node: ComponentNode | null = null;
+      try {
+        node = getCurrent();
+      } catch {}
+      if (node?.app?.dev) {
+        return new DebugEventBus(events);
+      }
+    }
+    super();
+  }
   trigger(name: string, payload?: any) {
     this.dispatchEvent(new CustomEvent(name, { detail: payload }));
+  }
+}
+class DebugEventBus extends EventBus {
+  private events: Set<string>;
+  constructor(events: string[]) {
+    super();
+    this.events = new Set(events);
+  }
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject | null,
+    options?: boolean | AddEventListenerOptions
+  ): void {
+    if (!this.events.has(type)) {
+      throw new OwlError(`EventBus: subscribing to unknown event '${type}'`);
+    }
+    super.addEventListener(type, listener, options);
+  }
+  trigger(name: string, payload?: any) {
+    if (!this.events.has(name)) {
+      throw new OwlError(`EventBus: triggering unknown event '${name}'`);
+    }
+    super.trigger(name, payload);
+  }
+
+  dispatchEvent(event: Event): boolean {
+    if (!this.events.has(event.type)) {
+      throw new OwlError(`EventBus: dispatching unknown event '${event.type}'`);
+    }
+    return super.dispatchEvent(event);
   }
 }
 

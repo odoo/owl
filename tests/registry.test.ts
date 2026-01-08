@@ -97,28 +97,34 @@ describe("registry", () => {
   });
 
   test("validation schema", async () => {
-    const registry = new Registry("test", {
-      type: Object,
-      shape: {
-        blip: String,
+    const registry = new Registry({
+      name: "test",
+      validation: {
+        type: Object,
+        shape: {
+          blip: String,
+        },
       },
     });
 
     registry.add("a", { blip: "asdf" });
     expect(() => {
       registry.add("a", { blip: 1 });
-    }).toThrow();
+    }).toThrow("'a' doesn't have the correct shape ('blip' is not a string)");
   });
 
   test("validation schema, with a class", async () => {
     class A {}
     class B {}
 
-    const registry = new Registry("test", { type: A });
+    const registry = new Registry({
+      name: "test",
+      validation: { type: A },
+    });
 
     registry.add("a", new A());
     expect(() => {
       registry.add("a", new B());
-    }).toThrow();
+    }).toThrow("'a' is not a a"); // message is weird
   });
 });

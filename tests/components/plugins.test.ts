@@ -220,7 +220,7 @@ test("shadow plugin", async () => {
 test("components can register resources", async () => {
   class PluginA extends Plugin {
     static id = "a";
-    colors = new Resource<string>("colors", String);
+    colors = new Resource<string>({ name: "colors", validation: String });
 
     value = computed(() => {
       return this.colors.items().join("|");

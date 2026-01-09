@@ -230,6 +230,7 @@ describe("hooks", () => {
       props = props();
       setup() {
         useListener(window, "click", this.increment);
+        window.dispatchEvent(new Event("click"));
       }
       increment() {
         n++;
@@ -248,12 +249,13 @@ describe("hooks", () => {
     expect(n).toBe(0);
     app.state.flag = true;
     await nextTick();
-    window.dispatchEvent(new Event("click"));
     expect(n).toBe(1);
+    window.dispatchEvent(new Event("click"));
+    expect(n).toBe(2);
     app.state.flag = false;
     await nextTick();
     window.dispatchEvent(new Event("click"));
-    expect(n).toBe(1);
+    expect(n).toBe(2);
   });
 
   describe("useEffect hook", () => {

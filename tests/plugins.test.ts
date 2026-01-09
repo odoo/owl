@@ -1,4 +1,4 @@
-import { effect, onWillDestroy, plugin, Plugin, PluginManager, status } from "../src";
+import { effect, onWillDestroy, plugin, Plugin, PluginManager, status, useListener } from "../src";
 import { Resource, useResource } from "../src/runtime/resource";
 import { waitScheduler } from "./helpers";
 
@@ -536,4 +536,29 @@ describe("plugins and resources", () => {
     await waitScheduler();
     expect(steps.splice(0)).toEqual(["red"]);
   });
+});
+
+test("can use useListener in a plugin", () => {
+  let n: number = 0;
+  const bus = new EventTarget();
+
+  class A extends Plugin {
+    setup() {
+      useListener(bus, "blip", () => n++);
+      expect(n).toBe(0);
+      bus.dispatchEvent(new Event("blip"));
+      expect(n).toBe(1);
+    }
+  }
+
+  const manager = new PluginManager(null);
+  manager.startPlugins([A]);
+  expect(n).toBe(1);
+
+  bus.dispatchEvent(new Event("blip"));
+  expect(n).toBe(2);
+  manager.destroy();
+  expect(n).toBe(2);
+  bus.dispatchEvent(new Event("blip"));
+  expect(n).toBe(2);
 });

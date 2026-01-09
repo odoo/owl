@@ -53,7 +53,7 @@ export function useListener(
   onWillUnmount(() => target.removeEventListener(eventName, boundHandler, eventParams));
 }
 
-export function usePlugins(Plugins: PluginConstructor[]) {
+export function providePlugins(Plugins: PluginConstructor[]) {
   const node = getCurrent();
 
   const manager = new PluginManager(node.pluginManager);

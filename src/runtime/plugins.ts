@@ -8,11 +8,13 @@ export interface PluginConstructor {
 }
 
 export class Plugin {
-  static id: string = {
-    get() {
-      return this.constructor.name;
-    },
-  } as any;
+  private static _shadowId: string;
+  static get id(): string {
+    return this._shadowId ?? this.name;
+  }
+  static set id(shadowId: string) {
+    this._shadowId = shadowId;
+  }
 
   setup() {}
 }
@@ -66,6 +68,13 @@ export class PluginManager {
         throw new OwlError(`Plugin "${pluginType.name}" has no id`);
       }
       if (this.plugins.hasOwnProperty(pluginType.id)) {
+        const existingPluginType = this.getPluginById(pluginType.id)!.constructor;
+        if (existingPluginType !== pluginType) {
+          PluginManager.current = previousManager;
+          throw new OwlError(
+            `Trying to start a plugin with the same id as an other plugin (id: '${pluginType.id}', existing plugin: '${existingPluginType.name}', starting plugin: '${pluginType.name}')`
+          );
+        }
         continue;
       }
 

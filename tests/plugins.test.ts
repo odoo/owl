@@ -7,7 +7,6 @@ describe("basic features", () => {
     const steps: string[] = [];
 
     class A extends Plugin {
-      static id = "a";
       setup() {
         steps.push("setup");
         onWillDestroy(() => {
@@ -26,12 +25,30 @@ describe("basic features", () => {
     expect(steps.splice(0)).toEqual(["destroy"]);
   });
 
+  test("can set a custom id", () => {
+    class A extends Plugin {
+      static id = "plugin-id";
+    }
+    const pm = new PluginManager(null);
+    pm.startPlugins([A]);
+    expect(pm.getPluginById("A")).toBe(null);
+    expect(pm.getPluginById("plugin-id")).toBeInstanceOf(A);
+  });
+
+  test("fails if plugins has falsy id", () => {
+    class A extends Plugin {
+      static id = "";
+    }
+    expect(() => new PluginManager(null).startPlugins([A])).toThrow(`Plugin "A" has no id`);
+  });
+
   test("can get a plugin", () => {
     let a;
     let isDestroyed = false;
 
     class A extends Plugin {
       static id = "a";
+
       setup() {
         a = this;
         onWillDestroy(() => (isDestroyed = true));
@@ -63,11 +80,59 @@ describe("basic features", () => {
     expect(a.p.value).toBe(1);
   });
 
+  test("fails if trying to start two plugin with the same id", () => {
+    class A extends Plugin {
+      static id = "plugin";
+    }
+    class B extends Plugin {
+      static id = "plugin";
+    }
+    expect(() => new PluginManager(null).startPlugins([A, B])).toThrow(
+      `Trying to start a plugin with the same id as an other plugin (id: 'plugin', existing plugin: 'A', starting plugin: 'B')`
+    );
+  });
+
+  test("plugin depending on another plugin with the same id (start only A, B is started implicitly)", () => {
+    class A extends Plugin {
+      static id = "plugin";
+      b = plugin(B);
+    }
+    class B extends Plugin {
+      static id = "plugin";
+    }
+    expect(() => new PluginManager(null).startPlugins([A])).not.toThrow();
+  });
+
+  test("plugin depending on another plugin with the same id (start A and B)", () => {
+    class A extends Plugin {
+      static id = "plugin";
+      b = plugin(B);
+    }
+    class B extends Plugin {
+      static id = "plugin";
+    }
+    expect(() => new PluginManager(null).startPlugins([A, B])).toThrow(
+      `Trying to start a plugin with the same id as an other plugin (id: 'plugin', existing plugin: 'A', starting plugin: 'B')`
+    );
+  });
+
+  test("plugin depending on another plugin with the same id (start B then A)", () => {
+    class A extends Plugin {
+      static id = "plugin";
+      b = plugin(B);
+    }
+    class B extends Plugin {
+      static id = "plugin";
+    }
+    expect(() => new PluginManager(null).startPlugins([B, A])).toThrow(
+      `Trying to start a plugin with the same id as an other plugin (id: 'plugin', existing plugin: 'B', starting plugin: 'A')`
+    );
+  });
+
   test("destroy order is reverse of setup order", () => {
     const steps: string[] = [];
 
     class A extends Plugin {
-      static id = "a";
       setup() {
         steps.push("setup A");
         onWillDestroy(() => {
@@ -76,7 +141,6 @@ describe("basic features", () => {
       }
     }
     class B extends Plugin {
-      static id = "b";
       setup() {
         steps.push("setup B");
         onWillDestroy(() => {
@@ -95,19 +159,10 @@ describe("basic features", () => {
     expect(steps.splice(0)).toEqual(["destroy B", "destroy A"]);
   });
 
-  test("fails if plugins has falsy id", () => {
-    class A extends Plugin {
-      static id = "";
-    }
-    expect(() => new PluginManager(null).startPlugins([A])).toThrowError(`Plugin "A" has no id`);
-  });
-
   test("plugins do not start twice", () => {
     const steps: string[] = [];
 
     class A extends Plugin {
-      static id = "a";
-
       setup() {
         steps.push("setup");
       }
@@ -227,7 +282,6 @@ describe("basic features", () => {
     let a = null;
 
     class A extends Plugin {
-      static id = "a";
       setup() {
         a = this;
       }
@@ -248,17 +302,14 @@ describe("basic features", () => {
   });
 
   test("plugin fn cannot be called outside Plugin and Component", () => {
-    class A extends Plugin {
-      static id = "a";
-    }
-    expect(() => plugin(A)).toThrowError(
+    class A extends Plugin {}
+    expect(() => plugin(A)).toThrow(
       `No active component (a hook function should only be called in 'setup')`
     );
   });
 
   test("plugin lifecycle", () => {
     class A extends Plugin {
-      static id = "a";
       status = status();
     }
     const manager = new PluginManager(null);
@@ -279,7 +330,6 @@ describe("sub plugin managers", () => {
     const steps: string[] = [];
 
     class A extends Plugin {
-      static id = "a";
       setup() {
         steps.push("setup A");
         onWillDestroy(() => {
@@ -289,7 +339,6 @@ describe("sub plugin managers", () => {
     }
 
     class B extends Plugin {
-      static id = "b";
       setup() {
         steps.push("setup B");
         onWillDestroy(() => {
@@ -317,7 +366,6 @@ describe("sub plugin managers", () => {
     const steps: string[] = [];
 
     class A extends Plugin {
-      static id = "a";
       setup() {
         steps.push("setup A");
         onWillDestroy(() => {
@@ -327,7 +375,6 @@ describe("sub plugin managers", () => {
     }
 
     class B extends Plugin {
-      static id = "b";
       setup() {
         steps.push("setup B");
         onWillDestroy(() => {
@@ -349,7 +396,6 @@ describe("sub plugin managers", () => {
     const steps: string[] = [];
 
     class A extends Plugin {
-      static id = "a";
       setup() {
         steps.push("setup A");
       }
@@ -359,8 +405,6 @@ describe("sub plugin managers", () => {
     }
 
     class B extends Plugin {
-      static id = "b";
-
       a = plugin(A);
       setup() {
         steps.push("setup B");
@@ -378,15 +422,13 @@ describe("sub plugin managers", () => {
 
   test("plugin can be shadowed", () => {
     class A extends Plugin {
-      static id = "a";
-
       someFunction() {
         return 1;
       }
     }
 
     class ShadowA extends Plugin {
-      static id = "a";
+      static id = "A";
 
       someFunction() {
         return 123;
@@ -395,23 +437,20 @@ describe("sub plugin managers", () => {
 
     const manager = new PluginManager(null);
     manager.startPlugins([A]);
-    expect(manager.getPluginById<A>("a")!.someFunction()).toBe(1);
+    expect(manager.getPluginById<A>("A")!.someFunction()).toBe(1);
 
     const subManager = new PluginManager(manager);
     subManager.startPlugins([ShadowA]);
-    expect(subManager.getPluginById<A>("a")!.someFunction()).toBe(123);
+    expect(subManager.getPluginById<A>("A")!.someFunction()).toBe(123);
   });
 });
 
 describe("plugins and resources", () => {
   test("can define a resource type", () => {
     class A extends Plugin {
-      static id = "a";
       colors = new Resource({ name: "colors", validation: String });
     }
     class B extends Plugin {
-      static id = "b";
-
       a = plugin(A);
 
       setup() {
@@ -419,8 +458,6 @@ describe("plugins and resources", () => {
       }
     }
     class C extends Plugin {
-      static id = "c";
-
       setup() {
         useResource(plugin(A).colors, ["green", "blue"]);
       }
@@ -428,24 +465,20 @@ describe("plugins and resources", () => {
 
     const manager = new PluginManager(null);
     manager.startPlugins([A, B, C]);
-    const a = manager.getPluginById("a") as A;
+    const a = manager.getPluginById("A") as A;
     expect(a.colors.items()).toEqual(["red", "green", "blue"]);
   });
 
   test("resources from child plugins are available in parent plugins", () => {
     class A extends Plugin {
-      static id = "a";
       colors = new Resource({ name: "colors", validation: String });
     }
     class B extends Plugin {
-      static id = "b";
-
       setup() {
         useResource(plugin(A).colors, ["red"]);
       }
     }
     class C extends Plugin {
-      static id = "c";
       setup() {
         useResource(plugin(A).colors, ["green", "blue"]);
       }
@@ -466,20 +499,15 @@ describe("plugins and resources", () => {
 
   test("resources are derived values, can be seen from effect", async () => {
     class A extends Plugin {
-      static id = "a";
       colors = new Resource<string>({ name: "colors", validation: String });
     }
 
     class B extends Plugin {
-      static id = "b";
-
       setup() {
         useResource(plugin(A).colors, ["red"]);
       }
     }
     class C extends Plugin {
-      static id = "c";
-
       setup() {
         useResource(plugin(A).colors, ["green", "blue"]);
       }

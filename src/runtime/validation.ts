@@ -1,6 +1,6 @@
 import { OwlError } from "../common/owl_error";
 
-type Ctor = { new (...args: any[]): any; };
+type Ctor = { new (...args: any[]): any };
 type BaseType = Ctor | true | "*";
 
 interface TypeInfo {
@@ -169,7 +169,10 @@ export function validateType(key: string, value: any, descr: TypeDescription): s
   if ("type" in descr && !result) {
     result = validateType(key, value, descr.type!);
   } else if (descr.extends && !result) {
-    if (typeof value !== "function" || !(value === descr.extends || value.prototype instanceof descr.extends)) {
+    if (
+      typeof value !== "function" ||
+      !(value === descr.extends || value.prototype instanceof descr.extends)
+    ) {
       result = `'${key}' is not class '${descr.extends.name}' or a subclass`;
     }
   }

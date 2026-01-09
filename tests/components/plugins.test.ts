@@ -5,7 +5,7 @@ import {
   plugin,
   Plugin,
   PluginManager,
-  usePlugins,
+  providePlugins,
   xml,
 } from "../../src";
 import { Resource, useResource } from "../../src/runtime/resource";
@@ -20,7 +20,6 @@ beforeEach(() => {
 
 test("basic use", async () => {
   class PluginA extends Plugin {
-    static id = "a";
     value = "value from plugin";
   }
 
@@ -38,7 +37,6 @@ test("basic use", async () => {
 
 test("can be started with plugin list", async () => {
   class PluginA extends Plugin {
-    static id = "a";
     value = "value from plugin";
   }
 
@@ -53,7 +51,6 @@ test("can be started with plugin list", async () => {
 
 test("basic use (setup)", async () => {
   class PluginA extends Plugin {
-    static id = "a";
     value = "value from plugin";
   }
 
@@ -102,12 +99,10 @@ test("get plugin which is not started", async () => {
 
 test("components can start plugins", async () => {
   class PluginA extends Plugin {
-    static id = "a";
     value = "value from plugin A";
   }
 
   class PluginB extends Plugin {
-    static id = "b";
     value = "value from plugin B";
   }
 
@@ -120,7 +115,7 @@ test("components can start plugins", async () => {
       this.a = plugin(PluginA); // PluginA is already started, we can get it
       // PluginB is not started yet so we'll crash if we try to get it (tested in a previous test)
 
-      usePlugins([PluginB]);
+      providePlugins([PluginB]);
       this.b = plugin(PluginB); // PluginB is now started, we can get it
     }
   }
@@ -157,7 +152,7 @@ test("components start plugins at their level", async () => {
     a = plugin(PluginA);
 
     setup() {
-      usePlugins([PluginB]);
+      providePlugins([PluginB]);
     }
   }
 
@@ -166,7 +161,7 @@ test("components start plugins at their level", async () => {
     static components = { Level2 };
 
     setup() {
-      usePlugins([PluginA]);
+      providePlugins([PluginA]);
     }
   }
 
@@ -199,7 +194,7 @@ test("shadow plugin", async () => {
     static components = { Level3 };
 
     setup() {
-      usePlugins([ShadowPluginA]);
+      providePlugins([ShadowPluginA]);
     }
   }
 
@@ -219,7 +214,6 @@ test("shadow plugin", async () => {
 
 test("components can register resources", async () => {
   class PluginA extends Plugin {
-    static id = "a";
     colors = new Resource<string>({ name: "colors", validation: String });
 
     value = computed(() => {

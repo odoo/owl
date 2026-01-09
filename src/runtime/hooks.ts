@@ -1,5 +1,5 @@
 import { getCurrent } from "./component_node";
-import { onMounted, onWillDestroy, onWillUnmount } from "./lifecycle_hooks";
+import { onWillDestroy } from "./lifecycle_hooks";
 import { PluginConstructor, PluginManager } from "./plugins";
 import { effect } from "./reactivity/effect";
 
@@ -31,15 +31,15 @@ export function useEffect(fn: Parameters<typeof effect>[0]) {
 /**
  * When a component needs to listen to DOM Events on element(s) that are not
  * part of his hierarchy, we can use the `useListener` hook.
- * It will correctly add and remove the event listener, whenever the
- * component is mounted and unmounted.
+ * It will immediately add the listener, and remove it whenver the plugin or
+ * component is destroyed.
  *
  * Example:
  *  a menu needs to listen to the click on window to be closed automatically
  *
  * Usage:
  *  in the constructor of the OWL component that needs to be notified,
- *  `useListener(window, 'click', this._doSomething);`
+ *  `useListener(window, 'click', () => this._doSomething());`
  * */
 export function useListener(
   target: EventTarget,
@@ -47,10 +47,8 @@ export function useListener(
   handler: EventListener,
   eventParams?: AddEventListenerOptions
 ) {
-  const node = getCurrent();
-  const boundHandler = handler.bind(node.component);
-  onMounted(() => target.addEventListener(eventName, boundHandler, eventParams));
-  onWillUnmount(() => target.removeEventListener(eventName, boundHandler, eventParams));
+  target.addEventListener(eventName, handler, eventParams);
+  onWillDestroy(() => target.removeEventListener(eventName, handler, eventParams));
 }
 
 export function providePlugins(Plugins: PluginConstructor[]) {

@@ -1,3 +1,4 @@
+import { type App } from "./app";
 import { getCurrent } from "./component_node";
 import { onWillDestroy } from "./lifecycle_hooks";
 import { PluginConstructor, PluginManager } from "./plugins";
@@ -59,4 +60,13 @@ export function providePlugins(Plugins: PluginConstructor[]) {
   onWillDestroy(() => manager.destroy());
 
   return manager.startPlugins(Plugins);
+}
+
+// -----------------------------------------------------------------------------
+// useApp
+// -----------------------------------------------------------------------------
+
+export function useApp(): App {
+  const node = getCurrent();
+  return node.app;
 }

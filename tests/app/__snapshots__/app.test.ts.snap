@@ -137,3 +137,16 @@ exports[`app warnIfNoStaticProps works as expected 1`] = `
   }
 }"
 `;
+
+exports[`useApp destroy remove the widget from the DOM 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;

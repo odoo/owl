@@ -226,11 +226,11 @@ describe("refs", () => {
     const ids = computed(() => comp.refs.items().map((el) => el.getAttribute("id")));
     expect(ids()).toEqual(["item-0", "item-1", "item-2"]);
 
-    comp.items.update(() => [0, 2, 4]);
+    comp.items.set([0, 2, 4]);
     await nextTick();
     expect(ids()).toEqual(["item-0", "item-2", "item-4"]);
 
-    comp.items.update(() => [0, 1, 2]);
+    comp.items.set([0, 1, 2]);
     await nextTick();
     expect(ids()).toEqual(["item-0", "item-2", "item-1"]);
   });

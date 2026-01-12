@@ -50,8 +50,8 @@ function canBeMadeReactive(value: any): boolean {
  * @param value the value make proxy
  * @returns a proxy for the given object when possible, the original otherwise
  */
-function possiblyReactive(val: any) {
-  return canBeMadeReactive(val) ? proxy(val) : val;
+function possiblyReactive(val: any, atom: Atom | null) {
+  return !atom && canBeMadeReactive(val) ? proxy(val) : val;
 }
 
 const skipped = new WeakSet<Target>();
@@ -104,8 +104,8 @@ function getTargetKeyAtom(target: Target, key: PropertyKey): Atom {
  *  or deletion)
  * @param callback the function to call when the key changes
  */
-function onReadTargetKey(target: Target, key: PropertyKey): void {
-  onReadAtom(getTargetKeyAtom(target, key));
+function onReadTargetKey(target: Target, key: PropertyKey, atom: Atom | null): void {
+  onReadAtom(atom ?? getTargetKeyAtom(target, key));
 }
 
 /**
@@ -117,14 +117,16 @@ function onReadTargetKey(target: Target, key: PropertyKey): void {
  * @param key the key that changed (or Symbol `KEYCHANGES` if a key was created
  *   or deleted)
  */
-function onWriteTargetKey(target: Target, key: PropertyKey): void {
-  const keyToAtomItem = targetToKeysToAtomItem.get(target)!;
-  if (!keyToAtomItem) {
-    return;
-  }
-  const atom = keyToAtomItem.get(key);
+function onWriteTargetKey(target: Target, key: PropertyKey, atom: Atom | null): void {
   if (!atom) {
-    return;
+    const keyToAtomItem = targetToKeysToAtomItem.get(target)!;
+    if (!keyToAtomItem) {
+      return;
+    }
+    if (!keyToAtomItem.has(key)) {
+      return;
+    }
+    atom = keyToAtomItem.get(key)!;
   }
   onWriteAtom(atom);
 }
@@ -132,6 +134,35 @@ function onWriteTargetKey(target: Target, key: PropertyKey): void {
 // Maps proxy objects to the underlying target
 export const targets = new WeakMap<Reactive<Target>, Target>();
 const proxyCache = new WeakMap<Target, Reactive<Target>>();
+
+export function proxifyTarget<T extends Target>(target: T, atom: Atom | null): T {
+  if (!canBeMadeReactive(target)) {
+    throw new OwlError(`Cannot make the given value reactive`);
+  }
+  if (skipped.has(target)) {
+    return target;
+  }
+  if (targets.has(target)) {
+    // target is reactive, create a reactive on the underlying object instead
+    return target;
+  }
+  const reactive = proxyCache.get(target)!;
+  if (reactive) {
+    return reactive as T;
+  }
+
+  const targetRawType = rawType(target);
+  const handler = COLLECTION_RAW_TYPES.includes(targetRawType)
+    ? collectionsProxyHandler(target as Collection, targetRawType as CollectionRawType, atom)
+    : basicProxyHandler<T>(atom);
+  const proxy = new Proxy(target, handler as ProxyHandler<T>) as Reactive<T>;
+
+  proxyCache.set(target, proxy);
+  targets.set(proxy, target);
+
+  return proxy;
+}
+
 /**
  * Creates a reactive proxy for an object. Reading data on the proxy object
  * subscribes to changes to the data. Writing data on the object will cause the
@@ -160,29 +191,7 @@ const proxyCache = new WeakMap<Target, Reactive<Target>>();
  * @returns a proxy that tracks changes to it
  */
 export function proxy<T extends Target>(target: T): T {
-  if (!canBeMadeReactive(target)) {
-    throw new OwlError(`Cannot make the given value reactive`);
-  }
-  if (skipped.has(target)) {
-    return target;
-  }
-  if (targets.has(target)) {
-    // target is reactive, create a reactive on the underlying object instead
-    return target;
-  }
-  const reactive = proxyCache.get(target)!;
-  if (reactive) return reactive as T;
-
-  const targetRawType = rawType(target);
-  const handler = COLLECTION_RAW_TYPES.includes(targetRawType)
-    ? collectionsProxyHandler(target as Collection, targetRawType as CollectionRawType)
-    : basicProxyHandler<T>();
-  const proxy = new Proxy(target, handler as ProxyHandler<T>) as Reactive<T>;
-
-  proxyCache.set(target, proxy);
-  targets.set(proxy, target);
-
-  return proxy;
+  return proxifyTarget(target, null);
 }
 
 /**
@@ -191,7 +200,7 @@ export function proxy<T extends Target>(target: T): T {
  * @param callback @see proxy
  * @returns a proxy handler object
  */
-function basicProxyHandler<T extends Target>(): ProxyHandler<T> {
+function basicProxyHandler<T extends Target>(atom: Atom | null): ProxyHandler<T> {
   return {
     get(target, key, receiver) {
       // non-writable non-configurable properties cannot be made proxy
@@ -199,15 +208,15 @@ function basicProxyHandler<T extends Target>(): ProxyHandler<T> {
       if (desc && !desc.writable && !desc.configurable) {
         return Reflect.get(target, key, receiver);
       }
-      onReadTargetKey(target, key);
-      return possiblyReactive(Reflect.get(target, key, receiver));
+      onReadTargetKey(target, key, atom);
+      return possiblyReactive(Reflect.get(target, key, receiver), atom);
     },
     set(target, key, value, receiver) {
       const hadKey = objectHasOwnProperty.call(target, key);
       const originalValue = Reflect.get(target, key, receiver);
       const ret = Reflect.set(target, key, toRaw(value), receiver);
       if (!hadKey && objectHasOwnProperty.call(target, key)) {
-        onWriteTargetKey(target, KEYCHANGES);
+        onWriteTargetKey(target, KEYCHANGES, atom);
       }
       // While Array length may trigger the set trap, it's not actually set by this
       // method but is updated behind the scenes, and the trap is not called with the
@@ -216,26 +225,26 @@ function basicProxyHandler<T extends Target>(): ProxyHandler<T> {
         originalValue !== Reflect.get(target, key, receiver) ||
         (key === "length" && Array.isArray(target))
       ) {
-        onWriteTargetKey(target, key);
+        onWriteTargetKey(target, key, atom);
       }
       return ret;
     },
     deleteProperty(target, key) {
       const ret = Reflect.deleteProperty(target, key);
       // TODO: only notify when something was actually deleted
-      onWriteTargetKey(target, KEYCHANGES);
-      onWriteTargetKey(target, key);
+      onWriteTargetKey(target, KEYCHANGES, atom);
+      onWriteTargetKey(target, key, atom);
       return ret;
     },
     ownKeys(target) {
-      onReadTargetKey(target, KEYCHANGES);
+      onReadTargetKey(target, KEYCHANGES, atom);
       return Reflect.ownKeys(target);
     },
     has(target, key) {
       // TODO: this observes all key changes instead of only the presence of the argument key
       // observing the key itself would observe value changes instead of presence changes
       // so we may need a finer grained system to distinguish observing value vs presence.
-      onReadTargetKey(target, KEYCHANGES);
+      onReadTargetKey(target, KEYCHANGES, atom);
       return Reflect.has(target, key);
     },
   } as ProxyHandler<T>;
@@ -248,11 +257,11 @@ function basicProxyHandler<T extends Target>(): ProxyHandler<T> {
  * @param target @see proxy
  * @param callback @see proxy
  */
-function makeKeyObserver(methodName: "has" | "get", target: any) {
+function makeKeyObserver(methodName: "has" | "get", target: any, atom: Atom | null) {
   return (key: any) => {
     key = toRaw(key);
-    onReadTargetKey(target, key);
-    return possiblyReactive(target[methodName](key));
+    onReadTargetKey(target, key, atom);
+    return possiblyReactive(target[methodName](key), atom);
   };
 }
 /**
@@ -265,15 +274,16 @@ function makeKeyObserver(methodName: "has" | "get", target: any) {
  */
 function makeIteratorObserver(
   methodName: "keys" | "values" | "entries" | typeof Symbol.iterator,
-  target: any
+  target: any,
+  atom: Atom | null
 ) {
   return function* () {
-    onReadTargetKey(target, KEYCHANGES);
+    onReadTargetKey(target, KEYCHANGES, atom);
     const keys = target.keys();
     for (const item of target[methodName]()) {
       const key = keys.next().value;
-      onReadTargetKey(target, key);
-      yield possiblyReactive(item);
+      onReadTargetKey(target, key, atom);
+      yield possiblyReactive(item, atom);
     }
   };
 }
@@ -285,16 +295,16 @@ function makeIteratorObserver(
  * @param target @see proxy
  * @param callback @see proxy
  */
-function makeForEachObserver(target: any) {
+function makeForEachObserver(target: any, atom: Atom | null) {
   return function forEach(forEachCb: (val: any, key: any, target: any) => void, thisArg: any) {
-    onReadTargetKey(target, KEYCHANGES);
+    onReadTargetKey(target, KEYCHANGES, atom);
     target.forEach(function (val: any, key: any, targetObj: any) {
-      onReadTargetKey(target, key);
+      onReadTargetKey(target, key, atom);
       forEachCb.call(
         thisArg,
-        possiblyReactive(val),
-        possiblyReactive(key),
-        possiblyReactive(targetObj)
+        possiblyReactive(val, atom),
+        possiblyReactive(key, atom),
+        possiblyReactive(targetObj, atom)
       );
     }, thisArg);
   };
@@ -312,7 +322,8 @@ function makeForEachObserver(target: any) {
 function delegateAndNotify(
   setterName: "set" | "add" | "delete",
   getterName: "has" | "get",
-  target: any
+  target: any,
+  atom: Atom | null
 ) {
   return (key: any, value: any) => {
     key = toRaw(key);
@@ -321,10 +332,10 @@ function delegateAndNotify(
     const ret = target[setterName](key, value);
     const hasKey = target.has(key);
     if (hadKey !== hasKey) {
-      onWriteTargetKey(target, KEYCHANGES);
+      onWriteTargetKey(target, KEYCHANGES, atom);
     }
     if (originalValue !== target[getterName](key)) {
-      onWriteTargetKey(target, key);
+      onWriteTargetKey(target, key, atom);
     }
     return ret;
   };
@@ -335,13 +346,13 @@ function delegateAndNotify(
  *
  * @param target @see proxy
  */
-function makeClearNotifier(target: Map<any, any> | Set<any>) {
+function makeClearNotifier(target: Map<any, any> | Set<any>, atom: Atom | null) {
   return () => {
     const allKeys = [...target.keys()];
     target.clear();
-    onWriteTargetKey(target, KEYCHANGES);
+    onWriteTargetKey(target, KEYCHANGES, atom);
     for (const key of allKeys) {
-      onWriteTargetKey(target, key);
+      onWriteTargetKey(target, key, atom);
     }
   };
 }
@@ -353,42 +364,42 @@ function makeClearNotifier(target: Map<any, any> | Set<any>) {
  * proxys that the key which is being added or deleted has been modified.
  */
 const rawTypeToFuncHandlers = {
-  Set: (target: any) => ({
-    has: makeKeyObserver("has", target),
-    add: delegateAndNotify("add", "has", target),
-    delete: delegateAndNotify("delete", "has", target),
-    keys: makeIteratorObserver("keys", target),
-    values: makeIteratorObserver("values", target),
-    entries: makeIteratorObserver("entries", target),
-    [Symbol.iterator]: makeIteratorObserver(Symbol.iterator, target),
-    forEach: makeForEachObserver(target),
-    clear: makeClearNotifier(target),
+  Set: (target: any, atom: Atom | null) => ({
+    has: makeKeyObserver("has", target, atom),
+    add: delegateAndNotify("add", "has", target, atom),
+    delete: delegateAndNotify("delete", "has", target, atom),
+    keys: makeIteratorObserver("keys", target, atom),
+    values: makeIteratorObserver("values", target, atom),
+    entries: makeIteratorObserver("entries", target, atom),
+    [Symbol.iterator]: makeIteratorObserver(Symbol.iterator, target, atom),
+    forEach: makeForEachObserver(target, atom),
+    clear: makeClearNotifier(target, atom),
     get size() {
-      onReadTargetKey(target, KEYCHANGES);
+      onReadTargetKey(target, KEYCHANGES, atom);
       return target.size;
     },
   }),
-  Map: (target: any) => ({
-    has: makeKeyObserver("has", target),
-    get: makeKeyObserver("get", target),
-    set: delegateAndNotify("set", "get", target),
-    delete: delegateAndNotify("delete", "has", target),
-    keys: makeIteratorObserver("keys", target),
-    values: makeIteratorObserver("values", target),
-    entries: makeIteratorObserver("entries", target),
-    [Symbol.iterator]: makeIteratorObserver(Symbol.iterator, target),
-    forEach: makeForEachObserver(target),
-    clear: makeClearNotifier(target),
+  Map: (target: any, atom: Atom | null) => ({
+    has: makeKeyObserver("has", target, atom),
+    get: makeKeyObserver("get", target, atom),
+    set: delegateAndNotify("set", "get", target, atom),
+    delete: delegateAndNotify("delete", "has", target, atom),
+    keys: makeIteratorObserver("keys", target, atom),
+    values: makeIteratorObserver("values", target, atom),
+    entries: makeIteratorObserver("entries", target, atom),
+    [Symbol.iterator]: makeIteratorObserver(Symbol.iterator, target, atom),
+    forEach: makeForEachObserver(target, atom),
+    clear: makeClearNotifier(target, atom),
     get size() {
-      onReadTargetKey(target, KEYCHANGES);
+      onReadTargetKey(target, KEYCHANGES, atom);
       return target.size;
     },
   }),
-  WeakMap: (target: any) => ({
-    has: makeKeyObserver("has", target),
-    get: makeKeyObserver("get", target),
-    set: delegateAndNotify("set", "get", target),
-    delete: delegateAndNotify("delete", "has", target),
+  WeakMap: (target: any, atom: Atom | null) => ({
+    has: makeKeyObserver("has", target, atom),
+    get: makeKeyObserver("get", target, atom),
+    set: delegateAndNotify("set", "get", target, atom),
+    delete: delegateAndNotify("delete", "has", target, atom),
   }),
 };
 /**
@@ -400,19 +411,20 @@ const rawTypeToFuncHandlers = {
  */
 function collectionsProxyHandler<T extends Collection>(
   target: T,
-  targetRawType: CollectionRawType
+  targetRawType: CollectionRawType,
+  atom: Atom | null
 ): ProxyHandler<T> {
   // TODO: if performance is an issue we can create the special handlers lazily when each
   // property is read.
-  const specialHandlers = rawTypeToFuncHandlers[targetRawType](target);
-  return Object.assign(basicProxyHandler(), {
+  const specialHandlers = rawTypeToFuncHandlers[targetRawType](target, atom);
+  return Object.assign(basicProxyHandler(atom), {
     // FIXME: probably broken when part of prototype chain since we ignore the receiver
     get(target: any, key: PropertyKey) {
       if (objectHasOwnProperty.call(specialHandlers, key)) {
         return (specialHandlers as any)[key];
       }
-      onReadTargetKey(target, key);
-      return possiblyReactive(target[key]);
+      onReadTargetKey(target, key, atom);
+      return possiblyReactive(target[key], atom);
     },
   }) as ProxyHandler<T>;
 }

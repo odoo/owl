@@ -1,6 +1,6 @@
 import { OwlError } from "../common/owl_error";
 import { computed } from "./reactivity/computed";
-import { signal, Signal } from "./reactivity/signal";
+import { signal } from "./reactivity/signal";
 import { TypeDescription, validateType } from "./validation";
 
 interface RegistryOptions {
@@ -9,7 +9,7 @@ interface RegistryOptions {
 }
 
 export class Registry<T> {
-  private _map: Signal<{ [key: string]: [number, T] }> = signal(Object.create(null));
+  private _map = signal.Object<Record<string, [number, T]>>(Object.create(null));
   private _name: string;
   private _validation?: TypeDescription;
 
@@ -43,7 +43,6 @@ export class Registry<T> {
       }
     }
     this._map()[key] = [sequence, value];
-    this._map.update();
     return this;
   }
 
@@ -57,7 +56,6 @@ export class Registry<T> {
 
   remove(key: string) {
     delete this._map()[key];
-    this._map.update();
   }
 
   has(key: string): boolean {

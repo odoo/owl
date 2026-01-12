@@ -1,4 +1,5 @@
 import { App, Component, mount, onWillPatch, onWillStart, props, proxy, xml } from "../../src";
+import { useApp } from "../../src/runtime/hooks";
 import { status } from "../../src/runtime/status";
 import {
   makeTestFixture,
@@ -195,5 +196,20 @@ describe("app", () => {
     expect(fixture.innerHTML).toBe(`<div class="my-div"></div>`);
     fixture.querySelector("div")!.click();
     expect(steps).toEqual(["click"]);
+  });
+});
+
+describe("useApp", () => {
+  test("destroy remove the widget from the DOM", async () => {
+    let appFromComponent = null;
+    class SomeComponent extends Component {
+      static template = xml`<div/>`;
+      setup() {
+        appFromComponent = useApp();
+      }
+    }
+    const app = new App();
+    await app.createRoot(SomeComponent).mount(fixture);
+    expect(appFromComponent).toBe(app);
   });
 });

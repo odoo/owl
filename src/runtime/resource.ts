@@ -1,7 +1,7 @@
 import { OwlError } from "../common/owl_error";
 import { onWillDestroy } from "./lifecycle_hooks";
 import { computed } from "./reactivity/computed";
-import { signal, Signal } from "./reactivity/signal";
+import { signal } from "./reactivity/signal";
 import { TypeDescription, validateType } from "./validation";
 
 interface ResourceOptions {
@@ -10,7 +10,7 @@ interface ResourceOptions {
 }
 
 export class Resource<T> {
-  private _items: Signal<[number, T][]> = signal([]);
+  private _items = signal.Array<[number, T]>([]);
   private _name: string;
   private _validation?: TypeDescription;
 
@@ -34,7 +34,6 @@ export class Resource<T> {
       }
     }
     this._items().push([sequence, item]);
-    this._items.update();
     return this;
   }
 

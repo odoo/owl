@@ -32,7 +32,7 @@ export function useEffect(fn: Parameters<typeof effect>[0]) {
 /**
  * When a component needs to listen to DOM Events on element(s) that are not
  * part of his hierarchy, we can use the `useListener` hook.
- * It will immediately add the listener, and remove it whenver the plugin or
+ * It will immediately add the listener, and remove it whenever the plugin or
  * component is destroyed.
  *
  * Example:

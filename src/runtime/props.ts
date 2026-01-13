@@ -119,7 +119,7 @@ export type GetProps<T extends Component> = {
   ? { [K in keyof I]: I[K] }
   : never;
 
-function validateProps(
+export function validateProps(
   componentName: string,
   props: Record<string, any>,
   validation: PropsValidation,

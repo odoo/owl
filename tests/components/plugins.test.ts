@@ -173,6 +173,24 @@ test("components start plugins at their level", async () => {
   expect(fixture.innerHTML).toBe("1 | 2: pA | 3: pA - pB");
 });
 
+test("components can give values to plugins", async () => {
+  class PluginA extends Plugin {
+    fromParent = plugin.props({ hello: String });
+  }
+
+  class Test extends Component {
+    static template = xml`<t t-out="this.a.fromParent.hello"/>`;
+    declare a: PluginA;
+
+    setup() {
+      providePlugins([PluginA], { PluginA: { hello: "hamburger" } });
+      this.a = plugin(PluginA);
+    }
+  }
+  await mount(Test, fixture);
+  expect(fixture.innerHTML).toBe("hamburger");
+});
+
 test("shadow plugin", async () => {
   class PluginA extends Plugin {
     static id = "a";

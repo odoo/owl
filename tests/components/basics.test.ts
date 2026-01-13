@@ -1,4 +1,4 @@
-import { App, Component, mount, props, proxy, status, toRaw, xml } from "../../src";
+import { App, Component, mount, props, proxy, status, toRaw, types as t, xml } from "../../src";
 import { markup } from "../../src/runtime/utils";
 import {
   elem,
@@ -156,10 +156,13 @@ describe("basics", () => {
     const p = { a: 1 };
     class Test extends Component {
       static template = xml`<span>simple vnode</span>`;
-      props = props({
-        a: true,
-        b: { optional: true, defaultValue: 1 },
-      });
+      props = props(
+        {
+          a: t.any,
+          b: t.optional(t.number),
+        },
+        { b: 1 }
+      );
       setup() {
         expect(Object.prototype.hasOwnProperty.call(this.props, "a")).toBe(true);
         expect(Object.prototype.hasOwnProperty.call(this.props, "b")).toBe(true);

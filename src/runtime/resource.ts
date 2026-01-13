@@ -1,21 +1,20 @@
-import { OwlError } from "../common/owl_error";
 import { onWillDestroy } from "./lifecycle_hooks";
 import { computed } from "./reactivity/computed";
 import { signal } from "./reactivity/signal";
-import { TypeDescription, validateType } from "./validation";
+import { assertType } from "./validation";
 
-interface ResourceOptions {
+interface ResourceOptions<T> {
   name?: string;
-  validation?: TypeDescription;
+  validation?: T;
 }
 
 export class Resource<T> {
   private _items = signal.Array<[number, T]>([]);
-  private _name: string;
-  private _validation?: TypeDescription;
+  // private _name: string;
+  private _validation?: T;
 
-  constructor(options: ResourceOptions = {}) {
-    this._name = options.name || "resource";
+  constructor(options: ResourceOptions<T> = {}) {
+    // this._name = options.name || "resource";
     this._validation = options.validation;
   }
 
@@ -27,11 +26,7 @@ export class Resource<T> {
 
   add(item: T, sequence: number = 50): Resource<T> {
     if (this._validation) {
-      const error = validateType("item", item, this._validation);
-      // todo: move error handling in validation.js
-      if (error) {
-        throw new OwlError(`Invalid type: ${error} (resource '${this._name}')`);
-      }
+      assertType(item, this._validation);
     }
     this._items().push([sequence, item]);
     return this;

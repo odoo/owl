@@ -40,7 +40,7 @@ export { Component } from "./component";
 export type { ComponentConstructor } from "./component";
 export { useComponent } from "./component_node";
 export { props } from "./props";
-export type { GetProps, PropsValidation } from "./props";
+export type { GetProps } from "./props";
 export { status } from "./status";
 export { proxy, markRaw, toRaw } from "./reactivity/proxy";
 export { untrack } from "./reactivity/computations";
@@ -59,8 +59,10 @@ export {
   onWillDestroy,
   onError,
 } from "./lifecycle_hooks";
-export { validate, validateType } from "./validation";
+export { assertType, validateType } from "./validation";
 export { OwlError } from "../common/owl_error";
+
+export * as types from "./types";
 
 export const __info__ = {
   version: App.version,

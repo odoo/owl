@@ -1,4 +1,4 @@
-import { effect } from "../src";
+import { effect, types as t } from "../src";
 import { Resource } from "../src/runtime/resource";
 import { waitScheduler } from "./helpers";
 
@@ -35,7 +35,7 @@ test("can remove values", () => {
 });
 
 test("sequence", async () => {
-  const resource = new Resource({ name: "r", validation: String });
+  const resource = new Resource<string>({ name: "r" });
 
   resource.add("a", 10);
   resource.add("b"); // default = 50
@@ -66,18 +66,15 @@ test("items and effects", async () => {
 test("validation schema", async () => {
   const resource = new Resource({
     name: "test",
-    validation: {
-      type: Object,
-      shape: {
-        blip: String,
-      },
-    },
+    validation: t.object({
+      blip: t.string,
+    }),
   });
 
   resource.add({ blip: "asdf" });
   expect(() => {
-    resource.add({ blip: 1 });
-  }).toThrow("'item' doesn't have the correct shape ('blip' is not a string)");
+    resource.add({ blip: 1 } as any);
+  }).toThrow("Value does not match the type");
 });
 
 test("validation schema, with a class", async () => {
@@ -86,11 +83,11 @@ test("validation schema, with a class", async () => {
 
   const resource = new Resource({
     name: "test",
-    validation: { type: A },
+    validation: t.instanceOf(A),
   });
 
   resource.add(new A());
   expect(() => {
     resource.add(new B());
-  }).toThrow("'item' is not a a"); // message is weird
+  }).toThrow("Value does not match the type");
 });

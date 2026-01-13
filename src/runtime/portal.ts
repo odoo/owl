@@ -1,8 +1,9 @@
-import { onMounted, onWillUnmount } from "./lifecycle_hooks";
+import { OwlError } from "../common/owl_error";
 import { BDom, text, VNode } from "./blockdom";
 import { Component } from "./component";
-import { OwlError } from "../common/owl_error";
+import { onMounted, onWillUnmount } from "./lifecycle_hooks";
 import { props } from "./props";
+import { string } from "./types";
 
 const VText: any = text("").constructor;
 
@@ -63,8 +64,7 @@ export class Portal extends Component {
   static template = "__portal__";
 
   props = props({
-    target: String,
-    slots: true,
+    target: string,
   });
 
   setup() {

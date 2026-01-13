@@ -1,4 +1,4 @@
-import { effect, onWillDestroy, plugin, Plugin, PluginManager, status, useListener } from "../src";
+import { effect, onWillDestroy, plugin, Plugin, PluginManager, status, types as t, useListener } from "../src";
 import { Resource, useResource } from "../src/runtime/resource";
 import { waitScheduler } from "./helpers";
 
@@ -448,7 +448,7 @@ describe("sub plugin managers", () => {
 describe("plugins and resources", () => {
   test("can define a resource type", () => {
     class A extends Plugin {
-      colors = new Resource({ name: "colors", validation: String });
+      colors = new Resource({ name: "colors", validation: t.string });
     }
     class B extends Plugin {
       a = plugin(A);
@@ -471,7 +471,7 @@ describe("plugins and resources", () => {
 
   test("resources from child plugins are available in parent plugins", () => {
     class A extends Plugin {
-      colors = new Resource({ name: "colors", validation: String });
+      colors = new Resource({ name: "colors", validation: t.string });
     }
     class B extends Plugin {
       setup() {
@@ -499,7 +499,7 @@ describe("plugins and resources", () => {
 
   test("resources are derived values, can be seen from effect", async () => {
     class A extends Plugin {
-      colors = new Resource<string>({ name: "colors", validation: String });
+      colors = new Resource({ name: "colors", validation: t.string });
     }
 
     class B extends Plugin {

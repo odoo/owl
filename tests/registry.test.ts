@@ -1,4 +1,4 @@
-import { effect } from "../src";
+import { effect, types as t } from "../src";
 import { Registry } from "../src/runtime/registry";
 import { nextMicroTick } from "./helpers";
 
@@ -99,18 +99,15 @@ describe("registry", () => {
   test("validation schema", async () => {
     const registry = new Registry({
       name: "test",
-      validation: {
-        type: Object,
-        shape: {
-          blip: String,
-        },
-      },
+      validation: t.object({
+        blip: t.string,
+      }),
     });
 
     registry.add("a", { blip: "asdf" });
     expect(() => {
-      registry.add("a", { blip: 1 });
-    }).toThrow("'a' doesn't have the correct shape ('blip' is not a string)");
+      registry.add("a", { blip: 1 } as any);
+    }).toThrow("Value does not match the type");
   });
 
   test("validation schema, with a class", async () => {
@@ -119,12 +116,12 @@ describe("registry", () => {
 
     const registry = new Registry({
       name: "test",
-      validation: { type: A },
+      validation: t.instanceOf(A),
     });
 
     registry.add("a", new A());
     expect(() => {
       registry.add("a", new B());
-    }).toThrow("'a' is not a a"); // message is weird
+    }).toThrow("Value does not match the type");
   });
 });

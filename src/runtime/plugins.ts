@@ -1,6 +1,5 @@
 import { OwlError } from "../common/owl_error";
 import { getCurrent } from "./component_node";
-import { useApp } from "./hooks";
 import { Props, PropsValidation, validateProps } from "./props";
 import { STATUS } from "./status";
 
@@ -148,7 +147,7 @@ plugin.props = function props<T = unknown, V extends PropsValidation = PropsVali
       key.endsWith("?") ? key.slice(0, -1) : key
     );
     applyPropGetters(keys);
-    const app = useApp();
+    const app = getCurrent().app;
     if (app.dev) {
       validateProps(currentPlugin, currentProps, validation, keys);
     }

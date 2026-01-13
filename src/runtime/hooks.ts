@@ -52,14 +52,14 @@ export function useListener(
   onWillDestroy(() => target.removeEventListener(eventName, handler, eventParams));
 }
 
-export function providePlugins(Plugins: PluginConstructor[]) {
+export function providePlugins(Plugins: PluginConstructor[], pluginProps?: Object) {
   const node = getCurrent();
 
   const manager = new PluginManager(node.pluginManager);
   node.pluginManager = manager;
   onWillDestroy(() => manager.destroy());
 
-  return manager.startPlugins(Plugins);
+  return manager.startPlugins(Plugins, pluginProps);
 }
 
 // -----------------------------------------------------------------------------

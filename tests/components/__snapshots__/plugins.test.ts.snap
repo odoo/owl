@@ -36,6 +36,18 @@ exports[`can be started with plugin list 1`] = `
 }"
 `;
 
+exports[`components can give values to plugins 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].a.fromParent.hello);
+  }
+}"
+`;
+
 exports[`components can register resources 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

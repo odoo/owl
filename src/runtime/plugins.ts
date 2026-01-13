@@ -1,11 +1,16 @@
 import { OwlError } from "../common/owl_error";
 import { getCurrent } from "./component_node";
+import { useApp } from "./hooks";
+import { Props, PropsValidation, validateProps } from "./props";
 import { STATUS } from "./status";
 
 export interface PluginConstructor {
   new (): Plugin;
   id: string;
 }
+
+let currentProps: any = {};
+let currentPlugin: string = "";
 
 export class Plugin {
   private static _shadowId: string;
@@ -56,7 +61,7 @@ export class PluginManager {
     return this.getPluginById<InstanceType<T>>(pluginType.id);
   }
 
-  startPlugins(pluginTypes: PluginConstructor[]): Plugin[] {
+  startPlugins(pluginTypes: PluginConstructor[], pluginProps: any = {}): Plugin[] {
     const previousManager = PluginManager.current;
     PluginManager.current = this;
     const plugins: Plugin[] = [];
@@ -77,11 +82,14 @@ export class PluginManager {
         }
         continue;
       }
+      currentProps = pluginProps[pluginType.id] || {};
+      currentPlugin = pluginType.id;
 
       const plugin = new pluginType();
       this.plugins[pluginType.id] = plugin;
       plugins.push(plugin);
     }
+    currentProps = {};
 
     // setup phase
     for (let p of plugins) {
@@ -112,3 +120,41 @@ export function plugin<T extends PluginConstructor>(pluginType: T): InstanceType
 
   return plugin;
 }
+
+// todo: remove duplication with the actual props function
+plugin.props = function props<T = unknown, V extends PropsValidation = PropsValidation>(
+  validation?: V
+): Props<T, V> {
+  const isSchemaValidated = validation && !Array.isArray(validation);
+
+  function getProp(key: string) {
+    if (isSchemaValidated && currentProps[key] === undefined) {
+      return (validation as any)[key].defaultValue;
+    }
+    return currentProps[key];
+  }
+  const result = Object.create(null);
+  function applyPropGetters(keys: string[]) {
+    for (const key of keys) {
+      Reflect.defineProperty(result, key, {
+        enumerable: true,
+        get: getProp.bind(null, key),
+      });
+    }
+  }
+
+  if (validation) {
+    const keys: string[] = (isSchemaValidated ? Object.keys(validation) : validation).map((key) =>
+      key.endsWith("?") ? key.slice(0, -1) : key
+    );
+    applyPropGetters(keys);
+    const app = useApp();
+    if (app.dev) {
+      validateProps(currentPlugin, currentProps, validation, keys);
+    }
+  } else {
+    applyPropGetters(Object.keys(currentProps));
+  }
+
+  return currentProps;
+};

@@ -1,19 +1,19 @@
 import { OwlError } from "../common/owl_error";
 import { computed } from "./reactivity/computed";
 import { signal } from "./reactivity/signal";
-import { TypeDescription, validateType } from "./validation";
+import { assertType } from "./validation";
 
-interface RegistryOptions {
+interface RegistryOptions<T> {
   name?: string;
-  validation?: TypeDescription;
+  validation?: T;
 }
 
 export class Registry<T> {
   private _map = signal.Object<Record<string, [number, T]>>(Object.create(null));
   private _name: string;
-  private _validation?: TypeDescription;
+  private _validation?: T;
 
-  constructor(options: RegistryOptions = {}) {
+  constructor(options: RegistryOptions<T> = {}) {
     this._name = options.name || "registry";
     this._validation = options.validation;
   }
@@ -36,11 +36,7 @@ export class Registry<T> {
 
   add(key: string, value: T, sequence: number = 50): Registry<T> {
     if (this._validation) {
-      const error = validateType(key, value, this._validation);
-      // todo: move error handling in validation.js
-      if (error) {
-        throw new Error("Invalid type: " + error);
-      }
+      assertType(value, this._validation);
     }
     this._map()[key] = [sequence, value];
     return this;

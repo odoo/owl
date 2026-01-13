@@ -6,6 +6,7 @@ import {
   Plugin,
   PluginManager,
   providePlugins,
+  types as t,
   xml,
 } from "../../src";
 import { Resource, useResource } from "../../src/runtime/resource";
@@ -232,7 +233,7 @@ test("shadow plugin", async () => {
 
 test("components can register resources", async () => {
   class PluginA extends Plugin {
-    colors = new Resource<string>({ name: "colors", validation: String });
+    colors = new Resource({ name: "colors", validation: t.string });
 
     value = computed(() => {
       return this.colors.items().join("|");

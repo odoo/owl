@@ -111,7 +111,7 @@ exports[`default props default values are also set whenever component is updated
 }"
 `;
 
-exports[`props validation can specify that additional props are allowed (array) 1`] = `
+exports[`props validation additional props are allowed (array) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -124,7 +124,7 @@ exports[`props validation can specify that additional props are allowed (array) 
 }"
 `;
 
-exports[`props validation can specify that additional props are allowed (array) 2`] = `
+exports[`props validation additional props are allowed (array) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -137,7 +137,7 @@ exports[`props validation can specify that additional props are allowed (array) 
 }"
 `;
 
-exports[`props validation can specify that additional props are allowed (object) 1`] = `
+exports[`props validation additional props are allowed (object) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -150,7 +150,7 @@ exports[`props validation can specify that additional props are allowed (object)
 }"
 `;
 
-exports[`props validation can specify that additional props are allowed (object) 2`] = `
+exports[`props validation additional props are allowed (object) 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

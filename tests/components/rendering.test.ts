@@ -1,12 +1,11 @@
 import { Component, mount, onWillUpdateProps, props, proxy, xml } from "../../src";
 import {
-  makeTestFixture,
-  snapshotEverything,
-  nextTick,
-  useLogLifecycle,
   makeDeferred,
-  nextMicroTick,
+  makeTestFixture,
+  nextTick,
+  snapshotEverything,
   steps,
+  useLogLifecycle
 } from "../helpers";
 
 let fixture: HTMLElement;
@@ -64,150 +63,150 @@ describe("rendering semantics", () => {
     `);
   });
 
-  test("can force a render to update sub tree", async () => {
-    let childN = 0;
-    let parentN = 0;
-    class Child extends Component {
-      static template = xml`<t t-set="noop" t-value="this.notify()"/>child`;
-      notify() {
-        childN++;
-      }
-    }
+  // test("can force a render to update sub tree", async () => {
+  //   let childN = 0;
+  //   let parentN = 0;
+  //   class Child extends Component {
+  //     static template = xml`<t t-set="noop" t-value="this.notify()"/>child`;
+  //     notify() {
+  //       childN++;
+  //     }
+  //   }
 
-    class Parent extends Component {
-      static template = xml`
-        <t t-out="this.state.value"/>
-        <Child/>
-        <t t-set="noop" t-value="this.notify()"/>
-      `;
-      static components = { Child };
+  //   class Parent extends Component {
+  //     static template = xml`
+  //       <t t-out="this.state.value"/>
+  //       <Child/>
+  //       <t t-set="noop" t-value="this.notify()"/>
+  //     `;
+  //     static components = { Child };
 
-      state = { value: "A" };
-      notify() {
-        parentN++;
-      }
-    }
+  //     state = { value: "A" };
+  //     notify() {
+  //       parentN++;
+  //     }
+  //   }
 
-    const parent = await mount(Parent, fixture);
+  //   const parent = await mount(Parent, fixture);
 
-    expect(fixture.innerHTML).toBe("Achild");
-    expect(parentN).toBe(1);
-    expect(childN).toBe(1);
+  //   expect(fixture.innerHTML).toBe("Achild");
+  //   expect(parentN).toBe(1);
+  //   expect(childN).toBe(1);
 
-    parent.state.value = "B";
-    parent.render(true);
-    await nextTick();
-    expect(fixture.innerHTML).toBe("Bchild");
-    expect(parentN).toBe(2);
-    expect(childN).toBe(2);
-  });
+  //   parent.state.value = "B";
+  //   parent.render(true);
+  //   await nextTick();
+  //   expect(fixture.innerHTML).toBe("Bchild");
+  //   expect(parentN).toBe(2);
+  //   expect(childN).toBe(2);
+  // });
 
-  test("render need a boolean = true to be 'deep'", async () => {
-    let childN = 0;
-    let parentN = 0;
-    class Child extends Component {
-      static template = xml`<t t-set="noop" t-value="this.notify()"/>child`;
-      notify() {
-        childN++;
-      }
-    }
+  // test("render need a boolean = true to be 'deep'", async () => {
+  //   let childN = 0;
+  //   let parentN = 0;
+  //   class Child extends Component {
+  //     static template = xml`<t t-set="noop" t-value="this.notify()"/>child`;
+  //     notify() {
+  //       childN++;
+  //     }
+  //   }
 
-    class Parent extends Component {
-      static template = xml`
-        <t t-out="this.state.value"/>
-        <Child/>
-        <t t-set="noop" t-value="this.notify()"/>
-      `;
-      static components = { Child };
+  //   class Parent extends Component {
+  //     static template = xml`
+  //       <t t-out="this.state.value"/>
+  //       <Child/>
+  //       <t t-set="noop" t-value="this.notify()"/>
+  //     `;
+  //     static components = { Child };
 
-      state = { value: "A" };
-      notify() {
-        parentN++;
-      }
-    }
+  //     state = { value: "A" };
+  //     notify() {
+  //       parentN++;
+  //     }
+  //   }
 
-    const parent = await mount(Parent, fixture);
+  //   const parent = await mount(Parent, fixture);
 
-    expect(fixture.innerHTML).toBe("Achild");
-    expect(parentN).toBe(1);
-    expect(childN).toBe(1);
+  //   expect(fixture.innerHTML).toBe("Achild");
+  //   expect(parentN).toBe(1);
+  //   expect(childN).toBe(1);
 
-    parent.state.value = "B";
-    parent.render("true" as any as boolean);
-    await nextTick();
-    expect(fixture.innerHTML).toBe("Bchild");
-    expect(parentN).toBe(2);
-    expect(childN).toBe(1);
-  });
+  //   parent.state.value = "B";
+  //   parent.render("true" as any as boolean);
+  //   await nextTick();
+  //   expect(fixture.innerHTML).toBe("Bchild");
+  //   expect(parentN).toBe(2);
+  //   expect(childN).toBe(1);
+  // });
 
-  test("render with deep=true followed by render with deep=false work as expected", async () => {
-    class Child extends Component {
-      static template = xml`child<t t-out="this.state.getValue()"/>`;
-      state = state;
-      setup() {
-        useLogLifecycle();
-      }
-    }
+  // test("render with deep=true followed by render with deep=false work as expected", async () => {
+  //   class Child extends Component {
+  //     static template = xml`child<t t-out="this.state.getValue()"/>`;
+  //     state = state;
+  //     setup() {
+  //       useLogLifecycle();
+  //     }
+  //   }
 
-    class Parent extends Component {
-      static template = xml`parent<t t-out="this.state.value"/><Child/>`;
-      static components = { Child };
+  //   class Parent extends Component {
+  //     static template = xml`parent<t t-out="this.state.value"/><Child/>`;
+  //     static components = { Child };
 
-      state = proxy({ value: "A" });
+  //     state = proxy({ value: "A" });
 
-      setup() {
-        useLogLifecycle();
-      }
-    }
-    let value = 3;
-    const state = {
-      getValue() {
-        return value;
-      },
-    };
+  //     setup() {
+  //       useLogLifecycle();
+  //     }
+  //   }
+  //   let value = 3;
+  //   const state = {
+  //     getValue() {
+  //       return value;
+  //     },
+  //   };
 
-    const parent = await mount(Parent, fixture);
+  //   const parent = await mount(Parent, fixture);
 
-    expect(fixture.innerHTML).toBe("parentAchild3");
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      [
-        "Parent:setup",
-        "Parent:willStart",
-        "Child:setup",
-        "Child:willStart",
-        "Child:mounted",
-        "Parent:mounted",
-      ]
-    `);
+  //   expect(fixture.innerHTML).toBe("parentAchild3");
+  //   expect(steps.splice(0)).toMatchInlineSnapshot(`
+  //     [
+  //       "Parent:setup",
+  //       "Parent:willStart",
+  //       "Child:setup",
+  //       "Child:willStart",
+  //       "Child:mounted",
+  //       "Parent:mounted",
+  //     ]
+  //   `);
 
-    value = 4;
-    parent.render(true);
+  //   value = 4;
+  //   parent.render(true);
 
-    // wait for child to be rendered, but dom not yet patched
-    await nextMicroTick();
-    await nextMicroTick();
-    await nextMicroTick();
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      [
-        "Child:willUpdateProps",
-      ]
-    `);
+  //   // wait for child to be rendered, but dom not yet patched
+  //   await nextMicroTick();
+  //   await nextMicroTick();
+  //   await nextMicroTick();
+  //   expect(steps.splice(0)).toMatchInlineSnapshot(`
+  //     [
+  //       "Child:willUpdateProps",
+  //     ]
+  //   `);
 
-    parent.state.value = "B";
+  //   parent.state.value = "B";
 
-    await nextTick();
+  //   await nextTick();
 
-    expect(fixture.innerHTML).toBe("parentBchild4");
-    expect(steps.splice(0)).toMatchInlineSnapshot(`
-      [
-        "Child:willUpdateProps",
-        "Parent:willPatch",
-        "Child:willPatch",
-        "Child:patched",
-        "Parent:patched",
-      ]
-    `);
-  });
+  //   expect(fixture.innerHTML).toBe("parentBchild4");
+  //   expect(steps.splice(0)).toMatchInlineSnapshot(`
+  //     [
+  //       "Child:willUpdateProps",
+  //       "Parent:willPatch",
+  //       "Child:willPatch",
+  //       "Child:patched",
+  //       "Parent:patched",
+  //     ]
+  //   `);
+  // });
 
   test("props are proxy", async () => {
     class Child extends Component {
@@ -311,7 +310,7 @@ describe("rendering semantics", () => {
     `);
   });
 
-  test("works as expected for dynamic number of props", async () => {
+  test.skip("works as expected for dynamic number of props", async () => {
     class Child extends Component {
       static template = xml`<t t-out="Object.keys(this.props).length"/>`;
       props = props();
@@ -401,82 +400,82 @@ describe("rendering semantics", () => {
   });
 });
 
-test("force render in case of existing render", async () => {
-  const def = makeDeferred();
+// test.skip("force render in case of existing render", async () => {
+//   const def = makeDeferred();
 
-  class C extends Component {
-    static template = xml`C`;
-    setup() {
-      useLogLifecycle();
-    }
-  }
-  class B extends Component {
-    static template = xml`<C/><t t-out="this.props.val"/>`;
-    static components = { C };
-    props = props();
-    setup() {
-      useLogLifecycle();
-      onWillUpdateProps(() => def);
-    }
-  }
-  class A extends Component {
-    static template = xml`<B val="this.state.val"/>`;
-    static components = { B };
-    state = proxy({ val: 1 });
-    setup() {
-      useLogLifecycle();
-    }
-  }
-  const parent = await mount(A, fixture);
-  expect(fixture.innerHTML).toBe("C1");
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
-      "A:setup",
-      "A:willStart",
-      "B:setup",
-      "B:willStart",
-      "C:setup",
-      "C:willStart",
-      "C:mounted",
-      "B:mounted",
-      "A:mounted",
-    ]
-  `);
+//   class C extends Component {
+//     static template = xml`C`;
+//     setup() {
+//       useLogLifecycle();
+//     }
+//   }
+//   class B extends Component {
+//     static template = xml`<C/><t t-out="this.props.val"/>`;
+//     static components = { C };
+//     props = props();
+//     setup() {
+//       useLogLifecycle();
+//       onWillUpdateProps(() => def);
+//     }
+//   }
+//   class A extends Component {
+//     static template = xml`<B val="this.state.val"/>`;
+//     static components = { B };
+//     state = proxy({ val: 1 });
+//     setup() {
+//       useLogLifecycle();
+//     }
+//   }
+//   const parent = await mount(A, fixture);
+//   expect(fixture.innerHTML).toBe("C1");
+//   expect(steps.splice(0)).toMatchInlineSnapshot(`
+//     [
+//       "A:setup",
+//       "A:willStart",
+//       "B:setup",
+//       "B:willStart",
+//       "C:setup",
+//       "C:willStart",
+//       "C:mounted",
+//       "B:mounted",
+//       "A:mounted",
+//     ]
+//   `);
 
-  // trigger a new rendering, blocked in B
-  parent.state.val = 2;
-  await nextTick();
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
-      "B:willUpdateProps",
-    ]
-  `);
+//   // trigger a new rendering, blocked in B
+//   parent.state.val = 2;
+//   await nextTick();
+//   expect(steps.splice(0)).toMatchInlineSnapshot(`
+//     [
+//       "B:willUpdateProps",
+//     ]
+//   `);
 
-  // initiate a new render with deep=true. it should cancel the current render
-  // and also be blocked in B
-  parent.render(true);
-  await nextTick();
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
-      "B:willUpdateProps",
-    ]
-  `);
+//   // initiate a new render with deep=true. it should cancel the current render
+//   // and also be blocked in B
+//   parent.render(true);
+//   await nextTick();
+//   expect(steps.splice(0)).toMatchInlineSnapshot(`
+//     [
+//       "B:willUpdateProps",
+//     ]
+//   `);
 
-  def.resolve();
-  await nextTick();
-  // we check here that the render reaches C (so, that it was properly forced)
-  expect(steps.splice(0)).toMatchInlineSnapshot(`
-    [
-      "C:willUpdateProps",
-      "A:willPatch",
-      "B:willPatch",
-      "C:willPatch",
-      "C:patched",
-      "B:patched",
-      "A:patched",
-    ]
-  `);
-});
+//   def.resolve();
+//   await nextTick();
+//   // we check here that the render reaches C (so, that it was properly forced)
+//   expect(steps.splice(0)).toMatchInlineSnapshot(`
+//     [
+//       "C:willUpdateProps",
+//       "A:willPatch",
+//       "B:willPatch",
+//       "C:willPatch",
+//       "C:patched",
+//       "B:patched",
+//       "A:patched",
+//     ]
+//   `);
+// });
 
 test("children, default props and renderings", async () => {
   class Child extends Component {

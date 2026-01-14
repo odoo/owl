@@ -23,7 +23,7 @@ export function props<P extends Props = any, D extends OptionalProps<P> = any>(t
   const node = getCurrent();
 
   const result = Object.create(null);
-  function applyPropGetters(keys: string[]) {
+  function applyProps(keys: string[]) {
     for (const key of keys) {
       result[key] = (node.props === undefined) ? (defaults as any)[key] : node.props[key];
     }
@@ -34,23 +34,14 @@ export function props<P extends Props = any, D extends OptionalProps<P> = any>(t
     const keys: string[] = (isSchemaValidated ? Object.keys(type) : type).map((key) =>
       key.endsWith("?") ? key.slice(0, -1) : key
     );
-    applyPropGetters(keys);
+    applyProps(keys);
 
     if (node.app.dev) {
       const validation = isSchemaValidated ? object(type) : validateKeys(...type);
       assertType(node.props, validation);
-      // node.willUpdateProps.push((np: Record<string, any>) => {
-      //   assertType(np, validation);
-      // });
     }
   } else {
-    applyPropGetters(Object.keys(node.props));
-    // node.willUpdateProps.push((np: Record<string, any>) => {
-    //   for (let key in result) {
-    //     Reflect.deleteProperty(result, key);
-    //   }
-    //   applyPropGetters(Object.keys(np));
-    // });
+    applyProps(Object.keys(node.props));
   }
 
   return result;

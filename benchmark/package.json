@@ -1,0 +1,17 @@
+{
+  "name": "benchmark",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@odoo/owl": "^2.8.1",
+    "@types/bun": "latest",
+    "vite": "^7.3.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5.9.3"
+  }
+}

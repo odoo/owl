@@ -23,8 +23,8 @@ export function onWillStart(fn: () => Promise<void> | void | any) {
 }
 
 export function onWillUpdateProps(fn: (nextProps: any) => Promise<void> | void | any) {
-  const node = getCurrent();
-  node.willUpdateProps.push(decorate(node, fn, "onWillUpdateProps"));
+  // const node = getCurrent();
+  // node.willUpdateProps.push(decorate(node, fn, "onWillUpdateProps"));
 }
 
 export function onMounted(fn: () => void | any) {

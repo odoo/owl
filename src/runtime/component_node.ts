@@ -9,11 +9,10 @@ import {
   ComputationState,
   getCurrentComputation,
   runWithComputation,
-  setComputation,
-  untrack,
+  setComputation
 } from "./reactivity/computations";
 import { fibersInError } from "./rendering/error_handling";
-import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./rendering/fibers";
+import { Fiber, makeRootFiber, MountFiber, MountOptions } from "./rendering/fibers";
 import { STATUS } from "./status";
 
 let currentNode: ComponentNode | null = null;
@@ -59,7 +58,6 @@ export class ComponentNode implements VNode<ComponentNode> {
   children: { [key: string]: ComponentNode } = Object.create(null);
 
   willStart: LifecycleHook[] = [];
-  willUpdateProps: LifecycleHook[] = [];
   willUnmount: LifecycleHook[] = [];
   mounted: LifecycleHook[] = [];
   willPatch: LifecycleHook[] = [];
@@ -90,7 +88,7 @@ export class ComponentNode implements VNode<ComponentNode> {
     };
     this.props = Object.assign({}, props);
     const previousComputation = getCurrentComputation();
-    setComputation(this.signalComputation);
+    setComputation(undefined);
     this.component = new C(this);
     const ctx = { this: this.component, __owl__: this };
     this.renderFn = app.getTemplate(C.template).bind(this.component, ctx, this);
@@ -219,31 +217,31 @@ export class ComponentNode implements VNode<ComponentNode> {
     this.status = STATUS.DESTROYED;
   }
 
-  async updateAndRender(props: Record<string, any>, parentFiber: Fiber) {
-    props = Object.assign({}, props);
-    // update
-    const fiber = makeChildFiber(this, parentFiber);
-    this.fiber = fiber;
-    const component = this.component;
+  // async updateAndRender(props: Record<string, any>, parentFiber: Fiber) {
+  //   props = Object.assign({}, props);
+  //   // update
+  //   const fiber = makeChildFiber(this, parentFiber);
+  //   this.fiber = fiber;
+  //   const component = this.component;
 
-    let prom: Promise<any[]>;
-    untrack(() => {
-      prom = Promise.all(this.willUpdateProps.map((f) => f.call(component, props)));
-    });
-    await prom!;
-    if (fiber !== this.fiber) {
-      return;
-    }
-    this.props = props;
-    fiber.render();
-    const parentRoot = parentFiber.root!;
-    if (this.willPatch.length) {
-      parentRoot.willPatch.push(fiber);
-    }
-    if (this.patched.length) {
-      parentRoot.patched.push(fiber);
-    }
-  }
+  //   let prom: Promise<any[]>;
+  //   untrack(() => {
+  //     prom = Promise.all(this.willUpdateProps.map((f) => f.call(component, props)));
+  //   });
+  //   await prom!;
+  //   if (fiber !== this.fiber) {
+  //     return;
+  //   }
+  //   this.props = props;
+  //   fiber.render();
+  //   const parentRoot = parentFiber.root!;
+  //   if (this.willPatch.length) {
+  //     parentRoot.willPatch.push(fiber);
+  //   }
+  //   if (this.patched.length) {
+  //     parentRoot.patched.push(fiber);
+  //   }
+  // }
 
   /**
    * Finds a child that has dom that is not yet updated, and update it. This

@@ -22,20 +22,10 @@ export type OptionalProps<T extends Props> = {
 export function props<P extends Props = any, D extends OptionalProps<P> = any>(type?: P, defaults: D = {} as D): AsProps<P, D> {
   const node = getCurrent();
 
-  function getProp(key: string) {
-    if (node.props[key] === undefined) {
-      return (defaults as any)[key];
-    }
-    return node.props[key];
-  }
-
   const result = Object.create(null);
   function applyPropGetters(keys: string[]) {
     for (const key of keys) {
-      Reflect.defineProperty(result, key, {
-        enumerable: true,
-        get: getProp.bind(null, key),
-      });
+      result[key] = (node.props === undefined) ? (defaults as any)[key] : node.props[key];
     }
   }
 
@@ -49,18 +39,18 @@ export function props<P extends Props = any, D extends OptionalProps<P> = any>(t
     if (node.app.dev) {
       const validation = isSchemaValidated ? object(type) : validateKeys(...type);
       assertType(node.props, validation);
-      node.willUpdateProps.push((np: Record<string, any>) => {
-        assertType(np, validation);
-      });
+      // node.willUpdateProps.push((np: Record<string, any>) => {
+      //   assertType(np, validation);
+      // });
     }
   } else {
     applyPropGetters(Object.keys(node.props));
-    node.willUpdateProps.push((np: Record<string, any>) => {
-      for (let key in result) {
-        Reflect.deleteProperty(result, key);
-      }
-      applyPropGetters(Object.keys(np));
-    });
+    // node.willUpdateProps.push((np: Record<string, any>) => {
+    //   for (let key in result) {
+    //     Reflect.deleteProperty(result, key);
+    //   }
+    //   applyPropGetters(Object.keys(np));
+    // });
   }
 
   return result;

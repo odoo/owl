@@ -1235,9 +1235,7 @@ export class CodeGenerator {
     let id = generateId("comp");
     this.staticDefs.push({
       id,
-      expr: `app.createComponent(${
-        ast.isDynamic ? null : expr
-      }, ${!ast.isDynamic})`,
+      expr: `app.createComponent(${ast.isDynamic ? null : expr}, ${!ast.isDynamic})`,
     });
 
     if (ast.isDynamic) {

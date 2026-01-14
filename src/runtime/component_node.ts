@@ -9,7 +9,7 @@ import {
   ComputationState,
   getCurrentComputation,
   runWithComputation,
-  setComputation
+  setComputation,
 } from "./reactivity/computations";
 import { fibersInError } from "./rendering/error_handling";
 import { Fiber, makeRootFiber, MountFiber, MountOptions } from "./rendering/fibers";
@@ -134,11 +134,7 @@ export class ComponentNode implements VNode<ComponentNode> {
       // situation may have changed after the microtask tick
       current = this.fiber;
     }
-    if (current) {
-      if (!current.bdom && !fibersInError.has(current)) {
-        return;
-      }
-    } else if (!this.bdom) {
+    if ((current && !current.bdom && !fibersInError.has(current)) || (!current && !this.bdom)) {
       return;
     }
 

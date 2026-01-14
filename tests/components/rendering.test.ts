@@ -5,7 +5,7 @@ import {
   nextTick,
   snapshotEverything,
   steps,
-  useLogLifecycle
+  useLogLifecycle,
 } from "../helpers";
 
 let fixture: HTMLElement;

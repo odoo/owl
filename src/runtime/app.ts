@@ -171,10 +171,7 @@ export class App extends TemplateSet {
     apps.delete(this);
   }
 
-  createComponent<P extends Record<string, any>>(
-    name: string | null,
-    isStatic: boolean,
-  ) {
+  createComponent<P extends Record<string, any>>(name: string | null, isStatic: boolean) {
     const isDynamic = !isStatic;
     const initiateRender = ComponentNode.prototype.initiateRender;
 

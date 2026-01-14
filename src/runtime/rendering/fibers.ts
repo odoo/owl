@@ -81,14 +81,12 @@ export class Fiber {
   parent: Fiber | null;
   children: Fiber[] = [];
   appliedToDom = false;
-  deep: boolean = false;
   childrenMap: ComponentNode["children"] = {};
 
   constructor(node: ComponentNode, parent: Fiber | null) {
     this.node = node;
     this.parent = parent;
     if (parent) {
-      this.deep = parent.deep;
       const root = parent.root!;
       root.setCounter(root.counter + 1);
       this.root = root;

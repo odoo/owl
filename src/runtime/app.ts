@@ -174,9 +174,6 @@ export class App extends TemplateSet {
   createComponent<P extends Record<string, any>>(
     name: string | null,
     isStatic: boolean,
-    hasSlotsProp: boolean,
-    hasDynamicPropList: boolean,
-    propList: string[]
   ) {
     const isDynamic = !isStatic;
     const initiateRender = ComponentNode.prototype.initiateRender;
@@ -188,12 +185,7 @@ export class App extends TemplateSet {
         node = undefined;
       }
       const parentFiber = ctx.fiber!;
-      if (node) {
-        // if (arePropsDifferent(node.props, props) || parentFiber.deep || node.forceNextRender) {
-        //   node.forceNextRender = false;
-        //   updateAndRender.call(node, props, parentFiber);
-        // }
-      } else {
+      if (!node) {
         // new component
         if (isStatic) {
           const components = parent.constructor.components;

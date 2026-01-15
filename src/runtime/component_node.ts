@@ -90,7 +90,7 @@ export class ComponentNode implements VNode<ComponentNode> {
     };
     this.props = Object.assign({}, props);
     const previousComputation = getCurrentComputation();
-    setComputation(this.signalComputation);
+    setComputation(undefined);
     this.component = new C(this);
     const ctx = { this: this.component, __owl__: this };
     this.renderFn = app.getTemplate(C.template).bind(this.component, ctx, this);

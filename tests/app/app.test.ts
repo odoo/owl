@@ -1,4 +1,4 @@
-import { App, Component, mount, onWillPatch, onWillStart, props, proxy, xml } from "../../src";
+import { App, Component, mount, onWillPatch, onWillStart, props, state, xml } from "../../src";
 import { useApp } from "../../src/runtime/hooks";
 import { status } from "../../src/runtime/status";
 import {
@@ -100,7 +100,7 @@ describe("app", () => {
     class A extends Component {
       static template = xml`A<t t-if="this.state.value"><B/></t>`;
       static components = { B };
-      state = proxy({ value: false });
+      state = state({ value: false });
       setup() {
         useLogLifecycle();
       }

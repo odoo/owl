@@ -1,4 +1,4 @@
-import { Component, mount, proxy, xml } from "../../src";
+import { Component, mount, state as proxy, xml } from "../../src";
 import { makeTestFixture, nextTick, snapshotEverything, steps, useLogLifecycle } from "../helpers";
 
 let fixture: HTMLElement;

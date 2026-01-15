@@ -1,7 +1,7 @@
 import { BDom, multi, text, toggler, createCatcher } from "../blockdom";
 import { Markup } from "../utils";
 import { html } from "../blockdom/index";
-import { markRaw } from "../reactivity/proxy";
+import { markRaw } from "../reactivity/state";
 import { OwlError } from "../../common/owl_error";
 
 const ObjectCreate = Object.create;

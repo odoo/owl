@@ -1,4 +1,4 @@
-import { App, Component, onMounted, onWillDestroy, proxy, signal, xml } from "../../src";
+import { App, Component, onMounted, onWillDestroy, state as proxy, signal, xml } from "../../src";
 import { status } from "../../src/runtime/status";
 import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 

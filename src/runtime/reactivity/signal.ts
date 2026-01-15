@@ -1,6 +1,6 @@
 import { OwlError } from "../../common/owl_error";
 import { onReadAtom, onWriteAtom, Atom, Opts } from "./computations";
-import { proxifyTarget } from "./proxy";
+import { proxifyTarget } from "./state";
 
 export type ReactiveValue<T> = () => T;
 

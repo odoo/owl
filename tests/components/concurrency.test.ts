@@ -9,7 +9,7 @@ import {
   onWillUnmount,
   onWillUpdateProps,
   props,
-  proxy,
+  state as proxy,
   xml,
 } from "../../src";
 import { Fiber } from "../../src/runtime/rendering/fibers";

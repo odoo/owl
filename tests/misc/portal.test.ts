@@ -9,7 +9,7 @@ import {
   onWillPatch,
   onWillUnmount,
   props,
-  proxy,
+  state as proxy,
 } from "../../src";
 import { xml } from "../../src/";
 import { elem, makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";

@@ -1,5 +1,5 @@
 import { Component, mount, onWillStart, onWillUpdateProps, xml } from "../../src";
-import { effect, markRaw, props, proxy, toRaw } from "../../src/runtime";
+import { effect, markRaw, props, state as proxy, toRaw } from "../../src/runtime";
 
 import {
   makeDeferred,

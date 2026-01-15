@@ -42,7 +42,7 @@ export { useComponent } from "./component_node";
 export { props } from "./props";
 export type { GetProps } from "./props";
 export { status } from "./status";
-export { proxy, markRaw, toRaw } from "./reactivity/proxy";
+export { state, markRaw, toRaw } from "./reactivity/state";
 export { untrack } from "./reactivity/computations";
 export { signal, ReactiveValue, Signal } from "./reactivity/signal";
 export { computed } from "./reactivity/computed";

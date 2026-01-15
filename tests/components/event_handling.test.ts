@@ -1,5 +1,5 @@
 import { makeTestFixture, snapshotEverything, nextTick, logStep, nextMicroTick } from "../helpers";
-import { mount, Component, proxy, xml, App } from "../../src/index";
+import { mount, Component, state as proxy, xml, App } from "../../src/index";
 
 snapshotEverything();
 

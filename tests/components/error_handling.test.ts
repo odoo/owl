@@ -7,7 +7,7 @@ import {
   onWillPatch,
   onWillStart,
   onWillUnmount,
-  proxy,
+  state as proxy,
   xml,
 } from "../../src/index";
 import { getCurrent } from "../../src/runtime/component_node";

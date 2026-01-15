@@ -1,4 +1,4 @@
-import { effect, proxy } from "../../src/runtime";
+import { effect, state as proxy } from "../../src/runtime";
 import { expectSpy, nextMicroTick } from "../helpers";
 
 async function waitScheduler() {

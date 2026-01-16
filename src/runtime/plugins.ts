@@ -121,7 +121,10 @@ export function plugin<T extends PluginConstructor>(pluginType: T): InstanceType
 }
 
 // todo: remove duplication with the actual props function
-plugin.props = function props<P extends Props = any, D extends OptionalProps<P> = any>(type?: P, defaults: D = {} as D): AsProps<P, D> {
+plugin.props = function props<P extends Props = any, D extends OptionalProps<P> = any>(
+  type?: P,
+  defaults: D = {} as D
+): AsProps<P, D> {
   function getProp(key: string) {
     if (currentProps[key] === undefined) {
       return (defaults as any)[key];
@@ -140,9 +143,11 @@ plugin.props = function props<P extends Props = any, D extends OptionalProps<P> 
 
   if (type) {
     const isSchemaValidated = type && !Array.isArray(type);
-    applyPropGetters((isSchemaValidated ? Object.keys(type) : type).map((key) =>
-      key.endsWith("?") ? key.slice(0, -1) : key
-    ));
+    applyPropGetters(
+      (isSchemaValidated ? Object.keys(type) : type).map((key) =>
+        key.endsWith("?") ? key.slice(0, -1) : key
+      )
+    );
     const app = getCurrent().app;
     if (app.dev) {
       const validation = isSchemaValidated ? object(type) : validateKeys(...type);

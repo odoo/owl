@@ -1,4 +1,13 @@
-import { App, Component, mount, onMounted, props, state as proxy, signal, xml } from "../../src/index";
+import {
+  App,
+  Component,
+  mount,
+  onMounted,
+  props,
+  state as proxy,
+  signal,
+  xml,
+} from "../../src/index";
 import { children, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();

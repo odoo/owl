@@ -676,10 +676,10 @@ describe("validate by shape", () => {
           type: Object,
           shape: {
             id: Number,
-            url: String
-          }
-        }
-      }
+            url: String,
+          },
+        },
+      },
     };
     expect(validateType({ p: [] }, description)).toEqual({
       type: "shape",
@@ -692,17 +692,7 @@ describe("validate by shape", () => {
       },
       received: { p: [] },
     });
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     expect(validateType({ p: {} }, description)).toEqual({
       type: "shape",
       expected: {

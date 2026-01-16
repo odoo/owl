@@ -797,7 +797,7 @@ describe("props validation", () => {
         size: {
           type: "validate",
           expected: expect.anything(),
-          received: "abcdef"
+          received: "abcdef",
         },
       },
       received: { size: "abcdef" },
@@ -842,7 +842,7 @@ describe("props validation", () => {
         n: {
           type: "type",
           expected: Number,
-          received: "str"
+          received: "str",
         },
       },
       received: { n: "str" },
@@ -865,7 +865,7 @@ describe("props validation", () => {
         n: {
           type: "validate",
           expected: validator,
-          received: 100
+          received: 100,
         },
       },
       received: { n: 100 },
@@ -1047,7 +1047,7 @@ describe("props validation", () => {
         p: {
           type: "missing prop",
           expected: { optional: false },
-          received: undefined
+          received: undefined,
         },
       },
       received: {},
@@ -1082,7 +1082,7 @@ describe("props validation", () => {
         p: {
           type: "mandatory value",
           expected: { type: Number },
-          received: undefined
+          received: undefined,
         },
       },
       received: {},
@@ -1140,7 +1140,7 @@ describe("props validation", () => {
         mandatory: {
           type: "missing prop",
           expected: Number,
-          received: undefined
+          received: undefined,
         },
       },
       received: {},
@@ -1205,7 +1205,7 @@ describe("props validation", () => {
         message: {
           type: "missing prop",
           expected: { optional: false },
-          received: undefined
+          received: undefined,
         },
       },
       received: {},

@@ -7,6 +7,7 @@ import {
   onWillUnmount,
   props,
   state as proxy,
+  signal,
   xml,
 } from "../../src";
 import { makeTestFixture, nextTick, snapshotEverything, steps, useLogLifecycle } from "../helpers";
@@ -306,4 +307,30 @@ describe("components and computed", () => {
     await mount(Parent, fixture);
     expect(fixture.textContent).toBe("11");
   });
+});
+
+test("reading reactive state in setup should work as expected", async () => {
+  const s = signal(1);
+  const steps: string[] = [];
+
+  class B extends Component {
+    static template = xml`<t t-out="this.c()"/>`;
+
+    c = computed(() => s() + 1);
+
+    setup() {
+      // we read the content of the signal s in setup, not in render
+      steps.push(`setup: ${this.c()}`);
+    }
+  }
+  class A extends Component {
+    static components = { B };
+    static template = xml`<B/>`;
+  }
+  await mount(A, fixture);
+  expect(fixture.innerHTML).toBe("2");
+  s.set(33);
+  await nextTick();
+  expect(fixture.innerHTML).toBe("34");
+  expect(steps).toEqual(["setup: 2"]);
 });

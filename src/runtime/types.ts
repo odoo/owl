@@ -43,7 +43,10 @@ export function array<T>(type?: T): T[] {
   } as any;
 }
 
-export function func<P extends any[] = [], R = void>(parameters: P, result: R): (...parameters: P) => R {
+export function func<P extends any[] = [], R = void>(
+  parameters: P,
+  result: R
+): (...parameters: P) => R {
   return function validateFunction(value: any) {
     if (typeof value !== "function") {
       return [{ type: "type", expected: Function, received: value }];
@@ -167,7 +170,7 @@ export function constructor<T extends Constructor>(type: T): T {
   } as any;
 }
 
-export function union<T extends any[]>(...types: T): (T extends Array<infer E> ? E : never) {
+export function union<T extends any[]>(...types: T): T extends Array<infer E> ? E : never {
   return function validateUnion(value: any) {
     const validations = types.filter((type) => validateType(value, type).length);
     if (validations.length) {

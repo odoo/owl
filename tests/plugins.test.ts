@@ -1,4 +1,13 @@
-import { effect, onWillDestroy, plugin, Plugin, PluginManager, status, types as t, useListener } from "../src";
+import {
+  effect,
+  onWillDestroy,
+  plugin,
+  Plugin,
+  PluginManager,
+  status,
+  types as t,
+  useListener,
+} from "../src";
 import { Resource, useResource } from "../src/runtime/resource";
 import { waitScheduler } from "./helpers";
 

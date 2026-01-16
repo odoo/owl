@@ -8,7 +8,9 @@ declare const isProps: unique symbol;
 type IsPropsObj = { [isProps]: true };
 export type AsProps<T extends Props, D extends Props> = IsPropsObj & T & Required<D>;
 
-type GetPropsWithOptionals<T> = T extends AsProps<infer P, infer D> ? Partial<D> & Omit<P, keyof D> : never;
+type GetPropsWithOptionals<T> = T extends AsProps<infer P, infer D>
+  ? Partial<D> & Omit<P, keyof D>
+  : never;
 export type GetProps<T> = {
   [K in keyof T]: T[K] extends IsPropsObj ? (x: GetPropsWithOptionals<T[K]>) => void : never;
 }[keyof T] extends (x: infer I) => void
@@ -19,7 +21,10 @@ export type OptionalProps<T extends Props> = {
   [K in keyof T as undefined extends T[K] ? K : never]?: NonNullable<T[K]>;
 };
 
-export function props<P extends Props = any, D extends OptionalProps<P> = any>(type?: P, defaults: D = {} as D): AsProps<P, D> {
+export function props<P extends Props = any, D extends OptionalProps<P> = any>(
+  type?: P,
+  defaults: D = {} as D
+): AsProps<P, D> {
   const node = getCurrent();
 
   function getProp(key: string) {

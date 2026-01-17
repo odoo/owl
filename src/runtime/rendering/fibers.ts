@@ -5,15 +5,6 @@ import { OwlError } from "../../common/owl_error";
 import { STATUS } from "../status";
 import { runWithComputation } from "../reactivity/computations";
 
-export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
-  let current = node.fiber;
-  if (current) {
-    cancelFibers(current.children);
-    current.root = null;
-  }
-  return new Fiber(node, parent);
-}
-
 export function makeRootFiber(node: ComponentNode): Fiber {
   let current = node.fiber;
   if (current) {
@@ -90,14 +81,12 @@ export class Fiber {
   parent: Fiber | null;
   children: Fiber[] = [];
   appliedToDom = false;
-  deep: boolean = false;
   childrenMap: ComponentNode["children"] = {};
 
   constructor(node: ComponentNode, parent: Fiber | null) {
     this.node = node;
     this.parent = parent;
     if (parent) {
-      this.deep = parent.deep;
       const root = parent.root!;
       root.setCounter(root.counter + 1);
       this.root = root;

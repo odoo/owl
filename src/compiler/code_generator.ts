@@ -1233,18 +1233,9 @@ export class CodeGenerator {
       keyArg = `${ctx.tKeyExpr} + ${keyArg}`;
     }
     let id = generateId("comp");
-    const propList: string[] = [];
-    for (let p in ast.props || {}) {
-      let [name, suffix] = p.split(".");
-      if (!suffix) {
-        propList.push(`"${name}"`);
-      }
-    }
     this.staticDefs.push({
       id,
-      expr: `app.createComponent(${
-        ast.isDynamic ? null : expr
-      }, ${!ast.isDynamic}, ${!!ast.slots}, ${!!ast.dynamicProps}, [${propList}])`,
+      expr: `app.createComponent(${ast.isDynamic ? null : expr}, ${!ast.isDynamic})`,
     });
 
     if (ast.isDynamic) {
@@ -1369,7 +1360,7 @@ export class CodeGenerator {
     let id = generateId("comp");
     this.staticDefs.push({
       id,
-      expr: `app.createComponent(null, false, true, false, false)`,
+      expr: `app.createComponent(null, false)`,
     });
 
     const target = compileExpr(ast.target);

@@ -10,10 +10,9 @@ import {
   getCurrentComputation,
   runWithComputation,
   setComputation,
-  untrack,
 } from "./reactivity/computations";
 import { fibersInError } from "./rendering/error_handling";
-import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./rendering/fibers";
+import { Fiber, makeRootFiber, MountFiber, MountOptions } from "./rendering/fibers";
 import { STATUS } from "./status";
 
 let currentNode: ComponentNode | null = null;
@@ -59,7 +58,6 @@ export class ComponentNode implements VNode<ComponentNode> {
   children: { [key: string]: ComponentNode } = Object.create(null);
 
   willStart: LifecycleHook[] = [];
-  willUpdateProps: LifecycleHook[] = [];
   willUnmount: LifecycleHook[] = [];
   mounted: LifecycleHook[] = [];
   willPatch: LifecycleHook[] = [];
@@ -136,22 +134,11 @@ export class ComponentNode implements VNode<ComponentNode> {
       // situation may have changed after the microtask tick
       current = this.fiber;
     }
-    if (current) {
-      if (!current.bdom && !fibersInError.has(current)) {
-        if (deep) {
-          // we want the render from this point on to be with deep=true
-          current.deep = deep;
-        }
-        return;
-      }
-      // if current rendering was with deep=true, we want this one to be the same
-      deep = deep || current.deep;
-    } else if (!this.bdom) {
+    if ((current && !current.bdom && !fibersInError.has(current)) || (!current && !this.bdom)) {
       return;
     }
 
     const fiber = makeRootFiber(this);
-    fiber.deep = deep;
     this.fiber = fiber;
 
     this.app.scheduler.addFiber(fiber);
@@ -217,32 +204,6 @@ export class ComponentNode implements VNode<ComponentNode> {
       }
     }
     this.status = STATUS.DESTROYED;
-  }
-
-  async updateAndRender(props: Record<string, any>, parentFiber: Fiber) {
-    props = Object.assign({}, props);
-    // update
-    const fiber = makeChildFiber(this, parentFiber);
-    this.fiber = fiber;
-    const component = this.component;
-
-    let prom: Promise<any[]>;
-    untrack(() => {
-      prom = Promise.all(this.willUpdateProps.map((f) => f.call(component, props)));
-    });
-    await prom!;
-    if (fiber !== this.fiber) {
-      return;
-    }
-    this.props = props;
-    fiber.render();
-    const parentRoot = parentFiber.root!;
-    if (this.willPatch.length) {
-      parentRoot.willPatch.push(fiber);
-    }
-    if (this.patched.length) {
-      parentRoot.patched.push(fiber);
-    }
   }
 
   /**

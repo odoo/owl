@@ -53,7 +53,6 @@ export {
   onWillStart,
   onMounted,
   onWillUnmount,
-  onWillUpdateProps,
   onWillPatch,
   onPatched,
   onWillDestroy,

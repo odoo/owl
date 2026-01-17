@@ -6,7 +6,7 @@ import {
   onPatched,
   onWillStart,
   onWillUnmount,
-  onWillUpdateProps,
+  // onWillUpdateProps,
   OwlError,
   props,
   proxy,
@@ -198,7 +198,7 @@ class TabbedEditor extends Component {
       }
     });
 
-    onWillUpdateProps((nextProps) => this._setupSessions(nextProps));
+    // onWillUpdateProps((nextProps) => this._setupSessions(nextProps));
 
     onWillUnmount(() => {
       clearInterval(this.interval);

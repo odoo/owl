@@ -28,9 +28,9 @@ test("can remove values", () => {
   const resource = new Resource();
   resource.add("a").add("b").add("c").add("d");
   expect(resource.items()).toEqual(["a", "b", "c", "d"]);
-  resource.remove("b");
+  resource.delete("b");
   expect(resource.items()).toEqual(["a", "c", "d"]);
-  resource.remove("a").remove("d");
+  resource.delete("a").delete("d");
   expect(resource.items()).toEqual(["c"]);
 });
 

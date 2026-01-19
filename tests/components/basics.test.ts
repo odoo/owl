@@ -3,10 +3,10 @@ import {
   Component,
   mount,
   props,
-  state as proxy,
+  proxy,
   status,
-  toRaw,
   types as t,
+  toRaw,
   xml,
 } from "../../src";
 import { markup } from "../../src/runtime/utils";

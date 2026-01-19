@@ -4,7 +4,7 @@ import {
   mount,
   onMounted,
   props,
-  state as proxy,
+  proxy,
   signal,
   xml,
 } from "../../src/index";

@@ -10,7 +10,7 @@ import {
   onWillUpdateProps,
   OwlError,
   props,
-  state as proxy,
+  proxy,
   signal,
   useComponent,
   useEffect,

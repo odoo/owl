@@ -32,7 +32,7 @@ export class Resource<T> {
     return this;
   }
 
-  remove(item: T): Resource<T> {
+  delete(item: T): Resource<T> {
     const items = this._items().filter(([seq, val]) => val !== item);
     this._items.set(items);
     return this;
@@ -49,7 +49,7 @@ export function useResource<T>(r: Resource<T>, elements: T[]) {
   }
   onWillDestroy(() => {
     for (let elem of elements) {
-      r.remove(elem);
+      r.delete(elem);
     }
   });
 }

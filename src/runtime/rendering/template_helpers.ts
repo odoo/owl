@@ -163,15 +163,15 @@ function createRef(ref: any) {
   let add: (el: HTMLElement) => void;
   let remove: (el: HTMLElement) => void;
 
-  if (ref.add && ref.remove) {
+  if (ref.add && ref.delete) {
     add = ref.add.bind(ref);
-    remove = ref.remove.bind(ref);
+    remove = ref.delete.bind(ref);
   } else if (ref.set) {
     add = ref.set.bind(ref);
     remove = () => ref.set(null);
   } else {
     throw new OwlError(
-      `Ref should implement either a 'set' function or 'add' and 'remove' functions`
+      `Ref should implement either a 'set' function or 'add' and 'delete' functions`
     );
   }
 

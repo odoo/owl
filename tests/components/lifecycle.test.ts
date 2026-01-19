@@ -2,7 +2,7 @@ import {
   App,
   Component,
   mount,
-  state as proxy,
+  proxy,
   xml,
   onWillPatch,
   onWillUnmount,

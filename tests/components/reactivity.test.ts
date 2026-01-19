@@ -6,8 +6,8 @@ import {
   onWillPatch,
   onWillUnmount,
   props,
-  state as proxy,
   signal,
+  proxy,
   xml,
 } from "../../src";
 import { makeTestFixture, nextTick, snapshotEverything, steps, useLogLifecycle } from "../helpers";

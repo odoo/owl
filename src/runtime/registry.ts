@@ -50,7 +50,7 @@ export class Registry<T> {
     return hasKey ? this._map()[key][1] : defaultValue!;
   }
 
-  remove(key: string) {
+  delete(key: string) {
     delete this._map()[key];
   }
 

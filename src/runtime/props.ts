@@ -1,30 +1,21 @@
 import { getCurrent } from "./component_node";
-import { keys as validateKeys, object } from "./types";
+import { GetOptionalEntries, KeyedObject, ResolveOptionalEntries, types } from "./types";
 import { assertType } from "./validation";
-
-export type Props = Record<string, any> | string[];
 
 declare const isProps: unique symbol;
 type IsPropsObj = { [isProps]: true };
-export type AsProps<T extends Props, D extends Props> = IsPropsObj & T & Required<D>;
+export type Props<T extends Record<string, any>, D extends Record<string, any>> = IsPropsObj & T & Required<D>;
 
-type GetPropsWithOptionals<T> = T extends AsProps<infer P, infer D>
-  ? Partial<D> & Omit<P, keyof D>
-  : never;
+type GetPropsWithOptionals<T> = T extends Props<infer P, any> ? P : never;
 export type GetProps<T> = {
   [K in keyof T]: T[K] extends IsPropsObj ? (x: GetPropsWithOptionals<T[K]>) => void : never;
 }[keyof T] extends (x: infer I) => void
   ? { [K in keyof I]: I[K] }
   : never;
 
-export type OptionalProps<T extends Props> = {
-  [K in keyof T as undefined extends T[K] ? K : never]?: NonNullable<T[K]>;
-};
-
-export function props<P extends Props = any, D extends OptionalProps<P> = any>(
-  type?: P,
-  defaults: D = {} as D
-): AsProps<P, D> {
+export function props<const P extends string[] = string[], D extends GetOptionalEntries<KeyedObject<P[number]>> = {}>(type?: P, defaults?: D): Props<ResolveOptionalEntries<KeyedObject<P[number]>>, D>;
+export function props<P extends Record<string, any> = Record<string, any>, D extends GetOptionalEntries<P> = {}>(type?: P, defaults?: D): Props<ResolveOptionalEntries<P>, D>;
+export function props<P extends Record<string, any> = Record<string, any>, D extends GetOptionalEntries<P> = {}>(type?: P, defaults = {} as D): Props<ResolveOptionalEntries<P>, D> {
   const node = getCurrent();
 
   function getProp(key: string) {
@@ -52,10 +43,10 @@ export function props<P extends Props = any, D extends OptionalProps<P> = any>(
     applyPropGetters(keys);
 
     if (node.app.dev) {
-      const validation = isSchemaValidated ? object(type) : validateKeys(...type);
-      assertType(node.props, validation);
+      const validation = isSchemaValidated ? types.object(type) : types.keys(type);
+      assertType(node.props, validation, `Invalid component props (${node.name})`);
       node.willUpdateProps.push((np: Record<string, any>) => {
-        assertType(np, validation);
+        assertType(np, validation, `Invalid component props (${node.name})`);
       });
     }
   } else {

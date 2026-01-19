@@ -22,7 +22,7 @@ export interface ValidationContext {
 export function assertType(
   value: any,
   validation: any,
-  errorMessage = "Value does not match the type",
+  errorMessage = "Value does not match the type"
 ): void {
   const issues = validateType(value, validation);
   if (issues.length) {
@@ -34,7 +34,7 @@ export function assertType(
         }
         return value;
       },
-      2,
+      2
     );
     throw new OwlError(`${errorMessage}\n${issueStrings}`);
   }
@@ -44,7 +44,7 @@ function createContext(
   issues: ValidationIssue[],
   value: any,
   path: PropertyKey[],
-  parent?: ValidationContext,
+  parent?: ValidationContext
 ): ValidationContext {
   return {
     issueDepth: 0,

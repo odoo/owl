@@ -22,12 +22,12 @@ export function props(): Props<Record<string, any>>;
 export function props<const Keys extends string[]>(keys: Keys): Props<ResolveObjectType<Keys>>;
 export function props<const Keys extends string[]>(
   keys: Keys,
-  defaults: GetPropsDefaults<KeyedObject<Keys>>,
+  defaults: GetPropsDefaults<KeyedObject<Keys>>
 ): Props<WithDefaults<ResolveObjectType<Keys>, GetPropsDefaults<KeyedObject<Keys>>>>;
 export function props<Shape extends {}>(shape: Shape): Props<ResolveObjectType<Shape>>;
 export function props<Shape extends {}>(
   shape: Shape,
-  defaults: GetPropsDefaults<Shape>,
+  defaults: GetPropsDefaults<Shape>
 ): Props<WithDefaults<ResolveObjectType<Shape>, GetPropsDefaults<Shape>>>;
 export function props(type?: any, defaults: any = {}): Props<{}> {
   const node = getCurrent();

@@ -40,7 +40,6 @@ instance somewhere in the DOM.
   is complete.
 
   The `option` object is an object with the following keys:
-
   - **`position (string)`**: either `first-child` or `last-child`. This option determines
     the position of the application in the target: either first or last child.
 

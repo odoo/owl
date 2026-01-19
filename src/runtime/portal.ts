@@ -3,7 +3,7 @@ import { BDom, text, VNode } from "./blockdom";
 import { Component } from "./component";
 import { onMounted, onWillUnmount } from "./lifecycle_hooks";
 import { props } from "./props";
-import { string } from "./types";
+import { types } from "./types";
 
 const VText: any = text("").constructor;
 
@@ -64,7 +64,7 @@ export class Portal extends Component {
   static template = "__portal__";
 
   props = props({
-    target: string,
+    target: types.string,
   });
 
   setup() {

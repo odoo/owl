@@ -186,7 +186,7 @@ function createRef(ref: any) {
 }
 
 function modelExpr(value: any) {
-  if (!value.set || typeof value !== "function") {
+  if (typeof value !== "function" || typeof value.set !== "function") {
     throw new OwlError(
       `Invalid t-model expression: expression should evaluate to a function with a 'set' method defined on it`
     );

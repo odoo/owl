@@ -169,7 +169,7 @@ describe("basics", () => {
       props = props(
         {
           a: t.any,
-          b: t.optional(t.number),
+          "b?": t.number,
         },
         { b: 1 }
       );

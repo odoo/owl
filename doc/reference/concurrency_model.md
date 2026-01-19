@@ -72,7 +72,6 @@ component (with some code like `app.mount(document.body)`).
 1. `willStart` is called on `A`
 
 2. when it is done, template `A` is rendered.
-
    - component `B` is created
      1. `willStart` is called on `B`
      2. template `B` is rendered
@@ -116,7 +115,6 @@ Here is what Owl will do:
 
 1. because of a state change, the method `render` is called on `C`
 2. template `C` is rendered again
-
    - component `D` is updated:
      1. hook `willUpdateProps` is called on `D` (async)
      2. template `D` is rerendered
@@ -130,7 +128,6 @@ Here is what Owl will do:
 4. components `F`, `D` are patched in that order
 
 5. component `C` is patched, which will cause recursively:
-
    1. `willUnmount` hook on `E`
    2. destruction of `E`,
 

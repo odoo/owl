@@ -63,8 +63,8 @@ export class TemplateSet {
         typeof rawTemplate === "string"
           ? rawTemplate
           : rawTemplate instanceof Element
-          ? rawTemplate.outerHTML
-          : rawTemplate.toString();
+            ? rawTemplate.outerHTML
+            : rawTemplate.toString();
       const newAsString = typeof template === "string" ? template : template.outerHTML;
       if (currentAsString === newAsString) {
         return;

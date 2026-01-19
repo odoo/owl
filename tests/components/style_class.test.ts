@@ -1,4 +1,4 @@
-import { Component, mount, onMounted, props, state as proxy, xml } from "../../src";
+import { Component, mount, onMounted, props, proxy, xml } from "../../src";
 import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 snapshotEverything();

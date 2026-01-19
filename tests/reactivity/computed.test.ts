@@ -1,4 +1,4 @@
-import { state as proxy, computed } from "../../src";
+import { proxy, computed } from "../../src";
 import { resetSignalHooks, setSignalHooks } from "../../src/runtime/reactivity/computed";
 import { Derived } from "../../src/runtime/reactivity/computations";
 import { expectSpy, nextMicroTick, spyComputed, spyEffect } from "../helpers";

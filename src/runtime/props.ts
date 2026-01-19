@@ -1,6 +1,23 @@
 import { getCurrent } from "./component_node";
 import { GetOptionalEntries, KeyedObject, PrettifyShape, ResolveObjectType, types } from "./types";
-import { assertType } from "./validation";
+import { assertType, ValidationContext } from "./validation";
+
+function validateObjectWithDefaults(
+  schema: Record<string, any> | string[],
+  defaultValues: Record<string, any>
+) {
+  const keys: string[] = Array.isArray(schema) ? schema : Object.keys(schema);
+  const mandatoryDefaultedKeys = keys.filter((key) => !key.endsWith("?") && key in defaultValues);
+  return (context: ValidationContext) => {
+    if (mandatoryDefaultedKeys.length) {
+      context.addIssue({
+        message: "props have default values on mandatory keys",
+        keys: mandatoryDefaultedKeys,
+      });
+    }
+    context.validate(types.object(schema));
+  };
+}
 
 declare const isProps: unique symbol;
 
@@ -29,11 +46,11 @@ export function props<Shape extends {}>(
   shape: Shape,
   defaults: GetPropsDefaults<Shape>
 ): Props<WithDefaults<ResolveObjectType<Shape>, GetPropsDefaults<Shape>>>;
-export function props(type?: any, defaults: any = {}): Props<{}> {
+export function props(type?: any, defaults?: any): Props<{}> {
   const node = getCurrent();
 
   function getProp(key: string) {
-    if (node.props[key] === undefined) {
+    if (node.props[key] === undefined && defaults) {
       return (defaults as any)[key];
     }
     return node.props[key];
@@ -50,14 +67,13 @@ export function props(type?: any, defaults: any = {}): Props<{}> {
   }
 
   if (type) {
-    const isSchemaValidated = type && !Array.isArray(type);
-    const keys: string[] = (isSchemaValidated ? Object.keys(type) : type).map((key: string) =>
+    const keys: string[] = (Array.isArray(type) ? type : Object.keys(type)).map((key: string) =>
       key.endsWith("?") ? key.slice(0, -1) : key
     );
     applyPropGetters(keys);
 
     if (node.app.dev) {
-      const validation = types.object(type);
+      const validation = defaults ? validateObjectWithDefaults(type, defaults) : types.object(type);
       assertType(node.props, validation, `Invalid component props (${node.name})`);
       node.willUpdateProps.push((np: Record<string, any>) => {
         assertType(np, validation, `Invalid component props (${node.name})`);

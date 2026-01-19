@@ -517,6 +517,19 @@ exports[`props validation can validate an object with simple shape 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div>hey</div>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;
+
+exports[`props validation can validate an object with simple shape 5`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -529,7 +542,7 @@ exports[`props validation can validate an object with simple shape 4`] = `
 }"
 `;
 
-exports[`props validation can validate an object with simple shape 5`] = `
+exports[`props validation can validate an object with simple shape 6`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -620,6 +633,17 @@ exports[`props validation can validate an optional props 5`] = `
 `;
 
 exports[`props validation can validate optional attributes in nested sub props 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = "") {
+    return text(\`\`);
+  }
+}"
+`;
+
+exports[`props validation can validate optional attributes in nested sub props 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -905,6 +929,17 @@ exports[`props validation props with type array, and no element 1`] = `
 `;
 
 exports[`props validation props with type object, and no shape 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = "") {
+    return text(\`\`);
+  }
+}"
+`;
+
+exports[`props validation props: extra props cause an error, part 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -1304,372 +1339,6 @@ exports[`props validation validate simple types 23`] = `
 `;
 
 exports[`props validation validate simple types 24`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    const props1 = {p: ctx['this'].p};
-    const b2 = comp1(props1, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    const props1 = {p: ctx['this'].p};
-    const b2 = comp1(props1, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    const props1 = {p: ctx['this'].p};
-    const b2 = comp1(props1, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 3`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div>hey</div>\`);
-  
-  return function template(ctx, node, key = "") {
-    return block1();
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 4`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    const props1 = {p: ctx['this'].p};
-    const b2 = comp1(props1, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 5`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    const props1 = {p: ctx['this'].p};
-    const b2 = comp1(props1, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 6`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    const props1 = {p: ctx['this'].p};
-    const b2 = comp1(props1, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 7`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div>hey</div>\`);
-  
-  return function template(ctx, node, key = "") {
-    return block1();
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 8`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    const props1 = {p: ctx['this'].p};
-    const b2 = comp1(props1, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 9`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    const props1 = {p: ctx['this'].p};
-    const b2 = comp1(props1, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 10`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    const props1 = {p: ctx['this'].p};
-    const b2 = comp1(props1, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 11`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div>hey</div>\`);
-  
-  return function template(ctx, node, key = "") {
-    return block1();
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 12`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    const props1 = {p: ctx['this'].p};
-    const b2 = comp1(props1, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 13`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    const props1 = {p: ctx['this'].p};
-    const b2 = comp1(props1, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 14`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    const props1 = {p: ctx['this'].p};
-    const b2 = comp1(props1, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 15`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div>hey</div>\`);
-  
-  return function template(ctx, node, key = "") {
-    return block1();
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 16`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    const props1 = {p: ctx['this'].p};
-    const b2 = comp1(props1, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 17`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    const props1 = {p: ctx['this'].p};
-    const b2 = comp1(props1, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 18`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    const props1 = {p: ctx['this'].p};
-    const b2 = comp1(props1, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 19`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div>hey</div>\`);
-  
-  return function template(ctx, node, key = "") {
-    return block1();
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 20`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    const props1 = {p: ctx['this'].p};
-    const b2 = comp1(props1, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 21`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    const props1 = {p: ctx['this'].p};
-    const b2 = comp1(props1, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 22`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
-  
-  let block1 = createBlock(\`<div><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    const props1 = {p: ctx['this'].p};
-    const b2 = comp1(props1, key + \`__1\`, node, this, null);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 23`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div>hey</div>\`);
-  
-  return function template(ctx, node, key = "") {
-    return block1();
-  }
-}"
-`;
-
-exports[`props validation validate simple types, alternate form 24`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

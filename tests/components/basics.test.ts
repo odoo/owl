@@ -1,14 +1,4 @@
-import {
-  App,
-  Component,
-  mount,
-  props,
-  proxy,
-  status,
-  types as t,
-  toRaw,
-  xml,
-} from "../../src";
+import { App, Component, mount, props, proxy, status, types as t, toRaw, xml } from "../../src";
 import { markup } from "../../src/runtime/utils";
 import {
   elem,

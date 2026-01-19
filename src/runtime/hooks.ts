@@ -3,6 +3,7 @@ import { getCurrent } from "./component_node";
 import { onWillDestroy } from "./lifecycle_hooks";
 import { PluginConstructor, PluginManager } from "./plugins";
 import { effect } from "./reactivity/effect";
+import { Signal } from "./reactivity/signal";
 
 // -----------------------------------------------------------------------------
 // useEffect
@@ -43,13 +44,25 @@ export function useEffect(fn: Parameters<typeof effect>[0]) {
  *  `useListener(window, 'click', () => this._doSomething());`
  * */
 export function useListener(
-  target: EventTarget,
+  target: EventTarget | Signal<EventTarget | null>,
   eventName: string,
   handler: EventListener,
   eventParams?: AddEventListenerOptions
 ) {
-  target.addEventListener(eventName, handler, eventParams);
-  onWillDestroy(() => target.removeEventListener(eventName, handler, eventParams));
+  if (typeof target === "function") {
+    // this is a ref
+    useEffect(() => {
+      const el = target();
+      if (el) {
+        el.addEventListener(eventName, handler, eventParams);
+        return () => el.removeEventListener(eventName, handler, eventParams);
+      }
+      return;
+    })
+  } else {
+    target.addEventListener(eventName, handler, eventParams);
+    onWillDestroy(() => target.removeEventListener(eventName, handler, eventParams));
+  }
 }
 
 export function providePlugins(Plugins: PluginConstructor[], pluginProps?: Object) {

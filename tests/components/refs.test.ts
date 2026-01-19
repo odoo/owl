@@ -4,7 +4,7 @@ import {
   mount,
   onMounted,
   onPatched,
-  state as proxy,
+  proxy,
   xml,
   props,
   signal,

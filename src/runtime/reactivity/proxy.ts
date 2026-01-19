@@ -51,7 +51,7 @@ function canBeMadeReactive(value: any): boolean {
  * @returns a proxy for the given object when possible, the original otherwise
  */
 function possiblyReactive(val: any, atom: Atom | null) {
-  return !atom && canBeMadeReactive(val) ? state(val) : val;
+  return !atom && canBeMadeReactive(val) ? proxy(val) : val;
 }
 
 const skipped = new WeakSet<Target>();
@@ -190,14 +190,14 @@ export function proxifyTarget<T extends Target>(target: T, atom: Atom | null): T
  *  proxy has changed
  * @returns a proxy that tracks changes to it
  */
-export function state<T extends Target>(target: T): T {
+export function proxy<T extends Target>(target: T): T {
   return proxifyTarget(target, null);
 }
 
 /**
  * Creates a basic proxy handler for regular objects and arrays.
  *
- * @param callback @see state
+ * @param callback @see proxy
  * @returns a proxy handler object
  */
 function basicProxyHandler<T extends Target>(atom: Atom | null): ProxyHandler<T> {
@@ -254,8 +254,8 @@ function basicProxyHandler<T extends Target>(atom: Atom | null): ProxyHandler<T>
  * and delegates to the underlying method.
  *
  * @param methodName name of the method to delegate to
- * @param target @see state
- * @param callback @see state
+ * @param target @see proxy
+ * @param callback @see proxy
  */
 function makeKeyObserver(methodName: "has" | "get", target: any, atom: Atom | null) {
   return (key: any) => {
@@ -269,8 +269,8 @@ function makeKeyObserver(methodName: "has" | "get", target: any, atom: Atom | nu
  * observe keys as necessary.
  *
  * @param methodName name of the method to delegate to
- * @param target @see state
- * @param callback @see state
+ * @param target @see proxy
+ * @param callback @see proxy
  */
 function makeIteratorObserver(
   methodName: "keys" | "values" | "entries" | typeof Symbol.iterator,
@@ -292,8 +292,8 @@ function makeIteratorObserver(
  * collection while observing key changes, and keys as they're iterated over,
  * and making the passed keys/values proxy.
  *
- * @param target @see state
- * @param callback @see state
+ * @param target @see proxy
+ * @param callback @see proxy
  */
 function makeForEachObserver(target: any, atom: Atom | null) {
   return function forEach(forEachCb: (val: any, key: any, target: any) => void, thisArg: any) {
@@ -317,7 +317,7 @@ function makeForEachObserver(target: any, atom: Atom | null) {
  * @param setterName name of the method to delegate to
  * @param getterName name of the method which should be used to retrieve the
  *  value before calling the delegate method for comparison purposes
- * @param target @see state
+ * @param target @see proxy
  */
 function delegateAndNotify(
   setterName: "set" | "add" | "delete",
@@ -344,7 +344,7 @@ function delegateAndNotify(
  * Creates a function that will clear the underlying collection and notify that
  * the keys of the collection have changed.
  *
- * @param target @see state
+ * @param target @see proxy
  */
 function makeClearNotifier(target: Map<any, any> | Set<any>, atom: Atom | null) {
   return () => {
@@ -405,8 +405,8 @@ const rawTypeToFuncHandlers = {
 /**
  * Creates a proxy handler for collections (Set/Map/WeakMap)
  *
- * @param callback @see state
- * @param target @see state
+ * @param callback @see proxy
+ * @param target @see proxy
  * @returns a proxy handler object
  */
 function collectionsProxyHandler<T extends Collection>(

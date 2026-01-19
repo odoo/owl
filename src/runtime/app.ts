@@ -5,7 +5,7 @@ import { ComponentNode, saveCurrent } from "./component_node";
 import { handleError, nodeErrorHandlers } from "./rendering/error_handling";
 import { Fiber, MountOptions, RootFiber } from "./rendering/fibers";
 import { Plugin, PluginManager } from "./plugins";
-import { state, toRaw } from "./reactivity/state";
+import { proxy, toRaw } from "./reactivity/proxy";
 import { Scheduler } from "./rendering/scheduler";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
 import { validateTarget } from "./utils";
@@ -40,7 +40,7 @@ declare global {
       Fiber: typeof Fiber;
       RootFiber: typeof RootFiber;
       toRaw: typeof toRaw;
-      proxy: typeof state;
+      proxy: typeof proxy;
     };
   }
 }
@@ -54,7 +54,7 @@ interface Root<T extends ComponentConstructor> {
   destroy(): void;
 }
 
-window.__OWL_DEVTOOLS__ ||= { apps, Fiber, RootFiber, toRaw, proxy: state };
+window.__OWL_DEVTOOLS__ ||= { apps, Fiber, RootFiber, toRaw, proxy };
 
 export class App extends TemplateSet {
   static validateTarget = validateTarget;

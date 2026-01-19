@@ -30,7 +30,7 @@ describe("registry", () => {
 
     registry.add("key", "some value");
     expect(registry.get("key")).toBe("some value");
-    registry.remove("key");
+    registry.delete("key");
   });
 
   test("set method returns the registry, so it is chainable", () => {

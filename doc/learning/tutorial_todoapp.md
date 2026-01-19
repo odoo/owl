@@ -148,7 +148,7 @@ data and a template to the `App` component:
 
 ```js
 class Root extends Component {
-  static template = xml/* xml */ `
+  static template = xml /* xml */ `
     <div class="task-list">
         <t t-foreach="tasks" t-as="task" t-key="task.id">
             <div class="task">
@@ -565,7 +565,7 @@ function createTaskStore() {
 // Task Component
 // -------------------------------------------------------------------------
 class Task extends Component {
-  static template = xml/* xml */ `
+  static template = xml /* xml */ `
     <div class="task" t-att-class="props.task.isCompleted ? 'done' : ''">
       <input type="checkbox" t-att-checked="props.task.isCompleted" t-on-click="() => store.toggleTask(props.task)"/>
       <span><t t-esc="props.task.text"/></span>
@@ -583,7 +583,7 @@ class Task extends Component {
 // Root Component
 // -------------------------------------------------------------------------
 class Root extends Component {
-  static template = xml/* xml */ `
+  static template = xml /* xml */ `
     <div class="todo-app">
       <input placeholder="Enter a new task" t-on-keyup="addTask" t-ref="add-input"/>
       <div class="task-list">
@@ -838,7 +838,7 @@ For reference, here is the final code:
   // Task Component
   // -------------------------------------------------------------------------
   class Task extends Component {
-    static template = xml/* xml */ `
+    static template = xml /* xml */ `
       <div class="task" t-att-class="props.task.isCompleted ? 'done' : ''">
         <input type="checkbox"
           t-att-id="props.task.id"
@@ -859,7 +859,7 @@ For reference, here is the final code:
   // Root Component
   // -------------------------------------------------------------------------
   class Root extends Component {
-    static template = xml/* xml */ `
+    static template = xml /* xml */ `
       <div class="todo-app">
         <input placeholder="Enter a new task" t-on-keyup="addTask" t-ref="add-input"/>
         <div class="task-list">

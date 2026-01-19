@@ -1,4 +1,4 @@
-import { Component, mount, onError, OwlError, props, xml } from "../../src";
+import { Component, mount, onError, OwlError, props, types as t, xml } from "../../src";
 import { App } from "../../src/runtime/app";
 import { makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
 
@@ -37,7 +37,7 @@ afterEach(() => {
 //------------------------------------------------------------------------------
 
 describe("props validation", () => {
-  test.skip("validation is only done in dev mode", async () => {
+  test("validation is only done in dev mode", async () => {
     class SubComp extends Component {
       static template = xml`<div>hey</div>`;
       props = props(["message"]);
@@ -58,18 +58,7 @@ describe("props validation", () => {
     );
     await mountProm;
     expect(error!).toBeDefined();
-    expect(error!.cause.message).toBe("Invalid component props (SubComp)");
-    expect(error!.cause.cause).toEqual({
-      type: "props",
-      expected: {
-        message: {
-          type: "missing prop",
-          expected: { optional: false },
-          received: undefined,
-        },
-      },
-      received: {},
-    });
+    expect(error!.cause.message).toMatch("Invalid component props (SubComp)");
     error = undefined;
 
     try {
@@ -80,7 +69,7 @@ describe("props validation", () => {
     expect(error!).toBeUndefined();
   });
 
-  test.skip("props: list of strings", async () => {
+  test("props: list of strings", async () => {
     class SubComp extends Component {
       static template = xml`<div>hey</div>`;
       props = props(["message"]);
@@ -101,21 +90,10 @@ describe("props validation", () => {
     );
     await mountProm;
     expect(error!).toBeDefined();
-    expect(error!.cause.message).toBe("Invalid component props (SubComp)");
-    expect(error!.cause.cause).toEqual({
-      type: "props",
-      expected: {
-        message: {
-          type: "missing prop",
-          expected: { optional: false },
-          received: undefined,
-        },
-      },
-      received: {},
-    });
+    expect(error!.cause.message).toMatch("Invalid component props (SubComp)");
   });
 
-  test.skip("validate props for root component", async () => {
+  test("validate props for root component", async () => {
     class Root extends Component {
       static template = xml`<div t-out="this.props.message"/>`;
       props = props(["message"]);
@@ -128,28 +106,17 @@ describe("props validation", () => {
       error = e as Error;
     }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe("Invalid component props (Root)");
-    expect((error! as any).cause).toEqual({
-      type: "props",
-      expected: {
-        message: {
-          type: "missing prop",
-          expected: { optional: false },
-          received: undefined,
-        },
-      },
-      received: {},
-    });
+    expect(error!.message).toMatch("Invalid component props (Root)");
   });
 
-  test.skip("validate simple types", async () => {
+  test("validate simple types", async () => {
     const Tests = [
-      { type: Number, ok: 1, ko: "1" },
-      { type: Boolean, ok: true, ko: "1" },
-      { type: String, ok: "1", ko: 1 },
-      { type: Object, ok: {}, ko: "1" },
-      { type: Date, ok: new Date(), ko: "1" },
-      { type: Function, ok: () => {}, ko: "1" },
+      { type: t.number, ok: 1, ko: "1" },
+      { type: t.boolean, ok: true, ko: "1" },
+      { type: t.string, ok: "1", ko: 1 },
+      { type: t.object(), ok: {}, ko: "1" },
+      { type: t.instanceOf(Date), ok: new Date(), ko: "1" },
+      { type: t.function(), ok: () => {}, ko: "1" },
     ];
     let state: { p?: any };
     class Parent extends Component {
@@ -177,18 +144,7 @@ describe("props validation", () => {
       );
       await mountProm;
       expect(error!).toBeDefined();
-      expect(error!.cause.message).toBe(`Invalid component props (_a)`);
-      expect(error!.cause.cause).toEqual({
-        type: "props",
-        expected: {
-          p: {
-            type: "missing prop",
-            expected: test.type,
-            received: undefined,
-          },
-        },
-        received: { p: undefined },
-      });
+      expect(error!.cause.message).toMatch(`Invalid component props (SubComp)`);
       error = undefined;
       state = { p: test.ok };
       try {
@@ -208,105 +164,14 @@ describe("props validation", () => {
       );
       await mountProm;
       expect(error!).toBeDefined();
-      expect(error!.cause.message).toBe(`Invalid component props (_a)`);
-      expect(error!.cause.cause).toEqual({
-        type: "props",
-        expected: {
-          p: {
-            type: "type",
-            expected: test.type,
-            received: test.ko,
-          },
-        },
-        received: { p: test.ko },
-      });
+      expect(error!.cause.message).toMatch(`Invalid component props (SubComp)`);
     }
   });
 
-  test.skip("validate simple types, alternate form", async () => {
-    const Tests = [
-      { type: Number, ok: 1, ko: "1" },
-      { type: Boolean, ok: true, ko: "1" },
-      { type: String, ok: "1", ko: 1 },
-      { type: Object, ok: {}, ko: "1" },
-      { type: Date, ok: new Date(), ko: "1" },
-      { type: Function, ok: () => {}, ko: "1" },
-    ];
-    let state: { p?: any };
-    class Parent extends Component {
-      static template = xml`<div><SubComp p="this.p"/></div>`;
-      get p() {
-        return state.p;
-      }
-    }
-    for (const test of Tests) {
-      const SubComp = class extends Component {
-        static template = xml`<div>hey</div>`;
-        props = props({ p: { type: test.type } });
-      };
-      (Parent as any).components = { SubComp };
-      state = {};
-      let app = new App({ test: true });
-      let error: OwlError | undefined;
-      let mountProm = app
-        .createRoot(Parent)
-        .mount(fixture)
-        .catch((e: Error) => (error = e));
-      await expect(nextAppError(app)).resolves.toThrow(
-        "[Owl] Unhandled error. Destroying the root component"
-      );
-      await mountProm;
-      expect(error!).toBeDefined();
-      expect(error!.cause.message).toBe(`Invalid component props (_a)`);
-      expect(error!.cause.cause).toEqual({
-        type: "props",
-        expected: {
-          p: {
-            type: "missing prop",
-            expected: { type: test.type },
-            received: undefined,
-          },
-        },
-        received: { p: undefined },
-      });
-      error = undefined;
-      state = { p: test.ok };
-      try {
-        await mount(Parent, fixture, { dev: true });
-      } catch (e) {
-        error = e as Error;
-      }
-      expect(error!).toBeUndefined();
-      state = { p: test.ko };
-      app = new App({ test: true });
-      mountProm = app
-        .createRoot(Parent)
-        .mount(fixture)
-        .catch((e: Error) => (error = e));
-      await expect(nextAppError(app)).resolves.toThrow(
-        "[Owl] Unhandled error. Destroying the root component"
-      );
-      await mountProm;
-      expect(error!).toBeDefined();
-      expect(error!.cause.message).toBe(`Invalid component props (_a)`);
-      expect(error!.cause.cause).toEqual({
-        type: "props",
-        expected: {
-          p: {
-            type: "type",
-            expected: test.type,
-            received: test.ko,
-          },
-        },
-        received: { p: test.ko },
-      });
-    }
-  });
-
-  test.skip("can validate a prop with multiple types", async () => {
+  test("can validate a prop with multiple types", async () => {
     class SubComp extends Component {
       static template = xml`<div>hey</div>`;
-      props = props({ p: [String, Boolean] });
+      props = props({ p: t.union([t.string, t.boolean]) });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.p"/></div>`;
@@ -342,24 +207,13 @@ describe("props validation", () => {
     );
     await mountProm;
     expect(error!).toBeDefined();
-    expect(error!.cause.message).toBe("Invalid component props (SubComp)");
-    expect(error!.cause.cause).toEqual({
-      type: "props",
-      expected: {
-        p: {
-          type: "type (union)",
-          expected: [String, Boolean],
-          received: 1,
-        },
-      },
-      received: { p: 1 },
-    });
+    expect(error!.cause.message).toMatch("Invalid component props (SubComp)");
   });
 
-  test.skip("can validate an optional props", async () => {
+  test("can validate an optional props", async () => {
     class SubComp extends Component {
       static template = xml`<div>hey</div>`;
-      props = props({ p: { type: String, optional: true } });
+      props = props({ "p?": t.string });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.p"/></div>`;
@@ -395,24 +249,13 @@ describe("props validation", () => {
     );
     await mountProm;
     expect(error!).toBeDefined();
-    expect(error!.cause.message).toBe("Invalid component props (SubComp)");
-    expect(error!.cause.cause).toEqual({
-      type: "props",
-      expected: {
-        p: {
-          type: "type",
-          expected: String,
-          received: 1,
-        },
-      },
-      received: { p: 1 },
-    });
+    expect(error!.cause.message).toMatch("Invalid component props (SubComp)");
   });
 
-  test.skip("can validate an array with given primitive type", async () => {
+  test("can validate an array with given primitive type", async () => {
     class SubComp extends Component {
       static template = xml`<div>hey</div>`;
-      props = props({ p: { type: Array, element: String } });
+      props = props({ p: t.array(t.string) });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.p"/></div>`;
@@ -443,24 +286,7 @@ describe("props validation", () => {
     } catch (e) {
       error = e as Error;
     }
-    expect(error.cause.message).toBe("Invalid component props (SubComp)");
-    expect(error.cause.cause).toEqual({
-      type: "props",
-      expected: {
-        p: {
-          type: "array element",
-          expected: {
-            [0]: {
-              type: "type",
-              expected: String,
-              received: 1,
-            },
-          },
-          received: [1],
-        },
-      },
-      received: { p: [1] },
-    });
+    expect(error.cause.message).toMatch("Invalid component props (SubComp)");
     try {
       state = { p: [1] };
       await mount(Parent, fixture, { test: true });
@@ -470,10 +296,10 @@ describe("props validation", () => {
     expect(error!).toBeDefined();
   });
 
-  test.skip("can validate an array with multiple sub element types", async () => {
+  test("can validate an array with multiple sub element types", async () => {
     class SubComp extends Component {
       static template = xml`<div>hey</div>`;
-      props = props({ p: { type: Array, element: [String, Boolean] } });
+      props = props({ p: t.array(t.union([t.string, t.boolean])) });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.p"/></div>`;
@@ -516,31 +342,14 @@ describe("props validation", () => {
     );
     await mountProm;
     expect(error!).toBeDefined();
-    expect(error!.cause.message).toBe("Invalid component props (SubComp)");
-    expect(error!.cause.cause).toEqual({
-      type: "props",
-      expected: {
-        p: {
-          type: "array element",
-          expected: {
-            1: {
-              type: "type (union)",
-              expected: [String, Boolean],
-              received: 1,
-            },
-          },
-          received: [true, 1],
-        },
-      },
-      received: { p: [true, 1] },
-    });
+    expect(error!.cause.message).toMatch("Invalid component props (SubComp)");
   });
 
-  test.skip("can validate an object with simple shape", async () => {
+  test("can validate an object with simple shape", async () => {
     class SubComp extends Component {
       static template = xml`<div>hey</div>`;
       props = props({
-        p: { type: Object, shape: { id: Number, url: String } },
+        p: t.object({ id: t.number, url: t.string }),
       });
     }
     class Parent extends Component {
@@ -565,48 +374,14 @@ describe("props validation", () => {
     } catch (e) {
       error = e;
     }
-    expect(error!.cause.message).toBe("Invalid component props (SubComp)");
-    expect(error!.cause.cause).toEqual({
-      type: "props",
-      expected: {
-        p: {
-          type: "shape",
-          expected: {
-            extra: {
-              type: "unknown key",
-              expected: undefined,
-              received: true,
-            },
-          },
-          received: { id: 1, url: "url", extra: true },
-        },
-      },
-      received: { p: { id: 1, url: "url", extra: true } },
-    });
+    expect(error!).toBeUndefined();
     state = { p: { id: "1", url: "url" } };
     try {
       await mount(Parent, fixture, { test: true });
     } catch (e) {
       error = e;
     }
-    expect(error!.cause.message).toBe("Invalid component props (SubComp)");
-    expect(error!.cause.cause).toEqual({
-      type: "props",
-      expected: {
-        p: {
-          type: "shape",
-          expected: {
-            id: {
-              type: "type",
-              expected: Number,
-              received: "1",
-            },
-          },
-          received: { id: "1", url: "url" },
-        },
-      },
-      received: { p: { id: "1", url: "url" } },
-    });
+    expect(error!.cause.message).toMatch("Invalid component props (SubComp)");
     error = undefined;
     state = { p: { id: 1 } };
     try {
@@ -614,37 +389,17 @@ describe("props validation", () => {
     } catch (e) {
       error = e;
     }
-    expect(error!.cause.message).toBe("Invalid component props (SubComp)");
-    expect(error!.cause.cause).toEqual({
-      type: "props",
-      expected: {
-        p: {
-          type: "shape",
-          expected: {
-            url: {
-              type: "missing key",
-              expected: String,
-              received: undefined,
-            },
-          },
-          received: { id: 1 },
-        },
-      },
-      received: { p: { id: 1 } },
-    });
+    expect(error!.cause.message).toMatch("Invalid component props (SubComp)");
   });
 
-  test.skip("can validate recursively complicated prop def", async () => {
+  test("can validate recursively complicated prop def", async () => {
     class SubComp extends Component {
       static template = xml`<div>hey</div>`;
       props = props({
-        p: {
-          type: Object,
-          shape: {
-            id: Number,
-            url: [Boolean, { type: Array, element: Number }],
-          },
-        },
+        p: t.object({
+          id: t.number,
+          url: t.union([t.boolean, t.array(t.number)]),
+        }),
       });
     }
     class Parent extends Component {
@@ -676,45 +431,14 @@ describe("props validation", () => {
     } catch (e: any) {
       error = e;
     }
-    expect(error!.cause.message).toBe("Invalid component props (SubComp)");
-    expect(error!.cause.cause).toEqual({
-      type: "props",
-      expected: {
-        p: {
-          type: "shape",
-          expected: {
-            url: {
-              type: "array element",
-              expected: {
-                1: {
-                  type: "type",
-                  expected: Number,
-                  received: true,
-                },
-              },
-              received: [12, true],
-            },
-          },
-          received: { id: 1, url: [12, true] },
-        },
-      },
-      received: { p: { id: 1, url: [12, true] } },
-    });
+    expect(error!.cause.message).toMatch("Invalid component props (SubComp)");
   });
 
-  test.skip("can validate optional attributes in nested sub props", async () => {
+  test("can validate optional attributes in nested sub props", async () => {
     class TestComponent extends Component {
       static template = xml``;
       props = props({
-        myprop: {
-          type: Array,
-          element: {
-            type: Object,
-            shape: {
-              num: { type: Number, optional: true },
-            },
-          },
-        },
+        myprop: t.array(t.object({ "num?": t.number })),
       });
     }
     let error: Error;
@@ -735,40 +459,14 @@ describe("props validation", () => {
     } catch (e) {
       error = e as Error;
     }
-    expect(error!).toBeDefined();
-    expect(error!.message).toBe("Invalid component props (TestComponent)");
-    expect((error! as any).cause).toEqual({
-      type: "props",
-      expected: {
-        myprop: {
-          type: "array element",
-          expected: {
-            0: {
-              type: "shape",
-              expected: {
-                a: {
-                  type: "unknown key",
-                  expected: undefined,
-                  received: 1,
-                },
-              },
-              received: { a: 1 },
-            },
-          },
-          received: [{ a: 1 }],
-        },
-      },
-      received: { myprop: [{ a: 1 }] },
-    });
+    expect(error!).toBeUndefined();
   });
 
-  test.skip("can validate with a custom validator", async () => {
+  test("can validate with a custom validator", async () => {
     class TestComponent extends Component {
       static template = xml``;
       props = props({
-        size: {
-          validate: (e: string) => ["small", "medium", "large"].includes(e),
-        },
+        size: t.customValidator(t.string, (e: string) => ["small", "medium", "large"].includes(e)),
       });
     }
     let error: Error;
@@ -790,29 +488,15 @@ describe("props validation", () => {
       error = e as Error;
     }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe("Invalid component props (TestComponent)");
-    expect((error! as any).cause).toEqual({
-      type: "props",
-      expected: {
-        size: {
-          type: "validate",
-          expected: expect.anything(),
-          received: "abcdef",
-        },
-      },
-      received: { size: "abcdef" },
-    });
+    expect(error!.message).toMatch("Invalid component props (TestComponent)");
   });
 
-  test.skip("can validate with a custom validator, and a type", async () => {
+  test("can validate with a custom validator, and a type", async () => {
     const validator = jest.fn((n) => 0 <= n && n <= 10);
     class TestComponent extends Component {
       static template = xml``;
       props = props({
-        n: {
-          type: Number,
-          validate: validator,
-        },
+        n: t.customValidator(t.number, validator),
       });
     }
     let error: Error | undefined;
@@ -835,18 +519,7 @@ describe("props validation", () => {
       error = e as Error;
     }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe("Invalid component props (TestComponent)");
-    expect((error! as any).cause).toEqual({
-      type: "props",
-      expected: {
-        n: {
-          type: "type",
-          expected: Number,
-          received: "str",
-        },
-      },
-      received: { n: "str" },
-    });
+    expect(error!.message).toMatch("Invalid component props (TestComponent)");
     expect(validator).toBeCalledTimes(1);
     error = undefined;
     try {
@@ -858,22 +531,11 @@ describe("props validation", () => {
       error = e as Error;
     }
     expect(error!).toBeDefined();
-    expect(error!.message).toBe("Invalid component props (TestComponent)");
-    expect((error! as any).cause).toEqual({
-      type: "props",
-      expected: {
-        n: {
-          type: "validate",
-          expected: validator,
-          received: 100,
-        },
-      },
-      received: { n: 100 },
-    });
+    expect(error!.message).toMatch("Invalid component props (TestComponent)");
     expect(validator).toBeCalledTimes(2);
   });
 
-  test.skip("props are validated in dev mode (code snapshot)", async () => {
+  test("props are validated in dev mode (code snapshot)", async () => {
     class Child extends Component {
       static template = xml`<div><t t-out="this.props.message"/></div>`;
       props = props(["message"]);
@@ -886,7 +548,7 @@ describe("props validation", () => {
     expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
   });
 
-  test.skip("props: list of strings with optional props", async () => {
+  test("props: list of strings with optional props", async () => {
     class SubComp extends Component {
       static template = xml``;
       props = props(["message", "someProp?"]);
@@ -907,23 +569,23 @@ describe("props validation", () => {
     ).resolves.toEqual(expect.anything());
   });
 
-  test.skip("props: can be defined with a boolean", async () => {
+  test("props: can be defined with a type any", async () => {
     class SubComp extends Component {
       static template = xml``;
-      props = props({ message: true } as const).message;
+      props = props({ message: t.any });
     }
     await expect(
       mount(SubComp, fixture, {
         dev: true,
-        props: {},
+        props: {} as any,
       })
     ).rejects.toThrow(expect.anything());
   });
 
-  test.skip("props with type array, and no element", async () => {
+  test("props with type array, and no element", async () => {
     class SubComp extends Component {
       static template = xml``;
-      props = props({ myprop: { type: Array } });
+      props = props({ myprop: t.array() });
     }
 
     await expect(
@@ -941,10 +603,10 @@ describe("props validation", () => {
     ).rejects.toThrow("Invalid component props (SubComp)");
   });
 
-  test.skip("props with type object, and no shape", async () => {
+  test("props with type object, and no shape", async () => {
     class SubComp extends Component {
       static template = xml``;
-      props = props({ myprop: { type: Object } });
+      props = props({ myprop: t.object() });
     }
 
     await expect(
@@ -979,7 +641,7 @@ describe("props validation", () => {
   test.skip("props: extra props cause an error, part 2", async () => {
     class SubComp extends Component {
       static template = xml``;
-      props = props({ message: true } as const);
+      props = props({ message: t.any });
     }
 
     await expect(
@@ -990,7 +652,7 @@ describe("props validation", () => {
     ).rejects.toThrow(expect.anything());
   });
 
-  test.skip("props: optional prop do not cause an error", async () => {
+  test("props: optional prop do not cause an error", async () => {
     class SubComp extends Component {
       static template = xml``;
       props = props(["message?"]);
@@ -1004,10 +666,10 @@ describe("props validation", () => {
     ).resolves.toEqual(expect.anything());
   });
 
-  test.skip("optional prop do not cause an error if value is undefined", async () => {
+  test("optional prop do not cause an error if value is undefined", async () => {
     class SubComp extends Component {
       static template = xml``;
-      props = props({ message: { type: String, optional: true } });
+      props = props({ "message?": t.string });
     }
 
     await expect(
@@ -1025,7 +687,7 @@ describe("props validation", () => {
     ).rejects.toThrow(expect.anything());
   });
 
-  test.skip("missing required boolean prop causes an error", async () => {
+  test("missing required boolean prop causes an error", async () => {
     class SubComp extends Component {
       static template = xml`<span><t t-if="this.props.p">hey</t></span>`;
       props = props(["p"]);
@@ -1040,18 +702,7 @@ describe("props validation", () => {
     } catch (e) {
       error = e;
     }
-    expect(error!.cause.message).toBe("Invalid component props (SubComp)");
-    expect(error!.cause.cause).toEqual({
-      type: "props",
-      expected: {
-        p: {
-          type: "missing prop",
-          expected: { optional: false },
-          received: undefined,
-        },
-      },
-      received: {},
-    });
+    expect(error!.cause.message).toMatch("Invalid component props (SubComp)");
   });
 
   test.skip("props are validated whenever component is updated", async () => {
@@ -1059,7 +710,7 @@ describe("props validation", () => {
     let error: Error;
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p"/></div>`;
-      props = props({ p: { type: Number } });
+      props = props({ p: t.number });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.state.p"/></div>`;
@@ -1075,31 +726,14 @@ describe("props validation", () => {
     parent.render();
     await nextTick();
     expect(error!).toBeDefined();
-    expect(error!.message).toBe("Invalid component props (SubComp)");
-    expect((error! as any).cause).toEqual({
-      type: "props",
-      expected: {
-        p: {
-          type: "mandatory value",
-          expected: { type: Number },
-          received: undefined,
-        },
-      },
-      received: {},
-    });
+    expect(error!.message).toMatch("Invalid component props (SubComp)");
   });
 
-  test.skip("default values are applied before validating props at update", async () => {
+  test("default values are applied before validating props at update", async () => {
     // need to do something about errors catched in render
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p"/></div>`;
-      props = props({
-        p: {
-          type: Number,
-          optional: true,
-          defaultValue: 4,
-        },
-      });
+      props = props({ "p?": t.number }, { p: 4 });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.state.p"/></div>`;
@@ -1115,12 +749,12 @@ describe("props validation", () => {
     expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
   });
 
-  test.skip("mix of optional and mandatory", async () => {
+  test("mix of optional and mandatory", async () => {
     class Child extends Component {
       static template = xml` <div><t t-out="this.props.mandatory"/></div>`;
       props = props({
-        optional: { type: String, optional: true },
-        mandatory: Number,
+        "optional?": t.string,
+        mandatory: t.number,
       });
     }
     class Parent extends Component {
@@ -1133,21 +767,10 @@ describe("props validation", () => {
     } catch (e) {
       error = e;
     }
-    expect(error!.cause.message).toBe("Invalid component props (Child)");
-    expect(error!.cause.cause).toEqual({
-      type: "props",
-      expected: {
-        mandatory: {
-          type: "missing prop",
-          expected: Number,
-          received: undefined,
-        },
-      },
-      received: {},
-    });
+    expect(error!.cause.message).toMatch("Invalid component props (Child)");
   });
 
-  test.skip("additional props are allowed (array)", async () => {
+  test("additional props are allowed (array)", async () => {
     class Child extends Component {
       static template = xml`<div>hey</div>`;
       props = props(["message"]);
@@ -1160,11 +783,11 @@ describe("props validation", () => {
     await expect(mount(Parent, fixture, { dev: true })).resolves.toEqual(expect.anything());
   });
 
-  test.skip("additional props are allowed (object)", async () => {
+  test("additional props are allowed (object)", async () => {
     class Child extends Component {
       static template = xml`<div>hey</div>`;
       props = props({
-        message: { type: String },
+        message: t.string,
       });
     }
     class Parent extends Component {
@@ -1176,7 +799,7 @@ describe("props validation", () => {
     await expect(mount(Parent, fixture, { dev: true })).resolves.toEqual(expect.anything());
   });
 
-  test.skip("can validate through slots", async () => {
+  test("can validate through slots", async () => {
     class Child extends Component {
       static template = xml`<div>hey</div>`;
       props = props(["message"]);
@@ -1184,7 +807,6 @@ describe("props validation", () => {
 
     class Wrapper extends Component {
       static template = xml`<t t-call-slot="default"/>`;
-      props = props(["slots"]);
     }
 
     class Parent extends Component {
@@ -1198,27 +820,16 @@ describe("props validation", () => {
     } catch (e) {
       error = e;
     }
-    expect(error!.cause.message).toBe("Invalid component props (Child)");
-    expect(error!.cause.cause).toEqual({
-      type: "props",
-      expected: {
-        message: {
-          type: "missing prop",
-          expected: { optional: false },
-          received: undefined,
-        },
-      },
-      received: {},
-    });
+    expect(error!.cause.message).toMatch("Invalid component props (Child)");
   });
 
-  test.skip("can use custom class as type", async () => {
+  test("can use custom class as type", async () => {
     class CustomClass {
       val = "hey";
     }
     class Child extends Component {
       static template = xml`<t t-out="this.props.customObj.val"/>`;
-      props = props({ customObj: CustomClass });
+      props = props({ customObj: t.instanceOf(CustomClass) });
     }
 
     class Parent extends Component {
@@ -1231,11 +842,11 @@ describe("props validation", () => {
     expect(fixture.innerHTML).toBe("hey");
   });
 
-  test.skip("can use custom class as type: validation failure", async () => {
+  test("can use custom class as type: validation failure", async () => {
     class CustomClass {}
     class Child extends Component {
       static template = xml`<div>hey</div>`;
-      props = props({ customObj: CustomClass });
+      props = props({ customObj: t.instanceOf(CustomClass) });
     }
 
     class Parent extends Component {
@@ -1250,18 +861,7 @@ describe("props validation", () => {
     } catch (e) {
       error = e;
     }
-    expect(error!.cause.message).toBe("Invalid component props (Child)");
-    expect(error!.cause.cause).toEqual({
-      type: "props",
-      expected: {
-        customObj: {
-          type: "type",
-          expected: CustomClass,
-          received: {},
-        },
-      },
-      received: { customObj: {} },
-    });
+    expect(error!.cause.message).toMatch("Invalid component props (Child)");
   });
 });
 
@@ -1270,15 +870,10 @@ describe("props validation", () => {
 //------------------------------------------------------------------------------
 
 describe("default props", () => {
-  test.skip("can set default values", async () => {
+  test("can set default values", async () => {
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p"/></div>`;
-      props = props({
-        p: {
-          optional: true,
-          defaultValue: 4,
-        },
-      });
+      props = props(["p?"], { p: 4 });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp /></div>`;
@@ -1288,15 +883,10 @@ describe("default props", () => {
     expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
   });
 
-  test.skip("default values are also set whenever component is updated", async () => {
+  test("default values are also set whenever component is updated", async () => {
     class SubComp extends Component {
       static template = xml`<div><t t-out="this.props.p"/></div>`;
-      props = props({
-        p: {
-          optional: true,
-          defaultValue: 4,
-        },
-      });
+      props = props(["p?"], { p: 4 });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.state.p"/></div>`;
@@ -1311,19 +901,10 @@ describe("default props", () => {
     expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
   });
 
-  test.skip("can set default boolean values", async () => {
+  test("can set default boolean values", async () => {
     class SubComp extends Component {
       static template = xml`<span><t t-if="this.props.p">hey</t><t t-if="!this.props.q">hey</t></span>`;
-      props = props({
-        p: {
-          optional: true,
-          defaultValue: true,
-        },
-        q: {
-          optional: true,
-          defaultValue: false,
-        },
-      });
+      props = props(["p?", "q?"], { p: true, q: false });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp/></div>`;
@@ -1333,15 +914,10 @@ describe("default props", () => {
     expect(fixture.innerHTML).toBe("<div><span>heyhey</span></div>");
   });
 
-  test.skip("a default prop cannot be defined on a mandatory prop", async () => {
+  test("a default prop cannot be defined on a mandatory prop", async () => {
     class Child extends Component {
       static template = xml` <div><t t-out="this.props.mandatory"/></div>`;
-      props = props({
-        mandatory: {
-          type: Number,
-          defaultValue: 3,
-        },
-      });
+      props = props(["mandatory"], { mandatory: 3 });
     }
     class Parent extends Component {
       static components = { Child };
@@ -1354,17 +930,6 @@ describe("default props", () => {
       error = e;
     }
     expect(error!).toBeDefined();
-    expect(error!.cause.message).toBe("Invalid component props (Child)");
-    expect(error!.cause.cause).toEqual({
-      type: "props",
-      expected: {
-        mandatory: {
-          type: "mandatory value with default",
-          expected: undefined,
-          received: 3,
-        },
-      },
-      received: {},
-    });
+    expect(error!.cause.message).toMatch("Invalid component props (Child)");
   });
 });

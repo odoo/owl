@@ -1,8 +1,8 @@
 import { OwlError } from "../common/owl_error";
 import { getCurrent } from "./component_node";
-import { AsProps, OptionalProps, Props } from "./props";
+import { Props } from "./props";
 import { STATUS } from "./status";
-import { keys as validateKeys, object } from "./types";
+import { GetOptionalEntries, types } from "./types";
 import { assertType } from "./validation";
 
 export interface PluginConstructor {
@@ -121,10 +121,10 @@ export function plugin<T extends PluginConstructor>(pluginType: T): InstanceType
 }
 
 // todo: remove duplication with the actual props function
-plugin.props = function props<P extends Props = any, D extends OptionalProps<P> = any>(
-  type?: P,
-  defaults: D = {} as D
-): AsProps<P, D> {
+plugin.props = function props<
+  P extends Record<string, any> = any,
+  D extends GetOptionalEntries<P> = any
+>(type?: P, defaults: D = {} as D): Props<P, D> {
   function getProp(key: string) {
     if (currentProps[key] === undefined) {
       return (defaults as any)[key];
@@ -150,7 +150,7 @@ plugin.props = function props<P extends Props = any, D extends OptionalProps<P> 
     );
     const app = getCurrent().app;
     if (app.dev) {
-      const validation = isSchemaValidated ? object(type) : validateKeys(...type);
+      const validation = isSchemaValidated ? types.object(type) : types.keys(type);
       assertType(currentProps, validation);
     }
   } else {

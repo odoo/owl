@@ -28,21 +28,6 @@ export interface Derived<Prev, Next = Prev> extends Atom<Next>, Computation<Next
 let Effects: Computation[];
 let CurrentComputation: Computation | undefined;
 
-// export function computed<T>(fn: () => T, opts?: Opts) {
-//   // todo: handle cleanup
-//   let computedComputation: Computation = {
-//     state: ComputationState.STALE,
-//     sources: new Set(),
-//     isEager: true,
-//     compute: () => {
-//       return fn();
-//     },
-//     value: undefined,
-//     name: opts?.name,
-//   };
-//   updateComputation(computedComputation);
-// }
-
 export function onReadAtom(atom: Atom) {
   if (!CurrentComputation) return;
   CurrentComputation.sources!.add(atom);

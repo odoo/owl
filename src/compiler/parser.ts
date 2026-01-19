@@ -845,8 +845,11 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
 // -----------------------------------------------------------------------------
 
 function parseTCallSlot(node: Element, ctx: ParsingContext): AST | null {
-  if (!node.hasAttribute("t-call-slot")) {
+  if (!node.hasAttribute("t-call-slot") || !node.hasAttribute("t-slot")) {
     return null;
+  }
+  if (node.hasAttribute("t-slot")) {
+    console.warn(`t-slot has been renamed t-call-slot.`);
   }
   const name = node.getAttribute("t-call-slot")!;
   node.removeAttribute("t-call-slot");

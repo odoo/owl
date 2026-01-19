@@ -121,7 +121,7 @@ function validateObjectShape(context: ValidationContext, shape: Record<string, a
   const missingKeys: string[] = [];
   for (const key in shape) {
     const property = key.endsWith("?") ? key.slice(0, -1) : key;
-    if (!(property in context.value)) {
+    if (context.value[property] === undefined) {
       if (!key.endsWith("?")) {
         missingKeys.push(property);
       }

@@ -60,9 +60,8 @@ export {
   onError,
 } from "./lifecycle_hooks";
 export { assertType, validateType } from "./validation";
+export { types } from "./types";
 export { OwlError } from "../common/owl_error";
-
-export * as types from "./types";
 
 export const __info__ = {
   version: App.version,

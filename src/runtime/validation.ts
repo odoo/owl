@@ -1,6 +1,10 @@
 import { OwlError } from "../common/owl_error";
 
-export function assertType(value: any, validation: any): void {
+export function assertType(
+  value: any,
+  validation: any,
+  errorMessage = "Value does not match the type"
+): void {
   const issues = validateType(value, validation);
   if (issues.length) {
     const issueStrings = JSON.stringify(
@@ -13,7 +17,7 @@ export function assertType(value: any, validation: any): void {
       },
       2
     );
-    throw new OwlError(`Value does not match the type\n${issueStrings}`);
+    throw new OwlError(`${errorMessage}\n${issueStrings}`);
   }
 }
 

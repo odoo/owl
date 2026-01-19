@@ -1,5 +1,12 @@
-import { types as t } from "../src";
+import { signal } from "../src/runtime/reactivity/signal";
+import { ValidationIssue, types as t } from "../src/runtime/types";
 import { assertType, validateType } from "../src/runtime/validation";
+
+// REMOVE ME WHEN API IS DECIDED
+const ISSUE: ValidationIssue = { message: "Validation issue" };
+const NO_ISSUE: ValidationIssue[] = [];
+
+class A {}
 
 test("simple assertion", () => {
   expect(() => assertType("hey", t.string)).not.toThrow();
@@ -9,1050 +16,385 @@ test("simple assertion", () => {
 });
 
 test("validateType", () => {
-  expect(validateType("abc", t.string)).toHaveLength(0);
-  expect(validateType("abc", t.number)).toHaveLength(1);
-  expect(validateType(undefined, t.number)).toHaveLength(1);
-  expect(validateType(1, t.number)).toHaveLength(0);
+  expect(validateType("abc", t.string)).toEqual(NO_ISSUE);
+  expect(validateType("abc", t.number)).toEqual([ISSUE]);
+  expect(validateType(undefined, t.number)).toEqual([ISSUE]);
+  expect(validateType(1, t.number)).toEqual(NO_ISSUE);
 });
 
-test("validate by no description", () => {
-  expect(validateType("hey", t.any)).toHaveLength(0);
-  expect(validateType({}, t.any)).toHaveLength(0);
-  expect(validateType([], t.any)).toHaveLength(0);
-  expect(validateType(1, t.any)).toHaveLength(0);
-  expect(validateType(undefined, t.any)).toHaveLength(0);
+test("any", () => {
+  expect(validateType("", t.any)).toEqual(NO_ISSUE);
+  expect(validateType("abc", t.any)).toEqual(NO_ISSUE);
+  expect(validateType(true, t.any)).toEqual(NO_ISSUE);
+  expect(validateType(false, t.any)).toEqual(NO_ISSUE);
+  expect(validateType(123, t.any)).toEqual(NO_ISSUE);
+  expect(validateType(987, t.any)).toEqual(NO_ISSUE);
+  expect(validateType(undefined, t.any)).toEqual(NO_ISSUE);
+  expect(validateType(null, t.any)).toEqual(NO_ISSUE);
+  expect(validateType({}, t.any)).toEqual(NO_ISSUE);
+  expect(validateType({ a: 1, b: "", c: { a: true } }, t.any)).toEqual(NO_ISSUE);
+  expect(validateType([{ a: 1 }, { b: 2 }], t.any)).toEqual(NO_ISSUE);
+  expect(validateType(() => {}, t.any)).toEqual(NO_ISSUE);
+  expect(validateType(A, t.any)).toEqual(NO_ISSUE);
+  expect(validateType(new A(), t.any)).toEqual(NO_ISSUE);
 });
 
-test.skip("validate by type", () => {
-  expect(validateType("hey", { type: String })).toBe(null);
-  expect(validateType({}, { type: Object })).toBe(null);
-  expect(validateType([], { type: Array })).toBe(null);
-  expect(validateType(1, { type: Boolean })).toEqual({
-    type: "type",
-    expected: Boolean,
-    received: 1,
-  });
+test("array", () => {
+  expect(validateType({}, t.array())).toEqual([ISSUE]);
+  expect(validateType("", t.array())).toEqual([ISSUE]);
+  expect(validateType("abc", t.array())).toEqual([ISSUE]);
+  expect(validateType(123, t.array())).toEqual([ISSUE]);
+  expect(validateType(987, t.array())).toEqual([ISSUE]);
+  expect(validateType(true, t.array())).toEqual([ISSUE]);
+  expect(validateType({}, t.array())).toEqual([ISSUE]);
+  expect(validateType([], t.array())).toEqual(NO_ISSUE);
+  expect(validateType([123], t.array())).toEqual(NO_ISSUE);
+  expect(validateType(["abc"], t.array())).toEqual(NO_ISSUE);
+  expect(validateType(["abc", 123], t.array())).toEqual(NO_ISSUE);
+  expect(validateType(["abc", 123, false], t.array())).toEqual(NO_ISSUE);
+  expect(validateType(["abc"], t.array(t.string))).toEqual(NO_ISSUE);
+  expect(validateType([123, "abc"], t.array(t.string))).toEqual([ISSUE]);
+  expect(validateType(["abc", "def"], t.array(t.string))).toEqual(NO_ISSUE);
+  expect(validateType(["abc", 321], t.array(t.string))).toEqual([ISSUE]);
 });
 
-test.skip("can assert dates", () => {
-  expect(validateType(new Date(), Date)).toBe(null);
-  expect(validateType(4, Date)).toEqual({
-    type: "type",
-    expected: Date,
-    received: 4,
-  });
+test("boolean", () => {
+  expect(validateType(true, t.boolean)).toEqual(NO_ISSUE);
+  expect(validateType(false, t.boolean)).toEqual(NO_ISSUE);
+  expect(validateType("", t.boolean)).toEqual([ISSUE]);
+  expect(validateType("abc", t.boolean)).toEqual([ISSUE]);
+  expect(validateType(123, t.boolean)).toEqual([ISSUE]);
+  expect(validateType(987, t.boolean)).toEqual([ISSUE]);
+  expect(validateType(undefined, t.boolean)).toEqual([ISSUE]);
+  expect(validateType(null, t.boolean)).toEqual([ISSUE]);
+  expect(validateType({}, t.boolean)).toEqual([ISSUE]);
+  expect(validateType([], t.boolean)).toEqual([ISSUE]);
+  expect(validateType(A, t.boolean)).toEqual([ISSUE]);
+  expect(validateType(new A(), t.boolean)).toEqual([ISSUE]);
 });
 
-test.skip("validate optional", () => {
-  expect(validateType(undefined, { optional: true })).toBe(null);
-  expect(validateType(null, { optional: true })).toBe(null);
-  expect(validateType("hey", { optional: true })).toBe(null);
-  expect(validateType(2, { optional: true })).toBe(null);
-  expect(validateType({}, { optional: true })).toBe(null);
-});
-
-test.skip("validate optional type", () => {
-  expect(validateType(undefined, { type: String, optional: true })).toBe(null);
-  expect(validateType("hey", { type: String, optional: true })).toBe(null);
-  expect(validateType(null, { type: String, optional: true })).toEqual({
-    type: "type",
-    expected: String,
-    received: null,
-  });
-  expect(validateType(2, { type: String, optional: true })).toEqual({
-    type: "type",
-    expected: String,
-    received: 2,
-  });
-  expect(validateType({}, { type: String, optional: true })).toEqual({
-    type: "type",
-    expected: String,
-    received: {},
-  });
-});
-
-test.skip("validate with custom validation", () => {
-  const validation = {
-    validate: (size: string) => ["small", "medium", "large"].includes(size),
-  };
-  expect(validateType("small", validation)).toBe(null);
-  expect(validateType("sall", validation)).toEqual({
-    type: "validate",
-    received: "sall",
-    expected: validation.validate,
-  });
-  expect(validateType(1, validation)).toEqual({
-    type: "validate",
-    received: 1,
-    expected: validation.validate,
-  });
-  expect(validateType(undefined, validation)).toEqual({
-    type: "mandatory value",
-    received: undefined,
-    expected: validation,
-  });
-});
-
-test.skip("validate by type and with custom validation", () => {
-  const validation = {
-    type: String,
-    validate: (size: string) => ["small", "medium", "large"].includes(size),
-  };
-  expect(validateType("small", validation)).toBe(null);
-  expect(validateType("sall", validation)).toEqual({
-    type: "validate",
-    received: "sall",
-    expected: validation.validate,
-  });
-  expect(validateType(1, validation)).toEqual({
-    type: "type",
-    received: 1,
-    expected: String,
-  });
-  expect(validateType(undefined, validation)).toEqual({
-    type: "mandatory value",
-    received: undefined,
-    expected: validation,
-  });
-});
-
-test.skip("validate optional custom validation", () => {
-  const validation = {
-    optional: true,
-    validate: (size: string) => ["small", "medium", "large"].includes(size),
-  };
-  expect(validateType("small", validation)).toBe(null);
-  expect(validateType("sall", validation)).toEqual({
-    type: "validate",
-    received: "sall",
-    expected: validation.validate,
-  });
-  expect(validateType(1, validation)).toEqual({
-    type: "validate",
-    received: 1,
-    expected: validation.validate,
-  });
-  expect(validateType(undefined, validation)).toBe(null);
-});
-
-test.skip("validate by optional type and with custom validation", () => {
-  const validation = {
-    type: String,
-    optional: true,
-    validate: (size: string) => ["small", "medium", "large"].includes(size),
-  };
-  expect(validateType("small", validation)).toBe(null);
-  expect(validateType("sall", validation)).toEqual({
-    type: "validate",
-    received: "sall",
-    expected: validation.validate,
-  });
-  expect(validateType(1, validation)).toEqual({
-    type: "type",
-    received: 1,
-    expected: String,
-  });
-  expect(validateType(undefined, validation)).toBe(null);
-});
-
-test.skip("validate by union", () => {
-  expect(validateType("", [String, Number])).toBe(null);
-  expect(validateType(1, [String, Number])).toBe(null);
-  expect(validateType(true, [String, Number])).toEqual({
-    type: "type (union)",
-    received: true,
-    expected: [String, Number],
-  });
-  expect(validateType(undefined, [String, Number])).toEqual({
-    type: "mandatory value",
-    received: undefined,
-    expected: [String, Number],
-  });
-});
-
-test.skip("validate by type union", () => {
-  expect(validateType("", { type: [String, Number] })).toBe(null);
-  expect(validateType(1, { type: [String, Number] })).toBe(null);
-  expect(validateType(true, { type: [String, Number] })).toEqual({
-    type: "type (union)",
-    received: true,
-    expected: [String, Number],
-  });
-  expect(validateType(undefined, { type: [String, Number] })).toEqual({
-    type: "mandatory value",
-    received: undefined,
-    expected: { type: [String, Number] },
-  });
-});
-
-test.skip("validate by complex union", () => {
-  const description = [Boolean, { type: Array, element: Number }];
-  expect(validateType(true, description)).toBe(null);
-  expect(validateType([], description)).toBe(null);
-  expect(validateType([1], description)).toBe(null);
-  expect(validateType(1, description)).toEqual({
-    type: "type (union)",
-    expected: description,
-    received: 1,
-  });
-  expect(validateType([true], description)).toEqual({
-    type: "array element",
-    expected: {
-      0: {
-        type: "type",
-        expected: Number,
-        received: true,
-      },
-    },
-    received: [true],
-  });
-});
-
-test.skip("validate by optional type union", () => {
-  expect(validateType("", { optional: true, type: [String, Number] })).toBe(null);
-  expect(validateType(1, { optional: true, type: [String, Number] })).toBe(null);
-  expect(validateType(true, { optional: true, type: [String, Number] })).toEqual({
-    type: "type (union)",
-    expected: [String, Number],
-    received: true,
-  });
-  expect(validateType(undefined, { optional: true, type: [String, Number] })).toBe(null);
-});
-
-test.skip("validate by value", () => {
-  expect(validateType("abc", { value: "abc" })).toBe(null);
-  expect(validateType("", { value: "abc" })).toEqual({
-    type: "exact value",
-    expected: "abc",
-    received: "",
-  });
-  expect(validateType("hello", { value: "abc" })).toEqual({
-    type: "exact value",
-    expected: "abc",
-    received: "hello",
-  });
-  expect(validateType(123, { value: "abc" })).toEqual({
-    type: "exact value",
-    expected: "abc",
-    received: 123,
-  });
-  expect(validateType(undefined, { value: "abc" })).toEqual({
-    type: "mandatory value",
-    expected: { value: "abc" },
-    received: undefined,
-  });
-  expect(validateType("abc", { value: null })).toEqual({
-    type: "exact value",
-    expected: null,
-    received: "abc",
-  });
-  expect(validateType(123, { value: null })).toEqual({
-    type: "exact value",
-    expected: null,
-    received: 123,
-  });
-});
-
-test.skip("validate by optional value", () => {
-  expect(validateType("abc", { optional: true, value: "abc" })).toBe(null);
-  expect(validateType("", { optional: true, value: "abc" })).toEqual({
-    type: "exact value",
-    expected: "abc",
-    received: "",
-  });
-  expect(validateType("hello", { optional: true, value: "abc" })).toEqual({
-    type: "exact value",
-    expected: "abc",
-    received: "hello",
-  });
-  expect(validateType(123, { optional: true, value: "abc" })).toEqual({
-    type: "exact value",
-    expected: "abc",
-    received: 123,
-  });
-  expect(validateType(undefined, { optional: true, value: "abc" })).toBe(null);
-});
-
-test.skip("validate by union of type and value", () => {
-  expect(validateType(false, [String, { value: false }])).toBe(null);
-  expect(validateType(true, [String, { value: false }])).toEqual({
-    type: "type (union)",
-    expected: [String, { value: false }],
-    received: true,
-  });
-  expect(validateType("string", [String, { value: false }])).toBe(null);
-  expect(validateType(1, [String, { value: false }])).toEqual({
-    type: "type (union)",
-    expected: [String, { value: false }],
-    received: 1,
-  });
-});
-
-test.skip("validate by extends", () => {
-  class A {}
+test("constructor", () => {
   class B extends A {}
-  class C extends B {}
-  class D extends A {}
-  expect(validateType(A, { extends: A })).toBe(null);
-  expect(validateType(B, { extends: A })).toBe(null);
-  expect(validateType(C, { extends: A })).toBe(null);
-  expect(validateType(A, { extends: B })).toEqual({
-    type: "class",
-    expected: B,
-    received: A,
-  });
-  expect(validateType(B, { extends: B })).toBe(null);
-  expect(validateType(C, { extends: B })).toBe(null);
-  expect(validateType(A, { extends: C })).toEqual({
-    type: "class",
-    expected: C,
-    received: A,
-  });
-  expect(validateType(B, { extends: C })).toEqual({
-    type: "class",
-    expected: C,
-    received: B,
-  });
-  expect(validateType(C, { extends: C })).toBe(null);
-  expect(validateType(D, { extends: A })).toBe(null);
-  expect(validateType(D, { extends: B })).toEqual({
-    type: "class",
-    expected: B,
-    received: D,
-  });
-  expect(validateType(C, { extends: D })).toEqual({
-    type: "class",
-    expected: D,
-    received: C,
+  class C {}
+  expect(validateType(true, t.constructor(A))).toEqual([ISSUE]);
+  expect(validateType("abc", t.constructor(A))).toEqual([ISSUE]);
+  expect(validateType(123, t.constructor(A))).toEqual([ISSUE]);
+  expect(validateType(A, t.constructor(A))).toEqual(NO_ISSUE);
+  expect(validateType(B, t.constructor(A))).toEqual(NO_ISSUE);
+  expect(validateType(C, t.constructor(A))).toEqual([ISSUE]);
+  expect(validateType(A, t.constructor(B))).toEqual([ISSUE]);
+  expect(validateType(B, t.constructor(B))).toEqual(NO_ISSUE);
+  expect(validateType(C, t.constructor(B))).toEqual([ISSUE]);
+  expect(validateType(A, t.constructor(C))).toEqual([ISSUE]);
+  expect(validateType(B, t.constructor(C))).toEqual([ISSUE]);
+  expect(validateType(C, t.constructor(C))).toEqual(NO_ISSUE);
+  expect(validateType({}, t.constructor(A))).toEqual([ISSUE]);
+  expect(validateType(new A(), t.constructor(A))).toEqual([ISSUE]);
+  expect(validateType(new B(), t.constructor(A))).toEqual([ISSUE]);
+  expect(validateType(new C(), t.constructor(A))).toEqual([ISSUE]);
+  expect(validateType([], t.constructor(A))).toEqual([ISSUE]);
+  expect(validateType(() => {}, t.constructor(A))).toEqual([ISSUE]);
+});
+
+describe("function", () => {
+  test("function", () => {
+    expect(validateType(123, t.function())).toEqual([ISSUE]);
+    expect(validateType("abc", t.function())).toEqual([ISSUE]);
+    expect(validateType(true, t.function())).toEqual([ISSUE]);
+    expect(validateType(() => {}, t.function())).toEqual(NO_ISSUE);
+    expect(validateType(function () {}, t.function())).toEqual(NO_ISSUE);
+    expect(validateType(A, t.function())).toEqual(NO_ISSUE); // Should return an issue
   });
 
-  const a = new A();
-  expect(validateType(a, { extends: A })).toEqual({
-    type: "class",
-    expected: A,
-    received: a,
-  });
-  const b = new B();
-  expect(validateType(b, { extends: A })).toEqual({
-    type: "class",
-    expected: A,
-    received: b,
-  });
-
-  expect(validateType(true, { extends: A })).toEqual({
-    type: "class",
-    expected: A,
-    received: true,
-  });
-  expect(validateType("A", { extends: A })).toEqual({
-    type: "class",
-    expected: A,
-    received: "A",
-  });
-  expect(validateType({}, { extends: A })).toEqual({
-    type: "class",
-    expected: A,
-    received: {},
-  });
-  const fn = () => {};
-  expect(validateType(fn, { extends: A })).toEqual({
-    type: "class",
-    expected: A,
-    received: fn,
+  test("parameters and return types are not checked", () => {
+    expect(validateType(() => {}, t.function([t.string], t.boolean))).toEqual(NO_ISSUE);
+    expect(validateType(function () {}, t.function([t.string], t.boolean))).toEqual(NO_ISSUE);
   });
 });
 
-test.skip("validate by element", () => {
-  const description = { element: String };
-  expect(validateType([], description)).toBe(null);
-  expect(validateType(1, description)).toEqual({
-    type: "type",
-    expected: { type: Array, element: String },
-    received: 1,
+test("instanceOf", () => {
+  class B extends A {}
+  class C {}
+  expect(validateType(123, t.instanceOf(A))).toEqual([ISSUE]);
+  expect(validateType("abc", t.instanceOf(A))).toEqual([ISSUE]);
+  expect(validateType(true, t.instanceOf(A))).toEqual([ISSUE]);
+  expect(validateType({}, t.instanceOf(A))).toEqual([ISSUE]);
+  expect(validateType([], t.instanceOf(A))).toEqual([ISSUE]);
+  expect(validateType(new A(), t.instanceOf(A))).toEqual(NO_ISSUE);
+  expect(validateType(new B(), t.instanceOf(A))).toEqual(NO_ISSUE);
+  expect(validateType(new C(), t.instanceOf(A))).toEqual([ISSUE]);
+});
+
+describe("keys", () => {
+  test("keys", () => {
+    expect(validateType("abc", t.keys(["a", "b"]))).toEqual([ISSUE]);
+    expect(validateType(123, t.keys(["a", "b"]))).toEqual([ISSUE]);
+    expect(validateType(true, t.keys(["a", "b"]))).toEqual([ISSUE]);
+    expect(validateType({}, t.keys(["a", "b"]))).toEqual([ISSUE]);
+    expect(validateType({ a: "abc" }, t.keys(["a", "b"]))).toEqual([ISSUE]);
+    expect(validateType({ a: "abc", b: "def" }, t.keys(["a", "b"]))).toEqual(NO_ISSUE);
+    expect(validateType({ a: 123 }, t.keys(["a", "b"]))).toEqual([ISSUE]);
+    expect(validateType({ a: 123, b: "def" }, t.keys(["a", "b"]))).toEqual(NO_ISSUE);
+    expect(validateType({ a: 123, b: 123 }, t.keys(["a", "b"]))).toEqual(NO_ISSUE);
   });
-  expect(validateType(undefined, description)).toEqual({
-    type: "mandatory value",
-    expected: { element: String },
-    received: undefined,
+
+  test("optional keys", () => {
+    expect(validateType({}, t.keys(["a", "b?"]))).toEqual([ISSUE]);
+    expect(validateType({ a: "abc" }, t.keys(["a", "b?"]))).toEqual(NO_ISSUE);
+    expect(validateType({ a: "abc", b: "def" }, t.keys(["a", "b?"]))).toEqual(NO_ISSUE);
+    expect(validateType({ a: 123 }, t.keys(["a", "b?"]))).toEqual(NO_ISSUE);
+    expect(validateType({ a: 123, b: "def" }, t.keys(["a", "b?"]))).toEqual(NO_ISSUE);
+    expect(validateType({ a: 123, b: 123 }, t.keys(["a", "b?"]))).toEqual(NO_ISSUE);
+    expect(validateType({ a: 123, b: 123 }, t.keys(["a", "b?"]))).toEqual(NO_ISSUE);
   });
-  expect(validateType(["a"], description)).toBe(null);
-  expect(validateType([1], description)).toEqual({
-    type: "array element",
-    expected: {
-      0: {
-        type: "type",
-        expected: String,
-        received: 1,
-      },
-    },
-    received: [1],
+
+  test("additional keys", () => {
+    expect(validateType({ a: "abc", b: "def", c: "ghi" }, t.keys(["a", "b?"]))).toEqual(NO_ISSUE);
+    expect(validateType({ a: "abc", c: "ghi" }, t.keys(["a", "b?"]))).toEqual(NO_ISSUE);
+    expect(validateType({ a: "abc", d: "jkl" }, t.keys(["a", "b?"]))).toEqual(NO_ISSUE);
   });
 });
 
-test.skip("validate by element union", () => {
-  const description = { element: [String, Boolean] };
-  expect(validateType([], description)).toBe(null);
-  expect(validateType(1, description)).toEqual({
-    type: "type",
-    expected: { type: Array, element: [String, Boolean] },
-    received: 1,
-  });
-  expect(validateType(undefined, description)).toEqual({
-    type: "mandatory value",
-    expected: description,
-    received: undefined,
-  });
-  expect(validateType(["a"], description)).toBe(null);
-  expect(validateType([1], description)).toEqual({
-    type: "array element",
-    expected: {
-      0: {
-        type: "type (union)",
-        expected: [String, Boolean],
-        received: 1,
-      },
-    },
-    received: [1],
-  });
-  expect(validateType([true, 1], description)).toEqual({
-    type: "array element",
-    expected: {
-      1: {
-        type: "type (union)",
-        expected: [String, Boolean],
-        received: 1,
-      },
-    },
-    received: [true, 1],
-  });
+test("literal", () => {
+  expect(validateType(123, t.literal(123))).toEqual(NO_ISSUE);
+  expect(validateType(321, t.literal(123))).toEqual([ISSUE]);
+  expect(validateType("abc", t.literal("abc"))).toEqual(NO_ISSUE);
+  expect(validateType("", t.literal("abc"))).toEqual([ISSUE]);
+  expect(validateType("abc", t.literal(""))).toEqual([ISSUE]);
+  expect(validateType(123, t.literal(""))).toEqual([ISSUE]);
+  expect(validateType("", t.literal(123))).toEqual([ISSUE]);
+  expect(validateType(true, t.literal(true))).toEqual(NO_ISSUE);
+  expect(validateType(false, t.literal(true))).toEqual([ISSUE]);
+  expect(validateType(null, t.literal(null))).toEqual(NO_ISSUE);
+  expect(validateType(true, t.literal(null))).toEqual([ISSUE]);
+  expect(validateType(null, t.literal(false))).toEqual([ISSUE]);
+  expect(validateType(undefined, t.literal(undefined))).toEqual(NO_ISSUE);
+  expect(validateType(123, t.literal(undefined))).toEqual([ISSUE]);
+  expect(validateType("abc", t.literal(undefined))).toEqual([ISSUE]);
+  expect(validateType(null, t.literal(undefined))).toEqual([ISSUE]);
 });
 
-test.skip("validate by values", () => {
-  const description = { values: String };
-  expect(validateType({}, description)).toBe(null);
-  expect(validateType(1, description)).toEqual({
-    type: "type",
-    expected: { type: Object, values: String },
-    received: 1,
-  });
-  expect(validateType(undefined, description)).toEqual({
-    type: "mandatory value",
-    expected: description,
-    received: undefined,
-  });
-  expect(validateType({ a: "abc" }, description)).toBe(null);
-  expect(validateType({ a: "abc", b: "cba" }, description)).toBe(null);
-  expect(validateType({ a: 1 }, description)).toEqual({
-    type: "values",
-    expected: {
-      a: {
-        type: "type",
-        expected: String,
-        received: 1,
-      },
-    },
-    received: { a: 1 },
-  });
+test("number", () => {
+  expect(validateType(123, t.number)).toEqual(NO_ISSUE);
+  expect(validateType(987, t.number)).toEqual(NO_ISSUE);
+  expect(validateType(true, t.number)).toEqual([ISSUE]);
+  expect(validateType(false, t.number)).toEqual([ISSUE]);
+  expect(validateType("", t.number)).toEqual([ISSUE]);
+  expect(validateType("abc", t.number)).toEqual([ISSUE]);
+  expect(validateType(undefined, t.number)).toEqual([ISSUE]);
+  expect(validateType(null, t.number)).toEqual([ISSUE]);
+  expect(validateType({}, t.number)).toEqual([ISSUE]);
+  expect(validateType([], t.number)).toEqual([ISSUE]);
+  expect(validateType(A, t.number)).toEqual([ISSUE]);
+  expect(validateType(new A(), t.number)).toEqual([ISSUE]);
 });
 
-describe("validate by shape", () => {
-  test.skip("key validation", () => {
-    expect(validateType({ a: "hey" }, { shape: ["a"] })).toBe(null);
-    expect(validateType({ b: 1 }, { shape: ["a"] })).toEqual({
-      type: "shape",
-      expected: {
-        a: {
-          type: "missing key",
-          expected: { optional: false },
-          received: undefined,
-        },
-        b: {
-          type: "unknown key",
-          expected: undefined,
-          received: 1,
-        },
-      },
-      received: { b: 1 },
-    });
+describe("object", () => {
+  test("object", () => {
+    expect(validateType(123, t.object({}))).toEqual([ISSUE]);
+    expect(validateType("abc", t.object({}))).toEqual([ISSUE]);
+    expect(validateType(true, t.object({}))).toEqual([ISSUE]);
+    expect(validateType(null, t.object({}))).toEqual([ISSUE]);
+    expect(validateType(undefined, t.object({}))).toEqual([ISSUE]);
+    expect(validateType([], t.object({}))).toEqual([ISSUE]);
+    expect(validateType(() => {}, t.object({}))).toEqual([ISSUE]);
+    expect(validateType({}, t.object({}))).toEqual(NO_ISSUE);
+    expect(validateType({ a: 1 }, t.object({}))).toEqual(NO_ISSUE);
+    expect(validateType({ a: 1 }, t.object({ a: t.number }))).toEqual(NO_ISSUE);
+    expect(validateType({ a: 1 }, t.object({ a: t.string }))).toEqual([ISSUE]);
+    expect(validateType({ b: 1 }, t.object({ a: t.string }))).toEqual([ISSUE]);
+    expect(validateType({ a: 1, b: "b" }, t.object({ b: t.string }))).toEqual(NO_ISSUE);
   });
 
-  test.skip("key validation with optional props", () => {
-    expect(validateType({ a: "hey" }, { shape: ["a", "b?"] })).toBe(null);
-    expect(validateType({ a: "hey", b: 1 }, { shape: ["a", "b?"] })).toBe(null);
-  });
-
-  test.skip("key validation with optional props and *", () => {
-    expect(validateType({ a: "hey" }, { shape: ["a", "b?", "*"] })).toBe(null);
-    expect(validateType({ a: "hey" }, { shape: ["a", "*"] })).toBe(null);
-    expect(validateType({ a: "hey", b: 1, c: 3 }, { shape: ["a", "*"] })).toBe(null);
-  });
-
-  test.skip("schema", () => {
-    expect(validateType({ a: "hey" }, { shape: { a: String } })).toBe(null);
-    expect(validateType({ a: 1 }, { shape: { a: Boolean } })).toEqual({
-      type: "shape",
-      expected: {
-        a: {
-          type: "type",
-          expected: Boolean,
-          received: 1,
-        },
-      },
-      received: { a: 1 },
-    });
-  });
-
-  test.skip("schema with type", () => {
-    expect(validateType({ a: "hey" }, { shape: { a: { type: String } } })).toBe(null);
-    expect(validateType({ a: 1 }, { shape: { a: { type: Boolean } } })).toEqual({
-      type: "shape",
-      expected: {
-        a: {
-          type: "type",
-          expected: Boolean,
-          received: 1,
-        },
-      },
-      received: { a: 1 },
-    });
-  });
-
-  test.skip("some particular edgecases as key name", () => {
-    expect(validateType({ shape: "hey" }, { shape: { shape: String } })).toBe(null);
-    expect(validateType({ shape: 1 }, { shape: { shape: Boolean } })).toEqual({
-      type: "shape",
-      expected: {
-        shape: {
-          type: "type",
-          expected: Boolean,
-          received: 1,
-        },
-      },
-      received: { shape: 1 },
-    });
-    expect(validateType({ element: "hey" }, { shape: { element: String } })).toBe(null);
-    expect(validateType({ element: 1 }, { shape: { element: Boolean } })).toEqual({
-      type: "shape",
-      expected: {
-        element: {
-          type: "type",
-          expected: Boolean,
-          received: 1,
-        },
-      },
-      received: { element: 1 },
-    });
-  });
-
-  test.skip("multiple errors", () => {
-    expect(validateType({ a: 1, b: 2 }, { shape: { a: Boolean, b: Boolean } })).toEqual({
-      type: "shape",
-      expected: {
-        a: {
-          type: "type",
-          expected: Boolean,
-          received: 1,
-        },
-        b: {
-          type: "type",
-          expected: Boolean,
-          received: 2,
-        },
-      },
-      received: { a: 1, b: 2 },
-    });
-  });
-
-  test.skip("missing key", () => {
-    expect(validateType({}, { shape: { a: Boolean } })).toEqual({
-      type: "shape",
-      expected: {
-        a: {
-          type: "missing key",
-          expected: Boolean,
-          received: undefined,
-        },
-      },
-      received: {},
-    });
-  });
-
-  test.skip("additional key", () => {
-    expect(validateType({ b: 1 }, { shape: {} })).toEqual({
-      type: "shape",
-      expected: {
-        b: {
-          type: "unknown key",
-          expected: undefined,
-          received: 1,
-        },
-      },
-      received: { b: 1 },
-    });
-  });
-
-  test.skip("undefined key", () => {
-    expect(validateType({ a: undefined }, { shape: { a: Boolean } })).toEqual({
-      type: "shape",
-      expected: {
-        a: {
-          type: "mandatory value",
-          expected: Boolean,
-          received: undefined,
-        },
-      },
-      received: { a: undefined },
-    });
-    expect(validateType({}, { shape: { a: Boolean } })).toEqual({
-      type: "shape",
-      expected: {
-        a: {
-          type: "missing key",
-          expected: Boolean,
-          received: undefined,
-        },
-      },
-      received: {},
-    });
-  });
-
-  test.skip("can use '*' to denote any type", () => {
-    expect(validateType({ a: "hey" }, { shape: { a: "*" } })).toBe(null);
-    expect(validateType({}, { shape: { a: "*" } })).toEqual({
-      type: "shape",
-      expected: {
-        a: {
-          type: "missing key",
-          expected: "*",
-          received: undefined,
-        },
-      },
-      received: {},
-    });
-  });
-
-  test.skip("object type description, with no type/optional key", () => {
-    expect(validateType({ a: "hey" }, { shape: { a: {} } })).toBe(null);
-    expect(validateType({ a: 1 }, { shape: { a: {} } })).toBe(null);
-    expect(validateType({}, { shape: { a: {} } })).toEqual({
-      type: "shape",
-      expected: {
-        a: {
-          type: "missing key",
-          expected: {},
-          received: undefined,
-        },
-      },
-      received: {},
-    });
-  });
-
-  test.skip("optional key", () => {
-    expect(validateType({}, { shape: { a: { optional: true } } })).toBe(null);
-    expect(validateType({}, { shape: { a: { type: Number, optional: true } } })).toBe(null);
-    expect(validateType({ a: undefined }, { shape: { a: { type: Number, optional: true } } })).toBe(
-      null
+  test("optional key", () => {
+    expect(validateType({}, t.object({ a: t.number }))).toEqual([ISSUE]);
+    expect(validateType({}, t.object({ "a?": t.number }))).toEqual(NO_ISSUE);
+    expect(validateType({}, t.object({ a: t.number, "b?": t.number }))).toEqual([ISSUE]);
+    expect(validateType({ a: 1 }, t.object({ a: t.number, "b?": t.number }))).toEqual(NO_ISSUE);
+    expect(validateType({ a: 1, b: 1 }, t.object({ a: t.number, "b?": t.number }))).toEqual(
+      NO_ISSUE
     );
-    expect(validateType({ a: 2 }, { shape: { a: { optional: true } } })).toBe(null);
-    expect(validateType({ a: undefined }, { shape: { a: { optional: true } } })).toBe(null);
-    expect(validateType({ a: 2 }, { shape: { a: { type: Number, optional: true } } })).toBe(null);
-    expect(validateType({ a: 2 }, { shape: { a: { type: String, optional: true } } })).toEqual({
-      type: "shape",
-      expected: {
-        a: {
-          type: "type",
-          expected: String,
-          received: 2,
-        },
-      },
-      received: { a: 2 },
-    });
   });
 
-  test.skip("objects with specified shape", () => {
-    const description = {
-      shape: {
-        p: {
-          type: Object,
-          shape: {
-            id: Number,
-            url: String,
-          },
-        },
-      },
-    };
-    expect(validateType({ p: [] }, description)).toEqual({
-      type: "shape",
-      expected: {
-        p: {
-          type: "type",
-          expected: { type: Object, shape: { id: Number, url: String } },
-          received: [],
-        },
-      },
-      received: { p: [] },
+  test("nested object", () => {
+    const type = t.object({
+      a: t.number,
+      b: t.object({
+        c: t.string,
+      }),
     });
 
-    expect(validateType({ p: {} }, description)).toEqual({
-      type: "shape",
-      expected: {
-        p: {
-          type: "shape",
-          expected: {
-            id: {
-              type: "missing key",
-              expected: Number,
-              received: undefined,
-            },
-            url: {
-              type: "missing key",
-              expected: String,
-              received: undefined,
-            },
-          },
-          received: {},
-        },
-      },
-      received: { p: {} },
-    });
-    expect(validateType({ p: { id: 1, url: "asf" } }, description)).toBe(null);
-    expect(validateType({ p: { id: 1, url: 1 } }, description)).toEqual({
-      type: "shape",
-      expected: {
-        p: {
-          type: "shape",
-          expected: {
-            url: {
-              type: "type",
-              expected: String,
-              received: 1,
-            },
-          },
-          received: { id: 1, url: 1 },
-        },
-      },
-      received: { p: { id: 1, url: 1 } },
-    });
-    expect(validateType({ p: undefined }, description)).toEqual({
-      type: "shape",
-      expected: {
-        p: {
-          type: "mandatory value",
-          expected: description.shape.p,
-          received: undefined,
-        },
-      },
-      received: { p: undefined },
-    });
+    expect(validateType({}, type)).toEqual([ISSUE]);
+    expect(validateType({ a: 1 }, type)).toEqual([ISSUE]);
+    expect(validateType({ a: 1, b: 1 }, type)).toEqual([ISSUE]);
+    expect(validateType({ a: 1, b: {} }, type)).toEqual([ISSUE]);
+    expect(validateType({ a: 1, b: { c: "" } }, type)).toEqual(NO_ISSUE);
+    expect(validateType({ a: "", b: { c: "" } }, type)).toEqual([ISSUE]);
+  });
+});
+
+describe("promise", () => {
+  test("promise", () => {
+    expect(validateType(123, t.promise())).toEqual([ISSUE]);
+    expect(validateType("abc", t.promise())).toEqual([ISSUE]);
+    expect(validateType(true, t.promise())).toEqual([ISSUE]);
+    expect(validateType(Promise.resolve(), t.promise())).toEqual(NO_ISSUE);
   });
 
-  test.skip("objects with a values schema", () => {
-    const description = {
-      shape: {
-        p: { type: Object, values: { type: Object, shape: { id: Number, url: String } } },
-      },
-    };
-    expect(validateType({ p: [] }, description)).toEqual({
-      type: "shape",
-      expected: {
-        p: {
-          type: "type",
-          expected: description.shape.p,
-          received: [],
-        },
-      },
-      received: { p: [] },
-    });
-    expect(validateType({ p: {} }, description)).toBe(null);
-    expect(validateType({ p: { id: 1, url: "asf" } }, description)).toEqual({
-      type: "shape",
-      expected: {
-        p: {
-          type: "values",
-          expected: {
-            id: {
-              type: "type",
-              expected: description.shape.p.values,
-              received: 1,
-            },
-            url: {
-              type: "type",
-              expected: description.shape.p.values,
-              received: "asf",
-            },
-          },
-          received: { id: 1, url: "asf" },
-        },
-      },
-      received: { p: { id: 1, url: "asf" } },
-    });
-    expect(
-      validateType(
-        {
-          p: {
-            a: { id: 1, url: "asf" },
-          },
-        },
-        description
-      )
-    ).toBe(null);
-    expect(
-      validateType(
-        {
-          p: {
-            a: { id: 1, url: "asf" },
-            b: { id: 1, url: 1 },
-          },
-        },
-        description
-      )
-    ).toEqual({
-      type: "shape",
-      expected: {
-        p: {
-          type: "values",
-          expected: {
-            b: {
-              type: "shape",
-              expected: {
-                url: {
-                  type: "type",
-                  expected: String,
-                  received: 1,
-                },
-              },
-              received: { id: 1, url: 1 },
-            },
-          },
-          received: {
-            a: { id: 1, url: "asf" },
-            b: { id: 1, url: 1 },
-          },
-        },
-      },
-      received: {
-        p: {
-          a: { id: 1, url: "asf" },
-          b: { id: 1, url: 1 },
-        },
-      },
-    });
+  test("return type is not checked", () => {
+    expect(validateType(Promise.resolve(""), t.promise(t.string))).toEqual(NO_ISSUE);
+    expect(validateType(Promise.resolve(123), t.promise(t.string))).toEqual(NO_ISSUE);
+    expect(validateType(Promise.resolve(true), t.promise(t.string))).toEqual(NO_ISSUE);
+  });
+});
+
+describe("reactiveValue", () => {
+  expect(validateType(123, t.reactiveValue(t.string))).toEqual([ISSUE]);
+  expect(validateType("abc", t.reactiveValue(t.string))).toEqual([ISSUE]);
+  expect(validateType(true, t.reactiveValue(t.string))).toEqual([ISSUE]);
+  expect(validateType(() => {}, t.reactiveValue(t.string))).toEqual(NO_ISSUE);
+  expect(validateType(function () {}, t.reactiveValue(t.string))).toEqual(NO_ISSUE);
+  expect(validateType(A, t.reactiveValue(t.string))).toEqual(NO_ISSUE); // Should return an issue
+});
+
+test("record", () => {
+  expect(validateType("abc", t.record(t.string))).toEqual([ISSUE]);
+  expect(validateType(123, t.record(t.string))).toEqual([ISSUE]);
+  expect(validateType(true, t.record(t.string))).toEqual([ISSUE]);
+  expect(validateType({}, t.record(t.string))).toEqual(NO_ISSUE);
+  expect(validateType({ a: "abc" }, t.record(t.string))).toEqual(NO_ISSUE);
+  expect(validateType({ a: "abc", b: "def" }, t.record(t.string))).toEqual(NO_ISSUE);
+  expect(validateType({ a: 123 }, t.record(t.string))).toEqual([ISSUE]);
+  expect(validateType({ a: 123, b: "def" }, t.record(t.string))).toEqual([ISSUE]);
+  expect(validateType({ a: 123, b: 123 }, t.record(t.string))).toEqual([ISSUE, ISSUE]);
+  expect(validateType({ a: 123, b: 123 }, t.record(t.number))).toEqual(NO_ISSUE);
+});
+
+describe("signal", () => {
+  expect(validateType(123, t.signal(t.string))).toEqual([ISSUE]);
+  expect(validateType("abc", t.signal(t.string))).toEqual([ISSUE]);
+  expect(validateType(true, t.signal(t.string))).toEqual([ISSUE]);
+  expect(validateType(() => {}, t.signal(t.string))).toEqual([ISSUE]);
+  expect(validateType(function () {}, t.signal(t.string))).toEqual([ISSUE]);
+  expect(validateType(A, t.signal(t.string))).toEqual([ISSUE]);
+  expect(validateType(signal("abc"), t.signal(t.string))).toEqual(NO_ISSUE);
+  expect(validateType(signal(123), t.signal(t.string))).toEqual(NO_ISSUE); // do not check value type
+});
+
+test("string", () => {
+  expect(validateType("", t.string)).toEqual(NO_ISSUE);
+  expect(validateType("abc", t.string)).toEqual(NO_ISSUE);
+  expect(validateType(123, t.string)).toEqual([ISSUE]);
+  expect(validateType(987, t.string)).toEqual([ISSUE]);
+  expect(validateType(true, t.string)).toEqual([ISSUE]);
+  expect(validateType(false, t.string)).toEqual([ISSUE]);
+  expect(validateType(undefined, t.string)).toEqual([ISSUE]);
+  expect(validateType(null, t.string)).toEqual([ISSUE]);
+  expect(validateType({}, t.string)).toEqual([ISSUE]);
+  expect(validateType([], t.string)).toEqual([ISSUE]);
+  expect(validateType(A, t.string)).toEqual([ISSUE]);
+  expect(validateType(new A(), t.string)).toEqual([ISSUE]);
+});
+
+test("tuple", () => {
+  expect(validateType(["abc"], t.tuple([t.string]))).toEqual(NO_ISSUE);
+  expect(validateType([], t.tuple([t.string]))).toEqual([ISSUE]);
+  expect(validateType([123], t.tuple([t.string]))).toEqual([ISSUE]);
+  expect(validateType(["abc", 123], t.tuple([t.string]))).toEqual([ISSUE]);
+  expect(validateType({}, t.tuple([t.string, t.number]))).toEqual([ISSUE]);
+  expect(validateType("", t.tuple([t.string, t.number]))).toEqual([ISSUE]);
+  expect(validateType("abc", t.tuple([t.string, t.number]))).toEqual([ISSUE]);
+  expect(validateType(123, t.tuple([t.string, t.number]))).toEqual([ISSUE]);
+  expect(validateType(987, t.tuple([t.string, t.number]))).toEqual([ISSUE]);
+  expect(validateType(true, t.tuple([t.string, t.number]))).toEqual([ISSUE]);
+  expect(validateType({}, t.tuple([t.string, t.number]))).toEqual([ISSUE]);
+  expect(validateType([], t.tuple([t.string, t.number]))).toEqual([ISSUE]);
+  expect(validateType(["abc", 123], t.tuple([t.string, t.number]))).toEqual(NO_ISSUE);
+  expect(validateType([123, "abc"], t.tuple([t.string, t.number]))).toEqual([ISSUE, ISSUE]);
+  expect(validateType(["abc"], t.tuple([t.string, t.number]))).toEqual([ISSUE]);
+  expect(validateType([123], t.tuple([t.string, t.number]))).toEqual([ISSUE]);
+  expect(validateType(["abc", true], t.tuple([t.string, t.number]))).toEqual([ISSUE]);
+  expect(validateType([true, 123], t.tuple([t.string, t.number]))).toEqual([ISSUE]);
+  expect(validateType(["abc", 123, true], t.tuple([t.string, t.number]))).toEqual([ISSUE]);
+  expect(validateType(["abc", 123, true], t.tuple([t.string, t.number, t.boolean]))).toEqual(
+    NO_ISSUE
+  );
+  expect(validateType(["abc", 123, 123], t.tuple([t.string, t.number, t.boolean]))).toEqual([
+    ISSUE,
+  ]);
+});
+
+test("union", () => {
+  expect(validateType("", t.union([t.string, t.number]))).toEqual(NO_ISSUE);
+  expect(validateType("abc", t.union([t.string, t.number]))).toEqual(NO_ISSUE);
+  expect(validateType(123, t.union([t.string, t.number]))).toEqual(NO_ISSUE);
+  expect(validateType(987, t.union([t.string, t.number]))).toEqual(NO_ISSUE);
+  expect(validateType(true, t.union([t.string, t.number]))).toEqual([ISSUE]);
+  expect(validateType({}, t.union([t.string, t.number]))).toEqual([ISSUE]);
+  expect(validateType([], t.union([t.string, t.number]))).toEqual([ISSUE]);
+});
+
+test("complex type", () => {
+  const complexType = t.object({
+    "a?": t.number,
+    b: t.array(
+      t.object({
+        a: t.instanceOf(A),
+        "b?": t.union([t.number, t.literal(false)]),
+        c: t.tuple([t.string, t.string]),
+      })
+    ),
   });
 
-  test.skip("objects with more complex shape", () => {
-    const description = {
-      shape: {
-        p: {
-          type: Object,
-          shape: {
-            id: Number,
-            url: [Boolean, { type: Array, element: Number }],
-          },
-        },
+  expect(validateType(1, complexType)).toEqual([ISSUE]);
+  expect(validateType("", complexType)).toEqual([ISSUE]);
+  expect(validateType([], complexType)).toEqual([ISSUE]);
+  expect(validateType(null, complexType)).toEqual([ISSUE]);
+  expect(validateType({}, complexType)).toEqual([ISSUE]);
+  expect(validateType({ a: "" }, complexType)).toEqual([ISSUE]);
+  expect(validateType({ a: 1 }, complexType)).toEqual([ISSUE]);
+  expect(validateType({ b: {} }, complexType)).toEqual([ISSUE]);
+  expect(
+    validateType(
+      {
+        b: { a: 1, c: ["a", "b", "c"] },
       },
-    };
-    expect(validateType({ p: [] }, description)).toEqual({
-      type: "shape",
-      expected: {
-        p: {
-          type: "type",
-          expected: description.shape.p,
-          received: [],
-        },
+      complexType
+    )
+  ).toEqual([ISSUE]);
+  expect(
+    validateType(
+      {
+        b: [{ a: new A(), c: ["a", "b"] }],
       },
-      received: { p: [] },
-    });
-    expect(validateType({ p: {} }, description)).toEqual({
-      type: "shape",
-      expected: {
-        p: {
-          type: "shape",
-          expected: {
-            id: {
-              type: "missing key",
-              expected: description.shape.p.shape.id,
-              received: undefined,
-            },
-            url: {
-              type: "missing key",
-              expected: description.shape.p.shape.url,
-              received: undefined,
-            },
-          },
-          received: {},
-        },
+      complexType
+    )
+  ).toEqual(NO_ISSUE);
+  expect(
+    validateType(
+      {
+        a: 123,
+        b: [{ a: new A(), c: ["a", "b"] }],
       },
-      received: { p: {} },
-    });
-    expect(validateType({ p: { id: 1, url: "asf" } }, description)).toEqual({
-      type: "shape",
-      expected: {
-        p: {
-          type: "shape",
-          expected: {
-            url: {
-              type: "type (union)",
-              expected: description.shape.p.shape.url,
-              received: "asf",
-            },
-          },
-          received: { id: 1, url: "asf" },
-        },
+      complexType
+    )
+  ).toEqual(NO_ISSUE);
+  expect(
+    validateType(
+      {
+        a: 123,
+        b: [{ a: new A(), b: false, c: ["a", "b"] }],
       },
-      received: { p: { id: 1, url: "asf" } },
-    });
-    expect(validateType({ p: { id: 1, url: true } }, description)).toBe(null);
-    expect(validateType({ p: undefined }, description)).toEqual({
-      type: "shape",
-      expected: {
-        p: {
-          type: "mandatory value",
-          expected: description.shape.p,
-          received: undefined,
-        },
+      complexType
+    )
+  ).toEqual(NO_ISSUE);
+  expect(
+    validateType(
+      {
+        a: 123,
+        b: [{ a: new A(), b: 123, c: ["a", "b"] }],
       },
-      received: { p: undefined },
-    });
-  });
-
-  test.skip("objects with shape and *", () => {
-    const description: any = {
-      shape: {
-        p: { type: Object, shape: { id: Number, "*": true } },
-      },
-    };
-    expect(validateType({ p: [] }, description)).toEqual({
-      type: "shape",
-      expected: {
-        p: {
-          type: "type",
-          expected: (description as any).shape.p,
-          received: [],
-        },
-      },
-      received: { p: [] },
-    });
-    expect(validateType({ p: {} }, description)).toEqual({
-      type: "shape",
-      expected: {
-        p: {
-          type: "shape",
-          expected: {
-            id: {
-              type: "missing key",
-              expected: (description as any).shape.p.shape.id,
-              received: undefined,
-            },
-          },
-          received: {},
-        },
-      },
-      received: { p: {} },
-    });
-    expect(validateType({ p: { id: 1 } }, description)).toBe(null);
-    expect(validateType({ p: { id: "asdf" } }, description)).toEqual({
-      type: "shape",
-      expected: {
-        p: {
-          type: "shape",
-          expected: {
-            id: {
-              type: "type",
-              expected: Number,
-              received: "asdf",
-            },
-          },
-          received: { id: "asdf" },
-        },
-      },
-      received: { p: { id: "asdf" } },
-    });
-    expect(validateType({ p: { id: 1, url: 1 } }, description)).toBe(null);
-    expect(validateType({ p: undefined }, description)).toEqual({
-      type: "shape",
-      expected: {
-        p: {
-          type: "mandatory value",
-          expected: (description as any).shape.p,
-          received: undefined,
-        },
-      },
-      received: { p: undefined },
-    });
-  });
-
-  test.skip("can specify that additional keys are allowed", () => {
-    const description: any = {
-      shape: {
-        message: String,
-        "*": true,
-      },
-    };
-    expect(validateType({ message: "hey" }, description)).toBe(null);
-    expect(validateType({ message: "hey", otherKey: true }, description)).toBe(null);
-  });
-
-  test.skip("array with element with shape", () => {
-    const description = {
-      shape: {
-        p: {
-          type: Array,
-          element: {
-            type: Object,
-            shape: {
-              num: { type: Number, optional: true },
-            },
-          },
-        },
-      },
-    };
-    expect(validateType({ p: 1 }, description)).toEqual({
-      type: "shape",
-      expected: {
-        p: {
-          type: "type",
-          expected: description.shape.p,
-          received: 1,
-        },
-      },
-      received: { p: 1 },
-    });
-    expect(validateType({ p: {} }, description)).toEqual({
-      type: "shape",
-      expected: {
-        p: {
-          type: "type",
-          expected: description.shape.p,
-          received: {},
-        },
-      },
-      received: { p: {} },
-    });
-    expect(validateType({ p: [] }, description)).toBe(null);
-    expect(validateType({ p: [{}] }, description)).toBe(null);
-    expect(validateType({ p: [{ num: 1 }] }, description)).toBe(null);
-    expect(validateType({ p: [{ num: true }] }, description)).toEqual({
-      type: "shape",
-      expected: {
-        p: {
-          type: "array element",
-          expected: {
-            0: {
-              type: "shape",
-              expected: {
-                num: {
-                  type: "type",
-                  expected: Number,
-                  received: true,
-                },
-              },
-              received: { num: true },
-            },
-          },
-          received: [{ num: true }],
-        },
-      },
-      received: { p: [{ num: true }] },
-    });
-  });
+      complexType
+    )
+  ).toEqual(NO_ISSUE);
 });

@@ -258,6 +258,28 @@ describe("hooks", () => {
     expect(n).toBe(2);
   });
 
+  test("useListener work with references", async () => {
+    class MyComponent extends Component {
+      static template = xml`<span t-ref="this.span"><t t-out="this.value()"/></span>`;
+      value = signal(0);
+      span = signal(null);
+      setup() {
+        useListener(this.span, "click", () => this.increment());
+      }
+      increment() {
+        this.value.set(this.value() + 1);
+      }
+    }
+
+    await mount(MyComponent, fixture);
+
+    expect(fixture.innerHTML).toBe("<span>0</span>");
+    const span = fixture.getElementsByTagName("span")[0];
+    span.click();
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<span>1</span>");
+  });
+
   describe("useEffect hook", () => {
     test("effect runs on mount, is reapplied on patch, and is cleaned up on unmount and before reapplying", async () => {
       let cleanupRun = 0;

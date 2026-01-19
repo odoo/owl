@@ -73,7 +73,7 @@ function constructorType<T extends Constructor>(constructor: T): T {
 function customValidator<T>(
   type: T,
   validator: (value: T) => boolean,
-  errorMessage: string = "value does not match custom validation",
+  errorMessage: string = "value does not match custom validation"
 ): T {
   return function validateCustom(context: ValidationContext) {
     context.validate(type);
@@ -154,7 +154,7 @@ function validateObjectKeys(context: ValidationContext, keys: string[]) {
 
 function objectType(): Record<string, any>;
 function objectType<const Keys extends string[]>(
-  keys: Keys,
+  keys: Keys
 ): ResolveOptionalEntries<KeyedObject<Keys>>;
 function objectType<Shape extends {}>(shape: Shape): ResolveOptionalEntries<Shape>;
 function objectType(schema = {}): Record<string, any> {

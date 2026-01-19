@@ -101,7 +101,8 @@
   },
   "prettier": {
     "printWidth": 100,
-    "endOfLine": "auto"
+    "endOfLine": "auto",
+    "trailingComma": "es5"
   },
   "dependencies": {
     "jsdom": "^25.0.1"

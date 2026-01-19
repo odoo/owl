@@ -208,3 +208,19 @@ exports[`hooks useListener 2`] = `
   }
 }"
 `;
+
+exports[`hooks useListener work with references 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createRef, safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<span block-ref="0"><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = "") {
+    let ref1 = createRef(ctx['this'].span);
+    const b2 = safeOutput(ctx['this'].value());
+    return block1([ref1], [b2]);
+  }
+}"
+`;

@@ -24,7 +24,4 @@ export class Component {
 
   setup() {}
 
-  render(deep: boolean = false) {
-    this.__owl__.render(deep === true);
-  }
 }

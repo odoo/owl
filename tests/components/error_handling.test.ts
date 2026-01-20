@@ -17,6 +17,7 @@ import {
   nextAppError,
   nextMicroTick,
   nextTick,
+  render,
   snapshotEverything,
   steps,
   useLogLifecycle,
@@ -60,7 +61,7 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("<div><div>heyfalse</div></div>");
     parent.state.flag = true;
 
-    parent.render();
+    render(parent);
     await expect(nextAppError(parent.__owl__.app)).resolves.toThrow(
       "[Owl] Unhandled error. Destroying the root component"
     );
@@ -226,7 +227,7 @@ function(app, bdom, helpers) {
       setup() {
         onError((err) => {
           this.error = err;
-          this.render();
+          render(this);
         });
       }
     }
@@ -362,7 +363,7 @@ describe("errors and promises", () => {
     const root = await mount(Root, fixture, { test: true });
     root.val = 4;
     let error: Error;
-    root.render();
+    render(root);
     await nextTick();
     expect(error!).toBeDefined();
     expect(error!.message).toBe(`boom`);
@@ -385,7 +386,7 @@ describe("errors and promises", () => {
     const root = await mount(Root, fixture, { test: true });
     root.val = 4;
     let error: Error;
-    root.render();
+    render(root);
     await nextTick();
     expect(error!).toBeDefined();
     expect(error!.message).toBe(`boom`);
@@ -429,7 +430,7 @@ describe("errors and promises", () => {
     expect(fixture.innerHTML).toBe("<div></div>");
     root.flag = true;
     let error: Error;
-    root.render();
+    render(root);
     await nextTick();
     expect(error!).toBeDefined();
     const regexp =
@@ -497,7 +498,7 @@ describe("errors and promises", () => {
     expect(fixture.innerHTML).toBe("<div>1</div>");
 
     root.state = "boom";
-    root.render();
+    render(root);
     const error: any = await nextAppError(root.__owl__.app)!;
     expect(error.cause.message).toBe("Cannot read properties of undefined (reading 'b')");
     expect(fixture.innerHTML).toBe("");
@@ -567,7 +568,7 @@ describe("can catch errors", () => {
         this.component = ErrorComponent;
         onError(() => {
           this.component = PerfectComponent;
-          this.render();
+          render(this);
         });
       }
     }
@@ -1255,7 +1256,7 @@ describe("can catch errors", () => {
       setup() {
         onError((error) => {
           this.error = error;
-          this.render();
+          render(this);
         });
       }
     }
@@ -1464,7 +1465,7 @@ describe("can catch errors", () => {
         steps.push(error.message);
         delete this.elements[id];
         this.elements[2] = Child;
-        this.render();
+        render(this);
       }
     }
 
@@ -1472,7 +1473,7 @@ describe("can catch errors", () => {
     expect(fixture.innerHTML).toBe("");
 
     parent.elements[1] = ErrorComp;
-    parent.render();
+    render(parent);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>Child 2</div>");
     expect(steps).toEqual(["Error Component"]);
@@ -1643,7 +1644,7 @@ describe("can catch errors", () => {
         onError(() => {
           logStep("error");
           this.component = OtherChild;
-          this.render();
+          render(this);
         });
       }
     }
@@ -1715,7 +1716,7 @@ describe("can catch errors", () => {
         onError(() => {
           logStep("error");
           this.component = OtherChild;
-          this.render();
+          render(this);
         });
       }
     }

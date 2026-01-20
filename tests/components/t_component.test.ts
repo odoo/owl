@@ -1,5 +1,5 @@
 import { Component, mount, proxy, xml } from "../../src";
-import { makeTestFixture, nextTick, snapshotEverything, steps, useLogLifecycle } from "../helpers";
+import { makeTestFixture, nextTick, render, snapshotEverything, steps, useLogLifecycle } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -78,7 +78,7 @@ describe("t-component", () => {
     `);
 
     parent.Child = ChildB;
-    parent.render();
+    render(parent);
     await nextTick();
     expect(fixture.innerHTML).toBe("child b");
     expect(steps.splice(0)).toMatchInlineSnapshot(`

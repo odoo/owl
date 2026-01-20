@@ -1834,6 +1834,12 @@ describe("qweb parser", () => {
     });
   });
 
+  test("t-slot on a div tag should throw", async () => {
+    expect(() => parse(`<div t-slot="name"/>`)).toThrowError(
+      "Directive 't-slot' can only be used on <t> nodes (used on a <div>)"
+    );
+  });
+
   // ---------------------------------------------------------------------------
   // t-debug
   // ---------------------------------------------------------------------------

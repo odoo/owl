@@ -46,6 +46,8 @@ Here is how the `Navbar` component could be defined, with the `t-slot` directive
 </div>
 ```
 
+Note that `t-slot` can only be used on a `<t>` element.
+
 ## Named slots
 
 Default slots are very useful, but sometimes, we may need more than one slot.

@@ -907,6 +907,12 @@ function parseTSlot(node: Element, ctx: ParsingContext): AST | null {
   if (!node.hasAttribute("t-slot")) {
     return null;
   }
+  if (node.tagName !== "t") {
+    throw new OwlError(
+      `Directive 't-slot' can only be used on <t> nodes (used on a <${node.tagName}>)`
+    );
+  }
+
   const name = node.getAttribute("t-slot")!;
   node.removeAttribute("t-slot");
   let attrs: Attrs | null = null;

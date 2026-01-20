@@ -24,6 +24,12 @@ export class Plugin {
   setup() {}
 }
 
+interface PluginManagerOptions {
+  parent?: PluginManager | null;
+  plugins?: PluginConstructor[];
+  pluginProps?: any;
+}
+
 export class PluginManager {
   // kind of public to make it possible to manipulate from the outside
   static current: PluginManager | null = null;
@@ -34,10 +40,13 @@ export class PluginManager {
 
   status: STATUS = STATUS.NEW;
 
-  constructor(parent?: PluginManager | null) {
-    this.parent = parent || null;
+  constructor(options: PluginManagerOptions = {}) {
+    this.parent = options.parent || null;
     this.parent?.children.push(this);
     this.plugins = this.parent ? Object.create(this.parent.plugins) : {};
+    if (options.plugins) {
+      this.startPlugins(options.plugins, options.pluginProps);
+    }
   }
 
   destroy() {

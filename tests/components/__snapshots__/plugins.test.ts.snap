@@ -1,5 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`a global plugin can import the current app 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = "") {
+    return text(\`coucou\`);
+  }
+}"
+`;
+
 exports[`basic use (setup) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

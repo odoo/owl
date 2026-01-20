@@ -1,5 +1,5 @@
 import { Component, mount, props, xml } from "../../src";
-import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { makeTestFixture, nextTick, render, snapshotEverything } from "../helpers";
 
 snapshotEverything();
 
@@ -37,11 +37,11 @@ describe("t-set", () => {
 
     expect(fixture.innerHTML).toBe("<div><p>2</p></div>");
     comp.state.flag = "elif";
-    comp.render();
+    render(comp);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><p>3</p></div>");
     comp.state.flag = "false";
-    comp.render();
+    render(comp);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><p>4</p></div>");
   });
@@ -70,11 +70,11 @@ describe("t-set", () => {
 
     expect(fixture.innerHTML).toBe("<div><p>2</p></div>");
     comp.state.flag = "elif";
-    comp.render();
+    render(comp);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><p>3</p></div>");
     comp.state.flag = "false";
-    comp.render();
+    render(comp);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><p>4</p></div>");
   });

@@ -1,5 +1,5 @@
 import { App, Component, mount, props, proxy, signal, xml } from "../../src/index";
-import { isDirectChildOf, makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { isDirectChildOf, makeTestFixture, nextTick, render, snapshotEverything } from "../helpers";
 
 snapshotEverything();
 
@@ -70,7 +70,7 @@ describe("t-call", () => {
       update() {
         expect(this).toBe(parent);
         this.counter++;
-        this.render();
+        render(this);
       }
     }
     parent = await mount(Parent, fixture);
@@ -93,7 +93,7 @@ describe("t-call", () => {
       update() {
         expect(this).toBe(parent);
         this.counter++;
-        this.render();
+        render(this);
       }
     }
     parent = await mount(Parent, fixture);

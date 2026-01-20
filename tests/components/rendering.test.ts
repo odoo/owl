@@ -6,6 +6,7 @@ import {
   useLogLifecycle,
   makeDeferred,
   nextMicroTick,
+  render,
   steps,
 } from "../helpers";
 
@@ -95,49 +96,11 @@ describe("rendering semantics", () => {
     expect(childN).toBe(1);
 
     parent.state.value = "B";
-    parent.render(true);
+    render(parent, true);
     await nextTick();
     expect(fixture.innerHTML).toBe("Bchild");
     expect(parentN).toBe(2);
     expect(childN).toBe(2);
-  });
-
-  test("render need a boolean = true to be 'deep'", async () => {
-    let childN = 0;
-    let parentN = 0;
-    class Child extends Component {
-      static template = xml`<t t-set="noop" t-value="this.notify()"/>child`;
-      notify() {
-        childN++;
-      }
-    }
-
-    class Parent extends Component {
-      static template = xml`
-        <t t-out="this.state.value"/>
-        <Child/>
-        <t t-set="noop" t-value="this.notify()"/>
-      `;
-      static components = { Child };
-
-      state = { value: "A" };
-      notify() {
-        parentN++;
-      }
-    }
-
-    const parent = await mount(Parent, fixture);
-
-    expect(fixture.innerHTML).toBe("Achild");
-    expect(parentN).toBe(1);
-    expect(childN).toBe(1);
-
-    parent.state.value = "B";
-    parent.render("true" as any as boolean);
-    await nextTick();
-    expect(fixture.innerHTML).toBe("Bchild");
-    expect(parentN).toBe(2);
-    expect(childN).toBe(1);
   });
 
   test("render with deep=true followed by render with deep=false work as expected", async () => {
@@ -181,7 +144,7 @@ describe("rendering semantics", () => {
     `);
 
     value = 4;
-    parent.render(true);
+    render(parent, true);
 
     // wait for child to be rendered, but dom not yet patched
     await nextMicroTick();
@@ -454,7 +417,7 @@ test("force render in case of existing render", async () => {
 
   // initiate a new render with deep=true. it should cancel the current render
   // and also be blocked in B
-  parent.render(true);
+  render(parent, true);
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [

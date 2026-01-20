@@ -1,6 +1,6 @@
 import { Component, mount, onError, OwlError, props, types as t, xml } from "../../src";
 import { App } from "../../src/runtime/app";
-import { makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
+import { makeTestFixture, nextAppError, nextTick, render, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -723,7 +723,7 @@ describe("props validation", () => {
     const parent = await mount(Parent, fixture, { dev: true });
     expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
     parent.state.p = undefined;
-    parent.render();
+    render(parent);
     await nextTick();
     expect(error!).toBeDefined();
     expect(error!.message).toMatch("Invalid component props (SubComp)");
@@ -744,7 +744,7 @@ describe("props validation", () => {
     const parent = await mount(Parent, fixture, { dev: true });
     expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
     parent.state.p = undefined;
-    parent.render();
+    render(parent);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
   });
@@ -896,7 +896,7 @@ describe("default props", () => {
     const parent = await mount(Parent, fixture, { dev: true });
     expect(fixture.innerHTML).toBe("<div><div>1</div></div>");
     parent.state.p = undefined;
-    parent.render();
+    render(parent);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div><div>4</div></div>");
   });

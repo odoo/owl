@@ -258,6 +258,16 @@ export class App<
   handleError(...args: Parameters<typeof handleError>) {
     return handleError(...args);
   }
+
+  onUnhandledError(error: Error) {
+    console.warn(`[Owl] Unhandled error. Destroying the root component`);
+    try {
+      this.destroy();
+    } catch (e) {
+      console.error(e);
+    }
+    throw error;
+  }
 }
 
 export async function mount<

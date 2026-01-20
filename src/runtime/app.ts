@@ -70,7 +70,7 @@ export class App extends TemplateSet {
     super(config);
     this.name = config.name || "";
     apps.add(this);
-    this.pluginManager = config.pluginManager || new PluginManager(null);
+    this.pluginManager = config.pluginManager || new PluginManager();
     if (config.plugins) {
       this.pluginManager.startPlugins(config.plugins);
     }

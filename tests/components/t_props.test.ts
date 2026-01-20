@@ -1,5 +1,5 @@
 import { Component, mount, props, proxy, xml } from "../../src";
-import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { makeTestFixture, nextTick, render, snapshotEverything } from "../helpers";
 
 snapshotEverything();
 
@@ -49,7 +49,7 @@ describe("t-props", () => {
     const parent = await mount(Parent, fixture);
     expect(fixture.textContent).toBe("thirdsecond");
     delete parent.a;
-    parent.render();
+    render(parent);
     await nextTick();
     expect(fixture.textContent).toBe("second");
   });

@@ -10,6 +10,7 @@ import {
   makeDeferred,
   nextMicroTick,
   steps,
+  render
 } from "../helpers";
 
 let fixture: HTMLElement;
@@ -126,7 +127,7 @@ describe("app", () => {
     `);
 
     // rerender to force the instantiation of a new B component (and cancelling the first)
-    comp.render();
+    render(comp);
     await nextMicroTick();
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [

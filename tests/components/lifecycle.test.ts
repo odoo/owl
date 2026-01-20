@@ -24,6 +24,7 @@ import {
   snapshotEverything,
   steps,
   useLogLifecycle,
+  render
 } from "../helpers";
 
 let fixture: HTMLElement;
@@ -1179,7 +1180,7 @@ describe("lifecycle hooks", () => {
         useLogLifecycle();
         onMounted(() => {
           this.patched = "Patched";
-          this.render();
+          render(this);
         });
       }
     }
@@ -1215,7 +1216,7 @@ describe("lifecycle hooks", () => {
             return;
           }
           this.patched = "Patched";
-          this.render();
+          render(this);
         });
       }
     }
@@ -1230,7 +1231,7 @@ describe("lifecycle hooks", () => {
       ]
     `);
 
-    parent.render();
+    render(parent);
     await nextTick();
     expect(fixture.innerHTML).toBe("<span></span>");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
@@ -1261,7 +1262,7 @@ describe("lifecycle hooks", () => {
             return;
           }
           this.patched = "Patched";
-          this.render();
+          render(this); 
         });
       }
     }
@@ -1276,7 +1277,7 @@ describe("lifecycle hooks", () => {
       ]
     `);
 
-    parent.render();
+    render(parent);
     await nextTick();
     expect(fixture.innerHTML).toBe("<span></span>");
 
@@ -1331,7 +1332,7 @@ describe("lifecycle hooks", () => {
     const app = new App();
     const comp = await app.createRoot(Parent).mount(fixture);
     comp.rev++;
-    comp.render();
+    render(comp);
     await nextTick();
     app.destroy();
 

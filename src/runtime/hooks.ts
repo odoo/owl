@@ -68,7 +68,7 @@ export function useListener(
 export function providePlugins(Plugins: PluginConstructor[], pluginProps?: Object) {
   const node = getCurrent();
 
-  const manager = new PluginManager(node.pluginManager);
+  const manager = new PluginManager({ parent: node.pluginManager });
   node.pluginManager = manager;
   onWillDestroy(() => manager.destroy());
 

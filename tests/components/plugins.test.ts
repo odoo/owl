@@ -29,7 +29,7 @@ test("basic use", async () => {
     a = plugin(PluginA);
   }
 
-  const pluginManager = new PluginManager(null);
+  const pluginManager = new PluginManager();
   pluginManager.startPlugins([PluginA]);
 
   await mount(Test, fixture, { pluginManager });
@@ -64,7 +64,7 @@ test("basic use (setup)", async () => {
     }
   }
 
-  const pluginManager = new PluginManager(null);
+  const pluginManager = new PluginManager();
   pluginManager.startPlugins([PluginA]);
 
   await mount(Test, fixture, { pluginManager });
@@ -92,7 +92,7 @@ test("get plugin which is not started", async () => {
     }
   }
 
-  const pluginManager = new PluginManager(null);
+  const pluginManager = new PluginManager();
   await mount(Test, fixture, { pluginManager });
 
   expect(steps.splice(0)).toEqual([`Unknown plugin "a"`]);
@@ -121,7 +121,7 @@ test("components can start plugins", async () => {
     }
   }
 
-  const pluginManager = new PluginManager(null);
+  const pluginManager = new PluginManager();
   pluginManager.startPlugins([PluginA]);
 
   await mount(Test, fixture, { pluginManager });
@@ -166,7 +166,7 @@ test("components start plugins at their level", async () => {
     }
   }
 
-  const pluginManager = new PluginManager(null);
+  const pluginManager = new PluginManager();
 
   await mount(Level1, fixture, { pluginManager });
   expect(pluginManager.getPluginById("a")).toBe(null);
@@ -224,7 +224,7 @@ test("shadow plugin", async () => {
     a = plugin(PluginA);
   }
 
-  const pluginManager = new PluginManager(null);
+  const pluginManager = new PluginManager();
   pluginManager.startPlugins([PluginA]);
 
   await mount(Level1, fixture, { pluginManager });
@@ -261,7 +261,7 @@ test("components can register resources", async () => {
     }
   }
 
-  const pluginManager = new PluginManager(null);
+  const pluginManager = new PluginManager();
   pluginManager.startPlugins([PluginA]);
   const a = pluginManager.getPlugin(PluginA)!;
   expect(a.colors.items()).toEqual([]);

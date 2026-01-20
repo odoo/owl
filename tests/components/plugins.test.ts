@@ -1,4 +1,5 @@
 import {
+  App,
   Component,
   computed,
   mount,
@@ -7,6 +8,7 @@ import {
   PluginManager,
   providePlugins,
   types as t,
+  useApp,
   xml,
 } from "../../src";
 import { Resource, useResource } from "../../src/runtime/resource";
@@ -48,6 +50,25 @@ test("can be started with plugin list", async () => {
 
   await mount(Test, fixture, { plugins: [PluginA] });
   expect(fixture.innerHTML).toBe("value from plugin");
+});
+
+test("a global plugin can import the current app", async () => {
+  let _appFromPlugin: any = null;
+
+  class PluginA extends Plugin {
+    setup() {
+      _appFromPlugin = useApp();
+    }
+  }
+
+  class Test extends Component {
+    static template = xml`coucou`;
+  }
+
+  const app = new App({ plugins: [PluginA] });
+  await app.createRoot(Test).mount(fixture);
+  expect(fixture.innerHTML).toBe("coucou");
+  expect(_appFromPlugin).toBe(app);
 });
 
 test("basic use (setup)", async () => {

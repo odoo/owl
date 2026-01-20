@@ -171,39 +171,6 @@ exports[`rendering semantics props are proxy 2`] = `
 }"
 `;
 
-exports[`rendering semantics render need a boolean = true to be 'deep' 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput, isBoundary, withDefault, setContextValue } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
-  
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    const b2 = safeOutput(ctx['this'].state.value);
-    const b3 = comp1({}, key + \`__1\`, node, this, null);
-    setContextValue(ctx, "noop", ctx['this'].notify());
-    return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`rendering semantics render need a boolean = true to be 'deep' 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
-  
-  return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    setContextValue(ctx, "noop", ctx['this'].notify());
-    return text(\`child\`);
-  }
-}"
-`;
-
 exports[`rendering semantics render with deep=true followed by render with deep=false work as expected 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

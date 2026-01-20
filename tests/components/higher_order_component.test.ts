@@ -1,5 +1,5 @@
 import { Component, mount, props, proxy, xml } from "../../src";
-import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
+import { makeTestFixture, nextTick, snapshotEverything, render } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -70,7 +70,7 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("<span>CHILD 1</span>");
 
     state.options.flag = false;
-    parent.render();
+    render(parent);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>CHILD 2</div>");
   });

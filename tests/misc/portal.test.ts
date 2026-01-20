@@ -12,7 +12,7 @@ import {
   proxy,
 } from "../../src";
 import { xml } from "../../src/";
-import { elem, makeTestFixture, nextAppError, nextTick, snapshotEverything } from "../helpers";
+import { elem, makeTestFixture, nextAppError, nextTick, snapshotEverything, render } from "../helpers";
 
 let fixture: HTMLElement;
 let originalconsoleWarn = console.warn;
@@ -131,7 +131,7 @@ describe("Portal", () => {
       setup() {
         onError((err) => {
           this.error = err;
-          this.render();
+          render(this);
         });
       }
     }
@@ -507,7 +507,7 @@ describe("Portal", () => {
 
     let error: Error;
     parent.state.error = true;
-    parent.render();
+    render(parent);
     await nextTick();
     expect(error!).toBeDefined();
     const regexp =

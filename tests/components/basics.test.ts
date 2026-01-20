@@ -4,6 +4,7 @@ import {
   elem,
   makeTestFixture,
   nextTick,
+  render,
   snapshotEverything,
   steps,
   useLogLifecycle,
@@ -99,7 +100,7 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe("<span>1</span>");
 
     component.value = 2;
-    component.render();
+    render(component);
     await nextTick();
     expect(fixture.innerHTML).toBe("<span>2</span>");
   });
@@ -117,7 +118,7 @@ describe("basics", () => {
 
     expect(fixture.innerHTML).toBe("onetwothree");
     component.items = ["two", "three", "one"];
-    component.render();
+    render(component);
     await nextTick();
     expect(fixture.innerHTML).toBe("twothreeone");
   });
@@ -311,7 +312,7 @@ describe("basics", () => {
     const test = await mount(Test, fixture);
     expect(fixture.innerHTML).toBe("<div>3</div>");
     test.value = 5;
-    test.render();
+    render(test);
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>5</div>");
   });
@@ -458,7 +459,7 @@ describe("basics", () => {
     button.click();
     await nextTick();
     expect(fixture.innerHTML).toBe("<div>1<button>Inc</button></div>");
-    await parent.render();
+    await render(parent);
     expect(fixture.innerHTML).toBe("<div>1<button>Inc</button></div>");
   });
 
@@ -551,7 +552,7 @@ describe("basics", () => {
     expect(fixture.innerHTML).toBe(`<div></div>`);
     fixture.querySelector("div")!.appendChild(document.createElement("span"));
     expect(fixture.innerHTML).toBe(`<div><span></span></div>`);
-    await widget.render();
+    await render(widget);
     expect(fixture.innerHTML).toBe(`<div><span></span></div>`);
   });
 
@@ -856,7 +857,7 @@ describe("basics", () => {
     Object.assign(parent.childProps, {
       subKey: 2,
     });
-    parent.render();
+    render(parent);
     await nextTick();
     expect(fixture.textContent!.trim()).toBe("1__2");
 
@@ -865,7 +866,7 @@ describe("basics", () => {
       key: 2,
       subKey: 3,
     });
-    parent.render();
+    render(parent);
     await nextTick();
     expect(fixture.textContent!.trim()).toBe("2__3");
   });
@@ -894,7 +895,7 @@ describe("basics", () => {
     `);
 
     parent.ifVar = false;
-    parent.render();
+    render(parent);
     await nextTick();
     expect(Object.keys(parent.__owl__.children).length).toStrictEqual(0);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
@@ -930,7 +931,7 @@ describe("basics", () => {
     `);
 
     parent.keyVar = 2;
-    parent.render();
+    render(parent);
     await nextTick();
     expect(Object.keys(parent.__owl__.children).length).toStrictEqual(1);
     expect(steps.splice(0)).toMatchInlineSnapshot(`
@@ -975,7 +976,7 @@ describe("basics", () => {
     `);
 
     parent.displayGrandChild = false;
-    parent.render();
+    render(parent);
     await nextTick();
     expect(fixture.innerHTML).toBe("");
 

@@ -1,5 +1,5 @@
 import { Component, mount, onMounted, props, proxy, xml } from "../../src/index";
-import { makeTestFixture, nextTick, snapshotEverything, steps, useLogLifecycle } from "../helpers";
+import { makeTestFixture, nextTick, render, snapshotEverything, steps, useLogLifecycle } from "../helpers";
 
 snapshotEverything();
 
@@ -297,7 +297,7 @@ describe("list of components", () => {
     const parent = await mount(Parent, fixture);
     expect(fixture.innerHTML).toBe("<span><div>1</div><div>2</div></span>");
     parent.clist = [2, 1];
-    parent.render();
+    render(parent);
     await nextTick();
     expect(fixture.innerHTML).toBe("<span><div>2</div><div>1</div></span>");
     expect(childInstances.length).toBe(2);

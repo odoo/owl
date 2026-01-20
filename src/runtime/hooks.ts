@@ -58,7 +58,7 @@ export function useListener(
         return () => el.removeEventListener(eventName, handler, eventParams);
       }
       return;
-    })
+    });
   } else {
     target.addEventListener(eventName, handler, eventParams);
     onWillDestroy(() => target.removeEventListener(eventName, handler, eventParams));

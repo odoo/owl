@@ -37,10 +37,10 @@ test("can remove values", () => {
 test("sequence", async () => {
   const resource = new Resource<string>({ name: "r" });
 
-  resource.add("a", 10);
+  resource.add("a", { sequence: 10 });
   resource.add("b"); // default = 50
-  resource.add("c", 14);
-  resource.add("d", 100);
+  resource.add("c", { sequence: 14 });
+  resource.add("d", { sequence: 100 });
 
   const items = resource.items;
   expect(items()).toEqual(["a", "c", "b", "d"]);

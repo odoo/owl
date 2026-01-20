@@ -1,4 +1,4 @@
-import { type App } from "./app";
+import { App } from "./app";
 import { getCurrent } from "./component_node";
 import { onWillDestroy } from "./lifecycle_hooks";
 import { PluginConstructor, PluginManager } from "./plugins";
@@ -80,6 +80,9 @@ export function providePlugins(Plugins: PluginConstructor[], pluginProps?: Objec
 // -----------------------------------------------------------------------------
 
 export function useApp(): App {
+  if (App.__current) {
+    return App.__current;
+  }
   const node = getCurrent();
   return node.app;
 }

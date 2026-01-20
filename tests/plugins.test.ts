@@ -24,7 +24,29 @@ describe("basic features", () => {
       }
     }
 
-    const manager = new PluginManager(null);
+    const manager = new PluginManager();
+    expect(steps.splice(0)).toEqual([]);
+
+    manager.startPlugins([A]);
+    expect(steps.splice(0)).toEqual(["setup"]);
+
+    manager.destroy();
+    expect(steps.splice(0)).toEqual(["destroy"]);
+  });
+
+  test("can start plugins directly from constructor", () => {
+    const steps: string[] = [];
+
+    class A extends Plugin {
+      setup() {
+        steps.push("setup");
+        onWillDestroy(() => {
+          steps.push("destroy");
+        });
+      }
+    }
+
+    const manager = new PluginManager();
     expect(steps.splice(0)).toEqual([]);
 
     manager.startPlugins([A]);
@@ -38,7 +60,7 @@ describe("basic features", () => {
     class A extends Plugin {
       static id = "plugin-id";
     }
-    const pm = new PluginManager(null);
+    const pm = new PluginManager();
     pm.startPlugins([A]);
     expect(pm.getPluginById("A")).toBe(null);
     expect(pm.getPluginById("plugin-id")).toBeInstanceOf(A);
@@ -48,7 +70,7 @@ describe("basic features", () => {
     class A extends Plugin {
       static id = "";
     }
-    expect(() => new PluginManager(null).startPlugins([A])).toThrow(`Plugin "A" has no id`);
+    expect(() => new PluginManager().startPlugins([A])).toThrow(`Plugin "A" has no id`);
   });
 
   test("can get a plugin", () => {
@@ -64,7 +86,7 @@ describe("basic features", () => {
       }
     }
 
-    const manager = new PluginManager(null);
+    const manager = new PluginManager();
     manager.startPlugins([A]);
     const plugin = manager.getPluginById("a");
     expect(plugin).toBe(a);
@@ -83,7 +105,7 @@ describe("basic features", () => {
       p = plugin(P);
     }
 
-    const manager = new PluginManager(null);
+    const manager = new PluginManager();
     manager.startPlugins([A]);
     const a = manager.getPlugin(A)!;
     expect(a.p.value).toBe(1);
@@ -96,7 +118,7 @@ describe("basic features", () => {
     class B extends Plugin {
       static id = "plugin";
     }
-    expect(() => new PluginManager(null).startPlugins([A, B])).toThrow(
+    expect(() => new PluginManager().startPlugins([A, B])).toThrow(
       `Trying to start a plugin with the same id as an other plugin (id: 'plugin', existing plugin: 'A', starting plugin: 'B')`
     );
   });
@@ -109,7 +131,7 @@ describe("basic features", () => {
     class B extends Plugin {
       static id = "plugin";
     }
-    expect(() => new PluginManager(null).startPlugins([A])).not.toThrow();
+    expect(() => new PluginManager().startPlugins([A])).not.toThrow();
   });
 
   test("plugin depending on another plugin with the same id (start A and B)", () => {
@@ -120,7 +142,7 @@ describe("basic features", () => {
     class B extends Plugin {
       static id = "plugin";
     }
-    expect(() => new PluginManager(null).startPlugins([A, B])).toThrow(
+    expect(() => new PluginManager().startPlugins([A, B])).toThrow(
       `Trying to start a plugin with the same id as an other plugin (id: 'plugin', existing plugin: 'A', starting plugin: 'B')`
     );
   });
@@ -133,7 +155,7 @@ describe("basic features", () => {
     class B extends Plugin {
       static id = "plugin";
     }
-    expect(() => new PluginManager(null).startPlugins([B, A])).toThrow(
+    expect(() => new PluginManager().startPlugins([B, A])).toThrow(
       `Trying to start a plugin with the same id as an other plugin (id: 'plugin', existing plugin: 'B', starting plugin: 'A')`
     );
   });
@@ -158,7 +180,7 @@ describe("basic features", () => {
       }
     }
 
-    const manager = new PluginManager(null);
+    const manager = new PluginManager();
     expect(steps.splice(0)).toEqual([]);
 
     manager.startPlugins([A, B]);
@@ -177,7 +199,7 @@ describe("basic features", () => {
       }
     }
 
-    const manager = new PluginManager(null);
+    const manager = new PluginManager();
     expect(steps.splice(0)).toEqual([]);
 
     manager.startPlugins([A, A]);
@@ -217,7 +239,7 @@ describe("basic features", () => {
       }
     }
 
-    const manager = new PluginManager(null);
+    const manager = new PluginManager();
     expect(steps.splice(0)).toEqual([]);
 
     manager.startPlugins([A, B, C]);
@@ -237,7 +259,7 @@ describe("basic features", () => {
       }
     }
 
-    const manager = new PluginManager(null);
+    const manager = new PluginManager();
     manager.startPlugins([A]);
     expect(manager.getPluginById<A>("a")).toBe(a);
     expect(manager.getPluginById<A>("b")).toBe(null);
@@ -277,7 +299,7 @@ describe("basic features", () => {
       }
     }
 
-    const manager = new PluginManager(null);
+    const manager = new PluginManager();
     expect(steps.splice(0)).toEqual([]);
 
     manager.startPlugins([C]); // note that we only start plugin C
@@ -305,7 +327,7 @@ describe("basic features", () => {
       }
     }
 
-    const manager = new PluginManager(null);
+    const manager = new PluginManager();
     manager.startPlugins([B]);
     expect(manager.getPluginById<B>("b")!.a).toBe(a);
   });
@@ -321,7 +343,7 @@ describe("basic features", () => {
     class A extends Plugin {
       status = status();
     }
-    const manager = new PluginManager(null);
+    const manager = new PluginManager();
     expect(manager.status).toBe(0); // new;
 
     const [a] = manager.startPlugins([A]) as [A];
@@ -356,11 +378,11 @@ describe("sub plugin managers", () => {
       }
     }
 
-    const manager = new PluginManager(null);
+    const manager = new PluginManager();
     manager.startPlugins([A]);
     expect(steps.splice(0)).toEqual(["setup A"]);
 
-    const subManager = new PluginManager(manager);
+    const subManager = new PluginManager({ parent: manager });
     subManager.startPlugins([B]);
     expect(steps.splice(0)).toEqual(["setup B"]);
 
@@ -392,9 +414,9 @@ describe("sub plugin managers", () => {
       }
     }
 
-    const manager = new PluginManager(null);
+    const manager = new PluginManager();
     manager.startPlugins([A]);
-    new PluginManager(manager).startPlugins([B]);
+    new PluginManager({ parent: manager }).startPlugins([B]);
     expect(steps.splice(0)).toEqual(["setup A", "setup B"]);
 
     manager.destroy();
@@ -421,11 +443,11 @@ describe("sub plugin managers", () => {
       }
     }
 
-    const manager = new PluginManager(null);
+    const manager = new PluginManager();
     manager.startPlugins([A]);
     expect(steps.splice(0)).toEqual(["setup A"]);
 
-    new PluginManager(manager).startPlugins([B]);
+    new PluginManager({ parent: manager }).startPlugins([B]);
     expect(steps).toEqual(["setup B", "value 1"]);
   });
 
@@ -444,11 +466,11 @@ describe("sub plugin managers", () => {
       }
     }
 
-    const manager = new PluginManager(null);
+    const manager = new PluginManager();
     manager.startPlugins([A]);
     expect(manager.getPluginById<A>("A")!.someFunction()).toBe(1);
 
-    const subManager = new PluginManager(manager);
+    const subManager = new PluginManager({ parent: manager });
     subManager.startPlugins([ShadowA]);
     expect(subManager.getPluginById<A>("A")!.someFunction()).toBe(123);
   });
@@ -472,7 +494,7 @@ describe("plugins and resources", () => {
       }
     }
 
-    const manager = new PluginManager(null);
+    const manager = new PluginManager();
     manager.startPlugins([A, B, C]);
     const a = manager.getPluginById("A") as A;
     expect(a.colors.items()).toEqual(["red", "green", "blue"]);
@@ -493,12 +515,12 @@ describe("plugins and resources", () => {
       }
     }
 
-    const manager = new PluginManager(null);
+    const manager = new PluginManager();
     manager.startPlugins([A, B]);
     const a = manager.getPlugin(A)!;
     expect(a.colors.items()).toEqual(["red"]);
 
-    const subManager = new PluginManager(manager);
+    const subManager = new PluginManager({ parent: manager });
     subManager.startPlugins([C]);
     expect(a.colors.items()).toEqual(["red", "green", "blue"]);
 
@@ -522,7 +544,7 @@ describe("plugins and resources", () => {
       }
     }
 
-    const manager = new PluginManager(null);
+    const manager = new PluginManager();
     manager.startPlugins([A, B]);
     const a = manager.getPlugin(A)!;
 
@@ -532,7 +554,7 @@ describe("plugins and resources", () => {
     });
     expect(steps.splice(0)).toEqual(["red"]);
 
-    const subManager = new PluginManager(manager);
+    const subManager = new PluginManager({ parent: manager });
     subManager.startPlugins([C]);
     expect(steps.splice(0)).toEqual([]);
 
@@ -560,7 +582,7 @@ test("can use useListener in a plugin", () => {
     }
   }
 
-  const manager = new PluginManager(null);
+  const manager = new PluginManager();
   manager.startPlugins([A]);
   expect(n).toBe(1);
 

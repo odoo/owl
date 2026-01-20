@@ -87,10 +87,10 @@ describe("registry", () => {
   test("sequence", async () => {
     const registry = new Registry();
 
-    registry.add("a", "a", 10);
+    registry.add("a", "a", { sequence: 10 });
     registry.add("b", "b");
-    registry.add("c", "c", 14);
-    registry.add("d", "d", 100);
+    registry.add("c", "c", { sequence: 14 });
+    registry.add("d", "d", { sequence: 100 });
 
     const items = registry.items;
     expect(items()).toEqual(["a", "c", "b", "d"]);

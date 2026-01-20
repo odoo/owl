@@ -27,18 +27,18 @@ export class Registry<T> {
 
   items = computed(() => this.entries().map((e) => e[1]));
 
-  addById<U extends { id: string } & T>(item: U, sequence: number = 50): Registry<T> {
+  addById<U extends { id: string } & T>(item: U, options: { sequence?: number } = {}): Registry<T> {
     if (!item.id) {
       throw new OwlError(`Item should have an id key (registry '${this._name}')`);
     }
-    return this.add(item.id, item, sequence);
+    return this.add(item.id, item, { sequence: options.sequence ?? 50 });
   }
 
-  add(key: string, value: T, sequence: number = 50): Registry<T> {
+  add(key: string, value: T, options: { sequence?: number } = {}): Registry<T> {
     if (this._validation) {
       assertType(value, this._validation);
     }
-    this._map()[key] = [sequence, value];
+    this._map()[key] = [options.sequence ?? 50, value];
     return this;
   }
 

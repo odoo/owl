@@ -845,7 +845,7 @@ function parseComponent(node: Element, ctx: ParsingContext): AST | null {
 // -----------------------------------------------------------------------------
 
 function parseTCallSlot(node: Element, ctx: ParsingContext): AST | null {
-  if (!node.hasAttribute("t-call-slot") || !node.hasAttribute("t-slot")) {
+  if (!node.hasAttribute("t-call-slot") && !node.hasAttribute("t-slot")) {
     return null;
   }
   if (node.hasAttribute("t-slot")) {

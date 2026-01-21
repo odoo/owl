@@ -29,7 +29,7 @@ describe("t-call (template calling)", () => {
     context.addTemplate("main", main);
     context.addTemplate("sub", `<span t-out="v"/>`);
 
-    expect(context.renderToString("main")).toBe("<div><span>Hi</span></div>");
+    expect(context.renderToString("main")).toBe("<div><span></span></div>");
   });
 
   test("t-call with t-if", () => {
@@ -82,24 +82,24 @@ describe("t-call (template calling)", () => {
     expect(context.renderToString("main")).toBe("<h1>ok</h1>");
   });
 
-  test("with used setbody", () => {
+  test("values set in body are in call context", () => {
     const context = new TestContext();
     const sub = '<t t-out="foo"/>';
-    const main = `<span><t t-call="sub"><t t-set="foo" t-value="'ok'"/></t></span>`;
+    const main = `<span><t t-call="sub" foo="'ok'"><t t-set="foo" t-value="'ko'"/></t></span>`;
     context.addTemplate("sub", sub);
     context.addTemplate("main", main);
 
     expect(context.renderToString("main")).toBe("<span>ok</span>");
   });
 
-  test("inherit context", () => {
+  test("does not inherit context", () => {
     const context = new TestContext();
-    const sub = '<t t-out="foo"/>';
-    const main = `<div><t t-set="foo" t-value="1"/><t t-call="sub"/></div>`;
+    const sub = '<t t-out="foo"/><t t-out="bar"/>';
+    const main = `<div><t t-set="foo" t-value="1"/><t t-set="bar" t-value="2"/><t t-call="sub" bar="bar"/></div>`;
     context.addTemplate("sub", sub);
     context.addTemplate("main", main);
 
-    expect(context.renderToString("main")).toBe("<div>1</div>");
+    expect(context.renderToString("main")).toBe("<div>2</div>");
   });
 
   test("scoped parameters", () => {
@@ -120,19 +120,20 @@ describe("t-call (template calling)", () => {
 
   test("scoped parameters, part 2", () => {
     const context = new TestContext();
-    const sub = '<t t-out="foo"/>';
+    const sub = '<t t-out="foo"/><t t-out="0"/>';
     const main = `
         <div>
           <t t-set="foo" t-value="11"/>
-          <t t-call="sub">
+          <t t-call="sub" foo="43">
             <t t-set="foo" t-value="42"/>
+            <t t-out="foo"/>
           </t>
           <t t-out="foo"/>
         </div>`;
     context.addTemplate("sub", sub);
     context.addTemplate("main", main);
 
-    expect(context.renderToString("main")).toBe("<div>4211</div>");
+    expect(context.renderToString("main")).toBe("<div>434211</div>");
   });
 
   test("call with several sub nodes on same line", () => {
@@ -248,18 +249,14 @@ describe("t-call (template calling)", () => {
     const context = new TestContext();
     const Parent = `
         <div>
-          <t t-call="nodeTemplate">
-              <t t-set="node" t-value="root"/>
-          </t>
+          <t t-call="nodeTemplate" node="root"/>
         </div>`;
 
     const nodeTemplate = `
         <div>
           <p><t t-out="node.val"/></p>
           <t t-foreach="node.children or []" t-as="subtree" t-key="subtree_index">
-              <t t-call="nodeTemplate">
-                  <t t-set="node" t-value="subtree"/>
-              </t>
+              <t t-call="nodeTemplate" node="subtree"/>
           </t>
         </div>`;
 
@@ -275,18 +272,14 @@ describe("t-call (template calling)", () => {
     const context = new TestContext();
     const Parent = `
         <div>
-          <t t-call="nodeTemplate">
-              <t t-set="node" t-value="root"/>
-          </t>
+          <t t-call="nodeTemplate" node="root"/>
         </div>`;
 
     const nodeTemplate = `
         <div>
           <p><t t-out="node.val"/></p>
           <t t-foreach="node.children or []" t-as="subtree" t-key="subtree_index">
-            <t t-call="nodeTemplate">
-              <t t-set="node" t-value="subtree"/>
-            </t>
+            <t t-call="nodeTemplate" node="subtree"/>
         </t>
         </div>`;
 
@@ -303,10 +296,7 @@ describe("t-call (template calling)", () => {
     const context = new TestContext();
     const Parent = `
         <div>
-          <t t-call="nodeTemplate">
-            <t t-set="recursive_idx" t-value="1"/>
-            <t t-set="node" t-value="root"/>
-          </t>
+          <t t-call="nodeTemplate" recursive_idx="1" node="root"/>
         </div>`;
 
     const nodeTemplate = `
@@ -314,9 +304,7 @@ describe("t-call (template calling)", () => {
           <t t-set="recursive_idx" t-value="recursive_idx + 1"/>
           <p><t t-out="node.val"/> <t t-out="recursive_idx"/></p>
           <t t-foreach="node.children or []" t-as="subtree" t-key="subtree_index">
-            <t t-call="nodeTemplate">
-              <t t-set="node" t-value="subtree"/>
-            </t>
+            <t t-call="nodeTemplate" node="subtree" recursive_idx="recursive_idx"/>
           </t>
         </div>`;
 
@@ -359,9 +347,7 @@ describe("t-call (template calling)", () => {
         <div>
           <t t-foreach="list" t-as="v" t-key="v_index">
             <t t-set="val" t-value="v.val"/>
-            <t t-call="sub">
-              <t t-set="val3" t-value="val*3"/>
-            </t>
+            <t t-call="sub" val3="val*3"/>
           </t>
         </div>`;
     const sub = `
@@ -383,9 +369,7 @@ describe("t-call (template calling)", () => {
         <div>
           <t t-foreach="list" t-as="v" t-key="v_index">
             <t t-set="val" t-value="v.val"/>
-            <t t-call="sub">
-              <t t-set="val3" t-value="val*3"/>
-            </t>
+            <t t-call="sub" val3="val*3" w="w"/>
           </t>
         </div>`;
     const sub = `
@@ -393,7 +377,7 @@ describe("t-call (template calling)", () => {
           <span t-out="val3"/>
           <t t-out="w"/>
         </t>`;
-    const wrapper = `<p><t t-set="w" t-value="'fromwrapper'"/><t t-call="main"/></p>`;
+    const wrapper = `<p><t t-set="w" t-value="'fromwrapper'"/><t t-call="main" w="w" list="list"/></p>`;
 
     context.addTemplate("main", main);
     context.addTemplate("sub", sub);
@@ -409,8 +393,8 @@ describe("t-call (template calling)", () => {
     const context = new TestContext();
     const main = `
         <div>
-          <t t-call="sub">
-            <t t-set="val">yip yip</t>
+          <t t-set="val">yip yip</t>
+          <t t-call="sub" val="val">
           </t>
         </div>`;
     const sub = `<p><t t-out="val"/></p>`;
@@ -478,7 +462,7 @@ describe("t-call (template calling)", () => {
     const context = new TestContext();
     const foo = `<foo><t t-out="val"/></foo>`;
     const bar = `<bar><t t-out="val"/></bar>`;
-    const main = `<div><t t-call="{{template}}"/></div>`;
+    const main = `<div><t t-call="{{template}}" val="val"/></div>`;
 
     context.addTemplate("foo", foo);
     context.addTemplate("bar", bar);
@@ -492,7 +476,7 @@ describe("t-call (template calling)", () => {
 
   test("t-call-context", () => {
     const context = new TestContext();
-    context.addTemplate("sub", `<span><t t-out="this.value"/></span>`);
+    context.addTemplate("sub", `<span><t t-out="value"/></span>`);
     context.addTemplate("main", `<t t-call="sub" t-call-context="obj"/>`);
 
     expect(context.renderToString("main", { obj: { value: 123 } })).toBe("<span>123</span>");
@@ -500,7 +484,7 @@ describe("t-call (template calling)", () => {
 
   test("t-call-context and value in body", () => {
     const context = new TestContext();
-    context.addTemplate("sub", `<span><t t-out="this.value1"/><t t-out="value2"/></span>`);
+    context.addTemplate("sub", `<span><t t-out="value1"/><t t-out="value2"/></span>`);
     context.addTemplate(
       "main",
       `
@@ -510,7 +494,7 @@ describe("t-call (template calling)", () => {
     );
 
     expect(context.renderToString("main", { obj: { value1: 123 }, aaron: "lucas" })).toBe(
-      "<span>123lucas</span>"
+      "<span>123</span>"
     );
   });
 
@@ -529,5 +513,50 @@ describe("t-call (template calling)", () => {
     );
 
     expect(context.renderToString("main")).toBe("grandchild<p>Some content...</p>");
+  });
+
+  test("t-call with attributes", () => {
+    const context = new TestContext();
+    context.addTemplate("sub", `<span><t t-out="v1"/><t t-out="v2"/></span>`);
+    context.addTemplate("main", `<t t-call="sub" v1="val1" v2="val2"/>`);
+
+    expect(context.renderToString("main", { val1: "abc", val2: "def" })).toBe(
+      "<span>abcdef</span>"
+    );
+  });
+
+  test("t-call with attributes and t-call-context", () => {
+    const context = new TestContext();
+    context.addTemplate(
+      "sub",
+      `<span><t t-out="v1"/><t t-out="v2"/><t t-out="v3"/><t t-out="v4"/></span>`
+    );
+    context.addTemplate("main", `<t t-call="sub" t-call-context="obj" v1="val1" v2="val2"/>`);
+
+    expect(
+      context.renderToString("main", { obj: { v3: "ghi", v4: "jkl" }, val1: "abc", val2: "def" })
+    ).toBe("<span>abcdefghijkl</span>");
+  });
+
+  test("t-call with attributes and t-out='0'", () => {
+    const context = new TestContext();
+    context.addTemplate("sub", `<span><t t-out="v_2"/><t t-out="0"/></span>`);
+    context.addTemplate("main", `<t t-call="sub" v_2="1">Hello</t>`);
+    expect(context.renderToString("main")).toBe("<span>1Hello</span>");
+  });
+
+  test("t-call and translation contexts", () => {
+    const translateFn = jest.fn((expr: string, translationCtx: string) =>
+      translationCtx === "fr" ? "jeu" : translationCtx === "pt" ? "título" : expr
+    );
+
+    const context = new TestContext({ translateFn });
+    context.addTemplate("sub", /* xml */ `<span title="title"><t t-out="title"/><t t-out="0"/></span>`);
+    context.addTemplate(
+      "main",
+      /* xml */ `<t t-call="sub" title="'title'" t-translation-context-title="pt" t-translation-context="fr">game</t>`
+    );
+
+    expect(context.renderToString("main")).toBe(/* xml */ `<span title="titulo">titlejeu</span>`);
   });
 });

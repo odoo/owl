@@ -25,6 +25,8 @@ import {
 } from "./parser";
 import { OwlError } from "../common/owl_error";
 
+const zero = Symbol("zero");
+
 type BlockType = "block" | "text" | "multi" | "list" | "html" | "comment";
 const whitespaceRE = /\s+/g;
 
@@ -268,7 +270,7 @@ export class CodeGenerator {
   translatableAttributes: string[] = TRANSLATABLE_ATTRS;
   ast: AST;
   staticDefs: { id: string; expr: string }[] = [];
-  slotNames: Set<String> = new Set();
+  slotNames: Set<String | Symbol> = new Set();
   helpers: Set<string> = new Set();
 
   constructor(ast: AST, options: CodeGenOptions) {
@@ -762,6 +764,17 @@ export class CodeGenerator {
     return block!.varName;
   }
 
+  compileZero() {
+    this.helpers.add("zero");
+    const isMultiple = this.slotNames.has(zero);
+    this.slotNames.add(zero);
+    let key = this.target.loopLevel ? `key${this.target.loopLevel}` : "key";
+    if (isMultiple) {
+      key = this.generateComponentKey(key);
+    }
+    return `ctx[zero]?.(node, ${key})`;
+  }
+
   compileTOut(ast: ASTTOut, ctx: Context): string {
     let { block } = ctx;
     if (block) {
@@ -770,8 +783,7 @@ export class CodeGenerator {
     block = this.createBlock(block, "html", ctx);
     let blockStr;
     if (ast.expr === "0") {
-      this.helpers.add("zero");
-      blockStr = `ctx[zero]`;
+      blockStr = this.compileZero();
     } else if (ast.body) {
       let bodyValue = null;
       bodyValue = BlockDescription.nextBlockId;
@@ -990,8 +1002,12 @@ export class CodeGenerator {
 
   compileTCall(ast: ASTTCall, ctx: Context): string {
     let { block, forceNewBlock } = ctx;
+
+    const attrs: string[] = ast.attrs
+      ? this.formatPropObject(ast.attrs, ast.attrsTranslationCtx, ctx.translationCtx)
+      : [];
     let ctxVar = ctx.ctxVar || "ctx";
-    if (ast.context) {
+    if (!ast.attrs && ast.context) {
       ctxVar = generateId("ctx");
       this.addLine(`let ${ctxVar} = {this: ${compileExpr(ast.context)}, __owl__: this.__owl__};`);
     }
@@ -1002,17 +1018,41 @@ export class CodeGenerator {
     }
     block = this.createBlock(block, "multi", ctx);
     if (ast.body) {
-      this.addLine(`${ctxVar} = Object.create(${ctxVar});`);
-      this.addLine(`${ctxVar}[isBoundary] = 1;`);
-      this.helpers.add("isBoundary");
-      const subCtx = createContext(ctx, { ctxVar });
-      const bl = this.compileMulti({ type: ASTType.Multi, content: ast.body }, subCtx);
-      if (bl) {
+      if (ast.attrs) {
+        const ctxStr = generateId("ctx");
+        this.helpers.add("capture");
+        this.define(ctxStr, `capture(ctx)`);
+        const name = this.compileInNewTarget("callBody", ast.body, ctx);
+        const zeroStr = generateId("lazyBlock");
+        this.define(zeroStr, `${name}.bind(this, Object.create(${ctxStr}))`);
         this.helpers.add("zero");
-        this.addLine(`${ctxVar}[zero] = ${bl};`);
+        attrs.push(`[zero]: ${zeroStr}`);
+      } else {
+        this.addLine(`${ctxVar} = Object.create(${ctxVar});`);
+        this.addLine(`${ctxVar}[isBoundary] = 1;`);
+        this.helpers.add("isBoundary");
+        const subCtx = createContext(ctx, { ctxVar });
+        const bl = this.compileAST(ast.body, subCtx);
+        if (bl) {
+          this.helpers.add("zero");
+          this.addLine(`${ctxVar}[zero] = () => ${bl};`);
+        }
       }
     }
 
+    let ctxExpr: string;
+    if (ast.attrs) {
+      const ctxString = `{${attrs.join(", ")}}`;
+      if (ast.context) {
+        const dynCtxVar = generateId("ctx");
+        this.addLine(`const ${dynCtxVar} = ${compileExpr(ast.context)};`);
+        ctxExpr = `Object.assign({}, ${dynCtxVar}${attrs.length ? ", " + ctxString : ""})`;
+      } else {
+        ctxExpr = ctxString;
+      }
+    } else {
+      ctxExpr = ctxVar;
+    }
     const key = this.generateComponentKey();
     if (isDynamic) {
       const templateVar = generateId("template");
@@ -1020,20 +1060,20 @@ export class CodeGenerator {
         this.staticDefs.push({ id: "call", expr: `app.callTemplate.bind(app)` });
       }
       this.define(templateVar, subTemplate);
-      this.insertBlock(`call(this, ${templateVar}, ${ctxVar}, node, ${key})`, block!, {
+      this.insertBlock(`call(this, ${templateVar}, ${ctxExpr}, node, ${key})`, block!, {
         ...ctx,
         forceNewBlock: !block,
       });
     } else {
       const id = generateId(`callTemplate_`);
       this.staticDefs.push({ id, expr: `app.getTemplate(${subTemplate})` });
-      this.insertBlock(`${id}.call(this, ${ctxVar}, node, ${key})`, block!, {
+      this.insertBlock(`${id}.call(this, ${ctxExpr}, node, ${key})`, block!, {
         ...ctx,
         forceNewBlock: !block,
       });
     }
-    if (ast.body && !ctx.isLast) {
-      this.addLine(`${ctxVar} = ${ctxVar}.__proto__;`);
+    if (!ast.attrs && ast.body && !ctx.isLast) {
+      this.addLine(`${ctxExpr} = ${ctxExpr}.__proto__;`);
     }
     return block.varName;
   }

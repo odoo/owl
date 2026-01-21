@@ -44,7 +44,7 @@ export type { GetProps } from "./props";
 export { status } from "./status";
 export { proxy, markRaw, toRaw } from "./reactivity/proxy";
 export { untrack } from "./reactivity/computations";
-export { signal, ReactiveValue, Signal } from "./reactivity/signal";
+export { signal, type ReactiveValue, type Signal } from "./reactivity/signal";
 export { computed } from "./reactivity/computed";
 export { effect } from "./reactivity/effect";
 export { useEffect, useListener, providePlugins, useApp } from "./hooks";

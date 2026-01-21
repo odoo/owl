@@ -41,13 +41,15 @@ describe("t-call (template calling)", () => {
     expect(context.renderToString("main", { flag: true })).toBe("<div><span>ok</span></div>");
   });
 
-  test("t-call allowed on a non t node", () => {
+  test("t-call not allowed on a non t node", () => {
     const context = new TestContext();
     const main = '<div t-call="sub"/>';
     context.addTemplate("main", main);
     context.addTemplate("sub", "<span>ok</span>");
 
-    expect(context.renderToString("main")).toBe("<div><span>ok</span></div>");
+    expect(() => context.renderToString("main")).toThrow(
+      "Directive 't-call' can only be used on <t> nodes (used on a <div>)"
+    );
   });
 
   test("with unused body", () => {
@@ -494,16 +496,6 @@ describe("t-call (template calling)", () => {
     context.addTemplate("main", `<t t-call="sub" t-call-context="obj"/>`);
 
     expect(context.renderToString("main", { obj: { value: 123 } })).toBe("<span>123</span>");
-  });
-
-  test("t-call on a div with t-call-context", () => {
-    const context = new TestContext();
-    context.addTemplate("sub", `<span><t t-out="this.value"/></span>`);
-    context.addTemplate("main", `<div t-call="sub" t-call-context="obj"/>`);
-
-    expect(context.renderToString("main", { obj: { value: 123 } })).toBe(
-      "<div><span>123</span></div>"
-    );
   });
 
   test("t-call-context and value in body", () => {

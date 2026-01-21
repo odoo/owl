@@ -1027,6 +1027,8 @@ describe("qweb parser", () => {
       body: {
         type: ASTType.TCall,
         name: "blap",
+        attrs: null,
+        attrsTranslationCtx: null,
         body: null,
         context: null,
       },
@@ -1065,6 +1067,8 @@ describe("qweb parser", () => {
     expect(parse(`<t t-call="blabla" />`)).toEqual({
       type: ASTType.TCall,
       name: "blabla",
+      attrs: null,
+      attrsTranslationCtx: null,
       body: null,
       context: null,
     });
@@ -1074,8 +1078,10 @@ describe("qweb parser", () => {
     expect(parse(`<t t-call="sub">ok</t>`)).toEqual({
       type: ASTType.TCall,
       name: "sub",
+      attrs: null,
+      attrsTranslationCtx: null,
       context: null,
-      body: [{ type: ASTType.Text, value: "ok" }],
+      body: { type: ASTType.Text, value: "ok" },
     });
   });
 
@@ -1083,6 +1089,8 @@ describe("qweb parser", () => {
     expect(parse(`<t t-call="blabla" t-call-context="someContext"/>`)).toEqual({
       type: ASTType.TCall,
       name: "blabla",
+      attrs: null,
+      attrsTranslationCtx: null,
       body: null,
       context: "someContext",
     });
@@ -1103,6 +1111,8 @@ describe("qweb parser", () => {
       content: {
         type: ASTType.TCall,
         name: "blabla",
+        attrs: null,
+        attrsTranslationCtx: null,
         body: null,
         context: null,
       },

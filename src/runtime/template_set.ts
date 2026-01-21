@@ -87,7 +87,8 @@ export class TemplateSet {
   }
 
   getTemplate(name: string): Template {
-    if (!(name in this.templates)) {
+    const cacheKey = name;
+    if (!(cacheKey in this.templates)) {
       const rawTemplate = this.getRawTemplate?.(name) || this.rawTemplates[name];
       if (rawTemplate === undefined) {
         let extraInfo = "";
@@ -102,13 +103,13 @@ export class TemplateSet {
       // first add a function to lazily get the template, in case there is a
       // recursive call to the template name
       const templates = this.templates;
-      this.templates[name] = function (context, parent) {
-        return templates[name].call(this, context, parent);
+      this.templates[cacheKey] = function (context, parent) {
+        return templates[cacheKey].call(this, context, parent);
       };
       const template = templateFn(this, bdom, this.runtimeUtils);
-      this.templates[name] = template;
+      this.templates[cacheKey] = template;
     }
-    return this.templates[name];
+    return this.templates[cacheKey];
   }
 
   _compileTemplate(name: string, template: string | Element): ReturnType<typeof compile> {

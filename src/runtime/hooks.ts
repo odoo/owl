@@ -3,7 +3,7 @@ import { getCurrent } from "./component_node";
 import { onWillDestroy } from "./lifecycle_hooks";
 import { PluginConstructor, PluginManager } from "./plugins";
 import { effect } from "./reactivity/effect";
-import { Signal } from "./reactivity/signal";
+import type { Signal } from "./reactivity/signal";
 
 // -----------------------------------------------------------------------------
 // useEffect

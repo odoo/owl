@@ -1,4 +1,4 @@
-import { atomSymbol, ReactiveValue } from "./reactivity/computations";
+import { atomSymbol, type ReactiveValue } from "./reactivity/computations";
 import { ValidationContext, ValidationIssue } from "./validation";
 
 type Constructor = { new (...args: any[]): any };

@@ -2,7 +2,7 @@ import { App } from "./app";
 import { getContext } from "./context";
 import { onWillDestroy } from "./lifecycle_hooks";
 import { effect } from "./reactivity/effect";
-import { Signal } from "./reactivity/signal";
+import type { Signal } from "./reactivity/signal";
 
 // -----------------------------------------------------------------------------
 // useEffect

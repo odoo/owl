@@ -118,7 +118,9 @@ export interface ASTTKey extends BaseAST {
 export interface ASTTCall extends BaseAST {
   type: ASTType.TCall;
   name: string;
-  body: AST[] | null;
+  attrs: Attrs | null;
+  attrsTranslationCtx: Attrs | null;
+  body: AST | null;
   context: string | null;
 }
 
@@ -248,10 +250,10 @@ function parseNode(node: Node, ctx: ParsingContext): AST | null {
     parseTForEach(node, ctx) ||
     parseTIf(node, ctx) ||
     parseTPortal(node, ctx) ||
-    parseTCall(node, ctx) ||
-    parseTCallBlock(node, ctx) ||
     parseTTranslation(node, ctx) ||
     parseTTranslationContext(node, ctx) ||
+    parseTCall(node, ctx) ||
+    parseTCallBlock(node, ctx) ||
     parseTKey(node, ctx) ||
     parseTOutNode(node, ctx) ||
     parseTCallSlot(node, ctx) ||
@@ -588,11 +590,27 @@ function parseTCall(node: Element, ctx: ParsingContext): AST | null {
   node.removeAttribute("t-call");
   node.removeAttribute("t-call-context");
 
-  const body = parseChildren(node, ctx);
+  let attrs: Attrs | null = null;
+  let attrsTranslationCtx: Attrs | null = null;
+  for (let attributeName of node.getAttributeNames()) {
+    const value = node.getAttribute(attributeName)!;
+    if (attributeName.startsWith("t-translation-context-")) {
+      const attrName = attributeName.slice(22);
+      attrsTranslationCtx = attrsTranslationCtx || {};
+      attrsTranslationCtx[attrName] = value;
+    } else {
+      attrs = attrs || {};
+      attrs[attributeName] = value;
+    }
+  }
+
+  const body = parseChildNodes(node, ctx);
   return {
     type: ASTType.TCall,
     name: subTemplate,
-    body: body.length ? body : null,
+    attrs,
+    attrsTranslationCtx,
+    body,
     context,
   };
 }

@@ -438,7 +438,6 @@ describe("t-call", () => {
     class Root extends Component {
       static template = xml`<t t-call="a"/>`;
     }
-
     await mount(Root, fixture, {
       templates: `
         <templates>
@@ -446,5 +445,29 @@ describe("t-call", () => {
         </templates>`,
     });
     expect(fixture.innerHTML).toBe("");
+  });
+
+  test("t-set inside t-call are not evaluated before being rendered", async () => {
+    class Root extends Component {
+      static template = xml`
+        <t t-call="a">
+          <t t-out="v"/>
+          coucou
+          <t t-set="v" t-value="this.f()"/>
+          <t t-out="v"/>
+        </t>`;
+
+      f() {
+        return 3;
+      }
+    }
+
+    await mount(Root, fixture, {
+      templates: `
+        <templates>
+          <t t-name="a"><t t-out="0"/></t>
+        </templates>`,
+    });
+    expect(fixture.innerHTML).toBe(" coucou 3");
   });
 });

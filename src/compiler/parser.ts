@@ -578,35 +578,17 @@ function parseTCall(node: Element, ctx: ParsingContext): AST | null {
   if (!node.hasAttribute("t-call")) {
     return null;
   }
+  if (node.tagName !== "t") {
+    throw new OwlError(
+      `Directive 't-call' can only be used on <t> nodes (used on a <${node.tagName}>)`
+    );
+  }
   const subTemplate = node.getAttribute("t-call")!;
   const context = node.getAttribute("t-call-context");
   node.removeAttribute("t-call");
   node.removeAttribute("t-call-context");
 
-  if (node.tagName !== "t") {
-    const ast = parseNode(node, ctx);
-    const tcall: AST = { type: ASTType.TCall, name: subTemplate, body: null, context };
-    if (ast && ast.type === ASTType.DomNode) {
-      ast.content = [tcall];
-      return ast;
-    }
-    if (ast && ast.type === ASTType.TComponent) {
-      return {
-        ...ast,
-        slots: {
-          default: {
-            content: tcall,
-            scope: null,
-            on: null,
-            attrs: null,
-            attrsTranslationCtx: null,
-          },
-        },
-      };
-    }
-  }
   const body = parseChildren(node, ctx);
-
   return {
     type: ASTType.TCall,
     name: subTemplate,

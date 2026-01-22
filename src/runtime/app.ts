@@ -66,12 +66,14 @@ export class App extends TemplateSet {
   scheduler = new Scheduler();
   roots: Set<Root<any>> = new Set();
   pluginManager: PluginManager;
+  internalPluginManager: boolean;
 
   constructor(config: AppConfig = {}) {
     super(config);
     this.name = config.name || "";
     apps.add(this);
     App.__current = this;
+    this.internalPluginManager = !config.pluginManager;
     this.pluginManager = config.pluginManager || new PluginManager();
     if (config.plugins) {
       this.pluginManager.startPlugins(config.plugins);
@@ -169,6 +171,9 @@ export class App extends TemplateSet {
   destroy() {
     for (let root of this.roots) {
       root.destroy();
+    }
+    if (this.internalPluginManager) {
+      this.pluginManager.destroy();
     }
     this.scheduler.processTasks();
     apps.delete(this);

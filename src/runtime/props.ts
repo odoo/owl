@@ -39,16 +39,16 @@ export function props(): Props<Record<string, any>>;
 export function props<const Keys extends string[]>(keys: Keys): Props<ResolveObjectType<Keys>>;
 export function props<
   const Keys extends string[],
-  Defaults extends GetPropsDefaults<KeyedObject<Keys>>,
+  Defaults,
 >(
   keys: Keys,
-  defaults: Defaults
-): Props<WithDefaults<ResolveObjectType<Keys>, GetPropsDefaults<KeyedObject<Keys>>>>;
+  defaults: Defaults & GetPropsDefaults<KeyedObject<Keys>>
+): Props<WithDefaults<ResolveObjectType<Keys>, Defaults>>;
 export function props<Shape extends {}>(shape: Shape): Props<ResolveObjectType<Shape>>;
-export function props<Shape extends {}, Defaults extends GetPropsDefaults<Shape>>(
+export function props<Shape extends {}, Defaults>(
   shape: Shape,
-  defaults: Defaults
-): Props<WithDefaults<ResolveObjectType<Shape>, GetPropsDefaults<Shape>>>;
+  defaults: Defaults & GetPropsDefaults<Shape>
+): Props<WithDefaults<ResolveObjectType<Shape>, Defaults>>;
 export function props(type?: any, defaults?: any): Props<{}> {
   const node = getCurrent();
 

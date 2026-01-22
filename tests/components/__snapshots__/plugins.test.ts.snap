@@ -47,7 +47,7 @@ exports[`can be started with plugin list 1`] = `
 }"
 `;
 
-exports[`components can give values to plugins 1`] = `
+exports[`components can give inputs to plugins 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -160,6 +160,18 @@ exports[`get plugin which is not started 1`] = `
   
   return function template(ctx, node, key = "") {
     return text(\`\`);
+  }
+}"
+`;
+
+exports[`plugin inputs are validated 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].a.inputA);
   }
 }"
 `;

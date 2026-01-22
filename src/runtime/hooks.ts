@@ -1,7 +1,7 @@
 import { App } from "./app";
 import { getCurrent } from "./component_node";
 import { onWillDestroy } from "./lifecycle_hooks";
-import { PluginConstructor, PluginManager } from "./plugins";
+import { GetPluginInputs, PluginConstructor, PluginManager } from "./plugins";
 import { effect } from "./reactivity/effect";
 import { Signal } from "./reactivity/signal";
 
@@ -65,14 +65,21 @@ export function useListener(
   }
 }
 
-export function providePlugins(Plugins: PluginConstructor[], pluginProps?: Object) {
+type GetPluginsInputs<T extends PluginConstructor[]> = {
+    [I in keyof T]: (x: GetPluginInputs<InstanceType<T[I]>>) => void;
+} extends {
+  [K: number]: (x: infer I) => void
+} ? I : never;
+type PrettifyShape<T> = T extends Function ? T : { [K in keyof T]: T[K] };
+
+export function providePlugins<const P extends PluginConstructor[]>(Plugins: P, inputs?: PrettifyShape<GetPluginsInputs<P>>) {
   const node = getCurrent();
 
-  const manager = new PluginManager({ parent: node.pluginManager });
+  const manager = new PluginManager({ parent: node.pluginManager, inputs });
   node.pluginManager = manager;
   onWillDestroy(() => manager.destroy());
 
-  return manager.startPlugins(Plugins, pluginProps);
+  return manager.startPlugins(Plugins);
 }
 
 // -----------------------------------------------------------------------------

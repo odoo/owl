@@ -198,7 +198,7 @@ test("components start plugins at their level", async () => {
   expect(fixture.innerHTML).toBe("1 | 2: pA | 3: pA - pB");
 });
 
-test("components can give values to plugins", async () => {
+test("components can give inputs to plugins", async () => {
   class PluginA extends Plugin {
     inputA = input("inputAlias", t.string);
   }
@@ -221,6 +221,23 @@ test("components can give values to plugins", async () => {
   }
   await mount(Test, fixture);
   expect(fixture.innerHTML).toBe("hamburger-123");
+});
+
+test("plugin inputs are validated", async () => {
+  class PluginA extends Plugin {
+    inputA = input("input", t.string);
+  }
+
+  class Test extends Component {
+    static template = xml`<t t-out="this.a.inputA"/>`;
+    declare a: PluginInstance<typeof PluginA>;
+
+    setup() {
+      providePlugins([PluginA], { input: 123 } as any);
+      this.a = plugin(PluginA);
+    }
+  }
+  await expect(mount(Test, fixture, { dev: true })).rejects.toThrow("Plugin input value does not match the type");
 });
 
 test("shadow plugin", async () => {

@@ -41,7 +41,7 @@ function createElementHandler(evName: string, capture: boolean = false): EventHa
   }
 
   function remove(this: HTMLElement) {
-    delete (this as any)[eventKey];
+    (this as any)[eventKey] = false;
     this.removeEventListener(evName, listener, { capture });
   }
   function update(this: HTMLElement, data: any) {

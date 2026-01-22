@@ -33,7 +33,7 @@ interface PluginManagerOptions {
 export class PluginManager {
   // kind of public to make it possible to manipulate from the outside
   static current: PluginManager | null = null;
-  private children: PluginManager[] = [];
+
   private parent: PluginManager | null;
   private plugins: Record<string, Plugin>;
   private onDestroyCb: Function[] = [];
@@ -42,7 +42,7 @@ export class PluginManager {
 
   constructor(options: PluginManagerOptions = {}) {
     this.parent = options.parent || null;
-    this.parent?.children.push(this);
+    this.parent?.onDestroyCb.push(() => this.destroy());
     this.plugins = this.parent ? Object.create(this.parent.plugins) : {};
     if (options.plugins) {
       this.startPlugins(options.plugins, options.pluginProps);
@@ -50,10 +50,6 @@ export class PluginManager {
   }
 
   destroy() {
-    for (let children of this.children) {
-      children.destroy();
-    }
-
     const cbs = this.onDestroyCb;
     while (cbs.length) {
       cbs.pop()!();

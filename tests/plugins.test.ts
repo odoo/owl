@@ -8,6 +8,7 @@ import {
   types as t,
   useListener,
 } from "../src";
+import { PluginInstance } from "../src/runtime/plugins";
 import { Resource, useResource } from "../src/runtime/resource";
 import { waitScheduler } from "./helpers";
 
@@ -321,7 +322,7 @@ describe("basic features", () => {
     class B extends Plugin {
       static id = "b";
 
-      declare a: A;
+      declare a: PluginInstance<typeof A>;
       setup() {
         this.a = plugin(A);
       }

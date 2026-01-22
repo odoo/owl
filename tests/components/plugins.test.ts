@@ -11,6 +11,7 @@ import {
   useApp,
   xml,
 } from "../../src";
+import { input, PluginInstance } from "../../src/runtime/plugins";
 import { Resource, useResource } from "../../src/runtime/resource";
 import { makeTestFixture, snapshotEverything } from "../helpers";
 
@@ -78,7 +79,7 @@ test("basic use (setup)", async () => {
 
   class Test extends Component {
     static template = xml`<t t-out="this.a.value"/>`;
-    declare a: PluginA;
+    declare a: PluginInstance<typeof PluginA>;
 
     setup() {
       this.a = plugin(PluginA);
@@ -102,7 +103,7 @@ test("get plugin which is not started", async () => {
 
   class Test extends Component {
     static template = xml``;
-    declare a: PluginA;
+    declare a: PluginInstance<typeof PluginA>;
 
     setup() {
       try {
@@ -130,8 +131,8 @@ test("components can start plugins", async () => {
 
   class Test extends Component {
     static template = xml`<t t-out="this.a.value"/> - <t t-out="this.b.value"/>`;
-    declare a: PluginA;
-    declare b: PluginB;
+    declare a: PluginInstance<typeof PluginA>;
+    declare b: PluginInstance<typeof PluginB>;
 
     setup() {
       this.a = plugin(PluginA); // PluginA is already started, we can get it
@@ -197,20 +198,27 @@ test("components start plugins at their level", async () => {
 
 test("components can give values to plugins", async () => {
   class PluginA extends Plugin {
-    fromParent = plugin.props({ hello: String });
+    inputA = input("inputAlias", t.string);
+  }
+
+  class PluginB extends Plugin {
+    inputB = input("otherInput", t.number);
+    other = 1;
   }
 
   class Test extends Component {
-    static template = xml`<t t-out="this.a.fromParent.hello"/>`;
-    declare a: PluginA;
+    static template = xml`<t t-out="this.a.inputA"/>-<t t-out="this.b.inputB"/>`;
+    declare a: PluginInstance<typeof PluginA>;
+    declare b: PluginInstance<typeof PluginB>;
 
     setup() {
-      providePlugins([PluginA], { PluginA: { hello: "hamburger" } });
+      providePlugins([PluginA, PluginB], { inputAlias: "hamburger", otherInput: 123 });
       this.a = plugin(PluginA);
+      this.b = plugin(PluginB);
     }
   }
   await mount(Test, fixture);
-  expect(fixture.innerHTML).toBe("hamburger");
+  expect(fixture.innerHTML).toBe("hamburger-123");
 });
 
 test("shadow plugin", async () => {

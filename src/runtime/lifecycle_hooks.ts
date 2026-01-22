@@ -1,5 +1,5 @@
 import { ComponentNode, getCurrent } from "./component_node";
-import { PluginManager } from "./plugins";
+import { PluginManager } from "./plugin_manager";
 import { nodeErrorHandlers } from "./rendering/error_handling";
 
 // -----------------------------------------------------------------------------

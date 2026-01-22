@@ -4,7 +4,7 @@ import { Component, ComponentConstructor } from "./component";
 import { ComponentNode, saveCurrent } from "./component_node";
 import { handleError, nodeErrorHandlers } from "./rendering/error_handling";
 import { Fiber, MountOptions, RootFiber } from "./rendering/fibers";
-import { Plugin, PluginManager } from "./plugins";
+import { Plugin, PluginManager } from "./plugin_manager";
 import { proxy, toRaw } from "./reactivity/proxy";
 import { Scheduler } from "./rendering/scheduler";
 import { TemplateSet, TemplateSetConfig } from "./template_set";

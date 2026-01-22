@@ -3,13 +3,14 @@ import {
   onWillDestroy,
   plugin,
   Plugin,
+  PluginInstance,
   PluginManager,
+  Resource,
   status,
   types as t,
   useListener,
+  useResource,
 } from "../src";
-import { PluginInstance } from "../src/runtime/plugins";
-import { Resource, useResource } from "../src/runtime/resource";
 import { waitScheduler } from "./helpers";
 
 describe("basic features", () => {

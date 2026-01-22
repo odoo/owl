@@ -2,7 +2,7 @@ import { OwlError } from "../common/owl_error";
 import type { App } from "./app";
 import { BDom, VNode } from "./blockdom";
 import { Component, ComponentConstructor } from "./component";
-import { PluginManager } from "./plugins";
+import { PluginManager } from "./plugin_manager";
 import {
   Atom,
   Computation,

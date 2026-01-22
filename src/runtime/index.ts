@@ -47,7 +47,7 @@ export { untrack } from "./reactivity/computations";
 export { signal, ReactiveValue, Signal } from "./reactivity/signal";
 export { computed } from "./reactivity/computed";
 export { effect } from "./reactivity/effect";
-export { useEffect, useListener, providePlugins, useApp } from "./hooks";
+export { useEffect, useListener, useApp } from "./hooks";
 export { batched, EventBus, htmlEscape, whenReady, markup } from "./utils";
 export {
   onWillStart,
@@ -62,10 +62,11 @@ export {
 export { assertType, validateType } from "./validation";
 export { types } from "./types";
 export { OwlError } from "../common/owl_error";
+export { input, plugin, providePlugins } from "./plugin_hooks";
+export type { GetPluginInputs, PluginInstance } from "./plugin_hooks";
+export { Plugin, PluginManager } from "./plugin_manager";
+export type { PluginConstructor } from "./plugin_manager";
 
 export const __info__ = {
   version: App.version,
 };
-
-export { Plugin, PluginManager, plugin } from "./plugins";
-export type { PluginConstructor } from "./plugins";

@@ -2,17 +2,19 @@ import {
   App,
   Component,
   computed,
+  input,
   mount,
   plugin,
   Plugin,
+  PluginInstance,
   PluginManager,
   providePlugins,
+  Resource,
   types as t,
   useApp,
+  useResource,
   xml,
 } from "../../src";
-import { input, PluginInstance } from "../../src/runtime/plugins";
-import { Resource, useResource } from "../../src/runtime/resource";
 import { makeTestFixture, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;

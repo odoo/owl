@@ -1,5 +1,5 @@
 import { getCurrent } from "./component_node";
-import { PluginManager } from "./plugins";
+import { PluginManager } from "./plugin_manager";
 
 // -----------------------------------------------------------------------------
 //  Status

@@ -84,7 +84,13 @@ export class PluginManager {
         continue;
       }
 
-      const plugin = new pluginType();
+      let plugin;
+      try {
+        plugin = new pluginType();
+      } catch (e) {
+        PluginManager.current = previousManager;
+        throw e;
+      }
       this.plugins[pluginType.id] = plugin;
       plugins.push(plugin);
     }

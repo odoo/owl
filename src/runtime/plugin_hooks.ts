@@ -32,8 +32,12 @@ export type GetPluginInputs<T> = {
 }
 
 export function input<const K extends string, T>(name: K, type?: T): PluginInput<K, T> {
+  const app = useApp();
   const manager = PluginManager.current || getCurrent().pluginManager;
   const value = manager.inputs[name];
+  if (app.dev) {
+    assertType(value, type, "Plugin input value does not match the type");
+  }
   return value;
 }
 

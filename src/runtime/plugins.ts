@@ -1,16 +1,12 @@
 import { OwlError } from "../common/owl_error";
 import { getCurrent } from "./component_node";
-import { Props, WithDefaults } from "./props";
 import { STATUS } from "./status";
-import { GetOptionalEntries, types } from "./types";
 import { assertType } from "./validation";
 
 export interface PluginConstructor {
   new (): Plugin;
   id: string;
 }
-
-let currentProps: any = {};
 
 export class Plugin {
   private static _shadowId: string;
@@ -27,7 +23,7 @@ export class Plugin {
 interface PluginManagerOptions {
   parent?: PluginManager | null;
   plugins?: PluginConstructor[];
-  pluginProps?: any;
+  inputs?: Record<string, any>;
 }
 
 export class PluginManager {
@@ -38,14 +34,16 @@ export class PluginManager {
   private plugins: Record<string, Plugin>;
   private onDestroyCb: Function[] = [];
 
+  inputs: Record<string, any>;
   status: STATUS = STATUS.NEW;
 
   constructor(options: PluginManagerOptions = {}) {
     this.parent = options.parent || null;
     this.parent?.onDestroyCb.push(() => this.destroy());
+    this.inputs = options.inputs ?? {};
     this.plugins = this.parent ? Object.create(this.parent.plugins) : {};
     if (options.plugins) {
-      this.startPlugins(options.plugins, options.pluginProps);
+      this.startPlugins(options.plugins);
     }
   }
 
@@ -66,7 +64,7 @@ export class PluginManager {
     return this.getPluginById<InstanceType<T>>(pluginType.id);
   }
 
-  startPlugins(pluginTypes: PluginConstructor[], pluginProps: any = {}): Plugin[] {
+  startPlugins(pluginTypes: PluginConstructor[]): Plugin[] {
     const previousManager = PluginManager.current;
     PluginManager.current = this;
     const plugins: Plugin[] = [];
@@ -87,13 +85,11 @@ export class PluginManager {
         }
         continue;
       }
-      currentProps = pluginProps[pluginType.id] || {};
 
       const plugin = new pluginType();
       this.plugins[pluginType.id] = plugin;
       plugins.push(plugin);
     }
-    currentProps = {};
 
     // setup phase
     for (let p of plugins) {
@@ -108,7 +104,9 @@ export class PluginManager {
   }
 }
 
-export function plugin<T extends PluginConstructor>(pluginType: T): InstanceType<T> {
+export type PluginInstance<T extends PluginConstructor> = Omit<InstanceType<T>, "setup">;
+
+export function plugin<T extends PluginConstructor>(pluginType: T): PluginInstance<T> {
   // getCurrent will throw if we're not in a component
   const manager = PluginManager.current || getCurrent().pluginManager;
 
@@ -125,42 +123,16 @@ export function plugin<T extends PluginConstructor>(pluginType: T): InstanceType
   return plugin;
 }
 
-// todo: remove duplication with the actual props function
-plugin.props = function props<
-  P extends Record<string, any> = any,
-  D extends GetOptionalEntries<P> = any,
->(type?: P, defaults: D = {} as D): Props<WithDefaults<P, D>> {
-  function getProp(key: string) {
-    if (currentProps[key] === undefined) {
-      return (defaults as any)[key];
-    }
-    return currentProps[key];
-  }
-  const result = Object.create(null);
-  function applyPropGetters(keys: string[]) {
-    for (const key of keys) {
-      Reflect.defineProperty(result, key, {
-        enumerable: true,
-        get: getProp.bind(null, key),
-      });
-    }
-  }
+declare const inputSymbol: unique symbol;
+export type PluginInput<K extends string, T> = T & { [inputSymbol]: true };
 
-  if (type) {
-    const isSchemaValidated = type && !Array.isArray(type);
-    applyPropGetters(
-      (isSchemaValidated ? Object.keys(type) : type).map((key) =>
-        key.endsWith("?") ? key.slice(0, -1) : key
-      )
-    );
-    const app = getCurrent().app;
-    if (app.dev) {
-      const validation = types.object(type);
-      assertType(currentProps, validation);
-    }
-  } else {
-    applyPropGetters(Object.keys(currentProps));
-  }
+export type GetPluginInputs<T> = {
+  [P in keyof T as T[P] extends PluginInput<infer K, infer I /* magic! */> ? K : never]: T[P] extends PluginInput<string, infer I> ? I : never;
+}
 
-  return currentProps;
-};
+export function input<const K extends string, T>(name: K, type?: T): PluginInput<K, T> {
+  const manager = PluginManager.current || getCurrent().pluginManager;
+  const value = manager.inputs[name];
+  assertType(value, type);
+  return value;
+}

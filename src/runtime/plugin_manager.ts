@@ -1,7 +1,5 @@
 import { OwlError } from "../common/owl_error";
-import { getCurrent } from "./component_node";
 import { STATUS } from "./status";
-import { assertType } from "./validation";
 
 export interface PluginConstructor {
   new (): Plugin;
@@ -102,37 +100,4 @@ export class PluginManager {
     }
     return plugins;
   }
-}
-
-export type PluginInstance<T extends PluginConstructor> = Omit<InstanceType<T>, "setup">;
-
-export function plugin<T extends PluginConstructor>(pluginType: T): PluginInstance<T> {
-  // getCurrent will throw if we're not in a component
-  const manager = PluginManager.current || getCurrent().pluginManager;
-
-  let plugin = manager.getPluginById<InstanceType<T>>(pluginType.id);
-  if (!plugin) {
-    if (manager === PluginManager.current) {
-      manager.startPlugins([pluginType]);
-      plugin = manager.getPluginById<InstanceType<T>>(pluginType.id)!;
-    } else {
-      throw new OwlError(`Unknown plugin "${pluginType.id}"`);
-    }
-  }
-
-  return plugin;
-}
-
-declare const inputSymbol: unique symbol;
-export type PluginInput<K extends string, T> = T & { [inputSymbol]: true };
-
-export type GetPluginInputs<T> = {
-  [P in keyof T as T[P] extends PluginInput<infer K, infer I /* magic! */> ? K : never]: T[P] extends PluginInput<string, infer I> ? I : never;
-}
-
-export function input<const K extends string, T>(name: K, type?: T): PluginInput<K, T> {
-  const manager = PluginManager.current || getCurrent().pluginManager;
-  const value = manager.inputs[name];
-  assertType(value, type);
-  return value;
 }

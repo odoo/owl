@@ -54,7 +54,10 @@ exports[`components can give values to plugins 1`] = `
   let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
-    return safeOutput(ctx['this'].a.fromParent.hello);
+    const b2 = safeOutput(ctx['this'].a.inputA);
+    const b3 = text(\`-\`);
+    const b4 = safeOutput(ctx['this'].b.inputB);
+    return multi([b2, b3, b4]);
   }
 }"
 `;

@@ -10,7 +10,6 @@ import {
   onWillUnmount,
   onWillUpdateProps,
   status,
-  useComponent,
   xml,
   computed,
   effect,
@@ -151,8 +150,7 @@ export const steps: string[] = [];
 export function logStep(step: string) {
   steps.push(step);
 }
-export function useLogLifecycle(key?: string, skipAsyncHooks: boolean = false) {
-  const component = useComponent();
+export function useLogLifecycle(component: Component, key?: string, skipAsyncHooks: boolean = false) {
   const componentStatus = status();
   let name = component.constructor.name;
   if (key) {

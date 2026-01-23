@@ -8,7 +8,6 @@ import {
     Component,
     useState,
     mount,
-    useComponent,
     onWillStart,
     onMounted,
     onWillUnmount,
@@ -19,26 +18,24 @@ import {
     onRendered,
     onWillDestroy,
 } from "@odoo/owl";
-  
-function useLogLifecycle() {
-    const component = useComponent();
-    const name = component.constructor.name;
-    onWillStart(() => console.log(`${name}:willStart`));
-    onMounted(() => console.log(`${name}:mounted`));
-    onWillUpdateProps(() => console.log(`${name}:willUpdateProps`));
-    onWillRender(() => console.log(`${name}:willRender`));
-    onRendered(() => console.log(`${name}:rendered`));
-    onWillPatch(() => console.log(`${name}:willPatch`));
-    onPatched(() => console.log(`${name}:patched`));
-    onWillUnmount(() => console.log(`${name}:willUnmount`));
-    onWillDestroy(() => console.log(`${name}:willDestroy`));
+
+function useLogLifecycle(componentName) {
+    onWillStart(() => console.log(`${componentName}:willStart`));
+    onMounted(() => console.log(`${componentName}:mounted`));
+    onWillUpdateProps(() => console.log(`${componentName}:willUpdateProps`));
+    onWillRender(() => console.log(`${componentName}:willRender`));
+    onRendered(() => console.log(`${componentName}:rendered`));
+    onWillPatch(() => console.log(`${componentName}:willPatch`));
+    onPatched(() => console.log(`${componentName}:patched`));
+    onWillUnmount(() => console.log(`${componentName}:willUnmount`));
+    onWillDestroy(() => console.log(`${componentName}:willDestroy`));
 }
 
 class DemoComponent extends Component {
     static template = "DemoComponent";
 
     setup() {
-        useLogLifecycle();
+        useLogLifecycle("DemoComponent");
         this.state = useState({ n: 0 });
     }
     increment() {
@@ -51,7 +48,7 @@ class Root extends Component {
     static components = { DemoComponent };
 
     setup() {
-        useLogLifecycle();
+        useLogLifecycle("Root");
         this.state = useState({ n: 0, flag: true });
     }
 
@@ -65,4 +62,3 @@ class Root extends Component {
 }
 
 mount(Root, document.body, { templates: TEMPLATES, dev: true });
-  

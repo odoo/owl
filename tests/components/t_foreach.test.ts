@@ -64,7 +64,7 @@ describe("list of components", () => {
       static template = xml`<div><t t-out="this.props.item"/></div>`;
       props = props();
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -82,7 +82,7 @@ describe("list of components", () => {
       static components = { Child };
 
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
 
       get items() {

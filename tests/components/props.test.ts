@@ -265,7 +265,7 @@ test("bound functions are considered 'alike'", async () => {
   class Child extends Component {
     static template = xml`child`;
     setup() {
-      useLogLifecycle();
+      useLogLifecycle(this);
     }
   }
 
@@ -276,7 +276,7 @@ test("bound functions are considered 'alike'", async () => {
     static components = { Child };
     state = proxy({ val: 1 });
     setup() {
-      useLogLifecycle();
+      useLogLifecycle(this);
     }
     someFunction() {}
   }
@@ -355,7 +355,7 @@ test(".alike suffix in a simple case", async () => {
     static template = xml`<t t-out="this.props.fn()"/>`;
     props = props();
     setup() {
-      useLogLifecycle();
+      useLogLifecycle(this);
     }
   }
 
@@ -366,7 +366,7 @@ test(".alike suffix in a simple case", async () => {
     static components = { Child };
     state = proxy({ counter: 0 });
     setup() {
-      useLogLifecycle();
+      useLogLifecycle(this);
     }
   }
 
@@ -402,7 +402,7 @@ test(".alike suffix in a list", async () => {
       </button>`;
     props = props();
     setup() {
-      useLogLifecycle();
+      useLogLifecycle(this);
     }
   }
 
@@ -419,7 +419,7 @@ test(".alike suffix in a list", async () => {
       ],
     });
     setup() {
-      useLogLifecycle();
+      useLogLifecycle(this);
     }
     toggle(id: number) {
       const todo = this.state.elems.find((el) => el.id === id)!;

@@ -1783,14 +1783,14 @@ describe("Reactivity: proxy", () => {
       static template = xml`<span><t t-out="this.contextObj.value"/></span>`;
       contextObj = proxy(testContext);
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
     class Parent extends Component {
       static template = xml`<div><Child /><Child /></div>`;
       static components = { Child };
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
     await mount(Parent, fixture);
@@ -1829,7 +1829,7 @@ describe("Reactivity: proxy", () => {
       static template = xml`<span><t t-out="this.contextObj.value"/></span>`;
       contextObj = proxy(testContext);
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -1837,7 +1837,7 @@ describe("Reactivity: proxy", () => {
       static template = xml`<div><Child /><Child /></div>`;
       static components = { Child };
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -1883,7 +1883,7 @@ describe("Reactivity: proxy", () => {
       static components = {};
       contextObj = proxy(testContext);
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -1891,7 +1891,7 @@ describe("Reactivity: proxy", () => {
       static template = xml`<div><Child /></div>`;
       static components = { Child };
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -1899,7 +1899,7 @@ describe("Reactivity: proxy", () => {
       static template = xml`<div><Child /><Parent /></div>`;
       static components = { Child, Parent };
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -2087,7 +2087,7 @@ describe("Reactivity: proxy", () => {
       static template = xml`<span><t t-out="this.contextObj.a"/></span>`;
       contextObj = proxy(testContext);
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
     class Parent extends Component {
@@ -2095,7 +2095,7 @@ describe("Reactivity: proxy", () => {
       static components = { Child };
       state = proxy({ flag: true });
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
     const parent = await mount(Parent, fixture);

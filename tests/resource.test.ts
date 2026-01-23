@@ -74,7 +74,7 @@ test("validation schema", async () => {
   resource.add({ blip: "asdf" });
   expect(() => {
     resource.add({ blip: 1 } as any);
-  }).toThrow("Value does not match the type");
+  }).toThrow("Resource item does not match the type");
 });
 
 test("validation schema, with a class", async () => {
@@ -89,5 +89,5 @@ test("validation schema, with a class", async () => {
   resource.add(new A());
   expect(() => {
     resource.add(new B());
-  }).toThrow("Value does not match the type");
+  }).toThrow("Resource item does not match the type");
 });

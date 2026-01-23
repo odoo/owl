@@ -10,9 +10,11 @@ interface ResourceOptions<T> {
 
 export class Resource<T> {
   private _items = signal.Array<[number, T]>([]);
+  private _name?: string;
   private _validation?: T;
 
   constructor(options: ResourceOptions<T> = {}) {
+    this._name = options.name;
     this._validation = options.validation;
   }
 
@@ -24,7 +26,8 @@ export class Resource<T> {
 
   add(item: T, options: { sequence?: number } = {}): Resource<T> {
     if (this._validation) {
-      assertType(item, this._validation);
+      const info = this._name ? ` (resource '${this._name}')` : "";
+      assertType(item, this._validation, `Resource item does not match the type${info}`);
     }
     this._items().push([options.sequence ?? 50, item]);
     return this;

@@ -349,7 +349,8 @@ describe("basic features", () => {
     const manager = new PluginManager(new App());
     expect(manager.status).toBe(0); // new;
 
-    const [a] = manager.startPlugins([A]) as [A];
+    manager.startPlugins([A]);
+    const a = manager.getPlugin(A)!;
     expect(manager.status).toBe(1); // started
     expect(a.status()).toBe("started");
 

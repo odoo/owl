@@ -53,7 +53,7 @@ type GetPluginsInputs<T extends PluginConstructor[]> = {
 type PrettifyShape<T> = T extends Function ? T : { [K in keyof T]: T[K] };
 
 export function providePlugins<const P extends PluginConstructor[]>(
-  Plugins: P,
+  pluginConstructors: P,
   inputs?: PrettifyShape<GetPluginsInputs<P>>
 ) {
   const node = getCurrent();
@@ -62,5 +62,5 @@ export function providePlugins<const P extends PluginConstructor[]>(
   node.pluginManager = manager;
   onWillDestroy(() => manager.destroy());
 
-  return manager.startPlugins(Plugins);
+  manager.startPlugins(pluginConstructors);
 }

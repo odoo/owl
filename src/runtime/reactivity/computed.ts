@@ -4,12 +4,12 @@ import {
   Derived,
   onReadAtom,
   onWriteAtom,
-  Opts,
+  ReactiveOptions,
   updateComputation,
 } from "./computations";
 import { ReactiveValue } from "./signal";
 
-export function computed<T>(fn: () => T, opts?: Opts): ReactiveValue<T> {
+export function computed<T>(fn: () => T, options?: ReactiveOptions): ReactiveValue<T> {
   // todo: handle cleanup
   let derivedComputation: Derived<any, any>;
   return () => {
@@ -23,7 +23,7 @@ export function computed<T>(fn: () => T, opts?: Opts): ReactiveValue<T> {
       isDerived: true,
       value: undefined,
       observers: new Set<Computation>(),
-      name: opts?.name,
+      name: options?.name,
     };
     onDerived?.(derivedComputation);
     updateComputation(derivedComputation);

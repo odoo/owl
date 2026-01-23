@@ -13,15 +13,15 @@ export type Computation<T = any> = {
   isDerived?: boolean;
   value: T; // for effects, this is the cleanup function
   childrenEffect?: Computation[]; // only for effects
-} & Opts;
+} & ReactiveOptions;
 
-export type Opts = {
+export type ReactiveOptions = {
   name?: string;
 };
 export type Atom<T = any> = {
   value: T;
   observers: Set<Computation>;
-} & Opts;
+} & ReactiveOptions;
 
 export interface Derived<Prev, Next = Prev> extends Atom<Next>, Computation<Next> {}
 

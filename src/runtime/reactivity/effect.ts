@@ -2,13 +2,13 @@ import {
   Computation,
   ComputationState,
   getCurrentComputation,
-  Opts,
+  ReactiveOptions,
   removeSources,
   setComputation,
   updateComputation,
 } from "./computations";
 
-export function effect<T>(fn: () => T, opts?: Opts) {
+export function effect<T>(fn: () => T, options?: ReactiveOptions) {
   const effectComputation: Computation = {
     state: ComputationState.STALE,
     value: undefined,
@@ -25,7 +25,7 @@ export function effect<T>(fn: () => T, opts?: Opts) {
     },
     sources: new Set(),
     childrenEffect: [],
-    name: opts?.name,
+    name: options?.name,
   };
   getCurrentComputation()?.childrenEffect?.push?.(effectComputation);
   updateComputation(effectComputation);

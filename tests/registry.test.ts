@@ -107,7 +107,7 @@ describe("registry", () => {
     registry.add("a", { blip: "asdf" });
     expect(() => {
       registry.add("a", { blip: 1 } as any);
-    }).toThrow("Value does not match the type");
+    }).toThrow("Registry entry does not match the type");
   });
 
   test("validation schema, with a class", async () => {
@@ -122,6 +122,6 @@ describe("registry", () => {
     registry.add("a", new A());
     expect(() => {
       registry.add("a", new B());
-    }).toThrow("Value does not match the type");
+    }).toThrow("Registry entry does not match the type");
   });
 });

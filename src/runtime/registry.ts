@@ -36,7 +36,8 @@ export class Registry<T> {
 
   add(key: string, value: T, options: { sequence?: number } = {}): Registry<T> {
     if (this._validation) {
-      assertType(value, this._validation);
+      const info = this._name ? ` (registry '${this._name}', key: '${key}')` : ` (key: '${key}')`;
+      assertType(value, this._validation, `Registry entry does not match the type${info}`);
     }
     this._map()[key] = [options.sequence ?? 50, value];
     return this;

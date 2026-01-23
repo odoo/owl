@@ -6,8 +6,8 @@ import {
   mount,
   plugin,
   Plugin,
+  PluginConstructor,
   PluginInstance,
-  PluginManager,
   providePlugins,
   Resource,
   types as t,
@@ -15,7 +15,7 @@ import {
   useResource,
   xml,
 } from "../../src";
-import { makeTestFixture, snapshotEverything } from "../helpers";
+import { makeTestFixture, nextMicroTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -34,14 +34,11 @@ test("basic use", async () => {
     a = plugin(PluginA);
   }
 
-  const pluginManager = new PluginManager();
-  pluginManager.startPlugins([PluginA]);
-
-  await mount(Test, fixture, { pluginManager });
+  await mount(Test, fixture, { plugins: [PluginA] });
   expect(fixture.innerHTML).toBe("value from plugin");
 });
 
-test("can be started with plugin list", async () => {
+test("can be started with resource", async () => {
   class PluginA extends Plugin {
     value = "value from plugin";
   }
@@ -51,8 +48,31 @@ test("can be started with plugin list", async () => {
     a = plugin(PluginA);
   }
 
-  await mount(Test, fixture, { plugins: [PluginA] });
+  const plugins = new Resource<PluginConstructor>().add(PluginA);
+  await mount(Test, fixture, { plugins });
   expect(fixture.innerHTML).toBe("value from plugin");
+});
+
+test("plugins added to resource starts automatically", async () => {
+  const steps: string[] = [];
+
+  class PluginA extends Plugin {
+    setup() {
+      steps.push("PluginA started");
+    }
+  }
+
+  class Test extends Component {
+    static template = xml``;
+  }
+
+  const plugins = new Resource<PluginConstructor>();
+  await mount(Test, fixture, { plugins });
+  expect(steps.splice(0)).toEqual([]);
+
+  plugins.add(PluginA);
+  await nextMicroTick();
+  expect(steps.splice(0)).toEqual(["PluginA started"]);
 });
 
 test("a global plugin can import the current app", async () => {
@@ -88,10 +108,7 @@ test("basic use (setup)", async () => {
     }
   }
 
-  const pluginManager = new PluginManager();
-  pluginManager.startPlugins([PluginA]);
-
-  await mount(Test, fixture, { pluginManager });
+  await mount(Test, fixture, { plugins: [PluginA] });
   expect(fixture.innerHTML).toBe("value from plugin");
 });
 
@@ -116,9 +133,7 @@ test("get plugin which is not started", async () => {
     }
   }
 
-  const pluginManager = new PluginManager();
-  await mount(Test, fixture, { pluginManager });
-
+  await mount(Test, fixture);
   expect(steps.splice(0)).toEqual([`Unknown plugin "a"`]);
 });
 
@@ -145,10 +160,7 @@ test("components can start plugins", async () => {
     }
   }
 
-  const pluginManager = new PluginManager();
-  pluginManager.startPlugins([PluginA]);
-
-  await mount(Test, fixture, { pluginManager });
+  await mount(Test, fixture, { plugins: [PluginA] });
   expect(fixture.innerHTML).toBe("value from plugin A - value from plugin B");
 });
 
@@ -190,11 +202,10 @@ test("components start plugins at their level", async () => {
     }
   }
 
-  const pluginManager = new PluginManager();
-
-  await mount(Level1, fixture, { pluginManager });
-  expect(pluginManager.getPluginById("a")).toBe(null);
-  expect(pluginManager.getPluginById("b")).toBe(null);
+  const app = new App();
+  await app.createRoot(Level1).mount(fixture);
+  expect(app.pluginManager.getPluginById("a")).toBe(null);
+  expect(app.pluginManager.getPluginById("b")).toBe(null);
   expect(fixture.innerHTML).toBe("1 | 2: pA | 3: pA - pB");
 });
 
@@ -272,10 +283,7 @@ test("shadow plugin", async () => {
     a = plugin(PluginA);
   }
 
-  const pluginManager = new PluginManager();
-  pluginManager.startPlugins([PluginA]);
-
-  await mount(Level1, fixture, { pluginManager });
+  await mount(Level1, fixture, { plugins: [PluginA] });
   expect(fixture.innerHTML).toBe("a | shadow");
 });
 
@@ -309,12 +317,11 @@ test("components can register resources", async () => {
     }
   }
 
-  const pluginManager = new PluginManager();
-  pluginManager.startPlugins([PluginA]);
-  const a = pluginManager.getPlugin(PluginA)!;
+  const app = new App({ plugins: [PluginA] });
+  const a = app.pluginManager.getPlugin(PluginA)!;
   expect(a.colors.items()).toEqual([]);
 
-  await mount(Level1, fixture, { pluginManager });
+  await app.createRoot(Level1).mount(fixture);
   expect(a.colors.items()).toEqual(["from lvl 1", "from lvl 2"]);
   expect(fixture.innerHTML).toBe("1 | 2: from lvl 1|from lvl 2 ");
 });

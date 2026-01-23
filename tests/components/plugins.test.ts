@@ -248,7 +248,9 @@ test("plugin inputs are validated", async () => {
       this.a = plugin(PluginA);
     }
   }
-  await expect(mount(Test, fixture, { dev: true })).rejects.toThrow("Plugin input value does not match the type");
+  await expect(mount(Test, fixture, { dev: true })).rejects.toThrow(
+    "Plugin input value does not match the type"
+  );
 });
 
 test("shadow plugin", async () => {

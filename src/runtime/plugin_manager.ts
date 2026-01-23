@@ -46,9 +46,11 @@ export class PluginManager {
     this.plugins = this.parent ? Object.create(this.parent.plugins) : {};
     if (options.plugins) {
       const plugins = options.plugins;
-      this.onDestroyCb.push(effect(() => {
-        this.startPlugins(plugins());
-      }));
+      this.onDestroyCb.push(
+        effect(() => {
+          this.startPlugins(plugins());
+        })
+      );
     }
   }
 

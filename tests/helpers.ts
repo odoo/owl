@@ -122,7 +122,7 @@ export class TestContext extends TemplateSet {
   }
 }
 export function render(c: Component, deep: boolean = false) {
-  return c.__owl__.render(deep)
+  return c.__owl__.render(deep);
 }
 
 export function snapshotEverything() {

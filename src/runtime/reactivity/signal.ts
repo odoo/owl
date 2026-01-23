@@ -1,5 +1,5 @@
 import { OwlError } from "../../common/owl_error";
-import { Atom, onReadAtom, onWriteAtom, Opts } from "./computations";
+import { onReadAtom, onWriteAtom, Atom, ReactiveOptions } from "./computations";
 import { proxifyTarget } from "./proxy";
 
 export type ReactiveValue<T> = () => T;
@@ -13,7 +13,7 @@ export interface Signal<T> extends ReactiveValue<T> {
   set(value: T): void;
 }
 
-interface SignalOptions<T> extends Opts {
+interface SignalOptions<T> extends ReactiveOptions {
   type?: T;
 }
 
@@ -67,7 +67,7 @@ signal.Object = function <T extends object>(
   return buildSignal<T>(initialValue, (atom) => proxifyTarget(atom.value, atom), options);
 };
 
-interface MapSignalOptions<K, V> extends Opts {
+interface MapSignalOptions<K, V> extends ReactiveOptions {
   keyType?: K;
   valueType?: V;
 }

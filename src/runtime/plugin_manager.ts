@@ -69,52 +69,43 @@ export class PluginManager {
     return (this.plugins[id] as T) || null;
   }
 
-  getPlugin<T extends PluginConstructor>(pluginType: T): InstanceType<T> | null {
-    return this.getPluginById<InstanceType<T>>(pluginType.id);
+  getPlugin<T extends PluginConstructor>(pluginConstructor: T): InstanceType<T> | null {
+    return this.getPluginById<InstanceType<T>>(pluginConstructor.id);
   }
 
-  startPlugins(pluginTypes: PluginConstructor[]): Plugin[] {
+  startPlugin<T extends PluginConstructor>(pluginConstructor: T): InstanceType<T> | null {
+    if (!pluginConstructor.id) {
+      throw new OwlError(`Plugin "${pluginConstructor.name}" has no id`);
+    }
+
+    if (this.plugins.hasOwnProperty(pluginConstructor.id)) {
+      const existingPluginType = this.getPluginById(pluginConstructor.id)!.constructor;
+      if (existingPluginType !== pluginConstructor) {
+        throw new OwlError(
+          `Trying to start a plugin with the same id as an other plugin (id: '${pluginConstructor.id}', existing plugin: '${existingPluginType.name}', starting plugin: '${pluginConstructor.name}')`
+        );
+      }
+      return null;
+    }
+
+    const plugin = new pluginConstructor();
+    plugin.setup();
+    this.plugins[pluginConstructor.id] = plugin;
+    return plugin as InstanceType<T>;
+  }
+
+  startPlugins(pluginConstructors: PluginConstructor[]): void {
     const previousManager = PluginManager.current;
     PluginManager.current = this;
-    const plugins: Plugin[] = [];
 
-    // instantiate plugins
-    for (const pluginType of pluginTypes) {
-      if (!pluginType.id) {
-        PluginManager.current = previousManager;
-        throw new OwlError(`Plugin "${pluginType.name}" has no id`);
+    try {
+      for (const pluginConstructor of pluginConstructors) {
+        this.startPlugin(pluginConstructor);
       }
-      if (this.plugins.hasOwnProperty(pluginType.id)) {
-        const existingPluginType = this.getPluginById(pluginType.id)!.constructor;
-        if (existingPluginType !== pluginType) {
-          PluginManager.current = previousManager;
-          throw new OwlError(
-            `Trying to start a plugin with the same id as an other plugin (id: '${pluginType.id}', existing plugin: '${existingPluginType.name}', starting plugin: '${pluginType.name}')`
-          );
-        }
-        continue;
-      }
-
-      let plugin;
-      try {
-        plugin = new pluginType();
-      } catch (e) {
-        PluginManager.current = previousManager;
-        throw e;
-      }
-      this.plugins[pluginType.id] = plugin;
-      plugins.push(plugin);
+    } finally {
+      PluginManager.current = previousManager;
     }
 
-    // setup phase
-    for (let p of plugins) {
-      p.setup();
-    }
-
-    PluginManager.current = previousManager;
-    if (!PluginManager.current) {
-      this.status = STATUS.MOUNTED;
-    }
-    return plugins;
+    this.status = STATUS.MOUNTED;
   }
 }

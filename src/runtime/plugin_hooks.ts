@@ -14,8 +14,7 @@ export function plugin<T extends PluginConstructor>(pluginType: T): PluginInstan
   let plugin = manager.getPluginById<InstanceType<T>>(pluginType.id);
   if (!plugin) {
     if (manager === PluginManager.current) {
-      manager.startPlugins([pluginType]);
-      plugin = manager.getPluginById<InstanceType<T>>(pluginType.id)!;
+      plugin = manager.startPlugin(pluginType)!;
     } else {
       throw new OwlError(`Unknown plugin "${pluginType.id}"`);
     }

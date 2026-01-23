@@ -32,10 +32,6 @@ export function getCurrent(): ComponentNode {
   return currentNode;
 }
 
-export function useComponent(): Component {
-  return currentNode!.component;
-}
-
 // -----------------------------------------------------------------------------
 //  Component VNode class
 // -----------------------------------------------------------------------------

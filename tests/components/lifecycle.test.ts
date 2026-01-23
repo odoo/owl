@@ -533,7 +533,7 @@ describe("lifecycle hooks", () => {
       static template = xml`<span><t t-out="this.props.n"/></span>`;
       props = props();
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -545,7 +545,7 @@ describe("lifecycle hooks", () => {
       `;
       static components = { Child };
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
       state = proxy({ n: 0, flag: true });
       increment() {
@@ -599,7 +599,7 @@ describe("lifecycle hooks", () => {
     class Child extends Component {
       static template = xml`<div/>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -607,7 +607,7 @@ describe("lifecycle hooks", () => {
       static template = xml`<div><Child/></div>`;
       static components = { Child };
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -718,7 +718,7 @@ describe("lifecycle hooks", () => {
     class Child extends Component {
       static template = xml`<div/>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
     class Parent extends Component {
@@ -726,7 +726,7 @@ describe("lifecycle hooks", () => {
       static components = { Child };
       state = proxy({ a: 1 });
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -758,14 +758,14 @@ describe("lifecycle hooks", () => {
     class GrandChild extends Component {
       static template = xml`<div/>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
     class Child extends Component {
       static template = xml`<GrandChild/>`;
       static components = { GrandChild };
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -774,7 +774,7 @@ describe("lifecycle hooks", () => {
       static components = { Child };
       state = proxy({ hasChild: false });
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -820,14 +820,14 @@ describe("lifecycle hooks", () => {
     class GrandChild extends Component {
       static template = xml`<div/>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
     class Child extends Component {
       static template = xml`<GrandChild/>`;
       static components = { GrandChild };
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -836,7 +836,7 @@ describe("lifecycle hooks", () => {
       static components = { Child };
       state = proxy({ hasChild: false });
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -868,7 +868,7 @@ describe("lifecycle hooks", () => {
     class GrandChild extends Component {
       static template = xml`<div/>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
         onWillStart(() => def);
       }
     }
@@ -876,7 +876,7 @@ describe("lifecycle hooks", () => {
       static template = xml`<GrandChild/>`;
       static components = { GrandChild };
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -885,7 +885,7 @@ describe("lifecycle hooks", () => {
       static components = { Child };
       state = proxy({ hasChild: false });
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -926,7 +926,7 @@ describe("lifecycle hooks", () => {
     class Child extends Component {
       static template = xml`<div/>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -935,7 +935,7 @@ describe("lifecycle hooks", () => {
       static components = { Child };
       state = proxy({ hasChild: true });
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -967,7 +967,7 @@ describe("lifecycle hooks", () => {
     class Child extends Component {
       static template = xml`<div/>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -976,7 +976,7 @@ describe("lifecycle hooks", () => {
       static components = { Child };
       state = proxy({ value: 1 });
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -1039,7 +1039,7 @@ describe("lifecycle hooks", () => {
     class TestWidget extends Component {
       name: string = "test";
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
     class B extends TestWidget {
@@ -1123,7 +1123,7 @@ describe("lifecycle hooks", () => {
     class Child extends Component {
       static template = xml`<div>child</div>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -1132,7 +1132,7 @@ describe("lifecycle hooks", () => {
       static components = { Child };
       state = proxy({ hasChild: true });
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -1177,7 +1177,7 @@ describe("lifecycle hooks", () => {
       static template = xml`<span t-out="this.patched"/>`;
       patched: any;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
         onMounted(() => {
           this.patched = "Patched";
           render(this);
@@ -1210,7 +1210,7 @@ describe("lifecycle hooks", () => {
       static template = xml`<span t-out="this.patched"/>`;
       patched: any;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
         onPatched(() => {
           if (this.patched === "Patched") {
             return;
@@ -1256,7 +1256,7 @@ describe("lifecycle hooks", () => {
       static template = xml`<span t-out="this.patched"/>`;
       patched: any;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
         onWillPatch(() => {
           if (this.patched === "Patched") {
             return;
@@ -1353,7 +1353,7 @@ describe("lifecycle hooks", () => {
     class Child extends Component {
       static template = xml`child`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -1363,7 +1363,7 @@ describe("lifecycle hooks", () => {
 
       state = proxy({ flag: false });
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
       async notify() {
         // we destroy here the app after the new child component has been

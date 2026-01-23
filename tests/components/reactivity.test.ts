@@ -193,7 +193,7 @@ describe("reactivity in lifecycle", () => {
       static template = xml`<t t-out="this.props.state.content.a"/>`;
       props = props();
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
     class Parent extends Component {
@@ -201,7 +201,7 @@ describe("reactivity in lifecycle", () => {
       static components = { Child };
       state: any = proxy({ renderChild: true, content: { a: 2 } });
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 

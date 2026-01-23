@@ -62,19 +62,6 @@ exports[`hooks can use onWillStart, onWillUpdateProps 2`] = `
 }"
 `;
 
-exports[`hooks can use useComponent 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div/>\`);
-  
-  return function template(ctx, node, key = "") {
-    return block1();
-  }
-}"
-`;
-
 exports[`hooks mounted callbacks should be called in reverse order from willUnmount callbacks 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

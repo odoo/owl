@@ -12,7 +12,6 @@ import {
   props,
   proxy,
   signal,
-  useComponent,
   useEffect,
   useListener,
   xml,
@@ -142,17 +141,6 @@ describe("hooks", () => {
       const input2 = fixture.querySelectorAll("input")[1];
       expect(input2).toBe(document.activeElement);
     });
-  });
-
-  test("can use useComponent", async () => {
-    expect.assertions(2);
-    class Test extends Component {
-      static template = xml`<div></div>`;
-      setup() {
-        expect(useComponent()).toBe(this);
-      }
-    }
-    await mount(Test, fixture);
   });
 
   test("can use onWillStart, onWillUpdateProps", async () => {

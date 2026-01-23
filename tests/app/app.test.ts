@@ -10,7 +10,7 @@ import {
   makeDeferred,
   nextMicroTick,
   steps,
-  render
+  render,
 } from "../helpers";
 
 let fixture: HTMLElement;

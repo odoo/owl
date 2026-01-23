@@ -1,5 +1,12 @@
 import { Component, mount, onMounted, props, proxy, xml } from "../../src/index";
-import { makeTestFixture, nextTick, render, snapshotEverything, steps, useLogLifecycle } from "../helpers";
+import {
+  makeTestFixture,
+  nextTick,
+  render,
+  snapshotEverything,
+  steps,
+  useLogLifecycle,
+} from "../helpers";
 
 snapshotEverything();
 

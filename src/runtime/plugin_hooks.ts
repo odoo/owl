@@ -28,8 +28,10 @@ declare const inputSymbol: unique symbol;
 export type PluginInput<K extends string, T> = T & { [inputSymbol]: true };
 
 export type GetPluginInputs<T> = {
-  [P in keyof T as T[P] extends PluginInput<infer K, infer I /* magic! */> ? K : never]: T[P] extends PluginInput<string, infer I> ? I : never;
-}
+  [P in keyof T as T[P] extends PluginInput<infer K, infer I /* magic! */>
+    ? K
+    : never]: T[P] extends PluginInput<string, infer I> ? I : never;
+};
 
 export function input<const K extends string, T>(name: K, type?: T): PluginInput<K, T> {
   const app = useApp();
@@ -42,13 +44,18 @@ export function input<const K extends string, T>(name: K, type?: T): PluginInput
 }
 
 type GetPluginsInputs<T extends PluginConstructor[]> = {
-    [I in keyof T]: (x: GetPluginInputs<InstanceType<T[I]>>) => void;
+  [I in keyof T]: (x: GetPluginInputs<InstanceType<T[I]>>) => void;
 } extends {
-  [K: number]: (x: infer I) => void
-} ? I : never;
+  [K: number]: (x: infer I) => void;
+}
+  ? I
+  : never;
 type PrettifyShape<T> = T extends Function ? T : { [K in keyof T]: T[K] };
 
-export function providePlugins<const P extends PluginConstructor[]>(Plugins: P, inputs?: PrettifyShape<GetPluginsInputs<P>>) {
+export function providePlugins<const P extends PluginConstructor[]>(
+  Plugins: P,
+  inputs?: PrettifyShape<GetPluginsInputs<P>>
+) {
   const node = getCurrent();
 
   const manager = new PluginManager(node.app, { parent: node.pluginManager, inputs });

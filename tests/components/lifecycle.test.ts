@@ -24,7 +24,7 @@ import {
   snapshotEverything,
   steps,
   useLogLifecycle,
-  render
+  render,
 } from "../helpers";
 
 let fixture: HTMLElement;
@@ -1262,7 +1262,7 @@ describe("lifecycle hooks", () => {
             return;
           }
           this.patched = "Patched";
-          render(this); 
+          render(this);
         });
       }
     }

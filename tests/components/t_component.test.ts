@@ -1,5 +1,12 @@
 import { Component, mount, proxy, xml } from "../../src";
-import { makeTestFixture, nextTick, render, snapshotEverything, steps, useLogLifecycle } from "../helpers";
+import {
+  makeTestFixture,
+  nextTick,
+  render,
+  snapshotEverything,
+  steps,
+  useLogLifecycle,
+} from "../helpers";
 
 let fixture: HTMLElement;
 

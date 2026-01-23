@@ -37,10 +37,7 @@ export type GetProps<T> = {
 
 export function props(): Props<Record<string, any>>;
 export function props<const Keys extends string[]>(keys: Keys): Props<ResolveObjectType<Keys>>;
-export function props<
-  const Keys extends string[],
-  Defaults,
->(
+export function props<const Keys extends string[], Defaults>(
   keys: Keys,
   defaults: Defaults & GetPropsDefaults<KeyedObject<Keys>>
 ): Props<WithDefaults<ResolveObjectType<Keys>, Defaults>>;

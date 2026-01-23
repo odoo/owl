@@ -21,7 +21,7 @@ describe("t-component", () => {
     class Child extends Component {
       static template = xml`<div>child</div>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -29,7 +29,7 @@ describe("t-component", () => {
       static template = xml`<t t-component="this.Child"/>`;
       Child = Child;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -52,14 +52,14 @@ describe("t-component", () => {
     class ChildA extends Component {
       static template = xml`<div>child a</div>`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
     class ChildB extends Component {
       static template = xml`child b`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 
@@ -67,7 +67,7 @@ describe("t-component", () => {
       static template = xml`<t t-component="this.Child"/>`;
       Child = ChildA;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 

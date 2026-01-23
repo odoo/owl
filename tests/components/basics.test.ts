@@ -875,7 +875,7 @@ describe("basics", () => {
     class Child extends Component {
       static template = xml`<div />`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
     class Parent extends Component {
@@ -911,7 +911,7 @@ describe("basics", () => {
     class Child extends Component {
       static template = xml`<div />`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
     class Parent extends Component {
@@ -949,7 +949,7 @@ describe("basics", () => {
     class GrandChild extends Component {
       static template = xml`<div />`;
       setup() {
-        useLogLifecycle();
+        useLogLifecycle(this);
       }
     }
 

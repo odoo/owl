@@ -38,7 +38,6 @@ export { App, mount } from "./app";
 export { xml } from "./template_set";
 export { Component } from "./component";
 export type { ComponentConstructor } from "./component";
-export { useComponent } from "./component_node";
 export { props } from "./props";
 export type { GetProps } from "./props";
 export { status } from "./status";

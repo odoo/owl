@@ -4,12 +4,14 @@ import { Component, ComponentConstructor } from "./component";
 import { ComponentNode, saveCurrent } from "./component_node";
 import { handleError, nodeErrorHandlers } from "./rendering/error_handling";
 import { Fiber, MountOptions, RootFiber } from "./rendering/fibers";
-import { Plugin, PluginManager } from "./plugin_manager";
+import { PluginConstructor, PluginManager } from "./plugin_manager";
 import { proxy, toRaw } from "./reactivity/proxy";
 import { Scheduler } from "./rendering/scheduler";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
 import { validateTarget } from "./utils";
 import { GetProps } from "./props";
+import { Resource } from "./resource";
+import { ReactiveValue } from "./reactivity/signal";
 
 // reimplement dev mode stuff see last change in 0f7a8289a6fb8387c3c1af41c6664b2a8448758f
 
@@ -18,14 +20,12 @@ type ComponentInstance<C extends ComponentConstructor> = C extends new (...args:
   : never;
 
 interface RootConfig<P> {
-  pluginManager?: PluginManager;
   props?: P;
 }
 
 export interface AppConfig extends TemplateSetConfig {
   name?: string;
-  plugins?: (typeof Plugin)[];
-  pluginManager?: PluginManager;
+  plugins?: PluginConstructor[] | Resource<PluginConstructor>;
   test?: boolean;
 }
 
@@ -66,18 +66,21 @@ export class App extends TemplateSet {
   scheduler = new Scheduler();
   roots: Set<Root<any>> = new Set();
   pluginManager: PluginManager;
-  internalPluginManager: boolean;
 
   constructor(config: AppConfig = {}) {
     super(config);
     this.name = config.name || "";
     apps.add(this);
     App.__current = this;
-    this.internalPluginManager = !config.pluginManager;
-    this.pluginManager = config.pluginManager || new PluginManager();
+    let plugins: ReactiveValue<PluginConstructor[]> | undefined;
     if (config.plugins) {
-      this.pluginManager.startPlugins(config.plugins);
+      if (config.plugins instanceof Resource) {
+        plugins = config.plugins.items;
+      } else {
+        plugins = () => config.plugins as PluginConstructor[];
+      }
     }
+    this.pluginManager = new PluginManager(this, { plugins });
     App.__current = null;
     if (config.test) {
       this.dev = true;
@@ -172,9 +175,7 @@ export class App extends TemplateSet {
     for (let root of this.roots) {
       root.destroy();
     }
-    if (this.internalPluginManager) {
-      this.pluginManager.destroy();
-    }
+    this.pluginManager.destroy();
     this.scheduler.processTasks();
     apps.delete(this);
   }

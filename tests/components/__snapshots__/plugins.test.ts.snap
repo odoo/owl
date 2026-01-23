@@ -35,7 +35,7 @@ exports[`basic use 1`] = `
 }"
 `;
 
-exports[`can be started with plugin list 1`] = `
+exports[`can be started with resource 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -172,6 +172,17 @@ exports[`plugin inputs are validated 1`] = `
   
   return function template(ctx, node, key = "") {
     return safeOutput(ctx['this'].a.inputA);
+  }
+}"
+`;
+
+exports[`plugins added to resource starts automatically 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = "") {
+    return text(\`\`);
   }
 }"
 `;

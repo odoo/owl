@@ -1,4 +1,7 @@
 import { OwlError } from "../common/owl_error";
+import { App } from "./app";
+import { effect } from "./reactivity/effect";
+import { ReactiveValue } from "./reactivity/signal";
 import { STATUS } from "./status";
 
 export interface PluginConstructor {
@@ -20,7 +23,7 @@ export class Plugin {
 
 interface PluginManagerOptions {
   parent?: PluginManager | null;
-  plugins?: PluginConstructor[];
+  plugins?: ReactiveValue<PluginConstructor[]>;
   inputs?: Record<string, any>;
 }
 
@@ -28,20 +31,24 @@ export class PluginManager {
   // kind of public to make it possible to manipulate from the outside
   static current: PluginManager | null = null;
 
-  private parent: PluginManager | null;
-  private plugins: Record<string, Plugin>;
-  private onDestroyCb: Function[] = [];
-
+  app: App;
   inputs: Record<string, any>;
+  onDestroyCb: Function[] = [];
+  parent: PluginManager | null;
+  plugins: Record<string, Plugin>;
   status: STATUS = STATUS.NEW;
 
-  constructor(options: PluginManagerOptions = {}) {
+  constructor(app: App, options: PluginManagerOptions = {}) {
+    this.app = app;
     this.parent = options.parent || null;
     this.parent?.onDestroyCb.push(() => this.destroy());
     this.inputs = options.inputs ?? {};
     this.plugins = this.parent ? Object.create(this.parent.plugins) : {};
     if (options.plugins) {
-      this.startPlugins(options.plugins);
+      const plugins = options.plugins;
+      this.onDestroyCb.push(effect(() => {
+        this.startPlugins(plugins());
+      }));
     }
   }
 

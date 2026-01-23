@@ -64,7 +64,7 @@ export { types } from "./types";
 export { OwlError } from "../common/owl_error";
 export { input, plugin, providePlugins } from "./plugin_hooks";
 export type { GetPluginInputs, PluginInstance } from "./plugin_hooks";
-export { Plugin, PluginManager } from "./plugin_manager";
+export { Plugin } from "./plugin_manager";
 export type { PluginConstructor } from "./plugin_manager";
 
 export const __info__ = {

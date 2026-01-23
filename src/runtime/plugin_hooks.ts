@@ -51,7 +51,7 @@ type PrettifyShape<T> = T extends Function ? T : { [K in keyof T]: T[K] };
 export function providePlugins<const P extends PluginConstructor[]>(Plugins: P, inputs?: PrettifyShape<GetPluginsInputs<P>>) {
   const node = getCurrent();
 
-  const manager = new PluginManager({ parent: node.pluginManager, inputs });
+  const manager = new PluginManager(node.app, { parent: node.pluginManager, inputs });
   node.pluginManager = manager;
   onWillDestroy(() => manager.destroy());
 

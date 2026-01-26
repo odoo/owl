@@ -1,6 +1,7 @@
 import { App } from "./app";
 import { getCurrent } from "./component_node";
 import { onWillDestroy } from "./lifecycle_hooks";
+import { PluginManager } from "./plugin_manager";
 import { effect } from "./reactivity/effect";
 import { Signal } from "./reactivity/signal";
 
@@ -69,9 +70,6 @@ export function useListener(
 // -----------------------------------------------------------------------------
 
 export function useApp(): App {
-  if (App.__current) {
-    return App.__current;
-  }
-  const node = getCurrent();
+  const node = PluginManager.current || getCurrent();
   return node.app;
 }

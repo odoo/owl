@@ -58,7 +58,6 @@ window.__OWL_DEVTOOLS__ ||= { apps, Fiber, RootFiber, toRaw, proxy };
 
 export class App extends TemplateSet {
   static validateTarget = validateTarget;
-  static __current: App | null = null;
   static apps = apps;
   static version = version;
 
@@ -71,7 +70,6 @@ export class App extends TemplateSet {
     super(config);
     this.name = config.name || "";
     apps.add(this);
-    App.__current = this;
     let plugins: ReactiveValue<PluginConstructor[]> | undefined;
     if (config.plugins) {
       if (config.plugins instanceof Resource) {
@@ -81,7 +79,6 @@ export class App extends TemplateSet {
       }
     }
     this.pluginManager = new PluginManager(this, { plugins });
-    App.__current = null;
     if (config.test) {
       this.dev = true;
     }

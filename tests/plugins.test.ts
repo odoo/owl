@@ -12,6 +12,7 @@ import {
   useResource,
 } from "../src";
 import { PluginManager } from "../src/runtime/plugin_manager";
+import { STATUS } from "../src/runtime/status";
 import { waitScheduler } from "./helpers";
 
 describe("basic features", () => {
@@ -347,15 +348,15 @@ describe("basic features", () => {
       status = status();
     }
     const manager = new PluginManager(new App());
-    expect(manager.status).toBe(0); // new;
+    expect(manager.status).toBe(STATUS.MOUNTED);
 
     manager.startPlugins([A]);
     const a = manager.getPlugin(A)!;
-    expect(manager.status).toBe(1); // started
+    expect(manager.status).toBe(STATUS.MOUNTED);
     expect(a.status()).toBe("started");
 
     manager.destroy();
-    expect(manager.status).toBe(3); // destroyed
+    expect(manager.status).toBe(STATUS.DESTROYED);
     expect(a.status()).toBe("destroyed");
   });
 });

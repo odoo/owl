@@ -1,6 +1,6 @@
 import { App, Component, mount, onWillPatch, onWillStart, props, proxy, xml } from "../../src";
 import { useApp } from "../../src/runtime/hooks";
-import { status } from "../../src/runtime/status";
+import { STATUS, status } from "../../src/runtime/status";
 import {
   makeTestFixture,
   snapshotEverything,
@@ -197,6 +197,13 @@ describe("app", () => {
     expect(fixture.innerHTML).toBe(`<div class="my-div"></div>`);
     fixture.querySelector("div")!.click();
     expect(steps).toEqual(["click"]);
+  });
+
+  test("app creates and destroys a plugin manager", () => {
+    const app = new App();
+    expect(app.pluginManager.status).toBe(STATUS.MOUNTED);
+    app.destroy();
+    expect(app.pluginManager.status).toBe(STATUS.DESTROYED);
   });
 });
 

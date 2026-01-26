@@ -34,16 +34,21 @@ export class PluginManager {
   app: App;
   inputs: Record<string, any>;
   onDestroyCb: Function[] = [];
-  parent: PluginManager | null;
   plugins: Record<string, Plugin>;
   status: STATUS = STATUS.NEW;
 
   constructor(app: App, options: PluginManagerOptions = {}) {
     this.app = app;
-    this.parent = options.parent || null;
-    this.parent?.onDestroyCb.push(() => this.destroy());
     this.inputs = options.inputs ?? {};
-    this.plugins = this.parent ? Object.create(this.parent.plugins) : {};
+
+    if (options.parent) {
+      const parent = options.parent;
+      parent.onDestroyCb.push(() => this.destroy());
+      this.plugins = Object.create(parent.plugins);
+    } else {
+      this.plugins = {};
+    }
+
     if (options.plugins) {
       const plugins = options.plugins;
       this.onDestroyCb.push(

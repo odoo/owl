@@ -150,7 +150,11 @@ export const steps: string[] = [];
 export function logStep(step: string) {
   steps.push(step);
 }
-export function useLogLifecycle(component: Component, key?: string, skipAsyncHooks: boolean = false) {
+export function useLogLifecycle(
+  component: Component,
+  key?: string,
+  skipAsyncHooks: boolean = false
+) {
   const componentStatus = status();
   let name = component.constructor.name;
   if (key) {

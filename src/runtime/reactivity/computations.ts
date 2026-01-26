@@ -67,25 +67,22 @@ function processEffects() {
 }
 
 export function untrack<T extends (...args: any[]) => any>(fn: T): ReturnType<T> {
-  return runWithComputation(undefined!, fn);
-}
-export function getCurrentComputation() {
-  return CurrentComputation;
-}
-export function setComputation(computation: Computation | undefined) {
-  CurrentComputation = computation;
-}
-// todo: should probably use updateComputation instead.
-export function runWithComputation<T>(computation: Computation, fn: () => T): T {
   const previousComputation = CurrentComputation;
-  CurrentComputation = computation;
-  let result: T;
+  CurrentComputation = undefined;
+  let result: ReturnType<T>;
   try {
     result = fn();
   } finally {
     CurrentComputation = previousComputation;
   }
   return result;
+}
+
+export function getCurrentComputation() {
+  return CurrentComputation;
+}
+export function setComputation(computation: Computation | undefined) {
+  CurrentComputation = computation;
 }
 
 export function updateComputation(computation: Computation) {

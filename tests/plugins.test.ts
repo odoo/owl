@@ -374,8 +374,7 @@ describe("basic features", () => {
       }
     }
 
-    const plugins = new Resource({ validation: t.constructor(Plugin) })
-      .add(PluginA);
+    const plugins = new Resource({ validation: t.constructor(Plugin) }).add(PluginA);
     const app = new App({ plugins });
     expect(steps.splice(0)).toEqual(["PluginA.setup"]);
 

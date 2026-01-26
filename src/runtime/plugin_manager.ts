@@ -51,6 +51,8 @@ export class PluginManager {
           this.startPlugins(plugins());
         })
       );
+    } else {
+      this.status = STATUS.MOUNTED;
     }
   }
 

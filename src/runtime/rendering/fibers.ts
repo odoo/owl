@@ -1,9 +1,9 @@
+import { OwlError } from "../../common/owl_error";
 import { BDom, mount } from "../blockdom";
 import type { ComponentNode } from "../component_node";
-import { fibersInError } from "./error_handling";
-import { OwlError } from "../../common/owl_error";
+import { getCurrentComputation, setComputation } from "../reactivity/computations";
 import { STATUS } from "../status";
-import { runWithComputation } from "../reactivity/computations";
+import { fibersInError } from "./error_handling";
 
 export function makeChildFiber(node: ComponentNode, parent: Fiber): Fiber {
   let current = node.fiber;
@@ -135,14 +135,15 @@ export class Fiber {
     const root = this.root;
     if (root) {
       // todo: should use updateComputation somewhere else.
-      runWithComputation(node.signalComputation, () => {
-        try {
-          (this.bdom as any) = true;
-          this.bdom = node.renderFn();
-        } catch (e) {
-          node.app.handleError({ node, error: e });
-        }
-      });
+      const c = getCurrentComputation();
+      setComputation(node.signalComputation);
+      try {
+        (this.bdom as any) = true;
+        this.bdom = node.renderFn();
+      } catch (e) {
+        node.app.handleError({ node, error: e });
+      }
+      setComputation(c);
       root.setCounter(root.counter - 1);
     }
   }

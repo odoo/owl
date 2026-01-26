@@ -8,9 +8,7 @@ import {
   Computation,
   ComputationState,
   getCurrentComputation,
-  runWithComputation,
   setComputation,
-  untrack,
 } from "./reactivity/computations";
 import { fibersInError } from "./rendering/error_handling";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./rendering/fibers";
@@ -98,7 +96,12 @@ export class ComponentNode implements VNode<ComponentNode> {
   mountComponent(target: any, options?: MountOptions) {
     const fiber = new MountFiber(this, target, options);
     this.app.scheduler.addFiber(fiber);
+    let prev = getCurrentComputation();
     this.initiateRender(fiber);
+    // only useful if the component is a root, and a willstart function just
+    // crashed synchonously. In that case, it is possible that the prev 
+    // computation has not been properly restored
+    setComputation(prev);
   }
 
   async initiateRender(fiber: Fiber | MountFiber) {
@@ -107,11 +110,11 @@ export class ComponentNode implements VNode<ComponentNode> {
       fiber.root!.mounted.push(fiber);
     }
     const component = this.component;
+    let prev = getCurrentComputation();
+    setComputation(undefined);
     try {
-      let promises: Promise<any[]>[];
-      runWithComputation(undefined!, () => {
-        promises = this.willStart.map((f) => f.call(component));
-      });
+      let promises = this.willStart.map((f) => f.call(component));
+      setComputation(prev);
       await Promise.all(promises!);
     } catch (e) {
       this.app.handleError({ node: this, error: e });
@@ -222,11 +225,12 @@ export class ComponentNode implements VNode<ComponentNode> {
     this.fiber = fiber;
     const component = this.component;
 
-    let prom: Promise<any[]>;
-    untrack(() => {
-      prom = Promise.all(this.willUpdateProps.map((f) => f.call(component, props)));
-    });
-    await prom!;
+    let prev = getCurrentComputation();
+    setComputation(undefined);
+    let promises = this.willUpdateProps.map((f) => f.call(component, props));
+    setComputation(prev);
+    await Promise.all(promises!);
+
     if (fiber !== this.fiber) {
       return;
     }

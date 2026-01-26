@@ -13,7 +13,7 @@ import {
 } from "../src";
 import { PluginManager } from "../src/runtime/plugin_manager";
 import { STATUS } from "../src/runtime/status";
-import { waitScheduler } from "./helpers";
+import { nextMicroTick, waitScheduler } from "./helpers";
 
 describe("basic features", () => {
   test("can instantiate and destroy a plugin", () => {
@@ -358,6 +358,32 @@ describe("basic features", () => {
     manager.destroy();
     expect(manager.status).toBe(STATUS.DESTROYED);
     expect(a.status()).toBe("destroyed");
+  });
+
+  test("resource can be used to start plugins", async () => {
+    const steps: string[] = [];
+
+    class PluginA extends Plugin {
+      setup(): void {
+        steps.push("PluginA.setup");
+      }
+    }
+    class PluginB extends Plugin {
+      setup(): void {
+        steps.push("PluginB.setup");
+      }
+    }
+
+    const plugins = new Resource({ validation: t.constructor(Plugin) })
+      .add(PluginA);
+    const app = new App({ plugins });
+    expect(steps.splice(0)).toEqual(["PluginA.setup"]);
+
+    plugins.add(PluginB);
+    await nextMicroTick();
+    expect(steps.splice(0)).toEqual(["PluginB.setup"]);
+
+    app.destroy();
   });
 });
 

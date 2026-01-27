@@ -1,7 +1,7 @@
-import { OwlError } from "../common/owl_error";
 import type { App } from "./app";
 import { BDom, VNode } from "./blockdom";
 import { Component, ComponentConstructor } from "./component";
+import { contextStack } from "./context";
 import { PluginManager } from "./plugin_manager";
 import {
   Atom,
@@ -13,22 +13,6 @@ import {
 import { fibersInError } from "./rendering/error_handling";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./rendering/fibers";
 import { STATUS } from "./status";
-
-let currentNode: ComponentNode | null = null;
-
-export function saveCurrent() {
-  let n = currentNode;
-  return () => {
-    currentNode = n;
-  };
-}
-
-export function getCurrent(): ComponentNode {
-  if (!currentNode) {
-    throw new OwlError("No active component (a hook function should only be called in 'setup')");
-  }
-  return currentNode;
-}
 
 // -----------------------------------------------------------------------------
 //  Component VNode class
@@ -45,7 +29,6 @@ export class ComponentNode implements VNode<ComponentNode> {
   status: STATUS = STATUS.NEW;
   forceNextRender: boolean = false;
   parentKey: string | null;
-  name: string; // TODO: remove
   props: Record<string, any>;
 
   renderFn: Function;
@@ -70,8 +53,15 @@ export class ComponentNode implements VNode<ComponentNode> {
     parent: ComponentNode | null,
     parentKey: string | null
   ) {
-    this.name = C.name;
-    currentNode = this;
+    contextStack.push({
+      type: "component",
+      app,
+      componentName: C.name,
+      node: this,
+      get status() {
+        return this.node.status;
+      },
+    });
     this.app = app;
     this.parent = parent;
     this.parentKey = parentKey;
@@ -90,7 +80,7 @@ export class ComponentNode implements VNode<ComponentNode> {
     this.renderFn = app.getTemplate(C.template).bind(this.component, ctx, this);
     this.component.setup();
     setComputation(previousComputation);
-    currentNode = null;
+    contextStack.length = 0; // clear context stack
   }
 
   mountComponent(target: any, options?: MountOptions) {

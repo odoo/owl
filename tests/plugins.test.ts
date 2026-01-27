@@ -338,9 +338,7 @@ describe("basic features", () => {
 
   test("plugin fn cannot be called outside Plugin and Component", () => {
     class A extends Plugin {}
-    expect(() => plugin(A)).toThrow(
-      `No active component (a hook function should only be called in 'setup')`
-    );
+    expect(() => plugin(A)).toThrow(`No active context`);
   });
 
   test("plugin lifecycle", () => {

@@ -482,5 +482,3 @@ describe("hooks", () => {
     });
   });
 });
-
-// function expectType<T>(t: T) {}

@@ -1,5 +1,4 @@
-import { getCurrent } from "./component_node";
-import { PluginManager } from "./plugin_manager";
+import { getContext } from "./context";
 
 // -----------------------------------------------------------------------------
 //  Status
@@ -17,16 +16,16 @@ export const enum STATUS {
 type STATUS_DESCR = "new" | "started" | "mounted" | "cancelled" | "destroyed";
 
 export function status(): () => STATUS_DESCR {
-  const pm = PluginManager.current;
-  const node = pm || getCurrent();
+  const context = getContext();
+  const entity = context.type === "component" ? context.node : context.manager;
   return () => {
-    switch (node.status) {
+    switch (entity.status) {
       case STATUS.NEW:
         return "new";
       case STATUS.CANCELLED:
         return "cancelled";
       case STATUS.MOUNTED:
-        return pm ? "started" : "mounted";
+        return context.type === "plugin" ? "started" : "mounted";
       case STATUS.DESTROYED:
         return "destroyed";
     }

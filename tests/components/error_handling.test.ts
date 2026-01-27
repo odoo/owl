@@ -10,7 +10,7 @@ import {
   proxy,
   xml,
 } from "../../src/index";
-import { getCurrent } from "../../src/runtime/component_node";
+import { getContext } from "../../src/runtime/context";
 import {
   logStep,
   makeTestFixture,
@@ -653,7 +653,7 @@ describe("can catch errors", () => {
 
       setup() {
         onWillStart(() => {
-          getCurrent();
+          getContext();
         });
       }
     }
@@ -663,9 +663,7 @@ describe("can catch errors", () => {
     } catch (e: any) {
       error = e;
     }
-    expect(error!.cause.message).toBe(
-      `No active component (a hook function should only be called in 'setup')`
-    );
+    expect(error!.cause.message).toBe(`No active context`);
   });
 
   test("Errors have the right cause", async () => {

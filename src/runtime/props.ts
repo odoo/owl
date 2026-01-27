@@ -1,4 +1,4 @@
-import { getCurrent } from "./component_node";
+import { getContext } from "./context";
 import { GetOptionalEntries, KeyedObject, PrettifyShape, ResolveObjectType, types } from "./types";
 import { assertType, ValidationContext } from "./validation";
 
@@ -47,7 +47,7 @@ export function props<Shape extends {}, Defaults>(
   defaults: Defaults & GetPropsDefaults<Shape>
 ): Props<WithDefaults<ResolveObjectType<Shape>, Defaults>>;
 export function props(type?: any, defaults?: any): Props<{}> {
-  const node = getCurrent();
+  const { node, app, componentName } = getContext("component");
 
   function getProp(key: string) {
     if (node.props[key] === undefined && defaults) {
@@ -72,11 +72,11 @@ export function props(type?: any, defaults?: any): Props<{}> {
     );
     applyPropGetters(keys);
 
-    if (node.app.dev) {
+    if (app.dev) {
       const validation = defaults ? validateObjectWithDefaults(type, defaults) : types.object(type);
-      assertType(node.props, validation, `Invalid component props (${node.name})`);
+      assertType(node.props, validation, `Invalid component props (${componentName})`);
       node.willUpdateProps.push((np: Record<string, any>) => {
-        assertType(np, validation, `Invalid component props (${node.name})`);
+        assertType(np, validation, `Invalid component props (${componentName})`);
       });
     }
   } else {

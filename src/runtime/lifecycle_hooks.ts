@@ -1,5 +1,5 @@
-import { ComponentNode, getCurrent } from "./component_node";
-import { PluginManager } from "./plugin_manager";
+import { ComponentNode } from "./component_node";
+import { getContext } from "./context";
 import { nodeErrorHandlers } from "./rendering/error_handling";
 
 // -----------------------------------------------------------------------------
@@ -18,48 +18,47 @@ function decorate(node: ComponentNode, f: Function, hookName: string) {
 }
 
 export function onWillStart(fn: () => Promise<void> | void | any) {
-  const node = getCurrent();
+  const { node } = getContext("component");
   node.willStart.push(decorate(node, fn, "onWillStart"));
 }
 
 export function onWillUpdateProps(fn: (nextProps: any) => Promise<void> | void | any) {
-  const node = getCurrent();
+  const { node } = getContext("component");
   node.willUpdateProps.push(decorate(node, fn, "onWillUpdateProps"));
 }
 
 export function onMounted(fn: () => void | any) {
-  const node = getCurrent();
+  const { node } = getContext("component");
   node.mounted.push(decorate(node, fn, "onMounted"));
 }
 
 export function onWillPatch(fn: () => any | void) {
-  const node = getCurrent();
+  const { node } = getContext("component");
   node.willPatch.unshift(decorate(node, fn, "onWillPatch"));
 }
 
 export function onPatched(fn: () => void | any) {
-  const node = getCurrent();
+  const { node } = getContext("component");
   node.patched.push(decorate(node, fn, "onPatched"));
 }
 
 export function onWillUnmount(fn: () => void | any) {
-  const node = getCurrent();
+  const { node } = getContext("component");
   node.willUnmount.unshift(decorate(node, fn, "onWillUnmount"));
 }
 
 export function onWillDestroy(fn: () => void | any) {
-  const pm = PluginManager.current;
-  if (pm) {
-    (pm as any).onDestroyCb.push(fn);
+  const context = getContext();
+  if (context.type === "component") {
+    context.node.willDestroy.unshift(decorate(context.node, fn, "onWillDestroy"));
   } else {
-    const node = getCurrent();
-    node.willDestroy.unshift(decorate(node, fn, "onWillDestroy"));
+    context.manager.onDestroyCb.push(fn);
   }
 }
 
 type OnErrorCallback = (error: any) => void | any;
 export function onError(callback: OnErrorCallback) {
-  const node = getCurrent();
+  const { node } = getContext("component");
   let handlers = nodeErrorHandlers.get(node);
   if (!handlers) {
     handlers = [];

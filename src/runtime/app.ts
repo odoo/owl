@@ -1,17 +1,18 @@
 import { OwlError } from "../common/owl_error";
 import { version } from "../version";
 import { Component, ComponentConstructor } from "./component";
-import { ComponentNode, saveCurrent } from "./component_node";
+import { ComponentNode } from "./component_node";
+import { saveContext } from "./context";
+import { PluginConstructor, PluginManager } from "./plugin_manager";
+import { GetProps } from "./props";
+import { proxy, toRaw } from "./reactivity/proxy";
+import { ReactiveValue } from "./reactivity/signal";
 import { handleError, nodeErrorHandlers } from "./rendering/error_handling";
 import { Fiber, MountOptions, RootFiber } from "./rendering/fibers";
-import { PluginConstructor, PluginManager } from "./plugin_manager";
-import { proxy, toRaw } from "./reactivity/proxy";
 import { Scheduler } from "./rendering/scheduler";
+import { Resource } from "./resource";
 import { TemplateSet, TemplateSetConfig } from "./template_set";
 import { validateTarget } from "./utils";
-import { GetProps } from "./props";
-import { Resource } from "./resource";
-import { ReactiveValue } from "./reactivity/signal";
 
 // reimplement dev mode stuff see last change in 0f7a8289a6fb8387c3c1af41c6664b2a8448758f
 
@@ -99,7 +100,7 @@ export class App extends TemplateSet {
       resolve = res;
       reject = rej;
     });
-    const restore = saveCurrent();
+    const restore = saveContext();
     let node: ComponentNode;
     let error: any = null;
     try {

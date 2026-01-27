@@ -1,5 +1,6 @@
 import { OwlError } from "../common/owl_error";
 import { App } from "./app";
+import { contextStack } from "./context";
 import { effect } from "./reactivity/effect";
 import { ReactiveValue } from "./reactivity/signal";
 import { STATUS } from "./status";
@@ -28,9 +29,6 @@ interface PluginManagerOptions {
 }
 
 export class PluginManager {
-  // kind of public to make it possible to manipulate from the outside
-  static current: PluginManager | null = null;
-
   app: App;
   inputs: Record<string, any>;
   onDestroyCb: Function[] = [];
@@ -100,15 +98,21 @@ export class PluginManager {
   }
 
   startPlugins(pluginConstructors: PluginConstructor[]): void {
-    const previousManager = PluginManager.current;
-    PluginManager.current = this;
+    contextStack.push({
+      type: "plugin",
+      app: this.app,
+      manager: this,
+      get status() {
+        return this.manager.status;
+      },
+    });
 
     try {
       for (const pluginConstructor of pluginConstructors) {
         this.startPlugin(pluginConstructor);
       }
     } finally {
-      PluginManager.current = previousManager;
+      contextStack.pop();
     }
 
     this.status = STATUS.MOUNTED;

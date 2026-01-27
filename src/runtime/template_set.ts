@@ -1,10 +1,10 @@
-import { compile, CustomDirectives, Template, TemplateFunction } from "../compiler";
-import { comment, createBlock, html, list, multi, text, toggler } from "./blockdom";
-import { getCurrent } from "./component_node";
-import { Portal, portalTemplate } from "./portal";
-import { helpers } from "./rendering/template_helpers";
 import { OwlError } from "../common/owl_error";
 import { parseXML } from "../common/utils";
+import { compile, CustomDirectives, Template, TemplateFunction } from "../compiler";
+import { comment, createBlock, html, list, multi, text, toggler } from "./blockdom";
+import { getContext } from "./context";
+import { Portal, portalTemplate } from "./portal";
+import { helpers } from "./rendering/template_helpers";
 
 const bdom = { text, createBlock, list, multi, html, toggler, comment };
 
@@ -92,7 +92,7 @@ export class TemplateSet {
       if (rawTemplate === undefined) {
         let extraInfo = "";
         try {
-          const componentName = getCurrent().component.constructor.name;
+          const { componentName } = getContext("component");
           extraInfo = ` (for component "${componentName}")`;
         } catch {}
         throw new OwlError(`Missing template: "${name}"${extraInfo}`);

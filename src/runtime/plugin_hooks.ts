@@ -1,19 +1,18 @@
 import { OwlError } from "../common/owl_error";
-import { getCurrent } from "./component_node";
-import { useApp } from "./hooks";
+import { getContext } from "./context";
 import { onWillDestroy } from "./lifecycle_hooks";
-import { assertType } from "./validation";
 import { PluginConstructor, PluginManager } from "./plugin_manager";
+import { assertType } from "./validation";
 
 export type PluginInstance<T extends PluginConstructor> = Omit<InstanceType<T>, "setup">;
 
 export function plugin<T extends PluginConstructor>(pluginType: T): PluginInstance<T> {
-  // getCurrent will throw if we're not in a component
-  const manager = PluginManager.current || getCurrent().pluginManager;
+  const context = getContext();
+  const manager = context.type === "component" ? context.node.pluginManager : context.manager;
 
   let plugin = manager.getPluginById<InstanceType<T>>(pluginType.id);
   if (!plugin) {
-    if (manager === PluginManager.current) {
+    if (context.type === "plugin") {
       plugin = manager.startPlugin(pluginType)!;
     } else {
       throw new OwlError(`Unknown plugin "${pluginType.id}"`);
@@ -33,8 +32,7 @@ export type GetPluginInputs<T> = {
 };
 
 export function input<const K extends string, T>(name: K, type?: T): PluginInput<K, T> {
-  const app = useApp();
-  const manager = PluginManager.current || getCurrent().pluginManager;
+  const { app, manager } = getContext("plugin");
   const value = manager.inputs[name];
   if (app.dev) {
     assertType(value, type, "Plugin input value does not match the type");
@@ -55,7 +53,7 @@ export function providePlugins<const P extends PluginConstructor[]>(
   pluginConstructors: P,
   inputs?: PrettifyShape<GetPluginsInputs<P>>
 ) {
-  const node = getCurrent();
+  const { node } = getContext("component");
 
   const manager = new PluginManager(node.app, { parent: node.pluginManager, inputs });
   node.pluginManager = manager;

@@ -4,9 +4,9 @@ import { Component, ComponentConstructor } from "./component";
 import { contextStack } from "./context";
 import { PluginManager } from "./plugin_manager";
 import {
-  Atom,
-  Computation,
+  ComputationAtom,
   ComputationState,
+  createComputation,
   getCurrentComputation,
   setComputation,
 } from "./reactivity/computations";
@@ -42,7 +42,7 @@ export class ComponentNode implements VNode<ComponentNode> {
   willPatch: LifecycleHook[] = [];
   patched: LifecycleHook[] = [];
   willDestroy: LifecycleHook[] = [];
-  signalComputation: Computation;
+  signalComputation: ComputationAtom;
 
   pluginManager: PluginManager;
 
@@ -66,12 +66,11 @@ export class ComponentNode implements VNode<ComponentNode> {
     this.parent = parent;
     this.parentKey = parentKey;
     this.pluginManager = parent ? parent.pluginManager : app.pluginManager;
-    this.signalComputation = {
-      value: undefined,
+    this.signalComputation = createComputation({
       compute: () => this.render(false),
-      sources: new Set<Atom>(),
       state: ComputationState.EXECUTED,
-    };
+      isDerived: false,
+    });
     this.props = Object.assign({}, props);
     const previousComputation = getCurrentComputation();
     setComputation(undefined);

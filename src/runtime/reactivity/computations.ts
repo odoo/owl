@@ -1,95 +1,104 @@
 import { batched } from "../utils";
 
+export interface ReactiveValue<T> {
+  (): T;
+}
+
+export interface WritableReactiveValue<T> extends ReactiveValue<T> {
+  /**
+   * Update the value of the reactive with a new value. If the new value is different
+   * from the previous values, all computations that depends on this reactive will
+   * be invalidated, and effects will rerun.
+   */
+  set(nextValue: T): void;
+}
+
 export enum ComputationState {
   EXECUTED = 0,
   STALE = 1,
   PENDING = 2,
 }
-export type Computation<T = any> = {
-  compute?: () => T;
-  state: ComputationState;
-  sources: Set<Atom | Derived<any, any>>;
-  isEager?: boolean;
-  isDerived?: boolean;
-  value: T; // for effects, this is the cleanup function
-  childrenEffect?: Computation[]; // only for effects
-} & ReactiveOptions;
 
-export type ReactiveOptions = {
-  name?: string;
-};
-export type Atom<T = any> = {
+export interface Atom<T = any> {
+  observers: Set<ComputationAtom>;
   value: T;
-  observers: Set<Computation>;
-} & ReactiveOptions;
+};
 
-export interface Derived<Prev, Next = Prev> extends Atom<Next>, Computation<Next> {}
+export interface ComputationAtom<T = any> extends Atom<T> {
+  compute: () => T;
+  isDerived: boolean;
+  sources: Set<Atom>;
+  state: ComputationState;
+}
 
-let Effects: Computation[];
-let CurrentComputation: Computation | undefined;
+export const atomSymbol = Symbol("Atom");
+
+let observers: ComputationAtom[] = [];
+let currentComputation: ComputationAtom | undefined;
+
+export function createComputation(options: Partial<ComputationAtom> = {}): ComputationAtom {
+  return {
+    state: ComputationState.STALE,
+    value: undefined,
+    compute() {},
+    sources: new Set(),
+    observers: new Set(),
+    isDerived: false,
+    ...options,
+  };
+}
 
 export function onReadAtom(atom: Atom) {
-  if (!CurrentComputation) return;
-  CurrentComputation.sources!.add(atom);
-  atom.observers.add(CurrentComputation);
+  if (!currentComputation) {
+    return;
+  }
+  currentComputation.sources.add(atom);
+  atom.observers.add(currentComputation);
 }
 
 export function onWriteAtom(atom: Atom) {
-  collectEffects(() => {
-    for (const ctx of atom.observers) {
-      if (ctx.state === ComputationState.EXECUTED) {
-        if (ctx.isDerived) markDownstream(ctx as Derived<any, any>);
-        else Effects.push(ctx);
+  for (const ctx of atom.observers) {
+    if (ctx.state === ComputationState.EXECUTED) {
+      if (ctx.isDerived) {
+        markDownstream(ctx);
+      } else {
+        observers.push(ctx);
       }
-      ctx.state = ComputationState.STALE;
     }
-  });
+    ctx.state = ComputationState.STALE;
+  }
   batchProcessEffects();
 }
-function collectEffects(fn: Function) {
-  if (Effects) return fn();
-  Effects = [];
-  try {
-    return fn();
-  } finally {
-    // todo
-    // processEffects();
-    true;
-  }
-}
+
 const batchProcessEffects = batched(processEffects);
 function processEffects() {
-  if (!Effects) return;
-  for (const computation of Effects) {
-    updateComputation(computation);
+  const length = observers.length;
+  for (let i = 0; i < length; i++) {
+    updateComputation(observers[i]);
   }
-  Effects = undefined!;
-}
-
-export function untrack<T extends (...args: any[]) => any>(fn: T): ReturnType<T> {
-  const previousComputation = CurrentComputation;
-  CurrentComputation = undefined;
-  let result: ReturnType<T>;
-  try {
-    result = fn();
-  } finally {
-    CurrentComputation = previousComputation;
-  }
-  return result;
+  observers = [];
 }
 
 export function getCurrentComputation() {
-  return CurrentComputation;
-}
-export function setComputation(computation: Computation | undefined) {
-  CurrentComputation = computation;
+  return currentComputation;
 }
 
-export function updateComputation(computation: Computation) {
+export function setComputation(computation: ComputationAtom | undefined) {
+  currentComputation = computation;
+}
+
+export function updateComputation(computation: ComputationAtom) {
   const state = computation.state;
-  if (state === ComputationState.EXECUTED) return;
+  if (state === ComputationState.EXECUTED) {
+    return;
+  }
   if (state === ComputationState.PENDING) {
-    computeSources(computation as Derived<any, any>);
+    for (const source of computation.sources) {
+      if (!("compute" in source)) {
+        continue;
+      }
+      updateComputation(source as ComputationAtom);
+    }
     // If the state is still not stale after processing the sources, it means
     // none of the dependencies have changed.
     // todo: test it
@@ -101,13 +110,14 @@ export function updateComputation(computation: Computation) {
   // todo: test performance. We might want to avoid removing the atoms to
   // directly re-add them at compute. Especially as we are making them stale.
   removeSources(computation);
-  const previousComputation = CurrentComputation;
-  CurrentComputation = computation;
-  computation.value = computation.compute?.();
+  const previousComputation = currentComputation;
+  currentComputation = computation;
+  computation.value = computation.compute();
   computation.state = ComputationState.EXECUTED;
-  CurrentComputation = previousComputation;
+  currentComputation = previousComputation;
 }
-export function removeSources(computation: Computation) {
+
+export function removeSources(computation: ComputationAtom) {
   const sources = computation.sources;
   for (const source of sources) {
     const observers = source.observers;
@@ -118,18 +128,29 @@ export function removeSources(computation: Computation) {
   sources.clear();
 }
 
-function markDownstream<A, B>(derived: Derived<A, B>) {
-  for (const observer of derived.observers) {
+function markDownstream(computation: ComputationAtom) {
+  for (const observer of computation.observers) {
     // if the state has already been marked, skip it
-    if (observer.state) continue;
+    if (observer.state) {
+      continue;
+    }
     observer.state = ComputationState.PENDING;
-    if (observer.isDerived) markDownstream(observer as Derived<any, any>);
-    else Effects.push(observer);
+    if (observer.isDerived) {
+      markDownstream(observer);
+    } else {
+      observers.push(observer);
+    }
   }
 }
-function computeSources(derived: Derived<any, any>) {
-  for (const source of derived.sources) {
-    if (!("compute" in source)) continue;
-    updateComputation(source as Derived<any, any>);
+
+export function untrack<T>(fn: (...args: any[]) => T): T {
+  const previousComputation = currentComputation;
+  currentComputation = undefined;
+  let result: T;
+  try {
+    result = fn();
+  } finally {
+    currentComputation = previousComputation;
   }
+  return result;
 }

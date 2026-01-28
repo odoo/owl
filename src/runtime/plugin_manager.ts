@@ -1,8 +1,8 @@
 import { OwlError } from "../common/owl_error";
 import { App } from "./app";
 import { contextStack } from "./context";
+import { ReactiveValue } from "./reactivity/computations";
 import { effect } from "./reactivity/effect";
-import { ReactiveValue } from "./reactivity/signal";
 import { STATUS } from "./status";
 
 export interface PluginConstructor {

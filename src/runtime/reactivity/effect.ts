@@ -1,64 +1,57 @@
 import {
-  Computation,
   ComputationState,
+  ComputationAtom,
   getCurrentComputation,
-  ReactiveOptions,
   removeSources,
   setComputation,
   updateComputation,
+  createComputation,
 } from "./computations";
 
-export function effect<T>(fn: () => T, options?: ReactiveOptions) {
-  const effectComputation: Computation = {
-    state: ComputationState.STALE,
-    value: undefined,
+export function effect<T>(fn: () => T) {
+  const computation = createComputation({
     compute() {
       // In case the cleanup read an atom.
       // todo: test it
       setComputation(undefined);
-      //   CurrentComputation = undefined!;
-      // `removeSources` is made by `runComputation`.
-      unsubscribeEffect(effectComputation);
-      setComputation(effectComputation);
-      //   CurrentComputation = effectComputation;
+      unsubscribeEffect(computation);
+      setComputation(computation);
       return fn();
     },
-    sources: new Set(),
-    childrenEffect: [],
-    name: options?.name,
-  };
-  getCurrentComputation()?.childrenEffect?.push?.(effectComputation);
-  updateComputation(effectComputation);
+    isDerived: false,
+  });
+  getCurrentComputation()?.observers.add(computation);
+  updateComputation(computation);
 
   // Remove sources and unsubscribe
-  return () => {
+  return function cleanupEffect() {
     // In case the cleanup read an atom.
     // todo: test it
     const previousComputation = getCurrentComputation();
     setComputation(undefined);
-    unsubscribeEffect(effectComputation);
+    unsubscribeEffect(computation);
     setComputation(previousComputation);
   };
 }
 
-function unsubscribeEffect(effectComputation: Computation) {
-  removeSources(effectComputation);
-  cleanupEffect(effectComputation);
-  for (const children of effectComputation.childrenEffect!) {
+function unsubscribeEffect(effect: ComputationAtom) {
+  removeSources(effect);
+  cleanupEffect(effect);
+  for (const childEffect of effect.observers) {
     // Consider it executed to avoid it's re-execution
     // todo: make a test for it
-    children.state = ComputationState.EXECUTED;
-    removeSources(children);
-    unsubscribeEffect(children);
+    childEffect.state = ComputationState.EXECUTED;
+    removeSources(childEffect);
+    unsubscribeEffect(childEffect);
   }
-  effectComputation.childrenEffect!.length = 0;
+  effect.observers.clear();
 }
 
-function cleanupEffect(computation: Computation) {
+function cleanupEffect(effect: ComputationAtom) {
   // the computation.value of an effect is a cleanup function
-  const cleanupFn = computation.value;
+  const cleanupFn = effect.value;
   if (cleanupFn && typeof cleanupFn === "function") {
     cleanupFn();
-    computation.value = undefined;
+    effect.value = undefined;
   }
 }

@@ -11,7 +11,6 @@ import {
   onWillUpdateProps,
   status,
   xml,
-  computed,
   effect,
 } from "../src";
 import { helpers } from "../src/runtime/rendering/template_helpers";
@@ -312,14 +311,6 @@ declare global {
       toBeLogged(): R;
     }
   }
-}
-
-export type SpyComputed<T> = (() => T) & { spy: jest.Mock<any, T[]> };
-export function spyComputed<T>(fn: () => T): SpyComputed<T> {
-  const spy = jest.fn(fn);
-  const d = computed(spy) as SpyComputed<T>;
-  d.spy = spy;
-  return d;
 }
 
 export type SpyEffect<T> = (() => () => void) & { spy: jest.Mock<any, T[]> };

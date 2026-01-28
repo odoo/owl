@@ -1,37 +1,28 @@
 import { OwlError } from "../../common/owl_error";
-import { onReadAtom, onWriteAtom, Atom, ReactiveOptions } from "./computations";
+import { Atom, atomSymbol, onReadAtom, onWriteAtom, WritableReactiveValue } from "./computations";
 import { proxifyTarget } from "./proxy";
 
-export type ReactiveValue<T> = () => T;
+export type Signal<T> = WritableReactiveValue<T>;
 
-export interface Signal<T> extends ReactiveValue<T> {
-  /**
-   * Update the value of the signal with a new value. If the new value is different
-   * from the previous values, all computations that depends on this signal will
-   * be invalidated, and effects will rerun.
-   */
-  set(value: T): void;
-}
-
-interface SignalOptions<T> extends ReactiveOptions {
+interface SignalOptions<T> {
   type?: T;
 }
 
-const signalSymbol = Symbol("Signal");
-
 function buildSignal<T>(value: T, set: (atom: Atom) => T, options?: SignalOptions<T>): Signal<T> {
-  const atom: Atom<T> = {
+  const atom: Atom & { type: "signal" } = {
+    type: "signal",
     value,
     observers: new Set(),
-    name: options?.name,
   };
+
   let readValue = set(atom);
-  const read = () => {
+  const readSignal = () => {
     onReadAtom(atom);
     return readValue;
   };
-  (read as any)[signalSymbol] = atom;
-  read.set = (newValue: T) => {
+  readSignal[atomSymbol] = atom;
+
+  readSignal.set = function writeSignal(newValue: T) {
     if (Object.is(atom.value, newValue)) {
       return;
     }
@@ -39,7 +30,8 @@ function buildSignal<T>(value: T, set: (atom: Atom) => T, options?: SignalOption
     readValue = set(atom);
     onWriteAtom(atom);
   };
-  return read;
+
+  return readSignal;
 }
 
 export function signal<T>(value: T, options: SignalOptions<T> = {}): Signal<T> {
@@ -47,41 +39,36 @@ export function signal<T>(value: T, options: SignalOptions<T> = {}): Signal<T> {
 }
 
 signal.invalidate = function (signal: Signal<any>): void {
-  if (typeof signal !== "function" || !(signalSymbol in signal)) {
+  if (typeof signal !== "function" || (signal as any)[atomSymbol]?.type !== "signal") {
     throw new OwlError(`Value is not a signal (${signal})`);
   }
-  const atom = signal[signalSymbol] as any;
-  onWriteAtom(atom);
+  onWriteAtom((signal as any)[atomSymbol]);
 };
 
 signal.Array = function <T>(initialValue: T[], options: SignalOptions<T> = {}): Signal<T[]> {
-  return buildSignal<T[]>(initialValue, (atom) => proxifyTarget(atom.value, atom), {
-    name: options.name,
-  });
+  return buildSignal<T[]>(initialValue, (atom) => proxifyTarget(atom.value, atom));
 };
 
 signal.Object = function <T extends object>(
   initialValue: T,
   options?: SignalOptions<T>
 ): Signal<T> {
-  return buildSignal<T>(initialValue, (atom) => proxifyTarget(atom.value, atom), options);
+  return buildSignal<T>(initialValue, (atom) => proxifyTarget(atom.value, atom));
 };
 
-interface MapSignalOptions<K, V> extends ReactiveOptions {
+interface MapSignalOptions<K, V> {
+  name?: string;
   keyType?: K;
   valueType?: V;
 }
+
 signal.Map = function <K, V>(
   initialValue: Map<K, V>,
   options?: MapSignalOptions<K, V>
 ): Signal<Map<K, V>> {
-  return buildSignal<Map<K, V>>(initialValue, (atom) => proxifyTarget(atom.value, atom), {
-    name: options?.name,
-  });
+  return buildSignal<Map<K, V>>(initialValue, (atom) => proxifyTarget(atom.value, atom));
 };
 
 signal.Set = function <T>(initialValue: Set<T>, options?: SignalOptions<T>): Signal<Set<T>> {
-  return buildSignal<Set<T>>(initialValue, (atom) => proxifyTarget(atom.value, atom), {
-    name: options?.name,
-  });
+  return buildSignal<Set<T>>(initialValue, (atom) => proxifyTarget(atom.value, atom));
 };

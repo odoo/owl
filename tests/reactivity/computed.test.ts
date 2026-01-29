@@ -308,3 +308,59 @@ describe("nested computed", () => {
     expectSpy(d4.spy, 2, { result: 7 });
   });
 });
+
+describe("writable computed", () => {
+  test("update source from computed", () => {
+    const percentage = signal(0.5);
+    const value = computed({
+      get: () => percentage() * 100,
+      set: (nextValue) => percentage.set(nextValue / 100),
+    });
+    expect(percentage()).toBe(0.5);
+    expect(value()).toBe(50);
+
+    percentage.set(0.21);
+    expect(percentage()).toBe(0.21);
+    expect(value()).toBe(21);
+  });
+
+  test("setter computes once if same value", () => {
+    const steps: string[] = [];
+
+    const percentage = signal(0.5);
+    const value = computed({
+      get: () => percentage() * 100,
+      set: (nextValue) => {
+        steps.push("compute");
+        percentage.set(nextValue / 100);
+      },
+    });
+
+    value.set(21);
+    value.set(21);
+    value.set(21);
+    expect(value()).toBe(21);
+    expect(steps.splice(0)).toEqual(["compute"]);
+  });
+
+  test("updating computed triggers effect", async () => {
+    const steps: number[] = [];
+
+    const percentage = signal(0.5);
+    const value = computed({
+      get: () => percentage() * 100,
+      set: (nextValue) => percentage.set(nextValue / 100),
+    });
+    const effect = spyEffect(() => {
+      steps.push(value());
+    });
+    const cleanupEffect = effect();
+    expect(steps.splice(0)).toEqual([50]);
+
+    value.set(25);
+    await waitScheduler();
+    expect(steps.splice(0)).toEqual([25]);
+
+    cleanupEffect();
+  });
+});

@@ -42,7 +42,7 @@ export { props } from "./props";
 export type { GetProps } from "./props";
 export { status } from "./status";
 export { proxy, markRaw, toRaw } from "./reactivity/proxy";
-export { untrack, ReactiveValue, WritableReactiveValue } from "./reactivity/computations";
+export { untrack, ReactiveValue } from "./reactivity/computations";
 export { signal, Signal } from "./reactivity/signal";
 export { computed } from "./reactivity/computed";
 export { effect } from "./reactivity/effect";

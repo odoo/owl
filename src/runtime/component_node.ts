@@ -55,14 +55,21 @@ const batchedRenderFunctions = new WeakMap<ComponentNode, Callback>();
  */
 export function useState<T extends object>(state: T): T {
   const node = getCurrent();
-  let render = batchedRenderFunctions.get(node)!;
+  let render = batchedRenderFunctions.get(node);
   if (!render) {
-    render = batched(node.render.bind(node, false));
+    const wrapper = { fn: batched(node.render.bind(node, false)) };
+    render = (...args) => wrapper.fn(...args);
     batchedRenderFunctions.set(node, render);
     // manual implementation of onWillDestroy to break cyclic dependency
-    node.willDestroy.push(clearReactivesForCallback.bind(null, render));
+    node.willDestroy.push(cleanupRenderAndReactives.bind(null, wrapper, render));
   }
   return reactive(state, render);
+}
+
+const NO_OP = () => {};
+function cleanupRenderAndReactives(wrapper: any, render: Callback) {
+  wrapper.fn = NO_OP;
+  clearReactivesForCallback(render);
 }
 
 // -----------------------------------------------------------------------------

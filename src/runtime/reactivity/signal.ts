@@ -1,8 +1,8 @@
 import { OwlError } from "../../common/owl_error";
-import { Atom, atomSymbol, onReadAtom, onWriteAtom, WritableReactiveValue } from "./computations";
+import { Atom, atomSymbol, onReadAtom, onWriteAtom, ReactiveValue } from "./computations";
 import { proxifyTarget } from "./proxy";
 
-export type Signal<T> = WritableReactiveValue<T>;
+export type Signal<T> = ReactiveValue<T>;
 
 interface SignalOptions<T> {
   type?: T;

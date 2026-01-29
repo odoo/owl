@@ -19,7 +19,7 @@ export enum ComputationState {
 export interface Atom<T = any> {
   observers: Set<ComputationAtom>;
   value: T;
-};
+}
 
 export interface ComputationAtom<T = any> extends Atom<T> {
   compute: () => T;

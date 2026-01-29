@@ -88,7 +88,7 @@ export class ComponentNode implements VNode<ComponentNode> {
     let prev = getCurrentComputation();
     this.initiateRender(fiber);
     // only useful if the component is a root, and a willstart function just
-    // crashed synchonously. In that case, it is possible that the prev 
+    // crashed synchonously. In that case, it is possible that the previous
     // computation has not been properly restored
     setComputation(prev);
   }

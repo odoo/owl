@@ -2,9 +2,6 @@ import { batched } from "../utils";
 
 export interface ReactiveValue<T> {
   (): T;
-}
-
-export interface WritableReactiveValue<T> extends ReactiveValue<T> {
   /**
    * Update the value of the reactive with a new value. If the new value is different
    * from the previous values, all computations that depends on this reactive will

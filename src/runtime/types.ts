@@ -1,4 +1,4 @@
-import { ReactiveValue, Signal } from "./reactivity/signal";
+import type { ReactiveValue, Signal } from "./reactivity/signal";
 import { ValidationContext, ValidationIssue } from "./validation";
 
 type Constructor = { new (...args: any[]): any };

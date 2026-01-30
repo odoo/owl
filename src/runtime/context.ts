@@ -50,11 +50,16 @@ export function getContext<K extends keyof Contexts>(
 
 interface CapturedContext {
   run<T = void>(callback: () => T): T;
-  protectAsync<P extends any[], R>(callback: (...args: P) => Promise<R>): (...args: P) => Promise<R>;
+  protectAsync<P extends any[], R>(
+    callback: (...args: P) => Promise<R>
+  ): (...args: P) => Promise<R>;
   runWithAsyncProtection<T>(callback: () => Promise<T>): Promise<T>;
 }
 
-function createAsyncProtection<P extends any[], R>(context: Context, callback: (...args: P) => Promise<R>): (...args: P) => Promise<R> {
+function createAsyncProtection<P extends any[], R>(
+  context: Context,
+  callback: (...args: P) => Promise<R>
+): (...args: P) => Promise<R> {
   return async function asyncContextProtection(this: any, ...args: P) {
     if (context.status > STATUS.MOUNTED) {
       throw new OwlError(`Function called after the end of life of the ${context.type}`);
@@ -82,7 +87,9 @@ export function useContext(): CapturedContext {
       contextStack.pop();
       return result;
     },
-    protectAsync<P extends any[], R>(callback: (...args: P) => Promise<R>): (...args: P) => Promise<R> {
+    protectAsync<P extends any[], R>(
+      callback: (...args: P) => Promise<R>
+    ): (...args: P) => Promise<R> {
       return createAsyncProtection(context, callback);
     },
     runWithAsyncProtection<T>(callback: () => Promise<T>): Promise<T> {

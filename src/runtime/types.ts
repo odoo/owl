@@ -1,5 +1,4 @@
-import { ReactiveValue } from "./reactivity/computations";
-import { Signal } from "./reactivity/signal";
+import { atomSymbol, ReactiveValue } from "./reactivity/computations";
 import { ValidationContext, ValidationIssue } from "./validation";
 
 type Constructor = { new (...args: any[]): any };
@@ -251,13 +250,8 @@ function reactiveValueType(): ReactiveValue<any>;
 function reactiveValueType<T>(type: T): ReactiveValue<T>;
 function reactiveValueType(type?: any): ReactiveValue<any> {
   return function validateReactiveValue(context: ValidationContext) {
-    if (typeof context.value !== "function") {
-      context.addIssue({ message: "value is not a reactive (it should be function)" });
-    }
-    if (typeof context.value.set !== "function") {
-      context.addIssue({
-        message: "value is not a reactive (method 'set' should be defined as a function)",
-      });
+    if (typeof context.value !== "function" || !context.value[atomSymbol]) {
+      context.addIssue({ message: "value is not a reactive value" });
     }
   } as any;
 }

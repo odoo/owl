@@ -1,5 +1,9 @@
 import { proxy, computed, signal } from "../../src";
-import { atomSymbol, ComputationAtom } from "../../src/runtime/reactivity/computations";
+import {
+  atomSymbol,
+  ComputationAtom,
+  ReactiveValue,
+} from "../../src/runtime/reactivity/computations";
 import { expectSpy, nextMicroTick, spyEffect } from "../helpers";
 
 async function waitScheduler() {
@@ -7,7 +11,7 @@ async function waitScheduler() {
   await nextMicroTick();
 }
 
-export type SpyComputed<T> = (() => T) & { spy: jest.Mock<any, T[]> };
+export type SpyComputed<T> = ReactiveValue<T> & { spy: jest.Mock<any, T[]> };
 export function spyComputed<T>(fn: () => T): SpyComputed<T> {
   const spy = jest.fn(fn);
   const d = computed(spy) as SpyComputed<T>;
@@ -310,10 +314,31 @@ describe("nested computed", () => {
 });
 
 describe("writable computed", () => {
+  test("set is define but does nothing by default", () => {
+    const percentage = signal(0.5);
+    const value = computed(() => percentage() * 100);
+    expect(percentage()).toBe(0.5);
+    expect(value()).toBe(50);
+
+    value.set(0.21);
+    expect(percentage()).toBe(0.5);
+    expect(value()).toBe(50);
+  });
+
+  test("create readonly signal", () => {
+    const percentage = signal(0.5);
+    const value = computed(percentage);
+    expect(percentage()).toBe(0.5);
+    expect(value()).toBe(0.5);
+
+    value.set(0.21);
+    expect(percentage()).toBe(0.5);
+    expect(value()).toBe(0.5);
+  });
+
   test("update source from computed", () => {
     const percentage = signal(0.5);
-    const value = computed({
-      get: () => percentage() * 100,
+    const value = computed(() => percentage() * 100, {
       set: (nextValue) => percentage.set(nextValue / 100),
     });
     expect(percentage()).toBe(0.5);
@@ -324,12 +349,11 @@ describe("writable computed", () => {
     expect(value()).toBe(21);
   });
 
-  test("setter computes once if same value", () => {
+  test("setter computes each time", () => {
     const steps: string[] = [];
 
     const percentage = signal(0.5);
-    const value = computed({
-      get: () => percentage() * 100,
+    const value = computed(() => percentage() * 100, {
       set: (nextValue) => {
         steps.push("compute");
         percentage.set(nextValue / 100);
@@ -340,15 +364,14 @@ describe("writable computed", () => {
     value.set(21);
     value.set(21);
     expect(value()).toBe(21);
-    expect(steps.splice(0)).toEqual(["compute"]);
+    expect(steps.splice(0)).toEqual(["compute", "compute", "compute"]);
   });
 
   test("updating computed triggers effect", async () => {
     const steps: number[] = [];
 
     const percentage = signal(0.5);
-    const value = computed({
-      get: () => percentage() * 100,
+    const value = computed(() => percentage() * 100, {
       set: (nextValue) => percentage.set(nextValue / 100),
     });
     const effect = spyEffect(() => {

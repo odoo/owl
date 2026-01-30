@@ -6,6 +6,7 @@ import { saveContext } from "./context";
 import { PluginConstructor, PluginManager } from "./plugin_manager";
 import { GetProps } from "./props";
 import { ReactiveValue } from "./reactivity/computations";
+import { computed } from "./reactivity/computed";
 import { proxy, toRaw } from "./reactivity/proxy";
 import { handleError, nodeErrorHandlers } from "./rendering/error_handling";
 import { Fiber, MountOptions, RootFiber } from "./rendering/fibers";
@@ -76,7 +77,7 @@ export class App extends TemplateSet {
       if (config.plugins instanceof Resource) {
         plugins = config.plugins.items;
       } else {
-        plugins = () => config.plugins as PluginConstructor[];
+        plugins = computed(() => config.plugins as PluginConstructor[]);
       }
     }
     this.pluginManager = new PluginManager(this, { plugins });

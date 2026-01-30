@@ -60,6 +60,8 @@ function toSchema(spec: SimplifiedSchema): NormalizedSchema {
   );
 }
 
+const SCHEMA_KEYS = new Set(["element", "optional", "shape", "type", "validate", "values"]);
+
 /**
  * Main validate function
  */
@@ -141,35 +143,42 @@ export function validateType(key: string, value: any, descr: TypeDescription): s
     let validDescr = descr.find((p) => !validateType(key, value, p));
     return validDescr ? null : `'${key}' is not a ${describe(descr)}`;
   }
-  let result: string | null = null;
+  const invalidKeys = Reflect.ownKeys(descr).filter((key) => !SCHEMA_KEYS.has(String(key)));
+  if (invalidKeys.length) {
+    return `invalid schema for '${key}': unknown keys ${invalidKeys
+      .map((key) => `"${String(key)}"`)
+      .join(", ")}`;
+  }
   if ("element" in descr) {
-    result = validateArrayType(key, value, descr.element!);
-  } else if ("shape" in descr) {
+    return validateArrayType(key, value, descr.element!);
+  }
+  if ("shape" in descr) {
     if (typeof value !== "object" || Array.isArray(value)) {
-      result = `'${key}' is not an object`;
+      return `'${key}' is not an object`;
     } else {
       const errors = validateSchema(value, descr.shape!);
       if (errors.length) {
-        result = `'${key}' doesn't have the correct shape (${errors.join(", ")})`;
+        return `'${key}' doesn't have the correct shape (${errors.join(", ")})`;
       }
     }
-  } else if ("values" in descr) {
+  }
+  if ("values" in descr) {
     if (typeof value !== "object" || Array.isArray(value)) {
-      result = `'${key}' is not an object`;
+      return `'${key}' is not an object`;
     } else {
       const errors = Object.entries(value)
         .map(([key, value]) => validateType(key, value, descr.values!))
         .filter(Boolean);
       if (errors.length) {
-        result = `some of the values in '${key}' are invalid (${errors.join(", ")})`;
+        return `some of the values in '${key}' are invalid (${errors.join(", ")})`;
       }
     }
   }
-  if ("type" in descr && !result) {
-    result = validateType(key, value, descr.type!);
+  if ("type" in descr) {
+    return validateType(key, value, descr.type!);
   }
-  if ("validate" in descr && !result) {
-    result = !descr.validate!(value) ? `'${key}' is not valid` : null;
+  if ("validate" in descr) {
+    return !descr.validate!(value) ? `'${key}' is not valid` : null;
   }
-  return result;
+  return null;
 }

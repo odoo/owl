@@ -308,4 +308,13 @@ describe("validateSchema", () => {
     ]);
     expect(validateSchema({ a: "string" }, { a: [String, { value: false }] })).toEqual([]);
   });
+
+  test("validate schema's own keys", () => {
+    expect(validateSchema({ arr: [] }, { arr: { type: Array, elements: String } as any })).toEqual([
+      `invalid schema for 'arr': unknown keys "elements"`,
+    ]);
+    expect(validateSchema({ obj: {} }, { obj: { type: Object, shapes: String } as any })).toEqual([
+      `invalid schema for 'obj': unknown keys "shapes"`,
+    ]);
+  });
 });

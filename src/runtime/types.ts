@@ -268,7 +268,7 @@ export const types = {
   number: numberType,
   object: objectType,
   promise: promiseType,
-  reactiveValue: reactiveValueType,
+  signal: reactiveValueType,
   record: recordType,
   string: stringType,
   tuple: tuple,

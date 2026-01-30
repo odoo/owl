@@ -1,6 +1,4 @@
-import { signal } from "../src/runtime/reactivity/signal";
-import { types as t } from "../src/runtime/types";
-import { assertType, validateType } from "../src/runtime/validation";
+import { assertType, computed, signal, types as t, validateType } from "../src";
 
 class A {}
 
@@ -352,14 +350,25 @@ describe("promise", () => {
   });
 });
 
-describe("reactiveValue", () => {
-  const issue = { message: "value is not a reactive (it should be function)" };
+test("reactiveValue", () => {
+  const issue = { message: "value is not a reactive value" };
   expect(validateType(123, t.reactiveValue(t.string))).toMatchObject([issue]);
   expect(validateType("abc", t.reactiveValue(t.string))).toMatchObject([issue]);
   expect(validateType(true, t.reactiveValue(t.string))).toMatchObject([issue]);
-  expect(validateType(() => {}, t.reactiveValue(t.string))).toEqual([]);
-  expect(validateType(function () {}, t.reactiveValue(t.string))).toEqual([]);
-  expect(validateType(A, t.reactiveValue(t.string))).toEqual([]); // Should return an issue
+  expect(validateType(() => {}, t.reactiveValue(t.string))).toMatchObject([issue]);
+  expect(validateType(function () {}, t.reactiveValue(t.string))).toMatchObject([issue]);
+  expect(validateType(A, t.reactiveValue(t.string))).toMatchObject([issue]);
+  class B {
+    set() {}
+  }
+  expect(validateType(B, t.reactiveValue(t.string))).toMatchObject([issue]);
+  expect(validateType(signal(1), t.reactiveValue(t.number))).toEqual([]);
+  expect(
+    validateType(
+      computed(() => 1),
+      t.reactiveValue(t.number)
+    )
+  ).toEqual([]);
 });
 
 test("record", () => {
@@ -386,20 +395,6 @@ test("record", () => {
     { message: "value is not a string", path: ["b"] },
   ]);
   expect(validateType({ a: 123, b: 123 }, t.record(t.number))).toEqual([]);
-});
-
-describe("signal", () => {
-  const notFunctionIssue = { message: "value is not a signal (it should be function)" };
-  const noSetIssue = {
-    message: "value is not a signal (method 'set' should be defined as a function)",
-  };
-  expect(validateType(123, t.signal(t.string))).toMatchObject([notFunctionIssue, noSetIssue]);
-  expect(validateType("abc", t.signal(t.string))).toMatchObject([notFunctionIssue, noSetIssue]);
-  expect(validateType(true, t.signal(t.string))).toMatchObject([notFunctionIssue, noSetIssue]);
-  expect(validateType(() => {}, t.signal(t.string))).toMatchObject([noSetIssue]);
-  expect(validateType(function () {}, t.signal(t.string))).toMatchObject([noSetIssue]);
-  expect(validateType(signal("abc"), t.signal(t.string))).toEqual([]);
-  expect(validateType(signal(123), t.signal(t.string))).toEqual([]); // do not check value type
 });
 
 test("string", () => {

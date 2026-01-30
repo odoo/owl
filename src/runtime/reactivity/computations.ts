@@ -7,7 +7,7 @@ export interface ReactiveValue<T> {
    * from the previous values, all computations that depends on this reactive will
    * be invalidated, and effects will rerun.
    */
-  set(nextValue: T): void;
+  set(nextValue: any): void;
 }
 
 export enum ComputationState {

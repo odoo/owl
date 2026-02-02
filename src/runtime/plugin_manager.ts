@@ -25,19 +25,19 @@ export class Plugin {
 interface PluginManagerOptions {
   parent?: PluginManager | null;
   plugins?: ReactiveValue<PluginConstructor[]>;
-  inputs?: Record<string, any>;
+  config?: Record<string, any>;
 }
 
 export class PluginManager {
   app: App;
-  inputs: Record<string, any>;
+  config: Record<string, any>;
   onDestroyCb: Function[] = [];
   plugins: Record<string, Plugin>;
   status: STATUS = STATUS.NEW;
 
   constructor(app: App, options: PluginManagerOptions = {}) {
     this.app = app;
-    this.inputs = options.inputs ?? {};
+    this.config = options.config ?? {};
 
     if (options.parent) {
       const parent = options.parent;

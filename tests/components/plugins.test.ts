@@ -2,7 +2,7 @@ import {
   App,
   Component,
   computed,
-  input,
+  config,
   mount,
   plugin,
   Plugin,
@@ -211,11 +211,11 @@ test("components start plugins at their level", async () => {
 
 test("components can give inputs to plugins", async () => {
   class PluginA extends Plugin {
-    inputA = input("inputAlias", t.string);
+    inputA = config("inputAlias", t.string);
   }
 
   class PluginB extends Plugin {
-    inputB = input("otherInput", t.number);
+    inputB = config("otherInput", t.number);
     other = 1;
   }
 
@@ -236,7 +236,7 @@ test("components can give inputs to plugins", async () => {
 
 test("plugin inputs are validated", async () => {
   class PluginA extends Plugin {
-    inputA = input("input", t.string);
+    inputA = config("input", t.string);
   }
 
   class Test extends Component {

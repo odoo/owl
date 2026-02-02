@@ -39,10 +39,9 @@ describe("lifecycle hooks", () => {
     expect.assertions(6); // 1 for snapshots
     class Test extends Component {
       static template = xml`<span>test</span>`;
-      status = status();
 
       setup() {
-        expect(this.status()).toBe("new");
+        expect(status(this)).toBe("new");
       }
     }
 
@@ -51,12 +50,12 @@ describe("lifecycle hooks", () => {
     const component = await app.createRoot(Test).mount(fixture);
 
     expect(fixture.innerHTML).toBe("<span>test</span>");
-    expect(component.status()).toBe("mounted");
+    expect(status(component)).toBe("mounted");
 
     app.destroy();
 
     expect(fixture.innerHTML).toBe("");
-    expect(component.status()).toBe("destroyed");
+    expect(status(component)).toBe("destroyed");
   });
 
   test("willStart is called", async () => {

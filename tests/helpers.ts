@@ -154,50 +154,49 @@ export function useLogLifecycle(
   key?: string,
   skipAsyncHooks: boolean = false
 ) {
-  const componentStatus = status();
   let name = component.constructor.name;
   if (key) {
     name = `${name} (${key})`;
   }
   logStep(`${name}:setup`);
-  expect(name + ": " + componentStatus()).toBe(name + ": " + "new");
+  expect(name + ": " + status(component)).toBe(name + ": " + "new");
 
   if (!skipAsyncHooks) {
     onWillStart(() => {
-      expect(name + ": " + componentStatus()).toBe(name + ": " + "new");
+      expect(name + ": " + status(component)).toBe(name + ": " + "new");
       logStep(`${name}:willStart`);
     });
   }
 
   onMounted(() => {
-    expect(name + ": " + componentStatus()).toBe(name + ": " + "mounted");
+    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
     logStep(`${name}:mounted`);
   });
 
   if (!skipAsyncHooks) {
     onWillUpdateProps(() => {
-      expect(name + ": " + componentStatus()).toBe(name + ": " + "mounted");
+      expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
       logStep(`${name}:willUpdateProps`);
     });
   }
 
   onWillPatch(() => {
-    expect(name + ": " + componentStatus()).toBe(name + ": " + "mounted");
+    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
     logStep(`${name}:willPatch`);
   });
 
   onPatched(() => {
-    expect(name + ": " + componentStatus()).toBe(name + ": " + "mounted");
+    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
     logStep(`${name}:patched`);
   });
 
   onWillUnmount(() => {
-    expect(name + ": " + componentStatus()).toBe(name + ": " + "mounted");
+    expect(name + ": " + status(component)).toBe(name + ": " + "mounted");
     logStep(`${name}:willUnmount`);
   });
 
   onWillDestroy(() => {
-    expect(componentStatus()).not.toBe("destroyed");
+    expect(status(component)).not.toBe("destroyed");
     logStep(`${name}:willDestroy`);
   });
 }

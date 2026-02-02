@@ -53,15 +53,6 @@ export class ComponentNode implements VNode<ComponentNode> {
     parent: ComponentNode | null,
     parentKey: string | null
   ) {
-    contextStack.push({
-      type: "component",
-      app,
-      componentName: C.name,
-      node: this,
-      get status() {
-        return this.node.status;
-      },
-    });
     this.app = app;
     this.parent = parent;
     this.parentKey = parentKey;
@@ -72,6 +63,15 @@ export class ComponentNode implements VNode<ComponentNode> {
       isDerived: false,
     });
     this.props = Object.assign({}, props);
+    contextStack.push({
+      type: "component",
+      app,
+      componentName: C.name,
+      node: this,
+      get status() {
+        return this.node.status;
+      },
+    });
     const previousComputation = getCurrentComputation();
     setComputation(undefined);
     this.component = new C(this);

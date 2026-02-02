@@ -7,6 +7,22 @@ beforeEach(() => {
   fixture = makeTestFixture();
 });
 
+test("component context is set after data init", async () => {
+  class PluginA extends Plugin {
+    value = 123;
+  }
+
+  class Root extends Component {
+    static template = xml``;
+    a = plugin(PluginA);
+  }
+
+  const app = new App({ plugins: [PluginA] });
+  const root = await app.createRoot(Root).mount(fixture);
+  expect(root.a.value).toBe(123);
+  app.destroy();
+});
+
 describe("run", () => {
   test("capture plugin context", async () => {
     let context;

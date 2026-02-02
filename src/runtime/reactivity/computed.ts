@@ -7,11 +7,11 @@ import {
   createComputation,
 } from "./computations";
 
-interface ComputedOptions {
-  set?(value: any): void;
+interface ComputedOptions<T> {
+  set?(value: T): void;
 }
 
-export function computed<T>(getter: () => T, options: ComputedOptions = {}): ReactiveValue<T> {
+export function computed<T>(getter: () => T, options: ComputedOptions<T> = {}): ReactiveValue<T> {
   const computation = createComputation({
     compute: () => {
       onWriteAtom(computation);

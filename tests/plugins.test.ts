@@ -1,5 +1,6 @@
 import {
   App,
+  config,
   effect,
   onWillDestroy,
   plugin,
@@ -379,6 +380,24 @@ describe("basic features", () => {
     plugins.add(PluginB);
     await nextMicroTick();
     expect(steps.splice(0)).toEqual(["PluginB.setup"]);
+
+    app.destroy();
+  });
+
+  test("config can be given from app", async () => {
+    const steps: string[] = [];
+
+    class PluginA extends Plugin {
+      input = config("input");
+
+      setup(): void {
+        steps.push(`PluginA - ${this.input}`);
+      }
+    }
+
+    const plugins = new Resource({ validation: t.constructor(Plugin) }).add(PluginA);
+    const app = new App({ plugins, config: { input: "hello" } });
+    expect(steps.splice(0)).toEqual(["PluginA - hello"]);
 
     app.destroy();
   });

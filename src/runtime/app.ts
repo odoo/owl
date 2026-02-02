@@ -28,6 +28,7 @@ interface RootConfig<P> {
 export interface AppConfig extends TemplateSetConfig {
   name?: string;
   plugins?: PluginConstructor[] | Resource<PluginConstructor>;
+  config?: Record<string, any>;
   test?: boolean;
 }
 
@@ -80,7 +81,7 @@ export class App extends TemplateSet {
         plugins = computed(() => config.plugins as PluginConstructor[]);
       }
     }
-    this.pluginManager = new PluginManager(this, { plugins });
+    this.pluginManager = new PluginManager(this, { plugins, config: config.config });
     if (config.test) {
       this.dev = true;
     }

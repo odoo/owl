@@ -1,4 +1,5 @@
-import { getContext } from "./context";
+import type { Component } from "./component";
+import { Plugin } from "./plugin_manager";
 
 // -----------------------------------------------------------------------------
 //  Status
@@ -15,19 +16,15 @@ export const enum STATUS {
 
 type STATUS_DESCR = "new" | "started" | "mounted" | "cancelled" | "destroyed";
 
-export function status(): () => STATUS_DESCR {
-  const context = getContext();
-  const entity = context.type === "component" ? context.node : context.manager;
-  return () => {
-    switch (entity.status) {
-      case STATUS.NEW:
-        return "new";
-      case STATUS.CANCELLED:
-        return "cancelled";
-      case STATUS.MOUNTED:
-        return context.type === "plugin" ? "started" : "mounted";
-      case STATUS.DESTROYED:
-        return "destroyed";
-    }
-  };
+export function status(entity: Component | Plugin): STATUS_DESCR {
+  switch (entity.__owl__.status) {
+    case STATUS.NEW:
+      return "new";
+    case STATUS.CANCELLED:
+      return "cancelled";
+    case STATUS.MOUNTED:
+      return entity instanceof Plugin ? "started" : "mounted";
+    case STATUS.DESTROYED:
+      return "destroyed";
+  }
 }

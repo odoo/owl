@@ -56,22 +56,21 @@ describe("async rendering", () => {
     let w: any = null;
     class W extends Component {
       static template = xml`<div/>`;
-      status = status();
       setup() {
         useLogLifecycle(this);
-        expect(this.status()).toBe("new");
+        expect(status(this)).toBe("new");
         w = this;
         onWillStart(() => def);
       }
     }
     const app = new App();
     app.createRoot(W).mount(fixture);
-    expect(w.status()).toBe("new");
+    expect(status(w)).toBe("new");
     app.destroy();
-    expect(w.status()).toBe("destroyed");
+    expect(status(w)).toBe("destroyed");
     def.resolve();
     await nextTick();
-    expect(w.status()).toBe("destroyed");
+    expect(status(w)).toBe("destroyed");
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "W:setup",

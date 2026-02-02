@@ -1,14 +1,4 @@
-import {
-  App,
-  Component,
-  mount,
-  onWillDestroy,
-  plugin,
-  Plugin,
-  props,
-  useContext,
-  xml,
-} from "../../src";
+import { App, Component, onWillDestroy, plugin, Plugin, props, useContext, xml } from "../../src";
 import { makeDeferred, makeTestFixture, nextTick } from "../helpers";
 
 let fixture: HTMLElement;
@@ -59,7 +49,8 @@ describe("run", () => {
       }
     }
 
-    await mount(Root, fixture, { plugins: [PluginA] });
+    const app = new App({ plugins: [PluginA] });
+    await app.createRoot(Root).mount(fixture);
     expect(() => plugin(PluginA)).toThrow("No active context");
 
     let value = 0;
@@ -68,6 +59,7 @@ describe("run", () => {
       value = a.value;
     });
     expect(value).toBe(123);
+    app.destroy();
   });
 
   test("fails if wrong context", async () => {
@@ -84,7 +76,22 @@ describe("run", () => {
     const app = new App({ plugins: [PluginA] });
     expect(() => context!.run(() => props())).toThrow("Expected to be in a component context");
 
+    class PluginB extends Plugin {}
+    const globalCtx = useContext();
+    // ctx is cleared after a "throw error"
+    expect(() => globalCtx!.run(() => plugin(PluginB))).toThrow("No active context");
+
     app.destroy();
+  });
+
+  test("capture global context", async () => {
+    const context = useContext();
+
+    let value = 0;
+    context!.run(() => {
+      value = 123;
+    });
+    expect(value).toBe(123);
   });
 });
 
@@ -187,5 +194,22 @@ describe("async protection", () => {
     deferred.resolve();
     await nextTick();
     expect(steps.splice(0)).toEqual([]);
+  });
+
+  test("global context and async function", async () => {
+    const steps: string[] = [];
+    const context = useContext();
+
+    const deferred = makeDeferred();
+    context!
+      .runWithAsyncProtection(() => deferred)
+      .then(() => {
+        steps.push("resolved");
+      });
+    await nextTick();
+
+    deferred.resolve();
+    await nextTick();
+    expect(steps.splice(0)).toEqual(["resolved"]);
   });
 });

@@ -12,12 +12,10 @@ beforeEach(() => {
 
 class SomeComponent extends Component {
   static template = xml`<div>main app</div>`;
-  status = status();
 }
 
 class SubComponent extends Component {
   static template = xml`<div>sub root</div>`;
-  status = status();
 }
 
 describe("subroot", () => {
@@ -31,8 +29,8 @@ describe("subroot", () => {
 
     app.destroy();
     expect(fixture.innerHTML).toBe("");
-    expect(comp.status()).toBe("destroyed");
-    expect(subcomp.status()).toBe("destroyed");
+    expect(status(comp)).toBe("destroyed");
+    expect(status(subcomp)).toBe("destroyed");
   });
 
   test("can mount subroot inside own dom", async () => {
@@ -45,8 +43,8 @@ describe("subroot", () => {
 
     app.destroy();
     expect(fixture.innerHTML).toBe("");
-    expect(comp.status()).toBe("destroyed");
-    expect(subcomp.status()).toBe("destroyed");
+    expect(status(comp)).toBe("destroyed");
+    expect(status(subcomp)).toBe("destroyed");
   });
 
   test("subcomponents can be destroyed, and it properly cleanup the subroots", async () => {
@@ -59,8 +57,8 @@ describe("subroot", () => {
 
     root.destroy();
     expect(fixture.innerHTML).toBe("<div>main app</div>");
-    expect(comp.status()).not.toBe("destroyed");
-    expect(subcomp.status()).toBe("destroyed");
+    expect(status(comp)).not.toBe("destroyed");
+    expect(status(subcomp)).toBe("destroyed");
   });
 
   test("can create a root in a setup function, then use a hook", async () => {

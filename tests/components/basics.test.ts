@@ -177,14 +177,13 @@ describe("basics", () => {
     expect.assertions(3);
     class Test extends Component {
       static template = xml`<span>simple vnode</span>`;
-      status = status();
       setup() {
-        expect(this.status()).toBe("new");
+        expect(status(this)).toBe("new");
       }
     }
 
     const test = await mount(Test, fixture);
-    expect(test.status()).toBe("mounted");
+    expect(status(test)).toBe("mounted");
   });
 
   test("throws if mounting on target=null", async () => {
@@ -742,7 +741,6 @@ describe("basics", () => {
     // this confuses the patching algorithm...
     class Child extends Component {
       static template = xml`<span>child</span>`;
-      status = status();
     }
 
     class Parent extends Component {
@@ -763,7 +761,7 @@ describe("basics", () => {
     parent.state.flag = true;
     await nextTick();
     expect(Object.values(parent.__owl__.children)[0].component).toBe(child);
-    expect(child.status()).toBe("mounted");
+    expect(status(child)).toBe("mounted");
     expect(fixture.innerHTML).toBe(
       `<div><h1>hey</h1><span><span>child</span></span><span>test</span></div>`
     );

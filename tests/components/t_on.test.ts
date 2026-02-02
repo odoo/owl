@@ -16,7 +16,6 @@ describe("t-on", () => {
     let child: any;
     class Child extends Component {
       static template = xml`<div t-on-click="this.onClick"/>`;
-      status = status();
       setup() {
         onMounted(() => {
           child = this;
@@ -37,7 +36,7 @@ describe("t-on", () => {
     expect(steps).toEqual(["click"]);
     (parent as any).state.flag = false;
     await nextTick();
-    expect(child.status()).toBe("destroyed");
+    expect(status(child)).toBe("destroyed");
     el.click();
     expect(steps).toEqual(["click"]);
   });

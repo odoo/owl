@@ -343,20 +343,18 @@ describe("basic features", () => {
   });
 
   test("plugin lifecycle", () => {
-    class A extends Plugin {
-      status = status();
-    }
+    class A extends Plugin {}
     const manager = new PluginManager(new App());
     expect(manager.status).toBe(STATUS.MOUNTED);
 
     manager.startPlugins([A]);
     const a = manager.getPlugin(A)!;
     expect(manager.status).toBe(STATUS.MOUNTED);
-    expect(a.status()).toBe("started");
+    expect(status(a)).toBe("started");
 
     manager.destroy();
     expect(manager.status).toBe(STATUS.DESTROYED);
-    expect(a.status()).toBe("destroyed");
+    expect(status(a)).toBe("destroyed");
   });
 
   test("resource can be used to start plugins", async () => {

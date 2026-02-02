@@ -6,7 +6,7 @@ import { effect } from "./reactivity/effect";
 import { STATUS } from "./status";
 
 export interface PluginConstructor {
-  new (): Plugin;
+  new (...args: any[]): Plugin;
   id: string;
 }
 
@@ -17,6 +17,12 @@ export class Plugin {
   }
   static set id(shadowId: string) {
     this._shadowId = shadowId;
+  }
+
+  __owl__: PluginManager;
+
+  constructor(manager: PluginManager) {
+    this.__owl__ = manager;
   }
 
   setup() {}
@@ -91,7 +97,7 @@ export class PluginManager {
       return null;
     }
 
-    const plugin = new pluginConstructor();
+    const plugin = new pluginConstructor(this);
     plugin.setup();
     this.plugins[pluginConstructor.id] = plugin;
     return plugin as InstanceType<T>;

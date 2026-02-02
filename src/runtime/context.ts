@@ -48,7 +48,7 @@ export function getContext<K extends keyof Contexts>(
   return context;
 }
 
-interface CapturedContext {
+export interface CapturedContext {
   run<T = void>(callback: () => T): T;
   protectAsync<P extends any[], R>(
     callback: (...args: P) => Promise<R>
@@ -79,21 +79,35 @@ function createAsyncProtection<P extends any[], R>(
  * functions within the captured context.
  */
 export function useContext(): CapturedContext {
-  const context = getContext();
+  const context: Context | undefined = contextStack.at(-1);
   return {
     run<T>(callback: () => T): T {
-      contextStack.push(context);
-      const result = callback();
-      contextStack.pop();
-      return result;
+      if (context) {
+        contextStack.push(context);
+        let result;
+        try {
+          result = callback();
+        } finally {
+          contextStack.pop();
+        }
+        return result;
+      } else {
+        return callback();
+      }
     },
     protectAsync<P extends any[], R>(
       callback: (...args: P) => Promise<R>
     ): (...args: P) => Promise<R> {
-      return createAsyncProtection(context, callback);
+      if (context) {
+        callback = createAsyncProtection(context, callback);
+      }
+      return callback;
     },
     runWithAsyncProtection<T>(callback: () => Promise<T>): Promise<T> {
-      return createAsyncProtection(context, callback)();
+      if (context) {
+        callback = createAsyncProtection(context, callback);
+      }
+      return callback();
     },
   };
 }

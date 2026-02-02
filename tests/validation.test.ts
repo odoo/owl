@@ -350,23 +350,23 @@ describe("promise", () => {
   });
 });
 
-test("reactiveValue", () => {
+test("signal", () => {
   const issue = { message: "value is not a reactive value" };
-  expect(validateType(123, t.reactiveValue(t.string))).toMatchObject([issue]);
-  expect(validateType("abc", t.reactiveValue(t.string))).toMatchObject([issue]);
-  expect(validateType(true, t.reactiveValue(t.string))).toMatchObject([issue]);
-  expect(validateType(() => {}, t.reactiveValue(t.string))).toMatchObject([issue]);
-  expect(validateType(function () {}, t.reactiveValue(t.string))).toMatchObject([issue]);
-  expect(validateType(A, t.reactiveValue(t.string))).toMatchObject([issue]);
+  expect(validateType(123, t.signal(t.string))).toMatchObject([issue]);
+  expect(validateType("abc", t.signal(t.string))).toMatchObject([issue]);
+  expect(validateType(true, t.signal(t.string))).toMatchObject([issue]);
+  expect(validateType(() => {}, t.signal(t.string))).toMatchObject([issue]);
+  expect(validateType(function () {}, t.signal(t.string))).toMatchObject([issue]);
+  expect(validateType(A, t.signal(t.string))).toMatchObject([issue]);
   class B {
     set() {}
   }
-  expect(validateType(B, t.reactiveValue(t.string))).toMatchObject([issue]);
-  expect(validateType(signal(1), t.reactiveValue(t.number))).toEqual([]);
+  expect(validateType(B, t.signal(t.string))).toMatchObject([issue]);
+  expect(validateType(signal(1), t.signal(t.number))).toEqual([]);
   expect(
     validateType(
       computed(() => 1),
-      t.reactiveValue(t.number)
+      t.signal(t.number)
     )
   ).toEqual([]);
 });

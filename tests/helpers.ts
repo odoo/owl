@@ -227,7 +227,7 @@ export function expectSpy(
   opt: { args?: any[]; result?: any } = {}
 ): void {
   expect(spy).toHaveBeenCalledTimes(count);
-  if ("args" in opt) expect(spy).lastCalledWith(...opt.args!);
+  if ("args" in opt) expect(spy).toHaveBeenLastCalledWith(...opt.args!);
   if ("result" in opt) expect(spy).toHaveReturnedWith(opt.result);
 }
 

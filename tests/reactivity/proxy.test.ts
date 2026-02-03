@@ -22,7 +22,7 @@ async function waitScheduler() {
 
 function expectSpy(spy: jest.Mock, callTime: number, args: any[]): void {
   expect(spy).toHaveBeenCalledTimes(callTime);
-  expect(spy).lastCalledWith(...args);
+  expect(spy).toHaveBeenLastCalledWith(...args);
 }
 
 describe("Reactivity", () => {
@@ -151,7 +151,7 @@ describe("Reactivity", () => {
     expectSpy(spy, 2, [true]);
     await waitScheduler();
     expectSpy(spy, 3, [false]);
-    expect(spy).lastCalledWith(false);
+    expect(spy).toHaveBeenLastCalledWith(false);
   });
 
   //   // Skipped because the hasOwnProperty trap is tripped by *writing*. We
@@ -268,11 +268,11 @@ describe("Reactivity", () => {
   });
 
   test("throws on primitive values", () => {
-    expect(() => createProxy(1)).toThrowError();
-    expect(() => createProxy("asf")).toThrowError();
-    expect(() => createProxy(true)).toThrowError();
-    expect(() => createProxy(null)).toThrowError();
-    expect(() => createProxy(undefined)).toThrowError();
+    expect(() => createProxy(1)).toThrow();
+    expect(() => createProxy("asf")).toThrow();
+    expect(() => createProxy(true)).toThrow();
+    expect(() => createProxy(null)).toThrow();
+    expect(() => createProxy(undefined)).toThrow();
   });
 
   test("throws on dates", () => {
@@ -1277,7 +1277,7 @@ describe("Collections", () => {
   describe("WeakSet", () => {
     test("cannot make proxy WeakSet", () => {
       const set = new WeakSet();
-      expect(() => proxy(set)).toThrowError("Cannot make the given value reactive");
+      expect(() => proxy(set)).toThrow("Cannot make the given value reactive");
     });
 
     test("WeakSet in proxy is original WeakSet", () => {

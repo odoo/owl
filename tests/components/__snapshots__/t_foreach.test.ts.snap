@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`list of components components in a node in a t-foreach  1`] = `
 "function anonymous(app, bdom, helpers

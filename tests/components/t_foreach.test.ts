@@ -333,7 +333,7 @@ describe("list of components", () => {
     }
     expect(error.cause.message).toBe("Got duplicate key in t-foreach: child");
     console.info = consoleInfo;
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("crash when using object as keys that serialize to the same string", async () => {
@@ -360,7 +360,7 @@ describe("list of components", () => {
     }
     expect(error.cause.message).toBe("Got duplicate key in t-foreach: [object Object]");
     console.info = consoleInfo;
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("order is correct when slots are not of same type", async () => {

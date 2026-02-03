@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`default props a default prop cannot be defined on a mandatory prop 1`] = `
 "function anonymous(app, bdom, helpers

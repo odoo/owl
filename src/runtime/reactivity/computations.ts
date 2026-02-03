@@ -1,13 +1,13 @@
 import { batched } from "../utils";
 
-export interface ReactiveValue<T> {
-  (): T;
+export interface ReactiveValue<TRead, TWrite=TRead> {
+  (): TRead;
   /**
    * Update the value of the reactive with a new value. If the new value is different
    * from the previous values, all computations that depends on this reactive will
    * be invalidated, and effects will rerun.
    */
-  set(nextValue: any): void;
+  set(nextValue: TWrite): void;
 }
 
 export enum ComputationState {

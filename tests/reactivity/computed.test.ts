@@ -386,4 +386,26 @@ describe("writable computed", () => {
 
     cleanupEffect();
   });
+
+  test("compute can read and write different types", () => {
+    const value = signal(4);
+    const binary = computed(() => value().toString(2), {
+      set: (nextValue: string | number) => {
+        if(typeof nextValue === "number") {
+          value.set(nextValue)
+        } else {
+          value.set(parseInt(nextValue, 2))
+        }
+      }
+    })
+    expect(binary()).toBe("100")
+
+    // can set a string
+    binary.set("110")
+    expect(value()).toBe(6)
+
+    // can also set a number
+    binary.set(7)
+    expect(value()).toBe(7)
+  })
 });

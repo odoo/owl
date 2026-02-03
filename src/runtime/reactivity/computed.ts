@@ -11,7 +11,10 @@ interface ComputedOptions<TWrite> {
   set?(value: TWrite): void;
 }
 
-export function computed<TRead, TWrite=TRead>(getter: () => TRead, options: ComputedOptions<TWrite> = {}): ReactiveValue<TRead, TWrite> {
+export function computed<TRead, TWrite = TRead>(
+  getter: () => TRead,
+  options: ComputedOptions<TWrite> = {}
+): ReactiveValue<TRead, TWrite> {
   const computation = createComputation({
     compute: () => {
       onWriteAtom(computation);

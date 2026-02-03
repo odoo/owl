@@ -1,4 +1,4 @@
-import { App, Component, mount, onWillDestroy, props } from "../../src";
+import { App, Component, mount, onWillDestroy, props, types } from "../../src";
 import { OwlError } from "../../src/common/owl_error";
 import {
   onError,
@@ -239,7 +239,8 @@ function(app, bdom, helpers) {
 
   test("render from above on error -- handler is not a Root or MountFiber", async () => {
     class Boom extends Component {
-      static template = xml`<div t-esc="a.b.c"/>`;
+      static template = xml`<div t-out="a.b.c"/>`;
+      props = props({ onError: types.function() });
       setup() {
         onError((err) => {
           this.props.onError(err);
@@ -250,9 +251,9 @@ function(app, bdom, helpers) {
     class Parent extends Component {
       static template = xml`
         <div>
-          <t t-if="error">Error</t>
+          <t t-if="this.error">Error</t>
           <t t-else="">
-            <Boom onError.bind="handleError"/>
+            <Boom onError.bind="this.handleError"/>
           </t>
         </div>`;
       static components = { Boom };
@@ -261,7 +262,7 @@ function(app, bdom, helpers) {
 
       handleError(err: Error) {
         this.error = err;
-        this.render();
+        render(this);
       }
     }
 

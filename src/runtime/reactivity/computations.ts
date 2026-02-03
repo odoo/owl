@@ -1,6 +1,6 @@
 import { batched } from "../utils";
 
-export interface ReactiveValue<TRead, TWrite=TRead> {
+export interface ReactiveValue<TRead, TWrite = TRead> {
   (): TRead;
   /**
    * Update the value of the reactive with a new value. If the new value is different

@@ -374,6 +374,6 @@ describe("style and class handling", () => {
       /Cannot read properties of undefined \(reading 'crash'\)|Cannot read property 'crash' of undefined/g;
     expect(error!.cause.message).toMatch(regexp);
     expect(fixture.innerHTML).toBe("");
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 });

@@ -285,7 +285,7 @@ describe("Portal", () => {
     expect(error!).toBeDefined();
     expect(error!.cause.message).toBe("invalid portal target");
     expect(fixture.innerHTML).toBe(``);
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("portal with child and props", async () => {

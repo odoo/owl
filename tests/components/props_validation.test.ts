@@ -509,7 +509,7 @@ describe("props validation", () => {
       error = e as Error;
     }
     expect(error!).toBeUndefined();
-    expect(validator).toBeCalledTimes(1);
+    expect(validator).toHaveBeenCalledTimes(1);
     try {
       await mount(TestComponent, fixture, {
         dev: true,
@@ -520,7 +520,7 @@ describe("props validation", () => {
     }
     expect(error!).toBeDefined();
     expect(error!.message).toMatch("Invalid component props (TestComponent)");
-    expect(validator).toBeCalledTimes(1);
+    expect(validator).toHaveBeenCalledTimes(1);
     error = undefined;
     try {
       await mount(TestComponent, fixture, {
@@ -532,7 +532,7 @@ describe("props validation", () => {
     }
     expect(error!).toBeDefined();
     expect(error!.message).toMatch("Invalid component props (TestComponent)");
-    expect(validator).toBeCalledTimes(2);
+    expect(validator).toHaveBeenCalledTimes(2);
   });
 
   test("props are validated in dev mode (code snapshot)", async () => {

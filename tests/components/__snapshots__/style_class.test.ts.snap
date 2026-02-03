@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`style and class handling can set class on multi root component 1`] = `
 "function anonymous(app, bdom, helpers

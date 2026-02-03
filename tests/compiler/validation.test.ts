@@ -37,7 +37,7 @@ describe("basic validation", () => {
     const template = `<t t-call="othertemplate" />`;
 
     context.addTemplate("template", template);
-    expect(() => context.renderToString("template")).toThrowError("Missing");
+    expect(() => context.renderToString("template")).toThrow("Missing");
   });
 
   test("error when unknown directive", () => {

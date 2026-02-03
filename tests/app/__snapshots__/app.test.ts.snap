@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`app app: clear scheduler tasks and destroy cancelled nodes immediately on destroy 1`] = `
 "function anonymous(app, bdom, helpers

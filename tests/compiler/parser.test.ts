@@ -1506,9 +1506,7 @@ describe("qweb parser", () => {
   });
 
   test("a component with a named slot with div tag", async () => {
-    expect(() =>
-      parse(`<MyComponent><div t-set-slot="name">foo</div></MyComponent>`)
-    ).toThrow();
+    expect(() => parse(`<MyComponent><div t-set-slot="name">foo</div></MyComponent>`)).toThrow();
   });
 
   test("a component with a named slot and some white space", async () => {

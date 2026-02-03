@@ -259,7 +259,7 @@ describe("slots", () => {
       error = e;
     }
     expect(error.cause.message).toBe("Cannot read properties of undefined (reading 'bool')");
-    expect(mockConsoleWarn).toBeCalledTimes(0);
+    expect(mockConsoleWarn).toHaveBeenCalledTimes(0);
   });
 
   test("simple default slot with params and bound function", async () => {

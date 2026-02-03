@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`t-component can switch between dynamic components without the need for a t-key 1`] = `
 "function anonymous(app, bdom, helpers

@@ -64,7 +64,7 @@ describe("app", () => {
     } as any);
 
     console.warn = originalconsoleWarn;
-    expect(mockConsoleWarn).toBeCalledWith(
+    expect(mockConsoleWarn).toHaveBeenCalledWith(
       "Component 'Root' does not have a static props description"
     );
   });

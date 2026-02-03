@@ -347,7 +347,7 @@ test("throw if prop uses an unknown suffix", async () => {
 
   await expect(async () => {
     await mount(Parent, fixture);
-  }).rejects.toThrowError("Invalid prop suffix: somesuffix");
+  }).rejects.toThrow("Invalid prop suffix: somesuffix");
 });
 
 test(".alike suffix in a simple case", async () => {

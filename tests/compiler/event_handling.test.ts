@@ -488,7 +488,7 @@ describe("t-on", () => {
 
       let owner = { onClick(e: Event) {} };
 
-      expect(() => mountToFixture(template, owner)).toThrowError("Unknown event modifier");
+      expect(() => mountToFixture(template, owner)).toThrow("Unknown event modifier");
     });
 
     test("t-on combined with t-out", async () => {

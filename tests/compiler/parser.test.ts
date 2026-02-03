@@ -1145,19 +1145,19 @@ describe("qweb parser", () => {
   });
 
   test("t-onclick without dash", async () => {
-    expect(() => parse(`<button t-onclick="add">Click</button>`)).toThrowError(
+    expect(() => parse(`<button t-onclick="add">Click</button>`)).toThrow(
       "Unknown QWeb directive: 't-onclick'"
     );
   });
 
   test("t-on without event", async () => {
-    expect(() => parse(`<button t-on="add">Click</button>`)).toThrowError(
+    expect(() => parse(`<button t-on="add">Click</button>`)).toThrow(
       "Missing event name with t-on directive"
     );
   });
 
   test("t-on- without event", async () => {
-    expect(() => parse(`<button t-on-="add">Click</button>`)).toThrowError(
+    expect(() => parse(`<button t-on-="add">Click</button>`)).toThrow(
       "Missing event name with t-on directive"
     );
   });
@@ -1297,7 +1297,7 @@ describe("qweb parser", () => {
   });
 
   test("component with event handler", async () => {
-    expect(() => parse(`<MyComponent t-onclick="someMethod"/>`)).toThrowError(
+    expect(() => parse(`<MyComponent t-onclick="someMethod"/>`)).toThrow(
       "unsupported directive on Component: t-onclick"
     );
   });
@@ -1508,7 +1508,7 @@ describe("qweb parser", () => {
   test("a component with a named slot with div tag", async () => {
     expect(() =>
       parse(`<MyComponent><div t-set-slot="name">foo</div></MyComponent>`)
-    ).toThrowError();
+    ).toThrow();
   });
 
   test("a component with a named slot and some white space", async () => {

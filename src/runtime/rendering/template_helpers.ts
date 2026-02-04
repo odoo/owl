@@ -81,18 +81,17 @@ function prepareList(collection: unknown): [unknown[], unknown[], number, undefi
 }
 
 const isBoundary = Symbol("isBoundary");
-
 function setContextValue(ctx: { [key: string]: any }, key: string, value: any): void {
-  const ctx0 = ctx;
-  while (!ctx.hasOwnProperty(key) && !ctx.hasOwnProperty(isBoundary)) {
-    const newCtx = ctx.__proto__;
-    if (!newCtx) {
-      ctx = ctx0;
-      break;
+  // const ctx0 = ctx;
+  if (!(key in ctx)) {
+    ctx[key] = value;
+  } else {
+    while (!ctx.hasOwnProperty(key) && !ctx.hasOwnProperty(isBoundary)) {
+      ctx = ctx.__proto__;
     }
-    ctx = newCtx;
+    ctx[key] = value;
   }
-  ctx[key] = value;
+  
 }
 
 function toNumber(val: string): number | string {

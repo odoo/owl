@@ -68,10 +68,12 @@ exports[`t-out multiple calls to t-out 1`] = `
   let block3 = createBlock(\`<span>coucou</span>\`);
   
   return function template(ctx, node, key = "") {
+    const ctx1 = ctx
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
     const b3 = block3();
     ctx[zero] = () => b3;
+    ctx = ctx1
     const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
@@ -135,10 +137,12 @@ exports[`t-out t-out 0 1`] = `
   let block3 = createBlock(\`<div>zero</div>\`);
   
   return function template(ctx, node, key = "") {
+    const ctx1 = ctx
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
     const b3 = block3();
     ctx[zero] = () => b3;
+    ctx = ctx1
     const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }

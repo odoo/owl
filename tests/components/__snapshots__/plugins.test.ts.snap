@@ -47,7 +47,7 @@ exports[`can be started with resource 1`] = `
 }"
 `;
 
-exports[`components can give inputs to plugins 1`] = `
+exports[`components can give config to plugins 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -164,7 +164,43 @@ exports[`get plugin which is not started 1`] = `
 }"
 `;
 
-exports[`plugin inputs are validated 1`] = `
+exports[`optional plugin config work as expected (no config given) 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].a.inputA);
+  }
+}"
+`;
+
+exports[`optional plugin config work as expected (no value given) 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].a.inputA);
+  }
+}"
+`;
+
+exports[`optional plugin config work as expected (value given) 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].a.inputA);
+  }
+}"
+`;
+
+exports[`plugin config are validated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;

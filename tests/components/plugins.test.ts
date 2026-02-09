@@ -209,7 +209,7 @@ test("components start plugins at their level", async () => {
   expect(fixture.innerHTML).toBe("1 | 2: pA | 3: pA - pB");
 });
 
-test("components can give inputs to plugins", async () => {
+test("components can give config to plugins", async () => {
   class PluginA extends Plugin {
     inputA = config("inputAlias", t.string);
   }
@@ -234,7 +234,7 @@ test("components can give inputs to plugins", async () => {
   expect(fixture.innerHTML).toBe("hamburger-123");
 });
 
-test("plugin inputs are validated", async () => {
+test("plugin config are validated", async () => {
   class PluginA extends Plugin {
     inputA = config("input", t.string);
   }
@@ -249,8 +249,47 @@ test("plugin inputs are validated", async () => {
     }
   }
   await expect(mount(Test, fixture, { dev: true })).rejects.toThrow(
-    "Plugin input value does not match the type"
+    "Config does not match the type"
   );
+});
+
+test("optional plugin config work as expected (value given)", async () => {
+  class PluginA extends Plugin {
+    inputA = config("input?", t.string) || "abc";
+  }
+
+  class Test extends Component {
+    static template = xml`<t t-out="this.a.inputA"/>`;
+    a = plugin(PluginA);
+  }
+  await mount(Test, fixture, { plugins: [PluginA], dev: true, config: { input: "def" } });
+  expect(fixture.innerHTML).toBe("def");
+});
+
+test("optional plugin config work as expected (no value given)", async () => {
+  class PluginA extends Plugin {
+    inputA = config("input?", t.string) || "abc";
+  }
+
+  class Test extends Component {
+    static template = xml`<t t-out="this.a.inputA"/>`;
+    a = plugin(PluginA);
+  }
+  await mount(Test, fixture, { plugins: [PluginA], dev: true, config: {} });
+  expect(fixture.innerHTML).toBe("abc");
+});
+
+test("optional plugin config work as expected (no config given)", async () => {
+  class PluginA extends Plugin {
+    inputA = config("input?", t.string) || "abc";
+  }
+
+  class Test extends Component {
+    static template = xml`<t t-out="this.a.inputA"/>`;
+    a = plugin(PluginA);
+  }
+  await mount(Test, fixture, { plugins: [PluginA], dev: true });
+  expect(fixture.innerHTML).toBe("abc");
 });
 
 test("shadow plugin", async () => {

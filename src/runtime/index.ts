@@ -62,7 +62,7 @@ export { assertType, validateType } from "./validation";
 export { types } from "./types";
 export { OwlError } from "../common/owl_error";
 export { config, plugin, providePlugins } from "./plugin_hooks";
-export type { GetPluginConfig, PluginInstance } from "./plugin_hooks";
+export type { PluginInstance } from "./plugin_hooks";
 export { Plugin } from "./plugin_manager";
 export type { PluginConstructor } from "./plugin_manager";
 export { useContext } from "./context";

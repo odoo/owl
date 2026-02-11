@@ -21,6 +21,10 @@ export type ResolveObjectType<T extends {}> = ResolveShapedObject<
   T extends string[] ? KeyedObject<T> : T
 >;
 
+type UnionToIntersection<U> = (U extends any ? (_: U) => any : never) extends (_: infer I) => void
+  ? I
+  : never;
+
 const anyType: any = function validateAny() {} as any;
 
 const booleanType: boolean = function validateBoolean(context: ValidationContext) {
@@ -102,6 +106,14 @@ function instanceType<T extends Constructor>(constructor: T): InstanceType<T> {
   return function validateInstanceType(context: ValidationContext) {
     if (!(context.value instanceof constructor)) {
       context.addIssue({ message: `value is not an instance of '${constructor.name}'` });
+    }
+  } as any;
+}
+
+function intersection<T extends any[]>(types: T): UnionToIntersection<T[number]> {
+  return function validateIntersection(context: ValidationContext) {
+    for (const type of types) {
+      context.validate(type);
     }
   } as any;
 }
@@ -272,5 +284,6 @@ export const types = {
   record: recordType,
   string: stringType,
   tuple: tuple,
+  and: intersection,
   or: union,
 };

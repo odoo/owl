@@ -226,7 +226,7 @@ function tuple<const T extends any[]>(types: T): T {
   } as any;
 }
 
-function union<T extends any[]>(types: T): T extends Array<infer E> ? E : never {
+function union<T extends any[]>(types: T): T[number] {
   return function validateUnion(context: ValidationContext) {
     let firstIssueIndex = 0;
     const subIssues: ValidationIssue[] = [];
@@ -272,5 +272,5 @@ export const types = {
   record: recordType,
   string: stringType,
   tuple: tuple,
-  union: union,
+  or: union,
 };

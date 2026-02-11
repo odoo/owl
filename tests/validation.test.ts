@@ -16,6 +16,29 @@ test("validateType", () => {
   expect(validateType(1, t.number)).toEqual([]);
 });
 
+test("and", () => {
+  const a = t.object({ a: t.string });
+  const b = t.object({ b: t.number });
+  expect(validateType({}, t.and([a, b]))).toMatchObject([
+    { message: "object value have missing keys", missingKeys: ["a"] },
+    { message: "object value have missing keys", missingKeys: ["b"] },
+  ]);
+  expect(validateType({ a: "abc" }, t.and([a, b]))).toMatchObject([
+    { message: "object value have missing keys", missingKeys: ["b"] },
+  ]);
+  expect(validateType({ a: 123 }, t.and([a, b]))).toMatchObject([
+    { message: "value is not a string", path: ["a"] },
+    { message: "object value have missing keys", missingKeys: ["b"] },
+  ]);
+  expect(validateType({ a: "abc", b: 123 }, t.and([a, b]))).toEqual([]);
+  expect(validateType({ b: 123 }, t.and([a, b]))).toMatchObject([
+    { message: "object value have missing keys", missingKeys: ["a"] },
+  ]);
+  expect(validateType({ a: "abc", b: "abc" }, t.and([a, b]))).toMatchObject([
+    { message: "value is not a number", path: ["b"] },
+  ]);
+});
+
 test("any", () => {
   expect(validateType("", t.any)).toEqual([]);
   expect(validateType("abc", t.any)).toEqual([]);

@@ -468,31 +468,31 @@ test("tuple", () => {
   ]);
 });
 
-test("union", () => {
-  expect(validateType("", t.union([t.string, t.number]))).toEqual([]);
-  expect(validateType("abc", t.union([t.string, t.number]))).toEqual([]);
-  expect(validateType(123, t.union([t.string, t.number]))).toEqual([]);
-  expect(validateType(987, t.union([t.string, t.number]))).toEqual([]);
-  expect(validateType(true, t.union([t.string, t.number]))).toMatchObject([
+test("or", () => {
+  expect(validateType("", t.or([t.string, t.number]))).toEqual([]);
+  expect(validateType("abc", t.or([t.string, t.number]))).toEqual([]);
+  expect(validateType(123, t.or([t.string, t.number]))).toEqual([]);
+  expect(validateType(987, t.or([t.string, t.number]))).toEqual([]);
+  expect(validateType(true, t.or([t.string, t.number]))).toMatchObject([
     {
       message: "value does not match union type",
       subIssues: [{ message: "value is not a string" }, { message: "value is not a number" }],
     },
   ]);
-  expect(validateType({}, t.union([t.string, t.number]))).toMatchObject([
+  expect(validateType({}, t.or([t.string, t.number]))).toMatchObject([
     {
       message: "value does not match union type",
       subIssues: [{ message: "value is not a string" }, { message: "value is not a number" }],
     },
   ]);
-  expect(validateType([], t.union([t.string, t.number]))).toMatchObject([
+  expect(validateType([], t.or([t.string, t.number]))).toMatchObject([
     {
       message: "value does not match union type",
       subIssues: [{ message: "value is not a string" }, { message: "value is not a number" }],
     },
   ]);
-  expect(validateType([], t.union([t.string, t.array(t.number)]))).toEqual([]);
-  expect(validateType([""], t.union([t.string, t.array(t.number)]))).toMatchObject([
+  expect(validateType([], t.or([t.string, t.array(t.number)]))).toEqual([]);
+  expect(validateType([""], t.or([t.string, t.array(t.number)]))).toMatchObject([
     { message: "value is not a number", path: [0] },
   ]);
 });
@@ -503,7 +503,7 @@ test("complex type", () => {
     b: t.array(
       t.object({
         a: t.instanceOf(A),
-        "b?": t.union([t.number, t.literal(false)]),
+        "b?": t.or([t.number, t.literal(false)]),
         c: t.tuple([t.string, t.string]),
       })
     ),

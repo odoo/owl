@@ -1,4 +1,4 @@
-import { effect, proxy } from "../../src/runtime";
+import { effect, proxy, signal } from "../../src/runtime";
 import { expectSpy, nextMicroTick } from "../helpers";
 
 async function waitScheduler() {
@@ -7,14 +7,15 @@ async function waitScheduler() {
 }
 
 describe("effect", () => {
-  it("effect runs directly", () => {
+  test("effect runs directly", () => {
     const spy = jest.fn();
     effect(() => {
       spy();
     });
     expect(spy).toHaveBeenCalledTimes(1);
   });
-  it("effect tracks proxy properties", async () => {
+
+  test("effect tracks proxy properties", async () => {
     const state = proxy({ a: 1 });
     const spy = jest.fn();
     effect(() => spy(state.a));
@@ -23,7 +24,8 @@ describe("effect", () => {
     await waitScheduler();
     expectSpy(spy, 2, { args: [2] });
   });
-  it("effect should unsubscribe previous dependencies", async () => {
+
+  test("effect should unsubscribe previous dependencies", async () => {
     const state = proxy({ a: 1, b: 10, c: 100 });
     const spy = jest.fn();
     effect(() => {
@@ -47,7 +49,8 @@ describe("effect", () => {
     await waitScheduler();
     expectSpy(spy, 4, { args: [200] });
   });
-  it("effect should not run if dependencies do not change", async () => {
+
+  test("effect should not run if dependencies do not change", async () => {
     const state = proxy({ a: 1 });
     const spy = jest.fn();
     effect(() => {
@@ -61,8 +64,30 @@ describe("effect", () => {
     await waitScheduler();
     expectSpy(spy, 2, { args: [2] });
   });
+
+  test("effects, signals, stuff", async () => {
+    const s1 = signal(1);
+    const s2 = signal(0);
+    let result = 0;
+    effect(() => {
+      result = s2();
+    })
+    effect(() => {
+      s2.set(s1());
+    });
+    expect(s2()).toBe(1);
+    expect(result).toBe(0);
+    await waitScheduler();
+    expect(result).toBe(1);
+    s1.set(2);
+    await waitScheduler();
+    expect(s2()).toBe(2);
+    await waitScheduler();
+    expect(result).toBe(2);
+  });
+
   describe("nested effects", () => {
-    it("should track correctly", async () => {
+    test("should track correctly", async () => {
       const state = proxy({ a: 1, b: 10 });
       const spy1 = jest.fn();
       const spy2 = jest.fn();
@@ -90,8 +115,9 @@ describe("effect", () => {
       expectSpy(spy2, 2, { args: [20] });
     });
   });
+
   describe("unsubscribe", () => {
-    it("should be able to unsubscribe", async () => {
+    test("should be able to unsubscribe", async () => {
       const state = proxy({ a: 1 });
       const spy = jest.fn();
       const unsubscribe = effect(() => {
@@ -106,7 +132,8 @@ describe("effect", () => {
       await waitScheduler();
       expectSpy(spy, 2, { args: [2] });
     });
-    it("effect should call cleanup function", async () => {
+
+    test("effect should call cleanup function", async () => {
       const state = proxy({ a: 1 });
       const spy = jest.fn();
       const cleanup = jest.fn();
@@ -125,7 +152,7 @@ describe("effect", () => {
       expectSpy(spy, 3, { args: [3] });
       expect(cleanup).toHaveBeenCalledTimes(2);
     });
-    it("should call cleanup when unsubscribing nested effects", async () => {
+    test("should call cleanup when unsubscribing nested effects", async () => {
       const state = proxy({ a: 1, b: 10, c: 100 });
       const spy1 = jest.fn();
       const spy2 = jest.fn();

@@ -171,7 +171,7 @@ describe("props validation", () => {
   test("can validate a prop with multiple types", async () => {
     class SubComp extends Component {
       static template = xml`<div>hey</div>`;
-      props = props({ p: t.union([t.string, t.boolean]) });
+      props = props({ p: t.or([t.string, t.boolean]) });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.p"/></div>`;
@@ -299,7 +299,7 @@ describe("props validation", () => {
   test("can validate an array with multiple sub element types", async () => {
     class SubComp extends Component {
       static template = xml`<div>hey</div>`;
-      props = props({ p: t.array(t.union([t.string, t.boolean])) });
+      props = props({ p: t.array(t.or([t.string, t.boolean])) });
     }
     class Parent extends Component {
       static template = xml`<div><SubComp p="this.p"/></div>`;
@@ -398,7 +398,7 @@ describe("props validation", () => {
       props = props({
         p: t.object({
           id: t.number,
-          url: t.union([t.boolean, t.array(t.number)]),
+          url: t.or([t.boolean, t.array(t.number)]),
         }),
       });
     }

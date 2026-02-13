@@ -69,8 +69,7 @@ export function onWriteAtom(atom: Atom) {
 
 const batchProcessEffects = batched(processEffects);
 function processEffects() {
-  const length = observers.length;
-  for (let i = 0; i < length; i++) {
+  for (let i = 0; i < observers.length; i++) {
     updateComputation(observers[i]);
   }
   observers = [];

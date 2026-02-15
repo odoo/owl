@@ -153,6 +153,20 @@ exports[`components start plugins at their level 3`] = `
 }"
 `;
 
+exports[`components, plugins, useEffect 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].value());
+    const b3 = safeOutput(ctx['this'].derived());
+    return multi([b2, b3]);
+  }
+}"
+`;
+
 exports[`get plugin which is not started 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

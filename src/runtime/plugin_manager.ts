@@ -1,7 +1,7 @@
 import { OwlError } from "../common/owl_error";
 import { App } from "./app";
 import { contextStack } from "./context";
-import { ReactiveValue } from "./reactivity/computations";
+import { ReactiveValue, untrack } from "./reactivity/computations";
 import { effect } from "./reactivity/effect";
 import { STATUS } from "./status";
 
@@ -57,7 +57,8 @@ export class PluginManager {
       const plugins = options.plugins;
       this.onDestroyCb.push(
         effect(() => {
-          this.startPlugins(plugins());
+          const p = plugins();
+          untrack(() => this.startPlugins(p));
         })
       );
     } else {

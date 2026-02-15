@@ -10,12 +10,14 @@ import {
   PluginInstance,
   providePlugins,
   Resource,
+  signal,
   types as t,
   useApp,
+  useEffect,
   useResource,
   xml,
 } from "../../src";
-import { makeTestFixture, nextMicroTick, snapshotEverything } from "../helpers";
+import { makeTestFixture, nextMicroTick, snapshotEverything, nextTick } from "../helpers";
 
 let fixture: HTMLElement;
 
@@ -366,3 +368,39 @@ test("components can register resources", async () => {
   expect(a.colors.items()).toEqual(["from lvl 1", "from lvl 2"]);
   expect(fixture.innerHTML).toBe("1 | 2: from lvl 1|from lvl 2 ");
 });
+
+test("components, plugins, useEffect", async () => {
+  const value = signal("a");
+  const derived = signal("a");
+
+  class P extends Plugin {
+
+    setup() {
+      useEffect(() => {
+        derived.set(value());
+      });
+      // this triggers the bug
+      value();
+    }
+  }
+
+  class R extends Component {
+    static template = xml`
+      <t t-out="this.value()"/>
+      <t t-out="this.derived()"/>`;
+
+    value = value;
+    derived = derived;
+  }
+
+  await mount(R, fixture, { plugins: [P]});
+  expect(fixture.innerHTML).toBe("aa");
+
+  value.set("b");
+  await nextTick();
+  expect(fixture.innerHTML).toBe("bb");
+  value.set("c");
+  await nextTick();
+  expect(fixture.innerHTML).toBe("cc");
+});
+

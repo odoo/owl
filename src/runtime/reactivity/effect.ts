@@ -9,8 +9,8 @@ import {
 } from "./computations";
 
 export function effect<T>(fn: () => T) {
-  const computation = createComputation({
-    compute() {
+  const computation = createComputation(
+    () => {
       // In case the cleanup read an atom.
       // todo: test it
       setComputation(undefined);
@@ -18,8 +18,8 @@ export function effect<T>(fn: () => T) {
       setComputation(computation);
       return fn();
     },
-    isDerived: false,
-  });
+    false
+  );
   getCurrentComputation()?.observers.add(computation);
   updateComputation(computation);
 

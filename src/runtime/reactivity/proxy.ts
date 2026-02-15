@@ -15,22 +15,6 @@ type CollectionRawType = "Set" | "Map" | "WeakMap";
 const objectToString = Object.prototype.toString;
 const objectHasOwnProperty = Object.prototype.hasOwnProperty;
 
-// Use arrays because Array.includes is faster than Set.has for small arrays
-const SUPPORTED_RAW_TYPES = ["Object", "Array", "Set", "Map", "WeakMap"];
-const COLLECTION_RAW_TYPES = ["Set", "Map", "WeakMap"];
-
-/**
- * extract "RawType" from strings like "[object RawType]" => this lets us ignore
- * many native objects such as Promise (whose toString is [object Promise])
- * or Date ([object Date]), while also supporting collections without using
- * instanceof in a loop
- *
- * @param obj the object to check
- * @returns the raw type of the object
- */
-function rawType(obj: any) {
-  return objectToString.call(toRaw(obj)).slice(8, -1);
-}
 /**
  * Checks whether a given value can be made into a proxy object.
  *
@@ -38,10 +22,14 @@ function rawType(obj: any) {
  * @returns whether the value can be made proxy
  */
 function canBeMadeReactive(value: any): boolean {
-  if (typeof value !== "object") {
+  if (typeof value !== "object" || value === null) {
     return false;
   }
-  return SUPPORTED_RAW_TYPES.includes(rawType(value));
+  const raw = toRaw(value);
+  if (Array.isArray(raw) || raw instanceof Set || raw instanceof Map || raw instanceof WeakMap) {
+    return true;
+  }
+  return objectToString.call(raw) === "[object Object]";
 }
 /**
  * Creates a proxy from the given object/callback if possible and returns it,
@@ -151,10 +139,16 @@ export function proxifyTarget<T extends Target>(target: T, atom: Atom | null): T
     return reactive as T;
   }
 
-  const targetRawType = rawType(target);
-  const handler = COLLECTION_RAW_TYPES.includes(targetRawType)
-    ? collectionsProxyHandler(target as Collection, targetRawType as CollectionRawType, atom)
-    : basicProxyHandler<T>(atom);
+  let handler: ProxyHandler<any>;
+  if (target instanceof Map) {
+    handler = collectionsProxyHandler(target as unknown as Collection, "Map", atom);
+  } else if (target instanceof Set) {
+    handler = collectionsProxyHandler(target as unknown as Collection, "Set", atom);
+  } else if (target instanceof WeakMap) {
+    handler = collectionsProxyHandler(target as unknown as Collection, "WeakMap", atom);
+  } else {
+    handler = basicProxyHandler<T>(atom);
+  }
   const proxy = new Proxy(target, handler as ProxyHandler<T>) as Reactive<T>;
 
   proxyCache.set(target, proxy);
@@ -203,13 +197,21 @@ export function proxy<T extends Target>(target: T): T {
 function basicProxyHandler<T extends Target>(atom: Atom | null): ProxyHandler<T> {
   return {
     get(target, key, receiver) {
+      onReadTargetKey(target, key, atom);
+      const value = Reflect.get(target, key, receiver);
+      // Fast path: signal-based proxies and primitive values don't need wrapping
+      if (atom || typeof value !== "object" || value === null) {
+        return value;
+      }
+      if (!canBeMadeReactive(value)) {
+        return value;
+      }
       // non-writable non-configurable properties cannot be made proxy
       const desc = Object.getOwnPropertyDescriptor(target, key);
       if (desc && !desc.writable && !desc.configurable) {
-        return Reflect.get(target, key, receiver);
+        return value;
       }
-      onReadTargetKey(target, key, atom);
-      return possiblyReactive(Reflect.get(target, key, receiver), atom);
+      return proxifyTarget(value, null);
     },
     set(target, key, value, receiver) {
       const hadKey = objectHasOwnProperty.call(target, key);

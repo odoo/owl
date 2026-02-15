@@ -33,15 +33,18 @@ export const atomSymbol = Symbol("Atom");
 let observers: ComputationAtom[] = [];
 let currentComputation: ComputationAtom | undefined;
 
-export function createComputation(options: Partial<ComputationAtom> = {}): ComputationAtom {
+export function createComputation(
+  compute: () => any,
+  isDerived: boolean,
+  state: ComputationState = ComputationState.STALE
+): ComputationAtom {
   return {
-    state: ComputationState.STALE,
+    state,
     value: undefined,
-    compute() {},
+    compute,
     sources: new Set(),
     observers: new Set(),
-    isDerived: false,
-    ...options,
+    isDerived,
   };
 }
 

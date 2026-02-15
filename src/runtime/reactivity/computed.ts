@@ -15,13 +15,13 @@ export function computed<TRead, TWrite = TRead>(
   getter: () => TRead,
   options: ComputedOptions<TWrite> = {}
 ): ReactiveValue<TRead, TWrite> {
-  const computation = createComputation({
-    compute: () => {
+  const computation = createComputation(
+    () => {
       onWriteAtom(computation);
       return getter();
     },
-    isDerived: true,
-  });
+    true
+  );
 
   function readComputed() {
     updateComputation(computation);

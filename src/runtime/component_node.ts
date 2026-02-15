@@ -57,11 +57,11 @@ export class ComponentNode implements VNode<ComponentNode> {
     this.parent = parent;
     this.parentKey = parentKey;
     this.pluginManager = parent ? parent.pluginManager : app.pluginManager;
-    this.signalComputation = createComputation({
-      compute: () => this.render(false),
-      state: ComputationState.EXECUTED,
-      isDerived: false,
-    });
+    this.signalComputation = createComputation(
+      () => this.render(false),
+      false,
+      ComputationState.EXECUTED
+    );
     this.props = Object.assign({}, props);
     contextStack.push({
       type: "component",

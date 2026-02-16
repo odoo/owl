@@ -5,6 +5,7 @@ import { comment, createBlock, html, list, multi, text, toggler } from "./blockd
 import { getContext } from "./context";
 import { Portal, portalTemplate } from "./portal";
 import { helpers } from "./rendering/template_helpers";
+import { suspenseTemplate } from "./suspense";
 
 const bdom = { text, createBlock, list, multi, html, toggler, comment };
 
@@ -136,3 +137,4 @@ export function xml(...args: Parameters<typeof String.raw>) {
 xml.nextId = 1;
 
 TemplateSet.registerTemplate("__portal__", portalTemplate);
+TemplateSet.registerTemplate("__suspense__", suspenseTemplate);

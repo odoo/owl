@@ -345,7 +345,7 @@ describe("basic features", () => {
   test("plugin lifecycle", () => {
     class A extends Plugin {}
     const manager = new PluginManager(new App());
-    expect(manager.status).toBe(STATUS.MOUNTED);
+    expect(manager.status).toBe(STATUS.NEW);
 
     manager.startPlugins([A]);
     const a = manager.getPlugin(A)!;

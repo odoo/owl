@@ -1,8 +1,9 @@
 import { OwlError } from "../common/owl_error";
 import { App } from "./app";
 import { contextStack } from "./context";
-import { ReactiveValue, untrack } from "./reactivity/computations";
+import { untrack } from "./reactivity/computations";
 import { effect } from "./reactivity/effect";
+import { Resource } from "./resource";
 import { STATUS } from "./status";
 
 export interface PluginConstructor {
@@ -30,7 +31,6 @@ export class Plugin {
 
 interface PluginManagerOptions {
   parent?: PluginManager | null;
-  plugins?: ReactiveValue<PluginConstructor[]>;
   config?: Record<string, any>;
 }
 
@@ -51,18 +51,6 @@ export class PluginManager {
       this.plugins = Object.create(parent.plugins);
     } else {
       this.plugins = {};
-    }
-
-    if (options.plugins) {
-      const plugins = options.plugins;
-      this.onDestroyCb.push(
-        effect(() => {
-          const p = plugins();
-          untrack(() => this.startPlugins(p));
-        })
-      );
-    } else {
-      this.status = STATUS.MOUNTED;
     }
   }
 
@@ -99,8 +87,8 @@ export class PluginManager {
     }
 
     const plugin = new pluginConstructor(this);
-    plugin.setup();
     this.plugins[pluginConstructor.id] = plugin;
+    plugin.setup();
     return plugin as InstanceType<T>;
   }
 
@@ -123,5 +111,21 @@ export class PluginManager {
     }
 
     this.status = STATUS.MOUNTED;
+  }
+}
+
+export function startPlugins(
+  manager: PluginManager,
+  plugins: PluginConstructor[] | Resource<PluginConstructor>
+) {
+  if (Array.isArray(plugins)) {
+    manager.startPlugins(plugins);
+  } else {
+    manager.onDestroyCb.push(
+      effect(() => {
+        const pluginItems = plugins.items();
+        untrack(() => manager.startPlugins(pluginItems));
+      })
+    );
   }
 }

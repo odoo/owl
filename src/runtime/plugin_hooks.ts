@@ -1,7 +1,8 @@
 import { OwlError } from "../common/owl_error";
 import { getContext } from "./context";
 import { onWillDestroy } from "./lifecycle_hooks";
-import { PluginConstructor, PluginManager } from "./plugin_manager";
+import { startPlugins, PluginConstructor, PluginManager } from "./plugin_manager";
+import { Resource } from "./resource";
 import { types } from "./types";
 import { assertType } from "./validation";
 
@@ -31,8 +32,8 @@ export function config<T = any>(name: string, type?: T): T {
   return manager.config[name.endsWith("?") ? name.slice(0, -1) : name];
 }
 
-export function providePlugins<const P extends PluginConstructor[]>(
-  pluginConstructors: P,
+export function providePlugins(
+  pluginConstructors: PluginConstructor[] | Resource<PluginConstructor>,
   config?: Record<string, any>
 ) {
   const { node } = getContext("component");
@@ -41,5 +42,5 @@ export function providePlugins<const P extends PluginConstructor[]>(
   node.pluginManager = manager;
   onWillDestroy(() => manager.destroy());
 
-  manager.startPlugins(pluginConstructors);
+  startPlugins(manager, pluginConstructors);
 }

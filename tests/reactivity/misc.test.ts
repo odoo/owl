@@ -1,10 +1,4 @@
-import {
-  Component,
-  mount,
-  signal,
-  useEffect,
-  xml
-} from "../../src";
+import { Component, mount, signal, useEffect, xml } from "../../src";
 import { makeTestFixture, nextTick, snapshotEverything } from "../helpers";
 
 let fixture: HTMLElement;
@@ -16,7 +10,7 @@ beforeEach(() => {
 });
 
 test("components and useEffect", async () => {
-  const s = signal("a")
+  const s = signal("a");
 
   class Test extends Component {
     static template = xml`<t t-out="this.current()"/>`;
@@ -34,4 +28,3 @@ test("components and useEffect", async () => {
   await nextTick();
   expect(fixture.innerHTML).toBe("b");
 });
-

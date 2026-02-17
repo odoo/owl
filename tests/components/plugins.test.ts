@@ -375,7 +375,6 @@ test("components, plugins, useEffect", async () => {
   const derived = signal("a");
 
   class P extends Plugin {
-
     setup() {
       useEffect(() => {
         derived.set(value());
@@ -394,7 +393,7 @@ test("components, plugins, useEffect", async () => {
     derived = derived;
   }
 
-  await mount(R, fixture, { plugins: [P]});
+  await mount(R, fixture, { plugins: [P] });
   expect(fixture.innerHTML).toBe("aa");
 
   value.set("b");
@@ -406,10 +405,9 @@ test("components, plugins, useEffect", async () => {
 });
 
 test("components mounted by plugin", async () => {
-
   class R2 extends Component {
     static template = xml`<t t-out="this.p.value"/>`;
-    p = plugin(P)
+    p = plugin(P);
   }
 
   class P extends Plugin {
@@ -420,7 +418,7 @@ test("components mounted by plugin", async () => {
       root.mount(fixture);
       onWillDestroy(() => {
         root.destroy();
-      })
+      });
     }
   }
 
@@ -428,6 +426,6 @@ test("components mounted by plugin", async () => {
     static template = xml`abc`;
   }
 
-  await mount(R, fixture, { plugins: [P]});
+  await mount(R, fixture, { plugins: [P] });
   expect(fixture.innerHTML).toBe("defabc");
 });

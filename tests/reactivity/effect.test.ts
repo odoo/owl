@@ -71,7 +71,7 @@ describe("effect", () => {
     let result = 0;
     effect(() => {
       result = s2();
-    })
+    });
     effect(() => {
       s2.set(s1());
     });

@@ -9,17 +9,14 @@ import {
 } from "./computations";
 
 export function effect<T>(fn: () => T) {
-  const computation = createComputation(
-    () => {
-      // In case the cleanup read an atom.
-      // todo: test it
-      setComputation(undefined);
-      unsubscribeEffect(computation);
-      setComputation(computation);
-      return fn();
-    },
-    false
-  );
+  const computation = createComputation(() => {
+    // In case the cleanup read an atom.
+    // todo: test it
+    setComputation(undefined);
+    unsubscribeEffect(computation);
+    setComputation(computation);
+    return fn();
+  }, false);
   getCurrentComputation()?.observers.add(computation);
   updateComputation(computation);
 

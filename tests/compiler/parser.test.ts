@@ -35,7 +35,7 @@ describe("qweb parser", () => {
 
   test("white spaces only text nodes with newlines are removed", async () => {
     const template = `
-      <div>  
+      <div>
       </div>`;
     expect(parse(template)).toEqual({
       type: ASTType.DomNode,
@@ -1027,6 +1027,8 @@ describe("qweb parser", () => {
       body: {
         type: ASTType.TCall,
         name: "blap",
+        attrs: null,
+        attrsTranslationCtx: null,
         body: null,
         context: null,
       },
@@ -1065,6 +1067,8 @@ describe("qweb parser", () => {
     expect(parse(`<t t-call="blabla" />`)).toEqual({
       type: ASTType.TCall,
       name: "blabla",
+      attrs: null,
+      attrsTranslationCtx: null,
       body: null,
       context: null,
     });
@@ -1074,8 +1078,10 @@ describe("qweb parser", () => {
     expect(parse(`<t t-call="sub">ok</t>`)).toEqual({
       type: ASTType.TCall,
       name: "sub",
+      attrs: null,
+      attrsTranslationCtx: null,
       context: null,
-      body: [{ type: ASTType.Text, value: "ok" }],
+      body: { type: ASTType.Text, value: "ok" },
     });
   });
 
@@ -1083,31 +1089,17 @@ describe("qweb parser", () => {
     expect(parse(`<t t-call="blabla" t-call-context="someContext"/>`)).toEqual({
       type: ASTType.TCall,
       name: "blabla",
+      attrs: null,
+      attrsTranslationCtx: null,
       body: null,
       context: "someContext",
     });
   });
 
   test("t-call on a div node", async () => {
-    expect(parse(`<div t-call="blabla" />`)).toEqual({
-      type: ASTType.DomNode,
-      tag: "div",
-      dynamicTag: null,
-      attrs: null,
-      attrsTranslationCtx: null,
-      on: null,
-      ref: null,
-      model: null,
-      ns: null,
-      content: [
-        {
-          type: ASTType.TCall,
-          name: "blabla",
-          body: null,
-          context: null,
-        },
-      ],
-    });
+    expect(() => parse(`<div t-call="blabla" />`)).toThrow(
+      "Directive 't-call' can only be used on <t> nodes (used on a <div>)"
+    );
   });
 
   test("t-call with t-if", async () => {
@@ -1119,6 +1111,8 @@ describe("qweb parser", () => {
       content: {
         type: ASTType.TCall,
         name: "blabla",
+        attrs: null,
+        attrsTranslationCtx: null,
         body: null,
         context: null,
       },
@@ -1619,27 +1613,6 @@ describe("qweb parser", () => {
     expect(() => parse(`<MyComponent t-out="someValue">Some content</MyComponent>`)).toThrow(
       "Cannot have t-out on a component that already has content"
     );
-  });
-
-  test("component with t-call", async () => {
-    expect(parse(`<MyComponent t-call="subTemplate"/>`)).toEqual({
-      type: ASTType.TComponent,
-      name: "MyComponent",
-      dynamicProps: null,
-      props: null,
-      propsTranslationCtx: null,
-      isDynamic: false,
-      on: null,
-      slots: {
-        default: {
-          content: { body: null, name: "subTemplate", type: ASTType.TCall, context: null },
-          attrs: null,
-          attrsTranslationCtx: null,
-          scope: null,
-          on: null,
-        },
-      },
-    });
   });
 
   test("component with t-set-slot inside component", async () => {

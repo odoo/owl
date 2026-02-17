@@ -1569,20 +1569,6 @@ describe("slots", () => {
     expect(fixture.innerHTML).toBe("<div><span><p>sokka</p></span></div>");
   });
 
-  test("slot and (inline) t-call", async () => {
-    let sokka = xml`<p>sokka</p>`;
-    class Dialog extends Component {
-      static template = xml`<span><t t-call-slot="default"/></span>`;
-    }
-    class Parent extends Component {
-      static template = xml`<div><Dialog t-call="${sokka}"/></div>`;
-      static components = { Dialog };
-    }
-    await mount(Parent, fixture);
-
-    expect(fixture.innerHTML).toBe("<div><span><p>sokka</p></span></div>");
-  });
-
   test("nested slots: evaluation context and parented relationship", async () => {
     let slot: any = null;
     let grandChild: any = null;

@@ -199,7 +199,7 @@ describe("app", () => {
 
   test("app creates and destroys a plugin manager", () => {
     const app = new App();
-    expect(app.pluginManager.status).toBe(STATUS.MOUNTED);
+    expect(app.pluginManager.status).toBe(STATUS.NEW);
     app.destroy();
     expect(app.pluginManager.status).toBe(STATUS.DESTROYED);
   });

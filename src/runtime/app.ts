@@ -3,10 +3,8 @@ import { version } from "../version";
 import { Component, ComponentConstructor } from "./component";
 import { ComponentNode } from "./component_node";
 import { saveContext } from "./context";
-import { PluginConstructor, PluginManager } from "./plugin_manager";
+import { PluginConstructor, PluginManager, startPlugins } from "./plugin_manager";
 import { GetProps } from "./props";
-import { ReactiveValue } from "./reactivity/computations";
-import { computed } from "./reactivity/computed";
 import { proxy, toRaw } from "./reactivity/proxy";
 import { handleError, nodeErrorHandlers } from "./rendering/error_handling";
 import { Fiber, MountOptions, RootFiber } from "./rendering/fibers";
@@ -73,15 +71,10 @@ export class App extends TemplateSet {
     super(config);
     this.name = config.name || "";
     apps.add(this);
-    let plugins: ReactiveValue<PluginConstructor[]> | undefined;
+    this.pluginManager = new PluginManager(this, { config: config.config });
     if (config.plugins) {
-      if (config.plugins instanceof Resource) {
-        plugins = config.plugins.items;
-      } else {
-        plugins = computed(() => config.plugins as PluginConstructor[]);
-      }
+      startPlugins(this.pluginManager, config.plugins);
     }
-    this.pluginManager = new PluginManager(this, { plugins, config: config.config });
     if (config.test) {
       this.dev = true;
     }

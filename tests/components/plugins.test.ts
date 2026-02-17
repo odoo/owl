@@ -4,6 +4,7 @@ import {
   computed,
   config,
   mount,
+  onWillDestroy,
   plugin,
   Plugin,
   PluginConstructor,
@@ -404,3 +405,29 @@ test("components, plugins, useEffect", async () => {
   expect(fixture.innerHTML).toBe("cc");
 });
 
+test("components mounted by plugin", async () => {
+
+  class R2 extends Component {
+    static template = xml`<t t-out="this.p.value"/>`;
+    p = plugin(P)
+  }
+
+  class P extends Plugin {
+    value = "def";
+    setup() {
+      const app = useApp();
+      const root = app.createRoot(R2);
+      root.mount(fixture);
+      onWillDestroy(() => {
+        root.destroy();
+      })
+    }
+  }
+
+  class R extends Component {
+    static template = xml`abc`;
+  }
+
+  await mount(R, fixture, { plugins: [P]});
+  expect(fixture.innerHTML).toBe("defabc");
+});

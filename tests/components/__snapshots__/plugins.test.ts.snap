@@ -106,6 +106,29 @@ exports[`components can start plugins 1`] = `
 }"
 `;
 
+exports[`components mounted by plugin 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return safeOutput(ctx['this'].p.value);
+  }
+}"
+`;
+
+exports[`components mounted by plugin 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  return function template(ctx, node, key = "") {
+    return text(\`abc\`);
+  }
+}"
+`;
+
 exports[`components start plugins at their level 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

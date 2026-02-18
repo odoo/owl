@@ -304,11 +304,11 @@ exports[`slots can use t-call in default-content of t-slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { callSlot, capture } = helpers;
+  let { callSlot } = helpers;
   const callTemplate_1 = app.getTemplate(\`__template__999\`);
   
   function defaultContent1(ctx, node, key = "") {
-    return callTemplate_1.call(this, Object.assign(capture(ctx), {}), node, key + \`__1\`);
+    return callTemplate_1.call(this, ctx, node, key + \`__1\`);
   }
   
   return function template(ctx, node, key = "") {
@@ -901,7 +901,7 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
   
   function slot1(ctx, node, key = "") {
     const b2 = text(\`[A]\`);
-    const b3 = callTemplate_1.call(this, Object.assign(capture(ctx), {}), node, key + \`__1\`);
+    const b3 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return multi([b2, b3]);
   }
   
@@ -916,7 +916,7 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, capture } = helpers;
+  let { isBoundary, withDefault, setContextValue } = helpers;
   const callTemplate_1 = app.getTemplate(\`__template__1001\`);
   
   return function template(ctx, node, key = "") {
@@ -924,7 +924,7 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
     ctx[isBoundary] = 1
     const b2 = text(\`[sub1] \`);
     setContextValue(ctx, "dummy", ctx['this'].validate);
-    const b3 = callTemplate_1.call(this, Object.assign(capture(ctx), {v: ctx['this'].props.number}), node, key + \`__1\`);
+    const b3 = callTemplate_1.call(this, Object.assign(Object.create(ctx), {v: ctx['this'].props.number}), node, key + \`__1\`);
     return multi([b2, b3]);
   }
 }"
@@ -1774,7 +1774,7 @@ exports[`slots slot and t-call 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = "") {
-    return callTemplate_1.call(this, Object.assign(capture(ctx), {}), node, key + \`__1\`);
+    return callTemplate_1.call(this, ctx, node, key + \`__1\`);
   }
   
   return function template(ctx, node, key = "") {
@@ -2243,7 +2243,7 @@ exports[`slots slot preserves properly parented relationship, even through t-cal
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = "") {
-    return callTemplate_1.call(this, Object.assign(capture(ctx), {}), node, key + \`__1\`);
+    return callTemplate_1.call(this, ctx, node, key + \`__1\`);
   }
   
   return function template(ctx, node, key = "") {
@@ -2913,7 +2913,7 @@ exports[`slots t-slot in recursive templates 1`] = `
       if (!ctx['item'].children.length) {
         b5 = safeOutput(ctx['item'].name);
       } else {
-        b6 = callTemplate_1.call(this, Object.assign(capture(ctx), {name: ctx['item'].name, items: ctx['item'].children}), node, key + \`__1__\${key1}\`);
+        b6 = callTemplate_1.call(this, Object.assign(Object.create(ctx), {name: ctx['item'].name, items: ctx['item'].children}), node, key + \`__1__\${key1}\`);
       }
       c_block3[i1] = withKey(multi([b5, b6]), key1);
     }
@@ -3096,7 +3096,7 @@ exports[`slots t-slot within dynamic t-call 1`] = `
   
   function slot1(ctx, node, key = "") {
     const template1 = (ctx['this'].tcallTemplate);
-    return call(this, template1, Object.assign(capture(ctx), {}), node, key + \`__1\`);
+    return call(this, template1, ctx, node, key + \`__1\`);
   }
   
   return function template(ctx, node, key = "") {

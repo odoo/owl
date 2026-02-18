@@ -61,7 +61,7 @@ exports[`t-out multiple calls to t-out 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { capture, zero } = helpers;
+  let { zero } = helpers;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -72,8 +72,8 @@ exports[`t-out multiple calls to t-out 1`] = `
   }
   
   return function template(ctx, node, key = "") {
-    const lazyBlock1 = callBody1.bind(this, capture(ctx));
-    const b2 = callTemplate_1.call(this, Object.assign(capture(ctx), {[zero]: lazyBlock1}), node, key + \`__1\`);
+    const lazyBlock1 = callBody1.bind(this, ctx);
+    const b2 = callTemplate_1.call(this, Object.assign(Object.create(ctx), {[zero]: lazyBlock1}), node, key + \`__1\`);
     return block1([], [b2]);
   }
 }"
@@ -129,7 +129,7 @@ exports[`t-out t-out 0 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { capture, zero } = helpers;
+  let { zero } = helpers;
   const callTemplate_1 = app.getTemplate(\`_basic-callee\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -140,8 +140,8 @@ exports[`t-out t-out 0 1`] = `
   }
   
   return function template(ctx, node, key = "") {
-    const lazyBlock1 = callBody1.bind(this, capture(ctx));
-    const b2 = callTemplate_1.call(this, Object.assign(capture(ctx), {[zero]: lazyBlock1}), node, key + \`__1\`);
+    const lazyBlock1 = callBody1.bind(this, ctx);
+    const b2 = callTemplate_1.call(this, Object.assign(Object.create(ctx), {[zero]: lazyBlock1}), node, key + \`__1\`);
     return block1([], [b2]);
   }
 }"

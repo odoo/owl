@@ -1013,10 +1013,9 @@ export class CodeGenerator {
     }
     block = this.createBlock(block, "multi", ctx);
     if (ast.body) {
-      this.helpers.add("capture");
       const name = this.compileInNewTarget("callBody", ast.body, ctx);
       const zeroStr = generateId("lazyBlock");
-      this.define(zeroStr, `${name}.bind(this, capture(ctx))`);
+      this.define(zeroStr, `${name}.bind(this, ${ctxVar})`);
       this.helpers.add("zero");
       attrs.push(`[zero]: ${zeroStr}`);
     }
@@ -1033,8 +1032,11 @@ export class CodeGenerator {
         ctxExpr = `Object.assign({}, ${dynCtxVar}, ${thisCtx}${attrs.length ? ", " + ctxString : ""})`;
       }
     } else {
-      this.helpers.add("capture");
-      ctxExpr = `Object.assign(capture(${ctxVar}), ${ctxString})`;
+      if (attrs.length === 0) {
+        ctxExpr = ctxVar;
+      } else {
+        ctxExpr = `Object.assign(Object.create(${ctxVar}), ${ctxString})`;
+      }
     }
     const key = this.generateComponentKey();
     if (isDynamic) {

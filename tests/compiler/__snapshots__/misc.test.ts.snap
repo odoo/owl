@@ -84,7 +84,7 @@ exports[`misc global 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, safeOutput, capture, isBoundary, withDefault, setContextValue, zero, withKey } = helpers;
+  let { prepareList, safeOutput, isBoundary, withDefault, setContextValue, zero, withKey } = helpers;
   const callTemplate_1 = app.getTemplate(\`_callee-uses-foo\`);
   const callTemplate_2 = app.getTemplate(\`_callee-uses-foo\`);
   const callTemplate_3 = app.getTemplate(\`_callee-uses-foo\`);
@@ -97,10 +97,10 @@ exports[`misc global 1`] = `
   function callBody1(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    const b8 = callTemplate_1.call(this, Object.assign(capture(ctx), {foo: 'aaa'}), node, key + \`__1\`);
-    const b9 = callTemplate_2.call(this, Object.assign(capture(ctx), {}), node, key + \`__2\`);
+    const b8 = callTemplate_1.call(this, Object.assign(Object.create(ctx), {foo: 'aaa'}), node, key + \`__1\`);
+    const b9 = callTemplate_2.call(this, ctx, node, key + \`__2\`);
     setContextValue(ctx, "foo", 'bbb');
-    const b10 = callTemplate_3.call(this, Object.assign(capture(ctx), {}), node, key + \`__3\`);
+    const b10 = callTemplate_3.call(this, ctx, node, key + \`__3\`);
     return multi([b8, b9, b10]);
   }
   
@@ -117,12 +117,12 @@ exports[`misc global 1`] = `
       const key1 = ctx['value'];
       const b5 = safeOutput(ctx['value']);
       const b4 = block4([], [b5]);
-      const lazyBlock1 = callBody1.bind(this, capture(ctx));
-      const b6 = callTemplate_4.call(this, Object.assign(capture(ctx), {[zero]: lazyBlock1}), node, key + \`__4__\${key1}\`);
+      const lazyBlock1 = callBody1.bind(this, ctx);
+      const b6 = callTemplate_4.call(this, Object.assign(Object.create(ctx), {[zero]: lazyBlock1}), node, key + \`__4__\${key1}\`);
       c_block2[i1] = withKey(multi([b4, b6]), key1);
     }
     const b2 = list(c_block2);
-    const b11 = callTemplate_5.call(this, Object.assign(capture(ctx), {}), node, key + \`__5\`);
+    const b11 = callTemplate_5.call(this, ctx, node, key + \`__5\`);
     return block1([], [b2, b11]);
   }
 }"
@@ -180,7 +180,7 @@ exports[`misc other complex template 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput, prepareList, withKey, createRef, capture } = helpers;
+  let { safeOutput, prepareList, withKey, createRef } = helpers;
   const callTemplate_1 = app.getTemplate(\`LOAD_INFOS_TEMPLATE\`);
   const comp1 = app.createComponent(\`BundlesList\`, true, false, false, ["bundles","category_custom_views","search"]);
   const comp2 = app.createComponent(\`BundlesList\`, true, false, false, ["bundles","search"]);
@@ -307,7 +307,7 @@ exports[`misc other complex template 1`] = `
       b22 = multi([b23, b27]);
     }
     if (ctx['load_infos']) {
-      b28 = callTemplate_1.call(this, Object.assign(capture(ctx), {}), node, key + \`__1\`);
+      b28 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     }
     if (ctx['message']) {
       const b30 = safeOutput(ctx['message']);

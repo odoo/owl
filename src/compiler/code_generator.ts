@@ -171,7 +171,6 @@ interface Context {
   tKeyExpr: string | null;
   nameSpace?: string;
   tModelSelectedExpr?: string;
-  ctxVar?: string;
   inPreTag?: boolean;
 }
 
@@ -195,10 +194,11 @@ class CodeTarget {
   name: string;
   indentLevel = 0;
   loopLevel = 0;
+  loopCtxVars: string[] = [];
+  tSetVars: Set<string> = new Set();
   code: string[] = [];
   hasRoot = false;
   hasCache = false;
-  shouldProtectScope: boolean = false;
   on: EventHandlers | null;
 
   constructor(name: string, on?: EventHandlers | null) {
@@ -218,10 +218,6 @@ class CodeTarget {
   generateCode(): string {
     let result: string[] = [];
     result.push(`function ${this.name}(ctx, node, key = "") {`);
-    if (this.shouldProtectScope) {
-      result.push(`  ctx = Object.create(ctx);`);
-      result.push(`  ctx[isBoundary] = 1`);
-    }
     if (this.hasCache) {
       result.push(`  let cache = ctx.cache || {};`);
       result.push(`  let nextCache = ctx.cache = {};`);
@@ -865,8 +861,7 @@ export class CodeGenerator {
     const loopVar = `i${this.target.loopLevel}`;
     const ctxVar = generateId("ctx");
     this.addLine(`const ${ctxVar} = ctx;`);
-    ctx.ctxVar = ctxVar
-    // this.addLine(`ctx = Object.create(ctx);`);
+    this.target.loopCtxVars.push(ctxVar);
     const vals = `v_block${block.id}`;
     const keys = `k_block${block.id}`;
     const l = `l_block${block.id}`;
@@ -879,7 +874,7 @@ export class CodeGenerator {
     }
     this.addLine(`for (let ${loopVar} = 0; ${loopVar} < ${l}; ${loopVar}++) {`);
     this.target.indentLevel++;
-    this.addLine(`const ctx = Object.create(${ctxVar});`);
+    this.addLine(`let ctx = Object.create(${ctxVar});`);
     this.addLine(`ctx[\`${ast.elem}\`] = ${keys}[${loopVar}];`);
     if (!ast.hasNoFirst) {
       this.addLine(`ctx[\`${ast.elem}_first\`] = ${loopVar} === 0;`);
@@ -931,6 +926,7 @@ export class CodeGenerator {
     }
     this.target.indentLevel--;
     this.target.loopLevel--;
+    this.target.loopCtxVars.pop();
     this.addLine(`}`);
     this.insertBlock("l", block, ctx);
     return block.varName;
@@ -1005,7 +1001,7 @@ export class CodeGenerator {
     const attrs: string[] = ast.attrs
       ? this.formatPropObject(ast.attrs, ast.attrsTranslationCtx, ctx.translationCtx)
       : [];
-    let ctxVar = ctx.ctxVar || "ctx";
+    let ctxVar = "ctx";
     const isDynamic = INTERP_REGEXP.test(ast.name);
     const subTemplate = isDynamic ? interpolate(ast.name) : "`" + ast.name + "`";
     if (block && !forceNewBlock) {
@@ -1073,9 +1069,10 @@ export class CodeGenerator {
   }
 
   compileTSet(ast: ASTTSet, ctx: Context): null {
-    this.target.shouldProtectScope = true;
-    this.helpers.add("isBoundary").add("withDefault");
+    this.helpers.add("withDefault");
     const expr = ast.value ? compileExpr(ast.value || "") : "null";
+    const isOuterScope = this.target.loopLevel === 0;
+    const isReassignment = !isOuterScope && this.target.tSetVars.has(ast.name);
     if (ast.body) {
       this.helpers.add("LazyValue");
       const bodyAst: AST = { type: ASTType.Multi, content: ast.body };
@@ -1083,7 +1080,16 @@ export class CodeGenerator {
       let key = this.target.currentKey(ctx);
       let value = `new LazyValue(${name}, ctx, this, node, ${key})`;
       value = ast.value ? (value ? `withDefault(${expr}, ${value})` : expr) : value;
-      this.addLine(`ctx[\`${ast.name}\`] = ${value};`);
+      if (isReassignment) {
+        const outerCtxVar = this.target.loopCtxVars[0];
+        this.addLine(`${outerCtxVar}[\`${ast.name}\`] = ${value};`);
+      } else if (isOuterScope) {
+        this.addLine(`ctx = Object.create(ctx);`);
+        this.addLine(`ctx[\`${ast.name}\`] = ${value};`);
+        this.target.tSetVars.add(ast.name);
+      } else {
+        this.addLine(`ctx[\`${ast.name}\`] = ${value};`);
+      }
     } else {
       let value: string;
       if (ast.defaultValue) {
@@ -1098,8 +1104,16 @@ export class CodeGenerator {
       } else {
         value = expr;
       }
-      this.helpers.add("setContextValue");
-      this.addLine(`setContextValue(${ctx.ctxVar || "ctx"}, "${ast.name}", ${value});`);
+      if (isReassignment) {
+        const outerCtxVar = this.target.loopCtxVars[0];
+        this.addLine(`${outerCtxVar}["${ast.name}"] = ${value};`);
+      } else if (isOuterScope) {
+        this.addLine(`ctx = Object.create(ctx);`);
+        this.addLine(`ctx["${ast.name}"] = ${value};`);
+        this.target.tSetVars.add(ast.name);
+      } else {
+        this.addLine(`ctx["${ast.name}"] = ${value};`);
+      }
     }
     return null;
   }
@@ -1183,19 +1197,13 @@ export class CodeGenerator {
     // slots
     let slotDef: string = "";
     if (ast.slots) {
-      let ctxStr = "ctx";
-      if (!this.hasSafeContext) {
-        ctxStr = generateId("ctx");
-        this.helpers.add("capture");
-        this.define(ctxStr, `capture(ctx)`);
-      }
       let slotStr: string[] = [];
       for (let slotName in ast.slots) {
         const slotAst = ast.slots[slotName];
         const params = [];
         if (slotAst.content) {
           const name = this.compileInNewTarget("slot", slotAst.content, ctx, slotAst.on);
-          params.push(`__render: ${name}.bind(this), __ctx: ${ctxStr}`);
+          params.push(`__render: ${name}.bind(this), __ctx: ctx`);
         }
         const scope = ast.slots[slotName].scope;
         if (scope) {
@@ -1380,12 +1388,6 @@ export class CodeGenerator {
 
     let { block } = ctx;
     const name = this.compileInNewTarget("slot", ast.content, ctx);
-    let ctxStr = "ctx";
-    if (!this.hasSafeContext) {
-      ctxStr = generateId("ctx");
-      this.helpers.add("capture");
-      this.define(ctxStr, `capture(ctx)`);
-    }
     let id = generateId("comp");
     this.staticDefs.push({
       id,
@@ -1394,7 +1396,7 @@ export class CodeGenerator {
 
     const target = compileExpr(ast.target);
     const key = this.generateComponentKey();
-    const blockString = `${id}({target: ${target},slots: {'default': {__render: ${name}.bind(this), __ctx: ${ctxStr}}}}, ${key}, node, ctx, Portal)`;
+    const blockString = `${id}({target: ${target},slots: {'default': {__render: ${name}.bind(this), __ctx: ctx}}}, ${key}, node, ctx, Portal)`;
     if (block) {
       this.insertAnchor(block);
     }

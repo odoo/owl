@@ -1056,7 +1056,7 @@ exports[`can catch errors catching error, rethrow, render parent  -- a main comp
     const ctx1 = ctx;
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(Object.values(ctx['this'].state.cps));;
     for (let i1 = 0; i1 < l_block1; i1++) {
-      const ctx = Object.create(ctx1);
+      let ctx = Object.create(ctx1);
       ctx[\`cp\`] = k_block1[i1];
       const key1 = ctx['cp'].id;
       const v1 = ctx['this'];
@@ -1135,7 +1135,7 @@ exports[`can catch errors catching in child makes parent render 1`] = `
     const ctx1 = ctx;
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(Object.entries(ctx['this'].elements));;
     for (let i1 = 0; i1 < l_block1; i1++) {
-      const ctx = Object.create(ctx1);
+      let ctx = Object.create(ctx1);
       ctx[\`elem\`] = k_block1[i1];
       const key1 = ctx['elem'][0];
       const v1 = ctx['this'];

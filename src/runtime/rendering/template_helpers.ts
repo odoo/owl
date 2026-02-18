@@ -44,19 +44,6 @@ function callSlot(
   return slotBDom || text("");
 }
 
-function capture(ctx: any): any {
-  const result = ObjectCreate(ctx);
-  for (let k in ctx) {
-    Object.defineProperty(result, k, {
-      value: ctx[k],
-      writable: true,
-      enumerable: true,
-      configurable: true,
-    });
-  }
-  return result;
-}
-
 function withKey(elem: any, k: string) {
   elem.key = k;
   return elem;
@@ -85,19 +72,6 @@ function prepareList(collection: unknown): [unknown[], unknown[], number, undefi
   return [keys, values, n, new Array(n)];
 }
 
-const isBoundary = Symbol("isBoundary");
-
-function setContextValue(ctx: { [key: string]: any }, key: string, value: any): void {
-  if (!(key in ctx)) {
-    ctx[key] = value;
-  } else {
-    while (!ctx.hasOwnProperty(key) && !ctx.hasOwnProperty(isBoundary)) {
-      ctx = ctx.__proto__;
-    }
-    ctx[key] = value;
-  }
-}
-
 function toNumber(val: string): number | string {
   const n = parseFloat(val);
   return isNaN(n) ? val : n;
@@ -121,7 +95,7 @@ class LazyValue {
 
   constructor(fn: any, ctx: any, component: any, node: any, key: any) {
     this.fn = fn;
-    this.ctx = capture(ctx);
+    this.ctx = ctx;
     this.component = component;
     this.node = node;
     this.key = key;
@@ -200,12 +174,9 @@ function modelExpr(value: any) {
 export const helpers = {
   withDefault,
   zero: Symbol("zero"),
-  isBoundary,
   callSlot,
-  capture,
   withKey,
   prepareList,
-  setContextValue,
   shallowEqual,
   toNumber,
   LazyValue,

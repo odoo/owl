@@ -69,7 +69,7 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
     const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(['someval']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      const ctx = Object.create(ctx1);
+      let ctx = Object.create(ctx1);
       ctx[\`action\`] = k_block2[i1];
       ctx[\`action_index\`] = i1;
       const key1 = ctx['action_index'];
@@ -137,7 +137,7 @@ exports[`t-on handler is bound to proper owner, part 2 1`] = `
     const ctx1 = ctx;
     const [k_block1, v_block1, l_block1, c_block1] = prepareList([1]);;
     for (let i1 = 0; i1 < l_block1; i1++) {
-      const ctx = Object.create(ctx1);
+      let ctx = Object.create(ctx1);
       ctx[\`value\`] = k_block1[i1];
       const key1 = ctx['value'];
       let hdlr1 = [ctx['add'], ctx];
@@ -185,7 +185,7 @@ exports[`t-on handler is bound to proper owner, part 4 1`] = `
     const ctx1 = ctx;
     const [k_block1, v_block1, l_block1, c_block1] = prepareList([1]);;
     for (let i1 = 0; i1 < l_block1; i1++) {
-      const ctx = Object.create(ctx1);
+      let ctx = Object.create(ctx1);
       ctx[\`value\`] = k_block1[i1];
       ctx[\`value_first\`] = i1 === 0;
       ctx[\`value_last\`] = i1 === k_block1.length - 1;
@@ -330,7 +330,7 @@ exports[`t-on t-on modifiers (native listener) t-on with prevent modifier in t-f
     const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['projects']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      const ctx = Object.create(ctx1);
+      let ctx = Object.create(ctx1);
       ctx[\`project\`] = k_block2[i1];
       const key1 = ctx['project'];
       let hdlr1 = ["prevent", _ev=>ctx['onEdit'](ctx['project'].id,_ev), ctx];

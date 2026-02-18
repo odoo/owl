@@ -275,7 +275,7 @@ describe("t-set", () => {
       </div>
     `;
     expect(renderToString(template)).toBe(
-      "<div><p>InLoop: 0</p><p>InLoop: 0</p><p>EndLoop: 0</p></div>"
+      "<div><p>InLoop: 0</p><p>InLoop: 1</p><p>EndLoop: 2</p></div>"
     );
   });
 

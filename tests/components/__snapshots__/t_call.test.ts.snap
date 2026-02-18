@@ -460,7 +460,7 @@ exports[`t-call t-call in t-foreach and children component 1`] = `
     const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(['a','b','c']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
-      const ctx = Object.create(ctx1);
+      let ctx = Object.create(ctx1);
       ctx[\`val\`] = k_block2[i1];
       ctx[\`val_first\`] = i1 === 0;
       ctx[\`val_last\`] = i1 === k_block2.length - 1;
@@ -632,7 +632,7 @@ exports[`t-call t-call-context: ComponentNode is not looked up in the context 2`
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { createRef, isBoundary, withDefault, setContextValue, safeOutput, markRaw } = helpers;
+  let { createRef, withDefault, safeOutput, markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, []);
   
   let block2 = createBlock(\`<div block-ref="0">outside slot</div>\`);
@@ -640,11 +640,10 @@ exports[`t-call t-call-context: ComponentNode is not looked up in the context 2`
   let block5 = createBlock(\`<div><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
     let ref2 = createRef(ctx['this'].myRef2);
     const b4 = block4([ref2]);
-    setContextValue(ctx, "test", 3);
+    ctx = Object.create(ctx);
+    ctx["test"] = 3;
     const b6 = safeOutput(ctx['test']);
     const b5 = block5([], [b6]);
     return multi([b4, b5]);
@@ -688,7 +687,7 @@ exports[`t-call t-call-context: slots don't make component available again when 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, capture, safeOutput, markRaw } = helpers;
+  let { withDefault, safeOutput, markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, []);
   
   function slot1(ctx, node, key = "") {
@@ -697,10 +696,8 @@ exports[`t-call t-call-context: slots don't make component available again when 
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    setContextValue(ctx, "dummy", 0);
-    const ctx1 = capture(ctx);
-    const props1 = {slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})};
+    ctx["dummy"] = 0;
+    const props1 = {slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})};
     return comp1(props1, key + \`__1\`, node, this, null);
   }
 }"
@@ -747,15 +744,14 @@ exports[`t-call t-set inside t-call are not evaluated before being rendered 1`] 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput, isBoundary, withDefault, setContextValue, zero } = helpers;
+  let { safeOutput, withDefault, zero } = helpers;
   const callTemplate_1 = app.getTemplate(\`a\`);
   
   function callBody1(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
     const b3 = safeOutput(ctx['v']);
     const b4 = text(\` coucou \`);
-    setContextValue(ctx, "v", ctx['this'].f());
+    ctx = Object.create(ctx);
+    ctx["v"] = ctx['this'].f();
     const b5 = safeOutput(ctx['v']);
     return multi([b3, b4, b5]);
   }

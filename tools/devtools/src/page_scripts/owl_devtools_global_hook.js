@@ -310,7 +310,7 @@
             // A render on a RootFiber is a root render and can propagate other renders to its children
             if (this instanceof self.RootFiber) {
               self.eventsBatch.push({
-                type: this.deep ? "render (deep)" : "render",
+                type: "render",
                 component: this.node.name,
                 key: this.node.parentKey ? this.node.parentKey : "",
                 path: path,
@@ -1570,7 +1570,7 @@
             component.root.render();
           }
         } else if (objectType === "env") {
-          [...this.apps][path[0]].root.render(true);
+          [...this.apps][path[0]].root.render();
         }
       }
     }

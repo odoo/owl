@@ -218,7 +218,7 @@ export class App extends TemplateSet {
       }
       const parentFiber = ctx.fiber!;
       if (node) {
-        if (arePropsDifferent(node.props, props) || parentFiber.deep || node.forceNextRender) {
+        if (arePropsDifferent(node.props, props) || node.forceNextRender) {
           node.forceNextRender = false;
           updateAndRender.call(node, props, parentFiber);
         }

@@ -52,7 +52,7 @@ exports[`t-set slots with a t-set with a component in body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { capture, isBoundary, withDefault, LazyValue, safeOutput, markRaw } = helpers;
+  let { isBoundary, withDefault, LazyValue, safeOutput, markRaw } = helpers;
   const comp1 = app.createComponent(\`C\`, true, false, false, []);
   const comp2 = app.createComponent(\`Child\`, true, true, false, []);
   
@@ -70,8 +70,7 @@ exports[`t-set slots with a t-set with a component in body 1`] = `
   }
   
   return function template(ctx, node, key = "") {
-    const ctx1 = capture(ctx);
-    return comp2({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__2\`, node, this, null);
+    return comp2({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__2\`, node, this, null);
   }
 }"
 `;
@@ -105,7 +104,7 @@ exports[`t-set slots with an t-set with a component in body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { capture, isBoundary, withDefault, LazyValue, safeOutput, markRaw } = helpers;
+  let { isBoundary, withDefault, LazyValue, safeOutput, markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   const comp2 = app.createComponent(\`Blorg\`, true, true, false, []);
   
@@ -127,8 +126,7 @@ exports[`t-set slots with an t-set with a component in body 1`] = `
   }
   
   return function template(ctx, node, key = "") {
-    const ctx1 = capture(ctx);
-    return comp2({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__2\`, node, this, null);
+    return comp2({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__2\`, node, this, null);
   }
 }"
 `;
@@ -162,7 +160,7 @@ exports[`t-set slots with an unused t-set with a component in body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { capture, isBoundary, withDefault, LazyValue, markRaw } = helpers;
+  let { isBoundary, withDefault, LazyValue, markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   const comp2 = app.createComponent(\`Child\`, true, true, false, []);
   
@@ -178,8 +176,7 @@ exports[`t-set slots with an unused t-set with a component in body 1`] = `
   }
   
   return function template(ctx, node, key = "") {
-    const ctx1 = capture(ctx);
-    return comp2({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__2\`, node, this, null);
+    return comp2({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__2\`, node, this, null);
   }
 }"
 `;

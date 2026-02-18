@@ -1184,7 +1184,7 @@ export class CodeGenerator {
     let slotDef: string = "";
     if (ast.slots) {
       let ctxStr = "ctx";
-      if (this.target.loopLevel || !this.hasSafeContext) {
+      if (!this.hasSafeContext) {
         ctxStr = generateId("ctx");
         this.helpers.add("capture");
         this.define(ctxStr, `capture(ctx)`);
@@ -1381,7 +1381,7 @@ export class CodeGenerator {
     let { block } = ctx;
     const name = this.compileInNewTarget("slot", ast.content, ctx);
     let ctxStr = "ctx";
-    if (this.target.loopLevel || !this.hasSafeContext) {
+    if (!this.hasSafeContext) {
       ctxStr = generateId("ctx");
       this.helpers.add("capture");
       this.define(ctxStr, `capture(ctx)`);

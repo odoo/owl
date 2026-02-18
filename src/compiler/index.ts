@@ -1,7 +1,8 @@
 import type { TemplateSet } from "../runtime/template_set";
 import type { BDom } from "../runtime/blockdom";
 import { CodeGenerator, Config } from "./code_generator";
-import { parse } from "./parser";
+import { parse, ASTType } from "./parser";
+import type { AST } from "./parser";
 import { OwlError } from "../common/owl_error";
 
 export type CustomDirectives = Record<
@@ -18,6 +19,38 @@ interface CompileOptions extends Config {
   customDirectives?: CustomDirectives;
   hasGlobalValues: boolean;
 }
+function hasDirectTSet(ast: AST | AST[] | null | undefined): boolean {
+  if (!ast) return false;
+  if (Array.isArray(ast)) return ast.some(hasDirectTSet);
+  switch (ast.type) {
+    case ASTType.TSet:
+      return true;
+    case ASTType.TComponent:
+    case ASTType.TCall:
+    case ASTType.TPortal:
+      return false; // content compiled as separate functions
+    case ASTType.DomNode:
+    case ASTType.Multi:
+      return hasDirectTSet((ast as any).content);
+    case ASTType.TIf:
+      return (
+        hasDirectTSet(ast.content) ||
+        !!(ast.tElif?.some((e) => hasDirectTSet(e.content))) ||
+        hasDirectTSet(ast.tElse)
+      );
+    case ASTType.TForEach:
+      return hasDirectTSet(ast.body);
+    case ASTType.TKey:
+    case ASTType.TDebug:
+    case ASTType.TLog:
+    case ASTType.TTranslation:
+    case ASTType.TTranslationContext:
+      return hasDirectTSet((ast as any).content);
+    default:
+      return false;
+  }
+}
+
 export function compile(
   template: string | Element,
   options: CompileOptions = {
@@ -28,10 +61,7 @@ export function compile(
   const ast = parse(template, options.customDirectives);
 
   // some work
-  const hasSafeContext =
-    template instanceof Node
-      ? !(template instanceof Element) || template.querySelector("[t-set], [t-call]") === null
-      : !template.includes("t-set=") && !template.includes("t-call=");
+  const hasSafeContext = !hasDirectTSet(ast);
 
   // code generation
   const codeGenerator = new CodeGenerator(ast, { ...options, hasSafeContext });

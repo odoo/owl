@@ -1043,7 +1043,7 @@ exports[`can catch errors catching error, rethrow, render parent  -- a main comp
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, capture, markRaw, withKey } = helpers;
+  let { prepareList, markRaw, withKey } = helpers;
   const comp1 = app.createComponent(null, false, false, false, []);
   const comp2 = app.createComponent(\`ErrorHandler\`, true, true, false, ["onError"]);
   
@@ -1061,8 +1061,7 @@ exports[`can catch errors catching error, rethrow, render parent  -- a main comp
       const key1 = ctx['cp'].id;
       const v1 = ctx['this'];
       const v2 = ctx['cp'];
-      const ctx2 = capture(ctx);
-      c_block1[i1] = withKey(comp2({onError: ()=>v1.cleanUp(v2.id),slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx2}})}, key + \`__2__\${key1}\`, node, this, null), key1);
+      c_block1[i1] = withKey(comp2({onError: ()=>v1.cleanUp(v2.id),slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__2__\${key1}\`, node, this, null), key1);
     }
     return list(c_block1);
   }
@@ -1123,7 +1122,7 @@ exports[`can catch errors catching in child makes parent render 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, capture, markRaw, withKey } = helpers;
+  let { prepareList, markRaw, withKey } = helpers;
   const comp1 = app.createComponent(null, false, false, false, ["id"]);
   const comp2 = app.createComponent(\`Catch\`, true, true, false, ["onError"]);
   
@@ -1141,8 +1140,7 @@ exports[`can catch errors catching in child makes parent render 1`] = `
       const key1 = ctx['elem'][0];
       const v1 = ctx['this'];
       const v2 = ctx['elem'];
-      const ctx2 = capture(ctx);
-      c_block1[i1] = withKey(comp2({onError: (_error)=>v1.onError(v2[0],_error),slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx2}})}, key + \`__2__\${key1}\`, node, this, null), key1);
+      c_block1[i1] = withKey(comp2({onError: (_error)=>v1.onError(v2[0],_error),slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__2__\${key1}\`, node, this, null), key1);
     }
     return list(c_block1);
   }

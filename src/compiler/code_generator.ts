@@ -574,7 +574,30 @@ export class CodeGenerator {
     if (modifiers.length) {
       modifiersCode = `${modifiers.join(",")}, `;
     }
-    return `[${modifiersCode}${compileExpr(handler)}, ctx]`;
+
+    const compiled = compileExpr(handler);
+    if (!compiled.trim()) {
+      return `[${modifiersCode}, ctx]`;
+    }
+
+    let hoistedExpr: string;
+    const arrowMatch = compiled.match(/^(\([^)]*\))\s*=>/);
+    const bareArrowMatch = !arrowMatch && compiled.match(/^([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=>/);
+
+    if (arrowMatch) {
+      const inner = arrowMatch[1].slice(1, -1).trim();
+      const rest = compiled.slice(arrowMatch[0].length);
+      hoistedExpr = inner ? `(ctx,${inner})=>${rest}` : `(ctx)=>${rest}`;
+    } else if (bareArrowMatch) {
+      const rest = compiled.slice(bareArrowMatch[0].length);
+      hoistedExpr = `(ctx,${bareArrowMatch[1]})=>${rest}`;
+    } else {
+      hoistedExpr = `(ctx, ev) => (${compiled}).call(ctx['this'], ev)`;
+    }
+
+    const id = generateId("hdlr_fn");
+    this.staticDefs.push({ id, expr: hoistedExpr });
+    return `[${modifiersCode}${id}, ctx]`;
   }
 
   compileTDomNode(ast: ASTDomNode, ctx: Context): string {
@@ -687,7 +710,7 @@ export class CodeGenerator {
       valueCode = shouldTrim ? `${valueCode}.trim()` : valueCode;
       valueCode = shouldNumberize ? `toNumber(${valueCode})` : valueCode;
 
-      const handler = `[(ev) => { ${exprId}.set(${valueCode}); }]`;
+      const handler = `[(ctx, ev) => { ${exprId}.set(${valueCode}); }, ctx]`;
       idx = block!.insertData(handler, "hdlr");
       attrs[`block-handler-${idx}`] = eventType;
     }

@@ -180,6 +180,17 @@ exports[`misc other complex template 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput, prepareList, withKey, createRef } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['selectProject'](ctx['project'])).call(ctx['this'], ev);
+  const hdlr_fn2 = (ctx, ev) => (ctx['toggleSettingsMenu']).call(ctx['this'], ev);
+  const hdlr_fn3 = (ctx, ev) => (ctx['toggleMore']).call(ctx['this'], ev);
+  const hdlr_fn4 = (ctx, ev) => (ctx['updateFilter']).call(ctx['this'], ev);
+  const hdlr_fn5 = (ctx, ev) => (ctx['updateFilter']).call(ctx['this'], ev);
+  const hdlr_fn6 = (ctx, ev) => (ctx['clearSearch']).call(ctx['this'], ev);
+  const hdlr_fn7 = (ctx, ev) => (ctx['updateTriggerDisplay']).call(ctx['this'], ev);
+  const hdlr_fn8 = (ctx, ev) => (ctx['triggerAll']).call(ctx['this'], ev);
+  const hdlr_fn9 = (ctx, ev) => (ctx['triggerNone']).call(ctx['this'], ev);
+  const hdlr_fn10 = (ctx, ev) => (ctx['triggerDefault']).call(ctx['this'], ev);
+  const hdlr_fn11 = (ctx, ev) => (ctx['toggleSettingsMenu']).call(ctx['this'], ev);
   const callTemplate_1 = app.getTemplate(\`LOAD_INFOS_TEMPLATE\`);
   const comp1 = app.createComponent(\`BundlesList\`, true, false, false, ["bundles","category_custom_views","search"]);
   const comp2 = app.createComponent(\`BundlesList\`, true, false, false, ["bundles","search"]);
@@ -223,7 +234,7 @@ exports[`misc other complex template 1`] = `
       let ctx = Object.create(ctx1);
       ctx[\`project\`] = k_block3[i1];
       const key1 = ctx['project'].id;
-      let hdlr1 = [ctx['selectProject'](ctx['project']), ctx];
+      let hdlr1 = [hdlr_fn1, ctx];
       const b5 = safeOutput(ctx['project'].name);
       c_block3[i1] = withKey(block4([hdlr1], [b5]), key1);
     }
@@ -254,8 +265,8 @@ exports[`misc other complex template 1`] = `
       }
       b6 = multi([b7, b8]);
     }
-    let hdlr2 = [ctx['toggleSettingsMenu'], ctx];
-    let hdlr3 = [ctx['toggleMore'], ctx];
+    let hdlr2 = [hdlr_fn2, ctx];
+    let hdlr3 = [hdlr_fn3, ctx];
     if (ctx['categories']&&ctx['categories'].length>1) {
       const ctx2 = ctx;
       const [k_block19, v_block19, l_block19, c_block19] = prepareList(ctx['categories']);;
@@ -272,10 +283,10 @@ exports[`misc other complex template 1`] = `
       b18 = block18([], [b19]);
     }
     let prop2 = new String((ctx['search'].value) === 0 ? 0 : ((ctx['search'].value) || ""));
-    let hdlr4 = [ctx['updateFilter'], ctx];
-    let hdlr5 = [ctx['updateFilter'], ctx];
+    let hdlr4 = [hdlr_fn4, ctx];
+    let hdlr5 = [hdlr_fn5, ctx];
     let ref1 = createRef(ctx['search_input']);
-    let hdlr6 = [ctx['clearSearch'], ctx];
+    let hdlr6 = [hdlr_fn6, ctx];
     let ref2 = createRef(ctx['settings_menu']);
     if (ctx['triggers']) {
       const ctx3 = ctx;
@@ -290,7 +301,7 @@ exports[`misc other complex template 1`] = `
           let attr8 = \`trigger_\${ctx['trigger'].id}\`;
           let prop3 = new Boolean(ctx['options'].trigger_display[ctx['trigger'].id]);
           let attr9 = ctx['trigger'].id;
-          let hdlr7 = [ctx['updateTriggerDisplay'], ctx];
+          let hdlr7 = [hdlr_fn7, ctx];
           let attr10 = \`trigger_\${ctx['trigger'].id}\`;
           const b26 = safeOutput(ctx['trigger'].name);
           b25 = block25([attr7, attr8, prop3, attr9, hdlr7, attr10], [b26]);
@@ -298,10 +309,10 @@ exports[`misc other complex template 1`] = `
         c_block23[i1] = withKey(multi([b25]), key1);
       }
       const b23 = list(c_block23);
-      let hdlr8 = [ctx['triggerAll'], ctx];
-      let hdlr9 = [ctx['triggerNone'], ctx];
-      let hdlr10 = [ctx['triggerDefault'], ctx];
-      let hdlr11 = [ctx['toggleSettingsMenu'], ctx];
+      let hdlr8 = [hdlr_fn8, ctx];
+      let hdlr9 = [hdlr_fn9, ctx];
+      let hdlr10 = [hdlr_fn10, ctx];
+      let hdlr11 = [hdlr_fn11, ctx];
       const b27 = block27([hdlr8, hdlr9, hdlr10, hdlr11]);
       b22 = multi([b23, b27]);
     }

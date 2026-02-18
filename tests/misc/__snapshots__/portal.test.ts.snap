@@ -236,11 +236,12 @@ exports[`Portal Portal composed with t-slot 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].onCustom).call(ctx['this'], ev);
   
   let block1 = createBlock(\`<div block-handler-0="custom"><span id="childSpan">child2</span></div>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['this'].onCustom, ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     return block1([hdlr1]);
   }
 }"

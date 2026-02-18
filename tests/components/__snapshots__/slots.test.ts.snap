@@ -739,11 +739,12 @@ exports[`slots dynamic t-call-slot call 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].toggle).call(ctx['this'], ev);
   
   let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['this'].toggle, ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     const slot1 = (ctx['this'].current.slot);
     const b2 = toggler(slot1, callSlot(ctx, node, key + \`__1\`, slot1, true, {}));
     return block1([hdlr1], [b2]);
@@ -785,6 +786,7 @@ exports[`slots dynamic t-call-slot call with default 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].toggle).call(ctx['this'], ev);
   
   let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
@@ -793,7 +795,7 @@ exports[`slots dynamic t-call-slot call with default 2`] = `
   }
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['this'].toggle, ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     const b3 = callSlot(ctx, node, key + \`__1\`, (ctx['this'].current.slot), true, {}, defaultContent1.bind(this));
     return block1([hdlr1], [b3]);
   }
@@ -878,12 +880,13 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].inc).call(ctx['this'], ev);
   const comp1 = app.createComponent(\`A\`, true, false, false, ["number"]);
   
   let block2 = createBlock(\`<button block-handler-0="click">inc</button>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['this'].inc, ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     const b2 = block2([hdlr1]);
     const b3 = comp1({number: ctx['this'].state.number}, key + \`__1\`, node, this, null);
     return multi([b2, b3]);
@@ -1850,6 +1853,7 @@ exports[`slots slot are properly rendered if inner props are changed 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput, markRaw } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].inc).call(ctx['this'], ev);
   const comp1 = app.createComponent(\`SomeComponent\`, true, false, false, ["val"]);
   const comp2 = app.createComponent(\`GenericComponent\`, true, true, false, []);
   
@@ -1860,7 +1864,7 @@ exports[`slots slot are properly rendered if inner props are changed 1`] = `
   }
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['this'].inc, ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     const b2 = safeOutput(ctx['this'].state.val);
     const b4 = comp2({slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__2\`, node, this, null);
     return block1([hdlr1], [b2, b4]);
@@ -2000,6 +2004,7 @@ exports[`slots slot content is bound to caller (variation) 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { withDefault, markRaw } = helpers;
+  const hdlr_fn1 = (ctx)=>ctx['this'].inc();
   const comp1 = app.createComponent(\`Child\`, true, true, false, []);
   
   let block1 = createBlock(\`<button block-handler-0="click">some text</button>\`);
@@ -2007,7 +2012,7 @@ exports[`slots slot content is bound to caller (variation) 1`] = `
   function slot1(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx["var"] = 1;
-    let hdlr1 = [()=>ctx['this'].inc(), ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     return block1([hdlr1]);
   }
   
@@ -2037,12 +2042,13 @@ exports[`slots slot content is bound to caller 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { markRaw } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].inc).call(ctx['this'], ev);
   const comp1 = app.createComponent(\`Child\`, true, true, false, []);
   
   let block1 = createBlock(\`<button block-handler-0="click">some text</button>\`);
   
   function slot1(ctx, node, key = "") {
-    let hdlr1 = [ctx['this'].inc, ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     return block1([hdlr1]);
   }
   
@@ -2368,13 +2374,14 @@ exports[`slots slots are properly bound to correct component 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot, withDefault, safeOutput } = helpers;
+  const hdlr_fn1 = (ctx)=>ctx['this'].increment();
   
   let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
   function defaultContent1(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx["var"] = 1;
-    let hdlr1 = [()=>ctx['this'].increment(), ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     const b2 = safeOutput(ctx['this'].state.value);
     return block1([hdlr1], [b2]);
   }
@@ -2390,13 +2397,14 @@ exports[`slots slots are rendered with proper context 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput, markRaw } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].doSomething).call(ctx['this'], ev);
   const comp1 = app.createComponent(\`Dialog\`, true, true, false, []);
   
   let block1 = createBlock(\`<div><span class="counter"><block-child-0/></span><block-child-1/></div>\`);
   let block3 = createBlock(\`<button block-handler-0="click">do something</button>\`);
   
   function slot1(ctx, node, key = "") {
-    let hdlr1 = [ctx['this'].doSomething, ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     return block3([hdlr1]);
   }
   
@@ -3033,12 +3041,13 @@ exports[`slots t-slot scope context 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { callSlot, markRaw } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].onClick).call(ctx['this'], ev);
   const comp1 = app.createComponent(\`Wrapper\`, true, true, false, []);
   
   let block1 = createBlock(\`<div block-handler-0="click"><block-child-0/></div>\`);
   
   function slot1(ctx, node, key = "") {
-    let hdlr1 = [ctx['this'].onClick, ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     const b2 = callSlot(ctx, node, key, 'default', false, {});
     return block1([hdlr1], [b2]);
   }

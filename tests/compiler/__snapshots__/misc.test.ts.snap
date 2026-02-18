@@ -109,14 +109,11 @@ exports[`misc global 1`] = `
       const key1 = ctx['value'];
       const b5 = safeOutput(ctx['value']);
       const b4 = block4([], [b5]);
-      const ctx2 = ctx
       ctx = Object.create(ctx);
       ctx[isBoundary] = 1;
-      const ctx3 = ctx
       ctx = Object.create(ctx);
       ctx[isBoundary] = 1;
       setContextValue(ctx, "foo", 'aaa');
-      ctx = ctx3
       const b8 = callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}\`);
       ctx = ctx.__proto__;
       const b9 = callTemplate_2.call(this, ctx, node, key + \`__2__\${key1}\`);
@@ -124,7 +121,6 @@ exports[`misc global 1`] = `
       const b10 = callTemplate_3.call(this, ctx, node, key + \`__3__\${key1}\`);
       const b7 = multi([b8, b9, b10]);
       ctx[zero] = () => b7;
-      ctx = ctx2
       const b6 = callTemplate_4.call(this, ctx, node, key + \`__4__\${key1}\`);
       ctx = ctx.__proto__;
       c_block2[i1] = withKey(multi([b4, b6]), key1);

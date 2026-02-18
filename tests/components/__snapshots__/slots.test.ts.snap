@@ -924,11 +924,9 @@ exports[`slots mix of slots, t-call, t-call with body, and giving own props chil
     ctx[isBoundary] = 1
     const b2 = text(\`[sub1] \`);
     setContextValue(ctx, "dummy", ctx['this'].validate);
-    const ctx1 = ctx
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
     setContextValue(ctx, "v", ctx['this'].props.number);
-    ctx = ctx1
     const b3 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     return multi([b2, b3]);
   }
@@ -2920,12 +2918,10 @@ exports[`slots t-slot in recursive templates 1`] = `
       if (!ctx['item'].children.length) {
         b5 = safeOutput(ctx['item'].name);
       } else {
-        const ctx3 = ctx
         ctx = Object.create(ctx);
         ctx[isBoundary] = 1;
         setContextValue(ctx, "name", ctx['item'].name);
         setContextValue(ctx, "items", ctx['item'].children);
-        ctx = ctx3
         b6 = callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}\`);
         ctx = ctx.__proto__;
       }

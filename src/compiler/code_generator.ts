@@ -866,7 +866,6 @@ export class CodeGenerator {
     const ctxVar = generateId("ctx");
     this.addLine(`const ${ctxVar} = ctx;`);
     ctx.ctxVar = ctxVar
-    // this.addLine(`ctx = Object.create(ctx);`);
     const vals = `v_block${block.id}`;
     const keys = `k_block${block.id}`;
     const l = `l_block${block.id}`;
@@ -933,9 +932,6 @@ export class CodeGenerator {
     this.target.indentLevel--;
     this.target.loopLevel--;
     this.addLine(`}`);
-    // if (!ctx.isLast) {
-      // this.addLine(`ctx = ${ctxVar};`);
-    // }
     this.insertBlock("l", block, ctx);
     return block.varName;
   }
@@ -1010,7 +1006,6 @@ export class CodeGenerator {
       ? this.formatPropObject(ast.attrs, ast.attrsTranslationCtx, ctx.translationCtx)
       : [];
     let ctxVar = ctx.ctxVar || "ctx";
-    let subCtxVar = generateId("ctx");
     const isDynamic = INTERP_REGEXP.test(ast.name);
     const subTemplate = isDynamic ? interpolate(ast.name) : "`" + ast.name + "`";
     if (block && !forceNewBlock) {
@@ -1028,7 +1023,6 @@ export class CodeGenerator {
         this.helpers.add("zero");
         attrs.push(`[zero]: ${zeroStr}`);
       } else {
-        this.addLine(`const ${subCtxVar} = ${ctxVar}`);
         this.addLine(`${ctxVar} = Object.create(${ctxVar});`);
         this.addLine(`${ctxVar}[isBoundary] = 1;`);
         this.helpers.add("isBoundary");
@@ -1038,7 +1032,6 @@ export class CodeGenerator {
           this.helpers.add("zero");
           this.addLine(`${ctxVar}[zero] = () => ${bl};`);
         }
-        this.addLine(`${ctxVar} = ${subCtxVar}`);
       }
     }
 

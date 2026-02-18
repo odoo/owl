@@ -313,11 +313,9 @@ exports[`t-set t-set can't alter in t-call body 1`] = `
     ctx[isBoundary] = 1
     setContextValue(ctx, "iter", 'source');
     const b2 = safeOutput(ctx['iter']);
-    const ctx1 = ctx
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
     setContextValue(ctx, "iter", 'inCall');
-    ctx = ctx1
     const b3 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
     ctx = ctx.__proto__;
     const b4 = safeOutput(ctx['iter']);

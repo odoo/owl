@@ -240,9 +240,7 @@ describe("t-foreach", () => {
         <div>
           <t t-foreach="numbers" t-as="a" t-key="a">
             <t t-foreach="letters" t-as="b"  t-key="b">
-              <t t-call="sub" >
-                <t t-set="c" t-value="'x' + '_' + a + '_'+ b" />
-              </t>
+              <t t-call="sub" c="'x' + '_' + a + '_'+ b" />
             </t>
             <span t-out="c"/>
           </t>

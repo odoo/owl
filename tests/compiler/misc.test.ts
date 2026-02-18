@@ -23,8 +23,7 @@ describe("misc", () => {
           <t t-foreach="[4,5,6]" t-as="value" t-key="value">
             <span t-out="value"/>
             <t t-call="_callee-asc">
-              <t t-call="_callee-uses-foo">
-                  <t t-set="foo" t-value="'aaa'"/>
+              <t t-call="_callee-uses-foo" foo="'aaa'">
               </t>
               <t t-call="_callee-uses-foo"/>
               <t t-set="foo" t-value="'bbb'"/>

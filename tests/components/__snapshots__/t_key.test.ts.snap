@@ -10,9 +10,10 @@ exports[`t-key t-foreach with t-key switch component position 1`] = `
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].clist);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      let ctx = Object.create(ctx1);
       ctx[\`c\`] = k_block2[i1];
       const key1 = ctx['c'];
       const tKey_1 = ctx['this'].key1;
@@ -136,24 +137,14 @@ exports[`t-key t-key on multiple Components with t-call 1 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
   const callTemplate_1 = app.getTemplate(\`calledTemplate\`);
   const callTemplate_2 = app.getTemplate(\`calledTemplate\`);
   
   let block1 = createBlock(\`<span><block-child-0/><block-child-1/></span>\`);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1;
-    setContextValue(ctx, "key", ctx['this'].key1);
-    const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
-    ctx = ctx.__proto__;
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1;
-    setContextValue(ctx, "key", ctx['this'].key2);
-    const b3 = callTemplate_2.call(this, ctx, node, key + \`__2\`);
+    const b2 = callTemplate_1.call(this, Object.assign(Object.create(ctx), {key: ctx['this'].key1}), node, key + \`__1\`);
+    const b3 = callTemplate_2.call(this, Object.assign(Object.create(ctx), {key: ctx['this'].key2}), node, key + \`__2\`);
     return block1([], [b2, b3]);
   }
 }"
@@ -191,19 +182,12 @@ exports[`t-key t-key on multiple Components with t-call 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
   const callTemplate_1 = app.getTemplate(\`calledTemplate\`);
   
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1;
-    setContextValue(ctx, "key1", ctx['this'].key1);
-    setContextValue(ctx, "key2", ctx['this'].key2);
-    const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    const b2 = callTemplate_1.call(this, Object.assign(Object.create(ctx), {'key1': ctx['this'].key1, 'key2': ctx['this'].key2}), node, key + \`__1\`);
     return block1([], [b2]);
   }
 }"

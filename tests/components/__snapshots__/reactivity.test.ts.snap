@@ -119,14 +119,13 @@ exports[`reactivity in lifecycle can use a state hook 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    setContextValue(ctx, "noop", ctx['this'].notify());
+    ctx["noop"] = ctx['this'].notify();
     const b2 = safeOutput(ctx['this'].state.a);
     return block1([], [b2]);
   }
@@ -152,14 +151,13 @@ exports[`reactivity in lifecycle change state while mounting component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    setContextValue(ctx, "noop", ctx['this'].notify());
+    ctx["noop"] = ctx['this'].notify();
     const b2 = safeOutput(ctx['this'].state.val);
     return block1([], [b2]);
   }
@@ -188,14 +186,13 @@ exports[`reactivity in lifecycle state changes in willUnmount do not trigger rer
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<span><block-child-0/><block-child-1/></span>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    setContextValue(ctx, "noop", ctx['this'].notify());
+    ctx["noop"] = ctx['this'].notify();
     const b2 = safeOutput(ctx['this'].props.val);
     const b3 = safeOutput(ctx['this'].state.n);
     return block1([], [b2, b3]);

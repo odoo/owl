@@ -200,9 +200,10 @@ exports[`t-model directive in a t-foreach 1`] = `
   let block3 = createBlock(\`<input type="checkbox" block-property-0="checked" block-handler-1="input"/>\`);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].things);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`thing\`] = k_block2[i1];
       const key1 = ctx['thing'].id;
       const expr1 = modelExpr(ctx['thing'].f);
@@ -226,9 +227,10 @@ exports[`t-model directive in a t-foreach, part 2 1`] = `
   let block3 = createBlock(\`<input block-property-0="value" block-handler-1="input"/>\`);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].things);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`thing\`] = k_block2[i1];
       ctx[\`thing_index\`] = i1;
       const key1 = ctx['thing_index'];
@@ -253,9 +255,10 @@ exports[`t-model directive in a t-foreach, part 3 1`] = `
   let block3 = createBlock(\`<input block-property-0="value" block-handler-1="input"/>\`);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].names);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`name\`] = k_block2[i1];
       ctx[\`name_index\`] = i1;
       const key1 = ctx['name_index'];
@@ -473,9 +476,10 @@ exports[`t-model directive t-model with dynamic number values on select options 
     const expr1 = modelExpr(ctx['this'].value);
     const bValue1 = expr1();
     let hdlr1 = [(ev) => { expr1.set(toNumber(ev.target.value)); }];
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].options);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`o\`] = k_block2[i1];
       const key1 = ctx['o'].value;
       let attr1 = ctx['o'].value;
@@ -570,9 +574,10 @@ exports[`t-model directive t-model with dynamic values on select options in fore
     const expr1 = modelExpr(ctx['this'].model);
     const bValue1 = expr1();
     let hdlr1 = [(ev) => { expr1.set(ev.target.value); }];
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].options);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`v\`] = k_block2[i1];
       const key1 = ctx['v'];
       let attr1 = ctx['v'];
@@ -597,9 +602,10 @@ exports[`t-model directive t-model with radio button group in t-foreach 1`] = `
   
   return function template(ctx, node, key = "") {
     let hdlr1 = [ctx['this'].getData, ctx];
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].options);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`opt\`] = k_block2[i1];
       const key1 = ctx['opt'];
       let prop1 = new String((ctx['opt']) === 0 ? 0 : ((ctx['opt']) || ""));

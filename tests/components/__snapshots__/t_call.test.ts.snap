@@ -161,8 +161,7 @@ exports[`t-call handlers are properly bound through a dynamic t-call 2`] = `
   let block1 = createBlock(\`<p block-handler-0="click">lucas</p>\`);
   
   return function template(ctx, node, key = "") {
-    const v1 = ctx['this'];
-    let hdlr1 = [()=>v1.update(), ctx];
+    let hdlr1 = [()=>ctx['this'].update(), ctx];
     return block1([hdlr1]);
   }
 }"
@@ -222,8 +221,7 @@ exports[`t-call handlers with arguments are properly bound through a t-call 2`] 
   let block1 = createBlock(\`<p block-handler-0="click">lucas</p>\`);
   
   return function template(ctx, node, key = "") {
-    const v1 = ctx['this'];
-    let hdlr1 = [()=>v1.update(v1.a), ctx];
+    let hdlr1 = [()=>ctx['this'].update(ctx['this'].a), ctx];
     return block1([hdlr1]);
   }
 }"
@@ -439,9 +437,10 @@ exports[`t-call t-call in t-foreach and children component 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(['a','b','c']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`val\`] = k_block2[i1];
       ctx[\`val_first\`] = i1 === 0;
       ctx[\`val_last\`] = i1 === k_block2.length - 1;

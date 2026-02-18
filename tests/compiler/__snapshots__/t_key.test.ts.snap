@@ -58,9 +58,10 @@ exports[`t-key t-key directive in a list 1`] = `
   let block3 = createBlock(\`<li><block-child-0/></li>\`);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['beers']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`beer\`] = k_block2[i1];
       const key1 = ctx['beer'].id;
       const b4 = safeOutput(ctx['beer'].name);

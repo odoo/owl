@@ -265,14 +265,14 @@ exports[`Reactivity: proxy useless atoms should be deleted 1`] = `
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
     setContextValue(ctx, "noop", ctx['this'].notify());
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(Object.keys(ctx['this'].state));;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`id\`] = k_block2[i1];
       const key1 = ctx['id'];
       c_block2[i1] = withKey(comp1({id: ctx['id']}, key + \`__1__\${key1}\`, node, this, null), key1);
     }
-    ctx = ctx.__proto__;
     const b2 = list(c_block2);
     const b4 = safeOutput(ctx['this'].total);
     const b5 = safeOutput(Object.keys(ctx['this'].state).length);

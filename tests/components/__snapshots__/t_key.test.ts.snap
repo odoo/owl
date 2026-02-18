@@ -10,9 +10,10 @@ exports[`t-key t-foreach with t-key switch component position 1`] = `
   let block1 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].clist);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`c\`] = k_block2[i1];
       const key1 = ctx['c'];
       const tKey_1 = ctx['this'].key1;

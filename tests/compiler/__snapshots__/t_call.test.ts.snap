@@ -435,9 +435,10 @@ exports[`t-call (template calling) recursive template, part 2 2`] = `
   
   return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['node'].val);
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block3, v_block3, l_block3, c_block3] = prepareList(ctx['node'].children||[]);;
     for (let i1 = 0; i1 < l_block3; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`subtree\`] = k_block3[i1];
       ctx[\`subtree_first\`] = i1 === 0;
       ctx[\`subtree_last\`] = i1 === k_block3.length - 1;
@@ -478,9 +479,10 @@ exports[`t-call (template calling) recursive template, part 3 2`] = `
   
   return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['node'].val);
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block3, v_block3, l_block3, c_block3] = prepareList(ctx['node'].children||[]);;
     for (let i1 = 0; i1 < l_block3; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`subtree\`] = k_block3[i1];
       ctx[\`subtree_first\`] = i1 === 0;
       ctx[\`subtree_last\`] = i1 === k_block3.length - 1;
@@ -525,9 +527,10 @@ exports[`t-call (template calling) recursive template, part 4: with t-set recurs
     setContextValue(ctx, "recursive_idx", ctx['recursive_idx']+1);
     const b2 = safeOutput(ctx['node'].val);
     const b3 = safeOutput(ctx['recursive_idx']);
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['node'].children||[]);;
     for (let i1 = 0; i1 < l_block4; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`subtree\`] = k_block4[i1];
       ctx[\`subtree_first\`] = i1 === 0;
       ctx[\`subtree_last\`] = i1 === k_block4.length - 1;
@@ -552,14 +555,14 @@ exports[`t-call (template calling) root t-call with body: t-foreach 1`] = `
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1;
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList([1]);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`i\`] = k_block2[i1];
       const key1 = ctx['i'];
       c_block2[i1] = withKey(text(\`1\`), key1);
     }
-    ctx = ctx.__proto__;
     const b2 = list(c_block2);
     ctx[zero] = () => b2;
     return callTemplate_1.call(this, ctx, node, key + \`__1\`);
@@ -1022,9 +1025,10 @@ exports[`t-call (template calling) t-call with t-set inside and outside 1`] = `
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['list']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`v\`] = k_block2[i1];
       ctx[\`v_first\`] = i1 === 0;
       ctx[\`v_last\`] = i1 === k_block2.length - 1;
@@ -1086,9 +1090,10 @@ exports[`t-call (template calling) t-call with t-set inside and outside. 2 2`] =
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
     ctx[isBoundary] = 1
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['list']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`v\`] = k_block2[i1];
       ctx[\`v_first\`] = i1 === 0;
       ctx[\`v_last\`] = i1 === k_block2.length - 1;

@@ -22,8 +22,7 @@ exports[`t-on can bind handlers with arguments 1`] = `
   let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
   return function template(ctx, node, key = "") {
-    const v1 = ctx['add'];
-    let hdlr1 = [()=>v1(5), ctx];
+    let hdlr1 = [()=>ctx['add'](5), ctx];
     return block1([hdlr1]);
   }
 }"
@@ -37,8 +36,7 @@ exports[`t-on can bind handlers with empty  object 1`] = `
   let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
   return function template(ctx, node, key = "") {
-    const v1 = ctx['doSomething'];
-    let hdlr1 = [()=>v1({}), ctx];
+    let hdlr1 = [()=>ctx['doSomething']({}), ctx];
     return block1([hdlr1]);
   }
 }"
@@ -52,8 +50,7 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
   let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
   return function template(ctx, node, key = "") {
-    const v1 = ctx['doSomething'];
-    let hdlr1 = [()=>v1({}), ctx];
+    let hdlr1 = [()=>ctx['doSomething']({}), ctx];
     return block1([hdlr1]);
   }
 }"
@@ -69,15 +66,14 @@ exports[`t-on can bind handlers with empty object (with non empty inner string) 
   let block3 = createBlock(\`<li><a block-handler-0="click">link</a></li>\`);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(['someval']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`action\`] = k_block2[i1];
       ctx[\`action_index\`] = i1;
       const key1 = ctx['action_index'];
-      const v1 = ctx['activate'];
-      const v2 = ctx['action'];
-      let hdlr1 = [()=>v1(v2), ctx];
+      let hdlr1 = [()=>ctx['activate'](ctx['action']), ctx];
       c_block2[i1] = withKey(block3([hdlr1]), key1);
     }
     const b2 = list(c_block2);
@@ -94,8 +90,7 @@ exports[`t-on can bind handlers with object arguments 1`] = `
   let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
   return function template(ctx, node, key = "") {
-    const v1 = ctx['add'];
-    let hdlr1 = [()=>v1({val:5}), ctx];
+    let hdlr1 = [()=>ctx['add']({val:5}), ctx];
     return block1([hdlr1]);
   }
 }"
@@ -139,9 +134,10 @@ exports[`t-on handler is bound to proper owner, part 2 1`] = `
   let block2 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block1, v_block1, l_block1, c_block1] = prepareList([1]);;
     for (let i1 = 0; i1 < l_block1; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`value\`] = k_block1[i1];
       const key1 = ctx['value'];
       let hdlr1 = [ctx['add'], ctx];
@@ -186,9 +182,10 @@ exports[`t-on handler is bound to proper owner, part 4 1`] = `
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block1, v_block1, l_block1, c_block1] = prepareList([1]);;
     for (let i1 = 0; i1 < l_block1; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`value\`] = k_block1[i1];
       ctx[\`value_first\`] = i1 === 0;
       ctx[\`value_last\`] = i1 === k_block1.length - 1;
@@ -330,14 +327,13 @@ exports[`t-on t-on modifiers (native listener) t-on with prevent modifier in t-f
   let block3 = createBlock(\`<a href="#" block-handler-0="click.prevent"> Edit <block-child-0/></a>\`);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['projects']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`project\`] = k_block2[i1];
       const key1 = ctx['project'];
-      const v1 = ctx['onEdit'];
-      const v2 = ctx['project'];
-      let hdlr1 = ["prevent", _ev=>v1(v2.id,_ev), ctx];
+      let hdlr1 = ["prevent", _ev=>ctx['onEdit'](ctx['project'].id,_ev), ctx];
       const b4 = safeOutput(ctx['project'].name);
       c_block2[i1] = withKey(block3([hdlr1], [b4]), key1);
     }
@@ -399,8 +395,7 @@ exports[`t-on t-on with inline statement (function call) 1`] = `
   let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
   return function template(ctx, node, key = "") {
-    const v1 = ctx['state'];
-    let hdlr1 = [()=>v1.incrementCounter(2), ctx];
+    let hdlr1 = [()=>ctx['state'].incrementCounter(2), ctx];
     return block1([hdlr1]);
   }
 }"
@@ -414,8 +409,7 @@ exports[`t-on t-on with inline statement 1`] = `
   let block1 = createBlock(\`<button block-handler-0="click">Click</button>\`);
   
   return function template(ctx, node, key = "") {
-    const v1 = ctx['state'];
-    let hdlr1 = [()=>v1.counter++, ctx];
+    let hdlr1 = [()=>ctx['state'].counter++, ctx];
     return block1([hdlr1]);
   }
 }"
@@ -429,8 +423,7 @@ exports[`t-on t-on with inline statement, part 2 1`] = `
   let block1 = createBlock(\`<button block-handler-0="click">Toggle</button>\`);
   
   return function template(ctx, node, key = "") {
-    const v1 = ctx['state'];
-    let hdlr1 = [()=>v1.flag=!v1.flag, ctx];
+    let hdlr1 = [()=>ctx['state'].flag=!ctx['state'].flag, ctx];
     return block1([hdlr1]);
   }
 }"
@@ -444,9 +437,7 @@ exports[`t-on t-on with inline statement, part 3 1`] = `
   let block1 = createBlock(\`<button block-handler-0="click">Toggle</button>\`);
   
   return function template(ctx, node, key = "") {
-    const v1 = ctx['state'];
-    const v2 = ctx['someFunction'];
-    let hdlr1 = [()=>v1.n=v2(3), ctx];
+    let hdlr1 = [()=>ctx['state'].n=ctx['someFunction'](3), ctx];
     return block1([hdlr1]);
   }
 }"
@@ -504,9 +495,7 @@ exports[`t-on t-on, with arguments and t-call 2`] = `
   let block1 = createBlock(\`<p block-handler-0="click">lucas</p>\`);
   
   return function template(ctx, node, key = "") {
-    const v1 = ctx['this'];
-    const v2 = ctx['value'];
-    let hdlr1 = [()=>v1.update(v2), ctx];
+    let hdlr1 = [()=>ctx['this'].update(ctx['value']), ctx];
     return block1([hdlr1]);
   }
 }"

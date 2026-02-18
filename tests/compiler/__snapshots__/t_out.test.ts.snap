@@ -87,8 +87,8 @@ exports[`t-out multiple calls to t-out 2`] = `
   let block1 = createBlock(\`<div><block-child-0/><div>Greeter</div><block-child-1/></div>\`);
   
   return function template(ctx, node, key = "") {
-    const b2 = ctx[zero];
-    const b3 = ctx[zero];
+    const b2 = ctx[zero] || text("");
+    const b3 = ctx[zero] || text("");
     return block1([], [b2, b3]);
   }
 }"
@@ -154,7 +154,7 @@ exports[`t-out t-out 0 2`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    const b2 = ctx[zero];
+    const b2 = ctx[zero] || text("");
     return block1([], [b2]);
   }
 }"

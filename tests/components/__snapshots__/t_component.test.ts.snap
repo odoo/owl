@@ -148,8 +148,7 @@ exports[`t-component modifying a sub widget 2`] = `
   
   return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['this'].state.counter);
-    const v1 = ctx['this'];
-    let hdlr1 = [()=>v1.state.counter++, ctx];
+    let hdlr1 = [()=>ctx['this'].state.counter++, ctx];
     return block1([hdlr1], [b2]);
   }
 }"

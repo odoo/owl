@@ -19,12 +19,13 @@ exports[`t-ref ref in a t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { capture } = helpers;
   const callTemplate_1 = app.getTemplate(\`sub\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    const b2 = callTemplate_1.call(this, Object.assign(capture(ctx), {}), node, key + \`__1\`);
     return block1([], [b2]);
   }
 }"
@@ -75,9 +76,10 @@ exports[`t-ref refs in a loop 1`] = `
   let block3 = createBlock(\`<div block-ref="0"><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['items']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`item\`] = k_block2[i1];
       const key1 = ctx['item'].id;
       const tKey_1 = ctx['item'].id;

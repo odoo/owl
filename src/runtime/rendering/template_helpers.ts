@@ -47,7 +47,12 @@ function callSlot(
 function capture(ctx: any): any {
   const result = ObjectCreate(ctx);
   for (let k in ctx) {
-    result[k] = ctx[k];
+    Object.defineProperty(result, k, {
+      value: ctx[k],
+      writable: true,
+      enumerable: true,
+      configurable: true,
+    });
   }
   return result;
 }
@@ -83,16 +88,14 @@ function prepareList(collection: unknown): [unknown[], unknown[], number, undefi
 const isBoundary = Symbol("isBoundary");
 
 function setContextValue(ctx: { [key: string]: any }, key: string, value: any): void {
-  const ctx0 = ctx;
-  while (!ctx.hasOwnProperty(key) && !ctx.hasOwnProperty(isBoundary)) {
-    const newCtx = ctx.__proto__;
-    if (!newCtx) {
-      ctx = ctx0;
-      break;
+  if (!(key in ctx)) {
+    ctx[key] = value;
+  } else {
+    while (!ctx.hasOwnProperty(key) && !ctx.hasOwnProperty(isBoundary)) {
+      ctx = ctx.__proto__;
     }
-    ctx = newCtx;
+    ctx[key] = value;
   }
-  ctx[key] = value;
 }
 
 function toNumber(val: string): number | string {

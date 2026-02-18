@@ -578,7 +578,7 @@ export class CodeGenerator {
     if (modifiers.length) {
       modifiersCode = `${modifiers.join(",")}, `;
     }
-    return `[${modifiersCode}${this.captureExpression(handler)}, ctx]`;
+    return `[${modifiersCode}${compileExpr(handler)}, ctx]`;
   }
 
   compileTDomNode(ast: ASTDomNode, ctx: Context): string {
@@ -863,7 +863,10 @@ export class CodeGenerator {
     block = this.createBlock(block, "list", ctx);
     this.target.loopLevel++;
     const loopVar = `i${this.target.loopLevel}`;
-    this.addLine(`ctx = Object.create(ctx);`);
+    const ctxVar = generateId("ctx");
+    this.addLine(`const ${ctxVar} = ctx;`);
+    ctx.ctxVar = ctxVar
+    // this.addLine(`ctx = Object.create(ctx);`);
     const vals = `v_block${block.id}`;
     const keys = `k_block${block.id}`;
     const l = `l_block${block.id}`;
@@ -876,6 +879,7 @@ export class CodeGenerator {
     }
     this.addLine(`for (let ${loopVar} = 0; ${loopVar} < ${l}; ${loopVar}++) {`);
     this.target.indentLevel++;
+    this.addLine(`const ctx = Object.create(${ctxVar});`);
     this.addLine(`ctx[\`${ast.elem}\`] = ${keys}[${loopVar}];`);
     if (!ast.hasNoFirst) {
       this.addLine(`ctx[\`${ast.elem}_first\`] = ${loopVar} === 0;`);
@@ -921,17 +925,13 @@ export class CodeGenerator {
     this.compileAST(ast.body, subCtx);
     if (ast.memo) {
       this.addLine(
-        `nextCache[key${
-          this.target.loopLevel
+        `nextCache[key${this.target.loopLevel
         }] = Object.assign(${c}[${loopVar}], {memo: memo${id!}});`
       );
     }
     this.target.indentLevel--;
     this.target.loopLevel--;
     this.addLine(`}`);
-    if (!ctx.isLast) {
-      this.addLine(`ctx = ctx.__proto__;`);
-    }
     this.insertBlock("l", block, ctx);
     return block.varName;
   }
@@ -1013,45 +1013,28 @@ export class CodeGenerator {
     }
     block = this.createBlock(block, "multi", ctx);
     if (ast.body) {
-      if (ast.attrs || ast.context) {
-        const ctxStr = generateId("ctx");
-        this.helpers.add("capture");
-        this.define(ctxStr, `capture(ctx)`);
-        const name = this.compileInNewTarget("callBody", ast.body, ctx);
-        const zeroStr = generateId("lazyBlock");
-        this.define(zeroStr, `${name}.bind(this, Object.create(${ctxStr}))`);
-        this.helpers.add("zero");
-        attrs.push(`[zero]: ${zeroStr}`);
-      } else {
-        this.addLine(`${ctxVar} = Object.create(${ctxVar});`);
-        this.addLine(`${ctxVar}[isBoundary] = 1;`);
-        this.helpers.add("isBoundary");
-        const subCtx = createContext(ctx, { ctxVar });
-        const bl = this.compileAST(ast.body, subCtx);
-        if (bl) {
-          this.helpers.add("zero");
-          this.addLine(`${ctxVar}[zero] = () => ${bl};`);
-        }
-      }
+      this.helpers.add("capture");
+      const name = this.compileInNewTarget("callBody", ast.body, ctx);
+      const zeroStr = generateId("lazyBlock");
+      this.define(zeroStr, `${name}.bind(this, capture(ctx))`);
+      this.helpers.add("zero");
+      attrs.push(`[zero]: ${zeroStr}`);
     }
 
     let ctxExpr: string;
-    if (ast.attrs || ast.context) {
-      const ctxString = `{${attrs.join(", ")}}`;
-      if (ast.context) {
-        const dynCtxVar = generateId("ctx");
-        this.addLine(`const ${dynCtxVar} = ${compileExpr(ast.context)};`);
-        if (ast.attrs) {
-          ctxExpr = `Object.assign({}, ${dynCtxVar}${attrs.length ? ", " + ctxString : ""})`;
-        } else {
-          const thisCtx = `{this: ${dynCtxVar}, __owl__: this.__owl__}`;
-          ctxExpr = `Object.assign({}, ${dynCtxVar}, ${thisCtx}${attrs.length ? ", " + ctxString : ""})`;
-        }
+    const ctxString = `{${attrs.join(", ")}}`;
+    if (ast.context) {
+      const dynCtxVar = generateId("ctx");
+      this.addLine(`const ${dynCtxVar} = ${compileExpr(ast.context)};`);
+      if (ast.attrs) {
+        ctxExpr = `Object.assign({}, ${dynCtxVar}${attrs.length ? ", " + ctxString : ""})`;
       } else {
-        ctxExpr = `Object.assign({}, ${ctxVar}, ${ctxString})`;
+        const thisCtx = `{this: ${dynCtxVar}, __owl__: this.__owl__}`;
+        ctxExpr = `Object.assign({}, ${dynCtxVar}, ${thisCtx}${attrs.length ? ", " + ctxString : ""})`;
       }
     } else {
-      ctxExpr = ctxVar;
+      this.helpers.add("capture");
+      ctxExpr = `Object.assign(capture(${ctxVar}), ${ctxString})`;
     }
     const key = this.generateComponentKey();
     if (isDynamic) {
@@ -1071,9 +1054,6 @@ export class CodeGenerator {
         ...ctx,
         forceNewBlock: !block,
       });
-    }
-    if (!(ast.attrs || ast.context) && ast.body && !ctx.isLast) {
-      this.addLine(`${ctxExpr} = ${ctxExpr}.__proto__;`);
     }
     return block.varName;
   }
@@ -1184,9 +1164,8 @@ export class CodeGenerator {
   getPropString(props: string[], dynProps: string | null): string {
     let propString = `{${props.join(",")}}`;
     if (dynProps) {
-      propString = `Object.assign({}, ${compileExpr(dynProps)}${
-        props.length ? ", " + propString : ""
-      })`;
+      propString = `Object.assign({}, ${compileExpr(dynProps)}${props.length ? ", " + propString : ""
+        })`;
     }
     return propString;
   }
@@ -1282,9 +1261,8 @@ export class CodeGenerator {
     }
     this.staticDefs.push({
       id,
-      expr: `app.createComponent(${
-        ast.isDynamic ? null : expr
-      }, ${!ast.isDynamic}, ${!!ast.slots}, ${!!ast.dynamicProps}, [${propList}])`,
+      expr: `app.createComponent(${ast.isDynamic ? null : expr
+        }, ${!ast.isDynamic}, ${!!ast.slots}, ${!!ast.dynamicProps}, [${propList}])`,
     });
 
     if (ast.isDynamic) {

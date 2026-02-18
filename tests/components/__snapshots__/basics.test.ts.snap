@@ -148,8 +148,7 @@ exports[`basics can be clicked on and updated 1`] = `
   
   return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['this'].state.counter);
-    const v1 = ctx['this'];
-    let hdlr1 = [()=>v1.state.counter++, ctx];
+    let hdlr1 = [()=>ctx['this'].state.counter++, ctx];
     return block1([hdlr1], [b2]);
   }
 }"
@@ -189,10 +188,11 @@ exports[`basics can inject values in tagged templates 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { capture } = helpers;
   const callTemplate_1 = app.getTemplate(\`__template__999\`);
   
   return function template(ctx, node, key = "") {
-    return callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    return callTemplate_1.call(this, Object.assign(capture(ctx), {}), node, key + \`__1\`);
   }
 }"
 `;
@@ -524,9 +524,10 @@ exports[`basics list of two sub components inside other nodes 1`] = `
   let block3 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].state.blips);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`blip\`] = k_block2[i1];
       const key1 = ctx['blip'].id;
       const b4 = comp1({}, key + \`__1__\${key1}\`, node, this, null);
@@ -681,8 +682,7 @@ exports[`basics rerendering a widget with a sub widget 2`] = `
   
   return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['this'].state.counter);
-    const v1 = ctx['this'];
-    let hdlr1 = [()=>v1.state.counter++, ctx];
+    let hdlr1 = [()=>ctx['this'].state.counter++, ctx];
     return block1([hdlr1], [b2]);
   }
 }"
@@ -1135,9 +1135,10 @@ exports[`basics updating a component with t-foreach as root 1`] = `
   let { prepareList, safeOutput, withKey } = helpers;
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].items);;
     for (let i1 = 0; i1 < l_block1; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`item\`] = k_block1[i1];
       const key1 = ctx['item'];
       c_block1[i1] = withKey(safeOutput(ctx['item']), key1);
@@ -1186,15 +1187,15 @@ exports[`basics widget after a t-foreach 1`] = `
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(Array(2));;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`elem\`] = k_block2[i1];
       ctx[\`elem_index\`] = i1;
       const key1 = ctx['elem_index'];
       c_block2[i1] = withKey(text(\`txt\`), key1);
     }
-    ctx = ctx.__proto__;
     const b2 = list(c_block2);
     const b4 = comp1({}, key + \`__1\`, node, this, null);
     return block1([], [b2, b4]);
@@ -1333,9 +1334,10 @@ exports[`t-out in components can render list of t-out  1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].state.items);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      const ctx = Object.create(ctx1);
       ctx[\`item\`] = k_block2[i1];
       const key1 = ctx['item'];
       c_block2[i1] = withKey(safeOutput(ctx['item']), key1);

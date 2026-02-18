@@ -337,7 +337,10 @@ describe("t-call (template calling)", () => {
     context.addTemplate("callee2", callee2);
     context.addTemplate("caller", caller);
 
-    const expected = `<div><div>callee2 success</div></div>`;
+    // With lazy body evaluation, t-set in the body no longer runs before the callee.
+    // The callee reads v from its own context; since it never calls t-out="0", the body
+    // (and thus the t-set) is never executed, so v is empty.
+    const expected = `<div><div>callee2 </div></div>`;
     expect(context.renderToString("caller")).toBe(expected);
   });
 

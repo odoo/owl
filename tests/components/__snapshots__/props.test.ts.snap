@@ -8,9 +8,10 @@ exports[`.alike suffix in a list 1`] = `
   const comp1 = app.createComponent(\`Todo\`, true, false, false, ["todo"]);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].state.elems);;
     for (let i1 = 0; i1 < l_block1; i1++) {
+      let ctx = Object.create(ctx1);
       ctx[\`elem\`] = k_block1[i1];
       const key1 = ctx['elem'].id;
       const v1 = ctx['this'];
@@ -131,9 +132,10 @@ exports[`basics arrow functions as prop correctly capture their scope 1`] = `
   const comp1 = app.createComponent(\`Child\`, true, false, false, ["onClick"]);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].items);;
     for (let i1 = 0; i1 < l_block1; i1++) {
+      let ctx = Object.create(ctx1);
       ctx[\`item\`] = k_block1[i1];
       const key1 = ctx['item'].val;
       const v1 = ctx['this'];
@@ -246,7 +248,7 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, LazyValue } = helpers;
+  let { LazyValue, withDefault } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, ["val"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
@@ -258,7 +260,6 @@ exports[`basics t-set with a body expression can be passed in props, and then t-
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
     ctx[\`abc\`] = new LazyValue(value1, ctx, this, node, key);
     const b3 = comp1({val: ctx['abc']}, key + \`__1\`, node, this, null);
     return block1([], [b3]);
@@ -285,15 +286,13 @@ exports[`basics t-set with a body expression can be used as textual prop 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, ["val"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    setContextValue(ctx, "abc", \`42\`);
+    ctx["abc"] = \`42\`;
     const b2 = comp1({val: ctx['abc']}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }
@@ -319,15 +318,13 @@ exports[`basics t-set works  1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, ["val"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    setContextValue(ctx, "val", 42);
+    ctx["val"] = 42;
     const b2 = comp1({val: ctx['val']}, key + \`__1\`, node, this, null);
     return block1([], [b2]);
   }

@@ -184,12 +184,11 @@ exports[`simple templates, mostly static inline template string with content in 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    setContextValue(ctx, "v", 1);
+    ctx["v"] = 1;
     return safeOutput(\`text\${ctx['v']}\`);
   }
 }"

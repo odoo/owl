@@ -4,24 +4,22 @@ exports[`t-on t-on expression captured in t-foreach 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, prepareList, withKey } = helpers;
+  let { prepareList, withKey } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<div><button block-handler-0="click">expr</button></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    setContextValue(ctx, "iter", 0);
-    ctx = Object.create(ctx);
+    ctx["iter"] = 0;
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].arr);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      let ctx = Object.create(ctx1);
       ctx[\`val\`] = k_block2[i1];
       const key1 = ctx['val'];
-      const v1 = ctx['this'];
-      const v2 = ctx['iter'];
-      let hdlr1 = [()=>v1.otherState.vals.push(v2+'_'+v2), ctx];
-      setContextValue(ctx, "iter", ctx['iter']+1);
+      let hdlr1 = [()=>ctx['this'].otherState.vals.push(ctx['iter']+'_'+ctx['iter']), ctx];
+      ctx1["iter"] = ctx['iter']+1;
       c_block2[i1] = withKey(block3([hdlr1]), key1);
     }
     const b2 = list(c_block2);
@@ -40,17 +38,16 @@ exports[`t-on t-on expression in t-foreach 1`] = `
   let block3 = createBlock(\`<div><block-child-0/>: <block-child-1/><button block-handler-0="click">Expr</button></div>\`);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].state.values);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      let ctx = Object.create(ctx1);
       ctx[\`val\`] = k_block2[i1];
       ctx[\`val_index\`] = i1;
       const key1 = ctx['val'];
       const b4 = safeOutput(ctx['val_index']);
       const b5 = safeOutput(ctx['val']+'');
-      const v1 = ctx['this'];
-      const v2 = ctx['val'];
-      let hdlr1 = [()=>v1.otherState.vals.push(v2), ctx];
+      let hdlr1 = [()=>ctx['this'].otherState.vals.push(ctx['val']), ctx];
       c_block2[i1] = withKey(block3([hdlr1], [b4, b5]), key1);
     }
     const b2 = list(c_block2);
@@ -63,28 +60,25 @@ exports[`t-on t-on expression in t-foreach with t-set 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, prepareList, safeOutput, withKey } = helpers;
+  let { prepareList, safeOutput, withKey } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<div><block-child-0/>: <block-child-1/><button block-handler-0="click">Expr</button></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    setContextValue(ctx, "bossa", 'nova');
-    ctx = Object.create(ctx);
+    ctx["bossa"] = 'nova';
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].state.values);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      let ctx = Object.create(ctx1);
       ctx[\`val\`] = k_block2[i1];
       ctx[\`val_index\`] = i1;
       const key1 = ctx['val'];
-      setContextValue(ctx, "bossa", ctx['bossa']+'_'+ctx['val_index']);
+      ctx1["bossa"] = ctx['bossa']+'_'+ctx['val_index'];
       const b4 = safeOutput(ctx['val_index']);
       const b5 = safeOutput(ctx['val']+'');
-      const v1 = ctx['this'];
-      const v2 = ctx['val'];
-      const v3 = ctx['bossa'];
-      let hdlr1 = [()=>v1.otherState.vals.push(v2+'_'+v3), ctx];
+      let hdlr1 = [()=>ctx['this'].otherState.vals.push(ctx['val']+'_'+ctx['bossa']), ctx];
       c_block2[i1] = withKey(block3([hdlr1], [b4, b5]), key1);
     }
     const b2 = list(c_block2);
@@ -103,17 +97,16 @@ exports[`t-on t-on method call in t-foreach 1`] = `
   let block3 = createBlock(\`<div><block-child-0/>: <block-child-1/><button block-handler-0="click">meth call</button></div>\`);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].state.values);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      let ctx = Object.create(ctx1);
       ctx[\`val\`] = k_block2[i1];
       ctx[\`val_index\`] = i1;
       const key1 = ctx['val'];
       const b4 = safeOutput(ctx['val_index']);
       const b5 = safeOutput(ctx['val']+'');
-      const v1 = ctx['this'];
-      const v2 = ctx['val'];
-      let hdlr1 = [()=>v1.addVal(v2), ctx];
+      let hdlr1 = [()=>ctx['this'].addVal(ctx['val']), ctx];
       c_block2[i1] = withKey(block3([hdlr1], [b4, b5]), key1);
     }
     const b2 = list(c_block2);
@@ -195,14 +188,13 @@ exports[`t-on t-on on components and t-foreach 1`] = `
   const catcher1 = createCatcher({"click":0});
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(['John','Raoul','Gérald']);;
     for (let i1 = 0; i1 < l_block1; i1++) {
+      let ctx = Object.create(ctx1);
       ctx[\`name\`] = k_block1[i1];
       const key1 = ctx['name'];
-      const v1 = ctx['this'];
-      const v2 = ctx['name'];
-      const hdlr1 = [()=>v1.log(v2), ctx];
+      const hdlr1 = [()=>ctx['this'].log(ctx['name']), ctx];
       c_block1[i1] = withKey(catcher1(comp1({value: ctx['name']}, key + \`__1__\${key1}\`, node, this, null), [hdlr1]), key1);
     }
     return list(c_block1);
@@ -292,17 +284,14 @@ exports[`t-on t-on on components, with a handler update 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, createCatcher } = helpers;
+  let { createCatcher } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, ["value"]);
   const catcher1 = createCatcher({"click":0});
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    setContextValue(ctx, "name", ctx['this'].state.name);
-    const v1 = ctx['this'];
-    const v2 = ctx['name'];
-    const hdlr1 = [()=>v1.log(v2), ctx];
+    ctx["name"] = ctx['this'].state.name;
+    const hdlr1 = [()=>ctx['this'].log(ctx['name']), ctx];
     return catcher1(comp1({value: ctx['name']}, key + \`__1\`, node, this, null), [hdlr1]);
   }
 }"
@@ -418,8 +407,7 @@ exports[`t-on t-on on t-call-slots 2`] = `
     const b2 = text(\` [\`);
     const b3 = safeOutput(ctx['this'].state.count);
     const b4 = text(\`] \`);
-    const v1 = ctx['this'];
-    const hdlr1 = [()=>v1.state.count++, ctx];
+    const hdlr1 = [()=>ctx['this'].state.count++, ctx];
     const b5 = catcher1(callSlot(ctx, node, key, 'default', false, {}), [hdlr1]);
     return multi([b2, b3, b4, b5]);
   }
@@ -440,8 +428,7 @@ exports[`t-on t-on on t-set-slots 1`] = `
   function slot1(ctx, node, key = "") {
     const b6 = block6();
     const b7 = block7();
-    const v1 = ctx['this'];
-    const hdlr1 = [()=>v1.state.count++, ctx];
+    const hdlr1 = [()=>ctx['this'].state.count++, ctx];
     return catcher1(multi([b6, b7]), [hdlr1]);
   }
   
@@ -495,9 +482,10 @@ exports[`t-on t-on when first component child is an empty component 2`] = `
   let block2 = createBlock(\`<span><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].props.list);;
     for (let i1 = 0; i1 < l_block1; i1++) {
+      let ctx = Object.create(ctx1);
       ctx[\`c\`] = k_block1[i1];
       ctx[\`c_index\`] = i1;
       const key1 = ctx['c_index'];

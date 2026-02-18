@@ -408,15 +408,14 @@ exports[`t-if t-set, then t-if 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
+  let { safeOutput } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
     let b2;
-    setContextValue(ctx, "title", 'test');
+    ctx["title"] = 'test';
     if (ctx['title']) {
       b2 = safeOutput(ctx['title']);
     }
@@ -429,17 +428,15 @@ exports[`t-if t-set, then t-if, part 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<span>COUCOU</span>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
     let b2;
-    setContextValue(ctx, "y", true);
-    setContextValue(ctx, "x", ctx['y']);
+    ctx["y"] = true;
+    ctx["x"] = ctx['y'];
     if (ctx['x']) {
       b2 = block2();
     }
@@ -452,7 +449,6 @@ exports[`t-if t-set, then t-if, part 3 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   let block2 = createBlock(\`<span>AAA</span>\`);
@@ -460,10 +456,9 @@ exports[`t-if t-set, then t-if, part 3 1`] = `
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
     let b2, b3;
-    setContextValue(ctx, "y", false);
-    setContextValue(ctx, "x", ctx['y']);
+    ctx["y"] = false;
+    ctx["x"] = ctx['y'];
     if (ctx['x']) {
       b2 = block2();
     } else if (!ctx['x']) {

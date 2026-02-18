@@ -405,6 +405,30 @@ exports[`t-call sub components in two t-calls 3`] = `
 }"
 `;
 
+exports[`t-call t-call and t-out 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const callTemplate_1 = app.getTemplate(\`a\`);
+  
+  return function template(ctx, node, key = "") {
+    return callTemplate_1.call(this, ctx, node, key + \`__1\`);
+  }
+}"
+`;
+
+exports[`t-call t-call and t-out 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { zero } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    return ctx[zero] || text("");
+  }
+}"
+`;
+
 exports[`t-call t-call in t-foreach and children component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

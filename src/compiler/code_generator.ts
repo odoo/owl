@@ -771,7 +771,7 @@ export class CodeGenerator {
     let blockStr;
     if (ast.expr === "0") {
       this.helpers.add("zero");
-      blockStr = `ctx[zero]`;
+      blockStr = `ctx[zero] || text("")`;
     } else if (ast.body) {
       let bodyValue = null;
       bodyValue = BlockDescription.nextBlockId;

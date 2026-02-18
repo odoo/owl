@@ -157,7 +157,7 @@ exports[`misc global 3`] = `
   
   return function template(ctx, node, key = "") {
     let attr1 = 'agüero';
-    const b2 = ctx[zero];
+    const b2 = ctx[zero] || text("");
     return block1([attr1], [b2]);
   }
 }"

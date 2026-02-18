@@ -33,11 +33,12 @@ exports[`app can add functions to the bdom 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { __globals__ } = helpers;
+  const hdlr_fn1 = (ctx)=>__globals__.plop('click');
   
   let block1 = createBlock(\`<div class="my-div" block-handler-0="click"/>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [()=>__globals__.plop('click'), ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     return block1([hdlr1]);
   }
 }"

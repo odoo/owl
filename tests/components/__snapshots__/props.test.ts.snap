@@ -26,12 +26,13 @@ exports[`.alike suffix in a list 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].props.toggle).call(ctx['this'], ev);
   
   let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/><block-child-1/></button>\`);
   
   return function template(ctx, node, key = "") {
     let b2, b3;
-    let hdlr1 = [ctx['this'].props.toggle, ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     b2 = safeOutput(ctx['this'].props.todo.id);
     if (ctx['this'].props.todo.isChecked) {
       b3 = text(\`V\`);
@@ -147,11 +148,12 @@ exports[`basics arrow functions as prop correctly capture their scope 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].props.onClick).call(ctx['this'], ev);
   
   let block1 = createBlock(\`<button block-handler-0="click"/>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['this'].props.onClick, ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     return block1([hdlr1]);
   }
 }"
@@ -230,11 +232,12 @@ exports[`basics support prop names that aren't valid bare object property names 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].props.onClick).call(ctx['this'], ev);
   
   let block1 = createBlock(\`<button block-handler-0="click"/>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['this'].props.onClick, ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     return block1([hdlr1]);
   }
 }"

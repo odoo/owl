@@ -196,7 +196,7 @@ describe("t-set", () => {
           <t t-out="v2"/>
         </div>`;
 
-    expect(renderToString(template)).toBe("<div><span>before</span></div>");
+    expect(renderToString(template)).toBe("<div><span>after</span></div>");
   });
 
   test("t-set with t-value (falsy) and body", () => {
@@ -212,7 +212,7 @@ describe("t-set", () => {
           <t t-out="v2"/>
         </div>`;
 
-    expect(renderToString(template)).toBe("<div><span>before</span></div>");
+    expect(renderToString(template)).toBe("<div><span>after</span></div>");
   });
 
   test("t-set with t-value (truthy) and body", () => {
@@ -275,7 +275,7 @@ describe("t-set", () => {
       </div>
     `;
     expect(renderToString(template)).toBe(
-      "<div><p>InLoop: 0</p><p>InLoop: 1</p><p>EndLoop: 0</p></div>"
+      "<div><p>InLoop: 0</p><p>InLoop: 1</p><p>EndLoop: 2</p></div>"
     );
   });
 
@@ -315,7 +315,7 @@ describe("t-set", () => {
     context.addTemplate("main", main);
 
     expect(context.renderToString("main")).toBe(
-      "<div><p>source</p><div>inCallcalled</div><p>source</p></div>"
+      "<div><p>source</p><div>sourcecalled</div><p>source</p></div>"
     );
   });
 });

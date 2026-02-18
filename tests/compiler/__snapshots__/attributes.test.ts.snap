@@ -326,14 +326,12 @@ exports[`attributes from object variables set previously 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
   
   let block1 = createBlock(\`<div><span block-attribute-0="class"/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    setContextValue(ctx, "o", {a:'b'});
+    ctx["o"] = {a:'b'};
     let attr1 = ctx['o'].a;
     return block1([attr1]);
   }
@@ -344,14 +342,12 @@ exports[`attributes from variables set previously (no external node) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
   
   let block1 = createBlock(\`<span block-attribute-0="class"/>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    setContextValue(ctx, "abc", 'def');
+    ctx["abc"] = 'def';
     let attr1 = ctx['abc'];
     return block1([attr1]);
   }
@@ -362,14 +358,12 @@ exports[`attributes from variables set previously 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
   
   let block1 = createBlock(\`<div><span block-attribute-0="class"/></div>\`);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    setContextValue(ctx, "abc", 'def');
+    ctx["abc"] = 'def';
     let attr1 = ctx['abc'];
     return block1([attr1]);
   }

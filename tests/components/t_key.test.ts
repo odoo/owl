@@ -122,8 +122,8 @@ describe("t-key", () => {
     class Parent extends Component {
       static components = { Child };
       static template = xml`<span>
-        <t t-call="calledTemplate"><t t-set="key" t-value="this.key1" /></t>
-        <t t-call="calledTemplate"><t t-set="key" t-value="this.key2" /></t>
+        <t t-call="calledTemplate" key="this.key1" />
+        <t t-call="calledTemplate" key="this.key2" />
       </span>`;
 
       key1 = 1;
@@ -162,10 +162,7 @@ describe("t-key", () => {
     class Parent extends Component {
       static components = { Child };
       static template = xml`<span>
-        <t t-call="calledTemplate">
-          <t t-set="key1" t-value="this.key1"/>
-          <t t-set="key2" t-value="this.key2"/>
-        </t>
+        <t t-call="calledTemplate" key1="this.key1" key2="this.key2" />
       </span>`;
 
       key1 = 1;

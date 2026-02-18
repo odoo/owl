@@ -1,19 +1,51 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`t-call body content is not evaluated if callee does not use t-out='0' 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput, zero } = helpers;
+  const callTemplate_1 = app.getTemplate(\`noZero\`);
+  
+  function callBody1(ctx, node, key = "") {
+    return safeOutput(ctx['this'].sideEffect());
+  }
+  
+  return function template(ctx, node, key = "") {
+    const lazyBlock1 = callBody1.bind(this, ctx);
+    return callTemplate_1.call(this, Object.assign(Object.create(ctx), {[zero]: lazyBlock1}), node, key + \`__1\`);
+  }
+}"
+`;
+
+exports[`t-call body content is not evaluated if callee does not use t-out='0' 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<span>no zero here</span>\`);
+  
+  return function template(ctx, node, key = "") {
+    return block1();
+  }
+}"
+`;
+
 exports[`t-call dynamic t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, zero } = helpers;
+  let { zero } = helpers;
   const call = app.callTemplate.bind(app);
   
+  function callBody1(ctx, node, key = "") {
+    return text(\` owl \`);
+  }
+  
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1;
-    const b2 = text(\` owl \`);
-    ctx[zero] = () => b2;
+    const lazyBlock1 = callBody1.bind(this, ctx);
     const template1 = (ctx['this'].current.template);
-    return call(this, template1, ctx, node, key + \`__1\`);
+    return call(this, template1, Object.assign(Object.create(ctx), {[zero]: lazyBlock1}), node, key + \`__1\`);
   }
 }"
 `;
@@ -161,8 +193,7 @@ exports[`t-call handlers are properly bound through a dynamic t-call 2`] = `
   let block1 = createBlock(\`<p block-handler-0="click">lucas</p>\`);
   
   return function template(ctx, node, key = "") {
-    const v1 = ctx['this'];
-    let hdlr1 = [()=>v1.update(), ctx];
+    let hdlr1 = [()=>ctx['this'].update(), ctx];
     return block1([hdlr1]);
   }
 }"
@@ -222,8 +253,7 @@ exports[`t-call handlers with arguments are properly bound through a t-call 2`] 
   let block1 = createBlock(\`<p block-handler-0="click">lucas</p>\`);
   
   return function template(ctx, node, key = "") {
-    const v1 = ctx['this'];
-    let hdlr1 = [()=>v1.update(v1.a), ctx];
+    let hdlr1 = [()=>ctx['this'].update(ctx['this'].a), ctx];
     return block1([hdlr1]);
   }
 }"
@@ -310,18 +340,12 @@ exports[`t-call recursive t-call binding this -- static t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
   const callTemplate_1 = app.getTemplate(\`recursive\`);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1;
-    setContextValue(ctx, "level", 0);
-    const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    const b2 = callTemplate_1.call(this, Object.assign(Object.create(ctx), {level: 0}), node, key + \`__1\`);
     return block1([], [b2]);
   }
 }"
@@ -331,24 +355,18 @@ exports[`t-call recursive t-call binding this -- static t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput, isBoundary, withDefault, setContextValue } = helpers;
+  let { safeOutput } = helpers;
   const callTemplate_1 = app.getTemplate(\`recursive\`);
   
   let block3 = createBlock(\`<div block-handler-0="click.stop"><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
     let b2;
     if (ctx['level']<2) {
       let hdlr1 = ["stop", ctx['this'].onClicked.bind(ctx['this']), ctx];
       const b4 = safeOutput(ctx['level']);
       const b3 = block3([hdlr1], [b4]);
-      ctx = Object.create(ctx);
-      ctx[isBoundary] = 1;
-      setContextValue(ctx, "level", ctx['level']+1);
-      const b5 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
-      ctx = ctx.__proto__;
+      const b5 = callTemplate_1.call(this, Object.assign(Object.create(ctx), {level: ctx['level']+1}), node, key + \`__1\`);
       b2 = multi([b3, b5]);
     }
     return multi([b2]);
@@ -439,9 +457,10 @@ exports[`t-call t-call in t-foreach and children component 1`] = `
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList(['a','b','c']);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      let ctx = Object.create(ctx1);
       ctx[\`val\`] = k_block2[i1];
       ctx[\`val_first\`] = i1 === 0;
       ctx[\`val_last\`] = i1 === k_block2.length - 1;
@@ -613,7 +632,7 @@ exports[`t-call t-call-context: ComponentNode is not looked up in the context 2`
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { createRef, capture, isBoundary, withDefault, setContextValue, safeOutput, markRaw } = helpers;
+  let { createRef, safeOutput, markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, []);
   
   let block2 = createBlock(\`<div block-ref="0">outside slot</div>\`);
@@ -622,10 +641,9 @@ exports[`t-call t-call-context: ComponentNode is not looked up in the context 2`
   
   function slot1(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
     let ref2 = createRef(ctx['this'].myRef2);
     const b4 = block4([ref2]);
-    setContextValue(ctx, "test", 3);
+    ctx["test"] = 3;
     const b6 = safeOutput(ctx['test']);
     const b5 = block5([], [b6]);
     return multi([b4, b5]);
@@ -634,8 +652,7 @@ exports[`t-call t-call-context: ComponentNode is not looked up in the context 2`
   return function template(ctx, node, key = "") {
     let ref1 = createRef(ctx['this'].myRef);
     const b2 = block2([ref1]);
-    const ctx1 = capture(ctx);
-    const b7 = comp1({prop: (ctx['this'].method).bind(this),slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})}, key + \`__1\`, node, this, null);
+    const b7 = comp1({prop: (ctx['this'].method).bind(this),slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})}, key + \`__1\`, node, this, null);
     return multi([b2, b7]);
   }
 }"
@@ -670,7 +687,7 @@ exports[`t-call t-call-context: slots don't make component available again when 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, capture, safeOutput, markRaw } = helpers;
+  let { safeOutput, markRaw } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, true, false, []);
   
   function slot1(ctx, node, key = "") {
@@ -679,10 +696,8 @@ exports[`t-call t-call-context: slots don't make component available again when 
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    setContextValue(ctx, "dummy", 0);
-    const ctx1 = capture(ctx);
-    const props1 = {slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx1}})};
+    ctx["dummy"] = 0;
+    const props1 = {slots: markRaw({'default': {__render: slot1.bind(this), __ctx: ctx}})};
     return comp1(props1, key + \`__1\`, node, this, null);
   }
 }"
@@ -729,21 +744,21 @@ exports[`t-call t-set inside t-call are not evaluated before being rendered 1`] 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, safeOutput, withDefault, setContextValue, zero } = helpers;
+  let { safeOutput, zero } = helpers;
   const callTemplate_1 = app.getTemplate(\`a\`);
   
-  return function template(ctx, node, key = "") {
+  function callBody1(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1;
     const b3 = safeOutput(ctx['v']);
     const b4 = text(\` coucou \`);
-    setContextValue(ctx, "v", ctx['this'].f());
+    ctx["v"] = ctx['this'].f();
     const b5 = safeOutput(ctx['v']);
-    const b2 = multi([b3, b4, b5]);
-    ctx[zero] = () => b2;
-    return callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    return multi([b3, b4, b5]);
+  }
+  
+  return function template(ctx, node, key = "") {
+    const lazyBlock1 = callBody1.bind(this, ctx);
+    return callTemplate_1.call(this, Object.assign(Object.create(ctx), {[zero]: lazyBlock1}), node, key + \`__1\`);
   }
 }"
 `;

@@ -1000,9 +1000,7 @@ describe("slots", () => {
                 <t t-if="!item.children.length">
                 <t t-out="item.name" />
                 </t>
-                <t t-else="" t-call="_test_recursive_template">
-                <t t-set="name" t-value="item.name" />
-                <t t-set="items" t-value="item.children" />
+                <t t-else="" t-call="_test_recursive_template" name="item.name" items="item.children">
                 </t>
             </t>
         </Wrapper>`;
@@ -1850,9 +1848,8 @@ describe("slots", () => {
     const subTemplate2 = xml`[sub2<t t-out="v"/>]`;
     const subTemplate1 = xml`[sub1]
       <t t-set="dummy" t-value="this.validate"/>
-      <t t-call="${subTemplate2}">
-        <t t-set="v" t-value="this.props.number"/>
-      </t>`;
+      <t t-call="${subTemplate2}" v="this.props.number"/>
+      `;
 
     let a: any;
     class A extends Component {

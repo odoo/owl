@@ -42,13 +42,13 @@ export function createCatcher(eventsSpec: EventsSpec): Catcher {
         let idx = handler.length - 2;
         let origFn = handler[idx];
         const self = this;
-        handler[idx] = function (ev: any) {
+        handler[idx] = function (ctx: any, ev: any) {
           const target = ev.target;
           let currentNode: any = self.child.firstNode();
           const afterNode = self.afterNode;
           while (currentNode && currentNode !== afterNode) {
             if (currentNode.contains(target)) {
-              return origFn.call(this, ev);
+              return origFn(ctx, ev);
             }
             currentNode = currentNode.nextSibling;
           }

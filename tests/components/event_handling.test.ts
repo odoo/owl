@@ -52,7 +52,7 @@ describe("event handling", () => {
     await mount(Parent, fixture);
     expect([]).toBeLogged();
     fixture.querySelector("button")!.click();
-    expect(["Invalid handler (expected a function, received: 'undefined')"]).toBeLogged();
+    expect(["Cannot read properties of undefined (reading 'call')"]).toBeLogged();
   });
 
   test("support for callable expression in event handler", async () => {

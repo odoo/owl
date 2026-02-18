@@ -143,12 +143,13 @@ exports[`t-component modifying a sub widget 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
+  const hdlr_fn1 = (ctx)=>ctx['this'].state.counter++;
   
   let block1 = createBlock(\`<div><block-child-0/><button block-handler-0="click">Inc</button></div>\`);
   
   return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['this'].state.counter);
-    let hdlr1 = [()=>ctx['this'].state.counter++, ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     return block1([hdlr1], [b2]);
   }
 }"

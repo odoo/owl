@@ -14,6 +14,7 @@ describe("t-on", () => {
     if (!node) {
       node = { component: ctx, status: STATUS.MOUNTED };
       ctx.__owl__ = node;
+      ctx.this = ctx;
     }
     const block = renderToBdom(template, ctx, node);
     const fixture = makeTestFixture();
@@ -157,6 +158,7 @@ describe("t-on", () => {
         expect(this).toBe(owner);
       },
     };
+    owner.this = owner;
     const node = { component: owner, status: STATUS.MOUNTED };
     owner.__owl__ = node;
     const fixture = makeTestFixture();
@@ -262,6 +264,7 @@ describe("t-on", () => {
         expect(this).toBe(owner);
       },
     };
+    owner.this = owner;
     const node = { component: owner, status: STATUS.MOUNTED };
     owner.__owl__ = node;
 

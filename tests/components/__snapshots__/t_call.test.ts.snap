@@ -189,11 +189,12 @@ exports[`t-call handlers are properly bound through a dynamic t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const hdlr_fn1 = (ctx)=>ctx['this'].update();
   
   let block1 = createBlock(\`<p block-handler-0="click">lucas</p>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [()=>ctx['this'].update(), ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     return block1([hdlr1]);
   }
 }"
@@ -220,11 +221,12 @@ exports[`t-call handlers are properly bound through a t-call 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].update).call(ctx['this'], ev);
   
   let block1 = createBlock(\`<p block-handler-0="click">lucas</p>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['this'].update, ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     return block1([hdlr1]);
   }
 }"
@@ -249,11 +251,12 @@ exports[`t-call handlers with arguments are properly bound through a t-call 2`] 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const hdlr_fn1 = (ctx)=>ctx['this'].update(ctx['this'].a);
   
   let block1 = createBlock(\`<p block-handler-0="click">lucas</p>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [()=>ctx['this'].update(ctx['this'].a), ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     return block1([hdlr1]);
   }
 }"
@@ -356,6 +359,7 @@ exports[`t-call recursive t-call binding this -- static t-call 2`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].onClicked.bind(ctx['this'])).call(ctx['this'], ev);
   const callTemplate_1 = app.getTemplate(\`recursive\`);
   
   let block3 = createBlock(\`<div block-handler-0="click.stop"><block-child-0/></div>\`);
@@ -363,7 +367,7 @@ exports[`t-call recursive t-call binding this -- static t-call 2`] = `
   return function template(ctx, node, key = "") {
     let b2;
     if (ctx['level']<2) {
-      let hdlr1 = ["stop", ctx['this'].onClicked.bind(ctx['this']), ctx];
+      let hdlr1 = ["stop", hdlr_fn1, ctx];
       const b4 = safeOutput(ctx['level']);
       const b3 = block3([hdlr1], [b4]);
       const b5 = callTemplate_1.call(this, Object.assign(Object.create(ctx), {level: ctx['level']+1}), node, key + \`__1\`);

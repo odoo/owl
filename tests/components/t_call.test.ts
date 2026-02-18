@@ -433,4 +433,18 @@ describe("t-call", () => {
     await nextTick();
     expect(fixture.innerHTML).toBe("Bchild");
   });
+
+  test("t-call and t-out", async () => {
+    class Root extends Component {
+      static template = xml`<t t-call="a"/>`;
+    }
+
+    await mount(Root, fixture, {
+      templates: `
+        <templates>
+          <t t-name="a"><t t-out="0"/></t>
+        </templates>`,
+    });
+    expect(fixture.innerHTML).toBe("");
+  });
 });

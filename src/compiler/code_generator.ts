@@ -1,4 +1,5 @@
-import { compileExpr, compileExprToArray, interpolate, INTERP_REGEXP } from "./inline_expressions";
+import { OwlError } from "../common/owl_error";
+import { compileExpr, INTERP_REGEXP, interpolate } from "./inline_expressions";
 import {
   AST,
   ASTComment,
@@ -7,9 +8,9 @@ import {
   ASTDomNode,
   ASTLog,
   ASTMulti,
-  ASTTCallSlot,
   ASTTCall,
   ASTTCallBlock,
+  ASTTCallSlot,
   ASTText,
   ASTTForEach,
   ASTTif,
@@ -23,7 +24,6 @@ import {
   Attrs,
   EventHandlers,
 } from "./parser";
-import { OwlError } from "../common/owl_error";
 
 const zero = Symbol("zero");
 
@@ -414,40 +414,6 @@ export class CodeGenerator {
     } else {
       this.define(block.varName, blockExpr);
     }
-  }
-
-  /**
-   * Captures variables that are used inside of an expression. This is useful
-   * because in compiled code, almost all variables are accessed through the ctx
-   * object. In the case of functions, that lookup in the context can be delayed
-   * which can cause issues if the value has changed since the function was
-   * defined.
-   *
-   * @param expr the expression to capture
-   * @param forceCapture whether the expression should capture its scope even if
-   *  it doesn't contain a function. Useful when the expression will be used as
-   *  a function body.
-   * @returns a new expression that uses the captured values
-   */
-  captureExpression(expr: string, forceCapture: boolean = false): string {
-    if (!forceCapture && !expr.includes("=>")) {
-      return compileExpr(expr);
-    }
-    const tokens = compileExprToArray(expr);
-    const mapping = new Map<string, string>();
-    return tokens
-      .map((tok) => {
-        if (tok.varName && !tok.isLocal) {
-          if (!mapping.has(tok.varName)) {
-            const varId = generateId("v");
-            mapping.set(tok.varName, varId);
-            this.define(varId, tok.value);
-          }
-          tok.value = mapping.get(tok.varName)!;
-        }
-        return tok.value;
-      })
-      .join("");
   }
 
   translate(str: string, translationCtx: string): string {
@@ -1116,7 +1082,7 @@ export class CodeGenerator {
       const attrTranslationCtx = attrsTranslationCtx?.[name] || translationCtx;
       value = toStringExpression(this.translateFn(value, attrTranslationCtx));
     } else {
-      value = this.captureExpression(value);
+      value = compileExpr(value)
     }
     if (name.includes(".")) {
       let [_name, suffix] = name.split(".");

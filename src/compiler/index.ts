@@ -29,7 +29,7 @@ export function compile(
   const ast = parse(template, options.customDirectives);
 
   // code generation
-  const codeGenerator = new CodeGenerator(ast, options );
+  const codeGenerator = new CodeGenerator(ast, options);
   const code = codeGenerator.generateCode();
   // template function
   try {

@@ -172,19 +172,18 @@ exports[`lifecycle hooks destroy new children before being mountged 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { withDefault } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
     let b2, b3, b4;
     b2 = text(\`before\`);
     if (ctx['this'].state.flag) {
       b3 = comp1({}, key + \`__1\`, node, this, null);
     }
     b4 = text(\`after\`);
-    setContextValue(ctx, "noop", ctx['this'].notify());
+    ctx = Object.create(ctx);
+    ctx["noop"] = ctx['this'].notify();
     return multi([b2, b3, b4]);
   }
 }"

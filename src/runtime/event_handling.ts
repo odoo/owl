@@ -38,7 +38,7 @@ export const mainEventHandler = (data: any, ev: Event, currentTarget?: EventTarg
     }
     let node = data[1] ? data[1].__owl__ : null;
     if (node ? node.status === STATUS.MOUNTED : true) {
-      handler.call(node ? node.component : null, ev);
+      handler(data[1], ev);
     }
   }
   return stopped;

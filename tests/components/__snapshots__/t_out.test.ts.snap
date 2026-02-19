@@ -4,7 +4,7 @@ exports[`components in t-out simple list 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, isBoundary, withDefault, LazyValue, safeOutput, withKey } = helpers;
+  let { prepareList, withDefault, LazyValue, safeOutput, withKey } = helpers;
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   function value1(ctx, node, key = "") {
@@ -12,11 +12,10 @@ exports[`components in t-out simple list 1`] = `
   }
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block1, v_block1, l_block1, c_block1] = prepareList([1,2]);;
     for (let i1 = 0; i1 < l_block1; i1++) {
+      let ctx = Object.create(ctx1);
       ctx[\`n\`] = k_block1[i1];
       const key1 = ctx['n'];
       ctx[\`blabla\`] = new LazyValue(value1, ctx, this, node, key1);

@@ -113,7 +113,7 @@ describe("t-on", () => {
     const buttons = fixture.querySelectorAll("button");
     buttons[0].click();
     buttons[1].click();
-    expect(comp.otherState.vals).toStrictEqual(["a_nova_0", "b_nova_0_1"]);
+    expect(comp.otherState.vals).toStrictEqual(["a_nova_0_1", "b_nova_0_1"]);
   });
 
   test("t-on method call in t-foreach", async () => {
@@ -165,7 +165,7 @@ describe("t-on", () => {
     const buttons = fixture.querySelectorAll("button");
     buttons[0].click();
     buttons[1].click();
-    expect(comp.otherState.vals).toStrictEqual(["0_0", "1_1"]);
+    expect(comp.otherState.vals).toStrictEqual(["2_2", "2_2"]);
   });
 
   test("t-on on components", async () => {

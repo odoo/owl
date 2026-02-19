@@ -88,13 +88,13 @@ exports[`refs refs and t-key 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { createRef } = helpers;
+  const hdlr_fn1 = (ctx)=>ctx['this'].state.renderId++;
   
   let block2 = createBlock(\`<button block-handler-0="click"/>\`);
   let block3 = createBlock(\`<p block-ref="0"/>\`);
   
   return function template(ctx, node, key = "") {
-    const v1 = ctx['this'];
-    let hdlr1 = [()=>v1.state.renderId++, ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     const b2 = block2([hdlr1]);
     const tKey_1 = ctx['this'].state.renderId;
     let ref1 = createRef(ctx['this'].root);
@@ -109,13 +109,14 @@ exports[`refs refs are properly bound in slots 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput, createRef, markRaw } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].doSomething).call(ctx['this'], ev);
   const comp1 = app.createComponent(\`Dialog\`, true, true, false, []);
   
   let block1 = createBlock(\`<div><span class="counter"><block-child-0/></span><block-child-1/></div>\`);
   let block3 = createBlock(\`<button block-handler-0="click" block-ref="1">do something</button>\`);
   
   function slot1(ctx, node, key = "") {
-    let hdlr1 = [ctx['this'].doSomething, ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     let ref1 = createRef(ctx['this'].button);
     return block3([hdlr1, ref1]);
   }
@@ -152,9 +153,10 @@ exports[`refs resource can be used for multi ref 1`] = `
   let block2 = createBlock(\`<p block-attribute-0="id" block-ref="1"/>\`);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].items());;
     for (let i1 = 0; i1 < l_block1; i1++) {
+      let ctx = Object.create(ctx1);
       ctx[\`item\`] = k_block1[i1];
       const key1 = ctx['item'];
       let attr1 = \`item-\${ctx['item']}\`;

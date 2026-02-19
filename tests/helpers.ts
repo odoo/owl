@@ -119,8 +119,8 @@ export class TestContext extends TemplateSet {
     return fixture.innerHTML;
   }
 }
-export function render(c: Component, deep: boolean = false) {
-  return c.__owl__.render(deep);
+export function render(c: Component) {
+  return c.__owl__.render();
 }
 
 export function snapshotEverything() {

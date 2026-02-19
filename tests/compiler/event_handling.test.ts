@@ -14,6 +14,7 @@ describe("t-on", () => {
     if (!node) {
       node = { component: ctx, status: STATUS.MOUNTED };
       ctx.__owl__ = node;
+      ctx.this = ctx;
     }
     const block = renderToBdom(template, ctx, node);
     const fixture = makeTestFixture();
@@ -157,6 +158,7 @@ describe("t-on", () => {
         expect(this).toBe(owner);
       },
     };
+    owner.this = owner;
     const node = { component: owner, status: STATUS.MOUNTED };
     owner.__owl__ = node;
     const fixture = makeTestFixture();
@@ -169,7 +171,7 @@ describe("t-on", () => {
   test("handler is bound to proper owner, part 4", () => {
     expect.assertions(3);
     const context = new TemplateSet();
-    const sub = `<button t-on-click="add">Click</button>`;
+    const sub = `<button t-on-click="this.add">Click</button>`;
     const main = `
         <t t-foreach="[1]" t-as="value" t-key="value">
           <t t-call="sub"/>
@@ -182,6 +184,7 @@ describe("t-on", () => {
         expect(this).toBe(owner);
       },
     };
+    owner.this = owner;
     const node = { component: owner, status: STATUS.MOUNTED };
     owner.__owl__ = node;
     const fixture = makeTestFixture();
@@ -261,6 +264,7 @@ describe("t-on", () => {
         expect(this).toBe(owner);
       },
     };
+    owner.this = owner;
     const node = { component: owner, status: STATUS.MOUNTED };
     owner.__owl__ = node;
 

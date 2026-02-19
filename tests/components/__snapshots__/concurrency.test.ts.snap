@@ -10,9 +10,10 @@ exports[`Cascading renders after microtaskTick 1`] = `
   return function template(ctx, node, key = "") {
     const b2 = comp1({}, key + \`__1\`, node, this, null);
     const b3 = text(\` _ \`);
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block4, v_block4, l_block4, c_block4] = prepareList(ctx['this'].state);;
     for (let i1 = 0; i1 < l_block4; i1++) {
+      let ctx = Object.create(ctx1);
       ctx[\`elem\`] = k_block4[i1];
       const key1 = ctx['elem'].id;
       c_block4[i1] = withKey(safeOutput(ctx['elem'].id), key1);
@@ -31,9 +32,10 @@ exports[`Cascading renders after microtaskTick 2`] = `
   const comp1 = app.createComponent(\`Element\`, true, false, false, ["id"]);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].state);;
     for (let i1 = 0; i1 < l_block1; i1++) {
+      let ctx = Object.create(ctx1);
       ctx[\`elem\`] = k_block1[i1];
       const key1 = ctx['elem'].id;
       c_block1[i1] = withKey(comp1({id: ctx['elem'].id}, key + \`__1__\${key1}\`, node, this, null), key1);
@@ -59,18 +61,17 @@ exports[`another scenario with delayed rendering 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue } = helpers;
+  let { withDefault } = helpers;
   const comp1 = app.createComponent(\`B\`, true, false, false, ["value"]);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
     let b2, b3;
     b2 = text(\`A\`);
     if (ctx['this'].state.value<15) {
       b3 = comp1({value: ctx['this'].state.value}, key + \`__1\`, node, this, null);
     }
-    setContextValue(ctx, "noop", ctx['this'].notify());
+    ctx = Object.create(ctx);
+    ctx["noop"] = ctx['this'].notify();
     return multi([b2, b3]);
   }
 }"
@@ -96,11 +97,12 @@ exports[`another scenario with delayed rendering 3`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
   
   let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['this'].increment, ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     const b2 = safeOutput(ctx['this'].state.val);
     return block1([hdlr1], [b2]);
   }
@@ -1211,114 +1213,6 @@ exports[`delay willUpdateProps 2`] = `
 }"
 `;
 
-exports[`delay willUpdateProps with rendering grandchild 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Parent\`, true, false, false, ["state"]);
-  
-  return function template(ctx, node, key = "") {
-    return comp1({state: ctx['this'].state}, key + \`__1\`, node, this, null);
-  }
-}"
-`;
-
-exports[`delay willUpdateProps with rendering grandchild 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`DelayedChild\`, true, false, false, ["value"]);
-  const comp2 = app.createComponent(\`ReactiveChild\`, true, false, false, []);
-  
-  return function template(ctx, node, key = "") {
-    const b2 = comp1({value: ctx['this'].props.state.value}, key + \`__1\`, node, this, null);
-    const b3 = comp2({}, key + \`__2\`, node, this, null);
-    return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`delay willUpdateProps with rendering grandchild 3`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
-  
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.value);
-    const b3 = text(\`_\`);
-    const b4 = safeOutput(ctx['this'].state.int);
-    return multi([b2, b3, b4]);
-  }
-}"
-`;
-
-exports[`delay willUpdateProps with rendering grandchild 4`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  let block1 = createBlock(\`<div/>\`);
-  
-  return function template(ctx, node, key = "") {
-    return block1();
-  }
-}"
-`;
-
-exports[`delayed fiber does not get rendered if it was cancelled 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`B\`, true, false, false, []);
-  
-  return function template(ctx, node, key = "") {
-    const b2 = text(\`A\`);
-    const b3 = comp1({}, key + \`__1\`, node, this, null);
-    return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`delayed fiber does not get rendered if it was cancelled 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`C\`, true, false, false, []);
-  
-  return function template(ctx, node, key = "") {
-    const b2 = text(\`B\`);
-    const b3 = comp1({}, key + \`__1\`, node, this, null);
-    return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`delayed fiber does not get rendered if it was cancelled 3`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`D\`, true, false, false, []);
-  
-  return function template(ctx, node, key = "") {
-    const b2 = text(\`C\`);
-    const b3 = comp1({}, key + \`__1\`, node, this, null);
-    return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`delayed fiber does not get rendered if it was cancelled 4`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  return function template(ctx, node, key = "") {
-    return text(\`D\`);
-  }
-}"
-`;
-
 exports[`delayed render does not go through when t-component value changed 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
@@ -1431,11 +1325,12 @@ exports[`delayed rendering, but then initial rendering is cancelled by yet anoth
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
   
   let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['this'].increment, ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     const b2 = safeOutput(ctx['this'].state.val);
     return block1([hdlr1], [b2]);
   }
@@ -1497,12 +1392,13 @@ exports[`delayed rendering, destruction, stuff happens 4`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
   
   let block3 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
   return function template(ctx, node, key = "") {
     const b2 = text(\`D\`);
-    let hdlr1 = [ctx['this'].increment, ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     const b4 = safeOutput(ctx['this'].state.val);
     const b3 = block3([hdlr1], [b4]);
     return multi([b2, b3]);
@@ -1526,15 +1422,14 @@ exports[`delayed rendering, reusing fiber and stuff 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput, isBoundary, withDefault, setContextValue } = helpers;
+  let { safeOutput, withDefault } = helpers;
   const comp1 = app.createComponent(\`C\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
     const b2 = safeOutput(ctx['this'].props.value);
     const b3 = comp1({}, key + \`__1\`, node, this, null);
-    setContextValue(ctx, "noop", ctx['this'].notify());
+    ctx = Object.create(ctx);
+    ctx["noop"] = ctx['this'].notify();
     return multi([b2, b3]);
   }
 }"
@@ -1545,11 +1440,12 @@ exports[`delayed rendering, reusing fiber and stuff 3`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
   
   let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['this'].increment, ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     const b2 = safeOutput(ctx['this'].state.val);
     return block1([hdlr1], [b2]);
   }
@@ -1593,11 +1489,12 @@ exports[`delayed rendering, reusing fiber then component is destroyed and  stuff
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
   
   let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['this'].increment, ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     const b2 = safeOutput(ctx['this'].state.val);
     return block1([hdlr1], [b2]);
   }
@@ -1639,11 +1536,12 @@ exports[`delayed rendering, then component is destroyed and  stuff 3`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
   
   let block1 = createBlock(\`<button block-handler-0="click"><block-child-0/></button>\`);
   
   return function template(ctx, node, key = "") {
-    let hdlr1 = [ctx['this'].increment, ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     const b2 = safeOutput(ctx['this'].state.val);
     return block1([hdlr1], [b2]);
   }
@@ -1674,12 +1572,11 @@ exports[`destroyed component causes other soon to be destroyed component to rere
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
+  let { withDefault, safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    setContextValue(ctx, "noop", ctx['this'].notify());
+    ctx["noop"] = ctx['this'].notify();
     return safeOutput(ctx['this'].props.value);
   }
 }"
@@ -1693,34 +1590,6 @@ exports[`destroyed component causes other soon to be destroyed component to rere
   
   return function template(ctx, node, key = "") {
     return safeOutput(ctx['this'].state.val+ctx['this'].props.value);
-  }
-}"
-`;
-
-exports[`destroying/recreating a subcomponent, other scenario 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
-  
-  return function template(ctx, node, key = "") {
-    let b2, b3;
-    b2 = text(\`parent\`);
-    if (ctx['this'].state.hasChild) {
-      b3 = comp1({}, key + \`__1\`, node, this, null);
-    }
-    return multi([b2, b3]);
-  }
-}"
-`;
-
-exports[`destroying/recreating a subcomponent, other scenario 3`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  
-  return function template(ctx, node, key = "") {
-    return text(\`child\`);
   }
 }"
 `;
@@ -1832,13 +1701,14 @@ exports[`rendering component again in next microtick 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].onClick).call(ctx['this'], ev);
   const comp1 = app.createComponent(\`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><button block-handler-0="click">Click</button><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
     let b2;
-    let hdlr1 = [ctx['this'].onClick, ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     if (ctx['this'].state.config.flag) {
       b2 = comp1({}, key + \`__1\`, node, this, null);
     }
@@ -1922,12 +1792,13 @@ exports[`renderings, destruction, patch, stuff, ... yet another variation 3`] = 
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
   
   let block3 = createBlock(\`<p block-handler-0="click"><block-child-0/></p>\`);
   
   return function template(ctx, node, key = "") {
     const b2 = text(\`D\`);
-    let hdlr1 = [ctx['this'].increment, ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     const b4 = safeOutput(ctx['this'].state.val);
     const b3 = block3([hdlr1], [b4]);
     return multi([b2, b3]);
@@ -1940,12 +1811,13 @@ exports[`renderings, destruction, patch, stuff, ... yet another variation 4`] = 
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
   
   let block3 = createBlock(\`<span block-handler-0="click"><block-child-0/></span>\`);
   
   return function template(ctx, node, key = "") {
     const b2 = text(\`C\`);
-    let hdlr1 = [ctx['this'].increment, ctx];
+    let hdlr1 = [hdlr_fn1, ctx];
     const b4 = safeOutput(ctx['this'].state.val);
     const b3 = block3([hdlr1], [b4]);
     return multi([b2, b3]);
@@ -1961,9 +1833,10 @@ exports[`t-foreach with dynamic async component 1`] = `
   const comp1 = app.createComponent(null, false, false, false, ["key"]);
   
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block1, v_block1, l_block1, c_block1] = prepareList(ctx['this'].list);;
     for (let i1 = 0; i1 < l_block1; i1++) {
+      let ctx = Object.create(ctx1);
       ctx[\`arr\`] = k_block1[i1];
       ctx[\`arr_index\`] = i1;
       const key1 = ctx['arr_index'];
@@ -2048,41 +1921,6 @@ exports[`t-key on dynamic async component (toggler is never patched) 2`] = `
   return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['this'].props.key);
     return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`two renderings initiated between willPatch and patched 1`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Panel\`, true, false, false, ["val"]);
-  
-  let block1 = createBlock(\`<div><block-child-0/><block-child-0/></div>\`);
-  
-  return function template(ctx, node, key = "") {
-    let b2;
-    if (ctx['this'].state.flag) {
-      const tKey_1 = 'panel_'+ctx['this'].state.panel;
-      b2 = toggler(tKey_1, comp1({val: ctx['this'].state.panel}, tKey_1 + key + \`__1\`, node, this, null));
-    }
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`two renderings initiated between willPatch and patched 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
-  
-  let block1 = createBlock(\`<abc><block-child-0/><block-child-1/></abc>\`);
-  
-  return function template(ctx, node, key = "") {
-    const b2 = safeOutput(ctx['this'].props.val);
-    const b3 = safeOutput(ctx['this'].mounted);
-    return block1([], [b2, b3]);
   }
 }"
 `;

@@ -4,12 +4,11 @@ exports[`translation context body of t-sets are translated in context 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
+  let { withDefault, safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    setContextValue(ctx, "label", \`traduit\`);
+    ctx["label"] = \`traduit\`;
     return safeOutput(ctx['label']);
   }
 }"
@@ -143,12 +142,11 @@ exports[`translation support body of t-sets are translated 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
+  let { withDefault, safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    setContextValue(ctx, "label", \`translated\`);
+    ctx["label"] = \`translated\`;
     return safeOutput(ctx['label']);
   }
 }"
@@ -158,12 +156,11 @@ exports[`translation support body of t-sets inside translation=off are not trans
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
+  let { withDefault, safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    setContextValue(ctx, "label", \`untranslated\`);
+    ctx["label"] = \`untranslated\`;
     return safeOutput(ctx['label']);
   }
 }"
@@ -173,12 +170,11 @@ exports[`translation support body of t-sets inside translation=off are not trans
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
+  let { withDefault, safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    setContextValue(ctx, "label", \`untranslated\`);
+    ctx["label"] = \`untranslated\`;
     return safeOutput(ctx['label']);
   }
 }"
@@ -188,7 +184,7 @@ exports[`translation support body of t-sets with html content are translated 1`]
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, LazyValue, safeOutput } = helpers;
+  let { withDefault, LazyValue, safeOutput } = helpers;
   
   let block1 = createBlock(\`<div>translated</div>\`);
   
@@ -198,7 +194,6 @@ exports[`translation support body of t-sets with html content are translated 1`]
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
     ctx[\`label\`] = new LazyValue(value1, ctx, this, node, key);
     return safeOutput(ctx['label']);
   }
@@ -209,7 +204,7 @@ exports[`translation support body of t-sets with text and html content are trans
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, LazyValue, safeOutput } = helpers;
+  let { withDefault, LazyValue, safeOutput } = helpers;
   
   let block3 = createBlock(\`<div>translated</div>\`);
   
@@ -221,7 +216,6 @@ exports[`translation support body of t-sets with text and html content are trans
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
     ctx[\`label\`] = new LazyValue(value1, ctx, this, node, key);
     return safeOutput(ctx['label']);
   }
@@ -284,12 +278,11 @@ exports[`translation support t-set and falsy t-value: t-body are translated 1`] 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { isBoundary, withDefault, setContextValue, safeOutput } = helpers;
+  let { withDefault, safeOutput } = helpers;
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    setContextValue(ctx, "label", withDefault(false, \`translated\`));
+    ctx["label"] = withDefault(false, \`translated\`);
     return safeOutput(ctx['label']);
   }
 }"

@@ -58,7 +58,7 @@ export class ComponentNode implements VNode<ComponentNode> {
     this.parentKey = parentKey;
     this.pluginManager = parent ? parent.pluginManager : app.pluginManager;
     this.signalComputation = createComputation(
-      () => this.render(false),
+      () => this.render(),
       false,
       ComputationState.EXECUTED
     );
@@ -114,7 +114,7 @@ export class ComponentNode implements VNode<ComponentNode> {
     }
   }
 
-  async render(deep: boolean) {
+  async render() {
     if (this.status >= STATUS.CANCELLED) {
       return;
     }
@@ -126,20 +126,13 @@ export class ComponentNode implements VNode<ComponentNode> {
     }
     if (current) {
       if (!current.bdom && !fibersInError.has(current)) {
-        if (deep) {
-          // we want the render from this point on to be with deep=true
-          current.deep = deep;
-        }
         return;
       }
-      // if current rendering was with deep=true, we want this one to be the same
-      deep = deep || current.deep;
     } else if (!this.bdom) {
       return;
     }
 
     const fiber = makeRootFiber(this);
-    fiber.deep = deep;
     this.fiber = fiber;
 
     this.app.scheduler.addFiber(fiber);

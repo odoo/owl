@@ -30,27 +30,28 @@ exports[`misc complex template 1`] = `
     if (ctx['batch'].state=='preparing') {
       b4 = block4();
     }
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block5, v_block5, l_block5, c_block5] = prepareList(ctx['batch'].slot_ids.filter(_slot=>_slot.build_id.id&&!_slot.trigger_id.manual&&(ctx['options'].trigger_display[_slot.trigger_id.id])));;
     for (let i1 = 0; i1 < l_block5; i1++) {
+      let ctx = Object.create(ctx1);
       ctx[\`slot\`] = k_block5[i1];
       const key1 = ctx['slot'].id;
       c_block5[i1] = withKey(comp1({class: ctx['slot_container'],slot: ctx['slot']}, key + \`__1__\${key1}\`, node, this, null), key1);
     }
-    ctx = ctx.__proto__;
     b5 = list(c_block5);
-    ctx = Object.create(ctx);
+    const ctx2 = ctx;
     const [k_block7, v_block7, l_block7, c_block7] = prepareList([1,2,3,4]);;
     for (let i1 = 0; i1 < l_block7; i1++) {
+      let ctx = Object.create(ctx2);
       ctx[\`x\`] = k_block7[i1];
       const key1 = ctx['x'];
       c_block7[i1] = withKey(block8(), key1);
     }
-    ctx = ctx.__proto__;
     b7 = list(c_block7);
-    ctx = Object.create(ctx);
+    const ctx3 = ctx;
     const [k_block9, v_block9, l_block9, c_block9] = prepareList(ctx['commit_links']);;
     for (let i1 = 0; i1 < l_block9; i1++) {
+      let ctx = Object.create(ctx3);
       ctx[\`commit_link\`] = k_block9[i1];
       const key1 = ctx['commit_link'].id;
       let b11, b12, b13, b14, b15, b16;
@@ -83,7 +84,7 @@ exports[`misc global 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, safeOutput, isBoundary, withDefault, setContextValue, zero, withKey } = helpers;
+  let { prepareList, safeOutput, withDefault, zero, withKey } = helpers;
   const callTemplate_1 = app.getTemplate(\`_callee-uses-foo\`);
   const callTemplate_2 = app.getTemplate(\`_callee-uses-foo\`);
   const callTemplate_3 = app.getTemplate(\`_callee-uses-foo\`);
@@ -93,12 +94,20 @@ exports[`misc global 1`] = `
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   let block4 = createBlock(\`<span><block-child-0/></span>\`);
   
+  function callBody1(ctx, node, key = "") {
+    const b8 = callTemplate_1.call(this, Object.assign(Object.create(ctx), {foo: 'aaa'}), node, key + \`__1\`);
+    const b9 = callTemplate_2.call(this, ctx, node, key + \`__2\`);
+    ctx = Object.create(ctx);
+    ctx["foo"] = 'bbb';
+    const b10 = callTemplate_3.call(this, ctx, node, key + \`__3\`);
+    return multi([b8, b9, b10]);
+  }
+  
   return function template(ctx, node, key = "") {
-    ctx = Object.create(ctx);
-    ctx[isBoundary] = 1
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block2, v_block2, l_block2, c_block2] = prepareList([4,5,6]);;
     for (let i1 = 0; i1 < l_block2; i1++) {
+      let ctx = Object.create(ctx1);
       ctx[\`value\`] = k_block2[i1];
       ctx[\`value_first\`] = i1 === 0;
       ctx[\`value_last\`] = i1 === k_block2.length - 1;
@@ -107,23 +116,10 @@ exports[`misc global 1`] = `
       const key1 = ctx['value'];
       const b5 = safeOutput(ctx['value']);
       const b4 = block4([], [b5]);
-      ctx = Object.create(ctx);
-      ctx[isBoundary] = 1;
-      ctx = Object.create(ctx);
-      ctx[isBoundary] = 1;
-      setContextValue(ctx, "foo", 'aaa');
-      const b8 = callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}\`);
-      ctx = ctx.__proto__;
-      const b9 = callTemplate_2.call(this, ctx, node, key + \`__2__\${key1}\`);
-      setContextValue(ctx, "foo", 'bbb');
-      const b10 = callTemplate_3.call(this, ctx, node, key + \`__3__\${key1}\`);
-      const b7 = multi([b8, b9, b10]);
-      ctx[zero] = () => b7;
-      const b6 = callTemplate_4.call(this, ctx, node, key + \`__4__\${key1}\`);
-      ctx = ctx.__proto__;
+      const lazyBlock1 = callBody1.bind(this, ctx);
+      const b6 = callTemplate_4.call(this, Object.assign(Object.create(ctx), {[zero]: lazyBlock1}), node, key + \`__4__\${key1}\`);
       c_block2[i1] = withKey(multi([b4, b6]), key1);
     }
-    ctx = ctx.__proto__;
     const b2 = list(c_block2);
     const b11 = callTemplate_5.call(this, ctx, node, key + \`__5\`);
     return block1([], [b2, b11]);
@@ -184,6 +180,17 @@ exports[`misc other complex template 1`] = `
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
   let { safeOutput, prepareList, withKey, createRef } = helpers;
+  const hdlr_fn1 = (ctx, ev) => (ctx['selectProject'](ctx['project'])).call(ctx['this'], ev);
+  const hdlr_fn2 = (ctx, ev) => (ctx['toggleSettingsMenu']).call(ctx['this'], ev);
+  const hdlr_fn3 = (ctx, ev) => (ctx['toggleMore']).call(ctx['this'], ev);
+  const hdlr_fn4 = (ctx, ev) => (ctx['updateFilter']).call(ctx['this'], ev);
+  const hdlr_fn5 = (ctx, ev) => (ctx['updateFilter']).call(ctx['this'], ev);
+  const hdlr_fn6 = (ctx, ev) => (ctx['clearSearch']).call(ctx['this'], ev);
+  const hdlr_fn7 = (ctx, ev) => (ctx['updateTriggerDisplay']).call(ctx['this'], ev);
+  const hdlr_fn8 = (ctx, ev) => (ctx['triggerAll']).call(ctx['this'], ev);
+  const hdlr_fn9 = (ctx, ev) => (ctx['triggerNone']).call(ctx['this'], ev);
+  const hdlr_fn10 = (ctx, ev) => (ctx['triggerDefault']).call(ctx['this'], ev);
+  const hdlr_fn11 = (ctx, ev) => (ctx['toggleSettingsMenu']).call(ctx['this'], ev);
   const callTemplate_1 = app.getTemplate(\`LOAD_INFOS_TEMPLATE\`);
   const comp1 = app.createComponent(\`BundlesList\`, true, false, false, ["bundles","category_custom_views","search"]);
   const comp2 = app.createComponent(\`BundlesList\`, true, false, false, ["bundles","search"]);
@@ -221,16 +228,16 @@ exports[`misc other complex template 1`] = `
     let b2, b3, b6, b18, b22, b28, b29, b31, b32;
     let attr1 = \`/runbot/\${ctx['project'].slug}\`;
     b2 = safeOutput(ctx['project'].name);
-    ctx = Object.create(ctx);
+    const ctx1 = ctx;
     const [k_block3, v_block3, l_block3, c_block3] = prepareList(ctx['projects']);;
     for (let i1 = 0; i1 < l_block3; i1++) {
+      let ctx = Object.create(ctx1);
       ctx[\`project\`] = k_block3[i1];
       const key1 = ctx['project'].id;
-      let hdlr1 = [ctx['selectProject'](ctx['project']), ctx];
+      let hdlr1 = [hdlr_fn1, ctx];
       const b5 = safeOutput(ctx['project'].name);
       c_block3[i1] = withKey(block4([hdlr1], [b5]), key1);
     }
-    ctx = ctx.__proto__;
     b3 = list(c_block3);
     if (ctx['user']) {
       let b7, b8;
@@ -258,12 +265,13 @@ exports[`misc other complex template 1`] = `
       }
       b6 = multi([b7, b8]);
     }
-    let hdlr2 = [ctx['toggleSettingsMenu'], ctx];
-    let hdlr3 = [ctx['toggleMore'], ctx];
+    let hdlr2 = [hdlr_fn2, ctx];
+    let hdlr3 = [hdlr_fn3, ctx];
     if (ctx['categories']&&ctx['categories'].length>1) {
-      ctx = Object.create(ctx);
+      const ctx2 = ctx;
       const [k_block19, v_block19, l_block19, c_block19] = prepareList(ctx['categories']);;
       for (let i1 = 0; i1 < l_block19; i1++) {
+        let ctx = Object.create(ctx2);
         ctx[\`category\`] = k_block19[i1];
         const key1 = ctx['category'].id;
         let attr6 = ctx['category'].id;
@@ -271,20 +279,20 @@ exports[`misc other complex template 1`] = `
         const b21 = safeOutput(ctx['category'].name);
         c_block19[i1] = withKey(block20([attr6, prop1], [b21]), key1);
       }
-      ctx = ctx.__proto__;
       const b19 = list(c_block19);
       b18 = block18([], [b19]);
     }
     let prop2 = new String((ctx['search'].value) === 0 ? 0 : ((ctx['search'].value) || ""));
-    let hdlr4 = [ctx['updateFilter'], ctx];
-    let hdlr5 = [ctx['updateFilter'], ctx];
+    let hdlr4 = [hdlr_fn4, ctx];
+    let hdlr5 = [hdlr_fn5, ctx];
     let ref1 = createRef(ctx['search_input']);
-    let hdlr6 = [ctx['clearSearch'], ctx];
+    let hdlr6 = [hdlr_fn6, ctx];
     let ref2 = createRef(ctx['settings_menu']);
     if (ctx['triggers']) {
-      ctx = Object.create(ctx);
+      const ctx3 = ctx;
       const [k_block23, v_block23, l_block23, c_block23] = prepareList(ctx['triggers']);;
       for (let i1 = 0; i1 < l_block23; i1++) {
+        let ctx = Object.create(ctx3);
         ctx[\`trigger\`] = k_block23[i1];
         const key1 = ctx['trigger'].id;
         let b25;
@@ -293,19 +301,18 @@ exports[`misc other complex template 1`] = `
           let attr8 = \`trigger_\${ctx['trigger'].id}\`;
           let prop3 = new Boolean(ctx['options'].trigger_display[ctx['trigger'].id]);
           let attr9 = ctx['trigger'].id;
-          let hdlr7 = [ctx['updateTriggerDisplay'], ctx];
+          let hdlr7 = [hdlr_fn7, ctx];
           let attr10 = \`trigger_\${ctx['trigger'].id}\`;
           const b26 = safeOutput(ctx['trigger'].name);
           b25 = block25([attr7, attr8, prop3, attr9, hdlr7, attr10], [b26]);
         }
         c_block23[i1] = withKey(multi([b25]), key1);
       }
-      ctx = ctx.__proto__;
       const b23 = list(c_block23);
-      let hdlr8 = [ctx['triggerAll'], ctx];
-      let hdlr9 = [ctx['triggerNone'], ctx];
-      let hdlr10 = [ctx['triggerDefault'], ctx];
-      let hdlr11 = [ctx['toggleSettingsMenu'], ctx];
+      let hdlr8 = [hdlr_fn8, ctx];
+      let hdlr9 = [hdlr_fn9, ctx];
+      let hdlr10 = [hdlr_fn10, ctx];
+      let hdlr11 = [hdlr_fn11, ctx];
       const b27 = block27([hdlr8, hdlr9, hdlr10, hdlr11]);
       b22 = multi([b23, b27]);
     }

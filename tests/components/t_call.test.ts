@@ -223,7 +223,7 @@ describe("t-call", () => {
       }
 
       static template = xml`
-          <div><t t-call="recursive"><t t-set="level" t-value="0" /></t></div>
+          <div><t t-call="recursive" level="0"/></div>
       `;
     }
 
@@ -233,9 +233,7 @@ describe("t-call", () => {
       `
         <t t-if="level &lt; 2" >
           <div t-on-click.stop="this.onClicked.bind(this)" t-out="level" />
-          <t t-call="recursive">
-            <t t-set="level" t-value="level + 1" />
-          </t>
+          <t t-call="recursive" level="level + 1" />
         </t>
     `
     );
@@ -469,5 +467,27 @@ describe("t-call", () => {
         </templates>`,
     });
     expect(fixture.innerHTML).toBe(" coucou 3");
+  });
+
+  test("body content is not evaluated if callee does not use t-out='0'", async () => {
+    let evalCount = 0;
+    class Root extends Component {
+      static template = xml`
+        <t t-call="noZero">
+          <t t-out="this.sideEffect()"/>
+        </t>`;
+      sideEffect() {
+        evalCount++;
+        return "body";
+      }
+    }
+    await mount(Root, fixture, {
+      templates: `
+        <templates>
+          <t t-name="noZero"><span>no zero here</span></t>
+        </templates>`,
+    });
+    expect(evalCount).toBe(0);
+    expect(fixture.innerHTML).toBe("<span>no zero here</span>");
   });
 });

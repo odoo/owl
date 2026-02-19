@@ -1,7 +1,7 @@
 import { atomSymbol, ReactiveValue } from "./reactivity/computations";
 import { ValidationContext, ValidationIssue } from "./validation";
 
-type Constructor = { new (...args: any[]): any };
+type Constructor<T = any> = { new (...args: any[]): T };
 
 export type GetOptionalEntries<T> = {
   [K in keyof T as K extends `${infer P}?` ? P : never]?: T[K];
@@ -127,6 +127,10 @@ function literalType<const T extends LiteralTypes>(literal: T): T {
       });
     }
   } as any;
+}
+
+function literalSelection<const T extends LiteralTypes>(literals: T[]): T {
+  return union(literals.map(literalType)) as any;
 }
 
 function validateObjectShape(context: ValidationContext, shape: Record<string, any>) {
@@ -268,7 +272,14 @@ function reactiveValueType(type?: any): ReactiveValue<any> {
   } as any;
 }
 
+function ref(): HTMLElement | null;
+function ref<T extends Constructor<HTMLElement>>(type: T): InstanceType<T> | null;
+function ref(type?: any): any {
+  return union([literalType(null), instanceType(type)]);
+}
+
 export const types = {
+  and: intersection,
   any: anyType,
   array: arrayType,
   boolean: booleanType,
@@ -279,11 +290,12 @@ export const types = {
   literal: literalType,
   number: numberType,
   object: objectType,
+  or: union,
   promise: promiseType,
-  signal: reactiveValueType,
   record: recordType,
+  ref,
+  selection: literalSelection,
+  signal: reactiveValueType,
   string: stringType,
   tuple: tuple,
-  and: intersection,
-  or: union,
 };

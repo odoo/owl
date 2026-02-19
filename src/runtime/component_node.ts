@@ -192,8 +192,8 @@ export class ComponentNode implements VNode<ComponentNode> {
         cb.call(component);
       }
     }
-    for (let child of Object.values(this.children)) {
-      child._destroy();
+    for (let childKey in this.children) {
+      this.children[childKey]._destroy();
     }
     if (this.willDestroy.length) {
       try {

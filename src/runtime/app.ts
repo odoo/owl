@@ -218,8 +218,8 @@ export class App extends TemplateSet {
       }
       const parentFiber = ctx.fiber!;
       if (node) {
-        if (arePropsDifferent(node.props, props) || parentFiber.deep || node.forceNextRender) {
-          node.forceNextRender = false;
+        if (arePropsDifferent(node.props, props) || parentFiber.deep || (node.depthFlags & 1)) {
+          node.depthFlags &= ~1;
           updateAndRender.call(node, props, parentFiber);
         }
       } else {

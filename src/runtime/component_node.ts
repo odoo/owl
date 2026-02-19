@@ -27,7 +27,7 @@ export class ComponentNode implements VNode<ComponentNode> {
   component: Component;
   bdom: BDom | null = null;
   status: STATUS = STATUS.NEW;
-  forceNextRender: boolean = false;
+  depthFlags: number = 0; // bit 0: forceNextRender, bits 1+: depth
   parentKey: string | null;
   props: Record<string, any>;
 
@@ -56,6 +56,7 @@ export class ComponentNode implements VNode<ComponentNode> {
     this.app = app;
     this.parent = parent;
     this.parentKey = parentKey;
+    this.depthFlags = parent ? (parent.depthFlags & ~1) + 2 : 0;
     this.pluginManager = parent ? parent.pluginManager : app.pluginManager;
     this.signalComputation = createComputation(
       () => this.render(false),
@@ -186,6 +187,7 @@ export class ComponentNode implements VNode<ComponentNode> {
   }
 
   _destroy() {
+    if (this.status === STATUS.DESTROYED) return;
     const component = this.component;
     if (this.status === STATUS.MOUNTED) {
       for (let cb of this.willUnmount) {

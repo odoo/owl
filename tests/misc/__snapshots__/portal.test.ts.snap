@@ -4,9 +4,9 @@ exports[`Portal Add and remove portals 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, safeOutput, withKey } = helpers;
+  let { prepareList, safeOutput, createComponent, withKey } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   function slot1(ctx, node, key = "") {
     const b3 = text(\` Portal\`);
@@ -32,9 +32,9 @@ exports[`Portal Add and remove portals on div 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, safeOutput, withKey } = helpers;
+  let { prepareList, safeOutput, createComponent, withKey } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   let block2 = createBlock(\`<div> Portal<block-child-0/></div>\`);
   
@@ -61,9 +61,9 @@ exports[`Portal Add and remove portals with t-foreach 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, safeOutput, withKey } = helpers;
+  let { prepareList, safeOutput, createComponent, withKey } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   let block2 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -93,9 +93,9 @@ exports[`Portal Add and remove portals with t-foreach and destroy 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, safeOutput, withKey } = helpers;
+  let { prepareList, safeOutput, createComponent, withKey } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   let block2 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -125,9 +125,9 @@ exports[`Portal Add and remove portals with t-foreach inside div 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, safeOutput, withKey } = helpers;
+  let { prepareList, safeOutput, createComponent, withKey } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
@@ -159,7 +159,8 @@ exports[`Portal Child and Portal 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   let block3 = createBlock(\`<div class="portal"/>\`);
   
@@ -175,8 +176,9 @@ exports[`Portal Child and Portal 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   let block2 = createBlock(\`<span>child</span>\`);
   let block3 = createBlock(\`<span>portal</span>\`);
@@ -197,9 +199,9 @@ exports[`Portal Portal composed with t-slot 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { markRaw } = helpers;
-  const comp1 = app.createComponent(\`Child2\`, true, false, false, ["customHandler"]);
-  const comp2 = app.createComponent(\`Child\`, true, true, false, []);
+  let { createComponent, markRaw } = helpers;
+  const comp1 = createComponent(app, \`Child2\`, true, false, false, ["customHandler"]);
+  const comp2 = createComponent(app, \`Child\`, true, true, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -218,9 +220,9 @@ exports[`Portal Portal composed with t-slot 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { callSlot } = helpers;
+  let { callSlot, createComponent } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   function slot1(ctx, node, key = "") {
     return callSlot(ctx, node, key, 'default', false, {});
@@ -251,8 +253,9 @@ exports[`Portal basic use of portal 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   let block1 = createBlock(\`<div><span>1</span><block-child-0/></div>\`);
   let block2 = createBlock(\`<p>2</p>\`);
@@ -272,8 +275,9 @@ exports[`Portal basic use of portal in dev mode 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   let block1 = createBlock(\`<div><span>1</span><block-child-0/></div>\`);
   let block2 = createBlock(\`<p>2</p>\`);
@@ -293,8 +297,9 @@ exports[`Portal basic use of portal on div 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   let block1 = createBlock(\`<div><span>1</span><block-child-0/></div>\`);
   let block2 = createBlock(\`<div><p>2</p></div>\`);
@@ -314,8 +319,9 @@ exports[`Portal basic use of portal, variation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   let block1 = createBlock(\`<div><span>1</span><block-child-0/></div>\`);
   let block2 = createBlock(\`<p>2</p>\`);
@@ -335,9 +341,10 @@ exports[`Portal conditional use of Portal (with sub Component) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["val"]);
-  const comp2 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
+  const comp2 = createComponent(app, null, false, true, false, false);
   
   let block2 = createBlock(\`<span>1</span>\`);
   
@@ -375,8 +382,9 @@ exports[`Portal conditional use of Portal 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   let block2 = createBlock(\`<span>1</span>\`);
   let block3 = createBlock(\`<p>2</p>\`);
@@ -400,7 +408,8 @@ exports[`Portal conditional use of Portal with child and div 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2;
@@ -416,9 +425,9 @@ exports[`Portal conditional use of Portal with child and div 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, withKey } = helpers;
+  let { prepareList, createComponent, withKey } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   let block1 = createBlock(\`<div><span>hasPortal</span><block-child-0/></div>\`);
   let block3 = createBlock(\`<p>thePortal</p>\`);
@@ -446,7 +455,8 @@ exports[`Portal conditional use of Portal with child and div, variation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   let block2 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -465,9 +475,9 @@ exports[`Portal conditional use of Portal with child and div, variation 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, withKey } = helpers;
+  let { prepareList, createComponent, withKey } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   let block2 = createBlock(\`<span>hasPortal</span>\`);
   let block4 = createBlock(\`<p>thePortal</p>\`);
@@ -496,8 +506,9 @@ exports[`Portal conditional use of Portal with div 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   let block2 = createBlock(\`<div><span>hasPortal</span><block-child-0/></div>\`);
   let block3 = createBlock(\`<p>thePortal</p>\`);
@@ -521,9 +532,10 @@ exports[`Portal lifecycle hooks of portal sub component are properly called 1`] 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["val"]);
-  const comp2 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
+  const comp2 = createComponent(app, null, false, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-0/></div>\`);
   
@@ -560,7 +572,8 @@ exports[`Portal portal and Child 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   let block2 = createBlock(\`<div class="portal"/>\`);
   
@@ -576,8 +589,9 @@ exports[`Portal portal and Child 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   let block2 = createBlock(\`<span>child</span>\`);
   let block3 = createBlock(\`<span>portal</span>\`);
@@ -598,9 +612,9 @@ exports[`Portal portal could have dynamically no content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
+  let { safeOutput, createComponent } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<span><block-child-0/></span>\`);
@@ -625,9 +639,10 @@ exports[`Portal portal destroys on crash 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["error"]);
-  const comp2 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["error"]);
+  const comp2 = createComponent(app, null, false, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -661,9 +676,10 @@ exports[`Portal portal with child and props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["val"]);
-  const comp2 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
+  const comp2 = createComponent(app, null, false, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -697,9 +713,9 @@ exports[`Portal portal with dynamic body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
+  let { safeOutput, createComponent } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<span><block-child-0/></span>\`);
@@ -727,8 +743,9 @@ exports[`Portal portal with many children 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block3 = createBlock(\`<div>1</div>\`);
@@ -751,9 +768,9 @@ exports[`Portal portal with no content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
+  let { safeOutput, createComponent } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -776,9 +793,9 @@ exports[`Portal portal with only text as content 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
+  let { safeOutput, createComponent } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -797,8 +814,9 @@ exports[`Portal portal with target not in dom 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<div>2</div>\`);
@@ -818,7 +836,8 @@ exports[`Portal simple catchError with portal 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Boom\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Boom\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   
@@ -838,9 +857,9 @@ exports[`Portal simple catchError with portal 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
+  let { safeOutput, createComponent } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   let block1 = createBlock(\`<div><span>1</span><block-child-0/></div>\`);
   let block2 = createBlock(\`<p><block-child-0/></p>\`);
@@ -861,8 +880,9 @@ exports[`Portal with target in template (after portal) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   let block1 = createBlock(\`<div><span>1</span><block-child-0/><div id="local-target"/></div>\`);
   let block2 = createBlock(\`<p>2</p>\`);
@@ -882,8 +902,9 @@ exports[`Portal with target in template (before portal) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   let block1 = createBlock(\`<div><div id="local-target"/><span>1</span><block-child-0/></div>\`);
   let block2 = createBlock(\`<p>2</p>\`);
@@ -924,8 +945,9 @@ exports[`Portal: Props validation target must be a valid selector 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, null, false, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   let block2 = createBlock(\`<div>2</div>\`);
@@ -945,9 +967,10 @@ exports[`Portal: UI/UX focus is kept across re-renders 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
   const Portal = app.Portal;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["val"]);
-  const comp2 = app.createComponent(null, false, true, false, false);
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["val"]);
+  const comp2 = createComponent(app, null, false, true, false, false);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   

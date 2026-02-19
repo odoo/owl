@@ -4,7 +4,8 @@ exports[`t-props basic use 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, true, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, true, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -34,7 +35,8 @@ exports[`t-props child receives a copy of the t-props object, not the original 1
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, true, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, true, []);
   
   return function template(ctx, node, key = "") {
     return comp1(Object.assign({}, ctx['this'].childProps), key + \`__1\`, node, this, null);
@@ -59,7 +61,8 @@ exports[`t-props t-props and other props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Comp\`, true, false, true, ["a"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Comp\`, true, false, true, ["a"]);
   
   let block1 = createBlock(\`<div><div><block-child-0/></div></div>\`);
   
@@ -90,7 +93,8 @@ exports[`t-props t-props only 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Comp\`, true, false, true, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Comp\`, true, false, true, []);
   
   let block1 = createBlock(\`<div><div><block-child-0/></div></div>\`);
   
@@ -120,7 +124,8 @@ exports[`t-props t-props with props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, true, ["a","b"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, true, ["a","b"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   

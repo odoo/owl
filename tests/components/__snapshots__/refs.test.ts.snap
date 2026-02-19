@@ -19,7 +19,8 @@ exports[`refs ref is set by child component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["ref"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["ref"]);
   
   return function template(ctx, node, key = "") {
     return comp1({ref: ctx['this'].ref}, key + \`__1\`, node, this, null);
@@ -66,8 +67,8 @@ exports[`refs refs and recursive templates 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { createRef, safeOutput } = helpers;
-  const comp1 = app.createComponent(\`Test\`, true, false, false, ["tree"]);
+  let { createRef, safeOutput, createComponent } = helpers;
+  const comp1 = createComponent(app, \`Test\`, true, false, false, ["tree"]);
   
   let block1 = createBlock(\`<p block-ref="0"><block-child-0/><block-child-1/></p>\`);
   
@@ -108,9 +109,9 @@ exports[`refs refs are properly bound in slots 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput, createRef, markRaw } = helpers;
+  let { safeOutput, createRef, markRaw, createComponent } = helpers;
   const hdlr_fn1 = (ctx, ev) => (ctx['this'].doSomething).call(ctx['this'], ev);
-  const comp1 = app.createComponent(\`Dialog\`, true, true, false, []);
+  const comp1 = createComponent(app, \`Dialog\`, true, true, false, []);
   
   let block1 = createBlock(\`<div><span class="counter"><block-child-0/></span><block-child-1/></div>\`);
   let block3 = createBlock(\`<button block-handler-0="click" block-ref="1">do something</button>\`);

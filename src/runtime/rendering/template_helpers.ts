@@ -1,8 +1,12 @@
-import { BDom, multi, text, toggler, createCatcher } from "../blockdom";
-import { Markup } from "../utils";
-import { html } from "../blockdom/index";
-import { markRaw } from "../reactivity/proxy";
 import { OwlError } from "../../common/owl_error";
+import { App } from "../app";
+import { BDom, createCatcher, multi, text, toggler } from "../blockdom";
+import { html } from "../blockdom/index";
+import { Component } from "../component";
+import { ComponentNode } from "../component_node";
+import { markRaw } from "../reactivity/proxy";
+import { Markup } from "../utils";
+import { Fiber } from "./fibers";
 
 const ObjectCreate = Object.create;
 /**
@@ -171,6 +175,84 @@ function modelExpr(value: any) {
   return value;
 }
 
+
+function createComponent<P extends Record<string, any>>(
+  app: App,
+  name: string | null,
+  isStatic: boolean,
+  hasSlotsProp: boolean,
+  hasDynamicPropList: boolean,
+  propList: string[]
+) {
+  const isDynamic = !isStatic;
+  let arePropsDifferent: (p1: P, p2: P) => boolean;
+  const hasNoProp = propList.length === 0;
+  if (hasSlotsProp) {
+    arePropsDifferent = (_1, _2) => true;
+  } else if (hasDynamicPropList) {
+    arePropsDifferent = function (props1: P, props2: P) {
+      for (let k in props1) {
+        if (props1[k] !== props2[k]) {
+          return true;
+        }
+      }
+      return Object.keys(props1).length !== Object.keys(props2).length;
+    };
+  } else if (hasNoProp) {
+    arePropsDifferent = (_1: any, _2: any) => false;
+  } else {
+    arePropsDifferent = function (props1: P, props2: P) {
+      for (let p of propList) {
+        if (props1[p] !== props2[p]) {
+          return true;
+        }
+      }
+      return false;
+    };
+  }
+
+  const updateAndRender = ComponentNode.prototype.updateAndRender;
+  const initiateRender = ComponentNode.prototype.initiateRender;
+
+  return (props: P, key: string, ctx: ComponentNode, parent: any, C: any) => {
+    let children = ctx.children;
+    let node: any = children[key];
+    if (isDynamic && node && node.component.constructor !== C) {
+      node = undefined;
+    }
+    const parentFiber = ctx.fiber!;
+    if (node) {
+      if (arePropsDifferent(node.props, props) || parentFiber.deep || node.forceNextRender) {
+        node.forceNextRender = false;
+        updateAndRender.call(node, props, parentFiber);
+      }
+    } else {
+      // new component
+      if (isStatic) {
+        const components = parent.constructor.components;
+        if (!components) {
+          throw new OwlError(
+            `Cannot find the definition of component "${name}", missing static components key in parent`
+          );
+        }
+        C = components[name as any];
+        if (!C) {
+          throw new OwlError(`Cannot find the definition of component "${name}"`);
+        } else if (!(C.prototype instanceof Component)) {
+          throw new OwlError(
+            `"${name}" is not a Component. It must inherit from the Component class`
+          );
+        }
+      }
+      node = new ComponentNode(C, props, app, ctx, key);
+      children[key] = node;
+      initiateRender.call(node, new Fiber(node, parentFiber));
+    }
+    parentFiber.childrenMap[key] = node;
+    return node;
+  };
+}
+
 export const helpers = {
   withDefault,
   zero: Symbol("zero"),
@@ -186,4 +268,5 @@ export const helpers = {
   OwlError,
   createRef,
   modelExpr,
+  createComponent: createComponent,
 };

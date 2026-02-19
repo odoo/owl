@@ -4,7 +4,8 @@ exports[`basics basic use 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["p"]);
   
   return function template(ctx, node, key = "") {
     return comp1({p: 1}, key + \`__1\`, node, this, null);
@@ -31,8 +32,9 @@ exports[`basics can select a sub widget  1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
-  const comp2 = app.createComponent(\`OtherChild\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp2 = createComponent(app, \`OtherChild\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2, b3;
@@ -77,8 +79,9 @@ exports[`basics can select a sub widget, part 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
-  const comp2 = app.createComponent(\`OtherChild\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp2 = createComponent(app, \`OtherChild\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2, b3;
@@ -123,7 +126,8 @@ exports[`basics sub widget is interactive 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["p"]);
   
   return function template(ctx, node, key = "") {
     return comp1({p: 1}, key + \`__1\`, node, this, null);
@@ -152,7 +156,8 @@ exports[`basics top level sub widget with a parent 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ComponentB\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ComponentB\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -167,7 +172,8 @@ exports[`basics top level sub widget with a parent 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ComponentC\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ComponentC\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     return comp1({}, key + \`__1\`, node, this, null);

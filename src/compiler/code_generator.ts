@@ -1231,9 +1231,10 @@ export class CodeGenerator {
         propList.push(`"${name}"`);
       }
     }
+    this.helpers.add("createComponent");
     this.staticDefs.push({
       id,
-      expr: `app.createComponent(${
+      expr: `createComponent(app, ${
         ast.isDynamic ? null : expr
       }, ${!ast.isDynamic}, ${!!ast.slots}, ${!!ast.dynamicProps}, [${propList}])`,
     });
@@ -1352,9 +1353,10 @@ export class CodeGenerator {
     let { block } = ctx;
     const name = this.compileInNewTarget("slot", ast.content, ctx);
     let id = generateId("comp");
+    this.helpers.add("createComponent");
     this.staticDefs.push({
       id,
-      expr: `app.createComponent(null, false, true, false, false)`,
+      expr: `createComponent(app, null, false, true, false, false)`,
     });
 
     const target = compileExpr(ast.target);

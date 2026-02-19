@@ -120,7 +120,7 @@ function onWriteTargetKey(target: Target, key: PropertyKey, atom: Atom | null): 
 }
 
 // Maps proxy objects to the underlying target
-export const targets = new WeakMap<Reactive<Target>, Target>();
+const targets = new WeakMap<Reactive<Target>, Target>();
 const proxyCache = new WeakMap<Target, Reactive<Target>>();
 
 export function proxifyTarget<T extends Target>(target: T, atom: Atom | null): T {

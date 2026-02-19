@@ -13,6 +13,7 @@ import {
   ASTTCallSlot,
   ASTText,
   ASTTForEach,
+  ForEachNoFlag,
   ASTTif,
   ASTTKey,
   ASTTOut,
@@ -835,16 +836,16 @@ export class CodeGenerator {
     this.target.indentLevel++;
     this.addLine(`let ctx = Object.create(${ctxVar});`);
     this.addLine(`ctx[\`${ast.elem}\`] = ${keys}[${loopVar}];`);
-    if (!ast.hasNoFirst) {
+    if (!(ast.noFlags & ForEachNoFlag.First)) {
       this.addLine(`ctx[\`${ast.elem}_first\`] = ${loopVar} === 0;`);
     }
-    if (!ast.hasNoLast) {
+    if (!(ast.noFlags & ForEachNoFlag.Last)) {
       this.addLine(`ctx[\`${ast.elem}_last\`] = ${loopVar} === ${keys}.length - 1;`);
     }
-    if (!ast.hasNoIndex) {
+    if (!(ast.noFlags & ForEachNoFlag.Index)) {
       this.addLine(`ctx[\`${ast.elem}_index\`] = ${loopVar};`);
     }
-    if (!ast.hasNoValue) {
+    if (!(ast.noFlags & ForEachNoFlag.Value)) {
       this.addLine(`ctx[\`${ast.elem}_value\`] = ${vals}[${loopVar}];`);
     }
     this.define(`key${this.target.loopLevel}`, ast.key ? compileExpr(ast.key) : loopVar);

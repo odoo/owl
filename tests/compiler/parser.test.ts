@@ -1,4 +1,4 @@
-import { ASTType, parse } from "../../src/compiler/parser";
+import { ASTType, ForEachNoFlag, parse } from "../../src/compiler/parser";
 
 describe("qweb parser", () => {
   // ---------------------------------------------------------------------------
@@ -765,10 +765,7 @@ describe("qweb parser", () => {
       elem: "item",
       key: "item_index",
       body: { type: ASTType.TOut, expr: "item", body: null },
-      hasNoFirst: true,
-      hasNoIndex: false,
-      hasNoLast: true,
-      hasNoValue: true,
+      noFlags: ForEachNoFlag.First | ForEachNoFlag.Last | ForEachNoFlag.Value,
     });
   });
 
@@ -779,10 +776,7 @@ describe("qweb parser", () => {
       elem: "item",
       key: "item_index",
       body: { type: ASTType.TOut, expr: "item", body: null },
-      hasNoFirst: true,
-      hasNoIndex: false,
-      hasNoLast: true,
-      hasNoValue: true,
+      noFlags: ForEachNoFlag.First | ForEachNoFlag.Last | ForEachNoFlag.Value,
     });
   });
 
@@ -804,10 +798,7 @@ describe("qweb parser", () => {
         ns: null,
         content: [{ type: ASTType.TOut, expr: "item", body: null }],
       },
-      hasNoFirst: true,
-      hasNoIndex: false,
-      hasNoLast: true,
-      hasNoValue: true,
+      noFlags: ForEachNoFlag.First | ForEachNoFlag.Last | ForEachNoFlag.Value,
     });
   });
 
@@ -818,10 +809,7 @@ describe("qweb parser", () => {
       elem: "item",
       key: "item.id",
       body: { type: ASTType.TOut, expr: "item", body: null },
-      hasNoFirst: true,
-      hasNoIndex: true,
-      hasNoLast: true,
-      hasNoValue: true,
+      noFlags: ForEachNoFlag.First | ForEachNoFlag.Last | ForEachNoFlag.Index | ForEachNoFlag.Value,
     });
   });
 
@@ -845,10 +833,7 @@ describe("qweb parser", () => {
         ns: null,
         content: [{ type: ASTType.TOut, expr: "item", body: null }],
       },
-      hasNoFirst: true,
-      hasNoIndex: false,
-      hasNoLast: true,
-      hasNoValue: true,
+      noFlags: ForEachNoFlag.First | ForEachNoFlag.Last | ForEachNoFlag.Value,
     });
   });
 
@@ -880,10 +865,7 @@ describe("qweb parser", () => {
           content: [{ type: ASTType.TOut, expr: "item", body: null }],
         },
       },
-      hasNoFirst: true,
-      hasNoIndex: false,
-      hasNoLast: true,
-      hasNoValue: true,
+      noFlags: ForEachNoFlag.First | ForEachNoFlag.Last | ForEachNoFlag.Value,
     });
   });
 
@@ -912,10 +894,7 @@ describe("qweb parser", () => {
         ns: null,
         content: [{ type: ASTType.TOut, expr: "category.name", body: null }],
       },
-      hasNoFirst: true,
-      hasNoIndex: false,
-      hasNoLast: true,
-      hasNoValue: true,
+      noFlags: ForEachNoFlag.First | ForEachNoFlag.Last | ForEachNoFlag.Value,
     });
   });
 
@@ -939,10 +918,7 @@ describe("qweb parser", () => {
           elem: "item",
           key: "item_index",
           body: { type: ASTType.TOut, expr: "item", body: null },
-          hasNoFirst: true,
-          hasNoIndex: false,
-          hasNoLast: true,
-          hasNoValue: true,
+          noFlags: ForEachNoFlag.First | ForEachNoFlag.Last | ForEachNoFlag.Value,
         },
       ],
     });
@@ -976,10 +952,7 @@ describe("qweb parser", () => {
         ns: null,
         content: [{ type: ASTType.TOut, expr: "item", body: null }],
       },
-      hasNoFirst: true,
-      hasNoIndex: false,
-      hasNoLast: true,
-      hasNoValue: true,
+      noFlags: ForEachNoFlag.First | ForEachNoFlag.Last | ForEachNoFlag.Value,
     });
   });
 
@@ -999,10 +972,7 @@ describe("qweb parser", () => {
         slots: null,
         on: null,
       },
-      hasNoFirst: true,
-      hasNoIndex: false,
-      hasNoLast: true,
-      hasNoValue: true,
+      noFlags: ForEachNoFlag.First | ForEachNoFlag.Last | ForEachNoFlag.Value,
     });
   });
 
@@ -1022,10 +992,7 @@ describe("qweb parser", () => {
         body: null,
         context: null,
       },
-      hasNoFirst: false,
-      hasNoIndex: false,
-      hasNoLast: false,
-      hasNoValue: false,
+      noFlags: 0,
     });
   });
 
@@ -1836,10 +1803,7 @@ describe("qweb parser", () => {
       },
       collection: "list",
       elem: "item",
-      hasNoFirst: true,
-      hasNoIndex: false,
-      hasNoLast: true,
-      hasNoValue: true,
+      noFlags: ForEachNoFlag.First | ForEachNoFlag.Last | ForEachNoFlag.Value,
       key: "item_index",
       type: ASTType.TForEach,
     });

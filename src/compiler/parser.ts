@@ -101,7 +101,6 @@ export interface ASTTForEach extends BaseAST {
   collection: string;
   elem: string;
   body: AST;
-  memo: string;
   hasNoFirst: boolean;
   hasNoLast: boolean;
   hasNoIndex: boolean;
@@ -523,8 +522,6 @@ function parseTForEach(node: Element, ctx: ParsingContext): AST | null {
     );
   }
   node.removeAttribute("t-key");
-  const memo = node.getAttribute("t-memo") || "";
-  node.removeAttribute("t-memo");
   const body = parseNode(node, ctx);
 
   if (!body) {
@@ -542,7 +539,6 @@ function parseTForEach(node: Element, ctx: ParsingContext): AST | null {
     collection,
     elem,
     body,
-    memo,
     key,
     hasNoFirst,
     hasNoLast,

@@ -4,8 +4,8 @@ exports[`t-set slot setted value (with t-set) not accessible with t-out 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput, markRaw } = helpers;
-  const comp1 = app.createComponent(\`Childcomp\`, true, true, false, []);
+  let { safeOutput, markRaw, createComponent } = helpers;
+  const comp1 = createComponent(app, \`Childcomp\`, true, true, false, []);
   
   let block1 = createBlock(\`<div><p><block-child-0/></p><block-child-1/><p><block-child-2/></p></div>\`);
   
@@ -48,9 +48,9 @@ exports[`t-set slots with a t-set with a component in body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { LazyValue, withDefault, safeOutput, markRaw } = helpers;
-  const comp1 = app.createComponent(\`C\`, true, false, false, []);
-  const comp2 = app.createComponent(\`Child\`, true, true, false, []);
+  let { LazyValue, createComponent, withDefault, safeOutput, markRaw } = helpers;
+  const comp1 = createComponent(app, \`C\`, true, false, false, []);
+  const comp2 = createComponent(app, \`Child\`, true, true, false, []);
   
   function slot1(ctx, node, key = "") {
     ctx = Object.create(ctx);
@@ -99,9 +99,9 @@ exports[`t-set slots with an t-set with a component in body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { LazyValue, withDefault, safeOutput, markRaw } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
-  const comp2 = app.createComponent(\`Blorg\`, true, true, false, []);
+  let { LazyValue, createComponent, withDefault, safeOutput, markRaw } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp2 = createComponent(app, \`Blorg\`, true, true, false, []);
   
   let block4 = createBlock(\`<div>coffee</div>\`);
   
@@ -154,9 +154,9 @@ exports[`t-set slots with an unused t-set with a component in body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { LazyValue, withDefault, markRaw } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
-  const comp2 = app.createComponent(\`Child\`, true, true, false, []);
+  let { LazyValue, createComponent, withDefault, markRaw } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp2 = createComponent(app, \`Child\`, true, true, false, []);
   
   function slot1(ctx, node, key = "") {
     ctx = Object.create(ctx);
@@ -255,8 +255,8 @@ exports[`t-set t-set not altered by child comp 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
-  const comp1 = app.createComponent(\`Childcomp\`, true, false, false, []);
+  let { safeOutput, createComponent } = helpers;
+  const comp1 = createComponent(app, \`Childcomp\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><p><block-child-0/></p><block-child-1/><p><block-child-2/></p></div>\`);
   
@@ -320,8 +320,8 @@ exports[`t-set t-set with a component in body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { LazyValue, withDefault, safeOutput } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { LazyValue, createComponent, withDefault, safeOutput } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><div><block-child-0/></div></div>\`);
   

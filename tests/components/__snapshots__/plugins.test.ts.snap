@@ -66,7 +66,8 @@ exports[`components can register resources 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Level2\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Level2\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     const b2 = text(\`1 | \`);
@@ -133,7 +134,8 @@ exports[`components start plugins at their level 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Level2\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Level2\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     const b2 = text(\`1 | \`);
@@ -147,8 +149,8 @@ exports[`components start plugins at their level 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
-  const comp1 = app.createComponent(\`Level3\`, true, false, false, []);
+  let { safeOutput, createComponent } = helpers;
+  const comp1 = createComponent(app, \`Level3\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     const b2 = text(\`2: \`);
@@ -264,8 +266,8 @@ exports[`shadow plugin 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
-  const comp1 = app.createComponent(\`Level2\`, true, false, false, []);
+  let { safeOutput, createComponent } = helpers;
+  const comp1 = createComponent(app, \`Level2\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     const b2 = safeOutput(ctx['this'].a.value);
@@ -280,7 +282,8 @@ exports[`shadow plugin 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Level3\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Level3\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     return comp1({}, key + \`__1\`, node, this, null);

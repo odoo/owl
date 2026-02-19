@@ -17,8 +17,9 @@ exports[`lifecycle hooks component semantics 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`B\`, true, false, false, []);
-  const comp2 = app.createComponent(\`C\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`B\`, true, false, false, []);
+  const comp2 = createComponent(app, \`C\`, true, false, false, []);
   
   let block1 = createBlock(\`<div>A<block-child-0/><block-child-1/></div>\`);
   
@@ -47,9 +48,10 @@ exports[`lifecycle hooks component semantics 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`D\`, true, false, false, []);
-  const comp2 = app.createComponent(\`E\`, true, false, false, []);
-  const comp3 = app.createComponent(\`F\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`D\`, true, false, false, []);
+  const comp2 = createComponent(app, \`E\`, true, false, false, []);
+  const comp3 = createComponent(app, \`F\`, true, false, false, []);
   
   let block1 = createBlock(\`<div>C<block-child-0/><block-child-1/><block-child-2/></div>\`);
   
@@ -109,7 +111,8 @@ exports[`lifecycle hooks components are unmounted and destroyed if no longer in 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["n"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["n"]);
   
   let block2 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -143,7 +146,8 @@ exports[`lifecycle hooks components are unmounted destroyed if no longer in DOM 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2;
@@ -172,7 +176,8 @@ exports[`lifecycle hooks destroy new children before being mountged 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     ctx = Object.create(ctx);
@@ -203,7 +208,8 @@ exports[`lifecycle hooks hooks are called in proper order in widget creation/des
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -231,7 +237,8 @@ exports[`lifecycle hooks lifecycle callbacks are bound to component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Test\`, true, false, false, ["rev"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Test\`, true, false, false, ["rev"]);
   
   return function template(ctx, node, key = "") {
     return comp1({rev: ctx['this'].rev}, key + \`__1\`, node, this, null);
@@ -255,7 +262,8 @@ exports[`lifecycle hooks lifecycle semantics 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["a"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["a"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -283,7 +291,8 @@ exports[`lifecycle hooks lifecycle semantics, part 2 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2;
@@ -299,7 +308,8 @@ exports[`lifecycle hooks lifecycle semantics, part 2 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`GrandChild\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`GrandChild\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     return comp1({}, key + \`__1\`, node, this, null);
@@ -324,7 +334,8 @@ exports[`lifecycle hooks lifecycle semantics, part 3 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2;
@@ -340,7 +351,8 @@ exports[`lifecycle hooks lifecycle semantics, part 4 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2;
@@ -356,7 +368,8 @@ exports[`lifecycle hooks lifecycle semantics, part 4 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`GrandChild\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`GrandChild\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     return comp1({}, key + \`__1\`, node, this, null);
@@ -381,7 +394,8 @@ exports[`lifecycle hooks lifecycle semantics, part 5 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2;
@@ -410,7 +424,8 @@ exports[`lifecycle hooks lifecycle semantics, part 6 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["value"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
   
   return function template(ctx, node, key = "") {
     return comp1({value: ctx['this'].state.value}, key + \`__1\`, node, this, null);
@@ -448,7 +463,8 @@ exports[`lifecycle hooks mounted hook is called on every mount, not just the fir
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2;
@@ -477,7 +493,8 @@ exports[`lifecycle hooks mounted hook is called on subcomponents, in proper orde
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -518,7 +535,8 @@ exports[`lifecycle hooks patched hook is called after updateProps 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["a"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["a"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -606,7 +624,8 @@ exports[`lifecycle hooks sub widget (inside sub node): hooks are correctly calle
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2;
@@ -685,7 +704,8 @@ exports[`lifecycle hooks various hooks are called on subsubcomponents, in proper
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -703,7 +723,8 @@ exports[`lifecycle hooks various hooks are called on subsubcomponents, in proper
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ChildChild\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ChildChild\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -731,7 +752,8 @@ exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents,
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["n"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["n"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -746,7 +768,8 @@ exports[`lifecycle hooks willPatch, patched hook are called on subsubcomponents,
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ChildChild\`, true, false, false, ["n"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ChildChild\`, true, false, false, ["n"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -776,7 +799,8 @@ exports[`lifecycle hooks willStart hook is called on sub component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     return comp1({}, key + \`__1\`, node, this, null);
@@ -827,7 +851,8 @@ exports[`lifecycle hooks willStart, mounted on subwidget rendered after main is 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   let block3 = createBlock(\`<div/>\`);
@@ -861,7 +886,8 @@ exports[`lifecycle hooks willUpdateProps hook is called 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["n"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["n"]);
   
   return function template(ctx, node, key = "") {
     return comp1({n: ctx['this'].state.n}, key + \`__1\`, node, this, null);

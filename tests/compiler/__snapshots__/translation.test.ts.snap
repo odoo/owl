@@ -37,7 +37,8 @@ exports[`translation context props with modifier .translate are translated in co
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ChildComponent\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ChildComponent\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     return comp1({text: \`jeu\`}, key + \`__1\`, node, this, null);
@@ -64,8 +65,8 @@ exports[`translation context slot attrs and text contents are translated in cont
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { markRaw } = helpers;
-  const comp1 = app.createComponent(\`ChildComponent\`, true, true, false, []);
+  let { markRaw, createComponent } = helpers;
+  const comp1 = createComponent(app, \`ChildComponent\`, true, true, false, []);
   
   function slot1(ctx, node, key = "") {
     return text(\`jeu\`);

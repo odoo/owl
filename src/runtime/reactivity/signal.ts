@@ -11,11 +11,7 @@ export interface Signal<T> extends ReactiveValue<T> {
   set(nextValue: T): void;
 }
 
-interface SignalOptions<T> {
-  type?: T;
-}
-
-function buildSignal<T>(value: T, set: (atom: Atom) => T, options?: SignalOptions<T>): Signal<T> {
+function buildSignal<T>(value: T, set: (atom: Atom) => T): Signal<T> {
   const atom: Atom & { type: "signal" } = {
     type: "signal",
     value,
@@ -41,8 +37,8 @@ function buildSignal<T>(value: T, set: (atom: Atom) => T, options?: SignalOption
   return readSignal;
 }
 
-export function signal<T>(value: T, options: SignalOptions<T> = {}): Signal<T> {
-  return buildSignal<T>(value, (atom) => atom.value, options);
+export function signal<T>(value: T): Signal<T> {
+  return buildSignal<T>(value, (atom) => atom.value);
 }
 
 signal.invalidate = function (signal: Signal<any>): void {
@@ -52,30 +48,18 @@ signal.invalidate = function (signal: Signal<any>): void {
   onWriteAtom((signal as any)[atomSymbol]);
 };
 
-signal.Array = function <T>(initialValue: T[], options: SignalOptions<T> = {}): Signal<T[]> {
+signal.Array = function <T>(initialValue: T[]): Signal<T[]> {
   return buildSignal<T[]>(initialValue, (atom) => proxifyTarget(atom.value, atom));
 };
 
-signal.Object = function <T extends object>(
-  initialValue: T,
-  options?: SignalOptions<T>
-): Signal<T> {
+signal.Object = function <T extends object>(initialValue: T): Signal<T> {
   return buildSignal<T>(initialValue, (atom) => proxifyTarget(atom.value, atom));
 };
 
-interface MapSignalOptions<K, V> {
-  name?: string;
-  keyType?: K;
-  valueType?: V;
-}
-
-signal.Map = function <K, V>(
-  initialValue: Map<K, V>,
-  options?: MapSignalOptions<K, V>
-): Signal<Map<K, V>> {
+signal.Map = function <K, V>(initialValue: Map<K, V>): Signal<Map<K, V>> {
   return buildSignal<Map<K, V>>(initialValue, (atom) => proxifyTarget(atom.value, atom));
 };
 
-signal.Set = function <T>(initialValue: Set<T>, options?: SignalOptions<T>): Signal<Set<T>> {
+signal.Set = function <T>(initialValue: Set<T>): Signal<Set<T>> {
   return buildSignal<Set<T>>(initialValue, (atom) => proxifyTarget(atom.value, atom));
 };

@@ -360,7 +360,7 @@ export function compileExpr(expr: string): string {
 
 export const INTERP_REGEXP = /\{\{.*?\}\}|\#\{.*?\}/g;
 
-export function replaceDynamicParts(s: string, replacer: (s: string) => string) {
+function replaceDynamicParts(s: string, replacer: (s: string) => string) {
   let matches = s.match(INTERP_REGEXP);
   if (matches && matches[0].length === s.length) {
     return `(${replacer(s.slice(2, matches[0][0] === "{" ? -2 : -1))})`;

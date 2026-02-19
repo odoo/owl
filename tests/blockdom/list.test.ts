@@ -6,8 +6,12 @@ import {
   text,
   createBlock,
   VNode,
-  withKey,
 } from "../../src/runtime/blockdom";
+
+function withKey(vnode: VNode, key: any) {
+  vnode.key = key;
+  return vnode;
+}
 import { makeTestFixture } from "./helpers";
 
 //------------------------------------------------------------------------------

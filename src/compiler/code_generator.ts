@@ -935,7 +935,6 @@ export class CodeGenerator {
     const attrs: string[] = ast.attrs
       ? this.formatPropObject(ast.attrs, ast.attrsTranslationCtx, ctx.translationCtx)
       : [];
-    let ctxVar = "ctx";
     const isDynamic = INTERP_REGEXP.test(ast.name);
     const subTemplate = isDynamic ? interpolate(ast.name) : "`" + ast.name + "`";
     if (block && !forceNewBlock) {
@@ -945,7 +944,7 @@ export class CodeGenerator {
     if (ast.body) {
       const name = this.compileInNewTarget("callBody", ast.body, ctx);
       const zeroStr = generateId("lazyBlock");
-      this.define(zeroStr, `${name}.bind(this, ${ctxVar})`);
+      this.define(zeroStr, `${name}.bind(this, ctx)`);
       this.helpers.add("zero");
       attrs.push(`[zero]: ${zeroStr}`);
     }
@@ -963,9 +962,9 @@ export class CodeGenerator {
       }
     } else {
       if (attrs.length === 0) {
-        ctxExpr = ctxVar;
+        ctxExpr = "ctx";
       } else {
-        ctxExpr = `Object.assign(Object.create(${ctxVar}), ${ctxString})`;
+        ctxExpr = `Object.assign(Object.create(ctx), ${ctxString})`;
       }
     }
     const key = this.generateComponentKey();

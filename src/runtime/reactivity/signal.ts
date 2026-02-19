@@ -15,7 +15,7 @@ interface SignalOptions<T> {
   type?: T;
 }
 
-function buildSignal<T>(value: T, set: (atom: Atom) => T, options?: SignalOptions<T>): Signal<T> {
+function buildSignal<T>(value: T, set: (atom: Atom) => T): Signal<T> {
   const atom: Atom & { type: "signal" } = {
     type: "signal",
     value,
@@ -41,25 +41,20 @@ function buildSignal<T>(value: T, set: (atom: Atom) => T, options?: SignalOption
   return readSignal;
 }
 
-export function signal<T>(value: T, options: SignalOptions<T> = {}): Signal<T> {
-  return buildSignal<T>(value, (atom) => atom.value, options);
-}
-
-signal.invalidate = function (signal: Signal<any>): void {
+function invalidateSignal(signal: Signal<any>): void {
   if (typeof signal !== "function" || (signal as any)[atomSymbol]?.type !== "signal") {
     throw new OwlError(`Value is not a signal (${signal})`);
   }
   onWriteAtom((signal as any)[atomSymbol]);
 };
 
-signal.Array = function <T>(initialValue: T[], options: SignalOptions<T> = {}): Signal<T[]> {
+function signalArray<T>(initialValue: T[], options?: SignalOptions<T>): Signal<T[]>;
+function signalArray<T>(initialValue: T[]): Signal<T[]> {
   return buildSignal<T[]>(initialValue, (atom) => proxifyTarget(atom.value, atom));
 };
 
-signal.Object = function <T extends object>(
-  initialValue: T,
-  options?: SignalOptions<T>
-): Signal<T> {
+function signalObject<T extends Record<PropertyKey, any>>(initialValue: T, options?: SignalOptions<T>): Signal<T>;
+function signalObject<T extends Record<PropertyKey, any>>(initialValue: T): Signal<T> {
   return buildSignal<T>(initialValue, (atom) => proxifyTarget(atom.value, atom));
 };
 
@@ -69,13 +64,22 @@ interface MapSignalOptions<K, V> {
   valueType?: V;
 }
 
-signal.Map = function <K, V>(
-  initialValue: Map<K, V>,
-  options?: MapSignalOptions<K, V>
-): Signal<Map<K, V>> {
+function signalMap<K, V>(initialValue: Map<K, V>, options?: MapSignalOptions<K, V>): Signal<Map<K, V>>;
+function signalMap<K, V>(initialValue: Map<K, V>): Signal<Map<K, V>> {
   return buildSignal<Map<K, V>>(initialValue, (atom) => proxifyTarget(atom.value, atom));
 };
 
-signal.Set = function <T>(initialValue: Set<T>, options?: SignalOptions<T>): Signal<Set<T>> {
+function signalSet<T>(initialValue: Set<T>, options?: SignalOptions<T>): Signal<Set<T>>;
+function signalSet<T>(initialValue: Set<T>): Signal<Set<T>> {
   return buildSignal<Set<T>>(initialValue, (atom) => proxifyTarget(atom.value, atom));
 };
+
+export function signal<T>(value: T, options?: SignalOptions<T>): Signal<T>;
+export function signal<T>(value: T): Signal<T> {
+  return buildSignal<T>(value, (atom) => atom.value);
+}
+signal.invalidate = invalidateSignal;
+signal.Array = signalArray;
+signal.Map = signalMap;
+signal.Object = signalObject;
+signal.Set = signalSet;

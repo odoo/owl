@@ -294,5 +294,4 @@ describe("t-foreach", () => {
     };
     expect(renderToString(template, ctx)).toBe("<span>a</span><span>b</span>");
   });
-
 });

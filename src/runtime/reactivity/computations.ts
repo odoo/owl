@@ -75,7 +75,7 @@ function processEffects() {
   for (let i = 0; i < observers.length; i++) {
     updateComputation(observers[i]);
   }
-  observers = [];
+  observers.length = 0;
 }
 
 export function getCurrentComputation() {
@@ -128,16 +128,19 @@ export function removeSources(computation: ComputationAtom) {
 }
 
 function markDownstream(computation: ComputationAtom) {
-  for (const observer of computation.observers) {
-    // if the state has already been marked, skip it
-    if (observer.state) {
-      continue;
-    }
-    observer.state = ComputationState.PENDING;
-    if (observer.isDerived) {
-      markDownstream(observer);
-    } else {
-      observers.push(observer);
+  const stack: ComputationAtom[] = [computation];
+  let current: ComputationAtom | undefined;
+  while ((current = stack.pop())) {
+    for (const observer of current.observers) {
+      if (observer.state) {
+        continue;
+      }
+      observer.state = ComputationState.PENDING;
+      if (observer.isDerived) {
+        stack.push(observer);
+      } else {
+        observers.push(observer);
+      }
     }
   }
 }

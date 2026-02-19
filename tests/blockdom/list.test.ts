@@ -6,13 +6,17 @@ import {
   text,
   createBlock,
   VNode,
-  withKey,
 } from "../../src/runtime/blockdom";
 import { makeTestFixture } from "./helpers";
 
 //------------------------------------------------------------------------------
 // Setup and helpers
 //------------------------------------------------------------------------------
+
+function withKey(vnode: VNode, key: any) {
+  vnode.key = key;
+  return vnode;
+}
 
 let fixture: HTMLElement;
 

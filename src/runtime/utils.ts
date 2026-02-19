@@ -1,5 +1,5 @@
 import { OwlError } from "../common/owl_error";
-export type Callback = () => void;
+export type Callback = (...args: any[]) => void;
 
 /**
  * Creates a batched version of a callback so that all calls to it in the same
@@ -10,12 +10,13 @@ export type Callback = () => void;
  */
 export function batched(callback: Callback): Callback {
   let scheduled = false;
-  return async function batchedCall(...args) {
+  return function batchedCall(...args) {
     if (!scheduled) {
       scheduled = true;
-      await Promise.resolve();
-      scheduled = false;
-      callback(...args);
+      queueMicrotask(() => {
+        scheduled = false;
+        callback(...args);
+      });
     }
   };
 }

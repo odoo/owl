@@ -1,5 +1,6 @@
 import {
   atomSymbol,
+  ComputationState,
   onReadAtom,
   onWriteAtom,
   ReactiveValue,
@@ -21,7 +22,9 @@ export function computed<TRead, TWrite = TRead>(
   }, true);
 
   function readComputed() {
-    updateComputation(computation);
+    if (computation.state !== ComputationState.EXECUTED) {
+      updateComputation(computation);
+    }
     onReadAtom(computation);
     return computation.value;
   }

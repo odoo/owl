@@ -96,15 +96,19 @@ export interface ASTTSet extends BaseAST {
   hasNoRepresentation: true;
 }
 
+export const enum ForEachNoFlag {
+  First = 1,
+  Last = 2,
+  Index = 4,
+  Value = 8,
+}
+
 export interface ASTTForEach extends BaseAST {
   type: ASTType.TForEach;
   collection: string;
   elem: string;
   body: AST;
-  hasNoFirst: boolean;
-  hasNoLast: boolean;
-  hasNoIndex: boolean;
-  hasNoValue: boolean;
+  noFlags: number;
   key: string | null;
 }
 
@@ -529,10 +533,11 @@ function parseTForEach(node: Element, ctx: ParsingContext): AST | null {
   }
 
   const hasNoTCall = !html.includes("t-call");
-  const hasNoFirst = hasNoTCall && !html.includes(`${elem}_first`);
-  const hasNoLast = hasNoTCall && !html.includes(`${elem}_last`);
-  const hasNoIndex = hasNoTCall && !html.includes(`${elem}_index`);
-  const hasNoValue = hasNoTCall && !html.includes(`${elem}_value`);
+  let noFlags = 0;
+  if (hasNoTCall && !html.includes(`${elem}_first`)) noFlags |= ForEachNoFlag.First;
+  if (hasNoTCall && !html.includes(`${elem}_last`)) noFlags |= ForEachNoFlag.Last;
+  if (hasNoTCall && !html.includes(`${elem}_index`)) noFlags |= ForEachNoFlag.Index;
+  if (hasNoTCall && !html.includes(`${elem}_value`)) noFlags |= ForEachNoFlag.Value;
 
   return {
     type: ASTType.TForEach,
@@ -540,10 +545,7 @@ function parseTForEach(node: Element, ctx: ParsingContext): AST | null {
     elem,
     body,
     key,
-    hasNoFirst,
-    hasNoLast,
-    hasNoIndex,
-    hasNoValue,
+    noFlags,
   };
 }
 

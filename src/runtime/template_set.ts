@@ -3,7 +3,7 @@ import { parseXML } from "../common/utils";
 import { compile, CustomDirectives, Template, TemplateFunction } from "../compiler";
 import { comment, createBlock, html, list, multi, text, toggler } from "./blockdom";
 import { getContext } from "./context";
-import { Portal, portalTemplate } from "./portal";
+import { portalTemplate } from "./portal";
 import { helpers } from "./rendering/template_helpers";
 
 const bdom = { text, createBlock, list, multi, html, toggler, comment };
@@ -28,7 +28,6 @@ export class TemplateSet {
   getRawTemplate?: (s: string) => Element | Function | string | void;
   translateFn?: (s: string, translationCtx: string) => string;
   translatableAttributes?: string[];
-  Portal = Portal;
   customDirectives: CustomDirectives;
   runtimeUtils: object;
   hasGlobalValues: boolean;

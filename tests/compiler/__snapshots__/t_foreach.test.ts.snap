@@ -638,3 +638,53 @@ exports[`t-foreach throws error if invalid loop expression 1`] = `
   }
 }"
 `;
+
+exports[`t-foreach with loops and multiple t-set 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { prepareList, safeOutput, withKey } = helpers;
+  
+  return function template(ctx, node, key = "") {
+    ctx = Object.create(ctx);
+    ctx["a"] = 0;
+    const ctx1 = ctx;
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList([1,2]);;
+    for (let i1 = 0; i1 < l_block2; i1++) {
+      let ctx = Object.create(ctx1);
+      ctx[\`i\`] = k_block2[i1];
+      const key1 = ctx['i'];
+      ctx1["a"] = ctx['a']+10;
+      ctx["b"] = 0;
+      const ctx2 = ctx;
+      const [k_block4, v_block4, l_block4, c_block4] = prepareList([1,2]);;
+      for (let i2 = 0; i2 < l_block4; i2++) {
+        let ctx = Object.create(ctx2);
+        ctx[\`j\`] = k_block4[i2];
+        const key2 = ctx['j'];
+        ctx1["a"] = ctx['a']+1;
+        ctx2["b"] = ctx['b']+1;
+        const b6 = text(\` |InnerLoop:\`);
+        const b7 = safeOutput(ctx['a']);
+        const b8 = text(\`,\`);
+        const b9 = safeOutput(ctx['b']);
+        const b10 = text(\`| \`);
+        c_block4[i2] = withKey(multi([b6, b7, b8, b9, b10]), key2);
+      }
+      const b4 = list(c_block4);
+      const b11 = text(\` |OuterLoop:\`);
+      const b12 = safeOutput(ctx['a']);
+      const b13 = text(\`,\`);
+      const b14 = safeOutput(ctx['b']);
+      const b15 = text(\`| \`);
+      c_block2[i1] = withKey(multi([b4, b11, b12, b13, b14, b15]), key1);
+    }
+    const b2 = list(c_block2);
+    const b16 = text(\` After:\`);
+    const b17 = safeOutput(ctx['a']);
+    const b18 = text(\`,\`);
+    const b19 = safeOutput(ctx['b']);
+    return multi([b2, b16, b17, b18, b19]);
+  }
+}"
+`;

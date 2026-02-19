@@ -194,7 +194,7 @@ class CodeTarget {
   indentLevel = 0;
   loopLevel = 0;
   loopCtxVars: string[] = [];
-  tSetVars: Set<string> = new Set();
+  tSetVars: Map<string, number> = new Map();
   code: string[] = [];
   hasRoot = false;
   needsScopeProtection = false;
@@ -1005,7 +1005,8 @@ export class CodeGenerator {
   compileTSet(ast: ASTTSet, ctx: Context): null {
     const expr = ast.value ? compileExpr(ast.value || "") : "null";
     const isOuterScope = this.target.loopLevel === 0;
-    const isReassignment = !isOuterScope && this.target.tSetVars.has(ast.name);
+    const defLevel = this.target.tSetVars.get(ast.name);
+    const isReassignment = defLevel !== undefined && this.target.loopLevel > defLevel;
     if (ast.body) {
       this.helpers.add("LazyValue");
       const bodyAst: AST = { type: ASTType.Multi, content: ast.body };
@@ -1015,14 +1016,15 @@ export class CodeGenerator {
       value = ast.value ? (value ? `withDefault(${expr}, ${value})` : expr) : value;
       this.helpers.add("withDefault");
       if (isReassignment) {
-        const outerCtxVar = this.target.loopCtxVars[0];
-        this.addLine(`${outerCtxVar}[\`${ast.name}\`] = ${value};`);
+        const ctxVar = this.target.loopCtxVars[defLevel];
+        this.addLine(`${ctxVar}[\`${ast.name}\`] = ${value};`);
       } else if (isOuterScope) {
         this.target.needsScopeProtection = true;
         this.addLine(`ctx[\`${ast.name}\`] = ${value};`);
-        this.target.tSetVars.add(ast.name);
+        this.target.tSetVars.set(ast.name, 0);
       } else {
         this.addLine(`ctx[\`${ast.name}\`] = ${value};`);
+        this.target.tSetVars.set(ast.name, this.target.loopLevel);
       }
     } else {
       let value: string;
@@ -1040,14 +1042,15 @@ export class CodeGenerator {
         value = expr;
       }
       if (isReassignment) {
-        const outerCtxVar = this.target.loopCtxVars[0];
-        this.addLine(`${outerCtxVar}["${ast.name}"] = ${value};`);
+        const ctxVar = this.target.loopCtxVars[defLevel];
+        this.addLine(`${ctxVar}["${ast.name}"] = ${value};`);
       } else if (isOuterScope) {
         this.target.needsScopeProtection = true;
         this.addLine(`ctx["${ast.name}"] = ${value};`);
-        this.target.tSetVars.add(ast.name);
+        this.target.tSetVars.set(ast.name, 0);
       } else {
         this.addLine(`ctx["${ast.name}"] = ${value};`);
+        this.target.tSetVars.set(ast.name, this.target.loopLevel);
       }
     }
     return null;

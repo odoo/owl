@@ -295,3 +295,22 @@ describe("t-foreach", () => {
     expect(renderToString(template, ctx)).toBe("<span>a</span><span>b</span>");
   });
 });
+
+  test("t-foreach with loops and multiple t-set", () => {
+    const template = `
+    <t t-set="a" t-value="0"/>
+    <t t-foreach="[1, 2]" t-as="i" t-key="i">
+        <t t-set="a" t-value="a + 10"/>
+        <t t-set="b" t-value="0"/>
+        <t t-foreach="[1, 2]" t-as="j"  t-key="j">
+            <t t-set="a" t-value="a + 1"/>
+            <t t-set="b" t-value="b + 1"/>
+            |InnerLoop:<t t-out="a"/>,<t t-out="b"/>|
+        </t>
+        |OuterLoop:<t t-out="a"/>,<t t-out="b"/>|
+    </t>
+    After:<t t-out="a"/>,<t t-out="b"/>`;
+    expect(renderToString(template, {}).replaceAll(/\s/g, "")).toBe(
+      "|InnerLoop:11,1||InnerLoop:12,2||OuterLoop:12,2||InnerLoop:23,1||InnerLoop:24,2||OuterLoop:24,2|After:24,"
+    );
+  });

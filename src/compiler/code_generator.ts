@@ -196,7 +196,6 @@ class CodeTarget {
   tSetVars: Set<string> = new Set();
   code: string[] = [];
   hasRoot = false;
-  hasCache = false;
   needsScopeProtection = false;
   on: EventHandlers | null;
 
@@ -217,10 +216,6 @@ class CodeTarget {
   generateCode(): string {
     let result: string[] = [];
     result.push(`function ${this.name}(ctx, node, key = "") {`);
-    if (this.hasCache) {
-      result.push(`  let cache = ctx.cache || {};`);
-      result.push(`  let nextCache = ctx.cache = {};`);
-    }
     if (this.needsScopeProtection) {
       result.push(`  ctx = Object.create(ctx);`);
     }
@@ -895,33 +890,9 @@ export class CodeGenerator {
       );
       this.addLine(`keys${block.id}.add(String(key${this.target.loopLevel}));`);
     }
-    let id: string;
-    if (ast.memo) {
-      this.target.hasCache = true;
-      id = generateId();
-      this.define(`memo${id}`, compileExpr(ast.memo));
-      this.define(`vnode${id}`, `cache[key${this.target.loopLevel}];`);
-      this.addLine(`if (vnode${id}) {`);
-      this.target.indentLevel++;
-      this.addLine(`if (shallowEqual(vnode${id}.memo, memo${id})) {`);
-      this.target.indentLevel++;
-      this.addLine(`${c}[${loopVar}] = vnode${id};`);
-      this.addLine(`nextCache[key${this.target.loopLevel}] = vnode${id};`);
-      this.addLine(`continue;`);
-      this.target.indentLevel--;
-      this.addLine("}");
-      this.target.indentLevel--;
-      this.addLine("}");
-    }
 
     const subCtx = createContext(ctx, { block, index: loopVar });
     this.compileAST(ast.body, subCtx);
-    if (ast.memo) {
-      this.addLine(
-        `nextCache[key${this.target.loopLevel
-        }] = Object.assign(${c}[${loopVar}], {memo: memo${id!}});`
-      );
-    }
     this.target.indentLevel--;
     this.target.loopLevel--;
     this.target.loopCtxVars.pop();

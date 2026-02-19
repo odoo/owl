@@ -765,7 +765,6 @@ describe("qweb parser", () => {
       elem: "item",
       key: "item_index",
       body: { type: ASTType.TOut, expr: "item", body: null },
-      memo: "",
       hasNoFirst: true,
       hasNoIndex: false,
       hasNoLast: true,
@@ -780,7 +779,6 @@ describe("qweb parser", () => {
       elem: "item",
       key: "item_index",
       body: { type: ASTType.TOut, expr: "item", body: null },
-      memo: "",
       hasNoFirst: true,
       hasNoIndex: false,
       hasNoLast: true,
@@ -806,7 +804,6 @@ describe("qweb parser", () => {
         ns: null,
         content: [{ type: ASTType.TOut, expr: "item", body: null }],
       },
-      memo: "",
       hasNoFirst: true,
       hasNoIndex: false,
       hasNoLast: true,
@@ -821,7 +818,6 @@ describe("qweb parser", () => {
       elem: "item",
       key: "item.id",
       body: { type: ASTType.TOut, expr: "item", body: null },
-      memo: "",
       hasNoFirst: true,
       hasNoIndex: true,
       hasNoLast: true,
@@ -849,7 +845,6 @@ describe("qweb parser", () => {
         ns: null,
         content: [{ type: ASTType.TOut, expr: "item", body: null }],
       },
-      memo: "",
       hasNoFirst: true,
       hasNoIndex: false,
       hasNoLast: true,
@@ -885,7 +880,6 @@ describe("qweb parser", () => {
           content: [{ type: ASTType.TOut, expr: "item", body: null }],
         },
       },
-      memo: "",
       hasNoFirst: true,
       hasNoIndex: false,
       hasNoLast: true,
@@ -918,7 +912,6 @@ describe("qweb parser", () => {
         ns: null,
         content: [{ type: ASTType.TOut, expr: "category.name", body: null }],
       },
-      memo: "",
       hasNoFirst: true,
       hasNoIndex: false,
       hasNoLast: true,
@@ -946,7 +939,6 @@ describe("qweb parser", () => {
           elem: "item",
           key: "item_index",
           body: { type: ASTType.TOut, expr: "item", body: null },
-          memo: "",
           hasNoFirst: true,
           hasNoIndex: false,
           hasNoLast: true,
@@ -984,7 +976,6 @@ describe("qweb parser", () => {
         ns: null,
         content: [{ type: ASTType.TOut, expr: "item", body: null }],
       },
-      memo: "",
       hasNoFirst: true,
       hasNoIndex: false,
       hasNoLast: true,
@@ -1008,7 +999,6 @@ describe("qweb parser", () => {
         slots: null,
         on: null,
       },
-      memo: "",
       hasNoFirst: true,
       hasNoIndex: false,
       hasNoLast: true,
@@ -1032,30 +1022,10 @@ describe("qweb parser", () => {
         body: null,
         context: null,
       },
-      memo: "",
       hasNoFirst: false,
       hasNoIndex: false,
       hasNoLast: false,
       hasNoValue: false,
-    });
-  });
-
-  test("t-foreach expression with t-memo", async () => {
-    expect(
-      parse(
-        `<t t-foreach="list" t-as="item" t-memo="[row.x]" t-key="item_index"><t t-out="item"/></t>`
-      )
-    ).toEqual({
-      type: ASTType.TForEach,
-      collection: "list",
-      elem: "item",
-      key: "item_index",
-      body: { type: ASTType.TOut, expr: "item", body: null },
-      memo: "[row.x]",
-      hasNoFirst: true,
-      hasNoIndex: false,
-      hasNoLast: true,
-      hasNoValue: true,
     });
   });
 
@@ -1871,7 +1841,6 @@ describe("qweb parser", () => {
       hasNoLast: true,
       hasNoValue: true,
       key: "item_index",
-      memo: "",
       type: ASTType.TForEach,
     });
   });

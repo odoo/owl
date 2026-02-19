@@ -1082,7 +1082,7 @@ export class CodeGenerator {
       const attrTranslationCtx = attrsTranslationCtx?.[name] || translationCtx;
       value = toStringExpression(this.translateFn(value, attrTranslationCtx));
     } else {
-      value = compileExpr(value)
+      value = compileExpr(value);
     }
     if (name.includes(".")) {
       let [_name, suffix] = name.split(".");
@@ -1115,8 +1115,9 @@ export class CodeGenerator {
   getPropString(props: string[], dynProps: string | null): string {
     let propString = `{${props.join(",")}}`;
     if (dynProps) {
-      propString = `Object.assign({}, ${compileExpr(dynProps)}${props.length ? ", " + propString : ""
-        })`;
+      propString = `Object.assign({}, ${compileExpr(dynProps)}${
+        props.length ? ", " + propString : ""
+      })`;
     }
     return propString;
   }
@@ -1206,8 +1207,9 @@ export class CodeGenerator {
     }
     this.staticDefs.push({
       id,
-      expr: `app.createComponent(${ast.isDynamic ? null : expr
-        }, ${!ast.isDynamic}, ${!!ast.slots}, ${!!ast.dynamicProps}, [${propList}])`,
+      expr: `app.createComponent(${
+        ast.isDynamic ? null : expr
+      }, ${!ast.isDynamic}, ${!!ast.slots}, ${!!ast.dynamicProps}, [${propList}])`,
     });
 
     if (ast.isDynamic) {

@@ -1346,9 +1346,7 @@ export class CodeGenerator {
     return null;
   }
   compileTPortal(ast: ASTTPortal, ctx: Context): string {
-    if (!this.staticDefs.find((d) => d.id === "Portal")) {
-      this.staticDefs.push({ id: "Portal", expr: `app.Portal` });
-    }
+    this.helpers.add("Portal");
 
     let { block } = ctx;
     const name = this.compileInNewTarget("slot", ast.content, ctx);

@@ -4,6 +4,7 @@ import { BDom, createCatcher, multi, text, toggler } from "../blockdom";
 import { html } from "../blockdom/index";
 import { Component } from "../component";
 import { ComponentNode } from "../component_node";
+import { Portal } from "../portal";
 import { markRaw } from "../reactivity/proxy";
 import { Markup } from "../utils";
 import { Fiber } from "./fibers";
@@ -269,4 +270,5 @@ export const helpers = {
   createRef,
   modelExpr,
   createComponent: createComponent,
+  Portal: Portal,
 };

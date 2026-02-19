@@ -1,6 +1,5 @@
-import { OwlError } from "../common/owl_error";
 import { version } from "../version";
-import { Component, ComponentConstructor } from "./component";
+import { ComponentConstructor } from "./component";
 import { ComponentNode } from "./component_node";
 import { saveContext } from "./context";
 import { PluginConstructor, PluginManager, startPlugins } from "./plugin_manager";
@@ -99,7 +98,7 @@ export class App extends TemplateSet {
     let node: ComponentNode;
     let error: any = null;
     try {
-      node = this.makeNode(Root, props);
+      node = new ComponentNode(Root, props, this, null, null);
     } catch (e) {
       error = e;
       reject(e);
@@ -128,14 +127,7 @@ export class App extends TemplateSet {
     return root;
   }
 
-  makeNode<T extends ComponentConstructor>(
-    Component: T,
-    props: GetProps<ComponentInstance<T>>
-  ): ComponentNode {
-    return new ComponentNode(Component, props, this, null, null);
-  }
-
-  mountNode(
+  private mountNode(
     node: ComponentNode,
     target: HTMLElement | ShadowRoot,
     resolve: (c: any) => void,
@@ -171,82 +163,6 @@ export class App extends TemplateSet {
     this.pluginManager.destroy();
     this.scheduler.processTasks();
     apps.delete(this);
-  }
-
-  createComponent<P extends Record<string, any>>(
-    name: string | null,
-    isStatic: boolean,
-    hasSlotsProp: boolean,
-    hasDynamicPropList: boolean,
-    propList: string[]
-  ) {
-    const isDynamic = !isStatic;
-    let arePropsDifferent: (p1: P, p2: P) => boolean;
-    const hasNoProp = propList.length === 0;
-    if (hasSlotsProp) {
-      arePropsDifferent = (_1, _2) => true;
-    } else if (hasDynamicPropList) {
-      arePropsDifferent = function (props1: P, props2: P) {
-        for (let k in props1) {
-          if (props1[k] !== props2[k]) {
-            return true;
-          }
-        }
-        return Object.keys(props1).length !== Object.keys(props2).length;
-      };
-    } else if (hasNoProp) {
-      arePropsDifferent = (_1: any, _2: any) => false;
-    } else {
-      arePropsDifferent = function (props1: P, props2: P) {
-        for (let p of propList) {
-          if (props1[p] !== props2[p]) {
-            return true;
-          }
-        }
-        return false;
-      };
-    }
-
-    const updateAndRender = ComponentNode.prototype.updateAndRender;
-    const initiateRender = ComponentNode.prototype.initiateRender;
-
-    return (props: P, key: string, ctx: ComponentNode, parent: any, C: any) => {
-      let children = ctx.children;
-      let node: any = children[key];
-      if (isDynamic && node && node.component.constructor !== C) {
-        node = undefined;
-      }
-      const parentFiber = ctx.fiber!;
-      if (node) {
-        if (arePropsDifferent(node.props, props) || parentFiber.deep || node.forceNextRender) {
-          node.forceNextRender = false;
-          updateAndRender.call(node, props, parentFiber);
-        }
-      } else {
-        // new component
-        if (isStatic) {
-          const components = parent.constructor.components;
-          if (!components) {
-            throw new OwlError(
-              `Cannot find the definition of component "${name}", missing static components key in parent`
-            );
-          }
-          C = components[name as any];
-          if (!C) {
-            throw new OwlError(`Cannot find the definition of component "${name}"`);
-          } else if (!(C.prototype instanceof Component)) {
-            throw new OwlError(
-              `"${name}" is not a Component. It must inherit from the Component class`
-            );
-          }
-        }
-        node = new ComponentNode(C, props, this, ctx, key);
-        children[key] = node;
-        initiateRender.call(node, new Fiber(node, parentFiber));
-      }
-      parentFiber.childrenMap[key] = node;
-      return node;
-    };
   }
 
   handleError(...args: Parameters<typeof handleError>) {

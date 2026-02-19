@@ -4,8 +4,8 @@ exports[`misc complex template 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput, prepareList, withKey } = helpers;
-  const comp1 = app.createComponent(\`SlotButton\`, true, false, false, ["class","slot"]);
+  let { safeOutput, prepareList, createComponent, withKey } = helpers;
+  const comp1 = createComponent(app, \`SlotButton\`, true, false, false, ["class","slot"]);
   
   let block1 = createBlock(\`<div block-attribute-0="class"><div block-attribute-1="class"><div class="batch_header"><a block-attribute-2="href" block-attribute-3="class" title="View Batch"><block-child-0/><block-child-1/><i class="arrow fa fa-window-maximize"/></a></div><block-child-2/><div class="batch_slots"><block-child-3/><block-child-4/></div><div class="batch_commits"><block-child-5/></div></div></div>\`);
   let block3 = createBlock(\`<i class="fa fa-exclamation-triangle"/>\`);
@@ -179,7 +179,7 @@ exports[`misc other complex template 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput, prepareList, withKey, createRef } = helpers;
+  let { safeOutput, prepareList, withKey, createRef, createComponent } = helpers;
   const hdlr_fn1 = (ctx, ev) => (ctx['selectProject'](ctx['project'])).call(ctx['this'], ev);
   const hdlr_fn2 = (ctx, ev) => (ctx['toggleSettingsMenu']).call(ctx['this'], ev);
   const hdlr_fn3 = (ctx, ev) => (ctx['toggleMore']).call(ctx['this'], ev);
@@ -192,8 +192,8 @@ exports[`misc other complex template 1`] = `
   const hdlr_fn10 = (ctx, ev) => (ctx['triggerDefault']).call(ctx['this'], ev);
   const hdlr_fn11 = (ctx, ev) => (ctx['toggleSettingsMenu']).call(ctx['this'], ev);
   const callTemplate_1 = app.getTemplate(\`LOAD_INFOS_TEMPLATE\`);
-  const comp1 = app.createComponent(\`BundlesList\`, true, false, false, ["bundles","category_custom_views","search"]);
-  const comp2 = app.createComponent(\`BundlesList\`, true, false, false, ["bundles","search"]);
+  const comp1 = createComponent(app, \`BundlesList\`, true, false, false, ["bundles","category_custom_views","search"]);
+  const comp2 = createComponent(app, \`BundlesList\`, true, false, false, ["bundles","search"]);
   
   let block1 = createBlock(\`<div><header><nav class="navbar navbar-expand-md navbar-light bg-light"><a block-attribute-0="href"><b style="color:#777;"><block-child-0/></b></a><button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#top_menu_collapse"><span class="navbar-toggler-icon"/></button><div class="collapse navbar-collapse" id="top_menu_collapse" aria-expanded="false"><ul class="nav navbar-nav ml-auto text-right" id="top_menu"><block-child-1/><li class="nav-item divider"/><block-child-2/></ul><div><div class="input-group input-group-sm"><div class="input-group-prepend input-group-sm"><button class="btn btn-default fa fa-cog" title="Settings" block-handler-1="click"/><button class="btn btn-default" block-handler-2="click"> More </button><block-child-3/></div><input class="form-control" type="text" placeholder="Search" aria-label="Search" name="search" block-property-3="value" block-handler-4="keyup" block-handler-5="change" block-ref="6"/><div class="input-group-append"><button class="btn btn-default fa fa-eraser" block-handler-7="click"/></div></div></div></div></nav></header><div class="container-fluid" block-ref="8"><div class="row"><!--div class="form-group col-md-6">
                       <h5>Search options</h5>

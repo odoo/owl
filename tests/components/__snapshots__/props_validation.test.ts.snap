@@ -4,7 +4,8 @@ exports[`default props a default prop cannot be defined on a mandatory prop 1`] 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     const props1 = {};
@@ -17,7 +18,8 @@ exports[`default props can set default boolean values 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -53,7 +55,8 @@ exports[`default props can set default values 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -84,7 +87,8 @@ exports[`default props default values are also set whenever component is updated
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -115,7 +119,8 @@ exports[`props validation additional props are allowed (array) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["message","otherProp"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["message","otherProp"]);
   
   return function template(ctx, node, key = "") {
     const props1 = {message: 'm',otherProp: 'o'};
@@ -141,7 +146,8 @@ exports[`props validation additional props are allowed (object) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["message","otherProp"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["message","otherProp"]);
   
   return function template(ctx, node, key = "") {
     const props1 = {message: 'm',otherProp: 'o'};
@@ -167,7 +173,8 @@ exports[`props validation can use custom class as type 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["customObj"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["customObj"]);
   
   return function template(ctx, node, key = "") {
     const props1 = {customObj: ctx['this'].customObj};
@@ -192,7 +199,8 @@ exports[`props validation can use custom class as type: validation failure 1`] =
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["customObj"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["customObj"]);
   
   return function template(ctx, node, key = "") {
     const props1 = {customObj: ctx['this'].customObj};
@@ -205,7 +213,8 @@ exports[`props validation can validate a prop with multiple types 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -234,7 +243,8 @@ exports[`props validation can validate a prop with multiple types 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -263,7 +273,8 @@ exports[`props validation can validate a prop with multiple types 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -279,7 +290,8 @@ exports[`props validation can validate an array with given primitive type 1`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -308,7 +320,8 @@ exports[`props validation can validate an array with given primitive type 3`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -337,7 +350,8 @@ exports[`props validation can validate an array with given primitive type 5`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -353,7 +367,8 @@ exports[`props validation can validate an array with given primitive type 6`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -369,7 +384,8 @@ exports[`props validation can validate an array with multiple sub element types 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -398,7 +414,8 @@ exports[`props validation can validate an array with multiple sub element types 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -427,7 +444,8 @@ exports[`props validation can validate an array with multiple sub element types 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -456,7 +474,8 @@ exports[`props validation can validate an array with multiple sub element types 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -472,7 +491,8 @@ exports[`props validation can validate an object with simple shape 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -501,7 +521,8 @@ exports[`props validation can validate an object with simple shape 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -530,7 +551,8 @@ exports[`props validation can validate an object with simple shape 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -546,7 +568,8 @@ exports[`props validation can validate an object with simple shape 6`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -562,7 +585,8 @@ exports[`props validation can validate an optional props 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -591,7 +615,8 @@ exports[`props validation can validate an optional props 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -620,7 +645,8 @@ exports[`props validation can validate an optional props 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -658,7 +684,8 @@ exports[`props validation can validate recursively complicated prop def 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -687,7 +714,8 @@ exports[`props validation can validate recursively complicated prop def 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -716,7 +744,8 @@ exports[`props validation can validate recursively complicated prop def 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -732,9 +761,9 @@ exports[`props validation can validate through slots 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { markRaw } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
-  const comp2 = app.createComponent(\`Wrapper\`, true, true, false, []);
+  let { createComponent, markRaw } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
+  const comp2 = createComponent(app, \`Wrapper\`, true, true, false, []);
   
   function slot1(ctx, node, key = "") {
     const props1 = {};
@@ -786,7 +815,8 @@ exports[`props validation default values are applied before validating props at 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -817,7 +847,8 @@ exports[`props validation missing required boolean prop causes an error 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -833,7 +864,8 @@ exports[`props validation mix of optional and mandatory 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -860,7 +892,8 @@ exports[`props validation props are validated in dev mode (code snapshot) 1`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["message"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["message"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -954,7 +987,8 @@ exports[`props validation props: list of strings 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -992,7 +1026,8 @@ exports[`props validation validate simple types 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1008,7 +1043,8 @@ exports[`props validation validate simple types 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1037,7 +1073,8 @@ exports[`props validation validate simple types 4`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1053,7 +1090,8 @@ exports[`props validation validate simple types 5`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1069,7 +1107,8 @@ exports[`props validation validate simple types 6`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1098,7 +1137,8 @@ exports[`props validation validate simple types 8`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1114,7 +1154,8 @@ exports[`props validation validate simple types 9`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1130,7 +1171,8 @@ exports[`props validation validate simple types 10`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1159,7 +1201,8 @@ exports[`props validation validate simple types 12`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1175,7 +1218,8 @@ exports[`props validation validate simple types 13`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1191,7 +1235,8 @@ exports[`props validation validate simple types 14`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1220,7 +1265,8 @@ exports[`props validation validate simple types 16`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1236,7 +1282,8 @@ exports[`props validation validate simple types 17`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1252,7 +1299,8 @@ exports[`props validation validate simple types 18`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1281,7 +1329,8 @@ exports[`props validation validate simple types 20`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1297,7 +1346,8 @@ exports[`props validation validate simple types 21`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1313,7 +1363,8 @@ exports[`props validation validate simple types 22`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1342,7 +1393,8 @@ exports[`props validation validate simple types 24`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, ["p"]);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, ["p"]);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1358,7 +1410,8 @@ exports[`props validation validation is only done in dev mode 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -1374,7 +1427,8 @@ exports[`props validation validation is only done in dev mode 2`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`SubComp\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`SubComp\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   

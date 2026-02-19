@@ -4,8 +4,9 @@ exports[`destroy a subroot while another component is mounted in main app 1`] = 
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`ChildB\`, true, false, false, []);
-  const comp2 = app.createComponent(\`ChildA\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`ChildB\`, true, false, false, []);
+  const comp2 = createComponent(app, \`ChildA\`, true, false, false, []);
   
   return function template(ctx, node, key = "") {
     let b2, b3;

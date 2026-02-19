@@ -123,8 +123,8 @@ exports[`t-on t-on on component next to t-on on div 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { createCatcher } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["value"]);
+  let { createComponent, createCatcher } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
   const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
   const catcher1 = createCatcher({"click":0});
   const hdlr_fn2 = (ctx, ev) => (ctx['this'].decrement).call(ctx['this'], ev);
@@ -159,8 +159,8 @@ exports[`t-on t-on on components 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { createCatcher } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["value"]);
+  let { createComponent, createCatcher } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
   const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
   const catcher1 = createCatcher({"click":0});
   
@@ -190,8 +190,8 @@ exports[`t-on t-on on components and t-foreach 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, createCatcher, withKey } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["value"]);
+  let { prepareList, createComponent, createCatcher, withKey } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
   const hdlr_fn1 = (ctx)=>ctx['this'].log(ctx['name']);
   const catcher1 = createCatcher({"click":0});
   
@@ -229,8 +229,8 @@ exports[`t-on t-on on components, variation 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { createCatcher } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["value"]);
+  let { createComponent, createCatcher } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
   const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
   const catcher1 = createCatcher({"click":0});
   
@@ -263,8 +263,8 @@ exports[`t-on t-on on components, with 'prevent' modifier 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { createCatcher } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["value"]);
+  let { createComponent, createCatcher } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
   const hdlr_fn1 = (ctx, ev) => (ctx['this'].increment).call(ctx['this'], ev);
   const catcher1 = createCatcher({"click.prevent":0});
   
@@ -294,8 +294,8 @@ exports[`t-on t-on on components, with a handler update 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { createCatcher } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["value"]);
+  let { createComponent, createCatcher } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["value"]);
   const hdlr_fn1 = (ctx)=>ctx['this'].log(ctx['name']);
   const catcher1 = createCatcher({"click":0});
   
@@ -327,7 +327,8 @@ exports[`t-on t-on on destroyed components 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, []);
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
@@ -360,8 +361,8 @@ exports[`t-on t-on on slot, with 'prevent' modifier 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { markRaw } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, true, false, []);
+  let { markRaw, createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, true, false, []);
   
   let block1 = createBlock(\`<button>button</button>\`);
   
@@ -394,8 +395,8 @@ exports[`t-on t-on on t-call-slots 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { markRaw } = helpers;
-  const comp1 = app.createComponent(\`Child\`, true, true, false, []);
+  let { markRaw, createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, true, false, []);
   
   let block1 = createBlock(\`<p>something</p>\`);
   
@@ -432,10 +433,10 @@ exports[`t-on t-on on t-set-slots 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput, createCatcher, markRaw } = helpers;
+  let { safeOutput, createCatcher, markRaw, createComponent } = helpers;
   const hdlr_fn1 = (ctx)=>ctx['this'].state.count++;
   const catcher1 = createCatcher({"click":0});
-  const comp1 = app.createComponent(\`Child\`, true, true, false, []);
+  const comp1 = createComponent(app, \`Child\`, true, true, false, []);
   
   let block6 = createBlock(\`<p>something</p>\`);
   let block7 = createBlock(\`<p>paragraph</p>\`);
@@ -473,9 +474,9 @@ exports[`t-on t-on when first component child is an empty component 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { createCatcher } = helpers;
+  let { createComponent, createCatcher } = helpers;
   const hdlr_fn1 = (ctx, ev) => (ctx['this'].push).call(ctx['this'], ev);
-  const comp1 = app.createComponent(\`Child\`, true, false, false, ["list"]);
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["list"]);
   const hdlr_fn2 = (ctx)=>{};
   const catcher1 = createCatcher({"click":0});
   

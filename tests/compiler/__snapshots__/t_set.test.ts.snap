@@ -248,8 +248,7 @@ exports[`t-set t-set can't alter from within callee 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
-  const callTemplate_1 = app.getTemplate(\`sub\`);
+  let { safeOutput, callTemplate } = helpers;
   
   let block1 = createBlock(\`<div><p><block-child-0/></p><block-child-1/><p><block-child-2/></p></div>\`);
   
@@ -257,7 +256,7 @@ exports[`t-set t-set can't alter from within callee 1`] = `
     ctx = Object.create(ctx);
     ctx["iter"] = 'source';
     const b2 = safeOutput(ctx['iter']);
-    const b3 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    const b3 = callTemplate(\`sub\`, this, app, ctx, node, key + \`__1\`);
     const b4 = safeOutput(ctx['iter']);
     return block1([], [b2, b3, b4]);
   }
@@ -286,8 +285,7 @@ exports[`t-set t-set can't alter in t-call body 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput, zero } = helpers;
-  const callTemplate_1 = app.getTemplate(\`sub\`);
+  let { safeOutput, zero, callTemplate } = helpers;
   
   let block1 = createBlock(\`<div><p><block-child-0/></p><block-child-1/><p><block-child-2/></p></div>\`);
   
@@ -302,7 +300,7 @@ exports[`t-set t-set can't alter in t-call body 1`] = `
     ctx["iter"] = 'source';
     const b2 = safeOutput(ctx['iter']);
     const lazyBlock1 = callBody1.bind(this, ctx);
-    const b3 = callTemplate_1.call(this, Object.assign(Object.create(ctx), {[zero]: lazyBlock1}), node, key + \`__1\`);
+    const b3 = callTemplate(\`sub\`, this, app, Object.assign(Object.create(ctx), {[zero]: lazyBlock1}), node, key + \`__1\`);
     const b4 = safeOutput(ctx['iter']);
     return block1([], [b2, b3, b4]);
   }

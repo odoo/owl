@@ -254,6 +254,11 @@ function createComponent<P extends Record<string, any>>(
   };
 }
 
+function callTemplate(subTemplate: string, owner: any, app: App, ctx: any, parent: any, key: any): any {
+  const template = app.getTemplate(subTemplate);
+  return toggler(subTemplate, template.call(owner, ctx, parent, key + subTemplate));
+}
+
 export const helpers = {
   withDefault,
   zero: Symbol("zero"),
@@ -269,6 +274,7 @@ export const helpers = {
   OwlError,
   createRef,
   modelExpr,
-  createComponent: createComponent,
-  Portal: Portal,
+  createComponent,
+  Portal,
+  callTemplate,
 };

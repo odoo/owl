@@ -111,7 +111,7 @@ export class TemplateSet {
     return this.templates[cacheKey];
   }
 
-  _compileTemplate(name: string, template: string | Element): ReturnType<typeof compile> {
+  private _compileTemplate(name: string, template: string | Element): ReturnType<typeof compile> {
     throw new OwlError(`Unable to compile a template. Please use owl full build instead`);
   }
 }

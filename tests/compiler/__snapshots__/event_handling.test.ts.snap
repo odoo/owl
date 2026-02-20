@@ -162,10 +162,10 @@ exports[`t-on handler is bound to proper owner, part 3 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const callTemplate_1 = app.getTemplate(\`sub\`);
+  let { callTemplate } = helpers;
   
   return function template(ctx, node, key = "") {
-    return callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    return callTemplate(\`sub\`, this, app, ctx, node, key + \`__1\`);
   }
 }"
 `;
@@ -189,8 +189,7 @@ exports[`t-on handler is bound to proper owner, part 4 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, withKey } = helpers;
-  const callTemplate_1 = app.getTemplate(\`sub\`);
+  let { prepareList, callTemplate, withKey } = helpers;
   
   return function template(ctx, node, key = "") {
     const ctx1 = ctx;
@@ -203,7 +202,7 @@ exports[`t-on handler is bound to proper owner, part 4 1`] = `
       ctx[\`value_index\`] = i1;
       ctx[\`value_value\`] = v_block1[i1];
       const key1 = ctx['value'];
-      c_block1[i1] = withKey(callTemplate_1.call(this, ctx, node, key + \`__1__\${key1}\`), key1);
+      c_block1[i1] = withKey(callTemplate(\`sub\`, this, app, ctx, node, key + \`__1__\${key1}\`), key1);
     }
     return list(c_block1);
   }
@@ -479,12 +478,12 @@ exports[`t-on t-on with t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const callTemplate_1 = app.getTemplate(\`sub\`);
+  let { callTemplate } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    const b2 = callTemplate(\`sub\`, this, app, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
 }"
@@ -509,12 +508,12 @@ exports[`t-on t-on, with arguments and t-call 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const callTemplate_1 = app.getTemplate(\`sub\`);
+  let { callTemplate } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/></div>\`);
   
   return function template(ctx, node, key = "") {
-    const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    const b2 = callTemplate(\`sub\`, this, app, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
 }"

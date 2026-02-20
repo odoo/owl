@@ -194,10 +194,10 @@ exports[`basics can inject values in tagged templates 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const callTemplate_1 = app.getTemplate(\`__template__999\`);
+  let { callTemplate } = helpers;
   
   return function template(ctx, node, key = "") {
-    return callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    return callTemplate(\`__template__999\`, this, app, ctx, node, key + \`__1\`);
   }
 }"
 `;

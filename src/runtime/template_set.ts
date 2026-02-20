@@ -114,11 +114,6 @@ export class TemplateSet {
   _compileTemplate(name: string, template: string | Element): ReturnType<typeof compile> {
     throw new OwlError(`Unable to compile a template. Please use owl full build instead`);
   }
-
-  callTemplate(owner: any, subTemplate: string, ctx: any, parent: any, key: any): any {
-    const template = this.getTemplate(subTemplate);
-    return toggler(subTemplate, template.call(owner, ctx, parent, key + subTemplate));
-  }
 }
 
 // -----------------------------------------------------------------------------

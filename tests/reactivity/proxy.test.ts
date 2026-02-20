@@ -1814,8 +1814,8 @@ describe("Reactivity: proxy", () => {
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "Child:willPatch",
-        "Child:patched",
         "Child:willPatch",
+        "Child:patched",
         "Child:patched",
       ]
     `);
@@ -1867,8 +1867,8 @@ describe("Reactivity: proxy", () => {
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "Child:willPatch",
-        "Child:patched",
         "Child:willPatch",
+        "Child:patched",
         "Child:patched",
       ]
     `);
@@ -1933,8 +1933,8 @@ describe("Reactivity: proxy", () => {
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "Child:willPatch",
-        "Child:patched",
         "Child:willPatch",
+        "Child:patched",
         "Child:patched",
       ]
     `);

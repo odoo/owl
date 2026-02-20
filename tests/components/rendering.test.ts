@@ -352,9 +352,9 @@ describe("rendering semantics", () => {
     expect(steps.splice(0)).toMatchInlineSnapshot(`
       [
         "A:willPatch",
-        "A:patched",
         "C:willPatch",
         "C:patched",
+        "A:patched",
       ]
     `);
 

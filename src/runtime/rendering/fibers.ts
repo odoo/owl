@@ -74,7 +74,7 @@ function cancelFibers(fibers: Fiber[]): number {
       // the same props, and skip the render completely. With the next line,
       // we kindly request the component code to force a render, so it works as
       // expected.
-      node.forceNextRender = true;
+      node.depthFlags |= 1;
     } else {
       result++;
     }
@@ -144,6 +144,12 @@ export class Fiber {
         node.app.handleError({ node, error: e });
       }
       setComputation(c);
+      // Collect children that will be removed during patching
+      for (let key in node.children) {
+        if (!(key in this.childrenMap)) {
+          root.toDestroy.push(node.children[key]);
+        }
+      }
       root.setCounter(root.counter - 1);
     }
   }
@@ -156,21 +162,16 @@ export class RootFiber extends Fiber {
   willPatch: Fiber[] = [];
   patched: Fiber[] = [];
   mounted: Fiber[] = [];
+  toDestroy: ComponentNode[] = [];
   // A fiber is typically locked when it is completing and the patch has not, or is being applied.
   // i.e.: render triggered in onWillUnmount or in willPatch will be delayed
   locked: boolean = false;
 
-  complete() {
-    const node = this.node;
+  callWillPatch() {
     this.locked = true;
     let current: Fiber | undefined = undefined;
-    let mountedFibers = this.mounted;
     try {
-      // Step 1: calling all willPatch lifecycle hooks
       for (current of this.willPatch) {
-        // because of the asynchronous nature of the rendering, some parts of the
-        // UI may have been rendered, then deleted in a followup rendering, and we
-        // do not want to call onWillPatch in that case.
         let node = current.node;
         if (node.fiber === current) {
           const component = node.component;
@@ -179,13 +180,36 @@ export class RootFiber extends Fiber {
           }
         }
       }
-      current = undefined;
-
-      // Step 2: patching the dom
-      node._patch();
+    } catch (e) {
       this.locked = false;
+      this.node.app.handleError({ fiber: current || this, error: e });
+    }
+  }
 
-      // Step 4: calling all mounted lifecycle hooks
+  callPreDestroy() {
+    try {
+      for (let node of this.toDestroy) {
+        node._destroy();
+      }
+    } catch (e) {
+      this.locked = false;
+      this.node.app.handleError({ fiber: this, error: e });
+    }
+  }
+
+  applyPatch() {
+    try {
+      this.node._patch();
+    } catch (e) {
+      this.node.app.handleError({ fiber: this, error: e });
+    }
+    this.locked = false;
+  }
+
+  callPostPatchHooks() {
+    let current: Fiber | undefined = undefined;
+    let mountedFibers = this.mounted;
+    try {
       while ((current = mountedFibers.pop())) {
         current = current;
         if (current.appliedToDom) {
@@ -195,7 +219,6 @@ export class RootFiber extends Fiber {
         }
       }
 
-      // Step 5: calling all patched hooks
       let patchedFibers = this.patched;
       while ((current = patchedFibers.pop())) {
         current = current;
@@ -206,18 +229,18 @@ export class RootFiber extends Fiber {
         }
       }
     } catch (e) {
-      // if mountedFibers is not empty, this means that a crash occured while
-      // calling the mounted hooks of some component. So, there may still be
-      // some component that have been mounted, but for which the mounted hooks
-      // have not been called. Here, we remove the willUnmount hooks for these
-      // specific component to prevent a worse situation (willUnmount being
-      // called even though mounted has not been called)
       for (let fiber of mountedFibers) {
         fiber.node.willUnmount = [];
       }
       this.locked = false;
-      node.app.handleError({ fiber: current || this, error: e });
+      this.node.app.handleError({ fiber: current || this, error: e });
     }
+  }
+
+  complete() {
+    this.callWillPatch();
+    this.applyPatch();
+    this.callPostPatchHooks();
   }
 
   setCounter(newValue: number) {
@@ -243,8 +266,17 @@ export class MountFiber extends RootFiber {
     this.target = target;
     this.position = options.position || "last-child";
   }
-  complete() {
-    let current: Fiber | undefined = this;
+
+  callWillPatch() {
+    // no-op: first mount, no willPatch
+    this.locked = true;
+  }
+
+  callPreDestroy() {
+    // no-op: first mount, nothing to destroy
+  }
+
+  applyPatch() {
     try {
       const node = this.node;
       node.children = this.childrenMap;
@@ -271,7 +303,16 @@ export class MountFiber extends RootFiber {
 
       node.status = STATUS.MOUNTED;
       this.appliedToDom = true;
-      let mountedFibers = this.mounted;
+    } catch (e) {
+      this.node.app.handleError({ fiber: this, error: e });
+    }
+    this.locked = false;
+  }
+
+  callPostPatchHooks() {
+    let current: Fiber | undefined = undefined;
+    let mountedFibers = this.mounted;
+    try {
       while ((current = mountedFibers.pop())) {
         if (current.appliedToDom) {
           for (let cb of current.node.mounted) {
@@ -282,5 +323,11 @@ export class MountFiber extends RootFiber {
     } catch (e) {
       this.node.app.handleError({ fiber: current as Fiber, error: e });
     }
+  }
+
+  complete() {
+    this.callWillPatch();
+    this.applyPatch();
+    this.callPostPatchHooks();
   }
 }

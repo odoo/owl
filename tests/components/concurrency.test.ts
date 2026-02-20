@@ -1974,8 +1974,8 @@ test("concurrent renderings scenario 13", async () => {
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
       "Child:willPatch",
-      "Child:patched",
       "Child:willPatch",
+      "Child:patched",
       "Child:patched",
     ]
   `);
@@ -3310,11 +3310,11 @@ test("delayed rendering, but then initial rendering is cancelled by yet another 
   await nextTick();
   expect(steps.splice(0)).toMatchInlineSnapshot(`
     [
-      "D:willPatch",
-      "D:patched",
       "A:willPatch",
       "B:willPatch",
       "C:willPatch",
+      "D:willPatch",
+      "D:patched",
       "C:patched",
       "B:patched",
       "A:patched",
@@ -3413,10 +3413,10 @@ test("delayed rendering, reusing fiber and stuff", async () => {
       "B:willUpdateProps",
       "A:willPatch",
       "B:willPatch",
-      "B:patched",
-      "A:patched",
       "C:willPatch",
       "C:patched",
+      "B:patched",
+      "A:patched",
     ]
   `);
 });
@@ -3674,10 +3674,10 @@ test("another scenario with delayed rendering", async () => {
     [
       "A:willPatch",
       "B:willPatch",
-      "B:patched",
-      "A:patched",
       "C:willPatch",
       "C:patched",
+      "B:patched",
+      "A:patched",
     ]
   `);
 });

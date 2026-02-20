@@ -1,12 +1,4 @@
-import {
-  list,
-  mount,
-  multi,
-  patch,
-  text,
-  createBlock,
-  VNode,
-} from "../../src/runtime/blockdom";
+import { list, mount, multi, patch, text, createBlock, VNode } from "../../src/runtime/blockdom";
 import { makeTestFixture } from "./helpers";
 
 //------------------------------------------------------------------------------

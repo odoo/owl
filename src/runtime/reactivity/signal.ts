@@ -46,17 +46,20 @@ function invalidateSignal(signal: Signal<any>): void {
     throw new OwlError(`Value is not a signal (${signal})`);
   }
   onWriteAtom((signal as any)[atomSymbol]);
-};
+}
 
 function signalArray<T>(initialValue: T[], options?: SignalOptions<T>): Signal<T[]>;
 function signalArray<T>(initialValue: T[]): Signal<T[]> {
   return buildSignal<T[]>(initialValue, (atom) => proxifyTarget(atom.value, atom));
-};
+}
 
-function signalObject<T extends Record<PropertyKey, any>>(initialValue: T, options?: SignalOptions<T>): Signal<T>;
+function signalObject<T extends Record<PropertyKey, any>>(
+  initialValue: T,
+  options?: SignalOptions<T>
+): Signal<T>;
 function signalObject<T extends Record<PropertyKey, any>>(initialValue: T): Signal<T> {
   return buildSignal<T>(initialValue, (atom) => proxifyTarget(atom.value, atom));
-};
+}
 
 interface MapSignalOptions<K, V> {
   name?: string;
@@ -64,15 +67,18 @@ interface MapSignalOptions<K, V> {
   valueType?: V;
 }
 
-function signalMap<K, V>(initialValue: Map<K, V>, options?: MapSignalOptions<K, V>): Signal<Map<K, V>>;
+function signalMap<K, V>(
+  initialValue: Map<K, V>,
+  options?: MapSignalOptions<K, V>
+): Signal<Map<K, V>>;
 function signalMap<K, V>(initialValue: Map<K, V>): Signal<Map<K, V>> {
   return buildSignal<Map<K, V>>(initialValue, (atom) => proxifyTarget(atom.value, atom));
-};
+}
 
 function signalSet<T>(initialValue: Set<T>, options?: SignalOptions<T>): Signal<Set<T>>;
 function signalSet<T>(initialValue: Set<T>): Signal<Set<T>> {
   return buildSignal<Set<T>>(initialValue, (atom) => proxifyTarget(atom.value, atom));
-};
+}
 
 export function signal<T>(value: T, options?: SignalOptions<T>): Signal<T>;
 export function signal<T>(value: T): Signal<T> {

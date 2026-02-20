@@ -39,4 +39,3 @@ export function remove(vnode: VNode, withBeforeRemove: boolean = false) {
   }
   vnode.remove();
 }
-

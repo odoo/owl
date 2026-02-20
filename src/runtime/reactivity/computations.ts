@@ -127,6 +127,23 @@ export function removeSources(computation: ComputationAtom) {
   sources.clear();
 }
 
+export function disposeComputation(computation: ComputationAtom) {
+  for (const source of computation.sources) {
+    source.observers.delete(computation);
+    // Recursively dispose derived computations that lost all observers
+    if (
+      "compute" in source &&
+      (source as ComputationAtom).isDerived &&
+      source.observers.size === 0
+    ) {
+      disposeComputation(source as ComputationAtom);
+    }
+  }
+  computation.sources.clear();
+  // Mark as stale so it recomputes correctly if ever re-used (shared computed case)
+  computation.state = ComputationState.STALE;
+}
+
 function markDownstream(computation: ComputationAtom) {
   const stack: ComputationAtom[] = [computation];
   let current: ComputationAtom | undefined;

@@ -568,9 +568,7 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
         }
       }
 
-      nodeInsertBefore.call(parent, el, afterNode);
-
-      // preparing all children
+      // preparing all children (off-DOM, before inserting el into the live document)
       if (childN) {
         const children = this.children;
         for (let i = 0; i < childN; i++) {
@@ -584,6 +582,8 @@ function createBlockClass(template: HTMLElement, ctx: BlockCtx): BlockClass {
           }
         }
       }
+
+      nodeInsertBefore.call(parent, el, afterNode);
       this.el = el as HTMLElement;
       this.parentEl = parent;
 

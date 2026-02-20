@@ -1,5 +1,6 @@
 import {
   App,
+  computed,
   config,
   effect,
   onWillDestroy,
@@ -7,11 +8,13 @@ import {
   Plugin,
   PluginInstance,
   Resource,
+  signal,
   status,
   types as t,
   useListener,
   useResource,
 } from "../src";
+import { atomSymbol, Atom } from "../src/runtime/reactivity/computations";
 import { PluginManager } from "../src/runtime/plugin_manager";
 import { STATUS } from "../src/runtime/status";
 import { nextMicroTick, waitScheduler } from "./helpers";
@@ -618,6 +621,28 @@ describe("plugins and resources", () => {
     await waitScheduler();
     expect(steps.splice(0)).toEqual(["red"]);
   });
+});
+
+test("destroying a plugin with computed cleans up signal observers", () => {
+  const selectedId = signal(0);
+  const selectedIdAtom: Atom = (selectedId as any)[atomSymbol];
+
+  class A extends Plugin {
+    isSelected = computed(() => selectedId() === 42);
+  }
+
+  const manager = new PluginManager(new App());
+  manager.startPlugins([A]);
+  const a = manager.getPlugin(A)!;
+
+  // Evaluate the computed to establish subscriptions
+  a.isSelected();
+  expect(selectedIdAtom.observers.size).toBe(1);
+
+  manager.destroy();
+
+  // After destruction, the computed should be cleaned up from selectedId's observers
+  expect(selectedIdAtom.observers.size).toBe(0);
 });
 
 test("can use useListener in a plugin", () => {

@@ -1,7 +1,7 @@
 import { OwlError } from "../../common/owl_error";
 import { BDom, mount } from "../blockdom";
 import type { ComponentNode } from "../component_node";
-import { getCurrentComputation, setComputation } from "../reactivity/computations";
+import { getCurrentComputation, removeSources, setComputation } from "../reactivity/computations";
 import { STATUS } from "../status";
 import { fibersInError } from "./error_handling";
 
@@ -136,6 +136,7 @@ export class Fiber {
     if (root) {
       // todo: should use updateComputation somewhere else.
       const c = getCurrentComputation();
+      removeSources(node.signalComputation);
       setComputation(node.signalComputation);
       try {
         (this.bdom as any) = true;

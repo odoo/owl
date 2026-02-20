@@ -2,7 +2,13 @@ import { proxy, computed, signal } from "../../src";
 import {
   atomSymbol,
   ComputationAtom,
+  ComputationState,
+  createComputation,
+  disposeComputation,
+  removeSources,
   ReactiveValue,
+  setComputation,
+  updateComputation,
 } from "../../src/runtime/reactivity/computations";
 import { expectSpy, nextMicroTick, spyEffect } from "../helpers";
 
@@ -196,7 +202,9 @@ test("computed should not be recomputed when called from effect if none of its s
   expectSpy(d.spy, 1, { result: 0 });
   state.a = 2;
   await waitScheduler();
-  expectSpy(e.spy, 2);
+  // effect should not rerun because computed value didn't change (still 0)
+  expectSpy(e.spy, 1);
+  // but computed getter was re-evaluated (source changed)
   expectSpy(d.spy, 2, { result: 0 });
 });
 
@@ -217,6 +225,94 @@ describe("unsubscription", () => {
     expect(d.atom.observers.size).toBe(1);
     unsubscribe();
     expect(d.atom.observers.size).toBe(0);
+  });
+});
+
+describe("disposeComputation", () => {
+  test("disposing a signalComputation recursively cleans up derived computations from signal observers", () => {
+    // Mimics the component scenario:
+    // selectedId signal -> isSelected computed -> signalComputation (render effect)
+    const selectedId = signal(0);
+    const selectedIdAtom = (selectedId as any)[atomSymbol];
+
+    const isSelected = computed(() => selectedId() === 42);
+    const isSelectedAtom = (isSelected as any)[atomSymbol];
+
+    // Simulate a signalComputation (like component's render effect)
+    // that reads isSelected during render
+    const signalComp = createComputation(
+      () => {
+        return isSelected(); // reads the computed during "render"
+      },
+      false,
+      ComputationState.STALE
+    );
+
+    // Execute (simulating first _render)
+    updateComputation(signalComp);
+
+    // Verify sources are established
+    expect(signalComp.sources.has(isSelectedAtom)).toBe(true);
+    expect(isSelectedAtom.observers.has(signalComp)).toBe(true);
+    expect(isSelectedAtom.sources.has(selectedIdAtom)).toBe(true);
+    expect(selectedIdAtom.observers.has(isSelectedAtom)).toBe(true);
+
+    // Dispose (simulating _destroy)
+    disposeComputation(signalComp);
+
+    // signalComputation's sources should be cleared
+    expect(signalComp.sources.size).toBe(0);
+    // signalComputation should be removed from isSelected's observers
+    expect(isSelectedAtom.observers.has(signalComp)).toBe(false);
+    // KEY CHECK: isSelected should be removed from selectedId's observers
+    // (recursive disposal since isSelected has no more observers)
+    expect(selectedIdAtom.observers.has(isSelectedAtom)).toBe(false);
+  });
+
+  test("disposing works after removeSources + re-render (simulating _render flow)", () => {
+    // Simulates the actual _render() flow where removeSources is called first,
+    // then sources are re-established during template rendering
+    const selectedId = signal(0);
+    const selectedIdAtom = (selectedId as any)[atomSymbol];
+
+    const isSelected = computed(() => selectedId() === 42);
+    const isSelectedAtom = (isSelected as any)[atomSymbol];
+
+    const signalComp = createComputation(
+      () => {
+        return isSelected();
+      },
+      false,
+      ComputationState.EXECUTED
+    );
+
+    // Simulate _render() flow: removeSources, then set currentComputation, then render
+    removeSources(signalComp); // noop first time
+    setComputation(signalComp);
+    isSelected(); // reads computed during "render"
+    setComputation(undefined);
+
+    // Verify sources established
+    expect(signalComp.sources.has(isSelectedAtom)).toBe(true);
+    expect(selectedIdAtom.observers.has(isSelectedAtom)).toBe(true);
+
+    // Simulate second _render() (e.g., parent-triggered render)
+    removeSources(signalComp); // clears sources
+    setComputation(signalComp);
+    isSelected(); // re-establishes sources
+    setComputation(undefined);
+
+    // Verify sources still correct after second render
+    expect(signalComp.sources.has(isSelectedAtom)).toBe(true);
+    expect(isSelectedAtom.observers.has(signalComp)).toBe(true);
+    expect(selectedIdAtom.observers.has(isSelectedAtom)).toBe(true);
+
+    // Dispose (simulating _destroy)
+    disposeComputation(signalComp);
+
+    expect(signalComp.sources.size).toBe(0);
+    expect(isSelectedAtom.observers.has(signalComp)).toBe(false);
+    expect(selectedIdAtom.observers.has(isSelectedAtom)).toBe(false);
   });
 });
 
@@ -260,8 +356,10 @@ describe("nested computed", () => {
     expectSpy(d2.spy, 1, { result: 0 });
     state.a = 3;
     await waitScheduler();
-    expectSpy(e.spy, 2);
+    // effect should not rerun because d2's value didn't change (still 0)
+    expectSpy(e.spy, 1);
     expectSpy(d1.spy, 2, { result: 3 });
+    // d2 recomputes because its source d1 changed, but its value is still 0
     expectSpy(d2.spy, 2, { result: 0 });
   });
 

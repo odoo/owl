@@ -10,6 +10,7 @@ import {
   proxy,
   xml,
 } from "../../src";
+import { atomSymbol, Atom } from "../../src/runtime/reactivity/computations";
 import { makeTestFixture, nextTick, snapshotEverything, steps, useLogLifecycle } from "../helpers";
 
 let fixture: HTMLElement;
@@ -333,4 +334,138 @@ test("reading reactive state in setup should work as expected", async () => {
   await nextTick();
   expect(fixture.innerHTML).toBe("34");
   expect(steps).toEqual(["setup: 2"]);
+});
+
+describe("reactive cleanup on component destruction", () => {
+  test("destroying a component with computed cleans up signal observers", async () => {
+    const selectedId = signal(0);
+    const selectedIdAtom: Atom = (selectedId as any)[atomSymbol];
+
+    class Child extends Component {
+      static template = xml`<span t-out="this.isSelected()"/>`;
+      p = props();
+      isSelected = computed(() => this.p.selected() === 1);
+    }
+
+    class Parent extends Component {
+      static template = xml`<div><Child t-if="this.show()" selected="this.selectedId"/></div>`;
+      static components = { Child };
+      show = signal(true);
+      selectedId = selectedId;
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div><span>false</span></div>");
+
+    // The child's isSelected computed should be in selectedId's observers
+    expect(selectedIdAtom.observers.size).toBe(1);
+
+    // Destroy the child by toggling show
+    parent.show.set(false);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div></div>");
+
+    // After child destruction, isSelected computed should be cleaned up
+    // from selectedId's observers
+    expect(selectedIdAtom.observers.size).toBe(0);
+  });
+
+  test("destroying multiple children with computeds cleans up all signal observers", async () => {
+    const selectedId = signal(0);
+    const selectedIdAtom: Atom = (selectedId as any)[atomSymbol];
+
+    class Row extends Component {
+      static template = xml`<span t-out="this.isSelected()"/>`;
+      p = props();
+      isSelected = computed(() => this.p.selected() === this.p.id);
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <t t-foreach="this.rows()" t-as="row" t-key="row">
+            <Row id="row" selected="this.selectedId"/>
+          </t>
+        </div>`;
+      static components = { Row };
+      rows = signal([1, 2, 3]);
+      selectedId = selectedId;
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe(
+      "<div><span>false</span><span>false</span><span>false</span></div>"
+    );
+
+    // 3 row computeds should be in selectedId's observers
+    expect(selectedIdAtom.observers.size).toBe(3);
+
+    // Clear all rows
+    parent.rows.set([]);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div></div>");
+
+    // All computeds should be cleaned up
+    expect(selectedIdAtom.observers.size).toBe(0);
+  });
+
+  test("benchmark-like scenario: signal.Array rows with computed isSelected", async () => {
+    // This closely mimics the benchmark's owl3_signal setup
+    const selectedId = signal(0);
+    const selectedIdAtom: Atom = (selectedId as any)[atomSymbol];
+
+    class TableRow extends Component {
+      static template = xml`
+        <tr t-att-class="this.isSelected() ? 'danger' : ''">
+          <td t-out="this.p.row.id"/>
+          <td><a t-out="this.p.row.label()"/></td>
+        </tr>`;
+      p = props();
+      isSelected = computed(() => {
+        return this.p.selected() === this.p.row.id;
+      });
+    }
+
+    class Root extends Component {
+      static template = xml`
+        <table><tbody>
+          <t t-foreach="this.rows()" t-as="row" t-key="row.id">
+            <TableRow row="row" selected="this.selectedId"/>
+          </t>
+        </tbody></table>`;
+      static components = { TableRow };
+      rows = signal.Array<{ id: number; label: ReturnType<typeof signal<string>> }>([]);
+      selectedId = selectedId;
+    }
+
+    function buildRows(count: number) {
+      return Array.from({ length: count }, (_, i) => ({
+        id: i + 1,
+        label: signal(`Item ${i + 1}`),
+      }));
+    }
+
+    const root = await mount(Root, fixture);
+    expect(selectedIdAtom.observers.size).toBe(0);
+
+    // Create rows
+    root.rows.set(buildRows(10));
+    await nextTick();
+    expect(selectedIdAtom.observers.size).toBe(10);
+
+    // Clear rows - this should clean up all computed observers
+    root.rows.set([]);
+    await nextTick();
+    expect(fixture.querySelector("tbody")!.innerHTML).toBe("");
+    expect(selectedIdAtom.observers.size).toBe(0);
+
+    // Create again and clear again - should not accumulate
+    root.rows.set(buildRows(5));
+    await nextTick();
+    expect(selectedIdAtom.observers.size).toBe(5);
+
+    root.rows.set([]);
+    await nextTick();
+    expect(selectedIdAtom.observers.size).toBe(0);
+  });
 });

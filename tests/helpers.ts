@@ -134,8 +134,8 @@ export function snapshotEverything() {
     snapshottedTemplates.clear();
   });
 
-  const originalCompileTemplate = TemplateSet.prototype._compileTemplate;
-  TemplateSet.prototype._compileTemplate = function (name: string, template: string | Element) {
+  const originalCompileTemplate = (TemplateSet.prototype as any)._compileTemplate;
+  (TemplateSet.prototype as any)._compileTemplate = function (name: string, template: string | Element) {
     const fn = originalCompileTemplate.call(this, "", template);
     if (!globalTemplateNames.has(name)) {
       expect(fn.toString()).toMatchSnapshot();

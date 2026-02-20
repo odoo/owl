@@ -3,7 +3,7 @@ import { compile } from "./compiler";
 
 export * from "./runtime";
 
-TemplateSet.prototype._compileTemplate = function _compileTemplate(
+(TemplateSet.prototype as any)._compileTemplate = function _compileTemplate(
   name: string,
   template: string | Element
 ) {

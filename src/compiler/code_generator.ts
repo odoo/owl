@@ -992,24 +992,11 @@ export class CodeGenerator {
       }
     }
     const key = this.generateComponentKey();
-    if (isDynamic) {
-      const templateVar = generateId("template");
-      if (!this.staticDefs.find((d) => d.id === "call")) {
-        this.staticDefs.push({ id: "call", expr: `app.callTemplate.bind(app)` });
-      }
-      this.define(templateVar, subTemplate);
-      this.insertBlock(`call(this, ${templateVar}, ${ctxExpr}, node, ${key})`, block!, {
-        ...ctx,
-        forceNewBlock: !block,
-      });
-    } else {
-      const id = generateId(`callTemplate_`);
-      this.staticDefs.push({ id, expr: `app.getTemplate(${subTemplate})` });
-      this.insertBlock(`${id}.call(this, ${ctxExpr}, node, ${key})`, block!, {
-        ...ctx,
-        forceNewBlock: !block,
-      });
-    }
+    this.helpers.add("callTemplate");
+    this.insertBlock(`callTemplate(${subTemplate}, this, app, ${ctxExpr}, node, ${key})`, block!, {
+      ...ctx,
+      forceNewBlock: !block,
+    });
     return block.varName;
   }
 

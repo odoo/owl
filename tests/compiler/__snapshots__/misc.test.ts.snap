@@ -84,22 +84,17 @@ exports[`misc global 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { prepareList, safeOutput, zero, withKey } = helpers;
-  const callTemplate_1 = app.getTemplate(\`_callee-uses-foo\`);
-  const callTemplate_2 = app.getTemplate(\`_callee-uses-foo\`);
-  const callTemplate_3 = app.getTemplate(\`_callee-uses-foo\`);
-  const callTemplate_4 = app.getTemplate(\`_callee-asc\`);
-  const callTemplate_5 = app.getTemplate(\`_callee-asc-toto\`);
+  let { prepareList, safeOutput, callTemplate, zero, withKey } = helpers;
   
   let block1 = createBlock(\`<div><block-child-0/><block-child-1/></div>\`);
   let block4 = createBlock(\`<span><block-child-0/></span>\`);
   
   function callBody1(ctx, node, key = "") {
     ctx = Object.create(ctx);
-    const b8 = callTemplate_1.call(this, Object.assign(Object.create(ctx), {foo: 'aaa'}), node, key + \`__1\`);
-    const b9 = callTemplate_2.call(this, ctx, node, key + \`__2\`);
+    const b8 = callTemplate(\`_callee-uses-foo\`, this, app, Object.assign(Object.create(ctx), {foo: 'aaa'}), node, key + \`__1\`);
+    const b9 = callTemplate(\`_callee-uses-foo\`, this, app, ctx, node, key + \`__2\`);
     ctx["foo"] = 'bbb';
-    const b10 = callTemplate_3.call(this, ctx, node, key + \`__3\`);
+    const b10 = callTemplate(\`_callee-uses-foo\`, this, app, ctx, node, key + \`__3\`);
     return multi([b8, b9, b10]);
   }
   
@@ -117,33 +112,17 @@ exports[`misc global 1`] = `
       const b5 = safeOutput(ctx['value']);
       const b4 = block4([], [b5]);
       const lazyBlock1 = callBody1.bind(this, ctx);
-      const b6 = callTemplate_4.call(this, Object.assign(Object.create(ctx), {[zero]: lazyBlock1}), node, key + \`__4__\${key1}\`);
+      const b6 = callTemplate(\`_callee-asc\`, this, app, Object.assign(Object.create(ctx), {[zero]: lazyBlock1}), node, key + \`__4__\${key1}\`);
       c_block2[i1] = withKey(multi([b4, b6]), key1);
     }
     const b2 = list(c_block2);
-    const b11 = callTemplate_5.call(this, ctx, node, key + \`__5\`);
+    const b11 = callTemplate(\`_callee-asc-toto\`, this, app, ctx, node, key + \`__5\`);
     return block1([], [b2, b11]);
   }
 }"
 `;
 
 exports[`misc global 2`] = `
-"function anonymous(app, bdom, helpers
-) {
-  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput } = helpers;
-  
-  let block1 = createBlock(\`<span><block-child-0/></span>\`);
-  
-  return function template(ctx, node, key = "") {
-    const b3 = text(\`foo default\`);
-    const b2 = safeOutput(ctx['foo'], b3);
-    return block1([], [b2]);
-  }
-}"
-`;
-
-exports[`misc global 3`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
@@ -155,6 +134,22 @@ exports[`misc global 3`] = `
     let attr1 = 'agüero';
     const b2 = ctx[zero]?.(node, key) || text("");
     return block1([attr1], [b2]);
+  }
+}"
+`;
+
+exports[`misc global 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b3 = text(\`foo default\`);
+    const b2 = safeOutput(ctx['foo'], b3);
+    return block1([], [b2]);
   }
 }"
 `;
@@ -179,7 +174,7 @@ exports[`misc other complex template 1`] = `
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  let { safeOutput, prepareList, withKey, createRef, createComponent } = helpers;
+  let { safeOutput, prepareList, withKey, createRef, callTemplate, createComponent } = helpers;
   const hdlr_fn1 = (ctx, ev) => (ctx['selectProject'](ctx['project'])).call(ctx['this'], ev);
   const hdlr_fn2 = (ctx, ev) => (ctx['toggleSettingsMenu']).call(ctx['this'], ev);
   const hdlr_fn3 = (ctx, ev) => (ctx['toggleMore']).call(ctx['this'], ev);
@@ -191,7 +186,6 @@ exports[`misc other complex template 1`] = `
   const hdlr_fn9 = (ctx, ev) => (ctx['triggerNone']).call(ctx['this'], ev);
   const hdlr_fn10 = (ctx, ev) => (ctx['triggerDefault']).call(ctx['this'], ev);
   const hdlr_fn11 = (ctx, ev) => (ctx['toggleSettingsMenu']).call(ctx['this'], ev);
-  const callTemplate_1 = app.getTemplate(\`LOAD_INFOS_TEMPLATE\`);
   const comp1 = createComponent(app, \`BundlesList\`, true, false, false, ["bundles","category_custom_views","search"]);
   const comp2 = createComponent(app, \`BundlesList\`, true, false, false, ["bundles","search"]);
   
@@ -317,7 +311,7 @@ exports[`misc other complex template 1`] = `
       b22 = multi([b23, b27]);
     }
     if (ctx['load_infos']) {
-      b28 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+      b28 = callTemplate(\`LOAD_INFOS_TEMPLATE\`, this, app, ctx, node, key + \`__1\`);
     }
     if (ctx['message']) {
       const b30 = safeOutput(ctx['message']);

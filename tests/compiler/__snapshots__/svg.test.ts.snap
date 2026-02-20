@@ -91,12 +91,12 @@ exports[`properly support svg svg namespace added to sub templates if root tag i
 "function anonymous(app, bdom, helpers
 ) {
   let { text, createBlock, list, multi, html, toggler, comment } = bdom;
-  const callTemplate_1 = app.getTemplate(\`path\`);
+  let { callTemplate } = helpers;
   
   let block1 = createBlock(\`<svg xmlns="http://www.w3.org/2000/svg"><block-child-0 xmlns=""/></svg>\`);
   
   return function template(ctx, node, key = "") {
-    const b2 = callTemplate_1.call(this, ctx, node, key + \`__1\`);
+    const b2 = callTemplate(\`path\`, this, app, ctx, node, key + \`__1\`);
     return block1([], [b2]);
   }
 }"

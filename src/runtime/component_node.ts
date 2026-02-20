@@ -7,6 +7,7 @@ import {
   ComputationAtom,
   ComputationState,
   createComputation,
+  disposeComputation,
   getCurrentComputation,
   setComputation,
 } from "./reactivity/computations";
@@ -43,6 +44,7 @@ export class ComponentNode implements VNode<ComponentNode> {
   patched: LifecycleHook[] = [];
   willDestroy: LifecycleHook[] = [];
   signalComputation: ComputationAtom;
+  computations: ComputationAtom[] = [];
 
   pluginManager: PluginManager;
 
@@ -204,6 +206,10 @@ export class ComponentNode implements VNode<ComponentNode> {
         this.app.handleError({ error: e, node: this });
       }
     }
+    for (const computation of this.computations) {
+      disposeComputation(computation);
+    }
+    disposeComputation(this.signalComputation);
     this.status = STATUS.DESTROYED;
   }
 

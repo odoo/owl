@@ -40,6 +40,120 @@ exports[`components and computed simple component and computed value 1`] = `
 }"
 `;
 
+exports[`reactive cleanup on component destruction benchmark-like scenario: signal.Array rows with computed isSelected 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { prepareList, createComponent, withKey } = helpers;
+  const comp1 = createComponent(app, \`TableRow\`, true, false, false, ["row","selected"]);
+  
+  let block1 = createBlock(\`<table><tbody><block-child-0/></tbody></table>\`);
+  
+  return function template(ctx, node, key = "") {
+    const ctx1 = ctx;
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].rows());;
+    for (let i1 = 0; i1 < l_block2; i1++) {
+      let ctx = Object.create(ctx1);
+      ctx[\`row\`] = k_block2[i1];
+      const key1 = ctx['row'].id;
+      c_block2[i1] = withKey(comp1({row: ctx['row'],selected: ctx['this'].selectedId}, key + \`__1__\${key1}\`, node, this, null), key1);
+    }
+    const b2 = list(c_block2);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`reactive cleanup on component destruction benchmark-like scenario: signal.Array rows with computed isSelected 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<tr block-attribute-0="class"><td><block-child-0/></td><td><a><block-child-1/></a></td></tr>\`);
+  
+  return function template(ctx, node, key = "") {
+    let attr1 = ctx['this'].isSelected()?'danger':'';
+    const b2 = safeOutput(ctx['this'].p.row.id);
+    const b3 = safeOutput(ctx['this'].p.row.label());
+    return block1([attr1], [b2, b3]);
+  }
+}"
+`;
+
+exports[`reactive cleanup on component destruction destroying a component with computed cleans up signal observers 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { createComponent } = helpers;
+  const comp1 = createComponent(app, \`Child\`, true, false, false, ["selected"]);
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    let b2;
+    if (ctx['this'].show()) {
+      b2 = comp1({selected: ctx['this'].selectedId}, key + \`__1\`, node, this, null);
+    }
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`reactive cleanup on component destruction destroying a component with computed cleans up signal observers 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].isSelected());
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`reactive cleanup on component destruction destroying multiple children with computeds cleans up all signal observers 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { prepareList, createComponent, withKey } = helpers;
+  const comp1 = createComponent(app, \`Row\`, true, false, false, ["id","selected"]);
+  
+  let block1 = createBlock(\`<div><block-child-0/></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    const ctx1 = ctx;
+    const [k_block2, v_block2, l_block2, c_block2] = prepareList(ctx['this'].rows());;
+    for (let i1 = 0; i1 < l_block2; i1++) {
+      let ctx = Object.create(ctx1);
+      ctx[\`row\`] = k_block2[i1];
+      const key1 = ctx['row'];
+      c_block2[i1] = withKey(comp1({id: ctx['row'],selected: ctx['this'].selectedId}, key + \`__1__\${key1}\`, node, this, null), key1);
+    }
+    const b2 = list(c_block2);
+    return block1([], [b2]);
+  }
+}"
+`;
+
+exports[`reactive cleanup on component destruction destroying multiple children with computeds cleans up all signal observers 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { safeOutput } = helpers;
+  
+  let block1 = createBlock(\`<span><block-child-0/></span>\`);
+  
+  return function template(ctx, node, key = "") {
+    const b2 = safeOutput(ctx['this'].isSelected());
+    return block1([], [b2]);
+  }
+}"
+`;
+
 exports[`reactivity in lifecycle Child component doesn't render when state they depend on changes but their parent is about to unmount them 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

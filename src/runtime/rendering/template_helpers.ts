@@ -176,7 +176,6 @@ function modelExpr(value: any) {
   return value;
 }
 
-
 function createComponent<P extends Record<string, any>>(
   app: App,
   name: string | null,
@@ -254,7 +253,14 @@ function createComponent<P extends Record<string, any>>(
   };
 }
 
-function callTemplate(subTemplate: string, owner: any, app: App, ctx: any, parent: any, key: any): any {
+function callTemplate(
+  subTemplate: string,
+  owner: any,
+  app: App,
+  ctx: any,
+  parent: any,
+  key: any
+): any {
   const template = app.getTemplate(subTemplate);
   return toggler(subTemplate, template.call(owner, ctx, parent, key + subTemplate));
 }

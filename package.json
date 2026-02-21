@@ -5,6 +5,16 @@
   "main": "dist/owl.cjs.js",
   "module": "dist/owl.es.js",
   "types": "dist/types/owl.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/owl.d.ts",
+      "import": "./dist/owl.es.js",
+      "require": "./dist/owl.cjs.js",
+      "default": "./dist/owl.es.js"
+    },
+    "./dist/*": "./dist/*",
+    "./package.json": "./package.json"
+  },
   "files": [
     "dist"
   ],

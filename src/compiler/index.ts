@@ -13,6 +13,8 @@ interface CompileOptions extends Config {
   name?: string;
   customDirectives?: customDirectives;
   hasGlobalValues: boolean;
+  trackExpressions?: boolean;
+  rawXml?: string;
 }
 export function compile(
   template: string | Element,

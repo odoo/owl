@@ -3,6 +3,7 @@ import { comment, createBlock, html, list, multi, text, toggler } from "./blockd
 import { getCurrent } from "./component_node";
 import { Portal, portalTemplate } from "./portal";
 import { helpers } from "./template_helpers";
+import { isThisTrackingEnabled, pushTrackingTemplate, popTrackingTemplate } from "./this_tracking";
 import { OwlError } from "../common/owl_error";
 import { parseXML } from "../common/utils";
 import type { customDirectives } from "../common/types";
@@ -106,8 +107,26 @@ export class TemplateSet {
       this.templates[name] = function (context, parent) {
         return templates[name].call(this, context, parent);
       };
-      const template = templateFn(this, bdom, this.runtimeUtils);
-      this.templates[name] = template;
+      const compiledTemplate = templateFn(this, bdom, this.runtimeUtils);
+      // Wrap with tracking support: push/pop the template name around execution
+      // so that property accesses are attributed to the correct template.
+      const wrappedName = name;
+      this.templates[name] = function trackedTemplate(
+        this: any,
+        context: any,
+        parent: any,
+        key?: string
+      ) {
+        if (isThisTrackingEnabled()) {
+          pushTrackingTemplate(wrappedName);
+          try {
+            return compiledTemplate.call(this, context, parent, key);
+          } finally {
+            popTrackingTemplate();
+          }
+        }
+        return compiledTemplate.call(this, context, parent, key);
+      };
     }
     return this.templates[name];
   }

@@ -6,6 +6,13 @@ import type { ComponentConstructor } from "./component";
 import { markRaw } from "./reactivity";
 import { OwlError } from "../common/owl_error";
 import type { ComponentNode } from "./component_node";
+import {
+  isThisTrackingEnabled,
+  createTrackedCtx,
+  pushTrackingTemplate,
+  popTrackingTemplate,
+  setExprLocation,
+} from "./this_tracking";
 
 const ObjectCreate = Object.create;
 /**
@@ -29,11 +36,29 @@ function callSlot(
   key = key + "__slot_" + name;
   const slots = ctx.props.slots || {};
   const { __render, __ctx, __scope } = slots[name] || {};
-  const slotScope = ObjectCreate(__ctx || {});
+  let slotScope = ObjectCreate(__ctx || {});
   if (__scope) {
     slotScope[__scope] = extra;
   }
-  const slotBDom = __render ? __render(slotScope, parent, key) : null;
+  let slotBDom: BDom | null = null;
+  if (__render) {
+    if (isThisTrackingEnabled() && __ctx) {
+      // Wrap the slot scope with a tracking proxy so property accesses
+      // inside slot content are recorded. The slot content was defined in
+      // the parent component's template, so use the parent's template name.
+      const parentComponent = __ctx["this"];
+      const parentTemplateName = parentComponent?.constructor?.template || "unknown-slot";
+      slotScope = createTrackedCtx(slotScope, parentComponent, parentTemplateName);
+      pushTrackingTemplate(parentTemplateName);
+      try {
+        slotBDom = __render(slotScope, parent, key);
+      } finally {
+        popTrackingTemplate();
+      }
+    } else {
+      slotBDom = __render(slotScope, parent, key);
+    }
+  }
   if (defaultContent) {
     let child1: BDom | undefined = undefined;
     let child2: BDom | undefined = undefined;
@@ -252,4 +277,5 @@ export const helpers = {
   markRaw,
   OwlError,
   makeRefWrapper,
+  __setExprLoc: setExprLocation,
 };

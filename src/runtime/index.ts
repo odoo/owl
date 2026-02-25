@@ -56,6 +56,19 @@ export {
 } from "./lifecycle_hooks";
 export { validate, validateType } from "./validation";
 export { OwlError } from "../common/owl_error";
+export {
+  enableThisTracking,
+  disableThisTracking,
+  clearThisTracking,
+  isThisTrackingEnabled,
+  getThisTrackingReport,
+} from "./this_tracking";
+export type {
+  TemplateAccess,
+  GetterAccess,
+  TemplateReport,
+  ThisTrackingReport,
+} from "./this_tracking";
 
 export const __info__ = {
   version: App.version,

@@ -31,6 +31,7 @@ import {
   EventHandlers,
 } from "./parser";
 import { OwlError } from "../common/owl_error";
+import { ExprLocFinder } from "./expr_loc_finder";
 
 type BlockType = "block" | "text" | "multi" | "list" | "html" | "comment";
 const whitespaceRE = /\s+/g;
@@ -45,6 +46,8 @@ export interface CodeGenOptions extends Config {
   hasSafeContext?: boolean;
   name?: string;
   hasGlobalValues: boolean;
+  trackExpressions?: boolean;
+  rawXml?: string;
 }
 
 // using a non-html document so that <inner/outer>HTML serializes as XML instead
@@ -281,6 +284,7 @@ export class CodeGenerator {
   staticDefs: { id: string; expr: string }[] = [];
   slotNames: Set<String> = new Set();
   helpers: Set<string> = new Set();
+  exprLocFinder: ExprLocFinder | null = null;
 
   constructor(ast: AST, options: CodeGenOptions) {
     this.translateFn = options.translateFn || ((s: string) => s);
@@ -302,6 +306,26 @@ export class CodeGenerator {
     if (options.hasGlobalValues) {
       this.helpers.add("__globals__");
     }
+    if (options.trackExpressions && options.rawXml) {
+      this.exprLocFinder = new ExprLocFinder(options.rawXml);
+    }
+  }
+
+  /**
+   * Compiles an expression with optional location tracking.
+   * When expression tracking is enabled, wraps the compiled expression with
+   * a __setExprLoc call using the comma operator so the tracking proxy can
+   * record the source location.
+   */
+  expr(originalExpr: string): string {
+    const compiled = compileExpr(originalExpr);
+    if (!this.exprLocFinder) return compiled;
+
+    const loc = this.exprLocFinder.find(originalExpr);
+    if (!loc) return compiled;
+
+    this.helpers.add("__setExprLoc");
+    return `(__setExprLoc(${JSON.stringify(originalExpr)}, ${loc.line}, ${loc.col}, ${loc.endCol}), ${compiled})`;
   }
 
   generateCode(): string {
@@ -451,7 +475,7 @@ export class CodeGenerator {
    */
   captureExpression(expr: string, forceCapture: boolean = false): string {
     if (!forceCapture && !expr.includes("=>")) {
-      return compileExpr(expr);
+      return this.expr(expr);
     }
     const tokens = compileExprToArray(expr);
     const mapping = new Map<string, string>();
@@ -530,7 +554,7 @@ export class CodeGenerator {
   }
 
   compileLog(ast: ASTLog, ctx: Context): string | null {
-    this.addLine(`console.log(${compileExpr(ast.expr)});`);
+    this.addLine(`console.log(${this.expr(ast.expr)});`);
     if (ast.content) {
       return this.compileAST(ast.content, ctx);
     }
@@ -605,7 +629,7 @@ export class CodeGenerator {
       this.blocks.push(block);
       if (ast.dynamicTag) {
         const tagExpr = generateId("tag");
-        this.define(tagExpr, compileExpr(ast.dynamicTag));
+        this.define(tagExpr, this.expr(ast.dynamicTag));
         block.dynamicTagName = tagExpr;
       }
     }
@@ -622,7 +646,7 @@ export class CodeGenerator {
         attrs["block-attribute-" + idx] = attrName;
       } else if (key.startsWith("t-att")) {
         attrName = key === "t-att" ? null : key.slice(6);
-        expr = compileExpr(ast.attrs[key]);
+        expr = this.expr(ast.attrs[key]);
         if (attrName && isProp(ast.tag, attrName)) {
           if (attrName === "readonly") {
             // the property has a different name than the attribute
@@ -674,11 +698,11 @@ export class CodeGenerator {
         specialInitTargetAttr,
       } = ast.model;
 
-      const baseExpression = compileExpr(baseExpr);
+      const baseExpression = this.expr(baseExpr);
       const bExprId = generateId("bExpr");
       this.define(bExprId, baseExpression);
 
-      const expression = compileExpr(expr);
+      const expression = this.expr(expr);
       const exprId = generateId("expr");
       this.define(exprId, expression);
 
@@ -691,7 +715,7 @@ export class CodeGenerator {
           // look at the dynamic attribute counterpart
           const dynamicTgExpr = ast.attrs[`t-att-${targetAttr}`];
           if (dynamicTgExpr) {
-            targetExpr = compileExpr(dynamicTgExpr);
+            targetExpr = this.expr(dynamicTgExpr);
           }
         }
         idx = block!.insertData(`${fullExpression} === ${targetExpr}`, "prop");
@@ -798,7 +822,7 @@ export class CodeGenerator {
       this.helpers.add("zero");
       expr = `ctx[zero]`;
     } else {
-      expr = compileExpr(ast.expr);
+      expr = this.expr(ast.expr);
       if (ast.defaultValue) {
         this.helpers.add("withDefault");
         // FIXME: defaultValue is not translated
@@ -832,10 +856,10 @@ export class CodeGenerator {
       const subCtx = createContext(ctx);
       this.compileAST({ type: ASTType.Multi, content: ast.body }, subCtx);
       this.helpers.add("safeOutput");
-      blockStr = `safeOutput(${compileExpr(ast.expr)}, b${bodyValue})`;
+      blockStr = `safeOutput(${this.expr(ast.expr)}, b${bodyValue})`;
     } else {
       this.helpers.add("safeOutput");
-      blockStr = `safeOutput(${compileExpr(ast.expr)})`;
+      blockStr = `safeOutput(${this.expr(ast.expr)})`;
     }
     this.insertBlock(blockStr, block, ctx);
     return block.varName;
@@ -862,11 +886,11 @@ export class CodeGenerator {
     if (!block || (block.type !== "multi" && forceNewBlock)) {
       block = this.createBlock(block, "multi", ctx);
     }
-    this.addLine(`if (${compileExpr(ast.condition)}) {`);
+    this.addLine(`if (${this.expr(ast.condition)}) {`);
     this.compileTIfBranch(ast.content, block, ctx);
     if (ast.tElif) {
       for (let clause of ast.tElif) {
-        this.addLine(`} else if (${compileExpr(clause.condition)}) {`);
+        this.addLine(`} else if (${this.expr(clause.condition)}) {`);
         this.compileTIfBranch(clause.content, block, ctx);
       }
     }
@@ -912,7 +936,7 @@ export class CodeGenerator {
     const l = `l_block${block.id}`;
     const c = `c_block${block.id}`;
     this.helpers.add("prepareList");
-    this.define(`[${keys}, ${vals}, ${l}, ${c}]`, `prepareList(${compileExpr(ast.collection)});`);
+    this.define(`[${keys}, ${vals}, ${l}, ${c}]`, `prepareList(${this.expr(ast.collection)});`);
     // Throw errors on duplicate keys in dev mode
     if (this.dev) {
       this.define(`keys${block.id}`, `new Set()`);
@@ -932,7 +956,7 @@ export class CodeGenerator {
     if (!ast.hasNoValue) {
       this.addLine(`ctx[\`${ast.elem}_value\`] = ${vals}[${loopVar}];`);
     }
-    this.define(`key${this.target.loopLevel}`, ast.key ? compileExpr(ast.key) : loopVar);
+    this.define(`key${this.target.loopLevel}`, ast.key ? this.expr(ast.key) : loopVar);
     if (this.dev) {
       // Throw error on duplicate keys in dev mode
       this.helpers.add("OwlError");
@@ -945,7 +969,7 @@ export class CodeGenerator {
     if (ast.memo) {
       this.target.hasCache = true;
       id = generateId();
-      this.define(`memo${id}`, compileExpr(ast.memo));
+      this.define(`memo${id}`, this.expr(ast.memo));
       this.define(`vnode${id}`, `cache[key${this.target.loopLevel}];`);
       this.addLine(`if (vnode${id}) {`);
       this.target.indentLevel++;
@@ -981,7 +1005,7 @@ export class CodeGenerator {
 
   compileTKey(ast: ASTTKey, ctx: Context): string | null {
     const tKeyExpr = generateId("tKey_");
-    this.define(tKeyExpr, compileExpr(ast.expr));
+    this.define(tKeyExpr, this.expr(ast.expr));
     ctx = createContext(ctx, {
       tKeyExpr,
       block: ctx.block,
@@ -1047,7 +1071,7 @@ export class CodeGenerator {
     let ctxVar = ctx.ctxVar || "ctx";
     if (ast.context) {
       ctxVar = generateId("ctx");
-      this.addLine(`let ${ctxVar} = ${compileExpr(ast.context)};`);
+      this.addLine(`let ${ctxVar} = ${this.expr(ast.context)};`);
     }
     const isDynamic = INTERP_REGEXP.test(ast.name);
     const subTemplate = isDynamic ? interpolate(ast.name) : "`" + ast.name + "`";
@@ -1100,14 +1124,14 @@ export class CodeGenerator {
       }
     }
     block = this.createBlock(block, "multi", ctx);
-    this.insertBlock(compileExpr(ast.name), block, { ...ctx, forceNewBlock: !block });
+    this.insertBlock(this.expr(ast.name), block, { ...ctx, forceNewBlock: !block });
     return block.varName;
   }
 
   compileTSet(ast: ASTTSet, ctx: Context): null {
     this.target.shouldProtectScope = true;
     this.helpers.add("isBoundary").add("withDefault");
-    const expr = ast.value ? compileExpr(ast.value || "") : "null";
+    const expr = ast.value ? this.expr(ast.value || "") : "null";
     if (ast.body) {
       this.helpers.add("LazyValue");
       const bodyAst: AST = { type: ASTType.Multi, content: ast.body };
@@ -1198,7 +1222,7 @@ export class CodeGenerator {
   getPropString(props: string[], dynProps: string | null): string {
     let propString = `{${props.join(",")}}`;
     if (dynProps) {
-      propString = `Object.assign({}, ${compileExpr(dynProps)}${
+      propString = `Object.assign({}, ${this.expr(dynProps)}${
         props.length ? ", " + propString : ""
       })`;
     }
@@ -1272,7 +1296,7 @@ export class CodeGenerator {
     let expr: string;
     if (ast.isDynamic) {
       expr = generateId("Comp");
-      this.define(expr, compileExpr(ast.name));
+      this.define(expr, this.expr(ast.name));
     } else {
       expr = `\`${ast.name}\``;
     }
@@ -1430,7 +1454,7 @@ export class CodeGenerator {
       expr: `app.createComponent(null, false, true, false, false)`,
     });
 
-    const target = compileExpr(ast.target);
+    const target = this.expr(ast.target);
     const key = this.generateComponentKey();
     const blockString = `${id}({target: ${target},slots: {'default': {__render: ${name}.bind(this), __ctx: ${ctxStr}}}}, ${key}, node, ctx, Portal)`;
     if (block) {

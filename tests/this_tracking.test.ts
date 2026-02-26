@@ -5,6 +5,8 @@ import {
   clearThisTracking,
   getThisTrackingReport,
   setTemplateTrackingAlias,
+  setExprLocation,
+  createTrackedCtx,
 } from "../src/runtime/this_tracking";
 import { makeTestFixture, nextTick } from "./helpers";
 
@@ -36,18 +38,16 @@ describe("this tracking - template accesses", () => {
     expect(fixture.innerHTML).toBe("<div>42</div>");
 
     const report = getThisTrackingReport();
-    const tmpl = report.templates[MyComp.template];
-    expect(tmpl).toBeDefined();
+    const accesses = Object.values(report.accesses);
 
     // 'value' is on the component (inherited via prototype), so source = 'component'
-    expect(tmpl.accesses.length).toBe(1);
-    expect(tmpl.accesses[0].property).toBe("value");
-    expect(tmpl.accesses[0].source).toBe("component");
-    expect(tmpl.accesses[0].expression).toBe("value");
-    expect(tmpl.accesses[0].line).toBe(1);
-    expect(tmpl.accesses[0].col).toBe(15);
-    expect(tmpl.accesses[0].endCol).toBe(20);
-    expect(tmpl.summary.value).toBe("component");
+    const access = accesses.find((a) => a.property === "value");
+    expect(access).toBeDefined();
+    expect(access!.source).toBe("component");
+    expect(access!.expression).toBe("value");
+    expect(access!.line).toBe(1);
+    expect(access!.col).toBe(15);
+    expect(access!.endCol).toBe(20);
   });
 
   test("tracks explicit this.property access (source: component)", async () => {
@@ -60,16 +60,16 @@ describe("this tracking - template accesses", () => {
     expect(fixture.innerHTML).toBe("<div>99</div>");
 
     const report = getThisTrackingReport();
-    const tmpl = report.templates[MyComp.template];
+    const accesses = Object.values(report.accesses);
 
     // ctx['this'] returns the component proxy (not recorded), then .value is recorded
-    expect(tmpl.accesses.length).toBe(1);
-    expect(tmpl.accesses[0].property).toBe("value");
-    expect(tmpl.accesses[0].source).toBe("component");
-    expect(tmpl.accesses[0].expression).toBe("this.value");
-    expect(tmpl.accesses[0].line).toBe(1);
-    expect(tmpl.accesses[0].col).toBe(15);
-    expect(tmpl.accesses[0].endCol).toBe(25);
+    const access = accesses.find((a) => a.property === "value");
+    expect(access).toBeDefined();
+    expect(access!.source).toBe("component");
+    expect(access!.expression).toBe("this.value");
+    expect(access!.line).toBe(1);
+    expect(access!.col).toBe(15);
+    expect(access!.endCol).toBe(25);
   });
 
   test("tracks reactive state access (source: component)", async () => {
@@ -82,16 +82,16 @@ describe("this tracking - template accesses", () => {
     expect(fixture.innerHTML).toBe("<div>5</div>");
 
     const report = getThisTrackingReport();
-    const tmpl = report.templates[MyComp.template];
+    const accesses = Object.values(report.accesses);
 
     // 'state' is on the component via prototype
-    expect(tmpl.accesses.length).toBe(1);
-    expect(tmpl.accesses[0].property).toBe("state");
-    expect(tmpl.accesses[0].source).toBe("component");
-    expect(tmpl.accesses[0].expression).toBe("state.count");
-    expect(tmpl.accesses[0].line).toBe(1);
-    expect(tmpl.accesses[0].col).toBe(15);
-    expect(tmpl.accesses[0].endCol).toBe(26);
+    const access = accesses.find((a) => a.property === "state");
+    expect(access).toBeDefined();
+    expect(access!.source).toBe("component");
+    expect(access!.expression).toBe("state.count");
+    expect(access!.line).toBe(1);
+    expect(access!.col).toBe(15);
+    expect(access!.endCol).toBe(26);
   });
 
   test("tracks props access (source: component)", async () => {
@@ -104,15 +104,15 @@ describe("this tracking - template accesses", () => {
     expect(fixture.innerHTML).toBe("<div>world</div>");
 
     const report = getThisTrackingReport();
-    const tmpl = report.templates[MyComp.template];
+    const accesses = Object.values(report.accesses);
 
-    expect(tmpl.accesses.length).toBe(1);
-    expect(tmpl.accesses[0].property).toBe("props");
-    expect(tmpl.accesses[0].source).toBe("component");
-    expect(tmpl.accesses[0].expression).toBe("props.name");
-    expect(tmpl.accesses[0].line).toBe(1);
-    expect(tmpl.accesses[0].col).toBe(15);
-    expect(tmpl.accesses[0].endCol).toBe(25);
+    const access = accesses.find((a) => a.property === "props");
+    expect(access).toBeDefined();
+    expect(access!.source).toBe("component");
+    expect(access!.expression).toBe("props.name");
+    expect(access!.line).toBe(1);
+    expect(access!.col).toBe(15);
+    expect(access!.endCol).toBe(25);
   });
 
   test("tracks component property accessed inside t-foreach (source: component)", async () => {
@@ -134,17 +134,17 @@ describe("this tracking - template accesses", () => {
     expect(fixture.innerHTML).toBe("<div><span>a</span><span>b</span></div>");
 
     const report = getThisTrackingReport();
-    const tmpl = report.templates[MyComp.template];
+    const accesses = Object.values(report.accesses);
 
     // Only 'items' is tracked (component property via prototype chain).
     // Loop variables (item, item_first, etc.) are own on the loop ctx layer — not proxied.
-    expect(tmpl.accesses.length).toBe(1);
-    expect(tmpl.accesses[0].property).toBe("items");
-    expect(tmpl.accesses[0].source).toBe("component");
-    expect(tmpl.accesses[0].expression).toBe("items");
-    expect(tmpl.accesses[0].line).toBe(3);
-    expect(tmpl.accesses[0].col).toBe(24);
-    expect(tmpl.accesses[0].endCol).toBe(29);
+    const access = accesses.find((a) => a.property === "items");
+    expect(access).toBeDefined();
+    expect(access!.source).toBe("component");
+    expect(access!.expression).toBe("items");
+    expect(access!.line).toBe(3);
+    expect(access!.col).toBe(24);
+    expect(access!.endCol).toBe(29);
   });
 
   test("tracks template name correctly", async () => {
@@ -156,12 +156,12 @@ describe("this tracking - template accesses", () => {
     await mount(MyComp, fixture);
 
     const report = getThisTrackingReport();
-    const templateNames = Object.keys(report.templates);
-    expect(templateNames.length).toBe(1);
-    expect(templateNames[0]).toMatch(/__template__/);
+    const accesses = Object.values(report.accesses);
+    expect(accesses.length).toBe(1);
+    expect(accesses[0].templateName).toMatch(/__template__/);
   });
 
-  test("summary reports 'both' when property accessed via prototype and explicit this", async () => {
+  test("two accesses to same property at different locations are separate entries", async () => {
     class MyComp extends Component {
       static template = xml`
         <div>
@@ -175,24 +175,23 @@ describe("this tracking - template accesses", () => {
     expect(fixture.innerHTML).toBe("<div><span>10</span><span>10</span></div>");
 
     const report = getThisTrackingReport();
-    const tmpl = report.templates[MyComp.template];
+    const accesses = Object.values(report.accesses);
 
-    // Both accesses to 'val' resolve through the component
-    expect(tmpl.accesses.length).toBe(2);
+    // Both accesses to 'val' are at different lines, so they are separate entries
+    const valAccesses = accesses.filter((a) => a.property === "val");
+    expect(valAccesses.length).toBe(2);
     // First access: ctx['val'] → inherited from component → source: 'component'
-    expect(tmpl.accesses[0].property).toBe("val");
-    expect(tmpl.accesses[0].source).toBe("component");
-    expect(tmpl.accesses[0].expression).toBe("val");
-    expect(tmpl.accesses[0].line).toBe(3);
-    expect(tmpl.accesses[0].col).toBe(23);
-    expect(tmpl.accesses[0].endCol).toBe(26);
+    expect(valAccesses[0].source).toBe("component");
+    expect(valAccesses[0].expression).toBe("val");
+    expect(valAccesses[0].line).toBe(3);
+    expect(valAccesses[0].col).toBe(23);
+    expect(valAccesses[0].endCol).toBe(26);
     // Second access: ctx['this'].val → component proxy → source: 'component'
-    expect(tmpl.accesses[1].property).toBe("val");
-    expect(tmpl.accesses[1].source).toBe("component");
-    expect(tmpl.accesses[1].expression).toBe("this.val");
-    expect(tmpl.accesses[1].line).toBe(4);
-    expect(tmpl.accesses[1].col).toBe(23);
-    expect(tmpl.accesses[1].endCol).toBe(31);
+    expect(valAccesses[1].source).toBe("component");
+    expect(valAccesses[1].expression).toBe("this.val");
+    expect(valAccesses[1].line).toBe(4);
+    expect(valAccesses[1].col).toBe(23);
+    expect(valAccesses[1].endCol).toBe(31);
   });
 });
 
@@ -218,22 +217,25 @@ describe("this tracking - getter accesses", () => {
     const report = getThisTrackingReport();
 
     // The getter 'fullName' was accessed at template level
-    const tmpl = report.templates[MyComp.template];
-    expect(tmpl.accesses.length).toBe(1);
-    expect(tmpl.accesses[0].property).toBe("fullName");
-    expect(tmpl.accesses[0].expression).toBe("fullName");
-    expect(tmpl.accesses[0].line).toBe(1);
-    expect(tmpl.accesses[0].col).toBe(15);
-    expect(tmpl.accesses[0].endCol).toBe(23);
+    const accesses = Object.values(report.accesses);
+    const access = accesses.find((a) => a.property === "fullName");
+    expect(access).toBeDefined();
+    expect(access!.expression).toBe("fullName");
+    expect(access!.line).toBe(1);
+    expect(access!.col).toBe(15);
+    expect(access!.endCol).toBe(23);
 
-    // Inside the getter, firstName and lastName were accessed (in that order)
-    expect(report.getterAccesses.length).toBe(2);
-    expect(report.getterAccesses[0].property).toBe("firstName");
-    expect(report.getterAccesses[0].getterName).toBe("fullName");
-    expect(report.getterAccesses[0].thisResolvedTo).toBe("ctx");
-    expect(report.getterAccesses[1].property).toBe("lastName");
-    expect(report.getterAccesses[1].getterName).toBe("fullName");
-    expect(report.getterAccesses[1].thisResolvedTo).toBe("ctx");
+    // Inside the getter, firstName and lastName were accessed
+    const gas = Object.values(report.getterAccesses);
+    expect(gas.length).toBe(2);
+    const gaFirst = gas.find((g) => g.property === "firstName");
+    const gaLast = gas.find((g) => g.property === "lastName");
+    expect(gaFirst).toBeDefined();
+    expect(gaFirst!.getterName).toBe("fullName");
+    expect(gaFirst!.source).toBe("ctx");
+    expect(gaLast).toBeDefined();
+    expect(gaLast!.getterName).toBe("fullName");
+    expect(gaLast!.source).toBe("ctx");
   });
 
   test("tracks getter accessed via explicit this (thisResolvedTo: component)", async () => {
@@ -253,22 +255,25 @@ describe("this tracking - getter accesses", () => {
     const report = getThisTrackingReport();
 
     // The getter 'fullName' was accessed at template level
-    const tmpl = report.templates[MyComp.template];
-    expect(tmpl.accesses.length).toBe(1);
-    expect(tmpl.accesses[0].property).toBe("fullName");
-    expect(tmpl.accesses[0].expression).toBe("this.fullName");
-    expect(tmpl.accesses[0].line).toBe(1);
-    expect(tmpl.accesses[0].col).toBe(15);
-    expect(tmpl.accesses[0].endCol).toBe(28);
+    const accesses = Object.values(report.accesses);
+    const access = accesses.find((a) => a.property === "fullName");
+    expect(access).toBeDefined();
+    expect(access!.expression).toBe("this.fullName");
+    expect(access!.line).toBe(1);
+    expect(access!.col).toBe(15);
+    expect(access!.endCol).toBe(28);
 
     // Inside the getter, this resolved to the component (accessed via this.fullName)
-    expect(report.getterAccesses.length).toBe(2);
-    expect(report.getterAccesses[0].property).toBe("firstName");
-    expect(report.getterAccesses[0].getterName).toBe("fullName");
-    expect(report.getterAccesses[0].thisResolvedTo).toBe("component");
-    expect(report.getterAccesses[1].property).toBe("lastName");
-    expect(report.getterAccesses[1].getterName).toBe("fullName");
-    expect(report.getterAccesses[1].thisResolvedTo).toBe("component");
+    const gas = Object.values(report.getterAccesses);
+    expect(gas.length).toBe(2);
+    const gaFirst = gas.find((g) => g.property === "firstName");
+    const gaLast = gas.find((g) => g.property === "lastName");
+    expect(gaFirst).toBeDefined();
+    expect(gaFirst!.getterName).toBe("fullName");
+    expect(gaFirst!.source).toBe("component");
+    expect(gaLast).toBeDefined();
+    expect(gaLast!.getterName).toBe("fullName");
+    expect(gaLast!.source).toBe("component");
   });
 
   test("getter accessing reactive state", async () => {
@@ -287,18 +292,19 @@ describe("this tracking - getter accesses", () => {
     const report = getThisTrackingReport();
 
     // The getter 'doubled' was accessed at template level
-    const tmpl = report.templates[MyComp.template];
-    expect(tmpl.accesses.length).toBe(1);
-    expect(tmpl.accesses[0].property).toBe("doubled");
-    expect(tmpl.accesses[0].expression).toBe("doubled");
-    expect(tmpl.accesses[0].line).toBe(1);
-    expect(tmpl.accesses[0].col).toBe(15);
-    expect(tmpl.accesses[0].endCol).toBe(22);
+    const accesses = Object.values(report.accesses);
+    const access = accesses.find((a) => a.property === "doubled");
+    expect(access).toBeDefined();
+    expect(access!.expression).toBe("doubled");
+    expect(access!.line).toBe(1);
+    expect(access!.col).toBe(15);
+    expect(access!.endCol).toBe(22);
 
-    expect(report.getterAccesses.length).toBe(1);
-    expect(report.getterAccesses[0].property).toBe("state");
-    expect(report.getterAccesses[0].getterName).toBe("doubled");
-    expect(report.getterAccesses[0].thisResolvedTo).toBe("ctx");
+    const gas = Object.values(report.getterAccesses);
+    expect(gas.length).toBe(1);
+    expect(gas[0].property).toBe("state");
+    expect(gas[0].getterName).toBe("doubled");
+    expect(gas[0].source).toBe("ctx");
   });
 });
 
@@ -318,8 +324,8 @@ describe("this tracking - lifecycle", () => {
     await mount(MyComp, fixture);
 
     const report = getThisTrackingReport();
-    expect(Object.keys(report.templates).length).toBe(0);
-    expect(report.getterAccesses.length).toBe(0);
+    expect(Object.keys(report.accesses).length).toBe(0);
+    expect(Object.keys(report.getterAccesses).length).toBe(0);
   });
 
   test("clearThisTracking resets accumulated data", async () => {
@@ -330,11 +336,11 @@ describe("this tracking - lifecycle", () => {
 
     await mount(MyComp, fixture);
     let report = getThisTrackingReport();
-    expect(Object.keys(report.templates).length).toBe(1);
+    expect(Object.keys(report.accesses).length).toBe(1);
 
     clearThisTracking();
     report = getThisTrackingReport();
-    expect(Object.keys(report.templates).length).toBe(0);
+    expect(Object.keys(report.accesses).length).toBe(0);
   });
 
   test("can enable tracking after initial render, tracks re-render", async () => {
@@ -359,14 +365,13 @@ describe("this tracking - lifecycle", () => {
     expect(fixture.innerHTML).toBe("<div>5</div>");
 
     const report = getThisTrackingReport();
-    const tmpl = report.templates[MyComp.template];
-    expect(tmpl).toBeDefined();
-    expect(tmpl.accesses.length).toBe(1);
-    expect(tmpl.accesses[0].property).toBe("state");
-    expect(tmpl.accesses[0].expression).toBe("state.count");
-    expect(tmpl.accesses[0].line).toBe(1);
-    expect(tmpl.accesses[0].col).toBe(12);
-    expect(tmpl.accesses[0].endCol).toBe(23);
+    const accesses = Object.values(report.accesses);
+    const access = accesses.find((a) => a.property === "state");
+    expect(access).toBeDefined();
+    expect(access!.expression).toBe("state.count");
+    expect(access!.line).toBe(1);
+    expect(access!.col).toBe(12);
+    expect(access!.endCol).toBe(23);
   });
 });
 
@@ -395,20 +400,21 @@ describe("this tracking - conditionals", () => {
     expect(fixture.innerHTML).toBe("<div><span>A</span></div>");
 
     const report = getThisTrackingReport();
-    const tmpl = report.templates[MyComp.template];
+    const accesses = Object.values(report.accesses);
 
     // 'showA' and 'a' should be tracked; 'b' should not since branch was not taken
-    expect(tmpl.accesses.length).toBe(2);
-    expect(tmpl.accesses[0].property).toBe("showA");
-    expect(tmpl.accesses[0].expression).toBe("showA");
-    expect(tmpl.accesses[0].line).toBe(3);
-    expect(tmpl.accesses[0].col).toBe(19);
-    expect(tmpl.accesses[0].endCol).toBe(24);
-    expect(tmpl.accesses[1].property).toBe("a");
-    expect(tmpl.accesses[1].expression).toBe("a");
-    expect(tmpl.accesses[1].line).toBe(4);
-    expect(tmpl.accesses[1].col).toBe(25);
-    expect(tmpl.accesses[1].endCol).toBe(26);
+    const showA = accesses.find((a) => a.property === "showA");
+    expect(showA).toBeDefined();
+    expect(showA!.expression).toBe("showA");
+    expect(showA!.line).toBe(3);
+    expect(showA!.col).toBe(19);
+    expect(showA!.endCol).toBe(24);
+    const a = accesses.find((a) => a.property === "a");
+    expect(a).toBeDefined();
+    expect(a!.expression).toBe("a");
+    expect(a!.line).toBe(4);
+    expect(a!.col).toBe(25);
+    expect(a!.endCol).toBe(26);
   });
 });
 
@@ -432,10 +438,11 @@ describe("this tracking - multiple components", () => {
     expect(fixture.innerHTML).toBe("<div><span>hello</span></div>");
 
     const report = getThisTrackingReport();
-    const templateNames = Object.keys(report.templates);
+    const accesses = Object.values(report.accesses);
+    const templateNames = new Set(accesses.map((a) => a.templateName));
 
     // Should have two templates tracked (parent + child)
-    expect(templateNames.length).toBe(2);
+    expect(templateNames.size).toBe(2);
   });
 });
 
@@ -462,16 +469,16 @@ describe("this tracking - t-call", () => {
     const report = getThisTrackingReport();
 
     // The "sub" template should have its own report
-    const subReport = report.templates["sub"];
-    expect(subReport).toBeDefined();
-    expect(subReport.accesses.length).toBe(1);
-    expect(subReport.accesses[0].property).toBe("value");
-    expect(subReport.accesses[0].templateName).toBe("sub");
-    expect(subReport.accesses[0].source).toBe("component");
+    const subAccesses = Object.values(report.accesses).filter(
+      (a) => a.templateName === "sub"
+    );
+    expect(subAccesses.length).toBe(1);
+    expect(subAccesses[0].property).toBe("value");
+    expect(subAccesses[0].source).toBe("component");
     // outerHTML: <t t-name="sub"><span t-esc="value"/></t>
-    expect(subReport.accesses[0].line).toBe(1);
-    expect(subReport.accesses[0].col).toBe(29);
-    expect(subReport.accesses[0].endCol).toBe(34);
+    expect(subAccesses[0].line).toBe(1);
+    expect(subAccesses[0].col).toBe(29);
+    expect(subAccesses[0].endCol).toBe(34);
   });
 
   test("dynamic t-call: accesses attributed to called template", async () => {
@@ -492,15 +499,15 @@ describe("this tracking - t-call", () => {
 
     const report = getThisTrackingReport();
 
-    const subReport = report.templates["dynamic_sub"];
-    expect(subReport).toBeDefined();
-    expect(subReport.accesses.length).toBe(1);
-    expect(subReport.accesses[0].property).toBe("greeting");
-    expect(subReport.accesses[0].templateName).toBe("dynamic_sub");
+    const subAccesses = Object.values(report.accesses).filter(
+      (a) => a.templateName === "dynamic_sub"
+    );
+    expect(subAccesses.length).toBe(1);
+    expect(subAccesses[0].property).toBe("greeting");
     // outerHTML: <t t-name="dynamic_sub"><span t-esc="greeting"/></t>
-    expect(subReport.accesses[0].line).toBe(1);
-    expect(subReport.accesses[0].col).toBe(37);
-    expect(subReport.accesses[0].endCol).toBe(45);
+    expect(subAccesses[0].line).toBe(1);
+    expect(subAccesses[0].col).toBe(37);
+    expect(subAccesses[0].endCol).toBe(45);
   });
 
   test("t-call with body: body content tracked under called template", async () => {
@@ -531,15 +538,15 @@ describe("this tracking - t-call", () => {
     const report = getThisTrackingReport();
 
     // 'outerValue' accessed inside "wrapper" template
-    const wrapperReport = report.templates["wrapper"];
-    expect(wrapperReport).toBeDefined();
-    expect(wrapperReport.accesses.length).toBe(1);
-    expect(wrapperReport.accesses[0].property).toBe("outerValue");
-    expect(wrapperReport.accesses[0].templateName).toBe("wrapper");
+    const wrapperAccesses = Object.values(report.accesses).filter(
+      (a) => a.templateName === "wrapper"
+    );
+    expect(wrapperAccesses.length).toBe(1);
+    expect(wrapperAccesses[0].property).toBe("outerValue");
     // outerHTML is multiline: <t t-name="wrapper">\n            <div class="wrap">...
-    expect(wrapperReport.accesses[0].line).toBe(2);
-    expect(wrapperReport.accesses[0].col).toBe(40);
-    expect(wrapperReport.accesses[0].endCol).toBe(50);
+    expect(wrapperAccesses[0].line).toBe(2);
+    expect(wrapperAccesses[0].col).toBe(40);
+    expect(wrapperAccesses[0].endCol).toBe(50);
   });
 
   test("nested t-call: each level attributed to its own template", async () => {
@@ -562,26 +569,26 @@ describe("this tracking - t-call", () => {
     const report = getThisTrackingReport();
 
     // 'a' accessed in level1
-    const l1Report = report.templates["level1"];
-    expect(l1Report).toBeDefined();
-    expect(l1Report.accesses.length).toBe(1);
-    expect(l1Report.accesses[0].property).toBe("a");
-    expect(l1Report.accesses[0].templateName).toBe("level1");
+    const l1Accesses = Object.values(report.accesses).filter(
+      (a) => a.templateName === "level1"
+    );
+    expect(l1Accesses.length).toBe(1);
+    expect(l1Accesses[0].property).toBe("a");
     // outerHTML: <t t-name="level1"><span t-esc="a"/>...
-    expect(l1Report.accesses[0].line).toBe(1);
-    expect(l1Report.accesses[0].col).toBe(32);
-    expect(l1Report.accesses[0].endCol).toBe(33);
+    expect(l1Accesses[0].line).toBe(1);
+    expect(l1Accesses[0].col).toBe(32);
+    expect(l1Accesses[0].endCol).toBe(33);
 
     // 'b' accessed in level2
-    const l2Report = report.templates["level2"];
-    expect(l2Report).toBeDefined();
-    expect(l2Report.accesses.length).toBe(1);
-    expect(l2Report.accesses[0].property).toBe("b");
-    expect(l2Report.accesses[0].templateName).toBe("level2");
+    const l2Accesses = Object.values(report.accesses).filter(
+      (a) => a.templateName === "level2"
+    );
+    expect(l2Accesses.length).toBe(1);
+    expect(l2Accesses[0].property).toBe("b");
     // outerHTML: <t t-name="level2"><span t-esc="b"/></t>
-    expect(l2Report.accesses[0].line).toBe(1);
-    expect(l2Report.accesses[0].col).toBe(32);
-    expect(l2Report.accesses[0].endCol).toBe(33);
+    expect(l2Accesses[0].line).toBe(1);
+    expect(l2Accesses[0].col).toBe(32);
+    expect(l2Accesses[0].endCol).toBe(33);
   });
 });
 
@@ -612,21 +619,16 @@ describe("this tracking - t-slot", () => {
     const report = getThisTrackingReport();
 
     // parentValue should be attributed to the parent's template.
-    // Two accesses: the slot proxy wraps an object whose prototype is the
-    // parent's original tracked proxy, so both fire for the same property.
-    const parentReport = report.templates[parentTpl];
-    expect(parentReport).toBeDefined();
-    expect(parentReport.accesses.length).toBe(2);
-    expect(parentReport.accesses[0].property).toBe("parentValue");
-    expect(parentReport.accesses[0].templateName).toBe(parentTpl);
-    expect(parentReport.accesses[0].line).toBe(3);
-    expect(parentReport.accesses[0].col).toBe(21);
-    expect(parentReport.accesses[0].endCol).toBe(32);
-    expect(parentReport.accesses[1].property).toBe("parentValue");
-    expect(parentReport.accesses[1].templateName).toBe(parentTpl);
-    expect(parentReport.accesses[1].line).toBe(3);
-    expect(parentReport.accesses[1].col).toBe(21);
-    expect(parentReport.accesses[1].endCol).toBe(32);
+    // The slot proxy fires through the parent's tracked proxy. Due to aggregation,
+    // duplicate accesses at the same location are merged into one entry.
+    const parentAccesses = Object.values(report.accesses).filter(
+      (a) => a.templateName === parentTpl
+    );
+    const pvAccess = parentAccesses.find((a) => a.property === "parentValue");
+    expect(pvAccess).toBeDefined();
+    expect(pvAccess!.line).toBe(3);
+    expect(pvAccess!.col).toBe(21);
+    expect(pvAccess!.endCol).toBe(32);
   });
 
   test("slot default content attributed to child template", async () => {
@@ -644,8 +646,10 @@ describe("this tracking - t-slot", () => {
 
     const report = getThisTrackingReport();
     // The default content runs within the child's template
-    const childTpl = Child.template;
-    expect(report.templates[childTpl]).toBeDefined();
+    const childAccesses = Object.values(report.accesses).filter(
+      (a) => a.templateName === Child.template
+    );
+    expect(childAccesses.length).toBeGreaterThan(0);
   });
 
   test("named slot content attributed to parent template", async () => {
@@ -670,33 +674,22 @@ describe("this tracking - t-slot", () => {
     expect(fixture.innerHTML).toBe("<div><h1>Header</h1><p>Footer</p></div>");
 
     const report = getThisTrackingReport();
-    const parentReport = report.templates[parentTpl];
-    expect(parentReport).toBeDefined();
+    const parentAccesses = Object.values(report.accesses).filter(
+      (a) => a.templateName === parentTpl
+    );
 
-    // 6 accesses total: 4 from capture(ctx) iterating all component properties
-    // through the parent proxy (props, env, title, footerText), then 2 from
-    // actual slot rendering (title, footerText).
-    expect(parentReport.accesses.length).toBe(6);
-    // capture(ctx) accesses happen before any __setExprLoc → no line/col
-    expect(parentReport.accesses[0].property).toBe("props");
-    expect(parentReport.accesses[0].line).toBeUndefined();
-    expect(parentReport.accesses[1].property).toBe("env");
-    expect(parentReport.accesses[1].line).toBeUndefined();
-    expect(parentReport.accesses[2].property).toBe("title");
-    expect(parentReport.accesses[2].line).toBeUndefined();
-    expect(parentReport.accesses[3].property).toBe("footerText");
-    expect(parentReport.accesses[3].line).toBeUndefined();
-    // Actual slot rendering accesses have line/col from __setExprLoc
-    expect(parentReport.accesses[4].property).toBe("title");
-    expect(parentReport.accesses[4].templateName).toBe(parentTpl);
-    expect(parentReport.accesses[4].line).toBe(3);
-    expect(parentReport.accesses[4].col).toBe(42);
-    expect(parentReport.accesses[4].endCol).toBe(47);
-    expect(parentReport.accesses[5].property).toBe("footerText");
-    expect(parentReport.accesses[5].templateName).toBe(parentTpl);
-    expect(parentReport.accesses[5].line).toBe(4);
-    expect(parentReport.accesses[5].col).toBe(41);
-    expect(parentReport.accesses[5].endCol).toBe(51);
+    // capture(ctx) accesses have no line/col → excluded from the new report.
+    // Only the actual slot rendering accesses with line/col are included.
+    const titleAccess = parentAccesses.find((a) => a.property === "title");
+    expect(titleAccess).toBeDefined();
+    expect(titleAccess!.line).toBe(3);
+    expect(titleAccess!.col).toBe(42);
+    expect(titleAccess!.endCol).toBe(47);
+    const footerAccess = parentAccesses.find((a) => a.property === "footerText");
+    expect(footerAccess).toBeDefined();
+    expect(footerAccess!.line).toBe(4);
+    expect(footerAccess!.col).toBe(41);
+    expect(footerAccess!.endCol).toBe(51);
   });
 });
 
@@ -721,15 +714,15 @@ describe("this tracking - t-name templates", () => {
     expect(fixture.innerHTML).toBe("<div>42</div>");
 
     const report = getThisTrackingReport();
-    const tmpl = report.templates["my-component"];
-    expect(tmpl).toBeDefined();
-    expect(tmpl.accesses.length).toBe(1);
-    expect(tmpl.accesses[0].property).toBe("value");
-    expect(tmpl.accesses[0].templateName).toBe("my-component");
+    const accesses = Object.values(report.accesses).filter(
+      (a) => a.templateName === "my-component"
+    );
+    expect(accesses.length).toBe(1);
+    expect(accesses[0].property).toBe("value");
     // outerHTML: <t t-name="my-component"><div t-esc="value"/></t>
-    expect(tmpl.accesses[0].line).toBe(1);
-    expect(tmpl.accesses[0].col).toBe(37);
-    expect(tmpl.accesses[0].endCol).toBe(42);
+    expect(accesses[0].line).toBe(1);
+    expect(accesses[0].col).toBe(37);
+    expect(accesses[0].endCol).toBe(42);
   });
 
   test("named template called via t-call has correct template name", async () => {
@@ -752,26 +745,26 @@ describe("this tracking - t-name templates", () => {
     const report = getThisTrackingReport();
 
     // mainVal should be in "main"
-    const mainReport = report.templates["main"];
-    expect(mainReport).toBeDefined();
-    expect(mainReport.accesses.length).toBe(1);
-    expect(mainReport.accesses[0].property).toBe("mainVal");
-    expect(mainReport.accesses[0].templateName).toBe("main");
+    const mainAccesses = Object.values(report.accesses).filter(
+      (a) => a.templateName === "main"
+    );
+    expect(mainAccesses.length).toBe(1);
+    expect(mainAccesses[0].property).toBe("mainVal");
     // outerHTML: <t t-name="main"><div t-esc="mainVal"/>...
-    expect(mainReport.accesses[0].line).toBe(1);
-    expect(mainReport.accesses[0].col).toBe(29);
-    expect(mainReport.accesses[0].endCol).toBe(36);
+    expect(mainAccesses[0].line).toBe(1);
+    expect(mainAccesses[0].col).toBe(29);
+    expect(mainAccesses[0].endCol).toBe(36);
 
     // subVal should be in "helper"
-    const helperReport = report.templates["helper"];
-    expect(helperReport).toBeDefined();
-    expect(helperReport.accesses.length).toBe(1);
-    expect(helperReport.accesses[0].property).toBe("subVal");
-    expect(helperReport.accesses[0].templateName).toBe("helper");
+    const helperAccesses = Object.values(report.accesses).filter(
+      (a) => a.templateName === "helper"
+    );
+    expect(helperAccesses.length).toBe(1);
+    expect(helperAccesses[0].property).toBe("subVal");
     // outerHTML: <t t-name="helper"><span t-esc="subVal"/></t>
-    expect(helperReport.accesses[0].line).toBe(1);
-    expect(helperReport.accesses[0].col).toBe(32);
-    expect(helperReport.accesses[0].endCol).toBe(38);
+    expect(helperAccesses[0].line).toBe(1);
+    expect(helperAccesses[0].col).toBe(32);
+    expect(helperAccesses[0].endCol).toBe(38);
   });
 
   test("getter tracking works with named templates", async () => {
@@ -796,22 +789,25 @@ describe("this tracking - t-name templates", () => {
 
     const report = getThisTrackingReport();
 
-    const tmpl = report.templates["getter-test"];
-    expect(tmpl).toBeDefined();
-    expect(tmpl.accesses.length).toBe(1);
-    expect(tmpl.accesses[0].property).toBe("fullName");
-    expect(tmpl.accesses[0].templateName).toBe("getter-test");
+    const accesses = Object.values(report.accesses).filter(
+      (a) => a.templateName === "getter-test"
+    );
+    expect(accesses.length).toBe(1);
+    expect(accesses[0].property).toBe("fullName");
     // outerHTML: <t t-name="getter-test"><div t-esc="fullName"/></t>
-    expect(tmpl.accesses[0].line).toBe(1);
-    expect(tmpl.accesses[0].col).toBe(36);
-    expect(tmpl.accesses[0].endCol).toBe(44);
+    expect(accesses[0].line).toBe(1);
+    expect(accesses[0].col).toBe(36);
+    expect(accesses[0].endCol).toBe(44);
 
     // Getter internal accesses
-    expect(report.getterAccesses.length).toBe(2);
-    expect(report.getterAccesses[0].property).toBe("firstName");
-    expect(report.getterAccesses[0].getterName).toBe("fullName");
-    expect(report.getterAccesses[1].property).toBe("lastName");
-    expect(report.getterAccesses[1].getterName).toBe("fullName");
+    const gas = Object.values(report.getterAccesses);
+    expect(gas.length).toBe(2);
+    const gaFirst = gas.find((g) => g.property === "firstName");
+    const gaLast = gas.find((g) => g.property === "lastName");
+    expect(gaFirst).toBeDefined();
+    expect(gaFirst!.getterName).toBe("fullName");
+    expect(gaLast).toBeDefined();
+    expect(gaLast!.getterName).toBe("fullName");
   });
 
   test("templates from Record config are tracked with correct names", async () => {
@@ -829,14 +825,14 @@ describe("this tracking - t-name templates", () => {
     expect(fixture.innerHTML).toBe("<div>hello</div>");
 
     const report = getThisTrackingReport();
-    const tmpl = report.templates["record-template"];
-    expect(tmpl).toBeDefined();
-    expect(tmpl.accesses.length).toBe(1);
-    expect(tmpl.accesses[0].property).toBe("msg");
-    expect(tmpl.accesses[0].templateName).toBe("record-template");
-    expect(tmpl.accesses[0].line).toBe(1);
-    expect(tmpl.accesses[0].col).toBe(12);
-    expect(tmpl.accesses[0].endCol).toBe(15);
+    const accesses = Object.values(report.accesses).filter(
+      (a) => a.templateName === "record-template"
+    );
+    expect(accesses.length).toBe(1);
+    expect(accesses[0].property).toBe("msg");
+    expect(accesses[0].line).toBe(1);
+    expect(accesses[0].col).toBe(12);
+    expect(accesses[0].endCol).toBe(15);
   });
 });
 
@@ -855,15 +851,15 @@ describe("this tracking - expression locations", () => {
     expect(fixture.innerHTML).toBe("<div>42</div>");
 
     const report = getThisTrackingReport();
-    const tmpl = report.templates[MyComp.template];
-    expect(tmpl.accesses.length).toBe(1);
+    const accesses = Object.values(report.accesses);
+    expect(accesses.length).toBe(1);
     // For template `<div t-esc="value"/>`:
     //   line 1, "value" starts at col 12 (after `<div t-esc="`), ends at 17
-    expect(tmpl.accesses[0].property).toBe("value");
-    expect(tmpl.accesses[0].expression).toBe("value");
-    expect(tmpl.accesses[0].line).toBe(1);
-    expect(tmpl.accesses[0].col).toBe(12);
-    expect(tmpl.accesses[0].endCol).toBe(17);
+    expect(accesses[0].property).toBe("value");
+    expect(accesses[0].expression).toBe("value");
+    expect(accesses[0].line).toBe(1);
+    expect(accesses[0].col).toBe(12);
+    expect(accesses[0].endCol).toBe(17);
   });
 
   test("reports line and col for multiline template", async () => {
@@ -880,14 +876,14 @@ describe("this tracking - expression locations", () => {
     expect(fixture.innerHTML).toBe("<div><span>hello</span></div>");
 
     const report = getThisTrackingReport();
-    const tmpl = report.templates[tpl];
-    expect(tmpl.accesses.length).toBe(1);
-    expect(tmpl.accesses[0].property).toBe("name");
-    expect(tmpl.accesses[0].expression).toBe("name");
+    const accesses = Object.values(report.accesses);
+    expect(accesses.length).toBe(1);
+    expect(accesses[0].property).toBe("name");
+    expect(accesses[0].expression).toBe("name");
     // Line 2 (1-based): `  <span t-esc="name"/>`
-    expect(tmpl.accesses[0].line).toBe(2);
-    expect(tmpl.accesses[0].col).toBe(15);
-    expect(tmpl.accesses[0].endCol).toBe(19);
+    expect(accesses[0].line).toBe(2);
+    expect(accesses[0].col).toBe(15);
+    expect(accesses[0].endCol).toBe(19);
   });
 
   test("reports full original expression for dotted access", async () => {
@@ -900,14 +896,14 @@ describe("this tracking - expression locations", () => {
     expect(fixture.innerHTML).toBe("<div>5</div>");
 
     const report = getThisTrackingReport();
-    const tmpl = report.templates[MyComp.template];
-    expect(tmpl.accesses.length).toBe(1);
+    const accesses = Object.values(report.accesses);
+    expect(accesses.length).toBe(1);
     // Full original expression is preserved
-    expect(tmpl.accesses[0].property).toBe("state");
-    expect(tmpl.accesses[0].expression).toBe("state.count");
-    expect(tmpl.accesses[0].line).toBe(1);
-    expect(tmpl.accesses[0].col).toBe(12);
-    expect(tmpl.accesses[0].endCol).toBe(23);
+    expect(accesses[0].property).toBe("state");
+    expect(accesses[0].expression).toBe("state.count");
+    expect(accesses[0].line).toBe(1);
+    expect(accesses[0].col).toBe(12);
+    expect(accesses[0].endCol).toBe(23);
   });
 
   test("reports full original expression for this.prop access", async () => {
@@ -920,13 +916,13 @@ describe("this tracking - expression locations", () => {
     expect(fixture.innerHTML).toBe("<div>99</div>");
 
     const report = getThisTrackingReport();
-    const tmpl = report.templates[MyComp.template];
-    expect(tmpl.accesses.length).toBe(1);
-    expect(tmpl.accesses[0].property).toBe("value");
-    expect(tmpl.accesses[0].expression).toBe("this.value");
-    expect(tmpl.accesses[0].line).toBe(1);
-    expect(tmpl.accesses[0].col).toBe(12);
-    expect(tmpl.accesses[0].endCol).toBe(22);
+    const accesses = Object.values(report.accesses);
+    expect(accesses.length).toBe(1);
+    expect(accesses[0].property).toBe("value");
+    expect(accesses[0].expression).toBe("this.value");
+    expect(accesses[0].line).toBe(1);
+    expect(accesses[0].col).toBe(12);
+    expect(accesses[0].endCol).toBe(22);
   });
 
   test("reports line/col for t-if condition", async () => {
@@ -943,19 +939,21 @@ describe("this tracking - expression locations", () => {
     await mount(MyComp, fixture);
 
     const report = getThisTrackingReport();
-    const tmpl = report.templates[tpl];
+    const accesses = Object.values(report.accesses);
 
-    expect(tmpl.accesses.length).toBe(2);
-    expect(tmpl.accesses[0].property).toBe("showIt");
-    expect(tmpl.accesses[0].expression).toBe("showIt");
-    expect(tmpl.accesses[0].line).toBe(2);
-    expect(tmpl.accesses[0].col).toBe(14);
-    expect(tmpl.accesses[0].endCol).toBe(20);
-    expect(tmpl.accesses[1].property).toBe("msg");
-    expect(tmpl.accesses[1].expression).toBe("msg");
-    expect(tmpl.accesses[1].line).toBe(2);
-    expect(tmpl.accesses[1].col).toBe(29);
-    expect(tmpl.accesses[1].endCol).toBe(32);
+    expect(accesses.length).toBe(2);
+    const showIt = accesses.find((a) => a.property === "showIt");
+    expect(showIt).toBeDefined();
+    expect(showIt!.expression).toBe("showIt");
+    expect(showIt!.line).toBe(2);
+    expect(showIt!.col).toBe(14);
+    expect(showIt!.endCol).toBe(20);
+    const msg = accesses.find((a) => a.property === "msg");
+    expect(msg).toBeDefined();
+    expect(msg!.expression).toBe("msg");
+    expect(msg!.line).toBe(2);
+    expect(msg!.col).toBe(29);
+    expect(msg!.endCol).toBe(32);
   });
 
   test("reports line/col for t-foreach collection", async () => {
@@ -973,15 +971,15 @@ describe("this tracking - expression locations", () => {
     await mount(MyComp, fixture);
 
     const report = getThisTrackingReport();
-    const tmpl = report.templates[tpl];
+    const accesses = Object.values(report.accesses);
 
     // Only the collection 'items' goes through the proxy
-    expect(tmpl.accesses.length).toBe(1);
-    expect(tmpl.accesses[0].property).toBe("items");
-    expect(tmpl.accesses[0].expression).toBe("items");
-    expect(tmpl.accesses[0].line).toBe(2);
-    expect(tmpl.accesses[0].col).toBe(16);
-    expect(tmpl.accesses[0].endCol).toBe(21);
+    const access = accesses.find((a) => a.property === "items");
+    expect(access).toBeDefined();
+    expect(access!.expression).toBe("items");
+    expect(access!.line).toBe(2);
+    expect(access!.col).toBe(16);
+    expect(access!.endCol).toBe(21);
   });
 
   test("reports line/col for named template expressions", async () => {
@@ -999,13 +997,14 @@ describe("this tracking - expression locations", () => {
     expect(fixture.innerHTML).toBe("<div>42</div>");
 
     const report = getThisTrackingReport();
-    const tmpl = report.templates["loc-test"];
-    expect(tmpl).toBeDefined();
-    expect(tmpl.accesses.length).toBe(1);
-    expect(tmpl.accesses[0].property).toBe("value");
-    expect(tmpl.accesses[0].line).toBe(1);
-    expect(tmpl.accesses[0].col).toBe(12);
-    expect(tmpl.accesses[0].endCol).toBe(17);
+    const accesses = Object.values(report.accesses).filter(
+      (a) => a.templateName === "loc-test"
+    );
+    expect(accesses.length).toBe(1);
+    expect(accesses[0].property).toBe("value");
+    expect(accesses[0].line).toBe(1);
+    expect(accesses[0].col).toBe(12);
+    expect(accesses[0].endCol).toBe(17);
   });
 
   test("reports different locations for multiple expressions", async () => {
@@ -1023,17 +1022,19 @@ describe("this tracking - expression locations", () => {
     await mount(MyComp, fixture);
 
     const report = getThisTrackingReport();
-    const tmpl = report.templates[tpl];
+    const accesses = Object.values(report.accesses);
 
-    expect(tmpl.accesses.length).toBe(2);
-    expect(tmpl.accesses[0].property).toBe("first");
-    expect(tmpl.accesses[0].line).toBe(2);
-    expect(tmpl.accesses[0].col).toBe(15);
-    expect(tmpl.accesses[0].endCol).toBe(20);
-    expect(tmpl.accesses[1].property).toBe("second");
-    expect(tmpl.accesses[1].line).toBe(3);
-    expect(tmpl.accesses[1].col).toBe(15);
-    expect(tmpl.accesses[1].endCol).toBe(21);
+    expect(accesses.length).toBe(2);
+    const first = accesses.find((a) => a.property === "first");
+    expect(first).toBeDefined();
+    expect(first!.line).toBe(2);
+    expect(first!.col).toBe(15);
+    expect(first!.endCol).toBe(20);
+    const second = accesses.find((a) => a.property === "second");
+    expect(second).toBeDefined();
+    expect(second!.line).toBe(3);
+    expect(second!.col).toBe(15);
+    expect(second!.endCol).toBe(21);
   });
 
   test("reports line/col for t-att dynamic attribute", async () => {
@@ -1046,13 +1047,13 @@ describe("this tracking - expression locations", () => {
     expect(fixture.innerHTML).toBe('<div class="active"></div>');
 
     const report = getThisTrackingReport();
-    const tmpl = report.templates[MyComp.template];
-    expect(tmpl.accesses.length).toBe(1);
-    expect(tmpl.accesses[0].property).toBe("cls");
-    expect(tmpl.accesses[0].expression).toBe("cls");
-    expect(tmpl.accesses[0].line).toBe(1);
-    expect(tmpl.accesses[0].col).toBe(18);
-    expect(tmpl.accesses[0].endCol).toBe(21);
+    const accesses = Object.values(report.accesses);
+    expect(accesses.length).toBe(1);
+    expect(accesses[0].property).toBe("cls");
+    expect(accesses[0].expression).toBe("cls");
+    expect(accesses[0].line).toBe(1);
+    expect(accesses[0].col).toBe(18);
+    expect(accesses[0].endCol).toBe(21);
   });
 });
 
@@ -1071,11 +1072,10 @@ describe("this tracking - source file", () => {
     expect(fixture.innerHTML).toBe("<div>42</div>");
 
     const report = getThisTrackingReport();
-    const tmpl = report.templates[MyComp.template];
-    expect(tmpl).toBeDefined();
-    expect(tmpl.accesses.length).toBe(1);
-    expect(tmpl.accesses[0].property).toBe("value");
-    expect(tmpl.accesses[0].file).toBe("/web/static/src/views/button.xml");
+    const accesses = Object.values(report.accesses);
+    const access = accesses.find((a) => a.property === "value");
+    expect(access).toBeDefined();
+    expect(access!.filename).toBe("/web/static/src/views/button.xml");
   });
 
   test("different elements can have different t-source-file values", async () => {
@@ -1093,12 +1093,13 @@ describe("this tracking - source file", () => {
     expect(fixture.innerHTML).toBe("<div><span>1</span><span>2</span></div>");
 
     const report = getThisTrackingReport();
-    const tmpl = report.templates[MyComp.template];
-    expect(tmpl.accesses.length).toBe(2);
-    expect(tmpl.accesses[0].property).toBe("first");
-    expect(tmpl.accesses[0].file).toBe("/web/base.xml");
-    expect(tmpl.accesses[1].property).toBe("second");
-    expect(tmpl.accesses[1].file).toBe("/account/extension.xml");
+    const accesses = Object.values(report.accesses);
+    const firstAccess = accesses.find((a) => a.property === "first");
+    expect(firstAccess).toBeDefined();
+    expect(firstAccess!.filename).toBe("/web/base.xml");
+    const secondAccess = accesses.find((a) => a.property === "second");
+    expect(secondAccess).toBeDefined();
+    expect(secondAccess!.filename).toBe("/account/extension.xml");
   });
 
   test("nested t-source-file overrides parent", async () => {
@@ -1116,15 +1117,16 @@ describe("this tracking - source file", () => {
     expect(fixture.innerHTML).toBe("<div>a<span>b</span></div>");
 
     const report = getThisTrackingReport();
-    const tmpl = report.templates[MyComp.template];
-    expect(tmpl.accesses.length).toBe(2);
-    expect(tmpl.accesses[0].property).toBe("outer");
-    expect(tmpl.accesses[0].file).toBe("/web/base.xml");
-    expect(tmpl.accesses[1].property).toBe("inner");
-    expect(tmpl.accesses[1].file).toBe("/account/override.xml");
+    const accesses = Object.values(report.accesses);
+    const outerAccess = accesses.find((a) => a.property === "outer");
+    expect(outerAccess).toBeDefined();
+    expect(outerAccess!.filename).toBe("/web/base.xml");
+    const innerAccess = accesses.find((a) => a.property === "inner");
+    expect(innerAccess).toBeDefined();
+    expect(innerAccess!.filename).toBe("/account/override.xml");
   });
 
-  test("accesses without t-source-file have no file property", async () => {
+  test("accesses without t-source-file have empty filename", async () => {
     class MyComp extends Component {
       static template = xml`<div><t t-esc="value"/></div>`;
       value = 1;
@@ -1133,9 +1135,9 @@ describe("this tracking - source file", () => {
     await mount(MyComp, fixture);
 
     const report = getThisTrackingReport();
-    const tmpl = report.templates[MyComp.template];
-    expect(tmpl.accesses.length).toBe(1);
-    expect(tmpl.accesses[0].file).toBeUndefined();
+    const accesses = Object.values(report.accesses);
+    expect(accesses.length).toBe(1);
+    expect(accesses[0].filename).toBe("");
   });
 
   test("setTemplateTrackingAlias causes report to use alias instead of raw template key", async () => {
@@ -1154,14 +1156,16 @@ describe("this tracking - source file", () => {
     expect(fixture.innerHTML).toBe("<div>42</div>");
 
     const report = getThisTrackingReport();
+    const accesses = Object.values(report.accesses);
     // The report should use the alias as the template name
-    const aliasedReport = report.templates["@web/views/button:MyComp"];
-    expect(aliasedReport).toBeDefined();
-    expect(aliasedReport.accesses.length).toBe(1);
-    expect(aliasedReport.accesses[0].property).toBe("value");
-    expect(aliasedReport.accesses[0].templateName).toBe("@web/views/button:MyComp");
-    // The raw template key should NOT appear
-    expect(report.templates[MyComp.template]).toBeUndefined();
+    const access = accesses.find((a) => a.property === "value");
+    expect(access).toBeDefined();
+    expect(access!.templateName).toBe("@web/views/button:MyComp");
+    // The raw template key should NOT appear in any entry
+    const rawAccesses = accesses.filter(
+      (a) => a.templateName === MyComp.template
+    );
+    expect(rawAccesses.length).toBe(0);
   });
 
   test("t-source-file works with t-call", async () => {
@@ -1182,9 +1186,70 @@ describe("this tracking - source file", () => {
 
     const report = getThisTrackingReport();
     // The t-call renders sub template; val is accessed in "sub" context
-    const subReport = report.templates["sub"];
-    expect(subReport).toBeDefined();
-    expect(subReport.accesses.length).toBe(1);
-    expect(subReport.accesses[0].property).toBe("val");
+    const subAccesses = Object.values(report.accesses).filter(
+      (a) => a.templateName === "sub"
+    );
+    expect(subAccesses.length).toBe(1);
+    expect(subAccesses[0].property).toBe("val");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Aggregated "both" source detection
+// ---------------------------------------------------------------------------
+
+describe("this tracking - source aggregation", () => {
+  test("same key with different sources produces 'both'", () => {
+    // Directly exercise the aggregation: access the same property at the same
+    // location once as "component" and once as "ctx", then verify the report
+    // merges them into "both".
+    const component = { foo: "bar" } as any;
+    const ctx = Object.create(component);
+    const trackedCtx = createTrackedCtx(ctx, component, "test-tmpl");
+
+    // First access: foo is inherited from component → "component"
+    setExprLocation("foo", 1, 0, 3);
+    void trackedCtx.foo;
+
+    // Make foo own on the ctx target
+    ctx.foo = "baz";
+
+    // Second access at SAME location: foo is now own → "ctx"
+    setExprLocation("foo", 1, 0, 3);
+    void trackedCtx.foo;
+
+    const report = getThisTrackingReport();
+    const accesses = Object.values(report.accesses);
+    const fooAccess = accesses.find((a) => a.property === "foo");
+    expect(fooAccess).toBeDefined();
+    expect(fooAccess!.source).toBe("both");
+  });
+
+  test("same property at different locations → separate entries", () => {
+    const component = { foo: "bar" } as any;
+    const ctx = Object.create(component);
+    const trackedCtx = createTrackedCtx(ctx, component, "test-tmpl");
+
+    // Access foo at line 1 → "component"
+    setExprLocation("foo", 1, 0, 3);
+    void trackedCtx.foo;
+
+    // Make foo own on ctx
+    ctx.foo = "baz";
+
+    // Access foo at line 2 (different location) → "ctx"
+    setExprLocation("foo", 2, 0, 3);
+    void trackedCtx.foo;
+
+    const report = getThisTrackingReport();
+    const accesses = Object.values(report.accesses);
+    const fooAccesses = accesses.filter((a) => a.property === "foo");
+
+    // Two different locations → two separate entries
+    expect(fooAccesses.length).toBe(2);
+    expect(fooAccesses[0].source).toBe("component");
+    expect(fooAccesses[0].line).toBe(1);
+    expect(fooAccesses[1].source).toBe("ctx");
+    expect(fooAccesses[1].line).toBe(2);
   });
 });

@@ -64,9 +64,8 @@ export {
   getThisTrackingReport,
 } from "./this_tracking";
 export type {
-  TemplateAccess,
-  GetterAccess,
-  TemplateReport,
+  AggregatedAccess,
+  AggregatedGetterAccess,
   ThisTrackingReport,
 } from "./this_tracking";
 

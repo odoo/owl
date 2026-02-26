@@ -15,7 +15,7 @@
 // Types
 // ---------------------------------------------------------------------------
 
-export interface TemplateAccess {
+interface TemplateAccess {
   /** The property name that was accessed */
   property: string;
   /** Whether the property was found on ctx (own) or inherited from the component */
@@ -34,29 +34,36 @@ export interface TemplateAccess {
   file?: string;
 }
 
-export interface GetterAccess {
-  /** The property accessed inside the getter */
+interface InternalGetterAccess {
   property: string;
-  /** The getter in which the access occurred */
   getterName: string;
-  /** Whether `this` inside the getter resolved to ctx or the component */
-  thisResolvedTo: "ctx" | "component";
+  source: "ctx" | "component";
+  templateName: string;
+  file?: string;
 }
 
-export interface TemplateReport {
-  /** Template name */
+export interface AggregatedAccess {
+  filename: string;
   templateName: string;
-  /** All property accesses recorded for this template */
-  accesses: TemplateAccess[];
-  /** Per-property summary: source(s) through which each property was accessed */
-  summary: Record<string, "ctx" | "component" | "both">;
+  property: string;
+  line: number;
+  col: number;
+  endCol: number;
+  expression: string;
+  source: "ctx" | "component" | "both";
+}
+
+export interface AggregatedGetterAccess {
+  filename: string;
+  templateName: string;
+  getterName: string;
+  property: string;
+  source: "ctx" | "component" | "both";
 }
 
 export interface ThisTrackingReport {
-  /** Per-template access reports */
-  templates: Record<string, TemplateReport>;
-  /** Getter-internal property accesses */
-  getterAccesses: GetterAccess[];
+  accesses: Record<string, AggregatedAccess>;
+  getterAccesses: Record<string, AggregatedGetterAccess>;
 }
 
 // ---------------------------------------------------------------------------
@@ -65,7 +72,7 @@ export interface ThisTrackingReport {
 
 let _tracking = false;
 const _templateAccesses: TemplateAccess[] = [];
-const _getterAccesses: GetterAccess[] = [];
+const _getterAccesses: InternalGetterAccess[] = [];
 const _getterStack: string[] = [];
 
 // Tracks whether the current access originates from the component proxy
@@ -91,6 +98,9 @@ let _currentExprInfo: ExprLocationInfo | null = null;
 // to human-readable names like "@web/views/button:MyComponent"
 const _templateNameAliases = new Map<string, string>();
 
+// Fallback file paths for inline templates (keyed by aliased template name)
+const _templateFallbackFiles = new Map<string, string>();
+
 // ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
@@ -111,6 +121,7 @@ export function clearThisTracking(): void {
   _inComponentProxy = false;
   _currentExprInfo = null;
   _templateNameAliases.clear();
+  _templateFallbackFiles.clear();
 }
 
 /**
@@ -139,33 +150,54 @@ export function setTemplateTrackingAlias(templateKey: string, readableName: stri
   _templateNameAliases.set(templateKey, readableName);
 }
 
+export function setTemplateFallbackFile(templateName: string, filename: string): void {
+  _templateFallbackFiles.set(templateName, filename);
+}
+
 export function getThisTrackingReport(): ThisTrackingReport {
-  // Build per-template reports
-  const templates: Record<string, TemplateReport> = {};
+  const accesses: Record<string, AggregatedAccess> = {};
   for (const access of _templateAccesses) {
-    if (!templates[access.templateName]) {
-      templates[access.templateName] = {
+    if (access.line == null) continue; // skip accesses without location info
+    const filename = access.file || "";
+    const key = `${filename}:${access.templateName}:${access.property}:${access.line}:${access.col}:${access.endCol}`;
+    const existing = accesses[key];
+    if (existing) {
+      if (existing.source !== access.source) {
+        existing.source = "both";
+      }
+    } else {
+      accesses[key] = {
+        filename,
         templateName: access.templateName,
-        accesses: [],
-        summary: {},
+        property: access.property,
+        line: access.line!,
+        col: access.col!,
+        endCol: access.endCol!,
+        expression: access.expression,
+        source: access.source,
       };
     }
-    const report = templates[access.templateName];
-    report.accesses.push(access);
-
-    // Update summary
-    const prev = report.summary[access.property];
-    if (!prev) {
-      report.summary[access.property] = access.source;
-    } else if (prev !== access.source) {
-      report.summary[access.property] = "both";
+  }
+  const getterAccesses: Record<string, AggregatedGetterAccess> = {};
+  for (const ga of _getterAccesses) {
+    const filename = ga.file || "";
+    const key = `${filename}:${ga.templateName}:${ga.getterName}:${ga.property}`;
+    const existing = getterAccesses[key];
+    if (existing) {
+      if (existing.source !== ga.source) {
+        existing.source = "both";
+      }
+    } else {
+      getterAccesses[key] = {
+        filename,
+        templateName: ga.templateName,
+        getterName: ga.getterName,
+        property: ga.property,
+        source: ga.source,
+      };
     }
   }
-
-  return {
-    templates,
-    getterAccesses: [..._getterAccesses],
-  };
+  return { accesses, getterAccesses };
 }
 
 // ---------------------------------------------------------------------------
@@ -267,16 +299,31 @@ export function createTrackedCtx(ctx: any, component: any, templateName: string)
           access.endCol = _currentExprInfo.endCol;
           if (_currentExprInfo.file) {
             access.file = _currentExprInfo.file;
+          } else {
+            const fallback = _templateFallbackFiles.get(effectiveName);
+            if (fallback) {
+              access.file = fallback;
+            }
           }
         }
         _templateAccesses.push(access);
       } else {
         // Inside a getter → record as getter-internal access
-        _getterAccesses.push({
+        const gAccess: InternalGetterAccess = {
           property: prop as string,
           getterName: _getterStack[_getterStack.length - 1],
-          thisResolvedTo: _inComponentProxy ? "component" : "ctx",
-        });
+          source: _inComponentProxy ? "component" : "ctx",
+          templateName: effectiveName,
+        };
+        if (_currentExprInfo?.file) {
+          gAccess.file = _currentExprInfo.file;
+        } else {
+          const fallback = _templateFallbackFiles.get(effectiveName);
+          if (fallback) {
+            gAccess.file = fallback;
+          }
+        }
+        _getterAccesses.push(gAccess);
       }
 
       // If this is a getter, push onto stack so nested accesses are
@@ -312,6 +359,9 @@ export function createTrackedCtx(ctx: any, component: any, templateName: string)
  * access `this` explicitly (i.e. `ctx['this'].prop`).
  */
 function createComponentProxy(component: any, templateName: string): any {
+  if (!component || typeof component !== "object") {
+    return component;
+  }
   const handler: ProxyHandler<any> = {
     get(target, prop, receiver) {
       if (!_tracking || shouldSkip(prop)) {
@@ -336,16 +386,31 @@ function createComponentProxy(component: any, templateName: string): any {
           access.endCol = _currentExprInfo.endCol;
           if (_currentExprInfo.file) {
             access.file = _currentExprInfo.file;
+          } else {
+            const fallback = _templateFallbackFiles.get(effectiveName);
+            if (fallback) {
+              access.file = fallback;
+            }
           }
         }
         _templateAccesses.push(access);
       } else {
         // Inside a getter, this is accessed via the component
-        _getterAccesses.push({
+        const gAccess: InternalGetterAccess = {
           property: prop as string,
           getterName: _getterStack[_getterStack.length - 1],
-          thisResolvedTo: "component",
-        });
+          source: "component",
+          templateName: effectiveName,
+        };
+        if (_currentExprInfo?.file) {
+          gAccess.file = _currentExprInfo.file;
+        } else {
+          const fallback = _templateFallbackFiles.get(effectiveName);
+          if (fallback) {
+            gAccess.file = fallback;
+          }
+        }
+        _getterAccesses.push(gAccess);
       }
 
       if (isGetter) {

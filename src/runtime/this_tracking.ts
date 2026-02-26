@@ -30,6 +30,8 @@ export interface TemplateAccess {
   col?: number;
   /** 0-based column end (exclusive) in the line */
   endCol?: number;
+  /** Source file URL (set via t-source-file attribute during template inheritance) */
+  file?: string;
 }
 
 export interface GetterAccess {
@@ -81,8 +83,13 @@ interface ExprLocationInfo {
   line: number;
   col: number;
   endCol: number;
+  file?: string;
 }
 let _currentExprInfo: ExprLocationInfo | null = null;
+
+// Template name aliases: maps auto-generated template keys (e.g. "__template__95")
+// to human-readable names like "@web/views/button:MyComponent"
+const _templateNameAliases = new Map<string, string>();
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -103,6 +110,7 @@ export function clearThisTracking(): void {
   _templateNameStack.length = 0;
   _inComponentProxy = false;
   _currentExprInfo = null;
+  _templateNameAliases.clear();
 }
 
 /**
@@ -114,13 +122,21 @@ export function setExprLocation(
   expr: string,
   line: number,
   col: number,
-  endCol: number
+  endCol: number,
+  file?: string
 ): void {
   _currentExprInfo = { originalExpr: expr, line, col, endCol };
+  if (file) {
+    _currentExprInfo.file = file;
+  }
 }
 
 export function isThisTrackingEnabled(): boolean {
   return _tracking;
+}
+
+export function setTemplateTrackingAlias(templateKey: string, readableName: string): void {
+  _templateNameAliases.set(templateKey, readableName);
 }
 
 export function getThisTrackingReport(): ThisTrackingReport {
@@ -157,7 +173,7 @@ export function getThisTrackingReport(): ThisTrackingReport {
 // ---------------------------------------------------------------------------
 
 export function pushTrackingTemplate(name: string): void {
-  _templateNameStack.push(name);
+  _templateNameStack.push(_templateNameAliases.get(name) || name);
 }
 
 export function popTrackingTemplate(): void {
@@ -214,6 +230,7 @@ function shouldSkip(prop: string | symbol): boolean {
  * @param templateName The default template name (overridden by stack if active)
  */
 export function createTrackedCtx(ctx: any, component: any, templateName: string): any {
+  templateName = _templateNameAliases.get(templateName) || templateName;
   const componentProxy = createComponentProxy(component, templateName);
 
   const handler: ProxyHandler<any> = {
@@ -248,6 +265,9 @@ export function createTrackedCtx(ctx: any, component: any, templateName: string)
           access.line = _currentExprInfo.line;
           access.col = _currentExprInfo.col;
           access.endCol = _currentExprInfo.endCol;
+          if (_currentExprInfo.file) {
+            access.file = _currentExprInfo.file;
+          }
         }
         _templateAccesses.push(access);
       } else {
@@ -314,6 +334,9 @@ function createComponentProxy(component: any, templateName: string): any {
           access.line = _currentExprInfo.line;
           access.col = _currentExprInfo.col;
           access.endCol = _currentExprInfo.endCol;
+          if (_currentExprInfo.file) {
+            access.file = _currentExprInfo.file;
+          }
         }
         _templateAccesses.push(access);
       } else {

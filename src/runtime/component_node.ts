@@ -6,7 +6,7 @@ import { OwlError } from "../common/owl_error";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./fibers";
 import { clearReactivesForCallback, getSubscriptions, reactive, targets } from "./reactivity";
 import { STATUS } from "./status";
-import { isThisTrackingEnabled, createTrackedCtx } from "./this_tracking";
+import { isThisTrackingEnabled, createTrackedCtx, setTemplateTrackingAlias } from "./this_tracking";
 import { batched, Callback } from "./utils";
 
 let currentNode: ComponentNode | null = null;
@@ -126,6 +126,9 @@ export class ComponentNode<P extends Props = any, E = any> implements VNode<Comp
     this.component = new C(props, env, this);
     let ctx: any = Object.assign(Object.create(this.component), { this: this.component });
     if (isThisTrackingEnabled()) {
+      if ((C as any).___filename && C.template.startsWith("__template__")) {
+        setTemplateTrackingAlias(C.template, `${(C as any).___filename}:${C.name}`);
+      }
       ctx = createTrackedCtx(ctx, this.component, C.template);
     }
     this.renderFn = app.getTemplate(C.template).bind(this.component, ctx, this);

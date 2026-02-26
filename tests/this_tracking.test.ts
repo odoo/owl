@@ -4,6 +4,7 @@ import {
   disableThisTracking,
   clearThisTracking,
   getThisTrackingReport,
+  setTemplateTrackingAlias,
 } from "../src/runtime/this_tracking";
 import { makeTestFixture, nextTick } from "./helpers";
 
@@ -1052,5 +1053,138 @@ describe("this tracking - expression locations", () => {
     expect(tmpl.accesses[0].line).toBe(1);
     expect(tmpl.accesses[0].col).toBe(18);
     expect(tmpl.accesses[0].endCol).toBe(21);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Source file tracking via t-source-file
+// ---------------------------------------------------------------------------
+
+describe("this tracking - source file", () => {
+  test("t-source-file attribute sets file in report", async () => {
+    class MyComp extends Component {
+      static template = xml`<div t-source-file="/web/static/src/views/button.xml"><t t-esc="value"/></div>`;
+      value = 42;
+    }
+
+    await mount(MyComp, fixture);
+    expect(fixture.innerHTML).toBe("<div>42</div>");
+
+    const report = getThisTrackingReport();
+    const tmpl = report.templates[MyComp.template];
+    expect(tmpl).toBeDefined();
+    expect(tmpl.accesses.length).toBe(1);
+    expect(tmpl.accesses[0].property).toBe("value");
+    expect(tmpl.accesses[0].file).toBe("/web/static/src/views/button.xml");
+  });
+
+  test("different elements can have different t-source-file values", async () => {
+    class MyComp extends Component {
+      static template = xml`
+        <div>
+          <span t-source-file="/web/base.xml" t-esc="first"/>
+          <span t-source-file="/account/extension.xml" t-esc="second"/>
+        </div>`;
+      first = 1;
+      second = 2;
+    }
+
+    await mount(MyComp, fixture);
+    expect(fixture.innerHTML).toBe("<div><span>1</span><span>2</span></div>");
+
+    const report = getThisTrackingReport();
+    const tmpl = report.templates[MyComp.template];
+    expect(tmpl.accesses.length).toBe(2);
+    expect(tmpl.accesses[0].property).toBe("first");
+    expect(tmpl.accesses[0].file).toBe("/web/base.xml");
+    expect(tmpl.accesses[1].property).toBe("second");
+    expect(tmpl.accesses[1].file).toBe("/account/extension.xml");
+  });
+
+  test("nested t-source-file overrides parent", async () => {
+    class MyComp extends Component {
+      static template = xml`
+        <div t-source-file="/web/base.xml">
+          <t t-esc="outer"/>
+          <span t-source-file="/account/override.xml" t-esc="inner"/>
+        </div>`;
+      outer = "a";
+      inner = "b";
+    }
+
+    await mount(MyComp, fixture);
+    expect(fixture.innerHTML).toBe("<div>a<span>b</span></div>");
+
+    const report = getThisTrackingReport();
+    const tmpl = report.templates[MyComp.template];
+    expect(tmpl.accesses.length).toBe(2);
+    expect(tmpl.accesses[0].property).toBe("outer");
+    expect(tmpl.accesses[0].file).toBe("/web/base.xml");
+    expect(tmpl.accesses[1].property).toBe("inner");
+    expect(tmpl.accesses[1].file).toBe("/account/override.xml");
+  });
+
+  test("accesses without t-source-file have no file property", async () => {
+    class MyComp extends Component {
+      static template = xml`<div><t t-esc="value"/></div>`;
+      value = 1;
+    }
+
+    await mount(MyComp, fixture);
+
+    const report = getThisTrackingReport();
+    const tmpl = report.templates[MyComp.template];
+    expect(tmpl.accesses.length).toBe(1);
+    expect(tmpl.accesses[0].file).toBeUndefined();
+  });
+
+  test("setTemplateTrackingAlias causes report to use alias instead of raw template key", async () => {
+    class MyComp extends Component {
+      static template = xml`<div><t t-esc="value"/></div>`;
+      value = 42;
+    }
+
+    // Simulate what the transpiler would do: set ___filename on the class
+    (MyComp as any).___filename = "@web/views/button";
+
+    // Register alias for the auto-generated template name
+    setTemplateTrackingAlias(MyComp.template, `@web/views/button:MyComp`);
+
+    await mount(MyComp, fixture);
+    expect(fixture.innerHTML).toBe("<div>42</div>");
+
+    const report = getThisTrackingReport();
+    // The report should use the alias as the template name
+    const aliasedReport = report.templates["@web/views/button:MyComp"];
+    expect(aliasedReport).toBeDefined();
+    expect(aliasedReport.accesses.length).toBe(1);
+    expect(aliasedReport.accesses[0].property).toBe("value");
+    expect(aliasedReport.accesses[0].templateName).toBe("@web/views/button:MyComp");
+    // The raw template key should NOT appear
+    expect(report.templates[MyComp.template]).toBeUndefined();
+  });
+
+  test("t-source-file works with t-call", async () => {
+    class MyComp extends Component {
+      static template = "main";
+      val = "hello";
+    }
+
+    const app = new App(MyComp, {
+      templates: `
+        <templates>
+          <t t-name="main"><div t-source-file="/web/main.xml"><t t-call="sub"/></div></t>
+          <t t-name="sub"><span t-esc="val"/></t>
+        </templates>`,
+    });
+    await app.mount(fixture);
+    expect(fixture.innerHTML).toBe("<div><span>hello</span></div>");
+
+    const report = getThisTrackingReport();
+    // The t-call renders sub template; val is accessed in "sub" context
+    const subReport = report.templates["sub"];
+    expect(subReport).toBeDefined();
+    expect(subReport.accesses.length).toBe(1);
+    expect(subReport.accesses[0].property).toBe("val");
   });
 });

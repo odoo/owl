@@ -25,6 +25,7 @@ import {
   ASTTPortal,
   ASTTranslation,
   ASTTranslationContext,
+  ASTTSourceFile,
   ASTTSet,
   ASTType,
   Attrs,
@@ -285,6 +286,7 @@ export class CodeGenerator {
   slotNames: Set<String> = new Set();
   helpers: Set<string> = new Set();
   exprLocFinder: ExprLocFinder | null = null;
+  currentSourceFile: string | null = null;
 
   constructor(ast: AST, options: CodeGenOptions) {
     this.translateFn = options.translateFn || ((s: string) => s);
@@ -325,7 +327,8 @@ export class CodeGenerator {
     if (!loc) return compiled;
 
     this.helpers.add("__setExprLoc");
-    return `(__setExprLoc(${JSON.stringify(originalExpr)}, ${loc.line}, ${loc.col}, ${loc.endCol}), ${compiled})`;
+    const fileArg = this.currentSourceFile ? `, ${JSON.stringify(this.currentSourceFile)}` : "";
+    return `(__setExprLoc(${JSON.stringify(originalExpr)}, ${loc.line}, ${loc.col}, ${loc.endCol}${fileArg}), ${compiled})`;
   }
 
   generateCode(): string {
@@ -542,6 +545,8 @@ export class CodeGenerator {
         return this.compileTTranslationContext(ast, ctx);
       case ASTType.TPortal:
         return this.compileTPortal(ast, ctx);
+      case ASTType.TSourceFile:
+        return this.compileTSourceFile(ast, ctx);
     }
   }
 
@@ -1432,6 +1437,16 @@ export class CodeGenerator {
         ast.content,
         Object.assign({}, ctx, { translationCtx: ast.translationCtx })
       );
+    }
+    return null;
+  }
+  compileTSourceFile(ast: ASTTSourceFile, ctx: Context): string | null {
+    if (ast.content) {
+      const prev = this.currentSourceFile;
+      this.currentSourceFile = ast.sourceFile;
+      const result = this.compileAST(ast.content, ctx);
+      this.currentSourceFile = prev;
+      return result;
     }
     return null;
   }

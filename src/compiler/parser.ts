@@ -29,6 +29,7 @@ export const enum ASTType {
   TTranslation,
   TTranslationContext,
   TPortal,
+  TSourceFile,
 }
 
 export interface BaseAST {
@@ -191,6 +192,12 @@ export interface ASTTPortal extends BaseAST {
   content: AST;
 }
 
+export interface ASTTSourceFile extends BaseAST {
+  type: ASTType.TSourceFile;
+  content: AST | null;
+  sourceFile: string;
+}
+
 export type AST =
   | ASTText
   | ASTComment
@@ -210,7 +217,8 @@ export type AST =
   | ASTDebug
   | ASTTranslation
   | ASTTranslationContext
-  | ASTTPortal;
+  | ASTTPortal
+  | ASTTSourceFile;
 
 // -----------------------------------------------------------------------------
 // Parser
@@ -261,6 +269,7 @@ function parseNode(node: Node, ctx: ParsingContext): AST | null {
     parseTCallBlock(node, ctx) ||
     parseTTranslation(node, ctx) ||
     parseTTranslationContext(node, ctx) ||
+    parseTSourceFile(node, ctx) ||
     parseTKey(node, ctx) ||
     parseTEscNode(node, ctx) ||
     parseTOutNode(node, ctx) ||
@@ -989,6 +998,36 @@ function parseTTranslationContext(node: Element, ctx: ParsingContext): AST | nul
     return makeASTMulti(children);
   }
   return wrapInTTranslationContextAST(result, translationCtx);
+}
+
+// -----------------------------------------------------------------------------
+// Source File
+// -----------------------------------------------------------------------------
+
+function wrapInTSourceFileAST(r: AST | null, sourceFile: string) {
+  const ast: ASTTSourceFile = {
+    type: ASTType.TSourceFile,
+    content: r,
+    sourceFile,
+  };
+  if (r?.hasNoRepresentation) {
+    ast.hasNoRepresentation = true;
+  }
+  return ast;
+}
+
+function parseTSourceFile(node: Element, ctx: ParsingContext): AST | null {
+  const sourceFile = node.getAttribute("t-source-file");
+  if (!sourceFile) {
+    return null;
+  }
+  node.removeAttribute("t-source-file");
+  const result = parseNode(node, ctx);
+  if (result?.type === ASTType.Multi) {
+    const children = result.content.map((c) => wrapInTSourceFileAST(c, sourceFile));
+    return makeASTMulti(children);
+  }
+  return wrapInTSourceFileAST(result, sourceFile);
 }
 
 // -----------------------------------------------------------------------------

@@ -15,6 +15,7 @@ interface CompileOptions extends Config {
   hasGlobalValues: boolean;
   trackExpressions?: boolean;
   rawXml?: string;
+  defaultSourceFile?: string;
 }
 export function compile(
   template: string | Element,

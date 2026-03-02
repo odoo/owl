@@ -47,7 +47,15 @@ function callSlot(
       // inside slot content are recorded. The slot content was defined in
       // the parent component's template, so use the parent's template name.
       const parentComponent = __ctx["this"];
-      const parentTemplateName = parentComponent?.constructor?.template || "unknown-slot";
+      const ctor = parentComponent?.constructor;
+      let parentTemplateName = ctor?.template;
+      if (!parentTemplateName) {
+        // Inline templates (xml``) may leave constructor.template as an
+        // opaque key like "__template__95". When it's falsy, fall back
+        // to ___filename:ClassName so the report can resolve the file.
+        const fname = (ctor as any)?.___filename;
+        parentTemplateName = fname ? `${fname}:${ctor.name}` : "unknown-slot";
+      }
       slotScope = createTrackedCtx(slotScope, parentComponent, parentTemplateName);
       pushTrackingTemplate(parentTemplateName);
       try {

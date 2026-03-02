@@ -1,6 +1,10 @@
 import { TemplateSet } from "./runtime/template_set";
 import { compile } from "./compiler";
-import { isThisTrackingEnabled } from "./runtime/this_tracking";
+import {
+  isThisTrackingEnabled,
+  getTemplateNameAlias,
+  getTemplateFallbackFile,
+} from "./runtime/this_tracking";
 
 export * from "./runtime";
 
@@ -9,6 +13,8 @@ TemplateSet.prototype._compileTemplate = function _compileTemplate(
   template: string | Element
 ) {
   const trackExpressions = isThisTrackingEnabled();
+  const alias = trackExpressions ? (getTemplateNameAlias(name) || name) : name;
+  const defaultSourceFile = trackExpressions ? (getTemplateFallbackFile(alias) || "") : undefined;
   return compile(template, {
     name,
     dev: this.dev,
@@ -22,5 +28,6 @@ TemplateSet.prototype._compileTemplate = function _compileTemplate(
         ? template
         : template.outerHTML
       : undefined,
+    defaultSourceFile,
   });
 };

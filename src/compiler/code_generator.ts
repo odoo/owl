@@ -49,6 +49,7 @@ export interface CodeGenOptions extends Config {
   hasGlobalValues: boolean;
   trackExpressions?: boolean;
   rawXml?: string;
+  defaultSourceFile?: string;
 }
 
 // using a non-html document so that <inner/outer>HTML serializes as XML instead
@@ -311,6 +312,9 @@ export class CodeGenerator {
     if (options.trackExpressions && options.rawXml) {
       this.exprLocFinder = new ExprLocFinder(options.rawXml);
     }
+    if (options.defaultSourceFile && this.currentSourceFile === null) {
+      this.currentSourceFile = options.defaultSourceFile;
+    }
   }
 
   /**
@@ -324,11 +328,12 @@ export class CodeGenerator {
     if (!this.exprLocFinder) return compiled;
 
     const loc = this.exprLocFinder.find(originalExpr);
-    if (!loc) return compiled;
-
     this.helpers.add("__setExprLoc");
     const fileArg = this.currentSourceFile ? `, ${JSON.stringify(this.currentSourceFile)}` : "";
-    return `(__setExprLoc(${JSON.stringify(originalExpr)}, ${loc.line}, ${loc.col}, ${loc.endCol}${fileArg}), ${compiled})`;
+    if (loc) {
+      return `(__setExprLoc(${JSON.stringify(originalExpr)}, ${loc.line}, ${loc.col}, ${loc.endCol}${fileArg}), ${compiled})`;
+    }
+    return `(__setExprLoc(${JSON.stringify(originalExpr)}, 0, 0, 0${fileArg}), ${compiled})`;
   }
 
   generateCode(): string {

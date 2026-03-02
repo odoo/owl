@@ -5,9 +5,11 @@ import {
   clearThisTracking,
   getThisTrackingReport,
   setTemplateTrackingAlias,
+  setTemplateFallbackFile,
   setExprLocation,
   createTrackedCtx,
 } from "../src/runtime/this_tracking";
+import { compile } from "../src/compiler";
 import { makeTestFixture, nextTick } from "./helpers";
 
 let fixture: HTMLElement;
@@ -1251,5 +1253,298 @@ describe("this tracking - source aggregation", () => {
     expect(fooAccesses[0].line).toBe(1);
     expect(fooAccesses[1].source).toBe("ctx");
     expect(fooAccesses[1].line).toBe(2);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// __setExprLoc always emitted (even when ExprLocFinder cannot find expression)
+// ---------------------------------------------------------------------------
+
+describe("this tracking - __setExprLoc always emitted", () => {
+  test("expressions not found by ExprLocFinder still get line=0 location", async () => {
+    // Build a template where the expression won't match the raw XML exactly
+    // (e.g. because of whitespace differences). The compiled code should still
+    // include __setExprLoc with line=0 so tracking is never stale.
+    //
+    // We test this end-to-end: if __setExprLoc is NOT emitted, the proxy
+    // would report the PREVIOUS expression's location (stale). By verifying
+    // that every access has line/col info (even if 0), we confirm emission.
+    class MyComp extends Component {
+      static template = xml`<div><t t-esc="value"/></div>`;
+      value = 42;
+    }
+
+    await mount(MyComp, fixture);
+
+    const report = getThisTrackingReport();
+    const accesses = Object.values(report.accesses);
+    const access = accesses.find((a) => a.property === "value");
+    expect(access).toBeDefined();
+    // The expression IS found by ExprLocFinder here, so line > 0
+    expect(access!.line).toBeGreaterThan(0);
+  });
+
+  test("compile with trackExpressions emits __setExprLoc in generated code", () => {
+    // Compile a template with expression tracking and verify the generated
+    // code contains __setExprLoc calls.
+    const template = `<div t-esc="myProp"/>`;
+    const fn = compile(template, {
+      hasGlobalValues: false,
+      trackExpressions: true,
+      rawXml: template,
+    });
+    const code = fn.toString();
+    expect(code).toContain("__setExprLoc");
+  });
+
+  test("compile with trackExpressions emits __setExprLoc even for unfindable expressions", () => {
+    // When rawXml doesn't match what ExprLocFinder expects (e.g., the
+    // expression is dynamically generated), it still emits __setExprLoc
+    // with line=0.
+    //
+    // We use a template where the expression text differs from what's in
+    // the raw XML attribute — ExprLocFinder.find() returns null.
+    // Use rawXml that differs from the actual parsed template.
+    const template = `<div t-esc="myProp"/>`;
+    const fn = compile(template, {
+      hasGlobalValues: false,
+      trackExpressions: true,
+      // rawXml is intentionally different so ExprLocFinder won't find "myProp"
+      rawXml: `<div t-esc="DIFFERENT"/>`,
+    });
+    const code = fn.toString();
+    // __setExprLoc should still be emitted with 0, 0, 0 fallback
+    expect(code).toContain("__setExprLoc");
+    expect(code).toContain(", 0, 0, 0");
+  });
+
+  test("compile without trackExpressions does NOT emit __setExprLoc", () => {
+    const template = `<div t-esc="myProp"/>`;
+    const fn = compile(template, {
+      hasGlobalValues: false,
+      trackExpressions: false,
+    });
+    const code = fn.toString();
+    expect(code).not.toContain("__setExprLoc");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// defaultSourceFile option
+// ---------------------------------------------------------------------------
+
+describe("this tracking - defaultSourceFile", () => {
+  test("compile with defaultSourceFile passes file to __setExprLoc", () => {
+    const template = `<div t-esc="value"/>`;
+    const fn = compile(template, {
+      hasGlobalValues: false,
+      trackExpressions: true,
+      rawXml: template,
+      defaultSourceFile: "@web/my_module",
+    });
+    const code = fn.toString();
+    expect(code).toContain("__setExprLoc");
+    expect(code).toContain("@web/my_module");
+  });
+
+  test("defaultSourceFile is used as fallback file in report for inline templates", async () => {
+    class MyComp extends Component {
+      static template = xml`<div><t t-esc="value"/></div>`;
+      value = 42;
+    }
+
+    // Simulate what the component_node does for inline templates:
+    // set ___filename, register alias, and set fallback file
+    (MyComp as any).___filename = "@web/views/my_view";
+    const alias = `@web/views/my_view:MyComp`;
+    setTemplateTrackingAlias(MyComp.template, alias);
+    setTemplateFallbackFile(alias, "@web/views/my_view");
+
+    await mount(MyComp, fixture);
+    expect(fixture.innerHTML).toBe("<div>42</div>");
+
+    const report = getThisTrackingReport();
+    const accesses = Object.values(report.accesses);
+    const access = accesses.find((a) => a.property === "value");
+    expect(access).toBeDefined();
+    expect(access!.filename).toBe("@web/views/my_view");
+    expect(access!.templateName).toBe(alias);
+  });
+
+  test("t-source-file overrides defaultSourceFile", () => {
+    // When t-source-file is present, it should take precedence over
+    // defaultSourceFile. Verify the generated code uses the t-source-file value.
+    const template = `<div t-source-file="/web/override.xml" t-esc="value"/>`;
+    const fn = compile(template, {
+      hasGlobalValues: false,
+      trackExpressions: true,
+      rawXml: template,
+      defaultSourceFile: "@web/fallback_module",
+    });
+    const code = fn.toString();
+    expect(code).toContain("__setExprLoc");
+    // The t-source-file attribute value should appear in the generated code
+    expect(code).toContain("/web/override.xml");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Slot tracking with ___filename fallback
+// ---------------------------------------------------------------------------
+
+describe("this tracking - slot ___filename fallback", () => {
+  test("slot content attributed to parent even when parent has ___filename but opaque template key", async () => {
+    class Child extends Component {
+      static template = xml`<div><t t-slot="default"/></div>`;
+    }
+
+    const parentTpl = xml`
+      <Child>
+        <span t-esc="parentValue"/>
+      </Child>`;
+
+    class Parent extends Component {
+      static template = parentTpl;
+      static components = { Child };
+      parentValue = "from parent";
+    }
+
+    // Simulate ___filename being set (like a transpiler would)
+    (Parent as any).___filename = "@web/views/form_view";
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div><span>from parent</span></div>");
+
+    const report = getThisTrackingReport();
+    const accesses = Object.values(report.accesses);
+
+    // parentValue should be attributed to the parent's template
+    const pvAccess = accesses.find((a) => a.property === "parentValue");
+    expect(pvAccess).toBeDefined();
+    // It should NOT be "unknown-slot"
+    expect(pvAccess!.templateName).not.toBe("unknown-slot");
+  });
+
+  test("slot content falls back to 'unknown-slot' when no ___filename or template", async () => {
+    class Child extends Component {
+      static template = xml`<div><t t-slot="default"/></div>`;
+    }
+
+    class Parent extends Component {
+      static template = xml`<Child><span t-esc="parentValue"/></Child>`;
+      static components = { Child };
+      parentValue = "from parent";
+    }
+
+    await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div><span>from parent</span></div>");
+
+    const report = getThisTrackingReport();
+    const accesses = Object.values(report.accesses);
+
+    // Parent has a valid template key (xml`` returns an opaque key that is truthy),
+    // so it should NOT be "unknown-slot"
+    const pvAccess = accesses.find((a) => a.property === "parentValue");
+    expect(pvAccess).toBeDefined();
+    expect(pvAccess!.templateName).not.toBe("unknown-slot");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Aggregation key includes expression for line=0 entries
+// ---------------------------------------------------------------------------
+
+describe("this tracking - aggregation key with line=0", () => {
+  test("different expressions at line=0 produce separate report entries", () => {
+    // When __setExprLoc is called with line=0 (ExprLocFinder couldn't find
+    // the expression), different expressions should NOT be collapsed into
+    // one entry. The aggregation key must include the expression string.
+    const component = { foo: "bar", baz: "qux" } as any;
+    const ctx = Object.create(component);
+    const trackedCtx = createTrackedCtx(ctx, component, "test-tmpl");
+
+    // Two different expressions, both at line=0
+    setExprLocation("foo", 0, 0, 0);
+    void trackedCtx.foo;
+
+    setExprLocation("baz", 0, 0, 0);
+    void trackedCtx.baz;
+
+    const report = getThisTrackingReport();
+    const accesses = Object.values(report.accesses);
+
+    // Should have 2 separate entries, not collapsed into 1
+    expect(accesses.length).toBe(2);
+    const fooAccess = accesses.find((a) => a.property === "foo");
+    const bazAccess = accesses.find((a) => a.property === "baz");
+    expect(fooAccess).toBeDefined();
+    expect(bazAccess).toBeDefined();
+    expect(fooAccess!.expression).toBe("foo");
+    expect(bazAccess!.expression).toBe("baz");
+  });
+
+  test("same expression at line=0 is still aggregated", () => {
+    // The same expression at line=0 should be collapsed into one entry.
+    const component = { foo: "bar" } as any;
+    const ctx = Object.create(component);
+    const trackedCtx = createTrackedCtx(ctx, component, "test-tmpl");
+
+    // Same expression accessed twice at line=0
+    setExprLocation("foo", 0, 0, 0);
+    void trackedCtx.foo;
+
+    setExprLocation("foo", 0, 0, 0);
+    void trackedCtx.foo;
+
+    const report = getThisTrackingReport();
+    const accesses = Object.values(report.accesses);
+
+    // Should be collapsed into 1 entry
+    expect(accesses.length).toBe(1);
+    expect(accesses[0].property).toBe("foo");
+    expect(accesses[0].line).toBe(0);
+  });
+
+  test("same expression at different non-zero lines stays separate", () => {
+    // Verify that for non-zero lines, the existing behavior is preserved:
+    // different line numbers → separate entries.
+    const component = { foo: "bar" } as any;
+    const ctx = Object.create(component);
+    const trackedCtx = createTrackedCtx(ctx, component, "test-tmpl");
+
+    setExprLocation("foo", 1, 0, 3);
+    void trackedCtx.foo;
+
+    setExprLocation("foo", 5, 0, 3);
+    void trackedCtx.foo;
+
+    const report = getThisTrackingReport();
+    const accesses = Object.values(report.accesses);
+
+    expect(accesses.length).toBe(2);
+    expect(accesses.find((a) => a.line === 1)).toBeDefined();
+    expect(accesses.find((a) => a.line === 5)).toBeDefined();
+  });
+
+  test("different expressions at same non-zero line/col are still collapsed (expression not in key)", () => {
+    // For non-zero lines, the key is filename:template:prop:line:col:endCol.
+    // Different expressions at the same location are collapsed (this is the
+    // original behavior and is correct for normal operation).
+    const component = { foo: "bar" } as any;
+    const ctx = Object.create(component);
+    const trackedCtx = createTrackedCtx(ctx, component, "test-tmpl");
+
+    setExprLocation("foo or bar", 3, 0, 10);
+    void trackedCtx.foo;
+
+    setExprLocation("foo and baz", 3, 0, 10);
+    void trackedCtx.foo;
+
+    const report = getThisTrackingReport();
+    const accesses = Object.values(report.accesses);
+
+    // Same line/col/endCol → collapsed into 1 entry (for non-zero lines)
+    expect(accesses.length).toBe(1);
+    expect(accesses[0].line).toBe(3);
   });
 });

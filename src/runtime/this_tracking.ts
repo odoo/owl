@@ -154,12 +154,22 @@ export function setTemplateFallbackFile(templateName: string, filename: string):
   _templateFallbackFiles.set(templateName, filename);
 }
 
+export function getTemplateNameAlias(templateKey: string): string | undefined {
+  return _templateNameAliases.get(templateKey);
+}
+
+export function getTemplateFallbackFile(templateName: string): string | undefined {
+  return _templateFallbackFiles.get(templateName);
+}
+
 export function getThisTrackingReport(): ThisTrackingReport {
   const accesses: Record<string, AggregatedAccess> = {};
   for (const access of _templateAccesses) {
     if (access.line == null) continue; // skip accesses without location info
     const filename = access.file || "";
-    const key = `${filename}:${access.templateName}:${access.property}:${access.line}:${access.col}:${access.endCol}`;
+    const key = access.line === 0
+      ? `${filename}:${access.templateName}:${access.property}:${access.expression}`
+      : `${filename}:${access.templateName}:${access.property}:${access.line}:${access.col}:${access.endCol}`;
     const existing = accesses[key];
     if (existing) {
       if (existing.source !== access.source) {

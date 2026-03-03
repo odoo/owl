@@ -1,7 +1,14 @@
 import { OwlError } from "../common/owl_error";
 import { App } from "./app";
 import { contextStack } from "./context";
-import { ComputationAtom, disposeComputation, untrack } from "./reactivity/computations";
+import {
+  ComputationAtom,
+  ComputationState,
+  createComputation,
+  disposeComputation,
+  setComputationScope,
+  untrack,
+} from "./reactivity/computations";
 import { effect } from "./reactivity/effect";
 import { Resource } from "./resource";
 import { STATUS } from "./status";
@@ -38,13 +45,14 @@ export class PluginManager {
   app: App;
   config: Record<string, any>;
   onDestroyCb: Function[] = [];
-  computations: ComputationAtom[] = [];
+  scopeComputation: ComputationAtom;
   plugins: Record<string, Plugin>;
   status: STATUS = STATUS.NEW;
 
   constructor(app: App, options: PluginManagerOptions = {}) {
     this.app = app;
     this.config = options.config ?? {};
+    this.scopeComputation = createComputation(() => {}, false, ComputationState.EXECUTED);
 
     if (options.parent) {
       const parent = options.parent;
@@ -60,9 +68,7 @@ export class PluginManager {
     while (cbs.length) {
       cbs.pop()!();
     }
-    for (const computation of this.computations) {
-      disposeComputation(computation);
-    }
+    disposeComputation(this.scopeComputation);
     this.status = STATUS.DESTROYED;
   }
 
@@ -105,11 +111,13 @@ export class PluginManager {
       },
     });
 
+    setComputationScope(this.scopeComputation);
     try {
       for (const pluginConstructor of pluginConstructors) {
         this.startPlugin(pluginConstructor);
       }
     } finally {
+      setComputationScope(undefined);
       contextStack.pop();
     }
 

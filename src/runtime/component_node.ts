@@ -10,6 +10,7 @@ import {
   disposeComputation,
   getCurrentComputation,
   setComputation,
+  setComputationScope,
 } from "./reactivity/computations";
 import { fibersInError } from "./rendering/error_handling";
 import { Fiber, makeChildFiber, makeRootFiber, MountFiber, MountOptions } from "./rendering/fibers";
@@ -44,7 +45,6 @@ export class ComponentNode implements VNode<ComponentNode> {
   patched: LifecycleHook[] = [];
   willDestroy: LifecycleHook[] = [];
   signalComputation: ComputationAtom;
-  computations: ComputationAtom[] = [];
 
   pluginManager: PluginManager;
 
@@ -76,10 +76,12 @@ export class ComponentNode implements VNode<ComponentNode> {
     });
     const previousComputation = getCurrentComputation();
     setComputation(undefined);
+    setComputationScope(this.signalComputation);
     this.component = new C(this);
     const ctx = { this: this.component, __owl__: this };
     this.renderFn = app.getTemplate(C.template).bind(this.component, ctx, this);
     this.component.setup();
+    setComputationScope(undefined);
     setComputation(previousComputation);
     contextStack.length = 0; // clear context stack
   }
@@ -205,9 +207,6 @@ export class ComponentNode implements VNode<ComponentNode> {
       } catch (e) {
         this.app.handleError({ error: e, node: this });
       }
-    }
-    for (const computation of this.computations) {
-      disposeComputation(computation);
     }
     disposeComputation(this.signalComputation);
     this.status = STATUS.DESTROYED;

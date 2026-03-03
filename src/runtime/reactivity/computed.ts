@@ -1,13 +1,13 @@
 import {
   atomSymbol,
   ComputationState,
+  getComputationScope,
   onReadAtom,
   onWriteAtom,
   ReactiveValue,
   updateComputation,
   createComputation,
 } from "./computations";
-import { contextStack } from "../context";
 
 interface ComputedOptions<TWrite> {
   set?(value: TWrite): void;
@@ -35,13 +35,10 @@ export function computed<TRead, TWrite = TRead>(
   readComputed[atomSymbol] = computation;
   readComputed.set = options.set ?? (() => {});
 
-  const context = contextStack.at(-1);
-  if (context) {
-    if (context.type === "component") {
-      context.node.computations.push(computation);
-    } else if (context.type === "plugin") {
-      context.manager.computations.push(computation);
-    }
+  const scope = getComputationScope();
+  if (scope) {
+    scope.sources.add(computation);
+    computation.observers.add(scope);
   }
 
   return readComputed;

@@ -32,6 +32,15 @@ export const atomSymbol = Symbol("Atom");
 
 let observers: ComputationAtom[] = [];
 let currentComputation: ComputationAtom | undefined;
+let currentScope: ComputationAtom | undefined;
+
+export function setComputationScope(scope: ComputationAtom | undefined) {
+  currentScope = scope;
+}
+
+export function getComputationScope() {
+  return currentScope;
+}
 
 export function createComputation(
   compute: () => any,

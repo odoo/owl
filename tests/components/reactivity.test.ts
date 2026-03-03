@@ -468,4 +468,52 @@ describe("reactive cleanup on component destruction", () => {
     await nextTick();
     expect(selectedIdAtom.observers.size).toBe(0);
   });
+
+  test("computed not read in last render is still cleaned up on destroy", async () => {
+    const selectedId = signal(0);
+    const selectedIdAtom: Atom = (selectedId as any)[atomSymbol];
+
+    class Child extends Component {
+      static template = xml`
+        <div>
+          <span t-if="this.p.showSelected()" t-out="this.isSelected()"/>
+        </div>`;
+      p = props();
+      isSelected = computed(() => this.p.selected() === 1);
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <div>
+          <Child t-if="this.showChild()" selected="this.selectedId" showSelected="this.showSelected"/>
+        </div>`;
+      static components = { Child };
+      showChild = signal(true);
+      showSelected = signal(true);
+      selectedId = selectedId;
+    }
+
+    const parent = await mount(Parent, fixture);
+    expect(fixture.innerHTML).toBe("<div><div><span>false</span></div></div>");
+
+    // computed is read in the template => subscribed to selectedId
+    expect(selectedIdAtom.observers.size).toBe(1);
+
+    // Stop showing the computed in the template (conditional rendering)
+    parent.showSelected.set(false);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div><div></div></div>");
+
+    // The computed is no longer read during render, but it's still
+    // subscribed to selectedId (its sources were not cleaned up)
+    expect(selectedIdAtom.observers.size).toBe(1);
+
+    // Now destroy the child entirely
+    parent.showChild.set(false);
+    await nextTick();
+    expect(fixture.innerHTML).toBe("<div></div>");
+
+    // The computed must be cleaned up even though it wasn't read in the last render
+    expect(selectedIdAtom.observers.size).toBe(0);
+  });
 });

@@ -62,7 +62,7 @@ export class ComponentNode implements VNode<ComponentNode> {
       false,
       ComputationState.EXECUTED
     );
-    this.props = Object.assign({}, props);
+    this.props = props;
     contextStack.push({
       type: "component",
       app,

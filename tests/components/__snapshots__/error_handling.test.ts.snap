@@ -1428,6 +1428,131 @@ exports[`can catch errors onError in class inheritance is not called if no rethr
 }"
 `;
 
+exports[`can catch errors re-render parent when self is in error - 2 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Classic\`, true, false, false, false);
+  const comp2 = app.createComponent(\`Classic\`, true, false, false, false);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = comp1({hasBoom: true,state: ctx['reactive']}, key + \`__1\`, node, this, null);
+    const b3 = comp2({hasBoom: false,state: ctx['reactive']}, key + \`__2\`, node, this, null);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`can catch errors re-render parent when self is in error - 2 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`BoomWrapper\`, true, false, false, false);
+  
+  let block3 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2,b3;
+    if (ctx['props'].hasBoom) {
+      b2 = comp1({state: ctx['props'].state}, key + \`__1\`, node, this, null);
+    } else {
+      let txt1 = ctx['props'].state.safeTree;
+      b3 = block3([txt1]);
+    }
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`can catch errors re-render parent when self is in error - 2 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Boom\`, true, false, false, true);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2,b3;
+    if (ctx['state'].errorTree==='error') {
+      b2 = comp1({}, key + \`__1\`, node, this, null);
+    } else {
+      b3 = text(ctx['state'].errorTree);
+    }
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`can catch errors re-render parent when self is in error - 2 4`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
+exports[`can catch errors re-render parent when self is in error 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Classic\`, true, false, false, true);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return comp1({}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`can catch errors re-render parent when self is in error 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  let { bind } = helpers;
+  const comp1 = app.createComponent(\`BoomWrapper\`, true, false, false, false);
+  
+  let block3 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    let b2,b3;
+    if (!ctx['inError']) {
+      b2 = comp1({onError: bind(this, ctx['onErrorAsProps'])}, key + \`__1\`, node, this, null);
+    } else {
+      b3 = block3();
+    }
+    return multi([b2, b3]);
+  }
+}"
+`;
+
+exports[`can catch errors re-render parent when self is in error 3`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Boom\`, true, false, false, true);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return comp1({}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`can catch errors re-render parent when self is in error 4`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block1 = createBlock(\`<div/>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return block1();
+  }
+}"
+`;
+
 exports[`errors and promises a rendering error in a sub component will reject the mount promise 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

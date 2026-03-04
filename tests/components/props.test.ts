@@ -147,6 +147,30 @@ describe("basics", () => {
     expect(onClickArgs![1]).toBeInstanceOf(MouseEvent);
   });
 
+  test("arrow function props do not leak synthetic keys into props()", async () => {
+    let childProps: any;
+    class Child extends Component {
+      static template = xml`<span><t t-esc="this.props.onClick"/></span>`;
+      props = props();
+      setup() {
+        childProps = this.props;
+      }
+    }
+
+    class Parent extends Component {
+      static template = xml`
+        <t t-foreach="this.items" t-as="item" t-key="item.val">
+          <Child onClick="(ev) => this.onClick(item.val, ev)"/>
+        </t>
+      `;
+      static components = { Child };
+      items = [{ val: 1 }];
+      onClick() {}
+    }
+    await mount(Parent, fixture);
+    expect(Object.keys(childProps)).toEqual(["onClick"]);
+  });
+
   test("support prop names that aren't valid bare object property names", async () => {
     expect.assertions(3);
     class Child extends Component {
@@ -451,5 +475,114 @@ test(".alike suffix in a list", async () => {
       "Todo:willPatch",
       "Todo:patched",
     ]
+  `);
+});
+
+test("arrow function props auto-skip re-render when captured variables don't change", async () => {
+  class Child extends Component {
+    static template = xml`<t t-out="this.props.fn()"/>`;
+    props = props();
+    setup() {
+      useLogLifecycle(this);
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`
+      <t t-out="this.state.counter"/>
+      <Child fn="() => 1"/>`;
+    static components = { Child };
+    state = proxy({ counter: 0 });
+    setup() {
+      useLogLifecycle(this);
+    }
+  }
+
+  const parent = await mount(Parent, fixture);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`
+    [
+      "Parent:setup",
+      "Parent:willStart",
+      "Child:setup",
+      "Child:willStart",
+      "Child:mounted",
+      "Parent:mounted",
+    ]
+  `);
+
+  expect(fixture.innerHTML).toBe("01");
+  parent.state.counter++;
+  await nextTick();
+  expect(fixture.innerHTML).toBe("11");
+  expect(steps.splice(0)).toMatchInlineSnapshot(`
+    [
+      "Parent:willPatch",
+      "Parent:patched",
+    ]
+  `);
+});
+
+test("arrow function props re-render when captured variable changes", async () => {
+  class Todo extends Component {
+    static template = xml`
+      <button t-on-click="this.props.toggle">
+        <t t-out="this.props.todo.id"/><t t-if="this.props.todo.isChecked">V</t>
+      </button>`;
+    props = props();
+    setup() {
+      useLogLifecycle(this);
+    }
+  }
+
+  class Parent extends Component {
+    static template = xml`
+      <t t-foreach="this.state.elems" t-as="elem" t-key="elem.id">
+        <Todo todo="elem" toggle="() => this.toggle(elem.id)"/>
+      </t>`;
+    static components = { Todo };
+    state = proxy({
+      elems: [
+        { id: 1, isChecked: false },
+        { id: 2, isChecked: true },
+      ],
+    });
+    setup() {
+      useLogLifecycle(this);
+    }
+    toggle(id: number) {
+      const index = this.state.elems.findIndex((el) => el.id === id)!;
+      const todo = this.state.elems[index];
+      this.state.elems[index] = { ...todo, isChecked: !todo.isChecked };
+    }
+  }
+
+  await mount(Parent, fixture);
+  expect(steps.splice(0)).toMatchInlineSnapshot(`
+    [
+      "Parent:setup",
+      "Parent:willStart",
+      "Todo:setup",
+      "Todo:willStart",
+      "Todo:setup",
+      "Todo:willStart",
+      "Todo:mounted",
+      "Todo:mounted",
+      "Parent:mounted",
+    ]
+  `);
+
+  expect(fixture.innerHTML).toBe("<button>1</button><button>2V</button>");
+  fixture.querySelector("button")?.click();
+  await nextTick();
+  expect(fixture.innerHTML).toBe("<button>1V</button><button>2V</button>");
+  // elem changed (replaced object), so the child with that elem re-renders
+  expect(steps.splice(0)).toMatchInlineSnapshot(`
+   [
+     "Todo:willUpdateProps",
+     "Parent:willPatch",
+     "Todo:willPatch",
+     "Todo:patched",
+     "Parent:patched",
+   ]
   `);
 });

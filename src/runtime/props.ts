@@ -80,12 +80,12 @@ export function props(type?: any, defaults?: any): Props<{}> {
       });
     }
   } else {
-    applyPropGetters(Object.keys(node.props));
+    applyPropGetters(Object.keys(node.props).filter((k) => k.charCodeAt(0) !== 1));
     node.willUpdateProps.push((np: Record<string, any>) => {
       for (let key in result) {
         Reflect.deleteProperty(result, key);
       }
-      applyPropGetters(Object.keys(np));
+      applyPropGetters(Object.keys(np).filter((k) => k.charCodeAt(0) !== 1));
     });
   }
 

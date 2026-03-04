@@ -1,5 +1,5 @@
 import { OwlError } from "../common/owl_error";
-import { compileExpr, INTERP_REGEXP, interpolate } from "./inline_expressions";
+import { compileExpr, INTERP_REGEXP, interpolate, processExpr } from "./inline_expressions";
 import {
   AST,
   ASTComment,
@@ -1139,9 +1139,33 @@ export class CodeGenerator {
     let { block } = ctx;
     // props
     const hasSlotsProp = "slots" in (ast.props || {});
-    const props: string[] = ast.props
-      ? this.formatPropObject(ast.props, ast.propsTranslationCtx, ctx.translationCtx)
-      : [];
+    const props: string[] = [];
+    const propList: string[] = [];
+
+    for (let p in ast.props || {}) {
+      let [name, suffix] = p.split(".");
+
+      if (suffix) {
+        // .alike, .bind, .translate — delegate to formatProp, no propList entry
+        props.push(this.formatProp(p, ast.props![p], ast.propsTranslationCtx, ctx.translationCtx));
+        continue;
+      }
+
+      const { expr: compiledValue, freeVariables } = processExpr(ast.props![p]);
+
+      const propName = /^[a-z_]+$/i.test(name) ? name : `'${name}'`;
+      props.push(`${propName}: ${compiledValue || undefined}`);
+
+      if (freeVariables) {
+        for (const varName of freeVariables) {
+          const syntheticKey = `\x01${name}.${varName}`;
+          propList.push(`"${syntheticKey}"`);
+          props.push(`"${syntheticKey}": ctx['${varName}']`);
+        }
+      } else {
+        propList.push(`"${name}"`);
+      }
+    }
 
     // slots
     let slotDef: string = "";
@@ -1211,13 +1235,6 @@ export class CodeGenerator {
       keyArg = `${ctx.tKeyExpr} + ${keyArg}`;
     }
     let id = generateId("comp");
-    const propList: string[] = [];
-    for (let p in ast.props || {}) {
-      let [name, suffix] = p.split(".");
-      if (!suffix) {
-        propList.push(`"${name}"`);
-      }
-    }
     this.helpers.add("createComponent");
     this.staticDefs.push({
       id,

@@ -264,11 +264,24 @@ const isRightSeparator = (token: Token) =>
  * the arrow operator, then we add the current (or some previous tokens) token to
  * the list of variables so it does not get replaced by a lookup in the context
  */
-export function compileExprToArray(expr: string): Token[] {
+// Leading spaces are trimmed during tokenization, so they need to be added back for some values
+const paddedValues = new Map([["in ", " in "]]);
+
+interface ProcessedExpr {
+  expr: string;
+  freeVariables: string[] | null;
+}
+
+/**
+ * Processes a javascript expression: compiles variable lookups and detects
+ * top-level arrow functions with their free variables, all in a single pass.
+ */
+export function processExpr(expr: string): ProcessedExpr {
   const localVars = new Set<string>();
   const tokens = tokenize(expr);
   let i = 0;
   let stack = []; // to track last opening (, [ or {
+  let topLevelArrowIndex = -1;
 
   while (i < tokens.length) {
     let token = tokens[i];
@@ -314,17 +327,20 @@ export function compileExprToArray(expr: string): Token[] {
       token.value = token.replace!((expr: any) => compileExpr(expr));
     }
     if (nextToken && nextToken.type === "OPERATOR" && nextToken.value === "=>") {
+      if (stack.length === 0) {
+        topLevelArrowIndex = i + 1;
+      }
       if (token.type === "RIGHT_PAREN") {
         let j = i - 1;
         while (j > 0 && tokens[j].type !== "LEFT_PAREN") {
           if (tokens[j].type === "SYMBOL" && tokens[j].originalValue) {
             tokens[j].value = tokens[j].originalValue!;
-            localVars.add(tokens[j].value); //] = { id: tokens[j].value, expr: tokens[j].value };
+            localVars.add(tokens[j].value);
           }
           j--;
         }
       } else {
-        localVars.add(token.value); //] = { id: token.value, expr: token.value };
+        localVars.add(token.value);
       }
     }
 
@@ -337,6 +353,7 @@ export function compileExprToArray(expr: string): Token[] {
     }
     i++;
   }
+
   // Mark all variables that have been used locally.
   // This assumes the expression has only one scope (incorrect but "good enough for now")
   for (const token of tokens) {
@@ -346,16 +363,27 @@ export function compileExprToArray(expr: string): Token[] {
       token.isLocal = true;
     }
   }
-  return tokens;
+
+  // Collect free variables from arrow function body
+  let freeVariables: string[] | null = null;
+  if (topLevelArrowIndex !== -1) {
+    freeVariables = [];
+    const seen = new Set<string>();
+    for (let i = topLevelArrowIndex + 1; i < tokens.length; i++) {
+      const t = tokens[i];
+      if (t.varName && !t.isLocal && t.varName !== "this" && !seen.has(t.varName)) {
+        seen.add(t.varName);
+        freeVariables.push(t.varName);
+      }
+    }
+  }
+
+  const compiled = tokens.map((t) => paddedValues.get(t.value) || t.value).join("");
+  return { expr: compiled, freeVariables };
 }
 
-// Leading spaces are trimmed during tokenization, so they need to be added back for some values
-const paddedValues = new Map([["in ", " in "]]);
-
 export function compileExpr(expr: string): string {
-  return compileExprToArray(expr)
-    .map((t) => paddedValues.get(t.value) || t.value)
-    .join("");
+  return processExpr(expr).expr;
 }
 
 export const INTERP_REGEXP = /\{\{.*?\}\}|\#\{.*?\}/g;

@@ -2107,29 +2107,4 @@ describe("qweb parser", () => {
       ns: null,
     });
   });
-
-  // ---------------------------------------------------------------------------
-  // t-portal
-  // ---------------------------------------------------------------------------
-  test("t-portal", async () => {
-    expect(parse(`<t t-portal="target">Content</t>`)).toEqual({
-      type: ASTType.TPortal,
-      target: "target",
-      content: { type: ASTType.Text, value: "Content" },
-    });
-  });
-
-  test("t-portal with t-if", async () => {
-    expect(parse(`<t t-portal="target" t-if="condition">Content</t>`)).toEqual({
-      condition: "condition",
-      content: {
-        content: { type: ASTType.Text, value: "Content" },
-        target: "target",
-        type: ASTType.TPortal,
-      },
-      tElif: null,
-      tElse: null,
-      type: ASTType.TIf,
-    });
-  });
 });

@@ -27,7 +27,6 @@ export const enum ASTType {
   TCallBlock,
   TTranslation,
   TTranslationContext,
-  TPortal,
 }
 
 export interface BaseAST {
@@ -182,12 +181,6 @@ export interface ASTTranslationContext extends BaseAST {
   translationCtx: string;
 }
 
-export interface ASTTPortal extends BaseAST {
-  type: ASTType.TPortal;
-  target: string;
-  content: AST;
-}
-
 export type AST =
   | ASTText
   | ASTComment
@@ -205,8 +198,7 @@ export type AST =
   | ASTLog
   | ASTDebug
   | ASTTranslation
-  | ASTTranslationContext
-  | ASTTPortal;
+  | ASTTranslationContext;
 
 // -----------------------------------------------------------------------------
 // Parser
@@ -252,7 +244,6 @@ function parseNode(node: Node, ctx: ParsingContext): AST | null {
     parseTDebugLog(node, ctx) ||
     parseTForEach(node, ctx) ||
     parseTIf(node, ctx) ||
-    parseTPortal(node, ctx) ||
     parseTTranslation(node, ctx) ||
     parseTTranslationContext(node, ctx) ||
     parseTCall(node, ctx) ||
@@ -932,30 +923,6 @@ function parseTTranslationContext(node: Element, ctx: ParsingContext): AST | nul
     return makeASTMulti(children);
   }
   return wrapInTTranslationContextAST(result, translationCtx);
-}
-
-// -----------------------------------------------------------------------------
-// Portal
-// -----------------------------------------------------------------------------
-
-function parseTPortal(node: Element, ctx: ParsingContext): AST | null {
-  if (!node.hasAttribute("t-portal")) {
-    return null;
-  }
-  const target = node.getAttribute("t-portal")!;
-  node.removeAttribute("t-portal");
-  const content = parseNode(node, ctx);
-  if (!content) {
-    return {
-      type: ASTType.Text,
-      value: "",
-    };
-  }
-  return {
-    type: ASTType.TPortal,
-    target,
-    content,
-  };
 }
 
 // -----------------------------------------------------------------------------

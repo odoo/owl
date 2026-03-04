@@ -17,7 +17,6 @@ import {
   ASTTif,
   ASTTKey,
   ASTTOut,
-  ASTTPortal,
   ASTTranslation,
   ASTTranslationContext,
   ASTTSet,
@@ -461,8 +460,6 @@ export class CodeGenerator {
         return this.compileTTranslation(ast, ctx);
       case ASTType.TTranslationContext:
         return this.compileTTranslationContext(ast, ctx);
-      case ASTType.TPortal:
-        return this.compileTPortal(ast, ctx);
     }
   }
 
@@ -1331,27 +1328,5 @@ export class CodeGenerator {
       );
     }
     return null;
-  }
-  compileTPortal(ast: ASTTPortal, ctx: Context): string {
-    this.helpers.add("Portal");
-
-    let { block } = ctx;
-    const name = this.compileInNewTarget("slot", ast.content, ctx);
-    let id = generateId("comp");
-    this.helpers.add("createComponent");
-    this.staticDefs.push({
-      id,
-      expr: `createComponent(app, null, false, true, false, false)`,
-    });
-
-    const target = compileExpr(ast.target);
-    const key = this.generateComponentKey();
-    const blockString = `${id}({target: ${target},slots: {'default': {__render: ${name}.bind(this), __ctx: ctx}}}, ${key}, node, ctx, Portal)`;
-    if (block) {
-      this.insertAnchor(block);
-    }
-    block = this.createBlock(block, "multi", ctx);
-    this.insertBlock(blockString, block, { ...ctx, forceNewBlock: false });
-    return block.varName;
   }
 }

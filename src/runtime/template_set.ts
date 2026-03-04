@@ -3,7 +3,6 @@ import { parseXML } from "../common/utils";
 import { compile, CustomDirectives, Template, TemplateFunction } from "../compiler";
 import { comment, createBlock, html, list, multi, text, toggler } from "./blockdom";
 import { getContext } from "./context";
-import { portalTemplate } from "./portal";
 import { helpers } from "./rendering/template_helpers";
 
 const bdom = { text, createBlock, list, multi, html, toggler, comment };
@@ -129,5 +128,3 @@ export function xml(...args: Parameters<typeof String.raw>) {
 }
 
 xml.nextId = 1;
-
-TemplateSet.registerTemplate("__portal__", portalTemplate);

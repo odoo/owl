@@ -139,11 +139,11 @@ a `.js` suffix, which is important. Most text editor can understand this syntax
 and will provide autocompletion.
 
 Now, to execute this code, we need to serve the `src` folder statically. A low
-tech way to do that is to use for example the python `SimpleHTTPServer` feature:
+tech way to do that is to use for example the python `http.server` module:
 
 ```
 $ cd src
-$ python -m SimpleHTTPServer 8022    # now content is available at localhost:8022
+$ python -m http.server 8022    # now content is available at localhost:8022
 ```
 
 Another more "javascripty" way to do it is to create a `npm` application. To do

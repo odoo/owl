@@ -375,3 +375,21 @@ export function replaceDynamicParts(s: string, replacer: (s: string) => string) 
 export function interpolate(s: string): string {
   return replaceDynamicParts(s, compileExpr);
 }
+
+const INTERP_TRANSLATE_REGEXP = /\{\{(\d+)\}\}/g;
+export function translateStringFormat(s: string, translateFn: Function): string {
+  const dynamic: Array<string> = [];
+  const repl = (substr: string) => {
+    const i = dynamic.length;
+    dynamic.push(substr);
+    return `{{${i}}}`; // coupled to INTERP_TRANSLATE_REGEXP
+  };
+  const rawString = s.replace(INTERP_REGEXP, (s) => repl(s.slice(2, s[0] === "{" ? -2 : -1)));
+  const translated: string = translateFn(rawString.trim());
+  if (translated !== undefined && translated !== rawString) {
+    return translated.replace(INTERP_TRANSLATE_REGEXP, (m, index) => {
+      return `{{${dynamic[index]}}}`;
+    });
+  }
+  return s;
+}

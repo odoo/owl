@@ -217,7 +217,7 @@ This is done via the `t-set` directive, which takes the name of the variable to 
    ```
 
    will print `3`. Note that the evaluation is done at rendering time, not at
-   compilte time.
+   compile time.
 
 2. if there is no `t-value` attribute, the node’s body is saved and its value is
    set as the variable’s value:

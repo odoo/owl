@@ -290,6 +290,36 @@ exports[`t-on t-on modifiers (native listener) t-on with .capture modifier 1`] =
 }"
 `;
 
+exports[`t-on t-on modifiers (native listener) t-on with .passive and .capture modifiers 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].onClick).call(ctx['this'], ev);
+  
+  let block1 = createBlock(\`<div block-handler-0="click.passive.capture"><button>Button</button></div>\`);
+  
+  return function template(ctx, node, key = "") {
+    let hdlr1 = ["passive","capture", hdlr_fn1, ctx];
+    return block1([hdlr1]);
+  }
+}"
+`;
+
+exports[`t-on t-on modifiers (native listener) t-on with .passive modifier 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const hdlr_fn1 = (ctx, ev) => (ctx['this'].onClick).call(ctx['this'], ev);
+  
+  let block1 = createBlock(\`<button block-handler-0="click.passive">Button</button>\`);
+  
+  return function template(ctx, node, key = "") {
+    let hdlr1 = ["passive", hdlr_fn1, ctx];
+    return block1([hdlr1]);
+  }
+}"
+`;
+
 exports[`t-on t-on modifiers (native listener) t-on with empty handler (only modifiers) 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

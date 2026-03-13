@@ -1,0 +1,22 @@
+<templates>
+    
+    <t t-name="example.ChatWindow">
+      <div style="border:1px solid gray;width:300px;margin:10px;padding:4px;">
+          <h4>Chat</h4>
+          <t t-foreach="this.messages()" t-as="msg" t-key="msg.id">
+            <div><t t-out="msg.text"/></div>
+          </t>
+          <input t-model="this.input" placeholder="Type a message..."/>
+          <button t-on-click="this.send">Send</button>
+        </div>
+    </t>
+
+    <t t-name="example.Root">
+        <p>Open the console to see the lifecycle events</p>
+        <button t-on-click="this.toggle">Toggle Chat</button>
+        <t t-if="this.isOpen()">
+            <ChatWindow/>
+        </t>
+    </t>
+
+</templates>

@@ -361,6 +361,34 @@ exports[`hooks useRef hook: basic use 1`] = `
 }"
 `;
 
+exports[`hooks useSubEnv applies on prototype chain 1`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  const comp1 = app.createComponent(\`Child\`, true, false, false, []);
+  
+  return function template(ctx, node, key = \\"\\") {
+    return comp1({}, key + \`__1\`, node, this, null);
+  }
+}"
+`;
+
+exports[`hooks useSubEnv applies on prototype chain 2`] = `
+"function anonymous(app, bdom, helpers
+) {
+  let { text, createBlock, list, multi, html, toggler, comment } = bdom;
+  
+  let block3 = createBlock(\`<div><block-text-0/></div>\`);
+  
+  return function template(ctx, node, key = \\"\\") {
+    const b2 = text(ctx['env'].valueA);
+    let txt1 = ctx['env'].valueB;
+    const b3 = block3([txt1]);
+    return multi([b2, b3]);
+  }
+}"
+`;
+
 exports[`hooks useSubEnv modifies user env 1`] = `
 "function anonymous(app, bdom, helpers
 ) {

@@ -1,5 +1,7 @@
 import { batched, EventBus, htmlEscape, markup } from "../src/runtime/utils";
-import { nextMicroTick } from "./helpers";
+import { makeTestFixture, nextMicroTick } from "./helpers";
+import { getCurrent } from "../src/runtime/component_node";
+import { Component, mount, xml } from "../src";
 
 describe("event bus behaviour", () => {
   test("can subscribe and be notified", () => {
@@ -32,6 +34,66 @@ describe("event bus behaviour", () => {
     const bus = new EventBus();
     bus.addEventListener("event", (ev: any) => expect(ev.detail).toBe("hello world"));
     bus.trigger("event", "hello world");
+  });
+
+  test("events are not validated if the bus is created outside of dev mode", async () => {
+    let bus_empty: EventBus | null = null;
+    class Root extends Component {
+      static template = xml`<div/>`;
+
+      setup() {
+        getCurrent(); // checks that we're in a component context
+
+        bus_empty = new EventBus([]);
+      }
+    }
+    await mount(Root, makeTestFixture());
+
+    bus_empty!.addEventListener("a", () => {});
+    bus_empty!.trigger("a");
+    bus_empty!.dispatchEvent(new CustomEvent("a"));
+  });
+  test("events are validated if the bus is created in dev mode & events are provided", async () => {
+    let bus: EventBus | null = null;
+    let bus_empty: EventBus | null = null;
+    let bbus_no_validation: EventBus | null = null;
+    class Root extends Component {
+      static template = xml`<div/>`;
+
+      setup() {
+        getCurrent(); // checks that we're in a component context
+
+        bus = new EventBus(["a", "b"]);
+        bus_empty = new EventBus([]);
+        bbus_no_validation = new EventBus();
+      }
+    }
+
+    await mount(Root, makeTestFixture(), { test: true });
+
+    bbus_no_validation!.addEventListener("c", () => {});
+    bbus_no_validation!.trigger("c");
+    bbus_no_validation!.dispatchEvent(new CustomEvent("c"));
+
+    bus!.addEventListener("a", () => {});
+    bus!.trigger("a");
+    bus!.dispatchEvent(new CustomEvent("a"));
+
+    expect(() => bus!.addEventListener("c", () => {})).toThrow(
+      "EventBus: subscribing to unknown event 'c'"
+    );
+    expect(() => bus!.trigger("c")).toThrow("EventBus: triggering unknown event 'c'");
+    expect(() => bus!.dispatchEvent(new CustomEvent("c"))).toThrow(
+      "EventBus: dispatching unknown event 'c'"
+    );
+
+    expect(() => bus_empty!.addEventListener("a", () => {})).toThrow(
+      "EventBus: subscribing to unknown event 'a'"
+    );
+    expect(() => bus_empty!.trigger("a")).toThrow("EventBus: triggering unknown event 'a'");
+    expect(() => bus_empty!.dispatchEvent(new CustomEvent("a"))).toThrow(
+      "EventBus: dispatching unknown event 'a'"
+    );
   });
 });
 

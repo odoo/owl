@@ -14,7 +14,7 @@ Reactivity
 - [`useState`](reference/reactivity.md#usestate): create a reactive object (hook, linked to a specific component)
 - [`reactive`](reference/reactivity.md#reactive): create a reactive object (not linked to any component)
 - [`markRaw`](reference/reactivity.md#markraw): mark an object or array so that it is ignored by the reactivity system
-- [`toRaw`](reference/reactivity.md#toraw): given a reactive objet, return the raw (non reactive) underlying object
+- [`toRaw`](reference/reactivity.md#toraw): given a reactive object, return the raw (non reactive) underlying object
 
 Lifecycle hooks:
 

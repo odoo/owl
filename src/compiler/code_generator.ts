@@ -46,7 +46,7 @@ export interface CodeGenOptions extends Config {
 // of HTML (as we will parse it as xml later)
 const xmlDoc = document.implementation.createDocument(null, null, null);
 
-const MODS = new Set(["stop", "capture", "prevent", "self", "synthetic"]);
+const MODS = new Set(["stop", "capture", "prevent", "self", "synthetic", "passive"]);
 
 let nextDataIds: { [key: string]: number } = {};
 

@@ -535,6 +535,38 @@ describe("t-on", () => {
       button.click();
       expect(steps).toEqual(["captured", "normal"]);
     });
+
+    test("t-on with .passive modifier", () => {
+      const template = `<button t-on-click.passive="this.onClick">Button</button>`;
+
+      const steps: string[] = [];
+      const owner = {
+        onClick() {
+          steps.push("clicked");
+        },
+      };
+      const fixture = mountToFixture(template, owner);
+
+      fixture.querySelector("button")!.click();
+      expect(steps).toEqual(["clicked"]);
+    });
+
+    test("t-on with .passive and .capture modifiers", () => {
+      const template = `<div t-on-click.passive.capture="this.onClick">
+        <button>Button</button>
+      </div>`;
+
+      const steps: string[] = [];
+      const owner = {
+        onClick() {
+          steps.push("clicked");
+        },
+      };
+      const fixture = mountToFixture(template, owner);
+
+      fixture.querySelector("button")!.click();
+      expect(steps).toEqual(["clicked"]);
+    });
   });
 
   describe("t-on modifiers (synthetic listener)", () => {

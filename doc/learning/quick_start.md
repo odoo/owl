@@ -130,6 +130,7 @@ export class Root extends Component {
 
 // main.js ---------------------------------------------------------------------
 import { Root } from "./root.js";
+const { Component, mount, xml } = owl;
 
 mount(Root, document.body);
 ```

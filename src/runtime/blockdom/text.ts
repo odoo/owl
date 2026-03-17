@@ -1,12 +1,15 @@
 import type { VNode } from "./index";
 
 const getDescriptor = (o: any, p: any) => Object.getOwnPropertyDescriptor(o, p)!;
-const nodeProto = Node.prototype;
-const characterDataProto = CharacterData.prototype;
-
-const nodeInsertBefore = nodeProto.insertBefore;
-const characterDataSetData = getDescriptor(characterDataProto, "data").set!;
-const nodeRemoveChild = nodeProto.removeChild;
+let nodeInsertBefore: typeof Node.prototype.insertBefore;
+let characterDataSetData: (v: string) => void;
+let nodeRemoveChild: typeof Node.prototype.removeChild;
+if (typeof Node !== "undefined") {
+  const nodeProto = Node.prototype;
+  nodeInsertBefore = nodeProto.insertBefore;
+  nodeRemoveChild = nodeProto.removeChild;
+  characterDataSetData = getDescriptor(CharacterData.prototype, "data").set!;
+}
 
 abstract class VSimpleNode {
   text: string | String;

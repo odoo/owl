@@ -7,13 +7,18 @@ import { VMulti } from "./multi";
 import { toText } from "./text";
 
 const getDescriptor = (o: any, p: any) => Object.getOwnPropertyDescriptor(o, p)!;
-const nodeProto = Node.prototype;
-const elementProto = Element.prototype;
-const characterDataProto = CharacterData.prototype;
-
-const characterDataSetData = getDescriptor(characterDataProto, "data").set!;
-const nodeGetFirstChild = getDescriptor(nodeProto, "firstChild").get!;
-const nodeGetNextSibling = getDescriptor(nodeProto, "nextSibling").get!;
+let nodeProto: Node;
+let elementProto: Element;
+let characterDataSetData: (v: string) => void;
+let nodeGetFirstChild: () => ChildNode | null;
+let nodeGetNextSibling: () => ChildNode | null;
+if (typeof Node !== "undefined") {
+  nodeProto = Node.prototype;
+  elementProto = Element.prototype;
+  characterDataSetData = getDescriptor(CharacterData.prototype, "data").set!;
+  nodeGetFirstChild = getDescriptor(nodeProto, "firstChild").get!;
+  nodeGetNextSibling = getDescriptor(nodeProto, "nextSibling").get!;
+}
 
 const NO_OP = () => {};
 

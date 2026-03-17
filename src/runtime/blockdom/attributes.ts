@@ -1,9 +1,15 @@
 import type { Setter } from "./block_compiler";
 
-const { setAttribute: elemSetAttribute, removeAttribute } = Element.prototype;
-const tokenList = DOMTokenList.prototype;
-const tokenListAdd = tokenList.add;
-const tokenListRemove = tokenList.remove;
+let elemSetAttribute: typeof Element.prototype.setAttribute;
+let removeAttribute: typeof Element.prototype.removeAttribute;
+let tokenListAdd: typeof DOMTokenList.prototype.add;
+let tokenListRemove: typeof DOMTokenList.prototype.remove;
+if (typeof Element !== "undefined") {
+  ({ setAttribute: elemSetAttribute, removeAttribute } = Element.prototype);
+  const tokenList = DOMTokenList.prototype;
+  tokenListAdd = tokenList.add;
+  tokenListRemove = tokenList.remove;
+}
 const isArray = Array.isArray;
 const { split, trim } = String.prototype;
 const wordRegexp = /\s+/;

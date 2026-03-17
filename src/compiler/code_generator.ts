@@ -49,7 +49,10 @@ export interface CodeGenOptions extends Config {
 
 // using a non-html document so that <inner/outer>HTML serializes as XML instead
 // of HTML (as we will parse it as xml later)
-const xmlDoc = document.implementation.createDocument(null, null, null);
+let xmlDoc: Document;
+if (typeof document !== "undefined") {
+  xmlDoc = document.implementation.createDocument(null, null, null);
+}
 
 const MODS = new Set(["stop", "capture", "prevent", "self", "synthetic"]);
 

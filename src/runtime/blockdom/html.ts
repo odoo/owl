@@ -1,9 +1,12 @@
 import type { VNode } from "./index";
 
-const nodeProto = Node.prototype;
-
-const nodeInsertBefore = nodeProto.insertBefore;
-const nodeRemoveChild = nodeProto.removeChild;
+let nodeInsertBefore: typeof Node.prototype.insertBefore;
+let nodeRemoveChild: typeof Node.prototype.removeChild;
+if (typeof Node !== "undefined") {
+  const nodeProto = Node.prototype;
+  nodeInsertBefore = nodeProto.insertBefore;
+  nodeRemoveChild = nodeProto.removeChild;
+}
 
 class VHtml {
   html: string;

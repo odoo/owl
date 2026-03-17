@@ -49,7 +49,9 @@ interface Root<P extends Props, E> {
   destroy(): void;
 }
 
-window.__OWL_DEVTOOLS__ ||= { apps, Fiber, RootFiber, toRaw, reactive };
+if (typeof window !== "undefined") {
+  window.__OWL_DEVTOOLS__ ||= { apps, Fiber, RootFiber, toRaw, reactive };
+}
 
 export class App<
   T extends abstract new (...args: any) => any = any,

@@ -7,10 +7,15 @@ import { STATUS } from "./status";
 //  Scheduler
 // -----------------------------------------------------------------------------
 
+let requestAnimationFrame: Window["requestAnimationFrame"];
+if (typeof window !== "undefined") {
+  requestAnimationFrame = window.requestAnimationFrame.bind(window);
+}
+
 export class Scheduler {
   // capture the value of requestAnimationFrame as soon as possible, to avoid
   // interactions with other code, such as test frameworks that override them
-  static requestAnimationFrame = window.requestAnimationFrame.bind(window);
+  static requestAnimationFrame = requestAnimationFrame;
   tasks: Set<RootFiber> = new Set();
   requestAnimationFrame: Window["requestAnimationFrame"];
   frame: number = 0;
